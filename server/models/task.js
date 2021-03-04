@@ -5,7 +5,7 @@ const validations = require('./validations/task')
 module.exports = {
   create: newTask => {
     assert_.object(newTask)
-    const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
+    const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporters, clue } = newTask
     let { lexicalScore } = newTask
 
     validations.pass('type', type)
@@ -23,7 +23,7 @@ module.exports = {
     validateAndAssign(task, 'entitiesType', entitiesType)
     validateAndAssign(task, 'lexicalScore', lexicalScore)
     validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
-    validateAndAssign(task, 'reporter', reporter)
+    validateAndAssign(task, 'reporters', reporters)
     validateAndAssign(task, 'clue', clue)
     return task
   },
@@ -31,12 +31,8 @@ module.exports = {
   update: (task, attribute, value) => {
     assert_.object(task)
     assert_.string(attribute)
-    // Accept an undefined state value as that's the default state
-    if (value || attribute !== 'state') assert_.type('string|number', value)
-
     validations.pass('attribute', attribute)
     validations.pass(attribute, value)
-
     const now = Date.now()
 
     task[attribute] = value
