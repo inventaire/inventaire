@@ -50,7 +50,7 @@ const filterNewTasks = (existingTasks, suggestions) => {
 }
 
 const addToSuggestion = (userId, isbn) => suggestion => {
-  suggestion.reporter = userId
+  suggestion.reporters = [ userId ]
   suggestion.clue = isbn
   return suggestion
 }

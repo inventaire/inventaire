@@ -3,11 +3,15 @@ const { getSingularTypes } = require('lib/wikidata/aliases')
 const invEntitiesTypes = getSingularTypes(Object.keys(invP31Values))
 
 module.exports = {
-  type: [ 'deduplicate' ],
+  allowedValues: {
+    type: [ 'deduplicate' ],
+    entitiesType: invEntitiesTypes,
+    state: [ undefined, 'merged', 'dismissed' ],
+  },
 
-  entitiesType: invEntitiesTypes,
-
-  state: [ undefined, 'merged', 'dismissed' ],
-
-  relationScore: []
+  updatable: [
+    'state',
+    'relationScore',
+    'reporters',
+  ]
 }

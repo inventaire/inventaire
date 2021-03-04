@@ -8,13 +8,13 @@ const tasks_ = module.exports = {
   create: async (suspectUri, type, entitiesType, suggestions) => {
     // suggestions may only be an array of objects with a 'uri' key
     const newTasksObjects = suggestions.map(suggestion => {
-      const { _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
+      const { _score, uri: suggestionUri, occurrences, reporters, clue } = suggestion
 
       const newTask = { type, suspectUri, suggestionUri }
 
       assignKeyIfExists(newTask, 'entitiesType', entitiesType)
       assignKeyIfExists(newTask, 'lexicalScore', _score)
-      assignKeyIfExists(newTask, 'reporter', reporter)
+      assignKeyIfExists(newTask, 'reporters', reporters)
       assignKeyIfExists(newTask, 'externalSourcesOccurrences', occurrences)
       assignKeyIfExists(newTask, 'clue', clue)
       return newTask
@@ -27,8 +27,7 @@ const tasks_ = module.exports = {
     return db.bulk(tasks)
   },
 
-  update: async options => {
-    const { ids, attribute, newValue } = options
+  update: async ({ ids, attribute, newValue }) => {
     if (ids.length === 0) return []
 
     return tasks_.byIds(ids)
@@ -93,6 +92,11 @@ const tasks_ = module.exports = {
       const tasksBySuggestionUris = _.groupBy(tasks, 'suggestionUri')
       return completeWithEmptyArrays(tasksBySuggestionUris, suggestionUris)
     })
+  },
+
+  bySuspectUriAndSuggestionUri: async (suspectUri, suggestionUri) => {
+    const tasks = await tasks_.bySuspectUris([ suspectUri ], { includeArchived: true })
+    return tasks.filter(task => task.suggestionUri === suggestionUri)[0]
   }
 }
 
