@@ -65,9 +65,7 @@ describe('entities:merge', () => {
       createWork()
     ])
     await merge(workA.uri, workB.uri)
-    const { entities, redirects } = await getByUris(workA.uri)
-    redirects[workA.uri].should.equal(workB.uri)
-    entities[workB.uri].should.be.ok()
+    await shouldBeMerged(workA, workB)
   })
 
   it('should merge entities with inv and isbn URIs', async () => {
@@ -78,13 +76,7 @@ describe('entities:merge', () => {
     const item = await createItemFromEntityUri({ uri: editionA.uri })
     item.entity.should.equal(editionA.uri)
     await merge(editionA.uri, editionB.uri)
-    const [ { entities, redirects }, { items } ] = await Promise.all([
-      getByUris(editionA.uri),
-      getItemsByIds(item._id)
-    ])
-    redirects[editionA.uri].should.equal(editionB.uri)
-    entities[editionB.uri].should.be.ok()
-    items[0].entity.should.equal(editionB.uri)
+    await shouldBeMerged(editionA, editionB, item)
   })
 
   it('should merge an entity with an ISBN', async () => {
@@ -268,3 +260,13 @@ describe('entities:merge', () => {
     })
   })
 })
+
+const shouldBeMerged = async (entityA, entityB, item) => {
+  const { entities, redirects } = await getByUris(entityA.uri)
+  redirects[entityA.uri].should.equal(entityB.uri)
+  entities[entityB.uri].should.be.ok()
+  if (item) {
+    const { items } = await getItemsByIds(item._id)
+    items[0].entity.should.equal(entityB.uri)
+  }
+}
