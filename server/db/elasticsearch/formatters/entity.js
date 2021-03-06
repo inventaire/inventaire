@@ -69,12 +69,23 @@ module.exports = async (entity, options = {}) => {
     entity.aliases = simplify.aliases(entity.aliases)
   }
 
+  const { labels, descriptions, aliases } = entity
+
+  entity.labels = removeUnusedLangs(labels)
   if (isWikidataEntity) {
-    // flattened terms are a single string to index every possible languages on a wikidata entity
-    // and to avoid having more than 1000 keys in an entity, which is forbidded by elasticsearch
-    entity.flattenedLabels = flattenTerms(entity.labels)
-    entity.flattenedDescriptions = flattenTerms(entity.descriptions)
-    entity.flattenedAliases = flattenTerms(entity.aliases)
+    entity.descriptions = removeUnusedLangs(descriptions)
+    entity.aliases = removeUnusedLangs(aliases)
+  }
+
+  const mainFieldsWords = new Set(getMainFieldsWords(entity))
+
+  if (isWikidataEntity) {
+    // Flattened terms are a single string to index all the words from non-active languages
+    // that weren't included in the fields above, as those non-active languages didn't get their
+    // own fields to avoid having more than 1000 keys in an entity, which is forbidded by elasticsearch
+    entity.flattenedLabels = flattenTerms(labels, mainFieldsWords)
+    entity.flattenedDescriptions = flattenTerms(descriptions, mainFieldsWords)
+    entity.flattenedAliases = flattenTerms(aliases, mainFieldsWords)
   }
 
   entity.labels = removeUnusedLangs(entity.labels)
@@ -132,10 +143,32 @@ const setTermsFromClaims = entity => {
   }
 }
 
-const flattenTerms = terms => {
-  return _.uniq(Object.values(terms)).join(' ')
+const flattenTerms = (terms, mainFieldsWords) => {
+  terms = Object.values(terms)
+  // Required for aliases
+  if (_.isArray(terms[0])) terms = _.flatten(terms)
+
+  return _.chain(terms)
+    .map(term => term.split(' '))
+    .flatten()
+    .filter(word => !mainFieldsWords.has(word.toLowerCase()))
+    .uniq()
+    .join(' ')
+    .value()
 }
 
 // Reject terms langs not used by inventaire-i18n, as entity object indexation shall be less than 1000 keys long
 // See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
 const removeUnusedLangs = terms => _.pick(terms, activeI18nLangs)
+
+const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
+  const labelsTerms = Object.values(labels)
+  const descriptionsTerms = Object.values(descriptions)
+  const aliasesTerms = _.flatten(Object.values(aliases))
+  const allTerms = labelsTerms.concat(descriptionsTerms, aliasesTerms)
+  return _.chain(allTerms)
+    .map(term => term.toLowerCase().split(' '))
+    .flatten()
+    .uniq()
+    .value()
+}

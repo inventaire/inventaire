@@ -6,7 +6,7 @@ const { createWork, createHuman, createSerie, createCollection, createPublisher,
 const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation } = require('../utils/search')
+const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const { max_gram: maxGram } = __.require('db', 'elasticsearch/settings/settings').analysis.filter.autocomplete_filter
 
@@ -21,8 +21,8 @@ describe('search:entities', () => {
       createSerie(),
       createPublisher(),
       createCollection(),
-      // Ensure wikidata uris are indexed
-      getByUris(wikidataUris, null, false),
+      // Ensure wikidata uris are indexed in the current format
+      getByUris(wikidataUris, null, true),
     ])
 
     await Promise.all([
@@ -108,6 +108,15 @@ describe('search:entities', () => {
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
         _.map(results, 'uri').should.containEql(work.uri)
+      })
+    })
+
+    describe('not exact', () => {
+      it('should match flattened terms', async () => {
+        const doc = await getIndexedDoc('wikidata', 'Q8337')
+        const firstTwoFlattenedLabelsWords = doc._source.flattenedLabels.split(' ').slice(0, 2).join(' ')
+        const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords })
+        _.map(results, 'uri').should.containEql('wd:Q8337')
       })
     })
   })
