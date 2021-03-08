@@ -8,6 +8,21 @@ const assert_ = __.require('utils', 'assert_types')
 const { maxKey } = __.require('lib', 'couch')
 const { oneDay } = __.require('lib', 'time')
 
+const getUserTotalContributions = userId => {
+  return db.view(designDocName, 'byUserId', {
+    group_level: 1,
+    // Maybe there is a way to only pass the userId key
+    // but I couln't find it
+    startkey: [ userId ],
+    endkey: [ userId, maxKey ]
+  })
+  // Testing the row existance in case we got an invalid user id
+  .then(res => {
+    const userRow = res.rows[0]
+    return userRow ? userRow.value : 0
+  })
+}
+
 module.exports = {
   db,
   byId: db.get,
@@ -31,6 +46,8 @@ module.exports = {
 
     return formatPatchesPage({ viewRes, total, limit, offset })
   },
+
+  getUserTotalContributions,
 
   byDate: async (limit, offset) => {
     const viewRes = await db.view(designDocName, 'byDate', {
@@ -118,21 +135,6 @@ const sortAndFilterContributions = rows => {
 // Filtering-out special users automated contributions
 // see server/db/couch/hard_coded_documents.js
 const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
-
-const getUserTotalContributions = userId => {
-  return db.view(designDocName, 'byUserId', {
-    group_level: 1,
-    // Maybe there is a way to only pass the userId key
-    // but I couln't find it
-    startkey: [ userId ],
-    endkey: [ userId, maxKey ]
-  })
-  // Testing the row existance in case we got an invalid user id
-  .then(res => {
-    const userRow = res.rows[0]
-    return userRow ? userRow.value : 0
-  })
-}
 
 const formatPatchesPage = ({ viewRes, total, limit, offset }) => {
   if (total == null) total = viewRes.total_rows
