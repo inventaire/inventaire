@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const lists_ = require('./users_lists')
 const groups_ = require('./groups')
 const user_ = __.require('controllers', 'user/lib/user')

@@ -15,7 +15,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const entitiesDb = __.require('db', 'couchdb/base')('entities')
 const patchesDb = __.require('db', 'couchdb/base')('patches')
 const docDiff = __.require('db', 'couchdb/doc_diffs')

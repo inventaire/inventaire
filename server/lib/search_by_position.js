@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const { buildSearcher } = __.require('lib', 'elasticsearch')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 
 module.exports = (db, dbBaseName) => {
   const searchByPosition = buildSearcher({

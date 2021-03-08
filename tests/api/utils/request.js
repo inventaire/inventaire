@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const { wait } = __.require('lib', 'promises')
 const host = CONFIG.fullPublicHost()
 const requests_ = __.require('lib', 'requests')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return

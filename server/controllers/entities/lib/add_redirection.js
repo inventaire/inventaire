@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 
 // Possibly overriding further redirects object
 // Notice a tricky naming issue here:

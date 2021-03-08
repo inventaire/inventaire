@@ -4,7 +4,7 @@ const designDocName = 'patches'
 const db = __.require('db', 'couchdb/base')('patches', designDocName)
 const Patch = __.require('models', 'patch')
 const Entity = __.require('models', 'entity')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const { maxKey } = __.require('lib', 'couch')
 const { oneDay } = __.require('lib', 'time')
 

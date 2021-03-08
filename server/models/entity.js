@@ -26,7 +26,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const validLangs = Object.keys(require('wikidata-lang').byCode)
 
 const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')

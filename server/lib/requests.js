@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const { wait } = __.require('lib', 'promises')
 const fetch = require('node-fetch')
 const error_ = __.require('lib', 'error/error')

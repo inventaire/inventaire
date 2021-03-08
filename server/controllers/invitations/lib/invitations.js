@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const db = __.require('db', 'couchdb/base')('users', 'invited')
 const { findOneByEmail, byEmails } = __.require('controllers', 'user/lib/shared_user_handlers')
 const Invited = __.require('models', 'invited')

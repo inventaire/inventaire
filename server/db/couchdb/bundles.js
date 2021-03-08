@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const couch_ = __.require('lib', 'couch')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 
 module.exports = (db, _) => {
   const actionAndReturn = (verb, doc) => {

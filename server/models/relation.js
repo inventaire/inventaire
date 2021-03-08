@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const couch_ = __.require('lib', 'couch')
 const assert = require('assert')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const { userId } = require('./validations/common')
 
 module.exports = {

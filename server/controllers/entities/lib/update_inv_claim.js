@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const entities_ = require('./entities')
 const radio = __.require('lib', 'radio')
 const retryOnConflict = __.require('lib', 'retry_on_conflict')

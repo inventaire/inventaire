@@ -6,7 +6,7 @@ const error_ = __.require('lib', 'error/error')
 const comments_ = __.require('controllers', 'comments/lib/comments')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const radio = __.require('lib', 'radio')
 const db = __.require('db', 'couchdb/base')('transactions')
 

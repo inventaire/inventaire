@@ -5,7 +5,7 @@ const { wait } = __.require('lib', 'promises')
 const { publicReq } = require('../utils/utils')
 const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const { indexes } = __.require('controllers', 'search/lib/indexes')
 const indexesNamesByBaseNames = Object.assign({
   items: CONFIG.db.name('items')

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const db = __.require('db', 'couchdb/base')('entities')
 const Entity = __.require('models', 'entity')
 const patches_ = require('./patches')

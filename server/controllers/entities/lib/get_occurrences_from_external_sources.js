@@ -1,7 +1,7 @@
 // A module to look for works labels occurrences in an author's external databases reference.
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const getWikipediaArticle = __.require('data', 'wikipedia/get_article')
 const getBnfAuthorWorksTitles = __.require('data', 'bnf/get_bnf_author_works_titles')
 const getBnbAuthorWorksTitles = __.require('data', 'bnb/get_bnb_author_works_titles')

@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { minKey, maxKey } = __.require('lib', 'couch')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const Notification = __.require('models', 'notification')
 const db = __.require('db', 'couchdb/base')('notifications')
 

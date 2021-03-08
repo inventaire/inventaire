@@ -20,7 +20,7 @@ const db = __.require('db', 'level/get_sub_db')('snapshot', 'json')
 const { formatBatchOps } = __.require('db', 'level/utils')
 const refreshSnapshot = require('./refresh_snapshot')
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const pTimeout = require('p-timeout')
 
 module.exports = {

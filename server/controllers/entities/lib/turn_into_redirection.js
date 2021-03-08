@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 const placeholders_ = require('./placeholders')

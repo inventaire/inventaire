@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
 const getInvEntityCanonicalUri = __.require('controllers', 'entities/lib/get_inv_entity_canonical_uri')
 const getBestLangValue = __.require('lib', 'get_best_lang_value')

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const invitations_ = require('./invitations')
 const Invited = __.require('models', 'invited')
 const radio = __.require('lib', 'radio')

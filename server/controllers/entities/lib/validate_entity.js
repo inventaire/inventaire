@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 const { Lang } = __.require('lib', 'regex')
 const getEntityType = require('./get_entity_type')
 const validateAndFormatClaims = require('./validate_and_format_claims')

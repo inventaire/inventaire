@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const memoize = __.require('lib', 'utils/memoize')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = __.require('lib', 'utils/assert_types')
 
 const dbFolderPathBase = __.path('root', 'db/leveldb')
 const { suffix } = CONFIG.db
