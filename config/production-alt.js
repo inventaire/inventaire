@@ -1,8 +1,7 @@
 // Production config for the alternate server, which:
-// - answering Prerender (thus getting the logs aside)
-// - update handle database change hooks (based on follow)
-// - sending activity reports
-// - start couch2elastic4sync sub processes
+// - answers Prerender (thus getting the logs aside)
+// - handles database changes hooks (based on follow)
+// - sends activity reports
 
 // This config file will be used if: NODE_ENV=production NODE_APP_INSTANCE=alt
 // Override locally in ./local-production-alt.js

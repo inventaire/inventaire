@@ -5,9 +5,6 @@
   "main": "server/server.js",
   "scripts": {
     "backup-databases": "./scripts/backup_databases/backup_databases.js",
-    "couch2elastic4sync:init": "./scripts/couch2elastic4sync/init.js",
-    "couch2elastic4sync:load": "./scripts/couch2elastic4sync/load.js",
-    "couch2elastic4sync:reset": "./scripts/couch2elastic4sync/reset.js",
     "create-dumps": "./scripts/dumps/prepare_dumps",
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.js",
     "db-actions:update-user-role": "./scripts/db_actions/update_user_role.js",
