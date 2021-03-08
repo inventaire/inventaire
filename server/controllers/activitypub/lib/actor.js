@@ -1,8 +1,7 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const user_ = __.require('controllers', 'user/lib/user')
-const couch_ = __.require('lib', 'couch')
+const error_ = require('lib/error/error')
+const user_ = require('controllers/user/lib/user')
+const couch_ = require('lib/couch')
 
 const host = CONFIG.fullPublicHost()
 

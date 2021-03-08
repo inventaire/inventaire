@@ -1,9 +1,8 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
-const user_ = __.require('controllers', 'user/lib/user')
-const couch_ = __.require('lib', 'couch')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const user_ = require('controllers/user/lib/user')
+const couch_ = require('lib/couch')
 
 module.exports = {
   get: (req, res) => {
