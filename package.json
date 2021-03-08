@@ -34,6 +34,7 @@
     "test-integration": "./scripts/run_integration_tests",
     "test-unit": "./scripts/run_unit_tests",
     "update-i18n": "./scripts/update_i18n",
+    "update-jsconfig": "./scripts/generate_jsconfig.js > ./jsconfig.json",
     "update-toc": "./scripts/update_toc",
     "watch": "./scripts/watch"
   },
