@@ -6,6 +6,7 @@ const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
 const error_ = require('lib/error/error')
 const { stringify: stringifyQuery } = require('querystring')
+const { sign } = require('controllers/activitypub/lib/security')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return
@@ -99,6 +100,19 @@ const bearerTokenReq = (token, method, endpoint, body) => {
   })
 }
 
+const signedReq = async (method, endpoint, url, keyUrl, privateKey) => {
+  const date = (new Date()).toUTCString()
+  const publicHost = CONFIG.host
+  const signature = await sign({ method, keyUrl, privateKey, endpoint, hostname: publicHost, date })
+  return rawRequest(method, url, {
+    headers: {
+      Host: publicHost,
+      Date: date,
+      Signature: signature,
+    }
+  })
+}
+
 module.exports = {
   waitForTestServer,
   request,
@@ -106,5 +120,6 @@ module.exports = {
   customAuthReq,
   rawCustomAuthReq,
   postUrlencoded,
-  bearerTokenReq
+  bearerTokenReq,
+  signedReq
 }
