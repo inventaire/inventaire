@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const ActionByInput = require('./action_by_input')
 
 const [ userId ] = process.argv.slice(2)

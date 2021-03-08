@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
-const slugify = __.require('controllers', 'groups/lib/slugify')
+const slugify = require('controllers/groups/lib/slugify')
 const endpoint = '/api/groups?action=slug'
 
 describe('groups:get:slug', () => {

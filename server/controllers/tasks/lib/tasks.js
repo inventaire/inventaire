@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
-const Task = __.require('models', 'task')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
+const Task = require('models/task')
 
-const db = __.require('db', 'couchdb/base')('tasks')
+const db = require('db/couchdb/base')('tasks')
 
 const tasks_ = module.exports = {
   create: async (suspectUri, type, entitiesType, suggestions) => {

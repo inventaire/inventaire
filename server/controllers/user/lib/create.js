@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation')
-const invitations_ = __.require('controllers', 'invitations/lib/invitations')
-const User = __.require('models', 'user')
-const db = __.require('db', 'couchdb/base')('users')
+const invitations_ = require('controllers/invitations/lib/invitations')
+const User = require('models/user')
+const db = require('db/couchdb/base')('users')
 const token_ = require('./token')
 const availability_ = require('./availability')
 

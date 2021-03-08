@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { createHuman, createWork } = require('./entities')
 const { checkEntities } = require('../utils/tasks')
-const { createInBulk } = __.require('controllers', 'tasks/lib/tasks')
+const { createInBulk } = require('controllers/tasks/lib/tasks')
 const promises = {}
 
 module.exports = {

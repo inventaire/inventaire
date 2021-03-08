@@ -1,14 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const Transaction = __.require('models', 'transaction')
-const error_ = __.require('lib', 'error/error')
-const comments_ = __.require('controllers', 'comments/lib/comments')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
-const { minKey, maxKey } = __.require('lib', 'couch')
-const assert_ = __.require('lib', 'utils/assert_types')
-const radio = __.require('lib', 'radio')
-const db = __.require('db', 'couchdb/base')('transactions')
+const _ = require('builders/utils')
+const Transaction = require('models/transaction')
+const error_ = require('lib/error/error')
+const comments_ = require('controllers/comments/lib/comments')
+const { BasicUpdater } = require('lib/doc_updates')
+const { minKey, maxKey } = require('lib/couch')
+const assert_ = require('lib/utils/assert_types')
+const radio = require('lib/radio')
+const db = require('db/couchdb/base')('transactions')
 
 const transactions_ = module.exports = {
   byId: db.get,

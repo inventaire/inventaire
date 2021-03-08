@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
 const { firstClaim, uniqByUri } = entities_
-const runWdQuery = __.require('data', 'wikidata/run_query')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
+const runWdQuery = require('data/wikidata/run_query')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { getPluralType, getPluralTypeByTypeUri } = __.require('lib', 'wikidata/aliases')
+const { getPluralType, getPluralTypeByTypeUri } = require('lib/wikidata/aliases')
 const { getCachedRelations } = require('./temporarily_cache_relations')
 
 // Working around the circular dependency

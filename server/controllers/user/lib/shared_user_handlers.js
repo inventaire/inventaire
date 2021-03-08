@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const couch_ = __.require('lib', 'couch')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const couch_ = require('lib/couch')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 
 const handlers = module.exports = {
   byEmail: (db, email) => {

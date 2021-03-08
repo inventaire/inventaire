@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
-const { customAuthReq } = __.require('apiTests', 'utils/request')
+const { publicReq, undesiredRes } = require('apiTests/utils/utils')
+const { customAuthReq } = require('apiTests/utils/request')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')

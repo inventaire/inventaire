@@ -5,10 +5,10 @@
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const designDocName = 'entities_deduplicate'
-const db = __.require('db', 'couchdb/base')('entities', designDocName)
+const db = require('db/couchdb/base')('entities', designDocName)
 
 module.exports = (req, res) => {
   return getHomonymes()

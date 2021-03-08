@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
 require('should')
-const parseEmails = __.require('controllers', 'invitations/lib/parse_emails')
+const parseEmails = require('controllers/invitations/lib/parse_emails')
 
 describe('parse emails', () => {
   it('should be a function', () => {

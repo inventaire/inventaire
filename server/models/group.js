@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const { truncateLatLng } = __.require('lib', 'geo')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const { truncateLatLng } = require('lib/geo')
+const assert_ = require('lib/utils/assert_types')
 
 const Group = module.exports = {}
 

@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
+const { getSingularTypes } = require('lib/wikidata/aliases')
 
 module.exports = params => {
   const { lang: userLang, search, limit: size, exact, minScore = 1 } = params

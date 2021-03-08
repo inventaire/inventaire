@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { readJsonFile, writeJsonFile } = __.require('lib', 'utils/json')
+const _ = require('builders/utils')
+const { readJsonFile, writeJsonFile } = require('lib/utils/json')
 const { isPropertyId } = require('wikidata-sdk')
 
 module.exports = {

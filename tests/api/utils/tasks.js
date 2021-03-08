@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { publicReq, adminReq } = require('./utils')
 const endpoint = '/api/tasks?action='
 

@@ -5,9 +5,9 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils'
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
 const someOtherUserId2 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac'
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 
-const Group = __.require('models', 'group')
+const Group = require('models/group')
 
 const createSomeGroup = () => {
   return Group.create({

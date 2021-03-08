@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const properties = require('../properties/properties_values_constraints')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
-const entities_ = __.require('controllers', 'entities/lib/entities')
-const runWdQuery = __.require('data', 'wikidata/run_query')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
+const entities_ = require('controllers/entities/lib/entities')
+const runWdQuery = require('data/wikidata/run_query')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
 
 module.exports = async (claims, resolveOnWikidata = true) => {

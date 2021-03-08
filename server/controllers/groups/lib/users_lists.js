@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('lib', 'utils/assert_types')
-const Group = __.require('models', 'group')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const Group = require('models/group')
 
 // Working around the circular dependency
 let groups_

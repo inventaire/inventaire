@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const shelves_ = require('controllers/shelves/lib/shelves')
+const sanitize = require('lib/sanitize/sanitize')
 const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
+const { getNetworkIds } = require('controllers/user/lib/relations_status')
 
 const sanitization = {
   ids: {},

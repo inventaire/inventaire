@@ -2,12 +2,12 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const { authReq, customAuthReq, getUser, getUserGetter } = require('../utils/utils')
-const randomString = __.require('lib', 'utils/random_string')
-const { Wait } = __.require('lib', 'promises')
+const randomString = require('lib/utils/random_string')
+const { Wait } = require('lib/promises')
 const endpoint = '/api/auth?action=update-password'
 const { createUser, createUserEmail } = require('../fixtures/users')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
-const db = __.require('db', 'couchdb/base')('users')
+const { BasicUpdater } = require('lib/doc_updates')
+const db = require('db/couchdb/base')('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', done => {

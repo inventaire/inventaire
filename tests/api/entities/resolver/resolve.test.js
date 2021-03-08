@@ -1,13 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { wait } = __.require('lib', 'promises')
-const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
-const { addClaim, getByUri } = __.require('apiTests', 'utils/entities')
-const { waitForIndexation } = __.require('apiTests', 'utils/search')
-const { createEditionWithIsbn, randomLabel } = __.require('apiTests', 'fixtures/entities')
+const { wait } = require('lib/promises')
+const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require('apiTests/fixtures/entities')
+const { addClaim, getByUri } = require('apiTests/utils/entities')
+const { waitForIndexation } = require('apiTests/utils/search')
+const { createEditionWithIsbn, randomLabel } = require('apiTests/fixtures/entities')
 
 const resolve = entries => {
   entries = _.forceArray(entries)

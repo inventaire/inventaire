@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
-const Shelf = __.require('models', 'shelf')
-const items_ = __.require('controllers', 'items/lib/items')
-const getAuthorizedItems = __.require('controllers', 'items/lib/get_authorized_items')
-const db = __.require('db', 'couchdb/base')('shelves')
-const error_ = __.require('lib', 'error/error')
+const Shelf = require('models/shelf')
+const items_ = require('controllers/items/lib/items')
+const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
+const db = require('db/couchdb/base')('shelves')
+const error_ = require('lib/error/error')
 
 const shelves_ = module.exports = {
   create: async newShelf => {

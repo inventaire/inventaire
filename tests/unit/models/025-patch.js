@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 const jiff = require('jiff')
-const randomString = __.require('lib', 'utils/random_string')
-const Entity = __.require('models', 'entity')
-const Patch = __.require('models', 'patch')
+const randomString = require('lib/utils/random_string')
+const Entity = require('models/entity')
+const Patch = require('models/patch')
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId

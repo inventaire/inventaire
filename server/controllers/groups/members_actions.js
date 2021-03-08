@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const sanitize = require('lib/sanitize/sanitize')
 const modelAction = require('./lib/model_action')
 const membershipValidations = require('./lib/membership_validations')
-const { Track } = __.require('lib', 'track')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const { Track } = require('lib/track')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 
 const sanitization = {
   group: {},

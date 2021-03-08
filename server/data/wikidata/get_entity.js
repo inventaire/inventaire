@@ -2,9 +2,9 @@
 // while requests are actually regrouped in the background
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const requestGrouper = __.require('lib', 'request_grouper')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const requestGrouper = require('lib/request_grouper')
 const { getEntities, getManyEntities } = require('wikidata-sdk')
 
 const requester = ids => {

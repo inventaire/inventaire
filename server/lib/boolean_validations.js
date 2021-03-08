@@ -3,7 +3,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('lodash')
 const wdk = require('wikidata-sdk')
-const regex_ = __.require('lib', 'regex')
+const regex_ = require('lib/regex')
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])

@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { appendToFullKeys, appendToShortKeys } = __.require('lib', 'i18n_autofix')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { appendToFullKeys, appendToShortKeys } = require('lib/i18n_autofix')
 const errorMessagePattern = /^(4|5)00/
 // Using _ as the convention to identify short keys: ex: awesome_title
 // (that is, keys with an English value different than the key itself)

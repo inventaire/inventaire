@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
-const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
-const { _id: reconcilerUserId } = __.require('db', 'couchdb/hard_coded_documents').users.reconciler
+const _ = require('builders/utils')
+const { Wait } = require('lib/promises')
+const mergeEntities = require('controllers/entities/lib/merge_entities')
+const { _id: reconcilerUserId } = require('db/couchdb/hard_coded_documents').users.reconciler
 const automergeAuthorWorks = require('./automerge_author_works')
 const longTitleLimit = 12
 

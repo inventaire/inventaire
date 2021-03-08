@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const Group = __.require('models', 'group')
-const db = __.require('db', 'couchdb/base')('groups')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const Group = require('models/group')
+const db = require('db/couchdb/base')('groups')
 const lists_ = require('./users_lists')
 const { add: addSlug } = require('./slug')
-const searchGroupsByPosition = __.require('lib', 'search_by_position')(db, 'groups')
+const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
 
 const groups_ = module.exports = {
   // using a view to avoid returning users or relations

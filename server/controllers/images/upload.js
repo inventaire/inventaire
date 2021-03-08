@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const parseForm = require('./lib/parse_form')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
 const containers = require('./lib/containers')
-const promises_ = __.require('lib', 'promises')
+const promises_ = require('lib/promises')
 
 module.exports = (req, res) => {
   const { container } = req.query

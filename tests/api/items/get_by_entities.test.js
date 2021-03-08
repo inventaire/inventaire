@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { getUser, authReq } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq } = require('apiTests/utils/utils')
 const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 
 describe('items:get-by-entities', () => {

@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { authReq, authReqC } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqC } = require('apiTests/utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 
 describe('transactions:get', () => {

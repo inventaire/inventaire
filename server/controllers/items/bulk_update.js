@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const items_ = __.require('controllers', 'items/lib/items')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { tap } = __.require('lib', 'promises')
+const sanitize = require('lib/sanitize/sanitize')
+const items_ = require('controllers/items/lib/items')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { tap } = require('lib/promises')
 
 const sanitization = {
   ids: {},

@@ -6,19 +6,19 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
 // than to put exceptions everywhere
-const seedUserId = __.require('db', 'couchdb/hard_coded_documents').users.seed._id
+const seedUserId = require('db/couchdb/hard_coded_documents').users.seed._id
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 
 // Working around the circular dependencies
 let searchWorkEntityByTitleAndAuthors, findAuthorFromWorksLabels
 const lateRequire = () => {
   searchWorkEntityByTitleAndAuthors = require('./search_work_entity_by_title_and_authors')
-  findAuthorFromWorksLabels = __.require('controllers', 'entities/lib/find_author_from_works_labels')
+  findAuthorFromWorksLabels = require('controllers/entities/lib/find_author_from_works_labels')
 }
 setTimeout(lateRequire, 0)
 

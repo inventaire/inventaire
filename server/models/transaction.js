@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const snapshotItemAttributes = require('./attributes/item').snapshot
 const snapshotUserAttributes = require('./attributes/user').snapshot
 const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction')

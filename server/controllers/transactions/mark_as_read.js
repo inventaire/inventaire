@@ -1,10 +1,10 @@
 // Mark the whole transaction as read
 
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const transactions_ = require('./lib/transactions')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const sanitize = require('lib/sanitize/sanitize')
 const { verifyRightToInteract } = require('./lib/rights_verification')
 
 const sanitization = {

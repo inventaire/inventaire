@@ -1,12 +1,12 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const comments_ = __.require('controllers', 'comments/lib/comments')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const comments_ = require('controllers/comments/lib/comments')
 const transactions_ = require('./lib/transactions')
 const { verifyRightToInteract } = require('./lib/rights_verification')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const radio = __.require('lib', 'radio')
-const { Track } = __.require('lib', 'track')
+const sanitize = require('lib/sanitize/sanitize')
+const radio = require('lib/radio')
+const { Track } = require('lib/track')
 
 const getSanitization = {
   transaction: {}

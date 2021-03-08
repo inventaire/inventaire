@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const validations = __.require('models', 'validations/common')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
+const _ = require('builders/utils')
+const validations = require('models/validations/common')
+const { BasicUpdater } = require('lib/doc_updates')
 
 const create = (inviterId, groupId) => email => {
   validations.pass('email', email)

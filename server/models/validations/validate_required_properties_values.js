@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
-const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
-const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const getEntityType = require('controllers/entities/lib/get_entity_type')
+const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 
 module.exports = (claims, checkedProperties) => {
   assert_.string(claims['wdt:P31'][0])

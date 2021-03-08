@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 
-const Entity = __.require('models', 'entity')
+const Entity = require('models/entity')
 
 const workDoc = () => {
   const doc = Entity.create()

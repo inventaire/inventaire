@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const ActionsControllers = __.require('lib', 'actions_controllers')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const ActionsControllers = require('lib/actions_controllers')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 
 const cspReport = (req, res) => {
   const { 'csp-report': errData } = req.body

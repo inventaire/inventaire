@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
 const { authReq, authReqB, authReqC, undesiredRes } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
 const { signup } = require('../fixtures/users')
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 const randomEmail = () => `a${randomString(4).toLowerCase()}@foo.org`
 
 // Do not re-test what test/libs/045-parse_emails unit tests already test

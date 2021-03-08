@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const isbn_ = __.require('lib', 'isbn/isbn')
-const error_ = __.require('lib', 'error/error')
-const dataseed = __.require('data', 'dataseed/dataseed')
+const _ = require('builders/utils')
+const isbn_ = require('lib/isbn/isbn')
+const error_ = require('lib/error/error')
+const dataseed = require('data/dataseed/dataseed')
 
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data

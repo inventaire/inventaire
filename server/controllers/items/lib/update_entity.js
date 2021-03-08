@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const Item = __.require('models', 'item')
-const db = __.require('db', 'couchdb/base')('items')
+const Item = require('models/item')
+const db = require('db/couchdb/base')('items')
 
 // Working around the circular dependency
 let items_

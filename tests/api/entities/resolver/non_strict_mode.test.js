@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { authReq } = __.require('apiTests', 'utils/utils')
-const { randomLabel, generateIsbn13 } = __.require('apiTests', 'fixtures/entities')
+const { authReq } = require('apiTests/utils/utils')
+const { randomLabel, generateIsbn13 } = require('apiTests/fixtures/entities')
 
 describe('entities:resolve:non-strict mode', () => {
   it('should ignore and report sanitization errors', async () => {

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const sanitize = require('lib/sanitize/sanitize')
 const { undesiredRes, shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {

@@ -5,13 +5,13 @@ const CONFIG = require('config')
 CONFIG.serverMode = true
 
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
-__.require('lib', 'startup/before')()
+require('lib/startup/before')()
 
 // Starting to make CouchDB initialization checks
-const waitForCouchInit = __.require('db', 'couchdb/init')
-const waitForElasticsearchInit = __.require('db', 'elasticsearch/init')
+const waitForCouchInit = require('db/couchdb/init')
+const waitForElasticsearchInit = require('db/elasticsearch/init')
 // Meanwhile, start setting up the server.
 // Startup time is mostly due to the time needed to require
 // all files from controllers, middlewares, libs, etc
@@ -23,7 +23,7 @@ Promise.all([
 ])
 .then(initExpress)
 .then(() => console.timeEnd('startup'))
-.then(__.require('lib', 'startup/after'))
+.then(require('lib/startup/after'))
 .catch(err => {
   _.error(err, 'init err')
   // Exit after the error logs where written, and give a second

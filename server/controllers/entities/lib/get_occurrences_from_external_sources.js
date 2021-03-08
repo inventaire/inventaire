@@ -1,18 +1,18 @@
 // A module to look for works labels occurrences in an author's external databases reference.
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('lib', 'utils/assert_types')
-const getWikipediaArticle = __.require('data', 'wikipedia/get_article')
-const getBnfAuthorWorksTitles = __.require('data', 'bnf/get_bnf_author_works_titles')
-const getBnbAuthorWorksTitles = __.require('data', 'bnb/get_bnb_author_works_titles')
-const getBneAuthorWorksTitles = __.require('data', 'bne/get_bne_author_works_titles')
-const getSelibrAuthorWorksTitle = __.require('data', 'selibr/get_selibr_author_works_titles')
-const getKjkAuthorWorksTitle = __.require('data', 'kjk/get_kjk_author_works_titles')
-const getNdlAuthorWorksTitle = __.require('data', 'ndl/get_ndl_author_works_titles')
-const getOlAuthorWorksTitles = __.require('data', 'openlibrary/get_ol_author_works_titles')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const getWikipediaArticle = require('data/wikipedia/get_article')
+const getBnfAuthorWorksTitles = require('data/bnf/get_bnf_author_works_titles')
+const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
+const getBneAuthorWorksTitles = require('data/bne/get_bne_author_works_titles')
+const getSelibrAuthorWorksTitle = require('data/selibr/get_selibr_author_works_titles')
+const getKjkAuthorWorksTitle = require('data/kjk/get_kjk_author_works_titles')
+const getNdlAuthorWorksTitle = require('data/ndl/get_ndl_author_works_titles')
+const getOlAuthorWorksTitles = require('data/openlibrary/get_ol_author_works_titles')
 const getEntityByUri = require('./get_entity_by_uri')
 const { normalizeTerm } = require('./terms_normalization')
-const promises_ = __.require('lib', 'promises')
+const promises_ = require('lib/promises')
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author

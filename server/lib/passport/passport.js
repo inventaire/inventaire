@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const user_ = require('controllers/user/lib/user')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 
 const passport = require('passport')
 

@@ -3,9 +3,9 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const regex_ = __.require('lib', 'regex')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const regex_ = require('lib/regex')
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
 

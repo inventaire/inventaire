@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
+const _ = require('builders/utils')
+const user_ = require('controllers/user/lib/user')
 const snapshot_ = require('./snapshot/snapshot')
 
 const filters = {

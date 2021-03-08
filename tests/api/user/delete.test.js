@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const { getReservedUser, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { getRefreshedUser, getRandomPosition } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')

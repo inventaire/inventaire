@@ -4,7 +4,7 @@ const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('
 
 const { createHuman } = require('../fixtures/entities')
 const { getByUri, updateLabel } = require('../utils/entities')
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 const humanPromise = createHuman()
 
 describe('entities:update-labels', () => {

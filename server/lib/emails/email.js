@@ -1,14 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const qs = require('querystring')
 const checkUserNotificationsSettings = require('./check_user_notifications_settings')
 
 const host = CONFIG.fullPublicHost()
 const { defaultFrom } = CONFIG.mailer
 const { i18n } = require('./i18n/i18n')
-const { kmBetween } = __.require('lib', 'geo')
+const { kmBetween } = require('lib/geo')
 
 module.exports = {
   validationEmail: (user, token) => {

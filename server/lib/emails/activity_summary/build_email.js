@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
 const host = CONFIG.fullPublicHost()
 const { i18n } = require('../i18n/i18n')
 const { contactAddress } = CONFIG
@@ -10,10 +10,10 @@ const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
 
-const relations_ = __.require('controllers', 'relations/lib/queries')
-const groupsCounts = __.require('controllers', 'groups/lib/counts')
-const notifications_ = __.require('controllers', 'notifications/lib/notifications')
-const transactions_ = __.require('controllers', 'transactions/lib/transactions')
+const relations_ = require('controllers/relations/lib/queries')
+const groupsCounts = require('controllers/groups/lib/counts')
+const notifications_ = require('controllers/notifications/lib/notifications')
+const transactions_ = require('controllers/transactions/lib/transactions')
 
 const getLastNetworkBooks = require('./last_network_books')
 const getLastNearbyPublicBooks = require('./last_nearby_books')

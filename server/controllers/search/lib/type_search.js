@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
-const { getHits, formatError } = __.require('lib', 'elasticsearch')
+const { getHits, formatError } = require('lib/elasticsearch')
 const { indexes, indexedTypes, indexedEntitiesTypes } = require('./indexes')
 const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')

@@ -6,7 +6,7 @@ const {
   Integer: integerPattern,
   PositiveInteger: PositiveIntegerPattern,
   Float: floatPattern
-} = __.require('lib', 'regex')
+} = require('lib/regex')
 
 module.exports = {
   combinations: (array1, array2) => {

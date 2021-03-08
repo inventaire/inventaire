@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const requests_ = __.require('lib', 'requests')
-const error_ = __.require('lib', 'error/error')
+const requests_ = require('lib/requests')
+const error_ = require('lib/error/error')
 const root = CONFIG.fullPublicHost()
 const OAuth = require('oauth-1.0a')
 const crypto = require('crypto')
@@ -24,7 +24,7 @@ const oauth = OAuth({
 })
 
 const qs = require('querystring')
-const user_ = __.require('controllers', 'user/lib/user')
+const user_ = require('controllers/user/lib/user')
 
 // Alternatively using the nice or the non-nice URL
 // see https://mediawiki.org/wiki/OAuth/For_Developers#Notes

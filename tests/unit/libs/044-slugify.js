@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
 require('should')
-const slugify = __.require('controllers', 'groups/lib/slugify')
+const slugify = require('controllers/groups/lib/slugify')
 
 describe('slugify', () => {
   it('should be a function', () => {

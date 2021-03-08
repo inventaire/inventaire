@@ -7,8 +7,8 @@ const [ suffix ] = process.argv.slice(2)
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
 
 const getDatabasesNames = require('./lib/get_databases_names')
 const backupDatabase = require('./lib/backup_database')

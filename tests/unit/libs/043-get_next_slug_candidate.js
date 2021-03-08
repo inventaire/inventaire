@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
 require('should')
-const getNextSlugCandidate = __.require('controllers', 'groups/lib/get_next_slug_candidate')
+const getNextSlugCandidate = require('controllers/groups/lib/get_next_slug_candidate')
 
 describe('get next slug candidate', () => {
   it('should return an iterated slug', () => {

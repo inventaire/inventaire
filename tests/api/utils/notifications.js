@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const { customAuthReq } = require('./utils')
-const assert_ = __.require('lib', 'utils/assert_types')
+const assert_ = require('lib/utils/assert_types')
 
 module.exports = {
   getNotifications: async ({ user, type, subject }) => {

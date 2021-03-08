@@ -5,7 +5,7 @@
 // to which alias URIs redirect
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const getInvUriFromDoc = require('./get_inv_uri_from_doc')
 const { prefixifyInv } = require('./prefix')
 

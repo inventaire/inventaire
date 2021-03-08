@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { defer } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { defer } = require('lib/promises')
 
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time

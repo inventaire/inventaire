@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const availability_ = __.require('controllers', 'user/lib/availability')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
+const availability_ = require('controllers/user/lib/availability')
 
 const usernameAvailabilitySanitization = {
   username: {}

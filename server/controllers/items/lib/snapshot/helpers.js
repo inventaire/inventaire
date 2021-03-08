@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('lib', 'utils/assert_types')
-const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
-const getInvEntityCanonicalUri = __.require('controllers', 'entities/lib/get_inv_entity_canonical_uri')
-const getBestLangValue = __.require('lib', 'get_best_lang_value')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const getEntityType = require('controllers/entities/lib/get_entity_type')
+const getInvEntityCanonicalUri = require('controllers/entities/lib/get_inv_entity_canonical_uri')
+const getBestLangValue = require('lib/get_best_lang_value')
 
 module.exports = {
   getDocData: updatedDoc => {

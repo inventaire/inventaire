@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('lib', 'utils/assert_types')
-const user_ = __.require('controllers', 'user/lib/user')
-const groups_ = __.require('controllers', 'groups/lib/groups')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const user_ = require('controllers/user/lib/user')
+const groups_ = require('controllers/groups/lib/groups')
 
 const getUsersByIds = (user1Id, user2Id) => {
   return user_.byIds([ user1Id, user2Id ])

@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const pw_ = __.require('lib', 'crypto').passwords
-const assert_ = __.require('lib', 'utils/assert_types')
-const error_ = __.require('lib', 'error/error')
-const randomString = __.require('lib', 'utils/random_string')
+const _ = require('builders/utils')
+const pw_ = require('lib/crypto').passwords
+const assert_ = require('lib/utils/assert_types')
+const error_ = require('lib/error/error')
+const randomString = require('lib/utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
-const { truncateLatLng } = __.require('lib', 'geo')
+const { truncateLatLng } = require('lib/geo')
 
 const User = module.exports = {}
 

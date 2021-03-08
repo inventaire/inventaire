@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { allowTransaction } = __.require('models', 'item')
-const { kmBetween } = __.require('lib', 'geo')
+const _ = require('builders/utils')
+const { allowTransaction } = require('models/item')
+const { kmBetween } = require('lib/geo')
 const host = CONFIG.fullPublicHost()
 const transacColors = require('./transactions_colors')
 

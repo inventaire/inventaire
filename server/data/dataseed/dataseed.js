@@ -6,9 +6,9 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const isbn_ = __.require('lib', 'isbn/isbn')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const isbn_ = require('lib/isbn/isbn')
 
 const { enabled, host } = CONFIG.dataseed
 const reqOptions = { timeout: 60 * 1000 }

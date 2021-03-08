@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const { wikidataOAuth } = CONFIG
 
 module.exports = {

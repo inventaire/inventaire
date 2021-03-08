@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const transactions_ = require('./lib/transactions')
 const { verifyIsRequester, verifyIsOwner, verifyRightToInteract } = require('./lib/rights_verification')
-const { states, statesList } = __.require('models', 'attributes/transaction')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const { Track } = __.require('lib', 'track')
+const { states, statesList } = require('models/attributes/transaction')
+const sanitize = require('lib/sanitize/sanitize')
+const { Track } = require('lib/track')
 
 const sanitization = {
   transaction: {},

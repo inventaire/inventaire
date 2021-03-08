@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { private: privateAttrs } = __.require('models', 'item').attributes
+const _ = require('builders/utils')
+const { private: privateAttrs } = require('models/item').attributes
 
 const omitPrivateAttributes = item => _.omit(item, privateAttrs)
 

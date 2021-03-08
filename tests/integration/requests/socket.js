@@ -2,8 +2,8 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
 const express = require('express')
-const requests_ = __.require('lib', 'requests')
-const { wait } = __.require('lib', 'promises')
+const requests_ = require('lib/requests')
+const { wait } = require('lib/promises')
 let port = 39463
 
 const startHangingupServer = () => new Promise(resolve => {

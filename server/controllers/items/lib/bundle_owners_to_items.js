@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const user_ = require('controllers/user/lib/user')
+const error_ = require('lib/error/error')
 
 module.exports = (res, reqUserId, items) => {
   if (!(items && items.length > 0)) throw error_.new('no item found', 404)

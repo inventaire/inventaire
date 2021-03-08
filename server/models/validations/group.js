@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const slugify = __.require('controllers', 'groups/lib/slugify')
+const _ = require('builders/utils')
+const slugify = require('controllers/groups/lib/slugify')
 const { pass, boundedString, BoundedString, localImg, boolean, position, userId } = require('./common')
 
 module.exports = {

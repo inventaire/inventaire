@@ -1,10 +1,10 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const items_ = __.require('controllers', 'items/lib/items')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const radio = __.require('lib', 'radio')
+const _ = require('builders/utils')
+const items_ = require('controllers/items/lib/items')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
+const radio = require('lib/radio')
 
 const sanitization = {
   ids: {}

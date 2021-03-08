@@ -1,14 +1,14 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const wdk = require('wikidata-sdk')
-const requests_ = __.require('lib', 'requests')
+const requests_ = require('lib/requests')
 const entities_ = require('./entities')
-const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/prefix')
-const cache_ = __.require('lib', 'cache')
+const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
+const cache_ = require('lib/cache')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const runWdQuery = __.require('data', 'wikidata/run_query')
+const runWdQuery = require('data/wikidata/run_query')
 const { getEntitiesPopularities } = require('./popularity')
 
 const caseInsensitiveProperties = [

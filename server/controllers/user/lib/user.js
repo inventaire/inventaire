@@ -1,17 +1,17 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
-const couch_ = __.require('lib', 'couch')
-const User = __.require('models', 'user')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const couch_ = require('lib/couch')
+const User = require('models/user')
 const { byEmail, byEmails, findOneByEmail } = require('./shared_user_handlers')
 const { omitPrivateData } = require('./authorized_user_data_pickers')
-const db = __.require('db', 'couchdb/base')('users')
-const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
-const { defaultAvatar } = __.require('lib', 'assets')
-const searchUsersByPosition = __.require('lib', 'search_by_position')(db, 'users')
-const searchUsersByDistance = __.require('lib', 'search_by_distance')('users')
+const db = require('db/couchdb/base')('users')
+const { getNetworkIds } = require('controllers/user/lib/relations_status')
+const { defaultAvatar } = require('lib/assets')
+const searchUsersByPosition = require('lib/search_by_position')(db, 'users')
+const searchUsersByDistance = require('lib/search_by_distance')('users')
 
 const user_ = module.exports = {
   byId: db.get,

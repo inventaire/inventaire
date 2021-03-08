@@ -4,7 +4,7 @@ require('should')
 const { authReq, getUserGetter, undesiredRes } = require('../utils/utils')
 const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=kick'
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const { humanName } = require('../fixtures/entities')
 const userPromise = getUserGetter(humanName())()
 

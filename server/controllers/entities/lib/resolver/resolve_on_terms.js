@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
-const typeSearch = __.require('controllers', 'search/lib/type_search')
+const typeSearch = require('controllers/search/lib/type_search')
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 const getAuthorsUris = require('../get_authors_uris')
 

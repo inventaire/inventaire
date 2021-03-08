@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { publicReq, undesiredRes } = __.require('apiTests', 'utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { publicReq, undesiredRes } = require('apiTests/utils/utils')
+const { Wait } = require('lib/promises')
 const { populate } = require('../fixtures/populate')
-const { expired } = __.require('lib', 'time')
+const { expired } = require('lib/time')
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {

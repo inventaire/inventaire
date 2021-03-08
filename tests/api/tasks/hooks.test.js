@@ -2,12 +2,12 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const should = require('should')
 const { merge, revertMerge } = require('../utils/entities')
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const { deleteByUris: deleteEntityByUris, findOrIndexEntities } = require('../utils/entities')
 const { createTask } = require('../fixtures/tasks')
 const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 
 describe('tasks:hooks', () => {
   describe('entity merge', () => {

@@ -1,19 +1,19 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const Item = __.require('models', 'item')
+const _ = require('builders/utils')
+const Item = require('models/item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities
-const assert_ = __.require('lib', 'utils/assert_types')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
-const { emit } = __.require('lib', 'radio')
+const assert_ = require('lib/utils/assert_types')
+const { BasicUpdater } = require('lib/doc_updates')
+const { emit } = require('lib/radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const { maxKey } = __.require('lib', 'couch')
+const { maxKey } = require('lib/couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
-const user_ = __.require('controllers', 'user/lib/user')
-const db = __.require('db', 'couchdb/base')('items')
-const error_ = __.require('lib', 'error/error')
+const user_ = require('controllers/user/lib/user')
+const db = require('db/couchdb/base')('items')
+const error_ = require('lib/error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
 
 const items_ = module.exports = {

@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { expired } = __.require('lib', 'time')
-const Shelf = __.require('models', 'shelf')
+const _ = require('builders/utils')
+const { expired } = require('lib/time')
+const Shelf = require('models/shelf')
 require('should')
 
 const someUserId = '1234567890a1234567890b1234567890'

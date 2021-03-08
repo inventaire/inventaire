@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const user_ = __.require('controllers', 'user/lib/user')
-const groups_ = __.require('controllers', 'groups/lib/groups')
-const Group = __.require('models', 'group')
+const user_ = require('controllers/user/lib/user')
+const groups_ = require('controllers/groups/lib/groups')
+const Group = require('models/group')
 
 module.exports = async (groupId, reqUserId) => {
   const group = await groups_.byId(groupId)

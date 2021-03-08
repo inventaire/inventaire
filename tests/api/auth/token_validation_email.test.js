@@ -4,12 +4,12 @@ const host = CONFIG.fullPublicHost()
 require('should')
 const { getUserGetter } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const { createUserEmail } = require('../fixtures/users')
-const { BasicUpdater } = __.require('lib', 'doc_updates')
-const db = __.require('db', 'couchdb/base')('users')
+const { BasicUpdater } = require('lib/doc_updates')
+const db = require('db/couchdb/base')('users')
 const endpoint = '/api/token?action=validation-email'
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 
 describe('token:validation-email', () => {
   it('should reject requests without email', async () => {

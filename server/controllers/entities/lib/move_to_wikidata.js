@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const entities_ = require('./entities')
 const mergeEntities = require('./merge_entities')
 const { cacheEntityRelations } = require('./temporarily_cache_relations')

@@ -4,8 +4,8 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const radio = __.require('lib', 'radio')
+const _ = require('builders/utils')
+const radio = require('lib/radio')
 const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
 const { itemsCountDebounceTime: delay } = CONFIG
 

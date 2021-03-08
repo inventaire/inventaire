@@ -1,12 +1,12 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
-const { Lang } = __.require('lib', 'regex')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const { Lang } = require('lib/regex')
 const getEntityType = require('./get_entity_type')
 const validateAndFormatClaims = require('./validate_and_format_claims')
 const typeWithoutLabels = require('./type_without_labels')
-const propertiesPerType = __.require('controllers', 'entities/lib/properties/properties_per_type')
+const propertiesPerType = require('controllers/entities/lib/properties/properties_per_type')
 const allowlistedTypes = Object.keys(propertiesPerType)
 
 // Can be used to validate both entities being created or existing entities

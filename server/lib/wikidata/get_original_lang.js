@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const wdLang = require('wikidata-lang')
-const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
+const { unprefixify } = require('controllers/entities/lib/prefix')
 
 module.exports = claims => {
   const langPropertiesClaims = _.pick(claims, langProperties)

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const _ = require('builders/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')

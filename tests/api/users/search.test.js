@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 const faker = require('faker')
 const { publicReq, customAuthReq, getUser, getUserB, getReservedUser } = require('../utils/utils')

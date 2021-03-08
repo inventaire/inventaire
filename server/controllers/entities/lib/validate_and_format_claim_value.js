@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 
 // Working around circular dependencies
 let getEntityByUri, entities_

@@ -1,10 +1,10 @@
 const __ = require('config').universalPath
-const items_ = __.require('controllers', 'items/lib/items')
-const user_ = __.require('controllers', 'user/lib/user')
-const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const items_ = require('controllers/items/lib/items')
+const user_ = require('controllers/user/lib/user')
+const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {},

@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const { validateValueType, propertyType } = require('./properties/validations')
 const properties = require('./properties/properties_values_constraints')
 

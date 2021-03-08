@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { wait } = require('lib/promises')
 const host = CONFIG.fullPublicHost()
-const requests_ = __.require('lib', 'requests')
-const assert_ = __.require('lib', 'utils/assert_types')
+const requests_ = require('lib/requests')
+const assert_ = require('lib/utils/assert_types')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return

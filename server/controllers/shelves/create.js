@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const { Track } = __.require('lib', 'track')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const { Track } = require('lib/track')
+const shelves_ = require('controllers/shelves/lib/shelves')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   name: {},

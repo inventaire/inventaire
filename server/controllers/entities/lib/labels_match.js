@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 const haveExactMatch = (labels1, labels2) => {
   const formattedLabels1 = labels1.map(formatLabel)

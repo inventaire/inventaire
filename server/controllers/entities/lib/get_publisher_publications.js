@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const runWdQuery = __.require('data', 'wikidata/run_query')
+const runWdQuery = require('data/wikidata/run_query')
 const entities_ = require('./entities')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const { prefixifyWd } = __.require('controllers', 'entities/lib/prefix')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
 
 module.exports = async ({ uri, refresh, dry }) => {
   const [ wdCollections, invPublications ] = await Promise.all([

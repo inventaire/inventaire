@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 
 require('should')
 
-const couch_ = __.require('lib', 'couch')
+const couch_ = require('lib/couch')
 
 describe('couch_', () => {
   it('env', () => {

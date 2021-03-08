@@ -3,9 +3,9 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const db = __.require('db', 'level/get_sub_db')('waiting', 'utf8')
-const { emptyValue } = __.require('db', 'level/utils')
+const _ = require('builders/utils')
+const db = require('db/level/get_sub_db')('waiting', 'utf8')
+const { emptyValue } = require('db/level/utils')
 
 module.exports = {
   transactionUpdate: transaction => {

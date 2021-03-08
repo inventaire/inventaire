@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
-const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 
 module.exports = async item => {
   const { entity: uri } = item

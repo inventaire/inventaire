@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { wait } = __.require('lib', 'promises')
-const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { getByUris, addClaim, getHistory } = __.require('apiTests', 'utils/entities')
-const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = __.require('apiTests', 'fixtures/entities')
+const { wait } = require('lib/promises')
+const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { getByUris, addClaim, getHistory } = require('apiTests/utils/entities')
+const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = require('apiTests/fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {

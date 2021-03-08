@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const cache_ = __.require('lib', 'cache')
-const { oneMonth } = __.require('lib', 'time')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const cache_ = require('lib/cache')
+const { oneMonth } = require('lib/time')
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`

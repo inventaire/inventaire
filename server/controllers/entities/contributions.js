@@ -1,8 +1,8 @@
 // An endpoint to list entities edits made by a user
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
+const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')
 
 const sanitization = {

@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { authReq, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { getByUris, getHistory } = __.require('apiTests', 'utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = __.require('apiTests', 'fixtures/entities')
+const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { getByUris, getHistory } = require('apiTests/utils/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = require('apiTests/fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

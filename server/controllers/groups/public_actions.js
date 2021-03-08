@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const groups_ = require('./lib/groups')
 const getGroupPublicData = require('./lib/group_public_data')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const sanitize = require('lib/sanitize/sanitize')
 const { get: getSlug } = require('./lib/slug')
 
 module.exports = {

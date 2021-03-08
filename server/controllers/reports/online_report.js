@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const onlineUsers = require('./lib/online_users')
-const responses_ = __.require('lib', 'responses')
-const headers_ = __.require('lib', 'headers')
+const responses_ = require('lib/responses')
+const headers_ = require('lib/headers')
 
 module.exports = (req, res) => {
   const { headers } = req

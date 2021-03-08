@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 // 'swift' or 'local'
 const { mode } = CONFIG.mediaStorage
 _.info(`media storage: ${mode}`)

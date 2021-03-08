@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const getByAccessLevel = require('./get_by_access_level')
-const items_ = __.require('controllers', 'items/lib/items')
-const groups_ = __.require('controllers', 'groups/lib/groups')
-const buildKeysFromShelf = __.require('controllers', 'items/lib/build_keys_from_shelf')
+const items_ = require('controllers/items/lib/items')
+const groups_ = require('controllers/groups/lib/groups')
+const buildKeysFromShelf = require('controllers/items/lib/build_keys_from_shelf')
 const getInventoryAccessLevel = require('./get_inventory_access_level')
 
 // Return what the reqUserId user is allowed to see

@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
 const { findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWork } = require('../fixtures/entities')
-const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled } = require('apiTests/utils/utils')
 
 describe('tasks:check-entities', () => {
   before(async () => {

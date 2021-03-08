@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 require('should')
 const { publicReq, undesiredRes } = require('../utils/utils')
 const endpoint = '/api/data?action=isbn'
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { generateIsbn13 } = require('../fixtures/entities')
 
 describe('data:isbn', () => {

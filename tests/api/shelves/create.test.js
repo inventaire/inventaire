@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { authReq } = require('../utils/utils')
 const { shelfName } = require('../fixtures/shelves')
 const endpoint = '/api/shelves?action=create'

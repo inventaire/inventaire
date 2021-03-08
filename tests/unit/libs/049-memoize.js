@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
 require('should')
-const memoize = __.require('lib', 'utils/memoize')
+const memoize = require('lib/utils/memoize')
 
 describe('memoize', () => {
   it('should be a function', () => {

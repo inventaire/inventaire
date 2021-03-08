@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const fetchExternalAuthorWorksTitles = __.require('data', 'lib/fetch_external_author_works_titles')
+const fetchExternalAuthorWorksTitles = require('data/lib/fetch_external_author_works_titles')
 
 const endpoint = 'http://data.bibliotheken.nl/sparql'
 

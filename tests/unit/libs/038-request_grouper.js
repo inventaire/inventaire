@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 require('should')
 const sinon = require('sinon')
 
-const requestGrouper = __.require('lib', 'request_grouper')
+const requestGrouper = require('lib/request_grouper')
 
 const MockRequester = (spy = _.noop) => async ids => {
   spy()

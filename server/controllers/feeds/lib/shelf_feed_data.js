@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const user_ = __.require('controllers', 'user/lib/user')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
+const user_ = require('controllers/user/lib/user')
+const shelves_ = require('controllers/shelves/lib/shelves')
 
 module.exports = async (shelfId, reqUserId) => {
   const shelf = await shelves_.byId(shelfId)

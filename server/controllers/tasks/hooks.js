@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
 const { tap } = promises_
-const tasks_ = __.require('controllers', 'tasks/lib/tasks')
-const radio = __.require('lib', 'radio')
+const tasks_ = require('controllers/tasks/lib/tasks')
+const radio = require('lib/radio')
 const checkEntity = require('./lib/check_entity')
 
 module.exports = () => {

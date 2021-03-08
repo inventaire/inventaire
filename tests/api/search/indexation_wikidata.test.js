@@ -1,11 +1,11 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const { getByUri } = require('../utils/entities')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc, deindex, indexPlaceholder } = require('../utils/search')
-const { wikidata: wikidataIndex } = __.require('controllers', 'search/lib/indexes').indexes
+const { wikidata: wikidataIndex } = require('controllers/search/lib/indexes').indexes
 
 describe('indexation:wikidata', () => {
   it('should index a wikidata entity when refreshed', async () => {

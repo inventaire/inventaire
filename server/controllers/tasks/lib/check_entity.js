@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
+const error_ = require('lib/error/error')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const tasks_ = require('./tasks')
 const getNewTasks = require('./get_new_tasks')
 const updateRelationScore = require('./relation_score')

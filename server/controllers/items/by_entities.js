@@ -1,10 +1,10 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const items_ = __.require('controllers', 'items/lib/items')
-const relations_ = __.require('controllers', 'relations/lib/queries')
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const items_ = require('controllers/items/lib/items')
+const relations_ = require('controllers/relations/lib/queries')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
+const responses_ = require('lib/responses')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 
 const sanitization = {

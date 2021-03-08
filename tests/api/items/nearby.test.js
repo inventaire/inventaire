@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { getUserGetter, customAuthReq } = __.require('apiTests', 'utils/utils')
+const { getUserGetter, customAuthReq } = require('apiTests/utils/utils')
 const { createItem } = require('../fixtures/items')
 const { waitForIndexation } = require('../utils/search')
 const { getRandomPosition } = require('../fixtures/users')

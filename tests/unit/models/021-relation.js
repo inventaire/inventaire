@@ -4,7 +4,7 @@
 
 // should = require 'should'
 
-// Relation = __.require('models', 'relation')
+// Relation = require('models/relation')
 // couch_ = __.require 'lib', 'couch'
 
 // describe 'relation model', ->

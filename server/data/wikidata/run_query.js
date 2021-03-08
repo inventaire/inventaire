@@ -1,12 +1,12 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const radio = __.require('lib', 'radio')
-const cache_ = __.require('lib', 'cache')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const radio = require('lib/radio')
+const cache_ = require('lib/cache')
+const error_ = require('lib/error/error')
 const wdk = require('wikidata-sdk')
 const makeSparqlRequest = require('./make_sparql_request')
 const { queries, queriesPerProperty } = require('./queries/queries')
-const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
+const { unprefixify } = require('controllers/entities/lib/prefix')
 const possibleQueries = Object.keys(queries)
 const dashesPattern = /-/g
 

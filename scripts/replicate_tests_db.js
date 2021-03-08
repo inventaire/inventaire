@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const error_ = require('lib/error/error')
 
 const dbHost = require('config').db.fullHost()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
-const dbsBaseNames = Object.keys(__.require('db', 'couchdb/list'))
+const dbsBaseNames = Object.keys(require('db/couchdb/list'))
 
 const replicate = async dbName => {
   const dbTestName = `${dbName}-tests`

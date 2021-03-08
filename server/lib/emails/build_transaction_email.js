@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const user_ = __.require('controllers', 'user/lib/user')
-const transactions_ = __.require('controllers', 'transactions/lib/transactions')
-const items_ = __.require('controllers', 'items/lib/items')
-const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
-const comments_ = __.require('controllers', 'comments/lib/comments')
-const { states } = __.require('models', 'attributes/transaction')
+const _ = require('builders/utils')
+const user_ = require('controllers/user/lib/user')
+const transactions_ = require('controllers/transactions/lib/transactions')
+const items_ = require('controllers/items/lib/items')
+const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
+const comments_ = require('controllers/comments/lib/comments')
+const { states } = require('models/attributes/transaction')
 const email_ = require('./email')
 
 module.exports = async transactionId => {

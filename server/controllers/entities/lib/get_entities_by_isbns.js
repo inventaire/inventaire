@@ -1,11 +1,11 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const dataseed = __.require('data', 'dataseed/dataseed')
+const dataseed = require('data/dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
-const isbn_ = __.require('lib', 'isbn/isbn')
-const { prefixifyIsbn } = __.require('controllers', 'entities/lib/prefix')
+const isbn_ = require('lib/isbn/isbn')
+const { prefixifyIsbn } = require('controllers/entities/lib/prefix')
 
 module.exports = async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)

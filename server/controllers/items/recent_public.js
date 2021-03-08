@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const items_ = __.require('controllers', 'items/lib/items')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const error_ = require('lib/error/error')
+const items_ = require('controllers/items/lib/items')
+const sanitize = require('lib/sanitize/sanitize')
 const bundleOwnersToItems = require('./lib/bundle_owners_to_items')
 const itemsQueryLimit = 100
 const offset = 0

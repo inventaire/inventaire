@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const { newsKey } = CONFIG.activitySummary
-const { BasicUpdater } = __.require('lib', 'doc_updates')
-const couch_ = __.require('lib', 'couch')
-const db = __.require('db', 'couchdb/base')('users')
+const { BasicUpdater } = require('lib/doc_updates')
+const couch_ = require('lib/couch')
+const db = require('db/couchdb/base')('users')
 
 const waitingForSummary = limit => {
   // Pick users with next summary between epoch 0 and now

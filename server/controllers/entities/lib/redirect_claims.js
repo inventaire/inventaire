@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const Entity = __.require('models', 'entity')
+const Entity = require('models/entity')
 
 module.exports = (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
 .then(results => {

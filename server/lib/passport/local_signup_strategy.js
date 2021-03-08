@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { track } = __.require('lib', 'track')
-const User = __.require('models', 'user')
-const headers_ = __.require('lib', 'headers')
-const createUser = __.require('controllers', 'user/lib/create')
+const { track } = require('lib/track')
+const User = require('models/user')
+const headers_ = require('lib/headers')
+const createUser = require('controllers/user/lib/create')
 
 const { Strategy: LocalStrategy } = require('passport-local')
 

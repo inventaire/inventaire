@@ -1,12 +1,12 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const automerge = require('./automerge')
-const typeSearch = __.require('controllers', 'search/lib/type_search')
-const entities_ = __.require('controllers', 'entities/lib/entities')
-const getOccurrencesFromEntities = __.require('controllers', 'entities/lib/get_occurrences_from_entities')
-const getOccurrencesFromExternalSources = __.require('controllers', 'entities/lib/get_occurrences_from_external_sources')
-const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
-const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
+const typeSearch = require('controllers/search/lib/type_search')
+const entities_ = require('controllers/entities/lib/entities')
+const getOccurrencesFromEntities = require('controllers/entities/lib/get_occurrences_from_entities')
+const getOccurrencesFromExternalSources = require('controllers/entities/lib/get_occurrences_from_external_sources')
+const { getEntityNormalizedTerms } = require('controllers/entities/lib/terms_normalization')
+const { haveExactMatch } = require('controllers/entities/lib/labels_match')
 
 module.exports = (entity, existingTasks) => {
   return Promise.all([

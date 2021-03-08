@@ -1,7 +1,7 @@
 let sendMail
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 const nodemailer = require('nodemailer')
 const hbs = require('nodemailer-express-handlebars')

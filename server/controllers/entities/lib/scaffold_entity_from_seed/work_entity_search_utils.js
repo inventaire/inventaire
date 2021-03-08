@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const getBestLangValue = __.require('lib', 'get_best_lang_value')
-const stringsAreClose = __.require('lib', 'strings_are_close')
+const _ = require('builders/utils')
+const getBestLangValue = require('lib/get_best_lang_value')
+const stringsAreClose = require('lib/strings_are_close')
 const { normalizeTerm } = require('../terms_normalization')
 
 const matchAuthor = (authors, lang) => result => {

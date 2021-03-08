@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { feed: feedConfig } = CONFIG
-const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
+const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const serializeFeed = require('./serialize_feed')
-const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
-const getAuthorizedItems = __.require('controllers', 'items/lib/get_authorized_items')
-const user_ = __.require('controllers', 'user/lib/user')
+const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')
+const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
+const user_ = require('controllers/user/lib/user')
 
 module.exports = lang => async ({ accessLevel, reqUserId, feedOptions, users, shelves }) => {
   users = users.map(user_.serializeData)

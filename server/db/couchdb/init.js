@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { tap } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { tap } = require('lib/promises')
 const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.fullHost()
 const initHardCodedDocuments = require('./init_hard_coded_documents')

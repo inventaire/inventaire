@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
-const getThumbData = __.require('data', 'commons/thumb')
-const getEnwikiImage = __.require('data', 'wikipedia/image')
-const getOpenLibraryCover = __.require('data', 'openlibrary/cover')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
+const getThumbData = require('data/commons/thumb')
+const getEnwikiImage = require('data/wikipedia/image')
+const getOpenLibraryCover = require('data/openlibrary/cover')
 const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
 
 module.exports = async entity => {

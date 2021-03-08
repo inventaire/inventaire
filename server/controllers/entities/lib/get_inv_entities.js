@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
 const getEntityType = require('./get_entity_type')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const formatEntityCommon = require('./format_entity_common')
 const addRedirection = require('./add_redirection')
-const { prefixifyInv, unprefixify } = __.require('controllers', 'entities/lib/prefix')
+const { prefixifyInv, unprefixify } = require('controllers/entities/lib/prefix')
 
 // Working around the circular dependency
 let getEntityByUri

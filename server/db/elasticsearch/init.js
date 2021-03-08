@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { get } = __.require('lib', 'requests')
-const { wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { get } = require('lib/requests')
+const { wait } = require('lib/promises')
 const { host: elasticHost } = CONFIG.elasticsearch
-const { indexesList, syncIndexesList } = __.require('db', 'elasticsearch/list')
+const { indexesList, syncIndexesList } = require('db/elasticsearch/list')
 const createIndex = require('./create_index')
 const reindexOnChange = require('./reindex_on_change')
 

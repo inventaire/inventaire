@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const should = require('should')
 const { authReq, authReqB, getUser, getUserB } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
 const { createShelf } = require('../fixtures/shelves')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 
 describe('items:update', () => {
   it('should reject invalid item id', async () => {

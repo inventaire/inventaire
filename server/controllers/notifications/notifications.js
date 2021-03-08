@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
-const radio = __.require('lib', 'radio')
-const ActionsControllers = __.require('lib', 'actions_controllers')
+const radio = require('lib/radio')
+const ActionsControllers = require('lib/actions_controllers')
 
 module.exports = {
   get: ActionsControllers({

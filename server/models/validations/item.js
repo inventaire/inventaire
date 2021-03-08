@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { pass, itemId, userId, entityUri, BoundedString, imgUrl } = require('./common')
 const { constrained } = require('../attributes/item')
 const constrainedAttributes = Object.keys(constrained)

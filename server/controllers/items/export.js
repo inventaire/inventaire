@@ -1,13 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
 const items_ = require('./lib/items')
 const addEntitiesData = require('./lib/export/add_entities_data')
 const FormatItemRow = require('./lib/export/format_item_row')
 const csvHeaderRow = require('./lib/export/csv_header_row')
-const responses_ = __.require('lib', 'responses')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
+const responses_ = require('lib/responses')
+const shelves_ = require('controllers/shelves/lib/shelves')
 
 const sanitization = {
   format: {

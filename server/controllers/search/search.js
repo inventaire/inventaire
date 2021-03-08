@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const Group = __.require('models', 'group')
+const sanitize = require('lib/sanitize/sanitize')
+const Group = require('models/group')
 
 const sanitization = {
   search: {},

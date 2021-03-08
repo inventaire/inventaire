@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const fs_ = __.require('lib', 'fs')
+const fs_ = require('lib/fs')
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
 

@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const should = require('should')
 const { publicReq, undesiredRes } = require('../utils/utils')
 const endpoint = '/api/data?action=wp-extract'
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 
 describe('wikipedia:extract', () => {
   it('should reject without title', done => {

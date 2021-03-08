@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 const should = require('should')
 
-const loginAttemps = __.require('lib', 'passport/login_attempts')
+const loginAttemps = require('lib/passport/login_attempts')
 
 describe('loginAttemps', () => {
   it('env', () => {

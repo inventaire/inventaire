@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')

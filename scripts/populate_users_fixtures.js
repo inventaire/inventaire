@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { createUserWithItems } = require('../tests/api/fixtures/populate')
-const { addRole } = __.require('controllers', 'user/lib/user')
+const { addRole } = require('controllers/user/lib/user')
 const { makeFriends } = require('../tests/api/utils/relations')
 const { createGroup, addMember, addAdmin } = require('../tests/api/fixtures/groups')
-const user_ = __.require('controllers', 'user/lib/user')
+const user_ = require('controllers/user/lib/user')
 
 const [ username ] = process.argv.slice(2)
 

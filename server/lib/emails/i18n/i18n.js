@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const Polyglot = require('node-polyglot')
-const { active: activeLangs } = __.require('i18nAssets', 'langs')
+const { active: activeLangs } = require('i18nAssets/langs')
 const moment = require('moment')
-const { appendToEmailsKeys } = __.require('lib', 'i18n_autofix')
+const { appendToEmailsKeys } = require('lib/i18n_autofix')
 const translate = require('./translate')
 
 const polyglots = {}
@@ -22,7 +22,7 @@ const warnAndFix = warning => {
 
 activeLangs.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
-  const phrases = __.require('i18nDist', `${lang}.json`)
+  const phrases = require(`i18nDist/${lang}.json`)
   polyglots[lang].extend(phrases)
   translators[lang] = translate(lang, polyglot)
 })

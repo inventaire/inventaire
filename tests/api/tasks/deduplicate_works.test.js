@@ -1,12 +1,12 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
 const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
 const { getByUris, getByUri } = require('../utils/entities')
-const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
+const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = require('apiTests/utils/utils')
 const { getBySuspectUri } = require('../utils/tasks')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const endpoint = '/api/tasks?action=deduplicate-works'
 
 describe('tasks:deduplicate:works', () => {

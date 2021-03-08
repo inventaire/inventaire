@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const follow = __.require('lib', 'follow')
+const follow = require('lib/follow')
 const filters = require('./filters')
 const indexation = require('./indexation')
 

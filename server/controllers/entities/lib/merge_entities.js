@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('lib', 'utils/assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const entities_ = require('./entities')
-const Entity = __.require('models', 'entity')
+const Entity = require('models/entity')
 const turnIntoRedirection = require('./turn_into_redirection')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 

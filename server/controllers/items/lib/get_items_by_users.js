@@ -1,8 +1,8 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { addAssociatedData, Paginate } = require('./queries_commons')
 const getByAccessLevel = require('./get_by_access_level')
-const { getRelationsStatuses } = __.require('controllers', 'user/lib/relations_status')
+const { getRelationsStatuses } = require('controllers/user/lib/relations_status')
 
 module.exports = (page, usersIds) => {
   // Allow to pass users ids either through the page object

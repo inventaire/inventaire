@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { wait } = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const { wait } = require('lib/promises')
+const error_ = require('lib/error/error')
 
 module.exports = params => {
   let { updateFn, maxAttempts } = params

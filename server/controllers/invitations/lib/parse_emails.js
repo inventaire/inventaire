@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { parseAddressList } = require('email-addresses')
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 
 // Takes a string (or an array) containing email addresses
 // (typically, the value of a text input filled with emails by a user)

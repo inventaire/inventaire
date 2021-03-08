@@ -1,16 +1,16 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const wdk = require('wikidata-sdk')
 const { simplify } = wdk
 const { getEntityId } = require('./entity_helpers')
 const { activeI18nLangs } = require('../helpers')
-const getEntityImagesFromClaims = __.require('controllers', 'entities/lib/get_entity_images_from_claims')
-const { firstClaim } = __.require('controllers', 'entities/lib/entities')
-const getEntityType = __.require('controllers', 'entities/lib/get_entity_type')
-const { indexedEntitiesTypes } = __.require('controllers', 'search/lib/indexes')
-const specialEntityImagesGetter = __.require('controllers', 'entities/lib/special_entity_images_getter')
-const { getSingularTypes } = __.require('lib', 'wikidata/aliases')
-const { getEntityPopularity } = __.require('controllers', 'entities/lib/popularity')
+const getEntityImagesFromClaims = require('controllers/entities/lib/get_entity_images_from_claims')
+const { firstClaim } = require('controllers/entities/lib/entities')
+const getEntityType = require('controllers/entities/lib/get_entity_type')
+const { indexedEntitiesTypes } = require('controllers/search/lib/indexes')
+const specialEntityImagesGetter = require('controllers/entities/lib/special_entity_images_getter')
+const { getSingularTypes } = require('lib/wikidata/aliases')
+const { getEntityPopularity } = require('controllers/entities/lib/popularity')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 module.exports = async (entity, options = {}) => {

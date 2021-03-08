@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const Task = __.require('models', 'task')
-const { expired } = __.require('lib', 'time')
+const Task = require('models/task')
+const { expired } = require('lib/time')
 
 const validDoc = () => ({
   type: 'deduplicate',

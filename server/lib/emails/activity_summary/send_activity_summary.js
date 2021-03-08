@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { justReceivedActivitySummary } = __.require('controllers', 'user/lib/summary')
+const _ = require('builders/utils')
+const { justReceivedActivitySummary } = require('controllers/user/lib/summary')
 const transporter_ = require('../transporter')
 const buildEmail = require('./build_email')
 const { disableUserUpdate } = CONFIG.activitySummary

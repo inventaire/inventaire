@@ -1,13 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
-const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const tasks_ = require('./tasks')
-const getEntitiesByIsbns = __.require('controllers', 'entities/lib/get_entities_by_isbns')
-const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
-const { haveExactMatch } = __.require('controllers', 'entities/lib/labels_match')
+const getEntitiesByIsbns = require('controllers/entities/lib/get_entities_by_isbns')
+const mergeEntities = require('controllers/entities/lib/merge_entities')
+const { haveExactMatch } = require('controllers/entities/lib/labels_match')
 
 module.exports = async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })

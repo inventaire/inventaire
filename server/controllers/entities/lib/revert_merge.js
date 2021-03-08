@@ -1,10 +1,10 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const entities_ = require('./entities')
 const patches_ = require('./patches')
 const placeholders_ = require('./placeholders')
-const updateItemEntity = __.require('controllers', 'items/lib/update_entity')
+const updateItemEntity = require('controllers/items/lib/update_entity')
 const { revertFromPatchDoc } = require('./revert_edit')
 
 module.exports = async (userId, fromId) => {

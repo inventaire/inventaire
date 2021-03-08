@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const wdk = require('wikidata-sdk')
-const isbn_ = __.require('lib', 'isbn/isbn')
+const isbn_ = require('lib/isbn/isbn')
 
 const prefixify = (id, prefix) => {
   if (id == null) return

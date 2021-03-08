@@ -1,14 +1,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 require('should')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
-const { catchNotFound } = __.require('lib', 'error/error')
+const { catchNotFound } = require('lib/error/error')
 
-const { someFakeUri } = __.require('apiTests', 'fixtures/entities')
-const { shouldNotBeCalled } = __.require('apiTests', 'utils/utils')
-const { get, set, del } = __.require('controllers', 'entities/lib/entities_relations_temporary_cache')
-const runQuery = __.require('data', 'wikidata/run_query')
+const { someFakeUri } = require('apiTests/fixtures/entities')
+const { shouldNotBeCalled } = require('apiTests/utils/utils')
+const { get, set, del } = require('controllers/entities/lib/entities_relations_temporary_cache')
+const runQuery = require('data/wikidata/run_query')
 
 const property = 'wdt:P50'
 const targetEntityUri = 'wd:Q1'

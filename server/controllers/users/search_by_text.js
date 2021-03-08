@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { buildSearcher } = __.require('lib', 'elasticsearch')
-const queryBuilder = __.require('controllers', 'search/lib/social_query_builder')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { buildSearcher } = require('lib/elasticsearch')
+const queryBuilder = require('controllers/search/lib/social_query_builder')
 
 module.exports = (req, res) => {
   const { query } = req

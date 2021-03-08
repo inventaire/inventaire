@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const { sendStaticJson } = __.require('lib', 'responses')
+const { sendStaticJson } = require('lib/responses')
 const { piwik } = CONFIG
 const endpoint = piwik.enabled ? piwik.endpoint : null
 

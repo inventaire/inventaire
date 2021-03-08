@@ -1,8 +1,8 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 require('should')
-const { getUser, getUserB, authReq, customAuthReq } = __.require('apiTests', 'utils/utils')
-const { wait } = __.require('lib', 'promises')
+const { getUser, getUserB, authReq, customAuthReq } = require('apiTests/utils/utils')
+const { wait } = require('lib/promises')
 const { createItem } = require('./items')
 const { getById: getRefreshedItem } = require('../utils/items')
 

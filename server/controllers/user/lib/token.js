@@ -1,15 +1,15 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const radio = __.require('lib', 'radio')
-const error_ = __.require('lib', 'error/error')
-const pw_ = __.require('lib', 'crypto').passwords
+const _ = require('builders/utils')
+const radio = require('lib/radio')
+const error_ = require('lib/error/error')
+const pw_ = require('lib/crypto').passwords
 const { tokenDaysToLive } = CONFIG
-const { WrappedUpdater } = __.require('lib', 'doc_updates')
-const randomString = __.require('lib', 'utils/random_string')
+const { WrappedUpdater } = require('lib/doc_updates')
+const randomString = require('lib/utils/random_string')
 const testToken = pw_.verify
 const user_ = require('./user')
-const db = __.require('db', 'couchdb/base')('users')
+const db = require('db/couchdb/base')('users')
 const wrappedUpdate = WrappedUpdater(db)
 const tokenLength = 32
 

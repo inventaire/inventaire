@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { forceArray } = __.require('builders', 'utils')
+const { forceArray } = require('builders/utils')
 
 module.exports = {
   formatBatchOps: ops => forceArray(ops).map(setDefaultType),

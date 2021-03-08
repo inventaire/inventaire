@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const { getNetworkIds } = __.require('controllers', 'user/lib/relations_status')
+const { getNetworkIds } = require('controllers/user/lib/relations_status')
 const listingsLists = require('./listings_lists')
 
 module.exports = reqUserId => async shelf => {

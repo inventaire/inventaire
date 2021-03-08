@@ -1,9 +1,9 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 
 module.exports = async title => {
   title = _.fixedEncodeURIComponent(title)

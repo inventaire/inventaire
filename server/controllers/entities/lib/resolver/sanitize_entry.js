@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const isbn_ = __.require('lib', 'isbn/isbn')
-const { isValidIsbn, normalizeIsbn } = __.require('lib', 'isbn/isbn')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const isbn_ = require('lib/isbn/isbn')
+const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
 const wdLang = require('wikidata-lang')
 const properties = require('../properties/properties_values_constraints')
 const validateClaimValueSync = require('../validate_claim_value_sync')

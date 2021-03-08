@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const tasks_ = require('./tasks')
 // relationScore (between 0 & 1) express the number of tasks for the same suspect
 

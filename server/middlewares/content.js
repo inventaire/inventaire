@@ -2,8 +2,8 @@ const CONFIG = require('config')
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const bodyParser = require('body-parser')
 
 module.exports = {

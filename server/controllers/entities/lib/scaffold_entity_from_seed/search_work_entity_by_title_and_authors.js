@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const typeSearch = __.require('controllers', 'search/lib/type_search')
-const getBestLangValue = __.require('lib', 'get_best_lang_value')
+const _ = require('builders/utils')
+const typeSearch = require('controllers/search/lib/type_search')
+const getBestLangValue = require('lib/get_best_lang_value')
 const getEntitiesByUris = require('../get_entities_by_uris')
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 const { matchTitle, matchAuthor } = require('./work_entity_search_utils')

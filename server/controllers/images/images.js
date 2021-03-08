@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const ActionsControllers = __.require('lib', 'actions_controllers')
+const ActionsControllers = require('lib/actions_controllers')
 
 module.exports = {
   get: ActionsControllers({

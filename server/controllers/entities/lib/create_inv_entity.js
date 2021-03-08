@@ -1,5 +1,5 @@
 const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
 const validateEntity = require('./validate_entity')
 const { prefixifyInv } = require('./prefix')

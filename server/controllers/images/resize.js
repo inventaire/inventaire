@@ -1,13 +1,13 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
-const responses_ = __.require('lib', 'responses')
+const responses_ = require('lib/responses')
 const getResizedImage = require('./lib/get_resized_image')
 const { offline } = CONFIG
-const containersList = Object.keys(__.require('controllers', 'images/lib/containers'))
+const containersList = Object.keys(require('controllers/images/lib/containers'))
 const { URL } = require('url')
 
 // resized images urls looks like
