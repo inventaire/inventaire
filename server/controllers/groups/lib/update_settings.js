@@ -5,7 +5,7 @@ const { attributes, validations, formatters } = __.require('models', 'group')
 const { updatable } = attributes
 const error_ = __.require('lib', 'error/error')
 const radio = __.require('lib', 'radio')
-const db = __.require('couch', 'base')('groups')
+const db = __.require('db', 'couchdb/base')('groups')
 const { add: addSlug } = require('./slug')
 
 module.exports = async (data, userId) => {

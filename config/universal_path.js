@@ -31,23 +31,14 @@ module.exports = {
     utils: '/server/lib/utils',
     data: '/server/data',
     db: '/server/db',
-    couch: '/server/db/couch',
-    level: '/server/db/level',
-    elasticsearch: '/server/db/elasticsearch',
     builders: '/server/builders',
     controllers: '/server/controllers',
-    leveldb: '/db/leveldb',
-    couchdb: '/db/couchdb',
     apiTests: '/tests/api',
     i18nSrc: '/inventaire-i18n/original',
     i18nDist: '/inventaire-i18n/dist/emails',
     i18nAssets: '/inventaire-i18n/assets',
     client: '/client',
     scripts: '/scripts',
-    logs: '/logs',
-    uploads: '/client/public/uploads',
-    modulesBin: '/node_modules/.bin',
-    dumps: '/dumps/inv'
   },
   path: function (route, name) {
     const path = this.paths[route]

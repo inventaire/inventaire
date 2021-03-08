@@ -8,7 +8,7 @@ const { BasicUpdater } = __.require('lib', 'doc_updates')
 const { minKey, maxKey } = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
 const radio = __.require('lib', 'radio')
-const db = __.require('couch', 'base')('transactions')
+const db = __.require('db', 'couchdb/base')('transactions')
 
 const transactions_ = module.exports = {
   byId: db.get,

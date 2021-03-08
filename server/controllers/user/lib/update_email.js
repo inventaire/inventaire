@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 const User = __.require('models', 'user')
 const token_ = require('./token')
 

@@ -9,7 +9,7 @@ const { WrappedUpdater } = __.require('lib', 'doc_updates')
 const randomString = __.require('lib', 'utils/random_string')
 const testToken = pw_.verify
 const user_ = require('./user')
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 const wrappedUpdate = WrappedUpdater(db)
 const tokenLength = 32
 

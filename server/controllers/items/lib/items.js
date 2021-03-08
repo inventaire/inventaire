@@ -12,7 +12,7 @@ const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
 const user_ = __.require('controllers', 'user/lib/user')
-const db = __.require('couch', 'base')('items')
+const db = __.require('db', 'couchdb/base')('items')
 const error_ = __.require('lib', 'error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
 

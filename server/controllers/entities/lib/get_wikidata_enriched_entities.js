@@ -17,12 +17,12 @@ const getWdEntity = __.require('data', 'wikidata/get_entity')
 const addImageData = require('./add_image_data')
 const radio = __.require('lib', 'radio')
 const propagateRedirection = require('./propagate_redirection')
-const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
+const { _id: hookUserId } = __.require('db', 'couchdb/hard_coded_documents').users.hook
 
 // Working around the circular dependency
 let reindex
 const lateRequire = () => {
-  reindex = __.require('elasticsearch', 'indexation')({ indexBaseName: 'wikidata' })
+  reindex = __.require('db', 'elasticsearch/indexation')({ indexBaseName: 'wikidata' })
 }
 setTimeout(lateRequire, 0)
 

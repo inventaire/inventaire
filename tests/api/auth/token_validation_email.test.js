@@ -7,7 +7,7 @@ const { rawRequest } = require('../utils/request')
 const { wait } = __.require('lib', 'promises')
 const { createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 const endpoint = '/api/token?action=validation-email'
 const randomString = __.require('lib', 'utils/random_string')
 

@@ -7,14 +7,14 @@ const { wait } = __.require('lib', 'promises')
 const assert_ = __.require('utils', 'assert_types')
 const error_ = __.require('lib', 'error/error')
 const follow = require('cloudant-follow')
-const metaDb = __.require('level', 'get_sub_db')('meta', 'utf8')
+const metaDb = __.require('db', 'level/get_sub_db')('meta', 'utf8')
 const requests_ = __.require('lib', 'requests')
 const dbHost = CONFIG.db.fullHost()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 // Working around the circular dependency
 let waitForCouchInit
-const lateRequire = () => { waitForCouchInit = __.require('couch', 'init') }
+const lateRequire = () => { waitForCouchInit = __.require('db', 'couchdb/init') }
 setTimeout(lateRequire, 0)
 
 // Never follow in non-server mode.

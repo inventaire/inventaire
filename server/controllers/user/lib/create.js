@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation')
 const invitations_ = __.require('controllers', 'invitations/lib/invitations')
 const User = __.require('models', 'user')
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 const token_ = require('./token')
 const availability_ = require('./availability')
 

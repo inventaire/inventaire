@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const radio = __.require('lib', 'radio')
 const couch_ = __.require('lib', 'couch')
-const db = __.require('couch', 'base')('groups')
+const db = __.require('db', 'couchdb/base')('groups')
 
 module.exports = () => {
   radio.on('group:leave', deleteGroupIfEmpty)

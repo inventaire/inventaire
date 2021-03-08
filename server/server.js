@@ -10,8 +10,8 @@ const _ = __.require('builders', 'utils')
 __.require('lib', 'startup/before')()
 
 // Starting to make CouchDB initialization checks
-const waitForCouchInit = __.require('couch', 'init')
-const waitForElasticsearchInit = __.require('elasticsearch', 'init')
+const waitForCouchInit = __.require('db', 'couchdb/init')
+const waitForElasticsearchInit = __.require('db', 'elasticsearch/init')
 // Meanwhile, start setting up the server.
 // Startup time is mostly due to the time needed to require
 // all files from controllers, middlewares, libs, etc

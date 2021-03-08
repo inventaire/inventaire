@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const db = __.require('couch', 'base')('items')
+const db = __.require('db', 'couchdb/base')('items')
 
 const bundleListings = listingsTypes => async (usersIds, reqUserId, options = {}) => {
   usersIds = _.forceArray(usersIds)

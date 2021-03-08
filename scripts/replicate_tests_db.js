@@ -7,7 +7,7 @@ const error_ = __.require('lib', 'error/error')
 const dbHost = require('config').db.fullHost()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
-const dbsBaseNames = Object.keys(__.require('couch', 'list'))
+const dbsBaseNames = Object.keys(__.require('db', 'couchdb/list'))
 
 const replicate = async dbName => {
   const dbTestName = `${dbName}-tests`

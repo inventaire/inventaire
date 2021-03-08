@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const Comment = __.require('models', 'comment')
 const assert_ = __.require('utils', 'assert_types')
 
-const db = __.require('couch', 'base')('comments')
+const db = __.require('db', 'couchdb/base')('comments')
 
 module.exports = {
   byId: db.get,

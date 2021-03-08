@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 require('should')
-const { formatBatchOps } = __.require('level', 'utils')
+const { formatBatchOps } = __.require('db', 'level/utils')
 
 describe('level utils', () => {
   describe('formatBatchOps', () => {

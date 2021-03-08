@@ -16,12 +16,12 @@ const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const assert_ = __.require('utils', 'assert_types')
-const entitiesDb = __.require('couch', 'base')('entities')
-const patchesDb = __.require('couch', 'base')('patches')
-const docDiff = __.require('couchdb', 'doc_diffs')
+const entitiesDb = __.require('db', 'couchdb/base')('entities')
+const patchesDb = __.require('db', 'couchdb/base')('patches')
+const docDiff = __.require('db', 'couchdb/doc_diffs')
 const Entity = __.require('models', 'entity')
 const Patch = __.require('models', 'patch')
-const userId = __.require('couch', 'hard_coded_documents').users.updater._id
+const userId = __.require('db', 'couchdb/hard_coded_documents').users.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
 const { getNextBatch, updateFn, stats } = require(updateFnFilePath)

@@ -10,7 +10,7 @@ const _ = __.require('builders', 'utils')
 const entities_ = require('./entities')
 const Entity = __.require('models', 'entity')
 const { tapEmit } = __.require('lib', 'radio')
-const db = __.require('couch', 'base')('entities')
+const db = __.require('db', 'couchdb/base')('entities')
 
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`

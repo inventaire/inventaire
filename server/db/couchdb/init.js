@@ -20,7 +20,7 @@ for (const dbName in dbsList) {
   })
 }
 
-const designDocFolder = __.path('couchdb', 'design_docs')
+const designDocFolder = __.path('db', 'couchdb/design_docs')
 
 const init = () => {
   return couchInit(dbBaseUrl, formattedList, designDocFolder)

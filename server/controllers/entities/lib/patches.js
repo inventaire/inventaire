@@ -1,7 +1,7 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
 const designDocName = 'patches'
-const db = __.require('couch', 'base')('patches', designDocName)
+const db = __.require('db', 'couchdb/base')('patches', designDocName)
 const Patch = __.require('models', 'patch')
 const Entity = __.require('models', 'entity')
 const assert_ = __.require('utils', 'assert_types')

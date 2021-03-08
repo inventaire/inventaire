@@ -8,7 +8,7 @@ const __ = require('config').universalPath
 const error_ = __.require('lib', 'error/error')
 const responses_ = __.require('lib', 'responses')
 const designDocName = 'entities_deduplicate'
-const db = __.require('couch', 'base')('entities', designDocName)
+const db = __.require('db', 'couchdb/base')('entities', designDocName)
 
 module.exports = (req, res) => {
   return getHomonymes()

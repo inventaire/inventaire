@@ -4,7 +4,7 @@ const mergeEntities = __.require('controllers', 'entities/lib/merge_entities')
 const getAuthorWorks = __.require('controllers', 'entities/lib/get_author_works')
 const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
 const { getEntityNormalizedTerms } = __.require('controllers', 'entities/lib/terms_normalization')
-const { _id: reconcilerUserId } = __.require('couch', 'hard_coded_documents').users.reconciler
+const { _id: reconcilerUserId } = __.require('db', 'couchdb/hard_coded_documents').users.reconciler
 
 module.exports = authorUri => {
   return getAuthorWorksByDomain(authorUri)

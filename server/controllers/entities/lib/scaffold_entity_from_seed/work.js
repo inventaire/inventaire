@@ -11,7 +11,7 @@ const error_ = __.require('lib', 'error/error')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
 // than to put exceptions everywhere
-const seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
+const seedUserId = __.require('db', 'couchdb/hard_coded_documents').users.seed._id
 const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 
 // Working around the circular dependencies

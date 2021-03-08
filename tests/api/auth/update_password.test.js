@@ -7,7 +7,7 @@ const { Wait } = __.require('lib', 'promises')
 const endpoint = '/api/auth?action=update-password'
 const { createUser, createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = __.require('lib', 'doc_updates')
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', done => {

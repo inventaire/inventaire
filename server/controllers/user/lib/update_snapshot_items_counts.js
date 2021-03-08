@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const items_ = __.require('controllers', 'items/lib/items')
 const User = __.require('models', 'user')
-const db = __.require('couch', 'base')('users')
+const db = __.require('db', 'couchdb/base')('users')
 
 module.exports = userId => {
   return items_.byOwner(userId)

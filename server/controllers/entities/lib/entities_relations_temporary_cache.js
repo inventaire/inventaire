@@ -3,7 +3,7 @@ const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
-const db = __.require('level', 'get_sub_db')('entities-relations', 'utf8')
+const db = __.require('db', 'level/get_sub_db')('entities-relations', 'utf8')
 const radio = __.require('lib', 'radio')
 
 module.exports = {

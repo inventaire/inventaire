@@ -13,7 +13,7 @@ const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
 // than to put exceptions everywhere
-const seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
+const seedUserId = __.require('db', 'couchdb/hard_coded_documents').users.seed._id
 const scaffoldWorkEntityFromSeed = require('./work')
 
 // seed attributes:

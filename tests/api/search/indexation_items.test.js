@@ -6,7 +6,7 @@ const { createItem } = require('../fixtures/items')
 const { deleteByIds, update } = require('../utils/items')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
-const { index } = __.require('elasticsearch', 'list').indexes.items
+const { index } = __.require('db', 'elasticsearch/list').indexes.items
 
 describe('indexation:items', () => {
   it('should index a new item', async () => {

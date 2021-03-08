@@ -24,7 +24,7 @@ couchdb_auth_host=$(node -p "require('config').db.fullHost()")
 elastic_host=$(node -p "require('config').elasticsearch.host")
 elastic_index_url="${elastic_host}/${database_name}"
 
-leveldb_folder_path_base=$(node -p "require('config').universalPath.path('leveldb')")
+leveldb_folder_path_base=$(node -p "require('config').universalPath.path('root', 'db/leveldb')")
 leveldb_folder_path=$(node -p "require('config').db.name('$leveldb_folder_path_base')")
 
 docs_indexed(){

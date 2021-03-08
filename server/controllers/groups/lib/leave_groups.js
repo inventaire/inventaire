@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const Group = __.require('models', 'group')
-const db = __.require('couch', 'base')('groups')
+const db = __.require('db', 'couchdb/base')('groups')
 const promises_ = __.require('lib', 'promises')
 
 // Working around the circular dependency

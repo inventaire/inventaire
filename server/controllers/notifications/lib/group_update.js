@@ -1,6 +1,6 @@
 const __ = require('config').universalPath
 const _ = __.require('builders', 'utils')
-const db = __.require('couch', 'base')('notifications')
+const db = __.require('db', 'couchdb/base')('notifications')
 const Notification = __.require('models', 'notification')
 
 const groupAttributeWithNotification = [

@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = __.require('builders', 'utils')
 const error_ = __.require('lib', 'error/error')
-const db = __.require('level', 'get_sub_db')('timeouts', 'json')
+const db = __.require('db', 'level/get_sub_db')('timeouts', 'json')
 const { serverMode } = CONFIG
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // Using port to keep instances data separated

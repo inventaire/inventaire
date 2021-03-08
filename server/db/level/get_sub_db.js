@@ -4,7 +4,7 @@ const _ = __.require('builders', 'utils')
 const memoize = __.require('lib', 'utils/memoize')
 const assert_ = __.require('utils', 'assert_types')
 
-const dbFolderPathBase = __.path('leveldb')
+const dbFolderPathBase = __.path('root', 'db/leveldb')
 const { suffix } = CONFIG.db
 const dbFolderPath = suffix ? `${dbFolderPathBase}-${suffix}` : dbFolderPathBase
 

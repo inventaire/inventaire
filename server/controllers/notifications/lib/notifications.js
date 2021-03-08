@@ -3,7 +3,7 @@ const _ = __.require('builders', 'utils')
 const { minKey, maxKey } = __.require('lib', 'couch')
 const assert_ = __.require('utils', 'assert_types')
 const Notification = __.require('models', 'notification')
-const db = __.require('couch', 'base')('notifications')
+const db = __.require('db', 'couchdb/base')('notifications')
 
 const notifications_ = module.exports = {
   byUserId: userId => {
