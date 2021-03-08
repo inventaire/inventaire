@@ -66,6 +66,7 @@
     "level-party": "^4.0.0",
     "leven": "^2.1.0",
     "lodash": "^4.17.15",
+    "module-alias": "^2.2.2",
     "moment": "^2.21.0",
     "mv": "^2.1.1",
     "node-fetch": "^2.6.1",
@@ -108,5 +109,21 @@
   },
   "engines": {
     "node": ">= 8"
+  },
+  "_moduleAliases": {
+    "apiTests": "tests/api",
+    "builders": "server/builders",
+    "client": "client",
+    "controllers": "server/controllers",
+    "data": "server/data",
+    "db": "server/db",
+    "i18nAssets": "inventaire-i18n/assets",
+    "i18nDist": "inventaire-i18n/dist/emails",
+    "i18nSrc": "inventaire-i18n/original",
+    "lib": "server/lib",
+    "models": "server/models",
+    "root": ".",
+    "scripts": "scripts",
+    "server": "server"
   }
 }

@@ -1,3 +1,7 @@
+// Call module-alias register before trying to access _moduleAliases
+// as it will convert those to their absolute paths
+require('module-alias/register')
+
 // This is where all the path magic happens!
 // By always passing by this module that nows the appRoot
 // we can copy dependency imports from one file to the other
@@ -20,33 +24,15 @@
 // and that those explanation aren't clear enough, please open an issue
 // to help make it clearer
 
-const appRoot = __dirname.replace('/config', '')
+const { _moduleAliases } = require('../package.json')
+
+const path = (route, name) => {
+  const path = _moduleAliases[route]
+  if (name != null) return `${path}/${name}`
+  else return path
+}
 
 module.exports = {
-  paths: {
-    root: '',
-    server: '/server',
-    lib: '/server/lib',
-    models: '/server/models',
-    utils: '/server/lib/utils',
-    data: '/server/data',
-    db: '/server/db',
-    builders: '/server/builders',
-    controllers: '/server/controllers',
-    apiTests: '/tests/api',
-    i18nSrc: '/inventaire-i18n/original',
-    i18nDist: '/inventaire-i18n/dist/emails',
-    i18nAssets: '/inventaire-i18n/assets',
-    client: '/client',
-    scripts: '/scripts',
-  },
-  path: function (route, name) {
-    const path = this.paths[route]
-    const rootedPath = `${appRoot}${path}`
-    if (name != null) return `${rootedPath}/${name}`
-    else return rootedPath
-  },
-  require: function (route, name) {
-    return require(this.path(route, name))
-  }
+  path,
+  require: (route, name) => require(path(route, name))
 }
