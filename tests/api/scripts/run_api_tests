@@ -15,7 +15,7 @@ check_filename(){
 if [ -z "$1" ]
 then
   find tests/api -type f -name *.test.js | \
-    xargs mocha --exit $MOCHA_OPTIONS --timeout $timeout
+    xargs mocha --exit $MOCHA_OPTIONS --timeout $timeout ./node_modules/module-alias/register.js
 else
   files=''
   for arg in $@
@@ -30,5 +30,5 @@ else
     fi
   done
   echo "files: $files"
-  mocha --exit $MOCHA_OPTIONS --timeout $timeout $files
+  mocha --exit $MOCHA_OPTIONS --timeout $timeout ./node_modules/module-alias/register.js $files
 fi

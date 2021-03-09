@@ -2,7 +2,7 @@
 files=$1
 export NODE_ENV=tests-unit
 if [ "$files" != "" ] ; then
-  mocha --exit $MOCHA_OPTIONS "$files"
+  mocha --exit $MOCHA_OPTIONS ./node_modules/module-alias/register.js "$files"
 else
-  mocha --exit $MOCHA_OPTIONS tests/unit/models/* tests/unit/libs/* tests/unit/controllers/*
+  mocha --exit $MOCHA_OPTIONS ./node_modules/module-alias/register.js tests/unit/models/* tests/unit/libs/* tests/unit/controllers/*
 fi
