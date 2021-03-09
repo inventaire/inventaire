@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
 const { wait } = require('lib/promises')
 const { createUser } = require('../fixtures/users')

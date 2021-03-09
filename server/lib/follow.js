@@ -1,7 +1,6 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
 const assert_ = require('lib/utils/assert_types')

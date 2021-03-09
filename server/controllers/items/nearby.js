@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const user_ = require('controllers/user/lib/user')
 const getItemsByUsers = require('./lib/get_items_by_users')
 const sanitize = require('lib/sanitize/sanitize')

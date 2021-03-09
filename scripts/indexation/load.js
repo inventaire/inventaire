@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { indexes } = require('db/elasticsearch/list')
 const { logErrorAndExit } = require('../scripts_utils')

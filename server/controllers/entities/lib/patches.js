@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const designDocName = 'patches'
 const db = require('db/couchdb/base')('patches', designDocName)

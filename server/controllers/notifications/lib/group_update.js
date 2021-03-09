@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const db = require('db/couchdb/base')('notifications')
 const Notification = require('models/notification')

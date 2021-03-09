@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { Wait } = require('lib/promises')
 const helpers_ = require('./helpers')

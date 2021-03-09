@@ -1,7 +1,5 @@
 // A middleware to catch other middlewares errors and repackage them
 // in JSON and with more readable error reports
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
 const { logoutRedirect } = require('controllers/auth/connection')
 

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const radio = require('lib/radio')
 const refreshSnapshot = require('./refresh_snapshot')
 

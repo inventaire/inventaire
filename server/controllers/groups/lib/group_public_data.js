@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const lists_ = require('./users_lists')

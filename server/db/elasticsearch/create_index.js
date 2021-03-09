@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
-const { host } = CONFIG.elasticsearch
+const { host } = require('config').elasticsearch
 const mappings = require('db/elasticsearch/mappings/mappings')
 const settings = require('db/elasticsearch/settings/settings')
 

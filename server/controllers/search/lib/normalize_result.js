@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const getBestLangValue = require('lib/get_best_lang_value')
 
 module.exports = lang => result => {

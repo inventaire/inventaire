@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const bodyParser = require('body-parser')

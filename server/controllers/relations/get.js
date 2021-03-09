@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { getUserRelations, getNetworkIds } = require('controllers/user/lib/relations_status')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')

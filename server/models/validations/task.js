@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { pass, entityUri, userId, BoundedString } = require('./common')
 

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { customAuthReq, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
 const endpoint = '/api/auth?action=email-confirmation'

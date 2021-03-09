@@ -4,7 +4,6 @@ const CONFIG = require('config')
 // and not simply scripts being executed in the wild
 CONFIG.serverMode = true
 
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 
 require('lib/startup/before')()

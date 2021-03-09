@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const onlineUsers = require('./lib/online_users')
 const responses_ = require('lib/responses')
 const headers_ = require('lib/headers')

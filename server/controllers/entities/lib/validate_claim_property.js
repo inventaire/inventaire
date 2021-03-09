@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const { validateProperty } = require('./properties/validations')
 const propertiesPerType = require('controllers/entities/lib/properties/properties_per_type')

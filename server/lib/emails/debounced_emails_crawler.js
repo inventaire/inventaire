@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
-const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
+const { crawlPeriod, debounceDelay, disabled } = require('config').debouncedEmail
 const { expired } = require('lib/time')
 const db = require('db/level/get_sub_db')('waiting', 'utf8')
 

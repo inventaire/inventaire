@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const ActionsControllers = require('lib/actions_controllers')
 
 module.exports = {

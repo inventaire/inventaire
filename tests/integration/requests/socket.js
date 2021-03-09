@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const express = require('express')
 const requests_ = require('lib/requests')

@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { getNames } = require('../snapshot/helpers')
-const host = CONFIG.fullPublicHost()
+const host = require('config').fullPublicHost()
 
 module.exports = lang => item => {
   const { _id, entity: uri, details, notes, shelfNames, created, listing, transaction } = item

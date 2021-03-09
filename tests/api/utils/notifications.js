@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { customAuthReq } = require('./utils')
 const assert_ = require('lib/utils/assert_types')
 

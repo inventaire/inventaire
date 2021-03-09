@@ -1,5 +1,4 @@
-const CONFIG = require('config')
-const { offline, verbose } = CONFIG
+const { offline, verbose } = require('config')
 const loggers_ = require('inv-loggers')
 const chalk = require('chalk')
 const { grey, red } = chalk

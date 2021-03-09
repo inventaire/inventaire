@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const properties = require('../properties/properties_values_constraints')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')

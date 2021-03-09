@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const user_ = require('controllers/user/lib/user')

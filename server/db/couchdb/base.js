@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const getDbApi = require('./cot_base')
 const memoize = require('lib/utils/memoize')

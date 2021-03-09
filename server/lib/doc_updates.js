@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 
 // The simplest doc update: set one or several key/values

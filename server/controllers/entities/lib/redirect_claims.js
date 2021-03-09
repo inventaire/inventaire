@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const entities_ = require('./entities')
 const Entity = require('models/entity')

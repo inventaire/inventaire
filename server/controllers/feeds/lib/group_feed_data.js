@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const user_ = require('controllers/user/lib/user')
 const groups_ = require('controllers/groups/lib/groups')
 const Group = require('models/group')

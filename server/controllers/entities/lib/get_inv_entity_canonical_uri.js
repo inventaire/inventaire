@@ -4,7 +4,6 @@
 // in entities claims, and are used in the client to build entities URLs
 // to which alias URIs redirect
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const getInvUriFromDoc = require('./get_inv_uri_from_doc')
 const { prefixifyInv } = require('./prefix')

@@ -1,8 +1,6 @@
 // Add emails to the waiting list to let ./debounced_emails_crawler
 // find and send them
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const db = require('db/level/get_sub_db')('waiting', 'utf8')
 const { emptyValue } = require('db/level/utils')

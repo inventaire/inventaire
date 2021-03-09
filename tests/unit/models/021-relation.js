@@ -1,5 +1,3 @@
-// CONFIG = require('config')
-// __ = CONFIG.universalPath
 // _ = __.require 'builders', 'utils'
 
 // should = require 'should'

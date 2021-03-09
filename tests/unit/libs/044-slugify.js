@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
 const slugify = require('controllers/groups/lib/slugify')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const Group = require('models/group')
 const radio = require('lib/radio')
 const initMembershipUpdateHooks = require('./membership_update_hooks')

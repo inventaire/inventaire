@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { findOneWaitingForSummary } = require('controllers/user/lib/summary')
 const sendActivitySummary = require('./send_activity_summary')

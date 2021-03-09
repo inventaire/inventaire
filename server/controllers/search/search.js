@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const normalizeResult = require('./lib/normalize_result')

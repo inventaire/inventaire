@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const { getNetworkIds } = require('controllers/user/lib/relations_status')

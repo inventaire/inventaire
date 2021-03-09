@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const should = require('should')
 const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 

@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { newsKey } = CONFIG.activitySummary
+const { newsKey } = require('config').activitySummary
 const { BasicUpdater } = require('lib/doc_updates')
 const couch_ = require('lib/couch')
 const db = require('db/couchdb/base')('users')

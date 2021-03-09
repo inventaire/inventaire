@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const pw = require('./password_hashing')
 const error_ = require('lib/error/error')
 const crypto = require('crypto')

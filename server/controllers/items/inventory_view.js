@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')

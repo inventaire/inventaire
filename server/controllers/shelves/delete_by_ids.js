@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const error_ = require('lib/error/error')

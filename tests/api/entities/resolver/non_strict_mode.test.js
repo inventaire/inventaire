@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq } = require('apiTests/utils/utils')
 const { randomLabel, generateIsbn13 } = require('apiTests/fixtures/entities')

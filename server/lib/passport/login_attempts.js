@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { oneMinute } = require('lib/time')
 
 const attemptsLimit = 10

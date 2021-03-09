@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const templateHelpers = require('lib/emails/handlebars_helpers')
 const transacColors = require('lib/emails/activity_summary/transactions_colors')

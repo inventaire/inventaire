@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 

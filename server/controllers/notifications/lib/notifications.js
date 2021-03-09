@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { minKey, maxKey } = require('lib/couch')
 const assert_ = require('lib/utils/assert_types')

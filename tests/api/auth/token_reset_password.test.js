@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const host = CONFIG.fullPublicHost()
 require('should')
 const { publicReq, undesiredRes } = require('../utils/utils')

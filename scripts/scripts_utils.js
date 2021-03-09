@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { red } = require('chalk')
 const { promisify } = require('util')

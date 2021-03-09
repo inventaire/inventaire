@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
 const wdk = require('wikidata-sdk')
 const wdEdit = require('lib/wikidata/edit')

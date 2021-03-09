@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { track } = require('lib/track')
 const User = require('models/user')
 const headers_ = require('lib/headers')

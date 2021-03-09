@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { pick, without } = require('lodash')
 const publicAttributes = require('models/attributes/user').public
 // Omit snapshot as it contains private and semi priavte data

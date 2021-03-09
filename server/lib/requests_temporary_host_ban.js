@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const db = require('db/level/get_sub_db')('timeouts', 'json')

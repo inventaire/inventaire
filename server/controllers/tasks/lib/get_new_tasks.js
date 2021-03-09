@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const automerge = require('./automerge')
 const typeSearch = require('controllers/search/lib/type_search')

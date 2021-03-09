@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const Task = require('models/task')
 const { expired } = require('lib/time')

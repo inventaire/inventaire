@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const items_ = require('controllers/items/lib/items')
 const user_ = require('controllers/user/lib/user')
 const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')

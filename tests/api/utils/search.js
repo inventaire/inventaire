@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
 const { publicReq } = require('../utils/utils')

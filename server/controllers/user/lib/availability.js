@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const User = require('models/user')
 const isReservedWord = require('./is_reserved_word')

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { forceArray } = require('builders/utils')
 
 module.exports = {

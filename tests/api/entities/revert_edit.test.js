@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
 const randomString = require('lib/utils/random_string')
 const { getByUri, updateLabel, revertEdit, getHistory, addClaim } = require('../utils/entities')

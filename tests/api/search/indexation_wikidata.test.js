@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { wait } = require('lib/promises')
 const { getByUri } = require('../utils/entities')

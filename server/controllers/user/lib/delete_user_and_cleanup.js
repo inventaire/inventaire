@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const relations_ = require('controllers/relations/lib/queries')
 const deleteUserItems = require('controllers/items/lib/delete_user_items')
 const { deleteUserShelves } = require('controllers/shelves/lib/shelves')

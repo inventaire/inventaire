@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
 const parseEmails = require('controllers/invitations/lib/parse_emails')

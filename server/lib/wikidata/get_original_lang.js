@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const wdLang = require('wikidata-lang')
 const { unprefixify } = require('controllers/entities/lib/prefix')

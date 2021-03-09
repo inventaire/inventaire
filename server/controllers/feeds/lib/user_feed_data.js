@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const user_ = require('controllers/user/lib/user')
 const getInventoryAccessLevel = require('controllers/items/lib/get_inventory_access_level')
 

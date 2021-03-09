@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { shellExec } = require('scripts/scripts_utils')
 const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')

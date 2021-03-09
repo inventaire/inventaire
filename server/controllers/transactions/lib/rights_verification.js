@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const interactions_ = require('lib/interactions')
 const error_ = require('lib/error/error')
 const Transaction = require('models/transaction')

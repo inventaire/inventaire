@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const radio = require('lib/radio')
 const error_ = require('lib/error/error')
 const pw_ = require('lib/crypto').passwords
-const { tokenDaysToLive } = CONFIG
+const { tokenDaysToLive } = require('config')
 const { WrappedUpdater } = require('lib/doc_updates')
 const randomString = require('lib/utils/random_string')
 const testToken = pw_.verify

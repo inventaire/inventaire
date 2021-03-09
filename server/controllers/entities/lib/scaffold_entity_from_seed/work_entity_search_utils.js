@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const getBestLangValue = require('lib/get_best_lang_value')
 const stringsAreClose = require('lib/strings_are_close')

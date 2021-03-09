@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation')
 const invitations_ = require('controllers/invitations/lib/invitations')

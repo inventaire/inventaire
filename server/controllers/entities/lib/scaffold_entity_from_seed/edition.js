@@ -4,8 +4,6 @@
 // This last task, and the effort of reconciling with the existing entities
 // is let to the responsability of the ./work module
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { parse: parseIsbn } = require('lib/isbn/isbn')

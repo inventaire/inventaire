@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 require('should')
 const { getUser, getReservedUser, customAuthReq } = require('apiTests/utils/utils')

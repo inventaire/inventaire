@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')

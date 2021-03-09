@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const runWdQuery = require('data/wikidata/run_query')
 const entities_ = require('./entities')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')

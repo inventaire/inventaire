@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser } = require('./utils')

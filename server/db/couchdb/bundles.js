@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const couch_ = require('lib/couch')
 const assert_ = require('lib/utils/assert_types')
 

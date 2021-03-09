@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const should = require('should')
 const { authReq, publicReq, undesiredRes } = require('../utils/utils')

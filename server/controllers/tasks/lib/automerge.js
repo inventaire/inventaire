@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { Wait } = require('lib/promises')
 const mergeEntities = require('controllers/entities/lib/merge_entities')

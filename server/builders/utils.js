@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('lodash')
 const server_ = require('lib/utils/base')
 const logs_ = require('lib/utils/logs')(_)

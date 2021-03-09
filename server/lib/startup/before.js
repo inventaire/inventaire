@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 // Needs to be run before the first promise is fired
 // so that the configuration applies to all

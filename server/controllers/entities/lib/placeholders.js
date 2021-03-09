@@ -5,7 +5,6 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const entities_ = require('./entities')
 const Entity = require('models/entity')

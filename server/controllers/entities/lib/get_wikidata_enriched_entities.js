@@ -4,7 +4,6 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const wdk = require('wikidata-sdk')
 const getOriginalLang = require('lib/wikidata/get_original_lang')

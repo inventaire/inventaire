@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const getEntityType = require('controllers/entities/lib/get_entity_type')

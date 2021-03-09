@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 
 // Working around the circular dependency
 let assert_

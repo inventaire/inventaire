@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { authReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')

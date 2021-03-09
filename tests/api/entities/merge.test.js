@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, dataadminReq, shouldNotBeCalled } = require('../utils/utils')
 const randomString = require('lib/utils/random_string')

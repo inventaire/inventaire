@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')

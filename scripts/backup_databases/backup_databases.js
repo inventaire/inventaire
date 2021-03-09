@@ -5,8 +5,6 @@
 
 const [ suffix ] = process.argv.slice(2)
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const promises_ = require('lib/promises')
 

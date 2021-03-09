@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
-const host = CONFIG.fullPublicHost()
+const host = require('config').fullPublicHost()
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')

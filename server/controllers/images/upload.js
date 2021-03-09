@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const parseForm = require('./lib/parse_form')
 const responses_ = require('lib/responses')

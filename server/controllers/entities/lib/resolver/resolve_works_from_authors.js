@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const getWorksFromAuthorsLabels = require('./get_works_from_authors_uris')
 const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpers')

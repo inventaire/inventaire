@@ -1,6 +1,5 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')

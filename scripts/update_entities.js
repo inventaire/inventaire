@@ -12,7 +12,6 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')

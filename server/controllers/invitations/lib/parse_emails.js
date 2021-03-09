@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { parseAddressList } = require('email-addresses')
 const error_ = require('lib/error/error')

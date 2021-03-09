@@ -2,12 +2,10 @@
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const radio = require('lib/radio')
 const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
-const { itemsCountDebounceTime: delay } = CONFIG
+const { itemsCountDebounceTime: delay } = require('config')
 
 module.exports = () => {
   const debouncedUpdaters = {}

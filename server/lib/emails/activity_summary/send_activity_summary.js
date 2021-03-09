@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { justReceivedActivitySummary } = require('controllers/user/lib/summary')
 const transporter_ = require('../transporter')
 const buildEmail = require('./build_email')
-const { disableUserUpdate } = CONFIG.activitySummary
+const { disableUserUpdate } = require('config').activitySummary
 
 let updateUser
 // It can be convenient in development to disable user update

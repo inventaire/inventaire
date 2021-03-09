@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const assert_ = require('lib/utils/assert_types')
 
 // Possibly overriding further redirects object

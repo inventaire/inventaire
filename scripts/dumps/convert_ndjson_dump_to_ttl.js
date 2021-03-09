@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const split = require('split')
 const through = require('through')

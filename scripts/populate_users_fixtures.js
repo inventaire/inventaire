@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { createUserWithItems } = require('../tests/api/fixtures/populate')
 const { addRole } = require('controllers/user/lib/user')

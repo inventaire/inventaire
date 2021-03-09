@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const sanitize = require('lib/sanitize/sanitize')
 const error_ = require('lib/error/error')
 const passport_ = require('lib/passport/passport')

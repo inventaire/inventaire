@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const ActionsControllers = require('lib/actions_controllers')
 const { addItems, removeItems } = require('./items_actions')
 

@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
 const assert_ = require('lib/utils/assert_types')
 const { wait } = require('lib/promises')

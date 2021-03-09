@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const ActionsControllers = require('lib/actions_controllers')
 const { authorWorks, serieParts, publisherPublications } = require('./get_entity_relatives')
 

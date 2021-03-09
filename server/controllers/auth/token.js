@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const ActionsControllers = require('lib/actions_controllers')
 const token_ = require('controllers/user/lib/token')

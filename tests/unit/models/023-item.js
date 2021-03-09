@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { expired } = require('lib/time')
 
 const should = require('should')

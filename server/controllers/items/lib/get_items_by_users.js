@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { addAssociatedData, Paginate } = require('./queries_commons')
 const getByAccessLevel = require('./get_by_access_level')

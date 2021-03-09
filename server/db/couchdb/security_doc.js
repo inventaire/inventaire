@@ -1,5 +1,4 @@
-const CONFIG = require('config')
-const { username } = CONFIG.db
+const { username } = require('config').db
 if (typeof username !== 'string') {
   throw new Error(`bad CONFIG.db.username: ${username}`)
 }

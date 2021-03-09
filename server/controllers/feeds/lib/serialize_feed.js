@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const Rss = require('rss')
 const root = CONFIG.fullPublicHost()

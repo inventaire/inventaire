@@ -7,7 +7,6 @@
 // - invitatitons: inviting people out of Inventaire
 // - users: finding users by their usernames, positions, etc
 
-const __ = require('config').universalPath
 const ActionsControllers = require('lib/actions_controllers')
 
 module.exports = {

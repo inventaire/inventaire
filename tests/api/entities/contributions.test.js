@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const should = require('should')
 const { adminReq, getUser, getReservedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')

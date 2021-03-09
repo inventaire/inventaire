@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const images_ = require('lib/images')
 const { userAgent } = require('lib/requests')
-const { maxSize } = CONFIG.mediaStorage.images
+const { maxSize } = require('config').mediaStorage.images
 const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
 const reqOptions = {

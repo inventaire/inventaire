@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { Wait } = require('lib/promises')
 const should = require('should')
 const { authReq, authReqB, getUser, getUserB } = require('../utils/utils')

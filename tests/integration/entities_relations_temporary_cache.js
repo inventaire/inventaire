@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { wait } = require('lib/promises')
 require('should')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache

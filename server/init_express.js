@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
+const { port, host, name } = require('config')
 const _ = require('builders/utils')
 const express = require('express')
-const { port, host, name } = CONFIG
 
 const middlewares = require('./middlewares/middlewares')
 const routes = require('./controllers/routes')

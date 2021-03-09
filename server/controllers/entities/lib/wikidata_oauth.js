@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
-const { wikidataOAuth } = CONFIG
+const { wikidataOAuth } = require('config')
 
 module.exports = {
   validate: user => {

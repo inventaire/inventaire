@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const entities_ = require('./entities')
 const getEntityType = require('./get_entity_type')

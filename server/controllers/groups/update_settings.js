@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const sanitize = require('lib/sanitize/sanitize')
 const membershipValidations = require('./lib/membership_validations')

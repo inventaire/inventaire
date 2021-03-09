@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const isbn_ = require('lib/isbn/isbn')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const Group = require('models/group')
 const db = require('db/couchdb/base')('groups')

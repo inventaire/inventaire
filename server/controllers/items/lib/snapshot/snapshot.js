@@ -14,7 +14,6 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const db = require('db/level/get_sub_db')('snapshot', 'json')
 const { formatBatchOps } = require('db/level/utils')

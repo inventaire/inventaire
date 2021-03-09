@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { pass } = require('./common')
 const { types } = require('../attributes/notification')
 const assert_ = require('lib/utils/assert_types')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const Q535 = require('./fixtures/Q535.customized.json')
 require('should')

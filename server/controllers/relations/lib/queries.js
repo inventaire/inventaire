@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const couch_ = require('lib/couch')
 const userRelativeRequest = require('./user-relative_request')
 const db = require('db/couchdb/base')('users', 'relations')

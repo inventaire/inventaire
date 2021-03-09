@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const radio = require('lib/radio')
 const ActionsControllers = require('lib/actions_controllers')
 

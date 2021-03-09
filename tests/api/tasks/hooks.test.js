@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
 const { merge, revertMerge } = require('../utils/entities')
 const { Wait } = require('lib/promises')

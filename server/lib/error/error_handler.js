@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const responses_ = require('lib/responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 

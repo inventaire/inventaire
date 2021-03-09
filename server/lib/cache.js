@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const db = require('db/level/get_sub_db')('cache', 'json')
-const { offline } = CONFIG
+const { offline } = require('config')
 const { oneMonth, expired } = require('lib/time')
 
 module.exports = {

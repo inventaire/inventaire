@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const images_ = require('lib/images')
 const putImage = require('./put_image')
 

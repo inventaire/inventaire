@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const couch_ = require('lib/couch')
 const assert = require('assert')
 const assert_ = require('lib/utils/assert_types')

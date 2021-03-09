@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 const { yellow } = require('chalk')

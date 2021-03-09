@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const root = CONFIG.fullPublicHost()

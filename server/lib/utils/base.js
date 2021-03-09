@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('lodash')
 const multipleSpacesPattern = /\s+/g
 const extraEncodedCharacters = /[!'()*]/g

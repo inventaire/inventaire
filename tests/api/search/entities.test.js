@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')

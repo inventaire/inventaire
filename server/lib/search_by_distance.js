@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { buildSearcher } = require('lib/elasticsearch')
 const { distanceBetween } = require('lib/geo')
 const assert_ = require('lib/utils/assert_types')

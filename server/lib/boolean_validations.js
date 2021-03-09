@@ -1,6 +1,4 @@
 // Keep in sync with client/app/lib/boolean_tests
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('lodash')
 const wdk = require('wikidata-sdk')
 const regex_ = require('lib/regex')

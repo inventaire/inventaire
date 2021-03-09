@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const typeSearch = require('controllers/search/lib/type_search')
 const getBestLangValue = require('lib/get_best_lang_value')

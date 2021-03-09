@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const intent = require('./lib/intent')
 const error_ = require('lib/error/error')

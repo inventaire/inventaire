@@ -1,6 +1,5 @@
 // Mark the whole transaction as read
 
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const transactions_ = require('./lib/transactions')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const Item = require('models/item')
 const listingsPossibilities = Item.attributes.constrained.listing.possibilities

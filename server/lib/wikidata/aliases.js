@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const { 'wdt:P31': invP31Values } = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
 

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const error_ = require('lib/error/error')
 const sanitize = require('lib/sanitize/sanitize')
 const availability_ = require('controllers/user/lib/availability')

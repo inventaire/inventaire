@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { getSingularTypes } = require('lib/wikidata/aliases')
 
 module.exports = params => {

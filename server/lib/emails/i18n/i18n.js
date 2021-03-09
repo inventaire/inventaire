@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const Polyglot = require('node-polyglot')
 const { active: activeLangs } = require('i18nAssets/langs')

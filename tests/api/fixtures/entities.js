@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
 const isbn_ = require('lib/isbn/isbn')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { expired } = require('lib/time')
 const Shelf = require('models/shelf')

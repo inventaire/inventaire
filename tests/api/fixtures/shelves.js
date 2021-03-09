@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const faker = require('faker')
 const { customAuthReq } = require('../utils/request')

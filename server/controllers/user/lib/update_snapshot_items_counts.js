@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const User = require('models/user')

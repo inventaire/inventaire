@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { wait } = require('lib/promises')
 const { adminReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=duplicates'

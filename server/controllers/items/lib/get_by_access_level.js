@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const db = require('db/couchdb/base')('items')

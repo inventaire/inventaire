@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
 
 module.exports = async (userId, reqUserId) => {

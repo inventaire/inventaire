@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const gm = require('gm')
 const crypto_ = require('lib/crypto')
 const { readFile } = require('fs').promises
-const { maxSize } = CONFIG.mediaStorage.images
+const { maxSize } = require('config').mediaStorage.images
 
 // gm accepts either a path string or a stream
 const shrinkAndFormat = (data, width, height) => {

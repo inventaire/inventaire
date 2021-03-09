@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const __ = require('config').universalPath
 const { addRole, removeRole } = require('controllers/user/lib/user')
 const [ userId, action, role ] = process.argv.slice(2)
 const { logSuccessAndExit, logErrorAndExit } = require('../scripts_utils')

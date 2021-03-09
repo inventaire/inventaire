@@ -1,5 +1,4 @@
 const { name, cookieMaxAge, protocol } = require('config')
-const __ = require('config').universalPath
 const { expired } = require('builders/utils')
 
 const passport = require('passport')

@@ -1,6 +1,5 @@
 // An endpoint to get statistics on users data contributions
 // Reserved to admins for the moment, as some data might be considered privacy issue
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')

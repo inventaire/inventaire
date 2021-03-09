@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const ActionsControllers = require('lib/actions_controllers')
 const { signup, login, logout } = require('./connection')
 const { usernameAvailability, emailAvailability } = require('./availability')

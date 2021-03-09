@@ -4,7 +4,6 @@
 // to sort it by reduced values, which isn't supported by CouchDB
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const designDocName = 'entities_deduplicate'

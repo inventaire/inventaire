@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { wait } = require('lib/promises')
 const radio = require('lib/radio')
 require('should')

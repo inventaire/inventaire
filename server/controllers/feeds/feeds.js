@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const headers_ = require('lib/headers')
 const sanitize = require('lib/sanitize/sanitize')

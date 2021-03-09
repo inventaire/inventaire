@@ -4,8 +4,6 @@
 // but if it fails to find the corresponding entities, it creates new ones.
 // It assumes that any seed arriving here found no match to its ISBN
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const createInvEntity = require('../create_inv_entity')

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const user_ = require('controllers/user/lib/user')
 const pw_ = require('lib/crypto').passwords

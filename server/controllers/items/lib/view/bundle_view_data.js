@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const buildInvertedClaimTree = require('./build_inverted_claim_tree')
 

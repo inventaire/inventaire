@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { props, tap, wait, map } = require('lib/promises')
 const { undesiredRes } = require('../utils')
 

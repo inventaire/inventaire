@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = require('config').universalPath
 const _ = require('builders/utils')
-const { feed: feedConfig } = CONFIG
+const { feed: feedConfig } = require('config')
 const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const serializeFeed = require('./serialize_feed')
 const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')

@@ -1,6 +1,4 @@
 require('should')
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils')
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'

@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const delayedInit = setTimeout
 const { initDelay, disabled } = CONFIG.mailer

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { publicReq, undesiredRes } = require('apiTests/utils/utils')
 const { customAuthReq } = require('apiTests/utils/request')

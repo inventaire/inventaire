@@ -1,12 +1,10 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 // to be used in development only
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const regex_ = require('lib/regex')
-const { local: localStorage } = CONFIG.mediaStorage
+const { local: localStorage } = require('config').mediaStorage
 const storageFolder = localStorage.folder()
 
 // images urls look like /img/#{container}/#{hash}"

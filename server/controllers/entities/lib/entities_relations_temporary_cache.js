@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
+const { checkFrequency, ttl } = require('config').entitiesRelationsTemporaryCache
 const db = require('db/level/get_sub_db')('entities-relations', 'utf8')
 const radio = require('lib/radio')
 

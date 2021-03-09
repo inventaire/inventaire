@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 require('should')
 const { authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')

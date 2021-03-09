@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
 const allowedValuesPerTypePerProperty = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')

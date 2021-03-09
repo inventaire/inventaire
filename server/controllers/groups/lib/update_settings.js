@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { attributes, validations, formatters } = require('models/group')
 const { updatable } = attributes

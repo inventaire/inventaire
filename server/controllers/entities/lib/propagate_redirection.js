@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const redirectClaims = require('./redirect_claims')
 const updateItemEntity = require('controllers/items/lib/update_entity')
 

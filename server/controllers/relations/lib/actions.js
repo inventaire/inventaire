@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const queries_ = require('./queries')
 const radio = require('lib/radio')
 

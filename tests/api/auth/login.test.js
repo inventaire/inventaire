@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
 const { Wait } = require('lib/promises')

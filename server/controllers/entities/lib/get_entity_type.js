@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { types } = require('lib/wikidata/aliases')
 
 // Takes an entity wdt:P31 (instance of) claims array

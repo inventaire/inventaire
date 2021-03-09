@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const resolveWorksFromEdition = require('./resolve_works_from_edition')
 const resolveAuthorsFromWorks = require('./resolve_authors_from_works')

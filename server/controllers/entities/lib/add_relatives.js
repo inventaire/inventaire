@@ -1,7 +1,6 @@
 // Enrich ../by_uris results with entities related to the directly
 // requested entities, following those entities claims
 
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const getEntitiesByUris = require('./get_entities_by_uris')
 

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const db = require('db/couchdb/base')('users')
 const User = require('models/user')
 const token_ = require('./token')

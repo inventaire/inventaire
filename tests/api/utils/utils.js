@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { request, customAuthReq } = require('./request')
 const randomString = require('lib/utils/random_string')
 const { createUser, getRefreshedUser } = require('../fixtures/users')

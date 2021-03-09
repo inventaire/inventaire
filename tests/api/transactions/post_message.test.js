@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, authReqC, shouldNotBeCalled } = require('apiTests/utils/utils')
 const { getSomeTransaction, addMessage } = require('../fixtures/transactions')

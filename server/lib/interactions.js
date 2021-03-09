@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
 const error_ = require('lib/error/error')
 

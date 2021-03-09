@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const groups_ = require('controllers/groups/lib/groups')
 const relations_ = require('controllers/relations/lib/queries')

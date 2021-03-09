@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { shellExec } = require('scripts/scripts_utils')
 const { backupFolder } = require('./get_backup_folder_data')
-const { username, password, hostname: host, port } = CONFIG.db
+const { username, password, hostname: host, port } = require('config').db
 
 module.exports = async dbName => {
   const args = buildArgsArray(backupFolder, dbName)

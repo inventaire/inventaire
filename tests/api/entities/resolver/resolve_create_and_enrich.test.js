@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
 const { authReq } = require('apiTests/utils/utils')
 const { deleteByUris } = require('apiTests/utils/entities')

@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
 const typeSearch = require('controllers/search/lib/type_search')

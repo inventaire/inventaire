@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { tap } = require('lib/promises')
 const tasks_ = require('./lib/tasks')
@@ -9,7 +7,7 @@ const responses_ = require('lib/responses')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const jobs_ = require('db/level/jobs')
 const checkEntity = require('./lib/check_entity')
-const { interval } = CONFIG.jobs['inv:deduplicate']
+const { interval } = require('config').jobs['inv:deduplicate']
 const batchLength = 1000
 
 module.exports = (req, res) => {

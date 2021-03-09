@@ -1,5 +1,4 @@
 // A module to look for works labels occurrences in an author's external databases reference.
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const getWikipediaArticle = require('data/wikipedia/get_article')

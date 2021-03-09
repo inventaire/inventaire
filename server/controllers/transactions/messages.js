@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const comments_ = require('controllers/comments/lib/comments')

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 require('should')
 const { formatBatchOps } = require('db/level/utils')
 

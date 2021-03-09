@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const entities_ = require('./entities')
 const mergeEntities = require('./merge_entities')

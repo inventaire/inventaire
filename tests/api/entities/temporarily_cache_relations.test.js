@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('lodash')
 require('should')
 const { createWorkWithAuthor, createWorkWithSerie } = require('../fixtures/entities')

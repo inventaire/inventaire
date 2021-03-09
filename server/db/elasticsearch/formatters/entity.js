@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const wdk = require('wikidata-sdk')
 const { simplify } = wdk

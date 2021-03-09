@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const Transaction = require('models/transaction')
 const error_ = require('lib/error/error')

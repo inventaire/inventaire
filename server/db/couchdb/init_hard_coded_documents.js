@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const users = _.values(require('./hard_coded_documents').users)
 const usersDb = require('db/couchdb/base')('users')

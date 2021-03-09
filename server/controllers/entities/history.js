@@ -1,5 +1,4 @@
 // An endpoint to get entities history as snapshots and diffs
-const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')

@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { attributes, validations, formatters } = require('models/user')
 const { updatable, concurrencial, acceptNullValue } = attributes

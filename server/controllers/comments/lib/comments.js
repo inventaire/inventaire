@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const Comment = require('models/comment')
 const assert_ = require('lib/utils/assert_types')
 

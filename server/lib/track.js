@@ -1,6 +1,5 @@
-// Doc: http://developer.piwik.org/api-reference/tracking-api
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
+// Doc: http://developer.piwik.org/api-reference/tracking-api
 const _ = require('builders/utils')
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const host = CONFIG.fullHost()

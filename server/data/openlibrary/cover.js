@@ -1,6 +1,5 @@
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
-const __ = require('config').universalPath
 const requests_ = require('lib/requests')
 const { coverByOlId } = require('./api')
 

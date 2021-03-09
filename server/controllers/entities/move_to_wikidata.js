@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { Track } = require('lib/track')

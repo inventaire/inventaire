@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const token_ = require('controllers/user/lib/token')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')

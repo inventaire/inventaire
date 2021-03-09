@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 const getByAccessLevel = require('./get_by_access_level')
 const items_ = require('controllers/items/lib/items')

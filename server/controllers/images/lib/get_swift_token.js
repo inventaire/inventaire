@@ -1,7 +1,6 @@
+const CONFIG = require('config')
 // Identity: v3
 // Swift: v2
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { tenMinutes } = require('lib/time')

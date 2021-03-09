@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const Item = require('models/item')
 const db = require('db/couchdb/base')('items')
 

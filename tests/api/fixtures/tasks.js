@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const { createHuman, createWork } = require('./entities')
 const { checkEntities } = require('../utils/tasks')

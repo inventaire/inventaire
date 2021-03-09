@@ -1,4 +1,3 @@
-const __ = require('config').universalPath
 const _ = require('builders/utils')
 
 const getSerieParts = require('./get_serie_parts')
