@@ -8,6 +8,8 @@ const containers = require('./lib/containers')
 const promises_ = __.require('lib', 'promises')
 
 module.exports = (req, res) => {
+  return error_.bundle(req, res, 'due to a technical incident, image upload is disabled today', 503)
+
   const { container } = req.query
 
   if ((container == null) || (containers[container] == null)) {
