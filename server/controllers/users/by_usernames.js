@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const user_ = __.require('controllers', 'user/lib/user')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const user_ = require('controllers/user/lib/user')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   usernames: {}

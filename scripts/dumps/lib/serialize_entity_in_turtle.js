@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
+const _ = require('builders/utils')
+const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 const { yellow } = require('chalk')
 
 module.exports = entity => {

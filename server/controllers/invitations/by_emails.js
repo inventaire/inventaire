@@ -1,14 +1,13 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const parseEmails = require('./lib/parse_emails')
 const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_data')
-const groups_ = __.require('controllers', 'groups/lib/groups')
-const Group = __.require('models', 'group')
-const { Track } = __.require('lib', 'track')
+const groups_ = require('controllers/groups/lib/groups')
+const Group = require('models/group')
+const { Track } = require('lib/track')
 
 module.exports = (req, res) => {
   const { user, body } = req

@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { getUser, authReq, customAuthReq, publicReq } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq, customAuthReq, publicReq } = require('apiTests/utils/utils')
 const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 const { getTwoFriends } = require('../fixtures/users')
 

@@ -1,14 +1,13 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { attributes, validations, formatters } = __.require('models', 'user')
+const _ = require('builders/utils')
+const { attributes, validations, formatters } = require('models/user')
 const { updatable, concurrencial, acceptNullValue } = attributes
-const updateEmail = __.require('controllers', 'user/lib/update_email')
-const db = __.require('couch', 'base')('users')
-const availability_ = __.require('controllers', 'user/lib/availability')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { basicUpdater } = __.require('lib', 'doc_updates')
-const { Track } = __.require('lib', 'track')
+const updateEmail = require('controllers/user/lib/update_email')
+const db = require('db/couchdb/base')('users')
+const availability_ = require('controllers/user/lib/availability')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { basicUpdater } = require('lib/doc_updates')
+const { Track } = require('lib/track')
 
 module.exports = (req, res) => {
   const { user, body } = req

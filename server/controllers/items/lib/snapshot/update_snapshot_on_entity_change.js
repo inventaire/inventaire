@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const radio = __.require('lib', 'radio')
+const radio = require('lib/radio')
 const refreshSnapshot = require('./refresh_snapshot')
 
 // Items keep some data about their related entities, and those entities graphs

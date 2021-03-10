@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const groups_ = __.require('controllers', 'groups/lib/groups')
-const relations_ = __.require('controllers', 'relations/lib/queries')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const groups_ = require('controllers/groups/lib/groups')
+const relations_ = require('controllers/relations/lib/queries')
+const assert_ = require('lib/utils/assert_types')
 
 module.exports = {
   getUserRelations: userId => {

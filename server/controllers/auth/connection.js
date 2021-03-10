@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const error_ = __.require('lib', 'error/error')
-const passport_ = __.require('lib', 'passport/passport')
+const sanitize = require('lib/sanitize/sanitize')
+const error_ = require('lib/error/error')
+const passport_ = require('lib/passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')
-const { ownerSafeData } = __.require('controllers', 'user/lib/authorized_user_data_pickers')
+const { ownerSafeData } = require('controllers/user/lib/authorized_user_data_pickers')
 
 const signupSanitization = {
   username: {},

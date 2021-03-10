@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
+const getOriginalLang = require('lib/wikidata/get_original_lang')
 const getSerieParts = require('./get_serie_parts')
 const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
 

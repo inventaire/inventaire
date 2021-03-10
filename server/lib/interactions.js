@@ -1,6 +1,5 @@
-const __ = require('config').universalPath
-const { areFriendsOrGroupCoMembers } = __.require('controllers', 'user/lib/relations_status')
-const error_ = __.require('lib', 'error/error')
+const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
+const error_ = require('lib/error/error')
 
 // MUST return the item or throw an error
 module.exports = {

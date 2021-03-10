@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 const { authReq, publicReq, undesiredRes } = require('../utils/utils')
 const { groupPromise } = require('../fixtures/groups')

@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const items_ = __.require('controllers', 'items/lib/items')
-const User = __.require('models', 'user')
-const db = __.require('couch', 'base')('users')
+const _ = require('builders/utils')
+const items_ = require('controllers/items/lib/items')
+const User = require('models/user')
+const db = require('db/couchdb/base')('users')
 
 module.exports = userId => {
   return items_.byOwner(userId)

@@ -22,16 +22,14 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const validLangs = Object.keys(require('wikidata-lang').byCode)
 
-const properties = __.require('controllers', 'entities/lib/properties/properties_values_constraints')
+const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 const validateRequiredPropertiesValues = require('./validations/validate_required_properties_values')
-const inferences = __.require('controllers', 'entities/lib/inferences')
+const inferences = require('controllers/entities/lib/inferences')
 
 const Entity = module.exports = {
   create: () => {

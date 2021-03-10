@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
 const { getEntitiesPopularities } = require('./lib/popularity')
 
 const sanitization = {

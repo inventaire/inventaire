@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { publicReq } = __.require('apiTests', 'utils/utils')
+const { publicReq } = require('apiTests/utils/utils')
 const { populate } = require('../fixtures/populate')
 const lastPublicUrl = '/api/items?action=last-public'
 

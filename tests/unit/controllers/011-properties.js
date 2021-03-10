@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 
-const { validateValueType } = __.require('controllers', 'entities/lib/properties/validations')
+const { validateValueType } = require('controllers/entities/lib/properties/validations')
 
 describe('properties', () => {
   describe('validateValueType', () => {

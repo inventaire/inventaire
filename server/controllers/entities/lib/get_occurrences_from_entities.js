@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const getAuthorWorks = __.require('controllers', 'entities/lib/get_author_works')
-const getEntitiesList = __.require('controllers', 'entities/lib/get_entities_list')
+const _ = require('builders/utils')
+const getAuthorWorks = require('controllers/entities/lib/get_author_works')
+const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const { getEntityNormalizedTerms } = require('./terms_normalization')
 
 module.exports = (uri, suspectWorksLabels) => {

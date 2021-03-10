@@ -1,8 +1,7 @@
 // Get the amount of entities linking to a given entity
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const runWdQuery = __.require('data', 'wikidata/run_query')
+const runWdQuery = require('data/wikidata/run_query')
 
 module.exports = (uri, refresh) => {
   const [ prefix, id ] = uri.split(':')

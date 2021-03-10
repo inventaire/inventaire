@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const items_ = __.require('controllers', 'items/lib/items')
-const getItemsByAccessLevel = __.require('controllers', 'items/lib/get_by_access_level')
-const relations_ = __.require('controllers', 'relations/lib/queries')
-const promises_ = __.require('lib', 'promises')
-const user_ = __.require('controllers', 'user/lib/user')
+const _ = require('builders/utils')
+const items_ = require('controllers/items/lib/items')
+const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')
+const relations_ = require('controllers/relations/lib/queries')
+const promises_ = require('lib/promises')
+const user_ = require('controllers/user/lib/user')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 
 module.exports = (userId, lang, limitDate = 0) => {

@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const promises_ = __.require('lib', 'promises')
+const promises_ = require('lib/promises')
 const getEntitiesByUris = require('./get_entities_by_uris')
 const specialEntityImagesGetter = require('./special_entity_images_getter')
 const getEntityImagesFromClaims = require('./get_entity_images_from_claims')

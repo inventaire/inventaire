@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const { updateReadStatus } = require('./lib/notifications')
 
 module.exports = (req, res) => {

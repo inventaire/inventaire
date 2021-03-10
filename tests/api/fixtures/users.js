@@ -1,15 +1,14 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = require('lib/utils/assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
-const { addRole } = __.require('controllers', 'user/lib/user')
+const { addRole } = require('controllers/user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
 // Working around the circular dependency

@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
-const isbn_ = __.require('lib', 'isbn/isbn')
+const isbn_ = require('lib/isbn/isbn')
 
 describe('isbn', () => {
   // Test only what was added on top of the isbn3 module

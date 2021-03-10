@@ -14,13 +14,12 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const db = __.require('level', 'get_sub_db')('snapshot', 'json')
-const { formatBatchOps } = __.require('level', 'utils')
+const _ = require('builders/utils')
+const db = require('db/level/get_sub_db')('snapshot', 'json')
+const { formatBatchOps } = require('db/level/utils')
 const refreshSnapshot = require('./refresh_snapshot')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const pTimeout = require('p-timeout')
 
 module.exports = {

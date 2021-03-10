@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser } = require('./utils')
 const { getIndexedDoc } = require('../utils/search')
-const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
-const { waitForIndexation } = __.require('apiTests', 'utils/search')
+const { unprefixify } = require('controllers/entities/lib/prefix')
+const { waitForIndexation } = require('apiTests/utils/search')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives, refresh) => {

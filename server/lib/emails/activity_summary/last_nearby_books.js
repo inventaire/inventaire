@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const items_ = __.require('controllers', 'items/lib/items')
+const items_ = require('controllers/items/lib/items')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 
 module.exports = (user, limitDate = 0) => {

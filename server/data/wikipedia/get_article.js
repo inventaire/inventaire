@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const error_ = require('lib/error/error')
 const qs = require('querystring')
-const cache_ = __.require('lib', 'cache')
-const { oneMonth } = __.require('lib', 'time')
+const cache_ = require('lib/cache')
+const { oneMonth } = require('lib/time')
 
 module.exports = params => {
   const { lang, title, introOnly } = params

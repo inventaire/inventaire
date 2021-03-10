@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
 const { pass } = require('./common')
 const { types } = require('../attributes/notification')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = require('lib/utils/assert_types')
 const Group = require('../group')
 
 const validations = module.exports = {

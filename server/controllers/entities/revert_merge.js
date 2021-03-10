@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
 const revertMerge = require('./lib/revert_merge')
-const { tapEmit } = __.require('lib', 'radio')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const { tapEmit } = require('lib/radio')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   from: {}

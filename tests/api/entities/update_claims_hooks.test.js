@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const { getByUris, updateClaim } = require('../utils/entities')
 const { createWork, createEditionFromWorks } = require('../fixtures/entities')
 

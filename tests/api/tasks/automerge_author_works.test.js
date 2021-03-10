@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { Wait, tap } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { Wait, tap } = require('lib/promises')
 require('should')
 
-const automergeAuthorWorks = __.require('controllers', 'tasks/lib/automerge_author_works')
+const automergeAuthorWorks = require('controllers/tasks/lib/automerge_author_works')
 const { checkEntities } = require('../utils/tasks')
 const { getByUris, findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/entities')

@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
-const isbn_ = __.require('lib', 'isbn/isbn')
+const isbn_ = require('lib/isbn/isbn')
 const wdLang = require('wikidata-lang')
 const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')

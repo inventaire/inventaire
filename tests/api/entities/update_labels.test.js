@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
 const should = require('should')
 const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const { createHuman } = require('../fixtures/entities')
 const { getByUri, updateLabel } = require('../utils/entities')
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 const humanPromise = createHuman()
 
 describe('entities:update-labels', () => {

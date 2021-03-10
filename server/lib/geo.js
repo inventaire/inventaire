@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = require('lib/utils/assert_types')
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo

@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const wdEdit = __.require('lib', 'wikidata/edit')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const wdEdit = require('lib/wikidata/edit')
 const wdOauth = require('./wikidata_oauth')
 const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')

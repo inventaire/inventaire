@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = __.require('apiTests', 'utils/utils')
+const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = require('apiTests/utils/utils')
 const { groupPromise, addMember } = require('../fixtures/groups')
 const { createItem, createItems } = require('../fixtures/items')
 const { humanName } = require('../fixtures/entities')

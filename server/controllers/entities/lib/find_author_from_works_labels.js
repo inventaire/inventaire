@@ -1,12 +1,10 @@
 // Tries to identify an author from the occurrences of their works labels
 // in their Wikipedia article. It can thus only work for authors known by Wikidata
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const typeSearch = __.require('controllers', 'search/lib/type_search')
+const _ = require('builders/utils')
+const typeSearch = require('controllers/search/lib/type_search')
 const getOccurrencesFromExternalSources = require('./get_occurrences_from_external_sources')
-const promises_ = __.require('lib', 'promises')
+const promises_ = require('lib/promises')
 
 // Returns a URI if an single author was identified
 // returns undefined otherwise

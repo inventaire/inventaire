@@ -1,14 +1,12 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
 const sanitizeEntry = require('./lib/resolver/sanitize_entry')
 const resolve = require('./lib/resolver/resolve')
 const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
 const CreateUnresolvedEntry = require('./lib/resolver/create_unresolved_entry')
-const { oneHour } = __.require('lib', 'time')
+const { oneHour } = require('lib/time')
 
 // Entry example:
 // {

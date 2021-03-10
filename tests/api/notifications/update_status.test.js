@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { getUser, getReservedUser, customAuthReq } = __.require('apiTests', 'utils/utils')
-const { makeFriends } = __.require('apiTests', 'utils/relations')
-const { getNotifications } = __.require('apiTests', 'utils/notifications')
+const { getUser, getReservedUser, customAuthReq } = require('apiTests/utils/utils')
+const { makeFriends } = require('apiTests/utils/relations')
+const { getNotifications } = require('apiTests/utils/notifications')
 
 describe('notifications:update status', () => {
   it('should update a notification', async () => {

@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const { Wait } = require('lib/promises')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
 
 module.exports = (req, res) => {

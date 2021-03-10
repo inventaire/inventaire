@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 
 // Throws if the passed object doesn't respect the provided constraints:
 // - validKeys: a limited set of possible keys

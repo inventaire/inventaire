@@ -22,12 +22,10 @@ const builders = require('./properties_config_builders')
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)
 
-const __ = require('config').universalPath
-
 const {
   PositiveInteger: positiveIntegerPattern,
   StrictlyPositiveInteger: strictlyPositiveIntegerPattern
-} = __.require('lib', 'regex')
+} = require('lib/regex')
 
 // Keep in sync with ./properties_per_type
 module.exports = {

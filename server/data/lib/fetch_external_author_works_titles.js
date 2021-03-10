@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
 const qs = require('querystring')
-const cache_ = __.require('lib', 'cache')
-const { oneMonth } = __.require('lib', 'time')
+const cache_ = require('lib/cache')
+const { oneMonth } = require('lib/time')
 const timespan = 3 * oneMonth
 
 module.exports = (name, endpoint, getQuery) => id => {

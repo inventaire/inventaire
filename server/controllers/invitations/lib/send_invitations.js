@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const invitations_ = require('./invitations')
-const Invited = __.require('models', 'invited')
-const radio = __.require('lib', 'radio')
+const Invited = require('models/invited')
+const radio = require('lib/radio')
 
 module.exports = (user, group, emails, message) => {
   assert_.object(user)

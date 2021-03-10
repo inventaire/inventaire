@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
 const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
 const { randomLongWord, randomWords } = require('../fixtures/text')
@@ -8,7 +6,7 @@ const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const { max_gram: maxGram } = __.require('db', 'elasticsearch/settings/settings').analysis.filter.autocomplete_filter
+const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.autocomplete_filter
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher

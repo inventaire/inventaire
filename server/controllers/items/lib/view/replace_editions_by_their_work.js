@@ -1,6 +1,5 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
+const _ = require('builders/utils')
+const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 
 module.exports = entities => {
   const { works, editions } = splitEntities(entities)

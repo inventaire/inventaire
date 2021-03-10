@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
-const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
+const getOriginalLang = require('lib/wikidata/get_original_lang')
+const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
 const updateLabel = require('./update_label')
 
 // TODO: also check for edition subtitle

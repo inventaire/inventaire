@@ -1,13 +1,12 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
+const _ = require('builders/utils')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
 const bundleViewData = require('./lib/view/bundle_view_data')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const sanitize = require('lib/sanitize/sanitize')
 const getAuthorizedItems = require('./lib/get_authorized_items')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
+const shelves_ = require('controllers/shelves/lib/shelves')
 
 const sanitization = {
   user: { optional: true },

@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const ActionsControllers = __.require('lib', 'actions_controllers')
+const ActionsControllers = require('lib/actions_controllers')
 const { bySuspectUris, bySuggestionUris } = require('./by_entity_uris')
 
 module.exports = {

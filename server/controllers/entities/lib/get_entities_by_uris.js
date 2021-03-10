@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const wdk = require('wikidata-sdk')
-const { isValidIsbn } = __.require('lib', 'isbn/isbn')
+const { isValidIsbn } = require('lib/isbn/isbn')
 
 // Getters take ids, return an object on the model { entities, notFound }
 const getters = {

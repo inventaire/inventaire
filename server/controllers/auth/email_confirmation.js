@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const token_ = __.require('controllers', 'user/lib/token')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
+const token_ = require('controllers/user/lib/token')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
 
 module.exports = (req, res) => {
   const { user } = req

@@ -1,15 +1,14 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
-const db = __.require('couch', 'base')('entities')
-const Entity = __.require('models', 'entity')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const db = require('db/couchdb/base')('entities')
+const Entity = require('models/entity')
 const patches_ = require('./patches')
-const isbn_ = __.require('lib', 'isbn/isbn')
-const couch_ = __.require('lib', 'couch')
+const isbn_ = require('lib/isbn/isbn')
+const couch_ = require('lib/couch')
 const validateAndFormatClaims = require('./validate_and_format_claims')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const getEntityType = require('./get_entity_type')
-const { getUrlFromImageHash } = __.require('lib', 'images')
+const { getUrlFromImageHash } = require('lib/images')
 
 const { validateProperty } = require('./properties/validations')
 

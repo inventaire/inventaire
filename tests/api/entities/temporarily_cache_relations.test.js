@@ -1,15 +1,14 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const _ = require('lodash')
 require('should')
 const { createWorkWithAuthor, createWorkWithSerie } = require('../fixtures/entities')
 const { merge } = require('../utils/entities')
 const { publicReq } = require('../utils/utils')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
-const { cacheEntityRelations, getCachedRelations } = __.require('controllers', 'entities/lib/temporarily_cache_relations')
+const { cacheEntityRelations, getCachedRelations } = require('controllers/entities/lib/temporarily_cache_relations')
 
 if (CONFIG.leveldbMemoryBackend) {
   throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)

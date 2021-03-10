@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const resolveEdition = require('./resolve_edition')
 const resolveSeedsByExternalIds = require('./resolve_seeds_by_external_ids')
 const resolveInContext = require('./resolve_in_context')

@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { groupName } = require('../fixtures/groups')
-const slugify = __.require('controllers', 'groups/lib/slugify')
+const slugify = require('controllers/groups/lib/slugify')
 const endpoint = '/api/groups?action=create'
 
 describe('groups:create', () => {

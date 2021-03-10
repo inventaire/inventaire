@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const { typesNames } = __.require('lib', 'wikidata/aliases')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const allowedValuesPerTypePerProperty = __.require('controllers', 'entities/lib/properties/allowed_values_per_type_per_property')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const { typesNames } = require('lib/wikidata/aliases')
+const sanitize = require('lib/sanitize/sanitize')
+const allowedValuesPerTypePerProperty = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
 
 const sanitization = {
   property: {

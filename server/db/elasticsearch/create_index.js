@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const { host } = CONFIG.elasticsearch
-const mappings = __.require('db', 'elasticsearch/mappings/mappings')
-const settings = __.require('db', 'elasticsearch/settings/settings')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const { host } = require('config').elasticsearch
+const mappings = require('db/elasticsearch/mappings/mappings')
+const settings = require('db/elasticsearch/settings/settings')
 
 module.exports = async index => {
   const url = `${host}/${index}`

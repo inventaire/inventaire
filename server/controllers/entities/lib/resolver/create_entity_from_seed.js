@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
-const isbn_ = __.require('lib', 'isbn/isbn')
-const { getImageByUrl, getImageByIsbn } = __.require('data', 'dataseed/dataseed')
+const isbn_ = require('lib/isbn/isbn')
+const { getImageByUrl, getImageByIsbn } = require('data/dataseed/dataseed')
 
 const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author

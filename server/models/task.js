@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const validations = require('./validations/task')
 
 module.exports = {

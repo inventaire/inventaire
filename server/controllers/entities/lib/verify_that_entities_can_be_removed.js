@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const entities_ = require('./entities')
-const items_ = __.require('controllers', 'items/lib/items')
+const items_ = require('controllers/items/lib/items')
 const getEntitiesByUris = require('./get_entities_by_uris')
 const { prefixifyInv } = require('./prefix')
 

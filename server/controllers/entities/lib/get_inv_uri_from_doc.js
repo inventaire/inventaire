@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const { normalizeIsbn } = __.require('lib', 'isbn/isbn')
+const { normalizeIsbn } = require('lib/isbn/isbn')
 const { prefixifyInv } = require('./prefix')
 
 module.exports = entity => {

@@ -4,25 +4,24 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const wdk = require('wikidata-sdk')
-const getOriginalLang = __.require('lib', 'wikidata/get_original_lang')
-const formatClaims = __.require('lib', 'wikidata/format_claims')
+const getOriginalLang = require('lib/wikidata/get_original_lang')
+const formatClaims = require('lib/wikidata/format_claims')
 const { simplify } = wdk
 const getEntityType = require('./get_entity_type')
-const { prefixifyWd, unprefixify } = __.require('controllers', 'entities/lib/prefix')
-const cache_ = __.require('lib', 'cache')
-const getWdEntity = __.require('data', 'wikidata/get_entity')
+const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
+const cache_ = require('lib/cache')
+const getWdEntity = require('data/wikidata/get_entity')
 const addImageData = require('./add_image_data')
-const radio = __.require('lib', 'radio')
+const radio = require('lib/radio')
 const propagateRedirection = require('./propagate_redirection')
-const { _id: hookUserId } = __.require('couch', 'hard_coded_documents').users.hook
+const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
 
 // Working around the circular dependency
 let reindex
 const lateRequire = () => {
-  reindex = __.require('elasticsearch', 'indexation')({ indexBaseName: 'wikidata' })
+  reindex = require('db/elasticsearch/indexation')({ indexBaseName: 'wikidata' })
 }
 setTimeout(lateRequire, 0)
 

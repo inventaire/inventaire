@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const Q535 = require('./fixtures/Q535.customized.json')
 require('should')
-const entityFormatter = __.require('db', 'elasticsearch/formatters/entity')
+const entityFormatter = require('db/elasticsearch/formatters/entity')
 
 describe('indexation: entity formatter', () => {
   describe('flatten fields', () => {

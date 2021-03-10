@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const getEntitiesByUris = require('./get_entities_by_uris')
 
 // Get only the entity formatted doc you needs instead of an object

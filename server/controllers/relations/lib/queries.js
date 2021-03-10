@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const couch_ = __.require('lib', 'couch')
+const couch_ = require('lib/couch')
 const userRelativeRequest = require('./user-relative_request')
-const db = __.require('couch', 'base')('users', 'relations')
+const db = require('db/couchdb/base')('users', 'relations')
 
-const Relation = __.require('models', 'relation')
+const Relation = require('models/relation')
 
 const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 

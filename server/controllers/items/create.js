@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const items_ = __.require('controllers', 'items/lib/items')
+const _ = require('builders/utils')
+const items_ = require('controllers/items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
-const error_ = __.require('lib', 'error/error')
-const { Track } = __.require('lib', 'track')
+const error_ = require('lib/error/error')
+const { Track } = require('lib/track')
 
 module.exports = (req, res) => {
   let { body: items } = req

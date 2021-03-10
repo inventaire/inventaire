@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { getByUri, updateLabel, revertEdit, getHistory, addClaim } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { createWork, createEditionWithIsbn } = require('../fixtures/entities')

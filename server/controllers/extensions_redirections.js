@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const user_ = __.require('controllers', 'user/lib/user')
-const groups_ = __.require('controllers', 'groups/lib/groups')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const user_ = require('controllers/user/lib/user')
+const groups_ = require('controllers/groups/lib/groups')
 
 const extensionRedirect = extension => (req, res) => {
   const { domain, id } = parseUrl(req, extension)

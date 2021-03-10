@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('../entities')
-const { getImageByUrl } = __.require('data', 'dataseed/dataseed')
+const { getImageByUrl } = require('data/dataseed/dataseed')
 
 module.exports = ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry

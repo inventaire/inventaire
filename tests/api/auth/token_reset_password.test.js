@@ -1,12 +1,11 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const host = CONFIG.fullPublicHost()
 require('should')
 const { publicReq, undesiredRes } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { createUserEmail } = require('../fixtures/users')
 const endpoint = '/api/token?action=reset-password'
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 
 describe('token:reset-password', () => {
   it('should reject requests without email', done => {

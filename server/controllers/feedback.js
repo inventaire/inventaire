@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const radio = __.require('lib', 'radio')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const radio = require('lib/radio')
 const { audit: auditIsbn } = require('isbn3')
 
 module.exports = {

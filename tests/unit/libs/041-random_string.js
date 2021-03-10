@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 
 describe('random string', () => {
   it('should return a string of the requested length', () => {

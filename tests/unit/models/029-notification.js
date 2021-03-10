@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 require('should')
-const Notification = __.require('models', 'notification')
+const Notification = require('models/notification')
 const someCouchUuid = '1234567890a1234567890b1234567890'
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({

@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { Wait } = require('lib/promises')
 const entities_ = require('./entities')
 const updateInvClaim = require('./update_inv_claim')
 const placeholders_ = require('./placeholders')
-const { unprefixify } = __.require('controllers', 'entities/lib/prefix')
+const { unprefixify } = require('controllers/entities/lib/prefix')
 
 module.exports = (user, uris) => {
   const reqUserId = user._id

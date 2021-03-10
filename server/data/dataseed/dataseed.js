@@ -4,13 +4,11 @@
 // while entities created internally ramp up toward getting us autonomous
 // Its place should be progressively decreased until complete removal
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const isbn_ = __.require('lib', 'isbn/isbn')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const isbn_ = require('lib/isbn/isbn')
 
-const { enabled, host } = CONFIG.dataseed
+const { enabled, host } = require('config').dataseed
 const reqOptions = { timeout: 60 * 1000 }
 if (host.startsWith('https')) reqOptions.selfSigned = true
 

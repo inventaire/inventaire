@@ -1,12 +1,10 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const formatters = require('./formatters/formatters')
 const filters = require('./filters')
 const deindex = require('./deindex')
 const { addToBatch, postBatch } = require('./bulk')
-const { updateDelay } = CONFIG.elasticsearch
+const { updateDelay } = require('config').elasticsearch
 const bulkThrottleDelay = updateDelay / 2
 
 let batch = []

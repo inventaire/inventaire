@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
-const transacColors = __.require('lib', 'emails/activity_summary/transactions_colors')
+const _ = require('builders/utils')
+const templateHelpers = require('lib/emails/handlebars_helpers')
+const transacColors = require('lib/emails/activity_summary/transactions_colors')
 
 module.exports = (item, user, lang) => {
   const { transaction, snapshot, details } = item

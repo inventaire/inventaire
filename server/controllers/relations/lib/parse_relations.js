@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 module.exports = res => {
   const relations = _.initCollectionsIndex(relationsTypes)

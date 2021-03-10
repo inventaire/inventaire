@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const Group = __.require('models', 'group')
-const radio = __.require('lib', 'radio')
+const Group = require('models/group')
+const radio = require('lib/radio')
 const initMembershipUpdateHooks = require('./membership_update_hooks')
-const db = __.require('couch', 'base')('groups')
+const db = require('db/couchdb/base')('groups')
 
 module.exports = (action, params) => {
   const { reqUserId, group: groupId, user: secondaryUserId } = params

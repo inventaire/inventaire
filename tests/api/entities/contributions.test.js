@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
 const should = require('should')
 const { adminReq, getUser, getReservedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 
 describe('entities:contributions', () => {
   it('should return contributions from all users by default', async () => {

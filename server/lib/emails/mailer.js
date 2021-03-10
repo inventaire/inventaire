@@ -1,6 +1,5 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const delayedInit = setTimeout
 const { initDelay, disabled } = CONFIG.mailer
 
@@ -21,7 +20,7 @@ const initMailer = () => {
 }
 
 const initMailerEventListeners = () => {
-  const radio = __.require('lib', 'radio')
+  const radio = require('lib/radio')
   const sendEmail = require('./send_email')
   const debounceEmails = require('./debounce_emails')
   const initDebouncedEmailsCrawler = require('./debounced_emails_crawler')

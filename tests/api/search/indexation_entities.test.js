@@ -1,12 +1,11 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const { createHuman, createEdition, addSerie } = require('../fixtures/entities')
 const { deleteByUris, merge, updateLabel } = require('../utils/entities')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
-const { entities: entitiesIndex } = __.require('controllers', 'search/lib/indexes').indexes
+const { entities: entitiesIndex } = require('controllers/search/lib/indexes').indexes
 
 describe('indexation:entities', () => {
   it('should index a new local entity', async () => {

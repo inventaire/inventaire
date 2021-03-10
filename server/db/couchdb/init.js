@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { tap } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { tap } = require('lib/promises')
 const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.fullHost()
 const initHardCodedDocuments = require('./init_hard_coded_documents')
@@ -20,7 +20,7 @@ for (const dbName in dbsList) {
   })
 }
 
-const designDocFolder = __.path('couchdb', 'design_docs')
+const designDocFolder = __.path('db', 'couchdb/design_docs')
 
 const init = () => {
   return couchInit(dbBaseUrl, formattedList, designDocFolder)

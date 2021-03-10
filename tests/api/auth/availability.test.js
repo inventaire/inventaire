@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { publicReq, undesiredRes } = require('../utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const usernameEndpoint = '/api/auth?action=username-availability'
 const emailEndpoint = '/api/auth?action=email-availability'
 const { createUser, createUsername } = require('../fixtures/users')

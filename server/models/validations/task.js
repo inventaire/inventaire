@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { pass, entityUri, userId, BoundedString } = require('./common')
 
 const attributes = require('../attributes/task')

@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const images_ = __.require('lib', 'images')
+const images_ = require('lib/images')
 const putImage = require('./put_image')
 
 const containerPutImage = (container, fnName) => fileData => {

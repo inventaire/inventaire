@@ -1,8 +1,7 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const getDbApi = require('./cot_base')
-const memoize = __.require('lib', 'utils/memoize')
+const memoize = require('lib/utils/memoize')
 const list = require('./list')
 
 module.exports = (dbBaseName, designDocName) => {

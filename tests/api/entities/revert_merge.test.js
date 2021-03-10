@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const { tap } = __.require('lib', 'promises')
+const { tap } = require('lib/promises')
 const { authReq, undesiredRes, dataadminReq } = require('../utils/utils')
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
 const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 

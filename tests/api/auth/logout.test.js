@@ -1,5 +1,5 @@
-require('should')
 const CONFIG = require('config')
+require('should')
 const host = CONFIG.fullHost()
 const { getUser, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')

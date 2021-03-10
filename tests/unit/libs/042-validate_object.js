@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
-const validateObject = __.require('lib', 'validate_object')
+const validateObject = require('lib/validate_object')
 
 describe('validate object', () => {
   it('should throw when passed an object with an invalid key', () => {

@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { authReq, authReqB, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { authReq, authReqB, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const { createItem } = require('../fixtures/items')
 const { createEditionFromWorkWithAuthor } = require('../fixtures/entities')

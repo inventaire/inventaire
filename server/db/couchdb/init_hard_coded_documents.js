@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const users = _.values(require('./hard_coded_documents').users)
-const usersDb = __.require('couch', 'base')('users')
+const usersDb = require('db/couchdb/base')('users')
 
 module.exports = () => {
   // Updating sequentially so that blue-cot initialize only a cookie session only once.

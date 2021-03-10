@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const isbn_ = __.require('lib', 'isbn/isbn')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const isbn_ = require('lib/isbn/isbn')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const { concurrentString, uniqueEntity } = require('./properties_config_bases')
 const allowedValuesPerTypePerProperty = require('./allowed_values_per_type_per_property')
-const { getPluralType } = __.require('lib', 'wikidata/aliases')
+const { getPluralType } = require('lib/wikidata/aliases')
 
 module.exports = {
   isbnProperty: num => {

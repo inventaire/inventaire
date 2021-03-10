@@ -1,6 +1,5 @@
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const { 'wdt:P31': invP31Values } = __.require('controllers', 'entities/lib/properties/allowed_values_per_type_per_property')
+const error_ = require('lib/error/error')
+const { 'wdt:P31': invP31Values } = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time

@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
 const verifyThatEntitiesCanBeRemoved = require('./lib/verify_that_entities_can_be_removed')
 const removeEntitiesByInvId = require('./lib/remove_entities_by_inv_id')
 

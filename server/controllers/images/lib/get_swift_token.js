@@ -1,11 +1,10 @@
+const CONFIG = require('config')
 // Identity: v3
 // Swift: v2
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const { tenMinutes } = __.require('lib', 'time')
-const requests_ = __.require('lib', 'requests')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const { tenMinutes } = require('lib/time')
+const requests_ = require('lib/requests')
 
 let lastToken
 let lastTokenExpirationTime = 0

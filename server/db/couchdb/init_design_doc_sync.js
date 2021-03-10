@@ -6,11 +6,11 @@
 
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { readFile, writeFile } = require('fs').promises
-const follow = __.require('lib', 'follow')
+const follow = require('lib/follow')
 const dbsList = require('./list')
-const designDocFolder = __.path('couchdb', 'design_docs')
+const designDocFolder = __.path('db', 'couchdb/design_docs')
 
 module.exports = () => {
   if (CONFIG.db.enableDesignDocSync) init()

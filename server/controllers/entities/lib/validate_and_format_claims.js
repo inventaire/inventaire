@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
 const validateAndFormatClaim = require('./validate_and_format_claim')
 const getEntityType = require('./get_entity_type')
 const validateClaimProperty = require('./validate_claim_property')

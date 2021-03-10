@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const User = __.require('models', 'user')
-const { getUserAccessLevels } = __.require('lib', 'get_user_access_levels')
+const _ = require('builders/utils')
+const User = require('models/user')
+const { getUserAccessLevels } = require('lib/get_user_access_levels')
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)

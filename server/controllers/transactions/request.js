@@ -1,13 +1,12 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const items_ = __.require('controllers', 'items/lib/items')
-const snapshot_ = __.require('controllers', 'items/lib/snapshot/snapshot')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const items_ = require('controllers/items/lib/items')
+const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const transactions_ = require('./lib/transactions')
-const user_ = __.require('controllers', 'user/lib/user')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const { Track } = __.require('lib', 'track')
+const user_ = require('controllers/user/lib/user')
+const sanitize = require('lib/sanitize/sanitize')
+const { Track } = require('lib/track')
 const { verifyRightToRequest } = require('./lib/rights_verification')
 
 const sanitization = {

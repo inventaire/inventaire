@@ -1,10 +1,9 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const Rss = require('rss')
 const root = CONFIG.fullPublicHost()
 const { feed: feedConfig } = CONFIG
-const templateHelpers = __.require('lib', 'emails/handlebars_helpers')
+const templateHelpers = require('lib/emails/handlebars_helpers')
 const getItemDescription = require('./get_item_description')
 const oneDayInMinutes = 24 * 60
 

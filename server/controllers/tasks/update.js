@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const { Track } = __.require('lib', 'track')
-const tasks_ = __.require('controllers', 'tasks/lib/tasks')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const { Track } = require('lib/track')
+const tasks_ = require('controllers/tasks/lib/tasks')
 const updateRelationScore = require('./lib/relation_score')
 
 module.exports = (req, res) => {

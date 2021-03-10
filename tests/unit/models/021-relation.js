@@ -1,10 +1,8 @@
-// CONFIG = require('config')
-// __ = CONFIG.universalPath
 // _ = __.require 'builders', 'utils'
 
 // should = require 'should'
 
-// Relation = __.require('models', 'relation')
+// Relation = require('models/relation')
 // couch_ = __.require 'lib', 'couch'
 
 // describe 'relation model', ->

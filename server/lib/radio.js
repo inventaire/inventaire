@@ -1,15 +1,13 @@
 // A server-wide event bus
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { EventEmitter } = require('events')
 const radio = new EventEmitter()
 
 // It's convenient in tests to have the guaranty that event listeners were called,
 // but in production, that would mean delaying API responses for secondary actions
 // (setting notifications, sending emails, analytics, etc)
-const waitForListeners = CONFIG.env.startsWith('tests')
+const waitForListeners = require('config').env.startsWith('tests')
 
 let emit
 if (waitForListeners) {

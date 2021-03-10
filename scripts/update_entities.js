@@ -12,16 +12,15 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
-const entitiesDb = __.require('couch', 'base')('entities')
-const patchesDb = __.require('couch', 'base')('patches')
-const docDiff = __.require('couchdb', 'doc_diffs')
-const Entity = __.require('models', 'entity')
-const Patch = __.require('models', 'patch')
-const userId = __.require('couch', 'hard_coded_documents').users.updater._id
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const entitiesDb = require('db/couchdb/base')('entities')
+const patchesDb = require('db/couchdb/base')('patches')
+const docDiff = require('db/couchdb/doc_diffs')
+const Entity = require('models/entity')
+const Patch = require('models/patch')
+const userId = require('db/couchdb/hard_coded_documents').users.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
 const { getNextBatch, updateFn, stats } = require(updateFnFilePath)

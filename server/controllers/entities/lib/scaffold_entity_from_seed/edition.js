@@ -4,16 +4,14 @@
 // This last task, and the effort of reconciling with the existing entities
 // is let to the responsability of the ./work module
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const { parse: parseIsbn } = __.require('lib', 'isbn/isbn')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const { parse: parseIsbn } = require('lib/isbn/isbn')
 const properties = require('../properties/properties_values_constraints')
 const createInvEntity = require('../create_inv_entity')
 // It is simpler to use a consistent, recognizable mocked user id
 // than to put exceptions everywhere
-const seedUserId = __.require('couch', 'hard_coded_documents').users.seed._id
+const seedUserId = require('db/couchdb/hard_coded_documents').users.seed._id
 const scaffoldWorkEntityFromSeed = require('./work')
 
 // seed attributes:

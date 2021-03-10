@@ -1,14 +1,13 @@
 const { name, cookieMaxAge, protocol } = require('config')
-const __ = require('config').universalPath
-const { expired } = __.require('builders', 'utils')
+const { expired } = require('builders/utils')
 
 const passport = require('passport')
-const passport_ = __.require('lib', 'passport/passport')
+const passport_ = require('lib/passport/passport')
 
 const cookieParser = require('cookie-parser')
 const cookieSession = require('cookie-session')
 const Keygrip = require('keygrip')
-const autoRotatedKeys = __.require('lib', 'auto_rotated_keys')
+const autoRotatedKeys = require('lib/auto_rotated_keys')
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {

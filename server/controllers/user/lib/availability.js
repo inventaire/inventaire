@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const User = __.require('models', 'user')
+const _ = require('builders/utils')
+const User = require('models/user')
 const isReservedWord = require('./is_reserved_word')
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const user_ = require('./user')
 
 module.exports = {

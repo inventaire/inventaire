@@ -1,7 +1,6 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { Wait } = require('lib/promises')
 require('should')
 const { authReq, authReqB, getUser, undesiredRes } = require('../utils/utils')
 const { CountChange } = require('./helpers')

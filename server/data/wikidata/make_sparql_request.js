@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const { wait } = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const { wait } = require('lib/promises')
+const error_ = require('lib/error/error')
 const wdk = require('wikidata-sdk')
 
 // Wikidata Query Service limits to 5 concurrent requests per IP

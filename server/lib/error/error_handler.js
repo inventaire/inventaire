@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const responses_ = __.require('lib', 'responses')
+const responses_ = require('lib/responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
 // Working around the circular dependency
 let _
-const lateRequire = () => { _ = __.require('builders', 'utils') }
+const lateRequire = () => { _ = require('builders/utils') }
 setTimeout(lateRequire, 0)
 
 module.exports = (req, res, err, status) => {

@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const entities_ = require('./entities')
-const Entity = __.require('models', 'entity')
+const Entity = require('models/entity')
 const getEntityType = require('./get_entity_type')
 const typeWithoutLabels = require('./type_without_labels')
 

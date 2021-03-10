@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const promises_ = __.require('lib', 'promises')
-const error_ = __.require('lib', 'error/error')
-const cache_ = __.require('lib', 'cache')
+const _ = require('builders/utils')
+const promises_ = require('lib/promises')
+const error_ = require('lib/error/error')
+const cache_ = require('lib/cache')
 const buildPopularityByUri = require('./build_popularity_by_uri')
 
 const getEntitiesPopularities = async ({ uris, refresh, dry }) => {

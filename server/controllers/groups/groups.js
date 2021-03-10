@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
 const publicActions = require('./public_actions')
 const { allUserGroups } = require('./lib/groups')
-const ActionsControllers = __.require('lib', 'actions_controllers')
+const ActionsControllers = require('lib/actions_controllers')
 const membersActions = require('./members_actions')
 
 module.exports = {

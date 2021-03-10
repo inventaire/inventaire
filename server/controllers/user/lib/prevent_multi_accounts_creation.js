@@ -1,11 +1,9 @@
 // preventing several accounts to be created at the same time
 // given that the creation process is considerably slowed by bcrypt
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const { expired } = __.require('lib', 'time')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const { expired } = require('lib/time')
 
 let lockedUsernames = []
 const errMessage = 'an account is already in the process of being created with this username'

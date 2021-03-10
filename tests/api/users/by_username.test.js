@@ -1,13 +1,11 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
-const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { createUser } = require('../fixtures/users')
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
-const { Wait } = __.require('lib', 'promises')
-const specialUsersNames = Object.keys(__.require('db', 'couch/hard_coded_documents').users)
+const { Wait } = require('lib/promises')
+const specialUsersNames = Object.keys(require('db/couch/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'
 

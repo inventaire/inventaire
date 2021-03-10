@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { expired } = __.require('lib', 'time')
+const { expired } = require('lib/time')
 
 const should = require('should')
 
-const Item = __.require('models', 'item')
+const Item = require('models/item')
 
 const someUserId = '1234567890a1234567890b1234567890'
 const create = Item.create.bind(null, someUserId)

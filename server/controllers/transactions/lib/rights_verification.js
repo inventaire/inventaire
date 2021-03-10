@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const interactions_ = __.require('lib', 'interactions')
-const error_ = __.require('lib', 'error/error')
-const Transaction = __.require('models', 'transaction')
+const interactions_ = require('lib/interactions')
+const error_ = require('lib/error/error')
+const Transaction = require('models/transaction')
 
 // Working around circular dependencies
 let transactions_

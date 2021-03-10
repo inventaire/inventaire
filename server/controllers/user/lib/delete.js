@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const couch_ = __.require('lib', 'couch')
-const User = __.require('models', 'user')
-const db = __.require('couch', 'base')('users')
+const _ = require('builders/utils')
+const couch_ = require('lib/couch')
+const User = require('models/user')
+const db = require('db/couchdb/base')('users')
 const user_ = require('./user')
 
 const deleteUser = user => db.del(user._id, user._rev)

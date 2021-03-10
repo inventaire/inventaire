@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { createTransaction, addMessage } = require('../fixtures/transactions')
-const { authReq } = __.require('apiTests', 'utils/utils')
+const { authReq } = require('apiTests/utils/utils')
 
 const endpoint = '/api/transactions?action=get-messages'
 

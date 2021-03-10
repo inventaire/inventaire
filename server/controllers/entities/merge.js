@@ -1,11 +1,10 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
-const { emit } = __.require('lib', 'radio')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const { emit } = require('lib/radio')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   from: {},

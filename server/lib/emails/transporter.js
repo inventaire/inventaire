@@ -1,7 +1,6 @@
-let sendMail
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 
 const nodemailer = require('nodemailer')
 const hbs = require('nodemailer-express-handlebars')
@@ -29,7 +28,7 @@ const transporter = nodemailer.createTransport(CONFIG.mailer, defaults)
 if (preview) {
   // overriding Nodemailer::sendMail to generate a preview file
   // instead of sending the email
-  sendMail = require('./preview_email')
+  const sendMail = require('./preview_email')
   transporter.sendMail = sendMail.bind(transporter)
 }
 

@@ -1,8 +1,7 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
-const { Wait, wait } = __.require('lib', 'promises')
+const { Wait, wait } = require('lib/promises')
 const { authReq, getUser, getUserB } = require('../utils/utils')
 const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
@@ -10,7 +9,7 @@ const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 

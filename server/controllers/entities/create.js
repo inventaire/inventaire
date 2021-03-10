@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const { Track } = __.require('lib', 'track')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const { Track } = require('lib/track')
 const getEntityByUri = require('./lib/get_entity_by_uri')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   labels: {

@@ -1,12 +1,10 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const validateObject = __.require('lib', 'validate_object')
+const _ = require('builders/utils')
+const validateObject = require('lib/validate_object')
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
 
 // Basic validation of controllers objects to ease debugging
 module.exports = path => {
-  const obj = __.require('controllers', path)
+  const obj = require(`controllers/${path}`)
 
   try {
     validateObject(obj, validEndpointKeys, 'function')

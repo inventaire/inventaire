@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const user_ = __.require('controllers', 'user/lib/user')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const user_ = require('controllers/user/lib/user')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   bbox: {},

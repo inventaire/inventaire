@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
 const { publicReq } = require('../utils/utils')
-const { Wait } = __.require('lib', 'promises')
+const { Wait } = require('lib/promises')
 const endpoint = '/api/auth?action=login'
-const randomString = __.require('lib', './utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:login', () => {

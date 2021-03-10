@@ -1,6 +1,5 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const crypto_ = __.require('lib', 'crypto')
+const _ = require('builders/utils')
+const crypto_ = require('lib/crypto')
 
 module.exports = data => {
   const fingerPrint = getFingerPrint(data)

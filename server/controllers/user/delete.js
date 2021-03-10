@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { Track } = __.require('lib', 'track')
-const deleteUserAndCleanup = __.require('controllers', 'user/lib/delete_user_and_cleanup')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { Track } = require('lib/track')
+const deleteUserAndCleanup = require('controllers/user/lib/delete_user_and_cleanup')
 
 module.exports = (req, res) => {
   const reqUserId = req.user._id

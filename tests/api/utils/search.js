@@ -1,12 +1,11 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { wait } = require('lib/promises')
 const { publicReq } = require('../utils/utils')
 const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
-const assert_ = __.require('utils', 'assert_types')
-const { indexes } = __.require('controllers', 'search/lib/indexes')
+const assert_ = require('lib/utils/assert_types')
+const { indexes } = require('controllers/search/lib/indexes')
 const indexesNamesByBaseNames = Object.assign({
   items: CONFIG.db.name('items')
 }, indexes)

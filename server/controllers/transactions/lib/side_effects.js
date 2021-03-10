@@ -2,12 +2,10 @@
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const radio = __.require('lib', 'radio')
-const Transaction = __.require('models', 'transaction')
-const items_ = __.require('controllers', 'items/lib/items')
+const _ = require('builders/utils')
+const radio = require('lib/radio')
+const Transaction = require('models/transaction')
+const items_ = require('controllers/items/lib/items')
 
 module.exports = () => radio.on('transaction:update', applySideEffects)
 

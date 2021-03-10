@@ -1,8 +1,7 @@
 const CONFIG = require('config')
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const error_ = require('lib/error/error')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {

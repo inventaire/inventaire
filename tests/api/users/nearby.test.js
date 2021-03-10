@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 require('should')
 const { getUserGetter, customAuthReq } = require('../utils/utils')
 const { waitForIndexation } = require('../utils/search')

@@ -1,15 +1,14 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { wait } = require('lib/promises')
 const { shouldNotBeCalled } = require('../utils')
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 
 const should = require('should')
 const sinon = require('sinon')
 
-const cache_ = __.require('lib', 'cache')
-const randomString = __.require('lib', './utils/random_string')
+const cache_ = require('lib/cache')
+const randomString = require('lib/utils/random_string')
 
 const hashKey = async key => _.hashCode(key)
 const workingFn = key => hashKey(key + randomString(8))

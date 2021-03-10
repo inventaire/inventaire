@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const intent = require('./lib/intent')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const { Track } = __.require('lib', 'track')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const { Track } = require('lib/track')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {}

@@ -3,11 +3,10 @@
 // This allow to work around the fact that multiple seed might be looking for the same
 // not-yet-existing entity work and that those seed being processed at about
 // the same time, the database and search engine wouldn't have the time to update
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const { defer } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { defer } = require('lib/promises')
 const { normalizeTerm } = require('../terms_normalization')
-const { oneMinute } = __.require('lib', 'time')
+const { oneMinute } = require('lib/time')
 
 const cache = {}
 

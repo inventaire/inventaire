@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
 require('should')
 const { authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = __.require('apiTests', 'utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 
 describe('items:bulk-update', () => {
   it('should update items details', async () => {

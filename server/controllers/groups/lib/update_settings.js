@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { attributes, validations, formatters } = __.require('models', 'group')
+const _ = require('builders/utils')
+const { attributes, validations, formatters } = require('models/group')
 const { updatable } = attributes
-const error_ = __.require('lib', 'error/error')
-const radio = __.require('lib', 'radio')
-const db = __.require('couch', 'base')('groups')
+const error_ = require('lib/error/error')
+const radio = require('lib/radio')
+const db = require('db/couchdb/base')('groups')
 const { add: addSlug } = require('./slug')
 
 module.exports = async (data, userId) => {

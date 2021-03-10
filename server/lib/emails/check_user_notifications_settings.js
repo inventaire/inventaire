@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 
 module.exports = (user, notificationLabel) => {
   const { _id, type, settings, undeliveredEmail } = user

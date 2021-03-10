@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
-const user_ = __.require('controllers', 'user/lib/user')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const user_ = require('controllers/user/lib/user')
 const sendInvitation = require('./send_invitations')
 
 module.exports = params => {

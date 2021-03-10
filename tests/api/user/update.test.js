@@ -1,11 +1,10 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 const { authReq, getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
 const { getUsersNearPosition } = require('../utils/users')
 const { getRefreshedUser } = require('../fixtures/users')
 const endpoint = '/api/user'
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 
 describe('user:update', () => {
   it('should update a user', async () => {

@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const couch_ = __.require('lib', 'couch')
+const _ = require('builders/utils')
+const couch_ = require('lib/couch')
 const { minKey, maxKey } = couch_
 const parseRelations = require('./parse_relations')
-const groups_ = __.require('controllers', 'groups/lib/groups')
-const db = __.require('couch', 'base')('users', 'relations')
+const groups_ = require('controllers/groups/lib/groups')
+const db = require('db/couchdb/base')('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
   return db.view('relations', 'byStatus', {

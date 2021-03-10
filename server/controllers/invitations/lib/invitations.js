@@ -1,12 +1,10 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
-const db = __.require('couch', 'base')('users', 'invited')
-const { findOneByEmail, byEmails } = __.require('controllers', 'user/lib/shared_user_handlers')
-const Invited = __.require('models', 'invited')
-const { makeRequest } = __.require('controllers', 'relations/lib/actions')
-const groupAction = __.require('controllers', 'groups/lib/model_action')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const db = require('db/couchdb/base')('users', 'invited')
+const { findOneByEmail, byEmails } = require('controllers/user/lib/shared_user_handlers')
+const Invited = require('models/invited')
+const { makeRequest } = require('controllers/relations/lib/actions')
+const groupAction = require('controllers/groups/lib/model_action')
 
 const invitations_ = module.exports = {
   findOneByEmail: findOneByEmail.bind(null, db),

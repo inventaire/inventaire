@@ -6,12 +6,11 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-const __ = require('config').universalPath
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const error_ = __.require('lib', 'error/error')
+const sanitize = require('lib/sanitize/sanitize')
+const error_ = require('lib/error/error')
 const getEntitiesImages = require('./lib/get_entities_images')
-const { img: imgUrlBuilder } = __.require('lib', 'emails/app_api')
-const getThumbData = __.require('data', 'commons/thumb')
+const { img: imgUrlBuilder } = require('lib/emails/app_api')
+const getThumbData = require('data/commons/thumb')
 
 const sanitization = {
   uris: {},

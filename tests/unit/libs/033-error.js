@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
 
 const should = require('should')
 
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 
 describe('error_', () => {
   describe('new', () => {

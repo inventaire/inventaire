@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const getAuthorWorks = __.require('controllers', 'entities/lib/get_author_works')
+const _ = require('builders/utils')
+const getAuthorWorks = require('controllers/entities/lib/get_author_works')
 const getEntitiesList = require('../get_entities_list')
 
 module.exports = authorUris => {

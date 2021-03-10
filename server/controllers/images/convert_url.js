@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const { getImageByUrl } = __.require('data', 'dataseed/dataseed')
-const { enabled: dataseedEnabled } = CONFIG.dataseed
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const { getImageByUrl } = require('data/dataseed/dataseed')
+const { enabled: dataseedEnabled } = require('config').dataseed
 
 module.exports = (req, res) => {
   const { url } = req.body

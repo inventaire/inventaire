@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const queries_ = require('./queries')
-const radio = __.require('lib', 'radio')
+const radio = require('lib/radio')
 
 module.exports = {
   acceptRequest: async (userId, otherId) => {

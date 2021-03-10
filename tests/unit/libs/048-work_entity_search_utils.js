@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 require('should')
-const { matchTitle } = __.require('controllers', 'entities/lib/scaffold_entity_from_seed/work_entity_search_utils')
+const { matchTitle } = require('controllers/entities/lib/scaffold_entity_from_seed/work_entity_search_utils')
 
 const result = {
   labels: {

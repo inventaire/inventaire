@@ -1,10 +1,9 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { getNames, aggregateClaims } = require('./helpers')
-const error_ = __.require('lib', 'error/error')
-const assert_ = __.require('utils', 'assert_types')
-const { snapshotValidations } = __.require('models', 'validations/item')
-const getBestLangValue = __.require('lib', 'get_best_lang_value')
+const error_ = require('lib/error/error')
+const assert_ = require('lib/utils/assert_types')
+const { snapshotValidations } = require('models/validations/item')
+const getBestLangValue = require('lib/get_best_lang_value')
 
 module.exports = {
   edition: (edition, works, authors, series) => {

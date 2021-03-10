@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const { BasicUpdater } = __.require('lib', 'doc_updates')
+const { BasicUpdater } = require('lib/doc_updates')
 
 const mapResult = (res, type) => res.rows.map(row => row[type])
 

@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const root = CONFIG.fullPublicHost()
+const _ = require('builders/utils')
+const root = require('config').fullPublicHost()
 
 module.exports = {
   // Keep in sync with client/app/api/img

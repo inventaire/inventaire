@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const responses_ = __.require('lib', 'responses')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
+const responses_ = require('lib/responses')
 const { validFilters } = require('./lib/queries_commons')
 const getItemsByUsers = require('./lib/get_items_by_users')
 

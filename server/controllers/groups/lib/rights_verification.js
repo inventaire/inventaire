@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const groups_ = require('./groups')
 const lists_ = require('./users_lists')
 const leave_ = require('./lib/leave_groups')

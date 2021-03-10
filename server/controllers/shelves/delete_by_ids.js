@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const shelves_ = __.require('controllers', 'shelves/lib/shelves')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const shelves_ = require('controllers/shelves/lib/shelves')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
 
 const sanitization = {
   ids: {},

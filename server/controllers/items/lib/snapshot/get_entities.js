@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
-const getEntityByUri = __.require('controllers', 'entities/lib/get_entity_by_uri')
-const getEntitiesByUris = __.require('controllers', 'entities/lib/get_entities_by_uris')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 const { aggregateClaims } = require('./helpers')
 
 const getRelativeEntities = relationProperty => async entity => {

@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const should = require('should')
 const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getNotifications } = require('../utils/notifications')
 const { groupPromise, createGroup, createGroupWithAMember } = require('../fixtures/groups')
-const slugify = __.require('controllers', 'groups/lib/slugify')
+const slugify = require('controllers/groups/lib/slugify')
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {

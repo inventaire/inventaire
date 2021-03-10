@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const buildInvertedClaimTree = require('./build_inverted_claim_tree')
 
 module.exports = items => entitiesData => {

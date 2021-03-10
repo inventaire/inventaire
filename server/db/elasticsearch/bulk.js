@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
-const { host: elasticHost } = CONFIG.elasticsearch
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
+const { host: elasticHost } = require('config').elasticsearch
 const { logBulkRes } = require('./helpers')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = require('lib/utils/assert_types')
 const headers = { 'content-type': 'application/x-ndjson' }
 
 const addToBatch = (batch, action, index, doc) => {

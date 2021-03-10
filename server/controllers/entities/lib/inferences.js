@@ -1,6 +1,4 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const isbn_ = __.require('lib', 'isbn/isbn')
+const isbn_ = require('lib/isbn/isbn')
 
 // Inferences are property values deduced from another property
 module.exports = {

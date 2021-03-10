@@ -1,6 +1,5 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const assert_ = __.require('utils', 'assert_types')
+const _ = require('builders/utils')
+const assert_ = require('lib/utils/assert_types')
 const wdk = require('wikidata-sdk')
 const allowlistedProperties = require('./allowlisted_properties')
 

@@ -1,7 +1,6 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { wait } = __.require('lib', 'promises')
-const radio = __.require('lib', 'radio')
+const { wait } = require('lib/promises')
+const radio = require('lib/radio')
 require('should')
 
 // Do not run without having set NODE_ENV

@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const Comment = __.require('models', 'comment')
-const assert_ = __.require('utils', 'assert_types')
+const Comment = require('models/comment')
+const assert_ = require('lib/utils/assert_types')
 
-const db = __.require('couch', 'base')('comments')
+const db = require('db/couchdb/base')('comments')
 
 module.exports = {
   byId: db.get,

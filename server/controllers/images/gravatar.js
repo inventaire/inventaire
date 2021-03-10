@@ -1,12 +1,10 @@
 // An endpoint to get the request user email and convert it to a gravatar url
 // so that a client can offer to import an existing avatar
 
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const sanitize = __.require('lib', 'sanitize/sanitize')
-const { md5 } = __.require('lib', 'crypto')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const sanitize = require('lib/sanitize/sanitize')
+const { md5 } = require('lib/crypto')
 
 const sanitization = {}
 

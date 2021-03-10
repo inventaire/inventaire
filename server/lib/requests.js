@@ -1,13 +1,12 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const assert_ = __.require('utils', 'assert_types')
-const { wait } = __.require('lib', 'promises')
+const assert_ = require('lib/utils/assert_types')
+const { wait } = require('lib/promises')
 const fetch = require('node-fetch')
-const error_ = __.require('lib', 'error/error')
+const error_ = require('lib/error/error')
 const { addContextToStack } = error_
 const { magenta } = require('chalk')
-const { repository } = __.require('root', 'package.json')
+const { repository } = require('root/package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, selfSignedHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareTimeout } = require('./requests_temporary_host_ban')

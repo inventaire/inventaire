@@ -1,5 +1,4 @@
-const CONFIG = require('config')
-const { mutedDomains, mutedPath } = CONFIG.requestsLogger
+const { mutedDomains, mutedPath } = require('config').requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1
 module.exports = (req, res, next) => {

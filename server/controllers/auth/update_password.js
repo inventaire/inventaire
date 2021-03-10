@@ -1,11 +1,10 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const responses_ = __.require('lib', 'responses')
-const db = __.require('couch', 'base')('users')
-const User = __.require('models', 'user')
-const pw_ = __.require('lib', 'crypto').passwords
-const { oneHour, expired } = __.require('lib', 'time')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const responses_ = require('lib/responses')
+const db = require('db/couchdb/base')('users')
+const User = require('models/user')
+const pw_ = require('lib/crypto').passwords
+const { oneHour, expired } = require('lib/time')
 
 module.exports = (req, res) => {
   const { user, body } = req

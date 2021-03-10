@@ -1,10 +1,9 @@
 const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const host = CONFIG.fullPublicHost()
 require('should')
-const { customAuthReq, rawCustomAuthReq } = __.require('apiTests', 'utils/request')
-const { getReservedUser } = __.require('apiTests', 'utils/utils')
+const { customAuthReq, rawCustomAuthReq } = require('apiTests/utils/request')
+const { getReservedUser } = require('apiTests/utils/utils')
 const { createItem } = require('../fixtures/items')
 const { createShelf } = require('../fixtures/shelves')
 const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addTranslator, someImageHash } = require('../fixtures/entities')

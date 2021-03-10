@@ -5,12 +5,11 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const entities_ = require('./entities')
-const Entity = __.require('models', 'entity')
-const { tapEmit } = __.require('lib', 'radio')
-const db = __.require('couch', 'base')('entities')
+const Entity = require('models/entity')
+const { tapEmit } = require('lib/radio')
+const db = require('db/couchdb/base')('entities')
 
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`

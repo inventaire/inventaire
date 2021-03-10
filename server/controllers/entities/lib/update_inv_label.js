@@ -1,9 +1,8 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const entities_ = require('./entities')
-const radio = __.require('lib', 'radio')
-const retryOnConflict = __.require('lib', 'retry_on_conflict')
+const radio = require('lib/radio')
+const retryOnConflict = require('lib/retry_on_conflict')
 const updateLabel = require('./update_label')
 
 const updateInvLabel = async (user, id, lang, value) => {

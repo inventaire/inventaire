@@ -10,10 +10,10 @@
 const CONFIG = require('config')
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { getRandomBytesBuffer } = __.require('lib', 'crypto')
-const { oneDay, msToHumanTime, msToHumanAge } = __.require('lib', 'time')
-const error_ = __.require('lib', 'error/error')
+const _ = require('builders/utils')
+const { getRandomBytesBuffer } = require('lib/crypto')
+const { oneDay, msToHumanTime, msToHumanAge } = require('lib/time')
+const error_ = require('lib/error/error')
 const { readFileSync } = require('fs')
 const { invert } = require('lodash')
 const { writeFile } = require('fs').promises

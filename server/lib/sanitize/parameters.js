@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const host = CONFIG.fullPublicHost()
-const error_ = __.require('lib', 'error/error')
-const { truncateLatLng } = __.require('lib', 'geo')
-const { isValidIsbn } = __.require('lib', 'isbn/isbn')
+const _ = require('builders/utils')
+const host = require('config').fullPublicHost()
+const error_ = require('lib/error/error')
+const { truncateLatLng } = require('lib/geo')
+const { isValidIsbn } = require('lib/isbn/isbn')
 
 // Parameters attributes:
 // - format (optional)
@@ -13,8 +11,8 @@ const { isValidIsbn } = __.require('lib', 'isbn/isbn')
 //   an error object with an `invalid #{paramName}` message and throw it
 
 const validations = {
-  common: __.require('models', 'validations/common'),
-  user: __.require('models', 'validations/user')
+  common: require('models/validations/common'),
+  user: require('models/validations/user')
 }
 
 const parseNumberString = value => {

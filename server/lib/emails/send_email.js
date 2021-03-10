@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const { Wait } = __.require('lib', 'promises')
+const _ = require('builders/utils')
+const { Wait } = require('lib/promises')
 const helpers_ = require('./helpers')
 const transporter_ = require('./transporter')
 const email_ = require('./email')
-const user_ = __.require('controllers', 'user/lib/user')
+const user_ = require('controllers/user/lib/user')
 
 module.exports = {
   validationEmail: (userData, token) => {

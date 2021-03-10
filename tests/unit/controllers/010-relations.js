@@ -1,5 +1,3 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
 
 require('should')
 const sinon = require('sinon')
@@ -29,7 +27,7 @@ const totalSpiesCount = () => {
   return count
 }
 
-const solveIntent = __.require('controllers', 'relations/lib/solve_intent')(actions)
+const solveIntent = require('controllers/relations/lib/solve_intent')(actions)
 
 describe('relations', () => {
   describe('solveIntent', () => {

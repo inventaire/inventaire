@@ -1,9 +1,7 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const should = require('should')
 
-const User = __.require('models', 'user')
+const User = require('models/user')
 
 const _create = args => User._create.apply(null, args)
 const create = args => User.create.apply(null, args)

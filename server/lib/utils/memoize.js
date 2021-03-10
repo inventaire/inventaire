@@ -6,7 +6,7 @@
 // the  './foo' module implements it. This memoize function thus aims to help
 // implementing this caching mechanism easily:
 //
-// const memoize = __.require('lib', 'utils/memoize')
+// const memoize = require('lib/utils/memoize')
 // const memoizedFn = memoize(fn)
 // memoizedFn('a', 'b') === memoizedFn('a', 'b')
 // memoizedFn('a', 'b') !== memoizedFn('a')

@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
+const _ = require('builders/utils')
 const { red } = require('chalk')
 const { promisify } = require('util')
 const exec = promisify(require('child_process').exec)

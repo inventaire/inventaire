@@ -1,8 +1,6 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { buildSearcher } = __.require('lib', 'elasticsearch')
-const { distanceBetween } = __.require('lib', 'geo')
-const assert_ = __.require('utils', 'assert_types')
+const { buildSearcher } = require('lib/elasticsearch')
+const { distanceBetween } = require('lib/geo')
+const assert_ = require('lib/utils/assert_types')
 
 module.exports = dbBaseName => {
   const searchByDistance = buildSearcher({

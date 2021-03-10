@@ -1,11 +1,9 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = __.require('builders', 'utils')
-const requests_ = __.require('lib', 'requests')
+const _ = require('builders/utils')
+const requests_ = require('lib/requests')
 const { createReadStream } = require('fs')
-const { getContentLength } = __.require('lib', 'fs')
+const { getContentLength } = require('lib/fs')
 const getToken = require('./get_swift_token')
-const { publicURL } = CONFIG.mediaStorage.swift
+const { publicURL } = require('config').mediaStorage.swift
 
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}`
 const relativeUrl = (container, filename) => `/img/${container}/${filename}`
