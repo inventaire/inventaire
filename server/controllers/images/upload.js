@@ -3,28 +3,28 @@ const parseForm = require('./lib/parse_form')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const containers = require('./lib/containers')
-const promises_ = require('lib/promises')
 
 module.exports = (req, res) => {
+  upload(req, res)
+  .then(responses_.Send(res))
+  .catch(error_.Handler(req, res))
+}
+
+const upload = async (req, res) => {
   const { container } = req.query
 
-  if ((container == null) || (containers[container] == null)) {
-    return error_.bundleInvalid(req, res, 'container', container)
+  if (container == null || containers[container] == null) {
+    throw error_.newInvalid('container', container)
   }
 
   const { putImage } = containers[container]
 
-  return parseForm(req)
-  .then(formData => {
-    const files = getFilesFromFormData(formData)
-    if (container === 'users') { files.forEach(validateFile) }
-    return files
-  })
-  .then(promises_.map(putImage))
-  .then(indexCollection)
-  .then(_.Log('upload post res'))
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
+  const files = await parseForm(req).then(getFilesFromFormData)
+  if (container === 'users') files.forEach(validateFile)
+
+  return Promise.all(files.map(putImage))
+  .then(indexUrlById)
+  .then(_.Log('uploaded images'))
 }
 
 const getFilesFromFormData = formData => {
@@ -39,7 +39,7 @@ const getFilesFromFormData = formData => {
     file.id = key
   }
 
-  return _.values(files)
+  return Object.values(files)
 }
 
 const validateFile = file => {
@@ -49,11 +49,10 @@ const validateFile = file => {
   }
 }
 
-const indexCollection = collection => {
+const indexUrlById = collection => {
   const index = {}
-  for (const data of collection) {
-    const { id, url } = data
+  collection.forEach(({ id, url }) => {
     index[id] = url
-  }
+  })
   return index
 }
