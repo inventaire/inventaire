@@ -99,6 +99,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "faker": "^4.1.0",
+    "form-data": "^4.0.0",
     "git-hooks": "^1.0.2",
     "level-test": "^8.0.0",
     "mailcomposer": "^2.1.0",
