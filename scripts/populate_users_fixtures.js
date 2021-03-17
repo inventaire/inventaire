@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('module-alias/register')
 const _ = require('builders/utils')
 const { createUserWithItems } = require('../tests/api/fixtures/populate')
 const { addRole } = require('controllers/user/lib/user')

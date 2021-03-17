@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('module-alias/register')
 const _ = require('builders/utils')
 const split = require('split')
 const through = require('through')

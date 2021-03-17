@@ -1,3 +1,4 @@
+require('module-alias/register')
 const _ = require('builders/utils')
 const { shellExec } = require('scripts/scripts_utils')
 const { backupFolder } = require('./get_backup_folder_data')

@@ -12,6 +12,7 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
+require('module-alias/register')
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
