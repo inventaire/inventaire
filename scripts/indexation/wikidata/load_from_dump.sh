@@ -8,7 +8,7 @@
 # This implementation reflects the current state of the getEntityType function (server/controllers/entities/lib/get_entity_type.js)
 # which only lets in entities that have a P31 or P279 value identified in server/lib/wikidata/aliases
 
-node --print "JSON.stringify(require('./server/lib/wikidata/aliases'))" |
+node --print "require('module-alias/register') ; JSON.stringify(require('./server/lib/wikidata/aliases'))" |
   # Get uris used as P31 from indexed types
   jq '.typesAliases | [ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
   # Get the id, wrapped between double quotes
