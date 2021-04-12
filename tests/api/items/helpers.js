@@ -1,5 +1,5 @@
 module.exports = {
-  newItemBase: () => ({ entity: 'wd:Q3548806', lang: 'fr' }),
+  newItemBase: () => ({ entity: 'wd:Q3548806' }),
 
   CountChange: (snapBefore, snapAfter) => {
     return section => {

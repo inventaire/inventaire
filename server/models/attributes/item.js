@@ -19,15 +19,12 @@ attributes.validAtCreation = [
   'details',
   'notes',
   'shelves',
-  // Legacy
-  'lang'
 ]
 
 // Not updatable by the user
 attributes.notUpdatable = [
   '_id',
   '_rev',
-  'lang',
   'created',
 
   // Updated when user updatable attributes are updated
