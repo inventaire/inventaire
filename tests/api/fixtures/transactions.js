@@ -5,15 +5,13 @@ const { createItem } = require('./items')
 const { getById: getRefreshedItem } = require('../utils/items')
 
 const createTransaction = async (params = {}) => {
-  let {
-    userA = getUser(),
-    userB = getUserB(),
-    itemData
-  } = params
-  userA = await userA
-  userB = await userB
-  itemData = itemData || { listing: 'public', transaction: 'giving' }
-  const item = await createItem(userB, itemData)
+  const userA = await (params.userA || getUser())
+  const userB = await (params.userB || getUserB())
+  let { item, itemData } = params
+  if (!item) {
+    itemData = itemData || { listing: 'public', transaction: 'giving' }
+    item = await createItem(userB, itemData)
+  }
   await wait(100)
   const refreshedItem = await getRefreshedItem(item)
   const res = await customAuthReq(userA, 'post', '/api/transactions?action=request', {

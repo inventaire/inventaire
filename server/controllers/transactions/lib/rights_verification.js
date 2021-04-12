@@ -22,9 +22,10 @@ const verifyNoExistingTransaction = (requester, item) => {
 }
 
 module.exports = {
-  verifyRightToRequest: (requester, item) => {
-    if (item.busy) {
-      throw error_.new('this item is busy', 403, item)
+  verifyRightToRequest: async (requester, item) => {
+    const itemIsBusy = await transactions_.itemIsBusy(item._id)
+    if (itemIsBusy) {
+      throw error_.new('item already busy', 403, item)
     }
 
     // the owner of the item isnt allowed to request it
@@ -37,27 +38,21 @@ module.exports = {
 
   verifyRightToInteract: (userId, transaction) => {
     const { owner, requester } = transaction
-    if (userId === owner || userId === requester) {
-      return transaction
-    } else {
+    if (!(userId === owner || userId === requester)) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   },
 
   verifyIsOwner: (userId, transaction) => {
     const { owner } = transaction
-    if (userId === owner) {
-      return transaction
-    } else {
+    if (userId !== owner) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   },
 
   verifyIsRequester: (userId, transaction) => {
     const { requester } = transaction
-    if (userId === requester) {
-      return transaction
-    } else {
+    if (userId !== requester) {
       throw error_.new('wrong user', 403, userId, transaction)
     }
   }

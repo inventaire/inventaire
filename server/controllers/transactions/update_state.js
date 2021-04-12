@@ -16,21 +16,39 @@ const sanitization = {
 module.exports = (req, res) => {
   sanitize(req, res, sanitization)
   .then(params => {
-    const { transaction, state } = req.body
-    const reqUserId = req.user._id
-    return transactions_.byId(transaction)
-    .then(VerifyRights(state, reqUserId))
-    .then(transactions_.updateState.bind(null, state, reqUserId))
-    .then(Track(req, [ 'transaction', 'update', state ]))
+    return updateState(params)
+    .then(Track(req, [ 'transaction', 'update', params.state ]))
   })
   .then(responses_.Ok(res))
   .catch(error_.Handler(req, res))
 }
 
-const VerifyRights = (state, reqUserId) => {
+const updateState = async ({ transactionId, state, reqUserId }) => {
+  const transaction = await transactions_.byId(transactionId)
+  validateRights(transaction, state, reqUserId)
+  await checkForConcurrentTransactions(transaction, state)
+  return transactions_.updateState(transaction, state, reqUserId)
+}
+
+const validateRights = (transaction, state, reqUserId) => {
   const { actor } = states[state]
-  if (actor === 'requester') return verifyIsRequester.bind(null, reqUserId)
-  else if (actor === 'owner') return verifyIsOwner.bind(null, reqUserId)
-  else if (actor === 'both') return verifyRightToInteract.bind(null, reqUserId)
-  else throw error_.new('unknown actor', 500, { state, reqUserId })
+  validateRightsFunctionByAllowedActor[actor](reqUserId, transaction)
+}
+
+const validateRightsFunctionByAllowedActor = {
+  requester: verifyIsRequester,
+  owner: verifyIsOwner,
+  both: verifyRightToInteract,
+}
+
+const checkForConcurrentTransactions = async (transaction, requestedState) => {
+  if (requestedState === 'accepted') {
+    // No need to check that the transaction holding the item busy is not the updated transaction
+    // as the requested state is 'accepted', which, to be valid, needs to be done on a transaction
+    // in a 'requested' state
+    const itemIsBusy = await transactions_.itemIsBusy(transaction.item)
+    if (itemIsBusy) {
+      throw error_.new('item already busy', 403, { transaction, requestedState })
+    }
+  }
 }

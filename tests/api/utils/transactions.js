@@ -13,6 +13,7 @@ module.exports = {
   },
 
   updateTransaction: async (user, transactionId, state) => {
+    transactionId = transactionId._id || transactionId
     return customAuthReq(user, 'put', `${endpoint}?action=update-state`, {
       transaction: transactionId,
       state

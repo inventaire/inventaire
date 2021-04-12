@@ -1,6 +1,7 @@
 require('should')
-const { authReq, authReqB, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { authReq, authReqB, authReqC, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
+const { updateTransaction } = require('../utils/transactions')
 const { createItem } = require('../fixtures/items')
 const { createEditionFromWorkWithAuthor } = require('../fixtures/entities')
 const endpoint = '/api/transactions?action=request'
@@ -78,5 +79,16 @@ describe('transactions:request', () => {
     snapshot.requester.username.should.equal(userA.username)
     snapshot.entity.image.should.equal(userBItem.snapshot['entity:image'])
     snapshot.entity.authors.should.equal(userBItem.snapshot['entity:authors'])
+  })
+
+  it('should reject if the item is already busy', async () => {
+    const { transaction, userB, userBItem } = await createTransaction()
+    await updateTransaction(userB, transaction, 'accepted')
+    await authReqC('post', endpoint, { item: userBItem._id, message: 'hi' })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      err.body.status_verbose.should.equal('item already busy')
+    })
   })
 })

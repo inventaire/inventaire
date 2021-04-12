@@ -41,10 +41,10 @@ const transactions_ = module.exports = {
     }
   },
 
-  updateState: (newState, userId, transaction) => {
+  updateState: async (transaction, newState, userId) => {
     Transaction.validatePossibleState(transaction, newState)
-    return db.update(transaction._id, stateUpdater(newState, userId, transaction))
-    .then(() => radio.emit('transaction:update', transaction, newState))
+    await db.update(transaction._id, stateUpdater(newState, userId, transaction))
+    await radio.emit('transaction:update', transaction, newState)
   },
 
   markAsRead: (userId, transaction) => {
@@ -69,10 +69,33 @@ const transactions_ = module.exports = {
   cancelAllActiveTransactions: async userId => {
     const transactions = await transactions_.byUser(userId)
     const activeTransactions = transactions.filter(Transaction.isActive)
-    return Promise.all(activeTransactions.map(transaction => {
-      return transactions_.updateState('cancelled', userId, transaction)
+    await Promise.all(activeTransactions.map(transaction => {
+      return transactions_.updateState(transaction, 'cancelled', userId)
     }))
+  },
+
+  itemIsBusy: async itemId => {
+    assert_.string(itemId)
+    const rows = await getBusyItems([ itemId ])
+    return rows.length > 0
+  },
+
+  setItemsBusyFlag: async items => {
+    assert_.objects(items)
+    if (items.length === 0) return items
+    const itemsIds = _.map(items, '_id')
+    const rows = await getBusyItems(itemsIds)
+    const busyItemsIds = new Set(_.map(rows, 'key'))
+    return items.map(item => {
+      item.busy = busyItemsIds.has(item._id)
+      return item
+    })
   }
+}
+
+const getBusyItems = async itemsIds => {
+  const { rows } = await db.viewKeys('transactions', 'byBusyItem', itemsIds, { include_docs: false })
+  return rows
 }
 
 const stateUpdater = (state, userId, transaction) => {

@@ -4,6 +4,9 @@
   "views": {
     "byUserAndItem": {
       "map": "(doc)->\n  emit [doc.owner, doc.item], null\n  emit [doc.requester, doc.item], null"
+    },
+    "byBusyItem": {
+      "map": "(doc)->\n  lastAction = doc.actions.slice(-1)[0].action\n  if lastAction is 'accepted' or (doc.transaction is 'lending' and lastAction is 'confirmed')\n    emit doc.item, null"
     }
   }
 }
