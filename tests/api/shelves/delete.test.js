@@ -28,27 +28,23 @@ describe('shelves:delete', () => {
   })
 
   it('should delete shelf but not the items', async () => {
-    const { shelf } = await createShelfWithItem()
-    const itemId = shelf.items[0]
-    const { _id: shelfId } = shelf
-    const res = await authReq('post', endpoint, { ids: shelfId })
+    const { shelf, item } = await createShelfWithItem()
+    const res = await authReq('post', endpoint, { ids: shelf._id })
     res.shelves.should.be.an.Array()
 
-    const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelfId}`)
+    const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelf._id}`)
     _.values(getShelfRes.shelves).length.should.equal(0)
 
-    const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
+    const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
     _.values(getItemsRes.items).length.should.not.equal(0)
   })
 
   describe('with-items', () => {
     it('should delete shelf and items', async () => {
-      const { shelf } = await createShelfWithItem()
-      const itemId = shelf.items[0]
-      const { _id: shelfId } = shelf
-      const res = await authReq('post', endpoint, { ids: shelfId, 'with-items': true })
+      const { shelf, item } = await createShelfWithItem()
+      const res = await authReq('post', endpoint, { ids: shelf._id, 'with-items': true })
       res.items.should.be.an.Array()
-      const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
+      const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
       _.values(getItemsRes.items).length.should.equal(0)
     })
   })

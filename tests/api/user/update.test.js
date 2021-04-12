@@ -1,10 +1,11 @@
-const _ = require('builders/utils')
 const should = require('should')
-const { authReq, getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
-const { getUsersNearPosition } = require('../utils/users')
+const { customAuthReq, getReservedUser } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const endpoint = '/api/user'
 const randomString = require('lib/utils/random_string')
+const { getIndexedDoc } = require('../utils/search')
+const { wait } = require('lib/promises')
+const { users: usersIndex } = require('controllers/search/lib/indexes').indexes
 
 describe('user:update', () => {
   it('should update a user', async () => {
@@ -27,7 +28,7 @@ describe('user:update', () => {
       updatedUser[attribute].should.deepEqual(value)
     })
 
-    it('should truncate the coordinates', async () => {
+    it('should round the coordinates', async () => {
       const user = await getReservedUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value: [ 10.123456, 10.123456 ] })
       const updatedUser = await getRefreshedUser(user)
@@ -45,14 +46,16 @@ describe('user:update', () => {
     })
 
     it('should update the position index', async () => {
-      await authReq('put', endpoint, { attribute, value })
-      const user = await getUser()
-      const userB = await getUserB()
-      const foundUsers = await getUsersNearPosition(value, userB)
-      _.map(foundUsers, '_id').should.containEql(user._id)
-      await authReq('put', endpoint, { attribute, value: null })
-      const foundUsersAfterDeletedPosition = await getUsersNearPosition(value, userB)
-      _.map(foundUsersAfterDeletedPosition, '_id').should.not.containEql(user._id)
+      const user = await getReservedUser()
+      await customAuthReq(user, 'put', endpoint, { attribute, value })
+      await wait(500)
+      const result = await getIndexedDoc(usersIndex, user._id)
+      result._source.position.lat.should.equal(10)
+      result._source.position.lon.should.equal(10)
+      await customAuthReq(user, 'put', endpoint, { attribute, value: null })
+      await wait(500)
+      const updatedResult = await getIndexedDoc(usersIndex, user._id)
+      should(updatedResult._source.position).not.be.ok()
     })
   })
 })

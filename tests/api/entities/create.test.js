@@ -105,8 +105,7 @@ describe('entities:create', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.context.property.should.equal('wdt:P31')
-      err.body.status_verbose.should.equal('invalid property value for entity type "edition"')
+      err.body.status_verbose.should.equal("wdt:P31 value isn't a known value")
     })
   })
 

@@ -31,12 +31,11 @@ describe('shelves:remove-items', () => {
     }
   })
 
-  it('should delete item from shelf', async () => {
-    const { shelf } = await createShelfWithItem()
-    const itemId = shelf.items[0]
+  it('should remove an item from a shelf', async () => {
+    const { shelf, item } = await createShelfWithItem()
     const res = await authReq('post', endpoint, {
       id: shelf._id,
-      items: [ itemId ]
+      items: [ item._id ]
     })
     res.shelves.should.be.ok()
     _.values(res.shelves)[0].items.length.should.equal(0)
