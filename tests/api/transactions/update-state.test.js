@@ -43,16 +43,16 @@ describe('transactions:update-state', () => {
     })
   })
 
-  describe('side effects', () => {
-    describe('one way transactions', () => {
+  describe('side effects: item.busy flag', () => {
+    describe('giving and selling transactions', () => {
       const itemData = { transaction: _.sample([ 'giving', 'selling' ]), listing: 'public' }
 
-      it('should set item.busy=false when the transaction is just requested', async () => {
+      it('should be false when the transaction is just requested', async () => {
         const { userBItem } = await createTransaction({ itemData })
         userBItem.busy.should.be.false()
       })
 
-      it('should set item.busy=true when the transaction is accepted', async () => {
+      it('should be true when the transaction is accepted', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await wait(100)
@@ -60,7 +60,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.true()
       })
 
-      it('should set item.busy=false when the transaction is just declined', async () => {
+      it('should be false when the transaction is just declined', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'declined')
         await wait(100)
@@ -68,7 +68,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.false()
       })
 
-      it('should set item.busy=false when the transaction is confirmed and change owner', async () => {
+      it('should be false when the transaction is confirmed and change owner', async () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         userBItem.owner.should.equal(userB._id)
         await updateTransaction(userB, transaction, 'accepted')
@@ -79,7 +79,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.false()
       })
 
-      it('should set item.busy=false when the transaction is cancelled', async () => {
+      it('should be false when the transaction is cancelled', async () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'cancelled')
@@ -89,15 +89,15 @@ describe('transactions:update-state', () => {
       })
     })
 
-    describe('two way transactions', () => {
+    describe('lending transactions', () => {
       const itemData = { transaction: 'lending', listing: 'public' }
 
-      it('should set item.busy=false when the transaction is just requested', async () => {
+      it('should be false when the transaction is just requested', async () => {
         const { userBItem } = await createTransaction({ itemData })
         userBItem.busy.should.be.false()
       })
 
-      it('should set item.busy=true when the transaction is accepted', async () => {
+      it('should be true when the transaction is accepted', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await wait(100)
@@ -105,7 +105,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.true()
       })
 
-      it('should set item.busy=false when the transaction is just declined', async () => {
+      it('should be false when the transaction is just declined', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'declined')
         await wait(100)
@@ -113,7 +113,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.false()
       })
 
-      it('should set item.busy=true when the transaction is confirmed', async () => {
+      it('should be true when the transaction is confirmed', async () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
@@ -122,7 +122,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.true()
       })
 
-      it('should set item.busy=false when the transaction is returned', async () => {
+      it('should be false when the transaction is returned', async () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
@@ -132,7 +132,7 @@ describe('transactions:update-state', () => {
         updatedItem.busy.should.be.false()
       })
 
-      it('should set item.busy=false when the transaction is cancelled', async () => {
+      it('should be false when the transaction is cancelled', async () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
