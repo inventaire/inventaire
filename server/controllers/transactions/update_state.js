@@ -25,17 +25,17 @@ module.exports = (req, res) => {
 
 const updateState = async ({ transactionId, state, reqUserId }) => {
   const transaction = await transactions_.byId(transactionId)
-  verifyRights(transaction, state, reqUserId)
+  validateRights(transaction, state, reqUserId)
   await checkForConcurrentTransactions(transaction, state)
   return transactions_.updateState(transaction, state, reqUserId)
 }
 
-const verifyRights = (transaction, state, reqUserId) => {
+const validateRights = (transaction, state, reqUserId) => {
   const { actor } = states[state]
-  verifyRightsFunctionByAllowedActor[actor](reqUserId, transaction)
+  validateRightsFunctionByAllowedActor[actor](reqUserId, transaction)
 }
 
-const verifyRightsFunctionByAllowedActor = {
+const validateRightsFunctionByAllowedActor = {
   requester: verifyIsRequester,
   owner: verifyIsOwner,
   both: verifyRightToInteract,
