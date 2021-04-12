@@ -5,7 +5,7 @@ const { createUser } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
 const { Wait } = require('lib/promises')
-const specialUsersNames = Object.keys(require('db/couch/hard_coded_documents').users)
+const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'
 

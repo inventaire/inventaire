@@ -115,7 +115,7 @@ const sortAndFilterContributions = rows => {
 }
 
 // Filtering-out special users automated contributions
-// see server/db/couch/hard_coded_documents.js
+// see server/db/couchdb/hard_coded_documents.js
 const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
 const getUserTotalContributions = userId => {
