@@ -15,7 +15,6 @@ if (CONFIG.serveStaticFiles) {
   const publicPath = __.path('client', 'public')
   const options = {
     maxAge: 0,
-    etag: false,
     setHeaders: res => {
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate')
     },
