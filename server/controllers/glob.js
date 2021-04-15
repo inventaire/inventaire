@@ -1,6 +1,12 @@
 const __ = require('config').universalPath
 const error_ = require('lib/error/error')
 const publicFolder = __.path('client', 'public')
+const indexOptions = {
+  root: publicFolder,
+  headers: {
+    'Cache-Control': 'no-cache, no-store, must-revalidate'
+  }
+}
 
 module.exports = {
   get: (req, res) => {
@@ -15,7 +21,7 @@ module.exports = {
       error_.bundle(req, res, err, 400)
     } else {
       // the routing will be done on the client side
-      res.sendFile('./index.html', { root: publicFolder })
+      res.sendFile('./index.html', indexOptions)
     }
   },
 
