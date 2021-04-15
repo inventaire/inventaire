@@ -90,8 +90,6 @@ const config = module.exports = {
   },
 
   serveStaticFiles: true,
-  noCache: true,
-  staticMaxAge: 0,
 
   hashPasswords: true,
   requestsLogger: {

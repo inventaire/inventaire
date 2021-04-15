@@ -13,13 +13,14 @@ const enableCors = (req, res, next) => {
 if (CONFIG.serveStaticFiles) {
   const express = require('express')
   const publicPath = __.path('client', 'public')
-  const options = { maxAge: CONFIG.staticMaxAge, fallthrough: false }
-  if (CONFIG.noCache) {
-    options.setHeaders = res => {
+  const options = {
+    maxAge: 0,
+    etag: false,
+    setHeaders: res => {
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-    }
-    options.maxAge = 0
-    options.etag = false
+    },
+    // Return a 404 when a file isn't found
+    fallthrough: false,
   }
   const staticMiddleware = express.static(publicPath, options)
   // the 2 arguments array will be apply'ied to app.use by server/init_express

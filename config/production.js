@@ -18,8 +18,6 @@ module.exports = {
     password: 'OVERRIDE',
     suffix: 'prod',
   },
-  noCache: true,
-  staticMaxAge: 0,
   logMissingI18nKeys: false,
   mailer: {
     disabled: false,
