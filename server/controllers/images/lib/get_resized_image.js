@@ -66,7 +66,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
 
   const handleBufferError = buf => {
     const err = new Error(buf.toString())
-    if (transmittedData) {
+    if (transmittedData || alreadySent) {
       _.error(err, 'image error after some data was already sent')
     } else {
       error_.handler(req, res, err)
@@ -85,6 +85,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
     // if data was actually passed before determining if it is a success
     // or an error
     stdout.on('data', data => {
+      if (alreadySent) return
       res.write(data)
       transmittedData = true
     })
@@ -94,6 +95,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
       if (alreadySent) return
       if (transmittedData) {
         res.end()
+        alreadySent = true
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {
         const message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
