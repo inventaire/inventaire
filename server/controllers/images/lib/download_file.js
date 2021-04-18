@@ -24,13 +24,10 @@ const validateResponse = (response, controller, url, path) => {
   let errMessage
   if (statusCode >= 400) {
     errMessage = `Remote response: ${statusCode} ${statusText}`
-  } else if (!contentLength) {
-    errMessage = 'content-length is missing'
-    statusCode = 400
-  } else if (contentLength > (10 * oneMB)) {
+  } else if (contentLength != null && contentLength > (10 * oneMB)) {
     errMessage = `image is too large: ${contentLength}`
     statusCode = 400
-  } else if (contentLength < 1000) {
+  } else if (contentLength != null && contentLength < 1000) {
     errMessage = `image is too small: ${contentLength}`
     statusCode = 400
   } else if (!isValidImageContentType(contentType)) {
