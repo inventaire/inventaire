@@ -44,6 +44,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "blue-cot": "^6.2.2",
     "body-parser": "^1.18.2",
     "chalk": "^1.1.3",
