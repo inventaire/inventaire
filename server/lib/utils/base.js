@@ -160,7 +160,10 @@ module.exports = {
     .uniq()
     .compact()
     .value()
-  }
+  },
+
+  // Decode first, so that any pre-encoded character isn't re-encoded
+  encodeURL: url => encodeURI(decodeURI(url)),
 }
 
 const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {

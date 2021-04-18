@@ -1,9 +1,7 @@
 const images_ = require('lib/images')
 const putImage = require('./put_image')
 
-const containerPutImage = (container, fnName) => fileData => {
-  const { id, path } = fileData
-
+const containerPutImage = (container, fnName) => ({ id = 0, path }) => {
   return images_[fnName](path)
   .then(() => images_.getHashFilename(path))
   .then(filename => putImage(container, path, id, filename))

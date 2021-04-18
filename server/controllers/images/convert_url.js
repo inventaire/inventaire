@@ -1,8 +1,10 @@
+const _ = require('builders/utils')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const sanitize = require('lib/sanitize/sanitize')
-const { getImageByUrl } = require('data/dataseed/dataseed')
+const { getImageByUrl: rewriteImageUrl } = require('data/dataseed/dataseed')
 const { enabled: dataseedEnabled } = require('config').dataseed
+const convertImageUrl = require('./lib/convert_image_url')
 
 const sanitization = {
   url: {}
@@ -16,10 +18,15 @@ module.exports = (req, res) => {
 }
 
 const convertUrl = async ({ url }) => {
-  // If dataseed is disabled, we simply return the same url,
-  // instead of converting it to an image hash
-  if (!dataseedEnabled) return { url, converted: false }
-  const data = await getImageByUrl(url)
-  data.converted = true
+  const originalUrl = url
+  if (dataseedEnabled) {
+    const res = await rewriteImageUrl(url)
+    url = res.url
+  }
+  if (!_.isUrl(url)) {
+    throw error_.new('invalid image url', 400, { url, originalUrl })
+  }
+  const data = await convertImageUrl(url)
+  _.log({ originalUrl, cleanedUrl: url, ...data }, 'convert url')
   return data
 }
