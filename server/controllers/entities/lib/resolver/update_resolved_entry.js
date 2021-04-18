@@ -38,7 +38,7 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
   // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity = _.cloneDeep(entity)
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
-  _.forEach(newClaims, (newValues, prop) => {
+  Object.keys(newClaims).forEach(prop => {
     updatedEntity.claims[prop] = newClaims[prop]
   })
   updateDatePrecision(entity, updatedEntity, seedClaims)
@@ -62,11 +62,11 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
 
 const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
   const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
-
-  _.forEach(seedDateClaims, (seedDates, prop) => {
+  Object.keys(seedDateClaims).forEach(prop => {
+    const seedDates = seedDateClaims[prop]
     const seedDate = seedDates[0]
     const currentDate = entity.claims[prop][0]
-    if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate)) {
+    if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
       updatedEntity.claims[prop] = seedDateClaims[prop]
     }
   })
@@ -74,6 +74,8 @@ const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
 
 const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'wdt:P577' ]
 
-const isMorePreciseDate = (date1, date2) => intCount(date1) > intCount(date2)
+const doDatesAgree = (seedDate, currentDate) => seedDate.startsWith(currentDate)
 
-const intCount = str => (str.match(/\d/g) || []).length
+const isMorePreciseDate = (date1, date2) => dateParts(date1).length > dateParts(date2).length
+
+const dateParts = simpleDay => simpleDay.split('-')
