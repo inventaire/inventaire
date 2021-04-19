@@ -7,6 +7,15 @@ const { shouldNotBeCalled } = require('../utils/utils')
 const convertUrl = url => authReq('post', endpoint, { url })
 
 describe('images:convert-url', () => {
+  it('should reject an invalid URL', async () => {
+    const imageUrl = 'upload.wikimedia.org/wikipedia/commons/thumb/6/64/foo.jpg'
+    await convertUrl(imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+    })
+  })
+
   it('should convert a URL', async () => {
     const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
     const { url, hash } = await convertUrl(imageUrl)
