@@ -3,7 +3,7 @@ const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
-const { getByUris, addClaim, getHistory } = require('apiTests/utils/entities')
+const { getByUris, getByUri, addClaim, getHistory } = require('apiTests/utils/entities')
 const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = require('apiTests/fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
@@ -33,9 +33,8 @@ describe('entities:resolver:update-resolved', () => {
     await addClaim(work.uri, 'wdt:P50', authorUri2)
     const { entries } = await resolveAndUpdate(entry)
     const entityUri = entries[0].works[0].uri
-    const { entities } = await getByUris(entityUri)
-    const workAuthorsUris = _.values(entities)[0].claims['wdt:P50']
-    workAuthorsUris.should.not.containEql(authorUri)
+    const { claims } = await getByUri(entityUri)
+    claims['wdt:P50'].should.not.containEql(authorUri)
   })
 
   it('should update entities claims values if property does not exist', async () => {
@@ -76,10 +75,8 @@ describe('entities:resolver:update-resolved', () => {
     const { entries } = await resolveAndUpdate(entry)
     const authorUri = entries[0].authors[0].uri
     authorUri.should.equal(human.uri)
-    const { entities } = await getByUris(authorUri)
-    const updatedAuthor = entities[authorUri]
-    const authorWebsiteClaimValues = updatedAuthor.claims['wdt:P856']
-    authorWebsiteClaimValues.should.containEql(officialWebsite)
+    const { claims } = await getByUri(authorUri)
+    claims['wdt:P856'].should.containEql(officialWebsite)
   })
 
   it('should update edition claims', async () => {
@@ -93,10 +90,8 @@ describe('entities:resolver:update-resolved', () => {
     }
     await resolveAndUpdate(entry)
     await wait(10)
-    const { entities } = await getByUris(uri)
-    const updatedEdition = entities[uri]
-    const numberOfPagesClaimsValues = updatedEdition.claims['wdt:P1104']
-    numberOfPagesClaimsValues.should.containEql(numberOfPages)
+    const { claims } = await getByUri(uri)
+    claims['wdt:P1104'].should.containEql(numberOfPages)
   })
 
   // Requires a running dataseed service and CONFIG.dataseed.enabled=true
@@ -110,9 +105,8 @@ describe('entities:resolver:update-resolved', () => {
     }
     await resolveAndUpdate(entry)
     await wait(10)
-    const { entities } = await getByUris(editionUri)
-    const { claims: updatedClaims } = entities[editionUri]
-    updatedClaims['invp:P2'][0].should.be.ok()
+    const { claims } = await getByUri(editionUri)
+    claims['invp:P2'][0].should.be.ok()
   })
 
   // Requires a running dataseed service and CONFIG.dataseed.enabled=true
@@ -152,9 +146,8 @@ describe('entities:resolver:update-resolved', () => {
     }
     await resolveAndUpdate(entry)
     await wait(10)
-    const { entities } = await getByUris(edition.uri)
-    const { claims: updatedClaims } = entities[edition.uri]
-    updatedClaims['invp:P2'][0].should.equal(originalImageHash)
+    const { claims } = await getByUri(edition.uri)
+    claims['invp:P2'][0].should.equal(originalImageHash)
   })
 
   it('should add a batch timestamp to patches', async () => {
@@ -180,6 +173,85 @@ describe('entities:resolver:update-resolved', () => {
     batchId.should.be.a.Number()
     batchId.should.above(startTime)
     batchId.should.below(Date.now())
+  })
+
+  it('should not update if entry date is as precise as entity date', async () => {
+    const year = '2020'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: year })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': year }
+      }
+    }
+    const { version } = await getByUri(uri)
+    const preResolvedEntityVersion = version
+
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { version: postResolvedVersion } = await getByUri(uri)
+    postResolvedVersion.should.equal(preResolvedEntityVersion)
+  })
+
+  it('should not update if entry date disagree with entity date', async () => {
+    const entryDate = '2020-01-01'
+    const entityDate = '2021'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: entityDate })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': entryDate }
+      }
+    }
+    const { version } = await getByUri(uri)
+    const preResolvedEntityVersion = version
+
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { version: postResolvedVersion } = await getByUri(uri)
+    postResolvedVersion.should.equal(preResolvedEntityVersion)
+  })
+
+  it('should update if entry date is more precise than entity date', async () => {
+    const entryDate = '2020-01-01'
+    const entityDate = '2020'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: entityDate })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': entryDate }
+      }
+    }
+    const { version } = await getByUri(uri)
+    const preResolvedEntityVersion = version
+
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { version: postResolvedVersion } = await getByUri(uri)
+    postResolvedVersion.should.equal(preResolvedEntityVersion + 1)
+  })
+
+  it('should update authors date claims', async () => {
+    const entryDate = '2020-01-01'
+    const entityDate = '2020'
+    const goodReadsId = someGoodReadsId()
+    const entry = {
+      edition: { isbn: generateIsbn13() },
+      authors: [ {
+        claims: {
+          'wdt:P2963': [ goodReadsId ],
+          'wdt:P569': [ entryDate ]
+        }
+      }
+      ]
+    }
+    const human = await createHuman()
+    await addClaim(human.uri, 'wdt:P2963', goodReadsId)
+    await addClaim(human.uri, 'wdt:P569', entityDate)
+    const { entries } = await resolveAndUpdate(entry)
+    const authorUri = entries[0].authors[0].uri
+    const { claims } = await getByUri(authorUri)
+    claims['wdt:P569'].should.containEql(entryDate)
   })
 })
 

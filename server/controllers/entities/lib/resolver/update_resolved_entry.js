@@ -22,7 +22,7 @@ const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
   if (prefix === 'wd') return
 
   const entity = await getEntity(prefix, entityId)
-  await addMissingClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
+  await updateClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
 }
 
 const getEntity = (prefix, entityId) => {
@@ -33,13 +33,23 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const addMissingClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
-  // Do not update if property already exists
+const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
+  // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
+  const updatedEntity = _.cloneDeep(entity)
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
+  Object.keys(newClaims).forEach(prop => {
+    updatedEntity.claims[prop] = newClaims[prop]
+  })
+  updateDatePrecision(entity, updatedEntity, seedClaims)
   await addImageClaim(entity, imageUrl, newClaims)
-  if (_.isEmpty(newClaims)) return
-  return entities_.addClaims(reqUserId, newClaims, entity, batchId)
+  if (_.isEqual(updatedEntity, entity)) return
+  await entities_.putUpdate({
+    userId: reqUserId,
+    currentDoc: entity,
+    updatedDoc: updatedEntity,
+    batchId
+  })
 }
 
 const addImageClaim = async (entity, imageUrl, newClaims) => {
@@ -49,3 +59,23 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   const { url: imageHash } = await getImageByUrl(imageUrl)
   newClaims['invp:P2'] = [ imageHash ]
 }
+
+const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
+  const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
+  Object.keys(seedDateClaims).forEach(prop => {
+    const seedDates = seedDateClaims[prop]
+    const seedDate = seedDates[0]
+    const currentDate = entity.claims[prop][0]
+    if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
+      updatedEntity.claims[prop] = seedDateClaims[prop]
+    }
+  })
+}
+
+const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'wdt:P577' ]
+
+const doDatesAgree = (seedDate, currentDate) => seedDate.startsWith(currentDate)
+
+const isMorePreciseDate = (date1, date2) => dateParts(date1).length > dateParts(date2).length
+
+const dateParts = simpleDay => simpleDay.split('-')
