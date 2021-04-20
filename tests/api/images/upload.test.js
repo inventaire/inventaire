@@ -12,7 +12,7 @@ const FormData = require('form-data')
 const { isImageHash } = require('lib/boolean_validations')
 
 describe('images:upload', () => {
-  it('reject uploads on assets containers', async () => {
+  it('reject uploads on assets container', async () => {
     await authReq('post', `${endpoint}&container=assets`)
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -20,11 +20,35 @@ describe('images:upload', () => {
     })
   })
 
-  it('reject uploads on remote containers', async () => {
+  it('reject uploads on remote container', async () => {
     await authReq('post', `${endpoint}&container=remote`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid container')
+    })
+  })
+
+  it('reject uploads on an unknown container', async () => {
+    await authReq('post', `${endpoint}&container=foo`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid container')
+    })
+  })
+
+  it('should accept uploads on entities container', async () => {
+    await authReq('post', `${endpoint}&container=entities`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('no file provided')
+    })
+  })
+
+  it('should accept uploads on users container', async () => {
+    await authReq('post', `${endpoint}&container=users`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('no file provided')
     })
   })
 

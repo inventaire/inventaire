@@ -13,7 +13,7 @@ module.exports = (req, res) => {
 const upload = async (req, res) => {
   const { container } = req.query
 
-  if (container == null || containers[container].putImage == null) {
+  if (containers[container] == null || containers[container].putImage == null) {
     throw error_.newInvalid('container', container)
   }
 
