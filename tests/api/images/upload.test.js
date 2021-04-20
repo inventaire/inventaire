@@ -12,6 +12,8 @@ const FormData = require('form-data')
 const { isImageHash } = require('lib/boolean_validations')
 
 describe('images:upload', () => {
+  // Uploads on the assets container are done directly by an instance admin
+  // without passing by this endpoint
   it('reject uploads on assets container', async () => {
     await authReq('post', `${endpoint}&container=assets`)
     .then(shouldNotBeCalled)
@@ -20,6 +22,9 @@ describe('images:upload', () => {
     })
   })
 
+  // `remote` is a pseudo-container known by the /img endpoint,
+  // but it's not a real object storage container: source files
+  // aren't fetched from the object storage but from remote URLs
   it('reject uploads on remote container', async () => {
     await authReq('post', `${endpoint}&container=remote`)
     .then(shouldNotBeCalled)
