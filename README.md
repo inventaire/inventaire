@@ -23,10 +23,13 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - [Installation](#installation)
   - [Dependencies to install manually](#dependencies-to-install-manually)
   - [Project development environment installation](#project-development-environment-installation)
+    - [server](#server)
+      - [emails](#emails)
+    - [client](#client)
   - [Installation tips](#installation-tips)
   - [Repositories and Branches](#repositories-and-branches)
-    - [server](#server)
-    - [client](#client)
+    - [server](#server-1)
+    - [client](#client-1)
     - [i18n](#i18n)
     - [deploy](#deploy)
     - [docker](#docker)
@@ -75,6 +78,8 @@ This should have installed:
 - the client ([inventaire-client](https://github.com/inventaire/inventaire-client)) in the `client` directory
 - i18n strings ([inventaire-i18n](https://github.com/inventaire/inventaire-i18n)) in the `inventaire-i18n` directory
 
+#### server
+
 This should also have created a `./config/local.js` file, in which you can override all present in `./config/default.js`: make sure to set `db` `username` and `password` to your CouchDB username and password.
 
 And now you should be all set! You can now start the server (on port `3006` by default)
@@ -82,6 +87,19 @@ And now you should be all set! You can now start the server (on port `3006` by d
 # Starting the server in watch mode so that it reboots on file changes
 npm run watch
 ```
+
+##### emails
+
+To debug emails in the browser:
+* Set the following values in config: `mailer.disabled = false` and `mailer.preview = true`.
+* Install `live-server`: `npm install --global live-server`
+* Make an action that triggers the email you would like to work on on the local server (ex: send a friend request)
+* Run `npm run preview-email`: this will open the last generated email in your browser (with a link to the data associated to the email, that's only there in this preview mode)
+
+Note that, while convenient, debugging emails in the browser is quite an approximation, as some email clients are antiquated, and, sadly, modern CSS can't be used.
+
+#### client
+
 If you want to work on the [client](https://github.com/inventaire/inventaire-client), you need to start the webpack watcher and dev server (on port `3005` by default)
 ```sh
 # In another terminal
