@@ -29,6 +29,8 @@ module.exports = (req, res) => {
   .then(resp => {
     const seed = resp[0] || {}
     delete seed.isbn
+    // TODO: convert image URL to hash?
+    delete seed.image
     Object.assign(data, seed)
     res.json(data)
   })

@@ -15,5 +15,6 @@ module.exports = {
   patches: [ 'patches' ],
   notifications: [ 'notifications' ],
   tasks: [ 'tasks' ],
-  shelves: [ 'shelves' ]
+  shelves: [ 'shelves' ],
+  images: [ 'images' ],
 }

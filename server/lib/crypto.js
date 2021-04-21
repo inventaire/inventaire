@@ -27,7 +27,16 @@ const createHexHash = algo => input => {
   .digest('hex')
 }
 
+const createHexHashFromStream = algo => stream => new Promise((resolve, reject) => {
+  const sum = crypto.createHash(algo)
+  return stream
+  .on('data', sum.update.bind(sum))
+  .on('end', () => resolve(sum.digest('hex')))
+  .on('error', reject)
+})
+
 exports.sha1 = createHexHash('sha1')
 exports.md5 = createHexHash('md5')
+exports.sha1FromStream = createHexHashFromStream('sha1')
 
 exports.getRandomBytesBuffer = length => crypto.randomBytes(length)

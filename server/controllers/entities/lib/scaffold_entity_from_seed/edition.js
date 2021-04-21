@@ -13,6 +13,7 @@ const createInvEntity = require('../create_inv_entity')
 // than to put exceptions everywhere
 const seedUserId = require('db/couchdb/hard_coded_documents').users.seed._id
 const scaffoldWorkEntityFromSeed = require('./work')
+const convertImageUrl = require('controllers/images/lib/convert_image_url')
 
 // seed attributes:
 // MUST have: isbn
@@ -58,7 +59,17 @@ const clearCache = isbn13 => () => {
   return setTimeout(remove, 10000)
 }
 
-const createEditionEntity = (seed, workPromise) => {
+const createEditionEntity = async (seed, workPromise) => {
+  if (seed.image) {
+    try {
+      const { hash } = await convertImageUrl(seed.image)
+      seed.imageHash = hash
+    } catch (err) {
+      // do not crash the function, if the image url conversion failed
+      _.error(err, `couldn't convert seed image url: ${seed.image}`)
+    }
+  }
+
   // The title is set hereafter as monolingual title (wdt:P1476)
   // instead of as a label
   const labels = {}
@@ -69,7 +80,7 @@ const createEditionEntity = (seed, workPromise) => {
   // wdt:P957 and wdt:P407 will be inferred from wdt:P212
 
   addClaimIfValid(claims, 'wdt:P1476', seed.title)
-  addClaimIfValid(claims, 'invp:P2', seed.image)
+  addClaimIfValid(claims, 'invp:P2', seed.imageHash)
   addClaimIfValid(claims, 'wdt:P577', seed.publicationDate)
   addClaimIfValid(claims, 'wdt:P1104', seed.numberOfPages)
 
@@ -84,7 +95,7 @@ const createEditionEntity = (seed, workPromise) => {
 }
 
 const addClaimIfValid = (claims, property, value) => {
-  if ((value != null) && properties[property].validate(value)) {
+  if (value != null && properties[property].validate(value)) {
     claims[property] = [ value ]
   }
 }

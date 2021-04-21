@@ -61,17 +61,14 @@ const customAuthReq = async (user, method, endpoint, body) => {
   return request(method, endpoint, body, user.cookie)
 }
 
-const rawCustomAuthReq = async (user, method, endpoint, body) => {
+const rawCustomAuthReq = async (user, method, url, options = {}) => {
   assert_.type('object|promise', user)
   assert_.string(method)
-  assert_.string(endpoint)
+  assert_.string(url)
   user = await user
-  return rawRequest(method, endpoint, {
-    headers: {
-      cookie: user.cookie
-    },
-    body
-  })
+  options.headers = options.headers || {}
+  options.headers.cookie = user.cookie
+  return rawRequest(method, url, options)
 }
 
 module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq }
