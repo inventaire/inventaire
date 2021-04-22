@@ -11,7 +11,7 @@ describe('items:snapshot', () => {
     const workEntity = await createWork()
     const serieEntity = await addSerie(workEntity)
     await wait(100)
-    const item = await authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+    const item = await authReq('post', '/api/items', { entity: workEntity.uri })
     const title = _.values(serieEntity.labels)[0]
     item.snapshot['entity:series'].should.equal(title)
   })
@@ -19,7 +19,7 @@ describe('items:snapshot', () => {
   it("should snapshot the item's work series ordinal", async () => {
     const workEntity = await createWork()
     const [ item ] = await Promise.all([
-      authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' }),
+      authReq('post', '/api/items', { entity: workEntity.uri }),
       addSerie(workEntity)
     ])
     await wait(100)
@@ -94,7 +94,7 @@ describe('items:snapshot', () => {
 
     it('should be updated when its local work entity title changes', async () => {
       const { _id: entityId, uri } = await createWork()
-      const item = await authReq('post', '/api/items', { entity: uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: uri })
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle} ${new Date().toISOString()}`
       await updateLabel(entityId, 'en', updatedTitle)
@@ -105,7 +105,7 @@ describe('items:snapshot', () => {
 
     it('should be updated when its local serie entity title changes', async () => {
       const workEntity = await createWork()
-      const item = await authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       await wait(200)
       const serieEntity = await addSerie(workEntity)
       await wait(200)
@@ -136,7 +136,7 @@ describe('items:snapshot', () => {
 
     it('should be updated when its local author entity title changes (work entity)', async () => {
       const workEntity = await createWorkWithAuthor()
-      const item = await authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       const updateAuthorName = humanName()
       const uri = workEntity.claims['wdt:P50'][0]
       await updateLabel(uri, 'en', updateAuthorName)
@@ -150,7 +150,7 @@ describe('items:snapshot', () => {
         createWork(),
         createWork()
       ])
-      const item = await authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: workEntityA.uri })
       await merge(workEntityA.uri, workEntityB.uri)
       const updatedItem = await getItem(item)
       const updatedTitle = workEntityB.labels.en
@@ -181,7 +181,7 @@ describe('items:snapshot', () => {
         createHuman()
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
-      const item = await authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       await wait(200)
       await merge(authorEntityA.uri, authorEntityB.uri)
       await wait(200)
@@ -196,7 +196,7 @@ describe('items:snapshot', () => {
         createHuman()
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
-      const item = await authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+      const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       await wait(200)
       await merge(authorEntityA.uri, authorEntityB.uri)
       await wait(200)
@@ -214,7 +214,7 @@ describe('items:snapshot', () => {
       const workEntityA = await createWork()
       const [ editionEntity, item ] = await Promise.all([
         createEditionFromWorks(workEntityA),
-        authReq('post', '/api/items', { entity: workEntityA.uri, lang: 'en' })
+        authReq('post', '/api/items', { entity: workEntityA.uri })
       ])
       await wait(100)
       item.entity = editionEntity.uri
