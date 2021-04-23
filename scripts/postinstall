@@ -32,6 +32,7 @@ touch run/3006 run/3009
   }
   "
   echo "$emptyConfigFile" >> ./config/local.js
+  chmod 600 ./config/local.js
 } || echo './config/local.js file already exist: skipping creation'
 
 npm run update-jsconfig
