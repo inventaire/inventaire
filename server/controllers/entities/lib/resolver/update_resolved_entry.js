@@ -56,7 +56,7 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   if (!imageUrl) return
   const imageClaims = entity.claims['invp:P2']
   if (imageClaims) return
-  const { hash: imageHash } = await convertAndCleanupImageUrl(imageUrl)
+  const { hash: imageHash } = await convertAndCleanupImageUrl({ url: imageUrl, container: 'entities' })
   newClaims['invp:P2'] = [ imageHash ]
 }
 

@@ -17,8 +17,10 @@ module.exports = {
   // minimanlist email regex
   // cf http://davidcel.is/blog/2012/09/06/stop-validating-email-addresses-with-regex/
   Email: /^[^@]+@[^@]+\.[^@]+$/,
+  EntityImg: /^\/img\/entities\/[0-9a-f]{40}$/,
   EntityUri: /^(wd:Q\d+|inv:[0-9a-f]{32}|isbn:\w{10}(\w{3})?)$/,
   Float: /^-?[\d.]+$/,
+  GroupImg: /^\/img\/groups\/[0-9a-f]{40}$/,
   ImageHash: /^[0-9a-f]{40}$/,
   Integer: /^-?\d+$/,
   // Accepting second level languages (like es-AR)

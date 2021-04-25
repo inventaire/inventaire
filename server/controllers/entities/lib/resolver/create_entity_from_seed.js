@@ -59,7 +59,7 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   }
 
   if (imageUrl) {
-    const { hash: imageHash } = await convertAndCleanupImageUrl(imageUrl)
+    const { hash: imageHash } = await convertAndCleanupImageUrl({ url: imageUrl, container: 'entities' })
     if (imageHash) claims['invp:P2'] = [ imageHash ]
   }
 
