@@ -13,6 +13,10 @@ module.exports = {
     putImage: containerPutImage('users', 'shrinkAndFormat')
   },
 
+  groups: {
+    putImage: containerPutImage('groups', 'shrinkAndFormat')
+  },
+
   entities: {
     putImage: containerPutImage('entities', 'removeExif')
   },

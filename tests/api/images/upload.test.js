@@ -57,6 +57,14 @@ describe('images:upload', () => {
     })
   })
 
+  it('should accept uploads on groups container', async () => {
+    await authReq('post', `${endpoint}&container=groups`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('no file provided')
+    })
+  })
+
   it('should upload an image', async () => {
     const { cookie } = await getUser()
     const container = 'entities'
