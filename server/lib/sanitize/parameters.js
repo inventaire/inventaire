@@ -145,15 +145,15 @@ const allowlistedStrings = {
 }
 
 const generics = {
+  allowlist: {
+    validate: (value, name, config) => config.allowlist.includes(value)
+  },
   boolean: {
     format: (value, name, config) => {
       if (_.isString(value)) return _.parseBooleanString(value, config.default)
       else return value
     },
     validate: value => _.typeOf(value) === 'boolean'
-  },
-  object: {
-    validate: _.isPlainObject
   },
   collection: {
     validate: (values, name, config) => {
@@ -165,6 +165,9 @@ const generics = {
       }
       return true
     }
+  },
+  object: {
+    validate: _.isPlainObject
   },
   positiveInteger: {
     format: value => {

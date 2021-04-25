@@ -103,7 +103,7 @@ describe('sanitize', () => {
   })
 
   describe('generic parameter', () => {
-    it('should accept generic parameters', async () => {
+    it('should accept boolean generic parameters', async () => {
       const req = { query: { 'include-users': true } }
       const res = {}
 
@@ -116,6 +116,25 @@ describe('sanitize', () => {
 
       const { includeUsers } = await sanitize(req, res, configs)
       includeUsers.should.be.true()
+    })
+
+    it('should accept allowlist generic parameters', async () => {
+      const res = {}
+
+      const configs = {
+        foo: {
+          generic: 'allowlist',
+          allowlist: [ 'a', 'b', 'c' ]
+        }
+      }
+
+      const { foo } = await sanitize({ query: { foo: 'a' } }, res, configs)
+      foo.should.equal('a')
+      await sanitize({ query: { foo: 'd' } }, res, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.startWith('invalid foo')
+      })
     })
 
     it('should throw when passed an invalid generic name', done => {
