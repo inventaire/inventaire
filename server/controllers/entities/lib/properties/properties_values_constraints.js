@@ -162,7 +162,7 @@ module.exports = {
   // GoodReads book ID
   'wdt:P2969': builders.externalId(strictlyPositiveIntegerPattern),
   // ISBN publisher prefix
-  'wdt:P3035': builders.externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/),
+  'wdt:P3035': extend(builders.externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/), { uniqueValue: false }),
   // Czech National Bibliography book ID
   'wdt:P3184': builders.externalId(/^cnb[0-9]{9}$/),
   // Babelio author ID
