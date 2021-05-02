@@ -96,7 +96,7 @@ const createOccurrencesFromUnstructuredArticle = worksLabels => {
 
 const createOccurrencesFromExactTitles = worksLabels => result => {
   const title = normalizeTerm(result.title)
-  if (worksLabels.includes(title)) {
+  if (worksLabels.map(normalizeTerm).includes(title)) {
     return {
       url: result.url,
       matchedTitles: [ title ],

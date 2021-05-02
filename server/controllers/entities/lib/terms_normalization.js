@@ -17,6 +17,8 @@ const normalizeTerm = term => {
   .replace(/\./g, ' ')
   // - Replace all groups of spaces that might have emerged above by a single space
   .replace(/\s+/g, ' ')
+
+  .trim()
 }
 
 const getEntityNormalizedTerms = entity => {
