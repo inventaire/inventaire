@@ -3,6 +3,7 @@
 
 const all = [
   'wdt:P31', // instance of
+  'wdt:P227', // GND ID
   'wdt:P243', // OCLC control number
   'wdt:P268', // BNF ID
 ]
@@ -71,7 +72,6 @@ module.exports = {
     'wdt:P135', // movement
     'wdt:P213', // ISNI
     'wdt:P214', // VIAF ID
-    'wdt:P227', // GND ID
     'wdt:P269', // SUDOC authorities ID
     'wdt:P349', // NDL of Japan Auth ID
     'wdt:P496', // ORCID ID
