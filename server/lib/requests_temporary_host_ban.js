@@ -9,18 +9,24 @@ const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // TODO: share ban data among instances
 const dbKey = CONFIG.port
 
-let timeoutData = {}
+const timeoutData = {}
 
 const restoreTimeoutsData = () => {
   db.get(dbKey)
-  .then(data => {
-    timeoutData = data
-    if (Object.keys(timeoutData).length > 0) _.success(timeoutData, 'timeouts data restored')
-  })
+  .then(restoreNonExpiredBans)
   .catch(err => {
     if (err.name === 'NotFoundError') return _.warn('no timeouts data found')
     else _.error(err, 'timeouts init err')
   })
+}
+
+const restoreNonExpiredBans = data => {
+  const now = Date.now()
+  Object.keys(data).forEach(host => {
+    const hostData = data[host]
+    if (hostData.expire > now) timeoutData[host] = data[host]
+  })
+  if (Object.keys(timeoutData).length > 0) _.success(timeoutData, 'timeouts data restored')
 }
 
 const throwIfTemporarilyBanned = host => {
