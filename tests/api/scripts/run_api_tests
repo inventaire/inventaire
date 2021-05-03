@@ -14,7 +14,7 @@ check_filename(){
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]
 then
-  find tests/api -type f -name *.test.js | \
+  find tests/api -type f -name *.test.js |
     xargs mocha --exit $MOCHA_OPTIONS --timeout $timeout ./node_modules/module-alias/register.js
 else
   files=''
