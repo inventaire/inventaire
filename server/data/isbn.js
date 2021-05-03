@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const isbn_ = require('lib/isbn/isbn')
 const error_ = require('lib/error/error')
-const dataseed = require('data/dataseed/dataseed')
+const { getByIsbns: getSeedsByIsbns } = require('data/dataseed/dataseed')
 
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
@@ -25,7 +25,7 @@ module.exports = (req, res) => {
 
   const refresh = _.parseBooleanString(req.query.refresh)
 
-  return dataseed.getByIsbns(data.isbn13, refresh)
+  return getSeedsByIsbns(data.isbn13, refresh)
   .then(resp => {
     const seed = resp[0] || {}
     delete seed.isbn

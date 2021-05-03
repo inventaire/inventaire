@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const entities_ = require('./entities')
-const dataseed = require('data/dataseed/dataseed')
+const { getByIsbns: getSeedsByIsbns } = require('data/dataseed/dataseed')
 const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = require('lib/isbn/isbn')
@@ -39,7 +39,7 @@ module.exports = async (rawIsbns, params = {}) => {
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
 const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
-  const seeds = await dataseed.getByIsbns(isbns, refresh)
+  const seeds = await getSeedsByIsbns(isbns, refresh)
   const insufficientData = []
   const validSeeds = []
   // TODO: Filter out more aggressively bad quality seeds
