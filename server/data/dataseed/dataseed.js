@@ -35,8 +35,7 @@ module.exports = {
     return requests_.get(url, reqOptions)
   },
 
-  // Converts the url to an image hash
-  getImageByUrl: imageUrl => {
+  cleanupImageUrl: imageUrl => {
     const url = _.buildPath(`${host}/images`, { url: encodeURIComponent(imageUrl) })
     return requests_.get(url, reqOptions)
   }

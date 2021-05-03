@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const entities_ = require('../entities')
-const { getImageByUrl } = require('data/dataseed/dataseed')
+const convertAndCleanupImageUrl = require('controllers/images/lib/convert_and_cleanup_image_url')
 
 module.exports = ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry
@@ -56,7 +56,7 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   if (!imageUrl) return
   const imageClaims = entity.claims['invp:P2']
   if (imageClaims) return
-  const { url: imageHash } = await getImageByUrl(imageUrl)
+  const { hash: imageHash } = await convertAndCleanupImageUrl(imageUrl)
   newClaims['invp:P2'] = [ imageHash ]
 }
 
