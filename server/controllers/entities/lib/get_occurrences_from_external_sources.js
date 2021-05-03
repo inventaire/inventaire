@@ -5,6 +5,7 @@ const getWikipediaArticle = require('data/wikipedia/get_article')
 const getBnfAuthorWorksTitles = require('data/bnf/get_bnf_author_works_titles')
 const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
 const getBneAuthorWorksTitles = require('data/bne/get_bne_author_works_titles')
+const getGndAuthorWorksTitles = require('data/gnd/get_gnd_author_works_titles')
 const getSelibrAuthorWorksTitle = require('data/selibr/get_selibr_author_works_titles')
 const getKjkAuthorWorksTitle = require('data/kjk/get_kjk_author_works_titles')
 const getNdlAuthorWorksTitle = require('data/ndl/get_ndl_author_works_titles')
@@ -34,6 +35,7 @@ module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getOpenLibraryOccurrences(authorEntity, worksLabels),
       getBnbOccurrences(authorEntity, worksLabels),
       getBneOccurrences(authorEntity, worksLabels),
+      getGndOccurrences(authorEntity, worksLabels),
       getSelibrOccurrences(authorEntity, worksLabels),
       getKjkOccurrences(authorEntity, worksLabels),
       getNdlOccurrences(authorEntity, worksLabels)
@@ -78,6 +80,7 @@ const getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAutho
 const getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds('wdt:P648', getOlAuthorWorksTitles)
 const getBnbOccurrences = getAndCreateOccurrencesFromIds('wdt:P5361', getBnbAuthorWorksTitles)
 const getBneOccurrences = getAndCreateOccurrencesFromIds('wdt:P950', getBneAuthorWorksTitles)
+const getGndOccurrences = getAndCreateOccurrencesFromIds('wdt:P227', getGndAuthorWorksTitles)
 const getSelibrOccurrences = getAndCreateOccurrencesFromIds('wdt:P906', getSelibrAuthorWorksTitle)
 const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuthorWorksTitle)
 const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
@@ -93,7 +96,7 @@ const createOccurrencesFromUnstructuredArticle = worksLabels => {
 
 const createOccurrencesFromExactTitles = worksLabels => result => {
   const title = normalizeTerm(result.title)
-  if (worksLabels.includes(title)) {
+  if (worksLabels.map(normalizeTerm).includes(title)) {
     return {
       url: result.url,
       matchedTitles: [ title ],

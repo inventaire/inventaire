@@ -31,6 +31,7 @@ module.exports = [
   'P212', // isbn 13
   'P213', // ISNI
   'P214', // VIAF ID
+  'P227', // GND ID
   'P268', // BnF ID
   'P269', // SUDOC authorities ID
   'P279', // subclass of
