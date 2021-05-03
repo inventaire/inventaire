@@ -64,19 +64,17 @@ const API = module.exports = {
   },
 
   createEditionWithIsbn: async (params = {}) => {
-    const { publisher } = params
-    let { publicationDate } = params
+    const { publisher, publicationDate } = params
     const work = await API.createWork()
     const isbn13h = API.generateIsbn13h()
-    publicationDate = publicationDate || '2020'
     const claims = {
       'wdt:P31': [ 'wd:Q3331189' ],
       'wdt:P629': [ work.uri ],
       'wdt:P212': [ isbn13h ],
-      'wdt:P577': [ publicationDate ],
       'wdt:P1476': [ API.randomLabel() ]
     }
     if (publisher) claims['wdt:P123'] = [ publisher ]
+    if (publicationDate !== null) claims['wdt:P577'] = [ publicationDate || '2020' ]
     const edition = await authReq('post', '/api/entities?action=create', { claims })
     edition.isbn = edition.uri.split(':')[1]
     edition.invUri = `inv:${edition._id}`

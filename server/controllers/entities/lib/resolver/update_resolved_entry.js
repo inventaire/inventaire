@@ -63,10 +63,14 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
 const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
   const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
   Object.keys(seedDateClaims).forEach(prop => {
-    const seedDates = seedDateClaims[prop]
-    const seedDate = seedDates[0]
-    const currentDate = entity.claims[prop][0]
-    if (seedDate && currentDate && isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
+    const seedDate = seedDateClaims[prop][0]
+    if (!seedDate) return
+    const currentDate = entity.claims[prop] && entity.claims[prop][0]
+    if (currentDate) {
+      if (isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
+        updatedEntity.claims[prop] = seedDateClaims[prop]
+      }
+    } else {
       updatedEntity.claims[prop] = seedDateClaims[prop]
     }
   })

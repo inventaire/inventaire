@@ -231,6 +231,21 @@ describe('entities:resolver:update-resolved', () => {
     postResolvedVersion.should.equal(preResolvedEntityVersion + 1)
   })
 
+  it('should update if is an entry date and no current date', async () => {
+    const entryDate = '2020-02-03'
+    const { uri, isbn } = await createEditionWithIsbn({ publicationDate: null })
+    const entry = {
+      edition: {
+        isbn,
+        claims: { 'wdt:P577': entryDate }
+      }
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const updatedEntity = await getByUri(uri)
+    updatedEntity.claims['wdt:P577'].should.deepEqual([ entryDate ])
+  })
+
   it('should update authors date claims', async () => {
     const entryDate = '2020-01-01'
     const entityDate = '2020'
