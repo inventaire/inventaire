@@ -4,8 +4,8 @@ const { mode } = require('config').mediaStorage
 _.info(`media storage: ${mode}`)
 const client = require(`./${mode}_client`)
 
-module.exports = (container, path, id, filename) => {
-  return client.putImage(container, path, filename)
-  .then(_.Log('new image url'))
-  .then(url => ({ id, url }))
+module.exports = async (container, path, id, filename) => {
+  const url = await client.putImage(container, path, filename)
+  _.log(url, 'new image url')
+  return { id, url }
 }

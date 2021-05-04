@@ -1,11 +1,11 @@
 const images_ = require('lib/images')
 const putImage = require('./put_image')
 
-const containerPutImage = (container, fnName) => fileData => {
+const containerPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
-  return images_[fnName](path)
-  .then(() => images_.getHashFilename(path))
-  .then(filename => putImage(container, path, id, filename))
+  await images_[fnName](path)
+  const filename = images_.getHashFilename(path)
+  return putImage(container, path, id, filename)
 }
 
 module.exports = {
