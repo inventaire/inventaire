@@ -141,6 +141,12 @@ const user_ = module.exports = {
 
   byPosition: searchUsersByPosition,
 
+  imageIsUsed: async imageHash => {
+    assert_.string(imageHash)
+    const { rows } = await db.view('users', 'byPicture', { key: imageHash })
+    return rows.length > 0
+  },
+
   // View model serialization for emails and rss feeds templates
   serializeData: user => {
     user.picture = user.picture || defaultAvatar

@@ -27,12 +27,18 @@ module.exports = {
       getParams(container, filename),
       getContentLength(path)
     ])
-    const { headers, url } = params
+    const { url, headers } = params
     headers['content-length'] = contentLength
     headers['content-type'] = 'application/octet-stream'
     const stream = createReadStream(path)
-    const res = await requests_.put(url, { headers, bodyStream: stream, parseJson: false })
-    _.log(res, 'swift putImage')
+    await requests_.put(url, { headers, bodyStream: stream, parseJson: false })
+    _.log({ container, path, filename }, 'swift: put image')
     return relativeUrl(container, filename)
+  },
+
+  deleteImage: async (container, filename) => {
+    const { url, headers } = await getParams(container, filename)
+    await requests_.delete(url, { headers, parseJson: false })
+    _.log({ container, filename }, 'swift: deleted image')
   }
 }

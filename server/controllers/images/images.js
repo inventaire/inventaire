@@ -1,4 +1,6 @@
 const ActionsControllers = require('lib/actions_controllers')
+const radio = require('lib/radio')
+const checkImage = require('./lib/check_image')
 
 module.exports = {
   get: ActionsControllers({
@@ -15,3 +17,5 @@ module.exports = {
     }
   })
 }
+
+radio.on('image:needs:check', checkImage)

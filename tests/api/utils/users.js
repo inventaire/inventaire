@@ -9,9 +9,12 @@ module.exports = {
     return users
   },
 
-  updateUser: (user, attribute, value) => customAuthReq(user, 'put', '/api/user', { attribute, value }),
+  updateUser: async ({ user, attribute, value }) => {
+    user = user || await getUser()
+    return customAuthReq(user, 'put', '/api/user', { attribute, value })
+  },
 
-  deleteUser: user => customAuthReq(user, 'delete', '/api/user')
+  deleteUser: user => customAuthReq(user, 'delete', '/api/user'),
 }
 
 const getBboxFromPosition = ([ lat, lng ]) => {

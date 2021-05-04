@@ -1,24 +1,33 @@
+const _ = require('builders/utils')
+// 'swift' or 'local'
+const { mode } = require('config').mediaStorage
+_.info(`media storage: ${mode}`)
+const { putImage, deleteImage } = require(`./${mode}_client`)
 const images_ = require('lib/images')
-const putImage = require('./put_image')
 
-const containerPutImage = (container, fnName) => async fileData => {
+const transformAndPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
   await images_[fnName](path)
-  const filename = images_.getHashFilename(path)
-  return putImage(container, path, id, filename)
+  const filename = await images_.getHashFilename(path)
+  const url = await putImage(container, path, filename)
+  _.log(url, 'new image url')
+  return { id, url }
 }
 
 module.exports = {
   users: {
-    putImage: containerPutImage('users', 'shrinkAndFormat')
+    putImage: transformAndPutImage('users', 'shrinkAndFormat'),
+    deleteImage,
   },
 
   groups: {
-    putImage: containerPutImage('groups', 'shrinkAndFormat')
+    putImage: transformAndPutImage('groups', 'shrinkAndFormat'),
+    deleteImage,
   },
 
   entities: {
-    putImage: containerPutImage('entities', 'removeExif')
+    putImage: transformAndPutImage('entities', 'removeExif'),
+    deleteImage,
   },
 
   // Placeholder to add 'remote' to the list of containers, when it's actually
