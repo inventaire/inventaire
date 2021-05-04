@@ -9,6 +9,7 @@ const responses_ = require('lib/responses')
 const { basicUpdater } = require('lib/doc_updates')
 const { Track } = require('lib/track')
 const sanitize = require('lib/sanitize/sanitize')
+const radio = require('lib/radio')
 
 const sanitization = {
   attribute: {},
@@ -25,7 +26,7 @@ module.exports = (req, res) => {
   .catch(error_.Handler(req, res))
 }
 
-const update = user => ({ attribute, value }) => {
+const update = user => async ({ attribute, value }) => {
   if (value == null && !acceptNullValue.includes(attribute)) {
     throw error_.newMissingBody('value')
   }
@@ -54,13 +55,18 @@ const update = user => ({ attribute, value }) => {
       throw error_.newInvalid('value', value)
     }
 
-    return updateAttribute(user, attribute, value)
+    await updateAttribute(user, attribute, value)
+    if (attribute === 'picture' && currentValue) {
+      radio.emit('image:needs:check', { container: 'users', url: currentValue })
+    }
+    return
   }
 
   if (concurrencial.includes(attribute)) {
     // checks for validity and availability (+ reserve words for username)
-    return availability_[attribute](value, currentValue)
-    .then(() => updateAttribute(user, attribute, value))
+    await availability_[attribute](value, currentValue)
+    await updateAttribute(user, attribute, value)
+    return
   }
 
   throw error_.new(`forbidden update: ${attribute} - ${value}`, 403)
