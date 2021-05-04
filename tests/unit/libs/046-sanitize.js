@@ -1,4 +1,4 @@
-require('should')
+const should = require('should')
 const sanitize = require('lib/sanitize/sanitize')
 const { undesiredRes, shouldNotBeCalled } = require('../utils')
 
@@ -63,6 +63,14 @@ describe('sanitize', () => {
     const configs = { lang: {}, nonJsonBody: true }
     const { lang } = await sanitize(req, res, configs)
     lang.should.equal('es')
+  })
+
+  it('should allow to have null values', async () => {
+    const req = { method: 'POST', query: {}, body: { value: null } }
+    const res = {}
+    const configs = { value: { canBeNull: true } }
+    const { value } = await sanitize(req, res, configs)
+    should(value).be.Null()
   })
 
   describe('optional parameters', () => {
