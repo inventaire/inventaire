@@ -1,5 +1,5 @@
 require('should')
-const { getUser, getUserB, authReq, customAuthReq } = require('apiTests/utils/utils')
+const { getUser, getUserB, authReq, customAuthReq } = require('tests/api/utils/utils')
 const { wait } = require('lib/promises')
 const { createItem } = require('./items')
 const { getById: getRefreshedItem } = require('../utils/items')

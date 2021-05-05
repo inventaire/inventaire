@@ -1,6 +1,6 @@
 require('should')
 const _ = require('builders/utils')
-const { authReqB, authReqC, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
 const { updateTransaction } = require('../utils/transactions')
 const { getById: getItem } = require('../utils/items')

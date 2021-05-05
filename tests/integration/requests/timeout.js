@@ -2,7 +2,7 @@ const should = require('should')
 const express = require('express')
 const requests_ = require('lib/requests')
 const { wait } = require('lib/promises')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
 // Avoid reusing ports from the previous test session, as timeouts data might be restored
 let port = 1024 + parseInt(Date.now().toString().slice(-4))

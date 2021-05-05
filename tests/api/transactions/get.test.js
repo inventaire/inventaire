@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { authReq, authReqC } = require('apiTests/utils/utils')
+const { authReq, authReqC } = require('tests/api/utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 
 describe('transactions:get', () => {

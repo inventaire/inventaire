@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { createGroup } = require('../fixtures/groups')
 const { getRandomPosition } = require('../fixtures/users')
 const { waitForIndexation } = require('../utils/search')

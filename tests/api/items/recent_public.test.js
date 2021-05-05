@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { publicReq, undesiredRes } = require('apiTests/utils/utils')
+const { publicReq, undesiredRes } = require('tests/api/utils/utils')
 const { Wait } = require('lib/promises')
 const { populate } = require('../fixtures/populate')
 const { expired } = require('lib/time')

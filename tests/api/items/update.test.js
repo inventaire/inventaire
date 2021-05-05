@@ -5,7 +5,7 @@ const { authReq, authReqB, getUser, getUserB } = require('../utils/utils')
 const { newItemBase, CountChange } = require('./helpers')
 const { createShelf } = require('../fixtures/shelves')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
-const { shouldNotBeCalled } = require('apiTests/utils/utils')
+const { shouldNotBeCalled } = require('tests/api/utils/utils')
 
 describe('items:update', () => {
   it('should reject invalid item id', async () => {

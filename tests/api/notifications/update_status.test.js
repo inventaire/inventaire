@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
 require('should')
-const { getUser, getReservedUser, customAuthReq } = require('apiTests/utils/utils')
-const { makeFriends } = require('apiTests/utils/relations')
-const { getNotifications } = require('apiTests/utils/notifications')
+const { getUser, getReservedUser, customAuthReq } = require('tests/api/utils/utils')
+const { makeFriends } = require('tests/api/utils/relations')
+const { getNotifications } = require('tests/api/utils/notifications')
 
 describe('notifications:update status', () => {
   it('should update a notification', async () => {

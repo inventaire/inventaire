@@ -114,7 +114,6 @@
     "node": ">= 8"
   },
   "_moduleAliases": {
-    "apiTests": "tests/api",
     "builders": "server/builders",
     "client": "client",
     "controllers": "server/controllers",
@@ -127,6 +126,7 @@
     "models": "server/models",
     "root": ".",
     "scripts": "scripts",
-    "server": "server"
+    "server": "server",
+    "tests": "tests"
   }
 }

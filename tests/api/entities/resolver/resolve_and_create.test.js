@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
-const { getByUris, getHistory } = require('apiTests/utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = require('apiTests/fixtures/entities')
+const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
+const { getByUris, getHistory } = require('tests/api/utils/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = require('tests/api/fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

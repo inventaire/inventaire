@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')

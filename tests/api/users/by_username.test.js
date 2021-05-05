@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')

@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqC, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { authReq, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { getSomeTransaction, addMessage } = require('../fixtures/transactions')
 
 const endpoint = '/api/transactions?action=message'

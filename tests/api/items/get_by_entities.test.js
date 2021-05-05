@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { getUser, authReq } = require('apiTests/utils/utils')
+const { getUser, authReq } = require('tests/api/utils/utils')
 const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 
 describe('items:get-by-entities', () => {

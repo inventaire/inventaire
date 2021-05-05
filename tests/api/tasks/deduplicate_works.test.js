@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 require('should')
 const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
 const { getByUris, getByUri } = require('../utils/entities')
-const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = require('apiTests/utils/utils')
+const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { getBySuspectUri } = require('../utils/tasks')
 const { wait } = require('lib/promises')
 const endpoint = '/api/tasks?action=deduplicate-works'

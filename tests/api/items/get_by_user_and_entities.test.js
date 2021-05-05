@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { getUser, authReq, customAuthReq, publicReq } = require('apiTests/utils/utils')
+const { getUser, authReq, customAuthReq, publicReq } = require('tests/api/utils/utils')
 const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 const { getTwoFriends } = require('../fixtures/users')
 

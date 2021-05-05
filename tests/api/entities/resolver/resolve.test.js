@@ -1,11 +1,11 @@
 const _ = require('builders/utils')
 const should = require('should')
 const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
-const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require('apiTests/fixtures/entities')
-const { addClaim, getByUri } = require('apiTests/utils/entities')
-const { waitForIndexation } = require('apiTests/utils/search')
-const { createEditionWithIsbn, randomLabel } = require('apiTests/fixtures/entities')
+const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
+const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require('tests/api/fixtures/entities')
+const { addClaim, getByUri } = require('tests/api/utils/entities')
+const { waitForIndexation } = require('tests/api/utils/search')
+const { createEditionWithIsbn, randomLabel } = require('tests/api/fixtures/entities')
 
 const resolve = entries => {
   entries = _.forceArray(entries)

@@ -1,6 +1,6 @@
 require('should')
-const { getUser, getReservedUser, authReq } = require('apiTests/utils/utils')
-const { makeFriends } = require('apiTests/utils/relations')
+const { getUser, getReservedUser, authReq } = require('tests/api/utils/utils')
+const { makeFriends } = require('tests/api/utils/relations')
 
 describe('notifications:get', () => {
   it('should get user notifications', async () => {

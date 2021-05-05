@@ -1,6 +1,6 @@
 require('should')
-const { publicReq, undesiredRes } = require('apiTests/utils/utils')
-const { customAuthReq } = require('apiTests/utils/request')
+const { publicReq, undesiredRes } = require('tests/api/utils/utils')
+const { customAuthReq } = require('tests/api/utils/request')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')

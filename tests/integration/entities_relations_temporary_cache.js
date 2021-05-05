@@ -4,8 +4,8 @@ require('should')
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 const { catchNotFound } = require('lib/error/error')
 
-const { someFakeUri } = require('apiTests/fixtures/entities')
-const { shouldNotBeCalled } = require('apiTests/utils/utils')
+const { someFakeUri } = require('tests/api/fixtures/entities')
+const { shouldNotBeCalled } = require('tests/api/utils/utils')
 const { get, set, del } = require('controllers/entities/lib/entities_relations_temporary_cache')
 const runQuery = require('data/wikidata/run_query')
 

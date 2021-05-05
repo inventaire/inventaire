@@ -1,5 +1,5 @@
 require('should')
-const { authReq, authReqB, authReqC, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { authReq, authReqB, authReqC, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { createTransaction } = require('../fixtures/transactions')
 const { updateTransaction } = require('../utils/transactions')
 const { createItem } = require('../fixtures/items')

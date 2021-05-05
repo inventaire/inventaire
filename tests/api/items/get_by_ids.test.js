@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = require('apiTests/utils/utils')
+const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = require('tests/api/utils/utils')
 const { groupPromise, addMember } = require('../fixtures/groups')
 const { createItem, createItems } = require('../fixtures/items')
 const { humanName } = require('../fixtures/entities')

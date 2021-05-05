@@ -1,7 +1,7 @@
 const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { createTransaction, addMessage } = require('../fixtures/transactions')
-const { authReq } = require('apiTests/utils/utils')
+const { authReq } = require('tests/api/utils/utils')
 
 const endpoint = '/api/transactions?action=get-messages'
 

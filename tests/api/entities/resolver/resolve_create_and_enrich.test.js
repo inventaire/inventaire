@@ -1,6 +1,6 @@
 const should = require('should')
-const { authReq } = require('apiTests/utils/utils')
-const { deleteByUris } = require('apiTests/utils/entities')
+const { authReq } = require('tests/api/utils/utils')
+const { deleteByUris } = require('tests/api/utils/entities')
 
 // Those tests should be activated and run alone from an empty database (with `npm run api-tests`)
 // after having started a dataseed service and set CONFIG.dataseed.enabled = true

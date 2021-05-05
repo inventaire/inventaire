@@ -9,7 +9,7 @@ const { createUser, getRefreshedUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('apiTests/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 

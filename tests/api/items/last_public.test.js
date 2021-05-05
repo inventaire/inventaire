@@ -1,5 +1,5 @@
 require('should')
-const { publicReq } = require('apiTests/utils/utils')
+const { publicReq } = require('tests/api/utils/utils')
 const { populate } = require('../fixtures/populate')
 const lastPublicUrl = '/api/items?action=last-public'
 

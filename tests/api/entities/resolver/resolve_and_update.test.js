@@ -2,9 +2,9 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('apiTests/utils/utils')
-const { getByUris, getByUri, addClaim, getHistory } = require('apiTests/utils/entities')
-const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = require('apiTests/fixtures/entities')
+const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
+const { getByUris, getByUri, addClaim, getHistory } = require('tests/api/utils/entities')
+const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = require('tests/api/fixtures/entities')
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {

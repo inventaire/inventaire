@@ -3,7 +3,7 @@ const assert_ = require('lib/utils/assert_types')
 const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser } = require('./utils')
 const { getIndexedDoc } = require('../utils/search')
 const { unprefixify } = require('controllers/entities/lib/prefix')
-const { waitForIndexation } = require('apiTests/utils/search')
+const { waitForIndexation } = require('tests/api/utils/search')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives, refresh) => {

@@ -3,7 +3,7 @@ require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
 const { findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWork } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('apiTests/utils/utils')
+const { shouldNotBeCalled } = require('tests/api/utils/utils')
 
 describe('tasks:check-entities', () => {
   before(async () => {

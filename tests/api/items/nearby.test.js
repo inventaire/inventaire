@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { getUserGetter, customAuthReq } = require('apiTests/utils/utils')
+const { getUserGetter, customAuthReq } = require('tests/api/utils/utils')
 const { createItem } = require('../fixtures/items')
 const { waitForIndexation } = require('../utils/search')
 const { getRandomPosition } = require('../fixtures/users')
