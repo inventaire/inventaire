@@ -16,6 +16,9 @@
     },
     "byInvitedUser": {
       "map": "(doc)->\n  if doc.type is 'group'\n    for invitation in doc.invited\n      emit invitation.user, null"
+    },
+    "byPicture": {
+      "map": "(doc)->\n  if doc.type is 'group'\n    if doc.picture isnt null then emit doc.picture.split('/')[3], null"
     }
   }
 }
