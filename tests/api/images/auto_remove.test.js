@@ -1,7 +1,7 @@
 require('should')
 const { getUserB } = require('../utils/utils')
 const { wait } = require('lib/promises')
-const { uploadSomeImage, localContainerHasImage } = require('../utils/images')
+const { importSomeImage, localContainerHasImage } = require('../utils/images')
 const { updateUser } = require('../utils/users')
 const { createGroup } = require('../fixtures/groups')
 const { updateGroup } = require('../utils/groups')
@@ -13,10 +13,10 @@ const delay = checkDelay + 100
 describe('images:auto-remove', () => {
   describe('users', () => {
     it('should auto-remove a user image', async () => {
-      const { url, hash } = await uploadSomeImage({ container: 'users' })
+      const { url, hash } = await importSomeImage({ container: 'users' })
       localContainerHasImage({ container: 'users', hash }).should.be.true()
       await updateUser({ attribute: 'picture', value: url })
-      const { url: url2, hash: hash2 } = await uploadSomeImage({ container: 'users' })
+      const { url: url2, hash: hash2 } = await importSomeImage({ container: 'users' })
       localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
       await updateUser({ attribute: 'picture', value: url2 })
       await wait(delay)
@@ -24,12 +24,12 @@ describe('images:auto-remove', () => {
     })
 
     it('should not auto-remove a user image if the same image is used by another user', async () => {
-      const { url, hash } = await uploadSomeImage({ container: 'users' })
+      const { url, hash } = await importSomeImage({ container: 'users' })
       await Promise.all([
         updateUser({ attribute: 'picture', value: url }),
         updateUser({ attribute: 'picture', value: url, user: getUserB() }),
       ])
-      const { url: url2, hash: hash2 } = await uploadSomeImage({ container: 'users' })
+      const { url: url2, hash: hash2 } = await importSomeImage({ container: 'users' })
       localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
       await updateUser({ attribute: 'picture', value: url2 })
       await wait(delay)
@@ -45,8 +45,8 @@ describe('images:auto-remove', () => {
         { url: url2 }
       ] = await Promise.all([
         createGroup(),
-        uploadSomeImage({ container: 'groups' }),
-        uploadSomeImage({ container: 'groups' }),
+        importSomeImage({ container: 'groups' }),
+        importSomeImage({ container: 'groups' }),
       ])
       localContainerHasImage({ container: 'groups', hash }).should.be.true()
       await updateGroup({ group, attribute: 'picture', value: url })
@@ -64,8 +64,8 @@ describe('images:auto-remove', () => {
       ] = await Promise.all([
         createGroup(),
         createGroup(),
-        uploadSomeImage({ container: 'groups' }),
-        uploadSomeImage({ container: 'groups' }),
+        importSomeImage({ container: 'groups' }),
+        importSomeImage({ container: 'groups' }),
       ])
       await Promise.all([
         updateGroup({ group, attribute: 'picture', value: url }),
@@ -83,8 +83,8 @@ describe('images:auto-remove', () => {
         { hash },
         { hash: hash2 },
       ] = await Promise.all([
-        uploadSomeImage({ container: 'entities' }),
-        uploadSomeImage({ container: 'entities' }),
+        importSomeImage({ container: 'entities' }),
+        importSomeImage({ container: 'entities' }),
       ])
       localContainerHasImage({ container: 'entities', hash }).should.be.true()
       const { uri } = await createEdition({ image: hash })
@@ -99,8 +99,8 @@ describe('images:auto-remove', () => {
         { hash },
         { hash: hash2 },
       ] = await Promise.all([
-        uploadSomeImage({ container: 'entities' }),
-        uploadSomeImage({ container: 'entities' }),
+        importSomeImage({ container: 'entities' }),
+        importSomeImage({ container: 'entities' }),
       ])
       const [ { uri } ] = await Promise.all([
         createEdition({ image: hash }),
