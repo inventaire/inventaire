@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const queries = {
   author_works: require('./author_works'),
   serie_parts: require('./serie_parts'),

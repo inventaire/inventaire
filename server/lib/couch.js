@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const { BasicUpdater } = require('lib/doc_updates')
 
 const mapResult = (res, type) => res.rows.map(row => row[type])

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const enableCorsOnPublicApiRoutes = (req, res, next) => {
   // Only have cross domain requests wide open for GET requests
   // to avoid CSRF on request altering the database

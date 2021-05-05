@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const getEntityType = require('controllers/entities/lib/get_entity_type')

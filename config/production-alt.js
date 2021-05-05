@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
+
 // Production config for the alternate server, which:
 // - answers Prerender (thus getting the logs aside)
 // - handles database changes hooks (based on follow)

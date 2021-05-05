@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 console.time('startup')
 const CONFIG = require('config')
 // Signal to other CONFIG consumers that they are in a server context

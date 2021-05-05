@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // There are no cases in the the app where we would need a higher definition than 1000px
 // So using 1000px as max width and resizing from that seems acceptable for a large majority of cases
 // Known exception: panoramas, but we don't use those much

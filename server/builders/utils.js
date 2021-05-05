@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const _ = require('lodash')
 const server_ = require('lib/utils/base')
 const logs_ = require('lib/utils/logs')(_)

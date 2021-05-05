@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // A small memoize implementation optimized for module initialization: when you call
 // `require('./foo')` several times, it always returns the same value or object
 // (see https://nodejs.org/docs/latest-v8.x/api/modules.html#modules_require_cache),

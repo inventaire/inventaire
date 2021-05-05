@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // Call module-alias register before trying to access _moduleAliases
 // as it will convert those to their absolute paths
 require('module-alias/register')
