@@ -17,7 +17,7 @@ const addToBatch = (batch, action, index, doc) => {
 }
 
 const postBatch = async batch => {
-  if (batch.length === 0) return _.warn('empty batch')
+  if (batch.length === 0) return _.warn('elasticsearch bulk update: empty batch')
   // It is required to end by a newline break
   const body = batch.join('\n') + '\n'
   try {

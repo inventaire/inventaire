@@ -33,7 +33,9 @@ module.exports = ({ indexBaseName, index }) => {
       if (formattedDoc) addToBatch(batch, 'index', index, formattedDoc)
     }
     if (batch.length >= 1000) postAndReset(batch)
-    else lazyPostAndReset()
+    // Known case where batch.length would still be 0: docs that won't generate
+    // a formattedDoc and thus not be indexed such as edition entities
+    else if (batch.length > 0) lazyPostAndReset()
   }
 }
 
