@@ -1,6 +1,7 @@
 const getAuthorWorks = require('./lib/get_author_works')
 const getSerieParts = require('./lib/get_serie_parts')
 const getPublisherPublications = require('./lib/get_publisher_publications')
+const getWorkEditions = require('./lib/get_work_editions')
 
 const sanitization = {
   uri: {},
@@ -19,5 +20,9 @@ module.exports = {
   publisherPublications: {
     sanitization,
     controller: getPublisherPublications,
+  },
+  workEditions: {
+    sanitization,
+    controller: getWorkEditions,
   },
 }

@@ -2,12 +2,18 @@ const _ = require('builders/utils')
 const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 
-module.exports = claims => {
+module.exports = (claims, langProperty) => {
   const langPropertiesClaims = _.pick(claims, langProperties)
   if (_.objLength(langPropertiesClaims) === 0) return
 
-  const someLangPropertyClaims = _.pickOne(langPropertiesClaims)
-  const originalLangUri = someLangPropertyClaims[0]
+  let originalLangUri
+  if (langProperty) {
+    if (claims[langProperty]) originalLangUri = claims[langProperty][0]
+  } else {
+    const someLangPropertyClaims = _.pickOne(langPropertiesClaims)
+    originalLangUri = someLangPropertyClaims[0]
+  }
+
   if (originalLangUri != null) {
     const wdId = unprefixify(originalLangUri)
     return wmLanguageCodeByWdId[wdId]

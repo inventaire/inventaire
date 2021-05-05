@@ -1,5 +1,5 @@
 const ActionsControllers = require('lib/actions_controllers')
-const { authorWorks, serieParts, publisherPublications } = require('./get_entity_relatives')
+const { authorWorks, serieParts, publisherPublications, workEditions } = require('./get_entity_relatives')
 
 module.exports = {
   get: ActionsControllers({
@@ -9,6 +9,7 @@ module.exports = {
       'author-works': authorWorks,
       'serie-parts': serieParts,
       'publisher-publications': publisherPublications,
+      'work-editions': workEditions,
       images: require('./images'),
       popularity: require('./popularity')
     },

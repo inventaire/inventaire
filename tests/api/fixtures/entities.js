@@ -6,6 +6,7 @@ const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 const { humanName, randomWords } = require('./text')
+const assert_ = require('lib/utils/assert_types')
 
 const createEntity = (P31, options = {}) => (params = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
@@ -45,11 +46,11 @@ const API = module.exports = {
     publicationDate = publicationDate || '2020'
     const lang = params.lang || 'en'
     if (work != null && works == null) works = [ work ]
-    const worksPromise = works ? Promise.resolve(works) : API.createWork()
-    works = await worksPromise
+    works = await (works || API.createWork())
     works = _.forceArray(works)
-    title = title || _.values(works[0].labels)[0]
+    assert_.objects(works)
     const worksUris = _.map(works, 'uri')
+    title = title || _.values(works[0].labels)[0]
     const editionClaims = Object.assign({
       'wdt:P31': [ 'wd:Q3331189' ],
       'wdt:P629': worksUris,
@@ -65,12 +66,14 @@ const API = module.exports = {
 
   createEditionWithIsbn: async (params = {}) => {
     const { publisher, publicationDate } = params
-    const work = await API.createWork()
+    const work = params.work || await API.createWork()
+    const lang = params.lang || 'en'
     const isbn13h = API.generateIsbn13h()
     const claims = {
       'wdt:P31': [ 'wd:Q3331189' ],
       'wdt:P629': [ work.uri ],
       'wdt:P212': [ isbn13h ],
+      'wdt:P407': [ `wd:${wdIdByWmLanguageCode[lang]}` ],
       'wdt:P1476': [ API.randomLabel() ]
     }
     if (publisher) claims['wdt:P123'] = [ publisher ]
