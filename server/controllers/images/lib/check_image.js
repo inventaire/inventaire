@@ -1,6 +1,7 @@
 const _ = require('builders/utils')
-const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
+const { imageIsUsed: entityImageIsUsed } = require('controllers/entities/lib/entities')
 const { imageIsUsed: groupImageIsUsed } = require('controllers/groups/lib/groups')
+const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
 const { wait } = require('lib/promises')
 const assert_ = require('lib/utils/assert_types')
 const containers = require('controllers/images/lib/containers')
@@ -20,6 +21,7 @@ module.exports = async ({ container, hash, url }) => {
 }
 
 const checkImagePerContainer = {
+  entities: entityImageIsUsed,
   groups: groupImageIsUsed,
   users: userImageIsUsed,
 }
