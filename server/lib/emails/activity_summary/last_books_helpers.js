@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const { allowTransaction } = require('models/item')
 const { kmBetween } = require('lib/geo')
 const host = require('config').fullPublicHost()
-const transacColors = require('./transactions_colors')
+const transactionsColors = require('./transactions_colors')
 const user_ = require('controllers/user/lib/user')
 
 module.exports = {
@@ -36,8 +36,8 @@ module.exports = {
           item.user.distance = kmBetween(user.position, position)
         }
         item.user.href = `${host}/inventory/${user.username}`
-        item.transacLabel = `${item.transaction}_personalized_strong`
-        item.transacColor = transacColors[item.transaction]
+        item.transactionLabel = `${item.transaction}_personalized_strong`
+        item.transactionColor = transactionsColors[item.transaction]
       }
       return item
     })

@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const templateHelpers = require('lib/emails/handlebars_helpers')
-const transacColors = require('lib/emails/activity_summary/transactions_colors')
+const transactionsColors = require('lib/emails/activity_summary/transactions_colors')
 
 module.exports = (item, user, lang) => {
   const { transaction, snapshot, details } = item
@@ -16,11 +16,11 @@ module.exports = (item, user, lang) => {
   }
 
   const i18nKey = `${transaction}_personalized_strong`
-  const transacLabel = templateHelpers.i18n(lang, i18nKey, user)
+  const transactionLabel = templateHelpers.i18n(lang, i18nKey, user)
 
   const userProfilePic = templateHelpers.imgSrc(user.picture, 64)
 
-  const transacColor = transacColors[transaction]
+  const transactionColor = transactionsColors[transaction]
 
   const detailsHtml = _.isNonEmptyString(details) ? `<p>${item.details}<p>` : ''
 
@@ -32,7 +32,7 @@ module.exports = (item, user, lang) => {
     </a>
   </td>
   <td>
-    <a href="${item.href}" title="${title}" style="color: white; text-decoration: none; background-color: ${transacColor}; text-align: center; padding: 16px; display: block;" >${transacLabel}</a>
+    <a href="${item.href}" title="${title}" style="color: white; text-decoration: none; background-color: ${transactionColor}; text-align: center; padding: 16px; display: block;" >${transactionLabel}</a>
   </td>
 </tr></table>
 ${detailsHtml}
