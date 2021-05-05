@@ -3,6 +3,7 @@ const { authReq } = require('../utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/images?action=upload'
 const { isImageHash } = require('lib/boolean_validations')
+const { uploadSomeImage } = require('../utils/images')
 
 describe('images:upload', () => {
   // Uploads on the assets container are done directly by an instance admin
@@ -60,11 +61,10 @@ describe('images:upload', () => {
 
   it('should upload an image', async () => {
     const container = 'entities'
-    const { statusCode, body } = await uploadSomeImage({ container })
+    const { statusCode, url } = await uploadSomeImage({ container })
     statusCode.should.equal(200)
-    const { somefile } = body
-    somefile.should.startWith(`/img/${container}/`)
-    const imageHash = somefile.split('/')[3]
+    url.should.startWith(`/img/${container}/`)
+    const imageHash = url.split('/')[3]
     isImageHash(imageHash).should.be.true()
   })
 })

@@ -4,13 +4,15 @@ const { mode } = require('config').mediaStorage
 _.info(`media storage: ${mode}`)
 const { putImage, deleteImage } = require(`./${mode}_client`)
 const images_ = require('lib/images')
+const radio = require('lib/radio')
 
 const transformAndPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
   await images_[fnName](path)
   const filename = await images_.getHashFilename(path)
   const url = await putImage(container, path, filename)
-  _.log(url, 'new image url')
+  _.log(url, 'new image')
+  await radio.emit('image:needs:check', { url, context: 'upload' })
   return { id, url }
 }
 

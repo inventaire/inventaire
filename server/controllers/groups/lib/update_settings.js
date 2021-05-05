@@ -33,7 +33,7 @@ module.exports = async (data, userId) => {
   await radio.emit('group:update', notifData)
 
   if (attribute === 'picture' && currentValue) {
-    await radio.emit('image:needs:check', { container: 'groups', url: currentValue })
+    await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
   }
 
   return { hooksUpdates }
