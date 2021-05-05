@@ -5,10 +5,10 @@
 //   such as ISBNs defined on work entities
 
 const _ = require('builders/utils')
-const wdk = require('wikidata-sdk')
+const { simplify } = require('wikidata-sdk')
+const { propertyClaims: simplifyPropertyClaims } = simplify
 const getOriginalLang = require('lib/wikidata/get_original_lang')
 const formatClaims = require('lib/wikidata/format_claims')
-const { simplify } = wdk
 const getEntityType = require('./get_entity_type')
 const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
 const cache_ = require('lib/cache')
@@ -53,8 +53,8 @@ const format = entity => {
 
   const { P31, P279 } = entity.claims
   if (P31 || P279) {
-    const simplifiedP31 = wdk.simplifyPropertyClaims(P31, simplifyClaimsOptions)
-    const simplifiedP279 = wdk.simplifyPropertyClaims(P279, simplifyClaimsOptions)
+    const simplifiedP31 = simplifyPropertyClaims(P31, simplifyClaimsOptions)
+    const simplifiedP279 = simplifyPropertyClaims(P279, simplifyClaimsOptions)
     entity.type = getEntityType(simplifiedP31, simplifiedP279)
   } else {
     // Make sure to override the type as Wikidata entities have a type with

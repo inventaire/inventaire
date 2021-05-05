@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
-const wdk = require('wikidata-sdk')
+const { claims: simplifyClaims } = require('wikidata-sdk').simplify
 const allowlistedProperties = require('./allowlisted_properties')
 
 const options = {
@@ -13,5 +13,5 @@ module.exports = (claims, wdId) => {
   assert_.object(claims)
   assert_.string(wdId)
   const allowlistedClaims = _.pick(claims, allowlistedProperties)
-  return wdk.simplifyClaims(allowlistedClaims, options)
+  return simplifyClaims(allowlistedClaims, options)
 }

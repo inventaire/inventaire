@@ -88,7 +88,7 @@
     "turtle-validator": "^1.0.2",
     "wikibase-edit": "^4.11.7",
     "wikidata-lang": "^2.0.10",
-    "wikidata-sdk": "^5.9.0"
+    "wikidata-sdk": "^7.12.0"
   },
   "devDependencies": {
     "couchdb-backup": "^1.0.0",

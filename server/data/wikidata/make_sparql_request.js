@@ -3,6 +3,7 @@ const requests_ = require('lib/requests')
 const { wait } = require('lib/promises')
 const error_ = require('lib/error/error')
 const wdk = require('wikidata-sdk')
+const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -43,7 +44,7 @@ const makeRequest = url => {
     ongoing += 1
     // Don't let a query block the queue more than 30 seconds
     return requests_.get(url, { timeout: 30000 })
-    .then(wdk.simplifySparqlResults)
+    .then(simplifySparqlResults)
     .finally(() => {
       ongoing -= 1
       logStats()

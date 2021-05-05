@@ -1,7 +1,8 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const wdk = require('wikidata-sdk')
+const { getReverseClaims, simplify } = require('wikidata-sdk')
+const { sparqlResults: simplifySparqlResults } = simplify
 const requests_ = require('lib/requests')
 const entities_ = require('./entities')
 const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
@@ -86,9 +87,9 @@ const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   _.log([ property, value ], 'reverse claim')
-  const url = wdk.getReverseClaims(wdProp, value, { caseInsensitive })
+  const url = getReverseClaims(wdProp, value, { caseInsensitive })
   const results = await requests_.get(url)
-  return wdk.simplifySparqlResults(results).map(prefixifyWd)
+  return simplifySparqlResults(results).map(prefixifyWd)
 }
 
 const invReverseClaims = async (property, value) => {
