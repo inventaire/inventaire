@@ -8,7 +8,7 @@ const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const { basicUpdater } = require('lib/doc_updates')
 const { Track } = require('lib/track')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const radio = require('lib/radio')
 
 const sanitization = {

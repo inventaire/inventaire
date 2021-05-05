@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const modelAction = require('./lib/model_action')
 const membershipValidations = require('./lib/membership_validations')
 const { Track } = require('lib/track')

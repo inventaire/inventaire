@@ -4,7 +4,7 @@ const error_ = require('lib/error/error')
 const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
 const bundleViewData = require('./lib/view/bundle_view_data')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const getAuthorizedItems = require('./lib/get_authorized_items')
 const shelves_ = require('controllers/shelves/lib/shelves')
 

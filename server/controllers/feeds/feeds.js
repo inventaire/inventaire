@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const headers_ = require('lib/headers')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const getAuthentifiedUser = require('./lib/get_authentified_user')
 const userFeedData = require('./lib/user_feed_data')
 const groupFeedData = require('./lib/group_feed_data')

@@ -3,7 +3,7 @@ const items_ = require('controllers/items/lib/items')
 const { getNetworkIds } = require('controllers/user/lib/relations_status')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 const { omitPrivateAttributes } = require('./lib/filter_private_attributes')
 

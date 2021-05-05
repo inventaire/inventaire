@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const checkEntity = require('./lib/check_entity')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   uris: {}

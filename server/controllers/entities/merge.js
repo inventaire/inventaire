@@ -4,7 +4,7 @@ const responses_ = require('lib/responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
 const { emit } = require('lib/radio')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   from: {},

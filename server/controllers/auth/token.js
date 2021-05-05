@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const ActionsControllers = require('lib/actions_controllers')
 const token_ = require('controllers/user/lib/token')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const error_ = require('lib/error/error')
 const passport_ = require('lib/passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')

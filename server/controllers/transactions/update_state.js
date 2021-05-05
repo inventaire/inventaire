@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const transactions_ = require('./lib/transactions')
 const { verifyIsRequester, verifyIsOwner, verifyRightToInteract } = require('./lib/rights_verification')
 const { states, statesList } = require('models/attributes/transaction')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { Track } = require('lib/track')
 
 const sanitization = {

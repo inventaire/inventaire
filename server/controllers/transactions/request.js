@@ -5,7 +5,7 @@ const items_ = require('controllers/items/lib/items')
 const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const transactions_ = require('./lib/transactions')
 const user_ = require('controllers/user/lib/user')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { Track } = require('lib/track')
 const { verifyRightToRequest } = require('./lib/rights_verification')
 

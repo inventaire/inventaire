@@ -3,7 +3,7 @@ const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const groups_ = require('./lib/groups')
 const getGroupPublicData = require('./lib/group_public_data')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { get: getSlug } = require('./lib/slug')
 
 module.exports = {

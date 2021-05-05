@@ -3,7 +3,7 @@
 
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { md5 } = require('lib/crypto')
 
 const sanitization = {}

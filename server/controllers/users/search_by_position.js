@@ -1,7 +1,7 @@
 const user_ = require('controllers/user/lib/user')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   bbox: {},

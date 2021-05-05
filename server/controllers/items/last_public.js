@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const items_ = require('controllers/items/lib/items')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const bundleOwnersToItems = require('./lib/bundle_owners_to_items')
 
 const sanitization = {

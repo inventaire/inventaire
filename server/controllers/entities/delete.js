@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const verifyThatEntitiesCanBeRemoved = require('./lib/verify_that_entities_can_be_removed')
 const removeEntitiesByInvId = require('./lib/remove_entities_by_inv_id')
 const entities_ = require('./lib/entities')

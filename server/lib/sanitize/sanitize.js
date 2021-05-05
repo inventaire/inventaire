@@ -5,7 +5,13 @@ const responses_ = require('lib/responses')
 const parameters = require('./parameters')
 const { generics } = parameters
 
-module.exports = async (req, res, configs) => {
+// The sanitize function doesn't need to be async
+// but has been used that way to be able to start promise chains
+// There are some cases though where async is a problem, namely
+// when something needs to be done during the current tick.
+// Example: consumers of the request (aka req) stream need to run on the same tick.
+// If they have to wait for the next tick, 'data' events might be over
+const sanitizeSync = (req, res, configs) => {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
@@ -31,6 +37,11 @@ module.exports = async (req, res, configs) => {
   if (req.user) input.reqUserId = req.user._id
 
   return input
+}
+
+module.exports = {
+  sanitizeSync,
+  sanitize: async (req, res, configs) => sanitizeSync(req, res, configs)
 }
 
 const optionsNames = new Set([ 'nonJsonBody' ])

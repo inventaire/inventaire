@@ -1,7 +1,7 @@
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const tasks_ = require('./lib/tasks')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   uris: {}
