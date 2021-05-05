@@ -11,6 +11,7 @@ const { authReq, getUser } = require('../utils/utils')
 const { createReadStream } = require('fs')
 const fetch = require('node-fetch')
 const FormData = require('form-data')
+const assert_ = require('lib/utils/assert_types')
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
@@ -43,14 +44,16 @@ module.exports = {
       headers: { cookie, ...form.getHeaders() },
       body: form,
     })
+    const { somefile } = await res.json()
     return {
       statusCode: res.status,
-      body: await res.json()
+      url: somefile
     }
   },
 
   localContainerHasImage: ({ container, hash, url }) => {
-    if (url) hash = url.split('/')[3]
+    if (url) [ container, hash ] = url.split('/').slice(2)
+    assert_.string(hash)
     const localImagePath = `${localStorageFolder}/${container}/${hash}`
     try {
       // Using the sync method so that consumers can chain this function with ".shoud.be.true()"

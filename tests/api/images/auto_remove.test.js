@@ -1,25 +1,38 @@
 require('should')
 const { getUserB } = require('../utils/utils')
 const { wait } = require('lib/promises')
-const { importSomeImage, localContainerHasImage } = require('../utils/images')
+const { importSomeImage, uploadSomeImage, localContainerHasImage } = require('../utils/images')
 const { updateUser } = require('../utils/users')
 const { createGroup } = require('../fixtures/groups')
 const { updateGroup } = require('../utils/groups')
-const { checkDelay } = require('config').mediaStorage.images
 const { createEdition } = require('../fixtures/entities')
 const { updateClaim } = require('../utils/entities')
-const delay = checkDelay + 100
+const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = require('config').mediaStorage.images.checkDelays
 
 describe('images:auto-remove', () => {
+  describe('upload', () => {
+    it('should auto-remove an image not used after a delay', async () => {
+      const { url } = await uploadSomeImage({ container: 'users' })
+      await wait(postUploadCheckDelay + 100)
+      localContainerHasImage({ url }).should.be.false()
+    })
+  })
+
+  describe('convert-url', () => {
+    it('should auto-remove an image not used after a delay', async () => {
+      const { url } = await importSomeImage({ container: 'groups' })
+      await wait(postUploadCheckDelay + 100)
+      localContainerHasImage({ url }).should.be.false()
+    })
+  })
+
   describe('users', () => {
     it('should auto-remove a user image', async () => {
       const { url, hash } = await importSomeImage({ container: 'users' })
-      localContainerHasImage({ container: 'users', hash }).should.be.true()
       await updateUser({ attribute: 'picture', value: url })
-      const { url: url2, hash: hash2 } = await importSomeImage({ container: 'users' })
-      localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
+      const { url: url2 } = await importSomeImage({ container: 'users' })
       await updateUser({ attribute: 'picture', value: url2 })
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'users', hash }).should.be.false()
     })
 
@@ -29,10 +42,9 @@ describe('images:auto-remove', () => {
         updateUser({ attribute: 'picture', value: url }),
         updateUser({ attribute: 'picture', value: url, user: getUserB() }),
       ])
-      const { url: url2, hash: hash2 } = await importSomeImage({ container: 'users' })
-      localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
+      const { url: url2 } = await importSomeImage({ container: 'users' })
       await updateUser({ attribute: 'picture', value: url2 })
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'users', hash }).should.be.true()
     })
   })
@@ -48,10 +60,9 @@ describe('images:auto-remove', () => {
         importSomeImage({ container: 'groups' }),
         importSomeImage({ container: 'groups' }),
       ])
-      localContainerHasImage({ container: 'groups', hash }).should.be.true()
       await updateGroup({ group, attribute: 'picture', value: url })
       await updateGroup({ group, attribute: 'picture', value: url2 })
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'groups', hash }).should.be.false()
     })
 
@@ -72,7 +83,7 @@ describe('images:auto-remove', () => {
         updateGroup({ group: group2, attribute: 'picture', value: url }),
       ])
       await updateGroup({ group, attribute: 'picture', value: url2 })
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'groups', hash }).should.be.true()
     })
   })
@@ -86,11 +97,10 @@ describe('images:auto-remove', () => {
         importSomeImage({ container: 'entities' }),
         importSomeImage({ container: 'entities' }),
       ])
-      localContainerHasImage({ container: 'entities', hash }).should.be.true()
       const { uri } = await createEdition({ image: hash })
       await wait(1000)
       await updateClaim(uri, 'invp:P2', hash, hash2)
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.false()
     })
 
@@ -108,7 +118,7 @@ describe('images:auto-remove', () => {
       ])
       await wait(1000)
       await updateClaim(uri, 'invp:P2', hash, hash2)
-      await wait(delay)
+      await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.true()
     })
   })

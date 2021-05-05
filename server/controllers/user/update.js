@@ -57,7 +57,7 @@ const update = user => async ({ attribute, value }) => {
 
     await updateAttribute(user, attribute, value)
     if (attribute === 'picture' && currentValue) {
-      await radio.emit('image:needs:check', { container: 'users', url: currentValue })
+      await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
     }
     return
   }
