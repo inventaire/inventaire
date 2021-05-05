@@ -4,6 +4,7 @@ const Group = require('models/group')
 const db = require('db/couchdb/base')('groups')
 const lists_ = require('./users_lists')
 const { add: addSlug } = require('./slug')
+const assert_ = require('lib/utils/assert_types')
 const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
 
 const groups_ = module.exports = {
@@ -69,5 +70,11 @@ const groups_ = module.exports = {
     })
   },
 
-  byPosition: searchGroupsByPosition
+  byPosition: searchGroupsByPosition,
+
+  imageIsUsed: async imageHash => {
+    assert_.string(imageHash)
+    const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
+    return rows.length > 0
+  },
 }
