@@ -1,18 +1,17 @@
 require('should')
-const { publicReq, undesiredRes } = require('../utils/utils')
+const { publicReq } = require('../utils/utils')
 const { createEdition, createEditionWithIsbn, createCollection, createPublisher } = require('../fixtures/entities')
 const { addClaim } = require('../utils/entities')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/entities?action=publisher-publications'
 
 describe('entities:publisher-publications', () => {
-  it('should reject without uri', done => {
-    publicReq('get', endpoint)
-    .then(undesiredRes(done))
+  it('should reject without uri', async () => {
+    await publicReq('get', endpoint)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: uri')
-      done()
     })
-    .catch(done)
   })
 
   it('should get an inventaire publisher collection', async () => {

@@ -4,7 +4,7 @@ const __ = CONFIG.universalPath
 const host = CONFIG.fullPublicHost()
 const someJpegPath = __.path('client', 'public/images/small/brittanystevens.jpg')
 const { authReq, getUser } = require('../utils/utils')
-const { shouldNotBeCalled } = require('root/tests/unit/utils')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/images?action=upload'
 const { createReadStream } = require('fs')
 const fetch = require('node-fetch')
