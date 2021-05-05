@@ -3,6 +3,7 @@ const { allowTransaction } = require('models/item')
 const { kmBetween } = require('lib/geo')
 const host = require('config').fullPublicHost()
 const transacColors = require('./transactions_colors')
+const user_ = require('controllers/user/lib/user')
 
 module.exports = {
   getLastItems: (limitDate, items) => {
@@ -24,6 +25,7 @@ module.exports = {
   },
 
   embedUsersData: (items, users, position) => {
+    users = users.map(user_.serializeData)
     users = _.keyBy(users, '_id')
     return items.map(item => {
       const user = users[item.owner]
