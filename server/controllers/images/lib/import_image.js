@@ -1,7 +1,7 @@
 const error_ = require('lib/error/error')
 const { md5 } = require('lib/crypto')
 const downloadFile = require('./download_file')
-const containers = require('controllers/images/lib/containers')
+const { containers } = require('controllers/images/lib/containers')
 
 module.exports = async (container, sourceUrl) => {
   if (containers[container] == null || containers[container].putImage == null) {

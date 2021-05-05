@@ -14,7 +14,7 @@ const transformAndPutImage = (container, fnName) => async fileData => {
   return { id, url }
 }
 
-module.exports = {
+const containers = {
   users: {
     putImage: transformAndPutImage('users', 'shrinkAndFormat'),
     deleteImage,
@@ -36,3 +36,8 @@ module.exports = {
   // Same but for emails and client assets
   assets: {}
 }
+
+const uploadContainersNames = Object.keys(containers)
+  .filter(containerName => containers[containerName].putImage != null)
+
+module.exports = { containers, uploadContainersNames }
