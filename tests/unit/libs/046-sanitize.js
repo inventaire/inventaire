@@ -57,12 +57,24 @@ describe('sanitize', () => {
     lang.should.equal('es')
   })
 
-  it('may optionally look for parameters in the query in POST and PUT requests', async () => {
+  it('should optionally look for parameters in the query in POST and PUT requests', async () => {
     const req = { method: 'POST', query: { lang: 'es' } }
     const res = {}
     const configs = { lang: {}, nonJsonBody: true }
     const { lang } = await sanitize(req, res, configs)
     lang.should.equal('es')
+    const { lang: lang2 } = await sanitize(req, res, configs)
+    lang2.should.equal('es')
+  })
+
+  it('should not remove non-parameter options from configs', async () => {
+    const req = { method: 'POST', query: { lang: 'es' } }
+    const res = {}
+    const configs = { lang: {}, nonJsonBody: true }
+    const { lang } = await sanitize(req, res, configs)
+    lang.should.equal('es')
+    const { lang: lang2 } = await sanitize(req, res, configs)
+    lang2.should.equal('es')
   })
 
   it('should allow to have null values', async () => {
