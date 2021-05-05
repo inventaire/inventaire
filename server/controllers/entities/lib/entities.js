@@ -110,7 +110,13 @@ const entities_ = module.exports = {
     if (entity.claims[property] != null) return entity.claims[property][0]
   },
 
-  uniqByUri: entities => _.uniqBy(entities, getUri)
+  uniqByUri: entities => _.uniqBy(entities, getUri),
+
+  imageIsUsed: async imageHash => {
+    assert_.string(imageHash)
+    const { rows } = await entities_.byClaim('invp:P2', imageHash)
+    return rows.length > 0
+  }
 }
 
 const getUri = entity => entity.uri

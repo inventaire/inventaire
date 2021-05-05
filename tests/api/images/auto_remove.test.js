@@ -6,6 +6,8 @@ const { updateUser } = require('../utils/users')
 const { createGroup } = require('../fixtures/groups')
 const { updateGroup } = require('../utils/groups')
 const { checkDelay } = require('config').mediaStorage.images
+const { createEdition } = require('../fixtures/entities')
+const { updateClaim } = require('../utils/entities')
 const delay = checkDelay + 100
 
 describe('images:auto-remove', () => {
@@ -72,6 +74,42 @@ describe('images:auto-remove', () => {
       await updateGroup({ group, attribute: 'picture', value: url2 })
       await wait(delay)
       localContainerHasImage({ container: 'groups', hash }).should.be.true()
+    })
+  })
+
+  describe('entities', () => {
+    it('should auto-remove an entity image', async () => {
+      const [
+        { hash },
+        { hash: hash2 },
+      ] = await Promise.all([
+        uploadSomeImage({ container: 'entities' }),
+        uploadSomeImage({ container: 'entities' }),
+      ])
+      localContainerHasImage({ container: 'entities', hash }).should.be.true()
+      const { uri } = await createEdition({ image: hash })
+      await wait(1000)
+      await updateClaim(uri, 'invp:P2', hash, hash2)
+      await wait(delay)
+      localContainerHasImage({ container: 'entities', hash }).should.be.false()
+    })
+
+    it('should not auto-remove an entity image if the same image is used by another entity', async () => {
+      const [
+        { hash },
+        { hash: hash2 },
+      ] = await Promise.all([
+        uploadSomeImage({ container: 'entities' }),
+        uploadSomeImage({ container: 'entities' }),
+      ])
+      const [ { uri } ] = await Promise.all([
+        createEdition({ image: hash }),
+        createEdition({ image: hash }),
+      ])
+      await wait(1000)
+      await updateClaim(uri, 'invp:P2', hash, hash2)
+      await wait(delay)
+      localContainerHasImage({ container: 'entities', hash }).should.be.true()
     })
   })
 })

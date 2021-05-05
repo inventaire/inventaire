@@ -40,7 +40,7 @@ const API = module.exports = {
 
   createEdition: async (params = {}) => {
     const { work } = params
-    let { works, title, claims, publisher, publicationDate } = params
+    let { works, title, claims, publisher, publicationDate, image } = params
     publisher = publisher || 'wd:Q1799264'
     publicationDate = publicationDate || '2020'
     const lang = params.lang || 'en'
@@ -58,7 +58,7 @@ const API = module.exports = {
       'wdt:P407': [ `wd:${wdIdByWmLanguageCode[lang]}` ],
       'wdt:P123': [ publisher ],
       'wdt:P577': [ publicationDate ],
-      'invp:P2': [ someImageHash ],
+      'invp:P2': [ image || someImageHash ],
     }, claims)
     return authReq('post', '/api/entities?action=create', { claims: editionClaims })
   },
