@@ -3,7 +3,7 @@ const user_ = require('controllers/user/lib/user')
 const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {},

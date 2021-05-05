@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const Group = require('models/group')
 
 const sanitization = {

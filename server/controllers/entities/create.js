@@ -2,7 +2,7 @@ const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { Track } = require('lib/track')
 const getEntityByUri = require('./lib/get_entity_by_uri')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   labels: {

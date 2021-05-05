@@ -1,6 +1,6 @@
 // An endpoint to list entities edits made by a user
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')
 

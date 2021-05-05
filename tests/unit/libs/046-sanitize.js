@@ -1,5 +1,5 @@
 const should = require('should')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { undesiredRes, shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {

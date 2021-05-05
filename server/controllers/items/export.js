@@ -1,5 +1,5 @@
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const items_ = require('./lib/items')
 const addEntitiesData = require('./lib/export/add_entities_data')
 const FormatItemRow = require('./lib/export/format_item_row')

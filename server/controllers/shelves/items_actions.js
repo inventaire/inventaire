@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { Track } = require('lib/track')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   id: {},

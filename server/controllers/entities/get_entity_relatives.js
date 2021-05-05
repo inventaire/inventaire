@@ -1,6 +1,6 @@
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const getAuthorWorks = require('./lib/get_author_works')
 const getSerieParts = require('./lib/get_serie_parts')
 const getPublisherPublications = require('./lib/get_publisher_publications')

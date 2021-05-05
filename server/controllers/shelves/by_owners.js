@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const filterVisibleShelves = require('./lib/filter_visible_shelves')
 const { getNetworkIds } = require('controllers/user/lib/relations_status')
 

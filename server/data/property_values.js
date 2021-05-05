@@ -1,7 +1,7 @@
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { typesNames } = require('lib/wikidata/aliases')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const allowedValuesPerTypePerProperty = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
 
 const sanitization = {

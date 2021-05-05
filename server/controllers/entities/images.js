@@ -6,7 +6,7 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const error_ = require('lib/error/error')
 const getEntitiesImages = require('./lib/get_entities_images')
 const { img: imgUrlBuilder } = require('lib/emails/app_api')
