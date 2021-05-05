@@ -139,7 +139,8 @@ const config = module.exports = {
       // In pixels
       maxSize: 1600,
       // 5MB
-      maxWeight: 5 * 1024 ** 2
+      maxWeight: 5 * 1024 ** 2,
+      checkDelay: 2000,
     },
     // By default, media are saved locally instead of using a remote
     // object storage service such as Swift
