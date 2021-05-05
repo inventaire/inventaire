@@ -123,7 +123,7 @@ describe('entities:delete', () => {
   it('should remove deleted entities from items snapshot', async () => {
     const author = await createHuman()
     const work = await createWorkWithAuthor(author)
-    const item = await authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+    const item = await authReq('post', '/api/items', { entity: work.uri })
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris(author.uri)
@@ -144,7 +144,7 @@ describe('entities:delete', () => {
 
   it('should not deleted entities that are the entity of an item', async () => {
     const work = await createWork()
-    await authReq('post', '/api/items', { entity: work.uri, lang: 'en' })
+    await authReq('post', '/api/items', { entity: work.uri })
     await deleteByUris(work.uri)
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -155,7 +155,7 @@ describe('entities:delete', () => {
 
   it('should not remove editions with an ISBN and an item', async () => {
     const { invUri, uri } = await createEditionWithIsbn()
-    await authReq('post', '/api/items', { entity: uri, lang: 'en' })
+    await authReq('post', '/api/items', { entity: uri })
     // Using the inv URI, as the isbn one would be rejected
     await deleteByUris(invUri)
     .then(shouldNotBeCalled)

@@ -111,7 +111,7 @@ describe('items:create', () => {
       .then(author => {
         return createWorkWithAuthor(author)
         .then(workEntity => {
-          return authReq('post', '/api/items', { entity: workEntity.uri, lang: 'en' })
+          return authReq('post', '/api/items', { entity: workEntity.uri })
           .then(item => {
             item.snapshot.should.be.an.Object()
             item.snapshot['entity:authors'].should.equal(author.labels.en)
@@ -148,7 +148,7 @@ describe('items:create', () => {
   })
 
   it('should reject an item created with an unknown entity', done => {
-    authReq('post', '/api/items', { entity: 'isbn:9782290711217', lang: 'fr' })
+    authReq('post', '/api/items', { entity: 'isbn:9782290711217' })
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('entity not found')
@@ -158,7 +158,7 @@ describe('items:create', () => {
   })
 
   it('should reject an item created with a non-allowlisted entity type', done => {
-    authReq('post', '/api/items', { entity: 'wd:Q1', lang: 'fr' })
+    authReq('post', '/api/items', { entity: 'wd:Q1' })
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid entity type')

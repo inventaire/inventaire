@@ -87,7 +87,6 @@ const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
   ])
   const item = await createItemFromEntityUri({
     uri: edition.uri,
-    item: { lang: 'en' }
   })
   return [ serie, work, edition, item ]
 }
