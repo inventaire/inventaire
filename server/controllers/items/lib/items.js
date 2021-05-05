@@ -121,15 +121,13 @@ const items_ = module.exports = {
   },
 
   // Data serializa emails and rss feeds templates
-  serializeData: item => {
-    return snapshot_.addToItem(item)
-    .then(item => {
-      const { 'entity:title': title, 'entity:authors': authors, 'entity:image': image } = item.snapshot
-      item.title = title
-      item.authors = authors
-      if (image != null) { item.pictures = [ image ] }
-      return item
-    })
+  serializeData: async item => {
+    item = await snapshot_.addToItem(item)
+    const { 'entity:title': title, 'entity:authors': authors, 'entity:image': image } = item.snapshot
+    item.title = title
+    item.authors = authors
+    if (image != null) item.pictures = [ image ]
+    return item
   },
 
   updateShelves: async (action, shelvesIds, userId, itemsIds) => {
