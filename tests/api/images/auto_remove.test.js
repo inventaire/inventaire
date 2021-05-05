@@ -3,6 +3,7 @@ const { getUserB } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const { uploadSomeImage, localContainerHasImage } = require('../utils/images')
 const { updateUser } = require('../utils/users')
+const delay = checkDelay + 100
 
 describe('images:auto-remove', () => {
   describe('users', () => {
@@ -13,7 +14,7 @@ describe('images:auto-remove', () => {
       const { url: url2, hash: hash2 } = await uploadSomeImage({ container: 'users' })
       localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
       await updateUser({ attribute: 'picture', value: url2 })
-      await wait(1500)
+      await wait(delay)
       localContainerHasImage({ container: 'users', hash }).should.be.false()
     })
 
@@ -26,7 +27,7 @@ describe('images:auto-remove', () => {
       const { url: url2, hash: hash2 } = await uploadSomeImage({ container: 'users' })
       localContainerHasImage({ container: 'users', hash: hash2 }).should.be.true()
       await updateUser({ attribute: 'picture', value: url2 })
-      await wait(1500)
+      await wait(delay)
       localContainerHasImage({ container: 'users', hash }).should.be.true()
     })
   })
