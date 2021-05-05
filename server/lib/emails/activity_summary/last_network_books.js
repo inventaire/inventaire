@@ -8,9 +8,12 @@ const { getLastItems, formatData, embedUsersData, getHighlightedItems } = requir
 module.exports = async (userId, lang, limitDate = 0) => {
   const networkUsersIds = await relations_.getUserFriendsAndCoGroupsMembers(userId)
   const networkItems = await getItemsByAccessLevel.network(networkUsersIds)
-  const serializedNetworkItems = await Promise.all(networkItems.map(items_.serializeData))
-  const lastNetworkItems = getLastItems(limitDate, serializedNetworkItems)
-  return extractHighlightedItems(lastNetworkItems, lang)
+  const lastNetworkItems = getLastItems(limitDate, networkItems)
+  const selectionData = await extractHighlightedItems(lastNetworkItems, lang)
+  // Serializing items last, as fetching items snapshots data can be expensive,
+  // so better do it on the smallest set possible
+  selectionData.highlighted = await Promise.all(selectionData.highlighted.map(items_.serializeData))
+  return selectionData
 }
 
 const extractHighlightedItems = async (lastItems, lang) => {
