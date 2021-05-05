@@ -22,14 +22,18 @@ module.exports = async (req, res, configs) => {
   }
 
   for (const name in configs) {
-    const config = configs[name]
-    sanitizeParameter(input, name, config, place, res)
+    if (!optionsNames.has(name)) {
+      const config = configs[name]
+      sanitizeParameter(input, name, config, place, res)
+    }
   }
 
   if (req.user) input.reqUserId = req.user._id
 
   return input
 }
+
+const optionsNames = new Set([ 'nonJsonBody' ])
 
 const sanitizeParameter = (input, name, config, place, res) => {
   const { generic } = config
@@ -71,7 +75,6 @@ const getPlace = (method, configs) => {
   let place = 'query'
   if (method === 'POST' || method === 'PUT') {
     if (!configs.nonJsonBody) place = 'body'
-    delete configs.nonJsonBody
   }
   return place
 }
