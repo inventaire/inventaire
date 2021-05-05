@@ -4,8 +4,8 @@ const { imageIsUsed: groupImageIsUsed } = require('controllers/groups/lib/groups
 const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
 const { wait } = require('lib/promises')
 const assert_ = require('lib/utils/assert_types')
-const containers = require('controllers/images/lib/containers')
-const { checkDelay } = require('config').mediaStorage.images
+const { containers } = require('controllers/images/lib/containers')
+const { postUpdateCheckDelay } = require('config').mediaStorage.images
 
 module.exports = async ({ container, hash, url }) => {
   if (url) hash = url.split('/')[3]
