@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
 const _ = require('builders/utils')

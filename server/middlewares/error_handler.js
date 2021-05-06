@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // A middleware to catch other middlewares errors and repackage them
 // in JSON and with more readable error reports
 const error_ = require('lib/error/error')

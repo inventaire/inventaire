@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // This config file contains the default values for all environments.
 // Override by creating per-environment files following the same structure
 // in this same folder

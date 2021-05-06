@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const { serverMode } = require('config')
 // This flag can't rely on the CONFIG.env, as it's main use case is for error reported by mocha,
 // and mocha is sometimes called directly, without giving the chance to set NODE_ENV

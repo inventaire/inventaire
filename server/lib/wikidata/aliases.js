@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const error_ = require('lib/error/error')
 const { 'wdt:P31': invP31Values } = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
 

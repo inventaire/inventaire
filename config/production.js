@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // Production config
 // This config file will be used if: NODE_ENV=production
 // Override locally in ./local-production.js

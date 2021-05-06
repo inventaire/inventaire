@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const snapshotItemAttributes = require('./attributes/item').snapshot

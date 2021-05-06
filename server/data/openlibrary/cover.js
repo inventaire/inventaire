@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
 const requests_ = require('lib/requests')

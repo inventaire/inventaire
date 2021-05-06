@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // This module recovers keys in config/.sessions_keys, and creates and keeps updated
 // an array of keys that will be passed to auth middlewares to sign cookies
 

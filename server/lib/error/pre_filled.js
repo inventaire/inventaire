@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 // Pre-formatted error handlers to make error responses consistent
 const { pick } = require('lodash')
 const { typeOf } = require('../utils/base')

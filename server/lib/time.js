@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const oneSecond = 1000
 const oneMinute = 60 * oneSecond
 const oneHour = 60 * oneMinute

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const { name, cookieMaxAge, protocol } = require('config')
 const { expired } = require('builders/utils')
 

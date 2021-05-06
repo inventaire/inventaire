@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('builders/utils')

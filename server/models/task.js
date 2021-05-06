@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
+
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const validations = require('./validations/task')

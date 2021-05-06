@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const items_ = require('controllers/items/lib/items')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
 

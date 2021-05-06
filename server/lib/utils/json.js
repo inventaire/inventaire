@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const { readFile, writeFile } = require('fs').promises
 const stringify = data => JSON.stringify(data, null, 2)
 const assert_ = require('./assert_types')

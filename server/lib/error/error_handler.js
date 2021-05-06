@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const responses_ = require('lib/responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 

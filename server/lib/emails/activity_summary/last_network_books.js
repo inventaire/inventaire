@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText:  2014  Maxime Lathuilière, Vincent Jumeaux
+// SPDX-License-Identifier: AGPL-3.0-only
+
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')
