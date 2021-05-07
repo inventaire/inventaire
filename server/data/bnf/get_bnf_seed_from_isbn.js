@@ -6,6 +6,9 @@ const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplif
 const cache_ = require('lib/cache')
 const { hashCode } = require('lib/utils/base')
 const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
+const reverseClaims = require('controllers/entities/lib/reverse_claims')
+const getEntitiesList = require('controllers/entities/lib/get_entities_list')
+const leven = require('leven')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -19,20 +22,22 @@ module.exports = async isbn => {
   const rows = await Promise.all(simplifiedResults.map((result, i) => {
     return formatRow(isbn, result, rawResults[i])
   }))
-  return regroupRows(rows)
+
+  const entry = regroupRows(rows)
+  if (entry?.publishers) {
+    await addPublisherId(entry)
+    delete entry.publishers
+  }
+  return entry
 }
 
-const get = async isbn => {
-  const url = getUrl(isbn)
-  return requests_.get(url, {
-    headers: {
-      accept: '*/*'
-    }
-  })
-}
+const headers = { accept: '*/*' }
 
 const base = 'https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=60000&query='
-const getUrl = isbn => base + getQuery(isbn)
+const get = async isbn => {
+  const url = base + getQuery(isbn)
+  return requests_.get(url, { headers })
+}
 
 const getQuery = isbn => {
   const { isbn10h, isbn13h, isbn13 } = parseIsbn(isbn)
@@ -154,20 +159,66 @@ const regroupRows = rows => {
   const editions = {}
   const works = {}
   const authors = {}
-  for (const entry of rows) {
-    addByBnfId(editions, entry, 'edition')
-    addByBnfId(works, entry, 'work')
-    addByBnfId(authors, entry, 'author')
+  const publishers = {}
+
+  for (const row of rows) {
+    addByBnfId(editions, row, 'edition')
+    addByBnfId(works, row, 'work')
+    addByBnfId(authors, row, 'author')
+    addByBnfId(publishers, row, 'publisher')
   }
+
   if (Object.keys(editions).length !== 1) return
+  const edition = Object.values(editions)[0]
+
   return {
-    edition: Object.values(editions)[0],
+    edition,
     works: Object.values(works),
     authors: Object.values(authors),
+    publishers: Object.values(publishers),
   }
 }
 
-const addByBnfId = (index, entry, typeName) => {
-  const bnfId = entry[typeName].claims.P268 || entry[typeName].tempBnfId
-  index[bnfId] = entry[typeName]
+const addByBnfId = (index, row, typeName) => {
+  const bnfId = row[typeName].claims?.P268 || row[typeName].tempBnfId || row[typeName].labels.fr
+  index[bnfId] = row[typeName]
 }
+
+const addPublisherId = async entry => {
+  if (!entry) return
+  const { publishers } = entry
+  if (Object.keys(publishers).length !== 1) return
+  const publisher = Object.values(publishers)[0]
+  const { isbn } = entry.edition
+  const publisherId = await resolvePublisher(isbn, publisher.labels.fr)
+  if (publisherId) entry.edition.claims.P123 = publisherId
+}
+
+const resolvePublisher = async (isbn, publisherLabel) => {
+  const { publisherPrefix } = parseIsbn(isbn)
+  const claims = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
+  if (claims.length === 0) return
+  const possiblePublishers = await getEntitiesList(claims)
+  const publisher = possiblePublishers
+    .map(getPublisherClosestTerm(publisherLabel))
+    .sort(byDistance)[0]
+  return publisher.id
+}
+
+const getPublisherClosestTerm = publisherLabel => entity => {
+  const closestTerm = getClosestTerm(entity, publisherLabel)
+  return {
+    id: entity.uri.split(':')[1],
+    distance: closestTerm.distance
+  }
+}
+
+const getClosestTerm = ({ labels, aliases }, publisherLabel) => {
+  const allAliases = _.flatten(Object.values(aliases))
+  const terms = Object.values(labels).concat(allAliases)
+  return _.uniq(terms)
+  .map(term => ({ term, distance: leven(term, publisherLabel) }))
+  .sort(byDistance)[0]
+}
+
+const byDistance = (a, b) => a.distance - b.distance
