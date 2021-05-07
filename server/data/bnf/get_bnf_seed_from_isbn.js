@@ -4,21 +4,22 @@ const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 const cache_ = require('lib/cache')
+const { hashCode } = require('lib/utils/base')
+const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
 
 module.exports = async isbn => {
-  const key = `bnf-seed:${isbn}`
-  const results = await cache_.get({
+  const queryHash = hashCode(getQuery(isbn))
+  const key = `bnf-seed:${isbn}:${queryHash}`
+  const response = await cache_.get({
     key,
     fn: get.bind(null, isbn)
   })
-  const simplifiedResults = simplifySparqlResults(results)
-  if (simplifiedResults.length !== 1) return
-
-  const result = simplifiedResults[0]
-  const workLabelLang = results.results.bindings[0].workLabel?.['xml:lang']
-  if (workLabelLang) result.work.labelLang = workLabelLang
-  const entry = convertResultToResolverEntry(isbn, result)
-  return entry
+  const simplifiedResults = simplifySparqlResults(response)
+  const { bindings: rawResults } = response.results
+  const rows = await Promise.all(simplifiedResults.map((result, i) => {
+    return formatRow(isbn, result, rawResults[i])
+  }))
+  return regroupRows(rows)
 }
 
 const get = async isbn => {
@@ -35,7 +36,7 @@ const getUrl = isbn => base + getQuery(isbn)
 
 const getQuery = isbn => {
   const { isbn10h, isbn13h, isbn13 } = parseIsbn(isbn)
-  const query = `SELECT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?publisherLabel (GROUP_CONCAT(?workMatch;separator="|") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator="|") AS ?authorMatches) WHERE {
+  const query = `SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?publisherLabel (GROUP_CONCAT(?workMatch;separator="|") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator="|") AS ?authorMatches) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
   UNION { ?edition bnf-onto:isbn "${isbn13h}" }
@@ -70,12 +71,14 @@ GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPu
   return qs.escape(query)
 }
 
-const convertResultToResolverEntry = (isbn, result) => {
+const formatRow = async (isbn, result, rawResult) => {
+  const workLabelLang = rawResult.workLabel?.['xml:lang']
+  if (workLabelLang) result.work.labelLang = workLabelLang
   const { edition, work, author, publisherLabel } = result
   const entry = {}
-  entry.edition = { isbn }
+  entry.edition = { isbn, url: edition.value }
   if (edition) {
-    const { claims } = parseMatches(edition.matches)
+    const { claims } = await parseMatches(edition.matches)
     entry.edition.claims = {
       P268: getBnfId(edition.value),
       P1476: edition.title,
@@ -83,9 +86,10 @@ const convertResultToResolverEntry = (isbn, result) => {
     }
   }
   if (work) {
-    const { id, claims } = parseMatches(work.matches)
+    const { id, claims } = await parseMatches(work.matches)
     entry.work = {
       id,
+      url: work.value,
       labels: {
         [work.labelLang]: work.label
       },
@@ -93,11 +97,13 @@ const convertResultToResolverEntry = (isbn, result) => {
     }
     const bnfId = getBnfId(work.value)
     if (bnfId) entry.work.claims.P268 = bnfId
+    else if (work.value.includes('temp-work')) entry.work.tempBnfId = work.value
   }
   if (author) {
-    const { id, claims } = parseMatches(author.matches)
+    const { id, claims } = await parseMatches(author.matches)
     entry.author = {
       id,
+      url: author.value,
       labels: { fr: author.label },
       claims
     }
@@ -116,23 +122,52 @@ const convertResultToResolverEntry = (isbn, result) => {
 // Ex: https://data.bnf.fr/temp-work/ef36a038d0abd4038d662bb01ddcbb76/#about
 const getBnfId = url => url?.split('/cb')[1]?.replace('#about', '')
 
-const parseMatches = matches => {
+const parseMatches = async matches => {
   if (!matches || matches === '') return {}
   const data = { claims: {} }
   const urls = _.uniq(matches.split('|'))
-  urls.forEach(url => {
+  for (const url of urls) {
     const { host, pathname } = new URL(url)
     if (getPropertyAndIdPerHost[host]) {
-      const { property, value } = getPropertyAndIdPerHost[host](pathname)
-      if (property === 'id') data.id = value
-      else data.claims[property] = value
+      const { property, value } = await getPropertyAndIdPerHost[host](pathname)
+      if (value) {
+        if (property === 'id') data.id = value
+        else data.claims[property] = value
+      }
     }
-  })
+  }
   return data
 }
 
 const getPropertyAndIdPerHost = {
+  'fr.dbpedia.org': async pathname => {
+    const title = pathname.split('/')[2]
+    const id = await getEntityIdBySitelink({ site: 'frwiki', title })
+    return { property: 'id', value: id }
+  },
   'viaf.org': pathname => ({ property: 'P214', value: pathname.split('/')[3] }),
   'wikidata.org': pathname => ({ property: 'id', value: pathname.split('/')[2] }),
   'www.idref.fr': pathname => ({ property: 'P269', value: pathname.split('/')[1] }),
+}
+
+const regroupRows = rows => {
+  const editions = {}
+  const works = {}
+  const authors = {}
+  for (const entry of rows) {
+    addByBnfId(editions, entry, 'edition')
+    addByBnfId(works, entry, 'work')
+    addByBnfId(authors, entry, 'author')
+  }
+  if (Object.keys(editions).length !== 1) return
+  return {
+    edition: Object.values(editions)[0],
+    works: Object.values(works),
+    authors: Object.values(authors),
+  }
+}
+
+const addByBnfId = (index, entry, typeName) => {
+  const bnfId = entry[typeName].claims.P268 || entry[typeName].tempBnfId
+  index[bnfId] = entry[typeName]
 }
