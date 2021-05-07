@@ -4,12 +4,11 @@
 {
   "root": true,
   "env": {
-      "browser": false,
       "commonjs": true,
-      "es6": true
+      "es2020": true
   },
   "parserOptions": {
-      "ecmaVersion": 2018
+      "ecmaVersion": 2020
   },
   "extends": [
       // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json

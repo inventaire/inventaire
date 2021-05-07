@@ -10,7 +10,7 @@ const filename = __filename.replace(`${process.cwd()}/`, '')
 const jsconfig = {
   __generatedBy: filename,
   compilerOptions: {
-    target: 'es6',
+    target: 'es2020',
     module: 'commonJS',
     moduleResolution: 'node',
     baseUrl: '.',

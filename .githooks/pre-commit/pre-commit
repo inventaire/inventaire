@@ -7,7 +7,7 @@ echo -e "\e[0;30mstarting to lint...\e[0m"
 npm run lint-staged
 
 # if package.json was modified, update jsconfig.json
-git status --porcelain -- package.json | grep -E "^ ?M" > /dev/null && {
+git status --porcelain -- package.json scripts/generate_jsconfig.js | grep -E "^ ?M" > /dev/null && {
   echo -e "\e[0;30mupdating jsconfig.json...\e[0m"
   npm run update-jsconfig
 } || true
