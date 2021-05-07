@@ -44,7 +44,7 @@ const makeRequest = url => {
     ongoing += 1
     // Don't let a query block the queue more than 30 seconds
     return requests_.get(url, { timeout: 30000 })
-    .then(simplifySparqlResults)
+    .then(res => simplifySparqlResults(res, { minimize: true }))
     .finally(() => {
       ongoing -= 1
       logStats()

@@ -89,7 +89,8 @@ const _wikidataReverseClaims = async (property, value) => {
   _.log([ property, value ], 'reverse claim')
   const url = getReverseClaims(wdProp, value, { caseInsensitive })
   const results = await requests_.get(url)
-  return simplifySparqlResults(results).map(prefixifyWd)
+  return simplifySparqlResults(results)
+  .map(result => prefixifyWd(result.subject))
 }
 
 const invReverseClaims = async (property, value) => {
