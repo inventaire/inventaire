@@ -25,7 +25,7 @@ module.exports = async isbn => {
 
   const entry = regroupRows(rows)
   if (entry?.publishers) {
-    await addPublisherId(entry)
+    await addPublisherUri(entry)
     delete entry.publishers
   }
   return entry
@@ -85,15 +85,15 @@ const formatRow = async (isbn, result, rawResult) => {
   if (edition) {
     const { claims } = await parseMatches(edition.matches)
     entry.edition.claims = {
-      P268: getBnfId(edition.value),
-      P1476: edition.title,
+      'wdt:P268': getBnfId(edition.value),
+      'wdt:P1476': edition.title,
       ...claims
     }
   }
   if (work) {
-    const { id, claims } = await parseMatches(work.matches)
+    const { uri, claims } = await parseMatches(work.matches)
     entry.work = {
-      id,
+      uri,
       url: work.value,
       labels: {
         [work.labelLang]: work.label
@@ -101,19 +101,19 @@ const formatRow = async (isbn, result, rawResult) => {
       claims
     }
     const bnfId = getBnfId(work.value)
-    if (bnfId) entry.work.claims.P268 = bnfId
+    if (bnfId) entry.work.claims['wdt:P268'] = bnfId
     else if (work.value.includes('temp-work')) entry.work.tempBnfId = work.value
   }
   if (author) {
-    const { id, claims } = await parseMatches(author.matches)
+    const { uri, claims } = await parseMatches(author.matches)
     entry.author = {
-      id,
+      uri,
       url: author.value,
       labels: { fr: author.label },
       claims
     }
     const bnfId = getBnfId(author.value)
-    if (bnfId) entry.author.claims.P268 = bnfId
+    if (bnfId) entry.author.claims['wdt:P268'] = bnfId
   }
   if (publisherLabel) {
     entry.publisher = {
@@ -136,7 +136,7 @@ const parseMatches = async matches => {
     if (getPropertyAndIdPerHost[host]) {
       const { property, value } = await getPropertyAndIdPerHost[host](pathname)
       if (value) {
-        if (property === 'id') data.id = value
+        if (property === 'uri') data.uri = value
         else data.claims[property] = value
       }
     }
@@ -148,11 +148,11 @@ const getPropertyAndIdPerHost = {
   'fr.dbpedia.org': async pathname => {
     const title = pathname.split('/')[2]
     const id = await getEntityIdBySitelink({ site: 'frwiki', title })
-    return { property: 'id', value: id }
+    if (id) return { property: 'uri', value: `wd:${id}` }
   },
-  'viaf.org': pathname => ({ property: 'P214', value: pathname.split('/')[3] }),
-  'wikidata.org': pathname => ({ property: 'id', value: pathname.split('/')[2] }),
-  'www.idref.fr': pathname => ({ property: 'P269', value: pathname.split('/')[1] }),
+  'viaf.org': pathname => ({ property: 'wdt:P214', value: pathname.split('/')[3] }),
+  'wikidata.org': pathname => ({ property: 'uri', value: `wd:${pathname.split('/')[2]}` }),
+  'www.idref.fr': pathname => ({ property: 'wdt:P269', value: pathname.split('/')[1] }),
 }
 
 const regroupRows = rows => {
@@ -180,18 +180,19 @@ const regroupRows = rows => {
 }
 
 const addByBnfId = (index, row, typeName) => {
-  const bnfId = row[typeName].claims?.P268 || row[typeName].tempBnfId || row[typeName].labels.fr
+  console.log({ index, row, typeName })
+  const bnfId = row[typeName].claims?.['wdt:P268'] || row[typeName].tempBnfId || row[typeName].labels?.fr
   index[bnfId] = row[typeName]
 }
 
-const addPublisherId = async entry => {
+const addPublisherUri = async entry => {
   if (!entry) return
   const { publishers } = entry
   if (Object.keys(publishers).length !== 1) return
   const publisher = Object.values(publishers)[0]
   const { isbn } = entry.edition
-  const publisherId = await resolvePublisher(isbn, publisher.labels.fr)
-  if (publisherId) entry.edition.claims.P123 = publisherId
+  const publisherUri = await resolvePublisher(isbn, Object.values(publisher.labels)[0])
+  if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
 }
 
 const resolvePublisher = async (isbn, publisherLabel) => {
@@ -207,8 +208,9 @@ const resolvePublisher = async (isbn, publisherLabel) => {
 
 const getPublisherClosestTerm = publisherLabel => entity => {
   const closestTerm = getClosestTerm(entity, publisherLabel)
+  const id = entity.uri.split(':')[1]
   return {
-    id: entity.uri.split(':')[1],
+    uri: `wd:${id}`,
     distance: closestTerm.distance
   }
 }
