@@ -3,15 +3,14 @@ const _ = require('builders/utils')
 const getSerieParts = require('./get_serie_parts')
 const getAuthorWorks = require('./get_author_works')
 
-// Working around circular dependencies
 let items_, getEntityByUri, reverseClaims, getEntitiesPopularities
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   items_ = require('controllers/items/lib/items')
   getEntityByUri = require('./get_entity_by_uri')
   reverseClaims = require('./reverse_claims');
   ({ getEntitiesPopularities } = require('./popularity'))
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 module.exports = uri => {
   return getEntityByUri({ uri, dry: true })

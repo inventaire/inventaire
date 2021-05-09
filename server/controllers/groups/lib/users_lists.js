@@ -2,10 +2,9 @@ const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const Group = require('models/group')
 
-// Working around the circular dependency
 let groups_
-const lateRequire = () => { groups_ = require('./groups') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { groups_ = require('./groups') }
+setImmediate(requireCircularDependencies)
 
 const lists_ = module.exports = {
   userInGroup: (userId, groupId) => {

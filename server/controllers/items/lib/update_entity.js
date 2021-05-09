@@ -1,10 +1,9 @@
 const Item = require('models/item')
 const db = require('db/couchdb/base')('items')
 
-// Working around the circular dependency
 let items_
-const lateRequire = () => { items_ = require('./items') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { items_ = require('./items') }
+setImmediate(requireCircularDependencies)
 
 const AfterFn = (viewName, modelFnName) => async (fromUri, toUri) => {
   const items = await items_[viewName](fromUri)

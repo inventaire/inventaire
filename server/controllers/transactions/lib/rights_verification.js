@@ -2,10 +2,9 @@ const interactions_ = require('lib/interactions')
 const error_ = require('lib/error/error')
 const Transaction = require('models/transaction')
 
-// Working around circular dependencies
 let transactions_
-const lateRequire = () => { transactions_ = require('./transactions') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { transactions_ = require('./transactions') }
+setImmediate(requireCircularDependencies)
 
 const verifyNoExistingTransaction = (requester, item) => {
   return transactions_.byUserAndItem(requester, item._id)

@@ -7,12 +7,11 @@ const { getSimpleDayDate, sortByScore } = require('./queries_utils')
 const { getPluralType, getPluralTypeByTypeUri } = require('lib/wikidata/aliases')
 const { getCachedRelations } = require('./temporarily_cache_relations')
 
-// Working around the circular dependency
 let getEntitiesPopularities
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   ({ getEntitiesPopularities } = require('./popularity'))
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 

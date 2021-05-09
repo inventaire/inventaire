@@ -1,12 +1,11 @@
 const error_ = require('lib/error/error')
 
-// Working around circular dependencies
 let getEntityByUri, entities_
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   getEntityByUri = require('./get_entity_by_uri')
   entities_ = require('./entities')
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 const properties = require('./properties/properties_values_constraints')
 const validateClaimValueSync = require('./validate_claim_value_sync')

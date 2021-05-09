@@ -8,10 +8,9 @@ const buildSnapshot = require('./build_snapshot')
 const { getWorkAuthorsAndSeries, getEditionGraphEntities } = require('./get_entities')
 const { getDocData } = require('./helpers')
 
-// Working around circular dependencies
 let snapshot_
-const lateRequire = () => { snapshot_ = require('./snapshot') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { snapshot_ = require('./snapshot') }
+setImmediate(requireCircularDependencies)
 
 const fromDoc = changedEntityDoc => {
   const [ uri, type ] = getDocData(changedEntityDoc)

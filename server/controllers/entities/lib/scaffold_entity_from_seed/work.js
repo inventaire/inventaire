@@ -14,11 +14,11 @@ const workEntitiesCache = require('./work_entity_search_deduplicating_cache')
 
 // Working around the circular dependencies
 let searchWorkEntityByTitleAndAuthors, findAuthorFromWorksLabels
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   searchWorkEntityByTitleAndAuthors = require('./search_work_entity_by_title_and_authors')
   findAuthorFromWorksLabels = require('controllers/entities/lib/find_author_from_works_labels')
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 // seed attributes:
 // MUST have: title

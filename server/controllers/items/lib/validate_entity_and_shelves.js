@@ -2,13 +2,12 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const allowlistedEntityTypes = [ 'edition', 'work' ]
 
-// Working around the circular dependency
 let getEntityByUri, shelves_
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
   shelves_ = require('controllers/shelves/lib/shelves')
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 module.exports = async (userId, item) => {
   const [ entity, shelves ] = await Promise.all([

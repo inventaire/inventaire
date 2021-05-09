@@ -18,12 +18,11 @@ const radio = require('lib/radio')
 const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
 
-// Working around the circular dependency
 let reindex
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   reindex = require('db/elasticsearch/indexation')({ indexBaseName: 'wikidata' })
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 module.exports = (ids, params) => {
   return Promise.all(ids.map(getCachedEnrichedEntity(params)))

@@ -1,10 +1,9 @@
 const getNextSlugCandidate = require('./get_next_slug_candidate')
 const slugify = require('./slugify')
 
-// Working around the circular dependency
 let groups_
-const lateRequire = () => { groups_ = require('./groups') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { groups_ = require('./groups') }
+setImmediate(requireCircularDependencies)
 
 const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
 

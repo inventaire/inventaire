@@ -11,10 +11,9 @@ const requests_ = require('lib/requests')
 const dbHost = CONFIG.db.fullHost()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
-// Working around the circular dependency
 let waitForCouchInit
-const lateRequire = () => { waitForCouchInit = require('db/couchdb/init') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { waitForCouchInit = require('db/couchdb/init') }
+setImmediate(requireCircularDependencies)
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server

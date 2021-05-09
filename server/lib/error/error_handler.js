@@ -1,10 +1,9 @@
 const responses_ = require('lib/responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
-// Working around the circular dependency
 let _
-const lateRequire = () => { _ = require('builders/utils') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { _ = require('builders/utils') }
+setImmediate(requireCircularDependencies)
 
 module.exports = (req, res, err, status) => {
   // only accepts Error instances

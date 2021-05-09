@@ -6,10 +6,9 @@ const formatEntityCommon = require('./format_entity_common')
 const addRedirection = require('./add_redirection')
 const { prefixifyInv, unprefixify } = require('controllers/entities/lib/prefix')
 
-// Working around the circular dependency
 let getEntityByUri
-const lateRequire = () => { getEntityByUri = require('./get_entity_by_uri') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { getEntityByUri = require('./get_entity_by_uri') }
+setImmediate(requireCircularDependencies)
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri

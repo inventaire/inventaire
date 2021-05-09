@@ -3,10 +3,9 @@ const Group = require('models/group')
 const db = require('db/couchdb/base')('groups')
 const promises_ = require('lib/promises')
 
-// Working around the circular dependency
 let groups_
-const lateRequire = () => { groups_ = require('./groups') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { groups_ = require('./groups') }
+setImmediate(requireCircularDependencies)
 
 module.exports = {
   userCanLeave: (userId, groupId) => {

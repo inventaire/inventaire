@@ -1,8 +1,7 @@
 
-// Working around the circular dependency
 let assert_
-const lateRequire = () => { assert_ = require('lib/utils/assert_types') }
-setTimeout(lateRequire, 0)
+const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
+setImmediate(requireCircularDependencies)
 
 const responses_ = module.exports = {
   // returns a function triggering a standard confirmation response

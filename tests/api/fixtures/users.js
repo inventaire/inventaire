@@ -11,12 +11,11 @@ const { makeFriends } = require('../utils/relations')
 const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
-// Working around the circular dependency
 let getUser, getReservedUser
-const lateRequire = () => {
+const requireCircularDependencies = () => {
   ({ getUser, getReservedUser } = require('../utils/utils'))
 }
-setTimeout(lateRequire, 0)
+setImmediate(requireCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
