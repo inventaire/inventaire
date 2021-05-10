@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 export NODE_ENV=tests-integration
 
+timeout=$(node -p 'require("config").mocha.timeout')
+
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]
 then
-  mocha --exit $MOCHA_OPTIONS ./node_modules/module-alias/register.js ./tests/integration/*
+  mocha --exit $MOCHA_OPTIONS --timeout "$timeout" ./node_modules/module-alias/register.js ./tests/integration/*
 else
-  mocha --exit $MOCHA_OPTIONS ./node_modules/module-alias/register.js "$@"
+  mocha --exit $MOCHA_OPTIONS --timeout "$timeout" ./node_modules/module-alias/register.js "$@"
 fi

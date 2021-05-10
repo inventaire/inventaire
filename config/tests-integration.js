@@ -14,5 +14,9 @@ module.exports = {
   entitiesRelationsTemporaryCache: {
     checkFrequency: 1000,
     ttl: 3 * 1000
-  }
+  },
+
+  mocha: {
+    timeout: 10000,
+  },
 }
