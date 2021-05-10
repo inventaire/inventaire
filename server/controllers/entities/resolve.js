@@ -1,9 +1,5 @@
-const _ = require('builders/utils')
-const sanitizeEntry = require('./lib/resolver/sanitize_entry')
-const resolve = require('./lib/resolver/resolve')
-const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
-const CreateUnresolvedEntry = require('./lib/resolver/create_unresolved_entry')
 const { oneHour } = require('lib/time')
+const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_create')
 
 // Entry example:
 // {
@@ -52,69 +48,10 @@ const sanitization = {
 
 const controller = async (params, req) => {
   req.setTimeout(oneHour)
-  params.batchId = Date.now()
-  const { strict } = params
-  const { entries, errors } = sanitizeEntries(params.entries, strict)
-
-  const resolvedEntries = await sequentialResolve(entries, params, errors)
+  const { resolvedEntries, errors } = await resolveUpdateAndCreate(params)
   const data = { entries: resolvedEntries }
-  if (!strict) data.errors = errors.map(formatError)
+  if (!params.strict) data.errors = errors.map(formatError)
   return data
-}
-
-const sanitizeEntries = (entries, strict) => {
-  const errors = []
-  const sanitizedEntries = []
-  entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))
-  return { entries: sanitizedEntries, errors }
-}
-
-const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => {
-  try {
-    sanitizedEntries.push(sanitizeEntry(entry))
-  } catch (err) {
-    handleError(strict, errors, err, entry)
-  }
-}
-
-const sequentialResolve = async (entries, params, errors) => {
-  if (entries.length === 0) return []
-
-  const { create, update, strict } = params
-  const updateResolvedEntry = buildActionFn(update, UpdateResolvedEntry, params)
-  const createUnresolvedEntry = buildActionFn(create, CreateUnresolvedEntry, params)
-  const addResolvedEntry = entry => resolvedEntries.push(entry)
-  const resolvedEntries = []
-
-  const resolveNext = () => {
-    const nextEntry = entries.shift()
-    if (nextEntry == null) return resolvedEntries
-
-    _.log(nextEntry, 'next entry')
-
-    return resolve(nextEntry)
-    .then(updateResolvedEntry)
-    .then(createUnresolvedEntry)
-    .then(addResolvedEntry)
-    .catch(err => handleError(strict, errors, err, nextEntry))
-    .then(resolveNext)
-  }
-
-  return resolveNext()
-}
-
-const buildActionFn = (flag, ActionFn, params) => {
-  if (flag) return ActionFn(params)
-  else return _.identity
-}
-
-const handleError = (strict, errors, err, entry) => {
-  if (strict) {
-    throw err
-  } else {
-    err.entry = entry
-    errors.push(err)
-  }
 }
 
 const formatError = err => {

@@ -2,7 +2,7 @@ const should = require('should')
 const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13 } = require('../fixtures/entities')
-const { getByUris, merge } = require('../utils/entities')
+const { getByUris, merge, deleteByUris } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 
 describe('entities:get:by-uris', () => {
@@ -116,11 +116,35 @@ describe('entities:get:by-isbns', () => {
     const { uri } = await createEditionWithIsbn()
     const res = await getByUris(uri)
     res.entities[uri].should.be.an.Object()
+    res.entities[uri].uri.should.equal(uri)
+    should(res.notFound).not.be.ok()
   })
 
-  it('should return editions isbn in notFound array when autocreation if false', async () => {
+  it('should return editions isbn in notFound array when autocreation is false', async () => {
     const uri = `isbn:${generateIsbn13()}`
     const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+    res.entities.should.deepEqual({})
     res.notFound[0].should.equal(uri)
+  })
+
+  it('should return editions isbn in notFound array when autocreation is true', async () => {
+    const isbnUnknownBySeedsSources = '9783981898743'
+    const uri = `isbn:${isbnUnknownBySeedsSources}`
+    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
+    res.entities.should.deepEqual({})
+    res.notFound[0].should.equal(uri)
+  })
+
+  it('should autocreate from seed when autocreation is true', async () => {
+    const isbnKnownBySeedsSources = '9782207116746'
+    const uri = `isbn:${isbnKnownBySeedsSources}`
+    await deleteByUris([ uri ])
+    const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+    notFound.should.deepEqual([ uri ])
+    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
+    const entity = res.entities[uri]
+    entity.should.be.an.Object()
+    entity.uri.should.equal(uri)
+    should(res.notFound).not.be.ok()
   })
 })
