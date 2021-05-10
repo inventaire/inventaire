@@ -81,7 +81,7 @@ const formatRow = async (isbn, result, rawResult) => {
   if (workLabelLang) result.work.labelLang = workLabelLang
   const { edition, work, author, publisherLabel } = result
   const entry = {}
-  entry.edition = { isbn, url: edition.value }
+  entry.edition = { isbn, sameAs: [ edition.value ] }
   if (edition) {
     const { claims } = await parseMatches(edition.matches)
     entry.edition.claims = {
@@ -94,7 +94,7 @@ const formatRow = async (isbn, result, rawResult) => {
     const { uri, claims } = await parseMatches(work.matches)
     entry.work = {
       uri,
-      url: work.value,
+      sameAs: [ work.value ],
       labels: {
         [work.labelLang]: work.label
       },
@@ -108,7 +108,7 @@ const formatRow = async (isbn, result, rawResult) => {
     const { uri, claims } = await parseMatches(author.matches)
     entry.author = {
       uri,
-      url: author.value,
+      sameAs: [ author.value ],
       labels: { fr: author.label },
       claims
     }
