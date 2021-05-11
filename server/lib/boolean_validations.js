@@ -2,6 +2,7 @@
 const _ = require('lodash')
 const wdk = require('wikidata-sdk')
 const regex_ = require('lib/regex')
+const { isNormalizedIsbn } = require('./isbn/isbn')
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
@@ -21,6 +22,11 @@ const tests = module.exports = {
     if (!isNonEmptyString(uri)) return false
     const [ prefix, id ] = uri && uri.split(':')
     return (prefix === 'inv') && isCouchUuid(id)
+  },
+  isIsbnEntityUri: uri => {
+    if (!isNonEmptyString(uri)) return false
+    const [ prefix, id ] = uri && uri.split(':')
+    return (prefix === 'isbn') && isNormalizedIsbn(id)
   },
   isWdEntityUri: uri => {
     if (!isNonEmptyString(uri)) return false

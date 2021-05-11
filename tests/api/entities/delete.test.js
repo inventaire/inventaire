@@ -100,9 +100,14 @@ describe('entities:delete', () => {
     await deleteByUris(invUri)
   })
 
-  it('should remove edition entities with an ISBN', async () => {
+  it('should remove edition entities with an ISBN from its inv uri', async () => {
     const { invUri } = await createEditionWithIsbn()
     await deleteByUris(invUri)
+  })
+
+  it('should remove edition entities with an ISBN from its isbn uri', async () => {
+    const { uri } = await createEditionWithIsbn()
+    await deleteByUris(uri)
   })
 
   it('should refuse to delete a work that is depend on by an edition', async () => {

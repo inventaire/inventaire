@@ -16,6 +16,7 @@ const isNormalizedIsbn = text => /^(97(8|9))?\d{9}(\d|X)$/.test(text)
 module.exports = {
   parse,
   normalizeIsbn,
+  isNormalizedIsbn,
   looksLikeAnIsbn: text => {
     if (typeof text !== 'string') return false
     const cleanedText = normalizeIsbn(text)
