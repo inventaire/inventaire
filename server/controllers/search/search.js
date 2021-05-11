@@ -20,6 +20,10 @@ const sanitization = {
     optional: true,
     default: false
   },
+  'min-score': {
+    generic: 'positiveInteger',
+    optional: true
+  }
 }
 
 module.exports = {
@@ -31,8 +35,8 @@ module.exports = {
   }
 }
 
-const search = async ({ types, search, lang, limit, filter, exact, reqUserId }) => {
-  const results = await typeSearch({ lang, types, search, limit, filter, exact })
+const search = async ({ types, search, lang, limit, filter, exact, minScore, reqUserId }) => {
+  const results = await typeSearch({ lang, types, search, limit, filter, exact, minScore })
   return results
   .filter(isSearchable(reqUserId))
   .map(normalizeResult(lang))
