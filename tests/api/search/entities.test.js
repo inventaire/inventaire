@@ -117,6 +117,31 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql('wd:Q8337')
       })
     })
+
+    describe('min score', () => {
+      it('should not return results below the specified score', async () => {
+        const label = `${randomLongWord(10)} ${randomLongWord(10)} ${randomLongWord(10)}`
+        const almostSameLabel = sameFirstNameLabel(label)
+        const [ humanA, humanB ] = await Promise.all([
+          createHuman({ labels: { en: label } }),
+          createHuman({ labels: { en: almostSameLabel } }),
+        ])
+        await Promise.all([
+          waitForIndexation('entities', humanA._id),
+          waitForIndexation('entities', humanB._id),
+        ])
+
+        const results = await search({ types: 'humans', search: label, lang: 'en', filter: 'inv' })
+        const humanAScore = results.find(entity => entity.id === humanA._id)._score
+        const humanBScore = results.find(entity => entity.id === humanB._id)._score
+        humanAScore.should.be.above(humanBScore + 2)
+        const minScore = Math.trunc(humanAScore - 1)
+        const resultsWithMinScore = await search({ types: 'humans', search: label, lang: 'en', filter: 'inv', minScore })
+        const foundIds = _.map(resultsWithMinScore, 'id')
+        foundIds.should.containEql(humanA._id)
+        foundIds.should.not.containEql(humanB._id)
+      })
+    })
   })
 
   describe('humans', () => {

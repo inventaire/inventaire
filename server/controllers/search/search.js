@@ -20,24 +20,27 @@ const sanitization = {
     optional: true,
     default: false
   },
+  'min-score': {
+    generic: 'positiveInteger',
+    optional: true
+  }
 }
 
 module.exports = {
   get: (req, res) => {
     sanitize(req, res, sanitization)
-    .then(params => {
-      const { types, search, lang, limit, filter, exact, reqUserId } = params
-      return typeSearch({ lang, types, search, limit, filter, exact })
-      .then(results => {
-        return results
-        .filter(isSearchable(reqUserId))
-        .map(normalizeResult(lang))
-      })
-      .then(results => results.slice(0, limit))
-    })
+    .then(search)
     .then(responses_.Wrap(res, 'results'))
     .catch(error_.Handler(req, res))
   }
+}
+
+const search = async ({ types, search, lang, limit, filter, exact, minScore, reqUserId }) => {
+  const results = await typeSearch({ lang, types, search, limit, filter, exact, minScore })
+  return results
+  .filter(isSearchable(reqUserId))
+  .map(normalizeResult(lang))
+  .slice(0, limit)
 }
 
 const isSearchable = reqUserId => result => {
