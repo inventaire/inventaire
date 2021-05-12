@@ -4,15 +4,15 @@
 {
   "root": true,
   "env": {
-      "commonjs": true,
-      "es2020": true
+    "commonjs": true,
+    "es2020": true
   },
   "parserOptions": {
-      "ecmaVersion": 2020
+    "ecmaVersion": 2020
   },
   "extends": [
-      // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
-      "standard"
+    // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
+    "standard"
   ],
   "plugins": [
     "prefer-arrow"
