@@ -5,6 +5,7 @@ const { rolesByAccess } = require('./get_user_access_levels')
 const { send } = require('./responses')
 const { sanitizeSync } = require('./sanitize/sanitize')
 const { track } = require('./track')
+const assert_ = require('./utils/assert_types')
 
 module.exports = controllers => {
   const actions = getActions(controllers)
@@ -71,9 +72,12 @@ const getActionData = (access, controllerData) => {
   let controller, sanitization, trackActionArray
   if (controllerData.sanitization) {
     ({ controller, sanitization, track: trackActionArray } = controllerData)
+    assert_.object(sanitization)
+    if (trackActionArray) assert_.array(trackActionArray)
   } else {
     controller = controllerData
   }
+  assert_.function(controller)
   return {
     access: rolesByAccess[access],
     controller,
