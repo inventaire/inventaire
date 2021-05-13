@@ -1,11 +1,14 @@
-const _ = require('builders/utils')
+const { someMatch } = require('builders/utils')
 const error_ = require('lib/error/error')
 const validateObject = require('lib/validate_object')
 const { rolesByAccess } = require('./get_user_access_levels')
+const { send } = require('./responses')
+const { sanitizeSync } = require('./sanitize/sanitize')
+const { track } = require('./track')
 
 module.exports = controllers => {
   const actions = getActions(controllers)
-  return (req, res) => {
+  return async (req, res) => {
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
     const action = req.query.action || req.body.action
@@ -26,8 +29,23 @@ module.exports = controllers => {
       if (req.user.roles) roles = roles.concat(req.user.roles)
     }
 
-    if (_.someMatch(roles, actionData.access)) actionData.controller(req, res)
-    else error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
+    if (!someMatch(roles, actionData.access)) {
+      return error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
+    }
+
+    const { controller, sanitization, trackActionArray } = actionData
+    try {
+      if (sanitization) {
+        const params = sanitizeSync(req, res, sanitization)
+        const result = await controller(params, req, res)
+        send(res, result)
+        if (trackActionArray) track(req, trackActionArray)
+      } else {
+        await controller(req, res)
+      }
+    } catch (err) {
+      error_.handler(req, res, err)
+    }
   }
 }
 
@@ -41,12 +59,25 @@ const getActions = controllers => {
 
   controllerKeys.forEach(access => {
     for (const action in controllers[access]) {
-      actions[action] = {
-        controller: controllers[access][action],
-        access: rolesByAccess[access]
-      }
+      const controllerData = controllers[access][action]
+      actions[action] = getActionData(access, controllerData)
     }
   })
 
   return actions
+}
+
+const getActionData = (access, controllerData) => {
+  let controller, sanitization, trackActionArray
+  if (controllerData.sanitization) {
+    ({ controller, sanitization, track: trackActionArray } = controllerData)
+  } else {
+    controller = controllerData
+  }
+  return {
+    access: rolesByAccess[access],
+    controller,
+    sanitization,
+    trackActionArray,
+  }
 }
