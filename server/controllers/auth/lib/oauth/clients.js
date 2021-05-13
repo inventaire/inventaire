@@ -1,5 +1,4 @@
-const __ = require('config').universalPath
-const db = __.require('couch', 'base')('oauth_clients')
+const db = require('db/couchdb/base')('oauth_clients')
 
 module.exports = {
   byId: async id => {

@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const responses_ = __.require('lib', 'responses')
-const error_ = __.require('lib', 'error/error')
-const sanitize = __.require('lib', 'sanitize/sanitize')
+const _ = require('builders/utils')
+const responses_ = require('lib/responses')
+const error_ = require('lib/error/error')
+const sanitize = require('lib/sanitize/sanitize')
 const clients_ = require('./lib/oauth/clients')
 
 const sanitization = {

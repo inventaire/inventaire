@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
 const { publicReq, authReq, rawAuthReq, shouldNotBeCalled } = require('../utils/utils')
 const { getClient } = require('../utils/oauth')
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 const endpoint = '/api/oauth/authorize'
 const { parse: parseQuery } = require('querystring')
 
@@ -78,7 +77,7 @@ describe('oauth:authorize', () => {
     const { _id: clientId, redirectUris } = await getClient()
     const state = randomString(20)
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username`
-    const { statusCode, headers } = await rawAuthReq('get', url)
+    const { statusCode, headers } = await rawAuthReq({ method: 'get', url })
     statusCode.should.equal(302)
     const { location } = headers
     const [ pathname, query ] = location.split('?')

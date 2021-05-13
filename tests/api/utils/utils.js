@@ -20,7 +20,7 @@ const API = module.exports = {
   adminReq: (...args) => customAuthReq(API.getAdminUser(), ...args),
   dataadminReq: (...args) => customAuthReq(API.getDataadminUser(), ...args),
 
-  rawAuthReq: (...args) => rawCustomAuthReq(API.getUser(), ...args),
+  rawAuthReq: ({ method, url }) => rawCustomAuthReq({ user: API.getUser(), method, url }),
 
   // Create users only if needed by the current test suite
   getUser: getUserGetter('a'),

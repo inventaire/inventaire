@@ -1,7 +1,6 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const error_ = __.require('lib', 'error/error')
-const user_ = __.require('controllers', 'user/lib/user')
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
+const user_ = require('controllers/user/lib/user')
 const { ownerSafeData } = require('./lib/authorized_user_data_pickers')
 
 module.exports = (req, res) => {

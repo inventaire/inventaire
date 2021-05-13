@@ -1,12 +1,11 @@
-const __ = require('config').universalPath
-const _ = __.require('builders', 'utils')
-const clientsDb = __.require('couch', 'base')('oauth_clients')
-const randomString = __.require('lib', 'utils/random_string')
+const _ = require('builders/utils')
+const clientsDb = require('db/couchdb/base')('oauth_clients')
+const randomString = require('lib/utils/random_string')
 const { parse: parseQuery } = require('querystring')
-const { sha1, passwords, getRandomBytes } = __.require('lib', 'crypto')
+const { sha1, passwords, getRandomBytes } = require('lib/crypto')
 const { waitForTestServer, postUrlencoded, rawCustomAuthReq } = require('./request')
 const { getUser } = require('./utils')
-const assert_ = __.require('utils', 'assert_types')
+const assert_ = require('lib/utils/assert_types')
 
 const getClient = async (params = {}) => {
   await waitForTestServer
@@ -53,7 +52,7 @@ const getClientWithAuthorization = async (params = {}) => {
     response_type: 'code',
     scope: scope.join('+'),
   })
-  const { headers } = await rawCustomAuthReq(user, 'get', url)
+  const { headers } = await rawCustomAuthReq({ user, method: 'get', url })
   const authorizationData = parseQuery(headers.location.split('?')[1])
   return Object.assign(authorizationData, client)
 }

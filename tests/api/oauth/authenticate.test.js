@@ -1,8 +1,7 @@
-const __ = require('config').universalPath
 const { shouldNotBeCalled } = require('../utils/utils')
 const { bearerTokenReq } = require('../utils/request')
 const { getToken } = require('../utils/oauth')
-const randomString = __.require('lib', 'utils/random_string')
+const randomString = require('lib/utils/random_string')
 const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
 
 describe('oauth:authenticate', () => {

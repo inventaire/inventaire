@@ -1,7 +1,5 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
-const error_ = __.require('lib', 'error/error')
+const { authorizationCodeLifetimeMs } = require('config').oauthServer
+const error_ = require('lib/error/error')
 const OAuthServer = require('express-oauth-server')
 const { getAcceptedScopes } = require('./lib/oauth/scopes')
 

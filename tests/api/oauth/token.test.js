@@ -1,10 +1,8 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
+const { authorizationCodeLifetimeMs } = require('config').oauthServer
 const { shouldNotBeCalled } = require('../utils/utils')
 const { postUrlencoded } = require('../utils/request')
 const { getClient, getClientWithAuthorization } = require('../utils/oauth')
-const { wait } = __.require('lib', 'promises')
+const { wait } = require('lib/promises')
 const post = body => postUrlencoded('/api/oauth/token', body)
 
 describe('oauth:token', () => {
