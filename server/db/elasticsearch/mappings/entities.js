@@ -9,6 +9,7 @@ module.exports = {
     flattenedLabels: flattenedTerms,
     flattenedAliases: flattenedTerms,
     flattenedDescriptions: flattenedTerms,
+    relationsTerms: flattenedTerms,
     uri: keyword,
     images: nested,
     created: date,
