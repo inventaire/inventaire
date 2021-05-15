@@ -183,10 +183,11 @@ const getRelationsTerms = async ({ type, claims }) => {
   return _.flatten(relationsEntities.map(getEntityTerms)).join(' ')
 }
 
-const authorProperties = [
+const worksAndSeriesProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P110', // illustrator
+  'wdt:P179', // serie
   'wdt:P6338', // colorist
 ]
 
@@ -194,8 +195,8 @@ const indexedRelationsPerType = {
   collection: [
     'wdt:P123', // publisher
   ],
-  serie: authorProperties,
-  work: authorProperties,
+  serie: worksAndSeriesProperties,
+  work: worksAndSeriesProperties,
 }
 
 // Not including descriptions

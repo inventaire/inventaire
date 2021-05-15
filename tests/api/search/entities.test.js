@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel, createWorkWithAuthor, createSerieWithAuthor, humanName } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel, createWorkWithAuthor, createSerieWithAuthor, createWorkWithSerie, humanName } = require('../fixtures/entities')
 const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -181,6 +181,18 @@ describe('search:entities', () => {
       const label = humanName()
       const human = await createHuman({ labels: { en: label } })
       const work = await createWorkWithAuthor(human)
+
+      await waitForIndexation('entities', work._id)
+
+      const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(work._id)
+    })
+
+    it('should find a work by its serie name', async () => {
+      const label = randomWords()
+      const serie = await createSerie({ labels: { en: label } })
+      const work = await createWorkWithSerie(serie)
 
       await waitForIndexation('entities', work._id)
 
