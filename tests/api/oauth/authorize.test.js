@@ -88,5 +88,15 @@ describe('oauth:authorize', () => {
   })
 
   // oauth2-server doesn't do scope validation during authorization
-  // xit('should reject invalid scope', async () => {})
+  it('should reject invalid scope', async () => {
+    const { _id: clientId } = await getClient()
+    const state = randomString(20)
+    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=foo`
+    await authReq('get', url)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid scope')
+    })
+  })
 })
