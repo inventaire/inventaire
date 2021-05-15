@@ -192,6 +192,7 @@ const authorProperties = [
 
 const indexedRelationsPerType = {
   work: authorProperties,
+  serie: authorProperties,
 }
 
 // Not including descriptions
