@@ -4,6 +4,7 @@ const { wait } = require('lib/promises')
 const host = CONFIG.fullPublicHost()
 const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
+const error_ = require('lib/error/error')
 const { stringify: stringifyQuery } = require('querystring')
 
 const testServerAvailability = async () => {
@@ -37,19 +38,21 @@ const request = async (method, endpoint, body, cookie) => {
   assert_.string(method)
   assert_.string(endpoint)
   const url = host + endpoint
-  const data = {
+  const options = {
     headers: { cookie },
-    // Use rawRequest to test redirections
     redirect: 'error'
   }
 
-  if (body != null) data.body = body
+  if (body != null) options.body = body
   await waitForTestServer
   try {
-    return await requests_[method](url, data)
+    return await requests_[method](url, options)
   } catch (err) {
     if (err.message === 'request error' && err.body && err.body.status_verbose) {
       err.message = `${err.message}: ${err.body.status_verbose}`
+    }
+    if (err.type === 'no-redirect') {
+      err = error_.new('request was redirected: use rawRequest to test redirections', 500, { method, url, options })
     }
     throw err
   }
