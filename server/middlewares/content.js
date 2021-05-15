@@ -55,7 +55,10 @@ module.exports = {
 
     temporaryLock(key, data)
 
-    if (logIncomingRequestsBody) _.log(req.body, `${method}:${url} body`)
+    if (logIncomingRequestsBody) {
+      const userAgent = req.headers['user-agent']
+      _.log(req.body, `${method}:${url} body [${userAgent}]`)
+    }
 
     next()
   }
