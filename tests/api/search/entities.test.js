@@ -130,7 +130,6 @@ describe('search:entities', () => {
           waitForIndexation('entities', humanA._id),
           waitForIndexation('entities', humanB._id),
         ])
-
         const results = await search({ types: 'humans', search: label, lang: 'en', filter: 'inv' })
         const humanAScore = results.find(entity => entity.id === humanA._id)._score
         const humanBScore = results.find(entity => entity.id === humanB._id)._score
@@ -181,9 +180,7 @@ describe('search:entities', () => {
       const label = humanName()
       const human = await createHuman({ labels: { en: label } })
       const work = await createWorkWithAuthor(human)
-
       await waitForIndexation('entities', work._id)
-
       const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
       const foundIds = _.map(results, 'id')
       foundIds.should.containEql(work._id)
@@ -193,9 +190,7 @@ describe('search:entities', () => {
       const label = randomWords()
       const serie = await createSerie({ labels: { en: label } })
       const work = await createWorkWithSerie(serie)
-
       await waitForIndexation('entities', work._id)
-
       const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
       const foundIds = _.map(results, 'id')
       foundIds.should.containEql(work._id)
@@ -222,10 +217,7 @@ describe('search:entities', () => {
       const label = humanName()
       const human = await createHuman({ labels: { en: label } })
       const serie = await createSerieWithAuthor({ human })
-      console.log({ human, serie })
-
       await waitForIndexation('entities', serie._id)
-
       const results = await search({ types: 'series', search: label, lang: 'en', filter: 'inv' })
       const foundIds = _.map(results, 'id')
       foundIds.should.containEql(serie._id)
@@ -259,9 +251,7 @@ describe('search:entities', () => {
           'wdt:P123': [ publisher.uri ]
         }
       })
-      console.log({ label, publisher, collection })
       await waitForIndexation('entities', collection._id)
-
       const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })
       const foundIds = _.map(results, 'id')
       foundIds.should.containEql(collection._id)
