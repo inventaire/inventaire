@@ -238,6 +238,22 @@ describe('search:entities', () => {
       results.forEach(result => result.type.should.equal('collections'))
       _.map(results, 'id').includes('Q3409094').should.be.true()
     })
+
+    it('should find a collection by its publisher name', async () => {
+      const label = randomWords()
+      const publisher = await createPublisher({ labels: { en: label } })
+      const collection = await createCollection({
+        claims: {
+          'wdt:P123': [ publisher.uri ]
+        }
+      })
+      console.log({ label, publisher, collection })
+      await waitForIndexation('entities', collection._id)
+
+      const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(collection._id)
+    })
   })
 
   describe('publishers', () => {

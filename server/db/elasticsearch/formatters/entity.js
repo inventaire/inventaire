@@ -191,8 +191,11 @@ const authorProperties = [
 ]
 
 const indexedRelationsPerType = {
-  work: authorProperties,
+  collection: [
+    'wdt:P123', // publisher
+  ],
   serie: authorProperties,
+  work: authorProperties,
 }
 
 // Not including descriptions
