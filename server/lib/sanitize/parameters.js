@@ -75,7 +75,7 @@ const arrayOfAType = validation => (values, type) => {
     if (!validation(value)) {
       // approximative way to get singular of a word
       const singularType = type.replace(/s$/, '')
-      const details = `expected ${singularType}, got ${value} (${_.typeOf(values)})`
+      const details = `expected ${singularType}, got ${value} (${_.typeOf(value)})`
       throw error_.new(`invalid ${singularType}: ${details}`, 400, { values })
     }
   }

@@ -91,7 +91,7 @@ const config = module.exports = {
 
   serveStaticFiles: true,
 
-  hashPasswords: true,
+  useSlowPasswordHashFunction: true,
   requestsLogger: {
     // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain
     // Possible values: js, css, img, api
@@ -201,5 +201,9 @@ const config = module.exports = {
   entitiesRelationsTemporaryCache: {
     checkFrequency: 10 * 60 * 1000,
     ttl: 4 * 60 * 60 * 1000
+  },
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 5 * 60 * 1000
   }
 }

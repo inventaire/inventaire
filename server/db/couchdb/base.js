@@ -6,9 +6,11 @@ const list = require('./list')
 
 module.exports = (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
-  // If no designDocName is provided,
-  // assumes it is the same as the dbBaseName
-  designDocName = designDocName || dbBaseName
+  // If no designDocName is provided while there are defined design docs for this database,
+  // assumes that it is the default design doc, which has the same name as the dbBaseName
+  if (list[dbBaseName].length > 0 && designDocName == null) {
+    designDocName = dbBaseName
+  }
   return getHandler(dbBaseName, dbName, designDocName)
 }
 
@@ -25,7 +27,7 @@ const validate = (dbBaseName, designDocName) => {
     throw new Error(`unknown dbBaseName: ${dbBaseName}`)
   }
 
-  if (!(list[dbBaseName].includes(designDocName))) {
+  if (designDocName && !list[dbBaseName].includes(designDocName)) {
     throw new Error(`unknown designDocName: ${designDocName}`)
   }
 }

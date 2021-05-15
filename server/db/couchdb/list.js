@@ -6,15 +6,18 @@
 // that aren't required to run on production
 
 module.exports = {
-  users: [ 'users', 'relations', 'invited' ],
-  groups: [ 'groups' ],
-  items: [ 'items' ],
-  transactions: [ 'transactions' ],
   comments: [ 'comments' ],
   entities: [ 'entities', 'entities_deduplicate' ],
-  patches: [ 'patches' ],
-  notifications: [ 'notifications' ],
-  tasks: [ 'tasks' ],
-  shelves: [ 'shelves' ],
+  groups: [ 'groups' ],
   images: [ 'images' ],
+  items: [ 'items' ],
+  notifications: [ 'notifications' ],
+  patches: [ 'patches' ],
+  shelves: [ 'shelves' ],
+  tasks: [ 'tasks' ],
+  oauth_authorizations: [],
+  oauth_clients: [],
+  oauth_tokens: [],
+  transactions: [ 'transactions' ],
+  users: [ 'users', 'relations', 'invited' ],
 }

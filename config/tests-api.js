@@ -37,8 +37,8 @@ module.exports = {
 
   leveldbMemoryBackend: false,
 
-  // Disable password hashing to make tests run faster
-  hashPasswords: false,
+  // Makes tests run faster
+  useSlowPasswordHashFunction: false,
   piwik: {
     enabled: false
   },
@@ -50,5 +50,9 @@ module.exports = {
     disabled: true
   },
 
-  itemsCountDebounceTime: 500
+  itemsCountDebounceTime: 500,
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 1000
+  },
 }

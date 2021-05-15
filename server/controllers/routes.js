@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const endpoint = require('./endpoint')
 const extensionsRedirections = require('./extensions_redirections')
 const glob = require('./glob')
+const oauthServer = require('./auth/oauth_server')
 
 // Routes structure:
 // 1 - api is the default prefix for server-side routes
@@ -19,6 +20,9 @@ const routes = module.exports = {
   'api/invitations': endpoint('./invitations/invitations'),
   'api/items': endpoint('./items/items'),
   'api/notifications': endpoint('./notifications/notifications'),
+  'api/oauth/authorize': oauthServer.authorize,
+  'api/oauth/clients': endpoint('./auth/oauth_clients'),
+  'api/oauth/token': oauthServer.token,
   'api/relations': endpoint('./relations/relations'),
   'api/reports': endpoint('./reports/reports'),
   'api/search': endpoint('./search/search'),

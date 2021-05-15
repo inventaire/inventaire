@@ -4,6 +4,8 @@ const { wait } = require('lib/promises')
 const host = CONFIG.fullPublicHost()
 const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
+const error_ = require('lib/error/error')
+const { stringify: stringifyQuery } = require('querystring')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return
@@ -27,7 +29,7 @@ const rawRequest = async (method, url, reqParams = {}) => {
   await waitForTestServer
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
-  reqParams.parseJson = false
+  reqParams.parseJson = reqParams.parseJson || false
   if (url[0] === '/') url = `${host}${url}`
   return requests_[method](url, reqParams)
 }
@@ -36,17 +38,21 @@ const request = async (method, endpoint, body, cookie) => {
   assert_.string(method)
   assert_.string(endpoint)
   const url = host + endpoint
-  const data = {
-    headers: { cookie }
+  const options = {
+    headers: { cookie },
+    redirect: 'error'
   }
 
-  if (body != null) data.body = body
+  if (body != null) options.body = body
   await waitForTestServer
   try {
-    return await requests_[method](url, data)
+    return await requests_[method](url, options)
   } catch (err) {
     if (err.message === 'request error' && err.body && err.body.status_verbose) {
       err.message = `${err.message}: ${err.body.status_verbose}`
+    }
+    if (err.type === 'no-redirect') {
+      err = error_.new('request was redirected: use rawRequest to test redirections', 500, { method, url, options })
     }
     throw err
   }
@@ -71,4 +77,34 @@ const rawCustomAuthReq = async ({ user, method, url, options = {} }) => {
   return rawRequest(method, url, options)
 }
 
-module.exports = { request, rawRequest, customAuthReq, rawCustomAuthReq }
+const postUrlencoded = (url, body) => {
+  return rawRequest('post', url, {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    body: stringifyQuery(body),
+    parseJson: true
+  })
+}
+
+const bearerTokenReq = (token, method, endpoint, body) => {
+  assert_.object(token)
+  assert_.string(token.access_token)
+  return rawRequest(method, endpoint, {
+    headers: {
+      authorization: `Bearer ${token.access_token}`
+    },
+    parseJson: true,
+    body
+  })
+}
+
+module.exports = {
+  waitForTestServer,
+  request,
+  rawRequest,
+  customAuthReq,
+  rawCustomAuthReq,
+  postUrlencoded,
+  bearerTokenReq
+}
