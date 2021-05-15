@@ -89,7 +89,8 @@ const entitiesFields = (userLang, exact) => {
       'flattenedLabels^0.25',
       'flattenedAliases^0.25',
       'descriptions.*^0.25',
-      'flattenedDescriptions^0.25'
+      'flattenedDescriptions^0.25',
+      'relationsTerms^0.25'
     )
   }
 

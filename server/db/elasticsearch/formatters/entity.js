@@ -10,6 +10,7 @@ const { indexedEntitiesTypes } = require('controllers/search/lib/indexes')
 const specialEntityImagesGetter = require('controllers/entities/lib/special_entity_images_getter')
 const { getSingularTypes } = require('lib/wikidata/aliases')
 const { getEntityPopularity } = require('controllers/entities/lib/popularity')
+const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 module.exports = async (entity, options = {}) => {
@@ -95,6 +96,8 @@ module.exports = async (entity, options = {}) => {
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
+  entity.relationsTerms = await getRelationsTerms(entity)
+
   // Those don't need to be indexed
   delete entity.claims
   delete entity.sitelinks
@@ -171,3 +174,18 @@ const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
     .uniq()
     .value()
 }
+
+const getRelationsTerms = async ({ type, claims }) => {
+  const indexedRelations = indexedRelationsPerType[type]
+  if (!indexedRelations) return ''
+  const relationsUris = _.flatten(_.values(_.pick(claims, indexedRelations)))
+  const relationsEntities = await getEntitiesList(relationsUris)
+  return _.flatten(relationsEntities.map(getEntityTerms)).join(' ')
+}
+
+const indexedRelationsPerType = {
+  work: [ 'wdt:P50' ]
+}
+
+// Not including descriptions
+const getEntityTerms = ({ labels, aliases }) => getMainFieldsWords({ labels, aliases })
