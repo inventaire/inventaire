@@ -30,7 +30,8 @@ module.exports = {
   geoPoint: { type: 'geo_point' },
   integer: { type: 'integer' },
   keyword: { type: 'keyword' },
-  nested: { type: 'nested' },
+  // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
+  objectNotIndexed: { type: 'object', enabled: false },
   terms: { properties: getTermsProperties() },
   text: { type: 'text' },
   flattenedTerms: autocompleteText,
