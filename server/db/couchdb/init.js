@@ -1,7 +1,6 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('builders/utils')
-const { tap } = require('lib/promises')
 const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.fullHost()
 const initHardCodedDocuments = require('./init_hard_coded_documents')
@@ -22,11 +21,13 @@ for (const dbName in dbsList) {
 
 const designDocFolder = __.path('db', 'couchdb/design_docs')
 
-const init = () => {
-  return couchInit(dbBaseUrl, formattedList, designDocFolder)
-  .then(tap(initHardCodedDocuments))
-  .then(tap(initDesignDocSync))
-  .catch(err => {
+const init = async () => {
+  try {
+    const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
+    _.log(res, 'couch init')
+    await initHardCodedDocuments()
+    initDesignDocSync()
+  } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
 
     const context = _.pick(CONFIG.db, 'protocol', 'hostname', 'port', 'username', 'password')
@@ -34,7 +35,7 @@ const init = () => {
     context.password = _.obfuscate(context.password)
     console.error(err.message, context)
     return process.exit(1)
-  })
+  }
 }
 
 let waitForCouchInit
