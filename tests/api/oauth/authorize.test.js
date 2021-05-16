@@ -73,6 +73,31 @@ describe('oauth:authorize', () => {
     })
   })
 
+  it('should reject an invalid scope (single scope)', async () => {
+    const { _id: clientId } = await getClient()
+    const state = randomString(20)
+    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=foo`
+    await authReq('get', url)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid scope')
+    })
+  })
+
+  it('should reject an invalid scope (multiple scopes)', async () => {
+    const { _id: clientId } = await getClient()
+    const state = randomString(20)
+    // username is a valid scope, but foo isn't
+    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username%20foo`
+    await authReq('get', url)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid scope')
+    })
+  })
+
   it('should redirect to the client redirect uri', async () => {
     const { _id: clientId, redirectUris } = await getClient()
     const state = randomString(20)
@@ -87,16 +112,11 @@ describe('oauth:authorize', () => {
     returnedState.should.equal(state)
   })
 
-  // oauth2-server doesn't do scope validation during authorization
-  it('should reject invalid scope', async () => {
+  it('should accept multiple scopes', async () => {
     const { _id: clientId } = await getClient()
     const state = randomString(20)
-    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=foo`
-    await authReq('get', url)
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('invalid scope')
-    })
+    const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username%20email`
+    const { statusCode } = await rawAuthReq({ method: 'get', url })
+    statusCode.should.equal(302)
   })
 })
