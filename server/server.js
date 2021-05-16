@@ -17,7 +17,7 @@ const waitForElasticsearchInit = require('db/elasticsearch/init')
 const initExpress = require('./init_express')
 
 Promise.all([
-  waitForCouchInit().then(_.Log('couch init')),
+  waitForCouchInit(),
   waitForElasticsearchInit()
 ])
 .then(initExpress)
