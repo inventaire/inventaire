@@ -6,7 +6,7 @@
       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.email.toLowerCase(), null"
     },
     "byUsername": {
-      "map": "(doc)->\n  if doc.type is 'user' or doc.special\n    emit doc.username.toLowerCase(), null\n    if doc.stableUsername? then emit doc.stableUsername.toLowerCase(), null"
+      "map": "(doc)->\n  if doc.type is 'user' or doc.special\n    username = doc.username.toLowerCase()\n    emit username, null\n    if doc.stableUsername?\n      stableUsername = doc.stableUsername.toLowerCase()\n      if stableUsername isnt username then emit stableUsername, null"
     },
     "byCreation": {
       "map": "(doc)->\n  if doc.type is 'user'\n    emit doc.created, doc.username"
