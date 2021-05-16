@@ -1,4 +1,3 @@
-const { someMatch } = require('builders/utils')
 const { authorizationCodeLifetimeMs } = require('config').oauthServer
 const error_ = require('lib/error/error')
 const OAuthServer = require('express-oauth-server')
@@ -30,8 +29,11 @@ module.exports = {
       const { scope } = req.query
       if (!scope) return error_.bundleMissingQuery(req, res, 'scope')
       const scopes = scope.split(' ')
-      if (!someMatch(allScopes, scopes)) {
-        return error_.bundle(req, res, `invalid scope. Valid scopes available: ${allScopes.join(', ')}`, 400, scope)
+
+      for (const scopeName of scopes) {
+        if (!allScopes.includes(scopeName)) {
+          return error_.bundle(req, res, `invalid scope: ${scopeName}`, 400, { invalid: scopeName, valid: allScopes })
+        }
       }
 
       authorize(req, res, next)
