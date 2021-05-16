@@ -1,5 +1,5 @@
 const should = require('should')
-const { customAuthReq, getReservedUser } = require('../utils/utils')
+const { customAuthReq, getReservedUser, getUser, getUserB } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { getToken } = require('../utils/oauth')
 const { bearerTokenReq } = require('../utils/request')
