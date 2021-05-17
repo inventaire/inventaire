@@ -12,6 +12,11 @@ const { createReadStream } = require('fs')
 const fetch = require('node-fetch')
 const FormData = require('form-data')
 const assert_ = require('lib/utils/assert_types')
+const { createEdition } = require('../fixtures/entities')
+const { updateClaim } = require('./entities')
+const { createGroup } = require('../fixtures/groups')
+const { updateGroup } = require('../utils/groups')
+const { updateUser } = require('./users')
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
@@ -33,21 +38,26 @@ module.exports = {
     })
   },
 
-  uploadSomeImage: async ({ container }) => {
-    const tmpPath = `/tmp/${randomString(10)}.jpg`
-    await downloadFile(someImageUrl(), tmpPath)
+  uploadSomeImage: async ({ container, imageFilePath, preventAutoRemove = false }) => {
+    imageFilePath = imageFilePath || `/tmp/${randomString(10)}.jpg`
+    const imageUrl = someImageUrl()
+    await downloadFile(imageUrl, imageFilePath)
     const { cookie } = await getUser()
     const form = new FormData()
-    form.append('somefile', createReadStream(tmpPath))
+    form.append('somefile', createReadStream(imageFilePath))
     const res = await fetch(`${host}/api/images?action=upload&container=${container}`, {
       method: 'post',
       headers: { cookie, ...form.getHeaders() },
       body: form,
     })
     const { somefile } = await res.json()
+    const hash = somefile.split('/')[3]
+    if (preventAutoRemove) await useImage[container](hash)
     return {
       statusCode: res.status,
-      url: somefile
+      url: somefile,
+      hash,
+      imageFilePath,
     }
   },
 
@@ -63,5 +73,20 @@ module.exports = {
       if (err.code === 'ENOENT') return false
       else throw err
     }
+  },
+}
+
+const useImage = {
+  entities: async hash => {
+    const edition = await createEdition()
+    const previousHash = edition.claims['invp:P2'][0]
+    await updateClaim(edition.uri, 'invp:P2', previousHash, hash)
+  },
+  groups: async hash => {
+    const group = await createGroup()
+    await updateGroup({ group, attribute: 'picture', value: `/img/groups/${hash}` })
+  },
+  users: async hash => {
+    await updateUser({ attribute: 'picture', value: `/img/users/${hash}` })
   },
 }
