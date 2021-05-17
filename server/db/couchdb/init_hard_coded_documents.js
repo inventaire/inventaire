@@ -26,9 +26,7 @@ const updateDoc = (db, doc) => {
     // and, if not, so that we can use db.put
     const docPath = `${db.name}/${id}`
     doc._rev = currentDoc._rev
-    if (_.isEqual(currentDoc, doc)) {
-      _.info(`${docPath} is up-to-date`)
-    } else {
+    if (!_.isEqual(currentDoc, doc)) {
       return db.put(doc)
       .then(_.Success(`${docPath} updated`))
     }

@@ -45,6 +45,5 @@ if (CONFIG.leveldbMemoryBackend) {
 module.exports = memoize((dbName, valueEncoding) => {
   assert_.string(dbName)
   assert_.string(valueEncoding)
-  _.success(`${dbName} opened`)
   return sub(globalDb, dbName, { valueEncoding })
 })
