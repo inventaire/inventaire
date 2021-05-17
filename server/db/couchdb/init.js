@@ -24,7 +24,7 @@ const designDocFolder = __.path('db', 'couchdb/design_docs')
 const init = async () => {
   try {
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
-    _.log(res, 'couch init')
+    if (_.objLength(res.operations) !== 0) _.log(res, 'couch init')
     await initHardCodedDocuments()
     initDesignDocSync()
   } catch (err) {
