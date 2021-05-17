@@ -19,7 +19,6 @@ const ensureIndexesExist = () => {
 const ensureIndexExists = index => {
   const indexUrl = `${elasticHost}/${index}`
   return get(indexUrl)
-  .then(() => { _.info(`${indexUrl} already exists`) })
   .catch(err => {
     if (err.statusCode === 404) return createIndex(index)
     else throw err

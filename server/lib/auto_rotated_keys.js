@@ -39,7 +39,6 @@ const getKeysFromFileSync = () => {
 const recoverKeysFromFile = () => {
   try {
     getKeysFromFileSync().forEach(recoverKey)
-    _.info(getKeysStatus(), 'recovered keys')
   } catch (err) {
     if (err.code !== 'ENOENT') throw err
   }
