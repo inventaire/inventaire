@@ -38,7 +38,9 @@ const get = async isbn => {
 }
 
 const getQuery = isbn => {
-  const { isbn10h, isbn13h, isbn13 } = parseIsbn(isbn)
+  const isbnData = parseIsbn(isbn)
+  if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
+  const { isbn10h, isbn13h, isbn13 } = isbnData
   const query = `SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?publisherLabel (GROUP_CONCAT(?workMatch;separator="|") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator="|") AS ?authorMatches) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
