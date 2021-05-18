@@ -106,7 +106,7 @@ const entitiesFields = (userLang, exact) => {
 const getClaimFilter = claimParameter => {
   return {
     terms: {
-      claim: [ claimParameter ]
+      claim: claimParameter.split('|')
     }
   }
 }
