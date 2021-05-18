@@ -1,14 +1,14 @@
 const _ = require('builders/utils')
 
 const getSerieParts = require('./get_serie_parts')
-const getAuthorWorks = require('./get_author_works')
 
-let items_, getEntityByUri, reverseClaims, getEntitiesPopularities
+let items_, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
 const requireCircularDependencies = () => {
   items_ = require('controllers/items/lib/items')
   getEntityByUri = require('./get_entity_by_uri')
-  reverseClaims = require('./reverse_claims');
-  ({ getEntitiesPopularities } = require('./popularity'))
+  reverseClaims = require('./reverse_claims')
+  ;({ getEntitiesPopularities } = require('./popularity'))
+  getAuthorWorks = require('./get_author_works')
 }
 setImmediate(requireCircularDependencies)
 

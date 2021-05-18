@@ -1,10 +1,15 @@
 const _ = require('builders/utils')
 const parseIsbn = require('lib/isbn/parse')
-const reverseClaims = require('controllers/entities/lib/reverse_claims')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const leven = require('leven')
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
+
+let getEntitiesList, reverseClaims
+const requireCircularDependencies = () => {
+  getEntitiesList = require('controllers/entities/lib/get_entities_list')
+  reverseClaims = require('controllers/entities/lib/reverse_claims')
+}
+setImmediate(requireCircularDependencies)
 
 const resolvePublisher = async (isbn, publisherLabel) => {
   const { publisherPrefix } = parseIsbn(isbn)
