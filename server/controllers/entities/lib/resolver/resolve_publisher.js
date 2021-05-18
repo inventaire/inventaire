@@ -12,7 +12,9 @@ const requireCircularDependencies = () => {
 setImmediate(requireCircularDependencies)
 
 const resolvePublisher = async (isbn, publisherLabel) => {
-  const { publisherPrefix } = parseIsbn(isbn)
+  const isbnData = parseIsbn(isbn)
+  if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
+  const { publisherPrefix } = isbnData
   const isbnPrefixPublishersUris = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
   if (isbnPrefixPublishersUris.length === 0) return
   const isbnPrefixPublishers = await getEntitiesList(isbnPrefixPublishersUris)
