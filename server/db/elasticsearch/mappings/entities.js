@@ -15,5 +15,6 @@ module.exports = {
     created: date,
     updated: date,
     popularity: integer,
+    claim: keyword,
   }
 }
