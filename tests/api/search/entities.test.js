@@ -142,7 +142,14 @@ describe('search:entities', () => {
       })
     })
 
-    describe('claim', () => {
+    describe('claim', async () => {
+      let workAuthor, workWithAuthor
+      before(async () => {
+        workAuthor = await createHuman()
+        workWithAuthor = await createWorkWithAuthor(workAuthor)
+        await waitForIndexation('entities', workWithAuthor._id)
+      })
+
       it('should reject unknown properties', async () => {
         await search({ types: 'works', claim: 'wdt:P6=wd:Q535' })
         .then(shouldNotBeCalled)
@@ -162,42 +169,30 @@ describe('search:entities', () => {
       })
 
       it('should find an entity by one of its relation claims', async () => {
-        const human = await createHuman()
-        const work = await createWorkWithAuthor(human)
-        await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', claim: `wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const results = await search({ types: 'works', claim: `wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
         const foundIds = _.map(results, 'id')
-        foundIds.should.containEql(work._id)
+        foundIds.should.containEql(workWithAuthor._id)
       })
 
       it('should accept OR conditions', async () => {
-        const human = await createHuman()
-        const work = await createWorkWithAuthor(human)
-        await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', claim: `wdt:P50=wd:Q535|wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const results = await search({ types: 'works', claim: `wdt:P50=wd:Q535|wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
         const foundIds = _.map(results, 'id')
-        foundIds.should.containEql(work._id)
+        foundIds.should.containEql(workWithAuthor._id)
       })
 
       it('should accept AND conditions', async () => {
-        const human = await createHuman()
-        const work = await createWorkWithAuthor(human)
-        await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
         const foundIds = _.map(results, 'id')
-        foundIds.should.containEql(work._id)
-        const results2 = await search({ types: 'works', claim: `wdt:P31=wd:Q2831984 wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        foundIds.should.containEql(workWithAuthor._id)
+        const results2 = await search({ types: 'works', claim: `wdt:P31=wd:Q2831984 wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
         const foundIds2 = _.map(results2, 'id')
-        foundIds2.should.not.containEql(work._id)
+        foundIds2.should.not.containEql(workWithAuthor._id)
       })
 
       it('should accept a combination of AND and OR conditions', async () => {
-        const human = await createHuman()
-        const work = await createWorkWithAuthor(human)
-        await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=wd:Q535|wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=wd:Q535|wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
         const foundIds = _.map(results, 'id')
-        foundIds.should.containEql(work._id)
+        foundIds.should.containEql(workWithAuthor._id)
       })
     })
   })
