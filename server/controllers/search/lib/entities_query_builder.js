@@ -16,7 +16,7 @@ module.exports = params => {
     { terms: { type: types } }
   ]
 
-  if (claim) filters.push(...getClaimFilter(claim))
+  if (claim) filters.push(...getClaimFilters(claim))
 
   if (!search) minScore = 0
 
@@ -106,7 +106,7 @@ const entitiesFields = (userLang, exact) => {
   return fields
 }
 
-const getClaimFilter = claimParameter => {
+const getClaimFilters = claimParameter => {
   return claimParameter
   .split(' ')
   .map(andCondition => {
