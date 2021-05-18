@@ -143,6 +143,24 @@ describe('search:entities', () => {
     })
 
     describe('claim', () => {
+      it('should reject unknown properties', async () => {
+        await search({ types: 'works', claim: 'wdt:P6=wd:Q535' })
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.statusCode.should.equal(400)
+          err.body.status_verbose.should.equal('unknown property')
+        })
+      })
+
+      it('should reject invalid property values', async () => {
+        await search({ types: 'works', claim: 'wdt:P123=456' })
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.statusCode.should.equal(400)
+          err.body.status_verbose.should.equal('invalid property value')
+        })
+      })
+
       it('should find an entity by one of its relation claims', async () => {
         const human = await createHuman()
         const work = await createWorkWithAuthor(human)
