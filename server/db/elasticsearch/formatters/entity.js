@@ -207,16 +207,10 @@ const getEntityTerms = ({ labels, aliases }) => getMainFieldsWords({ labels, ali
 const getFlattenedClaims = claims => {
   const flattenedClaims = []
   for (const property in claims) {
-    if (!nonIndexedClaimsProperties.has(property)) {
-      const propertyClaims = claims[property]
-      for (const value of propertyClaims) {
-        flattenedClaims.push(`${property}=${value}`)
-      }
+    const propertyClaims = claims[property]
+    for (const value of propertyClaims) {
+      flattenedClaims.push(`${property}=${value}`)
     }
   }
   return flattenedClaims
 }
-
-const nonIndexedClaimsProperties = new Set([
-  'wdt:P31'
-])
