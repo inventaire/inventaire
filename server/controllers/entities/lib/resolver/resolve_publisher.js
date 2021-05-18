@@ -8,9 +8,9 @@ const maximumNameDistance = 3
 
 const resolvePublisher = async (isbn, publisherLabel) => {
   const { publisherPrefix } = parseIsbn(isbn)
-  const claims = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
-  if (claims.length === 0) return
-  const isbnPrefixPublishers = await getEntitiesList(claims)
+  const isbnPrefixPublishersUris = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
+  if (isbnPrefixPublishersUris.length === 0) return
+  const isbnPrefixPublishers = await getEntitiesList(isbnPrefixPublishersUris)
   const matchingPublishers = getMatchingPublishers(publisherLabel, isbnPrefixPublishers)
   if (matchingPublishers.length === 1) return matchingPublishers[0].uri
 }
