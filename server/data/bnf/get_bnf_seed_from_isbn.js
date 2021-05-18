@@ -6,9 +6,7 @@ const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplif
 const cache_ = require('lib/cache')
 const { hashCode } = require('lib/utils/base')
 const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
-const reverseClaims = require('controllers/entities/lib/reverse_claims')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const leven = require('leven')
+const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -180,7 +178,6 @@ const regroupRows = rows => {
 }
 
 const addByBnfId = (index, row, typeName) => {
-  console.log({ index, row, typeName })
   const bnfId = row[typeName].claims?.['wdt:P268'] || row[typeName].tempBnfId || row[typeName].labels?.fr
   index[bnfId] = row[typeName]
 }
@@ -194,33 +191,3 @@ const addPublisherUri = async entry => {
   const publisherUri = await resolvePublisher(isbn, Object.values(publisher.labels)[0])
   if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
 }
-
-const resolvePublisher = async (isbn, publisherLabel) => {
-  const { publisherPrefix } = parseIsbn(isbn)
-  const claims = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
-  if (claims.length === 0) return
-  const possiblePublishers = await getEntitiesList(claims)
-  const publisher = possiblePublishers
-    .map(getPublisherClosestTerm(publisherLabel))
-    .sort(byDistance)[0]
-  return publisher.id
-}
-
-const getPublisherClosestTerm = publisherLabel => entity => {
-  const closestTerm = getClosestTerm(entity, publisherLabel)
-  const id = entity.uri.split(':')[1]
-  return {
-    uri: `wd:${id}`,
-    distance: closestTerm.distance
-  }
-}
-
-const getClosestTerm = ({ labels, aliases }, publisherLabel) => {
-  const allAliases = _.flatten(Object.values(aliases))
-  const terms = Object.values(labels).concat(allAliases)
-  return _.uniq(terms)
-  .map(term => ({ term, distance: leven(term, publisherLabel) }))
-  .sort(byDistance)[0]
-}
-
-const byDistance = (a, b) => a.distance - b.distance
