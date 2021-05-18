@@ -9,18 +9,19 @@ const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
-module.exports = async ({ lang, types, search, limit = 20, filter, exact, minScore }) => {
+module.exports = async ({ lang, types, search, limit = 20, filter, exact, minScore, claim }) => {
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
   }
-  assert_.string(search)
+  if (search) assert_.string(search)
 
   const hasSocialTypes = types.includes('users') || types.includes('groups')
   const hasEntityTypes = _.someMatch(types, indexedEntitiesTypes)
 
-  if (hasSocialTypes && exact) {
-    throw error_.new('exact search is restricted to entity types', 400, { givenTypes: types, validTypes: indexedEntitiesTypes })
+  if (hasSocialTypes) {
+    if (exact) typeParameterError('exact', types)
+    if (claim != null) typeParameterError('exact', types)
   }
 
   // Query must be either social (user, group) or entities related
@@ -36,7 +37,7 @@ module.exports = async ({ lang, types, search, limit = 20, filter, exact, minSco
   } else {
     queryIndexes = entitiesIndexesPerFilter[filter]
     if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
-    body = entitiesQueryBuilder({ lang, types, search, limit, exact, minScore })
+    body = entitiesQueryBuilder({ lang, types, search, limit, exact, minScore, claim })
   }
 
   const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
@@ -50,4 +51,9 @@ const entitiesIndexesPerFilter = {
   wd: [ indexes.wikidata ],
   inv: [ indexes.entities ],
   [undefined]: [ indexes.wikidata, indexes.entities ],
+}
+
+const typeParameterError = (parameter, types) => {
+  const context = { givenTypes: types, validTypes: indexedEntitiesTypes }
+  throw error_.new(`${parameter} search is restricted to entity types`, 400, context)
 }

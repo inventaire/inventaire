@@ -141,6 +141,17 @@ describe('search:entities', () => {
         foundIds.should.not.containEql(humanB._id)
       })
     })
+
+    describe('claim', () => {
+      it('should find an entity by one of its relation claims', async () => {
+        const human = await createHuman()
+        const work = await createWorkWithAuthor(human)
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', claim: `wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const foundIds = _.map(results, 'id')
+        foundIds.should.containEql(work._id)
+      })
+    })
   })
 
   describe('humans', () => {

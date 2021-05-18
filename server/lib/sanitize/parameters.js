@@ -183,7 +183,8 @@ const generics = {
       else return value
     },
     validate: _.isStrictlyPositiveInteger
-  }
+  },
+  string: nonEmptyString
 }
 
 const value = {

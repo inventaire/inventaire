@@ -1,22 +1,28 @@
 const { getSingularTypes } = require('lib/wikidata/aliases')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, exact, minScore = 1 } = params
-  let { types } = params
+  const { lang: userLang, search, limit: size, exact, claim } = params
+  let { types, minScore = 1 } = params
   types = getSingularTypes(types)
 
   const boolMode = exact ? 'must' : 'should'
+
+  const filters = [
+    // At least one type should match
+    // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
+    { terms: { type: types } }
+  ]
+
+  if (claim) filters.push(getClaimFilter(claim))
+
+  if (!search) minScore = 0
 
   return {
     query: {
       function_score: {
         query: {
           bool: {
-            filter: [
-              // At least one type should match
-              // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
-              { terms: { type: types } }
-            ],
+            filter: filters,
             // Because most of the work has been done at index time (indexing terms by ngrams)
             // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
             // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
@@ -38,6 +44,9 @@ module.exports = params => {
 }
 
 const matchEntities = (search, userLang, exact) => {
+  // In case a claim alone is searched
+  if (search == null) return
+
   const fields = entitiesFields(userLang, exact)
 
   const queries = [
@@ -92,4 +101,12 @@ const entitiesFields = (userLang, exact) => {
   }
 
   return fields
+}
+
+const getClaimFilter = claimParameter => {
+  return {
+    terms: {
+      claim: [ claimParameter ]
+    }
+  }
 }
