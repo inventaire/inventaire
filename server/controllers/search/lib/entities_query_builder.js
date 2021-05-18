@@ -1,4 +1,7 @@
 const { getSingularTypes } = require('lib/wikidata/aliases')
+const properties = require('controllers/entities/lib/properties/properties_values_constraints')
+const error_ = require('lib/error/error')
+const { isPropertyUri } = require('lib/boolean_validations')
 
 module.exports = params => {
   const { lang: userLang, search, limit: size, exact, claim } = params
@@ -109,11 +112,26 @@ const entitiesFields = (userLang, exact) => {
 const getClaimFilter = claimParameter => {
   return claimParameter
   .split(' ')
-  .map(condition => {
+  .map(andCondition => {
+    const orConditions = andCondition.split('|')
+    orConditions.forEach(validatePropertyAndValue)
     return {
       terms: {
-        claim: condition.split('|')
+        claim: orConditions
       }
     }
   })
+}
+
+const validatePropertyAndValue = condition => {
+  const [ property, value ] = condition.split('=')
+  if (!isPropertyUri(property)) {
+    throw error_.new('invalid property', 400, { property })
+  }
+  if (properties[property] == null) {
+    throw error_.new('unknown property', 400, { property, value })
+  }
+  if (!properties[property].validate(value)) {
+    throw error_.new('invalid property value', 400, { property, value })
+  }
 }
