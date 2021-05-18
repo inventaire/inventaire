@@ -160,6 +160,27 @@ describe('search:entities', () => {
         const foundIds = _.map(results, 'id')
         foundIds.should.containEql(work._id)
       })
+
+      it('should accept AND conditions', async () => {
+        const human = await createHuman()
+        const work = await createWorkWithAuthor(human)
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const foundIds = _.map(results, 'id')
+        foundIds.should.containEql(work._id)
+        const results2 = await search({ types: 'works', claim: `wdt:P31=wd:Q2831984 wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const foundIds2 = _.map(results2, 'id')
+        foundIds2.should.not.containEql(work._id)
+      })
+
+      it('should accept a combination of AND and OR conditions', async () => {
+        const human = await createHuman()
+        const work = await createWorkWithAuthor(human)
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=wd:Q535|wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const foundIds = _.map(results, 'id')
+        foundIds.should.containEql(work._id)
+      })
     })
   })
 
