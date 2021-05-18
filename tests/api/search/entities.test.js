@@ -151,6 +151,15 @@ describe('search:entities', () => {
         const foundIds = _.map(results, 'id')
         foundIds.should.containEql(work._id)
       })
+
+      it('should accept OR conditions', async () => {
+        const human = await createHuman()
+        const work = await createWorkWithAuthor(human)
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', claim: `wdt:P50=wd:Q535|wdt:P50=${human.uri}`, lang: 'en', filter: 'inv' })
+        const foundIds = _.map(results, 'id')
+        foundIds.should.containEql(work._id)
+      })
     })
   })
 
