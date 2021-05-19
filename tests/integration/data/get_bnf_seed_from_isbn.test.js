@@ -14,4 +14,14 @@ describe('get_bnf_seed_from_isbn', () => {
     const entry = await getBnfSeedFromIsbn('978-3-9818987-4-3')
     should(entry).not.be.ok()
   })
+
+  it('should include an image when one is available', async () => {
+    const entry = await getBnfSeedFromIsbn('978-2-7560-2885-9')
+    entry.edition.image.should.equal('https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb43483120v&couverture=1')
+  })
+
+  it('should not include an image when one is not available', async () => {
+    const entry = await getBnfSeedFromIsbn('978-2-207-11674-6')
+    should(entry.edition.image).not.be.ok()
+  })
 })
