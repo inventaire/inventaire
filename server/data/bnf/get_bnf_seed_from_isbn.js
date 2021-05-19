@@ -90,7 +90,7 @@ const formatRow = async (isbn, result, rawResult) => {
       ...claims
     }
   }
-  if (work) {
+  if (work.value) {
     const { uri, claims } = await parseMatches(work.matches)
     entry.work = {
       uri,
@@ -104,7 +104,7 @@ const formatRow = async (isbn, result, rawResult) => {
     if (bnfId) entry.work.claims['wdt:P268'] = bnfId
     else if (work.value.includes('temp-work')) entry.work.tempBnfId = work.value
   }
-  if (author) {
+  if (author.value) {
     const { uri, claims } = await parseMatches(author.matches)
     entry.author = {
       uri,
@@ -180,6 +180,7 @@ const regroupRows = rows => {
 }
 
 const addByBnfId = (index, row, typeName) => {
+  if (!row[typeName]) return
   const bnfId = row[typeName].claims?.['wdt:P268'] || row[typeName].tempBnfId || row[typeName].labels?.fr
   index[bnfId] = row[typeName]
 }
