@@ -7,6 +7,7 @@ const cache_ = require('lib/cache')
 const { hashCode } = require('lib/utils/base')
 const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
 const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
+const fetch = require('node-fetch')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -26,6 +27,7 @@ module.exports = async isbn => {
     await addPublisherUri(entry)
     delete entry.publishers
   }
+  await addImage(entry)
   return entry
 }
 
@@ -194,3 +196,17 @@ const addPublisherUri = async entry => {
   const publisherUri = await resolvePublisher(isbn, Object.values(publisher.labels)[0])
   if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
 }
+
+const addImage = async entry => {
+  const bnfId = entry?.edition.claims['wdt:P268']
+  if (!bnfId) return
+  const url = `https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb${bnfId}&couverture=1`
+  const { status: statusCode, headers } = await fetch(url)
+  let contentLength = headers.get('content-length')
+  if (contentLength) contentLength = parseInt(contentLength)
+  if (statusCode === 200 && contentLength !== placeholderContentLength) {
+    entry.edition.image = url
+  }
+}
+
+const placeholderContentLength = 4566
