@@ -84,7 +84,6 @@ const user_ = module.exports = {
     ])
 
     return usersDocs
-    .filter(user => user && user.type !== 'deletedUser')
     .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
   },
 
