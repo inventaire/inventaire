@@ -9,9 +9,9 @@ const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // TODO: share ban data among instances
 const dbKey = CONFIG.port
 
-const timeoutData = {}
+const banData = {}
 
-const restoreTimeoutsData = () => {
+const restoreBanData = () => {
   db.get(dbKey)
   .then(restoreNonExpiredBans)
   .catch(err => {
@@ -24,48 +24,48 @@ const restoreNonExpiredBans = data => {
   const now = Date.now()
   Object.keys(data).forEach(host => {
     const hostData = data[host]
-    if (hostData.expire > now) timeoutData[host] = data[host]
+    if (hostData.expire > now) banData[host] = data[host]
   })
-  if (Object.keys(timeoutData).length > 0) _.success(timeoutData, 'timeouts data restored')
+  if (Object.keys(banData).length > 0) _.success(banData, 'timeouts data restored')
 }
 
 const throwIfTemporarilyBanned = host => {
-  const hostTimeoutData = timeoutData[host]
-  if (hostTimeoutData != null && Date.now() < hostTimeoutData.expire) {
-    throw error_.new(`temporary ban: ${host}`, 500, { host, timeoutData: hostTimeoutData })
+  const hostBanData = banData[host]
+  if (hostBanData != null && Date.now() < hostBanData.expire) {
+    throw error_.new(`temporary ban: ${host}`, 500, { host, banData: hostBanData })
   }
 }
 
 const resetBanData = host => {
-  delete timeoutData[host]
+  delete banData[host]
   lazyBackup()
 }
 
-const declareTimeout = host => {
-  let hostTimeoutData = timeoutData[host]
+const declareHostError = host => {
+  let hostBanData = banData[host]
 
-  if (hostTimeoutData) {
+  if (hostBanData) {
     // Prevent several simulateous requests to all multiply the ban time
     // while the service might actually only have been down for a short while
-    if (Date.now() < hostTimeoutData.expire) return
+    if (Date.now() < hostBanData.expire) return
     // This host persists to timeout: renew and increase ban time
-    hostTimeoutData.banTime *= banTimeIncreaseFactor
+    hostBanData.banTime *= banTimeIncreaseFactor
   } else {
-    hostTimeoutData = timeoutData[host] = { banTime: baseBanTime }
+    hostBanData = banData[host] = { banTime: baseBanTime }
   }
 
-  hostTimeoutData.expire = Date.now() + hostTimeoutData.banTime
+  hostBanData.expire = Date.now() + hostBanData.banTime
   lazyBackup()
 }
 
 const backup = () => {
-  db.put(dbKey, timeoutData)
+  db.put(dbKey, banData)
   .then(() => _.success('timeouts data backup'))
   .catch(_.Error('timeouts data backup err'))
 }
 
 const lazyBackup = serverMode ? _.debounce(backup, 10 * 1000) : _.noop
 
-if (serverMode) restoreTimeoutsData()
+if (serverMode) restoreBanData()
 
-module.exports = { throwIfTemporarilyBanned, resetBanData, declareTimeout }
+module.exports = { throwIfTemporarilyBanned, resetBanData, declareHostError }

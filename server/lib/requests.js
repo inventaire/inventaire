@@ -9,7 +9,7 @@ const { magenta } = require('chalk')
 const { repository } = require('root/package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, insecureHttpsAgent } = require('./requests_agent')
-const { throwIfTemporarilyBanned, resetBanData, declareTimeout } = require('./requests_temporary_host_ban')
+const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
 const defaultTimeout = 30 * 1000
 
@@ -41,7 +41,7 @@ const req = method => async (url, options = {}) => {
       await wait(100)
       res = await fetch(url, options)
     } else {
-      if (err.type === 'request-timeout') declareTimeout(host)
+      if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
       throw err
     }
   }
