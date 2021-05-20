@@ -4,7 +4,7 @@ const requests_ = require('lib/requests')
 const { wait } = require('lib/promises')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
-// Avoid reusing ports from the previous test session, as timeouts data might be restored
+// Avoid reusing ports from the previous test session, as hosts bans data might be restored
 let port = 1024 + parseInt(Date.now().toString().slice(-4))
 
 const startTimeoutServer = () => new Promise(resolve => {
@@ -18,7 +18,7 @@ const startTimeoutServer = () => new Promise(resolve => {
   app.listen(port, () => resolve({ port, host, origin }))
 })
 
-describe('requests:timeout', function () {
+describe('requests:hosts-bans', function () {
   this.timeout(5 * 1000)
   it('should timeout after the specified time', async () => {
     const { origin } = await startTimeoutServer()
@@ -39,7 +39,7 @@ describe('requests:timeout', function () {
       rethrowShouldNotBeCalledErrors(err)
       err.message.should.startWith('temporary ban')
       err.context.host.should.equal(host)
-      const { banTime, expire } = err.context.timeoutData
+      const { banTime, expire } = err.context.hostBanData
       banTime.should.equal(baseBanTime)
       should(expire > Date.now()).be.true()
       should(expire < Date.now() + baseBanTime).be.true()
@@ -84,7 +84,7 @@ describe('requests:timeout', function () {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.message.should.startWith('temporary ban')
-      const { banTime, expire } = err.context.timeoutData
+      const { banTime, expire } = err.context.hostBanData
       banTime.should.equal(baseBanTime * banTimeIncreaseFactor)
       const execTimeMargin = 1000
       should(expire > beforeReban).be.true()
@@ -106,7 +106,7 @@ describe('requests:timeout', function () {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.message.should.startWith('temporary ban')
-      const { banTime, expire } = err.context.timeoutData
+      const { banTime, expire } = err.context.hostBanData
       banTime.should.equal(baseBanTime)
       const execTimeMargin = 1000
       should(expire > Date.now()).be.true()
@@ -121,7 +121,7 @@ describe('requests:timeout', function () {
       requests_.get(origin, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
     ])
     await requests_.get(`${origin}/b`, { timeout: 100 }).catch(err => {
-      const { banTime } = err.context.timeoutData
+      const { banTime } = err.context.hostBanData
       banTime.should.equal(baseBanTime)
     })
   })
