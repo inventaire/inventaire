@@ -17,6 +17,8 @@ module.exports = {
   omitPrivateData: (reqUserId, networkIds, extraAttribute) => {
     const attributes = getAttributes(extraAttribute)
     return userDoc => {
+      if (userDoc.type === 'deletedUser') return userDoc
+
       const userId = userDoc._id
       if (userId === reqUserId) return ownerSafeData(userDoc)
 

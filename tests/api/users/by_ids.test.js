@@ -1,7 +1,8 @@
 const _ = require('builders/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
 const { publicReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
 const { getTwoFriends } = require('../fixtures/users')
+const { deleteUser } = require('../utils/users')
 
 const endpoint = '/api/users?action=by-ids'
 
@@ -51,5 +52,12 @@ describe('users:by-ids', () => {
     const ids = users.map(_.property('_id'))
     const res = await publicReq('get', `${endpoint}&ids=${ids.join('|')}`)
     _.keys(res.users).should.deepEqual(ids)
+  })
+
+  it('should get deleted users', async () => {
+    const user = await getReservedUser()
+    await deleteUser(user)
+    const res = await publicReq('get', `${endpoint}&ids=${user._id}`)
+    res.users[user._id].should.be.ok()
   })
 })
