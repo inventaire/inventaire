@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const db = require('db/level/get_sub_db')('timeouts', 'json')
+const db = require('db/level/get_sub_db')('hosts-bans', 'json')
 const { serverMode } = CONFIG
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // Using port to keep instances data separated
@@ -15,8 +15,8 @@ const restoreBanData = () => {
   db.get(dbKey)
   .then(restoreNonExpiredBans)
   .catch(err => {
-    if (err.name === 'NotFoundError') return _.warn('no timeouts data found')
-    else _.error(err, 'timeouts init err')
+    if (err.name === 'NotFoundError') return _.warn('no hosts bans data found')
+    else _.error(err, 'hosts bans init err')
   })
 }
 
@@ -26,13 +26,13 @@ const restoreNonExpiredBans = data => {
     const hostData = data[host]
     if (hostData.expire > now) banData[host] = data[host]
   })
-  if (Object.keys(banData).length > 0) _.success(banData, 'timeouts data restored')
+  if (Object.keys(banData).length > 0) _.success(banData, 'hosts bans data restored')
 }
 
 const throwIfTemporarilyBanned = host => {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
-    throw error_.new(`temporary ban: ${host}`, 500, { host, banData: hostBanData })
+    throw error_.new(`temporary ban: ${host}`, 500, { host, hostBanData })
   }
 }
 
@@ -60,8 +60,8 @@ const declareHostError = host => {
 
 const backup = () => {
   db.put(dbKey, banData)
-  .then(() => _.success('timeouts data backup'))
-  .catch(_.Error('timeouts data backup err'))
+  .then(() => _.success('hosts bans data backup'))
+  .catch(_.Error('hosts bans data backup err'))
 }
 
 const lazyBackup = serverMode ? _.debounce(backup, 10 * 1000) : _.noop
