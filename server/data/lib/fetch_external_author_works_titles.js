@@ -5,11 +5,11 @@ const cache_ = require('lib/cache')
 const { oneMonth } = require('lib/time')
 const timespan = 3 * oneMonth
 
-module.exports = (name, endpoint, getQuery) => id => {
+module.exports = (name, endpoint, getQuery, requestOptions) => id => {
   const key = `${name}:author-works-titles:${id}`
   return cache_.get({
     key,
-    fn: makeRequest.bind(null, endpoint, getQuery(id), id),
+    fn: makeRequest.bind(null, endpoint, getQuery(id), requestOptions),
     timespan
   })
   .catch(err => {
@@ -18,13 +18,13 @@ module.exports = (name, endpoint, getQuery) => id => {
   })
 }
 
-const makeRequest = async (endpoint, query) => {
+const makeRequest = async (endpoint, query, requestOptions = {}) => {
   const escapedQuery = qs.escape(query)
   const base = `${endpoint}?query=`
-  const headers = { accept: 'application/sparql-results+json' }
+  requestOptions.headers = { accept: 'application/sparql-results+json' }
   const url = base + escapedQuery
 
-  const { results } = await requests_.get(url, { headers })
+  const { results } = await requests_.get(url, requestOptions)
   return results.bindings.map(parseResult)
 }
 
