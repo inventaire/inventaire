@@ -1,10 +1,11 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
 const { createUser } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
 const { Wait } = require('lib/promises')
+const { deleteUser } = require('../utils/users')
 const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'
@@ -65,5 +66,12 @@ describe('users:by-usernames', () => {
   it('should get a special user', async () => {
     const res = await publicReq('get', `${endpoint}&usernames=${specialUsersNames.join('|')}`)
     Object.keys(res.users).should.deepEqual(specialUsersNames)
+  })
+
+  it('should get a deleted user', async () => {
+    const user = await getReservedUser()
+    await deleteUser(user)
+    const res = await publicReq('get', `${endpoint}&usernames=${user.username}`)
+    res.users[user.username.toLowerCase()].should.be.ok()
   })
 })
