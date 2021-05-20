@@ -10,7 +10,7 @@ const isbn_ = require('lib/isbn/isbn')
 
 const { enabled, host } = require('config').dataseed
 const reqOptions = { timeout: 60 * 1000 }
-if (host.startsWith('https')) reqOptions.selfSigned = true
+if (host.startsWith('https')) reqOptions.ignoreCertificateErrors = true
 
 module.exports = {
   getByIsbns: async (isbns, refresh) => {

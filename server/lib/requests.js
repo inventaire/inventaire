@@ -8,7 +8,7 @@ const { addContextToStack } = error_
 const { magenta } = require('chalk')
 const { repository } = require('root/package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
-const { getAgent, selfSignedHttpsAgent } = require('./requests_agent')
+const { getAgent, insecureHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareTimeout } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
 const defaultTimeout = 30 * 1000
@@ -129,8 +129,8 @@ const completeOptions = (method, options) => {
 
   options.timeout = options.timeout || defaultTimeout
   options.compress = true
-  if (options.selfSigned) {
-    options.agent = selfSignedHttpsAgent
+  if (options.ignoreCertificateErrors) {
+    options.agent = insecureHttpsAgent
   } else {
     options.agent = getAgent
   }

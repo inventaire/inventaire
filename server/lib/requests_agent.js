@@ -3,9 +3,11 @@ const { Agent: HttpsAgent } = require('https')
 const httpAgent = new HttpAgent({ keepAlive: true })
 const httpsAgent = new HttpsAgent({ keepAlive: true })
 
-const selfSignedHttpsAgent = new HttpsAgent({
+const insecureHttpsAgent = new HttpsAgent({
   keepAlive: true,
-  // Accept self-signed certificates
+  // Useful to:
+  // - accept self-signed certificates
+  // - accept certificates that would otherwise generate a UNABLE_TO_VERIFY_LEAF_SIGNATURE error
   rejectUnauthorized: false
 })
 
@@ -14,4 +16,4 @@ const selfSignedHttpsAgent = new HttpsAgent({
 // https://github.com/bitinn/node-fetch#custom-agent
 const getAgent = ({ protocol }) => protocol === 'http:' ? httpAgent : httpsAgent
 
-module.exports = { getAgent, selfSignedHttpsAgent }
+module.exports = { getAgent, insecureHttpsAgent }

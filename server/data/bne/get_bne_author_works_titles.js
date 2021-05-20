@@ -7,4 +7,6 @@ const getQuery = bneId => `SELECT ?work ?title WHERE {
 ?work <http://datos.bne.es/def/P1001> ?title .
 }`
 
-module.exports = fetchExternalAuthorWorksTitles('bne', endpoint, getQuery)
+module.exports = fetchExternalAuthorWorksTitles('bne', endpoint, getQuery, {
+  ignoreCertificateErrors: true
+})
