@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const wmLanguageCodeByWdId = require('wikidata-lang/wm_code_by_wd_id')
+const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 
 module.exports = claims => {
