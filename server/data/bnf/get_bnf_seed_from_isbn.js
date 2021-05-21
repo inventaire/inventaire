@@ -8,6 +8,9 @@ const { hashCode } = require('lib/utils/base')
 const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
 const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
 const fetch = require('node-fetch')
+const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
+const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -43,7 +46,7 @@ const getQuery = isbn => {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10h, isbn13h, isbn13 } = isbnData
-  const query = `SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?publisherLabel (GROUP_CONCAT(?workMatch;separator="|") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator="|") AS ?authorMatches) WHERE {
+  const query = `SELECT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
   UNION { ?edition bnf-onto:isbn "${isbn13h}" }
@@ -52,8 +55,14 @@ const getQuery = isbn => {
   OPTIONAL{ ?edition dcterms:date ?editionPublicationDate }
   OPTIONAL{ ?edition dcterms:title ?editionTitle }
   OPTIONAL{ ?edition rdagroup1elements:publishersName ?publisherLabel }
+
   OPTIONAL {
     { ?edition owl:sameAs ?editionMatch . } UNION { ?edition skos:exactMatch ?editionMatch . }
+  }
+
+  OPTIONAL {
+    ?edition rdarelationships:expressionManifested ?expression .
+    ?expression dcterms:language ?expressionLang .
   }
 
   OPTIONAL {
@@ -64,24 +73,38 @@ const getQuery = isbn => {
     }
     OPTIONAL { ?work dcterms:title ?workLabel }
     OPTIONAL { ?work bnf-onto:firstYear ?workPublicationDate }
-    OPTIONAL {
+  }
+
+  OPTIONAL {
+    {
+      ?edition rdarelationships:workManifested ?work .
       ?work dcterms:creator ?author .
-      ?author foaf:name ?authorLabel
-      OPTIONAL {
-        { ?author owl:sameAs ?authorMatch . } UNION { ?author skos:exactMatch ?authorMatch . }
+    } UNION {
+      ?edition rdarelationships:expressionManifested ?expression .
+      ?expression marcrel:aut ?author .
+    }
+    OPTIONAL {
+      ?author foaf:name ?authorLabel .
+    }
+    OPTIONAL {
+      { ?author owl:sameAs ?authorMatch . }
+      UNION { ?author skos:exactMatch ?authorMatch . }
+      UNION {
+        ?author foaf:Person ?person .
+        { ?person owl:sameAs ?authorMatch . } UNION { ?person skos:exactMatch ?authorMatch . }
       }
     }
   }
 }
-GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?publisherLabel
-`
+GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel`
   return qs.escape(query)
 }
 
 const formatRow = async (isbn, result, rawResult) => {
-  const workLabelLang = rawResult.workLabel?.['xml:lang']
-  if (workLabelLang) result.work.labelLang = workLabelLang
   const { edition, work, author, publisherLabel } = result
+  const expressionLang = result.expressionLang.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
+  const workLabelLang = rawResult.workLabel?.['xml:lang'] || wmCodeByIso6392Code[expressionLang]
+  if (workLabelLang) result.work.labelLang = workLabelLang
   const entry = {}
   entry.edition = { isbn, sameAs: [ edition.value ] }
   if (edition) {
@@ -90,6 +113,9 @@ const formatRow = async (isbn, result, rawResult) => {
       'wdt:P268': getBnfId(edition.value),
       'wdt:P1476': edition.title,
       ...claims
+    }
+    if (expressionLang && wdIdByIso6392Code[expressionLang]) {
+      entry.edition.claims['wdt:P407'] = prefixifyWd(wdIdByIso6392Code[expressionLang])
     }
   }
   if (work.value) {
