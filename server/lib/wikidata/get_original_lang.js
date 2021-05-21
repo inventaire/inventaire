@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const wdLang = require('wikidata-lang')
+const wmLanguageCodeByWdId = require('wikidata-lang/wm_code_by_wd_id')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 
 module.exports = claims => {
@@ -10,8 +10,7 @@ module.exports = claims => {
   const originalLangUri = someLangPropertyClaims[0]
   if (originalLangUri != null) {
     const wdId = unprefixify(originalLangUri)
-    const wdLangData = wdLang.byWdId[wdId]
-    if (wdLangData) return wdLangData.code
+    return wmLanguageCodeByWdId[wdId]
   }
 }
 

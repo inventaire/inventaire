@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
 const isbn_ = require('lib/isbn/isbn')
-const wdLang = require('wikidata-lang')
+const wdIdByWmLanguageCode = require('wikidata-lang/wd_id_by_wm_code')
 const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
@@ -55,7 +55,7 @@ const API = module.exports = {
       'wdt:P629': worksUris,
       'wdt:P1476': [ title ],
       'wdt:P1680': [ randomWords() ],
-      'wdt:P407': [ `wd:${wdLang.byCode[lang].wd}` ],
+      'wdt:P407': [ `wd:${wdIdByWmLanguageCode[lang]}` ],
       'wdt:P123': [ publisher ],
       'wdt:P577': [ publicationDate ],
       'invp:P2': [ someImageHash ],

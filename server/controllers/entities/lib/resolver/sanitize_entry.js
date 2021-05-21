@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const isbn_ = require('lib/isbn/isbn')
 const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
-const wdLang = require('wikidata-lang')
+const wmLanguageCodeByWdId = require('wikidata-lang/wm_code_by_wd_id')
 const properties = require('../properties/properties_values_constraints')
 const validateClaimValueSync = require('../validate_claim_value_sync')
 const { validateProperty } = require('../properties/validations')
@@ -112,7 +112,7 @@ const createWorkSeedFromEdition = edition => {
   const langClaim = claims['wdt:P407'] && claims['wdt:P407'][0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null
   let lang
-  if (langWdId && wdLang.byWdId[langWdId]) lang = wdLang.byWdId[langWdId].code
+  if (langWdId && wmLanguageCodeByWdId[langWdId]) lang = wmLanguageCodeByWdId[langWdId]
   lang = lang || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
   return {
     labels: {
