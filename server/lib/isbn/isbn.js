@@ -1,6 +1,5 @@
 const { parse: isbnParser } = require('isbn3')
 const parse = require('./parse')
-const wdLang = require('wikidata-lang')
 
 // Removing any non-alpha numeric characters, especially '-' and spaces
 const normalizeIsbn = text => {
@@ -41,10 +40,6 @@ module.exports = {
     if (!isbn) return
     const isbnData = parse(isbn)
     if (isbnData == null) return
-    const langUri = isbnData.groupLangUri
-    if (langUri == null) return
-    const wdId = langUri.split(':')[1]
-    const wdLangData = wdLang.byWdId[wdId]
-    if (wdLangData) return wdLangData.code
+    return isbnData.groupLang
   }
 }
