@@ -1,4 +1,4 @@
-const wdIdByIso6391Code = require('wikidata-lang/wd_id_by_iso_639_1_code')
+const wdIdByIso6391Code = require('wikidata-lang/mappings/wd_id_by_iso_639_1_code.json')
 const groupsData = require('isbn-groups')
 
 const groupsMap = module.exports = {}

@@ -25,7 +25,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const wikimediaLanguageCodes = new Set(Object.keys(require('wikidata-lang/by_wm_code')))
+const wikimediaLanguageCodes = new Set(Object.keys(require('wikidata-lang/indexes/by_wm_code')))
 
 const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 const validateRequiredPropertiesValues = require('./validations/validate_required_properties_values')

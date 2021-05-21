@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { customAuthReq, authReq, getUser } = require('../utils/utils')
 const isbn_ = require('lib/isbn/isbn')
-const wdIdByWmLanguageCode = require('wikidata-lang/wd_id_by_wm_code')
+const wdIdByWmLanguageCode = require('wikidata-lang/mappings/wd_id_by_wm_code.json')
 const { getByUri, addClaim } = require('../utils/entities')
 const faker = require('faker')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
