@@ -8,7 +8,9 @@ const error_ = require('lib/error/error')
 const sanitization = {
   group: {},
   attribute: {},
-  value: {}
+  value: {
+    canBeNull: true
+  }
 }
 
 module.exports = (req, res) => {

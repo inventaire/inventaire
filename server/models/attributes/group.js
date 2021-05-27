@@ -15,5 +15,10 @@ module.exports = {
     'invited',
     'declined',
     'requested'
-  ]
+  ],
+
+  acceptNullValue: [
+    'position',
+    'picture'
+  ],
 }

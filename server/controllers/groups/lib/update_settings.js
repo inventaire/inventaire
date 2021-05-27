@@ -5,6 +5,7 @@ const error_ = require('lib/error/error')
 const radio = require('lib/radio')
 const db = require('db/couchdb/base')('groups')
 const { add: addSlug } = require('./slug')
+const { acceptNullValue } = require('models/attributes/group')
 
 module.exports = async (data, userId) => {
   const { group: groupId, attribute } = data
@@ -14,7 +15,7 @@ module.exports = async (data, userId) => {
     throw error_.new(`${attribute} can't be updated`, 400, data)
   }
 
-  if (!validations[attribute](value)) {
+  if (!validations[attribute](value) && !(value === null && acceptNullValue.includes(attribute))) {
     throw error_.newInvalid(attribute, value)
   }
 

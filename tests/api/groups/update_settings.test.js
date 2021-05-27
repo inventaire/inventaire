@@ -3,6 +3,7 @@ const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getNotifications } = require('../utils/notifications')
 const { groupPromise, createGroup, createGroupWithAMember } = require('../fixtures/groups')
 const slugify = require('controllers/groups/lib/slugify')
+const { importSomeImage } = require('../utils/images')
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {
@@ -55,7 +56,7 @@ describe('groups:update-settings', () => {
     updatedGroup.description.should.equal(updatedDescription)
   })
 
-  it('should update position', async () => {
+  it('should set a position', async () => {
     const { _id: groupId } = await groupPromise
     await authReq('put', endpoint, {
       group: groupId,
@@ -64,6 +65,51 @@ describe('groups:update-settings', () => {
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.position.should.deepEqual([ 0.12346, 0.12346 ])
+  })
+
+  it('should delete a position', async () => {
+    const { _id: groupId } = await groupPromise
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'position',
+      value: [ 0.123456789, 0.123456789 ]
+    })
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'position',
+      value: null
+    })
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    should(group.position).not.be.ok()
+  })
+
+  it('should set a picture', async () => {
+    const { _id: groupId } = await groupPromise
+    const { url } = await importSomeImage({ container: 'groups' })
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'picture',
+      value: url
+    })
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    group.picture.should.deepEqual(url)
+  })
+
+  it('should delete a picture', async () => {
+    const { _id: groupId } = await groupPromise
+    const { url } = await importSomeImage({ container: 'groups' })
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'picture',
+      value: url
+    })
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'picture',
+      value: null
+    })
+    const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
+    should(group.picture).not.be.ok()
   })
 
   it('should update searchable parameter', async () => {
