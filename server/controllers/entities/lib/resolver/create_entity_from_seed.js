@@ -48,8 +48,14 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   edition.labels = {}
 
   if (!imageUrl && enrich === true && isbn != null) {
-    const { url } = await getImageByIsbn(isbn)
-    imageUrl = url
+    try {
+      const { url } = await getImageByIsbn(isbn)
+      imageUrl = url
+    } catch (err) {
+      if (err.statusCode !== 404) {
+        _.error(err, 'failed to find an image by ISBN')
+      }
+    }
   }
 
   if (imageUrl) {
