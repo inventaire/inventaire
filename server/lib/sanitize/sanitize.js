@@ -62,7 +62,8 @@ const sanitizeParameter = (input, name, config, place, res) => {
 
   if (input[name] == null) applyDefaultValue(input, name, config, parameter)
   if (input[name] == null) {
-    if (config.optional || config.canBeNull) return
+    if (config.canBeNull && input[name] === null) return
+    else if (config.optional) return
     else throw error_.newMissing(place, name)
   }
 
