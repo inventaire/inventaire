@@ -1,20 +1,35 @@
+const _ = require('builders/utils')
+// 'swift' or 'local'
+const { mode } = require('config').mediaStorage
+_.info(`media storage: ${mode}`)
+const { putImage, deleteImage } = require(`./${mode}_client`)
 const images_ = require('lib/images')
-const putImage = require('./put_image')
+const radio = require('lib/radio')
 
-const containerPutImage = (container, fnName) => fileData => {
+const transformAndPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
-  return images_[fnName](path)
-  .then(() => images_.getHashFilename(path))
-  .then(filename => putImage(container, path, id, filename))
+  await images_[fnName](path)
+  const filename = await images_.getHashFilename(path)
+  const url = await putImage(container, path, filename)
+  _.log(url, 'new image')
+  await radio.emit('image:needs:check', { url, context: 'upload' })
+  return { id, url }
 }
 
-module.exports = {
+const containers = {
   users: {
-    putImage: containerPutImage('users', 'shrinkAndFormat')
+    putImage: transformAndPutImage('users', 'shrinkAndFormat'),
+    deleteImage,
+  },
+
+  groups: {
+    putImage: transformAndPutImage('groups', 'shrinkAndFormat'),
+    deleteImage,
   },
 
   entities: {
-    putImage: containerPutImage('entities', 'removeExif')
+    putImage: transformAndPutImage('entities', 'removeExif'),
+    deleteImage,
   },
 
   // Placeholder to add 'remote' to the list of containers, when it's actually
@@ -23,3 +38,8 @@ module.exports = {
   // Same but for emails and client assets
   assets: {}
 }
+
+const uploadContainersNames = Object.keys(containers)
+  .filter(containerName => containers[containerName].putImage != null)
+
+module.exports = { containers, uploadContainersNames }

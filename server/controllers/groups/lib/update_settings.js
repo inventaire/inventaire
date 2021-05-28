@@ -23,6 +23,7 @@ module.exports = async (data, userId) => {
   const groupDoc = await db.get(groupId)
   const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
 
+  const currentValue = groupDoc[attribute]
   groupDoc[attribute] = value
 
   const { updatedDoc, hooksUpdates } = await applyEditHooks(attribute, groupDoc)
@@ -30,6 +31,10 @@ module.exports = async (data, userId) => {
   await db.put(updatedDoc)
 
   await radio.emit('group:update', notifData)
+
+  if (attribute === 'picture' && currentValue) {
+    await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
+  }
 
   return { hooksUpdates }
 }

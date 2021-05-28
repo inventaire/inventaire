@@ -2,7 +2,7 @@ const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const groups_ = require('./lib/groups')
 const { Track } = require('lib/track')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   name: {},

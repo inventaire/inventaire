@@ -3,7 +3,7 @@ const intent = require('./lib/intent')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const { Track } = require('lib/track')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {}

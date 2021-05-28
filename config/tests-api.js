@@ -30,6 +30,12 @@ module.exports = {
   },
 
   mediaStorage: {
+    images: {
+      checkDelays: {
+        update: 200,
+        upload: 1000,
+      }
+    },
     local: {
       internalEndpoint: () => `http://localhost:${port}/local/`
     }

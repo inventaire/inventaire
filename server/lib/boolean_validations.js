@@ -13,8 +13,10 @@ const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 const tests = module.exports = {
   isUrl: bindedTest('Url'),
   isImageHash: bindedTest('ImageHash'),
-  isLocalImg: bindedTest('LocalImg'),
   isAssetImg: bindedTest('AssetImg'),
+  isEntityImg: bindedTest('EntityImg'),
+  isGroupImg: bindedTest('GroupImg'),
+  isLocalImg: bindedTest('LocalImg'),
   isUserImg: bindedTest('UserImg'),
   isLang: bindedTest('Lang'),
   isInvEntityId: isCouchUuid,

@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   ids: {},

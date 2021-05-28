@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const comments_ = require('controllers/comments/lib/comments')
 const transactions_ = require('./lib/transactions')
 const { verifyRightToInteract } = require('./lib/rights_verification')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const radio = require('lib/radio')
 const { Track } = require('lib/track')
 

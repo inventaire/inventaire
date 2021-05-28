@@ -1,5 +1,5 @@
-require('should')
-const sanitize = require('lib/sanitize/sanitize')
+const should = require('should')
+const { sanitize } = require('lib/sanitize/sanitize')
 const { undesiredRes, shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {
@@ -57,12 +57,32 @@ describe('sanitize', () => {
     lang.should.equal('es')
   })
 
-  it('may optionally look for parameters in the query in POST and PUT requests', async () => {
+  it('should optionally look for parameters in the query in POST and PUT requests', async () => {
     const req = { method: 'POST', query: { lang: 'es' } }
     const res = {}
     const configs = { lang: {}, nonJsonBody: true }
     const { lang } = await sanitize(req, res, configs)
     lang.should.equal('es')
+    const { lang: lang2 } = await sanitize(req, res, configs)
+    lang2.should.equal('es')
+  })
+
+  it('should not remove non-parameter options from configs', async () => {
+    const req = { method: 'POST', query: { lang: 'es' } }
+    const res = {}
+    const configs = { lang: {}, nonJsonBody: true }
+    const { lang } = await sanitize(req, res, configs)
+    lang.should.equal('es')
+    const { lang: lang2 } = await sanitize(req, res, configs)
+    lang2.should.equal('es')
+  })
+
+  it('should allow to have null values', async () => {
+    const req = { method: 'POST', query: {}, body: { value: null } }
+    const res = {}
+    const configs = { value: { canBeNull: true } }
+    const { value } = await sanitize(req, res, configs)
+    should(value).be.Null()
   })
 
   describe('optional parameters', () => {
@@ -103,7 +123,7 @@ describe('sanitize', () => {
   })
 
   describe('generic parameter', () => {
-    it('should accept generic parameters', async () => {
+    it('should accept boolean generic parameters', async () => {
       const req = { query: { 'include-users': true } }
       const res = {}
 
@@ -116,6 +136,25 @@ describe('sanitize', () => {
 
       const { includeUsers } = await sanitize(req, res, configs)
       includeUsers.should.be.true()
+    })
+
+    it('should accept allowlist generic parameters', async () => {
+      const res = {}
+
+      const configs = {
+        foo: {
+          generic: 'allowlist',
+          allowlist: [ 'a', 'b', 'c' ]
+        }
+      }
+
+      const { foo } = await sanitize({ query: { foo: 'a' } }, res, configs)
+      foo.should.equal('a')
+      await sanitize({ query: { foo: 'd' } }, res, configs)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.message.should.startWith('invalid foo')
+      })
     })
 
     it('should throw when passed an invalid generic name', done => {

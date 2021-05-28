@@ -1,15 +1,9 @@
 require('should')
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const host = CONFIG.fullPublicHost()
-const someJpegPath = __.path('client', 'public/images/small/brittanystevens.jpg')
-const { authReq, getUser } = require('../utils/utils')
+const { authReq } = require('../utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/images?action=upload'
-const { createReadStream } = require('fs')
-const fetch = require('node-fetch')
-const FormData = require('form-data')
 const { isImageHash } = require('lib/boolean_validations')
+const { uploadSomeImage } = require('../utils/images')
 
 describe('images:upload', () => {
   // Uploads on the assets container are done directly by an instance admin
@@ -57,20 +51,20 @@ describe('images:upload', () => {
     })
   })
 
-  it('should upload an image', async () => {
-    const { cookie } = await getUser()
-    const container = 'entities'
-    const form = new FormData()
-    form.append('somefile', createReadStream(someJpegPath))
-    const res = await fetch(`${host}${endpoint}&container=${container}`, {
-      method: 'post',
-      headers: { cookie, ...form.getHeaders() },
-      body: form,
+  it('should accept uploads on groups container', async () => {
+    await authReq('post', `${endpoint}&container=groups`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('no file provided')
     })
-    res.status.should.equal(200)
-    const { somefile } = await res.json()
-    somefile.should.startWith(`/img/${container}/`)
-    const imageHash = somefile.split('/').slice(3)[0]
+  })
+
+  it('should upload an image', async () => {
+    const container = 'entities'
+    const { statusCode, url } = await uploadSomeImage({ container })
+    statusCode.should.equal(200)
+    url.should.startWith(`/img/${container}/`)
+    const imageHash = url.split('/')[3]
     isImageHash(imageHash).should.be.true()
   })
 })

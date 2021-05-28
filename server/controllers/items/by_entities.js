@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const relations_ = require('controllers/relations/lib/queries')
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const responses_ = require('lib/responses')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 

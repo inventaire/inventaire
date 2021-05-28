@@ -1,7 +1,7 @@
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { Track } = require('lib/track')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const moveToWikidata = require('./lib/move_to_wikidata')
 
 const sanitization = {

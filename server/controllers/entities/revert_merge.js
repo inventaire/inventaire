@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const revertMerge = require('./lib/revert_merge')
 const { tapEmit } = require('lib/radio')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   from: {}

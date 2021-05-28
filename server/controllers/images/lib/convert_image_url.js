@@ -3,17 +3,17 @@ const error_ = require('lib/error/error')
 const db = require('db/couchdb/base')('images')
 const importImage = require('./import_image')
 
-module.exports = sourceImageUrl => importAndAddImage(sourceImageUrl)
+module.exports = ({ url: sourceImageUrl, container }) => importAndAddImage(container, sourceImageUrl)
 
-const importAndAddImage = async sourceImageUrl => {
-  const { url } = await importImage(sourceImageUrl)
+const importAndAddImage = async (container, sourceImageUrl) => {
+  const { url } = await importImage(container, sourceImageUrl)
   const hash = url.split('/').slice(-1)[0]
 
   if (!_.isImageHash(hash)) {
     throw error_.new('invalid hash', 500, { sourceImageUrl, hash })
   }
 
-  await saveImageSource(sourceImageUrl, hash)
+  if (container === 'entities') await saveImageSource(sourceImageUrl, hash)
 
   return { url, hash }
 }

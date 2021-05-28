@@ -2,7 +2,7 @@
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   id: {}

@@ -6,7 +6,7 @@ const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
 const responses_ = require('lib/responses')
 const getResizedImage = require('./lib/get_resized_image')
 const { offline } = CONFIG
-const containersList = Object.keys(require('controllers/images/lib/containers'))
+const containersList = Object.keys(require('controllers/images/lib/containers').containers)
 const { URL } = require('url')
 
 // resized images urls looks like

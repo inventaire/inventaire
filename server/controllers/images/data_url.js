@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const fetch = require('node-fetch')
 
 const sanitization = {

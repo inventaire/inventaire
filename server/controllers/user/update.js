@@ -8,18 +8,27 @@ const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const { basicUpdater } = require('lib/doc_updates')
 const { Track } = require('lib/track')
+const { sanitize } = require('lib/sanitize/sanitize')
+const radio = require('lib/radio')
+
+const sanitization = {
+  attribute: {},
+  value: {
+    canBeNull: true
+  },
+}
 
 module.exports = (req, res) => {
-  const { user, body } = req
-  const { attribute } = body
-  let { value } = body
+  sanitize(req, res, sanitization)
+  .then(update(req.user))
+  .then(responses_.Ok(res))
+  .then(Track(req, [ 'user', 'update' ]))
+  .catch(error_.Handler(req, res))
+}
 
-  if (!_.isNonEmptyString(attribute)) {
-    return error_.bundleMissingBody(req, res, 'attribute')
-  }
-
+const update = user => async ({ attribute, value }) => {
   if (value == null && !acceptNullValue.includes(attribute)) {
-    return error_.bundleMissingBody(req, res, 'value')
+    throw error_.newMissingBody('value')
   }
 
   // doesnt change anything for normal attribute
@@ -30,12 +39,12 @@ module.exports = (req, res) => {
   const currentValue = _.get(user, attribute)
 
   if (value === currentValue) {
-    return error_.bundle(req, res, 'already up-to-date', 400, { attribute, value })
+    throw error_.new('already up-to-date', 400, { attribute, value })
   }
 
   if (attribute !== rootAttribute) {
     if (!validations.deepAttributesExistance(attribute)) {
-      return error_.bundleInvalid(req, res, 'attribute', attribute)
+      throw error_.newInvalid('attribute', attribute)
     }
   }
 
@@ -43,25 +52,24 @@ module.exports = (req, res) => {
 
   if (updatable.includes(rootAttribute)) {
     if (!_.get(validations, rootAttribute)(value)) {
-      return error_.bundleInvalid(req, res, 'value', value)
+      throw error_.newInvalid('value', value)
     }
 
-    return updateAttribute(user, attribute, value)
-    .then(responses_.Ok(res))
-    .then(Track(req, [ 'user', 'update' ]))
-    .catch(error_.Handler(req, res))
+    await updateAttribute(user, attribute, value)
+    if (attribute === 'picture' && currentValue) {
+      await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
+    }
+    return
   }
 
   if (concurrencial.includes(attribute)) {
     // checks for validity and availability (+ reserve words for username)
-    return availability_[attribute](value, currentValue)
-    .then(() => updateAttribute(user, attribute, value))
-    .then(responses_.Ok(res))
-    .then(Track(req, [ 'user', 'update' ]))
-    .catch(error_.Handler(req, res))
+    await availability_[attribute](value, currentValue)
+    await updateAttribute(user, attribute, value)
+    return
   }
 
-  error_.bundle(req, res, `forbidden update: ${attribute} - ${value}`, 403)
+  throw error_.new(`forbidden update: ${attribute} - ${value}`, 403)
 }
 
 const updateAttribute = (user, attribute, value) => {

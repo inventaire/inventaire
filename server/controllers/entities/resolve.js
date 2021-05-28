@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const sanitizeEntry = require('./lib/resolver/sanitize_entry')
 const resolve = require('./lib/resolver/resolve')
 const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
