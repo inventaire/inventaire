@@ -142,7 +142,7 @@ const config = module.exports = {
       maxWeight: 5 * 1024 ** 2,
       checkDelays: {
         update: 2000,
-        upload: 30000,
+        upload: 5 * 60 * 1000,
       }
     },
     // By default, media are saved locally instead of using a remote
