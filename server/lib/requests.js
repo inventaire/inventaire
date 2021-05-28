@@ -62,12 +62,17 @@ const req = method => async (url, options = {}) => {
       body = JSON.parse(responseText)
     } catch (err) {
       // Some web services return errors with a different content-type
-      // Known case: CouchDB returns errors as plain text by default
+      // Known cases:
+      // - CouchDB returns errors as plain text by default
+      // - SPARQL services too
       // Let the error be raised as a request error instead of a JSON.parse error
       if (statusCode < 400) {
         err.context = { url, options, statusCode, responseText }
         addContextToStack(err)
         throw err
+      } else {
+        // Above 400, let it be raised as a request error hereafter
+        body = responseText
       }
     }
   } else {
