@@ -183,6 +183,8 @@ module.exports = {
   'wdt:P5491': builders.externalId(strictlyPositiveIntegerPattern),
   // OCLC work ID
   'wdt:P5331': builders.externalId(strictlyPositiveIntegerPattern),
+  // British Library system number
+  'wdt:P5199': builders.externalId(/^\d{9}$/),
   // NooSFere book ID
   'wdt:P5571': builders.externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
