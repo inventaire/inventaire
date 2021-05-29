@@ -33,6 +33,7 @@ const getPropertyAndIdPerHost = {
     }
     if (section === 'person') return { property: 'wdt:P5361', value: id }
   },
+  'datos.bne.es': pathname => ({ property: 'wdt:P950', value: pathname.split('/')[2] }),
   'data.bnf.fr': pathname => ({
     property: 'wdt:P268',
     // Known case where the replace won't be possible: temp works

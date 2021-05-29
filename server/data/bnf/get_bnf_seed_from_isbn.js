@@ -4,13 +4,13 @@ const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 const cache_ = require('lib/cache')
 const { hashCode } = require('lib/utils/base')
-const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
 const fetch = require('node-fetch')
 const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const { parseSameAsMatches } = require('data/lib/external_ids')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
+const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -24,13 +24,8 @@ module.exports = async isbn => {
   const rows = await Promise.all(simplifiedResults.map((result, i) => {
     return formatRow(isbn, result, rawResults[i])
   }))
-
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
-
-  if (entry?.publishers) {
-    await addPublisherUri(entry)
-    delete entry.publishers
-  }
+  await setEditionPublisherClaim(entry)
   await addImage(entry)
   return entry
 }
@@ -146,16 +141,6 @@ const formatRow = async (isbn, result, rawResult) => {
 }
 
 const getSourceId = entity => entity.claims?.['wdt:P268'] || entity.tempBnfId || entity.labels?.fr
-
-const addPublisherUri = async entry => {
-  if (!entry) return
-  const { publishers } = entry
-  if (Object.keys(publishers).length !== 1) return
-  const publisher = Object.values(publishers)[0]
-  const { isbn } = entry.edition
-  const publisherUri = await resolvePublisher(isbn, Object.values(publisher.labels)[0])
-  if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
-}
 
 const addImage = async entry => {
   const bnfId = entry?.edition.claims['wdt:P268']
