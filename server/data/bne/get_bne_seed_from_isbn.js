@@ -17,11 +17,10 @@ module.exports = async isbn => {
     key,
     fn: get.bind(null, isbn)
   })
-  const simplifiedResults = simplifySparqlResults(response)
-  const { bindings: rawResults } = response.results
-  const rows = await Promise.all(simplifiedResults.map((result, i) => {
-    return formatRow(isbn, result, rawResults[i])
-  }))
+  let simplifiedResults = simplifySparqlResults(response)
+  // Work around the absence of support for GROUP_CONCAT
+  simplifiedResults = regroupSameAsMatches(simplifiedResults)
+  const rows = await Promise.all(simplifiedResults.map(result => formatRow(isbn, result)))
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
   await setEditionPublisherClaim(entry)
   return entry
@@ -43,11 +42,14 @@ const getQuery = isbn => {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10, isbn13, isbn10h, isbn13h } = isbnData
+  // Virtuoso 37000 doesn't support GROUP_CONCAT
   const query = `
   PREFIX dcterms: <http://purl.org/dc/terms/>
   PREFIX bnep: <http://datos.bne.es/def/>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-  SELECT DISTINCT ?edition ?editionTitle ?editionSubtitle ?editionPages ?editionLang ?editionPublicationDate ?publisherLabel ?authorLabel WHERE {
+  SELECT DISTINCT ?edition ?editionTitle ?editionSubtitle ?editionPages ?editionLang ?editionPublicationDate ?publisherLabel ?author ?authorLabel ?authorBirth ?authorDeath ?authorMatch WHERE {
     { ?edition bnep:P3013 "${isbn10}" }
     UNION { ?edition bnep:P3013 "${isbn13}" }
     UNION { ?edition bnep:P3013 "${isbn10h}" }
@@ -59,13 +61,23 @@ const getQuery = isbn => {
     OPTIONAL { ?edition bnep:P3001 ?publisherLabel }
     OPTIONAL { ?edition bnep:P3006 ?editionPublicationDate }
     OPTIONAL { ?edition dcterms:language ?editionLang }
+
     OPTIONAL { ?edition bnep:P1011 ?authorLabel }
+    OPTIONAL {
+      ?edition bnep:OP3003 ?author .
+      OPTIONAL {
+        { ?author owl:sameAs ?authorMatch . }
+        UNION { ?author rdfs:seeAlso ?authorMatch . }
+      }
+      OPTIONAL { ?author bnep:P5010 ?authorBirth . }
+      OPTIONAL { ?author bnep:P5011 ?authorDeath . }
+    }
   }`
   return qs.escape(query)
 }
 
-const formatRow = async (isbn, result, rawResult) => {
-  const { edition, authorLabel, publisherLabel } = result
+const formatRow = async (isbn, result) => {
+  const { edition, author, publisherLabel } = result
   const entry = {}
   entry.edition = { isbn }
   if (edition) {
@@ -87,10 +99,15 @@ const formatRow = async (isbn, result, rawResult) => {
       entry.edition.claims['wdt:P577'] = publicationYear
     }
   }
-  if (authorLabel) {
+  if (author) {
+    const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
     entry.author = {
-      labels: { es: authorLabel },
+      uri,
+      labels: { es: author.label },
+      claims,
     }
+    if (author.birth) entry.author.claims['wdt:P569'] = author.birth
+    if (author.death) entry.author.claims['wdt:P570'] = author.death
   }
   if (publisherLabel) {
     entry.publisher = {
@@ -101,3 +118,23 @@ const formatRow = async (isbn, result, rawResult) => {
 }
 
 const yearPattern = /([12]\d{3})/
+
+const regroupSameAsMatches = simplifiedResults => {
+  const authorsMatches = {}
+  simplifiedResults.forEach(({ author }) => {
+    if (author?.match) {
+      authorsMatches[author.value] = authorsMatches[author.value] || []
+      authorsMatches[author.value].push(author.match)
+    }
+  })
+  simplifiedResults.forEach(({ author }) => {
+    if (authorsMatches[author.value]) author.matches = authorsMatches[author.value]
+  })
+  const editionAuthorCouples = []
+  return simplifiedResults.filter(result => {
+    const editionAuthorCouple = `${result.edition.value}+${result.author?.value}`
+    if (editionAuthorCouples.includes(editionAuthorCouple)) return false
+    editionAuthorCouples.push(editionAuthorCouple)
+    return true
+  })
+}

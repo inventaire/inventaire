@@ -20,7 +20,6 @@ module.exports = async isbn => {
   const rows = await Promise.all(simplifiedResults.map((result, i) => {
     return formatRow(isbn, result, rawResults[i])
   }))
-
   return buildEntryFromFormattedRows(rows, getSourceId)
 }
 
@@ -72,7 +71,7 @@ const formatRow = async (isbn, result, rawResult) => {
   const entry = {}
   entry.edition = { isbn }
   if (edition) {
-    const { claims } = await parseSameAsMatches(edition.matches + ',' + edition.value)
+    const { claims } = await parseSameAsMatches(edition.value, edition.matches)
     entry.edition.claims = {
       'wdt:P1476': edition.title,
       ...claims
@@ -83,7 +82,7 @@ const formatRow = async (isbn, result, rawResult) => {
     }
   }
   if (author) {
-    const { uri, claims } = await parseSameAsMatches(author.matches + ',' + author.value)
+    const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
     entry.author = {
       uri,
       labels: { fr: author.label },
