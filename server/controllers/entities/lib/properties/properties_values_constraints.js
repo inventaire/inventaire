@@ -103,6 +103,12 @@ module.exports = {
   'wdt:P921': bases.entity,
   // inspired by
   'wdt:P941': bases.workEntity,
+  // Biblioteca Nacional de España ID
+  'wdt:P950': builders.typedExternalId({
+    edition: /^(bima|bimo|bipa)\d{10}$/,
+    work: /^XX\d{4,7}$/,
+    human: /^XX\d{4,7}$/
+  }),
   // ISBN 10
   'wdt:P957': builders.isbnProperty(10),
   // SUDOC editions
