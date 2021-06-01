@@ -15,4 +15,16 @@ describe('get_bne_seed_from_isbn', () => {
     const entry = await getBneSeedFromIsbn('978-3-9818987-4-3')
     should(entry).not.be.ok()
   })
+
+  it('should resolve same as matches', async () => {
+    const entry = await getBneSeedFromIsbn('84-218-1182-7')
+    entry.authors[0].uri.should.equal('wd:Q309945')
+    entry.authors[0].claims['wdt:P950'].should.equal('XX887342')
+    entry.authors[0].claims['wdt:P269'].should.equal('027069427')
+    entry.authors[0].claims['wdt:P213'].should.equal('0000000121441313')
+    entry.authors[0].claims['wdt:P214'].should.equal('95155932')
+    entry.authors[0].claims['wdt:P227'].should.equal('109062353')
+    entry.authors[0].claims['wdt:P244'].should.equal('n82047405')
+    entry.authors[0].claims['wdt:P906'].should.equal('83651')
+  })
 })
