@@ -11,6 +11,7 @@ const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const { parseSameAsMatches } = require('data/lib/external_ids')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
+const { formatAuthorName } = require('data/commons/format_author_name')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn))
@@ -128,7 +129,7 @@ const formatRow = async (isbn, result, rawResult) => {
     const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
     entry.author = {
       uri,
-      labels: { fr: author.label },
+      labels: { fr: formatAuthorName(author.label) },
       claims
     }
   }
