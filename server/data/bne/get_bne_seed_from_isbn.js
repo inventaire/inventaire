@@ -9,6 +9,7 @@ const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_cod
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { isPositiveIntegerString } = require('lib/boolean_validations')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn)) + Math.random()
@@ -88,7 +89,7 @@ const formatRow = async (isbn, result) => {
     }
     const iso6392Lang = edition.lang?.replace('http://id.loc.gov/vocabulary/languages/', '')
     if (edition.lang && wdIdByIso6392Code[iso6392Lang]) {
-      entry.edition.claims['wdt:P407'] = wdIdByIso6392Code[iso6392Lang]
+      entry.edition.claims['wdt:P407'] = prefixifyWd(wdIdByIso6392Code[iso6392Lang])
     }
     if (edition.pages) {
       const pages = edition.pages.replace(' p.', '')

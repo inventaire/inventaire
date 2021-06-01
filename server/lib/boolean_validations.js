@@ -35,6 +35,7 @@ const tests = module.exports = {
     const [ prefix, id ] = uri && uri.split(':')
     return (prefix === 'wd') && wdk.isItemId(id)
   },
+  isEntityId: id => wdk.isItemId(id) || tests.isInvEntityId(id),
   isEmail: bindedTest('Email'),
   isCouchUuid,
   isUserId: isCouchUuid,
