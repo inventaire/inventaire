@@ -10,6 +10,7 @@ const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_forma
 const { isPositiveIntegerString } = require('lib/boolean_validations')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
+const { formatAuthorName } = require('data/commons/format_author_name')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn)) + Math.random()
@@ -104,7 +105,7 @@ const formatRow = async (isbn, result) => {
     const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
     entry.author = {
       uri,
-      labels: { es: author.label },
+      labels: { es: formatAuthorName(author.label) },
       claims,
     }
     if (author.birth) entry.author.claims['wdt:P569'] = author.birth
