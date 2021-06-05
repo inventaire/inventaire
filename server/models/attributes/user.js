@@ -21,6 +21,7 @@ attributes.ownerSafe = [
   'readToken',
   'roles',
   'publicKey',
+  'fediversable',
   'snapshot'
 ]
 
@@ -54,6 +55,7 @@ attributes.updatable = [
   'bio',
   'settings',
   'position',
+  'fediversable',
   'summaryPeriodicity'
 ]
 

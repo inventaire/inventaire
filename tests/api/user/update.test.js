@@ -117,4 +117,15 @@ describe('user:update', () => {
       _.get(updatedUser, attribute).should.be.false()
     })
   })
+
+  describe('fediversable', () => {
+    it('should update a user', async () => {
+      const user = await getReservedUser()
+      const attribute = 'fediversable'
+      const value = true
+      await customAuthReq(user, 'put', endpoint, { attribute, value })
+      const updatedUser = await getRefreshedUser(user)
+      updatedUser[attribute].should.equal(value)
+    })
+  })
 })

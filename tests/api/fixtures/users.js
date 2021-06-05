@@ -51,10 +51,11 @@ const API = module.exports = {
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
     if (role) await addRole(user._id, role)
-    return refreshUser(cookie)
+    return API.getUserWithCookie(cookie)
   },
 
-  createUserWithPrivateKey: async (customData = {}, role) => {
+  createUserOnFediverse: async (customData = {}, role) => {
+    _.extend(customData, { fediversable: true })
     const user = await API.createUser(customData, role)
     await createKeyPair(user)
     return byId(user._id)
@@ -128,8 +129,6 @@ const setCustomData = async (user, customData) => {
     await updateUser({ user, attribute, value })
   }
 }
-
-const refreshUser = API.getUserWithCookie
 
 const randomCoordinate = (min, max) => {
   // Let some margin so that no invalid coordinates can be generated

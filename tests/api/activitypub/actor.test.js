@@ -1,6 +1,7 @@
 const CONFIG = require('config')
+const _ = require('builders/utils')
 require('should')
-const { createUser, createUsername, createUserWithPrivateKey } = require('../fixtures/users')
+const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
 const { startActivityPubServer } = require('../utils/activity_pub')
 const { rawRequest } = require('../utils/request')
@@ -31,10 +32,10 @@ describe('activitypub:actor', () => {
   })
   it('should reject when no publicKey is found', async () => {
     try {
-      const emetterUser = await createUserWithPrivateKey()
+      const emetterUser = await createUserOnFediverse()
       delete emetterUser.publicKey
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
-      const receiverActorUrl = await createReceiverActorUrl()
+      const receiverActorUrl = await createReceiverActorUrl({ fediversable: false })
       wait(50)
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
@@ -49,10 +50,10 @@ describe('activitypub:actor', () => {
 
   it('should reject when fetching an invalid publicKey', async () => {
     try {
-      const emetterUser = await createUserWithPrivateKey()
+      const emetterUser = await createUserOnFediverse()
       emetterUser.publicKey = 'foo'
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
-      const receiverActorUrl = await createReceiverActorUrl()
+      const receiverActorUrl = await createReceiverActorUrl({ fediversable: false })
       wait(50)
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
@@ -67,11 +68,11 @@ describe('activitypub:actor', () => {
 
   it('should reject when key verification fails', async () => {
     try {
-      const emetterUser = await createUserWithPrivateKey()
-      const anotherUser = await createUserWithPrivateKey()
+      const emetterUser = await createUserOnFediverse()
+      const anotherUser = await createUserOnFediverse()
       emetterUser.privateKey = anotherUser.privateKey
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
-      const receiverActorUrl = await createReceiverActorUrl()
+      const receiverActorUrl = await createReceiverActorUrl({ fediversable: false })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -85,7 +86,7 @@ describe('activitypub:actor', () => {
 
   it('should reject unknown actor', async () => {
     try {
-      const emetterUser = await createUserWithPrivateKey()
+      const emetterUser = await createUserOnFediverse()
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const imaginaryReceiverUsername = createUsername()
       const receiverActorUrl = `${host}${query(imaginaryReceiverUsername)}`
@@ -100,8 +101,24 @@ describe('activitypub:actor', () => {
     }
   })
 
-  it('should return a json ld file', async () => {
-    const emetterUser = await createUserWithPrivateKey()
+  it('should reject user who is not on the fediverse', async () => {
+    try {
+      const emetterUser = await createUserOnFediverse()
+      const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
+      const receiverActorUrl = await createReceiverActorUrl({ fediversable: false })
+      await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      const parsedBody = JSON.parse(err.body
+      )
+      parsedBody.status_verbose.should.equal('this user is not on the fediverse')
+      parsedBody.status.should.equal(404)
+    }
+  })
+
+  it('should return a json ld file with a receiver actor url', async () => {
+    const emetterUser = await createUserOnFediverse()
     const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
     const receiverActorUrl = await createReceiverActorUrl()
     const res = await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
@@ -114,16 +131,18 @@ describe('activitypub:actor', () => {
   })
 })
 
-const createReceiverActorUrl = async () => {
+const createReceiverActorUrl = async (customData = {}) => {
   const receiverUsername = createUsername()
-  await createUser({ username: receiverUsername })
+  const userAttributes = _.extend({
+    username: receiverUsername,
+    fediversable: true
+  }, customData)
+  await createUser(userAttributes)
   const receiverActorUrl = `${host}${query(receiverUsername)}`
   return receiverActorUrl
 }
 
 const startServerWithEmetterUser = async emetterUser => {
   const { origin } = await startActivityPubServer(emetterUser)
-  const emetterActorUrl = `${origin}${query(emetterUser.username)}`
-  wait(50)
-  return emetterActorUrl
+  return `${origin}${query(emetterUser.username)}`
 }
