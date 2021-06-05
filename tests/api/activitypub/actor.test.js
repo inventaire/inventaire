@@ -25,6 +25,7 @@ describe('activitypub:actor', () => {
       parsedBody.status_verbose.should.equal('no signature header')
     }
   })
+
   it('should reject when no publicKey is found', async () => {
     try {
       const emetterUser = await createUserOnFediverse()
@@ -39,7 +40,7 @@ describe('activitypub:actor', () => {
       const parsedBody = JSON.parse(err.body
       )
       parsedBody.status.should.equal(500)
-      parsedBody.status_verbose.should.equal('no publicKey found')
+      parsedBody.status_verbose.should.equal('no publicKeyPem found')
     }
   })
 
@@ -57,7 +58,7 @@ describe('activitypub:actor', () => {
       const parsedBody = JSON.parse(err.body
       )
       parsedBody.status.should.equal(500)
-      parsedBody.status_verbose.should.equal('invalid publicKey found')
+      parsedBody.status_verbose.should.equal('invalid publicKeyPem found')
     }
   })
 

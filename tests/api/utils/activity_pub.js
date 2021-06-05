@@ -7,7 +7,7 @@ const endpoint = '/api/activitypub'
 
 const query = username => `${endpoint}?action=actor&name=${username}`
 
-const createReceiver = async (host, customData = {}) => {
+const createReceiver = async (customData = {}) => {
   const username = createUsername()
   const userAttributes = _.extend({
     username,
@@ -26,7 +26,7 @@ const startServerWithEmetterUser = async emetterUser => {
 
 const startActivityPubServer = emetterUser => new Promise(resolve => {
   const port = 1024 + Math.trunc(Math.random() * 10000)
-  const { publicKey, username } = emetterUser
+  const { publicKey: publicKeyPem, username } = emetterUser
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
@@ -39,7 +39,7 @@ const startActivityPubServer = emetterUser => new Promise(resolve => {
   })
 
   app.get(actorEndpoint, async (req, res) => {
-    return res.json({ publicKey })
+    return res.json({ publicKey: { publicKeyPem } })
   })
 
   app.listen(port, () => resolve({ port, host, origin }))

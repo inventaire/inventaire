@@ -103,12 +103,13 @@ const bearerTokenReq = (token, method, endpoint, body) => {
 const signedReq = async (method, endpoint, url, keyUrl, privateKey) => {
   const date = (new Date()).toUTCString()
   const publicHost = CONFIG.host
-  const signature = await sign({ method, keyUrl, privateKey, endpoint, hostname: publicHost, date })
+  const signature = await sign({ method, keyUrl, privateKey, endpoint, host: publicHost, date })
   return rawRequest(method, url, {
     headers: {
-      Host: publicHost,
-      Date: date,
-      Signature: signature,
+      date,
+      host: publicHost,
+      signature,
+      accept: 'application/activity+json, application/ld+json'
     }
   })
 }
