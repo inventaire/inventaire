@@ -1,4 +1,28 @@
+const _ = require('builders/utils')
 const express = require('express')
+const { createUser, createUsername } = require('../fixtures/users')
+const CONFIG = require('config')
+const host = CONFIG.fullHost()
+const endpoint = '/api/activitypub'
+
+const query = username => `${endpoint}?action=actor&name=${username}`
+
+const createReceiver = async (host, customData = {}) => {
+  const username = createUsername()
+  const userAttributes = _.extend({
+    username,
+    fediversable: true
+  }, customData)
+  await createUser(userAttributes)
+  return makeReceiverActorUrl(username)
+}
+
+const makeActorUrl = receiverUsername => `${host}${query(receiverUsername)}`
+
+const startServerWithEmetterUser = async emetterUser => {
+  const { origin } = await startActivityPubServer(emetterUser)
+  return `${origin}${query(emetterUser.username)}`
+}
 
 const startActivityPubServer = emetterUser => new Promise(resolve => {
   const port = 1024 + Math.trunc(Math.random() * 10000)
@@ -36,4 +60,4 @@ const formatWebfinger = (origin, actorEndpoint, resource) => {
   }
 }
 
-module.exports = { startActivityPubServer }
+module.exports = { startActivityPubServer, query, createReceiver, makeActorUrl, startServerWithEmetterUser }
