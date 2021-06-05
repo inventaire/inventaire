@@ -9,6 +9,7 @@ module.exports = async reqUsername => {
   const user = await user_.byUsername(reqUsername)
   .then(couch_.firstDoc)
   if (!user) throw error_.new('unknown actor', 404, reqUsername)
+  if (!user.fediversable) throw error_.new('this user is not on the fediverse', 404, reqUsername)
   const { picture, username } = user
   const actorUrl = `${host}/api/activitypub?action=actor&name=${username}`
   const actor = {

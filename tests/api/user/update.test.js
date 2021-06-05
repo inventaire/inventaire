@@ -100,6 +100,7 @@ describe('user:update', () => {
     })
   })
 
+<<<<<<< HEAD
   describe('settings', () => {
     it('should update a setting', async () => {
       const user = await getReservedUser()
@@ -115,6 +116,16 @@ describe('user:update', () => {
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
       _.get(updatedUser, attribute).should.be.false()
+=======
+  describe('fediversable', () => {
+    it('should update a user', async () => {
+      const user = await getReservedUser()
+      const attribute = 'fediversable'
+      const value = true
+      await customAuthReq(user, 'put', endpoint, { attribute, value })
+      const updatedUser = await getRefreshedUser(user)
+      updatedUser[attribute].should.equal(value)
+>>>>>>> fc48041e... introduce a 'fediversable' attribute in user doc
     })
   })
 })
