@@ -1,5 +1,5 @@
 const error_ = require('lib/error/error')
-const actor = require('controllers/activitypub/lib/actor')
+const getActor = require('controllers/activitypub/lib/get_actor')
 const { sanitize } = require('lib/sanitize/sanitize')
 const { verifySignature } = require('controllers/activitypub/lib/security')
 const { tap } = require('lib/promises')
@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   .then(tap(() => verifySignature(req)))
   .then(params => {
     const { name } = params
-    return actor(name)
+    return getActor(name)
   })
   .then(res.json.bind(res))
   .catch(error_.Handler(req, res))

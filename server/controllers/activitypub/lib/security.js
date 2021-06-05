@@ -4,9 +4,15 @@ const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
 
 const API = module.exports = {
-  sign: async ({ method, keyUrl, privateKey, endpoint, hostname, date }) => {
+  sign: async ({ method, keyUrl, privateKey, endpoint, host, date }) => {
     const signer = crypto.createSign('rsa-sha256')
-    const stringToSign = API.buildSignatureString({ method, hostname, endpoint, date })
+    const stringToSign = API.buildSignatureString({
+      method,
+      host,
+      endpoint,
+      date,
+      accept: 'application/activity+json, application/ld+json'
+    })
     signer.update(stringToSign)
     signer.end()
     const signature = signer.sign(privateKey)
@@ -18,22 +24,22 @@ const API = module.exports = {
     return `keyId="${keyUrl}",headers="${headers}",signature="${signatureB64}"`
   },
 
-  buildSignatureString: ({ method, hostname, endpoint, date }) => {
+  buildSignatureString: ({ method, endpoint, host, date }) => {
     // 'method' must be lowercased
     // 'date' should be a UTC string
-    return `(request-target): ${method} ${endpoint}\nhost: ${hostname}\ndate: ${date}`
+    return `(request-target): ${method} ${endpoint}\nhost: ${host}\ndate: ${date}`
   },
 
   verifySignature: async req => {
-    const { hostname, method, path: endpoint, headers } = req
-    const { date, signature } = headers
+    const { method, path: endpoint, headers } = req
+    const { date, host, signature } = headers
     if (!(signature)) throw error_.new('no signature header', 500, headers)
     const { keyId: actorUrl, signature: signatureString } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = API.buildSignatureString({ method: method.toLowerCase(), hostname, endpoint, date })
+    const signedString = API.buildSignatureString({ method: method.toLowerCase(), endpoint, host, date })
     verifier.update(signedString)
-    if (!(verifier.verify(publicKey, signatureString, 'base64'))) {
+    if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
     }
     // TODO: verify date
@@ -43,13 +49,13 @@ const API = module.exports = {
 const fetchActorPublicKey = async actorUrl => {
   const actor = await requests_.get(actorUrl)
   assert_.object(actor)
-  const { publicKey } = actor
-  if (!publicKey) {
-    throw error_.new('no publicKey found', 500, actor)
+  const { publicKeyPem } = actor.publicKey
+  if (!publicKeyPem) {
+    throw error_.new('no publicKeyPem found', 500, actor)
   }
-  // TODO: check if start string begin public key is in the specs
-  if (!publicKey.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
-    throw error_.new('invalid publicKey found', 500, publicKey)
+  // TODO: check if string MUST start with 'begin public key' in the specs
+  if (!publicKeyPem.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
+    throw error_.new('invalid publicKeyPem found', 500, actor.publicKey)
   }
   // TODO: handle timeout
   return actor.publicKey
