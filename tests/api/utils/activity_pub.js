@@ -13,8 +13,7 @@ const createReceiver = async (customData = {}) => {
     username,
     fediversable: true
   }, customData)
-  await createUser(userAttributes)
-  return makeReceiverActorUrl(username)
+  return createUser(userAttributes)
 }
 
 const makeActorUrl = receiverUsername => `${host}${query(receiverUsername)}`

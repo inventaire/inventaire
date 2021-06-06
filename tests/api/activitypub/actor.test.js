@@ -124,6 +124,7 @@ describe('activitypub:actor', () => {
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
     body.type.should.equal('Person')
+    body.preferredUsername.should.equal(username)
     body.id.should.equal(receiverActorUrl)
     body.publicKey.should.be.an.Object()
     body.publicKey.owner.should.equal(receiverActorUrl)
