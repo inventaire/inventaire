@@ -1,7 +1,7 @@
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
-const { query, startServerWithEmetterUser, createReceiver, makeActorUrl } = require('../utils/activity_pub')
+const { query, startServerWithEmetterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
@@ -11,7 +11,7 @@ describe('activitypub:actor', () => {
   it('should reject unsigned request', async () => {
     try {
       const receiverUsername = createUsername()
-      await rawRequest('get', query(receiverUsername), {
+      await rawRequest('get', query({ action: 'actor', username: receiverUsername }), {
         headers: {
           'content-type': 'application/activity+json'
         }
@@ -32,7 +32,7 @@ describe('activitypub:actor', () => {
       delete emetterUser.publicKey
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const { username } = await createReceiver({ fediversable: false })
-      const receiverActorUrl = makeActorUrl(username)
+      const receiverActorUrl = makeUrl({ action: 'actor', username })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -50,7 +50,7 @@ describe('activitypub:actor', () => {
       emetterUser.publicKey = 'foo'
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const { username } = await createReceiver({ fediversable: false })
-      const receiverActorUrl = makeActorUrl(username)
+      const receiverActorUrl = makeUrl({ action: 'actor', username })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -69,7 +69,7 @@ describe('activitypub:actor', () => {
       emetterUser.privateKey = anotherUser.privateKey
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const { username } = await createReceiver({ fediversable: false })
-      const receiverActorUrl = makeActorUrl(username)
+      const receiverActorUrl = makeUrl({ action: 'actor', username })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -86,7 +86,7 @@ describe('activitypub:actor', () => {
       const emetterUser = await createUserOnFediverse()
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const imaginaryReceiverUsername = createUsername()
-      const receiverActorUrl = makeActorUrl(imaginaryReceiverUsername)
+      const receiverActorUrl = makeUrl({ action: 'actor', username: imaginaryReceiverUsername })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -103,7 +103,7 @@ describe('activitypub:actor', () => {
       const emetterUser = await createUserOnFediverse()
       const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
       const { username } = await createReceiver({ fediversable: false })
-      const receiverActorUrl = makeActorUrl(username)
+      const receiverActorUrl = makeUrl({ action: 'actor', username })
       await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -119,7 +119,8 @@ describe('activitypub:actor', () => {
     const emetterUser = await createUserOnFediverse()
     const emetterActorUrl = await startServerWithEmetterUser(emetterUser)
     const { username } = await createReceiver()
-    const receiverActorUrl = makeActorUrl(username)
+    const receiverActorUrl = makeUrl({ action: 'actor', username })
+    const receiverInboxUrl = makeUrl({ action: 'inbox', username })
     const res = await signedReq('get', endpoint, receiverActorUrl, emetterActorUrl, emetterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
@@ -127,6 +128,7 @@ describe('activitypub:actor', () => {
     body.preferredUsername.should.equal(username)
     body.id.should.equal(receiverActorUrl)
     body.publicKey.should.be.an.Object()
+    body.inbox.should.equal(receiverInboxUrl)
     body.publicKey.owner.should.equal(receiverActorUrl)
   })
 })
