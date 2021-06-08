@@ -205,6 +205,8 @@ const value = {
 
 module.exports = {
   attribute: nonEmptyString,
+  actor: nonEmptyString,
+  object: nonEmptyString,
   bbox: {
     format: value => {
       return JSON.parse(value)

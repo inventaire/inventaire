@@ -5,5 +5,10 @@ module.exports = {
     public: {
       actor: require('./actor')
     }
+  }),
+  post: ActionsControllers({
+    public: {
+      inbox: require('./inbox')
+    }
   })
 }

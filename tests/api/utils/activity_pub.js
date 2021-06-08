@@ -1,11 +1,10 @@
 const _ = require('builders/utils')
 const express = require('express')
 const { createUser, createUsername } = require('../fixtures/users')
+const { getRandomBytes } = require('lib/crypto')
 const CONFIG = require('config')
 const host = CONFIG.fullHost()
 const endpoint = '/api/activitypub'
-
-const query = username => `${endpoint}?action=actor&name=${username}`
 
 const createReceiver = async (customData = {}) => {
   const username = createUsername()
@@ -16,11 +15,12 @@ const createReceiver = async (customData = {}) => {
   return createUser(userAttributes)
 }
 
-const makeActorUrl = receiverUsername => `${host}${query(receiverUsername)}`
+const query = ({ action, username }) => `${endpoint}?action=${action}&name=${username}`
+const makeUrl = params => `${host}${query(params)}`
 
 const startServerWithEmetterUser = async emetterUser => {
   const { origin } = await startActivityPubServer(emetterUser)
-  return `${origin}${query(emetterUser.username)}`
+  return `${origin}${query({ action: 'actor', username: emetterUser.username })}`
 }
 
 const startActivityPubServer = emetterUser => new Promise(resolve => {
@@ -59,4 +59,6 @@ const formatWebfinger = (origin, actorEndpoint, resource) => {
   }
 }
 
-module.exports = { startActivityPubServer, query, createReceiver, makeActorUrl, startServerWithEmetterUser }
+const randomActivityId = origin => `${origin}/${getRandomBytes(20, 'hex')}`
+
+module.exports = { startActivityPubServer, query, createReceiver, makeUrl, startServerWithEmetterUser, randomActivityId }
