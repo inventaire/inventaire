@@ -1,18 +1,15 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const requests_ = require('lib/requests')
 const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
 
 const API = module.exports = {
-  sign: async ({ method, keyUrl, privateKey, endpoint, host, date }) => {
+  sign: params => {
+    const { keyUrl, privateKey } = params
+    if (!params.headers) params.headers = '(request-target) host date'
     const signer = crypto.createSign('rsa-sha256')
-    const stringToSign = API.buildSignatureString({
-      method,
-      host,
-      endpoint,
-      date,
-      accept: 'application/activity+json, application/ld+json'
-    })
+    const stringToSign = API.buildSignatureString(params)
     signer.update(stringToSign)
     signer.end()
     const signature = signer.sign(privateKey)
@@ -20,24 +17,33 @@ const API = module.exports = {
     // headers must respect signature string keys order
     // ie. (request-target) host date
     // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-    const headers = '(request-target) host date'
-    return `keyId="${keyUrl}",headers="${headers}",signature="${signatureB64}"`
+    return `keyId="${keyUrl}",headers="${params.headers}",signature="${signatureB64}"`
   },
 
-  buildSignatureString: ({ method, endpoint, host, date }) => {
+  buildSignatureString: values => {
     // 'method' must be lowercased
-    // 'date' should be a UTC string
-    return `(request-target): ${method} ${endpoint}\nhost: ${host}\ndate: ${date}`
+    // 'date' must be a UTC string
+    const { headers, method, endpoint } = values
+    // arrayfying because key order matters
+    const headersKeys = headers.split(' ')
+    let signatureString = `(request-target): ${method} ${endpoint}`
+    for (const key of headersKeys) {
+      if (values[key]) {
+        signatureString = signatureString.concat('\n', `${key}: ${values[key]}`)
+      }
+    }
+    return signatureString
   },
 
   verifySignature: async req => {
-    const { method, path: endpoint, headers } = req
-    const { date, host, signature } = headers
-    if (!(signature)) throw error_.new('no signature header', 500, headers)
-    const { keyId: actorUrl, signature: signatureString } = parseSignature(signature)
+    const { method, path: endpoint, headers: reqHeaders } = req
+    const { signature } = reqHeaders
+    if (!(signature)) throw error_.new('no signature header', 500, reqHeaders)
+    // "headers" below specify the list of HTTP headers included when generating the signature for the message
+    const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = API.buildSignatureString({ method: method.toLowerCase(), endpoint, host, date })
+    const signedString = API.buildSignatureString(_.extend(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
