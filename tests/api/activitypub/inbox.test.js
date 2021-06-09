@@ -1,3 +1,5 @@
+const CONFIG = require('config')
+const _ = require('builders/utils')
 require('should')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
@@ -6,41 +8,45 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/
 
 const endpoint = '/api/activitypub'
 
-const inboxSignedReq = async params => {
-  let { origin, emetterActorUrl, receiverInboxUrl, receiverActorUrl, emetterUser } = params
-  if (!emetterActorUrl) {
+const randomActivity = ({ externalId, emetterActorUrl, activityObject, type }) => {
+  if (!externalId) externalId = randomActivityId(CONFIG.publicHost)
+  return {
+    '@context': 'https://www.w3.org/ns/activitystreams',
+    id: externalId,
+    type: type || 'Follow',
+    actor: emetterActorUrl,
+    object: activityObject
+  }
+}
+
+const buildReq = async (params = {}) => {
+  let { origin, body, emetterUrl: keyUrl, emetterUser, emetterEndpoints } = params
+  if (!emetterUser) {
     emetterUser = await createUserOnFediverse()
-    const serverData = await startServerWithEmetterUser(emetterUser)
-    if (!origin) { origin = serverData.origin }
-    emetterActorUrl = origin.concat(serverData.query)
+    const res = await startServerWithEmetterUser({
+      emetterUser,
+      endpoints: emetterEndpoints
+    })
+    origin = res.origin
+    keyUrl = origin.concat(res.query)
   }
-  let { body } = params
-  if (!body) {
-    body = {
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      id: randomActivityId(origin),
-      type: 'Follow',
-      actor: emetterActorUrl,
-      object: receiverActorUrl
-    }
-  }
-  return signedReq({
-    method: 'post',
-    endpoint,
-    url: receiverInboxUrl,
-    keyUrl: emetterActorUrl,
-    privateKey: emetterUser.privateKey,
-    body
-  })
+  const privateKey = emetterUser.privateKey
+  return { body, keyUrl, privateKey, origin }
+}
+
+const inboxSignedReq = async params => {
+  const { keyUrl, url, privateKey, body } = params
+  return signedReq({ method: 'post', endpoint, url, keyUrl, privateKey, body })
 }
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id', async () => {
     try {
       const { username } = await createReceiver()
-      const receiverInboxUrl = makeUrl({ action: 'inbox', username })
       const body = {}
-      await inboxSignedReq({ receiverInboxUrl, body })
+      const { keyUrl, privateKey } = await buildReq()
+      const receiverInboxUrl = makeUrl({ action: 'inbox', username })
+      await inboxSignedReq({ keyUrl, url: receiverInboxUrl, privateKey, body })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -63,8 +69,18 @@ describe('activitypub:post:inbox', () => {
         // activity creation will be ignored if id is already found
         id: randomActivityId(origin),
       }
-      const receiverInboxUrl = makeUrl({ action: 'inbox', username })
-      await inboxSignedReq({ receiverInboxUrl, emetterActorUrl, emetterUser, body })
+      const receiverActorUrl = makeUrl({ action: 'actor', username })
+      const req = await buildReq({
+        origin,
+        emetterUser,
+        activityObject: receiverActorUrl,
+      })
+
+      await inboxSignedReq(_.extend(req, {
+        keyUrl: emetterActorUrl,
+        url: makeUrl({ action: 'inbox', username }),
+        body,
+      }))
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -76,15 +92,24 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject if object name is not a fediversable user', async () => {
     try {
-      const { username: nonFediversableUsername } = await createUser()
+      const { username: nonFediversableUsername } = await createUser({ fediversable: false })
       const receiverActorUrl = makeUrl({ action: 'actor', username: nonFediversableUsername })
+      const { keyUrl, privateKey } = await buildReq({ activityObject: receiverActorUrl })
       const receiverInboxUrl = makeUrl({ action: 'inbox', username: nonFediversableUsername })
-      await inboxSignedReq({ receiverInboxUrl, receiverActorUrl })
+      const body = randomActivity({
+        emetterActorUrl: keyUrl,
+        activityObject: receiverActorUrl
+      })
+      await inboxSignedReq({
+        keyUrl,
+        url: receiverInboxUrl,
+        privateKey,
+        body
+      })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
+      const parsedBody = JSON.parse(err.body)
       parsedBody.status_verbose.should.equal('not found')
       parsedBody.status.should.equal(404)
     }
@@ -93,8 +118,21 @@ describe('activitypub:post:inbox', () => {
   it('should create an activity', async () => {
     const { username } = await createReceiver()
     const receiverActorUrl = makeUrl({ action: 'actor', username })
+    const { keyUrl, privateKey, origin } = await buildReq({ activityObject: receiverActorUrl })
+
+    const externalId = randomActivityId(origin)
     const receiverInboxUrl = makeUrl({ action: 'inbox', username })
-    const res = await inboxSignedReq({ receiverInboxUrl, receiverActorUrl })
+    const body = randomActivity({
+      externalId,
+      emetterActorUrl: keyUrl,
+      activityObject: receiverActorUrl
+    })
+    const res = await inboxSignedReq({
+      keyUrl,
+      url: receiverInboxUrl,
+      privateKey,
+      body,
+    })
     res.statusCode.should.equal(200)
   })
 })

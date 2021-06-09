@@ -105,7 +105,6 @@ const signedReq = async ({ method, endpoint, url, keyUrl, privateKey, body }) =>
   const publicHost = CONFIG.host
   // The minimum recommended data to sign is the (request-target), host, and date.
   // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-
   const signatureHeaders = {
     host: publicHost,
     date

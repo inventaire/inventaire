@@ -2,24 +2,14 @@ const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { signedReq } = require('../utils/utils')
-const { query, startServerWithEmetterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
+const { query, startServerWithEmetterAndReceiver, startServerWithEmetterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
 
 const endpoint = '/api/activitypub'
-const actorSignReq = async (receiverUrl, emetterUrl, privateKey) => {
-  return signedReq({
-    method: 'get',
-    endpoint,
-    url: receiverUrl,
-    keyUrl: emetterUrl,
-    privateKey
-  })
-}
 
-describe('activitypub:actor', () => {
+describe('activitypub:signed:request', () => {
   it('should reject unsigned request', async () => {
     try {
       const receiverUsername = createUsername()
@@ -41,15 +31,12 @@ describe('activitypub:actor', () => {
     try {
       const emetterUser = await createUserOnFediverse()
       delete emetterUser.publicKey
-      const emetterUrl = await startServerWithEmetterUser(emetterUser)
-      const { username } = await createReceiver({ fediversable: false })
-      const receiverUrl = makeUrl({ action: 'actor', username })
+      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
       await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
+      const parsedBody = JSON.parse(err.body)
       parsedBody.status.should.equal(500)
       parsedBody.status_verbose.should.equal('no publicKeyPem found')
     }
@@ -59,15 +46,12 @@ describe('activitypub:actor', () => {
     try {
       const emetterUser = await createUserOnFediverse()
       emetterUser.publicKey = 'foo'
-      const emetterUrl = await startServerWithEmetterUser(emetterUser)
-      const { username } = await createReceiver({ fediversable: false })
-      const receiverUrl = makeUrl({ action: 'actor', username })
+      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
       await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
+      const parsedBody = JSON.parse(err.body)
       parsedBody.status.should.equal(500)
       parsedBody.status_verbose.should.equal('invalid publicKeyPem found')
     }
@@ -78,9 +62,7 @@ describe('activitypub:actor', () => {
       const emetterUser = await createUserOnFediverse()
       const anotherUser = await createUserOnFediverse()
       emetterUser.privateKey = anotherUser.privateKey
-      const emetterUrl = await startServerWithEmetterUser(emetterUser)
-      const { username } = await createReceiver({ fediversable: false })
-      const receiverUrl = makeUrl({ action: 'actor', username })
+      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
       await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -93,9 +75,7 @@ describe('activitypub:actor', () => {
 
   it('should verify request', async () => {
     const emetterUser = await createUserOnFediverse()
-    const emetterUrl = await startServerWithEmetterUser(emetterUser)
-    const { username } = await createReceiver()
-    const receiverUrl = makeUrl({ action: 'actor', username })
+    const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
     const res = await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
@@ -103,8 +83,8 @@ describe('activitypub:actor', () => {
 
   it('should verify signatures with different headers', async () => {
     const emetterUser = await createUserOnFediverse()
-    const emetterUrl = await startServerWithEmetterUser(emetterUser)
-    const { privateKey } = emetterUser
+    const { origin, query } = await startServerWithEmetterUser({ emetterUser })
+    const emetterUrl = origin.concat(query)
     const { username } = await createReceiver()
     const receiverUrl = makeUrl({ action: 'actor', username })
     const date = (new Date()).toUTCString()
@@ -116,6 +96,7 @@ describe('activitypub:actor', () => {
       'content-type': 'application/xml',
     }
     const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+    const { privateKey } = emetterUser
     const signature = sign(_.extend({
       headers: signatureHeadersInfo,
       method,
