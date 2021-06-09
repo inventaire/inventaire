@@ -100,18 +100,28 @@ const bearerTokenReq = (token, method, endpoint, body) => {
   })
 }
 
-const signedReq = async (method, endpoint, url, keyUrl, privateKey) => {
+const signedReq = async ({ method, endpoint, url, keyUrl, privateKey, body }) => {
   const date = (new Date()).toUTCString()
   const publicHost = CONFIG.host
-  const signature = await sign({ method, keyUrl, privateKey, endpoint, host: publicHost, date })
-  return rawRequest(method, url, {
-    headers: {
-      date,
-      host: publicHost,
-      signature,
-      accept: 'application/activity+json, application/ld+json'
-    }
-  })
+  // The minimum recommended data to sign is the (request-target), host, and date.
+  // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
+
+  const signatureHeaders = {
+    host: publicHost,
+    date
+  }
+  const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+  const signature = sign(_.extend({
+    headers: signatureHeadersInfo,
+    method,
+    keyUrl,
+    privateKey,
+    endpoint
+  }, signatureHeaders))
+  const headers = _.extend({ signature }, signatureHeaders)
+  const params = { headers }
+  if (method === 'post') _.extend(params, { body })
+  return rawRequest(method, url, params)
 }
 
 module.exports = {
