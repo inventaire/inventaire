@@ -1,9 +1,11 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 require('should')
+const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
-const { startServerWithEmetterUser, createReceiver, makeUrl, randomActivityId } = require('../utils/activity_pub')
+const { startServerWithEmetterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
+const { getActivityByExternalId, randomActivityId } = require('../utils/activities')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const endpoint = '/api/activitypub'
@@ -134,5 +136,8 @@ describe('activitypub:post:inbox', () => {
       body,
     })
     res.statusCode.should.equal(200)
+    wait(100)
+    const newActivity = await getActivityByExternalId(externalId)
+    newActivity.externalId.should.equal(externalId)
   })
 })
