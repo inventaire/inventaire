@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
-const sanitize = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const clients_ = require('./lib/oauth/clients')
 
 const sanitization = {
