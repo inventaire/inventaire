@@ -2,31 +2,31 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 
 const validations = module.exports = {
+  attribute: _.isString,
+  boolean: _.isBoolean,
   couchUuid: _.isCouchUuid,
   'doc _id': _.isCouchUuid,
-  userId: _.isUserId,
-  itemId: _.isItemId,
-  transactionId: _.isTransactionId,
-  groupId: _.isGroupId,
-  username: _.isUsername,
   email: _.isEmail,
   entityUri: _.isEntityUri,
+  groupId: _.isGroupId,
+  itemId: _.isItemId,
   lang: _.isLang,
   localImg: _.isLocalImg,
-  userImg: image => {
-    // Allow a user to delete their picture by passing a null value
-    if (image === null) return true
-    else return _.isUserImg(image)
-  },
-  boolean: _.isBoolean,
-  attribute: _.isString,
-  shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
   position: latLng => {
     // Allow a user or a group to delete their position by passing a null value
     if (latLng === null) return true
     else return _.isArray(latLng) && (latLng.length === 2) && _.every(latLng, _.isNumber)
   },
-  patchId: _.isPatchId
+  patchId: _.isPatchId,
+  transactionId: _.isTransactionId,
+  userId: _.isUserId,
+  userImg: image => {
+    // Allow a user to delete their picture by passing a null value
+    if (image === null) return true
+    else return _.isUserImg(image)
+  },
+  username: _.isUsername,
+  shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
 }
 
 validations.boundedString = (str, minLength, maxLength) => {
