@@ -7,6 +7,7 @@ const { hashCode } = require('lib/utils/base')
 const { parseSameAsMatches } = require('data/lib/external_ids')
 const wdIdByIso6393Code = require('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
+const { prefixifyWd } = require('controllers/entities/lib/prefix')
 
 module.exports = async isbn => {
   const queryHash = hashCode(getQuery(isbn)) + Math.random()
@@ -78,7 +79,7 @@ const formatRow = async (isbn, result, rawResult) => {
     }
     const iso6393Lang = edition.lang?.replace('http://lexvo.org/id/iso639-3/', '')
     if (edition.lang && wdIdByIso6393Code[iso6393Lang]) {
-      entry.edition.claims['wdt:P407'] = wdIdByIso6393Code[iso6393Lang]
+      entry.edition.claims['wdt:P407'] = prefixifyWd(wdIdByIso6393Code[iso6393Lang])
     }
   }
   if (author) {
