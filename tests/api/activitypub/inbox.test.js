@@ -136,6 +136,8 @@ describe('activitypub:post:inbox', () => {
       body,
     })
     res.statusCode.should.equal(200)
+    const parsedBody = JSON.parse(res.body)
+    parsedBody.type.should.equal('Accept')
     wait(100)
     const newActivity = await getActivityByExternalId(externalId)
     newActivity.externalId.should.equal(externalId)
