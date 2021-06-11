@@ -12,18 +12,18 @@ const resolverParams = {
   reqUserId: seedUserId
 }
 
-let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedSeed
+let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedEntry
 const requireCircularDependencies = () => {
   ({ resolveUpdateAndCreate } = require('controllers/entities/lib/resolver/resolve_update_and_create'))
   getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-  getAuthoritiesAggregatedSeed = require('./get_authorities_aggregated_seed')
+  getAuthoritiesAggregatedEntry = require('./get_authorities_aggregated_entry')
 }
 setImmediate(requireCircularDependencies)
 
 module.exports = async isbn => {
-  const bnfSeedEntry = await getAuthoritiesAggregatedSeed(isbn)
-  if (bnfSeedEntry) {
-    const entity = await getEditionEntityFromEntry(bnfSeedEntry)
+  const entry = await getAuthoritiesAggregatedEntry(isbn)
+  if (entry) {
+    const entity = await getEditionEntityFromEntry(entry)
     if (entity) return entity
   }
   if (dataseedEnabled) {
@@ -49,9 +49,7 @@ const getEditionEntityFromEntry = async entry => {
 
 const buildEntry = async seed => {
   const { title, authors, image, publisher, publicationDate, isbn } = seed
-  console.log('seed', seed)
   const isbnData = parseIsbn(isbn)
-  console.log('isbnData', isbnData)
   const lang = isbnData.groupLang || 'en'
   const entry = {
     edition: {
