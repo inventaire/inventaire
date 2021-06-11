@@ -27,7 +27,18 @@ module.exports = async (req, res) => {
     const user = await user_.findOneByUsername(requestedObjectName)
     if (!user.fediversable) throw error_.notFound({ username: requestedObjectName })
     return create(params)
+    .then(createAcceptResponse)
   })
   .then(res.json.bind(res))
   .catch(error_.Handler(req, res))
+}
+
+const createAcceptResponse = res => {
+  const { actor, object } = res
+  return {
+    id: res.externalId,
+    type: 'Accept',
+    actor,
+    object
+  }
 }
