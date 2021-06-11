@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const { resolveEntrySeedsByExternalIds } = require('controllers/entities/lib/resolver/resolve_by_external_ids')
 const { isNotEmpty, objLength } = require('lib/utils/base')
 
 const authorities = {
@@ -23,10 +24,12 @@ const wrap = isbn => async name => {
   }
 }
 
-const getBestEntry = entries => {
+const getBestEntry = async entries => {
   entries = entries.filter(isNotEmpty)
   if (entries.length === 0) return
   if (entries.length === 1) return entries[0]
+
+  await Promise.all(entries.map(resolveEntrySeedsByExternalIds))
 
   const scoredEntriesByResolvedEntities = entries
     .map(getEntryResolutionScore)

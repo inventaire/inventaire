@@ -5,7 +5,7 @@ module.exports = {
 
 const buildQuery = externalIds => {
   const body = buildBody(externalIds)
-  return `SELECT DISTINCT ?work WHERE { ${body} }`
+  return `SELECT DISTINCT ?item WHERE { ${body} }`
 }
 
 const buildBody = externalIds => {
@@ -18,4 +18,4 @@ const buildBody = externalIds => {
   return `{ ${unions} }`
 }
 
-const buildTriple = ([ prop, value ]) => `?work ${prop} '${value}'`
+const buildTriple = ([ prop, value ]) => `?item ${prop} '${value}'`
