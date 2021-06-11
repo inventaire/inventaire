@@ -12,16 +12,16 @@ const resolverParams = {
   reqUserId: seedUserId
 }
 
-let resolveUpdateAndCreate, getEntityByUri, getBnfSeedFromIsbn
+let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedSeed
 const requireCircularDependencies = () => {
   ({ resolveUpdateAndCreate } = require('controllers/entities/lib/resolver/resolve_update_and_create'))
   getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-  getBnfSeedFromIsbn = require('data/bnf/get_bnf_seed_from_isbn')
+  getAuthoritiesAggregatedSeed = require('./get_authorities_aggregated_seed')
 }
 setImmediate(requireCircularDependencies)
 
 module.exports = async isbn => {
-  const bnfSeedEntry = await getBnfSeedFromIsbn(isbn)
+  const bnfSeedEntry = await getAuthoritiesAggregatedSeed(isbn)
   if (bnfSeedEntry) {
     const entity = await getEditionEntityFromEntry(bnfSeedEntry)
     if (entity) return entity
