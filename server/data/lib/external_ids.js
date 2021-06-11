@@ -4,7 +4,7 @@ const properties = require('controllers/entities/lib/properties/properties_value
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
 const parseSameAsMatches = async (...matches) => {
-  matches = matches
+  matches = flatten(matches)
     .filter(match => match != null && match !== '')
     .map(match => match.trim().split(','))
   const urls = uniq(flatten(matches))

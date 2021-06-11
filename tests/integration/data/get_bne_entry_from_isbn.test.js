@@ -6,7 +6,7 @@ describe('get_bne_entry_from_isbn', () => {
     const entry = await getBneEntryFromIsbn('978-84-261-2328-2')
     entry.edition.claims['wdt:P950'].should.equal('bimo0000048798')
     entry.edition.claims['wdt:P1476'].should.equal('O templo do sol')
-    entry.edition.claims['wdt:P407'].should.equal('Q9307')
+    entry.edition.claims['wdt:P407'].should.equal('wd:Q9307')
     entry.edition.claims['wdt:P1104'].should.equal(62)
     entry.edition.claims['wdt:P577'].should.equal('1988')
   })
