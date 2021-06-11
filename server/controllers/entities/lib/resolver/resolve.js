@@ -3,18 +3,20 @@ const { resolveAuthorsByExternalIds, resolveWorksByExternalIds } = require('./re
 const resolveInContext = require('./resolve_in_context')
 const resolveOnTerms = require('./resolve_on_terms')
 
-module.exports = entry => {
-  return resolveEdition(entry)
-  .then(resolveAuthorsByExternalIds)
-  .then(resolveWorksByExternalIds)
-  .then(resolveInContext)
-  .then(resolveOnTerms)
-  .then(entry => {
-    addResolvedFlag(entry.edition)
-    if (entry.works) entry.works.forEach(addResolvedFlag)
-    if (entry.authors) entry.authors.forEach(addResolvedFlag)
-    return entry
-  })
+module.exports = async entry => {
+  await Promise.all([
+    resolveEdition(entry),
+    resolveAuthorsByExternalIds(entry),
+    resolveWorksByExternalIds(entry),
+  ])
+  await resolveInContext(entry)
+  await resolveOnTerms(entry)
+
+  addResolvedFlag(entry.edition)
+  if (entry.works) entry.works.forEach(addResolvedFlag)
+  if (entry.authors) entry.authors.forEach(addResolvedFlag)
+
+  return entry
 }
 
 const addResolvedFlag = seed => {
