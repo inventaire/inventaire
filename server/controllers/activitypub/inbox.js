@@ -4,7 +4,7 @@ const { verifySignature } = require('controllers/activitypub/lib/security')
 const { tap } = require('lib/promises')
 const qs = require('querystring')
 const user_ = require('controllers/user/lib/user')
-const { create } = require('controllers/activitypub/lib/activities')
+const { createActivity } = require('controllers/activitypub/lib/activities')
 
 const sanitization = {
   id: {
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     const { name: requestedObjectName } = qs.parse(object)
     const user = await user_.findOneByUsername(requestedObjectName)
     if (!user.fediversable) throw error_.notFound({ username: requestedObjectName })
-    return create(params)
+    return createActivity(params)
     .then(createAcceptResponse)
   })
   .then(res.json.bind(res))

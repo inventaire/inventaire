@@ -3,7 +3,7 @@ const Activity = require('models/activity')
 const db = require('db/couchdb/base')('activities')
 
 const activities_ = module.exports = {
-  create: async newActivity => {
+  createActivity: async newActivity => {
     const activity = Activity.create(newActivity)
     return db.postAndReturn(activity)
   },
