@@ -73,6 +73,39 @@ describe('activitypub:signed:request', () => {
     }
   })
 
+  it('should reject if date header is more than 30 seconds old', async () => {
+    try {
+      const emetterUser = await createUserOnFediverse()
+      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
+      const now = new Date()
+      const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
+      const publicHost = CONFIG.host
+      const signatureHeaders = {
+        host: publicHost,
+        date: thirtySecondsAgo
+      }
+      const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+      const method = 'get'
+      const signature = sign(_.extend({
+        headers: signatureHeadersInfo,
+        method,
+        keyUrl: emetterUrl,
+        privateKey: emetterUser.privateKey,
+        endpoint
+      }, signatureHeaders))
+      const headers = _.extend({ signature }, signatureHeaders)
+      const params = { headers }
+
+      await rawRequest(method, receiverUrl, params)
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      const parsedBody = JSON.parse(err.body)
+      parsedBody.status.should.equal(400)
+      parsedBody.status_verbose.should.equal('outdated request')
+    }
+  })
+
   it('should verify request', async () => {
     const emetterUser = await createUserOnFediverse()
     const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })

@@ -3,6 +3,7 @@ const error_ = require('lib/error/error')
 const requests_ = require('lib/requests')
 const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
+const { expired } = require('lib/time')
 
 const API = module.exports = {
   sign: params => {
@@ -37,8 +38,10 @@ const API = module.exports = {
 
   verifySignature: async req => {
     const { method, path: endpoint, headers: reqHeaders } = req
-    const { signature } = reqHeaders
-    if (!(signature)) throw error_.new('no signature header', 500, reqHeaders)
+    const { date, signature } = reqHeaders
+    // 30 seconds time window for thtat signature to be considered valid
+    if (thirtySecondsTimeWindow(date)) throw error_.new('outdated request', 400, reqHeaders)
+    if (!(signature)) throw error_.new('no signature header', 400, reqHeaders)
     // "headers" below specify the list of HTTP headers included when generating the signature for the message
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
@@ -80,3 +83,5 @@ const parseSignature = signature => {
 }
 
 const removeTrailingQuote = line => line.replace(/"$/, '')
+
+const thirtySecondsTimeWindow = date => expired(Date.parse(date), 30000)
