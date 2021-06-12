@@ -4,7 +4,7 @@ const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 const cache_ = require('lib/cache')
 const { hashCode } = require('lib/utils/base')
-const { parseSameAsMatches } = require('data/lib/external_ids')
+const { parseSameasMatches } = require('data/lib/external_ids')
 const wdIdByIso6393Code = require('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
@@ -72,7 +72,7 @@ const formatRow = async (isbn, result, rawResult) => {
   const entry = {}
   entry.edition = { isbn }
   if (edition) {
-    const { claims } = await parseSameAsMatches(edition.value, edition.matches)
+    const { claims } = await parseSameasMatches(edition.value, edition.matches)
     entry.edition.claims = {
       'wdt:P1476': edition.title,
       ...claims
@@ -83,7 +83,7 @@ const formatRow = async (isbn, result, rawResult) => {
     }
   }
   if (author) {
-    const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
+    const { uri, claims } = await parseSameasMatches(author.value, author.matches)
     entry.author = {
       uri,
       labels: { fr: author.label },

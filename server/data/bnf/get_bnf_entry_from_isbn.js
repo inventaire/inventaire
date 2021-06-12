@@ -8,7 +8,7 @@ const fetch = require('node-fetch')
 const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { parseSameAsMatches } = require('data/lib/external_ids')
+const { parseSameasMatches } = require('data/lib/external_ids')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 const { formatAuthorName } = require('data/commons/format_author_name')
@@ -105,7 +105,7 @@ const formatRow = async (isbn, result, rawResult) => {
   const entry = {}
   entry.edition = { isbn }
   if (edition) {
-    const { claims } = await parseSameAsMatches(edition.value, edition.matches)
+    const { claims } = await parseSameasMatches(edition.value, edition.matches)
     entry.edition.claims = {
       'wdt:P1476': edition.title,
       ...claims
@@ -115,7 +115,7 @@ const formatRow = async (isbn, result, rawResult) => {
     }
   }
   if (work.value) {
-    const { uri, claims } = await parseSameAsMatches(work.value, work.matches)
+    const { uri, claims } = await parseSameasMatches(work.value, work.matches)
     entry.work = {
       uri,
       labels: {
@@ -126,7 +126,7 @@ const formatRow = async (isbn, result, rawResult) => {
     if (work.value.includes('temp-work')) entry.work.tempBnfId = work.value
   }
   if (author.value) {
-    const { uri, claims } = await parseSameAsMatches(author.value, author.matches)
+    const { uri, claims } = await parseSameasMatches(author.value, author.matches)
     entry.author = {
       uri,
       labels: { fr: formatAuthorName(author.label) },
