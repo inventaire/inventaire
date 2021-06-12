@@ -3,7 +3,7 @@ const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
 const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
-const parseSameAsMatches = async (...matches) => {
+const parseSameasMatches = async (...matches) => {
   matches = flatten(matches)
     .filter(match => match != null && match !== '')
     .map(match => match.trim().split(','))
@@ -67,4 +67,4 @@ const getPropertyAndIdFromWikipediaOrDbpedia = async (host, pathname) => {
   if (id) return { property: 'uri', value: `wd:${id}` }
 }
 
-module.exports = { parseSameAsMatches }
+module.exports = { parseSameasMatches }
