@@ -14,7 +14,7 @@ const authoritiesNames = Object.keys(authorities)
 module.exports = async isbn => {
   const entries = await Promise.all(authoritiesNames.map(wrap(isbn)))
   // TODO: aggregate resolved data, rather than just returning the best one
-  return getBestEntry(entries)
+  return getBestEntry(isbn, entries)
 }
 
 const wrap = isbn => async name => {
@@ -25,10 +25,14 @@ const wrap = isbn => async name => {
   }
 }
 
-const getBestEntry = async entries => {
+const getBestEntry = async (isbn, entries) => {
   entries = entries.filter(isNotEmpty)
   if (entries.length === 0) return
   if (entries.length === 1) return entries[0]
+
+  entries.forEach(entry => {
+    entry.edition.isbn = isbn
+  })
 
   await Promise.all(entries.map(resolveEntrySeedsByExternalIds))
 
