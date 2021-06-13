@@ -2,8 +2,6 @@ const qs = require('querystring')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
-const cache_ = require('lib/cache')
-const { hashCode } = require('lib/utils/base')
 const { parseSameasMatches } = require('data/lib/external_ids')
 const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
@@ -12,13 +10,14 @@ const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_cla
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const { formatAuthorName } = require('data/commons/format_author_name')
 
+const headers = {
+  'content-type': 'application/sparql-query',
+  accept: 'application/sparql-results+json',
+}
+
 module.exports = async isbn => {
-  const queryHash = hashCode(getQuery(isbn)) + Math.random()
-  const key = `bne-seed:${isbn}:${queryHash}`
-  const response = await cache_.get({
-    key,
-    fn: get.bind(null, isbn)
-  })
+  const url = `https://datos.bne.es/sparql?timeout=10000&format=json&query=${getQuery(isbn)}`
+  const response = await requests_.get(url, { headers, ignoreCertificateErrors: true })
   let simplifiedResults = simplifySparqlResults(response)
   // Work around the absence of support for GROUP_CONCAT
   simplifiedResults = regroupSameAsMatches(simplifiedResults)
@@ -29,16 +28,6 @@ module.exports = async isbn => {
 }
 
 const getSourceId = entity => entity.claims?.['wdt:P905']
-
-const headers = {
-  'content-type': 'application/sparql-query',
-  accept: 'application/sparql-results+json',
-}
-
-const get = async isbn => {
-  const url = `https://datos.bne.es/sparql?timeout=10000&debug=true&format=json&query=${getQuery(isbn)}`
-  return requests_.get(url, { headers, ignoreCertificateErrors: true })
-}
 
 const getQuery = isbn => {
   const isbnData = parseIsbn(isbn)
