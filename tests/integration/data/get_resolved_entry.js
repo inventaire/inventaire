@@ -25,4 +25,10 @@ describe('get resolved seed', () => {
     const edition = await getResolvedEntry('978-3-9818987-4-3')
     edition.notFound.should.be.true()
   })
+
+  it('should get an edition from an ISBN found on Wikidata', async () => {
+    // Expect the following triple to exist: wd:Q81689 wdt:P957 "84-95618-60-5"
+    const edition = await getResolvedEntry('84-95618-60-5')
+    edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q81689' ])
+  })
 })
