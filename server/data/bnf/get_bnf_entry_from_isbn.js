@@ -2,8 +2,6 @@ const qs = require('querystring')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
-const cache_ = require('lib/cache')
-const { hashCode } = require('lib/utils/base')
 const fetch = require('node-fetch')
 const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -13,13 +11,12 @@ const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_forma
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 const { formatAuthorName } = require('data/commons/format_author_name')
 
+const headers = { accept: '*/*' }
+const base = 'https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=60000&query='
+
 module.exports = async isbn => {
-  const queryHash = hashCode(getQuery(isbn))
-  const key = `bnf-seed:${isbn}:${queryHash}`
-  const response = await cache_.get({
-    key,
-    fn: get.bind(null, isbn)
-  })
+  const url = base + getQuery(isbn)
+  const response = await requests_.get(url, { headers })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results
   const rows = await Promise.all(simplifiedResults.map((result, i) => {
@@ -29,14 +26,6 @@ module.exports = async isbn => {
   await setEditionPublisherClaim(entry)
   await addImage(entry)
   return entry
-}
-
-const headers = { accept: '*/*' }
-
-const base = 'https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=60000&query='
-const get = async isbn => {
-  const url = base + getQuery(isbn)
-  return requests_.get(url, { headers })
 }
 
 const getQuery = isbn => {
