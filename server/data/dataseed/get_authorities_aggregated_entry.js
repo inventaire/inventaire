@@ -6,6 +6,7 @@ const authorities = {
   bnb: require('data/bnb/get_bnb_entry_from_isbn'),
   bne: require('data/bne/get_bne_entry_from_isbn'),
   bnf: require('data/bnf/get_bnf_entry_from_isbn'),
+  wikidata: require('data/wikidata/get_wikidata_entry_from_isbn'),
 }
 
 const authoritiesNames = Object.keys(authorities)
@@ -42,11 +43,11 @@ const getEntryResolutionScore = entry => {
   let score = 0
   if (entry.edition?.claims) score += objLength(entry.edition.claims)
   entry.works?.forEach(work => {
-    if (work.uri) score += 50
+    if (work.uri) score += 100
     if (work.claims) score += objLength(work.claims)
   })
   entry.authors?.forEach(author => {
-    if (author.uri) score += 50
+    if (author.uri) score += 20
     if (author.claims) score += objLength(author.claims)
   })
   return { entry, score }
