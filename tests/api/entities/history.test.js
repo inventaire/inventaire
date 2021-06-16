@@ -1,9 +1,8 @@
-require('should')
+const should = require('should')
 const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
 const endpoint = '/api/entities?action=history'
-const { _id: anonymizedId } = require('db/couchdb/hard_coded_documents').users.anonymized
 
 describe('entities:history', () => {
   it('should reject without uri', async () => {
@@ -33,31 +32,27 @@ describe('entities:history', () => {
     const { patches } = await adminReq('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
     patch.user.should.be.a.String()
-    patch.user.should.not.equal(anonymizedId)
   })
 
   it('should anonymize patches for dataadmins', async () => {
     const human = await createHuman()
     const { patches } = await dataadminReq('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
-    patch.user.should.be.a.String()
-    patch.user.should.equal(anonymizedId)
+    should(patch.user).not.be.ok()
   })
 
   it('should anonymize patches for authentified users', async () => {
     const human = await createHuman()
     const { patches } = await authReq('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
-    patch.user.should.be.a.String()
-    patch.user.should.equal(anonymizedId)
+    should(patch.user).not.be.ok()
   })
 
   it('should anonymize patches for public users', async () => {
     const human = await createHuman()
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
-    patch.user.should.be.a.String()
-    patch.user.should.equal(anonymizedId)
+    should(patch.user).not.be.ok()
   })
 
   it('should not anonymize patches from users that disabled anonymization', async () => {
@@ -71,7 +66,7 @@ describe('entities:history', () => {
       value: 'foo'
     })
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
-    patches[0].user.should.equal(anonymizedId)
+    should(patches[0].user).not.be.ok()
     patches[1].user.should.equal(user._id)
   })
 })

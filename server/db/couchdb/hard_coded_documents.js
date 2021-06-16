@@ -21,6 +21,5 @@ module.exports = {
     reconciler: userDoc('reconciler', '002'),
     // used by scripts/update_entities.js
     updater: userDoc('updater', '003'),
-    anonymized: userDoc('anonymized', '004')
   }
 }

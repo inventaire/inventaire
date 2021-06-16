@@ -4,7 +4,6 @@ const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')
 const { hasAdminAccess } = require('lib/user_access_levels')
-const { _id: anonymizedId } = require('db/couchdb/hard_coded_documents').users.anonymized
 const user_ = require('controllers/user/lib/user')
 
 const sanitization = {
@@ -21,23 +20,23 @@ const controller = async (params, req) => {
 const anonymizePatches = async patches => {
   const usersIds = _.uniq(_.map(patches, 'user'))
   const users = await user_.byIds(usersIds)
-  const anonymizedUserIdsByUserIds = buildAnonymizedUserIdsMap(users)
+  const deanonymizedUsersIds = getDeanonymizedUsersIds(users)
   patches.forEach(patch => {
-    patch.user = anonymizedUserIdsByUserIds[patch.user]
+    if (!deanonymizedUsersIds.has(patch.user)) anonymizePatch(patch)
   })
 }
 
-const buildAnonymizedUserIdsMap = users => {
-  const anonymizedUserIdsByUserIds = {}
+const getDeanonymizedUsersIds = users => {
+  const deanonymizedUsersIds = []
   for (const user of users) {
     const userSetting = _.get(user, 'settings.contributions.anonymize')
-    if (userSetting === false) {
-      anonymizedUserIdsByUserIds[user._id] = user._id
-    } else {
-      anonymizedUserIdsByUserIds[user._id] = anonymizedId
-    }
+    if (userSetting === false) deanonymizedUsersIds.push(user._id)
   }
-  return anonymizedUserIdsByUserIds
+  return new Set(deanonymizedUsersIds)
+}
+
+const anonymizePatch = patch => {
+  delete patch.user
 }
 
 module.exports = { sanitization, controller }
