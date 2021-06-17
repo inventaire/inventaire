@@ -8,6 +8,14 @@ const all = [
   'wdt:P268', // BNF ID
 ]
 
+const socialNetworks = [
+  'wdt:P2002', // Twitter account
+  'wdt:P2003', // Instagram username
+  'wdt:P2013', // Facebook account
+  'wdt:P2397', // YouTube channel ID
+  'wdt:P4033', // Mastodon address
+]
+
 const workAndSerie = all.concat([
   'wdt:P50', // author
   'wdt:P136', // genre
@@ -30,6 +38,7 @@ const workAndSerie = all.concat([
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331', // OCLC work ID
+  ...socialNetworks
 ])
 
 module.exports = {
@@ -86,18 +95,14 @@ module.exports = {
     'wdt:P1412', // languages of expression
     'wdt:P1960', // Google Scholar author ID
     'wdt:P1982', // Anime News Network person ID
-    'wdt:P2002', // Twitter account
-    'wdt:P2003', // Instagram username
-    'wdt:P2013', // Facebook account
-    'wdt:P2397', // YouTube channel ID
     'wdt:P2963', // GoodReads author ID
     'wdt:P3630', // Babelio author ID
-    'wdt:P4033', // Mastodon address
     'wdt:P4084', // MyAnimeList people ID
     'wdt:P4285', // Theses.fr person ID
     'wdt:P5361', // BNB person ID
     'wdt:P5491', // BD Gest' author ID
     'wdt:P7400', // LibraryThing author ID
+    ...socialNetworks
   ]),
 
   publisher: all.concat([
@@ -108,6 +113,7 @@ module.exports = {
     'wdt:P856', // official website
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035', // ISBN publisher prefix
+    ...socialNetworks
   ]),
 
   collection: all.concat([
@@ -116,5 +122,6 @@ module.exports = {
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject
     'wdt:P856', // official website
+    ...socialNetworks
   ])
 }
