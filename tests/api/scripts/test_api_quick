@@ -11,7 +11,8 @@
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
 server_port=$(node -p "require('config').port")
 
-if [[ -f "./run/${server_port}-supervisor" ]] ;
+# A supervisor process id is known for that port && that process is still running
+if [ -f "./run/${server_port}-supervisor" ] && [ -n "$(ps -o pid= --pid $(< ./run/${server_port}-supervisor))" ];
 then
   echo -e "\e[0;32mtests server is running: see logs in ./logs/test-server.log\e[0;30m"
 else
