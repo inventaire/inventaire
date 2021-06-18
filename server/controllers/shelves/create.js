@@ -1,8 +1,4 @@
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
-const { Track } = require('lib/track')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   name: {},
@@ -13,12 +9,9 @@ const sanitization = {
   items: { optional: true }
 }
 
-module.exports = (req, res, next) => {
-  sanitize(req, res, sanitization)
-  .then(formatNewShelf)
-  .then(responses_.Wrap(res, 'shelf'))
-  .then(Track(req, [ 'shelf', 'creation' ]))
-  .catch(error_.Handler(req, res))
+const controller = async params => {
+  const shelf = await formatNewShelf(params)
+  return { shelf }
 }
 
 const formatNewShelf = params => {
@@ -29,4 +22,10 @@ const formatNewShelf = params => {
     listing,
     owner,
   })
+}
+
+module.exports = {
+  sanitization,
+  controller,
+  track: [ 'shelf', 'creation' ]
 }
