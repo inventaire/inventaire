@@ -1,6 +1,3 @@
-const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
-const responses_ = require('lib/responses')
 const notifications_ = require('./lib/notifications')
 
 const sanitization = {
@@ -8,14 +5,7 @@ const sanitization = {
   offset: { optional: true },
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(getNotifications)
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
-}
-
-const getNotifications = params => {
+const controller = params => {
   return notifications_.byUserId(params.reqUserId)
   .then(paginate(params))
 }
@@ -35,3 +25,5 @@ const paginate = params => notifications => {
     return { notifications, total, offset }
   }
 }
+
+module.exports = { sanitization, controller }
