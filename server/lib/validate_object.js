@@ -13,12 +13,12 @@ module.exports = (obj, validKeys, valuesType) => {
   for (const key in obj) {
     const value = obj[key]
     if (!validKeys.includes(key)) {
-      throw error_.new(`invalid object key: ${key}`, 500, [ key, obj ])
+      throw error_.new(`invalid object key: ${key}`, 500, { obj, key, validKeys })
     }
 
     if (valuesType) {
       if (_.typeOf(value) !== valuesType) {
-        throw error_.new(`invalid object value: ${value}`, 500, [ value, obj ])
+        throw error_.new(`invalid object value: ${value}`, 500, { obj, value, valuesType })
       }
     }
   }
