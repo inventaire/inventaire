@@ -71,7 +71,7 @@ describe('invitations:by-emails', () => {
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal('invalid group id: abc')
+        err.body.status_verbose.should.equal('invalid group: abc')
       })
     })
 

@@ -8,31 +8,32 @@ const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_da
 const groups_ = require('controllers/groups/lib/groups')
 const Group = require('models/group')
 const { Track } = require('lib/track')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 
-module.exports = (req, res) => {
-  const { user, body } = req
-  let { emails, message, group: groupId } = body
-  const { _id: reqUserId } = req.user
+const sanitization = {
+  emails: {},
+  message: { optional: true },
+  group: { optional: true },
+}
 
-  if (message) {
-    if (!_.isString(message)) {
-      return error_.bundleInvalid(req, res, 'message', message)
-    }
-  } else {
-    // Convert undefined or empty string message to null to make following type checks easier
-    message = null
-  }
+module.exports = async (req, res) => {
+  const params = sanitizeSync(req, res, sanitization)
+  const { emails, groupId, reqUserId } = params
+  const { user } = req
+  let { message } = params
 
-  Promise.all([
+  // Convert undefined or empty string message to null to make following type checks easier
+  if (!message) message = null
+
+  const [ parsedEmails, group ] = await Promise.all([
     parseAndValidateEmails(emails, user.email),
     validateGroup(groupId, reqUserId)
   ])
-  .then(([ parsedEmails, group ]) => {
-    return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
-    .then(_.Log('invitationByEmails data'))
-    .then(responses_.Send(res))
-    .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
-  })
+
+  return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
+  .then(_.Log('invitationByEmails data'))
+  .then(responses_.Send(res))
+  .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
   .catch(error_.Handler(req, res))
 }
 

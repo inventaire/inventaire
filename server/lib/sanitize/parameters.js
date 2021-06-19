@@ -83,12 +83,15 @@ const arrayOfAType = validation => (values, type) => {
   return true
 }
 
-const arrayOrPipedStrings = value => {
-  if (_.isString(value)) value = value.split('|')
+const arrayOrSeparatedString = separator => value => {
+  if (_.isString(value)) value = value.split(separator)
   if (_.isArray(value)) return _.uniq(value)
   // Let the 'validate' function reject non-arrayfied values
   else return value
 }
+
+const arrayOrPipedString = arrayOrSeparatedString('|')
+const arrayOrCommaSeparatedString = arrayOrSeparatedString(',')
 
 const entityUri = {
   validate: validations.common.entityUri
@@ -97,17 +100,22 @@ const entityUri = {
 const isbn = { validate: isValidIsbn }
 
 const entityUris = {
-  format: arrayOrPipedStrings,
+  format: arrayOrPipedString,
   validate: arrayOfAType(validations.common.entityUri)
 }
 
+const emails = {
+  format: arrayOrCommaSeparatedString,
+  validate: arrayOfAType(validations.common.email)
+}
+
 const usernames = {
-  format: arrayOrPipedStrings,
+  format: arrayOrPipedString,
   validate: arrayOfAType(validations.common.username)
 }
 
 const couchUuids = {
-  format: arrayOrPipedStrings,
+  format: arrayOrPipedString,
   validate: arrayOfAType(validations.common.couchUuid)
 }
 
@@ -135,7 +143,7 @@ const allowlistedString = {
 }
 
 const allowlistedStrings = {
-  format: arrayOrPipedStrings,
+  format: arrayOrPipedString,
   validate: (values, name, config) => {
     for (const value of values) {
       allowlistedString.validate(value, name, config)
@@ -213,6 +221,7 @@ module.exports = {
     }
   },
   email: { validate: validations.common.email },
+  emails,
   description: nonEmptyString,
   filter: allowlistedString,
   format: allowlistedStrings,
