@@ -1,28 +1,21 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { sanitize } = require('lib/sanitize/sanitize')
-const radio = require('lib/radio')
+const { emit } = require('lib/radio')
 
 const sanitization = {
   ids: {}
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(deleteByIds)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
-}
-
-const deleteByIds = params => {
-  const { ids, reqUserId } = params
-  return items_.byIds(ids)
+const controller = async ({ ids, reqUserId }) => {
+  await items_.byIds(ids)
   .then(_.compact)
   .then(verifyOwnership(reqUserId))
   .then(items_.bulkDelete)
-  .then(() => radio.emit('user:inventory:update', reqUserId))
+
+  await emit('user:inventory:update', reqUserId)
+
+  return { ok: true }
 }
 
 const verifyOwnership = reqUserId => items => {
@@ -33,3 +26,5 @@ const verifyOwnership = reqUserId => items => {
   }
   return items
 }
+
+module.exports = { sanitization, controller }

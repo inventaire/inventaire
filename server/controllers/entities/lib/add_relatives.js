@@ -4,30 +4,24 @@
 const _ = require('builders/utils')
 const getEntitiesByUris = require('./get_entities_by_uris')
 
-module.exports = (relatives, refresh) => {
-  if (relatives == null) return _.identity
+const addRelatives = (results, relatives, refresh) => {
+  const { entities } = results
 
-  const addRelatives = results => {
-    const { entities } = results
+  const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
 
-    const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
+  if (additionalEntitiesUris.length === 0) return results
 
-    if (additionalEntitiesUris.length === 0) return results
-
-    return getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
-    // Recursively add relatives, so that an edition could be sent
-    // with its works, and its works authors and series
-    .then(addRelatives)
-    .then(additionalResults => {
-      // We only need to extend entities, as those additional URIs
-      // should already be the canonical URIs (no redirection needed)
-      // and all URIs should resolve to an existing entity
-      Object.assign(results.entities, additionalResults.entities)
-      return results
-    })
-  }
-
-  return addRelatives
+  return getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
+  // Recursively add relatives, so that an edition could be sent
+  // with its works, and its works authors and series
+  .then(additionalResults => addRelatives(additionalResults, relatives, refresh))
+  .then(additionalResults => {
+    // We only need to extend entities, as those additional URIs
+    // should already be the canonical URIs (no redirection needed)
+    // and all URIs should resolve to an existing entity
+    Object.assign(results.entities, additionalResults.entities)
+    return results
+  })
 }
 
 const getAdditionalEntitiesUris = (entities, relatives) => {
@@ -40,3 +34,5 @@ const getAdditionalEntitiesUris = (entities, relatives) => {
 }
 
 const getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives))
+
+module.exports = addRelatives

@@ -1,10 +1,8 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const mergeEntities = require('./lib/merge_entities')
 const { emit } = require('lib/radio')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   from: {},
@@ -21,14 +19,7 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(merge)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
-}
-
-const merge = async params => {
+const controller = async params => {
   const { reqUserId } = params
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
@@ -50,6 +41,7 @@ const merge = async params => {
 
   await mergeEntities({ userId: reqUserId, fromUri, toUri })
   emit('entity:merge', fromUri, toUri)
+  return { ok: true }
 }
 
 const getMergeEntities = async (fromUri, toUri) => {
@@ -111,3 +103,5 @@ const replaceIsbnUriByInvUri = (uri, invId) => {
   if (prefix === 'isbn') return `inv:${invId}`
   return uri
 }
+
+module.exports = { sanitization, controller }

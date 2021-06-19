@@ -1,7 +1,4 @@
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const reverseClaims = require('./lib/reverse_claims')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   property: {},
@@ -15,9 +12,9 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(reverseClaims)
-  .then(responses_.Wrap(res, 'uris'))
-  .catch(error_.Handler(req, res))
+const controller = async params => {
+  const uris = await reverseClaims(params)
+  return { uris }
 }
+
+module.exports = { sanitization, controller }

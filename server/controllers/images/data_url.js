@@ -1,6 +1,4 @@
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { sanitize } = require('lib/sanitize/sanitize')
 const fetch = require('node-fetch')
 
 const sanitization = {
@@ -8,14 +6,9 @@ const sanitization = {
 }
 
 // Get an image data-url from a URL
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { url } = params
-    return getImageDataUrl(url)
-  })
-  .then(responses_.Wrap(res, 'data-url'))
-  .catch(error_.Handler(req, res))
+const controller = async ({ url }) => {
+  const dataUrl = await getImageDataUrl(url)
+  return { 'data-url': dataUrl }
 }
 
 // Set encoding as null to get the response as a buffer
@@ -32,3 +25,5 @@ const getImageDataUrl = async url => {
   const buffer = body.toString('base64')
   return `data:${contentType};base64,${buffer}`
 }
+
+module.exports = { sanitization, controller }

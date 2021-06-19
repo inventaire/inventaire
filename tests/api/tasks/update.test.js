@@ -9,8 +9,8 @@ describe('tasks:update', () => {
     .then(suspect => {
       createTask({ suspectUri: suspect.uri })
       .then(task => update(task.id, 'state', 'dismissed'))
-      .then(updatedTask => {
-        updatedTask[0].ok.should.be.true()
+      .then(res => {
+        res.ok.should.be.true()
         done()
       })
     })

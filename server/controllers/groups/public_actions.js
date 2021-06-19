@@ -1,52 +1,41 @@
 const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const groups_ = require('./lib/groups')
 const getGroupPublicData = require('./lib/group_public_data')
-const { sanitize } = require('lib/sanitize/sanitize')
 const { get: getSlug } = require('./lib/slug')
 
 module.exports = {
-  byId: (req, res) => {
-    sanitize(req, res, { id: {} })
-    .then(params => {
-      const { id, reqUserId } = params
+  byId: {
+    sanitization: { id: {} },
+    controller: async ({ id, reqUserId }) => {
       return getGroupPublicData('byId', [ id ], reqUserId)
-    })
-    .then(responses_.Send(res))
-    .catch(error_.Handler(req, res))
-  },
-
-  bySlug: (req, res) => {
-    sanitize(req, res, { slug: {} })
-    .then(params => {
-      const { slug, reqUserId } = params
-      return getGroupPublicData('bySlug', [ slug ], reqUserId)
-      .then(responses_.Send(res))
-    })
-    .catch(error_.Handler(req, res))
-  },
-
-  searchByPositon: (req, res) => {
-    sanitize(req, res, { bbox: {} })
-    .then(({ bbox }) => groups_.byPosition(bbox))
-    .then(groups => groups.filter(searchable))
-    .then(responses_.Wrap(res, 'groups'))
-    .catch(error_.Handler(req, res))
-  },
-
-  slug: (req, res) => {
-    const { name, group: groupId } = req.query
-
-    if (name == null) return error_.bundleMissingQuery(req, res, 'name')
-
-    if ((groupId != null) && !_.isGroupId(groupId)) {
-      return error_.bundleInvalid(req, res, 'group', groupId)
     }
+  },
 
-    getSlug(name, groupId)
-    .then(responses_.Wrap(res, 'slug'))
-    .catch(error_.Handler(req, res))
+  bySlug: {
+    sanitization: { slug: {} },
+    controller: async ({ slug, reqUserId }) => {
+      return getGroupPublicData('bySlug', [ slug ], reqUserId)
+    }
+  },
+
+  searchByPositon: {
+    sanitization: { bbox: {} },
+    controller: async ({ bbox }) => {
+      let groups = await groups_.byPosition(bbox)
+      groups = groups.filter(searchable)
+      return { groups }
+    }
+  },
+
+  slug: {
+    sanitization: {
+      name: {},
+      group: { optional: true }
+    },
+    controller: async ({ name, groupId }) => {
+      const slug = await getSlug(name, groupId)
+      return { slug }
+    }
   }
 }
 

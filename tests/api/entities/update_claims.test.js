@@ -5,7 +5,7 @@ const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../util
 
 describe('entities:update-claims', () => {
   it('should reject without uri', async () => {
-    await updateClaim()
+    await updateClaim(null, 'wdt:P123')
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: uri')
@@ -39,7 +39,7 @@ describe('entities:update-claims', () => {
     await updateClaim(uri, property, oldValue)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.startWith('unsupported uri prefix')
+      err.body.status_verbose.should.startWith('invalid uri')
       err.statusCode.should.equal(400)
     })
   })

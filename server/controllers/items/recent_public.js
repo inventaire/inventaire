@@ -1,6 +1,4 @@
-const error_ = require('lib/error/error')
 const items_ = require('controllers/items/lib/items')
-const { sanitize } = require('lib/sanitize/sanitize')
 const bundleOwnersToItems = require('./lib/bundle_owners_to_items')
 const itemsQueryLimit = 100
 const offset = 0
@@ -18,18 +16,13 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { assertImage, lang, limit, reqUserId } = params
-    return items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
-    .then(selectRecentItems(lang, limit))
-    .then(bundleOwnersToItems.bind(null, res, reqUserId))
-  })
-  .catch(error_.Handler(req, res))
+const controller = async ({ assertImage, lang, limit, reqUserId }) => {
+  let items = await items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
+  items = selectRecentItems(items, lang, limit)
+  return bundleOwnersToItems(items, reqUserId)
 }
 
-const selectRecentItems = (lang, limit) => items => {
+const selectRecentItems = (items, lang, limit) => {
   const recentItems = []
   const discardedItems = []
   const itemsCountByOwner = {}
@@ -50,3 +43,5 @@ const selectRecentItems = (lang, limit) => items => {
   recentItems.push(...itemsToFill)
   return recentItems
 }
+
+module.exports = { sanitization, controller }

@@ -3,22 +3,23 @@ const { tap } = require('lib/promises')
 const tasks_ = require('./lib/tasks')
 const db = require('db/couchdb/base')('entities')
 const { Wait } = require('lib/promises')
-const responses_ = require('lib/responses')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const jobs_ = require('db/level/jobs')
 const checkEntity = require('./lib/check_entity')
 const { interval } = require('config').jobs['inv:deduplicate']
 const batchLength = 1000
 
-module.exports = (req, res) => {
-  const refresh = _.parseBooleanString(req.query.refresh)
+const sanitization = {
+  refresh: { optional: true }
+}
 
+const controller = async ({ refresh }) => {
   addEntitiesToQueueSequentially(refresh)
   .catch(_.Error('addEntitiesToQueueSequentially err'))
 
   // Not waiting for the queue to be loaded as that will take a while
   // and no useful data has to be returned
-  responses_.ok(res)
+  return { ok: true }
 }
 
 const addEntitiesToQueueSequentially = refresh => {
@@ -76,5 +77,7 @@ const filterNotAlreadySuspectEntities = uris => {
     return _.difference(uris, alreadyCheckedUris)
   })
 }
+
+module.exports = { sanitization, controller }
 
 const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)

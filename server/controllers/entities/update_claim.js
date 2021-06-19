@@ -1,32 +1,38 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 
-module.exports = (req, res) => {
+const sanitization = {
+  id: { optional: true },
+  uri: { optional: true },
+  property: {},
+  'old-value': { optional: true },
+  'new-value': { optional: true },
+}
+
+const controller = async (params, req) => {
+  let { id, uri, property, oldValue, newValue } = params
   let prefix
-  let { id, uri, property, 'old-value': oldVal, 'new-value': newVal } = req.body
-  _.log(req.body, 'update claim input')
-  if (_.isInvEntityId(id) && (uri == null)) { uri = `inv:${id}` }
+  _.log(params, 'update claim input')
+  if (_.isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
-  if (uri == null) return error_.bundleMissingBody(req, res, 'uri')
-  if (property == null) return error_.bundleMissingBody(req, res, 'property')
-  if ((oldVal == null) && (newVal == null)) {
-    return error_.bundleMissingBody(req, res, 'old-value|new-value')
+  if (uri == null) throw error_.newMissingBody('uri')
+  console.log({ oldValue, newValue })
+  if (oldValue == null && newValue == null) {
+    throw error_.newMissingBody('old-value|new-value')
   }
 
   // An empty string is interpreted as a null value
-  oldVal = parseEmptyValue(oldVal)
-  newVal = parseEmptyValue(newVal);
+  oldValue = parseEmptyValue(oldValue)
+  newValue = parseEmptyValue(newValue)
 
-  [ prefix, id ] = uri.split(':')
+  ;[ prefix, id ] = uri.split(':')
   const updater = updaters[prefix]
   if (updater == null) {
-    return error_.bundle(req, res, `unsupported uri prefix: ${prefix}`, 400, uri)
+    throw error_.new(`unsupported uri prefix: ${prefix}`, 400, uri)
   }
 
-  return updater(req.user, id, property, oldVal, newVal)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
+  await updater(req.user, id, property, oldValue, newValue)
+  return { ok: true }
 }
 
 const parseEmptyValue = value => value === '' ? null : value
@@ -36,3 +42,5 @@ const updaters = {
   inv: require('./lib/update_inv_claim'),
   wd: require('./lib/update_wd_claim')
 }
+
+module.exports = { sanitization, controller }

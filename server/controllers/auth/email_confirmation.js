@@ -1,16 +1,11 @@
 const token_ = require('controllers/user/lib/token')
-const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 
-module.exports = (req, res) => {
-  const { user } = req
-  if (user == null) {
-    return error_.bundle(req, res, 'user not found', 500)
-  }
+const sanitization = {}
 
-  sendEmailValidation(user)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
+const controller = async (params, req) => {
+  await sendEmailValidation(req.user)
+  return { ok: true }
 }
 
 const sendEmailValidation = async user => {
@@ -25,3 +20,5 @@ const sendEmailValidation = async user => {
 
   return token_.sendValidationEmail(user)
 }
+
+module.exports = { sanitization, controller }

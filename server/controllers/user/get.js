@@ -1,15 +1,8 @@
 const _ = require('builders/utils')
-const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const { ownerSafeData } = require('./lib/authorized_user_data_pickers')
 
-module.exports = (req, res) => {
-  getTailoredData(req, res)
-  .then(res.json.bind(res))
-  .catch(error_.Handler(req, res))
-}
-
-const getTailoredData = async (req, res) => {
+const controller = async (params, req, res) => {
   // The logged in user as its document set on req.user by passport.js
   const userData = ownerSafeData(req.user)
 
@@ -37,3 +30,5 @@ const attributesByScope = {
   'stable-username': 'stableUsername',
   email: 'email',
 }
+
+module.exports = { sanitization: {}, controller }

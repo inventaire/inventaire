@@ -1,26 +1,21 @@
 // An endpoint to get statistics on users data contributions
 // Reserved to admins for the moment, as some data might be considered privacy issue
-const _ = require('builders/utils')
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
 const patches_ = require('./lib/patches')
 
-module.exports = (req, res) => {
-  let { period } = req.query
-
-  if (period != null) {
-    if (!_.isPositiveIntegerString(period)) {
-      return error_.bundleInvalid(req, res, 'period', period)
-    }
-
-    period = _.stringToInt(period)
-
-    return patches_.getActivityFromLastDay(period)
-    .then(responses_.Send(res))
-    .catch(error_.Handler(req, res))
-  } else {
-    return patches_.getGlobalActivity()
-    .then(responses_.Wrap(res, 'activity'))
-    .catch(error_.Handler(req, res))
+const sanitization = {
+  period: {
+    generics: 'positiveInteger',
+    optional: true
   }
 }
+
+const controller = async ({ period }) => {
+  if (period != null) {
+    return patches_.getActivityFromLastDay(period)
+  } else {
+    const activity = await patches_.getGlobalActivity()
+    return { activity }
+  }
+}
+
+module.exports = { sanitization, controller }

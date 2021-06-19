@@ -1,9 +1,6 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const { getNetworkIds } = require('controllers/user/lib/relations_status')
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 const { omitPrivateAttributes } = require('./lib/filter_private_attributes')
 
@@ -17,22 +14,17 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { ids, reqUserId } = params
-    return Promise.all([
-      items_.byIds(ids),
-      getNetworkIds(reqUserId)
-    ])
-    .then(filterAuthorizedItems(reqUserId))
-    // Paginating isn't really required when requesting items by ids
-    // but it also handles sorting and the consistency of the API
-    .then(Paginate(params))
-    .then(addAssociatedData)
-  })
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
+const controller = async params => {
+  const { ids, reqUserId } = params
+  return Promise.all([
+    items_.byIds(ids),
+    getNetworkIds(reqUserId)
+  ])
+  .then(filterAuthorizedItems(reqUserId))
+  // Paginating isn't really required when requesting items by ids
+  // but it also handles sorting and the consistency of the API
+  .then(Paginate(params))
+  .then(addAssociatedData)
 }
 
 const filterAuthorizedItems = reqUserId => ([ items, networkIds ]) => {
@@ -55,3 +47,5 @@ const filterByAuthorization = (reqUserId, networkIds) => item => {
     if (listing === 'public') return omitPrivateAttributes(item)
   }
 }
+
+module.exports = { sanitization, controller }

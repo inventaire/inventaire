@@ -1,22 +1,17 @@
 const _ = require('builders/utils')
-const { Wait } = require('lib/promises')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
+const { wait } = require('lib/promises')
 const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
 
-module.exports = (req, res) => {
-  const { uris } = req.body
-
-  if (!_.isArray(uris)) {
-    return error_.bundleInvalid(req, res, 'uris', uris)
-  }
-
-  return refreshSequentially(uris)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
+const sanitization = {
+  uris: {}
 }
 
-const refreshSequentially = uris => {
+const controller = async ({ uris }) => {
+  await refreshSequentially(uris)
+  return { ok: true }
+}
+
+const refreshSequentially = async uris => {
   const refreshNext = async () => {
     const nextUri = uris.pop()
 
@@ -29,11 +24,13 @@ const refreshSequentially = uris => {
 
     _.log(nextUri, 'next URI for items snapshot refresh')
 
-    return refreshSnapshot.fromUri(nextUri)
+    await refreshSnapshot.fromUri(nextUri)
     // Space refreshes to lower stress on production resources
-    .then(Wait(100))
-    .then(refreshNext)
+    await wait(100)
+    return refreshNext()
   }
 
   return refreshNext()
 }
+
+module.exports = { sanitization, controller }

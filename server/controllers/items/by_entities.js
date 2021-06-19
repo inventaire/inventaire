@@ -1,9 +1,6 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const relations_ = require('controllers/relations/lib/queries')
-const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
-const responses_ = require('lib/responses')
 const { addAssociatedData, Paginate } = require('./lib/queries_commons')
 
 const sanitization = {
@@ -12,12 +9,9 @@ const sanitization = {
   offset: { optional: true }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(getEntitiesItems)
+const controller = async params => {
+  return getEntitiesItems(params)
   .then(addAssociatedData)
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
 }
 
 const getEntitiesItems = page => {
@@ -61,3 +55,5 @@ const deduplicateItems = (userItems, networkItems, publicItems) => {
 }
 
 const getId = _.property('_id')
+
+module.exports = { sanitization, controller }

@@ -1,9 +1,7 @@
 const _ = require('builders/utils')
 const parseForm = require('./lib/parse_form')
-const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const { containers, uploadContainersNames } = require('./lib/containers')
-const { sanitizeSync } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   nonJsonBody: true,
@@ -13,15 +11,8 @@ const sanitization = {
   },
 }
 
-module.exports = (req, res) => {
-  upload(req, res)
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
-}
-
-const upload = async (req, res) => {
-  // Use the sync version of sanitize so that parseForm below doesn't miss req 'data' events
-  const { container } = sanitizeSync(req, res, sanitization)
+const controller = async (params, req) => {
+  const { container } = params
 
   const { putImage } = containers[container]
 
@@ -62,3 +53,5 @@ const indexUrlById = collection => {
   })
   return index
 }
+
+module.exports = { sanitization, controller }

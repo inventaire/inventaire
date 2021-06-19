@@ -1,9 +1,6 @@
 const items_ = require('controllers/items/lib/items')
 const user_ = require('controllers/user/lib/user')
 const { areFriendsOrGroupCoMembers } = require('controllers/user/lib/relations_status')
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {},
@@ -17,15 +14,9 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { userId, uris, reqUserId, includeUsers } = params
-    return user_.getUserById(userId, reqUserId)
-    .then(getItemsFromUser(reqUserId, uris, includeUsers))
-  })
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
+const controller = async ({ userId, uris, reqUserId, includeUsers }) => {
+  return user_.getUserById(userId, reqUserId)
+  .then(getItemsFromUser(reqUserId, uris, includeUsers))
 }
 
 const getItemsFromUser = (reqUserId, uris, includeUsers) => user => {
@@ -47,3 +38,5 @@ const getAuthorizationLevel = async (reqUserId, ownerId) => {
   return areFriendsOrGroupCoMembers(reqUserId, ownerId)
   .then(bool => bool === true ? 'network' : 'public')
 }
+
+module.exports = { sanitization, controller }

@@ -1,22 +1,14 @@
 // An endpoint to get the request user email and convert it to a gravatar url
 // so that a client can offer to import an existing avatar
 
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { sanitize } = require('lib/sanitize/sanitize')
 const { md5 } = require('lib/crypto')
 
 const sanitization = {}
 
-// Get an image data-url from a URL
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(() => {
-    const { email } = req.user
-    return getGravatarUrl(email)
-  })
-  .then(responses_.Wrap(res, 'url'))
-  .catch(error_.Handler(req, res))
+const controller = async (params, req) => {
+  const { email } = req.user
+  const url = await getGravatarUrl(email)
+  return { url }
 }
 
 const getGravatarUrl = email => `${baseUrl}${getHash(email)}${queryString}`
@@ -32,3 +24,5 @@ const getHash = email => {
   email = email.trim().toLowerCase()
   return md5(email)
 }
+
+module.exports = { sanitization, controller }

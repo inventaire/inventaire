@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const buildInvertedClaimTree = require('./build_inverted_claim_tree')
 
-module.exports = items => entitiesData => {
+module.exports = (items, entitiesData) => {
   const { works, editionWorkMap } = entitiesData
   const worksTree = buildInvertedClaimTree(works)
   const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})

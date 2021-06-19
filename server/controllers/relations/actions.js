@@ -1,26 +1,23 @@
 const _ = require('builders/utils')
 const intent = require('./lib/intent')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { Track } = require('lib/track')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   user: {}
 }
 
-module.exports = action => (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { reqUserId, user: userId } = params
-
-    return solveNewRelation(action, userId, reqUserId)
-    .then(_.success.bind(null, userId, `${action}: OK!`))
-  })
-  .then(responses_.Ok(res))
-  .then(Track(req, [ 'relation', action ]))
-  .catch(error_.Handler(req, res))
+const controller = action => async params => {
+  const { reqUserId, user: userId } = params
+  await solveNewRelation(action, userId, reqUserId)
+  _.success(userId, `${action}: OK!`)
+  return { ok: true }
 }
+
+module.exports = action => ({
+  sanitization,
+  controller: controller(action),
+  track: [ 'relation', action ]
+})
 
 const solveNewRelation = async (action, othersId, reqUserId) => {
   if (reqUserId === othersId) {

@@ -1,6 +1,3 @@
-const { sanitize } = require('lib/sanitize/sanitize')
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const addRelatives = require('./lib/add_relatives')
 
@@ -24,13 +21,10 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => {
-    const { uris, refresh, relatives, autocreate } = params
-    return getEntitiesByUris({ uris, refresh, autocreate })
-    .then(addRelatives(relatives, refresh))
-  })
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
+const controller = async ({ uris, refresh, relatives, autocreate }) => {
+  const results = await getEntitiesByUris({ uris, refresh, autocreate })
+  if (relatives) return addRelatives(results, relatives, refresh)
+  else return results
 }
+
+module.exports = { sanitization, controller }

@@ -1,10 +1,8 @@
 const _ = require('builders/utils')
-const responses_ = require('lib/responses')
 const error_ = require('lib/error/error')
 const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
 const bundleViewData = require('./lib/view/bundle_view_data')
-const { sanitize } = require('lib/sanitize/sanitize')
 const getAuthorizedItems = require('./lib/get_authorized_items')
 const shelves_ = require('controllers/shelves/lib/shelves')
 
@@ -15,23 +13,17 @@ const sanitization = {
   'without-shelf': { optional: true, generic: 'boolean' }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(validateUserOrGroup)
-  .then(getItems)
-  .then(items => {
-    return getItemsEntitiesData(items)
-    .then(bundleViewData(items))
-  })
-  .then(responses_.Send(res))
-  .catch(error_.Handler(req, res))
+const controller = async params => {
+  validateUserOrGroup(params)
+  const items = await getItems(params)
+  const entitiesData = await getItemsEntitiesData(items)
+  return bundleViewData(items, entitiesData)
 }
 
 const validateUserOrGroup = params => {
   if (!(params.user || params.group || params.shelf)) {
     throw error_.newMissingQuery('user|group|shelf', 400, params)
   }
-  return params
 }
 
 const getItems = async params => {
@@ -53,3 +45,5 @@ const getItemsEntitiesData = items => {
   .then(({ entities }) => entities)
   .then(replaceEditionsByTheirWork)
 }
+
+module.exports = { sanitization, controller }

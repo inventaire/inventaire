@@ -1,7 +1,4 @@
 const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { sanitize } = require('lib/sanitize/sanitize')
 const sanitizeEntry = require('./lib/resolver/sanitize_entry')
 const resolve = require('./lib/resolver/resolve')
 const UpdateResolvedEntry = require('./lib/resolver/update_resolved_entry')
@@ -53,23 +50,16 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
+const controller = async (params, req) => {
   req.setTimeout(oneHour)
+  params.batchId = Date.now()
+  const { strict } = params
+  const { entries, errors } = sanitizeEntries(params.entries, strict)
 
-  sanitize(req, res, sanitization)
-  .then(params => {
-    params.batchId = Date.now()
-    const { strict } = params
-    const { entries, errors } = sanitizeEntries(params.entries, strict)
-
-    return sequentialResolve(entries, params, errors)
-    .then(resolvedEntries => {
-      const data = { entries: resolvedEntries }
-      if (!strict) data.errors = errors.map(formatError)
-      responses_.send(res, data)
-    })
-  })
-  .catch(error_.Handler(req, res))
+  const resolvedEntries = await sequentialResolve(entries, params, errors)
+  const data = { entries: resolvedEntries }
+  if (!strict) data.errors = errors.map(formatError)
+  return data
 }
 
 const sanitizeEntries = (entries, strict) => {
@@ -132,3 +122,5 @@ const formatError = err => {
   if (context === entry) return { message, entry }
   else return { message, context, entry }
 }
+
+module.exports = { sanitization, controller }

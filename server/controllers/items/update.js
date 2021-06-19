@@ -6,7 +6,6 @@ const responses_ = require('lib/responses')
 const { Track } = require('lib/track')
 
 module.exports = (req, res) => {
-  if (req.user == null) return error_.unauthorizedApiAccess(req, res)
   const { body: item } = req
   const { _id, entity } = item
 

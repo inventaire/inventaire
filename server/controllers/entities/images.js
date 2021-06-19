@@ -6,7 +6,7 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 const error_ = require('lib/error/error')
 const getEntitiesImages = require('./lib/get_entities_images')
 const { img: imgUrlBuilder } = require('lib/emails/app_api')
@@ -29,25 +29,22 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(async ({ uris, refresh, redirect, width, height }) => {
-    if (redirect) {
-      if (uris.length !== 1) {
-        throw error_.new('only one URI is allowed in redirect mode', 400, req.query)
-      }
+module.exports = async (req, res) => {
+  const { uris, refresh, redirect, width, height } = sanitizeSync(req, res, sanitization)
+  if (redirect) {
+    if (uris.length !== 1) {
+      throw error_.new('only one URI is allowed in redirect mode', 400, req.query)
     }
+  }
 
-    const images = await getEntitiesImages(uris, refresh)
+  const images = await getEntitiesImages(uris, refresh)
 
-    if (redirect) {
-      const url = await findRawImage(uris[0], images, width, height)
-      res.redirect(url)
-    } else {
-      res.json({ images })
-    }
-  })
-  .catch(error_.Handler(req, res))
+  if (redirect) {
+    const url = await findRawImage(uris[0], images, width, height)
+    res.redirect(url)
+  } else {
+    res.json({ images })
+  }
 }
 
 const findRawImage = async (uri, images, width, height) => {

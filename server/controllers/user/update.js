@@ -5,10 +5,7 @@ const updateEmail = require('controllers/user/lib/update_email')
 const db = require('db/couchdb/base')('users')
 const availability_ = require('controllers/user/lib/availability')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const { basicUpdater } = require('lib/doc_updates')
-const { Track } = require('lib/track')
-const { sanitize } = require('lib/sanitize/sanitize')
 const radio = require('lib/radio')
 
 const sanitization = {
@@ -18,15 +15,14 @@ const sanitization = {
   },
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(update(req.user))
-  .then(responses_.Ok(res))
-  .then(Track(req, [ 'user', 'update' ]))
-  .catch(error_.Handler(req, res))
+const controller = async (params, req) => {
+  const { attribute, value } = params
+  const { user } = req
+  await update(user, attribute, value)
+  return { ok: true }
 }
 
-const update = user => async ({ attribute, value }) => {
+const update = async (user, attribute, value) => {
   if (value == null && !acceptNullValue.includes(attribute)) {
     throw error_.newMissingBody('value')
   }
@@ -78,4 +74,10 @@ const updateAttribute = (user, attribute, value) => {
   } else {
     return db.update(user._id, basicUpdater.bind(null, attribute, value))
   }
+}
+
+module.exports = {
+  sanitization,
+  controller,
+  track: [ 'user', 'update' ]
 }

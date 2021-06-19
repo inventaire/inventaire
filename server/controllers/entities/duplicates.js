@@ -4,15 +4,12 @@
 // to sort it by reduced values, which isn't supported by CouchDB
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const designDocName = 'entities_deduplicate'
 const db = require('db/couchdb/base')('entities', designDocName)
 
-module.exports = (req, res) => {
-  return getHomonymes()
-  .then(responses_.Wrap(res, 'names'))
-  .catch(error_.Handler(req, res))
+const controller = async () => {
+  const names = await getHomonymes()
+  return { names }
 }
 
 const getHomonymes = async () => {
@@ -24,3 +21,5 @@ const getHomonymes = async () => {
   .sort((a, b) => b.value - a.value)
   .slice(0, 100)
 }
+
+module.exports = { sanitization: {}, controller }

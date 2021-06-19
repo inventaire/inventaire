@@ -1,19 +1,16 @@
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
 const tasks_ = require('./lib/tasks')
-const { sanitize } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   uris: {}
 }
 
-const byEntityUris = fnName => (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(({ uris }) => uris)
-  .then(uris => tasks_[fnName](uris, { index: true }))
-  .then(responses_.Wrap(res, 'tasks'))
-  .catch(error_.Handler(req, res))
-}
+const byEntityUris = fnName => ({
+  sanitization,
+  controller: async ({ uris }) => {
+    const tasks = await tasks_[fnName](uris, { index: true })
+    return { tasks }
+  }
+})
 
 module.exports = {
   bySuspectUris: byEntityUris('bySuspectUris'),

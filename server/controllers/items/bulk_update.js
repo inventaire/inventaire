@@ -1,8 +1,5 @@
-const { sanitize } = require('lib/sanitize/sanitize')
 const items_ = require('controllers/items/lib/items')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { tap } = require('lib/promises')
 
 const sanitization = {
   ids: {},
@@ -10,15 +7,13 @@ const sanitization = {
   value: { type: 'string' }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(tap(validateAttributes))
-  .then(items_.bulkUpdate)
-  .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
+const controller = async params => {
+  validateAttributes(params.attribute)
+  await items_.bulkUpdate(params)
+  return { ok: true }
 }
 
-const validateAttributes = ({ attribute }) => {
+const validateAttributes = attribute => {
   // bulk update cannot update collections values of some attributes
   // as there is no way to know what to do with the values (ie. add it, remove it)
   // Known attributes : shelves
@@ -28,3 +23,5 @@ const validateAttributes = ({ attribute }) => {
     throw error_.new(errorMessage, 400, attribute)
   }
 }
+
+module.exports = { sanitization, controller }
