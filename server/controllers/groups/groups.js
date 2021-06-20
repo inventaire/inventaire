@@ -1,7 +1,4 @@
-const responses_ = require('lib/responses')
-const error_ = require('lib/error/error')
 const publicActions = require('./public_actions')
-const { allUserGroups } = require('./lib/groups')
 const ActionsControllers = require('lib/actions_controllers')
 const membersActions = require('./members_actions')
 
@@ -14,11 +11,7 @@ module.exports = {
       slug: publicActions.slug
     },
     authentified: {
-      default: (req, res) => {
-        return allUserGroups(req.user._id)
-        .then(responses_.Wrap(res, 'groups'))
-        .catch(error_.Handler(req, res))
-      }
+      default: require('./get_user_groups')
     }
   }),
 
