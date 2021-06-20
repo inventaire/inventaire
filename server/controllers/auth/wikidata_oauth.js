@@ -1,6 +1,5 @@
 const CONFIG = require('config')
 const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
 const root = CONFIG.fullPublicHost()
 const OAuth = require('oauth-1.0a')
 const crypto = require('crypto')
@@ -35,25 +34,21 @@ const step2Url = `${wdBaseNice}Special:OAuth/authorize`
 const step3Url = `${wdBaseNonNice}Special:OAuth/token`
 const reqTokenSecrets = {}
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   const { _id: reqUserId } = req.user
   const { oauth_verifier: verifier, oauth_token: reqToken, redirect } = req.query
 
   const step1 = !(verifier || reqToken)
 
   if (step1) {
-    getStep1Token(redirect)
-    .then(step1Res => {
-      const { oauth_token_secret: reqTokenSecret } = qs.parse(step1Res)
-      reqTokenSecrets[reqUserId] = reqTokenSecret
-      res.redirect(`${step2Url}?${step1Res}`)
-    })
-    .catch(error_.Handler(req, res))
+    const step1Res = await getStep1Token(redirect)
+    const { oauth_token_secret: reqTokenSecret } = qs.parse(step1Res)
+    reqTokenSecrets[reqUserId] = reqTokenSecret
+    res.redirect(`${step2Url}?${step1Res}`)
   } else {
-    getStep3(reqUserId, verifier, reqToken)
-    .then(saveUserTokens(reqUserId))
-    .then(() => res.redirect(`${root}${redirect}`))
-    .catch(error_.Handler(req, res))
+    const step3Res = await getStep3(reqUserId, verifier, reqToken)
+    await saveUserTokens(step3Res, reqUserId)
+    res.redirect(`${root}${redirect}`)
   }
 }
 
@@ -91,7 +86,7 @@ const getOauthHeaders = (reqData, tokenData) => {
   return oauth.toHeader(signature)
 }
 
-const saveUserTokens = reqUserId => step3Res => {
+const saveUserTokens = (step3Res, reqUserId) => {
   const { oauth_token_secret: userTokenSecret, oauth_token: userToken } = qs.parse(step3Res)
   const data = { token: userToken, token_secret: userTokenSecret }
   return user_.setOauthTokens(reqUserId, 'wikidata', data)

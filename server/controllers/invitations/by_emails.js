@@ -34,7 +34,6 @@ module.exports = async (req, res) => {
   .then(_.Log('invitationByEmails data'))
   .then(responses_.Send(res))
   .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
-  .catch(error_.Handler(req, res))
 }
 
 const parseAndValidateEmails = async (emails, userEmail) => {

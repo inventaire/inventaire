@@ -31,5 +31,4 @@ module.exports = (req, res) => {
   .then(snapshot_.addToItem)
   .then(responses_.Send(res))
   .then(Track(req, [ 'item', 'update' ]))
-  .catch(error_.Handler(req, res))
 }

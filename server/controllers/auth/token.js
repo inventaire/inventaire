@@ -1,8 +1,7 @@
 const _ = require('builders/utils')
 const ActionsControllers = require('lib/actions_controllers')
 const token_ = require('controllers/user/lib/token')
-const { sanitize } = require('lib/sanitize/sanitize')
-const error_ = require('lib/error/error')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 const passport_ = require('lib/passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')
 
@@ -14,8 +13,8 @@ const sanitization = {
 }
 
 const confirmEmailValidity = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(params => token_.confirmEmailValidity(params.email, params.token))
+  const { email, token } = sanitizeSync(req, res, sanitization)
+  token_.confirmEmailValidity(email, token)
   .then(redirectValidEmail.bind(null, res, true))
   .catch(redirectValidEmail.bind(null, res, false))
 }
@@ -29,11 +28,8 @@ const redirectValidEmail = (res, bool, resp) => {
 //    => start a session with email/token instead of username/pw
 //    => redirect to the reset-password page
 const allowPasswordReset = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(() => passport_.authenticate.resetPassword(req, res, Redirect(res)))
-  // Only handling sanitization rejected errors,
-  // passport_.authenticate, deals with its own errors
-  .catch(error_.Handler(req, res))
+  sanitizeSync(req, res, sanitization)
+  passport_.authenticate.resetPassword(req, res, Redirect(res))
 }
 
 const Redirect = res => () => {

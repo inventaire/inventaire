@@ -44,7 +44,6 @@ module.exports = (req, res) => {
   return test
   .then(updatePassword.bind(null, user, newPassword))
   .then(responses_.Ok(res))
-  .catch(error_.Handler(req, res))
 }
 
 const updatePassword = (user, newPassword) => {

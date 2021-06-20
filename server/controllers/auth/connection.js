@@ -1,4 +1,4 @@
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 const error_ = require('lib/error/error')
 const passport_ = require('lib/passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')
@@ -20,14 +20,9 @@ module.exports = {
   // TODO: rate limit to 10 signup per IP per 10 minutes
   signup: (req, res) => {
     // `sanitize` is only used as pre-validation here
-    sanitize(req, res, signupSanitization)
-    .then(() => {
-      const next = loggedIn(req, res)
-      passport_.authenticate.localSignup(req, res, next)
-    })
-    // Only handling sanitization rejected errors,
-    // passport_.authenticate, deals with its own errors
-    .catch(error_.Handler(req, res))
+    sanitizeSync(req, res, signupSanitization)
+    const next = loggedIn(req, res)
+    passport_.authenticate.localSignup(req, res, next)
   },
 
   login: (req, res) => {
