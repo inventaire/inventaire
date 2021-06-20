@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const headers_ = require('lib/headers')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 const getAuthentifiedUser = require('./lib/get_authentified_user')
 const userFeedData = require('./lib/user_feed_data')
 const groupFeedData = require('./lib/group_feed_data')
@@ -31,19 +31,16 @@ const sanitization = {
 }
 
 module.exports = {
-  get: (req, res) => {
+  get: async (req, res) => {
     const headersLang = headers_.getLang(req.headers)
-    sanitize(req, res, sanitization)
-    .then(getFeed(headersLang))
-    .then(xml => {
-      res.set('content-type', 'application/rss+xml')
-      res.send(xml)
-    })
-    .catch(error_.Handler(req, res))
+    const params = sanitizeSync(req, res, sanitization)
+    const xml = await getFeed(headersLang, params)
+    res.set('content-type', 'application/rss+xml')
+    res.send(xml)
   }
 }
 
-const getFeed = headersLang => async params => {
+const getFeed = async (headersLang, params) => {
   const { userId, groupId, shelfId, requesterId, token } = params
   // Guess the lang from the query string or from the request headers
   // that might be passed by the feeds aggregator
