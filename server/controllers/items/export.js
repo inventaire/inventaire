@@ -1,5 +1,4 @@
-const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitizeSync } = require('lib/sanitize/sanitize')
 const items_ = require('./lib/items')
 const addEntitiesData = require('./lib/export/add_entities_data')
 const FormatItemRow = require('./lib/export/format_item_row')
@@ -13,27 +12,23 @@ const sanitization = {
   }
 }
 
-module.exports = (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(({ reqUserId }) => {
-    const { language } = req.user
-    const responseText = csvHeaderRow + '\n'
-    return items_.byOwner(reqUserId)
-    .then(buildItemsRowsSequentially(responseText, language))
-  })
-  .then(responses_.SendText(res))
-  .catch(error_.Handler(req, res))
+module.exports = async (req, res) => {
+  const { reqUserId } = sanitizeSync(req, res, sanitization)
+  const { language } = req.user
+  let responseText = csvHeaderRow + '\n'
+  const items = await items_.byOwner(reqUserId)
+  responseText = await buildItemsRowsSequentially(items, responseText, language)
+  responses_.sendText(res, responseText)
 }
 
 const addEntitiesAndShelfData = async item => {
   item = await addEntitiesData(item)
   const shelves = await shelves_.byIds(item.shelves)
   item.shelfNames = shelves.map(shelf => shelf.name)
-
   return item
 }
 
-const buildItemsRowsSequentially = (responseText, lang) => items => {
+const buildItemsRowsSequentially = async (items, responseText, lang) => {
   const formatItemRow = FormatItemRow(lang)
 
   const sendNextBatch = async () => {
