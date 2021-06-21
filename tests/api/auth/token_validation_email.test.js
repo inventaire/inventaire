@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 require('should')
-const { getUserGetter } = require('../utils/utils')
+const { getUserGetter, publicReq, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { wait } = require('lib/promises')
 const { createUserEmail } = require('../fixtures/users')
@@ -12,22 +12,34 @@ const randomString = require('lib/utils/random_string')
 
 describe('token:validation-email', () => {
   it('should reject requests without email', async () => {
-    const { headers } = await rawRequest('get', host + endpoint)
-    headers.location.should.equal(`${host}/?validEmail=false`)
+    await publicReq('get', endpoint)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.error_name.should.equal('missing_email')
+    })
   })
 
   it('should reject requests without token', async () => {
     const email = createUserEmail()
-    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}`)
-    headers.location.should.equal(`${host}/?validEmail=false`)
+    await publicReq('get', `${endpoint}&email=${email}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.error_name.should.equal('missing_token')
+    })
   })
 
   it('should reject if token is too short', async () => {
     const email = createUserEmail()
     const token = randomString(31)
     await getUserGetter(email)()
-    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${host}/?validEmail=false`)
+    await publicReq('get', `${endpoint}&email=${email}&token=${token}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid token length')
+    })
   })
 
   it('should reject if account is already validated', async () => {

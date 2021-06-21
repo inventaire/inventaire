@@ -12,16 +12,15 @@ const sanitization = {
   }
 }
 
-const confirmEmailValidity = (req, res) => {
+const confirmEmailValidity = async (req, res) => {
   const { email, token } = sanitizeSync(req, res, sanitization)
-  token_.confirmEmailValidity(email, token)
-  .then(redirectValidEmail.bind(null, res, true))
-  .catch(redirectValidEmail.bind(null, res, false))
-}
-
-const redirectValidEmail = (res, bool, resp) => {
-  if (!bool) _.error(resp, 'email validation failed')
-  res.redirect(`/?validEmail=${bool}`)
+  try {
+    await token_.confirmEmailValidity(email, token)
+    res.redirect('/?validEmail=true')
+  } catch (err) {
+    _.error(err, 'email validation failed')
+    res.redirect('/?validEmail=false')
+  }
 }
 
 // reset password =
