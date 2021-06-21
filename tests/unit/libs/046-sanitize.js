@@ -1,6 +1,6 @@
 const should = require('should')
 const { sanitize, sanitizeAsync } = require('lib/sanitize/sanitize')
-const { undesiredRes, shouldNotBeCalled } = require('../utils')
+const { shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {
   describe('sanitize', () => {
@@ -20,15 +20,14 @@ describe('sanitize', () => {
     })
   })
 
-  it('should reject invalid req objects based on req.query existance', done => {
+  it('should reject invalid req objects based on req.query existance', async () => {
     const req = {}
     const configs = {}
-    sanitizeAsync(req, {}, configs)
+    await sanitizeAsync(req, {}, configs)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.message.should.startWith('TypeError: expected object, got undefined')
-      done()
     })
-    .catch(done)
   })
 
   it('should add a warning for unknown parameter (server error)', async () => {
@@ -102,31 +101,27 @@ describe('sanitize', () => {
       Object.keys(input).length.should.equal(0)
     })
 
-    it('should still validate optional parameters', done => {
+    it('should still validate optional parameters', async () => {
       const req = { query: { lang: '1212515' } }
       const res = {}
       const configs = { lang: { optional: true } }
-      sanitizeAsync(req, res, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, res, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid lang: 1212515')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('secret parameter', () => {
-    it('should not return the value', done => {
+    it('should not return the value', async () => {
       const req = { query: { password: 'a' } }
       const configs = { password: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.context.value.should.equal('*')
-        done()
       })
-      .catch(done)
     })
   })
 
@@ -134,28 +129,24 @@ describe('sanitize', () => {
     it('should accept boolean generic parameters', async () => {
       const req = { query: { 'include-users': true } }
       const res = {}
-
       const configs = {
         'include-users': {
           generic: 'boolean',
           default: false
         }
       }
-
       const { includeUsers } = sanitize(req, res, configs)
       includeUsers.should.be.true()
     })
 
     it('should accept allowlist generic parameters', async () => {
       const res = {}
-
       const configs = {
         foo: {
           generic: 'allowlist',
           allowlist: [ 'a', 'b', 'c' ]
         }
       }
-
       const { foo } = sanitize({ query: { foo: 'a' } }, res, configs)
       foo.should.equal('a')
       await sanitizeAsync({ query: { foo: 'd' } }, res, configs)
@@ -165,23 +156,19 @@ describe('sanitize', () => {
       })
     })
 
-    it('should throw when passed an invalid generic name', done => {
+    it('should throw when passed an invalid generic name', async () => {
       const req = { query: {} }
       const res = {}
-
       const configs = {
         foo: {
           generic: 'bar'
         }
       }
-
-      sanitizeAsync(req, res, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, res, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid generic name')
-        done()
       })
-      .catch(done)
     })
 
     it('should clone default values', async () => {
@@ -194,7 +181,6 @@ describe('sanitize', () => {
           default: obj
         }
       }
-
       const { foo } = sanitize(req, res, configs)
       foo.should.deepEqual({})
       foo.should.not.equal(obj)
@@ -202,15 +188,11 @@ describe('sanitize', () => {
   })
 
   describe('strictly positive integer', () => {
-    it('should accept string values', done => {
+    it('should accept string values', async () => {
       const req = { query: { limit: '5' } }
       const configs = { limit: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(input => {
-        input.limit.should.equal(5)
-        done()
-      })
-      .catch(done)
+      const { limit } = sanitize(req, {}, configs)
+      limit.should.equal(5)
     })
 
     it('should accept a default value', async () => {
@@ -232,54 +214,46 @@ describe('sanitize', () => {
       ])
     })
 
-    it('should reject negative values', done => {
+    it('should reject negative values', async () => {
       const req = { query: { limit: '-5' } }
       const configs = { limit: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid limit: -5')
-        done()
       })
-      .catch(done)
     })
 
-    it('should reject non-integer values', done => {
+    it('should reject non-integer values', async () => {
       const req = { query: { limit: '5.5' } }
       const configs = { limit: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid limit: 5.5')
-        done()
       })
-      .catch(done)
     })
 
-    it('should reject non-number values', done => {
+    it('should reject non-number values', async () => {
       const req = { query: { limit: 'bla' } }
       const configs = { limit: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid limit: bla')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('couch uuid', () => {
-    it('should reject invalid uuids values', done => {
+    it('should reject invalid uuids values', async () => {
       const req = { query: { user: 'foo' } }
       const configs = { user: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid user: foo')
-        done()
       })
-      .catch(done)
     })
 
     it('should accept valid uuids', async () => {
@@ -292,69 +266,58 @@ describe('sanitize', () => {
   })
 
   describe('string with specific length', () => {
-    it('should reject a token of invalid type', done => {
+    it('should reject a token of invalid type', async () => {
       const req = { query: { token: 1251251 } }
       const configs = { token: { length: 32 } }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid token: expected string, got number')
-        done()
       })
-      .catch(done)
     })
 
-    it('should reject an invalid token', done => {
+    it('should reject an invalid token', async () => {
       const req = { query: { token: 'foo' } }
       const configs = { token: { length: 32 } }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid token length: expected 32, got 3')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('objects', () => {
-    it('should stringify invalid values', done => {
+    it('should stringify invalid values', async () => {
       const req = { query: { foo: [ 123 ] } }
       const configs = { foo: { generic: 'object' } }
-
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid foo: [123]')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('uris', () => {
-    it('should reject invalid type', done => {
+    it('should reject invalid type', async () => {
       const req = { query: { uris: 1251251 } }
       const configs = { uris: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid uris: expected array, got number')
-        done()
       })
-      .catch(done)
     })
 
-    it('should reject array including invalid values', done => {
+    it('should reject array including invalid values', async () => {
       const req = { query: { uris: [ 1251251 ] } }
       const configs = { uris: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.startWith('invalid uri: expected uri, got')
-        done()
       })
-      .catch(done)
     })
 
     it('should accept uris as an array of strings', async () => {
@@ -373,42 +336,36 @@ describe('sanitize', () => {
   })
 
   describe('uri', () => {
-    it('should reject invalid type', done => {
+    it('should reject invalid type', async () => {
       const req = { query: { uri: 1251251 } }
       const configs = { uri: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.startWith('invalid uri')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('ids', () => {
-    it('should reject invalid type', done => {
+    it('should reject invalid type', async () => {
       const req = { query: { ids: 1251251 } }
       const configs = { ids: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid ids: expected array, got number')
-        done()
       })
-      .catch(done)
     })
 
-    it('should reject array including invalid values', done => {
+    it('should reject array including invalid values', async () => {
       const req = { query: { ids: [ 1251251 ] } }
       const configs = { ids: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.startWith('invalid id: expected id, got')
-        done()
       })
-      .catch(done)
     })
 
     it('should deduplicate ids', async () => {
@@ -419,16 +376,14 @@ describe('sanitize', () => {
       ids.should.deepEqual([ id ])
     })
 
-    it('should reject an empty array', done => {
+    it('should reject an empty array', async () => {
       const req = { query: { ids: [] } }
       const configs = { ids: {} }
-      sanitizeAsync(req, {}, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, {}, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.startWith("ids array can't be empty")
-        done()
       })
-      .catch(done)
     })
   })
 
@@ -449,31 +404,28 @@ describe('sanitize', () => {
       lang.should.equal('fr')
     })
 
-    it('should reject an invalid lang', done => {
+    it('should reject an invalid lang', async () => {
       const req = { query: { lang: '12512' } }
       const res = {}
       const configs = { lang: {} }
-      sanitizeAsync(req, res, configs)
-      .then(undesiredRes(done))
+      await sanitizeAsync(req, res, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid lang: 12512')
-        done()
       })
-      .catch(done)
     })
   })
 
   describe('relatives', () => {
-    it('should reject non allowlisted relatives', done => {
+    it('should reject non allowlisted relatives', async () => {
       const req = { query: { relatives: [ 'bar', 'foo' ] } }
       const res = {}
       const configs = { relatives: { allowlist: [ 'bar' ] } }
-      sanitizeAsync(req, res, configs)
+      await sanitizeAsync(req, res, configs)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.startWith('invalid relative')
-        done()
       })
-      .catch(done)
     })
 
     it('should return relatives if allowlisted', async () => {
