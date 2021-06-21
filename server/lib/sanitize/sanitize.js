@@ -11,7 +11,7 @@ const { generics } = parameters
 // when something needs to be done during the current tick.
 // Example: consumers of the request (aka req) stream need to run on the same tick.
 // If they have to wait for the next tick, 'data' events might be over
-const sanitizeSync = (req, res, configs) => {
+const sanitize = (req, res, configs) => {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
@@ -40,8 +40,8 @@ const sanitizeSync = (req, res, configs) => {
 }
 
 module.exports = {
-  sanitizeSync,
-  sanitize: async (req, res, configs) => sanitizeSync(req, res, configs)
+  sanitize,
+  sanitizeAsync: async (req, res, configs) => sanitize(req, res, configs)
 }
 
 const optionsNames = new Set([ 'nonJsonBody' ])

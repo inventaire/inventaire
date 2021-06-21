@@ -1,4 +1,4 @@
-const { sanitizeSync } = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const items_ = require('./lib/items')
 const addEntitiesData = require('./lib/export/add_entities_data')
 const FormatItemRow = require('./lib/export/format_item_row')
@@ -13,7 +13,7 @@ const sanitization = {
 }
 
 module.exports = async (req, res) => {
-  const { reqUserId } = sanitizeSync(req, res, sanitization)
+  const { reqUserId } = sanitize(req, res, sanitization)
   const { language } = req.user
   let responseText = csvHeaderRow + '\n'
   const items = await items_.byOwner(reqUserId)

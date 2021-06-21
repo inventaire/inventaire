@@ -3,7 +3,7 @@ const responses_ = require('lib/responses')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitizeAsync } = require('lib/sanitize/sanitize')
 const Group = require('models/group')
 
 const sanitization = {
@@ -28,7 +28,7 @@ const sanitization = {
 
 module.exports = {
   get: (req, res) => {
-    sanitize(req, res, sanitization)
+    sanitizeAsync(req, res, sanitization)
     .then(search)
     .then(responses_.Wrap(res, 'results'))
     .catch(error_.Handler(req, res))

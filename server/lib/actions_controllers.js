@@ -3,7 +3,7 @@ const error_ = require('lib/error/error')
 const validateObject = require('lib/validate_object')
 const { rolesByAccess } = require('./get_user_access_levels')
 const { send } = require('./responses')
-const { sanitizeSync } = require('./sanitize/sanitize')
+const { sanitize } = require('./sanitize/sanitize')
 const { track } = require('./track')
 const assert_ = require('./utils/assert_types')
 
@@ -37,7 +37,7 @@ module.exports = controllers => {
     const { controller, sanitization, trackActionArray } = actionData
     try {
       if (sanitization) {
-        const params = sanitizeSync(req, res, sanitization)
+        const params = sanitize(req, res, sanitization)
         const result = await controller(params, req, res)
         send(res, result)
         if (trackActionArray) track(req, trackActionArray)

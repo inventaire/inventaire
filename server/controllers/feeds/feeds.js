@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const headers_ = require('lib/headers')
-const { sanitizeSync } = require('lib/sanitize/sanitize')
+const { sanitize } = require('lib/sanitize/sanitize')
 const getAuthentifiedUser = require('./lib/get_authentified_user')
 const userFeedData = require('./lib/user_feed_data')
 const groupFeedData = require('./lib/group_feed_data')
@@ -33,7 +33,7 @@ const sanitization = {
 module.exports = {
   get: async (req, res) => {
     const headersLang = headers_.getLang(req.headers)
-    const params = sanitizeSync(req, res, sanitization)
+    const params = sanitize(req, res, sanitization)
     const xml = await getFeed(headersLang, params)
     res.set('content-type', 'application/rss+xml')
     res.send(xml)
