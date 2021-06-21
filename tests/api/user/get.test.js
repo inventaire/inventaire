@@ -66,7 +66,7 @@ describe('user:get', () => {
       const initialUsername = userData.username
       userData.stableUsername.should.equal(initialUsername)
       const updatedUsername = initialUsername + 'a'
-      await updateUser(getUser(), 'username', updatedUsername)
+      await updateUser({ user: getUser(), attribute: 'username', value: updatedUsername })
       const { body: userDataAfterUpdate } = await bearerTokenReq(token, 'get', '/api/user')
       userDataAfterUpdate.username.should.equal(updatedUsername)
       userDataAfterUpdate.stableUsername.should.equal(initialUsername)

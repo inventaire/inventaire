@@ -1,3 +1,4 @@
+const assert_ = require('lib/utils/assert_types')
 const { customAuthReq, getUser } = require('./utils')
 
 module.exports = {
@@ -10,7 +11,9 @@ module.exports = {
   },
 
   updateUser: async ({ user, attribute, value }) => {
-    user = user || await getUser()
+    user = await (user || getUser())
+    assert_.object(user)
+    assert_.string(attribute)
     return customAuthReq(user, 'put', '/api/user', { attribute, value })
   },
 
