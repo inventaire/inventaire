@@ -21,7 +21,7 @@ module.exports = {
       // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/analysis-edgengram-tokenizer.html
       autocomplete_filter: {
         type: 'edge_ngram',
-        min_gram: 2,
+        min_gram: 1,
         max_gram: maxGram
       },
       // An analyzer to apply at search time to match the autocomplete analyzer used at index time

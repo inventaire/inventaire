@@ -89,6 +89,16 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      it('should find a label with single letter words', async () => {
+        // Insert random words in the middle to mitigate a too low score due to a high term frequency
+        // when running the tests several times without emptying the database
+        const label = `a ${randomWords(3)}`
+        const work = await createWork({ labels: { en: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'en', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
       it('should ignore the case', async () => {
         // Insert random words in the middle to mitigate a too low score due to a high term frequency
         // when running the tests several times without emptying the database
