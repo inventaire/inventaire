@@ -4,6 +4,7 @@ const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const entities_ = require('controllers/entities/lib/entities')
 const runWdQuery = require('data/wikidata/run_query')
 const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
+const { forceArray } = require('lib/utils/base')
 
 module.exports = async (claims, resolveOnWikidata = true) => {
   const externalIds = []
@@ -11,7 +12,7 @@ module.exports = async (claims, resolveOnWikidata = true) => {
   for (const prop in claims) {
     const values = claims[prop]
     if (properties[prop].isExternalId) {
-      values.forEach(value => externalIds.push([ prop, value ]))
+      forceArray(values).forEach(value => externalIds.push([ prop, value ]))
     }
   }
 

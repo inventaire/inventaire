@@ -106,14 +106,11 @@ const getIsbn = edition => {
 
 const createWorkSeedFromEdition = edition => {
   const { claims } = edition
-  const titleClaim = claims && claims['wdt:P1476'] && claims['wdt:P1476'][0]
-  if (titleClaim == null) return
-  const title = claims['wdt:P1476'][0]
-  const langClaim = claims['wdt:P407'] && claims['wdt:P407'][0]
+  const title = claims?.['wdt:P1476'] ? _.forceArray(claims['wdt:P1476'])[0] : null
+  if (title == null) return
+  const langClaim = claims['wdt:P407'] && _.forceArray(claims['wdt:P407'])[0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null
-  let lang
-  if (langWdId && wmLanguageCodeByWdId[langWdId]) lang = wmLanguageCodeByWdId[langWdId]
-  lang = lang || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
+  const lang = wmLanguageCodeByWdId[langWdId] || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
   return {
     labels: {
       [lang]: title

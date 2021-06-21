@@ -6,6 +6,7 @@ const all = [
   'wdt:P227', // GND ID
   'wdt:P243', // OCLC control number
   'wdt:P268', // BNF ID
+  'wdt:P950', // BNE ID
 ]
 
 const socialNetworks = [
@@ -68,6 +69,7 @@ module.exports = {
     'wdt:P2680', // author of afterword
     'wdt:P2969', // GoodReads book ID
     'wdt:P3184', // Czech National Bibliography book ID
+    'wdt:P5199', // British Library system number
     'wdt:P5571', // NooSFere book ID
     'invp:P2', // cover image hash
   ]),
@@ -90,7 +92,6 @@ module.exports = {
     'wdt:P737', // influenced by
     'wdt:P856', // official website
     'wdt:P906', // SELIBR ID (Swedish)
-    'wdt:P950', // BNE ID
     'wdt:P1006', // Dutch National for Author Names ID
     'wdt:P1412', // languages of expression
     'wdt:P1960', // Google Scholar author ID
