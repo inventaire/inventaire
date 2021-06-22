@@ -114,8 +114,8 @@ describe('activitypub:post:inbox', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
-      parsedBody.status_verbose.should.equal('not found')
-      parsedBody.status.should.equal(404)
+      parsedBody.status_verbose.should.equal('forbidden user')
+      parsedBody.status.should.equal(403)
     }
   })
 
