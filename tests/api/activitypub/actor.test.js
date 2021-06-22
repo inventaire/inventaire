@@ -1,17 +1,17 @@
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { startServerWithEmetterAndReceiver, startServerWithEmetterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
+const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      const { origin, query } = await startServerWithEmetterUser({ emetterUser })
-      const emetterUrl = origin.concat(query)
+      const emitterUser = await createUserOnFediverse()
+      const { origin, query } = await startServerWithEmitterUser({ emitterUser })
+      const emitterUrl = origin.concat(query)
       const imaginaryReceiverUsername = createUsername()
       const receiverUrl = makeUrl({ action: 'actor', username: imaginaryReceiverUsername })
-      await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -24,12 +24,12 @@ describe('activitypub:actor', () => {
 
   it('should reject user who is not on the fediverse', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      const { origin, query } = await startServerWithEmetterUser({ emetterUser })
-      const emetterUrl = origin.concat(query)
+      const emitterUser = await createUserOnFediverse()
+      const { origin, query } = await startServerWithEmitterUser({ emitterUser })
+      const emitterUrl = origin.concat(query)
       const { username } = await createReceiver({ fediversable: false })
       const receiverUrl = makeUrl({ action: 'actor', username })
-      await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -41,10 +41,10 @@ describe('activitypub:actor', () => {
   })
 
   it('should return a json ld file with a receiver actor url', async () => {
-    const emetterUser = await createUserOnFediverse()
-    const { receiverUrl, emetterUrl, receiverUsername } = await startServerWithEmetterAndReceiver({ emetterUser })
+    const emitterUser = await createUserOnFediverse()
+    const { receiverUrl, emitterUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
     const receiverInboxUrl = makeUrl({ action: 'inbox', username: receiverUsername })
-    const res = await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+    const res = await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
     body.type.should.equal('Person')
