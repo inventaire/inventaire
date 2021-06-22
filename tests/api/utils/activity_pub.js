@@ -3,7 +3,7 @@ const express = require('express')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
 const CONFIG = require('config')
-const host = CONFIG.fullHost()
+const host = CONFIG.fullPublicHost()
 const endpoint = '/api/activitypub'
 
 const createReceiver = async (customData = {}) => {
