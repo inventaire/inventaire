@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
@@ -9,6 +8,8 @@ const { getActivityByExternalId, randomActivityId } = require('../utils/activiti
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const endpoint = '/api/activitypub'
+
+// todo: emetter->emitter
 
 const randomActivity = ({ externalId, emetterActorUrl, activityObject, type }) => {
   if (!externalId) externalId = randomActivityId(CONFIG.publicHost)
@@ -72,17 +73,18 @@ describe('activitypub:post:inbox', () => {
         id: randomActivityId(origin),
       }
       const receiverActorUrl = makeUrl({ action: 'actor', username })
-      const req = await buildReq({
+      const { privateKey } = await buildReq({
         origin,
         emetterUser,
         activityObject: receiverActorUrl,
       })
 
-      await inboxSignedReq(_.extend(req, {
+      await inboxSignedReq({
         keyUrl: emetterActorUrl,
         url: makeUrl({ action: 'inbox', username }),
+        privateKey,
         body,
-      }))
+      })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -138,7 +140,7 @@ describe('activitypub:post:inbox', () => {
     res.statusCode.should.equal(200)
     const parsedBody = JSON.parse(res.body)
     parsedBody.type.should.equal('Accept')
-    wait(100)
+    await wait(50)
     const newActivity = await getActivityByExternalId(externalId)
     newActivity.externalId.should.equal(externalId)
   })

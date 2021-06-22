@@ -1,7 +1,5 @@
 const error_ = require('lib/error/error')
-const { sanitize } = require('lib/sanitize/sanitize')
-const { verifySignature } = require('controllers/activitypub/lib/security')
-const { tap } = require('lib/promises')
+const { sanitizeAsync } = require('lib/sanitize/sanitize')
 const qs = require('querystring')
 const user_ = require('controllers/user/lib/user')
 const { createActivity } = require('controllers/activitypub/lib/activities')
@@ -19,12 +17,13 @@ const sanitization = {
 }
 
 module.exports = async (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(tap(() => verifySignature(req)))
+  // todo: refacto await
+  sanitizeAsync(req, res, sanitization)
   .then(async params => {
     const { object } = params
     const { name: requestedObjectName } = qs.parse(object)
     const user = await user_.findOneByUsername(requestedObjectName)
+    // TODO: return 403 instead
     if (!user.fediversable) throw error_.notFound({ username: requestedObjectName })
     return createActivity(params)
     .then(createAcceptResponse)

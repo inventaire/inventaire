@@ -6,6 +6,7 @@ const { send } = require('./responses')
 const { sanitize } = require('./sanitize/sanitize')
 const { track } = require('./track')
 const assert_ = require('./utils/assert_types')
+const { verifySignature } = require('controllers/activitypub/lib/security')
 
 module.exports = controllers => {
   const actions = getActions(controllers)
@@ -38,6 +39,7 @@ module.exports = controllers => {
     try {
       if (sanitization) {
         const params = sanitize(req, res, sanitization)
+        await verifySignedReq(req, res)
         const result = await controller(params, req, res)
         send(res, result)
         if (trackActionArray) track(req, trackActionArray)
@@ -45,7 +47,7 @@ module.exports = controllers => {
         await controller(req, res)
       }
     } catch (err) {
-      error_.handler(req, res, err)
+      return error_.handler(req, res, err)
     }
   }
 }
@@ -83,5 +85,17 @@ const getActionData = (access, controllerData) => {
     controller,
     sanitization,
     trackActionArray,
+  }
+}
+
+const signedEnpoints = [ '/api/activitypub' ]
+
+const verifySignedReq = async (req, res) => {
+  if (signedEnpoints.includes(req.path)) {
+    try {
+      await verifySignature(req)
+    } catch (err) {
+      return error_.handler(req, res, err)
+    }
   }
 }
