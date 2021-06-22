@@ -18,20 +18,20 @@ const createReceiver = async (customData = {}) => {
 const query = ({ action, username }) => `${endpoint}?action=${action}&name=${username}`
 const makeUrl = params => `${host}${query(params)}`
 
-const startServerWithEmetterAndReceiver = async ({ emetterUser }) => {
-  const { origin, query } = await startServerWithEmetterUser({ emetterUser })
-  const emetterUrl = origin.concat(query)
+const startServerWithEmitterAndReceiver = async ({ emitterUser }) => {
+  const { origin, query } = await startServerWithEmitterUser({ emitterUser })
+  const emitterUrl = origin.concat(query)
   const { username } = await createReceiver()
   const receiverUrl = makeUrl({ action: 'actor', username })
-  return { receiverUrl, emetterUrl, receiverUsername: username }
+  return { receiverUrl, emitterUrl, receiverUsername: username }
 }
 
-const startServerWithEmetterUser = async ({ emetterUser, endpoints }) => {
-  if (!emetterUser) emetterUser = await createUserOnFediverse()
-  const { origin } = await startActivityPubServer({ user: emetterUser, endpoints })
+const startServerWithEmitterUser = async ({ emitterUser, endpoints }) => {
+  if (!emitterUser) emitterUser = await createUserOnFediverse()
+  const { origin } = await startActivityPubServer({ user: emitterUser, endpoints })
   return {
     origin,
-    query: query({ action: 'actor', username: emetterUser.username })
+    query: query({ action: 'actor', username: emitterUser.username })
   }
 }
 
@@ -75,14 +75,14 @@ const formatWebfinger = (origin, resource) => {
   }
 }
 
-const actorSignReq = async (receiverUrl, emetterUrl, privateKey) => {
+const actorSignReq = async (receiverUrl, emitterUrl, privateKey) => {
   return signedReq({
     method: 'get',
     endpoint,
     url: receiverUrl,
-    keyUrl: emetterUrl,
+    keyUrl: emitterUrl,
     privateKey
   })
 }
 
-module.exports = { startServerWithEmetterAndReceiver, query, createReceiver, makeUrl, startServerWithEmetterUser, actorSignReq }
+module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, actorSignReq }

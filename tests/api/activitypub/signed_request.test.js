@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { query, startServerWithEmetterAndReceiver, startServerWithEmetterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
+const { query, startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
@@ -29,10 +29,10 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when no publicKey is found', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      delete emetterUser.publicKey
-      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
-      await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+      const emitterUser = await createUserOnFediverse()
+      delete emitterUser.publicKey
+      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -44,10 +44,10 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when fetching an invalid publicKey', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      emetterUser.publicKey = 'foo'
-      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
-      await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+      const emitterUser = await createUserOnFediverse()
+      emitterUser.publicKey = 'foo'
+      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -59,11 +59,11 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when key verification fails', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
+      const emitterUser = await createUserOnFediverse()
       const anotherUser = await createUserOnFediverse()
-      emetterUser.privateKey = anotherUser.privateKey
-      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
-      await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+      emitterUser.privateKey = anotherUser.privateKey
+      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -75,8 +75,8 @@ describe('activitypub:signed:request', () => {
 
   it('should reject if date header is more than 30 seconds old', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
+      const emitterUser = await createUserOnFediverse()
+      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
@@ -89,8 +89,8 @@ describe('activitypub:signed:request', () => {
       const signature = sign(_.extend({
         headers: signatureHeadersInfo,
         method,
-        keyUrl: emetterUrl,
-        privateKey: emetterUser.privateKey,
+        keyUrl: emitterUrl,
+        privateKey: emitterUser.privateKey,
         endpoint
       }, signatureHeaders))
       const headers = _.extend({ signature }, signatureHeaders)
@@ -107,17 +107,17 @@ describe('activitypub:signed:request', () => {
   })
 
   it('should verify request', async () => {
-    const emetterUser = await createUserOnFediverse()
-    const { receiverUrl, emetterUrl } = await startServerWithEmetterAndReceiver({ emetterUser })
-    const res = await actorSignReq(receiverUrl, emetterUrl, emetterUser.privateKey)
+    const emitterUser = await createUserOnFediverse()
+    const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+    const res = await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
   })
 
   it('should verify signatures with different headers', async () => {
-    const emetterUser = await createUserOnFediverse()
-    const { origin, query } = await startServerWithEmetterUser({ emetterUser })
-    const emetterUrl = origin.concat(query)
+    const emitterUser = await createUserOnFediverse()
+    const { origin, query } = await startServerWithEmitterUser({ emitterUser })
+    const emitterUrl = origin.concat(query)
     const { username } = await createReceiver()
     const receiverUrl = makeUrl({ action: 'actor', username })
     const date = (new Date()).toUTCString()
@@ -129,11 +129,11 @@ describe('activitypub:signed:request', () => {
       'content-type': 'application/xml',
     }
     const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-    const { privateKey } = emetterUser
+    const { privateKey } = emitterUser
     const signature = sign(_.extend({
       headers: signatureHeadersInfo,
       method,
-      keyUrl: emetterUrl,
+      keyUrl: emitterUrl,
       privateKey,
       endpoint
     }, signatureHeaders))

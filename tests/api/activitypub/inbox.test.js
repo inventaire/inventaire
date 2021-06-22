@@ -3,37 +3,35 @@ require('should')
 const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq } = require('../utils/utils')
-const { startServerWithEmetterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
+const { startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
 const { getActivityByExternalId, randomActivityId } = require('../utils/activities')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 
 const endpoint = '/api/activitypub'
 
-// todo: emetter->emitter
-
-const randomActivity = ({ externalId, emetterActorUrl, activityObject, type }) => {
+const randomActivity = ({ externalId, emitterActorUrl, activityObject, type }) => {
   if (!externalId) externalId = randomActivityId(CONFIG.publicHost)
   return {
     '@context': 'https://www.w3.org/ns/activitystreams',
     id: externalId,
     type: type || 'Follow',
-    actor: emetterActorUrl,
+    actor: emitterActorUrl,
     object: activityObject
   }
 }
 
 const buildReq = async (params = {}) => {
-  let { origin, body, emetterUrl: keyUrl, emetterUser, emetterEndpoints } = params
-  if (!emetterUser) {
-    emetterUser = await createUserOnFediverse()
-    const res = await startServerWithEmetterUser({
-      emetterUser,
-      endpoints: emetterEndpoints
+  let { origin, body, emitterUrl: keyUrl, emitterUser, emitterEndpoints } = params
+  if (!emitterUser) {
+    emitterUser = await createUserOnFediverse()
+    const res = await startServerWithEmitterUser({
+      emitterUser,
+      endpoints: emitterEndpoints
     })
     origin = res.origin
     keyUrl = origin.concat(res.query)
   }
-  const privateKey = emetterUser.privateKey
+  const privateKey = emitterUser.privateKey
   return { body, keyUrl, privateKey, origin }
 }
 
@@ -62,25 +60,25 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject without activity type', async () => {
     try {
-      const emetterUser = await createUserOnFediverse()
-      const { origin, query } = await startServerWithEmetterUser(emetterUser)
-      const emetterActorUrl = origin.concat(query)
+      const emitterUser = await createUserOnFediverse()
+      const { origin, query } = await startServerWithEmitterUser(emitterUser)
+      const emitterActorUrl = origin.concat(query)
       const { username } = await createReceiver()
       const body = {
         '@context': 'https://www.w3.org/ns/activitystreams',
-        // id is a unique to each activity minted by the emetter of a request
+        // id is a unique to each activity minted by the emitter of a request
         // activity creation will be ignored if id is already found
         id: randomActivityId(origin),
       }
       const receiverActorUrl = makeUrl({ action: 'actor', username })
       const { privateKey } = await buildReq({
         origin,
-        emetterUser,
+        emitterUser,
         activityObject: receiverActorUrl,
       })
 
       await inboxSignedReq({
-        keyUrl: emetterActorUrl,
+        keyUrl: emitterActorUrl,
         url: makeUrl({ action: 'inbox', username }),
         privateKey,
         body,
@@ -101,7 +99,7 @@ describe('activitypub:post:inbox', () => {
       const { keyUrl, privateKey } = await buildReq({ activityObject: receiverActorUrl })
       const receiverInboxUrl = makeUrl({ action: 'inbox', username: nonFediversableUsername })
       const body = randomActivity({
-        emetterActorUrl: keyUrl,
+        emitterActorUrl: keyUrl,
         activityObject: receiverActorUrl
       })
       await inboxSignedReq({
@@ -128,7 +126,7 @@ describe('activitypub:post:inbox', () => {
     const receiverInboxUrl = makeUrl({ action: 'inbox', username })
     const body = randomActivity({
       externalId,
-      emetterActorUrl: keyUrl,
+      emitterActorUrl: keyUrl,
       activityObject: receiverActorUrl
     })
     const res = await inboxSignedReq({
