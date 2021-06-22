@@ -2,6 +2,7 @@ const _ = require('lodash')
 
 const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ],
+  signed: [ 'public' ],
   authentified: [ 'authentified', 'dataadmin', 'admin' ],
   dataadmin: [ 'dataadmin', 'admin' ],
   admin: [ 'admin' ]

@@ -1,16 +1,13 @@
 const error_ = require('lib/error/error')
 const getActor = require('controllers/activitypub/lib/get_actor')
-const { sanitize } = require('lib/sanitize/sanitize')
-const { verifySignature } = require('controllers/activitypub/lib/security')
-const { tap } = require('lib/promises')
+const { sanitizeAsync } = require('lib/sanitize/sanitize')
 
 const sanitization = {
   name: {}
 }
 
 module.exports = async (req, res) => {
-  sanitize(req, res, sanitization)
-  .then(tap(() => verifySignature(req)))
+  sanitizeAsync(req, res, sanitization)
   .then(params => {
     const { name } = params
     return getActor(name)

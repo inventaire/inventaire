@@ -7,7 +7,7 @@ module.exports = {
     }
   }),
   post: ActionsControllers({
-    public: {
+    signed: {
       inbox: require('./inbox')
     }
   })

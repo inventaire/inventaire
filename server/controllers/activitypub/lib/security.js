@@ -41,7 +41,7 @@ const API = module.exports = {
     const { date, signature } = reqHeaders
     // 30 seconds time window for thtat signature to be considered valid
     if (thirtySecondsTimeWindow(date)) throw error_.new('outdated request', 400, reqHeaders)
-    if (!(signature)) throw error_.new('no signature header', 400, reqHeaders)
+    if (signature === undefined) throw error_.new('no signature header', 400, reqHeaders)
     // "headers" below specify the list of HTTP headers included when generating the signature for the message
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
