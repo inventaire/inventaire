@@ -25,19 +25,14 @@ const controller = async params => {
   const { object } = params
   const { name: requestedObjectName } = qs.parse(object)
   const user = await user_.findOneByUsername(requestedObjectName)
-  // TODO: return 403 instead
-  if (!user.fediversable) throw error_.notFound({ username: requestedObjectName })
-  return createActivity(params)
-  .then(createAcceptResponse)
-}
-
-const createAcceptResponse = res => {
-  const { actor, object } = res
+  if (!user.fediversable) throw error_.new('forbidden user', 403, { username: requestedObjectName })
+  const res = createActivity(params)
+  const { actor, object: resObject } = res
   return {
     id: res.externalId,
     type: 'Accept',
     actor,
-    object
+    object: resObject
   }
 }
 

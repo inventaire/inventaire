@@ -20,8 +20,6 @@ module.exports = {
       newActivity[key] = value
     })
 
-    // to consider: since an external request can trigger an activity
-    // it could be possible to timestamp creation with request Date header (as is must exists)
     newActivity.created = Date.now()
 
     return newActivity
