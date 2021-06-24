@@ -11,9 +11,10 @@ const { makeFriends } = require('../utils/relations')
 const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
-let getUser, getReservedUser
+let getUser, getReservedUser, updateUser
 const requireCircularDependencies = () => {
-  ({ getUser, getReservedUser } = require('../utils/utils'))
+  ;({ getUser, getReservedUser } = require('../utils/utils'))
+  ;({ updateUser } = require('../utils/users'))
 }
 setImmediate(requireCircularDependencies)
 
@@ -114,12 +115,12 @@ const setCustomData = async (user, customData) => {
   delete customData.username
   for (const attribute in customData) {
     const value = customData[attribute]
-    await setUserAttribute(user, attribute, value)
+    if (_.isPlainObject(value)) {
+      // ex: 'settings.contributions.anonymize': false
+      throw new Error('use object path syntax')
+    }
+    await updateUser({ user, attribute, value })
   }
-}
-
-const setUserAttribute = (user, attribute, value) => {
-  return request('put', '/api/user', { attribute, value }, user.cookie)
 }
 
 const refreshUser = API.getUserWithCookie

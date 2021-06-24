@@ -3,7 +3,12 @@ const userDoc = (username, idLastCharacters) => ({
   username,
   special: true,
   // Data required to avoid crashing users logic
-  snapshot: {}
+  snapshot: {},
+  settings: {
+    contributions: {
+      anonymize: false
+    }
+  },
 })
 
 module.exports = {
@@ -15,6 +20,6 @@ module.exports = {
     hook: userDoc('hook', '001'),
     reconciler: userDoc('reconciler', '002'),
     // used by scripts/update_entities.js
-    updater: userDoc('updater', '003')
+    updater: userDoc('updater', '003'),
   }
 }

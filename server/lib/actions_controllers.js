@@ -1,7 +1,7 @@
 const { someMatch } = require('builders/utils')
 const error_ = require('lib/error/error')
 const validateObject = require('lib/validate_object')
-const { rolesByAccess } = require('./get_user_access_levels')
+const { rolesByAccess } = require('./user_access_levels')
 const { send } = require('./responses')
 const { sanitize } = require('./sanitize/sanitize')
 const { track } = require('./track')

@@ -31,7 +31,10 @@ const API = module.exports = {
   getDataadminUser: getUserGetter('dataadmin', 'dataadmin'),
   getUserGetter,
   // To be used when you need a user not used by any other tests
-  getReservedUser: customData => getUserGetter(randomString(8), null, customData)()
+  getReservedUser: customData => getUserGetter(randomString(8), null, customData)(),
+  getDeanonymizedUser: getUserGetter('deanonymized', null, {
+    'settings.contributions.anonymize': false
+  })
 }
 
 Object.assign(API, require('../../unit/utils'))

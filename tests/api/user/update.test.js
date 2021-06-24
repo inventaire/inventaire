@@ -1,4 +1,5 @@
 const should = require('should')
+const _ = require('lodash')
 const { customAuthReq, getReservedUser, getUser, getUserB } = require('../utils/utils')
 const { getRefreshedUser } = require('../fixtures/users')
 const { getToken } = require('../utils/oauth')
@@ -96,6 +97,24 @@ describe('user:update', () => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('this username is already used')
       })
+    })
+  })
+
+  describe('settings', () => {
+    it('should update a setting', async () => {
+      const user = await getReservedUser()
+      const attribute = 'settings.notifications.global'
+      await customAuthReq(user, 'put', endpoint, { attribute, value: false })
+      const updatedUser = await getRefreshedUser(user)
+      _.get(updatedUser, attribute).should.be.false()
+    })
+
+    it('should update anonymize setting', async () => {
+      const user = await getReservedUser()
+      const attribute = 'settings.contributions.anonymize'
+      await customAuthReq(user, 'put', endpoint, { attribute, value: false })
+      const updatedUser = await getRefreshedUser(user)
+      _.get(updatedUser, attribute).should.be.false()
     })
   })
 })

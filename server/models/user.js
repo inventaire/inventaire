@@ -32,7 +32,7 @@ User._create = (username, email, creationStrategy, language, password) => {
     created: Date.now(),
     creationStrategy,
     language,
-    settings: { notifications: {} },
+    settings: {},
     // A token that, when combined with the right user id,
     // gives access to all the resources the user can read
     // Use case:
