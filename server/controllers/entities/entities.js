@@ -11,14 +11,14 @@ module.exports = {
       'publisher-publications': publisherPublications,
       images: require('./images'),
       popularity: require('./popularity'),
-      history: require('./history')
+      history: require('./history'),
+      contributions: require('./contributions')
     },
     dataadmin: {
       duplicates: require('./duplicates')
     },
     admin: {
       activity: require('./activity'),
-      contributions: require('./contributions')
     }
   }),
 
