@@ -2,7 +2,7 @@ const { activeI18nLangs } = require('../helpers')
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/mapping-types.html
 
-const langProperty = {
+const autocompleteText = {
   type: 'text',
   analyzer: 'autocomplete',
   // Set a different default analyzer for search time,
@@ -17,9 +17,9 @@ const langProperty = {
 const getTermsProperties = () => {
   const properties = {}
   activeI18nLangs.forEach(lang => {
-    properties[lang] = langProperty
+    properties[lang] = autocompleteText
   })
-  properties.fromclaims = langProperty
+  properties.fromclaims = autocompleteText
   return properties
 }
 
@@ -30,7 +30,9 @@ module.exports = {
   geoPoint: { type: 'geo_point' },
   integer: { type: 'integer' },
   keyword: { type: 'keyword' },
-  nested: { type: 'nested' },
+  // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
+  objectNotIndexed: { type: 'object', enabled: false },
   terms: { properties: getTermsProperties() },
   text: { type: 'text' },
+  flattenedTerms: autocompleteText,
 }

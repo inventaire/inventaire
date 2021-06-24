@@ -1,4 +1,4 @@
-const { text, integer, keyword, date, nested, terms } = require('./mappings_datatypes')
+const { flattenedTerms, integer, keyword, date, objectNotIndexed, terms } = require('./mappings_datatypes')
 
 module.exports = {
   properties: {
@@ -6,13 +6,15 @@ module.exports = {
     labels: terms,
     aliases: terms,
     descriptions: terms,
-    flattenedLabels: text,
-    flattenedAliases: text,
-    flattenedDescriptions: text,
+    flattenedLabels: flattenedTerms,
+    flattenedAliases: flattenedTerms,
+    flattenedDescriptions: flattenedTerms,
+    relationsTerms: flattenedTerms,
     uri: keyword,
-    images: nested,
+    images: objectNotIndexed,
     created: date,
     updated: date,
     popularity: integer,
+    claim: keyword,
   }
 }
