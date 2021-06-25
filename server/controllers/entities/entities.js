@@ -11,14 +11,14 @@ module.exports = {
       'publisher-publications': publisherPublications,
       images: require('./images'),
       popularity: require('./popularity'),
-      history: require('./history')
+      history: require('./history'),
+      contributions: require('./contributions')
     },
     dataadmin: {
       duplicates: require('./duplicates')
     },
     admin: {
       activity: require('./activity'),
-      contributions: require('./contributions')
     }
   }),
 
@@ -38,10 +38,10 @@ module.exports = {
       'update-claim': require('./update_claim'),
       'update-label': require('./update_label'),
       'revert-edit': require('./revert_edit'),
+      merge: require('./merge'),
       'move-to-wikidata': require('./move_to_wikidata')
     },
     dataadmin: {
-      merge: require('./merge'),
       'revert-merge': require('./revert_merge')
     }
   })

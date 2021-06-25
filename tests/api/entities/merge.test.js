@@ -1,16 +1,16 @@
 require('should')
-const { authReq, dataadminReq, shouldNotBeCalled } = require('../utils/utils')
+const { publicReq, dataadminReq, shouldNotBeCalled, getUser, getUserB } = require('../utils/utils')
 const randomString = require('lib/utils/random_string')
 const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor, someFakeUri } = require('../fixtures/entities')
 
 describe('entities:merge', () => {
-  it('should require dataadmin rights', async () => {
-    await authReq('put', '/api/entities?action=merge')
+  it('should require to be authentified', async () => {
+    await publicReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(403)
+      err.statusCode.should.equal(401)
     })
   })
 
@@ -65,9 +65,7 @@ describe('entities:merge', () => {
       createWork()
     ])
     await merge(workA.uri, workB.uri)
-    const { entities, redirects } = await getByUris(workA.uri)
-    redirects[workA.uri].should.equal(workB.uri)
-    entities[workB.uri].should.be.ok()
+    await shouldBeMerged(workA, workB)
   })
 
   it('should merge entities with inv and isbn URIs', async () => {
@@ -78,13 +76,7 @@ describe('entities:merge', () => {
     const item = await createItemFromEntityUri({ uri: editionA.uri })
     item.entity.should.equal(editionA.uri)
     await merge(editionA.uri, editionB.uri)
-    const [ { entities, redirects }, { items } ] = await Promise.all([
-      getByUris(editionA.uri),
-      getItemsByIds(item._id)
-    ])
-    redirects[editionA.uri].should.equal(editionB.uri)
-    entities[editionB.uri].should.be.ok()
-    items[0].entity.should.equal(editionB.uri)
+    await shouldBeMerged(editionA, editionB, item)
   })
 
   it('should merge an entity with an ISBN', async () => {
@@ -220,4 +212,52 @@ describe('entities:merge', () => {
     const entity = entities[humanAUri]
     entity._meta_type.should.equal('removed:placeholder')
   })
+
+  describe('non-dataadmin', () => {
+    it('should create a merge request task', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const { task, merged } = await merge(editionA.uri, editionB.uri, { user: getUser() })
+      task.should.be.an.Object()
+      task.suspectUri.should.equal(editionA.uri)
+      task.suggestionUri.should.equal(editionB.uri)
+      merged.should.be.false()
+    })
+
+    it('should reuse an existing task when the same user is requesting the same merge', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const user = await getUser()
+      const { task: taskA } = await merge(editionA.uri, editionB.uri, { user })
+      const { task: taskB } = await merge(editionA.uri, editionB.uri, { user })
+      taskA._id.should.equal(taskB._id)
+      taskB.reporters.should.deepEqual([ user._id ])
+    })
+
+    it('should reuse an existing task when another user is requesting the same merge', async () => {
+      const [ editionA, editionB ] = await Promise.all([
+        createEdition(),
+        createEdition()
+      ])
+      const [ userA, userB ] = await Promise.all([ getUser(), getUserB() ])
+      const { task: taskA } = await merge(editionA.uri, editionB.uri, { user: userA })
+      const { task: taskB } = await merge(editionA.uri, editionB.uri, { user: userB })
+      taskA._id.should.equal(taskB._id)
+      taskB.reporters.should.deepEqual([ userA._id, userB._id ])
+    })
+  })
 })
+
+const shouldBeMerged = async (entityA, entityB, item) => {
+  const { entities, redirects } = await getByUris(entityA.uri)
+  redirects[entityA.uri].should.equal(entityB.uri)
+  entities[entityB.uri].should.be.ok()
+  if (item) {
+    const { items } = await getItemsByIds(item._id)
+    items[0].entity.should.equal(entityB.uri)
+  }
+}
