@@ -10,7 +10,7 @@ module.exports = {
     const { resource } = params
     findUser(resource)
     .then(user => {
-      if (!user) throw error_.new('unknown actor', 400, resource)
+      if (!user || !user.fediversable) throw error_.new('unknown actor', 400, resource)
       const { username } = user
       res.json(formatWebfinger(username, resource))
     })
