@@ -1,7 +1,7 @@
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
@@ -11,7 +11,7 @@ describe('activitypub:actor', () => {
       const keyUrl = origin.concat(query)
       const imaginaryReceiverUsername = createUsername()
       const receiverUrl = makeUrl({ action: 'actor', username: imaginaryReceiverUsername })
-      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -29,7 +29,7 @@ describe('activitypub:actor', () => {
       const keyUrl = origin.concat(query)
       const { username } = await createReceiver({ fediversable: false })
       const receiverUrl = makeUrl({ action: 'actor', username })
-      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -44,7 +44,7 @@ describe('activitypub:actor', () => {
     const emitterUser = await createUserOnFediverse()
     const { receiverUrl, keyUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
     const receiverInboxUrl = makeUrl({ action: 'inbox', username: receiverUsername })
-    const res = await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+    const res = await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
     body.type.should.equal('Person')

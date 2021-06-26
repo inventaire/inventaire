@@ -2,9 +2,9 @@ const _ = require('builders/utils')
 const express = require('express')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { randomActivity } = require('./activities')
-const { signedReq } = require('../utils/utils')
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
+
 const endpoint = '/api/activitypub'
 
 const createReceiver = async (customData = {}) => {
@@ -78,14 +78,4 @@ const formatWebfinger = (origin, resource) => {
   }
 }
 
-const actorSignReq = async (receiverUrl, keyUrl, privateKey) => {
-  return signedReq({
-    method: 'get',
-    endpoint,
-    url: receiverUrl,
-    keyUrl,
-    privateKey
-  })
-}
-
-module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, actorSignReq, randomActivity }
+module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, randomActivity }

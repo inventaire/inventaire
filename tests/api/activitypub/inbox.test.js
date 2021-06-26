@@ -1,10 +1,9 @@
 require('should')
 const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
-const { signedReq } = require('../utils/utils')
 const { createReceiver, makeUrl, startServerWithEmitterAndReceiver } = require('../utils/activity_pub')
 const { getActivityByExternalId, randomActivityId, randomActivity } = require('../utils/activities')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id', async () => {
@@ -17,8 +16,7 @@ describe('activitypub:post:inbox', () => {
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
+      const parsedBody = JSON.parse(err.body)
       parsedBody.status_verbose.should.equal('missing parameter in body: id')
       parsedBody.status.should.equal(400)
     }
@@ -37,8 +35,8 @@ describe('activitypub:post:inbox', () => {
       })
       delete body.type
       await signedReq({
-        keyUrl,
         url: receiverInboxUrl,
+        keyUrl,
         privateKey,
         body,
       })
@@ -61,10 +59,11 @@ describe('activitypub:post:inbox', () => {
         emitterActorUrl: keyUrl,
         activityObject: receiverActorUrl
       })
+
       await signedReq({
-        keyUrl,
-        url: receiverInboxUrl,
         privateKey,
+        url: receiverInboxUrl,
+        keyUrl,
         body
       })
       .then(shouldNotBeCalled)
@@ -88,8 +87,8 @@ describe('activitypub:post:inbox', () => {
       activityObject: receiverActorUrl
     })
     const res = await signedReq({
-      keyUrl,
       url: receiverInboxUrl,
+      keyUrl,
       privateKey,
       body,
     })

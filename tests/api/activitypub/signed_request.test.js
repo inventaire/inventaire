@@ -2,9 +2,9 @@ const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { query, startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl, actorSignReq } = require('../utils/activity_pub')
+const { query, startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
 const { rawRequest } = require('../utils/request')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
 
 const endpoint = '/api/activitypub'
@@ -32,7 +32,7 @@ describe('activitypub:signed:request', () => {
       const emitterUser = await createUserOnFediverse()
       delete emitterUser.publicKey
       const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -47,7 +47,7 @@ describe('activitypub:signed:request', () => {
       const emitterUser = await createUserOnFediverse()
       emitterUser.publicKey = 'foo'
       const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -63,7 +63,7 @@ describe('activitypub:signed:request', () => {
       const anotherUser = await createUserOnFediverse()
       emitterUser.privateKey = anotherUser.privateKey
       const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -109,7 +109,7 @@ describe('activitypub:signed:request', () => {
   it('should verify request', async () => {
     const emitterUser = await createUserOnFediverse()
     const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-    const res = await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
+    const res = await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
   })
