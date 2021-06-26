@@ -8,10 +8,10 @@ describe('activitypub:actor', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const emitterUrl = origin.concat(query)
+      const keyUrl = origin.concat(query)
       const imaginaryReceiverUsername = createUsername()
       const receiverUrl = makeUrl({ action: 'actor', username: imaginaryReceiverUsername })
-      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -26,10 +26,10 @@ describe('activitypub:actor', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const emitterUrl = origin.concat(query)
+      const keyUrl = origin.concat(query)
       const { username } = await createReceiver({ fediversable: false })
       const receiverUrl = makeUrl({ action: 'actor', username })
-      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -42,9 +42,9 @@ describe('activitypub:actor', () => {
 
   it('should return a json ld file with a receiver actor url', async () => {
     const emitterUser = await createUserOnFediverse()
-    const { receiverUrl, emitterUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
+    const { receiverUrl, keyUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
     const receiverInboxUrl = makeUrl({ action: 'inbox', username: receiverUsername })
-    const res = await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+    const res = await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
     body.type.should.equal('Person')

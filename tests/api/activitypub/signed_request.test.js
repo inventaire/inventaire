@@ -31,8 +31,8 @@ describe('activitypub:signed:request', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       delete emitterUser.publicKey
-      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+      const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -46,8 +46,8 @@ describe('activitypub:signed:request', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       emitterUser.publicKey = 'foo'
-      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+      const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -62,8 +62,8 @@ describe('activitypub:signed:request', () => {
       const emitterUser = await createUserOnFediverse()
       const anotherUser = await createUserOnFediverse()
       emitterUser.privateKey = anotherUser.privateKey
-      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-      await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+      const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -76,7 +76,7 @@ describe('activitypub:signed:request', () => {
   it('should reject if date header is more than 30 seconds old', async () => {
     try {
       const emitterUser = await createUserOnFediverse()
-      const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
@@ -89,7 +89,7 @@ describe('activitypub:signed:request', () => {
       const signature = sign(_.extend({
         headers: signatureHeadersInfo,
         method,
-        keyUrl: emitterUrl,
+        keyUrl,
         privateKey: emitterUser.privateKey,
         endpoint
       }, signatureHeaders))
@@ -108,8 +108,8 @@ describe('activitypub:signed:request', () => {
 
   it('should verify request', async () => {
     const emitterUser = await createUserOnFediverse()
-    const { receiverUrl, emitterUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
-    const res = await actorSignReq(receiverUrl, emitterUrl, emitterUser.privateKey)
+    const { receiverUrl, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+    const res = await actorSignReq(receiverUrl, keyUrl, emitterUser.privateKey)
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()
   })
@@ -117,7 +117,7 @@ describe('activitypub:signed:request', () => {
   it('should verify signatures with different headers', async () => {
     const emitterUser = await createUserOnFediverse()
     const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-    const emitterUrl = origin.concat(query)
+    const keyUrl = origin.concat(query)
     const { username } = await createReceiver()
     const receiverUrl = makeUrl({ action: 'actor', username })
     const date = (new Date()).toUTCString()
@@ -133,7 +133,7 @@ describe('activitypub:signed:request', () => {
     const signature = sign(_.extend({
       headers: signatureHeadersInfo,
       method,
-      keyUrl: emitterUrl,
+      keyUrl,
       privateKey,
       endpoint
     }, signatureHeaders))

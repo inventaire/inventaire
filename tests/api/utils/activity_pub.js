@@ -1,6 +1,7 @@
 const _ = require('builders/utils')
 const express = require('express')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
+const { randomActivity } = require('./activities')
 const { signedReq } = require('../utils/utils')
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
@@ -18,17 +19,19 @@ const createReceiver = async (customData = {}) => {
 const query = ({ action, username }) => `${endpoint}?action=${action}&name=${username}`
 const makeUrl = params => `${host}${query(params)}`
 
-const startServerWithEmitterAndReceiver = async ({ emitterUser }) => {
+const startServerWithEmitterAndReceiver = async (params = {}) => {
+  let { emitterUser } = params
+  if (!emitterUser) emitterUser = await createUserOnFediverse()
   const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-  const emitterUrl = origin.concat(query)
+  const keyUrl = origin.concat(query)
   const { username } = await createReceiver()
+  const privateKey = emitterUser.privateKey
   const receiverUrl = makeUrl({ action: 'actor', username })
-  return { receiverUrl, emitterUrl, receiverUsername: username }
+  return { keyUrl, privateKey, receiverUrl, receiverUsername: username }
 }
 
-const startServerWithEmitterUser = async ({ emitterUser, endpoints }) => {
-  if (!emitterUser) emitterUser = await createUserOnFediverse()
-  const { origin } = await startActivityPubServer({ user: emitterUser, endpoints })
+const startServerWithEmitterUser = async ({ emitterUser }) => {
+  const { origin } = await startActivityPubServer({ user: emitterUser })
   return {
     origin,
     query: query({ action: 'actor', username: emitterUser.username })
@@ -75,14 +78,14 @@ const formatWebfinger = (origin, resource) => {
   }
 }
 
-const actorSignReq = async (receiverUrl, emitterUrl, privateKey) => {
+const actorSignReq = async (receiverUrl, keyUrl, privateKey) => {
   return signedReq({
     method: 'get',
     endpoint,
     url: receiverUrl,
-    keyUrl: emitterUrl,
+    keyUrl,
     privateKey
   })
 }
 
-module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, actorSignReq }
+module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, actorSignReq, randomActivity }

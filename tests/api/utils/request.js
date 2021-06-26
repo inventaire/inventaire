@@ -101,6 +101,8 @@ const bearerTokenReq = (token, method, endpoint, body) => {
 }
 
 const signedReq = async ({ method, endpoint, url, keyUrl, privateKey, body }) => {
+  if (!endpoint) endpoint = '/api/activitypub'
+  if (!method) method = 'post'
   const date = (new Date()).toUTCString()
   const publicHost = CONFIG.host
   // The minimum recommended data to sign is the (request-target), host, and date.
