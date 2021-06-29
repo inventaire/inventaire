@@ -126,6 +126,9 @@ describe('user:update', () => {
       await customAuthReq(user, 'put', endpoint, { attribute, value })
       const updatedUser = await getRefreshedUser(user)
       updatedUser[attribute].should.equal(value)
+      // relations on fediverse must rely on stable uris
+      // therefore fediversable user shall have a stable username
+      updatedUser.stableUsername.should.equal(user.username)
     })
   })
 })
