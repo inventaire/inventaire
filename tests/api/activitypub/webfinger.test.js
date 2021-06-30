@@ -38,12 +38,12 @@ describe('activitypub:webfinger', () => {
       await publicReq('get', `${endpoint}${unknownLocalActorResource}`).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('unknown actor')
+      err.statusCode.should.equal(404)
+      err.body.status_verbose.should.equal('not found')
     }
   })
 
-  it('should reject not fediversable actor', async () => {
+  it('should reject if user is not on the fediverse', async () => {
     try {
       const username = createUsername()
       await createUser({ username })
@@ -51,8 +51,8 @@ describe('activitypub:webfinger', () => {
       await publicReq('get', `${endpoint}${resource}`).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('unknown actor')
+      err.statusCode.should.equal(404)
+      err.body.status_verbose.should.equal('user is not on the fediverse')
     }
   })
 

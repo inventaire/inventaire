@@ -49,7 +49,7 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
-  it('should reject if object name is not a fediversable user', async () => {
+  it('should reject if receiver user is not on the fediverse', async () => {
     try {
       const { username: nonFediversableUsername } = await createUser({ fediversable: false })
       const receiverActorUrl = makeUrl({ action: 'actor', username: nonFediversableUsername })
@@ -70,8 +70,8 @@ describe('activitypub:post:inbox', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
-      parsedBody.status_verbose.should.equal('forbidden user')
-      parsedBody.status.should.equal(403)
+      parsedBody.status_verbose.should.equal('user is not on the fediverse')
+      parsedBody.status.should.equal(404)
     }
   })
 
