@@ -17,12 +17,12 @@ describe('activitypub:actor', () => {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body
       )
-      parsedBody.status_verbose.should.equal('unknown actor')
+      parsedBody.status_verbose.should.equal('not found')
       parsedBody.status.should.equal(404)
     }
   })
 
-  it('should reject user who is not on the fediverse', async () => {
+  it('should reject if receiver user is not on the fediverse', async () => {
     try {
       const emitterUser = await createUserOnFediverse()
       const { origin, query } = await startServerWithEmitterUser({ emitterUser })
@@ -35,7 +35,7 @@ describe('activitypub:actor', () => {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body
       )
-      parsedBody.status_verbose.should.equal('this user is not on the fediverse')
+      parsedBody.status_verbose.should.equal('user is not on the fediverse')
       parsedBody.status.should.equal(404)
     }
   })

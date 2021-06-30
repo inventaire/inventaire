@@ -10,7 +10,9 @@ module.exports = {
     const { resource } = params
     findUser(resource)
     .then(user => {
-      if (!user || !user.fediversable) throw error_.new('unknown actor', 400, resource)
+      if (!user) throw error_.notFound(resource)
+      if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, resource)
+
       const { username } = user
       res.json(formatWebfinger(username, resource))
     })

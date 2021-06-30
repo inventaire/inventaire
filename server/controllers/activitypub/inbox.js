@@ -25,7 +25,8 @@ const controller = async params => {
   const { object } = params
   const { name: requestedObjectName } = qs.parse(object)
   const user = await user_.findOneByUsername(requestedObjectName)
-  if (!user.fediversable) throw error_.new('forbidden user', 403, { username: requestedObjectName })
+  if (!user) throw error_.notFound({ username: requestedObjectName })
+  if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   const res = createActivity(params)
   const { actor, object: resObject } = res
   return {
