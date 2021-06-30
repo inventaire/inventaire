@@ -17,7 +17,6 @@ module.exports = {
       duplicates: require('./duplicates')
     },
     admin: {
-      activity: require('./activity'),
       contributions: require('./contributions')
     }
   }),

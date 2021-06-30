@@ -55,7 +55,7 @@ module.exports = {
     return patches
   },
 
-  getGlobalActivity: async () => {
+  getGlobalContributions: async () => {
     let { rows } = await db.view(designDocName, 'byUserId', { group_level: 1 })
     rows = rows.map(formatRow)
     return sortAndFilterContributions(rows)
@@ -63,7 +63,7 @@ module.exports = {
     .slice(0, 100)
   },
 
-  getActivityFromLastDay: days => {
+  getContributionsFromLastDay: days => {
     assert_.number(days)
     const now = Date.now()
     const startTime = now - (oneDay * days)
@@ -76,8 +76,8 @@ module.exports = {
     })
     .then(({ rows }) => rows)
     .then(rows => convertToArray(rows.reduce(aggregatePeriodContributions, {})))
-    .then(activity => ({
-      activity,
+    .then(contributions => ({
+      contributions,
       start: startDay,
       end: today
     }))
