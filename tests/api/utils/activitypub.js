@@ -2,8 +2,7 @@ const _ = require('builders/utils')
 const express = require('express')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { randomActivity } = require('./activities')
-const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const makeUrl = require('controllers/activitypub/lib/make_url')
 
 const endpoint = '/api/activitypub'
 
@@ -17,16 +16,15 @@ const createReceiver = async (customData = {}) => {
 }
 
 const query = ({ action, username }) => `${endpoint}?action=${action}&name=${username}`
-const makeUrl = params => `${host}${query(params)}`
 
 const startServerWithEmitterAndReceiver = async (params = {}) => {
   let { emitterUser } = params
   if (!emitterUser) emitterUser = await createUserOnFediverse()
   const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-  const keyUrl = origin.concat(query)
+  const keyUrl = makeUrl({ origin, params: query })
   const { username } = await createReceiver()
   const privateKey = emitterUser.privateKey
-  const receiverUrl = makeUrl({ action: 'actor', username })
+  const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
   return { keyUrl, privateKey, receiverUrl, receiverUsername: username }
 }
 
@@ -34,7 +32,7 @@ const startServerWithEmitterUser = async ({ emitterUser }) => {
   const { origin } = await startActivityPubServer({ user: emitterUser })
   return {
     origin,
-    query: query({ action: 'actor', username: emitterUser.username })
+    query: { action: 'actor', name: emitterUser.username }
   }
 }
 

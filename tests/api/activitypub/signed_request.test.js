@@ -13,7 +13,7 @@ describe('activitypub:signed:request', () => {
   it('should reject unsigned request', async () => {
     try {
       const receiverUsername = createUsername()
-      await rawRequest('get', query({ action: 'actor', username: receiverUsername }), {
+      await rawRequest('get', `${endpoint}?action=actor&name=${receiverUsername}`, {
         headers: {
           'content-type': 'application/activity+json'
         }
@@ -117,9 +117,9 @@ describe('activitypub:signed:request', () => {
   it('should verify signatures with different headers', async () => {
     const emitterUser = await createUserOnFediverse()
     const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-    const keyUrl = origin.concat(query)
+    const keyUrl = makeUrl({ origin, params: query })
     const { username } = await createReceiver()
-    const receiverUrl = makeUrl({ action: 'actor', username })
+    const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
     const date = (new Date()).toUTCString()
     const host = CONFIG.host
     const method = 'get'

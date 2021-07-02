@@ -8,9 +8,9 @@ describe('activitypub:actor', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const keyUrl = origin.concat(query)
+      const keyUrl = makeUrl({ origin, params: query })
       const imaginaryReceiverUsername = createUsername()
-      const receiverUrl = makeUrl({ action: 'actor', username: imaginaryReceiverUsername })
+      const receiverUrl = makeUrl({ params: { action: 'actor', name: imaginaryReceiverUsername } })
       await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -26,9 +26,9 @@ describe('activitypub:actor', () => {
     try {
       const emitterUser = await createUserOnFediverse()
       const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const keyUrl = origin.concat(query)
+      const keyUrl = makeUrl({ origin, params: query })
       const { username } = await createReceiver({ fediversable: false })
-      const receiverUrl = makeUrl({ action: 'actor', username })
+      const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
       await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -43,7 +43,7 @@ describe('activitypub:actor', () => {
   it('should return a json ld file with a receiver actor url', async () => {
     const emitterUser = await createUserOnFediverse()
     const { receiverUrl, keyUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
-    const receiverInboxUrl = makeUrl({ action: 'inbox', username: receiverUsername })
+    const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: receiverUsername } })
     const res = await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
     const body = JSON.parse(res.body)
     body['@context'].should.an.Array()

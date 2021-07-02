@@ -11,7 +11,7 @@ describe('activitypub:post:inbox', () => {
       const { username } = await createReceiver()
       const body = {}
       const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
-      const receiverInboxUrl = makeUrl({ action: 'inbox', username })
+      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({ keyUrl, url: receiverInboxUrl, privateKey, body })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -27,8 +27,8 @@ describe('activitypub:post:inbox', () => {
       const emitterUser = await createUserOnFediverse()
       const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver({ emitterUser })
       const { username } = await createReceiver()
-      const receiverActorUrl = makeUrl({ action: 'actor', username })
-      const receiverInboxUrl = makeUrl({ action: 'inbox', username })
+      const receiverActorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const body = randomActivity({
         emitterActorUrl: keyUrl,
         activityObject: receiverActorUrl
@@ -52,8 +52,8 @@ describe('activitypub:post:inbox', () => {
   it('should reject if receiver user is not on the fediverse', async () => {
     try {
       const { username: nonFediversableUsername } = await createUser({ fediversable: false })
-      const receiverActorUrl = makeUrl({ action: 'actor', username: nonFediversableUsername })
-      const receiverInboxUrl = makeUrl({ action: 'inbox', username: nonFediversableUsername })
+      const receiverActorUrl = makeUrl({ params: { action: 'actor', name: nonFediversableUsername } })
+      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: nonFediversableUsername } })
       const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
       const body = randomActivity({
         emitterActorUrl: keyUrl,
@@ -77,8 +77,8 @@ describe('activitypub:post:inbox', () => {
 
   it('should create an activity', async () => {
     const { username } = await createReceiver()
-    const receiverActorUrl = makeUrl({ action: 'actor', username })
-    const receiverInboxUrl = makeUrl({ action: 'inbox', username })
+    const receiverActorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
     const externalId = randomActivityId()
     const body = randomActivity({
