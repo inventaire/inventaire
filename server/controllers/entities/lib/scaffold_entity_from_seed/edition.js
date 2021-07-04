@@ -62,7 +62,7 @@ const clearCache = isbn13 => () => {
 const createEditionEntity = async (seed, workPromise) => {
   if (seed.image) {
     try {
-      const { hash } = await convertImageUrl(seed.image)
+      const { hash } = await convertImageUrl({ url: seed.image, container: 'entities' })
       seed.imageHash = hash
     } catch (err) {
       // do not crash the function, if the image url conversion failed
