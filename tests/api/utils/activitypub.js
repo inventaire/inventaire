@@ -25,7 +25,7 @@ const startServerWithEmitterAndReceiver = async (params = {}) => {
   const { username } = await createReceiver()
   const privateKey = emitterUser.privateKey
   const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
-  return { keyUrl, privateKey, receiverUrl, receiverUsername: username }
+  return { origin, keyUrl, privateKey, receiverUrl, receiverUsername: username }
 }
 
 const startServerWithEmitterUser = async ({ emitterUser }) => {

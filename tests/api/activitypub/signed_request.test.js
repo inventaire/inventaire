@@ -10,6 +10,22 @@ const { sign } = require('controllers/activitypub/lib/security')
 const endpoint = '/api/activitypub'
 
 describe('activitypub:signed:request', () => {
+  it('should reject missing params', async () => {
+    try {
+      await rawRequest('get', `${endpoint}?action=actor`, {
+        headers: {
+          'content-type': 'application/activity+json'
+        }
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      const parsedBody = JSON.parse(err.body)
+      parsedBody.status.should.equal(400)
+      parsedBody.status_verbose.should.startWith('missing parameter')
+    }
+  })
+
   it('should reject unsigned request', async () => {
     try {
       const receiverUsername = createUsername()
