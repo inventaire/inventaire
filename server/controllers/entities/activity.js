@@ -4,7 +4,7 @@ const patches_ = require('./lib/patches')
 
 const sanitization = {
   period: {
-    generics: 'positiveInteger',
+    generic: 'positiveInteger',
     optional: true
   }
 }
