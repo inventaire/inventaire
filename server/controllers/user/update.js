@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const { attributes, validations, formatters } = require('models/user')
 const { updatable, concurrencial, acceptNullValue } = attributes
 const updateEmail = require('controllers/user/lib/update_email')
+const { setStableUsername } = require('controllers/user/lib/user')
 const db = require('db/couchdb/base')('users')
 const availability_ = require('controllers/user/lib/availability')
 const error_ = require('lib/error/error')
@@ -69,10 +70,11 @@ const update = async (user, attribute, value) => {
   throw error_.new('forbidden update', 403, { attribute, value })
 }
 
-const updateAttribute = (user, attribute, value) => {
+const updateAttribute = async (user, attribute, value) => {
   if (attribute === 'email') {
     return updateEmail(user, value)
   } else {
+    if (attribute === 'fediversable') await setStableUsername(user)
     return db.update(user._id, basicUpdater.bind(null, attribute, value))
   }
 }

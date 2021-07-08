@@ -177,6 +177,9 @@ const generics = {
   object: {
     validate: _.isPlainObject
   },
+  string: {
+    validate: _.isString
+  },
   positiveInteger: {
     format: value => {
       if (_.isPositiveIntegerString) return parseInt(value)
@@ -204,6 +207,8 @@ const value = {
 
 module.exports = {
   attribute: nonEmptyString,
+  actor: nonEmptyString,
+  object: nonEmptyString,
   bbox: {
     format: value => {
       return JSON.parse(value)
