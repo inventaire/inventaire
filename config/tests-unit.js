@@ -5,5 +5,7 @@
 module.exports = {
   env: 'tests-unit',
   verbose: false,
-  leveldbMemoryBackend: true
+  leveldb: {
+    memoryBackend: true,
+  },
 }

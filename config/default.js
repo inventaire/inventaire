@@ -76,7 +76,10 @@ const config = module.exports = {
     backupFolder: 'backups/couchdb'
   },
 
-  leveldbMemoryBackend: false,
+  leveldb: {
+    inMemoryLRUCacheSize: 64 * 1024 ** 2,
+    memoryBackend: false,
+  },
 
   elasticsearch: {
     host: 'http://localhost:9200',

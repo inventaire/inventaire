@@ -6,14 +6,14 @@ const assert_ = require('lib/utils/assert_types')
 
 const dbFolderPathBase = __.path('root', 'db/leveldb')
 const { suffix } = CONFIG.db
+const { inMemoryLRUCacheSize, memoryBackend } = CONFIG.leveldb
 const dbFolderPath = suffix ? `${dbFolderPathBase}-${suffix}` : dbFolderPathBase
 
 const sub = require('subleveldown')
 
 // See https://github.com/Level/leveldown#options
 const leveldownOptions = {
-  // Increase in-memory LRU cache to 128MB
-  cacheSize: 128 * 1024 ** 2,
+  cacheSize: inMemoryLRUCacheSize,
 
   // Default is 1024, which causes 'WriteError: "Too many open files"' errors in production
   // Setting it to Infinity lets the operating system fully manage the process limit.
@@ -31,7 +31,7 @@ const leveldownOptions = {
 }
 
 let globalDb
-if (CONFIG.leveldbMemoryBackend) {
+if (memoryBackend) {
   _.warn('leveldb in memory')
   const level = require('level-test')()
   globalDb = level()

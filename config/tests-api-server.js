@@ -10,7 +10,6 @@ module.exports = {
   mailer: {
     enabled: false
   },
-  leveldbMemoryBackend: false,
   jobs: {
     'inv:deduplicate': {
       run: true,
