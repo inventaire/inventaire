@@ -23,5 +23,5 @@ const controller = async ({ id, attribute, value }) => {
 module.exports = {
   sanitization,
   controller,
-  tasks: [ 'task', 'update' ]
+  track: [ 'task', 'update' ]
 }
