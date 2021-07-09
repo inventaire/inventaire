@@ -39,10 +39,7 @@ const sanitize = (req, res, configs) => {
   return input
 }
 
-module.exports = {
-  sanitize,
-  sanitizeAsync: async (req, res, configs) => sanitize(req, res, configs)
-}
+module.exports = { sanitize }
 
 const optionsNames = new Set([ 'nonJsonBody' ])
 
