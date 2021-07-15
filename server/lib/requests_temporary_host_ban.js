@@ -30,7 +30,6 @@ const restoreNonExpiredBans = data => {
 }
 
 const throwIfTemporarilyBanned = host => {
-  if (host.startsWith('localhost')) return
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
     throw error_.new(`temporary ban: ${host}`, 500, { host, hostBanData })
@@ -43,6 +42,9 @@ const resetBanData = host => {
 }
 
 const declareHostError = host => {
+  // Never ban local services
+  if (host.startsWith('localhost')) return
+
   let hostBanData = banData[host]
 
   if (hostBanData) {
