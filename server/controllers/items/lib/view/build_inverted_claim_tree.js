@@ -1,3 +1,5 @@
+const _ = require('builders/utils')
+
 const base = () => ({
   author: {},
   genre: {},
@@ -11,7 +13,13 @@ const viewProperties = {
 }
 
 const addToTree = (tree, entity) => {
-  const { uri } = entity
+  const { uri, claims } = entity
+
+  if (claims == null) {
+    _.warn(entity, 'entity can not be added to tree')
+    return tree
+  }
+
   for (const property in viewProperties) {
     const name = viewProperties[property]
     const values = entity.claims[property]
