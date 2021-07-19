@@ -3,7 +3,8 @@ const ActionsControllers = require('lib/actions_controllers')
 module.exports = {
   get: ActionsControllers({
     public: {
-      actor: require('./actor')
+      actor: require('./actor'),
+      outbox: require('./outbox')
     }
   }),
   post: ActionsControllers({

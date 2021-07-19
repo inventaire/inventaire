@@ -18,7 +18,8 @@ module.exports = async requestedUsername => {
     type: 'Person',
     id: actorUrl,
     preferredUsername: username,
-    inbox: `${host}/api/activitypub?action=inbox&name=${username}`
+    inbox: `${host}/api/activitypub?action=inbox&name=${username}`,
+    outbox: `${host}/api/activitypub?action=outbox&name=${username}`
   }
   await addKeyPair(actor, user, actorUrl)
   addIcon(actor, picture)
