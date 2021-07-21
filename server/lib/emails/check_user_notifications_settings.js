@@ -11,7 +11,7 @@ module.exports = (user, notificationLabel) => {
     throw emailDisabled({ user: _id, reason: 'too many undelivered emails' })
   }
 
-  const { notifications } = settings
+  const { notifications = {} } = settings
   checkSetting(_id, notifications, 'global')
   return checkSetting(_id, notifications, notificationLabel)
 }
