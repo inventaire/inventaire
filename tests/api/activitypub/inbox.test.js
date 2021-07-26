@@ -1,7 +1,7 @@
 require('should')
 const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
-const { createReceiver, makeUrl, startServerWithEmitterAndReceiver } = require('../utils/activity_pub')
+const { createReceiver, makeUrl, startServerWithEmitterAndReceiver } = require('../utils/activitypub')
 const { getActivityByExternalId, randomActivityId, randomActivity } = require('../utils/activities')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 

@@ -1,6 +1,6 @@
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activity_pub')
+const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activitypub')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 
 describe('activitypub:actor', () => {
