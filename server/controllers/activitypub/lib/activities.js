@@ -9,7 +9,7 @@ const activities_ = module.exports = {
   },
   byExternalIds: async ids => {
     ids = _.forceArray(ids)
-    return db.viewByKeys('byExternalIds', ids)
+    return db.viewByKeys('byExternalId', ids)
   },
   byExternalId: async id => {
     const docs = await activities_.byExternalIds(id)

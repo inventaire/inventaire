@@ -21,7 +21,7 @@ const shelves_ = module.exports = {
     return assignItemsToShelves(shelves, items)
   },
   byOwners: ownersIds => {
-    return db.viewByKeys('byOwners', ownersIds)
+    return db.viewByKeys('byOwner', ownersIds)
   },
   updateAttributes: async params => {
     const { shelfId, reqUserId } = params
@@ -52,7 +52,7 @@ const shelves_ = module.exports = {
     }
   },
   deleteUserShelves: userId => {
-    return db.viewByKeys('byOwners', [ userId ])
+    return db.viewByKeys('byOwner', [ userId ])
     .then(db.bulkDelete)
   },
 }
