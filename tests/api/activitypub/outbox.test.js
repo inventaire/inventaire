@@ -39,7 +39,6 @@ describe('outbox:public', () => {
   it('should return content with items link', async () => {
     const user = createUser({ fediversable: true, language: 'it' })
     const item = await createItem(user)
-    await createItem(user, { listing: 'network' })
     const { username } = await user
     await wait(800)
     const outboxUrl = `${endpoint}${username}&offset=0`
@@ -54,5 +53,16 @@ describe('outbox:public', () => {
     res.orderedItems.length.should.equal(1)
     res.orderedItems[0].object.content.should.containEql(item._id)
     // res.orderedItems[0].object.contentMap.it.should.be.a.String()
+  })
+
+  it('should not return network items', async () => {
+    const user = createUser({ fediversable: true })
+    await createItem(user, { listing: 'network' })
+    const { username } = await user
+    await wait(800)
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    const res = await publicReq('get', outboxUrl)
+    res.totalItems.should.equal(0)
+    res.orderedItems.length.should.equal(0)
   })
 })

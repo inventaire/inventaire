@@ -1,1 +1,1 @@
-module.exports = [ 'type', 'actor', 'object', 'externalId' ]
+module.exports = [ 'type', 'actor', 'object', 'externalId', 'content' ]

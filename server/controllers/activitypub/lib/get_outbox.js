@@ -1,4 +1,5 @@
-const items_ = require('controllers/items/lib/items')
+const _ = require('builders/utils')
+const { byUsername } = require('controllers/activitypub/lib/activities')
 const makeUrl = require('./make_url')
 const formatActivities = require('./format_activities')
 
@@ -23,7 +24,9 @@ const buildPaginatedOutbox = async (targetUser, offset, outbox) => {
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + 10}`
-  const items = await items_.byOwnerAndListing(targetUser._id, 'public')
-  outbox.orderedItems = await formatActivities(items, targetUser)
+  const { username } = targetUser
+  const activities = await byUsername(username)
+  const res = await formatActivities(activities, targetUser)
+  _.extend(outbox, res)
   return outbox
 }

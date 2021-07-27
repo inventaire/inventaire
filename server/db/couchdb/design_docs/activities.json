@@ -1,5 +1,9 @@
 {
   "_id": "_design/activities",
   "language": "coffeescript",
-  "views": {}
+  "views": {
+    "byUsername": {
+      "map": "(doc)->emit doc.actor.username, null"
+    }
+  }
 }
