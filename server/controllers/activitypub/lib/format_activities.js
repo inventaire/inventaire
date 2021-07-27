@@ -1,20 +1,28 @@
+const _ = require('builders/utils')
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 const { i18n } = require('lib/emails/i18n/i18n')
 const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const makeUrl = require('./make_url')
+const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 
-module.exports = async (items, user) => {
+module.exports = async (activitiesDocs, user) => {
   const actor = formatActorUrl(user.username)
-  const activities = await groupItemsByActivities(items, user, actor)
-  return activities
+  // get all users items in order to drop activities only with private items
+  // and still serve all possible activities
+  const items = await getItemsByActivities(activitiesDocs, user, actor)
+  const activities = _.compact(activitiesDocs.map(formatActivity(user.lang, actor, items)))
+  return {
+    totalItems: activities.length,
+    orderedItems: activities
+  }
 }
 
-const groupItemsByActivities = async (items, user, actor) => {
-  const itemsWithSnapshots = await Promise.all(items.map(snapshot_.addToItem))
-  // fake grouping by items, to be replaced when bulked items activities are on
-  const groupedActivities = itemsWithSnapshots.map(item => { return { items: [ item ] } })
-  return groupedActivities.map(formatActivity(user.language, actor))
+const getItemsByActivities = async (activities, user, actor) => {
+  // todo: enhance getAuthorizedItems to accept an actorUrl instead of a reqUserId
+  return getAuthorizedItems.byUser(user._id)
+  .then(items => Promise.all(items.map(snapshot_.addToItem)))
+  .then(_.KeyBy('_id'))
 }
 
 const formatActorUrl = username => {
@@ -24,17 +32,20 @@ const formatActorUrl = username => {
   return actor
 }
 
-const formatActivity = (userLang, actor) => activity => {
-  const { items } = activity
-  const object = { type: 'Note' }
+const formatActivity = (userLang, actor, itemsWithSnapshots) => activity => {
+  const { _id } = activity
+  let { object } = activity
+  const items = _.pick(itemsWithSnapshots, object.itemsIds)
+  if (_.isEmpty(items)) return null
+  object = { type: 'Note' }
   const text = i18n(userLang, 'create_items_activity', null, 'i18nActivities')
   object.content = buildItemsContent(items, text)
-  return { type: 'Create', object, actor }
+  return { _id, type: 'Create', object, actor }
 }
 
 const buildItemsContent = (items, text) => {
   let html = `<p>${text}<p>`
-  items.forEach(item => {
+  Object.values(items).forEach(item => {
     const url = `${host}/items/${item._id}`
     const linkText = item.snapshot['entity:title']
     const link = `<a href="${url}" rel="nofollow noopener noreferrer" target="_blank">${linkText}</a>`
