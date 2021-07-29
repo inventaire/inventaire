@@ -23,5 +23,13 @@ module.exports = {
     })
     newActivity.created = newActivity.updated = Date.now()
     return newActivity
+  },
+  update: activity => {
+    baseActivityValidations.pass('object', activity.object)
+    baseActivityValidations.pass('actor', activity.actor)
+    baseActivityValidations.pass('type', activity.type)
+
+    activity.updated = Date.now()
+    return activity
   }
 }

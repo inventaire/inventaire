@@ -1,6 +1,6 @@
 require('should')
 const { wait } = require('lib/promises')
-const { createItem } = require('../fixtures/items')
+const { createItem, createItems } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
 const { getActivitiesByUsername } = require('../utils/activities')
 
@@ -25,5 +25,25 @@ describe('create:activity', () => {
       firstActivity.object.should.be.ok()
       firstActivity.object.itemsIds.should.containEql(item._id)
     })
+  })
+})
+
+describe('update:activity:items', () => {
+  it('should return an activity when creating items in bulk', async () => {
+    const user = createUser({ fediversable: true })
+    await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])
+    const { username } = await user
+    const res = await getActivitiesByUsername(username)
+    res.length.should.equal(1)
+  })
+
+  it('should return an activity when creating items sequentially', async () => {
+    const user = createUser({ fediversable: true })
+    await createItem(user)
+    await createItem(user)
+    const { username } = await user
+    await wait(800)
+    const res = await getActivitiesByUsername(username)
+    res.length.should.equal(1)
   })
 })
