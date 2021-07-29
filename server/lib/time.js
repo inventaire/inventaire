@@ -25,6 +25,7 @@ const coloredElapsedTime = startTime => {
 module.exports = {
   oneMinute,
   tenMinutes: 10 * oneMinute,
+  fiveMinutes: 5 * oneMinute,
   oneHour,
   oneDay,
   oneMonth: 30 * oneDay,
