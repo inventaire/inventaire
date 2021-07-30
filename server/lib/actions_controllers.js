@@ -22,13 +22,11 @@ module.exports = controllers => {
   return async (req, res) => {
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
-    let action = req.query.action || req.body.action
+    const action = req.query.action || req.body.action || 'default'
 
-    if (action == null && actionsControllersParams.default == null) {
+    if (action === 'default' && actionsControllersParams.default == null) {
       return error_.bundleMissingQuery(req, res, 'action')
     }
-
-    action = action || 'default'
 
     const controllerParams = actionsControllersParams[action]
     if (controllerParams == null) return error_.unknownAction(req, res)
