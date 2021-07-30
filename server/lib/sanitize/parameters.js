@@ -206,6 +206,7 @@ const value = {
 }
 
 module.exports = {
+  '@context': allowlistedStrings,
   attribute: nonEmptyString,
   actor: nonEmptyString,
   object: nonEmptyString,

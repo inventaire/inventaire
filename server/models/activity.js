@@ -10,6 +10,8 @@ module.exports = {
 
     activity.externalId = activity.id
     delete activity.id
+    delete activity.context
+    delete activity['@context']
     const newActivity = {}
     Object.keys(activity).forEach(key => {
       const value = activity[key]

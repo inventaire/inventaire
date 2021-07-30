@@ -1,9 +1,5 @@
 {
   "_id": "_design/activities",
   "language": "coffeescript",
-  "views": {
-    "byExternalId": {
-      "map": "(doc)-> emit doc.externalId, null"
-    }
-  }
+  "views": {}
 }

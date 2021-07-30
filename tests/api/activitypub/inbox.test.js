@@ -1,8 +1,7 @@
 require('should')
-const { wait } = require('lib/promises')
 const { createUser, createUserOnFediverse } = require('../fixtures/users')
 const { createReceiver, makeUrl, startServerWithEmitterAndReceiver } = require('../utils/activitypub')
-const { getActivityByExternalId, randomActivityId, randomActivity } = require('../utils/activities')
+const { randomActivityId, randomActivity } = require('../utils/activities')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 
 describe('activitypub:post:inbox', () => {
@@ -94,9 +93,10 @@ describe('activitypub:post:inbox', () => {
     })
     res.statusCode.should.equal(200)
     const parsedBody = JSON.parse(res.body)
+    parsedBody['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
     parsedBody.type.should.equal('Accept')
-    await wait(50)
-    const newActivity = await getActivityByExternalId(externalId)
-    newActivity.externalId.should.equal(externalId)
+    parsedBody.object.should.equal(receiverActorUrl)
+    parsedBody.actor.should.equal(keyUrl)
+    parsedBody.id.should.equal(externalId)
   })
 })
