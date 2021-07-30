@@ -1,9 +1,10 @@
 const _ = require('builders/utils')
 const Activity = require('models/activity')
 const db = require('db/couchdb/base')('activities')
-const { expired, fiveMinutes } = require('lib/time')
+const { expired } = require('lib/time')
 const cache_ = require('lib/cache')
 const { tap } = require('lib/promises')
+const { activitiesDebounceTime } = require('config')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this
@@ -43,12 +44,15 @@ const activities_ = module.exports = {
   },
   byUsername: async username => {
     return db.viewByKey('byUsername', username)
+    .then(docs => docs.filter(oldEnough))
   },
   byId: db.get,
   byIds: db.byIds
 }
 
-const isRecent = date => date && !expired(date, fiveMinutes)
+const oldEnough = doc => !isRecent(doc.updated)
+
+const isRecent = date => date && !expired(date, activitiesDebounceTime)
 
 const createActivity = params => {
   const newActivity = formatActivity(params)
