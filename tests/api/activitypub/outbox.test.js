@@ -1,5 +1,6 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
+const debounceTime = CONFIG.activitiesDebounceTime
 require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
@@ -26,7 +27,7 @@ describe('outbox:public', () => {
     const user = createUser({ fediversable: true })
     await createItem(user)
     const { username } = await user
-    await wait(800)
+    await wait(debounceTime)
     const outboxUrl = `${endpoint}${username}`
     const res = await publicReq('get', outboxUrl)
     const fullHostUrl = `${host}${outboxUrl}`
@@ -40,7 +41,7 @@ describe('outbox:public', () => {
     const user = createUser({ fediversable: true, language: 'it' })
     const item = await createItem(user)
     const { username } = await user
-    await wait(800)
+    await wait(debounceTime)
     const outboxUrl = `${endpoint}${username}&offset=0`
     const fullHostUrl = `${host}${endpoint}${username}`
     const res = await publicReq('get', outboxUrl)
@@ -59,7 +60,7 @@ describe('outbox:public', () => {
     const user = createUser({ fediversable: true })
     await createItem(user, { listing: 'network' })
     const { username } = await user
-    await wait(800)
+    await wait(debounceTime)
     const outboxUrl = `${endpoint}${username}&offset=0`
     const res = await publicReq('get', outboxUrl)
     res.totalItems.should.equal(0)
