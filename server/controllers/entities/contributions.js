@@ -5,6 +5,7 @@ const { isPropertyUri, isLang } = require('lib/boolean_validations')
 const user_ = require('controllers/user/lib/user')
 const { shouldBeAnonymized } = require('models/user')
 const anonymizePatches = require('./lib/anonymize_patches')
+const { hasAdminAccess } = require('lib/user_access_levels')
 
 const sanitization = {
   user: { optional: true },
@@ -16,8 +17,9 @@ const sanitization = {
   }
 }
 
-const controller = async params => {
-  const { userId, limit, offset, filter, reqUserHasAdminAccess } = params
+const controller = async (params, req) => {
+  const { userId, limit, offset, filter } = params
+  const reqUserHasAdminAccess = hasAdminAccess(req.user)
   if (filter != null && !(isPropertyUri(filter) || isLang(filter))) {
     throw error_.new('invalid filter', 400, params)
   }

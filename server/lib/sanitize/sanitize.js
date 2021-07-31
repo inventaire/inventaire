@@ -4,7 +4,6 @@ const assert_ = require('lib/utils/assert_types')
 const responses_ = require('lib/responses')
 const parameters = require('./parameters')
 const { generics } = parameters
-const { getUserAccessLevels } = require('lib/user_access_levels')
 
 // The sanitize function doesn't need to be async
 // but has been used that way to be able to start promise chains
@@ -37,9 +36,6 @@ const sanitize = (req, res, configs) => {
 
   if (req.user) {
     input.reqUserId = req.user._id
-    const reqUserAccessLevel = getUserAccessLevels(req.user)
-    input.reqUserHasAdminAccess = reqUserAccessLevel.includes('admin')
-    input.reqUserHasDataadminAccess = reqUserAccessLevel.includes('dataadmin')
   }
 
   return input
