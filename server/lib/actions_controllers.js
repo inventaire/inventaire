@@ -1,87 +1,66 @@
-const { someMatch } = require('builders/utils')
 const error_ = require('lib/error/error')
 const validateObject = require('lib/validate_object')
 const { rolesByAccess } = require('./user_access_levels')
-const { send } = require('./responses')
-const { sanitize } = require('./sanitize/sanitize')
-const { track } = require('./track')
-const assert_ = require('./utils/assert_types')
+const { controllerWrapper, validateControllerWrapperParams } = require('./controller_wrapper')
+
+// A function to route requests to an endpoint to sub-endpoints
+// identified by their 'action' names:
+//
+// controllers = {
+//   [accessLevel]: {
+//     [actionA]: controller,
+//     [actionB]: {
+//       sanitization,
+//       controller,
+//       track,
+//     },
+//   }
+// }
 
 module.exports = controllers => {
-  const actions = getActions(controllers)
+  const actionsControllersParams = getActionsControllersParams(controllers)
   return async (req, res) => {
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
-    const action = req.query.action || req.body.action
+    const action = req.query.action || req.body.action || 'default'
 
-    if (action == null && actions.default == null) {
+    if (action === 'default' && actionsControllersParams.default == null) {
       return error_.bundleMissingQuery(req, res, 'action')
     }
 
-    const actionData = action ? actions[action] : actions.default
-    if (actionData == null) {
-      return error_.unknownAction(req, res)
-    }
+    const controllerParams = actionsControllersParams[action]
+    if (controllerParams == null) return error_.unknownAction(req, res)
 
-    // user.roles doesn't contain 'public' and 'authentified', but those are needed to resolve access levels
-    let roles = [ 'public' ]
-    if (req.user) {
-      roles.push('authentified')
-      if (req.user.roles) roles = roles.concat(req.user.roles)
-    }
-
-    if (!someMatch(roles, actionData.access)) {
-      return error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: actionData.access })
-    }
-
-    const { controller, sanitization, trackActionArray } = actionData
-    try {
-      if (sanitization) {
-        const params = sanitize(req, res, sanitization)
-        const result = await controller(params, req, res)
-        send(res, result)
-        if (trackActionArray) track(req, trackActionArray)
-      } else {
-        await controller(req, res)
-      }
-    } catch (err) {
-      error_.handler(req, res, err)
-    }
+    return controllerWrapper(controllerParams, req, res)
   }
 }
 
 const accessLevels = Object.keys(rolesByAccess)
 
-const getActions = controllers => {
+const getActionsControllersParams = controllers => {
   validateObject(controllers, accessLevels, 'object')
 
   const controllerKeys = Object.keys(controllers)
-  const actions = {}
+  const actionsControllersParams = {}
 
   controllerKeys.forEach(access => {
     for (const action in controllers[access]) {
-      const controllerData = controllers[access][action]
-      actions[action] = getActionData(access, controllerData)
+      const actionData = controllers[access][action]
+      actionsControllersParams[action] = getActionControllerParams(access, actionData)
     }
   })
 
-  return actions
+  return actionsControllersParams
 }
 
-const getActionData = (access, controllerData) => {
-  let controller, sanitization, trackActionArray
-  if (controllerData.sanitization) {
-    ({ controller, sanitization, track: trackActionArray } = controllerData)
-    assert_.object(sanitization)
-    if (trackActionArray) assert_.array(trackActionArray)
+const getActionControllerParams = (access, actionData) => {
+  let controller, sanitization, track
+  if (actionData.sanitization) {
+    ({ controller, sanitization, track } = actionData)
   } else {
-    controller = controllerData
+    controller = actionData
   }
-  assert_.function(controller)
-  return {
-    access: rolesByAccess[access],
-    controller,
-    sanitization,
-    trackActionArray,
-  }
+  const controllerParams = { access, controller, sanitization, track }
+  validateControllerWrapperParams(controllerParams)
+  return controllerParams
 }

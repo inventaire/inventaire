@@ -1,10 +1,8 @@
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
-const { sanitizeAsync } = require('lib/sanitize/sanitize')
 const Group = require('models/group')
+const { ControllerWrapper } = require('lib/controller_wrapper')
 
 const sanitization = {
   search: {},
@@ -26,21 +24,13 @@ const sanitization = {
   }
 }
 
-module.exports = {
-  get: (req, res) => {
-    sanitizeAsync(req, res, sanitization)
-    .then(search)
-    .then(responses_.Wrap(res, 'results'))
-    .catch(error_.Handler(req, res))
-  }
-}
-
 const search = async ({ types, search, lang, limit, filter, exact, minScore, reqUserId }) => {
-  const results = await typeSearch({ lang, types, search, limit, filter, exact, minScore })
-  return results
-  .filter(isSearchable(reqUserId))
-  .map(normalizeResult(lang))
-  .slice(0, limit)
+  let results = await typeSearch({ lang, types, search, limit, filter, exact, minScore })
+  results = results
+    .filter(isSearchable(reqUserId))
+    .map(normalizeResult(lang))
+    .slice(0, limit)
+  return { results }
 }
 
 const isSearchable = reqUserId => result => {
@@ -55,4 +45,12 @@ const isSearchable = reqUserId => result => {
   } else {
     return true
   }
+}
+
+module.exports = {
+  get: ControllerWrapper({
+    access: 'public',
+    sanitization,
+    controller: search,
+  })
 }
