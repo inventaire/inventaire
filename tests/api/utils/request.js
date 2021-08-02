@@ -38,7 +38,7 @@ const rawRequest = async (method, url, reqParams = {}) => {
 const request = async (method, endpoint, body, cookie) => {
   assert_.string(method)
   assert_.string(endpoint)
-  const url = host + endpoint
+  const url = endpoint.startsWith(host) ? endpoint : host + endpoint
   const options = {
     headers: { cookie },
     redirect: 'error'

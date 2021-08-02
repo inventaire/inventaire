@@ -1,51 +1,39 @@
 require('should')
-const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { startServerWithEmitterAndReceiver, startServerWithEmitterUser, createReceiver, makeUrl } = require('../utils/activitypub')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
+const { createUsername } = require('../fixtures/users')
+const { createReceiver, makeUrl } = require('../utils/activitypub')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
     try {
-      const emitterUser = await createUserOnFediverse()
-      const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const keyUrl = makeUrl({ origin, params: query })
-      const imaginaryReceiverUsername = createUsername()
-      const receiverUrl = makeUrl({ params: { action: 'actor', name: imaginaryReceiverUsername } })
-      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
+      const receiverUrl = makeUrl({ params: { action: 'actor', name: createUsername() } })
+      await publicReq('get', receiverUrl)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
-      parsedBody.status_verbose.should.equal('not found')
-      parsedBody.status.should.equal(404)
+      err.body.status_verbose.should.equal('not found')
+      err.body.status.should.equal(404)
     }
   })
 
   it('should reject if receiver user is not on the fediverse', async () => {
     try {
-      const emitterUser = await createUserOnFediverse()
-      const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-      const keyUrl = makeUrl({ origin, params: query })
       const { username } = await createReceiver({ fediversable: false })
       const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
-      await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
+      await publicReq('get', receiverUrl)
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body
-      )
-      parsedBody.status_verbose.should.equal('user is not on the fediverse')
-      parsedBody.status.should.equal(404)
+      err.body.status_verbose.should.equal('user is not on the fediverse')
+      err.body.status.should.equal(404)
     }
   })
 
   it('should return a json ld file with a receiver actor url', async () => {
-    const emitterUser = await createUserOnFediverse()
-    const { receiverUrl, keyUrl, receiverUsername } = await startServerWithEmitterAndReceiver({ emitterUser })
-    const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: receiverUsername } })
-    const res = await signedReq({ url: receiverUrl, keyUrl, privateKey: emitterUser.privateKey })
-    const body = JSON.parse(res.body)
+    const { username } = await createReceiver({ fediversable: true })
+    const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    const body = await publicReq('get', receiverUrl)
     body['@context'].should.an.Array()
     body.type.should.equal('Person')
     body.id.should.equal(receiverUrl)
