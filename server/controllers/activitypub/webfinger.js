@@ -1,55 +1,31 @@
 const CONFIG = require('config')
 const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
 const user_ = require('controllers/user/lib/user')
-const couch_ = require('lib/couch')
+const { ControllerWrapper } = require('lib/controller_wrapper')
+
+const sanitization = {
+  resource: {}
+}
+
+const controller = async ({ resource }) => {
+  const username = getActorParts(resource)[0]
+  const user = await user_.findOneByUsername(username)
+  if (!user) throw error_.new('not found', 404, resource)
+  if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, resource)
+  return formatWebfinger(username, resource)
+}
 
 module.exports = {
-  get: (req, res) => {
-    const params = customSanitize(req, res)
-    const { resource } = params
-    findUser(resource)
-    .then(user => {
-      if (!user) throw error_.notFound(resource)
-      if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, resource)
-
-      const { username } = user
-      res.json(formatWebfinger(username, resource))
-    })
-    .catch(error_.Handler(req, res))
-  }
-}
-
-const customSanitize = (req, res) => {
-  if (req.query.resource === null) {
-    throw error_.new('missing parameter in query: resource', 400)
-  }
-  const { resource } = req.query
-  if (!isValid(resource)) {
-    throw error_.new('invalid resource', 400, resource)
-  }
-  return req.query
-}
-
-const isValid = resource => {
-  assert_.string(resource)
-  if (resource.startsWith('acct:') === false) return false
-  const actorParts = getActorParts(resource)
-  if (actorParts.length !== 2) return false
-
-  const host = actorParts[1]
-  return host === CONFIG.publicHost
+  get: ControllerWrapper({
+    access: 'public',
+    sanitization,
+    controller,
+  })
 }
 
 const getActorParts = resource => {
   const actorWithHost = resource.substr(5)
   return actorWithHost.split('@')
-}
-
-const findUser = async resource => {
-  const username = getActorParts(resource)[0]
-  return user_.byUsername(username)
-  .then(couch_.firstDoc)
 }
 
 const formatWebfinger = (username, resource) => {
