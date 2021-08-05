@@ -1,17 +1,17 @@
 require('should')
-const { createUser, createUserOnFediverse } = require('../fixtures/users')
-const { createReceiver, makeUrl, startServerWithEmitterAndReceiver } = require('../utils/activitypub')
-const { randomActivityId, randomActivity } = require('../utils/activities')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
+const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
+const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { makeUrl, randomActivity } = require('../utils/activitypub')
 
 describe('activitypub:post:inbox', () => {
-  it('should reject without activity id', async () => {
+  it('should reject without activity id in body', async () => {
     try {
-      const { username } = await createReceiver()
-      const body = {}
-      const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
-      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      await signedReq({ keyUrl, url: receiverInboxUrl, privateKey, body })
+      const { username } = await createUsername()
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      await signedReq({
+        url: inboxUrl,
+        body: {}
+      })
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
@@ -23,21 +23,15 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject without activity type', async () => {
     try {
-      const emitterUser = await createUserOnFediverse()
-      const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver({ emitterUser })
-      const { username } = await createReceiver()
-      const receiverActorUrl = makeUrl({ params: { action: 'actor', name: username } })
-      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = randomActivity({
-        emitterActorUrl: keyUrl,
-        activityObject: receiverActorUrl
-      })
+      const { username } = await createUsername()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const body = randomActivity()
       delete body.type
       await signedReq({
-        url: receiverInboxUrl,
-        keyUrl,
-        privateKey,
-        body,
+        url: inboxUrl,
+        object: actorUrl,
+        body
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -48,22 +42,30 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
-  it('should reject if receiver user is not on the fediverse', async () => {
+  it('should reject without an activity object', async () => {
     try {
-      const { username: nonFediversableUsername } = await createUser({ fediversable: false })
-      const receiverActorUrl = makeUrl({ params: { action: 'actor', name: nonFediversableUsername } })
-      const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: nonFediversableUsername } })
-      const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
-      const body = randomActivity({
-        emitterActorUrl: keyUrl,
-        activityObject: receiverActorUrl
-      })
-
+      const { username } = await createUser({ fediversable: true })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
-        privateKey,
-        url: receiverInboxUrl,
-        keyUrl,
-        body
+        url: inboxUrl
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      const parsedBody = JSON.parse(err.body)
+      parsedBody.status_verbose.should.equal('missing parameter in body: object')
+      parsedBody.status.should.equal(400)
+    }
+  })
+
+  it('should reject if user is not on the fediverse', async () => {
+    try {
+      const { username } = await createUser({ fediversable: false })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      await signedReq({
+        object: actorUrl,
+        url: inboxUrl
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -75,28 +77,17 @@ describe('activitypub:post:inbox', () => {
   })
 
   it('should create an activity', async () => {
-    const { username } = await createReceiver()
-    const receiverActorUrl = makeUrl({ params: { action: 'actor', name: username } })
-    const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-    const { keyUrl, privateKey } = await startServerWithEmitterAndReceiver()
-    const externalId = randomActivityId()
-    const body = randomActivity({
-      externalId,
-      emitterActorUrl: keyUrl,
-      activityObject: receiverActorUrl
-    })
+    const { username } = await createUserOnFediverse()
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const res = await signedReq({
-      url: receiverInboxUrl,
-      keyUrl,
-      privateKey,
-      body,
+      object: actorUrl,
+      url: inboxUrl
     })
     res.statusCode.should.equal(200)
     const parsedBody = JSON.parse(res.body)
     parsedBody['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
     parsedBody.type.should.equal('Accept')
-    parsedBody.object.should.equal(receiverActorUrl)
-    parsedBody.actor.should.equal(keyUrl)
-    parsedBody.id.should.equal(externalId)
+    parsedBody.object.should.equal(actorUrl)
   })
 })

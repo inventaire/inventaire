@@ -58,6 +58,10 @@ const API = module.exports = {
 const fetchActorPublicKey = async actorUrl => {
   const actor = await requests_.get(actorUrl)
   assert_.object(actor)
+  const { publicKey } = actor
+  if (!publicKey || !_.isNonEmptyPlainObject(publicKey)) {
+    throw error_.new('no publicKey found', 500, actor)
+  }
   const { publicKeyPem } = actor.publicKey
   if (!publicKeyPem) {
     throw error_.new('no publicKeyPem found', 500, actor)

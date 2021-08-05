@@ -1,4 +1,5 @@
-const { request, customAuthReq, rawCustomAuthReq, signedReq } = require('./request')
+const { request, customAuthReq, rawCustomAuthReq } = require('./request')
+const { signedReq } = require('./activitypub')
 const randomString = require('lib/utils/random_string')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
 require('should')

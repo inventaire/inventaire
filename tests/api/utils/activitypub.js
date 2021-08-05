@@ -1,39 +1,74 @@
+const CONFIG = require('config')
 const _ = require('builders/utils')
+const { rawRequest } = require('../utils/request')
+const { sign } = require('controllers/activitypub/lib/security')
+const host = CONFIG.fullPublicHost()
+const { getRandomBytes, keyPair } = require('lib/crypto')
+const { generateKeyPair } = keyPair
 const express = require('express')
-const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { randomActivity } = require('./activities')
+const { createUsername } = require('../fixtures/users')
 const makeUrl = require('controllers/activitypub/lib/make_url')
 
 const endpoint = '/api/activitypub'
 
-const createReceiver = async (customData = {}) => {
-  const username = createUsername()
-  const userAttributes = _.extend({
-    username,
-    fediversable: true
-  }, customData)
-  return createUser(userAttributes)
+// in a separate file since createUser has a circular dependency in api/utils/request.js
+const signedReq = async ({ method, object, url, body, emitterUser }) => {
+  const { keyUrl, privateKey, origin } = await startServerWithEmitterAndReceiver({ emitterUser })
+  if (!body) {
+    body = randomActivity({
+      actor: keyUrl,
+      object,
+      origin
+    })
+  }
+  const endpoint = '/api/activitypub'
+  method = body ? 'post' : 'get'
+  const date = (new Date()).toUTCString()
+  const publicHost = CONFIG.host
+  // The minimum recommended data to sign is the (request-target), host, and date.
+  // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
+  const signatureHeaders = {
+    host: publicHost,
+    date
+  }
+  const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+  const signature = sign(_.extend({
+    headers: signatureHeadersInfo,
+    method,
+    keyUrl,
+    privateKey,
+    endpoint
+  }, signatureHeaders))
+  const headers = _.extend({ signature }, signatureHeaders)
+  const params = { headers }
+  if (method === 'post') _.extend(params, { body })
+  return rawRequest(method, url, params)
 }
 
-const query = ({ action, username }) => `${endpoint}?action=${action}&name=${username}`
+const randomActivityId = (origin = host) => `${origin}/${getRandomBytes(20, 'hex')}`
+
+const randomActivity = (params = {}) => {
+  const { object, actor, type, origin } = params
+  let { externalId } = params
+  if (!externalId) externalId = randomActivityId(origin)
+  return {
+    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    id: externalId,
+    type: type || 'Follow',
+    actor,
+    object
+  }
+}
 
 const startServerWithEmitterAndReceiver = async (params = {}) => {
   let { emitterUser } = params
-  if (!emitterUser) emitterUser = await createUserOnFediverse()
-  const { origin, query } = await startServerWithEmitterUser({ emitterUser })
-  const keyUrl = makeUrl({ origin, params: query })
-  const { username } = await createReceiver()
-  const privateKey = emitterUser.privateKey
-  const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
-  return { origin, keyUrl, privateKey, receiverUrl, receiverUsername: username }
-}
-
-const startServerWithEmitterUser = async ({ emitterUser }) => {
+  if (!emitterUser) emitterUser = await generateKeyPair()
+  if (!emitterUser.username) emitterUser.username = createUsername()
   const { origin } = await startActivityPubServer({ user: emitterUser })
-  return {
-    origin,
-    query: { action: 'actor', name: emitterUser.username }
-  }
+  const query = { action: 'actor', name: emitterUser.username }
+  const keyUrl = makeUrl({ origin, params: query })
+  const privateKey = emitterUser.privateKey
+  return { keyUrl, privateKey, origin }
 }
 
 const startActivityPubServer = ({ user, endpoints = [] }) => new Promise(resolve => {
@@ -76,4 +111,9 @@ const formatWebfinger = (origin, resource) => {
   }
 }
 
-module.exports = { startServerWithEmitterAndReceiver, query, createReceiver, makeUrl, startServerWithEmitterUser, randomActivity }
+module.exports = {
+  startServerWithEmitterAndReceiver,
+  makeUrl,
+  randomActivity,
+  signedReq
+}

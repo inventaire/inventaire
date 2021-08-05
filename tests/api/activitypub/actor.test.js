@@ -1,12 +1,13 @@
 require('should')
-const { createUsername } = require('../fixtures/users')
-const { createReceiver, makeUrl } = require('../utils/activitypub')
+const { createUser, createUsername } = require('../fixtures/users')
+const { makeUrl } = require('../utils/activitypub')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
     try {
-      const receiverUrl = makeUrl({ params: { action: 'actor', name: createUsername() } })
+      const name = createUsername()
+      const receiverUrl = makeUrl({ params: { action: 'actor', name } })
       await publicReq('get', receiverUrl)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -18,7 +19,7 @@ describe('activitypub:actor', () => {
 
   it('should reject if receiver user is not on the fediverse', async () => {
     try {
-      const { username } = await createReceiver({ fediversable: false })
+      const { username } = await createUser({ fediversable: false })
       const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
       await publicReq('get', receiverUrl)
       .then(shouldNotBeCalled)
@@ -30,7 +31,7 @@ describe('activitypub:actor', () => {
   })
 
   it('should return a json ld file with a receiver actor url', async () => {
-    const { username } = await createReceiver({ fediversable: true })
+    const { username } = await createUser({ fediversable: true })
     const receiverUrl = makeUrl({ params: { action: 'actor', name: username } })
     const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const body = await publicReq('get', receiverUrl)

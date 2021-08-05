@@ -6,7 +6,6 @@ const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
 const error_ = require('lib/error/error')
 const { stringify: stringifyQuery } = require('querystring')
-const { sign } = require('controllers/activitypub/lib/security')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return
@@ -100,31 +99,6 @@ const bearerTokenReq = (token, method, endpoint, body) => {
   })
 }
 
-const signedReq = async ({ method, endpoint, url, keyUrl, privateKey, body }) => {
-  if (!endpoint) endpoint = '/api/activitypub'
-  if (!method) { body ? method = 'post' : method = 'get' }
-  const date = (new Date()).toUTCString()
-  const publicHost = CONFIG.host
-  // The minimum recommended data to sign is the (request-target), host, and date.
-  // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-  const signatureHeaders = {
-    host: publicHost,
-    date
-  }
-  const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-  const signature = sign(_.extend({
-    headers: signatureHeadersInfo,
-    method,
-    keyUrl,
-    privateKey,
-    endpoint
-  }, signatureHeaders))
-  const headers = _.extend({ signature }, signatureHeaders)
-  const params = { headers }
-  if (method === 'post') _.extend(params, { body })
-  return rawRequest(method, url, params)
-}
-
 module.exports = {
   waitForTestServer,
   request,
@@ -133,5 +107,4 @@ module.exports = {
   rawCustomAuthReq,
   postUrlencoded,
   bearerTokenReq,
-  signedReq
 }
