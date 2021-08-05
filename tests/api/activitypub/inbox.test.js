@@ -1,7 +1,7 @@
 require('should')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { makeUrl, randomActivity } = require('../utils/activitypub')
+const { makeUrl, createActivity } = require('../utils/activitypub')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -24,13 +24,11 @@ describe('activitypub:post:inbox', () => {
   it('should reject without activity type', async () => {
     try {
       const { username } = await createUsername()
-      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = randomActivity()
+      const body = createActivity()
       delete body.type
       await signedReq({
         url: inboxUrl,
-        object: actorUrl,
         body
       })
       .then(shouldNotBeCalled)
@@ -44,7 +42,7 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject without an activity object', async () => {
     try {
-      const { username } = await createUser({ fediversable: true })
+      const { username } = await createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
         url: inboxUrl

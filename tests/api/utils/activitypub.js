@@ -2,7 +2,6 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 const { rawRequest } = require('../utils/request')
 const { sign } = require('controllers/activitypub/lib/security')
-const host = CONFIG.fullPublicHost()
 const { getRandomBytes, keyPair } = require('lib/crypto')
 const { generateKeyPair } = keyPair
 const express = require('express')
@@ -13,9 +12,9 @@ const endpoint = '/api/activitypub'
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser }) => {
-  const { keyUrl, privateKey, origin } = await startServerWithEmitterAndReceiver({ emitterUser })
+  const { keyUrl, privateKey, origin } = await startServerWithEmitterUser(emitterUser)
   if (!body) {
-    body = randomActivity({
+    body = createActivity({
       actor: keyUrl,
       object,
       origin
@@ -45,12 +44,10 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
   return rawRequest(method, url, params)
 }
 
-const randomActivityId = (origin = host) => `${origin}/${getRandomBytes(20, 'hex')}`
-
-const randomActivity = (params = {}) => {
+const createActivity = (params = {}) => {
   const { object, actor, type, origin } = params
   let { externalId } = params
-  if (!externalId) externalId = randomActivityId(origin)
+  if (!externalId) externalId = `${origin}/${getRandomBytes(20, 'hex')}`
   return {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: externalId,
@@ -60,31 +57,30 @@ const randomActivity = (params = {}) => {
   }
 }
 
-const startServerWithEmitterAndReceiver = async (params = {}) => {
-  let { emitterUser } = params
-  if (!emitterUser) emitterUser = await generateKeyPair()
-  if (!emitterUser.username) emitterUser.username = createUsername()
-  const { origin } = await startActivityPubServer({ user: emitterUser })
+const createSkinnyEmitterUser = async () => {
+  const emitterUser = await generateKeyPair()
+  emitterUser.username = createUsername()
+  return emitterUser
+}
+
+const startServerWithEmitterUser = async emitterUser => {
+  if (!emitterUser) emitterUser = await createSkinnyEmitterUser()
+  const { origin } = await startActivityPubServer(emitterUser)
   const query = { action: 'actor', name: emitterUser.username }
   const keyUrl = makeUrl({ origin, params: query })
   const privateKey = emitterUser.privateKey
   return { keyUrl, privateKey, origin }
 }
 
-const startActivityPubServer = ({ user, endpoints = [] }) => new Promise(resolve => {
+const startActivityPubServer = emitterUser => new Promise(resolve => {
   const port = 1024 + Math.trunc(Math.random() * 10000)
-  const { publicKey: publicKeyPem, username } = user
+  const { publicKey: publicKeyPem, username } = emitterUser
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
   const webfingerEndpoint = '/.well-known/webfinger?resource='
   const resource = `acct:${username}@${host}`
 
-  for (const endpt of endpoints) {
-    app.get('/' + endpt.name, (req, res) => {
-      return res.json(endpt.resData)
-    })
-  }
   app.get(`${webfingerEndpoint}${resource}`, async (req, res) => {
     return res.json(formatWebfinger(origin, endpoint, resource))
   })
@@ -112,8 +108,9 @@ const formatWebfinger = (origin, resource) => {
 }
 
 module.exports = {
-  startServerWithEmitterAndReceiver,
+  startServerWithEmitterUser,
   makeUrl,
-  randomActivity,
+  createActivity,
+  createSkinnyEmitterUser,
   signedReq
 }

@@ -2,24 +2,17 @@ const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
-const { makeUrl, randomActivity, startServerWithEmitterAndReceiver } = require('../utils/activitypub')
+const { makeUrl, createActivity, startServerWithEmitterUser, createSkinnyEmitterUser } = require('../utils/activitypub')
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
-const { generateKeyPair } = require('lib/crypto').keyPair
 
 const endpoint = '/api/activitypub'
 
-const randomEmitterUser = async () => {
-  const emitterUser = await generateKeyPair()
-  emitterUser.username = createUsername()
-  return emitterUser
-}
-
-const inboxReq = async ({ emitterUser, receiverUsername, body }) => {
-  if (receiverUsername === undefined) receiverUsername = createUsername()
-  const inboxUrl = makeUrl({ params: { action: 'inbox', name: receiverUsername } })
-  const actorUrl = makeUrl({ params: { action: 'actor', name: receiverUsername } })
+const inboxReq = async ({ emitterUser, username }) => {
+  if (!username) username = createUsername()
+  const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+  const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
   return signedReq({
     emitterUser,
     object: actorUrl,
@@ -32,7 +25,7 @@ describe('activitypub:signed:request', () => {
     try {
       const username = createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = randomActivity()
+      const body = createActivity()
       await rawRequest('post', inboxUrl, {
         headers: {
           'content-type': 'application/activity+json'
@@ -50,7 +43,7 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when no publicKey is found', async () => {
     try {
-      const emitterUser = await randomEmitterUser()
+      const emitterUser = await createSkinnyEmitterUser()
       delete emitterUser.publicKey
       await inboxReq({ emitterUser })
       .then(shouldNotBeCalled)
@@ -64,7 +57,7 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when fetching an invalid publicKey', async () => {
     try {
-      const emitterUser = await randomEmitterUser()
+      const emitterUser = await createSkinnyEmitterUser()
       emitterUser.publicKey = 'foo'
       await inboxReq({ emitterUser })
       .then(shouldNotBeCalled)
@@ -78,8 +71,8 @@ describe('activitypub:signed:request', () => {
 
   it('should reject when key verification fails', async () => {
     try {
-      const emitterUser = await randomEmitterUser()
-      const anotherUser = await randomEmitterUser()
+      const emitterUser = await createSkinnyEmitterUser()
+      const anotherUser = await createSkinnyEmitterUser()
       emitterUser.privateKey = anotherUser.privateKey
       await inboxReq({ emitterUser })
       .then(shouldNotBeCalled)
@@ -93,8 +86,8 @@ describe('activitypub:signed:request', () => {
 
   it('should reject if date header is more than 30 seconds old', async () => {
     try {
-      const emitterUser = await randomEmitterUser()
-      const { username, keyUrl } = await startServerWithEmitterAndReceiver({ emitterUser })
+      const emitterUser = await createSkinnyEmitterUser()
+      const { username, keyUrl } = await startServerWithEmitterUser(emitterUser)
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
@@ -113,7 +106,7 @@ describe('activitypub:signed:request', () => {
       }, signatureHeaders))
       const headers = _.extend({ signature }, signatureHeaders)
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = randomActivity()
+      const body = createActivity()
       await rawRequest(method, inboxUrl, {
         headers,
         body
@@ -128,8 +121,8 @@ describe('activitypub:signed:request', () => {
   })
 
   it('should verify request', async () => {
-    const { username: receiverUsername } = await createUserOnFediverse()
-    const res = await inboxReq({ receiverUsername })
+    const { username } = await createUserOnFediverse()
+    const res = await inboxReq({ username })
     const resBody = JSON.parse(res.body)
     resBody['@context'].should.an.Array()
   })
