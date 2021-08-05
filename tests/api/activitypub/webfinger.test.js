@@ -8,6 +8,20 @@ const { createUser, createUserOnFediverse, createUsername } = require('../fixtur
 const endpoint = '/.well-known/webfinger?resource='
 
 describe('activitypub:webfinger', () => {
+  it('should reject invalid resource', async () => {
+    try {
+      const endpoint = '/.well-known/webfinger?rezzzzzz='
+      const invalidResource = 'bar.org'
+      invalidResource.should.not.equal(CONFIG.host)
+      const actor = `acct:foo@${invalidResource}`
+      await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('missing parameter')
+    }
+  })
+
   it('should reject invalid host', async () => {
     try {
       const invalidResource = 'bar.org'

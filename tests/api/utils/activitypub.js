@@ -74,14 +74,14 @@ const startServerWithEmitterUser = async emitterUser => {
 
 const startActivityPubServer = emitterUser => new Promise(resolve => {
   const port = 1024 + Math.trunc(Math.random() * 10000)
-  const { publicKey: publicKeyPem, username } = emitterUser
+  const { publicKey: publicKeyPem } = emitterUser
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
   const webfingerEndpoint = '/.well-known/webfinger?resource='
-  const resource = `acct:${username}@${host}`
 
-  app.get(`${webfingerEndpoint}${resource}`, async (req, res) => {
+  app.get(webfingerEndpoint, async (req, res) => {
+    const { resource } = req.query
     return res.json(formatWebfinger(origin, endpoint, resource))
   })
 
