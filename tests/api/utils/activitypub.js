@@ -8,11 +8,9 @@ const express = require('express')
 const { createUsername } = require('../fixtures/users')
 const makeUrl = require('controllers/activitypub/lib/make_url')
 
-const endpoint = '/api/activitypub'
-
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser }) => {
-  const { keyUrl, privateKey, origin } = await startServerWithEmitterUser(emitterUser)
+  const { keyUrl, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
       actor: keyUrl,
@@ -20,7 +18,6 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
       origin
     })
   }
-  const endpoint = '/api/activitypub'
   method = body ? 'post' : 'get'
   const date = (new Date()).toUTCString()
   const publicHost = CONFIG.host
@@ -36,7 +33,7 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
     method,
     keyUrl,
     privateKey,
-    endpoint
+    endpoint: '/api/activitypub'
   }, signatureHeaders))
   const headers = _.extend({ signature }, signatureHeaders)
   const params = { headers }
@@ -57,60 +54,51 @@ const createActivity = (params = {}) => {
   }
 }
 
-const createSkinnyEmitterUser = async () => {
-  const emitterUser = await generateKeyPair()
-  emitterUser.username = createUsername()
-  return emitterUser
+const createRemoteActivityPubServerUser = async () => {
+  const user = await generateKeyPair()
+  user.username = createUsername()
+  remoteActivityPubServerUsers[user.username] = user
+  return user
 }
 
-const startServerWithEmitterUser = async emitterUser => {
-  if (!emitterUser) emitterUser = await createSkinnyEmitterUser()
-  const { origin } = await startActivityPubServer(emitterUser)
-  const query = { action: 'actor', name: emitterUser.username }
-  const keyUrl = makeUrl({ origin, params: query })
-  const privateKey = emitterUser.privateKey
+const remoteServerActivityPubEndpoint = '/some_ap_endpoint'
+
+let removeActivityPubServer
+const getSomeRemoteServerUser = async emitterUser => {
+  emitterUser = emitterUser || await createRemoteActivityPubServerUser()
+  removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
+  const { origin } = removeActivityPubServer
+  const { username, privateKey } = emitterUser
+  const query = { name: username }
+  const keyUrl = makeUrl({ origin, params: query, endpoint: remoteServerActivityPubEndpoint })
   return { keyUrl, privateKey, origin }
 }
 
-const startActivityPubServer = emitterUser => new Promise(resolve => {
+const remoteActivityPubServerUsers = {}
+
+const startActivityPubServer = () => new Promise(resolve => {
   const port = 1024 + Math.trunc(Math.random() * 10000)
-  const { publicKey: publicKeyPem } = emitterUser
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
-  const webfingerEndpoint = '/.well-known/webfinger?resource='
 
-  app.get(webfingerEndpoint, async (req, res) => {
-    const { resource } = req.query
-    return res.json(formatWebfinger(origin, endpoint, resource))
-  })
-
-  app.get(endpoint, async (req, res) => {
-    return res.json({ publicKey: { publicKeyPem } })
+  app.get(remoteServerActivityPubEndpoint, async (req, res) => {
+    const { name } = req.query
+    const user = remoteActivityPubServerUsers[name]
+    if (user) {
+      res.json({ publicKey: { publicKeyPem: user.publicKey } })
+    } else {
+      res.status(400).json({ found: false })
+    }
   })
 
   app.listen(port, () => resolve({ port, host, origin }))
 })
 
-const formatWebfinger = (origin, resource) => {
-  const actorUrl = `${origin}${endpoint}`
-  return {
-    subject: resource,
-    aliases: [ actorUrl ],
-    links: [
-      {
-        rel: 'self',
-        type: 'application/activity+json',
-        href: actorUrl
-      }
-    ]
-  }
-}
-
 module.exports = {
-  startServerWithEmitterUser,
+  getSomeRemoteServerUser,
   makeUrl,
   createActivity,
-  createSkinnyEmitterUser,
+  createRemoteActivityPubServerUser,
   signedReq
 }
