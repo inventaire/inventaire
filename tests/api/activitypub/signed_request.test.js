@@ -50,7 +50,7 @@ describe('activitypub:signed:request', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
-      parsedBody.status.should.equal(500)
+      parsedBody.status.should.equal(400)
       parsedBody.status_verbose.should.equal('no publicKey found')
     }
   })
@@ -64,7 +64,7 @@ describe('activitypub:signed:request', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
-      parsedBody.status.should.equal(500)
+      parsedBody.status.should.equal(400)
       parsedBody.status_verbose.should.equal('invalid publicKeyPem found')
     }
   })

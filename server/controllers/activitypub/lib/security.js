@@ -60,15 +60,15 @@ const fetchActorPublicKey = async actorUrl => {
   assert_.object(actor)
   const { publicKey } = actor
   if (!publicKey || !_.isNonEmptyPlainObject(publicKey)) {
-    throw error_.new('no publicKey found', 500, actor)
+    throw error_.new('no publicKey found', 400, actor)
   }
   const { publicKeyPem } = actor.publicKey
   if (!publicKeyPem) {
-    throw error_.new('no publicKeyPem found', 500, actor)
+    throw error_.new('no publicKeyPem found', 400, actor)
   }
   // TODO: check if string MUST start with 'begin public key' in the specs
   if (!publicKeyPem.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
-    throw error_.new('invalid publicKeyPem found', 500, actor.publicKey)
+    throw error_.new('invalid publicKeyPem found', 400, actor.publicKey)
   }
   // TODO: handle timeout
   return actor.publicKey
