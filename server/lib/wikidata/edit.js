@@ -4,6 +4,8 @@ const { userAgent } = require('lib/requests')
 module.exports = require('wikibase-edit')({
   instance: 'https://www.wikidata.org',
   userAgent,
-  // Set an increased maxlag, as most edits are isolated edits from humans using the GUI
-  maxlag: 10,
+  // Most edits are isolated edits from humans using the GUI, maxlag could thus be omitted
+  // See https://github.com/maxlath/wikibase-edit/blob/master/docs/how_to.md#maxlag
+  // and https://www.mediawiki.org/wiki/Manual:Maxlag_parameter
+  maxlag: null,
 })
