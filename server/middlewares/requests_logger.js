@@ -1,4 +1,6 @@
-const { mutedDomains, mutedPath } = require('config').requestsLogger
+const CONFIG = require('config')
+const host = CONFIG.fullPublicHost()
+const { mutedDomains, mutedPath } = CONFIG.requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1
 module.exports = (req, res, next) => {
@@ -36,13 +38,15 @@ const format = (req, res) => {
   // for instance when tests timeout
   const interrupted = finished ? '' : ' \x1b[33mCLOSED BEFORE FINISHING'
 
-  const base = `\x1b[90m${method} ${url} \x1b[${color}m${status}${interrupted} \x1b[90m${responseTime(req, res)}`
+  let line = `\x1b[90m${method} ${url} \x1b[${color}m${status}${interrupted} \x1b[90m${responseTime(req, res)}`
 
-  if (user) {
-    return `${base} - u:${user._id}\x1b[0m`
-  } else {
-    return `${base}\x1b[0m`
-  }
+  if (user) line += ` - u:${user._id}`
+
+  const { origin } = req.headers
+  // Log cross-site requests origin
+  if (origin != null && origin !== host) line += ` - origin:${origin}`
+
+  return `${line}\x1b[0m`
 }
 
 const statusCategoryColor = {
