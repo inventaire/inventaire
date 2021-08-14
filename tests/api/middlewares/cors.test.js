@@ -1,6 +1,5 @@
+const should = require('should')
 const { rawRequest } = require('../utils/request')
-
-require('should')
 
 describe('CORS', () => {
   describe('OPTIONS', () => {
@@ -15,6 +14,11 @@ describe('CORS', () => {
       res.headers['access-control-allow-methods'].should.equal('*')
       res.headers['access-control-allow-headers'].should.equal('content-type')
       res.headers['access-control-allow-credentials'].should.equal('false')
+    })
+
+    it('should not return session cookies', async () => {
+      const res = await rawRequest('options', '/api/whatever')
+      should(res.headers['set-cookie']).not.be.ok()
     })
   })
 })

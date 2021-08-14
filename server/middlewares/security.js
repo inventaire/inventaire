@@ -1,4 +1,4 @@
-const enableCorsOnPublicApiRoutes = (req, res, next) => {
+const setCorsPolicy = (req, res, next) => {
   res.header('access-control-allow-origin', '*')
   res.header('access-control-allow-methods', '*')
   res.header('access-control-allow-headers', 'content-type')
@@ -14,4 +14,4 @@ const enableCorsOnPublicApiRoutes = (req, res, next) => {
   }
 }
 
-module.exports = { enableCorsOnPublicApiRoutes }
+module.exports = { setCorsPolicy }

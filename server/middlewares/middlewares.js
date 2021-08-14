@@ -10,6 +10,8 @@ module.exports = [
   // in the middleware are logged
   requestsLogger,
 
+  security.setCorsPolicy,
+
   // server/controllers/auth/fake_submit.js relies on the possibility
   // to submit a url encoded form data, so it needs to have the body-parser ready for it
   content.acceptUrlencoded('/api/submit'),
@@ -31,6 +33,4 @@ module.exports = [
   auth.authorizationHeader,
 
   content.deduplicateRequests,
-
-  security.enableCorsOnPublicApiRoutes
 ]
