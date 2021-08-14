@@ -13,7 +13,7 @@ describe('CORS', () => {
       res.headers['access-control-allow-origin'].should.equal('*')
       res.headers['access-control-allow-methods'].should.equal('*')
       res.headers['access-control-allow-headers'].should.equal('content-type')
-      res.headers['access-control-allow-credentials'].should.equal('false')
+      should(res.headers['access-control-allow-credentials']).not.be.ok()
     })
 
     it('should not return session cookies', async () => {
