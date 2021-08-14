@@ -11,9 +11,8 @@ const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, insecureHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
+const { coloredElapsedTime } = require('./time')
 const defaultTimeout = 30 * 1000
-
-let requestId = 0
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
@@ -29,8 +28,7 @@ const req = method => async (url, options = {}) => {
 
   completeOptions(method, options)
 
-  let reqTimerKey
-  if (logOutgoingRequests) reqTimerKey = startReqTimer(method, url, options)
+  const timer = startReqTimer(method, url, options)
 
   let res
   try {
@@ -46,7 +44,7 @@ const req = method => async (url, options = {}) => {
     }
   }
 
-  if (logOutgoingRequests) endReqTimer(reqTimerKey)
+  endReqTimer(timer)
 
   const { status: statusCode } = res
 
@@ -99,9 +97,9 @@ const req = method => async (url, options = {}) => {
 // Same but doesn't parse response
 const head = async (url, options = {}) => {
   completeOptions('head', options)
-  const reqTimerKey = startReqTimer('head', url, options)
+  const timer = startReqTimer('head', url, options)
   const { status, headers } = await fetch(url, options)
-  endReqTimer(reqTimerKey)
+  endReqTimer(timer)
   return {
     statusCode: status,
     headers: formatHeaders(headers.raw())
@@ -146,20 +144,24 @@ const startReqTimer = (method, url, options) => {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
 
-  let body = ' '
-  if (options.bodyStream) body += '[stream]'
+  let body = ''
+  if (options.bodyStream) body += ' [stream]'
   else if (options && options.body) {
     const { length } = options.body
-    if (length < bodyLogLimit) body += options.body
-    else body += `${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
+    if (length < bodyLogLimit) body += ' ' + options.body
+    else body += ` ${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
   }
 
-  const reqTimerKey = magenta(`${method.toUpperCase()} ${url}${body} [r${++requestId}]`)
-  console.time(reqTimerKey)
-  return reqTimerKey
+  const reqTimerKey = `${method.toUpperCase()} ${url}${body}`
+  const startTime = process.hrtime()
+  return [ reqTimerKey, startTime ]
 }
 
-const endReqTimer = console.timeEnd
+const endReqTimer = ([ reqTimerKey, startTime ]) => {
+  if (!logOutgoingRequests) return
+  const elapsed = coloredElapsedTime(startTime)
+  process.stdout.write(`${magenta(reqTimerKey)} ${elapsed}\n`)
+}
 
 module.exports = {
   get: req('get'),
