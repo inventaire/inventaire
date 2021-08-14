@@ -1,17 +1,18 @@
-const enableCorsOnPublicApiRoutes = (req, res, next) => {
-  // Only have cross domain requests wide open for GET requests
-  // to avoid CSRF on request altering the database
-  if (req.method === 'GET') {
-    res.header('access-control-allow-origin', '*')
-    res.header('access-control-allow-methods', 'GET')
-    res.header('access-control-allow-headers', 'content-type')
-  } else {
-    res.header('access-control-allow-origin', 'https://api.inventaire.io')
-    res.header('access-control-allow-methods', 'GET,POST,PUT')
-    res.header('access-control-allow-credentials', 'true')
-  }
+const setCorsPolicy = (req, res, next) => {
+  res.header('access-control-allow-origin', '*')
+  res.header('access-control-allow-methods', '*')
+  res.header('access-control-allow-headers', 'content-type')
+  // Recommend browsers to not send cookies, to prevent CSRF on endpoints requiring authentification
+  // by not setting access-control-allow-credentials, rather than setting it to false,
+  // see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials#directives
 
-  next()
+  if (req.method === 'OPTIONS') {
+    // The headers above is all preflight requests should need
+    // See https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
+    res.end()
+  } else {
+    next()
+  }
 }
 
-module.exports = { enableCorsOnPublicApiRoutes }
+module.exports = { setCorsPolicy }
