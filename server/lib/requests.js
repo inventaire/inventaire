@@ -167,5 +167,6 @@ module.exports = {
   put: req('put'),
   delete: req('delete'),
   head,
+  options: req('options'),
   userAgent
 }
