@@ -49,8 +49,8 @@ module.exports = async (req, res, url, dimensions) => {
     err.privateContext = url
     error_.handler(req, res, err, statusCode)
   } else {
-    res.header('Content-Type', 'image/jpeg')
-    res.header('Cache-Control', 'immutable')
+    res.header('content-type', 'image/jpeg')
+    res.header('cache-control', 'immutable')
     resizeFromStream(response.body, width, height, req, res)
   }
 }

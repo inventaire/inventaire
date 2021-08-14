@@ -57,7 +57,7 @@ module.exports = {
       next()
     } else if (authorization.startsWith('Basic')) {
       // TODO: handle response to avoid text/plain 401 response
-      // to keep the API consistent on Content-Type
+      // to keep the API consistent on content-type
       passport_.authenticate.basic(req, res, next)
     } else if (authorization.startsWith('Bearer')) {
       oauthServer.authenticate(req, res, afterBearerToken(req, res, next))

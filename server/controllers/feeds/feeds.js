@@ -35,7 +35,7 @@ module.exports = {
     const headersLang = headers_.getLang(req.headers)
     const params = sanitize(req, res, sanitization)
     const xml = await getFeed(headersLang, params)
-    res.set('content-type', 'application/rss+xml')
+    res.header('content-type', 'application/rss+xml')
     res.send(xml)
   }
 }

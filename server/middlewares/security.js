@@ -2,13 +2,13 @@ const enableCorsOnPublicApiRoutes = (req, res, next) => {
   // Only have cross domain requests wide open for GET requests
   // to avoid CSRF on request altering the database
   if (req.method === 'GET') {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'GET')
-    res.header('Access-Control-Allow-Headers', 'Content-Type')
+    res.header('access-control-allow-origin', '*')
+    res.header('access-control-allow-methods', 'GET')
+    res.header('access-control-allow-headers', 'content-type')
   } else {
-    res.header('Access-Control-Allow-Origin', 'https://api.inventaire.io')
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT')
-    res.header('Access-Control-Allow-Credentials', 'true')
+    res.header('access-control-allow-origin', 'https://api.inventaire.io')
+    res.header('access-control-allow-methods', 'GET,POST,PUT')
+    res.header('access-control-allow-credentials', 'true')
   }
 
   next()

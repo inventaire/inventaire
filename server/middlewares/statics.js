@@ -16,7 +16,7 @@ if (CONFIG.serveStaticFiles) {
   const options = {
     maxAge: 0,
     setHeaders: res => {
-      res.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+      res.header('cache-control', 'no-cache, no-store, must-revalidate')
     },
     // Return a 404 when a file isn't found
     fallthrough: false,

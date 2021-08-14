@@ -4,9 +4,9 @@ const publicFolder = __.path('client', 'public')
 const indexOptions = {
   root: publicFolder,
   headers: {
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'cache-control': 'no-cache, no-store, must-revalidate',
     // Opt-out from Google FLoC, see https://plausible.io/blog/google-floc
-    'Permissions-Policy': 'interest-cohort=()',
+    'permissions-policy': 'interest-cohort=()',
   }
 }
 

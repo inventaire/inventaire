@@ -5,7 +5,7 @@ let cacheControl
 // Applies to both API and static files requests
 if (noCache) {
   cacheControl = (req, res, next) => {
-    res.header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    res.header('cache-control', 'no-cache, no-store, must-revalidate')
     next()
   }
 } else {

@@ -51,6 +51,6 @@ module.exports = {
 
 const options = {
   headers: {
-    'Content-Type': 'image/jpeg'
+    'content-type': 'image/jpeg'
   }
 }
