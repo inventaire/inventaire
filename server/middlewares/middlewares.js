@@ -19,8 +19,6 @@ module.exports = [
 
   content.jsonBodyParser,
   statics.favicon,
-
-  statics.enableCors,
   statics.mountStaticFiles,
 
   cache.cacheControl,
