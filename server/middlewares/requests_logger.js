@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
   req._startAt = process.hrtime()
 
   res.on('close', () => {
-    if (skip(req, res)) return
+    if (skip(req)) return
     const line = format(req, res)
     if (line == null) return
     process.stdout.write(`${line}\n`)
@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
   next()
 }
 
-const skip = (req, res) => {
+const skip = req => {
   // /!\ resources behind the /public endpoint will have their pathname
   // with /public removed: /public/css/app.css will have a pathname=/css/app.css
   // In that case, req._parsedOriginalUrl would be defined to the original /public/css/app.css,
