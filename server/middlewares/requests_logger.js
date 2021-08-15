@@ -37,23 +37,32 @@ const format = (req, res) => {
   // See https://nodejs.org/api/http.html#http_event_finish
   // Interruption typically happen when the client closes the request,
   // for instance when tests timeout
-  const interrupted = finished ? '' : ' \x1b[33mCLOSED BEFORE FINISHING'
+  const interrupted = finished ? '' : ` ${yellow}CLOSED BEFORE FINISHING`
 
-  let line = `\x1b[90m${method} ${url} \x1b[${color}m${status}${interrupted} \x1b[90m${coloredElapsedTime(req._startAt)}`
+  let line = `${grey}${method} ${url} ${color}${status}${interrupted} ${grey}${coloredElapsedTime(req._startAt)}${grey}`
 
   if (user) line += ` - u:${user._id}`
 
   const { origin } = req.headers
   // Log cross-site requests origin
-  if (origin != null && origin !== host) line += `\x1b[90m - origin:${origin}`
+  if (origin != null && origin !== host) line += ` - origin:${origin}`
 
-  return `${line}\x1b[0m`
+  return `${line}${resetColors}`
 }
 
+// Using escape codes rather than chalk to save a few characters per line
+const escape = '\x1b['
+const resetColors = `${escape}0m`
+const red = `${escape}31m`
+const green = `${escape}32m`
+const yellow = `${escape}33m`
+const cyan = `${escape}36m`
+const grey = `${escape}90m`
+
 const statusCategoryColor = {
-  5: 31, // red
-  4: 33, // yellow
-  3: 36, // cyan
-  2: 32, // green
-  undefined: 0, // no color
+  5: red,
+  4: yellow,
+  3: cyan,
+  2: green,
+  undefined: resetColors,
 }
