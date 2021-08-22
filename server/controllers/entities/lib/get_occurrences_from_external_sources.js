@@ -88,6 +88,7 @@ const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAutho
 const createOccurrencesFromUnstructuredArticle = worksLabels => {
   const worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
   return article => {
+    if (!article.extract) return
     const matchedTitles = _.uniq(article.extract.match(worksLabelsPattern))
     if (matchedTitles.length <= 0) return
     return { url: article.url, matchedTitles, structuredDataSource: false }
