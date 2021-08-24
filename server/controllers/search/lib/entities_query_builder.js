@@ -62,7 +62,9 @@ const matchEntities = (search, userLang, exact) => {
         operator: 'or',
         fields,
         analyzer: 'standard_truncated',
-        type: 'cross_fields',
+        // cross_fields would be preferable but it generates 'function score query returned an invalid score' errors
+        // See https://github.com/elastic/elasticsearch/issues/44700
+        type: 'best_fields',
       }
     })
     // Flattened terms have been indexes with the 'standard' analyzer
@@ -75,7 +77,7 @@ const matchEntities = (search, userLang, exact) => {
         operator: 'or',
         fields: entitiesFlattenedFields,
         analyzer: 'standard',
-        type: 'cross_fields',
+        type: 'best_fields',
       }
     })
   }
