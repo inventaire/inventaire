@@ -5,8 +5,6 @@ module.exports = params => {
   let { types } = params
   types = getSingularTypes(types)
 
-  const boolMode = exact ? 'must' : 'should'
-
   return {
     query: {
       function_score: {
@@ -20,7 +18,10 @@ module.exports = params => {
             // Because most of the work has been done at index time (indexing terms by ngrams)
             // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
             // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-            [boolMode]: matchEntities(search, userLang, exact)
+            should: matchEntities(search, userLang, exact),
+            // The default value would be 0 due to the presence of a filter
+            // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#bool-min-should-match
+            minimum_should_match: 1
           }
         },
         // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
