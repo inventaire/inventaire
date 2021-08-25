@@ -56,6 +56,7 @@ const wikidataOnlyP31Values = {
     'wd:Q17994250', // pocket edition
     'wd:Q1238720', // volume
     'wd:Q193495', // monograph
+    'wd:Q83818856', // grammar book
   ],
   editions: [
     'wd:Q3972943' // publishing
