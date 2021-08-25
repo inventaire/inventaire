@@ -54,7 +54,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 - a [CouchDB](https://couchdb.apache.org/) (>=3.1) instance (on port 5984 for default config)
 - an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.10) instance (on port 9200 for default config)
 
-To install all this those dependneices on Ubuntu 20.04:
+To install all this those dependencies on Ubuntu 20.04:
 
 For packages available in Ubuntu default repositories:
 ```sh
