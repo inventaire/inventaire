@@ -29,7 +29,7 @@ const waitForElastic = async () => {
   try {
     await get(elasticHost)
   } catch (err) {
-    if (err.statusCode === 503 || err.message.includes('ECONNREFUSED')) {
+    if (err.statusCode === 503 || err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
       _.warn(`waiting for Elasticsearch on ${elasticHost}`)
       await wait(500)
       return waitForElastic()
