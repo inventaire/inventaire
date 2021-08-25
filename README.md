@@ -72,7 +72,7 @@ Alternatively, CouchDB and Elasticsearch could be run in Docker:
 ```sh
 wget https://raw.githubusercontent.com/inventaire/docker-inventaire/master/docker-compose.yml
 ```
-* Run 'couchdb' and 'elasticsearch' services in the background:
+* Run `couchdb` and `elasticsearch` services in the background:
 ```sh
 docker-compose up -d couchdb elasticsearch
 ```
