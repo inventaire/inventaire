@@ -72,7 +72,7 @@ module.exports = _ => {
       const counter = () => {
         if (errorCounter !== prev) {
           prev = errorCounter
-          return console.log(red('errors: ') + errorCounter)
+          console.log(red('errors: ') + errorCounter)
         }
       }
       setInterval(counter, 5000)

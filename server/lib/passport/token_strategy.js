@@ -34,7 +34,6 @@ const returnIfValid = (done, token, email, user) => {
   return verifyToken(user, token)
   .then(valid => {
     if (valid) {
-      console.log('valid', valid)
       return openPasswordUpdateWindow(user)
       .then(_.Log('clearToken res'))
       .then(() => done(null, user))

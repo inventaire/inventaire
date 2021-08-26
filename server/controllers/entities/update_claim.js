@@ -16,7 +16,6 @@ const controller = async (params, req) => {
   if (_.isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
   if (uri == null) throw error_.newMissingBody('uri')
-  console.log({ oldValue, newValue })
   if (oldValue == null && newValue == null) {
     throw error_.newMissingBody('old-value|new-value')
   }
