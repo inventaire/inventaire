@@ -275,10 +275,13 @@ describe('patch', () => {
       const { patch, newVersion } = generateSomePatch(base)
       const patches = [ patch ]
       should(patch.snapshot).not.be.ok()
-      Patch.addSnapshots(base, patches)
+      Patch.addSnapshots(patches)
       patch.snapshot.should.be.an.Object()
       patch.snapshot.claims.should.deepEqual({})
       patch.snapshot.labels.en.should.equal(newVersion.labels.en)
+      should(patch.snapshot.type).not.be.ok()
+      should(patch.snapshot.version).not.be.ok()
+      should(patch.snapshot.created).not.be.ok()
     })
 
     it('should recover from disordered patches', () => {
@@ -295,7 +298,7 @@ describe('patch', () => {
 
       patches = _.shuffle(patches)
 
-      Patch.addSnapshots(base, patches)
+      Patch.addSnapshots(patches)
 
       for (const patch of patches) {
         patch.snapshot.should.be.an.Object()

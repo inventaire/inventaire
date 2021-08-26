@@ -2,7 +2,6 @@ const _ = require('builders/utils')
 const designDocName = 'patches'
 const db = require('db/couchdb/base')('patches', designDocName)
 const Patch = require('models/patch')
-const Entity = require('models/entity')
 const assert_ = require('lib/utils/assert_types')
 const { maxKey } = require('lib/couch')
 const { oneDay } = require('lib/time')
@@ -50,8 +49,7 @@ module.exports = {
 
   getWithSnapshots: async entityId => {
     const patches = await byEntityId(entityId)
-    const base = Entity.create()
-    Patch.addSnapshots(base, patches)
+    Patch.addSnapshots(patches)
     return patches
   },
 

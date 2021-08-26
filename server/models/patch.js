@@ -61,8 +61,8 @@ module.exports = {
     return updatedDoc
   },
 
-  addSnapshots: (base, patchesDocs) => {
-    let previousVersion = base
+  addSnapshots: patchesDocs => {
+    let previousVersion = { labels: {}, claims: {} }
 
     // patchesDocs is typically the output a CouchDB view
     // which is likely to order patches alphabetically (ex: 10 will come before 2)
