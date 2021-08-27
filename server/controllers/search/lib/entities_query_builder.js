@@ -1,6 +1,7 @@
 const { getSingularTypes } = require('lib/wikidata/aliases')
 const properties = require('controllers/entities/lib/properties/properties_values_constraints')
 const error_ = require('lib/error/error')
+const { trim } = require('lodash')
 const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
 
 module.exports = params => {
@@ -112,7 +113,7 @@ const getClaimFilters = claimParameter => {
   return claimParameter
   .split(' ')
   .map(andCondition => {
-    const orConditions = andCondition.split('|')
+    const orConditions = andCondition.split('|').map(trim)
     orConditions.forEach(validatePropertyAndValue)
     return {
       terms: {
