@@ -18,19 +18,18 @@ module.exports = params => {
 
   if (!search) minScore = 0
 
+  const shoulds = matchEntities(search, userLang, exact)
+
   return {
     query: {
       function_score: {
         query: {
           bool: {
             filter: filters,
-            // Because most of the work has been done at index time (indexing terms by ngrams)
-            // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
-            // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-            should: matchEntities(search, userLang, exact),
-            // The default value would be 0 due to the presence of a filter
+            should: shoulds,
+            // The default value would be 0 due to the presence of filters
             // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#bool-min-should-match
-            minimum_should_match: 1
+            minimum_should_match: shoulds != null ? 1 : 0
           }
         },
         // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
