@@ -57,4 +57,18 @@ describe('search:entities:by-claim', async () => {
     const foundIds = _.map(results, 'id')
     foundIds.should.containEql(workWithAuthor._id)
   })
+
+  it('should accept a claim and a search', async () => {
+    const anotherWorkWithThatSameAuthor = await createWorkWithAuthor(workAuthor)
+    await waitForIndexation('entities', anotherWorkWithThatSameAuthor._id)
+    const workLabel = workWithAuthor.labels.en
+    const resultsWithOnlyClaimFilter = await search({ types: 'works', claim: `wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
+    const foundIdsA = _.map(resultsWithOnlyClaimFilter, 'id')
+    foundIdsA.should.containEql(workWithAuthor._id)
+    foundIdsA.should.containEql(anotherWorkWithThatSameAuthor._id)
+    const resultsWithClaimFilterAndSearch = await search({ types: 'works', claim: `wdt:P50=${workAuthor.uri}`, search: workLabel, exact: true, lang: 'en', filter: 'inv' })
+    const foundIdsB = _.map(resultsWithClaimFilterAndSearch, 'id')
+    foundIdsB.should.containEql(workWithAuthor._id)
+    foundIdsB.should.not.containEql(anotherWorkWithThatSameAuthor._id)
+  })
 })
