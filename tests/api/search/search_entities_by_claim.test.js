@@ -3,6 +3,7 @@ require('should')
 const { createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
+const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
 
 describe('search:entities:by-claim', async () => {
   let workAuthor, workWithAuthor
@@ -37,7 +38,7 @@ describe('search:entities:by-claim', async () => {
   })
 
   it('should accept OR conditions', async () => {
-    const results = await search({ types: 'works', claim: `wdt:P50=wd:Q535|wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
+    const results = await search({ types: 'works', claim: `wdt:P50=${workAuthor.uri}|wdt:P50=${someOtherAuthorUri}`, lang: 'en', filter: 'inv' })
     const foundIds = _.map(results, 'id')
     foundIds.should.containEql(workWithAuthor._id)
   })
@@ -52,7 +53,7 @@ describe('search:entities:by-claim', async () => {
   })
 
   it('should accept a combination of AND and OR conditions', async () => {
-    const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=wd:Q535|wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
+    const results = await search({ types: 'works', claim: `wdt:P31=wd:Q47461344 wdt:P50=${workAuthor.uri}|wdt:P50=${someOtherAuthorUri}`, lang: 'en', filter: 'inv' })
     const foundIds = _.map(results, 'id')
     foundIds.should.containEql(workWithAuthor._id)
   })
