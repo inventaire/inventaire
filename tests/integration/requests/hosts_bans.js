@@ -10,7 +10,7 @@ let port = 1024 + parseInt(Date.now().toString().slice(-4))
 const startTimeoutServer = () => new Promise(resolve => {
   port++
   const app = express()
-  const host = `localhost:${port}`
+  const host = `127.0.0.1:${port}`
   const origin = `http://${host}`
   app.get('/no-timeout', (req, res) => res.json({ ok: true }))
   // Always timeout
