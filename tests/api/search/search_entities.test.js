@@ -37,18 +37,26 @@ describe('search:entities', () => {
     describe('exact', () => {
       it('should reject types that are not entity related', async () => {
         try {
-          await search({ types: [ 'groups', 'users' ], exact: true }).then(shouldNotBeCalled)
+          await search({ types: [ 'groups', 'users' ], search: 'foo', exact: true }).then(shouldNotBeCalled)
         } catch (err) {
           err.statusCode.should.equal(400)
           err.body.status_verbose.should.equal('exact search is restricted to entity types')
         }
       })
 
-      it('should return only exact matches', async () => {
+      // Ex: when requesting 'Myron Howe', 'Myron W Howe' will be considered an exact match
+      it('should return only results including exact matches of each words', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
         results.length.should.be.aboveOrEqual(1)
-        results.forEach(result => result.label.should.equal(humanLabel))
+        const labelWords = humanLabel.split(' ')
+        results.forEach(result => {
+          result.label.should.equal(humanLabel)
+          const resultLabelWords = result.label.split(' ')
+          labelWords.forEach(word => {
+            resultLabelWords.includes(word).should.be.true()
+          })
+        })
       })
 
       it('should accept a different word order', async () => {

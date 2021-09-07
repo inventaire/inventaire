@@ -98,6 +98,8 @@ module.exports = async (entity, options = {}) => {
 
   entity.relationsTerms = await getRelationsTerms(entity)
 
+  entity.claim = getFlattenedClaims(entity.claims)
+
   // Those don't need to be indexed
   delete entity.claims
   delete entity.sitelinks
@@ -201,3 +203,14 @@ const indexedRelationsPerType = {
 
 // Not including descriptions
 const getEntityTerms = ({ labels, aliases }) => getMainFieldsWords({ labels, aliases })
+
+const getFlattenedClaims = claims => {
+  const flattenedClaims = []
+  for (const property in claims) {
+    const propertyClaims = claims[property]
+    for (const value of propertyClaims) {
+      flattenedClaims.push(`${property}=${value}`)
+    }
+  }
+  return flattenedClaims
+}

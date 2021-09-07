@@ -1,27 +1,36 @@
 const { getSingularTypes } = require('lib/wikidata/aliases')
+const properties = require('controllers/entities/lib/properties/properties_values_constraints')
+const error_ = require('lib/error/error')
+const { trim } = require('lodash')
+const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, exact, minScore = 1 } = params
-  let { types } = params
+  const { lang: userLang, search, limit: size, exact, claim } = params
+  let { types, minScore = 1 } = params
   types = getSingularTypes(types)
+
+  const filters = [
+    // At least one type should match
+    // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
+    { terms: { type: types } }
+  ]
+
+  if (claim) filters.push(...getClaimFilters(claim))
+
+  if (!search) minScore = 0
+
+  const shoulds = matchEntities(search, userLang, exact)
 
   return {
     query: {
       function_score: {
         query: {
           bool: {
-            filter: [
-              // At least one type should match
-              // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
-              { terms: { type: types } }
-            ],
-            // Because most of the work has been done at index time (indexing terms by ngrams)
-            // all this query needs to do is to look up search terms which is way more efficient than the match_phrase_prefix approach
-            // See https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_time_search_as_you_type.html
-            should: matchEntities(search, userLang, exact),
-            // The default value would be 0 due to the presence of a filter
+            filter: filters,
+            should: shoulds,
+            // The default value would be 0 due to the presence of filters
             // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#bool-min-should-match
-            minimum_should_match: 1
+            minimum_should_match: shoulds != null ? 1 : 0
           }
         },
         // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
@@ -39,6 +48,9 @@ module.exports = params => {
 }
 
 const matchEntities = (search, userLang, exact) => {
+  // In case a claim alone is searched
+  if (search == null) return
+
   const fields = entitiesFields(userLang, exact)
 
   const queries = [
@@ -95,4 +107,38 @@ const entitiesFields = (userLang, exact) => {
   }
 
   return fields
+}
+
+const getClaimFilters = claimParameter => {
+  return claimParameter
+  .split(' ')
+  .map(andCondition => {
+    const orConditions = andCondition.split('|').map(trim)
+    orConditions.forEach(validatePropertyAndValue)
+    return {
+      terms: {
+        claim: orConditions
+      }
+    }
+  })
+}
+
+const validatePropertyAndValue = condition => {
+  const [ property, value ] = condition.split('=')
+  if (!isPropertyUri(property)) {
+    throw error_.new('invalid property', 400, { property })
+  }
+  if (properties[property] == null) {
+    throw error_.new('unknown property', 400, { property, value })
+  }
+  // Using a custom validation for wdt:P31, to avoid having to pass an entityType
+  if (property === 'wdt:P31') {
+    if (!isWdEntityUri(value)) {
+      throw error_.new('invalid property value', 400, { property, value })
+    }
+  } else {
+    if (!properties[property].validate(value)) {
+      throw error_.new('invalid property value', 400, { property, value })
+    }
+  }
 }

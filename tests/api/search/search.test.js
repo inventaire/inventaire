@@ -11,7 +11,7 @@ describe('search:global', () => {
         await publicReq('get', '/api/search?lang=en&types=works').then(shouldNotBeCalled)
       } catch (err) {
         err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal('missing parameter in query: search')
+        err.body.status_verbose.should.equal('missing parameter in query: search or claim')
       }
     })
 

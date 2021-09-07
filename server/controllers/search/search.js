@@ -1,3 +1,5 @@
+const _ = require('builders/utils')
+const error_ = require('lib/error/error')
 const normalizeResult = require('./lib/normalize_result')
 const { indexedTypes } = require('./lib/indexes')
 const typeSearch = require('./lib/type_search')
@@ -5,7 +7,9 @@ const Group = require('models/group')
 const { ControllerWrapper } = require('lib/controller_wrapper')
 
 const sanitization = {
-  search: {},
+  search: {
+    optional: true
+  },
   lang: {},
   types: { allowlist: indexedTypes },
   limit: { default: 10, max: 100 },
@@ -21,15 +25,25 @@ const sanitization = {
   'min-score': {
     generic: 'positiveInteger',
     optional: true
+  },
+  claim: {
+    generic: 'string',
+    optional: true
   }
 }
 
-const search = async ({ types, search, lang, limit, filter, exact, minScore, reqUserId }) => {
-  let results = await typeSearch({ lang, types, search, limit, filter, exact, minScore })
+const search = async ({ types, search, lang, limit, filter, exact, minScore, claim, reqUserId }) => {
+  if (!(_.isNonEmptyString(search) || _.isNonEmptyString(claim))) {
+    throw error_.newMissing('query', 'search or claim')
+  }
+
+  let results = await typeSearch({ lang, types, search, limit, filter, exact, minScore, claim })
+
   results = results
     .filter(isSearchable(reqUserId))
     .map(normalizeResult(lang))
     .slice(0, limit)
+
   return { results }
 }
 
