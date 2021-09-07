@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel } = require('../fixtures/entities')
+const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel, createWorkWithAuthor, createSerieWithAuthor, createWorkWithSerie, humanName } = require('../fixtures/entities')
 const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -130,7 +130,6 @@ describe('search:entities', () => {
           waitForIndexation('entities', humanA._id),
           waitForIndexation('entities', humanB._id),
         ])
-
         const results = await search({ types: 'humans', search: label, lang: 'en', filter: 'inv' })
         const humanAScore = results.find(entity => entity.id === humanA._id)._score
         const humanBScore = results.find(entity => entity.id === humanB._id)._score
@@ -176,6 +175,26 @@ describe('search:entities', () => {
       results.forEach(result => result.type.should.equal('works'))
       _.map(results, 'id').includes('Q180736').should.be.true()
     })
+
+    it('should find a work by its author name', async () => {
+      const label = humanName()
+      const human = await createHuman({ labels: { en: label } })
+      const work = await createWorkWithAuthor(human)
+      await waitForIndexation('entities', work._id)
+      const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(work._id)
+    })
+
+    it('should find a work by its serie name', async () => {
+      const label = randomWords()
+      const serie = await createSerie({ labels: { en: label } })
+      const work = await createWorkWithSerie(serie)
+      await waitForIndexation('entities', work._id)
+      const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(work._id)
+    })
   })
 
   describe('series', () => {
@@ -192,6 +211,16 @@ describe('search:entities', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
       _.map(results, 'id').includes('Q8337').should.be.true()
+    })
+
+    it('should find a serie by its author name', async () => {
+      const label = humanName()
+      const human = await createHuman({ labels: { en: label } })
+      const serie = await createSerieWithAuthor({ human })
+      await waitForIndexation('entities', serie._id)
+      const results = await search({ types: 'series', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(serie._id)
     })
   })
 
@@ -212,6 +241,20 @@ describe('search:entities', () => {
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('collections'))
       _.map(results, 'id').includes('Q3409094').should.be.true()
+    })
+
+    it('should find a collection by its publisher name', async () => {
+      const label = randomWords()
+      const publisher = await createPublisher({ labels: { en: label } })
+      const collection = await createCollection({
+        claims: {
+          'wdt:P123': [ publisher.uri ]
+        }
+      })
+      await waitForIndexation('entities', collection._id)
+      const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })
+      const foundIds = _.map(results, 'id')
+      foundIds.should.containEql(collection._id)
     })
   })
 

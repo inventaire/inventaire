@@ -89,9 +89,7 @@ const API = module.exports = {
 
   createWorkWithAuthor: async (human, label) => {
     label = label || API.randomLabel()
-    const humanPromise = human ? Promise.resolve(human) : API.createHuman()
-
-    human = await humanPromise
+    human = await (human || API.createHuman())
     return authReq('post', '/api/entities?action=create', {
       labels: { en: label },
       claims: {
@@ -99,6 +97,14 @@ const API = module.exports = {
         'wdt:P50': [ human.uri ]
       }
     })
+  },
+
+  createSerieWithAuthor: async params => {
+    let { human } = params
+    human = await (human || API.createHuman())
+    const serie = await API.createSerie(params)
+    await API.addAuthor(serie, human)
+    return serie
   },
 
   createEditionFromWorkWithAuthor: async () => {
