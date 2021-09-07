@@ -202,7 +202,15 @@ const indexedRelationsPerType = {
 }
 
 // Not including descriptions
-const getEntityTerms = ({ labels, aliases }) => getMainFieldsWords({ labels, aliases })
+const getEntityTerms = entity => {
+  const { labels, aliases } = entity
+  // Known case: deleted Wikidata entity
+  if (!labels) {
+    _.warn(entity, 'can not getEntityTerms: entity has no labels')
+    return []
+  }
+  return getMainFieldsWords({ labels, aliases })
+}
 
 const getFlattenedClaims = claims => {
   const flattenedClaims = []
