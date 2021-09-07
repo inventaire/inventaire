@@ -6,6 +6,7 @@
 // that aren't required to run on production
 
 module.exports = {
+  activities: [ 'activities' ],
   comments: [ 'comments' ],
   entities: [ 'entities', 'entities_deduplicate' ],
   groups: [ 'groups' ],

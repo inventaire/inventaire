@@ -1,4 +1,5 @@
 const { request, customAuthReq, rawCustomAuthReq } = require('./request')
+const { signedReq } = require('./activitypub')
 const randomString = require('lib/utils/random_string')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
 require('should')
@@ -14,6 +15,7 @@ const getUserGetter = (key, role, customData) => () => {
 const API = module.exports = {
   publicReq: request,
   customAuthReq,
+  signedReq,
   authReq: (...args) => customAuthReq(API.getUser(), ...args),
   authReqB: (...args) => customAuthReq(API.getUserB(), ...args),
   authReqC: (...args) => customAuthReq(API.getUserC(), ...args),

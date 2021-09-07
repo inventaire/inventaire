@@ -1,5 +1,7 @@
 const _ = require('builders/utils')
-const host = require('config').fullPublicHost()
+const CONFIG = require('config')
+const { publicHost } = CONFIG
+const host = CONFIG.fullPublicHost()
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
@@ -204,7 +206,10 @@ const value = {
 }
 
 module.exports = {
+  '@context': allowlistedStrings,
   attribute: nonEmptyString,
+  actor: nonEmptyString,
+  object: nonEmptyString,
   bbox: {
     format: value => {
       return JSON.parse(value)
@@ -264,11 +269,22 @@ module.exports = {
   },
   prefix: allowlistedString,
   property: { validate: _.isPropertyUri },
-  refresh: generics.boolean,
   range: Object.assign({}, positiveInteger, {
     default: 50,
     max: 500
   }),
+  refresh: generics.boolean,
+  resource: {
+    validate: resource => {
+      _.isString(resource)
+      if (resource.startsWith('acct:') === false) return false
+      const actorWithHost = resource.substr(5)
+      const actorParts = actorWithHost.split('@')
+      if (actorParts.length !== 2) return false
+      const reqHost = actorParts[1]
+      return reqHost === publicHost
+    }
+  },
   search: nonEmptyString,
   shelf: couchUuid,
   slug: nonEmptyString,

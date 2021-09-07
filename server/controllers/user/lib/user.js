@@ -10,6 +10,7 @@ const { getNetworkIds } = require('controllers/user/lib/relations_status')
 const { defaultAvatar } = require('lib/assets')
 const searchUsersByPosition = require('lib/search_by_position')(db, 'users')
 const searchUsersByDistance = require('lib/search_by_distance')('users')
+const { generateKeyPair } = require('lib/crypto').keyPair
 
 const user_ = module.exports = {
   byId: db.get,
@@ -145,6 +146,15 @@ const user_ = module.exports = {
     assert_.string(imageHash)
     const { rows } = await db.view('users', 'byPicture', { key: imageHash })
     return rows.length > 0
+  },
+
+  createKeyPair: async user => {
+    if (user.publicKey && user.privateKey) {
+      throw error_.new('user already has key pair', 400)
+    }
+    const keyPair = await generateKeyPair()
+    await db.update(user._id, User.addKeyPair(keyPair))
+    return keyPair.publicKey
   },
 
   // View model serialization for emails and rss feeds templates

@@ -34,7 +34,9 @@ const routes = module.exports = {
   'api/transactions': endpoint('./transactions/transactions'),
   'api/user': endpoint('./user/user'),
   'api/users': endpoint('./users/users'),
-  'img/*': endpoint('./images/resize')
+  'api/activitypub': endpoint('./activitypub/activitypub'),
+  'img/*': endpoint('./images/resize'),
+  '.well-known/webfinger': endpoint('./activitypub/webfinger')
 }
 
 if (CONFIG.logMissingI18nKeys) {

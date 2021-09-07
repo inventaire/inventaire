@@ -16,6 +16,7 @@ const validations = module.exports = {
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,
+  fediversable: boolean,
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1
 }
 

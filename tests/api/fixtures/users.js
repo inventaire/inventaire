@@ -5,7 +5,7 @@ const assert_ = require('lib/utils/assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
-const { addRole } = require('controllers/user/lib/user')
+const { byId, addRole, createKeyPair } = require('controllers/user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
 const randomString = require('lib/utils/random_string')
@@ -51,7 +51,14 @@ const API = module.exports = {
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
     if (role) await addRole(user._id, role)
-    return refreshUser(cookie)
+    return API.getUserWithCookie(cookie)
+  },
+
+  createUserOnFediverse: async (customData = {}, role) => {
+    _.extend(customData, { fediversable: true })
+    const user = await API.createUser(customData, role)
+    await createKeyPair(user)
+    return byId(user._id)
   },
 
   getUserWithCookie: async cookie => {
@@ -122,8 +129,6 @@ const setCustomData = async (user, customData) => {
     await updateUser({ user, attribute, value })
   }
 }
-
-const refreshUser = API.getUserWithCookie
 
 const randomCoordinate = (min, max) => {
   // Let some margin so that no invalid coordinates can be generated
