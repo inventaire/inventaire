@@ -78,7 +78,12 @@ const loadFromStdin = () => {
   .on('data', async function (line) {
     ongoing++
     if (ongoing >= 3) this.pause()
-    await addLine(line).catch(stopLoading)
+    await addLine(line)
+      .catch(err => {
+        err.context = err.context || {}
+        err.context.line = line
+        _.error(err, 'loadFromStdin addLine error')
+      })
     if (ongoing < 3 && this.paused) this.resume()
     ongoing--
   })
