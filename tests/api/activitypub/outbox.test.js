@@ -19,7 +19,7 @@ describe('outbox:public', () => {
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(404)
-      err.body.status_verbose.should.equal('user is not on the fediverse')
+      err.body.status_verbose.should.equal('not found')
     }
   })
 
