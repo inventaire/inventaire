@@ -5,7 +5,7 @@ const { trim } = require('lodash')
 const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, exact, claim } = params
+  const { lang: userLang, search, limit: size, exact, claim, safe = false } = params
   let { types, minScore = 1 } = params
   types = getSingularTypes(types)
 
@@ -19,7 +19,7 @@ module.exports = params => {
 
   if (!search) minScore = 0
 
-  const shoulds = matchEntities(search, userLang, exact)
+  const shoulds = matchEntities(search, userLang, exact, safe)
 
   return {
     query: {
@@ -47,11 +47,17 @@ module.exports = params => {
   }
 }
 
-const matchEntities = (search, userLang, exact) => {
+const matchEntities = (search, userLang, exact, safe) => {
   // In case a claim alone is searched
   if (search == null) return
 
   const fields = entitiesFields(userLang, exact)
+
+  // From time to time, cross_fields generates 'function score query returned an invalid score' errors
+  // See https://github.com/elastic/elasticsearch/issues/44700
+  // So, until there is a fix for that, requests that generate those errors will be retried in "safe" mode,
+  // that is, with best_fields instead of cross_fields
+  const matchType = safe ? 'best_fields' : 'cross_fields'
 
   const queries = [
     {
@@ -62,7 +68,7 @@ const matchEntities = (search, userLang, exact) => {
         operator: 'and',
         fields,
         analyzer: 'standard_truncated',
-        type: 'best_fields',
+        type: matchType,
         boost: 3
       }
     }
@@ -75,9 +81,7 @@ const matchEntities = (search, userLang, exact) => {
         operator: 'or',
         fields,
         analyzer: 'standard_truncated',
-        // cross_fields would be preferable but it generates 'function score query returned an invalid score' errors
-        // See https://github.com/elastic/elasticsearch/issues/44700
-        type: 'best_fields',
+        type: matchType,
       }
     })
   }
