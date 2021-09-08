@@ -7,6 +7,7 @@ module.exports = {
   create: activity => {
     assert_.object(activity)
     assert_.string(activity.type)
+    assert_.object(activity.actor)
     if (activity.id) activity.externalId = activity.id
     delete activity.id
     delete activity.context
