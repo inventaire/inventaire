@@ -5,12 +5,12 @@ const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
 const { expired } = require('lib/time')
 
-const API = module.exports = {
+module.exports = {
   sign: params => {
     const { keyUrl, privateKey } = params
     if (!params.headers) params.headers = '(request-target) host date'
     const signer = crypto.createSign('rsa-sha256')
-    const stringToSign = API.buildSignatureString(params)
+    const stringToSign = buildSignatureString(params)
     signer.update(stringToSign)
     signer.end()
     const signature = signer.sign(privateKey)
@@ -19,21 +19,6 @@ const API = module.exports = {
     // ie. (request-target) host date
     // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
     return `keyId="${keyUrl}",headers="${params.headers}",signature="${signatureB64}"`
-  },
-
-  buildSignatureString: values => {
-    // 'method' must be lowercased
-    // 'date' must be a UTC string
-    const { headers, method, endpoint } = values
-    // arrayfying because key order matters
-    const headersKeys = headers.split(' ')
-    let signatureString = `(request-target): ${method} ${endpoint}`
-    for (const key of headersKeys) {
-      if (values[key]) {
-        signatureString = signatureString.concat('\n', `${key}: ${values[key]}`)
-      }
-    }
-    return signatureString
   },
 
   verifySignature: async req => {
@@ -46,7 +31,7 @@ const API = module.exports = {
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = API.buildSignatureString(_.extend(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
+    const signedString = buildSignatureString(_.extend(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
@@ -55,6 +40,20 @@ const API = module.exports = {
   }
 }
 
+const buildSignatureString = params => {
+  // 'method' must be lowercased
+  // 'date' must be a UTC string
+  const { headers, method, endpoint } = params
+  // arrayfying because key order matters
+  const headersKeys = headers.split(' ')
+  let signatureString = `(request-target): ${method} ${endpoint}`
+  for (const key of headersKeys) {
+    if (params[key]) {
+      signatureString = signatureString.concat('\n', `${key}: ${params[key]}`)
+    }
+  }
+  return signatureString
+}
 const fetchActorPublicKey = async actorUrl => {
   const actor = await requests_.get(actorUrl)
   assert_.object(actor)
