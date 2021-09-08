@@ -4,10 +4,10 @@ const user_ = require('controllers/user/lib/user')
 
 const host = CONFIG.fullPublicHost()
 
-module.exports = async reqUsername => {
-  const user = await user_.findOneByUsername(reqUsername)
-  if (user === undefined) throw error_.notFound(reqUsername)
-  if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, reqUsername)
+module.exports = async requestedUsername => {
+  const user = await user_.findOneByUsername(requestedUsername)
+  if (user === undefined) throw error_.notFound(requestedUsername)
+  if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, requestedUsername)
   const { picture, username } = user
   const actorUrl = `${host}/api/activitypub?action=actor&name=${username}`
   const actor = {
