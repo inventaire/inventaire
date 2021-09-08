@@ -9,7 +9,7 @@ const requests_ = require('./requests')
 const track = (req, actionArray) => {
   if (!enabled) return
 
-  const { _id: userId, language } = req.user
+  const { _id: userId, language } = (req.user || {})
   const { 'user-agent': ua, 'accept-language': al } = req.headers
   let { referer: url } = req.headers
   const [ category, action, name, value ] = actionArray
