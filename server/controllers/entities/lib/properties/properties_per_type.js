@@ -6,6 +6,7 @@ const all = [
   'wdt:P227', // GND ID
   'wdt:P243', // OCLC control number
   'wdt:P268', // BNF ID
+  'wdt:P856', // official website
 ]
 
 const socialNetworks = [
@@ -26,7 +27,6 @@ const workAndSerie = all.concat([
   'wdt:P407', // language
   'wdt:P577', // publication date
   'wdt:P648', // Open Library ID
-  'wdt:P856', // official website
   'wdt:P921', // main subject
   'wdt:P941', // inspired by
   'wdt:P1085', // Librarything work ID
@@ -88,7 +88,6 @@ module.exports = {
     'wdt:P570', // date of death
     'wdt:P648', // Open Library ID
     'wdt:P737', // influenced by
-    'wdt:P856', // official website
     'wdt:P906', // SELIBR ID (Swedish)
     'wdt:P950', // BNE ID
     'wdt:P1006', // Dutch National for Author Names ID
@@ -110,7 +109,6 @@ module.exports = {
     'wdt:P127', // owned by
     'wdt:P571', // inception
     'wdt:P576', // dissolution
-    'wdt:P856', // official website
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035', // ISBN publisher prefix
     ...socialNetworks
@@ -121,7 +119,6 @@ module.exports = {
     'wdt:P1476', // title
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject
-    'wdt:P856', // official website
     ...socialNetworks
   ])
 }
