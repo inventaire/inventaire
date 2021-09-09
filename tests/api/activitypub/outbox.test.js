@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 const debounceTime = CONFIG.activitiesDebounceTime
 require('should')
-const { createItem } = require('../fixtures/items')
+const { createItem, createItems } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
 const { publicReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
@@ -64,6 +64,50 @@ describe('outbox:public', () => {
     const outboxUrl = `${endpoint}${username}&offset=0`
     const res = await publicReq('get', outboxUrl)
     res.totalItems.should.equal(0)
+    res.orderedItems.length.should.equal(0)
+  })
+})
+
+describe('create:items:activity', () => {
+  it('should return an activity when creating items in bulk', async () => {
+    const user = createUser({ fediversable: true })
+    await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    await wait(debounceTime)
+    const res = await publicReq('get', outboxUrl)
+    res.orderedItems.length.should.equal(1)
+  })
+
+  it('should return an activity when creating items sequentially', async () => {
+    const user = createUser({ fediversable: true })
+    await createItem(user)
+    await createItem(user)
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    await wait(debounceTime)
+    const res = await publicReq('get', outboxUrl)
+    res.orderedItems.length.should.equal(1)
+  })
+
+  it('should return several activities when creating items at a different time', async () => {
+    const user = createUser({ fediversable: true })
+    await createItem(user)
+    await wait(debounceTime)
+    await createItem(user)
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    await wait(debounceTime)
+    const res = await publicReq('get', outboxUrl)
+    res.orderedItems.length.should.equal(2)
+  })
+
+  it('should not return recent activities', async () => {
+    const user = createUser({ fediversable: true })
+    await createItem(user)
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(0)
   })
 })
