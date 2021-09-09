@@ -1,6 +1,9 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
-const getOutbox = require('controllers/activitypub/lib/get_outbox')
+const { byUsername } = require('controllers/activitypub/lib/activities')
+const makeUrl = require('./lib/make_url')
+const formatActivities = require('./lib/format_activities')
 
 const sanitization = {
   name: {},
@@ -21,4 +24,32 @@ module.exports = {
   sanitization,
   controller,
   track: [ 'activitypub', 'outbox' ]
+}
+
+const getOutbox = async (params, targetUser) => {
+  const { name, offset } = params
+  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name } })
+  const totalPublicItems = targetUser.snapshot.public['items:count']
+  const baseOutbox = {
+    id: fullOutboxUrl,
+    type: 'OrderedCollection',
+    totalItems: totalPublicItems,
+    first: `${fullOutboxUrl}&offset=0`
+  }
+  if (offset != null && offset >= 0) {
+    return buildPaginatedOutbox(targetUser, offset, baseOutbox)
+  }
+  return baseOutbox
+}
+
+const buildPaginatedOutbox = async (targetUser, offset, outbox) => {
+  const { id: fullOutboxUrl } = outbox
+  outbox.type = 'OrderedCollectionPage'
+  outbox.partOf = fullOutboxUrl
+  outbox.next = `${fullOutboxUrl}&offset=${offset + 10}`
+  const { username } = targetUser
+  const activities = await byUsername(username)
+  const res = await formatActivities(activities, targetUser)
+  _.extend(outbox, res)
+  return outbox
 }
