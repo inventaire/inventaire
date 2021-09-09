@@ -93,7 +93,10 @@ User.softDelete = userDoc => {
 }
 
 User.updateEmail = (doc, email) => {
-  doc.email = email
+  if (email !== doc.email) {
+    doc.email = email
+    doc.validEmail = false
+  }
   return doc
 }
 

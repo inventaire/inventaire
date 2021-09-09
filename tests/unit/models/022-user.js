@@ -178,4 +178,13 @@ describe('user model', () => {
       user.privateKey.should.deepEqual('bar')
     })
   })
+
+  describe('updateEmail', () => {
+    it('should reset validEmail flag', () => {
+      const user = _create(validUser())
+      user.validEmail = true
+      const updatedEmail = User.updateEmail(user, 'foo@example.org')
+      updatedEmail.validEmail.should.be.false()
+    })
+  })
 })
