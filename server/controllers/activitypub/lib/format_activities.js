@@ -11,7 +11,7 @@ module.exports = async (activitiesDocs, user) => {
   // get all users items in order to drop activities only with private items
   // and still serve all possible activities
   const items = await getItemsByActivities(activitiesDocs, user, actor)
-  const activities = _.compact(activitiesDocs.map(formatActivity(user.lang, actor, items)))
+  const activities = _.compact(activitiesDocs.map(formatActivity(user, actor, items)))
   return {
     totalItems: activities.length,
     orderedItems: activities
@@ -32,24 +32,39 @@ const formatActorUrl = username => {
   return actor
 }
 
-const formatActivity = (userLang, actor, itemsWithSnapshots) => activity => {
+const formatActivity = (user, actor, itemsWithSnapshots) => activity => {
   const { _id } = activity
   let { object } = activity
   const items = _.pick(itemsWithSnapshots, object.itemsIds)
   if (_.isEmpty(items)) return null
   object = { type: 'Note' }
-  const text = i18n(userLang, 'create_items_activity', null, 'i18nActivities')
-  object.content = buildItemsContent(items, text)
+  object.content = buildItemsContent(items, user)
   return { _id, type: 'Create', object, actor }
 }
 
-const buildItemsContent = (items, text) => {
-  let html = `<p>${text}<p>`
-  Object.values(items).forEach(item => {
+const buildItemsContent = (items, user) => {
+  const { lang: userLang, username } = user
+  const itemsAry = Object.values(items)
+  const itemsLength = itemsAry.length
+  const maxItemsToDisplay = 3
+  const firstThreeItems = itemsAry.slice(0, maxItemsToDisplay)
+
+  const text = i18n(userLang, 'create_items_activity', { username })
+  let html = `<p>${text} `
+  const links = firstThreeItems.map(item => {
     const url = `${host}/items/${item._id}`
     const linkText = item.snapshot['entity:title']
     const link = `<a href="${url}" rel="nofollow noopener noreferrer" target="_blank">${linkText}</a>`
-    html += link
+    return link
   })
+  html += links.join(', ')
+  if (itemsLength > maxItemsToDisplay) {
+    const and = ' ' + i18n(userLang, 'and') + ' '
+    html += and
+    const more = i18n(userLang, 'x_more_books_to_inventory', { itemsLength: itemsLength - maxItemsToDisplay })
+    const moreLink = `<a href="${host}/inventory/${username}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
+    html += moreLink
+  }
+  html += '</p>'
   return html
 }

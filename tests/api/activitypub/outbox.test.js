@@ -27,7 +27,7 @@ describe('outbox:public', () => {
     const user = createUser({ fediversable: true })
     await createItem(user)
     const { username } = await user
-    await wait(debounceTime)
+    await wait(debounceTime + 500)
     const outboxUrl = `${endpoint}${username}`
     const res = await publicReq('get', outboxUrl)
     const fullHostUrl = `${host}${outboxUrl}`
@@ -41,7 +41,7 @@ describe('outbox:public', () => {
     const user = createUser({ fediversable: true, language: 'it' })
     const item = await createItem(user)
     const { username } = await user
-    await wait(debounceTime)
+    await wait(debounceTime + 500)
     const outboxUrl = `${endpoint}${username}&offset=0`
     const fullHostUrl = `${host}${endpoint}${username}`
     const res = await publicReq('get', outboxUrl)
@@ -74,7 +74,7 @@ describe('create:items:activity', () => {
     await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])
     const { username } = await user
     const outboxUrl = `${endpoint}${username}&offset=0`
-    await wait(debounceTime)
+    await wait(debounceTime + 500)
     const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(1)
   })
@@ -85,7 +85,7 @@ describe('create:items:activity', () => {
     await createItem(user)
     const { username } = await user
     const outboxUrl = `${endpoint}${username}&offset=0`
-    await wait(debounceTime)
+    await wait(debounceTime + 500)
     const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(1)
   })
@@ -97,7 +97,7 @@ describe('create:items:activity', () => {
     await createItem(user)
     const { username } = await user
     const outboxUrl = `${endpoint}${username}&offset=0`
-    await wait(debounceTime)
+    await wait(debounceTime + 500)
     const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(2)
   })
