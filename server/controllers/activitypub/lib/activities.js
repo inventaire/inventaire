@@ -2,38 +2,16 @@ const _ = require('builders/utils')
 const Activity = require('models/activity')
 const db = require('db/couchdb/base')('activities')
 const { expired } = require('lib/time')
-const cache_ = require('lib/cache')
-const { tap } = require('lib/promises')
 const { activitiesDebounceTime } = require('config')
+const radio = require('lib/radio')
+const items_ = require('controllers/items/lib/items')
+const user_ = require('controllers/user/lib/user')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
 const activities_ = module.exports = {
-  createActivity: async params => {
-    const { actor } = params
-    const { username } = actor
-    // get last updated activity date, if recent enough then
-    // do not create a new activity but update the last updated one
-    const key = `last-updated-activity:${username}`
-    const { lastUpdate, activityId } = await cache_.get({ key, dry: true }) || {}
-    let updateOrCreatePromise
-    if (isRecent(lastUpdate)) {
-      updateOrCreatePromise = updateLastActivity(params, activityId)
-    } else {
-      updateOrCreatePromise = createActivity(params)
-    }
-
-    return updateOrCreatePromise
-    .then(tap(activity => {
-      const value = {
-        lastUpdate: activity.updated,
-        activityId: activity._id
-      }
-      cache_.put(key, value)
-    }))
-  },
   byExternalIds: async ids => {
     ids = _.forceArray(ids)
     return db.viewByKeys('byExternalIds', ids)
@@ -54,19 +32,17 @@ const oldEnough = doc => !isRecent(doc.updated)
 
 const isRecent = date => date && !expired(date, activitiesDebounceTime)
 
-const createActivity = params => {
+const createActivity = (username, itemsIds) => {
+  const params = {
+    actor: {
+      username,
+    },
+    itemsIds,
+    type: 'Create'
+  }
   const newActivity = formatActivity(params)
   const activity = Activity.create(newActivity)
   return db.postAndReturn(activity)
-}
-
-const updateLastActivity = async (params, activityId) => {
-  const { itemsIds: newItemsIds } = params
-  let activity = await activities_.byId(activityId)
-  const { itemsIds: currentItemsIds } = activity.object
-  activity.object.itemsIds = _.extend(currentItemsIds, newItemsIds)
-  activity = Activity.update(activity)
-  return db.putAndReturn(activity)
 }
 
 const formatActivity = params => {
@@ -77,3 +53,28 @@ const formatActivity = params => {
   if (id) _.extend(activity, { externalId: id })
   return activity
 }
+
+const debouncedActivities = {}
+
+const createDebouncedActivity = userId => async () => {
+  delete debouncedActivities[userId]
+  const publicItems = await items_.recentPublicByOwner(userId)
+  const publicItemsIds = publicItems.map(_.property('_id'))
+  const { username } = await user_.byId(userId)
+  const activitiesItemsIds = []
+  const activities = await activities_.byUsername(username)
+  activities.forEach(activity => {
+    if (!_.isNonEmptyArray(activity.itemsIds)) return
+    activitiesItemsIds.push(...activity.itemsIds)
+  })
+  const newItemsIds = _.difference(publicItemsIds, activitiesItemsIds)
+  return createActivity(username, newItemsIds)
+  .catch(_.Error('create debounced activity err'))
+}
+
+radio.on('user:inventory:update', userId => {
+  if (!debouncedActivities[userId]) {
+    debouncedActivities[userId] = _.debounce(createDebouncedActivity(userId), activitiesDebounceTime)
+  }
+  return debouncedActivities[userId]()
+})

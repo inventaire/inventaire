@@ -1,10 +1,8 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
-const { createActivity } = require('controllers/activitypub/lib/activities')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = require('lib/error/error')
 const { Track } = require('lib/track')
-const { tap } = require('lib/promises')
 
 module.exports = (req, res) => {
   let { body: items, user } = req
@@ -25,7 +23,6 @@ module.exports = (req, res) => {
 
   return items_.create(user._id, items)
   .then(getItemsWithSnapshots(singleItemMode))
-  .then(tap(createItemsActivity(user)))
   .then(data => res.status(201).json(data))
   .then(Track(req, [ 'item', 'creation', null, items.length ]))
 }
@@ -38,16 +35,4 @@ const getItemsWithSnapshots = singleItemMode => async itemsDocs => {
   } else {
     return Promise.all(itemsDocs.map(snapshot_.addToItem))
   }
-}
-
-const createItemsActivity = user => async items => {
-  const itemsIds = items.map(_.property('_id'))
-  if (!user.fediversable) return
-  return createActivity({
-    actor: {
-      username: user.username,
-    },
-    itemsIds,
-    type: 'Create'
-  })
 }

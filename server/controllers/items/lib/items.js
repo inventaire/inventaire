@@ -13,6 +13,7 @@ const user_ = require('controllers/user/lib/user')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
+const promises_ = require('lib/promises')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -35,6 +36,16 @@ const items_ = module.exports = {
   byShelvesAndListing: (keys, reqUserId) => {
     return db.viewByKeys('byShelvesAndListing', keys)
     .then(formatItems(reqUserId))
+  },
+
+  recentPublicByOwner: ownerId => {
+    const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
+    return db.viewCustom('publicByOwnerAndDate', {
+      include_docs: true,
+      startkey: [ ownerId, yesterdayTime ],
+      endkey: [ ownerId, Date.now() ],
+    })
+    .then(promises_.map(filterPrivateAttributes()))
   },
 
   // all items from an entity that require a specific authorization
