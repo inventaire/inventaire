@@ -125,7 +125,6 @@ module.exports = {
     return emailAddress => {
       return {
         to: emailAddress,
-        replyTo: inviter.email,
         subject: i18n(lang, 'email_invitation_subject', inviter),
         template: 'email_invitation',
         context: { inviter, message, lang, host }
@@ -142,7 +141,6 @@ module.exports = {
     // Object required to pass as i18n strings context
     return emailAddress => ({
       to: emailAddress,
-      replyTo: inviter.email,
       subject: i18n(lang, 'group_email_invitation_subject', { username, groupName }),
       template: 'group_email_invitation',
       context: { message, lang, host, username, groupName, pathname }
