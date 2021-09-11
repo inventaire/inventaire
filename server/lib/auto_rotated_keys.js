@@ -105,7 +105,7 @@ const saveKeysToDisk = () => {
     .map(timestamp => `${timestamp}:${data[timestamp]}`)
     .join('\n')
 
-  writeFile(keysFilePath, file)
+  writeFile(keysFilePath, file, { mode: 0o600 })
   .then(() => _.info('updated keys saved'))
   .catch(_.Error('failed to save keys'))
 }
