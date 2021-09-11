@@ -207,9 +207,8 @@ const value = {
 
 module.exports = {
   '@context': allowlistedStrings,
-  attribute: nonEmptyString,
   actor: nonEmptyString,
-  object: nonEmptyString,
+  attribute: nonEmptyString,
   bbox: {
     format: value => {
       return JSON.parse(value)
@@ -251,6 +250,7 @@ module.exports = {
   message: nonEmptyString,
   name: nonEmptyString,
   'new-value': value,
+  object: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   'old-value': value,
   options: allowlistedStrings,
