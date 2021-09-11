@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 require('should')
-const { createUsername, createUserOnFediverse } = require('../fixtures/users')
+const { createUsername, createUser } = require('../fixtures/users')
 const { makeUrl, createActivity, getSomeRemoteServerUser, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
@@ -120,7 +120,7 @@ describe('activitypub:signed:request', () => {
   })
 
   it('should verify request', async () => {
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const res = await inboxReq({ username })
     const resBody = JSON.parse(res.body)
     resBody.ok.should.be.true()

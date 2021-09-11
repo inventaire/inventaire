@@ -3,7 +3,7 @@ const _ = require('builders/utils')
 require('should')
 const { publicReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { createUser, createUserOnFediverse, createUsername } = require('../fixtures/users')
+const { createUser, createUsername } = require('../fixtures/users')
 const { updateUser } = require('../utils/users')
 const { wait } = require('lib/promises')
 const fullPublicHost = CONFIG.fullPublicHost()
@@ -75,7 +75,7 @@ describe('activitypub:webfinger', () => {
 
   it('should return an activitypub compliant webfinger', async () => {
     const username = createUsername()
-    await createUserOnFediverse({ username })
+    await createUser({ fediversable: true, username })
     const resource = `acct:${username}@${CONFIG.publicHost}`
     const res = await publicReq('get', `${endpoint}${resource}`)
     const { subject, aliases, links } = res
@@ -92,7 +92,7 @@ describe('activitypub:webfinger', () => {
 
   it('should find a user after a username change', async () => {
     const initialUsername = createUsername()
-    const user = await createUserOnFediverse({ username: initialUsername })
+    const user = await createUser({ fediversable: true, username: initialUsername })
     user.stableUsername.should.equal(initialUsername)
     const newUsername = createUsername()
     await updateUser({ user, attribute: 'username', value: newUsername })
