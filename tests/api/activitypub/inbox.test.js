@@ -56,6 +56,24 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
+  it('should reject with an invalid activity object', async () => {
+    try {
+      const { username } = await createUser({ fediversable: false })
+      const actorUrl = 'invalidActorUrl'
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      await signedReq({
+        object: actorUrl,
+        url: inboxUrl
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      const parsedBody = JSON.parse(err.body)
+      parsedBody.status_verbose.should.startWith('invalid object')
+      parsedBody.status.should.equal(400)
+    }
+  })
+
   it('should reject if user is not on the fediverse', async () => {
     try {
       const { username } = await createUser({ fediversable: false })
@@ -86,6 +104,6 @@ describe('activitypub:post:inbox', () => {
     const parsedBody = JSON.parse(res.body)
     parsedBody['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
     parsedBody.type.should.equal('Accept')
-    parsedBody.object.should.equal(actorUrl)
+    parsedBody.object.name.should.equal(username)
   })
 })

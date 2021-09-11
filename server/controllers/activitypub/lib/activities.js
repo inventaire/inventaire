@@ -12,6 +12,10 @@ const user_ = require('controllers/user/lib/user')
 // way ensures activities consistency which allows pagination based on offsets
 
 const activities_ = module.exports = {
+  createActivity: async newActivity => {
+    const activity = Activity.create(newActivity)
+    return db.postAndReturn(activity)
+  },
   byExternalIds: async ids => {
     ids = _.forceArray(ids)
     return db.viewByKeys('byExternalIds', ids)

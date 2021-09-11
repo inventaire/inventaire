@@ -21,6 +21,7 @@ const objectValidations = {
   pass,
   type: type => objectTypes.includes(type),
   content: BoundedString(1, contentLimit),
+  name: BoundedString(1, 80),
   itemsIds: itemsIds => {
     assert_.array(itemsIds)
     itemsIds.forEach(id => {
@@ -36,6 +37,7 @@ const actorValidations = {
   pass,
   type: type => actorTypes.includes(type),
   username: BoundedString(1, 80),
+  uri: BoundedString(1, 256),
 }
 
 const baseActivityValidations = {
