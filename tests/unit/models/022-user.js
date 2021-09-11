@@ -168,17 +168,6 @@ describe('user model', () => {
     })
   })
 
-  describe('addKeyPair', () => {
-    it('should add a public key and a private key', () => {
-      const user = _create(validUser())
-      should(user.publicKey).not.be.ok()
-      should(user.privateKey).not.be.ok()
-      User.addKeyPair({ publicKey: 'foo', privateKey: 'bar' })(user)
-      user.publicKey.should.deepEqual('foo')
-      user.privateKey.should.deepEqual('bar')
-    })
-  })
-
   describe('updateEmail', () => {
     it('should reset validEmail flag', () => {
       const user = _create(validUser())

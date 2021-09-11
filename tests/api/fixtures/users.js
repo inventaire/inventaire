@@ -5,7 +5,7 @@ const assert_ = require('lib/utils/assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
 const faker = require('faker')
-const { byId, addRole, createKeyPair } = require('controllers/user/lib/user')
+const { addRole } = require('controllers/user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
 const randomString = require('lib/utils/random_string')
@@ -51,16 +51,7 @@ const API = module.exports = {
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
     if (role) await addRole(user._id, role)
-    if (customData.fediversable) await createKeyPair(user)
     return API.getUserWithCookie(cookie)
-  },
-
-  createUserOnFediverse: async (customData = {}, role) => {
-    customData.fediversable = true
-    const user = await API.createUser(customData, role)
-    await createKeyPair(user)
-    const updatedUser = await byId(user._id)
-    return Object.assign(user, updatedUser)
   },
 
   getUserWithCookie: async cookie => {

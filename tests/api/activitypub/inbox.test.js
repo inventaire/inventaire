@@ -1,5 +1,5 @@
 require('should')
-const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
+const { createUser, createUsername } = require('../fixtures/users')
 const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { makeUrl, createActivity, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
@@ -96,7 +96,7 @@ describe('activitypub:post:inbox', () => {
   })
 
   it('should return a valid response', async () => {
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const res = await signedReq({
@@ -110,7 +110,7 @@ describe('activitypub:post:inbox', () => {
 describe('activitypub:Follow', () => {
   it('should create a Follow activity', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     await signedReq({
@@ -124,7 +124,7 @@ describe('activitypub:Follow', () => {
 
   it('should not recreate a Follow activity if actor is already following someone', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const requestPromise = signedReq({
@@ -141,7 +141,7 @@ describe('activitypub:Follow', () => {
 
   it('should trigger an Accept activity', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const { remoteHost } = await signedReq({
@@ -161,7 +161,7 @@ describe('activitypub:Follow', () => {
 
 describe('activitypub:Undo', () => {
   it('should repond ok if already not following', async () => {
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const emitterUser = await createRemoteActivityPubServerUser()
     const res = await signedReq({
@@ -174,7 +174,7 @@ describe('activitypub:Undo', () => {
   })
 
   it('should reject to undo from another actor', async () => {
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const emitterUserA = await createRemoteActivityPubServerUser()
@@ -199,7 +199,7 @@ describe('activitypub:Undo', () => {
   })
 
   it('should delete activity', async () => {
-    const { username } = await createUserOnFediverse()
+    const { username } = await createUser({ fediversable: true })
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     const emitterUser = await createRemoteActivityPubServerUser()
