@@ -38,6 +38,17 @@ describe('activitypub:webfinger', () => {
     }
   })
 
+  it('should reject an invalid resource scheme', async () => {
+    try {
+      const actor = `bcct:foo@${CONFIG.publicHost}`
+      await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid resource')
+    }
+  })
+
   it('should reject invalid actor', async () => {
     try {
       const invalidActorResource = 'acct:foobar.org'
