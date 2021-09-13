@@ -48,8 +48,11 @@ const buildPaginatedOutbox = async (targetUser, offset, outbox) => {
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + 10}`
   const { username } = targetUser
-  const activities = await byUsername(username)
-  const res = await formatActivities(activities, targetUser)
-  _.extend(outbox, res)
+  const rawActivities = await byUsername(username)
+  const activities = await formatActivities(rawActivities, targetUser)
+  _.extend(outbox, {
+    totalItems: activities.length,
+    orderedItems: activities
+  })
   return outbox
 }

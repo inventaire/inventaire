@@ -1,3 +1,4 @@
+const CONFIG = require('config')
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const requests_ = require('lib/requests')
@@ -5,7 +6,7 @@ const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
 const { expired } = require('lib/time')
 
-module.exports = {
+const security_ = module.exports = {
   sign: params => {
     const { keyUrl, privateKey } = params
     if (!params.headers) params.headers = '(request-target) host date'
@@ -37,6 +38,27 @@ module.exports = {
       throw error_.new('signature verification failed', 400, { publicKey })
     }
     // TODO: verify date
+  },
+
+  signRequest: ({ method, keyUrl, privateKey, endpoint }) => {
+    if (!endpoint) endpoint = '/api/activitypub'
+    const date = (new Date()).toUTCString()
+    const publicHost = CONFIG.host
+    // The minimum recommended data to sign is the (request-target), host, and date.
+    // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
+    const signatureHeaders = {
+      host: publicHost,
+      date
+    }
+    const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+    const signature = security_.sign(_.extend({
+      headers: signatureHeadersInfo,
+      method,
+      keyUrl,
+      privateKey,
+      endpoint
+    }, signatureHeaders))
+    return _.extend({ signature }, signatureHeaders)
   }
 }
 
