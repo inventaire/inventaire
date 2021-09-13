@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+const { getEntitiesByUris } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 
 module.exports = entities => {
   const { works, editions } = splitEntities(entities)

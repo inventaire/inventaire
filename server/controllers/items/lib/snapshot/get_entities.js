@@ -1,7 +1,6 @@
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+const { getEntityByUri, getEntitiesByUris } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 const { aggregateClaims } = require('./helpers')
 
 const getRelativeEntities = relationProperty => async entity => {

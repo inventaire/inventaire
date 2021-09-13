@@ -1,10 +1,10 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const allowlistedEntityTypes = [ 'edition', 'work' ]
+const { getEntityByUri } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 
-let getEntityByUri, shelves_
+let shelves_
 const requireCircularDependencies = () => {
-  getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
   shelves_ = require('controllers/shelves/lib/shelves')
 }
 setImmediate(requireCircularDependencies)

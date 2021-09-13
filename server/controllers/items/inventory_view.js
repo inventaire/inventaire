@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+const { getEntitiesByUris } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
 const bundleViewData = require('./lib/view/bundle_view_data')
 const getAuthorizedItems = require('./lib/get_authorized_items')

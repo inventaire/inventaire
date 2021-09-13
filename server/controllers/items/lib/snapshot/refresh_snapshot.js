@@ -1,11 +1,9 @@
 const _ = require('builders/utils')
 const promises_ = require('lib/promises')
 const assert_ = require('lib/utils/assert_types')
-const entities_ = require('controllers/entities/lib/entities')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
-const buildSnapshot = require('./build_snapshot')
+const { getEntityByUri, getEntitiesByUris, getUrisByClaim } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 const { getWorkAuthorsAndSeries, getEditionGraphEntities } = require('./get_entities')
+const buildSnapshot = require('./build_snapshot')
 const { getDocData } = require('./helpers')
 
 let snapshot_
@@ -31,7 +29,7 @@ const fromUri = changedEntityUri => {
 module.exports = { fromDoc, fromUri }
 
 const multiWorkRefresh = relationProperty => async uri => {
-  const uris = await entities_.urisByClaim(relationProperty, uri)
+  const uris = await getUrisByClaim(relationProperty, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
   return _.flatten(snapshots)
 }
@@ -78,7 +76,7 @@ const getEditionsSnapshots = async (uri, works, authors, series) => {
   assert_.array(authors)
   assert_.array(series)
 
-  return entities_.urisByClaim('wdt:P629', uri)
+  return getUrisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
   .then(res => _.values(res.entities))
   .then(promises_.map(edition => getEditionSnapshot([ edition, works, authors, series ])))

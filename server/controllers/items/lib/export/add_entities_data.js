@@ -1,7 +1,6 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
+const { getEntityByUri, getEntitiesList } = require('controllers/entities/lib/remote/instance_agnostic_entities')
 
 module.exports = async item => {
   const { entity: uri } = item
