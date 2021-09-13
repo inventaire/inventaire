@@ -1,7 +1,6 @@
-const CONFIG = require('config')
 const _ = require('builders/utils')
 const { rawRequest } = require('../utils/request')
-const { sign } = require('controllers/activitypub/lib/security')
+const { signRequest } = require('controllers/activitypub/lib/security')
 const { getRandomBytes, keyPair } = require('lib/crypto')
 const { generateKeyPair } = keyPair
 const express = require('express')
@@ -19,26 +18,11 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
     })
   }
   method = body ? 'post' : 'get'
-  const date = (new Date()).toUTCString()
-  const publicHost = CONFIG.host
-  // The minimum recommended data to sign is the (request-target), host, and date.
-  // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-  const signatureHeaders = {
-    host: publicHost,
-    date
-  }
-  const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-  const signature = sign(_.extend({
-    headers: signatureHeadersInfo,
-    method,
-    keyUrl,
-    privateKey,
-    endpoint: '/api/activitypub'
-  }, signatureHeaders))
-  const headers = _.extend({ signature }, signatureHeaders)
+  const headers = signRequest({ method, keyUrl, privateKey })
   const params = { headers }
   if (method === 'post') _.extend(params, { body })
-  return rawRequest(method, url, params)
+  const res = await rawRequest(method, url, params)
+  return _.extend(res, { remoteHost: origin })
 }
 
 const createActivity = (params = {}) => {
@@ -81,15 +65,31 @@ const startActivityPubServer = () => new Promise(resolve => {
   const app = express()
   const host = `localhost:${port}`
   const origin = `http://${host}`
+  const inboxEndpoint = '/inbox'
+  const visitsCountEndpoint = '/visits_count'
 
   app.get(remoteServerActivityPubEndpoint, async (req, res) => {
     const { name } = req.query
     const user = remoteActivityPubServerUsers[name]
     if (user) {
-      res.json({ publicKey: { publicKeyPem: user.publicKey } })
+      res.json({
+        publicKey: { publicKeyPem: user.publicKey },
+        inbox: origin + inboxEndpoint,
+      })
     } else {
       res.status(400).json({ found: false })
     }
+  })
+
+  let inboxVisitCount = 0
+
+  app.post(inboxEndpoint, async (req, res) => {
+    inboxVisitCount++
+    res.json({ ok: true })
+  })
+
+  app.get(visitsCountEndpoint, async (req, res) => {
+    res.json({ inbox: inboxVisitCount })
   })
 
   app.listen(port, () => resolve({ port, host, origin }))

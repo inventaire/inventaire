@@ -4,10 +4,12 @@ const debounceTime = CONFIG.activitiesDebounceTime
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
-const { publicReq } = require('../utils/utils')
+const { publicReq, signedReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
+const { makeUrl } = require('../utils/activitypub')
+const requests_ = require('lib/requests')
 
 describe('outbox:public', () => {
   it('reject if user is not fediversable', async () => {
@@ -109,5 +111,22 @@ describe('create:items:activity', () => {
     const outboxUrl = `${endpoint}${username}&offset=0`
     const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(0)
+  })
+})
+
+describe('post:activity:remote:inbox', () => {
+  it('should post an activity to inbox', async () => {
+    const user = await createUser({ fediversable: true })
+    const { username } = user
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    // Follow user
+    const { remoteHost } = await signedReq({ object: actorUrl, url: inboxUrl })
+    await createItem(user)
+    await wait(debounceTime)
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    await publicReq('get', outboxUrl)
+    const visitsCount = await requests_.get(`${remoteHost}/visits_count`)
+    visitsCount.inbox.should.equal(1)
   })
 })

@@ -6,30 +6,51 @@ const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const items_ = require('controllers/items/lib/items')
 const user_ = require('controllers/user/lib/user')
+const formatActivities = require('./format_activities')
+const requests_ = require('lib/requests')
+const { signRequest } = require('controllers/activitypub/lib/security')
+const error_ = require('lib/error/error')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
 const activities_ = module.exports = {
+  getFollowActivitiesByObject: async name => {
+    return db.viewByKey('followActivitiesByObject', name)
+  },
   createActivity: async newActivity => {
     const activity = Activity.create(newActivity)
     return db.postAndReturn(activity)
-  },
-  byExternalIds: async ids => {
-    ids = _.forceArray(ids)
-    return db.viewByKeys('byExternalIds', ids)
-  },
-  byExternalId: async id => {
-    const docs = await activities_.byExternalIds(id)
-    return docs[0]
   },
   byUsername: async username => {
     return db.viewByKey('byUsername', username)
     .then(docs => docs.filter(oldEnough))
   },
   byId: db.get,
-  byIds: db.byIds
+  byIds: db.byIds,
+  postActivityToInbox: ({ headers, activity, privateKey }) => async followActivity => {
+    const uri = followActivity.actor.uri
+    if (!uri) return
+    let actorRes
+    try {
+      actorRes = await requests_.get(uri, { headers })
+    } catch (err) {
+      throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { uri, activity, err })
+    }
+    const inboxUri = actorRes.inbox
+    if (!inboxUri) return _.log('No inbox found, cannot post activity', uri)
+
+    let postHeaders = signRequest({ method: 'post', keyUrl: inboxUri, privateKey })
+    postHeaders = _.extend(postHeaders, headers)
+    postHeaders['content-type'] = 'application/activity+json'
+    try {
+      return requests_.post(inboxUri, { headers: postHeaders, body: activity })
+    } catch (err) {
+      throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity, err })
+    }
+  }
+
 }
 
 const oldEnough = doc => !isRecent(doc.updated)
@@ -64,7 +85,8 @@ const createDebouncedActivity = userId => async () => {
   delete debouncedActivities[userId]
   const publicItems = await items_.recentPublicByOwner(userId)
   const publicItemsIds = publicItems.map(_.property('_id'))
-  const { username } = await user_.byId(userId)
+  const user = await user_.byId(userId)
+  const { username } = user
   const activitiesItemsIds = []
   const activities = await activities_.byUsername(username)
   activities.forEach(activity => {
@@ -73,6 +95,7 @@ const createDebouncedActivity = userId => async () => {
   })
   const newItemsIds = _.difference(publicItemsIds, activitiesItemsIds)
   return createActivity(username, newItemsIds)
+  .then(postActivityToInboxFollowers(user))
   .catch(_.Error('create debounced activity err'))
 }
 
@@ -82,3 +105,34 @@ radio.on('user:inventory:update', userId => {
   }
   return debouncedActivities[userId]()
 })
+
+const postActivityToInboxFollowers = user => async activity => {
+  const followActivities = await activities_.getFollowActivitiesByObject(user.username)
+  // arbitrary timeout
+  const headers = { timeout: 30 * 1000 }
+  const formattedActivities = await formatActivities([ activity ], user)
+  const formattedActivity = formattedActivities[0]
+  return followActivities.forEach(postActivityToInboxFollower({ headers, formattedActivity, privateKey: user.privateKey }))
+}
+
+const postActivityToInboxFollower = ({ headers, formattedActivity, privateKey }) => async activity => {
+  const uri = activity.actor.uri
+  if (!uri) return
+  let actorRes
+  try {
+    actorRes = await requests_.get(uri, { headers })
+  } catch (err) {
+    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { uri, activity: formattedActivity, err })
+  }
+  const inboxUri = actorRes.inbox
+  if (!inboxUri) return _.log('No inbox found, cannot post activity', uri)
+
+  let postHeaders = signRequest({ method: 'post', keyUrl: uri, privateKey })
+  postHeaders = _.extend(postHeaders, headers)
+  postHeaders['content-type'] = 'application/json'
+  try {
+    await requests_.post(inboxUri, { headers: postHeaders, body: formattedActivity })
+  } catch (err) {
+    throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity: formattedActivity, err })
+  }
+}

@@ -51,6 +51,7 @@ const API = module.exports = {
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
     if (role) await addRole(user._id, role)
+    if (customData.fediversable) await createKeyPair(user)
     return API.getUserWithCookie(cookie)
   },
 
