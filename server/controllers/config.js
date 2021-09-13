@@ -1,9 +1,10 @@
 const { sendStaticJson } = require('lib/responses')
-const { piwik } = require('config')
+const { piwik, remoteEntities } = require('config')
 const endpoint = piwik.enabled ? piwik.endpoint : null
 
 const clientConfig = JSON.stringify({
-  piwik: endpoint && endpoint.replace('/piwik.php', '')
+  piwik: endpoint && endpoint.replace('/piwik.php', ''),
+  remoteEntities
 })
 
 // A endpoint dedicated to pass configuration parameters to the client
