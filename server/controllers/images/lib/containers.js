@@ -1,6 +1,7 @@
 const _ = require('builders/utils')
 // 'swift' or 'local'
-const { mode } = require('config').mediaStorage
+const CONFIG = require('config')
+const { mode } = CONFIG.mediaStorage
 _.info(`media storage: ${mode}`)
 const { putImage, deleteImage } = require(`./${mode}_client`)
 const images_ = require('lib/images')
@@ -27,16 +28,18 @@ const containers = {
     deleteImage,
   },
 
-  entities: {
-    putImage: transformAndPutImage('entities', 'removeExif'),
-    deleteImage,
-  },
-
   // Placeholder to add 'remote' to the list of containers, when it's actually
   // used to fetch remote images
   remote: {},
   // Same but for emails and client assets
   assets: {}
+}
+
+if (CONFIG.remoteEntities == null) {
+  containers.entities = {
+    putImage: transformAndPutImage('entities', 'removeExif'),
+    deleteImage,
+  }
 }
 
 const uploadContainersNames = Object.keys(containers)

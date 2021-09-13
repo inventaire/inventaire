@@ -1,10 +1,17 @@
 const _ = require('builders/utils')
-const { imageIsUsed: entityImageIsUsed } = require('controllers/entities/lib/entities')
-const { imageIsUsed: groupImageIsUsed } = require('controllers/groups/lib/groups')
-const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
 const assert_ = require('lib/utils/assert_types')
 const { containers } = require('controllers/images/lib/containers')
-const { checkDelays } = require('config').mediaStorage.images
+const CONFIG = require('config')
+const { checkDelays } = CONFIG.mediaStorage.images
+const { remoteEntities } = CONFIG
+
+const { imageIsUsed: groupImageIsUsed } = require('controllers/groups/lib/groups')
+const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
+
+let entityImageIsUsed
+if (remoteEntities == null) {
+  entityImageIsUsed = require('controllers/entities/lib/entities').imageIsUsed
+}
 
 module.exports = async ({ container, hash, url, context }) => {
   if (url) [ container, hash ] = url.split('/').slice(2)

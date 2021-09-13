@@ -11,8 +11,6 @@ const oauthServer = require('./auth/oauth_server')
 const routes = module.exports = {
   'api/auth': endpoint('./auth/auth'),
   'api/config': endpoint('./config'),
-  'api/data': endpoint('./data'),
-  'api/entities': endpoint('./entities/entities'),
   'api/feedback': endpoint('./feedback'),
   'api/feeds': endpoint('./feeds/feeds'),
   'api/groups': endpoint('./groups/groups'),
@@ -28,7 +26,6 @@ const routes = module.exports = {
   'api/search': endpoint('./search/search'),
   'api/shelves': endpoint('./shelves/shelves'),
   'api/submit': require('./auth/fake_submit'),
-  'api/tasks': endpoint('./tasks/tasks'),
   'api/tests*': endpoint('./tests'),
   'api/token': endpoint('./auth/token'),
   'api/transactions': endpoint('./transactions/transactions'),
@@ -37,6 +34,12 @@ const routes = module.exports = {
   'api/activitypub': endpoint('./activitypub/activitypub'),
   'img/*': endpoint('./images/resize'),
   '.well-known/webfinger': endpoint('./activitypub/webfinger')
+}
+
+if (CONFIG.remoteEntities == null) {
+  routes['api/data'] = endpoint('./data')
+  routes['api/entities'] = endpoint('./entities/entities')
+  routes['api/tasks'] = endpoint('./tasks/tasks')
 }
 
 if (CONFIG.logMissingI18nKeys) {

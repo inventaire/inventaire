@@ -2,7 +2,9 @@ const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const { host: elasticHost } = require('config').elasticsearch
+const CONFIG = require('config')
+const { remoteEntities } = CONFIG
+const { host: elasticHost } = CONFIG.elasticsearch
 const { getHits, formatError } = require('lib/elasticsearch')
 const { indexes, indexedTypes, indexedEntitiesTypes } = require('./indexes')
 const indexedTypesSet = new Set(indexedTypes)
@@ -29,6 +31,10 @@ const typeSearch = async params => {
   // but cannot be both as results scores are built very differently
   if (hasSocialTypes && hasEntityTypes) {
     throw error_.new('can not have both social and entity types', 400, { types })
+  }
+
+  if (hasEntityTypes && remoteEntities != null) {
+    throw error_.new('entities should be searched on remote instance', 400, { types, remoteEntities })
   }
 
   let body, queryIndexes
