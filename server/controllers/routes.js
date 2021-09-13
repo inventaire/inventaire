@@ -11,7 +11,7 @@ const oauthServer = require('./auth/oauth_server')
 const routes = module.exports = {
   'api/auth': endpoint('./auth/auth'),
   'api/config': endpoint('./config'),
-  'api/data': endpoint('./data'),
+  'api/data*': endpoint('./data'),
   'api/entities': endpoint('./entities/entities'),
   'api/feedback': endpoint('./feedback'),
   'api/feeds': endpoint('./feeds/feeds'),

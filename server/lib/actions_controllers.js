@@ -20,9 +20,10 @@ const { controllerWrapper, validateControllerWrapperParams } = require('./contro
 module.exports = controllers => {
   const actionsControllersParams = getActionsControllersParams(controllers)
   return async (req, res) => {
+    const pathAction = req.params[0]?.replace(leadingSlash, '')
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
-    const action = req.query.action || req.body.action || 'default'
+    const action = pathAction || req.query.action || req.body.action || 'default'
 
     if (action === 'default' && actionsControllersParams.default == null) {
       return error_.bundleMissingQuery(req, res, 'action')
@@ -34,6 +35,8 @@ module.exports = controllers => {
     return controllerWrapper(controllerParams, req, res)
   }
 }
+
+const leadingSlash = /^\//
 
 const accessLevels = Object.keys(rolesByAccess)
 
