@@ -28,6 +28,8 @@ const config = module.exports = {
     return `${this.publicProtocol}://${this.publicHost}:${this.port}`
   },
   invHost: 'https://inventaire.io',
+  // Set to 'https://inventaire.io' in ./local-dev.js to use inventaire.io entities locally
+  remoteEntities: null,
   // To allow fallback between servers, they need to share the same session keys:
   // one should have autoRotateKeys=true and the others autoRotateKeys=false
   autoRotateKeys: true,
