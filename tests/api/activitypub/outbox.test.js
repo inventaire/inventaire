@@ -127,6 +127,8 @@ describe('post:activity:remote:inbox', () => {
     const outboxUrl = `${endpoint}${username}&offset=0`
     await publicReq('get', outboxUrl)
     const visitsCount = await requests_.get(`${remoteHost}/visits_count`)
-    visitsCount.inbox.should.equal(1)
+    // one visit for the accept activity (sent after the follow)
+    // one visit for the inbox posting
+    visitsCount.inbox.should.equal(2)
   })
 })

@@ -101,9 +101,5 @@ describe('activitypub:post:inbox', () => {
       url: inboxUrl
     })
     res.statusCode.should.equal(200)
-    const parsedBody = JSON.parse(res.body)
-    parsedBody['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
-    parsedBody.type.should.equal('Accept')
-    parsedBody.object.name.should.equal(username)
   })
 })
