@@ -1,7 +1,7 @@
 const error_ = require('lib/error/error')
 const qs = require('querystring')
 const user_ = require('controllers/user/lib/user')
-const { createActivity } = require('controllers/activitypub/lib/activities')
+const { createActivity, postActivityToInbox } = require('controllers/activitypub/lib/activities')
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 
@@ -32,13 +32,14 @@ const controller = async params => {
   actor = { uri: actor }
   const res = await createActivity({ id, type, actor, object })
   const { object: resObject } = res
-  return {
+  const activity = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: res.externalId,
     type: 'Accept',
     actor: actor.uri,
     object: resObject
   }
+  return postActivityToInbox({ activity, privateKey: user.privateKey })(res)
 }
 
 module.exports = {

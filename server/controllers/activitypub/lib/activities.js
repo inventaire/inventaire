@@ -87,15 +87,11 @@ const createDebouncedActivity = userId => async () => {
   const publicItemsIds = publicItems.map(_.property('_id'))
   const user = await user_.byId(userId)
   const { username } = user
-  const activitiesItemsIds = []
   const activities = await activities_.byUsername(username)
-  activities.forEach(activity => {
-    if (!_.isNonEmptyArray(activity.itemsIds)) return
-    activitiesItemsIds.push(...activity.itemsIds)
-  })
+  const activitiesItemsIds = _.flatMap(activities, _.property('object.itemsIds'))
   const newItemsIds = _.difference(publicItemsIds, activitiesItemsIds)
   return createActivity(username, newItemsIds)
-  .then(postActivityToInboxFollowers(user))
+  .then(postActivityToInboxes(user))
   .catch(_.Error('create debounced activity err'))
 }
 
@@ -106,33 +102,11 @@ radio.on('user:inventory:update', userId => {
   return debouncedActivities[userId]()
 })
 
-const postActivityToInboxFollowers = user => async activity => {
+const postActivityToInboxes = user => async activity => {
   const followActivities = await activities_.getFollowActivitiesByObject(user.username)
   // arbitrary timeout
   const headers = { timeout: 30 * 1000 }
   const formattedActivities = await formatActivities([ activity ], user)
   const formattedActivity = formattedActivities[0]
-  return followActivities.forEach(postActivityToInboxFollower({ headers, formattedActivity, privateKey: user.privateKey }))
-}
-
-const postActivityToInboxFollower = ({ headers, formattedActivity, privateKey }) => async activity => {
-  const uri = activity.actor.uri
-  if (!uri) return
-  let actorRes
-  try {
-    actorRes = await requests_.get(uri, { headers })
-  } catch (err) {
-    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { uri, activity: formattedActivity, err })
-  }
-  const inboxUri = actorRes.inbox
-  if (!inboxUri) return _.log('No inbox found, cannot post activity', uri)
-
-  let postHeaders = signRequest({ method: 'post', keyUrl: uri, privateKey })
-  postHeaders = _.extend(postHeaders, headers)
-  postHeaders['content-type'] = 'application/json'
-  try {
-    await requests_.post(inboxUri, { headers: postHeaders, body: formattedActivity })
-  } catch (err) {
-    throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity: formattedActivity, err })
-  }
+  return followActivities.forEach(activities_.postActivityToInbox({ headers, activity: formattedActivity, privateKey: user.privateKey }))
 }
