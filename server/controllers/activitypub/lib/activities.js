@@ -60,9 +60,10 @@ const debouncedActivities = {}
 
 const createDebouncedActivity = userId => async () => {
   delete debouncedActivities[userId]
+  const user = await user_.byId(userId)
+  if (!user.fediversable) return
   const publicItems = await items_.recentPublicByOwner(userId)
   const publicItemsIds = publicItems.map(_.property('_id'))
-  const user = await user_.byId(userId)
   const { username } = user
   const activities = await activities_.byUsername(username)
   const activitiesItemsIds = _.flatMap(activities, _.property('object.itemsIds'))
