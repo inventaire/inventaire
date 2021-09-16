@@ -7,7 +7,7 @@ const makeUrl = require('./make_url')
 const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 
 module.exports = async (activitiesDocs, user) => {
-  const actor = formatActorUrl(user.username)
+  const actor = makeUrl({ params: { action: 'actor', name: user.username } })
   // get all users items in order to drop activities only with private items
   // and still serve all possible activities
   const items = await getItemsByActivities(activitiesDocs, user, actor)
@@ -21,13 +21,6 @@ const getItemsByActivities = async (activities, user, actor) => {
   .then(_.KeyBy('_id'))
 }
 
-const formatActorUrl = username => {
-  const actor = {}
-  actor.id = makeUrl({ params: { action: 'actor', name: username } })
-  actor.type = 'Person'
-  return actor
-}
-
 const formatActivityDoc = (user, actor, itemsWithSnapshots) => activityDoc => {
   const { _id } = activityDoc
   let { object } = activityDoc
@@ -35,7 +28,9 @@ const formatActivityDoc = (user, actor, itemsWithSnapshots) => activityDoc => {
   if (_.isEmpty(items)) return null
   object = { type: 'Note' }
   object.content = buildItemsContent(items, user)
-  return { _id, type: 'Create', object, actor }
+  const to = []
+  const cc = [ 'https://www.w3.org/ns/activitystreams#Public' ]
+  return { _id, type: 'Create', object, actor, to, cc }
 }
 
 const buildItemsContent = (items, user) => {

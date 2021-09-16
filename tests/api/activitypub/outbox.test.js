@@ -54,7 +54,11 @@ describe('outbox:public', () => {
     res.totalItems.should.equal(1)
     res.orderedItems.should.be.an.Array()
     res.orderedItems.length.should.equal(1)
-    res.orderedItems[0].object.content.should.containEql(item._id)
+    const createActivity = res.orderedItems[0]
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    createActivity.actor.should.equal(actorUrl)
+    createActivity.object.content.should.containEql(item._id)
+    createActivity.cc.should.containEql('https://www.w3.org/ns/activitystreams#Public')
     // res.orderedItems[0].object.contentMap.it.should.be.a.String()
   })
 
