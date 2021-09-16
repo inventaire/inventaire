@@ -8,8 +8,6 @@ const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 
 module.exports = async (activitiesDocs, user) => {
   const actor = makeUrl({ params: { action: 'actor', name: user.username } })
-  // get all users items in order to drop activities only with private items
-  // and still serve all possible activities
   const items = await getItemsByActivities(activitiesDocs, user, actor)
   return _.compact(activitiesDocs.map(formatActivityDoc(user, actor, items)))
 }
@@ -21,38 +19,47 @@ const getItemsByActivities = async (activities, user, actor) => {
   .then(_.KeyBy('_id'))
 }
 
-const formatActivityDoc = (user, actor, itemsWithSnapshots) => activityDoc => {
+const formatActivityDoc = (user, actor, items) => activityDoc => {
   const { _id } = activityDoc
   let { object } = activityDoc
-  const items = _.pick(itemsWithSnapshots, object.itemsIds)
-  if (_.isEmpty(items)) return null
+  const maxLinksToDisplay = 3
+
+  const { itemsIds } = object
+  if (_.isEmpty(itemsIds)) return null
+  // itemsLength as in OrderedItems (not user's item)
+  const { itemsLength, links } = buildLinkContentFromItems(items, itemsIds, maxLinksToDisplay)
+
   object = { type: 'Note' }
-  object.content = buildItemsContent(items, user)
+  object.content = buildContent(links, user, maxLinksToDisplay, itemsLength)
   const to = []
   const cc = [ 'https://www.w3.org/ns/activitystreams#Public' ]
   return { _id, type: 'Create', object, actor, to, cc }
 }
 
-const buildItemsContent = (items, user) => {
-  const { lang: userLang, username } = user
-  const itemsAry = Object.values(items)
-  const itemsLength = itemsAry.length
-  const maxItemsToDisplay = 3
-  const firstThreeItems = itemsAry.slice(0, maxItemsToDisplay)
-
-  const text = i18n(userLang, 'create_items_activity', { username })
-  let html = `<p>${text} `
+const buildLinkContentFromItems = (items, objectItemsIds, maxLinksToDisplay) => {
+  const objectItems = Object.values(_.pick(items, objectItemsIds))
+  const firstThreeItems = objectItems.slice(0, maxLinksToDisplay)
   const links = firstThreeItems.map(item => {
-    const url = `${host}/items/${item._id}`
-    const linkText = item.snapshot['entity:title']
-    const link = `<a href="${url}" rel="nofollow noopener noreferrer" target="_blank">${linkText}</a>`
-    return link
+    return {
+      text: item.snapshot['entity:title'],
+      url: `${host}/items/${item._id}`
+    }
   })
-  html += links.join(', ')
-  if (itemsLength > maxItemsToDisplay) {
+  const itemsLength = objectItems.length
+  return { itemsLength, links }
+}
+
+const buildContent = (links, user, maxLinksToDisplay, itemsLength) => {
+  const { lang: userLang, username } = user
+  let html = `<p>${i18n(userLang, 'create_items_activity', { username })} `
+  const htmlLinks = links.map(link => {
+    return `<a href="${link.url}" rel="nofollow noopener noreferrer" target="_blank">${link.text}</a>`
+  })
+  html += htmlLinks.join(', ')
+  if (itemsLength > maxLinksToDisplay) {
     const and = ' ' + i18n(userLang, 'and') + ' '
     html += and
-    const more = i18n(userLang, 'x_more_books_to_inventory', { itemsLength: itemsLength - maxItemsToDisplay })
+    const more = i18n(userLang, 'x_more_books_to_inventory', { itemsLength: itemsLength - maxLinksToDisplay })
     const moreLink = `<a href="${host}/inventory/${username}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
     html += moreLink
   }
