@@ -7,6 +7,8 @@ const ownerSafeData = user => {
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
   safeUserDoc.accessLevels = getUserAccessLevels(user)
+  safeUserDoc.settings = safeUserDoc.settings || {}
+  safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
   return safeUserDoc
 }
 
