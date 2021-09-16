@@ -4,7 +4,7 @@ const debounceTime = CONFIG.activitiesDebounceTime
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
-const { publicReq, signedReq } = require('../utils/utils')
+const { publicReq, signedReq, customAuthReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
@@ -70,7 +70,23 @@ describe('outbox:public', () => {
   })
 })
 
-describe('create:items:activity', () => {
+describe('update:items', () => {
+  it('should not create an activity if another activity already has item id', async () => {
+    // meaning updating any item attribute wont trigger any activity
+    const user = createUser({ fediversable: true })
+    const item = await createItem(user)
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    await wait(debounceTime + 500)
+    item.transaction = 'lending'
+    await customAuthReq(user, 'put', '/api/items', item)
+    await wait(debounceTime + 500)
+    const res = await publicReq('get', outboxUrl)
+    res.orderedItems.length.should.equal(1)
+  })
+})
+
+describe('create:items', () => {
   it('should return an activity when creating items in bulk', async () => {
     const user = createUser({ fediversable: true })
     await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])

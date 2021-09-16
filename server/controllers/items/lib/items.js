@@ -89,7 +89,7 @@ const items_ = module.exports = {
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
     const { docs } = await db.fetch(itemsIds)
-    emit('user:inventory:update', userId)
+    await emit('user:inventory:update', userId)
     return docs
   },
 
@@ -98,7 +98,7 @@ const items_ = module.exports = {
     const currentItem = await db.get(itemUpdateData._id)
     let updatedItem = Item.update(userId, itemUpdateData, currentItem)
     updatedItem = await db.putAndReturn(updatedItem)
-    emit('user:inventory:update', userId)
+    await emit('user:inventory:update', userId)
     return updatedItem
   },
 
@@ -107,7 +107,7 @@ const items_ = module.exports = {
     const currentItems = await items_.byIds(ids)
     let updatedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
     updatedItems = await db.bulk(updatedItems)
-    emit('user:inventory:update', reqUserId)
+    await emit('user:inventory:update', reqUserId)
     return updatedItems
   },
 
