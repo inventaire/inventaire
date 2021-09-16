@@ -4,6 +4,7 @@ const error_ = require('lib/error/error')
 const qs = require('querystring')
 const cache_ = require('lib/cache')
 const { oneMonth } = require('lib/time')
+const { fixedEncodeURIComponent } = require('lib/utils/base')
 
 module.exports = params => {
   const { lang, title, introOnly } = params
@@ -23,6 +24,12 @@ const getArticle = async (lang, title, introOnly) => {
   if (pages == null) {
     throw error_.new('invalid extract response', 500, { lang, title }, query)
   }
+
+  // Replace spaces by underscores before URI encoding
+  // as Mediawiki considers them interchangeable
+  // and _ is more readable than %20
+  title = title.replace(/\s/g, '_')
+  title = fixedEncodeURIComponent(title)
 
   return {
     extract: getCleanExtract(_.values(pages)),
