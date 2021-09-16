@@ -25,7 +25,7 @@ describe('activitypub:actor', () => {
       .then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('user is not on the fediverse')
+      err.body.status_verbose.should.equal('not found')
       err.body.status.should.equal(404)
     }
   })
