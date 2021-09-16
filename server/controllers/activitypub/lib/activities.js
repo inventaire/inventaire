@@ -50,34 +50,11 @@ const activities_ = module.exports = {
       throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity, err })
     }
   }
-
 }
 
 const oldEnough = doc => !isRecent(doc.updated)
 
 const isRecent = date => date && !expired(date, activitiesDebounceTime)
-
-const createActivity = (username, itemsIds) => {
-  const params = {
-    actor: {
-      username,
-    },
-    itemsIds,
-    type: 'Create'
-  }
-  const newActivity = formatActivity(params)
-  const activity = Activity.create(newActivity)
-  return db.postAndReturn(activity)
-}
-
-const formatActivity = params => {
-  const { username, type, id, itemsIds } = params
-  let { actor } = params
-  if (username && !actor) actor = { username }
-  const activity = { type, actor, object: { itemsIds } }
-  if (id) _.extend(activity, { externalId: id })
-  return activity
-}
 
 const debouncedActivities = {}
 
@@ -89,8 +66,12 @@ const createDebouncedActivity = userId => async () => {
   const { username } = user
   const activities = await activities_.byUsername(username)
   const activitiesItemsIds = _.flatMap(activities, _.property('object.itemsIds'))
-  const newItemsIds = _.difference(publicItemsIds, activitiesItemsIds)
-  return createActivity(username, newItemsIds)
+  const itemsIds = _.difference(publicItemsIds, activitiesItemsIds)
+  return activities_.createActivity({
+    actor: { username },
+    object: { itemsIds },
+    type: 'Create'
+  })
   .then(postActivityToInboxes(user))
   .catch(_.Error('create debounced activity err'))
 }

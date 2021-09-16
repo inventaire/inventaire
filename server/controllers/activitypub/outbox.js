@@ -14,20 +14,9 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const { name } = params
+  const { name, offset } = params
   const user = await user_.findOneByUsername(name)
   if (!user || !user.fediversable) throw error_.notFound({ name })
-  return getOutbox(params, user)
-}
-
-module.exports = {
-  sanitization,
-  controller,
-  track: [ 'activitypub', 'outbox' ]
-}
-
-const getOutbox = async (params, user) => {
-  const { offset } = params
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
   const totalPublicItems = user.snapshot.public['items:count']
   const baseOutbox = {
@@ -36,11 +25,16 @@ const getOutbox = async (params, user) => {
     totalItems: totalPublicItems,
     first: `${fullOutboxUrl}&offset=0`
   }
-  if (offset != null && offset >= 0) {
-    return buildPaginatedOutbox(user, offset, baseOutbox)
-  }
-  return baseOutbox
+  return superiorToZero(offset) ? buildPaginatedOutbox(user, offset, baseOutbox) : baseOutbox
 }
+
+module.exports = {
+  sanitization,
+  controller,
+  track: [ 'activitypub', 'outbox' ]
+}
+
+const superiorToZero = offset => offset != null && offset >= 0
 
 const buildPaginatedOutbox = async (user, offset, outbox) => {
   const { id: fullOutboxUrl } = outbox
