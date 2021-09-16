@@ -47,7 +47,7 @@ const getEnrichedEntity = async wdId => {
   return entity
 }
 
-const format = entity => {
+const format = async entity => {
   if (entity.missing != null) return formatEmpty('missing', entity)
 
   const { P31, P279 } = entity.claims
@@ -73,7 +73,7 @@ const format = entity => {
 
 const simplifyClaimsOptions = { entityPrefix: 'wd' }
 
-const formatValidEntity = entity => {
+const formatValidEntity = async entity => {
   const { id: wdId } = entity
   entity.uri = `wd:${wdId}`
   entity.labels = simplify.labels(entity.labels)
@@ -83,7 +83,7 @@ const formatValidEntity = entity => {
   entity.claims = formatClaims(entity.claims, wdId)
   entity.originalLang = getOriginalLang(entity.claims)
 
-  formatAndPropagateRedirection(entity)
+  await formatAndPropagateRedirection(entity)
 
   // Deleting unnecessary attributes
   delete entity.id
@@ -96,7 +96,7 @@ const formatValidEntity = entity => {
   return addImageData(entity)
 }
 
-const formatAndPropagateRedirection = entity => {
+const formatAndPropagateRedirection = async entity => {
   if (entity.redirects != null) {
     const { from, to } = entity.redirects
     entity.redirects = {
@@ -110,7 +110,7 @@ const formatAndPropagateRedirection = entity => {
     // to their new entity
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
     reindex({ _id: unprefixify(entity.redirects.from), redirect: true })
-    radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
+    await radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
 }
 

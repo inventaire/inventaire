@@ -40,7 +40,7 @@ const controller = async params => {
   toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
 
   await mergeEntities({ userId: reqUserId, fromUri, toUri })
-  emit('entity:merge', fromUri, toUri)
+  await emit('entity:merge', fromUri, toUri)
   return { ok: true }
 }
 
