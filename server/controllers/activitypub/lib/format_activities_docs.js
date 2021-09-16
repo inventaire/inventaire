@@ -11,7 +11,7 @@ module.exports = async (activitiesDocs, user) => {
   // get all users items in order to drop activities only with private items
   // and still serve all possible activities
   const items = await getItemsByActivities(activitiesDocs, user, actor)
-  return _.compact(activitiesDocs.map(formatActivity(user, actor, items)))
+  return _.compact(activitiesDocs.map(formatActivityDoc(user, actor, items)))
 }
 
 const getItemsByActivities = async (activities, user, actor) => {
@@ -28,9 +28,9 @@ const formatActorUrl = username => {
   return actor
 }
 
-const formatActivity = (user, actor, itemsWithSnapshots) => activity => {
-  const { _id } = activity
-  let { object } = activity
+const formatActivityDoc = (user, actor, itemsWithSnapshots) => activityDoc => {
+  const { _id } = activityDoc
+  let { object } = activityDoc
   const items = _.pick(itemsWithSnapshots, object.itemsIds)
   if (_.isEmpty(items)) return null
   object = { type: 'Note' }

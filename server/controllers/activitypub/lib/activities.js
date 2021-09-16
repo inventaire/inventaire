@@ -6,7 +6,7 @@ const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const items_ = require('controllers/items/lib/items')
 const user_ = require('controllers/user/lib/user')
-const formatActivities = require('./format_activities')
+const formatActivitiesDocs = require('./format_activities_docs')
 const requests_ = require('lib/requests')
 const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
@@ -102,11 +102,11 @@ radio.on('user:inventory:update', userId => {
   return debouncedActivities[userId]()
 })
 
-const postActivityToInboxes = user => async activity => {
+const postActivityToInboxes = user => async activityDoc => {
   const followActivities = await activities_.getFollowActivitiesByObject(user.username)
   // arbitrary timeout
   const headers = { timeout: 30 * 1000 }
-  const formattedActivities = await formatActivities([ activity ], user)
-  const formattedActivity = formattedActivities[0]
-  return Promise.all(followActivities.map(activities_.postActivityToInbox({ headers, activity: formattedActivity, privateKey: user.privateKey })))
+  const activities = await formatActivitiesDocs([ activityDoc ], user)
+  const activity = activities[0]
+  return Promise.all(followActivities.map(activities_.postActivityToInbox({ headers, activity, privateKey: user.privateKey })))
 }
