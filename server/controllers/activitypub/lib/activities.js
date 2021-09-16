@@ -108,5 +108,5 @@ const postActivityToInboxes = user => async activity => {
   const headers = { timeout: 30 * 1000 }
   const formattedActivities = await formatActivities([ activity ], user)
   const formattedActivity = formattedActivities[0]
-  return followActivities.forEach(activities_.postActivityToInbox({ headers, activity: formattedActivity, privateKey: user.privateKey }))
+  return Promise.all(followActivities.map(activities_.postActivityToInbox({ headers, activity: formattedActivity, privateKey: user.privateKey })))
 }
