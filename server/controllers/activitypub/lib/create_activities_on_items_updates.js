@@ -3,7 +3,7 @@ const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const items_ = require('controllers/items/lib/items')
 const user_ = require('controllers/user/lib/user')
-const { postActivityToInboxes } = require('./post_activity_to_inboxes')
+const { postActivityToUserFollowersInboxes } = require('./post_activity_to_inboxes')
 const activities_ = require('./activities')
 
 const debouncedActivities = {}
@@ -23,7 +23,7 @@ const createDebouncedActivity = userId => async () => {
     object: { itemsIds },
     type: 'Create'
   })
-  .then(postActivityToInboxes(user))
+  .then(postActivityToUserFollowersInboxes(user))
   .catch(_.Error('create debounced activity err'))
 }
 

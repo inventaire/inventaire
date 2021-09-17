@@ -4,20 +4,22 @@ const requests_ = require('lib/requests')
 const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
 const { getFollowActivitiesByObject } = require('./activities')
+const assert_ = require('lib/utils/assert_types')
 // Arbitrary timeout
 const timeout = 30 * 1000
 
-const postActivityToInbox = ({ activity, privateKey }) => async followActivity => {
-  const uri = followActivity.actor.uri
-  if (!uri) return
+const postActivityToInbox = async ({ recipientActorUri, activity, privateKey }) => {
+  assert_.string(recipientActorUri)
   let actorRes
   try {
-    actorRes = await requests_.get(uri, { timeout })
+    actorRes = await requests_.get(recipientActorUri, { timeout })
   } catch (err) {
-    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { uri, activity, err })
+    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity, err })
   }
   const inboxUri = actorRes.inbox
-  if (!inboxUri) return _.log('No inbox found, cannot post activity', uri)
+  if (!inboxUri) {
+    return _.info({ recipientActorUri }, 'No inbox found, cannot post activity')
+  }
 
   const postHeaders = signRequest({ method: 'post', keyUrl: inboxUri, privateKey })
   postHeaders['content-type'] = 'application/activity+json'
@@ -28,11 +30,13 @@ const postActivityToInbox = ({ activity, privateKey }) => async followActivity =
   }
 }
 
-const postActivityToInboxes = user => async activityDoc => {
+const postActivityToUserFollowersInboxes = user => async activityDoc => {
   const followActivities = await getFollowActivitiesByObject(user.username)
-  const activities = await formatActivitiesDocs([ activityDoc ], user)
-  const activity = activities[0]
-  return Promise.all(followActivities.map(postActivityToInbox({ activity, privateKey: user.privateKey })))
+  const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
+  const followersActorsUris = _.map(followActivities, 'actor.uri')
+  return Promise.all(followersActorsUris.map(uri => {
+    return postActivityToInbox({ recipientActorUri: uri, activity, privateKey: user.privateKey })
+  }))
 }
 
-module.exports = { postActivityToInbox, postActivityToInboxes }
+module.exports = { postActivityToInbox, postActivityToUserFollowersInboxes }
