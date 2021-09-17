@@ -40,6 +40,9 @@ const controller = async params => {
     actor: actor.uri,
     object: resObject
   }
+  // "the server SHOULD generate either an Accept or Reject activity
+  // with the Follow as the object and deliver it to the actor of the Follow."
+  // See https://www.w3.org/TR/activitypub/#follow-activity-outbox
   return postActivityToInbox({ activity, privateKey: user.privateKey })(res)
 }
 
