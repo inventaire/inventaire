@@ -13,3 +13,5 @@ module.exports = {
     }
   })
 }
+
+require('./lib/create_activities_on_items_updates')()
