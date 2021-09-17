@@ -65,31 +65,26 @@ const getEntryResolutionScore = entry => {
 const byScore = (a, b) => b.score - a.score
 
 const parseEntry = (entry, bestEntry) => entryKey => {
-  const subentryKeys = Object.keys(entry[entryKey])
-  const isEntryKeyEdition = entryKey !== 'edition'
-  subentryKeys.forEach(parseSubentry(entry[entryKey], bestEntry[entryKey], isEntryKeyEdition))
-}
-
-const parseSubentry = (entryValue, bestEntryValue, isEntryKeyEdition) => subentryKey => {
-  // multiple authors or works must be ignored
+  let entryValue = entry[entryKey]
+  let bestEntryValue = bestEntry[entryKey]
+  if (!bestEntry?.claims || !bestEntryValue?.claims) return
   if (_.isNonEmptyArray(bestEntryValue) && bestEntryValue.length > 1) return
   if (_.isNonEmptyArray(entryValue) && entryValue.length > 1) return
 
-  if (isEntryKeyEdition) {
+  if (entryKey !== 'edition') {
     entryValue = entryValue[0]
-    if (bestEntryValue)bestEntryValue = bestEntryValue[0]
+    if (bestEntryValue) bestEntryValue = bestEntryValue[0]
   }
-
-  if (subentryKey !== 'claims' && subentryKey !== 'labels') return
-
-  const claimsOrLangsKeys = Object.keys(entryValue[subentryKey])
-  claimsOrLangsKeys.forEach(addClaimOrLangToBestEntry(entryValue[subentryKey], bestEntryValue[subentryKey]))
-
+  const entryClaims = bestEntry.claims
+  const bestEntryClaims = bestEntryValue.claims
+  // multiple authors or works must be ignored
+  const claimsKeys = Object.keys(entryClaims)
+  claimsKeys.forEach(addClaimToBestEntry(entryClaims, bestEntryClaims))
   bestEntryValue = _.forceArray(bestEntryValue)
 }
 
-const addClaimOrLangToBestEntry = (subentryValue, bestSubentryValue) => claimOrLang => {
-  if (!bestSubentryValue[claimOrLang]) {
-    bestSubentryValue[claimOrLang] = subentryValue[claimOrLang]
+const addClaimToBestEntry = (subentryClaims, bestSubentryClaims) => claimKey => {
+  if (!bestSubentryClaims[claimKey]) {
+    bestSubentryClaims[claimKey] = subentryClaims[claimKey]
   }
 }
