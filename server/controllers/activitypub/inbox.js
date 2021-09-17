@@ -1,8 +1,9 @@
 const error_ = require('lib/error/error')
 const qs = require('querystring')
 const user_ = require('controllers/user/lib/user')
-const { createActivity, postActivityToInbox } = require('controllers/activitypub/lib/activities')
+const { createActivity } = require('controllers/activitypub/lib/activities')
 const CONFIG = require('config')
+const { postActivityToInbox } = require('./lib/post_activity_to_inboxes')
 const host = CONFIG.fullPublicHost()
 
 const sanitization = {
