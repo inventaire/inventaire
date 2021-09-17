@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
@@ -97,14 +96,14 @@ describe('activitypub:signed:request', () => {
       }
       const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
       const method = 'post'
-      const signature = sign(_.extend({
+      const signature = sign(Object.assign({
         headers: signatureHeadersInfo,
         method,
         keyUrl,
         privateKey: emitterUser.privateKey,
         endpoint
       }, signatureHeaders))
-      const headers = _.extend({ signature }, signatureHeaders)
+      const headers = Object.assign({ signature }, signatureHeaders)
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const body = createActivity()
       await rawRequest(method, inboxUrl, {

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const { rawRequest } = require('../utils/request')
 const { signRequest } = require('controllers/activitypub/lib/security')
 const { getRandomBytes, keyPair } = require('lib/crypto')
@@ -20,9 +19,9 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
   method = body ? 'post' : 'get'
   const headers = signRequest({ method, keyUrl, privateKey })
   const params = { headers }
-  if (method === 'post') _.extend(params, { body })
+  if (method === 'post') params.body = body
   const res = await rawRequest(method, url, params)
-  return _.extend(res, { remoteHost: origin })
+  return Object.assign(res, { remoteHost: origin })
 }
 
 const createActivity = (params = {}) => {

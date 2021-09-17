@@ -32,7 +32,7 @@ const security_ = module.exports = {
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = buildSignatureString(_.extend(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
+    const signedString = buildSignatureString(Object.assign(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
@@ -51,14 +51,14 @@ const security_ = module.exports = {
       date
     }
     const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-    const signature = security_.sign(_.extend({
+    const signature = security_.sign(Object.assign({
       headers: signatureHeadersInfo,
       method,
       keyUrl,
       privateKey,
       endpoint
     }, signatureHeaders))
-    return _.extend({ signature }, signatureHeaders)
+    return Object.assign({ signature }, signatureHeaders)
   }
 }
 
