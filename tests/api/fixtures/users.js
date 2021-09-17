@@ -56,7 +56,7 @@ const API = module.exports = {
   },
 
   createUserOnFediverse: async (customData = {}, role) => {
-    _.extend(customData, { fediversable: true })
+    customData.fediversable = true
     const user = await API.createUser(customData, role)
     await createKeyPair(user)
     return byId(user._id)

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const { byUsername } = require('controllers/activitypub/lib/activities')
@@ -44,7 +43,7 @@ const buildPaginatedOutbox = async (user, offset, outbox) => {
   const { username } = user
   const activitiesDocs = await byUsername(username)
   const activities = await formatActivitiesDocs(activitiesDocs, user)
-  _.extend(outbox, {
+  Object.assign(outbox, {
     totalItems: activities.length,
     orderedItems: activities
   })
