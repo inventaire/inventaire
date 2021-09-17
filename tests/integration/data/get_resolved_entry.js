@@ -19,6 +19,11 @@ describe('get resolved seed', () => {
     const work = await getEntityByUri({ uri: workUri })
     const authorUri = work.claims['wdt:P50'][0]
     authorUri.should.equal('wd:Q470568')
+    // it should aggregate claims results
+    // BNE property which does not exist on BNF
+    edition.claims['wdt:P577'][0].should.equal('1988')
+    // BNF and BNE property, with a BNF value as BNF has a higher score
+    edition.claims['wdt:P407'][0].should.equal('wd:Q397')
   })
 
   it('should not get an entry from an unknown ISBN', async () => {
