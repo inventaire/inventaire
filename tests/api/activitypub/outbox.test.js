@@ -56,6 +56,8 @@ describe('outbox:public', () => {
     res.orderedItems.length.should.equal(1)
     const createActivity = res.orderedItems[0]
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const activityEndpoint = makeUrl({ params: { action: 'activity' } })
+    createActivity.id.should.startWith(activityEndpoint)
     createActivity.actor.should.equal(actorUrl)
     createActivity.object.content.should.containEql(item._id)
     createActivity.cc.should.containEql('https://www.w3.org/ns/activitystreams#Public')
