@@ -2,8 +2,8 @@
   "_id": "_design/activities",
   "language": "coffeescript",
   "views": {
-    "byUsername": {
-      "map": "(doc)->emit doc.actor.username, null"
+    "byUsernameAndDate": {
+      "map": "(doc)-> emit [ doc.actor.username, doc.updated ], null"
     },
     "followActivitiesByObject": {
       "map": "(doc)->\n  if doc.type is 'Follow'\n    emit Object.values(doc.object)[0], null"
