@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
-const { byUsername } = require('controllers/activitypub/lib/activities')
+const { byUsername, getActivitiesCountByUsername } = require('controllers/activitypub/lib/activities')
 const makeUrl = require('./lib/make_url')
 const formatActivitiesDocs = require('./lib/format_activities_docs')
 
@@ -21,15 +21,20 @@ const controller = async params => {
   const user = await user_.findOneByUsername(name)
   if (!user || !user.fediversable) throw error_.notFound({ name })
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
-  const totalPublicItems = user.snapshot.public['items:count']
   const baseOutbox = {
     id: fullOutboxUrl,
     type: 'OrderedCollection',
-    totalItems: totalPublicItems,
-    first: `${fullOutboxUrl}&offset=0`
+    first: `${fullOutboxUrl}&offset=0`,
+    next: `${fullOutboxUrl}&offset=0`
   }
-  if (offset == null) return baseOutbox
-  else return buildPaginatedOutbox(user, offset, limit, baseOutbox)
+  if (offset == null) {
+    // Mimick Mastodon, which only indicates the totalItems count when fetching
+    // type=OrderedCollection page
+    baseOutbox.totalItems = await getActivitiesCountByUsername(user.username)
+    return baseOutbox
+  } else {
+    return buildPaginatedOutbox(user, offset, limit, baseOutbox)
+  }
 }
 
 module.exports = {
@@ -45,10 +50,6 @@ const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const { username } = user
   const activitiesDocs = await byUsername({ username, offset, limit })
-  const activities = await formatActivitiesDocs(activitiesDocs, user)
-  Object.assign(outbox, {
-    totalItems: activities.length,
-    orderedItems: activities
-  })
+  outbox.orderedItems = await formatActivitiesDocs(activitiesDocs, user)
   return outbox
 }

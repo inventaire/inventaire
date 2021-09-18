@@ -3,7 +3,8 @@
   "language": "coffeescript",
   "views": {
     "byUsernameAndDate": {
-      "map": "(doc)-> emit [ doc.actor.username, doc.updated ], null"
+      "map": "(doc)-> emit [ doc.actor.username, doc.updated ], null",
+      "reduce": "_count"
     },
     "followActivitiesByObject": {
       "map": "(doc)->\n  if doc.type is 'Follow'\n    emit Object.values(doc.object)[0], null"
