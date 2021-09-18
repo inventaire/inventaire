@@ -159,13 +159,11 @@ describe('post:activity:remote:inbox', () => {
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
     // Follow user
     const { remoteHost } = await signedReq({ object: actorUrl, url: inboxUrl })
-    await createItem(user)
-    await wait(debounceTime)
+    const item = await createItem(user)
+    await wait(debounceTime + 500)
     const outboxUrl = `${endpoint}${username}&offset=0`
     await publicReq('get', outboxUrl)
-    const visitsCount = await requests_.get(`${remoteHost}/visits_count`)
-    // one visit for the accept activity (sent after the follow)
-    // one visit for the inbox posting
-    visitsCount.inbox.should.equal(2)
+    const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${username}`)
+    inbox[0].object.content.should.containEql(item._id)
   })
 })
