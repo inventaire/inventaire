@@ -31,14 +31,13 @@ const controller = async params => {
   if (!user) throw error_.notFound({ username: requestedObjectName })
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   actor = { uri: actor }
-  const res = await createActivity({ id, type, actor, object })
-  const { object: resObject } = res
+  const followActivity = await createActivity({ id, type, actor, object })
   const activity = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
-    id: res.externalId,
+    id: followActivity.externalId,
     type: 'Accept',
     actor: actor.uri,
-    object: resObject
+    object: followActivity.object
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
