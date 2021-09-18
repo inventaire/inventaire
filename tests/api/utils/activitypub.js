@@ -5,6 +5,8 @@ const { generateKeyPair } = keyPair
 const express = require('express')
 const { createUsername } = require('../fixtures/users')
 const makeUrl = require('controllers/activitypub/lib/make_url')
+const requestsLogger = require('server/middlewares/requests_logger')
+const { jsonBodyParser } = require('server/middlewares/content')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser }) => {
@@ -54,7 +56,7 @@ const getSomeRemoteServerUser = async emitterUser => {
   const { username, privateKey } = emitterUser
   const query = { name: username }
   const keyUrl = makeUrl({ origin, params: query, endpoint: remoteServerActivityPubEndpoint })
-  return { keyUrl, privateKey, origin }
+  return { username, keyUrl, privateKey, origin }
 }
 
 const remoteActivityPubServerUsers = {}
@@ -65,7 +67,10 @@ const startActivityPubServer = () => new Promise(resolve => {
   const host = `localhost:${port}`
   const origin = `http://${host}`
   const inboxEndpoint = '/inbox'
-  const visitsCountEndpoint = '/visits_count'
+  const inboxInspectionEndpoint = '/inbox_inspection'
+
+  app.use(requestsLogger)
+  app.use(jsonBodyParser)
 
   app.get(remoteServerActivityPubEndpoint, async (req, res) => {
     const { name } = req.query
@@ -80,15 +85,20 @@ const startActivityPubServer = () => new Promise(resolve => {
     }
   })
 
-  let inboxVisitCount = 0
+  const inboxes = {}
 
   app.post(inboxEndpoint, async (req, res) => {
-    inboxVisitCount++
+    const activity = req.body
+    const { actor } = activity
+    const username = new URL(actor).searchParams.get('name')
+    inboxes[username] = inboxes[username] || []
+    inboxes[username].unshift(activity)
     res.json({ ok: true })
   })
 
-  app.get(visitsCountEndpoint, async (req, res) => {
-    res.json({ inbox: inboxVisitCount })
+  app.get(inboxInspectionEndpoint, async (req, res) => {
+    const { username } = req.query
+    res.json({ inbox: inboxes[username] })
   })
 
   app.listen(port, () => resolve({ port, host, origin }))
