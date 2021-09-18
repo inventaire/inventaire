@@ -31,9 +31,17 @@ const formatActivityDoc = (user, actor, items) => activityDoc => {
 
   object = { type: 'Note' }
   object.content = buildContent(links, user, maxLinksToDisplay, itemsLength)
-  const to = []
-  const cc = [ 'https://www.w3.org/ns/activitystreams#Public' ]
-  return { _id, type: 'Create', object, actor, to, cc }
+
+  return {
+    // TODO: implement activity endpoint to make this URI publicly dereferencable,
+    // as recommended by the spec, see https://www.w3.org/TR/activitypub/#obj-id
+    id: `${host}/api/activitypub?action=activity&id=${_id}`,
+    type: 'Create',
+    object,
+    actor,
+    to: [],
+    cc: [ 'https://www.w3.org/ns/activitystreams#Public' ],
+  }
 }
 
 const buildLinkContentFromItems = (items, objectItemsIds, maxLinksToDisplay) => {
