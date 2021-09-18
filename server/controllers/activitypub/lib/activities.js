@@ -22,8 +22,18 @@ module.exports = {
       startkey: [ username, Date.now() ],
       endkey: [ username, 0 ],
       descending: true,
-      include_docs: true
+      include_docs: true,
+      reduce: false
     })
+  },
+  getActivitiesCountByUsername: async username => {
+    assert_.string(username)
+    const res = await db.view('activities', 'byUsernameAndDate', {
+      startkey: [ username, 0 ],
+      endkey: [ username, Date.now() ],
+      group_level: 1
+    })
+    return res.rows[0]?.value || 0
   },
   byId: db.get,
   byIds: db.byIds,

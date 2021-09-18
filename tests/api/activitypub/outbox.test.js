@@ -51,7 +51,6 @@ describe('outbox:public', () => {
     res.partOf.should.equal(fullHostUrl)
     res.first.should.equal(`${fullHostUrl}&offset=0`)
     res.next.should.equal(`${fullHostUrl}&offset=10`)
-    res.totalItems.should.equal(1)
     res.orderedItems.should.be.an.Array()
     res.orderedItems.length.should.equal(1)
     const createActivity = res.orderedItems[0]
@@ -88,7 +87,6 @@ describe('outbox:public', () => {
     await wait(debounceTime)
     const outboxUrl = `${endpoint}${username}&offset=0`
     const res = await publicReq('get', outboxUrl)
-    res.totalItems.should.equal(0)
     res.orderedItems.length.should.equal(0)
   })
 })
