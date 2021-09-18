@@ -15,7 +15,7 @@ const createDebouncedActivity = userId => async () => {
   const publicItems = await items_.recentPublicByOwner(userId)
   const publicItemsIds = publicItems.map(_.property('_id'))
   const { username } = user
-  const activities = await activities_.byUsername(username)
+  const activities = await activities_.byUsername({ username })
   const activitiesItemsIds = _.flatMap(activities, _.property('object.itemsIds'))
   const itemsIds = _.difference(publicItemsIds, activitiesItemsIds)
   return activities_.createActivity({

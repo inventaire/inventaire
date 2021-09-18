@@ -9,11 +9,15 @@ const sanitization = {
   offset: {
     optional: true,
     default: null
-  }
+  },
+  limit: {
+    optional: true,
+    default: 10
+  },
 }
 
 const controller = async params => {
-  const { name, offset } = params
+  const { name, offset, limit } = params
   const user = await user_.findOneByUsername(name)
   if (!user || !user.fediversable) throw error_.notFound({ name })
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
@@ -24,7 +28,8 @@ const controller = async params => {
     totalItems: totalPublicItems,
     first: `${fullOutboxUrl}&offset=0`
   }
-  return superiorToZero(offset) ? buildPaginatedOutbox(user, offset, baseOutbox) : baseOutbox
+  if (offset == null) return baseOutbox
+  else return buildPaginatedOutbox(user, offset, limit, baseOutbox)
 }
 
 module.exports = {
@@ -33,15 +38,13 @@ module.exports = {
   track: [ 'activitypub', 'outbox' ]
 }
 
-const superiorToZero = offset => offset != null && offset >= 0
-
-const buildPaginatedOutbox = async (user, offset, outbox) => {
+const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   const { id: fullOutboxUrl } = outbox
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
-  outbox.next = `${fullOutboxUrl}&offset=${offset + 10}`
+  outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const { username } = user
-  const activitiesDocs = await byUsername(username)
+  const activitiesDocs = await byUsername({ username, offset, limit })
   const activities = await formatActivitiesDocs(activitiesDocs, user)
   Object.assign(outbox, {
     totalItems: activities.length,

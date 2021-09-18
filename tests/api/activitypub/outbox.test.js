@@ -64,6 +64,23 @@ describe('outbox:public', () => {
     // res.orderedItems[0].object.contentMap.it.should.be.a.String()
   })
 
+  it('should paginate activities', async () => {
+    const user = createUser({ fediversable: true })
+    const itemA = await createItem(user)
+    await wait(debounceTime + 500)
+    const itemB = await createItem(user)
+    await wait(debounceTime + 500)
+    const { username } = await user
+    const firstOutboxPage = `${endpoint}${username}&offset=0&limit=1`
+    const res1 = await publicReq('get', firstOutboxPage)
+    res1.orderedItems.length.should.equal(1)
+    res1.orderedItems[0].object.content.should.containEql(itemB._id)
+    const nextOutboxPage = `${endpoint}${username}&offset=1&limit=1`
+    const res2 = await publicReq('get', nextOutboxPage)
+    res2.orderedItems.length.should.equal(1)
+    res2.orderedItems[0].object.content.should.containEql(itemA._id)
+  })
+
   it('should not return network items', async () => {
     const user = createUser({ fediversable: true })
     await createItem(user, { listing: 'network' })
