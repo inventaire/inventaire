@@ -41,10 +41,11 @@ const sortAndAggregateEntries = async (isbn, entries) => {
 
   const bestEntry = scoredEntriesByResolvedEntities.shift().entry
 
-  entries.forEach(entry => {
+  scoredEntriesByResolvedEntities.forEach(({ entry }) => {
     const entryKeys = Object.keys(entry)
-    if (_.isNonEmptyArray(entryKeys)) entryKeys.forEach(parseEntry(entry, bestEntry))
+    entryKeys.forEach(parseEntry(entry, bestEntry))
   })
+
   return bestEntry
 }
 
@@ -67,7 +68,8 @@ const byScore = (a, b) => b.score - a.score
 const parseEntry = (entry, bestEntry) => entryKey => {
   let entryValue = entry[entryKey]
   let bestEntryValue = bestEntry[entryKey]
-  if (!bestEntry?.claims || !bestEntryValue?.claims) return
+
+  // Multiple authors or works must be ignored
   if (_.isNonEmptyArray(bestEntryValue) && bestEntryValue.length > 1) return
   if (_.isNonEmptyArray(entryValue) && entryValue.length > 1) return
 
@@ -75,12 +77,13 @@ const parseEntry = (entry, bestEntry) => entryKey => {
     entryValue = entryValue[0]
     if (bestEntryValue) bestEntryValue = bestEntryValue[0]
   }
-  const entryClaims = bestEntry.claims
+
+  if (!entryValue?.claims) return
+
+  const entryClaims = entryValue.claims
   const bestEntryClaims = bestEntryValue.claims
-  // multiple authors or works must be ignored
   const claimsKeys = Object.keys(entryClaims)
   claimsKeys.forEach(addClaimToBestEntry(entryClaims, bestEntryClaims))
-  bestEntryValue = _.forceArray(bestEntryValue)
 }
 
 const addClaimToBestEntry = (subentryClaims, bestSubentryClaims) => claimKey => {
