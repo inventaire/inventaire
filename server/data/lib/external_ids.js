@@ -1,23 +1,49 @@
+const _ = require('builders/utils')
 const { uniq, flatten } = require('lodash')
 const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
 const properties = require('controllers/entities/lib/properties/properties_values_constraints')
+const assert_ = require('lib/utils/assert_types')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
-const parseSameasMatches = async (...matches) => {
+const parseSameasMatches = async ({ matches, expectedEntityType }) => {
+  assert_.array(matches)
+  assert_.string(expectedEntityType)
+
   matches = flatten(matches)
     .filter(match => match != null && match !== '')
     .map(match => match.trim().split(','))
+
   const urls = uniq(flatten(matches))
   if (urls.length === 0) return {}
   const entryData = { claims: {} }
+
   for (const url of urls) {
     const { property, value } = await getUrlData(url)
     if (value) {
-      if (property === 'uri') entryData.uri = value
-      else entryData.claims[property] = value
+      await setFoundValue(entryData, property, value, expectedEntityType)
     }
   }
+
   return entryData
+}
+
+const setFoundValue = async (entryData, property, value, expectedEntityType) => {
+  if (property === 'uri') {
+    // Wikidata edition entities should not be used until
+    // https://github.com/inventaire/inventaire/issues/182 is resolved
+    if (expectedEntityType !== 'edition') {
+      const uri = value
+      const { type } = await getEntityByUri({ uri })
+      if (type === expectedEntityType) {
+        entryData.uri = uri
+      } else {
+        _.warn({ entryData, property, value, type, expectedEntityType }, 'type mismatch')
+      }
+    }
+  } else {
+    entryData.claims[property] = value
+  }
 }
 
 const getUrlData = async url => {

@@ -72,7 +72,10 @@ const formatRow = async (isbn, result) => {
   const entry = {}
   entry.edition = { isbn }
   if (edition) {
-    const { claims } = await parseSameasMatches(edition.value)
+    const { claims } = await parseSameasMatches({
+      matches: [ edition.value ],
+      expectedEntityType: 'edition'
+    })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
       ...claims
@@ -91,7 +94,10 @@ const formatRow = async (isbn, result) => {
     }
   }
   if (author) {
-    const { uri, claims } = await parseSameasMatches(author.value, author.matches)
+    const { uri, claims } = await parseSameasMatches({
+      matches: [ author.value, author.matches ],
+      expectedEntityType: 'human'
+    })
     entry.author = {
       uri,
       labels: { es: formatAuthorName(author.label) },

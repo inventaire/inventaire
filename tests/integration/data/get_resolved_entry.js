@@ -36,4 +36,12 @@ describe('get resolved seed', () => {
     const edition = await getResolvedEntry('84-95618-60-5')
     edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q81689' ])
   })
+
+  it('should not resolve an entity with the wrong type', async () => {
+    const edition = await getResolvedEntry('978-88-7799-292-5')
+    // BNF finds that the work is wd:Q238476, which is not identified
+    // as a work by server/controllers/entities/lib/get_entity_type.js
+    // wd:Q238476 should thus be discarded and an new inv entity should be set as wdt:P629
+    edition.claims['wdt:P629'][0].should.startWith('inv:')
+  })
 })
