@@ -37,7 +37,7 @@ describe('get resolved seed', () => {
     edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q81689' ])
   })
 
-  it('should not resolve an entity with the wrong type', async () => {
+  it('should create local entity when resolved entity has an unknown type', async () => {
     const edition = await getResolvedEntry('978-88-7799-292-5')
     // BNF finds that the work is wd:Q238476, which is not identified
     // as a work by server/controllers/entities/lib/get_entity_type.js

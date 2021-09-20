@@ -29,21 +29,19 @@ const parseSameasMatches = async ({ matches, expectedEntityType }) => {
 }
 
 const setFoundValue = async (entryData, property, value, expectedEntityType) => {
-  if (property === 'uri') {
-    // Wikidata edition entities should not be used until
-    // https://github.com/inventaire/inventaire/issues/182 is resolved
-    if (expectedEntityType !== 'edition') {
-      const uri = value
-      const { type } = await getEntityByUri({ uri })
-      if (type === expectedEntityType) {
-        entryData.uri = uri
-      } else {
-        _.warn({ entryData, property, value, type, expectedEntityType }, 'type mismatch')
-      }
-    }
-  } else {
+  if (property !== 'uri') {
     entryData.claims[property] = value
+    return
   }
+  // Wikidata edition entities should not be used until
+  // https://github.com/inventaire/inventaire/issues/182 is resolved
+  if (expectedEntityType === 'edition') return
+  const uri = value
+  const { type } = await getEntityByUri({ uri })
+  if (type !== expectedEntityType) {
+    return _.warn({ entryData, property, value, type, expectedEntityType }, 'type mismatch')
+  }
+  entryData.uri = uri
 }
 
 const getUrlData = async url => {
