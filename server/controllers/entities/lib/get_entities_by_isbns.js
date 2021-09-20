@@ -1,14 +1,13 @@
 const _ = require('builders/utils')
 const entities_ = require('./entities')
-const { getByIsbns: getSeedsByIsbns } = require('data/dataseed/dataseed')
-const scaffoldEditionEntityFromSeed = require('./scaffold_entity_from_seed/edition')
 const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = require('lib/isbn/isbn')
 const { prefixifyIsbn } = require('controllers/entities/lib/prefix')
+const getResolvedEntry = require('data/dataseed/get_resolved_entry')
 
 module.exports = async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
-  const { refresh, autocreate } = params
+  const { autocreate } = params
   // search entities by isbn locally
   let entities = await entities_.byIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
@@ -23,12 +22,15 @@ module.exports = async (rawIsbns, params = {}) => {
   const results = { entities }
 
   if (autocreate) {
-    const [ newEntities, notFound ] = await getMissingEditionEntitiesFromSeeds(missingIsbns, refresh)
-
-    results.entities = entities.concat(newEntities)
-    if (notFound.length > 0) {
-      results.notFound = _.map(notFound, 'isbn').map(prefixifyIsbn)
+    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => getResolvedEntry(isbn)))
+    const newEntities = []
+    const notFound = []
+    for (const resolvedEdition of resolvedEditions) {
+      if (resolvedEdition.notFound) notFound.push(prefixifyIsbn(resolvedEdition.isbn))
+      else newEntities.push(resolvedEdition)
     }
+    results.entities = entities.concat(newEntities)
+    if (notFound.length > 0) results.notFound = notFound
   } else {
     results.notFound = missingIsbns.map(prefixifyIsbn)
   }
@@ -37,26 +39,6 @@ module.exports = async (rawIsbns, params = {}) => {
 }
 
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
-
-const getMissingEditionEntitiesFromSeeds = async (isbns, refresh) => {
-  const seeds = await getSeedsByIsbns(isbns, refresh)
-  const insufficientData = []
-  const validSeeds = []
-  // TODO: Filter out more aggressively bad quality seeds
-  // - titles with punctuations
-  // - authors with punctuations or single word
-  for (const seed of seeds) {
-    if (_.isNonEmptyString(seed.title)) {
-      validSeeds.push(seed)
-    } else {
-      insufficientData.push(seed)
-    }
-  }
-
-  const editionEntitiesScaffold = await Promise.all(validSeeds.map(scaffoldEditionEntityFromSeed))
-  const newEntities = editionEntitiesScaffold.map(formatEditionEntity)
-  return [ newEntities, insufficientData ]
-}
 
 const getRedirections = isbns => {
   // isbns list, redirections object
