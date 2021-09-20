@@ -88,7 +88,7 @@ GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPu
 
 const formatRow = async (isbn, result, rawResult) => {
   const { edition, work, author, publisherLabel } = result
-  const expressionLang = result.expressionLang.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
+  const expressionLang = result.expressionLang?.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
   const workLabelLang = rawResult.workLabel?.['xml:lang'] || wmCodeByIso6392Code[expressionLang]
   if (workLabelLang) result.work.labelLang = workLabelLang
   const entry = {}
