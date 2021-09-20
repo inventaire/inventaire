@@ -13,5 +13,5 @@ const resolveAuthor = worksUris => author => {
   const authorSeedTerms = getEntityNormalizedTerms(author)
   return getAuthorsFromWorksUris(worksUris)
   .then(worksUris => worksUris.filter(someTermsMatch(authorSeedTerms)))
-  .then(resolveSeed(author))
+  .then(resolveSeed(author, 'human'))
 }
