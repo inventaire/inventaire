@@ -35,6 +35,7 @@ const formatActivityDoc = (user, actor) => async activityDoc => {
     actor,
     to: [],
     cc: [ 'https://www.w3.org/ns/activitystreams#Public' ],
+    attachment: _.compact(firstItems.map(buildAttachement))
   }
 }
 
@@ -68,4 +69,14 @@ const buildContent = (links, user, itemsLength) => {
   }
   html += '</p>'
   return html
+}
+
+const buildAttachement = item => {
+  const imageUrl = item.snapshot['entity:image']
+  if (!imageUrl) return
+  return {
+    type: 'Document',
+    mediaType: 'image/jpeg',
+    url: `${host}${imageUrl}`,
+  }
 }

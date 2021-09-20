@@ -60,6 +60,7 @@ describe('outbox:public', () => {
     createActivity.actor.should.equal(actorUrl)
     createActivity.object.content.should.containEql(item._id)
     createActivity.cc.should.containEql('https://www.w3.org/ns/activitystreams#Public')
+    createActivity.attachment.should.be.an.Array()
     // res.orderedItems[0].object.contentMap.it.should.be.a.String()
   })
 
