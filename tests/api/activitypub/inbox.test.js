@@ -1,7 +1,7 @@
 require('should')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { makeUrl, createActivity } = require('../utils/activitypub')
+const { makeUrl, createActivity, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -92,14 +92,62 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
-  it('should create an activity', async () => {
-    const { username } = await createUserOnFediverse()
-    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-    const res = await signedReq({
-      object: actorUrl,
-      url: inboxUrl
+  describe('follow', () => {
+    it('should create a follow activity', async () => {
+      const { username } = await createUserOnFediverse()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const res = await signedReq({
+        object: actorUrl,
+        url: inboxUrl
+      })
+      res.statusCode.should.equal(200)
     })
-    res.statusCode.should.equal(200)
+  })
+
+  describe('undo follow', () => {
+    it('should reject a request to undo from another actor', async () => {
+      const { username } = await createUserOnFediverse()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const emitterUserA = await createRemoteActivityPubServerUser()
+      const emitterUserB = await createRemoteActivityPubServerUser()
+      const { body } = await signedReq({
+        emitterUser: emitterUserA,
+        object: actorUrl,
+        url: inboxUrl
+      })
+      const activity = JSON.parse(body)
+      await signedReq({
+        emitterUser: emitterUserB,
+        url: inboxUrl,
+        type: 'Undo',
+        object: activity.id,
+      })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(403)
+      })
+    })
+
+    it('should undo a follow activity', async () => {
+      const { username } = await createUserOnFediverse()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const emitterUser = await createRemoteActivityPubServerUser()
+      const { body } = await signedReq({
+        emitterUser,
+        object: actorUrl,
+        url: inboxUrl
+      })
+      const activity = JSON.parse(body)
+      await signedReq({
+        emitterUser,
+        url: inboxUrl,
+        type: 'Undo',
+        object: activity.id,
+      })
+      // TODO: check followers list to confirm that the undo removed the actor from the list
+    })
   })
 })

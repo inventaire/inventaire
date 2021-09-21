@@ -8,6 +8,9 @@
     },
     "followActivitiesByObject": {
       "map": "(doc)->\n  if doc.type is 'Follow'\n    emit Object.values(doc.object)[0], null"
+    },
+    "byExternalId": {
+      "map": "(doc)-> if doc.externalId then emit doc.externalId, null"
     }
   }
 }

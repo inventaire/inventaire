@@ -1,12 +1,16 @@
 const Activity = require('models/activity')
 const db = require('db/couchdb/base')('activities')
 const assert_ = require('lib/utils/assert_types')
+const { firstDoc } = require('lib/couch')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
 module.exports = {
+  byId: db.get,
+  byIds: db.byIds,
+  deleteById: db.delete,
   getFollowActivitiesByObject: async name => {
     return db.viewByKey('followActivitiesByObject', name)
   },
@@ -35,6 +39,8 @@ module.exports = {
     })
     return res.rows[0]?.value || 0
   },
-  byId: db.get,
-  byIds: db.byIds,
+  byExternalId: externalId => {
+    return db.viewByKey('byExternalId', externalId)
+    .then(firstDoc)
+  },
 }

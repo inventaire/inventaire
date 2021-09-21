@@ -2,6 +2,7 @@ const CONFIG = require('config')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const { ControllerWrapper } = require('lib/controller_wrapper')
+const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
 
 const sanitization = {
   resource: {}
@@ -29,7 +30,6 @@ const getActorParts = resource => {
 }
 
 const formatWebfinger = (username, resource) => {
-  const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
   const actorUrl = `${publicHost}/api/activitypub?action=actor&name=${username}`
 
   return {
