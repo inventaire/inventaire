@@ -9,13 +9,14 @@ const requestsLogger = require('server/middlewares/requests_logger')
 const { jsonBodyParser } = require('server/middlewares/content')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
-const signedReq = async ({ method, object, url, body, emitterUser }) => {
+const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
   const { keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
       actor: keyId,
       object,
-      origin
+      origin,
+      type,
     })
   }
   method = body ? 'post' : 'get'
@@ -27,13 +28,13 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
 }
 
 const createActivity = (params = {}) => {
-  const { object, actor, type, origin } = params
+  const { object, actor, type = 'Follow', origin } = params
   let { externalId } = params
-  if (!externalId) externalId = `${origin}/${getRandomBytes(20, 'hex')}`
+  externalId = externalId || `${origin}/${getRandomBytes(20, 'hex')}`
   return {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: externalId,
-    type: type || 'Follow',
+    type,
     actor,
     object
   }
