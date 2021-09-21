@@ -16,5 +16,5 @@ module.exports = async (worksSeeds, editionSeed) => {
 const resolveWork = worksEntities => workSeed => {
   const workSeedTerms = getEntityNormalizedTerms(workSeed)
   const matchingWorks = worksEntities.filter(someTermsMatch(workSeedTerms))
-  return resolveSeed(workSeed)(matchingWorks)
+  return resolveSeed(workSeed, 'work')(matchingWorks)
 }
