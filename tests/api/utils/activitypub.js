@@ -19,7 +19,7 @@ const signedReq = async ({ method, object, url, body, emitterUser }) => {
     })
   }
   method = body ? 'post' : 'get'
-  const headers = signRequest({ method, keyUrl, privateKey })
+  const headers = signRequest({ method, keyUrl, privateKey, body })
   const params = { headers }
   if (method === 'post') params.body = body
   const res = await rawRequest(method, url, params)

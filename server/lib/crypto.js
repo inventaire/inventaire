@@ -41,6 +41,12 @@ exports.sha1 = createHexHash('sha1')
 exports.md5 = createHexHash('md5')
 exports.sha1FromStream = createHexHashFromStream('sha1')
 
+exports.getSha256Base64Digest = input => {
+  return crypto.createHash('sha256')
+  .update(input)
+  .digest('base64')
+}
+
 exports.getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
 
 exports.keyPair = {
