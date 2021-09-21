@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const { authReq } = require('./utils')
+const { authReq, customAuthReq, getUser } = require('./utils')
 
 const utils = module.exports = {
   getByIds: ids => {
@@ -17,8 +17,9 @@ const utils = module.exports = {
     return authReq('post', '/api/items?action=delete-by-ids', { ids })
   },
 
-  update: (ids, attribute, value) => {
+  update: ({ ids, attribute, value, user }) => {
     ids = _.forceArray(ids)
-    return authReq('put', '/api/items?action=bulk-update', { ids, attribute, value })
+    user = user || getUser()
+    return customAuthReq(user, 'put', '/api/items?action=bulk-update', { ids, attribute, value })
   }
 }
