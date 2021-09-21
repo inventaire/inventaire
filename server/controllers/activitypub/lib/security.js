@@ -1,4 +1,3 @@
-const CONFIG = require('config')
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const requests_ = require('lib/requests')
@@ -43,13 +42,10 @@ const security_ = module.exports = {
   signRequest: ({ method, keyUrl, privateKey, endpoint }) => {
     if (!endpoint) endpoint = '/api/activitypub'
     const date = (new Date()).toUTCString()
-    const publicHost = CONFIG.host
+    const { host } = new URL(keyUrl)
     // The minimum recommended data to sign is the (request-target), host, and date.
     // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-    const signatureHeaders = {
-      host: publicHost,
-      date
-    }
+    const signatureHeaders = { host, date }
     const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
     const signature = security_.sign(Object.assign({
       headers: signatureHeadersInfo,
