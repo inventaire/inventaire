@@ -1,14 +1,13 @@
 require('should')
 const Activity = require('models/activity')
-const someCouchUuid = '1234567890a1234567890b1234567890'
 const someActitvityData = () => ({
   type: 'Create',
   actor: {
-    username: 'foo',
+    name: 'foo',
   },
   object: {
     content: 'some string note',
-    itemsIds: [ someCouchUuid ],
+    items: { since: Date.now() - 5000, until: Date.now() },
   }
 })
 
@@ -51,20 +50,20 @@ describe('activity model', () => {
       .should.throw(/invalid attribute/)
     })
 
-    it('should reject object with an document id', () => {
+    it('should reject object with an invalid timestamp', () => {
       const activity = someActitvityData()
-      activity.object.itemsIds[0] = 'bar'
+      activity.object.items.until = 'bar'
       Activity.create.bind(null, activity)
-      .should.throw(/invalid id/)
+      .should.throw(/expected number/)
     })
 
     it('should return a activity object', () => {
       const activityDoc = Activity.create(someActitvityData())
       activityDoc.should.be.an.Object()
       activityDoc.type.should.equal('Create')
-      activityDoc.actor.username.should.be.a.String()
+      activityDoc.actor.name.should.be.a.String()
       activityDoc.object.content.should.be.a.String()
-      activityDoc.object.itemsIds.should.be.a.Array()
+      activityDoc.object.items.should.be.an.Object()
     })
   })
 })

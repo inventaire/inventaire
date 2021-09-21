@@ -14,22 +14,29 @@ module.exports = async (activitiesDocs, user) => {
 }
 
 const formatActivityDoc = (user, actor) => async activityDoc => {
-  const { _id } = activityDoc
-  let { object } = activityDoc
-  const { itemsIds } = object
-  if (_.isEmpty(itemsIds)) return null
+  const { since, until } = activityDoc.object.items
 
-  const firstItems = await getFirstPublicItems(itemsIds)
+  // TODO: fetch documents only for the first items
+  const publicRangeItems = await items_.publicByOwnerAndDate({
+    ownerId: user._id,
+    since,
+    until,
+  })
+
+  if (publicRangeItems.length === 0) return
+
+  const firstItems = publicRangeItems.slice(0, 3)
+  await Promise.all(firstItems.map(snapshot_.addToItem))
   const links = firstItems.map(buildLinkContentFromItem)
-  // itemsLength as in OrderedItems (not user's item)
-  const itemsLength = itemsIds.length
-  object = { type: 'Note' }
+  // // itemsLength as in OrderedItems (not user's item)
+  const itemsLength = publicRangeItems.length
+  const object = { type: 'Note' }
   object.content = buildContent(links, user, itemsLength)
 
   return {
     // TODO: implement activity endpoint to make this URI publicly dereferencable,
     // as recommended by the spec, see https://www.w3.org/TR/activitypub/#obj-id
-    id: `${host}/api/activitypub?action=activity&id=${_id}`,
+    id: `${host}/api/activitypub?action=activity&id=${activityDoc._id}`,
     type: 'Create',
     object,
     actor,
@@ -37,13 +44,6 @@ const formatActivityDoc = (user, actor) => async activityDoc => {
     cc: [ 'https://www.w3.org/ns/activitystreams#Public' ],
     attachment: _.compact(firstItems.map(buildAttachement))
   }
-}
-
-const getFirstPublicItems = async itemsIds => {
-  let firstItems = await items_.byIds(itemsIds.slice(0, maxLinksToDisplay))
-  firstItems = firstItems.filter(item => item.listing === 'public')
-  await Promise.all(firstItems.map(snapshot_.addToItem))
-  return firstItems
 }
 
 const buildLinkContentFromItem = item => {

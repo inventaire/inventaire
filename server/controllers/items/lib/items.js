@@ -4,7 +4,7 @@ const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = require('lib/utils/assert_types')
 const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
-const { filterPrivateAttributes, omitPrivateAttributes } = require('./filter_private_attributes')
+const { filterPrivateAttributes } = require('./filter_private_attributes')
 const { maxKey } = require('lib/couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
@@ -13,7 +13,6 @@ const user_ = require('controllers/user/lib/user')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
-const promises_ = require('lib/promises')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -38,16 +37,16 @@ const items_ = module.exports = {
     .then(formatItems(reqUserId))
   },
 
-  recentPublicByOwner: (ownerId, since) => {
+  publicByOwnerAndDate: ({ ownerId, since, until }) => {
     assert_.string(ownerId)
     assert_.number(since)
+    assert_.number(until)
     return db.viewCustom('publicByOwnerAndDate', {
       include_docs: true,
-      startkey: [ ownerId, Date.now() ],
+      startkey: [ ownerId, until ],
       endkey: [ ownerId, since ],
       descending: true,
     })
-    .then(promises_.map(omitPrivateAttributes))
   },
 
   // all items from an entity that require a specific authorization
@@ -92,7 +91,6 @@ const items_ = module.exports = {
     const itemsIds = _.map(res, 'id')
     const { docs } = await db.fetch(itemsIds)
     await emit('user:inventory:update', userId)
-    await emit('user:items:created', userId)
     return docs
   },
 
