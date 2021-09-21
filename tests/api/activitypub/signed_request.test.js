@@ -86,7 +86,7 @@ describe('activitypub:signed:request', () => {
   it('should reject if date header is more than 30 seconds old', async () => {
     try {
       const emitterUser = await createRemoteActivityPubServerUser()
-      const { username, keyUrl } = await getSomeRemoteServerUser(emitterUser)
+      const { username, keyId } = await getSomeRemoteServerUser(emitterUser)
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
@@ -99,7 +99,7 @@ describe('activitypub:signed:request', () => {
       const signature = sign(Object.assign({
         headers: signatureHeadersInfo,
         method,
-        keyUrl,
+        keyId,
         privateKey: emitterUser.privateKey,
         endpoint
       }, signatureHeaders))

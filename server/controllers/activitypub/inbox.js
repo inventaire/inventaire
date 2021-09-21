@@ -45,7 +45,7 @@ const controller = async params => {
   await postActivityToInbox({
     recipientActorUri: actor.uri,
     activity,
-    privateKey: user.privateKey,
+    user,
   })
   return activity
 }

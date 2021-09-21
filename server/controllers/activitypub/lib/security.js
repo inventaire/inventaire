@@ -8,7 +8,7 @@ const { getSha256Base64Digest } = require('lib/crypto')
 
 const security_ = module.exports = {
   sign: params => {
-    const { keyUrl, privateKey, headers = '(request-target) host date' } = params
+    const { keyId, privateKey, headers = '(request-target) host date' } = params
     const signer = crypto.createSign('rsa-sha256')
     const stringToSign = buildSignatureString(params)
     signer.update(stringToSign)
@@ -18,7 +18,7 @@ const security_ = module.exports = {
     // headers must respect signature string keys order
     // ie. (request-target) host date
     // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-    return `keyId="${keyUrl}",headers="${headers}",signature="${signatureB64}"`
+    return `keyId="${keyId}",headers="${headers}",signature="${signatureB64}"`
   },
 
   verifySignature: async req => {
@@ -39,10 +39,10 @@ const security_ = module.exports = {
     // TODO: verify date
   },
 
-  signRequest: ({ method, keyUrl, privateKey, endpoint, body }) => {
+  signRequest: ({ method, keyId, privateKey, endpoint, body }) => {
     if (!endpoint) endpoint = '/api/activitypub'
     const date = (new Date()).toUTCString()
-    const { host } = new URL(keyUrl)
+    const { host } = new URL(keyId)
     // The minimum recommended data to sign is the (request-target), host, and date.
     // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
     // The digest is additionnal required by Mastodon
@@ -56,7 +56,7 @@ const security_ = module.exports = {
     const signature = security_.sign(Object.assign({
       headers: signatureHeadersInfo,
       method,
-      keyUrl,
+      keyId,
       privateKey,
       endpoint
     }, signatureHeaders))

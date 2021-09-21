@@ -5,10 +5,11 @@ const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
 const { getFollowActivitiesByObject } = require('./activities')
 const assert_ = require('lib/utils/assert_types')
+const { publicHost } = require('config')
 // Arbitrary timeout
 const timeout = 30 * 1000
 
-const postActivityToInbox = async ({ recipientActorUri, activity, privateKey }) => {
+const postActivityToInbox = async ({ user, recipientActorUri, activity }) => {
   assert_.string(recipientActorUri)
   let actorRes
   try {
@@ -18,11 +19,14 @@ const postActivityToInbox = async ({ recipientActorUri, activity, privateKey }) 
   }
   const inboxUri = actorRes.inbox
   if (!inboxUri) {
-    return _.info({ recipientActorUri }, 'No inbox found, cannot post activity')
+    return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
   }
 
+  const { username, privateKey } = user
+  const keyId = `acct:${username}@${publicHost}`
+
   const body = activity
-  const postHeaders = signRequest({ method: 'post', keyUrl: inboxUri, privateKey, body })
+  const postHeaders = signRequest({ method: 'post', keyId, privateKey, body })
   postHeaders['content-type'] = 'application/activity+json'
   try {
     return requests_.post(inboxUri, { headers: postHeaders, body, timeout })
@@ -36,7 +40,7 @@ const postActivityToUserFollowersInboxes = user => async activityDoc => {
   const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
   const followersActorsUris = _.map(followActivities, 'actor.uri')
   return Promise.all(followersActorsUris.map(uri => {
-    return postActivityToInbox({ recipientActorUri: uri, activity, privateKey: user.privateKey })
+    return postActivityToInbox({ recipientActorUri: uri, activity, user })
   }))
 }
 
