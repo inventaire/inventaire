@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const { pass, BoundedString } = require('./common')
 const activityTypes = [ 'Follow', 'Create' ]
@@ -22,13 +21,9 @@ const objectValidations = {
   type: type => objectTypes.includes(type),
   content: BoundedString(1, contentLimit),
   name: BoundedString(1, 80),
-  itemsIds: itemsIds => {
-    assert_.array(itemsIds)
-    itemsIds.forEach(id => {
-      if (!_.isCouchUuid(id)) {
-        throw error_.new(`invalid id: ${id}`, 400, { itemsIds })
-      }
-    })
+  items: itemsMetadata => {
+    assert_.number(itemsMetadata.since)
+    assert_.number(itemsMetadata.until)
     return true
   }
 }

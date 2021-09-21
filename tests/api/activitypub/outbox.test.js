@@ -3,6 +3,7 @@ const host = CONFIG.fullPublicHost()
 const debounceTime = CONFIG.activitiesDebounceTime
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
+const { update: updateItem } = require('../utils/items')
 const { createUser } = require('../fixtures/users')
 const { publicReq, signedReq, customAuthReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
@@ -105,6 +106,24 @@ describe('update:items', () => {
     await wait(debounceTime + 500)
     const res = await publicReq('get', outboxUrl)
     res.orderedItems.length.should.equal(1)
+  })
+
+  it('should including an item previously private after it was updated to public', async () => {
+    const user = createUser({ fediversable: true })
+    const [ publicItem, privateItem ] = await createItems(user, [ { listing: 'public' }, { listing: 'private' } ])
+    await wait(debounceTime + 500)
+    const { username } = await user
+    const outboxUrl = `${endpoint}${username}&offset=0`
+    const res1 = await publicReq('get', outboxUrl)
+    res1.orderedItems.length.should.equal(1)
+    res1.orderedItems[0].object.content.should.containEql(publicItem._id)
+    res1.orderedItems[0].object.content.should.not.containEql(privateItem._id)
+    await updateItem({ user, ids: privateItem._id, attribute: 'listing', value: 'public' })
+    await wait(debounceTime + 500)
+    const res2 = await publicReq('get', outboxUrl)
+    res2.orderedItems.length.should.equal(1)
+    res2.orderedItems[0].object.content.should.containEql(publicItem._id)
+    res2.orderedItems[0].object.content.should.containEql(privateItem._id)
   })
 })
 
