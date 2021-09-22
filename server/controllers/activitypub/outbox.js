@@ -22,6 +22,7 @@ const controller = async params => {
   if (!user || !user.fediversable) throw error_.notFound({ name })
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
   const baseOutbox = {
+    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: fullOutboxUrl,
     type: 'OrderedCollection',
     first: `${fullOutboxUrl}&offset=0`,
@@ -45,6 +46,7 @@ module.exports = {
 
 const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   const { id: fullOutboxUrl } = outbox
+  outbox['@context'] = [ 'https://www.w3.org/ns/activitystreams' ]
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`

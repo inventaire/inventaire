@@ -36,6 +36,7 @@ const formatActivityDoc = (user, actor) => async activityDoc => {
   return {
     // TODO: implement activity endpoint to make this URI publicly dereferencable,
     // as recommended by the spec, see https://www.w3.org/TR/activitypub/#obj-id
+    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: `${host}/api/activitypub?action=activity&id=${activityDoc._id}`,
     type: 'Create',
     object,
