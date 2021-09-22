@@ -123,6 +123,6 @@ describe('activitypub:signed:request', () => {
     const { username } = await createUserOnFediverse()
     const res = await inboxReq({ username })
     const resBody = JSON.parse(res.body)
-    resBody['@context'].should.an.Array()
+    resBody.ok.should.be.true()
   })
 })

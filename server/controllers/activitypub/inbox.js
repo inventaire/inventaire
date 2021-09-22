@@ -32,15 +32,19 @@ const controller = async params => {
   if (!user) throw error_.notFound({ username: requestedObjectName })
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   actor = { uri: actor }
-  if (await isAlreadyFollowing(actor, requestedObjectName)) return {}
+  // todo: insert early return once Unfollow is implemented
+  if (await isAlreadyFollowing(actor, requestedObjectName)) { }
   const followActivity = await createActivity({ id, type, actor, object })
-  const objectUrl = makeUrl({ params: { action: 'actor', name: followActivity.object.name } })
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: requestedObjectName } })
+  return sendAcceptActivity(followActivity, actor, followedActorUri, user)
+}
+
+const sendAcceptActivity = async (followActivity, actor, followedActorUri, user) => {
   const activity = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
-    id: followActivity.externalId,
     type: 'Accept',
-    actor: actor.uri,
-    object: objectUrl
+    actor: followedActorUri,
+    object: followActivity.externalId
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
@@ -50,7 +54,7 @@ const controller = async params => {
     activity,
     user,
   })
-  return activity
+  return { ok: true }
 }
 
 const isAlreadyFollowing = async (actor, name) => {
