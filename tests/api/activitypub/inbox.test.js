@@ -1,7 +1,9 @@
 require('should')
 const { createUser, createUsername, createUserOnFediverse } = require('../fixtures/users')
 const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { makeUrl, createActivity } = require('../utils/activitypub')
+const { makeUrl, createActivity, createRemoteActivityPubServerUser } = require('../utils/activitypub')
+const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
+const { wait } = require('lib/promises')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -92,7 +94,7 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
-  it('should create an activity', async () => {
+  it('should return a valid response', async () => {
     const { username } = await createUserOnFediverse()
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
@@ -101,5 +103,38 @@ describe('activitypub:post:inbox', () => {
       url: inboxUrl
     })
     res.statusCode.should.equal(200)
+  })
+})
+
+describe('activitypub:follow', () => {
+  it('should create a follow activity', async () => {
+    const emitterUser = await createRemoteActivityPubServerUser()
+    const { username } = await createUserOnFediverse()
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    await signedReq({
+      emitterUser,
+      object: actorUrl,
+      url: inboxUrl
+    })
+    const activities = await getFollowActivitiesByObject(username)
+    activities.length.should.equal(1)
+  })
+
+  it('should not recreate a follow activity if actor is already following someone', async () => {
+    const emitterUser = await createRemoteActivityPubServerUser()
+    const { username } = await createUserOnFediverse()
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    const requestPromise = signedReq({
+      emitterUser,
+      object: actorUrl,
+      url: inboxUrl
+    })
+    await requestPromise
+    await wait(500)
+    await requestPromise
+    const activities = await getFollowActivitiesByObject(username)
+    activities.length.should.equal(1)
   })
 })
