@@ -64,7 +64,7 @@ describe('activitypub:signed:request', () => {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
       parsedBody.status.should.equal(400)
-      parsedBody.status_verbose.should.equal('invalid publicKeyPem found')
+      parsedBody.status_verbose.should.equal('invalid publicKey found')
     }
   })
 
