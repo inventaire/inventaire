@@ -4,6 +4,7 @@ const { active: activeLangs } = require('i18nAssets/langs')
 const moment = require('moment')
 const { appendToEmailsKeys } = require('lib/i18n_autofix')
 const translate = require('./translate')
+const { autofixI18n } = require('config')
 
 const polyglots = {}
 const translators = {}
@@ -12,6 +13,8 @@ const warnAndFix = warning => {
   if (!/Missing\stranslation/.test(warning)) {
     return _.warn(warning)
   }
+
+  if (!autofixI18n) return
 
   // hacky solution to extract the key from polyglot warning
   const key = warning.split('"')[1]

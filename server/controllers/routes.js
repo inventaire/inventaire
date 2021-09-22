@@ -39,7 +39,7 @@ const routes = module.exports = {
   '.well-known/webfinger': endpoint('./activitypub/webfinger')
 }
 
-if (CONFIG.logMissingI18nKeys) {
+if (CONFIG.autofixI18n) {
   routes['api/i18n'] = require('./i18n')
 }
 

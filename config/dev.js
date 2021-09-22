@@ -12,5 +12,6 @@ module.exports = {
   },
   piwik: {
     enabled: false
-  }
+  },
+  autofixI18n: true,
 }

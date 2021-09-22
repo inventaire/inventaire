@@ -104,7 +104,7 @@ const config = module.exports = {
     ]
   },
   // enable the api/i18n endpoint and its i18nMissingKeys controller
-  logMissingI18nKeys: true,
+  autofixI18n: false,
 
   // parameters for Nodemailer
   mailer: {
