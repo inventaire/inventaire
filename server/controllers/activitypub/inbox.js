@@ -4,6 +4,7 @@ const user_ = require('controllers/user/lib/user')
 const { createActivity } = require('controllers/activitypub/lib/activities')
 const CONFIG = require('config')
 const { postActivityToInbox } = require('./lib/post_activity_to_inboxes')
+const makeUrl = require('./lib/make_url')
 const host = CONFIG.fullPublicHost()
 
 const sanitization = {
@@ -32,12 +33,13 @@ const controller = async params => {
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   actor = { uri: actor }
   const followActivity = await createActivity({ id, type, actor, object })
+  const objectUrl = makeUrl({ params: { action: 'actor', name: followActivity.object.name } })
   const activity = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: followActivity.externalId,
     type: 'Accept',
     actor: actor.uri,
-    object: followActivity.object
+    object: objectUrl
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
