@@ -26,10 +26,10 @@ const postActivityToInbox = async ({ user, recipientActorUri, activity }) => {
   const keyId = `acct:${username}@${publicHost}`
 
   const body = activity
-  const postHeaders = signRequest({ method: 'post', keyId, privateKey, body })
+  const postHeaders = signRequest({ url: inboxUri, method: 'post', keyId, privateKey, body })
   postHeaders['content-type'] = 'application/activity+json'
   try {
-    return requests_.post(inboxUri, { headers: postHeaders, body, timeout })
+    return requests_.post(inboxUri, { headers: postHeaders, body, timeout, parseJson: false })
   } catch (err) {
     throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity, err })
   }

@@ -22,7 +22,7 @@ const security_ = module.exports = {
   },
 
   verifySignature: async req => {
-    const { method, path: endpoint, headers: reqHeaders } = req
+    const { method, path: pathname, headers: reqHeaders } = req
     const { date, signature } = reqHeaders
     // 30 seconds time window for thtat signature to be considered valid
     if (thirtySecondsTimeWindow(date)) throw error_.new('outdated request', 400, reqHeaders)
@@ -31,7 +31,7 @@ const security_ = module.exports = {
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
     const publicKey = await fetchActorPublicKey(actorUrl)
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = buildSignatureString(Object.assign(reqHeaders, { headers, method: method.toLowerCase(), endpoint }))
+    const signedString = buildSignatureString(Object.assign(reqHeaders, { headers, method: method.toLowerCase(), pathname }))
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
@@ -39,10 +39,9 @@ const security_ = module.exports = {
     // TODO: verify date
   },
 
-  signRequest: ({ method, keyId, privateKey, endpoint, body }) => {
-    if (!endpoint) endpoint = '/api/activitypub'
-    const date = (new Date()).toUTCString()
-    const { host } = new URL(keyId)
+  signRequest: ({ url, method, keyId, privateKey, body }) => {
+    const date = new Date().toUTCString()
+    const { host, pathname } = new URL(url)
     // The minimum recommended data to sign is the (request-target), host, and date.
     // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
     // The digest is additionnal required by Mastodon
@@ -58,7 +57,7 @@ const security_ = module.exports = {
       method,
       keyId,
       privateKey,
-      endpoint
+      pathname
     }, signatureHeaders))
     return Object.assign({ signature }, signatureHeaders)
   }
@@ -67,10 +66,10 @@ const security_ = module.exports = {
 const buildSignatureString = params => {
   // 'method' must be lowercased
   // 'date' must be a UTC string
-  const { headers, method, endpoint } = params
+  const { headers, method, pathname } = params
   // arrayfying because key order matters
   const headersKeys = headers.split(' ')
-  let signatureString = `(request-target): ${method} ${endpoint}`
+  let signatureString = `(request-target): ${method} ${pathname}`
   for (const key of headersKeys) {
     if (params[key]) {
       signatureString = signatureString.concat('\n', `${key}: ${params[key]}`)
