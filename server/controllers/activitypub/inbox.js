@@ -23,7 +23,7 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const { id, type } = params
+  const { id: externalId, type } = params
   let { actor, object } = params
   if (!object.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
   const { name: requestedObjectName } = qs.parse(object)
@@ -32,11 +32,15 @@ const controller = async params => {
   if (!user) throw error_.notFound({ username: requestedObjectName })
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   actor = { uri: actor }
-  // todo: insert early return once Unfollow is implemented
-  if (await isAlreadyFollowing(actor, requestedObjectName)) { }
-  const followActivity = await createActivity({ id, type, actor, object })
+  let followActivity = await getExistingFollowActivity(actor, requestedObjectName)
+  if (followActivity) {
+    followActivity.externalId = externalId
+  } else {
+    followActivity = await createActivity({ id: externalId, type, actor, object })
+  }
   const followedActorUri = makeUrl({ params: { action: 'actor', name: requestedObjectName } })
-  return sendAcceptActivity(followActivity, actor, followedActorUri, user)
+  await sendAcceptActivity(followActivity, actor, followedActorUri, user)
+  return { ok: true }
 }
 
 const sendAcceptActivity = async (followActivity, actor, followedActorUri, user) => {
@@ -54,13 +58,12 @@ const sendAcceptActivity = async (followActivity, actor, followedActorUri, user)
     activity,
     user,
   })
-  return { ok: true }
 }
 
-const isAlreadyFollowing = async (actor, name) => {
+const getExistingFollowActivity = async (actor, name) => {
   const followActivities = await getFollowActivitiesByObject(name)
   const followActivitiesByActor = followActivities.filter(activity => activity.actor.uri === actor.uri)
-  return followActivitiesByActor.length >= 1
+  return followActivitiesByActor[0]
 }
 
 module.exports = {
