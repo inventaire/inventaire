@@ -1,11 +1,11 @@
 const _ = require('builders/utils')
 const should = require('should')
 const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
-const { createUser } = require('../fixtures/users')
+const { createUser, createUsername } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
 const { Wait } = require('lib/promises')
-const { deleteUser } = require('../utils/users')
+const { deleteUser, updateUser } = require('../utils/users')
 const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'
@@ -73,5 +73,17 @@ describe('users:by-usernames', () => {
     await deleteUser(user)
     const res = await publicReq('get', `${endpoint}&usernames=${user.username}`)
     res.users[user.username.toLowerCase()].should.be.ok()
+  })
+
+  it('should get a user by both their stableUsername and current username', async () => {
+    const initialUsername = createUsername()
+    const newUsername = createUsername()
+    // Make fediversable to set a stableUsername
+    const user = await createUser({ fediversable: true, username: initialUsername })
+    await updateUser({ user, attribute: 'username', value: newUsername })
+    const res1 = await publicReq('get', `${endpoint}&usernames=${initialUsername}`)
+    res1.users[initialUsername.toLowerCase()].should.be.ok()
+    const res2 = await publicReq('get', `${endpoint}&usernames=${newUsername}`)
+    res2.users[newUsername.toLowerCase()].should.be.ok()
   })
 })

@@ -92,8 +92,13 @@ const user_ = module.exports = {
   getUsersIndexByUsernames: async (reqUserId, usernames) => {
     const users = await user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
     const usersByLowercasedUsername = {}
+    const lowercasedUsernames = usernames.map(username => username.toLowerCase())
     for (const user of users) {
-      usersByLowercasedUsername[user.username.toLowerCase()] = user
+      if (lowercasedUsernames.includes(user.username.toLowerCase())) {
+        usersByLowercasedUsername[user.username.toLowerCase()] = user
+      } else if (lowercasedUsernames.includes(user.stableUsername.toLowerCase())) {
+        usersByLowercasedUsername[user.stableUsername.toLowerCase()] = user
+      }
     }
     return usersByLowercasedUsername
   },
