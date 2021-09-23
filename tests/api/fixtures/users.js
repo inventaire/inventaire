@@ -59,7 +59,8 @@ const API = module.exports = {
     customData.fediversable = true
     const user = await API.createUser(customData, role)
     await createKeyPair(user)
-    return byId(user._id)
+    const updatedUser = await byId(user._id)
+    return Object.assign(user, updatedUser)
   },
 
   getUserWithCookie: async cookie => {

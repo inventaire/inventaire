@@ -35,12 +35,8 @@ const user_ = module.exports = {
     return user_.byUsername(username)
     .then(couch_.firstDoc)
     .then(user => {
-      // Ignoring case as does the byUsername db view
-      if (user && user.username.toLowerCase() === username.toLowerCase()) {
-        return user
-      } else {
-        throw error_.notFound({ username })
-      }
+      if (user) return user
+      else throw error_.notFound({ username })
     })
   },
 
