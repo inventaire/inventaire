@@ -11,6 +11,7 @@ const timeout = 30 * 1000
 
 const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
   assert_.string(recipientActorUri)
+  assert_.object(activity)
   let actorRes
   try {
     actorRes = await requests_.get(recipientActorUri, { timeout })
@@ -25,7 +26,8 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
   const { stableUsername, privateKey } = user
   const keyId = `acct:${stableUsername}@${publicHost}`
 
-  const body = activity
+  const body = Object.assign({}, activity)
+  body.to = [ recipientActorUri, 'Public' ]
   const postHeaders = signRequest({ url: inboxUri, method: 'post', keyId, privateKey, body })
   postHeaders['content-type'] = 'application/activity+json'
   try {

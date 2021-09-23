@@ -49,7 +49,7 @@ const formatActivityDoc = (user, actor) => async activityDoc => {
     type: 'Create',
     object,
     actor,
-    to: 'https://www.w3.org/ns/activitystreams#Public',
+    to: 'Public',
   }
 }
 

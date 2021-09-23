@@ -9,7 +9,7 @@ const { publicReq, signedReq, customAuthReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
-const { makeUrl } = require('../utils/activitypub')
+const { makeUrl, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const requests_ = require('lib/requests')
 
 describe('outbox:public', () => {
@@ -60,7 +60,7 @@ describe('outbox:public', () => {
     createActivity.id.should.startWith(activityEndpoint)
     createActivity.actor.should.equal(actorUrl)
     createActivity.object.content.should.containEql(item._id)
-    createActivity.to.should.containEql('https://www.w3.org/ns/activitystreams#Public')
+    createActivity.to.should.containEql('Public')
     createActivity.object.attachment.should.be.an.Array()
     // res.orderedItems[0].object.contentMap.it.should.be.a.String()
   })
@@ -177,13 +177,17 @@ describe('post:activity:remote:inbox', () => {
     const { username } = user
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    const remoteUser = await createRemoteActivityPubServerUser()
     // Follow user
-    const { remoteHost } = await signedReq({ object: actorUrl, url: inboxUrl })
+    const res = await signedReq({ object: actorUrl, url: inboxUrl, emitterUser: remoteUser })
+    const { remoteHost } = res
     const item = await createItem(user)
     await wait(debounceTime + 500)
     const outboxUrl = `${endpoint}${username}&offset=0`
     await publicReq('get', outboxUrl)
     const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${username}`)
-    inbox[0].object.content.should.containEql(item._id)
+    const createActivity = inbox[0]
+    createActivity.object.content.should.containEql(item._id)
+    createActivity.to.should.deepEqual([ remoteUser.id, 'Public' ])
   })
 })

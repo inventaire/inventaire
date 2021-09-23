@@ -44,6 +44,7 @@ const createRemoteActivityPubServerUser = async () => {
   const username = createUsername()
   const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const user = {
+    id: actorUrl,
     username,
     publicKey: {
       id: `${actorUrl}#main-key`,
