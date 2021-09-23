@@ -40,6 +40,7 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
 const postActivityToUserFollowersInboxes = user => async activityDoc => {
   const followActivities = await getFollowActivitiesByObject(user.stableUsername)
   const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
+  if (!activity) return
   const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
     return signAndPostActivity({ recipientActorUri: uri, activity, user })
