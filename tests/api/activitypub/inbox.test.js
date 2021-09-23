@@ -4,6 +4,7 @@ const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require
 const { makeUrl, createActivity, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { wait } = require('lib/promises')
+const requests_ = require('lib/requests')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -107,7 +108,7 @@ describe('activitypub:post:inbox', () => {
 })
 
 describe('activitypub:follow', () => {
-  it('should create a follow activity', async () => {
+  it('should create a Follow activity', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
     const { username } = await createUserOnFediverse()
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
@@ -121,7 +122,7 @@ describe('activitypub:follow', () => {
     activities.length.should.equal(1)
   })
 
-  it('should not recreate a follow activity if actor is already following someone', async () => {
+  it('should not recreate a Follow activity if actor is already following someone', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
     const { username } = await createUserOnFediverse()
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
@@ -136,5 +137,24 @@ describe('activitypub:follow', () => {
     await requestPromise
     const activities = await getFollowActivitiesByObject(username)
     activities.length.should.equal(1)
+  })
+
+  it('should trigger an Accept activity', async () => {
+    const emitterUser = await createRemoteActivityPubServerUser()
+    const { username } = await createUserOnFediverse()
+    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+    const { remoteHost } = await signedReq({
+      emitterUser,
+      object: actorUrl,
+      url: inboxUrl
+    })
+    const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${username}`)
+    inbox.length.should.equal(1)
+    const activity = inbox[0]
+    activity['@context'].should.deepEqual([ 'https://www.w3.org/ns/activitystreams' ])
+    activity.type.should.equal('Accept')
+    activity.actor.should.equal(actorUrl)
+    activity.object.should.startWith(remoteHost)
   })
 })
