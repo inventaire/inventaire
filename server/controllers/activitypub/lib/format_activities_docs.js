@@ -8,7 +8,7 @@ const items_ = require('controllers/items/lib/items')
 const maxLinksToDisplay = 3
 
 module.exports = async (activitiesDocs, user) => {
-  const actor = makeUrl({ params: { action: 'actor', name: user.username } })
+  const actor = makeUrl({ params: { action: 'actor', name: user.stableUsername } })
   const formattedActivities = await Promise.all(activitiesDocs.map(formatActivityDoc(user, actor)))
   return _.compact(formattedActivities)
 }
@@ -61,8 +61,8 @@ const buildLinkContentFromItem = item => {
 }
 
 const buildContent = (links, user, itemsLength) => {
-  const { lang: userLang, username } = user
-  let html = `<p>${i18n(userLang, 'create_items_activity', { username })} `
+  const { lang: userLang, stableUsername } = user
+  let html = `<p>${i18n(userLang, 'create_items_activity', { username: stableUsername })} `
   const htmlLinks = links.map(link => {
     return `<a href="${link.url}" rel="nofollow noopener noreferrer" target="_blank">${link.text}</a>`
   })
@@ -71,7 +71,7 @@ const buildContent = (links, user, itemsLength) => {
     const and = ' ' + i18n(userLang, 'and') + ' '
     html += and
     const more = i18n(userLang, 'x_more_books_to_inventory', { itemsLength: itemsLength - maxLinksToDisplay })
-    const moreLink = `<a href="${host}/inventory/${username}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
+    const moreLink = `<a href="${host}/inventory/${stableUsername}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
     html += moreLink
   }
   html += '</p>'

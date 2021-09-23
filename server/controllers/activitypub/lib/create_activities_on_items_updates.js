@@ -11,12 +11,12 @@ const createDebouncedActivity = userId => async () => {
   delete debouncedActivities[userId]
   const user = await user_.byId(userId)
   if (!user.fediversable) return
-  const { username } = user
-  const [ lastUserActivity ] = await byUsername({ username, limit: 1 })
+  const { stableUsername } = user
+  const [ lastUserActivity ] = await byUsername({ username: stableUsername, limit: 1 })
   const since = lastUserActivity?.updated || 0
   return createActivity({
     type: 'Create',
-    actor: { username },
+    actor: { username: stableUsername },
     object: { items: { since, until: Date.now() } },
   })
   .then(postActivityToUserFollowersInboxes(user))

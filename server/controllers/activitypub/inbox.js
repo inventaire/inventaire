@@ -27,18 +27,19 @@ const controller = async params => {
   let { actor, object } = params
   if (!object.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
   const { name: requestedObjectName } = qs.parse(object)
-  object = { name: requestedObjectName }
   const user = await user_.findOneByUsername(requestedObjectName)
   if (!user) throw error_.notFound({ username: requestedObjectName })
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
   actor = { uri: actor }
-  let followActivity = await getExistingFollowActivity(actor, requestedObjectName)
+  const { stableUsername } = user
+  object = { name: stableUsername }
+  let followActivity = await getExistingFollowActivity(actor, stableUsername)
   if (followActivity) {
     followActivity.externalId = externalId
   } else {
     followActivity = await createActivity({ id: externalId, type, actor, object })
   }
-  const followedActorUri = makeUrl({ params: { action: 'actor', name: requestedObjectName } })
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: stableUsername } })
   await sendAcceptActivity(followActivity, actor, followedActorUri, user)
   return { ok: true }
 }

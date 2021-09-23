@@ -31,7 +31,7 @@ const controller = async params => {
   if (offset == null) {
     // Mimick Mastodon, which only indicates the totalItems count when fetching
     // type=OrderedCollection page
-    baseOutbox.totalItems = await getActivitiesCountByUsername(user.username)
+    baseOutbox.totalItems = await getActivitiesCountByUsername(user.stableUsername)
     return baseOutbox
   } else {
     return buildPaginatedOutbox(user, offset, limit, baseOutbox)
@@ -50,8 +50,8 @@ const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
-  const { username } = user
-  const activitiesDocs = await byUsername({ username, offset, limit })
+  const { stableUsername } = user
+  const activitiesDocs = await byUsername({ username: stableUsername, offset, limit })
   outbox.orderedItems = await formatActivitiesDocs(activitiesDocs, user)
   return outbox
 }
