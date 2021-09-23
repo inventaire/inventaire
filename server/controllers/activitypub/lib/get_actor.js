@@ -7,8 +7,8 @@ const host = CONFIG.fullPublicHost()
 module.exports = async requestedUsername => {
   const user = await user_.findOneByUsername(requestedUsername)
   if (!user || !user.fediversable) throw error_.notFound({ requestedUsername })
-  const { picture, username } = user
-  const actorUrl = `${host}/api/activitypub?action=actor&name=${username}`
+  const { picture, stableUsername } = user
+  const actorUrl = `${host}/api/activitypub?action=actor&name=${stableUsername}`
   const actor = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
@@ -16,9 +16,9 @@ module.exports = async requestedUsername => {
     ],
     type: 'Person',
     id: actorUrl,
-    preferredUsername: username,
-    inbox: `${host}/api/activitypub?action=inbox&name=${username}`,
-    outbox: `${host}/api/activitypub?action=outbox&name=${username}`
+    preferredUsername: stableUsername,
+    inbox: `${host}/api/activitypub?action=inbox&name=${stableUsername}`,
+    outbox: `${host}/api/activitypub?action=outbox&name=${stableUsername}`
   }
   await addKeyPair(actor, user, actorUrl)
   addIcon(actor, picture)
