@@ -22,8 +22,8 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
     return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
   }
 
-  const { username, privateKey } = user
-  const keyId = `acct:${username}@${publicHost}`
+  const { stableUsername, privateKey } = user
+  const keyId = `acct:${stableUsername}@${publicHost}`
 
   const body = activity
   const postHeaders = signRequest({ url: inboxUri, method: 'post', keyId, privateKey, body })
