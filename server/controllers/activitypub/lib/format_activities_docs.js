@@ -30,20 +30,26 @@ const formatActivityDoc = (user, actor) => async activityDoc => {
   const links = firstItems.map(buildLinkContentFromItem)
   // // itemsLength as in OrderedItems (not user's item)
   const itemsLength = publicRangeItems.length
-  const object = { type: 'Note' }
-  object.content = buildContent(links, user, itemsLength)
+
+  const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
+
+  const object = {
+    id,
+    type: 'Note',
+    content: buildContent(links, user, itemsLength),
+    published: new Date(until).toISOString(),
+    attachment: _.compact(firstItems.map(buildAttachement)),
+  }
 
   return {
     // TODO: implement activity endpoint to make this URI publicly dereferencable,
     // as recommended by the spec, see https://www.w3.org/TR/activitypub/#obj-id
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
-    id: `${host}/api/activitypub?action=activity&id=${activityDoc._id}`,
+    '@context': 'https://www.w3.org/ns/activitystreams',
+    id: `${id}#create`,
     type: 'Create',
     object,
     actor,
-    to: [],
-    cc: [ 'https://www.w3.org/ns/activitystreams#Public' ],
-    attachment: _.compact(firstItems.map(buildAttachement))
+    to: 'https://www.w3.org/ns/activitystreams#Public',
   }
 }
 
