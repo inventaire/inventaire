@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const user_ = require('controllers/user/lib/user')
-const { postActivityToUserFollowersInboxes } = require('./post_activity_to_inboxes')
+const { postActivityToUserFollowersInboxes } = require('./post_activity')
 const { byUsername, createActivity } = require('./activities')
 
 const debouncedActivities = {}

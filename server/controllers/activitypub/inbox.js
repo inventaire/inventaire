@@ -3,7 +3,7 @@ const qs = require('querystring')
 const user_ = require('controllers/user/lib/user')
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const CONFIG = require('config')
-const { postActivityToInbox } = require('./lib/post_activity_to_inboxes')
+const { signAndPostActivity } = require('./lib/post_activity')
 const makeUrl = require('./lib/make_url')
 const host = CONFIG.fullPublicHost()
 
@@ -49,7 +49,7 @@ const sendAcceptActivity = async (followActivity, actor, followedActorUri, user)
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
   // See https://www.w3.org/TR/activitypub/#follow-activity-outbox
-  await postActivityToInbox({
+  await signAndPostActivity({
     recipientActorUri: actor.uri,
     activity,
     user,

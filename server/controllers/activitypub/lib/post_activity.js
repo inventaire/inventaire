@@ -9,7 +9,7 @@ const { publicHost } = require('config')
 // Arbitrary timeout
 const timeout = 30 * 1000
 
-const postActivityToInbox = async ({ user, recipientActorUri, activity }) => {
+const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
   assert_.string(recipientActorUri)
   let actorRes
   try {
@@ -40,8 +40,8 @@ const postActivityToUserFollowersInboxes = user => async activityDoc => {
   const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
   const followersActorsUris = _.map(followActivities, 'actor.uri')
   return Promise.all(followersActorsUris.map(uri => {
-    return postActivityToInbox({ recipientActorUri: uri, activity, user })
+    return signAndPostActivity({ recipientActorUri: uri, activity, user })
   }))
 }
 
-module.exports = { postActivityToInbox, postActivityToUserFollowersInboxes }
+module.exports = { signAndPostActivity, postActivityToUserFollowersInboxes }
