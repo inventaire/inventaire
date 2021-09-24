@@ -13,7 +13,8 @@ const createDebouncedActivity = userId => async () => {
   if (!user.fediversable) return
   const { stableUsername } = user
   const [ lastUserActivity ] = await byUsername({ username: stableUsername, limit: 1 })
-  const since = lastUserActivity?.updated || 0
+  const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
+  const since = lastUserActivity?.updated || yesterdayTime
   return createActivity({
     type: 'Create',
     actor: { name: stableUsername },
