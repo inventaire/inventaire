@@ -37,6 +37,7 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
   }
 }
 
+// TODO: use sharedInbox
 const postActivityToUserFollowersInboxes = user => async activityDoc => {
   const followActivities = await getFollowActivitiesByObject(user.stableUsername)
   const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
