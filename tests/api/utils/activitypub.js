@@ -46,6 +46,7 @@ const createRemoteActivityPubServerUser = async () => {
   const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const user = {
     id: actorUrl,
+    actor: actorUrl,
     username,
     publicKey: {
       id: `${actorUrl}#main-key`,
@@ -53,7 +54,7 @@ const createRemoteActivityPubServerUser = async () => {
       publicKeyPem: publicKey
     },
     privateKey,
-    inbox: origin + inboxEndpoint,
+    inbox: `${origin}${inboxEndpoint}?username=${username}`,
   }
   remoteActivityPubServerUsers[user.username] = user
   return user
@@ -98,9 +99,8 @@ const startActivityPubServer = () => new Promise(resolve => {
   const inboxes = {}
 
   app.post(inboxEndpoint, async (req, res) => {
+    const { username } = req.query
     const activity = req.body
-    const { actor } = activity
-    const username = new URL(actor).searchParams.get('name')
     inboxes[username] = inboxes[username] || []
     inboxes[username].unshift(activity)
     res.json({ ok: true })
