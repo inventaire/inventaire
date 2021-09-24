@@ -79,6 +79,28 @@ module.exports = {
       start: startDay,
       end: today
     }))
+  },
+
+  byClaimValue: async (claimValue, offset, limit) => {
+    const { rows } = await db.view(designDocName, 'byClaimValueAndDate', {
+      startkey: [ claimValue, maxKey ],
+      endkey: [ claimValue ],
+      descending: true,
+      reduce: false,
+      skip: offset,
+      limit,
+    })
+    return rows
+  },
+
+  getCountByClaimValue: async claimValue => {
+    const { rows } = await db.view(designDocName, 'byClaimValueAndDate', {
+      startkey: [ claimValue, maxKey ],
+      endkey: [ claimValue ],
+      group_level: 1,
+      descending: true,
+    })
+    return rows[0].value
   }
 }
 

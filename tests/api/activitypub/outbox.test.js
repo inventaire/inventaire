@@ -10,6 +10,7 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/
 const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
 const { makeUrl } = require('../utils/activitypub')
+const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -170,5 +171,42 @@ describe('outbox', () => {
     })
   })
 
-  describe('entities', () => {})
+  describe('entities', () => {
+    it('should return a first page URL', async () => {
+      const { uri: authorUri } = await createHuman()
+      const { uri: workUri } = await createWork()
+      await addAuthor(workUri, authorUri)
+      const outboxUrl = `${endpoint}${authorUri}`
+      const res = await publicReq('get', outboxUrl)
+      const fullHostUrl = `${host}${outboxUrl}`
+      decodeURIComponent(res.id).should.equal(fullHostUrl)
+      res.type.should.equal('OrderedCollection')
+      res.totalItems.should.equal(1)
+      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
+      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=0`)
+    })
+
+    it('should return entities activities', async () => {
+      const { uri: authorUri } = await createHuman()
+      const { uri: workUri, _id } = await createWork()
+      await addAuthor(workUri, authorUri)
+      const outboxUrl = `${endpoint}${authorUri}`
+      await wait(500)
+      const res = await publicReq('get', `${outboxUrl}&offset=0`)
+      const fullHostUrl = `${host}${outboxUrl}`
+      res.type.should.equal('OrderedCollectionPage')
+      decodeURIComponent(res.partOf).should.equal(fullHostUrl)
+      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
+      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=10`)
+      res.orderedItems.should.be.an.Array()
+      res.orderedItems.length.should.equal(1)
+      const createActivity = res.orderedItems[0]
+      const actorUrl = makeUrl({ params: { action: 'actor', name: authorUri } })
+      const activityEndpoint = makeUrl({ params: { action: 'activity' } })
+      createActivity.id.should.startWith(activityEndpoint)
+      createActivity.actor.should.equal(actorUrl)
+      createActivity.object.content.should.containEql(_id)
+      createActivity.to.should.containEql('Public')
+    })
+  })
 })
