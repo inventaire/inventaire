@@ -16,7 +16,7 @@ module.exports = {
   },
   byUsername: async ({ username, limit = 10, offset = 0 }) => {
     assert_.string(username)
-    return db.viewCustom('byUsernameAndDate', {
+    return db.viewCustom('byActorNameAndDate', {
       limit,
       skip: offset,
       startkey: [ username, Date.now() ],
@@ -28,7 +28,7 @@ module.exports = {
   },
   getActivitiesCountByUsername: async username => {
     assert_.string(username)
-    const res = await db.view('activities', 'byUsernameAndDate', {
+    const res = await db.view('activities', 'byActorNameAndDate', {
       startkey: [ username, 0 ],
       endkey: [ username, Date.now() ],
       group_level: 1

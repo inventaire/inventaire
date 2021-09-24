@@ -8,8 +8,8 @@ const sanitization = {
 
 const controller = async ({ id }) => {
   const activityDoc = await activities_.byId(id)
-  const { username } = activityDoc.actor
-  const user = await findOneByUsername(username)
+  const { name } = activityDoc.actor
+  const user = await findOneByUsername(name)
   const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
   return activity
 }

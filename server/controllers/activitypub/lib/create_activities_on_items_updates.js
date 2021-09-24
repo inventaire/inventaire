@@ -16,7 +16,7 @@ const createDebouncedActivity = userId => async () => {
   const since = lastUserActivity?.updated || 0
   return createActivity({
     type: 'Create',
-    actor: { username: stableUsername },
+    actor: { name: stableUsername },
     object: { items: { since, until: Date.now() } },
   })
   .then(postActivityToUserFollowersInboxes(user))

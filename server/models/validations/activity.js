@@ -31,7 +31,7 @@ const objectValidations = {
 const actorValidations = {
   pass,
   type: type => actorTypes.includes(type),
-  username: BoundedString(1, 80),
+  name: BoundedString(1, 80),
   uri: BoundedString(1, 256),
 }
 
