@@ -4,6 +4,7 @@ const { signedReq, shouldNotBeCalled } = require('../utils/utils')
 const { makeUrl, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { wait } = require('lib/promises')
+const { createHuman } = require('../fixtures/entities')
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {
@@ -65,6 +66,31 @@ describe('activitypub:inbox:Undo', () => {
       })
       await wait(500)
       const activities2 = await getFollowActivitiesByObject(username)
+      activities2.length.should.equal(0)
+    })
+  })
+
+  describe('entities', () => {
+    it('should delete activity', async () => {
+      const { uri } = await createHuman()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: uri } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: uri } })
+      const emitterUser = await createRemoteActivityPubServerUser()
+      await signedReq({
+        emitterUser,
+        object: actorUrl,
+        url: inboxUrl
+      })
+      const activities = await getFollowActivitiesByObject(uri)
+      const activity = activities[0]
+      await signedReq({
+        emitterUser,
+        url: inboxUrl,
+        type: 'Undo',
+        object: activity.externalId,
+      })
+      await wait(500)
+      const activities2 = await getFollowActivitiesByObject(uri)
       activities2.length.should.equal(0)
     })
   })
