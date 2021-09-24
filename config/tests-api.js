@@ -55,6 +55,7 @@ module.exports = {
   },
 
   itemsCountDebounceTime: 500,
+  activitiesDebounceTime: 500,
 
   oauthServer: {
     authorizationCodeLifetimeMs: 1000

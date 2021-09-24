@@ -51,14 +51,16 @@ const API = module.exports = {
     const user = await API.getUserWithCookie(cookie)
     await setCustomData(user, customData)
     if (role) await addRole(user._id, role)
+    if (customData.fediversable) await createKeyPair(user)
     return API.getUserWithCookie(cookie)
   },
 
   createUserOnFediverse: async (customData = {}, role) => {
-    _.extend(customData, { fediversable: true })
+    customData.fediversable = true
     const user = await API.createUser(customData, role)
     await createKeyPair(user)
-    return byId(user._id)
+    const updatedUser = await byId(user._id)
+    return Object.assign(user, updatedUser)
   },
 
   getUserWithCookie: async cookie => {

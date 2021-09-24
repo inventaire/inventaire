@@ -1,7 +1,8 @@
-const CONFIG = require('config')
+const { publicHost } = require('config')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const { ControllerWrapper } = require('lib/controller_wrapper')
+const makeUrl = require('controllers/activitypub/lib/make_url')
 
 const sanitization = {
   resource: {}
@@ -12,7 +13,7 @@ const controller = async ({ resource }) => {
   const user = await user_.findOneByUsername(username)
   if (!user) throw error_.new('not found', 404, resource)
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, resource)
-  return formatWebfinger(username, resource)
+  return formatWebfinger(user.stableUsername)
 }
 
 module.exports = {
@@ -28,12 +29,11 @@ const getActorParts = resource => {
   return actorWithHost.split('@')
 }
 
-const formatWebfinger = (username, resource) => {
-  const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
-  const actorUrl = `${publicHost}/api/activitypub?action=actor&name=${username}`
+const formatWebfinger = stableUsername => {
+  const actorUrl = makeUrl({ params: { action: 'actor', name: stableUsername } })
 
   return {
-    subject: resource,
+    subject: `acct:${stableUsername}@${publicHost}`,
     aliases: [ actorUrl ],
     links: [
       {

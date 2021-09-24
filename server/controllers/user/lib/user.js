@@ -35,12 +35,8 @@ const user_ = module.exports = {
     return user_.byUsername(username)
     .then(couch_.firstDoc)
     .then(user => {
-      // Ignoring case as does the byUsername db view
-      if (user && user.username.toLowerCase() === username.toLowerCase()) {
-        return user
-      } else {
-        throw error_.notFound({ username })
-      }
+      if (user) return user
+      else throw error_.notFound({ username })
     })
   },
 
@@ -96,8 +92,13 @@ const user_ = module.exports = {
   getUsersIndexByUsernames: async (reqUserId, usernames) => {
     const users = await user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
     const usersByLowercasedUsername = {}
+    const lowercasedUsernames = usernames.map(username => username.toLowerCase())
     for (const user of users) {
-      usersByLowercasedUsername[user.username.toLowerCase()] = user
+      if (lowercasedUsernames.includes(user.username.toLowerCase())) {
+        usersByLowercasedUsername[user.username.toLowerCase()] = user
+      } else if (lowercasedUsernames.includes(user.stableUsername.toLowerCase())) {
+        usersByLowercasedUsername[user.stableUsername.toLowerCase()] = user
+      }
     }
     return usersByLowercasedUsername
   },

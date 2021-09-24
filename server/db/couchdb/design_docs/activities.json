@@ -1,5 +1,13 @@
 {
   "_id": "_design/activities",
   "language": "coffeescript",
-  "views": {}
+  "views": {
+    "byActorNameAndDate": {
+      "map": "(doc)-> emit [ doc.actor.name, doc.updated ], null",
+      "reduce": "_count"
+    },
+    "followActivitiesByObject": {
+      "map": "(doc)->\n  if doc.type is 'Follow'\n    emit doc.object.name, null"
+    }
+  }
 }

@@ -4,6 +4,9 @@ require('should')
 const { publicReq } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { createUser, createUserOnFediverse, createUsername } = require('../fixtures/users')
+const { updateUser } = require('../utils/users')
+const { wait } = require('lib/promises')
+const fullPublicHost = CONFIG.fullPublicHost()
 
 const endpoint = '/.well-known/webfinger?resource='
 
@@ -78,13 +81,27 @@ describe('activitypub:webfinger', () => {
     const { subject, aliases, links } = res
     res.should.be.an.Object()
     subject.should.equal(resource)
-    const publicHost = `${CONFIG.publicProtocol}://${CONFIG.publicHost}`
-    const actorUrl = `${publicHost}/api/activitypub?action=actor&name=${username}`
+    const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
     aliases[0].should.equal(actorUrl)
     aliases.should.matchAny(actorUrl)
     const firstLink = _.find(links, { rel: 'self' })
     firstLink.should.be.an.Object()
     firstLink.type.should.equal('application/activity+json')
     firstLink.href.should.equal(actorUrl)
+  })
+
+  it('should find a user after a username change', async () => {
+    const initialUsername = createUsername()
+    const user = await createUserOnFediverse({ username: initialUsername })
+    user.stableUsername.should.equal(initialUsername)
+    const newUsername = createUsername()
+    await updateUser({ user, attribute: 'username', value: newUsername })
+    await wait(500)
+    const resource = `acct:${initialUsername}@${CONFIG.publicHost}`
+    const res1 = await publicReq('get', `${endpoint}${resource}`)
+    res1.subject.should.equal(resource)
+    const resourceAlias = `acct:${newUsername}@${CONFIG.publicHost}`
+    const res2 = await publicReq('get', `${endpoint}${resourceAlias}`)
+    res2.subject.should.equal(resource)
   })
 })

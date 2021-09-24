@@ -1,44 +1,29 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
 const { rawRequest } = require('../utils/request')
-const { sign } = require('controllers/activitypub/lib/security')
+const { signRequest } = require('controllers/activitypub/lib/security')
 const { getRandomBytes, keyPair } = require('lib/crypto')
 const { generateKeyPair } = keyPair
 const express = require('express')
 const { createUsername } = require('../fixtures/users')
 const makeUrl = require('controllers/activitypub/lib/make_url')
+const requestsLogger = require('server/middlewares/requests_logger')
+const { jsonBodyParser } = require('server/middlewares/content')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser }) => {
-  const { keyUrl, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
+  const { keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
-      actor: keyUrl,
+      actor: keyId,
       object,
       origin
     })
   }
   method = body ? 'post' : 'get'
-  const date = (new Date()).toUTCString()
-  const publicHost = CONFIG.host
-  // The minimum recommended data to sign is the (request-target), host, and date.
-  // source https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-  const signatureHeaders = {
-    host: publicHost,
-    date
-  }
-  const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-  const signature = sign(_.extend({
-    headers: signatureHeadersInfo,
-    method,
-    keyUrl,
-    privateKey,
-    endpoint: '/api/activitypub'
-  }, signatureHeaders))
-  const headers = _.extend({ signature }, signatureHeaders)
+  const headers = signRequest({ url, method, keyId, privateKey, body })
   const params = { headers }
-  if (method === 'post') _.extend(params, { body })
-  return rawRequest(method, url, params)
+  if (method === 'post') params.body = body
+  const res = await rawRequest(method, url, params)
+  return Object.assign(res, { remoteHost: origin })
 }
 
 const createActivity = (params = {}) => {
@@ -55,13 +40,25 @@ const createActivity = (params = {}) => {
 }
 
 const createRemoteActivityPubServerUser = async () => {
-  const user = await generateKeyPair()
-  user.username = createUsername()
+  const { publicKey, privateKey } = await generateKeyPair()
+  const username = createUsername()
+  const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
+  const user = {
+    id: actorUrl,
+    username,
+    publicKey: {
+      id: `${actorUrl}#main-key`,
+      owner: actorUrl,
+      publicKeyPem: publicKey
+    },
+    privateKey,
+    inbox: origin + inboxEndpoint,
+  }
   remoteActivityPubServerUsers[user.username] = user
   return user
 }
 
-const remoteServerActivityPubEndpoint = '/some_ap_endpoint'
+const actorEndpoint = '/some_actor_endpoint'
 
 let removeActivityPubServer
 const getSomeRemoteServerUser = async emitterUser => {
@@ -70,26 +67,47 @@ const getSomeRemoteServerUser = async emitterUser => {
   const { origin } = removeActivityPubServer
   const { username, privateKey } = emitterUser
   const query = { name: username }
-  const keyUrl = makeUrl({ origin, params: query, endpoint: remoteServerActivityPubEndpoint })
-  return { keyUrl, privateKey, origin }
+  const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
+  return { username, keyId, privateKey, origin }
 }
 
 const remoteActivityPubServerUsers = {}
 
-const startActivityPubServer = () => new Promise(resolve => {
-  const port = 1024 + Math.trunc(Math.random() * 10000)
-  const app = express()
-  const host = `localhost:${port}`
-  const origin = `http://${host}`
+const port = 1024 + Math.trunc(Math.random() * 10000)
+const host = `localhost:${port}`
+const origin = `http://${host}`
+const inboxEndpoint = '/inbox'
+const inboxInspectionEndpoint = '/inbox_inspection'
 
-  app.get(remoteServerActivityPubEndpoint, async (req, res) => {
+const startActivityPubServer = () => new Promise(resolve => {
+  const app = express()
+  app.use(requestsLogger)
+  app.use(jsonBodyParser)
+
+  app.get(actorEndpoint, async (req, res) => {
     const { name } = req.query
     const user = remoteActivityPubServerUsers[name]
     if (user) {
-      res.json({ publicKey: { publicKeyPem: user.publicKey } })
+      res.json(user)
     } else {
-      res.status(400).json({ found: false })
+      res.status(404).json({ found: false })
     }
+  })
+
+  const inboxes = {}
+
+  app.post(inboxEndpoint, async (req, res) => {
+    const activity = req.body
+    const { actor } = activity
+    const username = new URL(actor).searchParams.get('name')
+    inboxes[username] = inboxes[username] || []
+    inboxes[username].unshift(activity)
+    res.json({ ok: true })
+  })
+
+  app.get(inboxInspectionEndpoint, async (req, res) => {
+    const { username } = req.query
+    res.json({ inbox: inboxes[username] })
   })
 
   app.listen(port, () => resolve({ port, host, origin }))

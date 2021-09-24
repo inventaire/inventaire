@@ -3,7 +3,9 @@ const ActionsControllers = require('lib/actions_controllers')
 module.exports = {
   get: ActionsControllers({
     public: {
-      actor: require('./actor')
+      activity: require('./activity'),
+      actor: require('./actor'),
+      outbox: require('./outbox')
     }
   }),
   post: ActionsControllers({
@@ -12,3 +14,5 @@ module.exports = {
     }
   })
 }
+
+require('./lib/create_activities_on_items_updates')()

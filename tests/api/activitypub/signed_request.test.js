@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUserOnFediverse } = require('../fixtures/users')
@@ -65,7 +64,7 @@ describe('activitypub:signed:request', () => {
       rethrowShouldNotBeCalledErrors(err)
       const parsedBody = JSON.parse(err.body)
       parsedBody.status.should.equal(400)
-      parsedBody.status_verbose.should.equal('invalid publicKeyPem found')
+      parsedBody.status_verbose.should.equal('invalid publicKey found')
     }
   })
 
@@ -87,7 +86,7 @@ describe('activitypub:signed:request', () => {
   it('should reject if date header is more than 30 seconds old', async () => {
     try {
       const emitterUser = await createRemoteActivityPubServerUser()
-      const { username, keyUrl } = await getSomeRemoteServerUser(emitterUser)
+      const { username, keyId } = await getSomeRemoteServerUser(emitterUser)
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
@@ -97,14 +96,14 @@ describe('activitypub:signed:request', () => {
       }
       const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
       const method = 'post'
-      const signature = sign(_.extend({
+      const signature = sign(Object.assign({
         headers: signatureHeadersInfo,
         method,
-        keyUrl,
+        keyId,
         privateKey: emitterUser.privateKey,
         endpoint
       }, signatureHeaders))
-      const headers = _.extend({ signature }, signatureHeaders)
+      const headers = Object.assign({ signature }, signatureHeaders)
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const body = createActivity()
       await rawRequest(method, inboxUrl, {
@@ -124,6 +123,6 @@ describe('activitypub:signed:request', () => {
     const { username } = await createUserOnFediverse()
     const res = await inboxReq({ username })
     const resBody = JSON.parse(res.body)
-    resBody['@context'].should.an.Array()
+    resBody.ok.should.be.true()
   })
 })

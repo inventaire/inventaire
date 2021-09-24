@@ -104,7 +104,7 @@ const config = module.exports = {
     ]
   },
   // enable the api/i18n endpoint and its i18nMissingKeys controller
-  logMissingI18nKeys: true,
+  autofixI18n: false,
 
   // parameters for Nodemailer
   mailer: {
@@ -197,6 +197,8 @@ const config = module.exports = {
   },
 
   itemsCountDebounceTime: 5000,
+
+  activitiesDebounceTime: 5 * 60 * 1000,
 
   jobs: {
     'inv:deduplicate': {

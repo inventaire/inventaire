@@ -21,7 +21,7 @@ describe('indexation:items', () => {
 
   it('should reindex an updated item', async () => {
     const { _id } = await createItem()
-    await update(_id, 'details', 'foo')
+    await update({ ids: _id, attribute: 'details', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, _id)
     result._source.details.should.equal('foo')
