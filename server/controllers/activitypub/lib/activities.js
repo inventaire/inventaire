@@ -18,13 +18,13 @@ module.exports = {
     const activity = Activity.create(newActivity)
     return db.postAndReturn(activity)
   },
-  byUsername: async ({ username, limit = 10, offset = 0 }) => {
-    assert_.string(username)
+  byActorName: async ({ name, limit = 10, offset = 0 }) => {
+    assert_.string(name)
     return db.viewCustom('byActorNameAndDate', {
       limit,
       skip: offset,
-      startkey: [ username, Date.now() ],
-      endkey: [ username, 0 ],
+      startkey: [ name, Date.now() ],
+      endkey: [ name, 0 ],
       descending: true,
       include_docs: true,
       reduce: false

@@ -3,7 +3,7 @@ const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { generateKeyPair } = require('lib/crypto').keyPair
+const { getSharedKeyPair } = require('./shared_key_pair')
 
 const host = CONFIG.fullPublicHost()
 
@@ -66,7 +66,7 @@ const buildActorObject = async ({ name, preferredUsername, summary, imagePath })
     }
   }
 
-  if (!sharedKeyPair) await initSharedKey()
+  const { publicKey } = await getSharedKeyPair()
 
   // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
   // shared public keys they already know
@@ -74,21 +74,8 @@ const buildActorObject = async ({ name, preferredUsername, summary, imagePath })
     // "#" is an identifier in order to host the key in a same document as the actor URL document
     id: `${actorUrl}#main-key`,
     owner: actorUrl, // must be actor.id
-    publicKeyPem: sharedKeyPair.publicKey
+    publicKeyPem: publicKey
   }
 
   return actor
-}
-
-// Using a single key pair shared between all actors managed by this server.
-// Using a key pair per user would make sense if the server was storing encrypted data
-// but as we are storing data in plain text, using different key pairs doesn't seem to bring any value
-// See https://github.com/w3c/activitypub/issues/225
-// As for key caching, "refresh on fail" seems to be the most used strategy,
-// so simply creating a new shared key pair every time the server restarts seems acceptable,
-// cached keys will get refreshed at their next attempt
-// See https://socialhub.activitypub.rocks/t/caching-public-keys/688
-let sharedKeyPair
-const initSharedKey = async () => {
-  sharedKeyPair = await generateKeyPair()
 }

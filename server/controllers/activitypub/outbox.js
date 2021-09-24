@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
-const { byUsername, getActivitiesCountByUsername } = require('controllers/activitypub/lib/activities')
+const { byActorName, getActivitiesCountByUsername } = require('controllers/activitypub/lib/activities')
 const makeUrl = require('./lib/make_url')
 const formatActivitiesDocs = require('./lib/format_activities_docs')
 
@@ -50,7 +50,7 @@ const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const { stableUsername } = user
-  const activitiesDocs = await byUsername({ username: stableUsername, offset, limit })
+  const activitiesDocs = await byActorName({ name: stableUsername, offset, limit })
   outbox.orderedItems = await formatActivitiesDocs(activitiesDocs, user)
   return outbox
 }

@@ -5,6 +5,7 @@ const { makeUrl, createActivity, createRemoteActivityPubServerUser } = require('
 const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { wait } = require('lib/promises')
 const requests_ = require('lib/requests')
+const { createHuman } = require('../fixtures/entities')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -77,51 +78,73 @@ describe('activitypub:post:inbox', () => {
     }
   })
 
-  it('should reject if user is not on the fediverse', async () => {
-    try {
-      const { username } = await createUser({ fediversable: false })
+  describe('users', () => {
+    it('should reject if user is not on the fediverse', async () => {
+      try {
+        const { username } = await createUser({ fediversable: false })
+        const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+        const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+        await signedReq({
+          object: actorUrl,
+          url: inboxUrl
+        })
+        .then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        const parsedBody = JSON.parse(err.body)
+        parsedBody.status_verbose.should.equal('user is not on the fediverse')
+        parsedBody.status.should.equal(404)
+      }
+    })
+
+    it('should create a Follow activity', async () => {
+      const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      await signedReq({
+      const res = await signedReq({
         object: actorUrl,
         url: inboxUrl
       })
-      .then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
-      const parsedBody = JSON.parse(err.body)
-      parsedBody.status_verbose.should.equal('user is not on the fediverse')
-      parsedBody.status.should.equal(404)
-    }
+      res.statusCode.should.equal(200)
+      const activities = await getFollowActivitiesByObject(username)
+      activities.length.should.equal(1)
+    })
   })
 
-  it('should return a valid response', async () => {
-    const { username } = await createUser({ fediversable: true })
-    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-    const res = await signedReq({
-      object: actorUrl,
-      url: inboxUrl
+  describe('entities', () => {
+    it('should reject if entity is not found', async () => {
+      try {
+        const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        const actorUrl = makeUrl({ params: { action: 'actor', name: uri } })
+        const inboxUrl = makeUrl({ params: { action: 'inbox', name: uri } })
+        await signedReq({
+          object: actorUrl,
+          url: inboxUrl
+        })
+        .then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        const parsedBody = JSON.parse(err.body)
+        parsedBody.status.should.equal(404)
+      }
     })
-    res.statusCode.should.equal(200)
+
+    it('should create a Follow activity', async () => {
+      const { uri } = await createHuman()
+      const actorUrl = makeUrl({ params: { action: 'actor', name: uri } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: uri } })
+      const res = await signedReq({
+        object: actorUrl,
+        url: inboxUrl
+      })
+      res.statusCode.should.equal(200)
+      const activities = await getFollowActivitiesByObject(uri)
+      activities.length.should.equal(1)
+    })
   })
 })
 
 describe('activitypub:Follow', () => {
-  it('should create a Follow activity', async () => {
-    const emitterUser = await createRemoteActivityPubServerUser()
-    const { username } = await createUser({ fediversable: true })
-    const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-    const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-    await signedReq({
-      emitterUser,
-      object: actorUrl,
-      url: inboxUrl
-    })
-    const activities = await getFollowActivitiesByObject(username)
-    activities.length.should.equal(1)
-  })
-
   it('should not recreate a Follow activity if actor is already following someone', async () => {
     const emitterUser = await createRemoteActivityPubServerUser()
     const { username } = await createUser({ fediversable: true })

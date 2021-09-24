@@ -3,7 +3,7 @@ const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const user_ = require('controllers/user/lib/user')
 const { postActivityToUserFollowersInboxes } = require('./post_activity')
-const { byUsername, createActivity } = require('./activities')
+const { byActorName, createActivity } = require('./activities')
 
 const debouncedActivities = {}
 
@@ -12,7 +12,7 @@ const createDebouncedActivity = userId => async () => {
   const user = await user_.byId(userId)
   if (!user.fediversable) return
   const { stableUsername } = user
-  const [ lastUserActivity ] = await byUsername({ username: stableUsername, limit: 1 })
+  const [ lastUserActivity ] = await byActorName({ name: stableUsername, limit: 1 })
   const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
   const since = lastUserActivity?.updated || yesterdayTime
   return createActivity({
