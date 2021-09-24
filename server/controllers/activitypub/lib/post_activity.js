@@ -6,10 +6,12 @@ const error_ = require('lib/error/error')
 const { getFollowActivitiesByObject } = require('./activities')
 const assert_ = require('lib/utils/assert_types')
 const { publicHost } = require('config')
+const { getSharedKeyPair } = require('./shared_key_pair')
 // Arbitrary timeout
 const timeout = 30 * 1000
 
-const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
+const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) => {
+  assert_.string(actorName)
   assert_.string(recipientActorUri)
   assert_.object(activity)
   let actorRes
@@ -23,8 +25,9 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
     return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
   }
 
-  const { stableUsername, privateKey } = user
-  const keyId = `acct:${stableUsername}@${publicHost}`
+  const keyId = `acct:${actorName}@${publicHost}`
+
+  const { privateKey } = await getSharedKeyPair()
 
   const body = Object.assign({}, activity)
   body.to = [ recipientActorUri, 'Public' ]
@@ -44,7 +47,7 @@ const postActivityToUserFollowersInboxes = user => async activityDoc => {
   if (!activity) return
   const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
-    return signAndPostActivity({ recipientActorUri: uri, activity, user })
+    return signAndPostActivity({ actorName: user.stableUsername, recipientActorUri: uri, activity })
   }))
 }
 
