@@ -208,5 +208,21 @@ describe('outbox', () => {
       createActivity.object.content.should.containEql(_id)
       createActivity.to.should.containEql('Public')
     })
+
+    it('should paginate activities', async () => {
+      const { uri: authorUri } = await createHuman()
+      const { uri: workUri, _id: workId1 } = await createWork()
+      const { uri: workUri2, _id: workId2 } = await createWork()
+      await addAuthor(workUri, authorUri)
+      await addAuthor(workUri2, authorUri)
+      const outboxUrl = `${endpoint}${authorUri}`
+      await wait(500)
+      const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
+      res1.orderedItems.length.should.equal(1)
+      res1.orderedItems[0].object.content.should.containEql(workId2)
+      const res2 = await publicReq('get', `${outboxUrl}&offset=1&limit=1`)
+      res2.orderedItems.length.should.equal(1)
+      res2.orderedItems[0].object.content.should.containEql(workId1)
+    })
   })
 })
