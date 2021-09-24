@@ -46,7 +46,6 @@ module.exports = {
 
 const buildPaginatedOutbox = async (user, offset, limit, outbox) => {
   const { id: fullOutboxUrl } = outbox
-  outbox['@context'] = [ 'https://www.w3.org/ns/activitystreams' ]
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
