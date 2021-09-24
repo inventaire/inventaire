@@ -26,6 +26,8 @@ module.exports = async params => {
     actor = { uri: actor }
     const { stableUsername } = user
     object = { name: stableUsername }
+  } else {
+    throw error_.new('invalid object name', 400, { object })
   }
 
   let followActivity = await getExistingFollowActivity(actor, object.name)

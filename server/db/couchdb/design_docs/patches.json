@@ -18,6 +18,10 @@
     },
     "byRedirectUri": {
       "map": "(doc)->\n  if doc.context?.redirectClaims?\n    fromUri = doc.context.redirectClaims.fromUri\n    emit fromUri, null"
+    },
+    "byClaimValueAndDate": {
+      "map": "(doc)->\n  for operation in doc.patch\n    if operation.op is 'add'\n      pathParts = operation.path.split('/')\n      section = pathParts[1]\n      property = pathParts[2]\n      if section is 'claims'\n        if pathParts[3]?\n          if operation.value.startsWith('wd:') or operation.value.startsWith('inv:')\n            emit [ operation.value, doc.timestamp ], property\n        else\n          for subvalue in operation.value\n            if subvalue.startsWith('wd:') or subvalue.startsWith('inv:')\n              emit [ subvalue, doc.timestamp ], property\n",
+      "reduce": "_count"
     }
   }
 }
