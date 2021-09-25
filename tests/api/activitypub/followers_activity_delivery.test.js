@@ -7,6 +7,7 @@ const { signedReq } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const { makeUrl, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const requests_ = require('lib/requests')
+const { createHuman, createWork, addAuthor } = require('../fixtures/entities')
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
@@ -27,6 +28,28 @@ describe('followers activity delivery', () => {
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUser.username}`)
       const createActivity = inbox[0]
       createActivity.object.content.should.containEql(item._id)
+      createActivity.to.should.deepEqual([ remoteUser.id, 'Public' ])
+    })
+  })
+
+  describe('entities followers', () => {
+    it('should post an activity to inbox', async () => {
+      const { uri: authorUri } = await createHuman()
+      const { uri: workUri, _id: workId } = await createWork()
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name: authorUri } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: authorUri } })
+      const remoteUser = await createRemoteActivityPubServerUser()
+      const { remoteHost } = await signedReq({
+        url: inboxUrl,
+        object: followedActorUrl,
+        type: 'Follow',
+        emitterUser: remoteUser
+      })
+      await addAuthor(workUri, authorUri)
+      await wait(500)
+      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUser.username}`)
+      const createActivity = inbox[0]
+      createActivity.object.content.should.containEql(workId)
       createActivity.to.should.deepEqual([ remoteUser.id, 'Public' ])
     })
   })

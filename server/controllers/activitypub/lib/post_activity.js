@@ -1,5 +1,4 @@
 const _ = require('builders/utils')
-const formatUserItemsActivities = require('./format_user_items_activities')
 const requests_ = require('lib/requests')
 const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
@@ -41,14 +40,12 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
 }
 
 // TODO: use sharedInbox
-const postActivityToUserFollowersInboxes = user => async activityDoc => {
-  const followActivities = await getFollowActivitiesByObject(user.stableUsername)
-  const [ activity ] = await formatUserItemsActivities([ activityDoc ], user)
-  if (!activity) return
+const postActivityToActorFollowersInboxes = async ({ activity, actorName }) => {
+  const followActivities = await getFollowActivitiesByObject(actorName)
   const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
-    return signAndPostActivity({ actorName: user.stableUsername, recipientActorUri: uri, activity })
+    return signAndPostActivity({ actorName, recipientActorUri: uri, activity })
   }))
 }
 
-module.exports = { signAndPostActivity, postActivityToUserFollowersInboxes }
+module.exports = { signAndPostActivity, postActivityToActorFollowersInboxes }
