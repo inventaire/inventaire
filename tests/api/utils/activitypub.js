@@ -10,7 +10,7 @@ const { jsonBodyParser } = require('server/middlewares/content')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
-  const { keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
+  const { id, username, keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
       actor: keyId,
@@ -24,7 +24,11 @@ const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
   const params = { headers }
   if (method === 'post') params.body = body
   const res = await rawRequest(method, url, params)
-  return Object.assign(res, { remoteHost: origin })
+  return Object.assign(res, {
+    remoteHost: origin,
+    remoteUserId: id,
+    remoteUsername: username,
+  })
 }
 
 const createActivity = (params = {}) => {
@@ -67,10 +71,10 @@ const getSomeRemoteServerUser = async emitterUser => {
   emitterUser = emitterUser || await createRemoteActivityPubServerUser()
   removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
   const { origin } = removeActivityPubServer
-  const { username, privateKey } = emitterUser
+  const { id, username, privateKey } = emitterUser
   const query = { name: username }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
-  return { username, keyId, privateKey, origin }
+  return { id, username, keyId, privateKey, origin }
 }
 
 const remoteActivityPubServerUsers = {}
