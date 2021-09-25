@@ -11,6 +11,7 @@ const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
 const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
+const { createShelf } = require('../fixtures/shelves')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -226,6 +227,45 @@ describe('outbox', () => {
       const res2 = await publicReq('get', `${outboxUrl}&offset=1&limit=1`)
       res2.orderedItems.length.should.equal(1)
       new URL(res2.orderedItems[0].object.id).searchParams.get('id').should.containEql(workId1)
+    })
+  })
+
+  describe('shelves', () => {
+    it('reject invalid shelf id', async () => {
+      try {
+        const outboxUrl = `${endpoint}shelf:foo`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid shelf id')
+      }
+    })
+
+    it("reject if shelf's owner is not fediversable", async () => {
+      try {
+        const user = createUser({ fediversable: false })
+        const shelf = await createShelf(user)
+        const outboxUrl = `${endpoint}shelf:${shelf._id}`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal('not found')
+      }
+    })
+
+    it('should not return network shelf', async () => {
+      try {
+        const user = createUser({ fediversable: true })
+        const shelf = await createShelf(user, { listing: 'network' })
+        const outboxUrl = `${endpoint}shelf:${shelf._id}`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal('not found')
+      }
     })
   })
 })
