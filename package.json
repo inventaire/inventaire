@@ -120,7 +120,7 @@
     "data": "server/data",
     "db": "server/db",
     "i18nAssets": "inventaire-i18n/assets",
-    "i18nDist": "inventaire-i18n/dist/emails",
+    "i18nDist": "inventaire-i18n/dist/server",
     "i18nSrc": "inventaire-i18n/original",
     "lib": "server/lib",
     "models": "server/models",

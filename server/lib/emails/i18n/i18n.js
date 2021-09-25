@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const Polyglot = require('node-polyglot')
 const { active: activeLangs } = require('i18nAssets/langs')
 const moment = require('moment')
-const { appendToEmailsKeys } = require('lib/i18n_autofix')
+const { appendToServerKeys } = require('lib/i18n_autofix')
 const translate = require('./translate')
 const { autofixI18n } = require('config')
 
@@ -18,7 +18,7 @@ const warnAndFix = warning => {
 
   // hacky solution to extract the key from polyglot warning
   const key = warning.split('"')[1]
-  return appendToEmailsKeys(key)
+  return appendToServerKeys(key)
 }
 
 activeLangs.forEach(lang => {

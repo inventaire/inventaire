@@ -6,9 +6,9 @@ const { isPropertyId } = require('wikidata-sdk')
 module.exports = {
   appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
   appendToShortKeys: keys => appendToI18nKeys(short, keys, false),
-  appendToEmailsKeys: key => {
+  appendToServerKeys: key => {
     const fullValue = !/^\w+_\w+/.test(key)
-    return appendToI18nKeys(emails, [ key ], fullValue)
+    return appendToI18nKeys(server, [ key ], fullValue)
   }
 }
 
@@ -35,7 +35,7 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
 
 const full = __.path('i18nSrc', 'fullkey.en.json')
 const short = __.path('i18nSrc', 'shortkey.en.json')
-const emails = __.path('i18nSrc', 'emails.en.json')
+const server = __.path('i18nSrc', 'server.en.json')
 
 const reorder = keys => {
   const reordered = {}
