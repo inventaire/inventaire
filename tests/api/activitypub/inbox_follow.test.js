@@ -58,16 +58,14 @@ describe('activitypub:inbox:Follow', () => {
     })
 
     it('should trigger an Accept activity', async () => {
-      const emitterUser = await createRemoteActivityPubServerUser()
       const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const { remoteHost } = await signedReq({
-        emitterUser,
+      const { remoteHost, remoteUsername } = await signedReq({
         object: actorUrl,
         url: inboxUrl
       })
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${username}`)
+      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       inbox.length.should.equal(1)
       const activity = inbox[0]
       activity['@context'].should.deepEqual([ 'https://www.w3.org/ns/activitystreams' ])

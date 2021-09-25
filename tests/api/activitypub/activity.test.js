@@ -14,12 +14,11 @@ describe('activity', () => {
     const { username } = user
     const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
     const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-    // Follow user
-    const { remoteHost } = await signedReq({ object: actorUrl, url: inboxUrl })
+    const { remoteHost, remoteUsername } = await signedReq({ object: actorUrl, url: inboxUrl, type: 'Follow' })
     await createItem(user)
     await wait(debounceTime + 500)
     await publicReq('get', `/api/activitypub?action=outbox&name=${username}&offset=0`)
-    const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${username}`)
+    const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
     const [ createActivity ] = inbox
     const activityUrl = createActivity.object.id
     const activityId = new URL(activityUrl).searchParams.get('id')
