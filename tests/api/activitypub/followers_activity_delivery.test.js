@@ -34,8 +34,8 @@ describe('followers activity delivery', () => {
 
   describe('entities followers', () => {
     it('should post an activity to inbox', async () => {
-      const { uri: authorUri } = await createHuman()
-      const { uri: workUri, _id: workId } = await createWork()
+      const { uri: authorUri, labels: authorLabels } = await createHuman()
+      const { uri: workUri, labels: workLabels } = await createWork()
       const followedActorUrl = makeUrl({ params: { action: 'actor', name: authorUri } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: authorUri } })
       const remoteUser = await createRemoteActivityPubServerUser()
@@ -49,7 +49,8 @@ describe('followers activity delivery', () => {
       await wait(500)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUser.username}`)
       const createActivity = inbox[0]
-      createActivity.object.content.should.containEql(workId)
+      createActivity.object.content.should.containEql(authorLabels.en)
+      createActivity.object.content.should.containEql(workLabels.en)
       createActivity.to.should.deepEqual([ remoteUser.id, 'Public' ])
     })
   })
