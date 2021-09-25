@@ -11,7 +11,7 @@ const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
 const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
-const { createShelf } = require('../fixtures/shelves')
+const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -245,7 +245,7 @@ describe('outbox', () => {
     it("reject if shelf's owner is not fediversable", async () => {
       try {
         const user = createUser({ fediversable: false })
-        const shelf = await createShelf(user)
+        const { shelf } = await createShelf(user)
         const outboxUrl = `${endpoint}shelf:${shelf._id}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
@@ -258,7 +258,7 @@ describe('outbox', () => {
     it('should not return network shelf', async () => {
       try {
         const user = createUser({ fediversable: true })
-        const shelf = await createShelf(user, { listing: 'network' })
+        const { shelf } = await createShelf(user, { listing: 'network' })
         const outboxUrl = `${endpoint}shelf:${shelf._id}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {

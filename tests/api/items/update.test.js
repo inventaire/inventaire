@@ -89,7 +89,7 @@ describe('items:update', () => {
 
   it('should reject item with a shelf from another owner', async () => {
     const item = await authReq('post', '/api/items', newItemBase())
-    const shelf = await createShelf(getUserB())
+    const { shelf } = await createShelf(getUserB())
     item.shelves = [ shelf._id ]
     await authReq('put', '/api/items', item)
     .then(shouldNotBeCalled)

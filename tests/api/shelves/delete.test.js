@@ -18,7 +18,7 @@ describe('shelves:delete', () => {
 
   it('should reject deleting different owner shelf', async () => {
     try {
-      const shelf = await createShelf()
+      const { shelf } = await createShelf()
       await authReqB('post', endpoint, { ids: shelf._id }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)

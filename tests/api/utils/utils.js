@@ -29,6 +29,7 @@ const API = module.exports = {
   getUserId: () => API.getUser().then(({ _id }) => _id),
   getUserB: getUserGetter('b'),
   getUserC: getUserGetter('c'),
+  getFediversableUser: getUserGetter(null, null, { fediversable: true }),
   getAdminUser: getUserGetter('admin', 'admin'),
   getDataadminUser: getUserGetter('dataadmin', 'dataadmin'),
   getUserGetter,

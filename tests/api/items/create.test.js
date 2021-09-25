@@ -180,7 +180,7 @@ describe('items:create', () => {
   describe('shelves', () => {
     it('should create an item with a shelf', async () => {
       const editionUri = await editionUriPromise
-      const shelf = await createShelf()
+      const { shelf } = await createShelf()
       const item = await authReq('post', '/api/items', {
         entity: editionUri,
         shelves: [ shelf._id ]
@@ -204,7 +204,7 @@ describe('items:create', () => {
     })
 
     it('should reject item with a shelf from another owner', async () => {
-      const shelf = await createShelf(getUserB())
+      const { shelf } = await createShelf(getUserB())
       const editionUri = await editionUriPromise
       try {
         const item = await authReq('post', '/api/items', {

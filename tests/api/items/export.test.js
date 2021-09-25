@@ -36,7 +36,7 @@ describe('items:export', () => {
       const notes = 'some private notes'
       const name = 'some shelf'
       const item = await createItem(userPromise, { details, notes })
-      const shelf = await createShelf(userPromise, { name })
+      const { shelf } = await createShelf(userPromise, { name })
       await customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
         id: shelf._id,
         items: [ item._id ]
