@@ -17,6 +17,9 @@
     "publicByOwnerAndDate": {
       "map": "(doc)->\n  if doc.listing is 'public'\n    emit [doc.owner, doc.created], null"
     },
+    "publicByShelfAndDate": {
+      "map": "(doc)->\n  if doc.shelves?\n    for shelf in doc.shelves\n      if doc.listing is 'public'  \n          emit [shelf, doc.created], null"
+    },
     "byOwnerAndEntityAndListing": {
       "map": "(doc)->\n  emit [doc.owner, doc.entity, doc.listing], null"
     },

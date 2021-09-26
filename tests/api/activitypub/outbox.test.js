@@ -267,5 +267,41 @@ describe('outbox', () => {
         err.body.status_verbose.should.equal('not found')
       }
     })
+
+    it('should return a first page URL', async () => {
+      const { shelf } = await createShelfWithItem({}, null)
+      await wait(debounceTime + 50)
+      const outboxUrl = `${endpoint}shelf:${shelf._id}`
+      const res = await publicReq('get', outboxUrl)
+      const fullHostUrl = `${host}${outboxUrl}`
+      decodeURIComponent(res.id).should.equal(fullHostUrl)
+      res.type.should.equal('OrderedCollection')
+      res.totalItems.should.equal(1)
+      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
+      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=0`)
+    })
+
+    it('should return content with items link', async () => {
+      const { shelf, item } = await createShelfWithItem({}, null)
+      const name = `shelf:${shelf._id}`
+      await wait(debounceTime + 50)
+      const outboxUrl = `${endpoint}${name}&offset=0`
+      const res = await publicReq('get', outboxUrl)
+      const fullHostUrl = `${host}${endpoint}${name}`
+      res.type.should.equal('OrderedCollectionPage')
+      decodeURIComponent(res.partOf).should.equal(fullHostUrl)
+      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
+      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=10`)
+      res.orderedItems.should.be.an.Array()
+      res.orderedItems.length.should.equal(1)
+      const createActivity = res.orderedItems[0]
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const activityEndpoint = makeUrl({ params: { action: 'activity' } })
+      createActivity.id.should.startWith(activityEndpoint)
+      createActivity.actor.should.equal(actorUrl)
+      createActivity.object.content.should.containEql(item._id)
+      createActivity.to.should.containEql('Public')
+      createActivity.object.attachment.should.be.an.Array()
+    })
   })
 })

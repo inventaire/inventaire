@@ -49,6 +49,18 @@ const items_ = module.exports = {
     })
   },
 
+  publicByShelfAndDate: ({ shelf, since, until }) => {
+    assert_.string(shelf)
+    assert_.number(since)
+    assert_.number(until)
+    return db.viewCustom('publicByShelfAndDate', {
+      include_docs: true,
+      startkey: [ shelf, until ],
+      endkey: [ shelf, since ],
+      descending: true,
+    })
+  },
+
   // all items from an entity that require a specific authorization
   authorizedByEntities: (uris, reqUserId) => {
     return listingByEntities('network', uris, reqUserId)

@@ -15,5 +15,4 @@ module.exports = {
   })
 }
 
-require('./lib/create_activities_on_items_updates')()
-require('./lib/create_activities_on_entities_updates')()
+require('./lib/radio_hooks')()
