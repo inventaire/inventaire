@@ -1,13 +1,11 @@
 const error_ = require('lib/error/error')
 const qs = require('querystring')
-const user_ = require('controllers/user/lib/user')
 const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
 const makeUrl = require('./lib/make_url')
-const { isEntityUri, isUsername, isCouchUuid } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const shelves_ = require('controllers/shelves/lib/shelves')
+const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
+const { isEntityUri, isUsername } = require('lib/boolean_validations')
 
 module.exports = async params => {
   const { id: externalId, type } = params
@@ -16,24 +14,15 @@ module.exports = async params => {
   const { name: requestedObjectName } = qs.parse(object)
 
   if (isEntityUri(requestedObjectName)) {
-    const entity = await getEntityByUri({ uri: requestedObjectName })
-    if (!entity) throw error_.notFound({ uri: requestedObjectName })
+    const { entity } = await validateEntity(requestedObjectName)
     object = { name: entity.uri }
     actor = { uri: actor }
   } else if (requestedObjectName.startsWith('shelf:')) {
-    const id = requestedObjectName.split(':')[1]
-    if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })
-    const shelf = await shelves_.byId(id)
-    if (!shelf || shelf.listing !== 'public') throw error_.notFound({ requestedObjectName })
-    const owner = await user_.byId(shelf.owner)
-    if (!owner) throw error_.notFound({ username: requestedObjectName })
-    if (!owner.fediversable) throw error_.new("shelf's owner is not on the fediverse", 404, { username: requestedObjectName })
+    await validateShelf(requestedObjectName)
     actor = { uri: actor }
     object = { name: requestedObjectName }
   } else if (isUsername(requestedObjectName)) {
-    const user = await user_.findOneByUsername(requestedObjectName)
-    if (!user) throw error_.notFound({ username: requestedObjectName })
-    if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username: requestedObjectName })
+    const { user } = await validateUser(requestedObjectName)
     actor = { uri: actor }
     const { stableUsername } = user
     object = { name: stableUsername }

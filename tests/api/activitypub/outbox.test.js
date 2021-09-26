@@ -24,7 +24,7 @@ describe('outbox', () => {
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(404)
-        err.body.status_verbose.should.equal('not found')
+        err.body.status_verbose.should.equal('user is not on the fediverse')
       }
     })
 
@@ -253,7 +253,7 @@ describe('outbox', () => {
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(404)
-        err.body.status_verbose.should.equal('not found')
+        err.body.status_verbose.should.equal("shelf's owner is not on the fediverse")
       }
     })
 

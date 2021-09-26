@@ -1,14 +1,12 @@
 const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
 const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
 const makeUrl = require('./lib/make_url')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
-const { isEntityUri, isUsername, isCouchUuid } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const patches_ = require('controllers/entities/lib/patches')
 const formatEntityPatchesActivities = require('./lib/format_entity_patches_activities')
-const shelves_ = require('controllers/shelves/lib/shelves')
+const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
 
 const sanitization = {
   name: {},
@@ -36,13 +34,7 @@ const controller = async params => {
 }
 
 const getShelfActivities = async ({ name, offset, limit }) => {
-  const id = name.split(':')[1]
-  if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })
-  const shelf = await shelves_.byId(id)
-  if (!shelf || shelf.listing !== 'public') throw error_.notFound({ name })
-  const user = await user_.byId(shelf.owner)
-  if (!user.fediversable) throw error_.notFound({ name })
-
+  const { shelf } = await validateShelf(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name } })
   const baseOutbox = getBaseOutbox(fullOutboxUrl)
   if (offset == null) {
@@ -54,8 +46,7 @@ const getShelfActivities = async ({ name, offset, limit }) => {
 }
 
 const getEntityActivities = async ({ name: uri, offset, limit }) => {
-  const entity = await getEntityByUri({ uri })
-  if (!entity) throw error_.notFound({ uri })
+  const { entity } = await validateEntity(uri)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: uri } })
   const baseOutbox = getBaseOutbox(fullOutboxUrl)
   if (offset == null) {
@@ -76,8 +67,7 @@ const getBaseOutbox = url => {
 }
 
 const getUserActivities = async ({ name, offset, limit }) => {
-  const user = await user_.findOneByUsername(name)
-  if (!user || !user.fediversable) throw error_.notFound({ name })
+  const { user } = await validateUser(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
   const baseOutbox = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],

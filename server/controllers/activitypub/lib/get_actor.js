@@ -1,11 +1,8 @@
 const CONFIG = require('config')
 const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const { isEntityUri, isUsername, isCouchUuid } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const { validateShelf, validateUser, validateEntity } = require('./validations')
+const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
-const shelves_ = require('controllers/shelves/lib/shelves')
-
 const host = CONFIG.fullPublicHost()
 
 module.exports = name => {
@@ -21,14 +18,7 @@ module.exports = name => {
 }
 
 const getShelfActor = async name => {
-  const id = name.split(':')[1]
-  if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })
-  const shelf = await shelves_.byId(id)
-  if (!shelf || shelf.listing !== 'public') throw error_.notFound({ name })
-  const owner = await user_.byId(shelf.owner)
-  if (!owner) throw error_.notFound({ username: name })
-  if (!owner.fediversable) throw error_.new("shelf's owner is not on the fediverse", 404, { username: name })
-
+  const { shelf } = await validateShelf(name)
   const { description } = shelf
   return buildActorObject({
     name,
@@ -37,9 +27,8 @@ const getShelfActor = async name => {
   })
 }
 
-const getUserActor = async requestedUsername => {
-  const user = await user_.findOneByUsername(requestedUsername)
-  if (!user || !user.fediversable) throw error_.notFound({ requestedUsername })
+const getUserActor = async username => {
+  const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   return buildActorObject({
     name: stableUsername,
@@ -50,7 +39,7 @@ const getUserActor = async requestedUsername => {
 }
 
 const getEntityActor = async uri => {
-  const entity = await getEntityByUri({ uri })
+  const { entity } = await validateEntity(uri)
   const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
   return buildActorObject({
     name: uri,
