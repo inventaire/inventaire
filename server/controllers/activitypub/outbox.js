@@ -119,7 +119,7 @@ const buildPaginatedShelfOutbox = async (shelf, name, offset, limit, outbox) => 
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const activitiesDocs = await byActorName({ name, offset, limit })
-  outbox.orderedItems = await formatShelfItemsActivities(activitiesDocs, shelf, name)
+  outbox.orderedItems = await formatShelfItemsActivities(activitiesDocs, shelf._id, name)
   return outbox
 }
 

@@ -3,12 +3,13 @@ const makeUrl = require('./make_url')
 const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
 const items_ = require('controllers/items/lib/items')
 
-module.exports = async (activitiesDocs, shelf, name) => {
+module.exports = async (activitiesDocs, shelfId, name) => {
+  if (activitiesDocs.length === 0) return
   const actor = makeUrl({ params: { action: 'actor', name } })
-  const parentLink = `/shelves/${shelf._id}`
+  const parentLink = `/shelves/${shelfId}`
   const { since, until } = findFullRangeFromActivities(activitiesDocs)
   const allActivitiesItems = await items_.publicByShelfAndDate({
-    shelf: shelf._id,
+    shelf: shelfId,
     since,
     until,
   })

@@ -5,6 +5,8 @@ const user_ = require('controllers/user/lib/user')
 const { postActivityToActorFollowersInboxes } = require('./post_activity')
 const { byActorName, createActivity } = require('./activities')
 const formatEntityPatchesActivities = require('./format_entity_patches_activities')
+const formatUserItemsActivities = require('./format_user_items_activities')
+const formatShelfItemsActivities = require('./format_shelf_items_activities')
 
 const debouncedActivities = {}
 
@@ -38,11 +40,20 @@ const createDebouncedActivity = ({ userId, shelfId }) => async () => {
   const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
   const since = lastActivity?.updated || yesterdayTime
 
-  const activity = createActivity({
+  const activityDoc = await createActivity({
     type: 'Create',
     actor: { name },
     object: { items: { since, until: Date.now() } },
   })
+
+  let activity
+  if (userId) {
+    [ activity ] = await formatUserItemsActivities([ activityDoc ], user)
+  } else if (shelfId) {
+    [ activity ] = await formatShelfItemsActivities([ activityDoc ], shelfId, name)
+  }
+  if (!activity) return
+
   return postActivityToActorFollowersInboxes({ activity, actorName: name })
 }
 

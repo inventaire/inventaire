@@ -103,7 +103,9 @@ const startActivityPubServer = () => new Promise(resolve => {
   const inboxes = {}
 
   app.post(inboxEndpoint, async (req, res) => {
-    const { username } = req.query
+    let { username } = req.query
+    // since shelf uri is contains ':'
+    username = decodeURIComponent(username)
     const activity = req.body
     inboxes[username] = inboxes[username] || []
     inboxes[username].unshift(activity)
