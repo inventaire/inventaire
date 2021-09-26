@@ -11,9 +11,9 @@ const sanitization = {
 
 const controller = async ({ period }) => {
   if (period != null) {
-    return patches_.getActivityFromLastDay(period)
+    return patches_.getContributionsFromLastDay(period)
   } else {
-    const activity = await patches_.getGlobalActivity()
+    const activity = await patches_.getGlobalContributions()
     return { activity }
   }
 }
