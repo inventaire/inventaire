@@ -61,7 +61,8 @@ describe('outbox', () => {
 
     it('should return content with items link', async () => {
       const user = createUser({ fediversable: true, language: 'it' })
-      const item = await createItem(user)
+      const details = 'details'
+      const item = await createItem(user, { details })
       const { username } = await user
       await wait(debounceTime + 500)
       const outboxUrl = `${endpoint}${username}&offset=0`
@@ -79,6 +80,7 @@ describe('outbox', () => {
       createActivity.id.should.startWith(activityEndpoint)
       createActivity.actor.should.equal(actorUrl)
       createActivity.object.content.should.containEql(item._id)
+      createActivity.object.content.should.containEql(details)
       createActivity.to.should.containEql('Public')
       createActivity.object.attachment.should.be.an.Array()
     })
