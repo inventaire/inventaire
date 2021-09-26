@@ -4,6 +4,7 @@ const { createHuman, createEdition } = require('../fixtures/entities')
 const { makeUrl } = require('../utils/activitypub')
 const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
+const { createShelf } = require('../fixtures/shelves')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
@@ -89,6 +90,41 @@ describe('activitypub:actor', () => {
       const receiverUrl = makeUrl({ params: { action: 'actor', name: uri } })
       const body = await publicReq('get', receiverUrl)
       body.icon.url.should.endWith(image.url)
+    })
+  })
+
+  describe('shelves', () => {
+    it('should reject if receiver user is not on the fediverse', async () => {
+      try {
+        const user = createUser({ fediversable: false })
+        const { shelf } = await createShelf(user)
+        const name = `shelf:${shelf._id}`
+        const actorUrl = makeUrl({ params: { action: 'actor', name } })
+        await publicReq('get', actorUrl)
+        .then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.body.status_verbose.should.equal("shelf's owner is not on the fediverse")
+        err.body.status.should.equal(404)
+      }
+    })
+
+    it('should return a json ld file with a receiver actor url', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = `shelf:${shelf._id}`
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const outboxUrl = makeUrl({ params: { action: 'outbox', name } })
+      const res = await publicReq('get', actorUrl)
+      res.type.should.equal('Person')
+      res.id.should.equal(decodeURIComponent(actorUrl))
+      res.preferredUsername.should.equal(name)
+      res.publicKey.should.be.an.Object()
+      res.inbox.should.equal(decodeURIComponent(inboxUrl))
+      res.outbox.should.equal(decodeURIComponent(outboxUrl))
+      res.publicKey.id.should.equal(decodeURIComponent(`${actorUrl}#main-key`))
+      res.publicKey.owner.should.equal(decodeURIComponent(actorUrl))
     })
   })
 })
