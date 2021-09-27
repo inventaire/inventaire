@@ -3,7 +3,7 @@ const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const { i18n } = require('lib/emails/i18n/i18n')
 const getBestLangValue = require('lib/get_best_lang_value')
-const { makeUrl } = require('root/tests/api/utils/activitypub')
+const makeUrl = require('./make_url')
 const host = CONFIG.fullPublicHost()
 
 module.exports = rows => {
