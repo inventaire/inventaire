@@ -1,21 +1,34 @@
+const { oneDay } = require('lib/time')
 const { simpleDay } = require('lib/utils/base')
 const { adminReq } = require('../utils/utils')
-const endpoint = '/api/entities?action=activity'
+const endpoint = '/api/entities?action=contributions-count'
 
 describe('entities:activity', () => {
-  it('should return user and contributions number', async () => {
-    const { activity } = await adminReq('get', endpoint)
-    activity.should.be.an.Array()
-    activity[0].user.should.be.a.String()
-    activity[0].contributions.should.be.a.Number()
+  it('should return global contributions count', async () => {
+    const { contributions } = await adminReq('get', endpoint)
+    contributions.forEach(contribution => {
+      contribution.user.should.be.a.String()
+      contribution.contributions.should.be.a.Number()
+    })
+  })
+
+  it('should return contributions count for a specific period', async () => {
+    const { contributions, start, end } = await adminReq('get', `${endpoint}&period=7`)
+    contributions.should.be.an.Array()
+    contributions.forEach(contribution => {
+      contribution.user.should.be.a.String()
+      contribution.contributions.should.be.a.Number()
+    })
+    start.should.equal(simpleDay(Date.now() - 7 * oneDay))
+    end.should.equal(simpleDay(Date.now()))
   })
 
   it('should restrict activity to the specfied period', async () => {
-    const { activity, start, end } = await adminReq('get', `${endpoint}&period=1`)
+    const { contributions, start, end } = await adminReq('get', `${endpoint}&period=1`)
     const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
     const yesterday = simpleDay(yesterdayTime)
     const today = simpleDay()
-    activity.should.be.an.Array()
+    contributions.should.be.an.Array()
     start.should.equal(yesterday)
     end.should.equal(today)
   })

@@ -13,8 +13,8 @@ const controller = async ({ period }) => {
   if (period != null) {
     return patches_.getContributionsFromLastDay(period)
   } else {
-    const activity = await patches_.getGlobalContributions()
-    return { activity }
+    const contributions = await patches_.getGlobalContributions()
+    return { contributions }
   }
 }
 
