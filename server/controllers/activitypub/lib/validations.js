@@ -3,6 +3,7 @@ const { isCouchUuid } = require('lib/boolean_validations')
 const user_ = require('controllers/user/lib/user')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const { dehyphenizeEntityUri, hyphenizeEntityUri } = require('./helpers')
 
 module.exports = {
   validateShelf: async name => {
@@ -21,9 +22,11 @@ module.exports = {
     if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username })
     return { user }
   },
-  validateEntity: async uri => {
+  validateEntity: async name => {
+    const uri = dehyphenizeEntityUri(name)
     const entity = await getEntityByUri({ uri })
     if (!entity) throw error_.notFound({ uri })
+    entity.actorName = hyphenizeEntityUri(entity.uri)
     return { entity }
   }
 }
