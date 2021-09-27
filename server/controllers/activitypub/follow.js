@@ -3,7 +3,7 @@ const qs = require('querystring')
 const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
-const makeUrl = require('./lib/make_url')
+const { makeUrl } = require('./lib/helpers')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 

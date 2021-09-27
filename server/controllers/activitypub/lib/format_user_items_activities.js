@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
-const makeUrl = require('./make_url')
 const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
+const { makeUrl } = require('./helpers')
 const items_ = require('controllers/items/lib/items')
 
 module.exports = async (activitiesDocs, user) => {

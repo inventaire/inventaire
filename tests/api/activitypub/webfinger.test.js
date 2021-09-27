@@ -7,6 +7,7 @@ const { createUser, createUsername } = require('../fixtures/users')
 const { updateUser } = require('../utils/users')
 const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
+const { hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
 const fullPublicHost = CONFIG.fullPublicHost()
 const { publicHost } = CONFIG
 const { createShelf } = require('../fixtures/shelves')
@@ -124,12 +125,13 @@ describe('activitypub:webfinger', () => {
   describe('entities', () => {
     it('should return an activitypub compliant webfinger', async () => {
       const { uri } = await createHuman()
-      const resource = `acct:${uri}@${publicHost}`
+      const actorName = hyphenizeEntityUri(uri)
+      const resource = `acct:${actorName}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
       res.should.be.an.Object()
       subject.should.equal(resource)
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${encodeURIComponent(uri)}`
+      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${actorName}`
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })

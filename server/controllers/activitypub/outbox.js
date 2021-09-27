@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
-const makeUrl = require('./lib/make_url')
+const { makeUrl } = require('./lib/helpers')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
