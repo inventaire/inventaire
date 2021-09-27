@@ -4,7 +4,7 @@ const { ControllerWrapper } = require('lib/controller_wrapper')
 const makeUrl = require('controllers/activitypub/lib/make_url')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { validateUser } = require('./lib/validations')
+const { validateUser, validateShelf } = require('./lib/validations')
 
 const sanitization = {
   resource: {}
@@ -15,9 +15,12 @@ const controller = async ({ resource }) => {
   if (isEntityUri(name)) {
     const entity = await getEntityByUri({ uri: name })
     if (entity) return formatWebfinger(entity.uri)
+  } else if (name.startsWith('shelf:')) {
+    await validateShelf(name)
+    return formatWebfinger(name)
   } else if (isUsername(name)) {
     const { user } = await validateUser(name)
-    if (user.fediversable) return formatWebfinger(user.stableUsername)
+    return formatWebfinger(user.stableUsername)
   }
   throw error_.notFound({ resource, name })
 }
