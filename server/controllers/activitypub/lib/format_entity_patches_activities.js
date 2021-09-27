@@ -3,7 +3,7 @@ const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const { i18n } = require('lib/emails/i18n/i18n')
 const getBestLangValue = require('lib/get_best_lang_value')
-const { makeUrl } = require('./helpers')
+const { makeUrl, hyphenizeEntityUri } = require('./helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = rows => {
@@ -26,8 +26,8 @@ const formatEntityPatchActivity = async row => {
   const subjectLabel = getBestLangValue('en', subjectEntity.originalLang, subjectEntity.labels).value
   const objectLabel = getBestLangValue('en', objectEntity.originalLang, objectEntity.labels).value
   const id = `${host}/api/activitypub?action=activity&id=${patchId}`
-
-  const actor = makeUrl({ params: { action: 'actor', name: objectUri } })
+  const name = hyphenizeEntityUri(objectUri)
+  const actor = makeUrl({ params: { action: 'actor', name } })
 
   const object = {
     id,

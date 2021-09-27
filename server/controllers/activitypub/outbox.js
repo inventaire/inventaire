@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
-const { makeUrl } = require('./lib/helpers')
+const { makeUrl, dehyphenizeEntityUri } = require('./lib/helpers')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
@@ -22,7 +22,7 @@ const sanitization = {
 
 const controller = async params => {
   const { name } = params
-  if (isEntityUri(name)) {
+  if (isEntityUri(dehyphenizeEntityUri(name))) {
     return getEntityActivities(params)
   } else if (name.startsWith('shelf-')) {
     return getShelfActivities(params)
@@ -45,12 +45,19 @@ const getShelfActivities = async ({ name, offset, limit }) => {
   }
 }
 
-const getEntityActivities = async ({ name: uri, offset, limit }) => {
-  const { entity } = await validateEntity(uri)
-  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: uri } })
-  const baseOutbox = getBaseOutbox(fullOutboxUrl)
+const getEntityActivities = async ({ name, offset, limit }) => {
+  const { entity } = await validateEntity(name)
+  if (!entity) throw error_.notFound({ name })
+  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: entity.actorName } })
+  const baseOutbox = {
+    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    id: fullOutboxUrl,
+    type: 'OrderedCollection',
+    first: `${fullOutboxUrl}&offset=0`,
+    next: `${fullOutboxUrl}&offset=0`
+  }
   if (offset == null) {
-    baseOutbox.totalItems = await patches_.getCountByClaimValue(uri)
+    baseOutbox.totalItems = await patches_.getCountByClaimValue(entity.uri)
     return baseOutbox
   } else {
     return buildPaginatedEntityOutbox(entity, offset, limit, baseOutbox)

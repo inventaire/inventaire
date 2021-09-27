@@ -3,8 +3,8 @@ const qs = require('querystring')
 const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
-const { makeUrl } = require('./lib/helpers')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
+const { makeUrl, dehyphenizeEntityUri } = require('./lib/helpers')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 
 module.exports = async params => {
@@ -13,9 +13,10 @@ module.exports = async params => {
   if (!object.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
   const { name: requestedObjectName } = qs.parse(object)
 
-  if (isEntityUri(requestedObjectName)) {
+  if (isEntityUri(dehyphenizeEntityUri(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)
-    object = { name: entity.uri }
+    if (!entity) throw error_.notFound({ name: requestedObjectName })
+    object = { name: entity.actorName }
     actor = { uri: actor }
   } else if (requestedObjectName.startsWith('shelf-')) {
     await validateShelf(requestedObjectName)

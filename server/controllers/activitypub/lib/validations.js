@@ -26,6 +26,7 @@ module.exports = {
     const uri = dehyphenizeEntityUri(name)
     const entity = await getEntityByUri({ uri })
     if (!entity) throw error_.notFound({ uri })
+    // Use canonical uri
     entity.actorName = hyphenizeEntityUri(entity.uri)
     return { entity }
   }

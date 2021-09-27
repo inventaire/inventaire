@@ -13,6 +13,7 @@ const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
+const { hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -180,32 +181,32 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${authorUri}`
+      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
       const res = await publicReq('get', outboxUrl)
       const fullHostUrl = `${host}${outboxUrl}`
-      decodeURIComponent(res.id).should.equal(fullHostUrl)
+      res.id.should.equal(fullHostUrl)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
-      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
-      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=0`)
+      res.first.should.equal(`${fullHostUrl}&offset=0`)
+      res.next.should.equal(`${fullHostUrl}&offset=0`)
     })
 
     it('should return entities activities', async () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${authorUri}`
+      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
       await wait(500)
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const fullHostUrl = `${host}${outboxUrl}`
       res.type.should.equal('OrderedCollectionPage')
-      decodeURIComponent(res.partOf).should.equal(fullHostUrl)
-      decodeURIComponent(res.first).should.equal(`${fullHostUrl}&offset=0`)
-      decodeURIComponent(res.next).should.equal(`${fullHostUrl}&offset=10`)
+      res.partOf.should.equal(fullHostUrl)
+      res.first.should.equal(`${fullHostUrl}&offset=0`)
+      res.next.should.equal(`${fullHostUrl}&offset=10`)
       res.orderedItems.should.be.an.Array()
       res.orderedItems.length.should.equal(1)
       const createActivity = res.orderedItems[0]
-      const actorUrl = makeUrl({ params: { action: 'actor', name: authorUri } })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: hyphenizeEntityUri(authorUri) } })
       const activityEndpoint = makeUrl({ params: { action: 'activity' } })
       createActivity.id.should.startWith(activityEndpoint)
       createActivity.actor.should.equal(actorUrl)
@@ -222,7 +223,7 @@ describe('outbox', () => {
       const { uri: workUri2, _id: workId2 } = await createWork()
       await addAuthor(workUri, authorUri)
       await addAuthor(workUri2, authorUri)
-      const outboxUrl = `${endpoint}${authorUri}`
+      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
       await wait(500)
       const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
       res1.orderedItems.length.should.equal(1)
