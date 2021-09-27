@@ -34,7 +34,7 @@ const createDebouncedActivity = ({ userId, shelfId }) => async () => {
     delete debouncedActivities[shelfId]
     // todo: use group slugify to create shelf name
     // shelf = await shelves_.byId(shelfId)
-    name = `shelf:${shelfId}`
+    name = `shelf-${shelfId}`
   }
   const [ lastActivity ] = await byActorName({ name, limit: 1 })
   const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)

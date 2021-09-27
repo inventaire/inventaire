@@ -8,7 +8,7 @@ const host = CONFIG.fullPublicHost()
 module.exports = name => {
   if (isEntityUri(name)) {
     return getEntityActor(name)
-  } else if (name.startsWith('shelf:')) {
+  } else if (name.startsWith('shelf-')) {
     return getShelfActor(name)
   } else if (isUsername(name)) {
     return getUserActor(name)

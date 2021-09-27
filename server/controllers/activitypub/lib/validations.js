@@ -6,7 +6,7 @@ const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 
 module.exports = {
   validateShelf: async name => {
-    const id = name.split(':')[1]
+    const id = name.split('-')[1]
     if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })
     const shelf = await shelves_.byId(id)
     if (!shelf || shelf.listing !== 'public') throw error_.notFound({ name })

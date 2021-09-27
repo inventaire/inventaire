@@ -24,7 +24,7 @@ const controller = async params => {
   const { name } = params
   if (isEntityUri(name)) {
     return getEntityActivities(params)
-  } else if (name.startsWith('shelf:')) {
+  } else if (name.startsWith('shelf-')) {
     return getShelfActivities(params)
   } else if (isUsername(name)) {
     return getUserActivities(params)

@@ -6,6 +6,7 @@ const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/act
 const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const { createShelf } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {
@@ -100,7 +101,7 @@ describe('activitypub:inbox:Undo', () => {
     it('should delete activity', async () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
-      const name = `shelf:${shelf._id}`
+      const name = getActorName(shelf)
       const actorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
       const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
       const emitterUser = await createRemoteActivityPubServerUser()

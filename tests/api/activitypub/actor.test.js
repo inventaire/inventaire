@@ -5,6 +5,7 @@ const { makeUrl } = require('../utils/activitypub')
 const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
@@ -98,7 +99,7 @@ describe('activitypub:actor', () => {
       try {
         const user = createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
-        const name = `shelf:${shelf._id}`
+        const name = getActorName(shelf)
         const actorUrl = makeUrl({ params: { action: 'actor', name } })
         await publicReq('get', actorUrl)
         .then(shouldNotBeCalled)
@@ -112,7 +113,7 @@ describe('activitypub:actor', () => {
     it('should return a json ld file with a receiver actor url', async () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
-      const name = `shelf:${shelf._id}`
+      const name = getActorName(shelf)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const outboxUrl = makeUrl({ params: { action: 'outbox', name } })

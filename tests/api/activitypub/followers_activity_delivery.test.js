@@ -10,7 +10,7 @@ const requests_ = require('lib/requests')
 const { createHuman, createWork, addAuthor } = require('../fixtures/entities')
 const { createShelf } = require('../fixtures/shelves')
 const { rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { addItemsToShelf } = require('../utils/shelves')
+const { addItemsToShelf, getActorName } = require('../utils/shelves')
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
@@ -61,7 +61,8 @@ describe('followers activity delivery', () => {
       try {
         const user = createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
-        const name = `shelf:${shelf._id}`
+        const name = getActorName(shelf)
+
         const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
         const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
         await signedReq({
@@ -79,7 +80,7 @@ describe('followers activity delivery', () => {
       try {
         const user = createUser({ fediversable: true })
         const { shelf } = await createShelf(user, { listing: 'network' })
-        const name = `shelf:${shelf._id}`
+        const name = getActorName(shelf)
         const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
         const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
         await signedReq({
@@ -96,7 +97,7 @@ describe('followers activity delivery', () => {
     it('should post an activity to inbox shelves followers', async () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
-      const name = `shelf:${shelf._id}`
+      const name = getActorName(shelf)
       const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
       const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
       const res = await signedReq({

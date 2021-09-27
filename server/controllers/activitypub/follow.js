@@ -17,7 +17,7 @@ module.exports = async params => {
     const { entity } = await validateEntity(requestedObjectName)
     object = { name: entity.uri }
     actor = { uri: actor }
-  } else if (requestedObjectName.startsWith('shelf:')) {
+  } else if (requestedObjectName.startsWith('shelf-')) {
     await validateShelf(requestedObjectName)
     actor = { uri: actor }
     object = { name: requestedObjectName }

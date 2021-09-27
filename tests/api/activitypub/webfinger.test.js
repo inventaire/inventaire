@@ -10,6 +10,7 @@ const { createHuman } = require('../fixtures/entities')
 const fullPublicHost = CONFIG.fullPublicHost()
 const { publicHost } = CONFIG
 const { createShelf } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 const endpoint = '/.well-known/webfinger?resource='
 
@@ -141,7 +142,8 @@ describe('activitypub:webfinger', () => {
       try {
         const user = createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
-        const resource = `acct:shelf:${shelf._id}@${publicHost}`
+        const name = getActorName(shelf)
+        const resource = `acct:${name}@${publicHost}`
         await publicReq('get', `${endpoint}${resource}`).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -153,7 +155,7 @@ describe('activitypub:webfinger', () => {
     it('should return an activitypub compliant webfinger', async () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
-      const name = `shelf:${shelf._id}`
+      const name = getActorName(shelf)
       const resource = `acct:${name}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res

@@ -15,7 +15,7 @@ const controller = async ({ resource }) => {
   if (isEntityUri(name)) {
     const entity = await getEntityByUri({ uri: name })
     if (entity) return formatWebfinger(entity.uri)
-  } else if (name.startsWith('shelf:')) {
+  } else if (name.startsWith('shelf-')) {
     await validateShelf(name)
     return formatWebfinger(name)
   } else if (isUsername(name)) {

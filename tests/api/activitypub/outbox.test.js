@@ -12,6 +12,7 @@ const endpoint = '/api/activitypub?action=outbox&name='
 const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -235,7 +236,7 @@ describe('outbox', () => {
   describe('shelves', () => {
     it('reject invalid shelf id', async () => {
       try {
-        const outboxUrl = `${endpoint}shelf:foo`
+        const outboxUrl = `${endpoint}shelf-foo`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -248,7 +249,8 @@ describe('outbox', () => {
       try {
         const user = createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
-        const outboxUrl = `${endpoint}shelf:${shelf._id}`
+        const name = getActorName(shelf)
+        const outboxUrl = `${endpoint}${name}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -261,7 +263,8 @@ describe('outbox', () => {
       try {
         const user = createUser({ fediversable: true })
         const { shelf } = await createShelf(user, { listing: 'network' })
-        const outboxUrl = `${endpoint}shelf:${shelf._id}`
+        const name = getActorName(shelf)
+        const outboxUrl = `${endpoint}${name}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -273,7 +276,8 @@ describe('outbox', () => {
     it('should return a first page URL', async () => {
       const { shelf } = await createShelfWithItem({}, null)
       await wait(debounceTime + 50)
-      const outboxUrl = `${endpoint}shelf:${shelf._id}`
+      const name = getActorName(shelf)
+      const outboxUrl = `${endpoint}${name}`
       const res = await publicReq('get', outboxUrl)
       const fullHostUrl = `${host}${outboxUrl}`
       decodeURIComponent(res.id).should.equal(fullHostUrl)
@@ -285,7 +289,7 @@ describe('outbox', () => {
 
     it('should return content with items link', async () => {
       const { shelf, item } = await createShelfWithItem({}, null)
-      const name = `shelf:${shelf._id}`
+      const name = getActorName(shelf)
       await wait(debounceTime + 50)
       const outboxUrl = `${endpoint}${name}&offset=0`
       const res = await publicReq('get', outboxUrl)
