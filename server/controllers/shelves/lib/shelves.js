@@ -33,7 +33,7 @@ const shelves_ = module.exports = {
   },
   addItems: async (ids, itemsIds, userId) => {
     const docs = await updateShelvesItems('addShelves', ids, userId, itemsIds)
-    emit('shelves:update', ids)
+    await emit('shelves:update', ids)
     return docs
   },
   removeItems: (ids, itemsIds, userId) => {

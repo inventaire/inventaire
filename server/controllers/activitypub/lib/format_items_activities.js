@@ -8,6 +8,7 @@ const maxLinksToDisplay = 3
 module.exports = {
   createItemsNote: ({ allActivitiesItems, lang, name, actor, parentLink }) => async activityDoc => {
     const { since, until } = activityDoc.object.items
+    // todo: pre-sorting the items per range
     const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
 
     if (publicRangeItems.length === 0) return

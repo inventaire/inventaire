@@ -18,7 +18,7 @@ module.exports = () => {
     return debouncedActivities[userId]()
   })
   radio.on('shelves:update', shelvesIds => {
-    Promise.all(shelvesIds.map(debounceActivities))
+    return Promise.all(shelvesIds.map(debounceActivities))
   })
   radio.on('patch:created', _deliverEntityActivitiesFromPatch)
 }
@@ -65,7 +65,7 @@ const debounceActivities = async shelfId => {
 }
 
 const _deliverEntityActivitiesFromPatch = patch => {
-  deliverEntityActivitiesFromPatch(patch)
+  return deliverEntityActivitiesFromPatch(patch)
   .catch(_.Error('create_activities_on_entities_updates err'))
 }
 
