@@ -1,7 +1,7 @@
 const { rawRequest } = require('../utils/request')
 const { signRequest } = require('controllers/activitypub/lib/security')
-const { getRandomBytes, keyPair } = require('lib/crypto')
-const { generateKeyPair } = keyPair
+const { getSharedKeyPair } = require('controllers/activitypub/lib/shared_key_pair')
+const { getRandomBytes } = require('lib/crypto')
 const express = require('express')
 const { createUsername } = require('../fixtures/users')
 const makeUrl = require('controllers/activitypub/lib/make_url')
@@ -45,7 +45,7 @@ const createActivity = (params = {}) => {
 }
 
 const createRemoteActivityPubServerUser = async () => {
-  const { publicKey, privateKey } = await generateKeyPair()
+  const { publicKey, privateKey } = await getSharedKeyPair()
   const username = createUsername()
   const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const user = {
