@@ -6,6 +6,8 @@ const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/act
 const { wait } = require('lib/promises')
 const requests_ = require('lib/requests')
 const { createHuman } = require('../fixtures/entities')
+const { createShelf } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 describe('activitypub:inbox:Follow', () => {
   describe('users', () => {
@@ -103,6 +105,23 @@ describe('activitypub:inbox:Follow', () => {
       })
       res.statusCode.should.equal(200)
       const activities = await getFollowActivitiesByObject(uri)
+      activities.length.should.equal(1)
+    })
+  })
+
+  describe('shelf', () => {
+    it('should create a Follow activity', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = getActorName(shelf)
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const res = await signedReq({
+        object: actorUrl,
+        url: inboxUrl
+      })
+      res.statusCode.should.equal(200)
+      const activities = await getFollowActivitiesByObject(name)
       activities.length.should.equal(1)
     })
   })
