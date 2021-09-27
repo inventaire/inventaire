@@ -5,7 +5,7 @@ const radio = require('lib/radio')
 const { audit: auditIsbn } = require('isbn3')
 
 module.exports = {
-  post: (req, res) => {
+  post: async (req, res) => {
     const { user, body } = req
     const { subject, message, uris, unknownUser } = body
     let { context } = body
@@ -30,7 +30,7 @@ module.exports = {
 
     if (!automaticReport || isNewAutomaticReport(subject)) {
       _.log({ subject, message, uris, unknownUser, context }, 'sending feedback')
-      radio.emit('received:feedback', subject, message, user, unknownUser, uris, context)
+      await radio.emit('received:feedback', subject, message, user, unknownUser, uris, context)
     } else {
       _.info(subject, 'not re-sending automatic report')
     }

@@ -24,14 +24,12 @@ const transactions_ = module.exports = {
     return db.viewByKey('byUserAndItem', [ userId, itemId ])
   },
 
-  create: (itemDoc, ownerDoc, requesterDoc) => {
+  create: async (itemDoc, ownerDoc, requesterDoc) => {
     const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
     _.log(transaction, 'transaction')
-    return db.post(transaction)
-    .then(couchRes => {
-      radio.emit('transaction:request', couchRes.id)
-      return couchRes
-    })
+    const couchRes = await db.post(transaction)
+    await radio.emit('transaction:request', couchRes.id)
+    return couchRes
   },
 
   addMessage: (userId, message, transactionId) => {

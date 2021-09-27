@@ -40,11 +40,11 @@ module.exports = (user, group, emails, message) => {
   .catch(_.Error('send invitations err'))
 }
 
-const triggerInvitation = (user, group, emails, message) => {
+const triggerInvitation = async (user, group, emails, message) => {
   if (group) {
-    radio.emit('send:group:email:invitations', user, group, emails, message)
+    await radio.emit('send:group:email:invitations', user, group, emails, message)
   } else {
-    radio.emit('send:email:invitations', user, emails, message)
+    await radio.emit('send:email:invitations', user, emails, message)
   }
 }
 

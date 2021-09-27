@@ -14,19 +14,17 @@ const tokenLength = 32
 module.exports = {
   tokenLength,
 
-  sendValidationEmail: user => {
+  sendValidationEmail: async user => {
     if (user.validEmail) {
       const log = _.pick(user, [ '_id', 'creationStrategy' ])
       _.warn(log, 'email was already validated')
       return user
     }
 
-    return getTokenData()
-    .then(([ token, tokenHash ]) => {
-      radio.emit('validation:email', user, token)
-      wrappedUpdate(user._id, 'emailValidation', tokenHash)
-      return user
-    })
+    const [ token, tokenHash ] = await getTokenData()
+    await radio.emit('validation:email', user, token)
+    await wrappedUpdate(user._id, 'emailValidation', tokenHash)
+    return user
   },
 
   confirmEmailValidity: (email, token) => {
@@ -38,13 +36,11 @@ module.exports = {
     })
   },
 
-  sendResetPasswordEmail: user => {
-    return getTokenData()
-    .then(([ token, tokenHash ]) => {
-      radio.emit('reset:password:email', user, token)
-      wrappedUpdate(user._id, 'token', tokenHash)
-      return user
-    })
+  sendResetPasswordEmail: async user => {
+    const [ token, tokenHash ] = await getTokenData()
+    await radio.emit('reset:password:email', user, token)
+    await wrappedUpdate(user._id, 'token', tokenHash)
+    return user
   },
 
   openPasswordUpdateWindow: user => {
