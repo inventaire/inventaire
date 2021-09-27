@@ -10,7 +10,7 @@ const { jsonBodyParser } = require('server/middlewares/content')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
-  const { keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
+  const { id, username, keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
       actor: keyId,
@@ -24,7 +24,11 @@ const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
   const params = { headers }
   if (method === 'post') params.body = body
   const res = await rawRequest(method, url, params)
-  return Object.assign(res, { remoteHost: origin })
+  return Object.assign(res, {
+    remoteHost: origin,
+    remoteUserId: id,
+    remoteUsername: username,
+  })
 }
 
 const createActivity = (params = {}) => {
@@ -46,6 +50,7 @@ const createRemoteActivityPubServerUser = async () => {
   const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const user = {
     id: actorUrl,
+    actor: actorUrl,
     username,
     publicKey: {
       id: `${actorUrl}#main-key`,
@@ -53,7 +58,7 @@ const createRemoteActivityPubServerUser = async () => {
       publicKeyPem: publicKey
     },
     privateKey,
-    inbox: origin + inboxEndpoint,
+    inbox: `${origin}${inboxEndpoint}?username=${username}`,
   }
   remoteActivityPubServerUsers[user.username] = user
   return user
@@ -66,10 +71,10 @@ const getSomeRemoteServerUser = async emitterUser => {
   emitterUser = emitterUser || await createRemoteActivityPubServerUser()
   removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
   const { origin } = removeActivityPubServer
-  const { username, privateKey } = emitterUser
+  const { id, username, privateKey } = emitterUser
   const query = { name: username }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
-  return { username, keyId, privateKey, origin }
+  return { id, username, keyId, privateKey, origin }
 }
 
 const remoteActivityPubServerUsers = {}
@@ -98,9 +103,8 @@ const startActivityPubServer = () => new Promise(resolve => {
   const inboxes = {}
 
   app.post(inboxEndpoint, async (req, res) => {
+    const { username } = req.query
     const activity = req.body
-    const { actor } = activity
-    const username = new URL(actor).searchParams.get('name')
     inboxes[username] = inboxes[username] || []
     inboxes[username].unshift(activity)
     res.json({ ok: true })

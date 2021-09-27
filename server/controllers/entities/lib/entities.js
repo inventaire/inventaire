@@ -9,6 +9,7 @@ const validateAndFormatClaims = require('./validate_and_format_claims')
 const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
 const getEntityType = require('./get_entity_type')
 const { getUrlFromImageHash } = require('lib/images')
+const { emit } = require('lib/radio')
 
 const { validateProperty } = require('./properties/validations')
 
@@ -93,7 +94,8 @@ const entities_ = module.exports = {
     const docAfterUpdate = await db.putAndReturn(updatedDoc)
 
     try {
-      await patches_.create(params)
+      const patch = await patches_.create(params)
+      await emit('patch:created', patch)
     } catch (err) {
       err.type = 'patch_creation_failed'
       err.context = err.context || {}

@@ -1,15 +1,16 @@
 const _ = require('builders/utils')
-const formatActivitiesDocs = require('./format_activities_docs')
 const requests_ = require('lib/requests')
 const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
 const { getFollowActivitiesByObject } = require('./activities')
 const assert_ = require('lib/utils/assert_types')
 const { publicHost } = require('config')
+const { getSharedKeyPair } = require('./shared_key_pair')
 // Arbitrary timeout
 const timeout = 30 * 1000
 
-const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
+const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) => {
+  assert_.string(actorName)
   assert_.string(recipientActorUri)
   assert_.object(activity)
   let actorRes
@@ -23,8 +24,9 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
     return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
   }
 
-  const { stableUsername, privateKey } = user
-  const keyId = `acct:${stableUsername}@${publicHost}`
+  const keyId = `acct:${actorName}@${publicHost}`
+
+  const { privateKey } = await getSharedKeyPair()
 
   const body = Object.assign({}, activity)
   body.to = [ recipientActorUri, 'Public' ]
@@ -38,14 +40,12 @@ const signAndPostActivity = async ({ user, recipientActorUri, activity }) => {
 }
 
 // TODO: use sharedInbox
-const postActivityToUserFollowersInboxes = user => async activityDoc => {
-  const followActivities = await getFollowActivitiesByObject(user.stableUsername)
-  const [ activity ] = await formatActivitiesDocs([ activityDoc ], user)
-  if (!activity) return
+const postActivityToActorFollowersInboxes = async ({ activity, actorName }) => {
+  const followActivities = await getFollowActivitiesByObject(actorName)
   const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
-    return signAndPostActivity({ recipientActorUri: uri, activity, user })
+    return signAndPostActivity({ actorName, recipientActorUri: uri, activity })
   }))
 }
 
-module.exports = { signAndPostActivity, postActivityToUserFollowersInboxes }
+module.exports = { signAndPostActivity, postActivityToActorFollowersInboxes }
