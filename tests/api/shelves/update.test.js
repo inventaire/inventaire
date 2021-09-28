@@ -79,7 +79,7 @@ describe('shelves:update', () => {
 
   it('should throw when no new attribute to update', async () => {
     try {
-      const shelf = await createShelf(getUser())
+      const { shelf } = await createShelf(getUser())
       const params = {
         shelf: shelf._id,
         name: shelf.name
@@ -93,7 +93,7 @@ describe('shelves:update', () => {
   })
 
   it('should be able to remove a shelf description', async () => {
-    const shelf = await createShelf()
+    const { shelf } = await createShelf()
     const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       description: null,

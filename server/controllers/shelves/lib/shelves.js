@@ -5,6 +5,7 @@ const items_ = require('controllers/items/lib/items')
 const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 const db = require('db/couchdb/base')('shelves')
 const error_ = require('lib/error/error')
+const { emit } = require('lib/radio')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
@@ -30,8 +31,10 @@ const shelves_ = module.exports = {
     const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
     return db.putAndReturn(updatedShelf)
   },
-  addItems: (ids, itemsIds, userId) => {
-    return updateShelvesItems('addShelves', ids, userId, itemsIds)
+  addItems: async (ids, itemsIds, userId) => {
+    const docs = await updateShelvesItems('addShelves', ids, userId, itemsIds)
+    await emit('shelves:update', ids)
+    return docs
   },
   removeItems: (ids, itemsIds, userId) => {
     return updateShelvesItems('deleteShelves', ids, userId, itemsIds)
@@ -61,6 +64,7 @@ const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   const shelves = await shelves_.byIds(shelvesIds)
   shelves_.validateOwnership(userId, shelves)
   await items_.updateShelves(action, shelvesIds, userId, itemsIds)
+  // todo: make it fast: create a param which explicits if shelves are needed
   return shelves_.byIdsWithItems(shelvesIds, userId)
 }
 

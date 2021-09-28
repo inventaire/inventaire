@@ -1,12 +1,12 @@
 const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const { byActorName, getActivitiesCountByUsername } = require('controllers/activitypub/lib/activities')
+const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
 const makeUrl = require('./lib/make_url')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
+const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const patches_ = require('controllers/entities/lib/patches')
 const formatEntityPatchesActivities = require('./lib/format_entity_patches_activities')
+const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
 
 const sanitization = {
   name: {},
@@ -24,6 +24,8 @@ const controller = async params => {
   const { name } = params
   if (isEntityUri(name)) {
     return getEntityActivities(params)
+  } else if (name.startsWith('shelf-')) {
+    return getShelfActivities(params)
   } else if (isUsername(name)) {
     return getUserActivities(params)
   } else {
@@ -31,17 +33,22 @@ const controller = async params => {
   }
 }
 
-const getEntityActivities = async ({ name: uri, offset, limit }) => {
-  const entity = await getEntityByUri({ uri })
-  if (!entity) throw error_.notFound({ uri })
-  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: uri } })
-  const baseOutbox = {
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
-    id: fullOutboxUrl,
-    type: 'OrderedCollection',
-    first: `${fullOutboxUrl}&offset=0`,
-    next: `${fullOutboxUrl}&offset=0`
+const getShelfActivities = async ({ name, offset, limit }) => {
+  const { shelf } = await validateShelf(name)
+  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name } })
+  const baseOutbox = getBaseOutbox(fullOutboxUrl)
+  if (offset == null) {
+    baseOutbox.totalItems = await getActivitiesCountByName(name)
+    return baseOutbox
+  } else {
+    return buildPaginatedShelfOutbox(shelf, name, offset, limit, baseOutbox)
   }
+}
+
+const getEntityActivities = async ({ name: uri, offset, limit }) => {
+  const { entity } = await validateEntity(uri)
+  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: uri } })
+  const baseOutbox = getBaseOutbox(fullOutboxUrl)
   if (offset == null) {
     baseOutbox.totalItems = await patches_.getCountByClaimValue(uri)
     return baseOutbox
@@ -49,10 +56,18 @@ const getEntityActivities = async ({ name: uri, offset, limit }) => {
     return buildPaginatedEntityOutbox(entity, offset, limit, baseOutbox)
   }
 }
+const getBaseOutbox = url => {
+  return {
+    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    id: url,
+    type: 'OrderedCollection',
+    first: `${url}&offset=0`,
+    next: `${url}&offset=0`
+  }
+}
 
 const getUserActivities = async ({ name, offset, limit }) => {
-  const user = await user_.findOneByUsername(name)
-  if (!user || !user.fediversable) throw error_.notFound({ name })
+  const { user } = await validateUser(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
   const baseOutbox = {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
@@ -64,7 +79,7 @@ const getUserActivities = async ({ name, offset, limit }) => {
   if (offset == null) {
     // Mimick Mastodon, which only indicates the totalItems count when fetching
     // type=OrderedCollection page
-    baseOutbox.totalItems = await getActivitiesCountByUsername(user.stableUsername)
+    baseOutbox.totalItems = await getActivitiesCountByName(user.stableUsername)
     return baseOutbox
   } else {
     return buildPaginatedUserOutbox(user, offset, limit, baseOutbox)
@@ -85,6 +100,16 @@ const buildPaginatedUserOutbox = async (user, offset, limit, outbox) => {
   const { stableUsername } = user
   const activitiesDocs = await byActorName({ name: stableUsername, offset, limit })
   outbox.orderedItems = await formatUserItemsActivities(activitiesDocs, user)
+  return outbox
+}
+
+const buildPaginatedShelfOutbox = async (shelf, name, offset, limit, outbox) => {
+  const { id: fullOutboxUrl } = outbox
+  outbox.type = 'OrderedCollectionPage'
+  outbox.partOf = fullOutboxUrl
+  outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
+  const activitiesDocs = await byActorName({ name, offset, limit })
+  outbox.orderedItems = await formatShelfItemsActivities(activitiesDocs, shelf._id, name)
   return outbox
 }
 

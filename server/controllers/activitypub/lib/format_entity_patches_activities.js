@@ -25,7 +25,6 @@ const formatEntityPatchActivity = async row => {
 
   const subjectLabel = getBestLangValue('en', subjectEntity.originalLang, subjectEntity.labels).value
   const objectLabel = getBestLangValue('en', objectEntity.originalLang, objectEntity.labels).value
-
   const id = `${host}/api/activitypub?action=activity&id=${patchId}`
 
   const actor = makeUrl({ params: { action: 'actor', name: objectUri } })

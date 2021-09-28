@@ -11,6 +11,8 @@ const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
 const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
+const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -23,7 +25,7 @@ describe('outbox', () => {
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(404)
-        err.body.status_verbose.should.equal('not found')
+        err.body.status_verbose.should.equal('user is not on the fediverse')
       }
     })
 
@@ -60,7 +62,8 @@ describe('outbox', () => {
 
     it('should return content with items link', async () => {
       const user = createUser({ fediversable: true, language: 'it' })
-      const item = await createItem(user)
+      const details = 'details'
+      const item = await createItem(user, { details })
       const { username } = await user
       await wait(debounceTime + 500)
       const outboxUrl = `${endpoint}${username}&offset=0`
@@ -78,6 +81,7 @@ describe('outbox', () => {
       createActivity.id.should.startWith(activityEndpoint)
       createActivity.actor.should.equal(actorUrl)
       createActivity.object.content.should.containEql(item._id)
+      createActivity.object.content.should.containEql(details)
       createActivity.to.should.containEql('Public')
       createActivity.object.attachment.should.be.an.Array()
     })
@@ -226,6 +230,84 @@ describe('outbox', () => {
       const res2 = await publicReq('get', `${outboxUrl}&offset=1&limit=1`)
       res2.orderedItems.length.should.equal(1)
       new URL(res2.orderedItems[0].object.id).searchParams.get('id').should.containEql(workId1)
+    })
+  })
+
+  describe('shelves', () => {
+    it('reject invalid shelf id', async () => {
+      try {
+        const outboxUrl = `${endpoint}shelf-foo`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid shelf id')
+      }
+    })
+
+    it("reject if shelf's owner is not fediversable", async () => {
+      try {
+        const user = createUser({ fediversable: false })
+        const { shelf } = await createShelf(user)
+        const name = getActorName(shelf)
+        const outboxUrl = `${endpoint}${name}`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal("shelf's owner is not on the fediverse")
+      }
+    })
+
+    it('should not return network shelf', async () => {
+      try {
+        const user = createUser({ fediversable: true })
+        const { shelf } = await createShelf(user, { listing: 'network' })
+        const name = getActorName(shelf)
+        const outboxUrl = `${endpoint}${name}`
+        await publicReq('get', outboxUrl).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal('not found')
+      }
+    })
+
+    it('should return a first page URL', async () => {
+      const { shelf } = await createShelfWithItem({}, null)
+      await wait(debounceTime + 50)
+      const name = getActorName(shelf)
+      const outboxUrl = `${endpoint}${name}`
+      const res = await publicReq('get', outboxUrl)
+      const fullHostUrl = `${host}${outboxUrl}`
+      res.id.should.equal(fullHostUrl)
+      res.type.should.equal('OrderedCollection')
+      res.totalItems.should.equal(1)
+      res.first.should.equal(`${fullHostUrl}&offset=0`)
+      res.next.should.equal(`${fullHostUrl}&offset=0`)
+    })
+
+    it('should return content with items link', async () => {
+      const { shelf, item } = await createShelfWithItem({}, null)
+      const name = getActorName(shelf)
+      await wait(debounceTime + 50)
+      const outboxUrl = `${endpoint}${name}&offset=0`
+      const res = await publicReq('get', outboxUrl)
+      const fullHostUrl = `${host}${endpoint}${name}`
+      res.type.should.equal('OrderedCollectionPage')
+      res.partOf.should.equal(fullHostUrl)
+      res.first.should.equal(`${fullHostUrl}&offset=0`)
+      res.next.should.equal(`${fullHostUrl}&offset=10`)
+      res.orderedItems.should.be.an.Array()
+      res.orderedItems.length.should.equal(1)
+      const createActivity = res.orderedItems[0]
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const activityEndpoint = makeUrl({ params: { action: 'activity' } })
+      createActivity.id.should.startWith(activityEndpoint)
+      createActivity.actor.should.equal(actorUrl)
+      createActivity.object.content.should.containEql(item._id)
+      createActivity.to.should.containEql('Public')
+      createActivity.object.attachment.should.be.an.Array()
     })
   })
 })

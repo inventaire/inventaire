@@ -1,14 +1,9 @@
 const _ = require('builders/utils')
-const radio = require('lib/radio')
-const formatEntityPatchesActivities = require('./format_entity_patches_activities')
 const { postActivityToActorFollowersInboxes } = require('./post_activity')
+const formatEntityPatchesActivities = require('./format_entity_patches_activities')
 
-module.exports = () => {
-  radio.on('patch:created', _deliverEntityActivitiesFromPatch)
-}
-
-const _deliverEntityActivitiesFromPatch = patch => {
-  deliverEntityActivitiesFromPatch(patch)
+module.exports = patch => {
+  return deliverEntityActivitiesFromPatch(patch)
   .catch(_.Error('create_activities_on_entities_updates err'))
 }
 

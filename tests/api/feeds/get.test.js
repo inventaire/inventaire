@@ -132,7 +132,7 @@ describe('feeds:get', () => {
 
   describe('shelf', () => {
     it('should return a shelf RSS feed', async () => {
-      const shelf = await createShelf(getUser(), { listing: 'public' })
+      const { shelf } = await createShelf(getUser(), { listing: 'public' })
       const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}`)
       body.startsWith('<?xml').should.be.true()
     })

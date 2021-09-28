@@ -32,7 +32,7 @@ describe('items:inventory-view', () => {
 
   it('should return an inventory-view for user items without shelf', async () => {
     const user = await createUserWithItems()
-    const shelf = await createShelf(user)
+    const { shelf } = await createShelf(user)
     const { itemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
     const itemsCount = itemsByDate.length
     const allButOneItemsIds = itemsByDate.slice(0, itemsCount - 1)
@@ -64,7 +64,7 @@ describe('items:inventory-view', () => {
   })
 
   it('should return a shelf inventory-view', async () => {
-    const shelf = await createShelf()
+    const { shelf } = await createShelf()
     const res = await publicReq('get', `${endpoint}&shelf=${shelf._id}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()

@@ -9,6 +9,8 @@ const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const fullPublicHost = CONFIG.fullPublicHost()
 const { publicHost } = CONFIG
+const { createShelf } = require('../fixtures/shelves')
+const { getActorName } = require('../utils/shelves')
 
 const endpoint = '/.well-known/webfinger?resource='
 
@@ -131,9 +133,38 @@ describe('activitypub:webfinger', () => {
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
-      firstLink.should.be.an.Object()
-      firstLink.type.should.equal('application/activity+json')
       firstLink.href.should.equal(actorUrl)
+    })
+  })
+
+  describe('shelves', () => {
+    it('should reject if user is not on the fediverse', async () => {
+      try {
+        const user = createUser({ fediversable: false })
+        const { shelf } = await createShelf(user)
+        const name = getActorName(shelf)
+        const resource = `acct:${name}@${publicHost}`
+        await publicReq('get', `${endpoint}${resource}`).then(shouldNotBeCalled)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal("shelf's owner is not on the fediverse")
+      }
+    })
+
+    it('should return an activitypub compliant webfinger', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = getActorName(shelf)
+      const resource = `acct:${name}@${publicHost}`
+      const res = await publicReq('get', `${endpoint}${resource}`)
+      const { subject, aliases, links } = res
+      res.should.be.an.Object()
+      subject.should.equal(resource)
+      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${name}`
+      decodeURIComponent(aliases[0]).should.equal(actorUrl)
+      const firstLink = _.find(links, { rel: 'self' })
+      decodeURIComponent(firstLink.href).should.equal(actorUrl)
     })
   })
 })

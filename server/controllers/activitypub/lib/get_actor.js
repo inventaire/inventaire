@@ -1,15 +1,15 @@
 const CONFIG = require('config')
 const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
+const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const { getSharedKeyPair } = require('./shared_key_pair')
-
 const host = CONFIG.fullPublicHost()
 
 module.exports = name => {
   if (isEntityUri(name)) {
     return getEntityActor(name)
+  } else if (name.startsWith('shelf-')) {
+    return getShelfActor(name)
   } else if (isUsername(name)) {
     return getUserActor(name)
   } else {
@@ -17,9 +17,18 @@ module.exports = name => {
   }
 }
 
-const getUserActor = async requestedUsername => {
-  const user = await user_.findOneByUsername(requestedUsername)
-  if (!user || !user.fediversable) throw error_.notFound({ requestedUsername })
+const getShelfActor = async name => {
+  const { shelf } = await validateShelf(name)
+  const { description } = shelf
+  return buildActorObject({
+    name,
+    preferredUsername: name,
+    summary: description
+  })
+}
+
+const getUserActor = async username => {
+  const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   return buildActorObject({
     name: stableUsername,
@@ -30,7 +39,7 @@ const getUserActor = async requestedUsername => {
 }
 
 const getEntityActor = async uri => {
-  const entity = await getEntityByUri({ uri })
+  const { entity } = await validateEntity(uri)
   const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
   return buildActorObject({
     name: uri,

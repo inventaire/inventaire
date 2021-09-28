@@ -22,5 +22,6 @@ module.exports = {
       items: itemsIds
     })
     return shelves
-  }
+  },
+  getActorName: shelf => `shelf-${shelf._id}`
 }

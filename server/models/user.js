@@ -161,15 +161,6 @@ User.setStableUsername = user => {
   return user
 }
 
-User.addKeyPair = keyPair => user => {
-  const { publicKey, privateKey } = keyPair
-  assert_.string(publicKey)
-  assert_.string(privateKey)
-  user.publicKey = publicKey
-  user.privateKey = privateKey
-  return user
-}
-
 User.formatters = {
   position: truncateLatLng
 }
