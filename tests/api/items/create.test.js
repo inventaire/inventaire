@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 require('should')
 const { Wait, wait } = require('lib/promises')
-const { authReq, getUser, getUserB } = require('../utils/utils')
+const { authReq, getUser, getUserB, customAuthReq } = require('../utils/utils')
 const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
@@ -180,8 +180,9 @@ describe('items:create', () => {
   describe('shelves', () => {
     it('should create an item with a shelf', async () => {
       const editionUri = await editionUriPromise
-      const { shelf } = await createShelf()
-      const item = await authReq('post', '/api/items', {
+      const user = await getUser()
+      const { shelf } = await createShelf(user)
+      const item = await customAuthReq(user, 'post', '/api/items', {
         entity: editionUri,
         shelves: [ shelf._id ]
       })
