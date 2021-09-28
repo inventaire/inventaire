@@ -63,11 +63,11 @@ const declareHostError = host => {
 
 const backup = () => {
   db.put(dbKey, banData)
-  .then(() => _.success('hosts bans data backup'))
+  // .then(() => _.success('hosts bans data backup'))
   .catch(_.Error('hosts bans data backup err'))
 }
 
-const lazyBackup = serverMode ? _.debounce(backup, 10 * 1000) : _.noop
+const lazyBackup = serverMode ? _.debounce(backup, 60 * 1000) : _.noop
 
 if (serverMode) restoreBanData()
 
