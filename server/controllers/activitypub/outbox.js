@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
-const { makeUrl, dehyphenizeEntityUri } = require('./lib/helpers')
+const { makeUrl, getEntityUriFromActorName } = require('./lib/helpers')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
@@ -22,7 +22,7 @@ const sanitization = {
 
 const controller = async params => {
   const { name } = params
-  if (isEntityUri(dehyphenizeEntityUri(name))) {
+  if (isEntityUri(getEntityUriFromActorName(name))) {
     return getEntityActivities(params)
   } else if (name.startsWith('shelf-')) {
     return getShelfActivities(params)

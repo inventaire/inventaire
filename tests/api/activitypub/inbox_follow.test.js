@@ -8,7 +8,7 @@ const requests_ = require('lib/requests')
 const { createHuman } = require('../fixtures/entities')
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
-const { hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
+const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('activitypub:inbox:Follow', () => {
   describe('users', () => {
@@ -98,7 +98,7 @@ describe('activitypub:inbox:Follow', () => {
 
     it('should create a Follow activity', async () => {
       const { uri } = await createHuman()
-      const name = hyphenizeEntityUri(uri)
+      const name = getEntityActorName(uri)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const res = await signedReq({

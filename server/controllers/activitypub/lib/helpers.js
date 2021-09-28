@@ -10,7 +10,7 @@ const makeUrl = ({ origin, endpoint, params }) => {
   return url
 }
 
-const hyphenizeEntityUri = uri => uri.replace(':', '-')
-const dehyphenizeEntityUri = uri => uri.replace('-', ':')
+const getEntityActorName = uri => uri.replace(':', '-')
+const getEntityUriFromActorName = name => name.replace('-', ':')
 
-module.exports = { makeUrl, hyphenizeEntityUri, dehyphenizeEntityUri }
+module.exports = { makeUrl, getEntityActorName, getEntityUriFromActorName }

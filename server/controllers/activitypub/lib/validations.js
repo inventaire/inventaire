@@ -3,7 +3,7 @@ const { isCouchUuid } = require('lib/boolean_validations')
 const user_ = require('controllers/user/lib/user')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { dehyphenizeEntityUri, hyphenizeEntityUri } = require('./helpers')
+const { getEntityUriFromActorName, getEntityActorName } = require('./helpers')
 
 module.exports = {
   validateShelf: async name => {
@@ -23,11 +23,11 @@ module.exports = {
     return { user }
   },
   validateEntity: async name => {
-    const uri = dehyphenizeEntityUri(name)
+    const uri = getEntityUriFromActorName(name)
     const entity = await getEntityByUri({ uri })
     if (!entity) throw error_.notFound({ uri })
     // Use canonical uri
-    entity.actorName = hyphenizeEntityUri(entity.uri)
+    entity.actorName = getEntityActorName(entity.uri)
     return { entity }
   }
 }

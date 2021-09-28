@@ -11,7 +11,7 @@ const { createHuman, createWork, addAuthor } = require('../fixtures/entities')
 const { createShelf } = require('../fixtures/shelves')
 const { rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { addItemsToShelf, getActorName } = require('../utils/shelves')
-const { hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
+const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
@@ -38,8 +38,8 @@ describe('followers activity delivery', () => {
     it('should post an activity to inbox', async () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
-      const followedActorUrl = makeUrl({ params: { action: 'actor', name: hyphenizeEntityUri(authorUri) } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: hyphenizeEntityUri(authorUri) } })
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name: getEntityActorName(authorUri) } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: getEntityActorName(authorUri) } })
       const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,

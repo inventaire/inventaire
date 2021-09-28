@@ -13,7 +13,7 @@ const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
-const { hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
+const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -181,7 +181,7 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
+      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', outboxUrl)
       const fullHostUrl = `${host}${outboxUrl}`
       res.id.should.equal(fullHostUrl)
@@ -195,7 +195,7 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
+      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       await wait(500)
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const fullHostUrl = `${host}${outboxUrl}`
@@ -206,7 +206,7 @@ describe('outbox', () => {
       res.orderedItems.should.be.an.Array()
       res.orderedItems.length.should.equal(1)
       const createActivity = res.orderedItems[0]
-      const actorUrl = makeUrl({ params: { action: 'actor', name: hyphenizeEntityUri(authorUri) } })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: getEntityActorName(authorUri) } })
       const activityEndpoint = makeUrl({ params: { action: 'activity' } })
       createActivity.id.should.startWith(activityEndpoint)
       createActivity.actor.should.equal(actorUrl)
@@ -223,7 +223,7 @@ describe('outbox', () => {
       const { uri: workUri2, _id: workId2 } = await createWork()
       await addAuthor(workUri, authorUri)
       await addAuthor(workUri2, authorUri)
-      const outboxUrl = `${endpoint}${hyphenizeEntityUri(authorUri)}`
+      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       await wait(500)
       const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
       res1.orderedItems.length.should.equal(1)

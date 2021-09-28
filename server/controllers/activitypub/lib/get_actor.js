@@ -3,11 +3,11 @@ const error_ = require('lib/error/error')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
-const { dehyphenizeEntityUri } = require('./helpers')
+const { getEntityUriFromActorName } = require('./helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = name => {
-  if (isEntityUri(dehyphenizeEntityUri(name))) {
+  if (isEntityUri(getEntityUriFromActorName(name))) {
     return getEntityActor(name)
   } else if (name.startsWith('shelf-')) {
     return getShelfActor(name)

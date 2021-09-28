@@ -1,7 +1,7 @@
 require('should')
 const { createUser, createUsername } = require('../fixtures/users')
 const { createHuman, createEdition } = require('../fixtures/entities')
-const { makeUrl, hyphenizeEntityUri } = require('controllers/activitypub/lib/helpers')
+const { makeUrl, getEntityActorName } = require('controllers/activitypub/lib/helpers')
 const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
@@ -73,7 +73,7 @@ describe('activitypub:actor', () => {
   describe('entities', () => {
     it('should return an entity actor', async () => {
       const { uri } = await createHuman()
-      const name = hyphenizeEntityUri(uri)
+      const name = getEntityActorName(uri)
       const receiverUrl = makeUrl({ params: { action: 'actor', name } })
       const receiverInboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const receiverOutboxUrl = makeUrl({ params: { action: 'outbox', name } })
@@ -89,7 +89,7 @@ describe('activitypub:actor', () => {
 
     it('should set an image when one is available', async () => {
       const { uri, image } = await createEdition()
-      const name = hyphenizeEntityUri(uri)
+      const name = getEntityActorName(uri)
       const receiverUrl = makeUrl({ params: { action: 'actor', name } })
       const body = await publicReq('get', receiverUrl)
       body.icon.url.should.endWith(image.url)
