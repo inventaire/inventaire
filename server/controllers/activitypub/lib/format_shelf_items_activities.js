@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const makeUrl = require('./make_url')
+const { makeUrl } = require('./helpers')
 const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
 const items_ = require('controllers/items/lib/items')
 

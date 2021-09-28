@@ -7,6 +7,7 @@ const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
+const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {
@@ -75,15 +76,16 @@ describe('activitypub:inbox:Undo', () => {
   describe('entities', () => {
     it('should delete activity', async () => {
       const { uri } = await createHuman()
-      const actorUrl = makeUrl({ params: { action: 'actor', name: uri } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: uri } })
+      const name = getEntityActorName(uri)
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const emitterUser = await createRemoteActivityPubServerUser()
       await signedReq({
         emitterUser,
         object: actorUrl,
         url: inboxUrl
       })
-      const activities = await getFollowActivitiesByObject(uri)
+      const activities = await getFollowActivitiesByObject(name)
       const activity = activities[0]
       await signedReq({
         emitterUser,
@@ -92,7 +94,7 @@ describe('activitypub:inbox:Undo', () => {
         object: activity.externalId,
       })
       await wait(500)
-      const activities2 = await getFollowActivitiesByObject(uri)
+      const activities2 = await getFollowActivitiesByObject(name)
       activities2.length.should.equal(0)
     })
   })

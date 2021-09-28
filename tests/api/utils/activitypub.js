@@ -4,7 +4,7 @@ const { getSharedKeyPair } = require('controllers/activitypub/lib/shared_key_pai
 const { getRandomBytes } = require('lib/crypto')
 const express = require('express')
 const { createUsername } = require('../fixtures/users')
-const makeUrl = require('controllers/activitypub/lib/make_url')
+const { makeUrl } = require('controllers/activitypub/lib/helpers')
 const requestsLogger = require('server/middlewares/requests_logger')
 const { jsonBodyParser } = require('server/middlewares/content')
 

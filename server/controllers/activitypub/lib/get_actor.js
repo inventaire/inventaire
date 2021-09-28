@@ -3,10 +3,11 @@ const error_ = require('lib/error/error')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
+const { getEntityUriFromActorName } = require('./helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = name => {
-  if (isEntityUri(name)) {
+  if (isEntityUri(getEntityUriFromActorName(name))) {
     return getEntityActor(name)
   } else if (name.startsWith('shelf-')) {
     return getShelfActor(name)
@@ -38,11 +39,11 @@ const getUserActor = async username => {
   })
 }
 
-const getEntityActor = async uri => {
-  const { entity } = await validateEntity(uri)
+const getEntityActor = async name => {
+  const { entity } = await validateEntity(name)
   const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
   return buildActorObject({
-    name: uri,
+    name: entity.actorName,
     preferredUsername: label,
     imagePath: entity.image.url
   })
