@@ -41,10 +41,9 @@ const getUserActor = async username => {
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
-  const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
   return buildActorObject({
     name: entity.actorName,
-    preferredUsername: label,
+    preferredUsername: entity.actorName,
     imagePath: entity.image.url
   })
 }

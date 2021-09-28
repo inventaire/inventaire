@@ -85,6 +85,7 @@ describe('activitypub:actor', () => {
       body.inbox.should.equal(receiverInboxUrl)
       body.outbox.should.equal(receiverOutboxUrl)
       body.publicKey.owner.should.equal(receiverUrl)
+      body.preferredUsername.should.equal(name)
     })
 
     it('should set an image when one is available', async () => {
