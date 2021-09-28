@@ -27,12 +27,13 @@ const byClaimValueAndDate = doc => {
       const [ , section, property, arrayIndex ] = operation.path.split('/')
       if (section === 'claims') {
         if (arrayIndex != null) {
-          if (operation.value.startsWith('wd:') || operation.value.startsWith('inv:')) {
+          const { value } = operation
+          if (typeof value === 'string' && (value.startsWith('wd:') || value.startsWith('inv:'))) {
             rows.push({ id, key: [ operation.value, doc.timestamp ], value: property })
           }
         } else {
           for (const subvalue of operation.value) {
-            if (subvalue.startsWith('wd:') || subvalue.startsWith('inv:')) {
+            if (typeof subvalue === 'string' && (subvalue.startsWith('wd:') || subvalue.startsWith('inv:'))) {
               rows.push({ id, key: [ subvalue, doc.timestamp ], value: property })
             }
           }
