@@ -213,7 +213,7 @@ describe('outbox', () => {
       createActivity.type.should.equal('Create')
       createActivity.object.type.should.equal('Note')
       createActivity.object.content.should.startWith('<p>')
-      new URL(createActivity.object.id).searchParams.get('id').should.containEql(workId)
+      new URL(createActivity.object.id).searchParams.get('id').should.containEql(`inv-${workId}-`)
       createActivity.to.should.containEql('Public')
     })
 

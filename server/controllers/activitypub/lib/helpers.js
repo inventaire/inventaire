@@ -12,5 +12,15 @@ const makeUrl = ({ origin, endpoint, params }) => {
 
 const getEntityActorName = uri => uri.replace(':', '-')
 const getEntityUriFromActorName = name => name.replace('-', ':')
+const getActivityIdFromPatchId = (patchId, rowIndex) => `inv-${patchId.replace(':', '-')}-${rowIndex}`
 
-module.exports = { makeUrl, getEntityActorName, getEntityUriFromActorName }
+const activityIdPattern = /^inv-[0-9a-f]{32}-\d{1,3}-\d{1,3}$/
+const isEntityActivityId = activityId => activityIdPattern.test(activityId)
+
+module.exports = {
+  makeUrl,
+  getEntityActorName,
+  getEntityUriFromActorName,
+  getActivityIdFromPatchId,
+  isEntityActivityId,
+}
