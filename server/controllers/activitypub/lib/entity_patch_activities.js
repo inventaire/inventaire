@@ -17,7 +17,7 @@ const deliverEntityActivitiesFromPatch = async patch => {
 
 const getActivitiesFromPatch = async patch => {
   const rows = byClaimValueAndDate(patch)
-  if (rows.length === 0) return
+  if (rows.length === 0) return []
   return formatEntityPatchesActivities(rows)
 }
 
