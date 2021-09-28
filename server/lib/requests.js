@@ -5,7 +5,7 @@ const { wait } = require('lib/promises')
 const fetch = require('node-fetch')
 const error_ = require('lib/error/error')
 const { addContextToStack } = error_
-const { magenta } = require('chalk')
+const { magenta, green, cyan, yellow, red } = require('chalk')
 const { repository } = require('root/package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
 const { getAgent, insecureHttpsAgent } = require('./requests_agent')
@@ -44,9 +44,9 @@ const req = method => async (url, options = {}) => {
     }
   }
 
-  endReqTimer(timer)
-
   const { status: statusCode } = res
+
+  endReqTimer(timer, statusCode)
 
   // Always parse as text, even if JSON, as in case of an error in the JSON response
   // (such as HTML being retunred instead of JSON), it allows to include the actual response
@@ -98,10 +98,10 @@ const req = method => async (url, options = {}) => {
 const head = async (url, options = {}) => {
   completeOptions('head', options)
   const timer = startReqTimer('head', url, options)
-  const { status, headers } = await fetch(url, options)
-  endReqTimer(timer)
+  const { status: statusCode, headers } = await fetch(url, options)
+  endReqTimer(timer, statusCode)
   return {
-    statusCode: status,
+    statusCode,
     headers: formatHeaders(headers.raw())
   }
 }
@@ -157,10 +157,18 @@ const startReqTimer = (method, url, options) => {
   return [ reqTimerKey, startTime ]
 }
 
-const endReqTimer = ([ reqTimerKey, startTime ]) => {
+const endReqTimer = ([ reqTimerKey, startTime ], statusCode) => {
   if (!logOutgoingRequests) return
   const elapsed = coloredElapsedTime(startTime)
-  process.stdout.write(`${magenta(reqTimerKey)} ${elapsed}\n`)
+  const statusColor = getStatusColor(statusCode)
+  process.stdout.write(`${magenta(reqTimerKey)} ${statusColor(statusCode)} ${elapsed}\n`)
+}
+
+const getStatusColor = statusCode => {
+  if (statusCode < 300) return green
+  if (statusCode < 400) return cyan
+  if (statusCode < 500) return yellow
+  return red
 }
 
 module.exports = {
