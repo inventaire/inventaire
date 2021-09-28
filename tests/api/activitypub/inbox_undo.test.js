@@ -102,8 +102,8 @@ describe('activitypub:inbox:Undo', () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
-      const actorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
-      const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const emitterUser = await createRemoteActivityPubServerUser()
       await signedReq({
         emitterUser,

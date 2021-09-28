@@ -63,8 +63,8 @@ describe('followers activity delivery', () => {
         const { shelf } = await createShelf(user)
         const name = getActorName(shelf)
 
-        const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
-        const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
+        const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
+        const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
         await signedReq({
           url: inboxUrl,
           object: followedActorUrl,
@@ -81,8 +81,8 @@ describe('followers activity delivery', () => {
         const user = createUser({ fediversable: true })
         const { shelf } = await createShelf(user, { listing: 'network' })
         const name = getActorName(shelf)
-        const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
-        const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
+        const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
+        const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
         await signedReq({
           url: inboxUrl,
           object: followedActorUrl,
@@ -98,8 +98,8 @@ describe('followers activity delivery', () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
-      const followedActorUrl = decodeURIComponent(makeUrl({ params: { action: 'actor', name } }))
-      const inboxUrl = decodeURIComponent(makeUrl({ params: { action: 'inbox', name } }))
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const res = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
