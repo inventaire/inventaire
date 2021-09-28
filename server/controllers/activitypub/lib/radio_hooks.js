@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const { activitiesDebounceTime } = require('config')
 const radio = require('lib/radio')
 const user_ = require('controllers/user/lib/user')
+const shelves_ = require('controllers/shelves/lib/shelves')
 const { postActivityToActorFollowersInboxes } = require('./post_activity')
 const { byActorName, createActivity } = require('./activities')
 const formatUserItemsActivities = require('./format_user_items_activities')
@@ -31,6 +32,10 @@ const createDebouncedActivity = ({ userId, shelfId }) => async () => {
     name = user.stableUsername
   } else if (shelfId) {
     delete debouncedActivities[shelfId]
+    const shelf = await shelves_.byId(shelfId)
+    if (shelf.listing !== 'public') return
+    const owner = await user_.byId(shelf.owner)
+    if (!owner.fediversable) return
     // todo: use group slugify to create shelf name
     // shelf = await shelves_.byId(shelfId)
     name = `shelf-${shelfId}`
