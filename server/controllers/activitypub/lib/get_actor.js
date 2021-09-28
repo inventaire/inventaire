@@ -71,7 +71,7 @@ const buildActorObject = async ({ name, preferredUsername, summary, imagePath })
     actor.icon = {
       mediaType: 'image/jpeg',
       type: 'Image',
-      url: `${host}${imagePath}`
+      url: imagePath.startsWith('http') ? imagePath : `${host}${imagePath}`
     }
   }
 

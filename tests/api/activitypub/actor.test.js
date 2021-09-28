@@ -95,6 +95,12 @@ describe('activitypub:actor', () => {
       const body = await publicReq('get', receiverUrl)
       body.icon.url.should.endWith(image.url)
     })
+
+    it('should set external image urls when one is available', async () => {
+      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q237087' } })
+      const body = await publicReq('get', actorUrl)
+      body.icon.url.should.startWith('https://commons.wikimedia.org/wiki/Special:FilePath')
+    })
   })
 
   describe('shelves', () => {
