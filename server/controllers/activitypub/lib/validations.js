@@ -14,7 +14,7 @@ module.exports = {
     const owner = await user_.byId(shelf.owner)
     if (!owner) throw error_.notFound({ name })
     if (!owner.fediversable) throw error_.new("shelf's owner is not on the fediverse", 404, { name })
-    return { shelf }
+    return { shelf, owner }
   },
   validateUser: async username => {
     const user = await user_.findOneByUsername(username)

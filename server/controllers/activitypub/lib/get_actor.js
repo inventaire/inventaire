@@ -19,11 +19,11 @@ module.exports = name => {
 }
 
 const getShelfActor = async name => {
-  const { shelf } = await validateShelf(name)
+  const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
   return buildActorObject({
-    name,
-    preferredUsername: name,
+    actorName: name,
+    displayName: `${shelf.name} [${owner.username}]`,
     summary: description
   })
 }
@@ -32,8 +32,8 @@ const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   return buildActorObject({
-    name: stableUsername,
-    preferredUsername: stableUsername,
+    actorName: stableUsername,
+    displayName: user.username,
     summary: bio,
     imagePath: picture,
   })
@@ -41,15 +41,17 @@ const getUserActor = async username => {
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
+  const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
   return buildActorObject({
-    name: entity.actorName,
-    preferredUsername: entity.actorName,
+    actorName: entity.actorName,
+    displayName: label,
+    summary: entity.descriptions?.en,
     imagePath: entity.image.url
   })
 }
 
-const buildActorObject = async ({ name, preferredUsername, summary, imagePath }) => {
-  const actorUrl = `${host}/api/activitypub?action=actor&name=${name}`
+const buildActorObject = async ({ actorName, displayName, summary, imagePath }) => {
+  const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
   const actor = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
@@ -57,13 +59,14 @@ const buildActorObject = async ({ name, preferredUsername, summary, imagePath })
     ],
     type: 'Person',
     id: actorUrl,
-    preferredUsername,
+    name: displayName,
+    preferredUsername: actorName,
     summary,
-    inbox: `${host}/api/activitypub?action=inbox&name=${name}`,
-    outbox: `${host}/api/activitypub?action=outbox&name=${name}`,
+    inbox: `${host}/api/activitypub?action=inbox&name=${actorName}`,
+    outbox: `${host}/api/activitypub?action=outbox&name=${actorName}`,
     publicKey: {
-      id: `${host}/api/activitypub?action=actor&name=${name}#main-key`,
-      owner: `${host}/api/activitypub?action=actor&name=${name}`
+      id: `${host}/api/activitypub?action=actor&name=${actorName}#main-key`,
+      owner: `${host}/api/activitypub?action=actor&name=${actorName}`
     }
   }
 
