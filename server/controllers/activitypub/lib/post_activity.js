@@ -29,6 +29,7 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
   const { privateKey } = await getSharedKeyPair()
 
   const body = Object.assign({}, activity)
+
   body.to = [ recipientActorUri, 'Public' ]
   const postHeaders = signRequest({ url: inboxUri, method: 'post', keyId, privateKey, body })
   postHeaders['content-type'] = 'application/activity+json'

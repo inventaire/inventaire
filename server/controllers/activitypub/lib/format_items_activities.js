@@ -30,6 +30,7 @@ module.exports = {
     }
     return {
       id: `${id}#create`,
+      '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Create',
       object,
       actor,
