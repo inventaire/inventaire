@@ -31,11 +31,13 @@ const formatEntityPatchActivity = async row => {
   const id = `${host}/api/activitypub?action=activity&id=${patchId}`
   const name = getEntityActorName(objectUri)
   const actor = makeUrl({ params: { action: 'actor', name } })
+  const subjectUrl = `${host}/entity/${subjectUri}`
+  const objectUrl = `${host}/entity/${objectUri}`
 
   const object = {
     id,
     type: 'Note',
-    content: `<p>${i18n('en', activityText[property], { subjectLabel, objectLabel })}</p>`,
+    content: `<p>${i18n('en', activityText[property], { subjectLabel, subjectUrl, objectLabel, objectUrl })}</p>`,
     published: new Date(timestamp).toISOString(),
   }
 
