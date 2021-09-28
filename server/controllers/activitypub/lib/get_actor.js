@@ -4,6 +4,8 @@ const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
 const { getEntityUriFromActorName } = require('./helpers')
+const { unprefixify } = require('controllers/entities/lib/prefix')
+const { publicHost } = CONFIG
 const host = CONFIG.fullPublicHost()
 
 module.exports = name => {
@@ -21,36 +23,51 @@ module.exports = name => {
 const getShelfActor = async name => {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
+  const links = [
+    { name: 'shelf', url: `${host}/shelves/${shelf._id}` }
+  ]
   return buildActorObject({
     actorName: name,
     displayName: `${shelf.name} [${owner.username}]`,
-    summary: description
+    summary: description,
+    links,
   })
 }
 
 const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
+  const links = [
+    { name: 'inventory', url: `${host}/inventory/${username}` }
+  ]
   return buildActorObject({
     actorName: stableUsername,
-    displayName: user.username,
+    displayName: username,
     summary: bio,
     imagePath: picture,
+    links,
   })
 }
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
   const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
+  const links = [
+    { name: publicHost, url: `${host}/entity/${entity.uri}` }
+  ]
+  if (entity.uri.startsWith('wd:')) {
+    links.push({ name: 'wikidata.org', url: `https://www.wikidata.org/wiki/${unprefixify(entity.uri)}` })
+  }
   return buildActorObject({
     actorName: entity.actorName,
     displayName: label,
     summary: entity.descriptions?.en,
-    imagePath: entity.image.url
+    imagePath: entity.image.url,
+    links,
   })
 }
 
-const buildActorObject = async ({ actorName, displayName, summary, imagePath }) => {
+const buildActorObject = async ({ actorName, displayName, summary, imagePath, links }) => {
   const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
   const actor = {
     '@context': [
@@ -76,6 +93,18 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath }) 
       type: 'Image',
       url: imagePath.startsWith('http') ? imagePath : `${host}${imagePath}`
     }
+  }
+
+  if (links) {
+    actor.attachment = links.map(({ name, url }) => {
+      const [ protocol, urlWithoutProtocol ] = url.split('://')
+      return {
+        type: 'PropertyValue',
+        name,
+        // Mimicking Mastodon
+        value: `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank"><span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span></a>`
+      }
+    })
   }
 
   const { publicKey } = await getSharedKeyPair()
