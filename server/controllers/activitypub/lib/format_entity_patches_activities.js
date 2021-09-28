@@ -13,6 +13,9 @@ module.exports = rows => {
 
 const activityText = {
   'wdt:P50': 'author_has_new_work',
+  'wdt:P123': 'publisher_has_new_edition',
+  'wdt:P195': 'collection_has_new_edition',
+  'wdt:P921': 'subject_has_new_work',
 }
 
 const hasActivityText = ({ value: property }) => activityText[property] != null
