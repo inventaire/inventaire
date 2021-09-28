@@ -97,6 +97,36 @@ describe('activitypub:inbox:Undo', () => {
       const activities2 = await getFollowActivitiesByObject(name)
       activities2.length.should.equal(0)
     })
+
+    it('should accept an "object" as object', async () => {
+      const { uri } = await createHuman()
+      const name = getEntityActorName(uri)
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const emitterUser = await createRemoteActivityPubServerUser()
+      await signedReq({
+        emitterUser,
+        type: 'Follow',
+        object: actorUrl,
+        url: inboxUrl
+      })
+      const activities = await getFollowActivitiesByObject(name)
+      const activity = activities[0]
+      await signedReq({
+        emitterUser,
+        url: inboxUrl,
+        type: 'Undo',
+        object: {
+          id: activity.externalId,
+          type: 'Follow',
+          actor: emitterUser.actor,
+          object: actorUrl
+        }
+      })
+      await wait(500)
+      const activities2 = await getFollowActivitiesByObject(name)
+      activities2.length.should.equal(0)
+    })
   })
 
   describe('shelf', () => {

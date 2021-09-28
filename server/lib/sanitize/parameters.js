@@ -186,7 +186,10 @@ const generics = {
     },
     validate: _.isStrictlyPositiveInteger
   },
-  string: nonEmptyString
+  string: nonEmptyString,
+  stringOrObject: {
+    validate: value => _.isNonEmptyString(value) || _.isPlainObject(value)
+  }
 }
 
 const value = {
