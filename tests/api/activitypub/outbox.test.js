@@ -5,7 +5,7 @@ require('should')
 const { createItem, createItems } = require('../fixtures/items')
 const { update: updateItem } = require('../utils/items')
 const { createUser } = require('../fixtures/users')
-const { publicReq, customAuthReq } = require('../utils/utils')
+const { publicReq, customAuthReq, getFediversableUser } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
@@ -275,7 +275,7 @@ describe('outbox', () => {
     })
 
     it('should return a first page URL', async () => {
-      const { shelf } = await createShelfWithItem({}, null)
+      const { shelf } = await createShelfWithItem({}, null, getFediversableUser())
       await wait(debounceTime + 50)
       const name = getActorName(shelf)
       const outboxUrl = `${endpoint}${name}`
@@ -289,7 +289,7 @@ describe('outbox', () => {
     })
 
     it('should return content with items link', async () => {
-      const { shelf, item } = await createShelfWithItem({}, null)
+      const { shelf, item } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
       await wait(debounceTime + 50)
       const outboxUrl = `${endpoint}${name}&offset=0`

@@ -4,7 +4,7 @@ require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
 const { createShelfWithItem } = require('../fixtures/shelves')
-const { publicReq } = require('../utils/utils')
+const { publicReq, getFediversableUser } = require('../utils/utils')
 const { wait } = require('lib/promises')
 const { makeUrl } = require('../utils/activitypub')
 const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
@@ -51,8 +51,7 @@ describe('activity', () => {
 
   describe('shelf', () => {
     it('should get an activity', async () => {
-      const user = createUser({ fediversable: true })
-      const { shelf } = await createShelfWithItem(user)
+      const { shelf } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
       await wait(debounceTime + 500)
       const outboxUrl = makeUrl({ params: { action: 'outbox', name, offset: 0 } })

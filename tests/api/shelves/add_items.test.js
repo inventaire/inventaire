@@ -18,7 +18,7 @@ describe('shelves:add-items', () => {
   })
 
   it('should reject without items', async () => {
-    const shelf = await shelfPromise
+    const { shelf } = await shelfPromise
     try {
       await authReq('post', endpoint, {
         id: shelf._id
@@ -32,7 +32,7 @@ describe('shelves:add-items', () => {
   })
 
   it('should add items', async () => {
-    const shelf = await shelfPromise
+    const { shelf } = await shelfPromise
     const item = await createItem()
     const { _id: id } = item
     const res = await authReq('post', endpoint, {
@@ -48,7 +48,7 @@ describe('shelves:add-items', () => {
 
   it('should reject adding different owner items', async () => {
     try {
-      const shelf = await shelfPromise
+      const { shelf } = await shelfPromise
       const item = await createItem(getUserB())
       await authReq('post', endpoint, {
         id: shelf._id,

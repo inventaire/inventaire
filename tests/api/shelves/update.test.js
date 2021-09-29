@@ -17,7 +17,7 @@ describe('shelves:update', () => {
   })
 
   it('should filter out non updatable attributes', async () => {
-    const shelf = await shelfPromise
+    const { shelf } = await shelfPromise
     try {
       const params = {
         shelf: shelf._id,
@@ -32,7 +32,7 @@ describe('shelves:update', () => {
   })
 
   it('should reject an empty name', async () => {
-    const shelf = await shelfPromise
+    const { shelf } = await shelfPromise
     try {
       const params = {
         shelf: shelf._id,
@@ -50,7 +50,7 @@ describe('shelves:update', () => {
     const name = shelfName()
     const description = shelfDescription()
     const listing = 'network'
-    const shelf = await shelfPromise
+    const { shelf } = await shelfPromise
     const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       name,
@@ -64,7 +64,7 @@ describe('shelves:update', () => {
 
   it('should reject updating if different owner', async () => {
     try {
-      const shelf = await shelfPromise
+      const { shelf } = await shelfPromise
       const params = {
         shelf: shelf._id,
         name: 'foo'

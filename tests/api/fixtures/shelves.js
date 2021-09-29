@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const faker = require('faker')
 const { customAuthReq } = require('../utils/request')
-const { getFediversableUser } = require('../utils/utils')
+const { getUser } = require('../utils/utils')
 const { createItem } = require('../fixtures/items')
 const { addItemsToShelf } = require('../utils/shelves')
 
@@ -10,7 +10,7 @@ const fixtures = module.exports = {
   shelfDescription: () => faker.lorem.paragraph(),
 
   createShelf: async (userPromise, shelfData = {}) => {
-    userPromise = userPromise || getFediversableUser()
+    userPromise = userPromise || getUser()
     shelfData.name = shelfData.name || fixtures.shelfName()
     shelfData.listing = shelfData.listing || 'public'
     shelfData.description = shelfData.description || fixtures.shelfDescription()
@@ -25,8 +25,9 @@ const fixtures = module.exports = {
     }
   },
 
-  createShelfWithItem: async (shelfData = {}, item) => {
-    const { shelf, user } = await fixtures.createShelf(null, shelfData)
+  createShelfWithItem: async (shelfData = {}, item, userPromise) => {
+    userPromise = userPromise || getUser()
+    const { shelf, user } = await fixtures.createShelf(userPromise, shelfData)
     item = await (item || createItem(user))
     const itemId = item._id
     await addItemsToShelf(user, shelf, [ itemId ])
