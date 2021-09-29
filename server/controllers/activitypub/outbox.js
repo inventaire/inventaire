@@ -87,6 +87,8 @@ const getUserActivities = async ({ name, offset, limit }) => {
   if (offset == null) {
     // Mimick Mastodon, which only indicates the totalItems count when fetching
     // type=OrderedCollection page
+    // TODO: remove empty activities from count? as it's otherwise surprising
+    // to find 0 activities, when the OrderedCollection says there are activities
     baseOutbox.totalItems = await getActivitiesCountByName(user.stableUsername)
     return baseOutbox
   } else {
