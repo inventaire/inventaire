@@ -10,7 +10,7 @@ const { isEntityUri, isUsername } = require('lib/boolean_validations')
 module.exports = async params => {
   const { id: externalId, type } = params
   let { actor, object } = params
-  if (!object.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
+  if (!object?.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
   const { name: requestedObjectName } = qs.parse(object)
 
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {

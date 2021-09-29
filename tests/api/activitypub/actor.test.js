@@ -6,6 +6,9 @@ const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
+const CONFIG = require('config')
+const { publicHost } = CONFIG
+const fullPublicHost = CONFIG.fullPublicHost()
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
@@ -100,6 +103,17 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q237087' } })
       const body = await publicReq('get', actorUrl)
       body.icon.url.should.startWith('https://commons.wikimedia.org/wiki/Special:FilePath')
+    })
+
+    it('should set URLs as attachment', async () => {
+      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q237087' } })
+      const body = await publicReq('get', actorUrl)
+      body.attachment[0].type.should.equal('PropertyValue')
+      body.attachment[0].name.should.equal(publicHost)
+      body.attachment[0].value.should.containEql(`${fullPublicHost}/entity/wd:Q237087`)
+      body.attachment[1].type.should.equal('PropertyValue')
+      body.attachment[1].name.should.equal('wikidata.org')
+      body.attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q237087')
     })
   })
 

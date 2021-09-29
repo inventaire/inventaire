@@ -1,9 +1,12 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { byExternalId, deleteById } = require('controllers/activitypub/lib/activities')
 const { isNonEmptyString } = require('lib/boolean_validations')
 
 module.exports = async params => {
-  const { actor, object } = params
+  let { actor, object } = params
+
+  if (_.isPlainObject(object)) object = object.id
 
   if (!isNonEmptyString(object)) throw error_.new('invalid activity object', 400, params)
   const activity = await byExternalId(object)

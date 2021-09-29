@@ -2,20 +2,23 @@ const _ = require('builders/utils')
 const { postActivityToActorFollowersInboxes } = require('./post_activity')
 const formatEntityPatchesActivities = require('./format_entity_patches_activities')
 
-module.exports = patch => {
-  return deliverEntityActivitiesFromPatch(patch)
-  .catch(_.Error('create_activities_on_entities_updates err'))
+const deliverEntityActivitiesFromPatch = async patch => {
+  try {
+    const activities = await getActivitiesFromPatch(patch)
+    if (activities.length === 0) return
+    await Promise.all(activities.map(activity => {
+      const actorName = new URL(activity.actor).searchParams.get('name')
+      return postActivityToActorFollowersInboxes({ activity, actorName })
+    }))
+  } catch (err) {
+    _.error(err, 'create_activities_on_entities_updates err')
+  }
 }
 
-const deliverEntityActivitiesFromPatch = async patch => {
+const getActivitiesFromPatch = async patch => {
   const rows = byClaimValueAndDate(patch)
-  if (rows.length === 0) return
-  const activities = await formatEntityPatchesActivities(rows)
-  if (activities.length === 0) return
-  await Promise.all(activities.map(activity => {
-    const actorName = new URL(activity.actor).searchParams.get('name')
-    return postActivityToActorFollowersInboxes({ activity, actorName })
-  }))
+  if (rows.length === 0) return []
+  return formatEntityPatchesActivities(rows)
 }
 
 // Mimick server/db/couchdb/design_docs/patches.json byClaimValueAndDate
@@ -42,4 +45,9 @@ const byClaimValueAndDate = doc => {
     }
   }
   return rows
+}
+
+module.exports = {
+  deliverEntityActivitiesFromPatch,
+  getActivitiesFromPatch,
 }

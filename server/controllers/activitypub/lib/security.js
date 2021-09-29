@@ -29,7 +29,13 @@ const security_ = module.exports = {
     if (signature === undefined) throw error_.new('no signature header', 400, reqHeaders)
     // "headers" below specify the list of HTTP headers included when generating the signature for the message
     const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
-    const publicKey = await fetchActorPublicKey(actorUrl)
+    let publicKey
+    try {
+      publicKey = await fetchActorPublicKey(actorUrl)
+    } catch (err) {
+      _.warn({ method, pathname, body: req.body }, 'could not fetch public key')
+      throw err
+    }
     const verifier = crypto.createVerify('rsa-sha256')
     const signedString = buildSignatureString(Object.assign(reqHeaders, { headers, method: method.toLowerCase(), pathname }))
     verifier.update(signedString)

@@ -63,6 +63,7 @@ const getEntityActivities = async ({ name, offset, limit }) => {
     return buildPaginatedEntityOutbox(entity, offset, limit, baseOutbox)
   }
 }
+
 const getBaseOutbox = url => {
   return {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],

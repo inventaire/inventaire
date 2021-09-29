@@ -15,7 +15,9 @@ const sanitization = {
     allowlist: [ 'https://www.w3.org/ns/activitystreams' ]
   },
   actor: {},
-  object: {}
+  object: {
+    generic: 'stringOrObject'
+  }
 }
 
 const controller = async params => {

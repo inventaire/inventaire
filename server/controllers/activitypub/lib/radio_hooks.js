@@ -7,7 +7,7 @@ const { postActivityToActorFollowersInboxes } = require('./post_activity')
 const { byActorName, createActivity } = require('./activities')
 const formatUserItemsActivities = require('./format_user_items_activities')
 const formatShelfItemsActivities = require('./format_shelf_items_activities')
-const deliverEntityActivitiesFromPatch = require('./deliver_entity_activities_from_patch')
+const { deliverEntityActivitiesFromPatch } = require('./entity_patch_activities')
 const debouncedActivities = {}
 
 module.exports = () => {
