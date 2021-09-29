@@ -1,11 +1,12 @@
 const activities_ = require('./lib/activities')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
-const { findOneByUsername } = require('controllers/user/lib/user')
+const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityActivityId } = require('./lib/helpers')
 const { isCouchUuid } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')
 const patches_ = require('controllers/entities/lib/patches')
 const { getActivitiesFromPatch } = require('./lib/entity_patch_activities')
+const { validateShelf, validateUser } = require('./lib/validations')
 
 const sanitization = {
   id: {
@@ -18,7 +19,7 @@ const controller = async ({ id }) => {
   if (isEntityActivityId(id)) {
     return getEntityActivity(id)
   } else {
-    return getUserActivity(id)
+    return getActivity(id)
   }
 }
 
@@ -33,12 +34,26 @@ const getEntityActivity = async id => {
   return activity
 }
 
-const getUserActivity = async id => {
+const getActivity = async id => {
   if (!isCouchUuid(id)) throw error_.new('invalid activity id', 400, { id })
   const activityDoc = await activities_.byId(id)
   const { name } = activityDoc.actor
-  const user = await findOneByUsername(name)
+  if (name.startsWith('shelf-')) {
+    return getShelfActivity(activityDoc, name)
+  } else {
+    return getUserActivity(activityDoc, name)
+  }
+}
+
+const getUserActivity = async (activityDoc, name) => {
+  const { user } = await validateUser(name)
   const [ activity ] = await formatUserItemsActivities([ activityDoc ], user)
+  return activity
+}
+
+const getShelfActivity = async (activityDoc, name) => {
+  const { shelf } = await validateShelf(name)
+  const [ activity ] = await formatShelfItemsActivities([ activityDoc ], shelf._id, name)
   return activity
 }
 
