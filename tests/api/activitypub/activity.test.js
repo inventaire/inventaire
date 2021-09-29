@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const debounceTime = CONFIG.activitiesDebounceTime
+const debounceTime = CONFIG.activitiesDebounceTime + 50
 require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
@@ -17,7 +17,7 @@ describe('activity', () => {
       const user = await createUser({ fediversable: true })
       const { username } = user
       await createItem(user)
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const outboxUrl = makeUrl({ params: { action: 'outbox', name: username, offset: 0 } })
       const { orderedItems } = await publicReq('get', outboxUrl)
       const activityUrl = orderedItems[0].object.id
@@ -53,7 +53,7 @@ describe('activity', () => {
     it('should get an activity', async () => {
       const { shelf } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const outboxUrl = makeUrl({ params: { action: 'outbox', name, offset: 0 } })
       const { orderedItems } = await publicReq('get', outboxUrl)
       const activityUrl = orderedItems[0].object.id

@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const debounceTime = CONFIG.activitiesDebounceTime
+const debounceTime = CONFIG.activitiesDebounceTime + 100
 require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
@@ -26,10 +26,10 @@ describe('followers activity delivery', () => {
         type: 'Follow',
       })
       const item = await createItem(user)
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       const createActivity = inbox[0]
-      createActivity['@context'].should.equal('https://www.w3.org/ns/activitystreams')
+      createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.object.content.should.containEql(item._id)
       createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })
@@ -50,7 +50,7 @@ describe('followers activity delivery', () => {
       await wait(500)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       const createActivity = inbox[0]
-      createActivity['@context'].should.equal('https://www.w3.org/ns/activitystreams')
+      createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.type.should.equal('Create')
       createActivity.object.type.should.equal('Note')
       createActivity.object.content.should.startWith('<p>')
@@ -111,10 +111,10 @@ describe('followers activity delivery', () => {
       const { remoteHost, remoteUserId, remoteUsername } = res
       const { _id: itemId } = await createItem(user)
       await addItemsToShelf(user, shelf, [ itemId ])
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       const createActivity = inbox[0]
-      createActivity['@context'].should.equal('https://www.w3.org/ns/activitystreams')
+      createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.object.content.should.containEql(itemId)
       createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })

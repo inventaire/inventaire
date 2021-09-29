@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
-const debounceTime = CONFIG.activitiesDebounceTime
+const debounceTime = CONFIG.activitiesDebounceTime + 50
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
 const { update: updateItem } = require('../utils/items')
@@ -34,7 +34,7 @@ describe('outbox', () => {
       const user = createUser({ fediversable: true })
       await createItem(user)
       const { username } = await user
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
       const fullHostUrl = `${host}${outboxUrl}`
@@ -47,9 +47,9 @@ describe('outbox', () => {
     it('should paginate activities', async () => {
       const user = createUser({ fediversable: true })
       const itemA = await createItem(user)
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const itemB = await createItem(user)
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const { username } = await user
       const firstOutboxPage = `${endpoint}${username}&offset=0&limit=1`
       const res1 = await publicReq('get', firstOutboxPage)
@@ -66,7 +66,7 @@ describe('outbox', () => {
       const details = 'details'
       const item = await createItem(user, { details })
       const { username } = await user
-      await wait(debounceTime + 500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${username}&offset=0`
       const fullHostUrl = `${host}${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
@@ -104,10 +104,10 @@ describe('outbox', () => {
         const item = await createItem(user)
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         item.transaction = 'lending'
         await customAuthReq(user, 'put', '/api/items', item)
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(1)
       })
@@ -115,7 +115,7 @@ describe('outbox', () => {
       it('should including an item previously private after it was updated to public', async () => {
         const user = createUser({ fediversable: true })
         const [ publicItem, privateItem ] = await createItems(user, [ { listing: 'public' }, { listing: 'private' } ])
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
         const res1 = await publicReq('get', outboxUrl)
@@ -123,7 +123,7 @@ describe('outbox', () => {
         res1.orderedItems[0].object.content.should.containEql(publicItem._id)
         res1.orderedItems[0].object.content.should.not.containEql(privateItem._id)
         await updateItem({ user, ids: privateItem._id, attribute: 'listing', value: 'public' })
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const res2 = await publicReq('get', outboxUrl)
         res2.orderedItems.length.should.equal(1)
         res2.orderedItems[0].object.content.should.containEql(publicItem._id)
@@ -137,7 +137,7 @@ describe('outbox', () => {
         await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(1)
       })
@@ -148,7 +148,7 @@ describe('outbox', () => {
         await createItem(user)
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(1)
       })
@@ -160,7 +160,7 @@ describe('outbox', () => {
         await createItem(user)
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
-        await wait(debounceTime + 500)
+        await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(2)
       })
@@ -276,7 +276,7 @@ describe('outbox', () => {
 
     it('should return a first page URL', async () => {
       const { shelf } = await createShelfWithItem({}, null, getFediversableUser())
-      await wait(debounceTime + 50)
+      await wait(debounceTime)
       const name = getActorName(shelf)
       const outboxUrl = `${endpoint}${name}`
       const res = await publicReq('get', outboxUrl)
@@ -291,7 +291,7 @@ describe('outbox', () => {
     it('should return content with items link', async () => {
       const { shelf, item } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
-      await wait(debounceTime + 50)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${name}&offset=0`
       const res = await publicReq('get', outboxUrl)
       const fullHostUrl = `${host}${endpoint}${name}`
