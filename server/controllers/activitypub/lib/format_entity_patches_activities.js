@@ -25,8 +25,8 @@ const formatEntityPatchActivity = async (row, rowIndex) => {
   const [ objectUri, timestamp ] = key
   const subjectUri = prefixifyInv(patchId.split(':')[0])
   const [ subjectEntity, objectEntity ] = await getEntitiesList([ subjectUri, objectUri ])
-  const subjectLabel = getBestLangValue('en', subjectEntity.originalLang, subjectEntity.labels).value
-  const objectLabel = getBestLangValue('en', objectEntity.originalLang, objectEntity.labels).value
+  const subjectLabel = getLabel(subjectEntity)
+  const objectLabel = getLabel(objectEntity)
   const activityId = getActivityIdFromPatchId(patchId, rowIndex)
   const id = `${host}/api/activitypub?action=activity&id=${activityId}`
   const name = getEntityActorName(objectUri)
@@ -49,4 +49,10 @@ const formatEntityPatchActivity = async (row, rowIndex) => {
     actor,
     to: 'Public',
   }
+}
+
+const getLabel = entity => {
+  const label = getBestLangValue('en', entity.originalLang, entity.labels).value
+  if (label) return label
+  else return entity.claims['wdt:P1476']?.[0]
 }
