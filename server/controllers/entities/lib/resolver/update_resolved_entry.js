@@ -38,11 +38,11 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
   // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity = _.cloneDeep(entity)
   const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
+  await addImageClaim(entity, imageUrl, newClaims)
   Object.keys(newClaims).forEach(prop => {
     updatedEntity.claims[prop] = newClaims[prop]
   })
   updateDatePrecision(entity, updatedEntity, seedClaims)
-  await addImageClaim(entity, imageUrl, newClaims)
   if (_.isEqual(updatedEntity, entity)) return
   await entities_.putUpdate({
     userId: reqUserId,
