@@ -4,7 +4,7 @@ const { wait } = require('lib/promises')
 const { getByUri } = require('../utils/entities')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc, deindex, indexPlaceholder } = require('../utils/search')
-const { wikidata: wikidataIndex } = require('db/elasticsearch/list').indexesNamesByBaseNames
+const { wikidata: wikidataIndex } = require('db/elasticsearch/indexes').indexesNamesByBaseNames
 
 describe('indexation:wikidata', () => {
   it('should index a wikidata entity when refreshed', async () => {

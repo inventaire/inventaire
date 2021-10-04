@@ -5,7 +5,7 @@ const { getUser } = require('../utils/utils')
 const { createGroup, membershipAction } = require('../fixtures/groups')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
-const { index } = require('db/elasticsearch/list').indexes.groups
+const { index } = require('db/elasticsearch/indexes').indexes.groups
 
 describe('indexation:groups', () => {
   it('should index a new group', async () => {

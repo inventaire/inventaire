@@ -5,7 +5,7 @@ const { createUser } = require('../fixtures/users')
 const { deleteUser } = require('../utils/users')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
-const { index } = require('db/elasticsearch/list').indexes.users
+const { index } = require('db/elasticsearch/indexes').indexes.users
 
 describe('indexation:users', () => {
   it('should index a new user', async () => {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 require('module-alias/register')
 const _ = require('builders/utils')
-const { indexes } = require('db/elasticsearch/list')
+const { indexes } = require('db/elasticsearch/indexes')
 const { logErrorAndExit } = require('../scripts_utils')
 const split = require('split')
 const { red } = require('chalk')

@@ -44,5 +44,4 @@ const socialTypes = [
 
 const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
 
-console.log({ indexes, indexesNamesByBaseNames, indexesList, syncIndexesList, indexedTypes, indexedEntitiesTypes })
 module.exports = { indexes, indexesNamesByBaseNames, indexesList, syncIndexesList, indexedTypes, indexedEntitiesTypes }

@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const normalizeResult = require('./lib/normalize_result')
-const { indexedTypes } = require('db/elasticsearch/list')
+const { indexedTypes } = require('db/elasticsearch/indexes')
 const typeSearch = require('./lib/type_search')
 const Group = require('models/group')
 const { ControllerWrapper } = require('lib/controller_wrapper')

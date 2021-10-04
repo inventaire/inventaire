@@ -5,7 +5,7 @@ const { publicReq } = require('../utils/utils')
 const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
-const { indexesNamesByBaseNames } = require('db/elasticsearch/list')
+const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
 
 const endpoint = '/api/search'
 
