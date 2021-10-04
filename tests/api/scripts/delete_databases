@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/list.js')).join(' '))")
+databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/list')).join(' '))")
+indexes=$(node -e "console.log(Object.keys(require('./server/db/elasticsearch/indexes').indexes).join(' '))")
 dbHost=$(node -e "console.log(require('config').db.fullHost())")
 elasticHost=$(node -e "console.log(require('config').elasticsearch.host)")
 leveldbPathBase=$(node -e "console.log(require('config').universalPath.path('root', 'db/leveldb'))")
@@ -7,11 +8,15 @@ leveldbPath="${leveldbPathBase}-tests"
 
 for db in $databases
 do
-  echo "\ndeleting ${db}-tests in couchdb... " &&
+  echo "deleting ${db}-tests in CouchDB... " &&
   curl -sXDELETE "${dbHost}/${db}-tests"
-  echo "\ndeleting ${db}-tests in elastic search... " &&
-  curl -sXDELETE "${elasticHost}/${db}-tests"
 done
 
-echo "\ndeleting ${leveldbPath}... " &&
-rm -rf ${leveldbPath}
+for index in $indexes
+do
+  echo "deleting ${index}-tests in Elasticsearch index... " &&
+  curl -sXDELETE "${elasticHost}/${index}-tests"
+done
+
+echo "deleting ${leveldbPath}... " &&
+rm -rf "${leveldbPath}"
