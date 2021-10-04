@@ -2,11 +2,14 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
+const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
+const assert_ = require('./utils/assert_types')
 const { host: elasticHost } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
-  let { index, dbBaseName, queryBuilder } = params
-  if (!index) index = CONFIG.db.name(dbBaseName)
+  const { dbBaseName, queryBuilder } = params
+  const index = indexesNamesByBaseNames[dbBaseName]
+  assert_.string(index)
 
   const url = `${elasticHost}/${index}/_search`
 
