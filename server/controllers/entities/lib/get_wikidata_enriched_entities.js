@@ -20,7 +20,7 @@ const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hoo
 
 let reindex
 const requireCircularDependencies = () => {
-  reindex = require('db/elasticsearch/indexation')({ indexBaseName: 'wikidata' })
+  reindex = require('db/elasticsearch/indexation')('wikidata')
 }
 setImmediate(requireCircularDependencies)
 

@@ -5,14 +5,14 @@ const filters = require('./filters')
 const deindex = require('./deindex')
 const { addToBatch, postBatch } = require('./bulk')
 const { updateDelay } = require('config').elasticsearch
+const { indexesNamesByBaseNames } = require('./indexes')
 const bulkThrottleDelay = updateDelay / 2
 
 let batch = []
 
-module.exports = ({ indexBaseName, index }) => {
+module.exports = indexBaseName => {
   assert_.string(indexBaseName)
-
-  index = index || indexBaseName
+  const index = indexesNamesByBaseNames[indexBaseName]
   const format = formatters[indexBaseName]
   const shouldBeDeindexed = deindex[indexBaseName]
   const filter = filters[indexBaseName]
