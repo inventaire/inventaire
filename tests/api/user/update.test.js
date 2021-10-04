@@ -9,7 +9,7 @@ const endpoint = '/api/user'
 const randomString = require('lib/utils/random_string')
 const { getIndexedDoc } = require('../utils/search')
 const { wait } = require('lib/promises')
-const { users: usersIndex } = require('controllers/search/lib/indexes').indexes
+const { users: usersIndex } = require('db/elasticsearch/list').indexesNamesByBaseNames
 
 describe('user:update', () => {
   it('should update a user', async () => {
