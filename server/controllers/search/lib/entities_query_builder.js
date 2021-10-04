@@ -91,8 +91,8 @@ const matchEntities = (search, userLang, exact, safe) => {
 
 const entitiesFields = (userLang, exact) => {
   const fields = [
-    'labels.*',
-    'aliases.*^0.5',
+    'groupedLabels',
+    'groupedAliases^0.5',
   ]
   if (userLang) {
     fields.push(
@@ -102,9 +102,9 @@ const entitiesFields = (userLang, exact) => {
   }
   if (!exact) {
     fields.push(
+      'groupedDescriptions^0.25',
       'flattenedLabels^0.25',
       'flattenedAliases^0.25',
-      'descriptions.*^0.25',
       'flattenedDescriptions^0.25',
       'relationsTerms^0.25'
     )
