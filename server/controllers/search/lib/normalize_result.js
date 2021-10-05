@@ -11,7 +11,7 @@ module.exports = lang => result => {
 const entityFormatter = (result, _source, lang) => ({
   id: result._id,
   type: _source.type,
-  uri: getUri(result._index, result._id),
+  uri: getUri(result._id),
   label: getBestLangValue(lang, null, _source.labels).value,
   description: getShortDescription(_source.descriptions, lang),
   image: getBestLangValue(lang, null, _source.images).value,
@@ -24,7 +24,7 @@ const getShortDescription = (descriptions, lang) => {
   if (value) return value.slice(0, 200)
 }
 
-const getUri = (index, id) => index === 'wikidata' ? `wd:${id}` : `inv:${id}`
+const getUri = id => id[0] === 'Q' ? `wd:${id}` : `inv:${id}`
 
 const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   id: result._id,
