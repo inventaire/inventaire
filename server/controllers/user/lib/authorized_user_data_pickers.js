@@ -4,6 +4,7 @@ const { getUserAccessLevels } = require('lib/user_access_levels')
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
+  if (user.type === 'deletedUser') return safeUserDoc
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
   safeUserDoc.accessLevels = getUserAccessLevels(user)
