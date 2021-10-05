@@ -27,7 +27,7 @@ describe('items:snapshot', () => {
     await wait(100)
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:ordinal'].should.equal('5')
-    updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
+    await updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
     await wait(100)
     const reupdatedItem = await getItem(item)
     reupdatedItem.snapshot['entity:ordinal'].should.equal('6')
