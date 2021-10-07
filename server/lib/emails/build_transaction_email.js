@@ -145,7 +145,10 @@ const findMainUser = transaction => {
   }
 }
 
-const ownerIsActor = action => states[action.action].actor === 'owner'
+const ownerIsActor = action => {
+  const actor = action.actor || states[action.action].actor
+  return actor === 'owner'
+}
 const OwnerIsSender = transaction => message => message.user === transaction.owner
 const ownerIsMessager = (owner, message) => message.user === owner._id
 
