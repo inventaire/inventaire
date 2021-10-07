@@ -1,6 +1,5 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
-const delayedInit = setTimeout
 const { initDelay, disabled } = CONFIG.mailer
 
 module.exports = () => {
@@ -15,7 +14,7 @@ const initMailer = () => {
     _.info('mailer enabled')
     // Loading mailer dependencies slightly later
     // due to its lower priority at startup
-    delayedInit(initMailerEventListeners, initDelay)
+    setTimeout(initMailerEventListeners, initDelay)
   }
 }
 
@@ -52,6 +51,6 @@ const initActivitySummary = () => {
   } else {
     _.info('activity summary enabled')
     const activitySummary = require('./activity_summary/activity_summary')
-    delayedInit(activitySummary, initDelay)
+    setTimeout(activitySummary, initDelay)
   }
 }
