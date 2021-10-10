@@ -214,6 +214,24 @@ describe('entities:resolve:external-id', () => {
     entries[0].authors[0].should.be.an.Object()
     entries[0].authors[0].uri.should.equal(author.uri)
   })
+
+  it('should resolve with multiple external ids', async () => {
+    const goodReadsId = someGoodReadsId()
+    const openLibraryId = someOpenLibraryId('human')
+    const claims = {
+      'wdt:P648': [ openLibraryId ],
+      'wdt:P2963': [ goodReadsId ],
+    }
+    const author = await createHuman({ claims })
+    await wait(10)
+    const { entries } = await resolve({
+      edition: { isbn: generateIsbn13() },
+      authors: [ { claims } ]
+    })
+    entries[0].authors.should.be.an.Array()
+    entries[0].authors[0].should.be.an.Object()
+    entries[0].authors[0].uri.should.equal(author.uri)
+  })
 })
 
 describe('entities:resolve:in-context', () => {

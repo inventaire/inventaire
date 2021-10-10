@@ -23,6 +23,7 @@ module.exports = async (claims, resolveOnWikidata = true) => {
 
   return Promise.all(requests)
   .then(_.flatten)
+  .then(_.uniq)
 }
 
 const wdQuery = async externalIds => {
