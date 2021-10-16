@@ -209,4 +209,13 @@ describe('entities:update-claims', () => {
       err.body.status_verbose.should.equal('this property value is already used')
     })
   })
+
+  it('should accept a recoverable ISNI', async () => {
+    const human = await createHuman()
+    const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
+    await addClaim(human.uri, 'wdt:P213', someRecoverableIsni)
+    const updatedHuman = await getByUri(human.uri)
+    updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
+  })
 })
