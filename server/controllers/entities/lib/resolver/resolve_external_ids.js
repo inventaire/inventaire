@@ -11,8 +11,12 @@ module.exports = async (claims, resolveOnWikidata = true) => {
 
   for (const prop in claims) {
     const values = claims[prop]
-    if (properties[prop].isExternalId) {
-      forceArray(values).forEach(value => externalIds.push([ prop, value ]))
+    const { isExternalId, format } = properties[prop]
+    if (isExternalId) {
+      forceArray(values).forEach(value => {
+        if (format) value = format(value)
+        externalIds.push([ prop, value ])
+      })
     }
   }
 
