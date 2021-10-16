@@ -58,13 +58,21 @@ const isExternalIdProperty = propertyId => properties[propertyId].isExternalId
 const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
 
 const sanitizeSeed = (seed, type) => {
-  if (seed.labels == null) { seed.labels = {} }
-  if (!_.isPlainObject(seed.labels)) {
+  seed.labels = seed.labels || {}
+  seed.claims = seed.claims || {}
+  validateLabels(seed)
+  validateAndFormatClaims(seed, type)
+  validateImage(seed, type)
+}
+
+const validateLabels = seed => {
+  const { labels } = seed
+  if (!_.isPlainObject(labels)) {
     throw error_.new('invalid labels', 400, { seed })
   }
 
-  for (const lang in seed.labels) {
-    const label = seed.labels[lang]
+  for (const lang in labels) {
+    const label = labels[lang]
     if (!_.isLang(lang)) {
       throw error_.new('invalid label lang', 400, { lang, label })
     }
@@ -73,21 +81,12 @@ const sanitizeSeed = (seed, type) => {
       throw error_.new('invalid label', 400, { lang, label })
     }
   }
+}
 
-  const claims = seed.claims = seed.claims || {}
-
+const validateAndFormatClaims = (seed, type) => {
+  const { claims } = seed
   if (!_.isPlainObject(claims)) {
     throw error_.new('invalid claims', 400, { seed })
-  }
-
-  if (seed.image != null) {
-    if (type === 'edition') {
-      if (!_.isUrl(seed.image)) {
-        throw error_.new('invalid image url', 400, { seed })
-      }
-    } else {
-      throw error_.new(`${type} can't have an image`, 400, { seed })
-    }
   }
 
   Object.keys(claims).forEach(validateAndFormatPropertyClaims(claims, type))
@@ -101,6 +100,18 @@ const validateAndFormatPropertyClaims = (claims, type) => prop => {
       validateClaimValueSync(prop, value, type)
       return format ? format(value) : value
     })
+}
+
+const validateImage = (seed, type) => {
+  if (seed.image != null) {
+    if (type === 'edition') {
+      if (!_.isUrl(seed.image)) {
+        throw error_.new('invalid image url', 400, { seed })
+      }
+    } else {
+      throw error_.new(`${type} can't have an image`, 400, { seed })
+    }
+  }
 }
 
 const getIsbn = edition => {
