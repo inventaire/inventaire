@@ -211,6 +211,19 @@ describe('entities:create', () => {
     })
   })
 
+  it('should accept a recoverable ISNI', async () => {
+    const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
+    const res = await authReq('post', endpoint, {
+      labels: { fr: randomLabel() },
+      claims: {
+        'wdt:P31': [ 'wd:Q5' ], // human
+        'wdt:P213': [ someRecoverableIsni ]
+      }
+    })
+    res.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
+  })
+
   it('should reject invalid prefixes', async () => {
     await authReq('post', endpoint, {
       prefix: 'foo',
