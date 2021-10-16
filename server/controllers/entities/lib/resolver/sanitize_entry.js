@@ -90,11 +90,17 @@ const sanitizeSeed = (seed, type) => {
     }
   }
 
-  return Object.keys(claims).forEach(prop => {
-    validateProperty(prop)
-    claims[prop] = _.forceArray(claims[prop])
-    return claims[prop].forEach(value => validateClaimValueSync(prop, value, type))
-  })
+  Object.keys(claims).forEach(validateAndFormatPropertyClaims(claims, type))
+}
+
+const validateAndFormatPropertyClaims = (claims, type) => prop => {
+  validateProperty(prop)
+  const { format } = properties[prop]
+  claims[prop] = _.forceArray(claims[prop])
+    .map(value => {
+      validateClaimValueSync(prop, value, type)
+      return format ? format(value) : value
+    })
 }
 
 const getIsbn = edition => {
