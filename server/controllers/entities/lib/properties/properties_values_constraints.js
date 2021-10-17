@@ -54,7 +54,12 @@ module.exports = {
   // ISBN 13
   'wdt:P212': builders.isbnProperty(13),
   // ISNI
-  'wdt:P213': builders.externalId(/^\d{4} \d{4} \d{4} \d{3}[0-9X]$/),
+  'wdt:P213': extend(builders.externalId(/^\d{4} ?\d{4} ?\d{4} ?\d{3}[0-9X]$/), {
+    format: id => {
+      id = id.replace(/\s/g, '')
+      return `${id.slice(0, 4)} ${id.slice(4, 8)} ${id.slice(8, 12)} ${id.slice(12)}`
+    }
+  }),
   // VIAF id
   'wdt:P214': builders.externalId(/^[1-9]\d(\d{0,7}|\d{17,20})$/),
   // GND ID

@@ -268,6 +268,24 @@ describe('entities:resolver:update-resolved', () => {
     const { claims } = await getByUri(authorUri)
     claims['wdt:P569'].should.containEql(entryDate)
   })
+
+  it('should update recoverable ids', async () => {
+    const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
+    const human = await createHuman()
+    const author = {
+      uri: human.uri,
+      claims: {
+        'wdt:P213': [ someRecoverableIsni ]
+      }
+    }
+    await resolveAndUpdate({
+      edition: { isbn: generateIsbn13() },
+      authors: [ author ]
+    })
+    const updatedHuman = await getByUri(human.uri)
+    updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
+  })
 })
 
 const someEntryWithAGoodReadsWorkId = () => ({

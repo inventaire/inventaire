@@ -232,6 +232,26 @@ describe('entities:resolve:external-id', () => {
     entries[0].authors[0].should.be.an.Object()
     entries[0].authors[0].uri.should.equal(author.uri)
   })
+
+  it('should resolve recoverable ids', async () => {
+    const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
+    const human = await createHuman({
+      claims: {
+        'wdt:P213': [ someValidIsni ]
+      }
+    })
+    const author = {
+      claims: {
+        'wdt:P213': [ someRecoverableIsni ]
+      }
+    }
+    const { entries } = await resolve({
+      edition: { isbn: generateIsbn13() },
+      authors: [ author ]
+    })
+    entries[0].authors[0].uri.should.equal(human.uri)
+  })
 })
 
 describe('entities:resolve:in-context', () => {

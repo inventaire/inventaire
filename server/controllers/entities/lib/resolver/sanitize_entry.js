@@ -4,8 +4,7 @@ const isbn_ = require('lib/isbn/isbn')
 const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
 const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
 const properties = require('../properties/properties_values_constraints')
-const validateClaimValueSync = require('../validate_claim_value_sync')
-const { validateProperty } = require('../properties/validations')
+const sanitizeSeed = require('./sanitize_seed')
 
 // Validate : requires only one edition to resolve from and a valid isbn
 // Format : if edition is a list, force pick the first edition
@@ -56,46 +55,6 @@ const sanitizeEdition = edition => {
 const isExternalIdProperty = propertyId => properties[propertyId].isExternalId
 
 const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
-
-const sanitizeSeed = (seed, type) => {
-  if (seed.labels == null) { seed.labels = {} }
-  if (!_.isPlainObject(seed.labels)) {
-    throw error_.new('invalid labels', 400, { seed })
-  }
-
-  for (const lang in seed.labels) {
-    const label = seed.labels[lang]
-    if (!_.isLang(lang)) {
-      throw error_.new('invalid label lang', 400, { lang, label })
-    }
-
-    if (!_.isNonEmptyString(label)) {
-      throw error_.new('invalid label', 400, { lang, label })
-    }
-  }
-
-  const claims = seed.claims = seed.claims || {}
-
-  if (!_.isPlainObject(claims)) {
-    throw error_.new('invalid claims', 400, { seed })
-  }
-
-  if (seed.image != null) {
-    if (type === 'edition') {
-      if (!_.isUrl(seed.image)) {
-        throw error_.new('invalid image url', 400, { seed })
-      }
-    } else {
-      throw error_.new(`${type} can't have an image`, 400, { seed })
-    }
-  }
-
-  return Object.keys(claims).forEach(prop => {
-    validateProperty(prop)
-    claims[prop] = _.forceArray(claims[prop])
-    return claims[prop].forEach(value => validateClaimValueSync(prop, value, type))
-  })
-}
 
 const getIsbn = edition => {
   const { isbn, claims } = edition
