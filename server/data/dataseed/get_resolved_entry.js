@@ -1,3 +1,4 @@
+const _ = require('builders/utils')
 const { _id: seedUserId } = require('db/couchdb/hard_coded_documents').users.seed
 const { getByIsbns: getSeedsByIsbns } = require('./dataseed')
 const { enabled: dataseedEnabled } = require('config').dataseed
@@ -21,19 +22,23 @@ const requireCircularDependencies = () => {
 setImmediate(requireCircularDependencies)
 
 module.exports = async isbn => {
-  const entry = await getAuthoritiesAggregatedEntry(isbn)
-  if (entry) {
-    const entity = await getEditionEntityFromEntry(entry)
-    if (entity) return entity
-  }
-  if (dataseedEnabled) {
-    const [ seed ] = await getSeedsByIsbns(isbn)
-    if (seed) {
-      const dataseedEntry = await buildEntry(seed)
-      const entity = await getEditionEntityFromEntry(dataseedEntry)
+  try {
+    const entry = await getAuthoritiesAggregatedEntry(isbn)
+    if (entry) {
+      const entity = await getEditionEntityFromEntry(entry)
       if (entity) return entity
-      return dataseedEntry
     }
+    if (dataseedEnabled) {
+      const [ seed ] = await getSeedsByIsbns(isbn)
+      if (seed) {
+        const dataseedEntry = await buildEntry(seed)
+        const entity = await getEditionEntityFromEntry(dataseedEntry)
+        if (entity) return entity
+        return dataseedEntry
+      }
+    }
+  } catch (err) {
+    _.error(err, 'get_resolved_entry error')
   }
   return { isbn, notFound: true }
 }
