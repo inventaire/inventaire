@@ -7,25 +7,25 @@ const { validateProperty } = require('../properties/validations')
 module.exports = (seed, type) => {
   seed.labels = seed.labels || {}
   seed.claims = seed.claims || {}
-  validateLabels(seed)
+  validateLabels(seed, type)
   validateAndFormatClaims(seed, type)
   validateImage(seed, type)
 }
 
-const validateLabels = seed => {
+const validateLabels = (seed, type) => {
   const { labels } = seed
   if (!_.isPlainObject(labels)) {
-    throw error_.new('invalid labels', 400, { seed })
+    throw error_.new('invalid labels', 400, { seed, type })
   }
 
   for (const lang in labels) {
     const label = labels[lang]
     if (!_.isLang(lang)) {
-      throw error_.new('invalid label lang', 400, { lang, label })
+      throw error_.new('invalid label lang', 400, { lang, label, seed, type })
     }
 
     if (!_.isNonEmptyString(label)) {
-      throw error_.new('invalid label', 400, { lang, label })
+      throw error_.new('invalid label', 400, { lang, label, seed, type })
     }
   }
 }
