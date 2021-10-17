@@ -56,7 +56,7 @@ const getQuery = isbn => {
   return qs.escape(query)
 }
 
-const formatRow = async (isbn, result, rawResult) => {
+const formatRow = async (isbn, result) => {
   const { edition, author } = result
   const entry = {}
   entry.edition = { isbn }
@@ -79,13 +79,13 @@ const formatRow = async (isbn, result, rawResult) => {
       matches: [ author.value, author.matches ],
       expectedEntityType: 'human',
     })
-    entry.author = {
-      uri,
-      labels: { fr: author.label },
-      claims
+    if (author.label || uri) {
+      entry.author = { labels: {}, claims }
+      if (uri) entry.author.uri = uri
+      if (author.label) entry.author.labels.en = author.label
+      if (author.birth) entry.author.claims['wdt:P569'] = author.birth
+      if (author.death) entry.author.claims['wdt:P570'] = author.death
     }
-    if (author.birth) entry.author.claims['wdt:P569'] = author.birth
-    if (author.death) entry.author.claims['wdt:P570'] = author.death
   }
   return entry
 }
