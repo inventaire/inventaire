@@ -1,7 +1,5 @@
 // An endpoint to get entities history as snapshots and diffs
 const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const patches_ = require('./lib/patches')
 const { hasAdminAccess } = require('lib/user_access_levels')
 const user_ = require('controllers/user/lib/user')
