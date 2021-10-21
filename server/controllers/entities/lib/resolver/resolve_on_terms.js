@@ -44,17 +44,17 @@ const resolveWorksAndAuthor = (works, author) => authorsUris => {
   return Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
 }
 
-const getWorkAndResolve = (authorSeed, authorsUris) => work => {
+const getWorkAndResolve = (authorSeed, authorsUris) => async work => {
   if (work == null || work.uri != null) return
   const workTerms = getEntityNormalizedTerms(work)
-  return getWorksFromAuthorsUris(authorsUris)
-  .then(resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms))
+  const authorsWorks = await getWorksFromAuthorsUris(authorsUris)
+  return resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms, authorsWorks)
 }
 
-const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms) => searchedWorks => {
-  // Several searchedWorks could match authors homonyms/duplicates
-  if (searchedWorks.length !== 1) return
-  const searchedWork = searchedWorks[0]
+const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms, authorsWorks) => {
+  // Several authorsWorks could match authors homonyms/duplicates
+  if (authorsWorks.length !== 1) return
+  const searchedWork = authorsWorks[0]
   const matchedAuthorsUris = _.intersection(getAuthorsUris(searchedWork), authorsUris)
   // If unique author to avoid assigning a work to a duplicated author
   if (matchedAuthorsUris.length !== 1) return
