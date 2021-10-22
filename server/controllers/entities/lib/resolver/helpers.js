@@ -4,11 +4,9 @@ const { getEntityNormalizedTerms } = require('../terms_normalization')
 module.exports = {
   getAlreadyResolvedUris: seed => _.compact(_.map(seed, 'uri')),
 
-  someTermsMatch: seedTerms => {
-    return entity => {
-      const entityTerms = getEntityNormalizedTerms(entity)
-      return _.someMatch(seedTerms, entityTerms)
-    }
+  someTermsMatch: seedTerms => entity => {
+    const entityTerms = getEntityNormalizedTerms(entity).map(_.toLowerCase)
+    return _.someMatch(serializeStrings(seedTerms), serializeStrings(entityTerms))
   },
 
   resolveSeed: (seed, expectedEntityType) => entities => {
@@ -24,4 +22,17 @@ module.exports = {
     }
     return seed
   }
+}
+const serializeStrings = strings => {
+  return strings.map(str => {
+    const lowerStr = _.toLowerCase(str)
+    // avoid mismatch such:
+    // 'Willing slaves of capital : Spinoza and Marx on desire'
+    // 'Willing slaves of capital: Spinoza and Marx on desire'
+    return lowerStr.replace(/ /g, '')
+    // superTrim
+    .replace(/^\s+/g, '')
+    .replace(/\s+$/g, '')
+    .replace(/\s+/g, ' ')
+  })
 }
