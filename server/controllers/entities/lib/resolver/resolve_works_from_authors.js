@@ -1,7 +1,6 @@
 const _ = require('builders/utils')
 const getWorksFromAuthorsLabels = require('./get_works_from_authors_uris')
 const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpers')
-const { getEntityNormalizedTerms } = require('../terms_normalization')
 const getAuthorsUris = require('../get_authors_uris')
 
 module.exports = async (works, authors) => {
@@ -11,10 +10,9 @@ module.exports = async (works, authors) => {
   return Promise.all(works.map(resolveWork(authorsUris)))
 }
 
-const resolveWork = authorsUris => work => {
-  if (work.uri != null) return work
-  const workSeedTerms = getEntityNormalizedTerms(work)
+const resolveWork = authorsUris => workSeed => {
+  if (workSeed.uri != null) return workSeed
   return getWorksFromAuthorsLabels(authorsUris)
-  .then(works => works.filter(someTermsMatch(workSeedTerms)))
-  .then(resolveSeed(work, 'work'))
+  .then(works => works.filter(someTermsMatch(workSeed)))
+  .then(resolveSeed(workSeed, 'work'))
 }
