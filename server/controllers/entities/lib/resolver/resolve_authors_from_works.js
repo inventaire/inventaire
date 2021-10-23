@@ -8,10 +8,10 @@ module.exports = async (authors, works) => {
   return Promise.all(authors.map(resolveAuthor(worksUris)))
 }
 
-const resolveAuthor = worksUris => author => {
-  if (author.uri != null) return author
-  const authorSeedTerms = getEntityNormalizedTerms(author)
+const resolveAuthor = worksUris => authorSeed => {
+  if (authorSeed.uri != null) return authorSeed
+  const authorSeedTerms = getEntityNormalizedTerms(authorSeed)
   return getAuthorsFromWorksUris(worksUris)
-  .then(worksUris => worksUris.filter(someTermsMatch(authorSeedTerms)))
-  .then(resolveSeed(author, 'human'))
+  .then(authors => authors.filter(someTermsMatch(authorSeedTerms)))
+  .then(resolveSeed(authorSeed, 'human'))
 }
