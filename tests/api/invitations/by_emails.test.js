@@ -28,6 +28,11 @@ describe('invitations:by-emails', () => {
       emails[1].should.equal('b@foo.org')
     })
 
+    it('should accept an empty message', async () => {
+      const { emails } = await authReq('post', endpoint, { emails: 'a@foo.org', message: '' })
+      emails[0].should.equal('a@foo.org')
+    })
+
     it('should reject missing emails', async () => {
       await authReq('post', endpoint, {})
       .then(shouldNotBeCalled)
