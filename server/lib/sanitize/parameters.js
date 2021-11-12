@@ -37,12 +37,15 @@ const positiveInteger = {
 }
 
 const nonEmptyString = {
-  format: str => {
+  format: (str, name, config) => {
+    if (str === '' && config.optional) return
     if (typeof str === 'string') return str.normalize().trim()
     // Let the validation throw an error
     else return str
   },
   validate: (value, name, config) => {
+    if (value == null && config.optional) return true
+
     if (!_.isString(value)) {
       const details = `expected string, got ${_.typeOf(value)}`
       throw error_.new(`invalid ${name}: ${details}`, 400, { value })
