@@ -18,6 +18,7 @@ module.exports = async (req, res) => {
   let responseText = csvHeaderRow + '\n'
   const items = await items_.byOwner(reqUserId)
   responseText = await buildItemsRowsSequentially(items, responseText, language)
+  res.header('content-type', 'text/csv')
   responses_.sendText(res, responseText)
 }
 

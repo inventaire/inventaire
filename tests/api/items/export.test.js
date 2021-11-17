@@ -31,6 +31,11 @@ const reqAndParse = async (itemId, user) => {
 
 describe('items:export', () => {
   describe('csv', () => {
+    it('should return csv content', async () => {
+      const { headers } = await rawCustomAuthReq({ user: userPromise, method: 'get', url: endpoint })
+      headers['content-type'].should.equal('text/csv; charset=utf-8')
+    })
+
     it('should return items data', async () => {
       const details = 'my details: \'Lorem?!#$ ipsum\' dolor; sit amet, consectetur "adipisicing" elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (See also https://en.wikipedia.org/wiki/Lorem_ipsum).'
       const notes = 'some private notes'
