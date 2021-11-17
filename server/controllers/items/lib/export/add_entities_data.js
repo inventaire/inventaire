@@ -6,6 +6,7 @@ const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 module.exports = async item => {
   const { entity: uri } = item
   const entity = await getEntityByUri({ uri })
+  if (!entity) throw error_.new('entity not found', 500, { item: item._id, uri })
 
   let works
   if (entity.type === 'edition') {
