@@ -44,8 +44,8 @@ module.exports = {
 
       const { hostname } = new URL(url)
 
-      if (denylistedRemoteHosts.includes(hostname)) {
-        return error_.bundle(req, res, 'denylisted domain', 400, url)
+      if (!trustedRemoteHosts.has(hostname)) {
+        return error_.bundle(req, res, 'image domain not allowed', 400, url)
       }
 
       const urlCode = _.hashCode(url).toString()
@@ -69,7 +69,8 @@ const parseReq = req => {
   return pathname.split('/')
 }
 
-const denylistedRemoteHosts = [
-  // Returns ENOTFOUND errors
-  'avatars.io'
-]
+const trustedRemoteHosts = new Set([
+  'commons.wikimedia.org',
+  'upload.wikimedia.org',
+  'covers.openlibrary.org',
+])
