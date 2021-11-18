@@ -62,18 +62,12 @@ const entities_ = module.exports = {
     })
   },
 
-  createBlank: () => {
-    // Create a new entity doc.
-    // This constituts the basis on which next modifications patch
-    return db.postAndReturn(Entity.create())
-  },
-
   edit: async params => {
-    const { userId, updatedLabels, updatedClaims, currentDoc, batchId } = params
+    const { userId, updatedLabels, updatedClaims, currentDoc, batchId, create } = params
     let updatedDoc = _.cloneDeep(currentDoc)
     updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
     updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId })
+    return entities_.putUpdate({ userId, currentDoc, updatedDoc, batchId, create })
   },
 
   addClaims: async (userId, newClaims, currentDoc, batchId) => {
@@ -84,14 +78,19 @@ const entities_ = module.exports = {
   },
 
   putUpdate: async params => {
-    const { userId, currentDoc, updatedDoc } = params
+    const { userId, currentDoc, updatedDoc, create } = params
     assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
 
     Entity.beforeSave(updatedDoc)
 
     // It is to the consumers responsability to check if there is an update:
     // empty patches at this stage will throw 500 errors
-    const docAfterUpdate = await db.putAndReturn(updatedDoc)
+    let docAfterUpdate
+    if (create) {
+      docAfterUpdate = await db.postAndReturn(updatedDoc)
+    } else {
+      docAfterUpdate = await db.putAndReturn(updatedDoc)
+    }
 
     try {
       const patch = await patches_.create(params)
