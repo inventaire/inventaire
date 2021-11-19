@@ -63,7 +63,7 @@ describe('user model', () => {
       })
 
       it('should throw on missing domain', () => {
-        const args = replaceParam(1, 'morelike@anemailbutno');
+        const args = replaceParam(1, 'morelike@');
         (() => _create(args)).should.throw()
       })
     })
