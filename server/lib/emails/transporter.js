@@ -19,18 +19,10 @@ const options = {
   extName: '.hbs'
 }
 
-const { defaultFrom, preview } = CONFIG.mailer
-const defaults =
-  { from: defaultFrom }
+const { defaultFrom, nodemailer: nodemailerOptions } = CONFIG.mailer
+const defaults = { from: defaultFrom }
 
-const transporter = nodemailer.createTransport(CONFIG.mailer, defaults)
-
-if (preview) {
-  // overriding Nodemailer::sendMail to generate a preview file
-  // instead of sending the email
-  const sendMail = require('./preview_email')
-  transporter.sendMail = sendMail.bind(transporter)
-}
+const transporter = nodemailer.createTransport(nodemailerOptions, defaults)
 
 transporter.use('compile', hbs(options))
 
