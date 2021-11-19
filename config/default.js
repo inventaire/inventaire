@@ -109,13 +109,16 @@ const config = module.exports = {
   // parameters for Nodemailer
   mailer: {
     disabled: true,
-    preview: true,
-    // Rely on SMTP: make sure the appropriate ports are not blocked by your server provider
+    // Relies on SMTP: make sure the appropriate ports are not blocked by your server provider
     // - Scaleway: https://community.online.net/t/solved-smtp-connection-blocked/2262/3
-    service: 'yoursettings',
-    auth: {
-      user: 'yoursettings',
-      pass: 'yoursettings'
+    nodemailer: {
+      host: 'smtp.ethereal.email',
+      port: 587,
+      // Get some username and password at https://ethereal.email/create
+      auth: {
+        user: 'someusername@ethereal.email',
+        pass: 'somepassword'
+      },
     },
     defaultFrom: `inventaire.io <${contactAddress}>`,
     initDelay: 10000

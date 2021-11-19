@@ -21,7 +21,6 @@ module.exports = {
   autofixI18n: false,
   mailer: {
     disabled: false,
-    preview: false
   },
   activitySummary: {
     disabled: false

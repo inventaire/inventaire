@@ -110,10 +110,9 @@ npm run watch
 ##### emails
 
 To debug emails in the browser:
-* Set the following values in config: `mailer.disabled = false` and `mailer.preview = true`.
-* Install `live-server`: `npm install --global live-server`
+* Get some username and password at https://ethereal.email/create and set the following values in config: `mailer.nodemailer.user` and `mailer.nodemailer.pass`.
 * Make an action that triggers the email you would like to work on on the local server (ex: send a friend request)
-* Run `npm run preview-email`: this will open the last generated email in your browser (with a link to the data associated to the email, that's only there in this preview mode)
+* Open https://ethereal.email/messages to see the generated email
 
 Note that, while convenient, debugging emails in the browser is quite an approximation, as some email clients are antiquated, and, sadly, modern CSS can't be used.
 
