@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { md5 } = require('lib/crypto')
-const downloadFile = require('./download_file')
+const downloadImage = require('./download_image')
 const { containers } = require('controllers/images/lib/containers')
 
 module.exports = async (container, sourceUrl) => {
@@ -11,6 +11,6 @@ module.exports = async (container, sourceUrl) => {
   const tmpFilename = md5(sourceUrl)
   const tmpPath = `/tmp/${tmpFilename}`
 
-  await downloadFile(sourceUrl, tmpPath)
+  await downloadImage(sourceUrl, tmpPath)
   return containers[container].putImage({ path: tmpPath })
 }
