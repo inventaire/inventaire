@@ -6,7 +6,7 @@ mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
 const randomString = require('lib/utils/random_string')
 const fs = require('fs')
-const downloadFile = require('controllers/images/lib/download_file')
+const downloadImage = require('controllers/images/lib/download_image')
 const { authReq, getUser } = require('../utils/utils')
 const { createReadStream } = require('fs')
 const fetch = require('node-fetch')
@@ -41,7 +41,7 @@ module.exports = {
   uploadSomeImage: async ({ container, imageFilePath, preventAutoRemove = false }) => {
     imageFilePath = imageFilePath || `/tmp/${randomString(10)}.jpg`
     const imageUrl = someImageUrl()
-    await downloadFile(imageUrl, imageFilePath)
+    await downloadImage(imageUrl, imageFilePath)
     const { cookie } = await getUser()
     const form = new FormData()
     form.append('somefile', createReadStream(imageFilePath))
