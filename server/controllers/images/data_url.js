@@ -11,10 +11,12 @@ const controller = async ({ url }) => {
   return { 'data-url': dataUrl }
 }
 
-// Set encoding as null to get the response as a buffer
-// see https://stackoverflow.com/a/17133012/3324977
+const headers = {
+  accept: 'image/*'
+}
+
 const getImageDataUrl = async url => {
-  const res = await fetch(url)
+  const res = await fetch(url, { headers })
   const contentType = res.headers.get('content-type')
 
   if (contentType.split('/')[0] !== 'image') {
