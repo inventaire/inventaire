@@ -75,4 +75,24 @@ describe('images:convert-url', () => {
     const { hash } = await convertUrl('entities', imageUrl)
     hash.should.equal('12f6bc6121725a1b28f57bdc10443db459119140')
   })
+
+  it('should reject a localhost image', async () => {
+    const imageUrl = 'http://localhost/someimage.jpg'
+    await convertUrl('entities', imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.error_name.should.equal('invalid_url')
+      err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject an image with an IP address', async () => {
+    const imageUrl = 'http://192.168.178.247/someimage.jpg'
+    await convertUrl('entities', imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.error_name.should.equal('invalid_url')
+      err.statusCode.should.equal(400)
+    })
+  })
 })

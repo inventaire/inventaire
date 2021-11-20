@@ -24,6 +24,24 @@ describe('images:data-url', () => {
     })
   })
 
+  it('should reject with an IP URL', async () => {
+    await authReq('get', `${endpoint}&url=${encodeURIComponent('http://192.168.178.247/someimage.jpg')}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid url:')
+    })
+  })
+
+  it('should reject with local host', async () => {
+    await authReq('get', `${endpoint}&url=${encodeURIComponent('http://localhost/someimage.jpg')}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('invalid url:')
+    })
+  })
+
   it('should reject with an invalid content type', async () => {
     const invalidContentTypeUrl = encodeURIComponent('http://maxlath.eu/data.json')
     await authReq('get', `${endpoint}&url=${invalidContentTypeUrl}`)
