@@ -9,7 +9,13 @@ const oneMB = Math.pow(1024, 2)
 module.exports = async (url, path) => {
   url = encodeURL(url)
   const controller = new AbortController()
-  const response = await fetch(url, { timeout: 30000, signal: controller.signal })
+  const response = await fetch(url, {
+    timeout: 30000,
+    signal: controller.signal,
+    headers: {
+      accept: 'image/*'
+    },
+  })
   validateResponse(response, controller, url, path)
   return saveFile(response.body, path)
 }
