@@ -41,6 +41,18 @@ describe('auth:signup', () => {
     })
     res.ok.should.be.true()
   })
+
+  it('should reject an invalid email', async () => {
+    await publicReq('post', endpoint, {
+      username: randomString(4),
+      email: `bla${randomString(4)}@foo..bar`,
+      password: randomString(8)
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.error_name.should.equal('invalid_email')
+    })
+  })
 })
 
 describe('auth:username-availability', () => {
