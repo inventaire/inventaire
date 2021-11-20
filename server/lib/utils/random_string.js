@@ -1,18 +1,26 @@
-const _ = require('lodash')
-const alphabet = 'abcdefghijklmnopqrstuvwxyz'
-const possibleChars = `${alphabet + alphabet.toUpperCase()}0123456789`
+const { randomBytes } = require('crypto')
+const nonAlphaNumericCharacters = /\W/g
 
 // Generated strings should:
 // - be fast to generate
-// - be in a URL without requiring to be escaped
+// - be in a URL or file path without requiring to be escaped
 // - have the highest possible entropy with those constraints
-module.exports = length => {
-  let text = ''
-  let i = 0
-  while (i < length) {
-    text += possibleChars.charAt(_.random(possibleChars.length - 1))
-    i++
-  }
+const getRandomString = length => {
+  // 1 byte = 8 bits
+  // 1 base64 character = log2(64) bits = 6 bits
+  // So to get x base64 characters, we need x*6/8 bytes,
+  // but we request more as some characters will be dropped to keep only alphanumerics
 
-  return text
+  const result = randomBytes(length)
+    .toString('base64')
+    .replace(nonAlphaNumericCharacters, '')
+
+  // Due to the dropped characters, there is chance we don't have enough
+  if (result.length >= length) {
+    return result.slice(0, length)
+  } else {
+    return getRandomString(length)
+  }
 }
+
+module.exports = getRandomString
