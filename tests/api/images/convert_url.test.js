@@ -60,7 +60,8 @@ describe('images:convert-url', () => {
     await convertUrl('entities', imageUrl)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(404)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('could not download image')
     })
   })
 

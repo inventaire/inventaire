@@ -1,3 +1,4 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const fetch = require('node-fetch')
 
@@ -7,8 +8,15 @@ const sanitization = {
 
 // Get an image data-url from a URL
 const controller = async ({ url }) => {
-  const dataUrl = await getImageDataUrl(url)
-  return { 'data-url': dataUrl }
+  try {
+    const dataUrl = await getImageDataUrl(url)
+    return { 'data-url': dataUrl }
+  } catch (err) {
+    // In case of server-side request forgery, do not let internal services
+    // error responses get out
+    _.error(err, 'data_url private error')
+    throw error_.new('image could not be converted', 400, { url })
+  }
 }
 
 const headers = {
