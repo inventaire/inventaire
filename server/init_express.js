@@ -28,9 +28,12 @@ module.exports = () => {
   // cf http://expressjs.com/fr/guide/error-handling.html
   app.use(require('./middlewares/error_handler'))
 
-  // Required to set secure cookies
-  // See https://expressjs.com/en/api.html#trust.proxy.options.table
-  if (publicProtocol === 'https') app.set('trust proxy', 'loopback')
+  if (publicProtocol === 'https') {
+    // Allows Nginx to pass a "X-Forwarded-Proto=https" header
+    // Required to set secure cookies
+    // See https://expressjs.com/en/api.html#trust.proxy.options.table
+    app.set('trust proxy', 'loopback')
+  }
 
   app.disable('x-powered-by')
 
