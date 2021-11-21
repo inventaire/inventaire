@@ -12,11 +12,14 @@ const { getAgent, insecureHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
 const { coloredElapsedTime } = require('./time')
+const { isUrl } = require('./boolean_validations')
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
+
+  if (options.sanitize && !isUrl(url)) throw error_.newInvalid('url', url)
 
   const { host } = new URL(url)
   throwIfTemporarilyBanned(host)
