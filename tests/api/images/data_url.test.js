@@ -30,7 +30,7 @@ describe('images:data-url', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid content type')
+      err.body.status_verbose.should.equal('image could not be converted')
     })
   })
 

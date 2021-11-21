@@ -17,7 +17,8 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
   try {
     actorRes = await requests_.get(recipientActorUri, { timeout })
   } catch (err) {
-    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity, err })
+    _.error(err, 'signAndPostActivity private error')
+    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity })
   }
   const inboxUri = actorRes.inbox
   if (!inboxUri) {
