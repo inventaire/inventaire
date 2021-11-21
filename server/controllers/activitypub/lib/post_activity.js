@@ -1,3 +1,4 @@
+const CONFIG = require('config')
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const { signRequest } = require('controllers/activitypub/lib/security')
@@ -8,6 +9,7 @@ const { publicHost } = require('config')
 const { getSharedKeyPair } = require('./shared_key_pair')
 // Arbitrary timeout
 const timeout = 30 * 1000
+const sanitize = CONFIG.activitypub.sanitizeUrls
 
 const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) => {
   assert_.string(actorName)
@@ -15,7 +17,7 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
   assert_.object(activity)
   let actorRes
   try {
-    actorRes = await requests_.get(recipientActorUri, { timeout })
+    actorRes = await requests_.get(recipientActorUri, { timeout, sanitize })
   } catch (err) {
     throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity, err })
   }
