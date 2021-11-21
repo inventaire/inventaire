@@ -1,4 +1,4 @@
-const { port, host, name } = require('config')
+const { port, host, name, publicProtocol } = require('config')
 const _ = require('builders/utils')
 const express = require('express')
 
@@ -27,6 +27,13 @@ module.exports = () => {
   // Should be used after all middlewares and routes
   // cf http://expressjs.com/fr/guide/error-handling.html
   app.use(require('./middlewares/error_handler'))
+
+  if (publicProtocol === 'https') {
+    // Allows Nginx to pass a "X-Forwarded-Proto=https" header
+    // Required to set secure cookies
+    // See https://expressjs.com/en/api.html#trust.proxy.options.table
+    app.set('trust proxy', 'loopback')
+  }
 
   app.disable('x-powered-by')
 

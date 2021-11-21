@@ -1,4 +1,4 @@
-const { name, cookieMaxAge, protocol } = require('config')
+const { name, cookieMaxAge, publicProtocol } = require('config')
 const { expired } = require('builders/utils')
 
 const passport = require('passport')
@@ -24,7 +24,7 @@ const cookieSessionParams = {
   sameSite: 'lax',
 
   // Expliciting the default values
-  secure: protocol === 'https',
+  secure: publicProtocol === 'https',
   httpOnly: true,
 }
 
