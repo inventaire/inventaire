@@ -5,7 +5,7 @@
 const urlPattern = '^(https?:\\/\\/)' + // protocol
   '((([a-z\\d]([a-z\\d-_]*[a-z\\d])*)\\.)+[a-z]{2,})' + // domain name
   '(\\:\\d+)?' + // port?
-  '(\\/[-a-z\\d%_.~+]*)*' + // path
+  '(\\/[-a-z\\d:%_.~+]*)*' + // path
   '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string?
   '(\\#[-a-z\\d_]*)?$' // fragment?
 
