@@ -1,4 +1,15 @@
 const error_ = require('lib/error/error')
+const { qualifier: simplifyQualifier } = require('wikidata-sdk').simplify
+
+const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
+  if (simplifiedClaims['wdt:P179']?.length === 1) {
+    const { qualifiers: serieQualifiers } = rawClaims.P179[0]
+    if (serieQualifiers.P1545?.length === 1) {
+      const simplifiedQualifier = simplifyQualifier(serieQualifiers.P1545[0])
+      simplifiedClaims['wdt:P1545'] = [ simplifiedQualifier ]
+    }
+  }
+}
 
 const relocateQualifierProperties = invEntity => {
   const { claims } = invEntity
@@ -30,4 +41,4 @@ const relocateQualifierProperties = invEntity => {
   delete claims['wdt:P1545']
 }
 
-module.exports = { relocateQualifierProperties }
+module.exports = { flattenQualifierProperties, relocateQualifierProperties }
