@@ -6,6 +6,7 @@ const validateEntity = require('./validate_entity')
 const getEntityType = require('./get_entity_type')
 const properties = require('./properties/properties_values_constraints')
 const { prefixifyWd, unprefixify } = require('./prefix')
+const { relocateQualifierProperties } = require('lib/wikidata/data_model_adapter')
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
 module.exports = async params => {
@@ -63,8 +64,8 @@ const validateWikidataCompliance = entity => {
 
 const format = entity => {
   const { claims } = entity
-  entity.claims = Object.keys(claims)
-    .reduce(unprefixifyClaims(claims), {})
+  entity.claims = Object.keys(claims).reduce(unprefixifyClaims(claims), {})
+  relocateQualifierProperties(entity)
   return entity
 }
 
