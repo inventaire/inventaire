@@ -50,7 +50,7 @@ This repository tracks the server-side developments, while the (heavy) [client-s
 
 ### Dependencies to install manually
 - [git](https://git-scm.com/), [curl](https://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts):
-- [NodeJS](https://nodejs.org/) (>=8, using the latest LTS is recommended), [NVM](https://github.com/creationix/nvm) (allows greater version update flexibility)
+- [NodeJS](https://nodejs.org/) (>=10, using the latest LTS is recommended), [NVM](https://github.com/creationix/nvm) (allows greater version update flexibility)
 - a [CouchDB](https://couchdb.apache.org/) (>=3.1) instance (on port 5984 for default config)
 - an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.10) instance (on port 9200 for default config)
 
