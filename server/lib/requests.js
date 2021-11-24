@@ -13,13 +13,18 @@ const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./
 const { URL } = require('url')
 const { coloredElapsedTime } = require('./time')
 const { isUrl } = require('./boolean_validations')
+const { isRestrictedHost } = require('./network')
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
 
-  if (options.sanitize && !isUrl(url)) throw error_.newInvalid('url', url)
+  if (options.sanitize) {
+    if (!isUrl(url) && await isRestrictedHost(url)) {
+      throw error_.newInvalid('url', url)
+    }
+  }
 
   const { host } = new URL(url)
   throwIfTemporarilyBanned(host)
