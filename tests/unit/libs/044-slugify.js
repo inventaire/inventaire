@@ -13,11 +13,12 @@ describe('slugify', () => {
   })
 
   it('should replace URL reserved characters', () => {
-    slugify("L:a;:? M[!Y]$'@,\"|N=.E - é<(}{h)>o").should.equal('la-myn-e-ého')
+    slugify("L:a;:? M[!Y]$'@,\"|N=.E - é<(}{h)/\\>o").should.equal('la-myn-e-ého')
+    slugify('/Â§"$%&/)?=)( yes!').should.equal('â-yes')
   })
 
   it('should preserve non-ASCII characters', () => {
-    slugify('『青チョークの男』').should.equal('『青チョークの男』')
+    slugify('『青チョークの男』').should.equal('青チョークの男')
   })
 
   it('should drop dashes at the extremities', () => {
