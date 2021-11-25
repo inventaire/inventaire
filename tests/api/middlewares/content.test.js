@@ -9,7 +9,7 @@ describe('content', () => {
       await makeRequest('application/json')
     })
 
-    it('should accept JSON with application/application/csp-report content-type', async () => {
+    it('should accept JSON with application/csp-report content-type', async () => {
       await makeRequest('application/csp-report')
     })
 
