@@ -25,11 +25,11 @@ const validatePassword = async ({ user, currentPassword, resetPassword }) => {
   // classic password update
   if (currentPassword != null) {
     if (!User.validations.password(currentPassword)) {
-      throw error_.newInvalid('current-password', currentPassword)
+      throw error_.new('invalid current-password', 400)
     }
     const isValid = await verifyCurrentPassword(user, currentPassword)
     if (!isValid) {
-      throw error_.newInvalid('current-password', user.email)
+      throw error_.new('invalid current-password', 400)
     }
 
   // token-based password reset, with expiration date
@@ -50,7 +50,7 @@ const verifyCurrentPassword = async (user, currentPassword) => {
 
 const updatePassword = async (user, newPassword) => {
   const newHash = await pw_.hash(newPassword)
-  await updateUserPassword.bind(user._id, user, newHash)
+  await updateUserPassword(user._id, user, newHash)
 }
 
 const updateUserPassword = (userId, user, newHash) => {

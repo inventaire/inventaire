@@ -41,7 +41,7 @@ const API = module.exports = {
     const username = customData.username || API.createUsername()
     const userData = {
       username,
-      password: '12345678',
+      password: customData.password || '12345678',
       email: `${username}@adomain.org`,
       language: customData.language || 'en'
     }
@@ -113,6 +113,7 @@ const parseCookie = res => res.headers['set-cookie']
 
 const setCustomData = async (user, customData) => {
   delete customData.username
+  delete customData.password
   for (const attribute in customData) {
     const value = customData[attribute]
     if (_.isPlainObject(value)) {

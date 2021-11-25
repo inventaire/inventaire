@@ -1,18 +1,15 @@
 require('should')
-const { authReq, customAuthReq, getUser, getUserGetter } = require('../utils/utils')
+const { authReq, customAuthReq, getReservedUser } = require('../utils/utils')
 const randomString = require('lib/utils/random_string')
 const { wait } = require('lib/promises')
 const endpoint = '/api/auth?action=update-password'
-const { createUser, createUserEmail } = require('../fixtures/users')
 const { BasicUpdater } = require('lib/doc_updates')
 const { shouldNotBeCalled } = require('root/tests/unit/utils')
 const db = require('db/couchdb/base')('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', async () => {
-    const user = await getUser()
     await authReq('post', endpoint, {
-      email: user.email,
       'new-password': randomString(7)
     })
     .then(shouldNotBeCalled)
@@ -23,9 +20,8 @@ describe('auth:update-password', () => {
 
   it('should reject short old password', async () => {
     await authReq('post', endpoint, {
-      email: createUserEmail(),
+      'current-password': randomString(7),
       'new-password': randomString(20),
-      'current-password': randomString(7)
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -34,11 +30,9 @@ describe('auth:update-password', () => {
   })
 
   it('should reject if current password is incorrect', async () => {
-    const user = await createUser()
     await authReq('post', endpoint, {
-      email: user.email,
       'current-password': randomString(20),
-      'new-password': randomString(20)
+      'new-password': randomString(20),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -47,11 +41,9 @@ describe('auth:update-password', () => {
   })
 
   it('should reject if reset password timestamp is invalid', async () => {
-    const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
-    await updateCustomUser(userPromise, 'resetPassword', 'invalid')
-    await customAuthReq(userPromise, 'post', endpoint, {
-      email,
+    const user = await getReservedUser()
+    await updateCustomUser(user, 'resetPassword', 'invalid')
+    await customAuthReq(user, 'post', endpoint, {
       'new-password': randomString(20)
     })
     .then(shouldNotBeCalled)
@@ -61,11 +53,9 @@ describe('auth:update-password', () => {
   })
 
   it('should reject if reset password timestamp is too old', async () => {
-    const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
-    await updateCustomUser(userPromise, 'resetPassword', 1000)
-    await customAuthReq(userPromise, 'post', endpoint, {
-      email,
+    const user = await getReservedUser()
+    await updateCustomUser(user, 'resetPassword', 1000)
+    await customAuthReq(user, 'post', endpoint, {
       'new-password': randomString(20)
     })
     .then(shouldNotBeCalled)
@@ -75,15 +65,27 @@ describe('auth:update-password', () => {
   })
 
   it('should reset password timestamp is recent', async () => {
-    const email = createUserEmail()
-    const userPromise = getUserGetter(email)()
+    const user = await getReservedUser()
     const recentTime = Date.now() - 1000
-    await updateCustomUser(userPromise, 'resetPassword', recentTime)
-    const res = await customAuthReq(userPromise, 'post', endpoint, {
-      email,
+    await updateCustomUser(user, 'resetPassword', recentTime)
+    await customAuthReq(user, 'post', endpoint, {
       'new-password': randomString(20)
     })
-    res.ok.should.be.true()
+  })
+
+  it('should update the password', async () => {
+    const password = randomString(20)
+    const newPassword = randomString(20)
+    const newPassword2 = randomString(20)
+    const user = await getReservedUser({ password })
+    await customAuthReq(user, 'post', endpoint, {
+      'current-password': password,
+      'new-password': newPassword,
+    })
+    await customAuthReq(user, 'post', endpoint, {
+      'current-password': newPassword,
+      'new-password': newPassword2,
+    })
   })
 })
 
