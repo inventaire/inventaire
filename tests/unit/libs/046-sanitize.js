@@ -505,4 +505,34 @@ describe('sanitize', () => {
       bbox.should.deepEqual([ 0, 0, 1, 1 ])
     })
   })
+
+  describe('parameter prefixed aliases', () => {
+    it('should allow to use parameter aliases ', async () => {
+      const req = { query: { 'new-password': '12345678', 'old-password': '12345678' } }
+      const configs = { 'new-password': {}, 'old-password': {} }
+      sanitize(req, {}, configs)
+    })
+
+    it('should reject an alias used instead of the primary parameter name', async () => {
+      const req = { query: { 'new-password': '12345678' } }
+      const configs = { password: {} }
+      try {
+        sanitize(req, {}, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        err.message.should.equal('missing parameter in query: password')
+      }
+    })
+
+    it('should reject a primary paramer named used instead of an alias', async () => {
+      const req = { query: { password: '12345678' } }
+      const configs = { 'new-password': {} }
+      try {
+        sanitize(req, {}, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        err.message.should.equal('missing parameter in query: new-password')
+      }
+    })
+  })
 })
