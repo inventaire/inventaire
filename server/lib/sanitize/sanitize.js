@@ -51,9 +51,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
     if (generic) {
       throw error_.new('invalid generic name', 500, { generic })
     } else {
-      addWarning(res, `unexpected config parameter: ${name}`)
-      delete input[name]
-      return
+      throw error_.new('invalid parameter name', 500, { name })
     }
   }
 

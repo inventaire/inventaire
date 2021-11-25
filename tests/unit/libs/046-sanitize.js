@@ -14,18 +14,20 @@ describe('sanitize', () => {
     }
   })
 
-  it('should add a warning for unknown parameter (server error)', async () => {
+  it('should throw a 500 when the server uses an unknown parameter', async () => {
     const req = { query: { foo: 1000 } }
     const res = {}
     const configs = {
       foo: {}
     }
-    const input = sanitize(req, res, configs)
-    input.should.deepEqual({})
-    res.warnings.should.be.an.Object()
-    res.warnings.parameters.should.deepEqual([
-      'unexpected config parameter: foo'
-    ])
+    try {
+      sanitize(req, res, configs)
+      shouldNotBeCalled()
+    } catch (err) {
+      err.message.should.equal('invalid parameter name')
+      err.context.name.should.equal('foo')
+      err.statusCode.should.equal(500)
+    }
   })
 
   it('should add a warning for unexpected parameter (user error)', async () => {
