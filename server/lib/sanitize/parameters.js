@@ -195,22 +195,6 @@ const generics = {
   }
 }
 
-const value = {
-  // Endpoints accepting a 'value' can specify a type
-  // or have to do their own validation
-  // as a value can be anything, including null
-  validate: (value, name, config) => {
-    const { type: expectedType } = config
-    if (expectedType) {
-      const valueType = _.typeOf(value)
-      if (valueType !== expectedType) {
-        throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
-      }
-    }
-    return true
-  }
-}
-
 module.exports = {
   '@context': allowlistedStrings,
   actor: nonEmptyString,
@@ -255,10 +239,8 @@ module.exports = {
   listing: allowlistedString,
   message: nonEmptyString,
   name: nonEmptyString,
-  'new-value': value,
   object: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
-  'old-value': value,
   options: allowlistedStrings,
   owners: couchUuids,
   password: {
@@ -310,5 +292,19 @@ module.exports = {
   usernames,
   relatives: allowlistedStrings,
   requester: couchUuid,
-  value,
+  // Endpoints accepting a 'value' can specify a type
+  // or have to do their own validation
+  // as a value can be anything, including null
+  value: {
+    validate: (value, name, config) => {
+      const { type: expectedType } = config
+      if (expectedType) {
+        const valueType = _.typeOf(value)
+        if (valueType !== expectedType) {
+          throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
+        }
+      }
+      return true
+    },
+  },
 }
