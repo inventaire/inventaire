@@ -1,57 +1,57 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
 const db = require('db/couchdb/base')('users')
 const User = require('models/user')
 const pw_ = require('lib/crypto').passwords
 const { oneHour, expired } = require('lib/time')
 
-module.exports = (req, res) => {
-  const { user, body } = req
-  const { 'current-password': currentPassword, 'new-password': newPassword } = body
+const sanitization = {
+  'current-password': {
+    optional: true
+  },
+  'new-password': {},
+}
+
+const controller = async (params, req) => {
+  const { user } = req
+  const { currentPassword, newPassword } = params
   const { resetPassword } = user
-  if (!User.validations.password(newPassword)) {
-    return error_.bundleInvalid(req, res, 'new-password', user)
-  }
+  await validatePassword({ user, currentPassword, resetPassword })
+  await updatePassword(user, newPassword)
+  return { ok: true }
+}
 
-  let test
-
+const validatePassword = async ({ user, currentPassword, resetPassword }) => {
   // classic password update
   if (currentPassword != null) {
     if (!User.validations.password(currentPassword)) {
-      return error_.bundleInvalid(req, res, 'current-password', currentPassword)
+      throw error_.newInvalid('current-password', currentPassword)
     }
-    test = verifyCurrentPassword(user, currentPassword)
-    .then(isValid => {
-      if (!isValid) {
-        throw error_.newInvalid('current-password', user.email)
-      }
-    })
+    const isValid = await verifyCurrentPassword(user, currentPassword)
+    if (!isValid) {
+      throw error_.newInvalid('current-password', user.email)
+    }
 
   // token-based password reset, with expiration date
   } else if (resetPassword != null) {
     if (!_.isNumber(resetPassword)) {
-      return error_.bundle(req, res, 'invalid resetPassword timestamp', 500)
+      throw error_.new('invalid resetPassword timestamp', 500)
     }
-    test = testOpenResetPasswordWindow(resetPassword)
+    await testOpenResetPasswordWindow(resetPassword)
+  } else {
+    // Known case: a resetPassword request but without a valid reset
+    throw error_.new('reset password token expired: request a new token', 403)
   }
-
-  if (test == null) {
-    // it is a resetPassword request but without a valid reset
-    return error_.bundle(req, res, 'reset password token expired: request a new token', 403)
-  }
-
-  return test
-  .then(updatePassword.bind(null, user, newPassword))
-  .then(responses_.Ok(res))
 }
 
-const updatePassword = (user, newPassword) => {
-  return pw_.hash(newPassword)
-  .then(updateUserPassword.bind(null, user._id, user))
+const verifyCurrentPassword = async (user, currentPassword) => {
+  return pw_.verify(user.password, currentPassword)
 }
 
-const verifyCurrentPassword = (user, currentPassword) => pw_.verify(user.password, currentPassword)
+const updatePassword = async (user, newPassword) => {
+  const newHash = await pw_.hash(newPassword)
+  await updateUserPassword.bind(user._id, user, newHash)
+}
 
 const updateUserPassword = (userId, user, newHash) => {
   const updateFn = User.updatePassword.bind(null, user, newHash)
@@ -62,4 +62,9 @@ const testOpenResetPasswordWindow = async resetPassword => {
   if (expired(resetPassword, oneHour)) {
     throw error_.new('reset password timespan experied', 400)
   }
+}
+
+module.exports = {
+  sanitization,
+  controller,
 }

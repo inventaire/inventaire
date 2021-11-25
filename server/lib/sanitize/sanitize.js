@@ -91,7 +91,7 @@ const getParameterFunctions = (name, generic) => {
   return parameter
 }
 
-const prefixedParameterPattern = /^(old|new)-/
+const prefixedParameterPattern = /^(old|new|current)-/
 
 const getPlace = (method, configs) => {
   let place = 'query'
