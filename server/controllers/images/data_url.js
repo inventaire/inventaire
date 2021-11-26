@@ -1,4 +1,5 @@
 const error_ = require('lib/error/error')
+const { isRestrictedHost } = require('lib/network')
 const fetch = require('node-fetch')
 
 const sanitization = {
@@ -7,7 +8,9 @@ const sanitization = {
 
 // Get an image data-url from a URL
 const controller = async ({ url }) => {
+  console.log('HERE')
   const dataUrl = await getImageDataUrl(url)
+  console.log('THERE')
   return { 'data-url': dataUrl }
 }
 
@@ -16,7 +19,10 @@ const headers = {
 }
 
 const getImageDataUrl = async url => {
-  const res = await fetch(url, { headers })
+  if (await isRestrictedHost(url)) {
+    throw error_.newInvalid('url', url)
+  }
+  const res = await fetch(url, { headers, sanitize: true })
   const contentType = res.headers.get('content-type')
 
   if (contentType.split('/')[0] !== 'image') {
