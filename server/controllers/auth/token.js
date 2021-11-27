@@ -1,16 +1,16 @@
 const _ = require('builders/utils')
 const ActionsControllers = require('lib/actions_controllers')
 const token_ = require('controllers/user/lib/token')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
 const passport_ = require('lib/passport/passport')
 const setLoggedInCookie = require('./lib/set_logged_in_cookie')
 
-const sanitization = {
+const sanitization = validateSanitization({
   email: {},
   token: {
     length: token_.tokenLength
   }
-}
+})
 
 const confirmEmailValidity = async (req, res) => {
   const { email, token } = sanitize(req, res, sanitization)

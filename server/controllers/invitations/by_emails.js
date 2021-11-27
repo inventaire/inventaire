@@ -8,13 +8,13 @@ const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_da
 const groups_ = require('controllers/groups/lib/groups')
 const Group = require('models/group')
 const { Track } = require('lib/track')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
 
-const sanitization = {
+const sanitization = validateSanitization({
   emails: {},
   message: { optional: true },
   group: { optional: true },
-}
+})
 
 module.exports = async (req, res) => {
   const params = sanitize(req, res, sanitization)
