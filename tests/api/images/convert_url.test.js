@@ -3,6 +3,7 @@ const { authReq } = require('../utils/utils')
 const endpoint = '/api/images?action=convert-url'
 const { isImageHash, isEntityImg, isUserImg, isGroupImg } = require('lib/boolean_validations')
 const { shouldNotBeCalled } = require('../utils/utils')
+const hostname = require('os').hostname()
 
 const convertUrl = (container, url) => authReq('post', endpoint, { container, url })
 
@@ -60,7 +61,8 @@ describe('images:convert-url', () => {
     await convertUrl('entities', imageUrl)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.statusCode.should.equal(404)
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('could not download image')
     })
   })
 
@@ -92,6 +94,26 @@ describe('images:convert-url', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.error_name.should.equal('invalid_url')
+      err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject an image with an IP address', async () => {
+    const imageUrl = 'http://192.168.178.247/someimage.jpg'
+    await convertUrl('entities', imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.error_name.should.equal('invalid_url')
+      err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject domain name resolving to private network', async () => {
+    const imageUrl = `http://${hostname}.local:9200`
+    await convertUrl('entities', imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('could not download image')
       err.statusCode.should.equal(400)
     })
   })

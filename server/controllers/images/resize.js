@@ -38,7 +38,7 @@ module.exports = {
       url = `${mediaStorageEndpoint}${container}/${rest}`
     } else if (/^[0-9]+$/.test(rest)) {
       url = req.query.href
-      if (!_.isUrl(url)) {
+      if (!_.isPublicUrl(url)) {
         return error_.bundle(req, res, 'invalid href query', 400, url)
       }
 

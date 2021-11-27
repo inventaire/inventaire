@@ -52,7 +52,7 @@ const validateAndFormatPropertyClaims = (claims, type) => prop => {
 const validateImage = (seed, type) => {
   if (seed.image != null) {
     if (type === 'edition') {
-      if (!_.isUrl(seed.image)) {
+      if (!_.isPublicUrl(seed.image)) {
         throw error_.new('invalid image url', 400, { seed })
       }
     } else {

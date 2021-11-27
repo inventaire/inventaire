@@ -13,7 +13,7 @@ module.exports = async ({ container, url }) => {
     const res = await cleanupImageUrl(url)
     url = res.url
   }
-  if (!_.isUrl(url)) {
+  if (!_.isPublicUrl(url)) {
     throw error_.new('invalid image url', 400, { url, originalUrl })
   }
   const data = await convertImageUrl({ container, url })

@@ -33,7 +33,7 @@ module.exports = {
 
   url: {
     datatype: 'string',
-    validate: _.isUrl
+    validate: _.isPublicUrl
   },
 
   uniqueSimpleDay: {

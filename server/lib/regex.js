@@ -1,14 +1,4 @@
 // Keep in sync with client/lib/regex
-
-// Adapted from http://stackoverflow.com/a/14582229/3324977
-// Not accepting auth, ip addresses, or localhost for security reasons
-const urlPattern = '^(https?:\\/\\/)' + // protocol
-  '((([a-z\\d]([a-z\\d-_]*[a-z\\d])*)\\.)+[a-z]{2,})' + // domain name
-  '(\\:\\d+)?' + // port?
-  '(\\/[-a-z\\d:%_.~+]*)*' + // path
-  '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string?
-  '(\\#[-a-z\\d_]*)?$' // fragment?
-
 module.exports = {
   AssetImg: /^\/img\/assets\/\w/,
   CouchUuid: /^[0-9a-f]{32}$/,
@@ -30,7 +20,6 @@ module.exports = {
   Sha1: /^[0-9a-f]{40}$/,
   SimpleDay: /^-?([1-9]{1}[0-9]{0,3}|0)(-\d{2})?(-\d{2})?$/,
   StrictlyPositiveInteger: /^[1-9]\d*$/,
-  Url: new RegExp(urlPattern, 'i'),
   UserImg: /^\/img\/users\/[0-9a-f]{40}$/,
   // all 1 letter strings are reserved for the application
   Username: /^\w{2,20}$/,

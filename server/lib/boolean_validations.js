@@ -11,7 +11,19 @@ const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
 const tests = module.exports = {
-  isUrl: bindedTest('Url'),
+  isPublicUrl: url => {
+    try {
+      const { protocol, host, username, password } = new URL(url)
+      if (!(protocol === 'http:' || protocol === 'https:')) return false
+      if (host === 'localhost') return false
+      if (username !== '' || password !== '') return false
+      // TODO: dns.lookup + private ip range check
+    } catch (err) {
+      if (err.code === 'ERR_INVALID_URL') return false
+      else throw err
+    }
+    return true
+  },
   isImageHash: bindedTest('ImageHash'),
   isAssetImg: bindedTest('AssetImg'),
   isEntityImg: bindedTest('EntityImg'),
@@ -72,6 +84,6 @@ const tests = module.exports = {
   isNonEmptyPlainObject: obj => _.isPlainObject(obj) && (Object.keys(obj).length > 0),
   isPositiveIntegerString: str => _.isString(str) && PositiveIntegerPattern.test(str),
   isStrictlyPositiveInteger: num => Number.isInteger(num) && num > 0,
-  isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
+  isExtendedUrl: str => tests.isPublicUrl(str) || tests.isLocalImg(str),
   isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
 }

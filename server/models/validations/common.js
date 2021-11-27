@@ -37,7 +37,7 @@ validations.BoundedString = (minLength, maxLength) => str => {
   return validations.boundedString(str, minLength, maxLength)
 }
 
-validations.imgUrl = url => validations.localImg(url) || _.isUrl(url) || _.isImageHash(url)
+validations.imgUrl = url => validations.localImg(url) || _.isPublicUrl(url) || _.isImageHash(url)
 
 validations.valid = function (attribute, value, option) {
   let test = this[attribute]
