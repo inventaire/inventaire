@@ -344,57 +344,45 @@ describe('entities:resolve:in-context', () => {
 })
 
 describe('entities:resolve:on-labels', () => {
-  it('should not resolve work pair if no labels match', async () => {
-    const author = await createHuman()
-    const workLabel = randomLabel()
-    const seedLabel = randomLabel()
-    const authorLabel = author.labels.en
-    const work = await createWorkWithAuthor(author, workLabel)
+  let author, workLabel, authorLabel, work
+  before(async () => {
+    author = await createHuman()
+    workLabel = randomLabel()
+    authorLabel = author.labels.en
+    work = await createWorkWithAuthor(author, workLabel)
     await waitForIndexation('entities', work._id)
-    const { entries } = await resolve(basicEntry(seedLabel, authorLabel))
-    should(entries[0].works[0].uri).not.be.ok()
   })
 
-  it('should resolve author and work pair by searching for exact labels', async () => {
-    const author = await createHuman()
-    const workLabel = randomLabel()
-    const authorLabel = author.labels.en
-    const work = await createWorkWithAuthor(author, workLabel)
-    await waitForIndexation('entities', work._id)
+  it('should resolve work pair on exact match', async () => {
     const { entries } = await resolve(basicEntry(workLabel, authorLabel))
     entries[0].works[0].uri.should.equal(work.uri)
     entries[0].authors[0].uri.should.equal(author.uri)
   })
 
   it('should resolve work pair with case insentive labels', async () => {
-    const author = await createHuman()
-    const workLabel = randomLabel()
-    const seedLabel = workLabel.toUpperCase()
-    const authorLabel = author.labels.en
-    const work = await createWorkWithAuthor(author, workLabel)
-    await waitForIndexation('entities', work._id)
-    const { entries } = await resolve(basicEntry(seedLabel, authorLabel))
-    entries[0].works[0].uri.should.equal(work.uri)
-    entries[0].authors[0].uri.should.equal(author.uri)
+    const upperWorkLabel = workLabel.toUpperCase()
+    const { entries: entries2 } = await resolve(basicEntry(upperWorkLabel, authorLabel))
+    entries2[0].works[0].uri.should.equal(work.uri)
+    entries2[0].authors[0].uri.should.equal(author.uri)
+  })
+
+  it('should not resolve work pair if no labels match', async () => {
+    const randomWorkLabel = randomLabel()
+    const { entries: entries3 } = await resolve(basicEntry(randomWorkLabel, authorLabel))
+    should(entries3[0].works[0].uri).not.be.ok()
   })
 
   it('should not resolve when several works exist', async () => {
-    const author = await createHuman()
     const sameLabelAuthor = await createHuman({ labels: author.labels })
-    const workLabel = randomLabel()
-    const [ workA, workB ] = await Promise.all([
-      createWorkWithAuthor(author, workLabel),
-      createWorkWithAuthor(sameLabelAuthor, workLabel)
-    ])
-    await Promise.all([
-      waitForIndexation('entities', workA._id),
-      waitForIndexation('entities', workB._id),
-    ])
+    const workB = await createWorkWithAuthor(sameLabelAuthor, workLabel)
+    await waitForIndexation('entities', workB._id)
     const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()
   })
+})
 
+describe('entities:resolve:images', () => {
   it('should reject an invalid image URL', async () => {
     const editionSeed = {
       isbn: generateIsbn13(),
