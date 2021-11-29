@@ -4,13 +4,8 @@ const error_ = require('lib/error/error')
 const responses_ = require('lib/responses')
 
 const cspReport = (req, res) => {
-  const { 'csp-report': errData } = req.body
-
-  if (errData == null) {
-    return error_.bundleMissingBody(req, res, 'csp-report')
-  }
-
-  const err = buildError('csp report', 'csp', errData, req)
+  const report = req.body['csp-report'] || req.body
+  const err = buildError('csp report', 'csp', report, req)
   _.error(err, 'csp report')
   responses_.ok(res)
 }
