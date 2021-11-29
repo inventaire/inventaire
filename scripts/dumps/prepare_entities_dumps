@@ -44,7 +44,7 @@ cat "$raw_db_json_filename" |
   # Filter-out removed:placeholders
   grep '"type":"entity"' |
   # Filter-out redirections
-  grep -v "redirect" |
+  grep -v ',"redirect":' |
   # Filter-out entities empty canvas (entity creation process failure)
   grep -v '"version":1' |
   drop_comma > "${filtered_dump_filename}"
