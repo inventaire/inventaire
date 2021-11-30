@@ -1,5 +1,5 @@
 const should = require('should')
-const { sanitize } = require('lib/sanitize/sanitize')
+const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
 const { shouldNotBeCalled } = require('../utils')
 
 describe('sanitize', () => {
@@ -12,20 +12,6 @@ describe('sanitize', () => {
     } catch (err) {
       err.message.should.startWith('TypeError: expected object, got undefined')
     }
-  })
-
-  it('should add a warning for unknown parameter (server error)', async () => {
-    const req = { query: { foo: 1000 } }
-    const res = {}
-    const configs = {
-      foo: {}
-    }
-    const input = sanitize(req, res, configs)
-    input.should.deepEqual({})
-    res.warnings.should.be.an.Object()
-    res.warnings.parameters.should.deepEqual([
-      'unexpected config parameter: foo'
-    ])
   })
 
   it('should add a warning for unexpected parameter (user error)', async () => {
@@ -140,22 +126,6 @@ describe('sanitize', () => {
         shouldNotBeCalled()
       } catch (err) {
         err.message.should.startWith('invalid foo')
-      }
-    })
-
-    it('should throw when passed an invalid generic name', async () => {
-      const req = { query: {} }
-      const res = {}
-      const configs = {
-        foo: {
-          generic: 'bar'
-        }
-      }
-      try {
-        sanitize(req, res, configs)
-        shouldNotBeCalled()
-      } catch (err) {
-        err.message.should.equal('invalid generic name')
       }
     })
 
@@ -502,5 +472,68 @@ describe('sanitize', () => {
       const { bbox } = sanitize(req, {}, configs)
       bbox.should.deepEqual([ 0, 0, 1, 1 ])
     })
+  })
+
+  describe('parameter prefixed aliases', () => {
+    it('should allow to use parameter aliases ', async () => {
+      const req = { query: { 'new-password': '12345678', 'old-password': '12345678' } }
+      const configs = { 'new-password': {}, 'old-password': {} }
+      sanitize(req, {}, configs)
+    })
+
+    it('should reject an alias used instead of the primary parameter name', async () => {
+      const req = { query: { 'new-password': '12345678' } }
+      const configs = { password: {} }
+      try {
+        sanitize(req, {}, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        err.message.should.equal('missing parameter in query: password')
+      }
+    })
+
+    it('should reject a primary paramer named used instead of an alias', async () => {
+      const req = { query: { password: '12345678' } }
+      const configs = { 'new-password': {} }
+      try {
+        sanitize(req, {}, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        err.message.should.equal('missing parameter in query: new-password')
+      }
+    })
+  })
+})
+
+describe('validateSanitization', () => {
+  it('should reject an unknown parameter', async () => {
+    try {
+      validateSanitization({ foo: {} })
+      shouldNotBeCalled()
+    } catch (err) {
+      err.message.should.equal('invalid parameter name')
+      err.context.name.should.equal('foo')
+      err.statusCode.should.equal(500)
+    }
+  })
+
+  it('should reject an invalid generic name', async () => {
+    try {
+      validateSanitization({ foo: { generic: 'bar' } })
+      shouldNotBeCalled()
+    } catch (err) {
+      err.message.should.equal('invalid generic name')
+      err.context.name.should.equal('foo')
+      err.context.generic.should.equal('bar')
+      err.statusCode.should.equal(500)
+    }
+  })
+
+  it('should accept a known parameter', async () => {
+    validateSanitization({ ids: {} })
+  })
+
+  it('should accept a valid generic name', async () => {
+    validateSanitization({ foo: { generic: 'boolean' } })
   })
 })

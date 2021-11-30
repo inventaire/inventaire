@@ -3,7 +3,7 @@ const error_ = require('lib/error/error')
 const validateObject = require('lib/validate_object')
 const { rolesByAccess } = require('./user_access_levels')
 const { send } = require('./responses')
-const { sanitize } = require('./sanitize/sanitize')
+const { sanitize, validateSanitization } = require('./sanitize/sanitize')
 const { track } = require('./track')
 const assert_ = require('./utils/assert_types')
 const { verifySignature } = require('../controllers/activitypub/lib/security')
@@ -56,7 +56,10 @@ const validateControllerWrapperParams = controllerParams => {
   assert_.string(access)
   assert_.array(rolesByAccess[access])
   assert_.function(controller)
-  if (sanitization) assert_.object(sanitization)
+  if (sanitization) {
+    assert_.object(sanitization)
+    validateSanitization(sanitization)
+  }
   if (trackActionArray) assert_.array(trackActionArray)
 }
 

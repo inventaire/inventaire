@@ -39,23 +39,10 @@ const sanitize = (req, res, configs) => {
   return input
 }
 
-module.exports = { sanitize }
-
 const optionsNames = new Set([ 'nonJsonBody' ])
 
 const sanitizeParameter = (input, name, config, place, res) => {
-  const { generic } = config
-  const parameter = generic ? generics[generic] : parameters[name]
-
-  if (parameter == null) {
-    if (generic) {
-      throw error_.new('invalid generic name', 500, { generic })
-    } else {
-      addWarning(res, `unexpected config parameter: ${name}`)
-      delete input[name]
-      return
-    }
-  }
+  const parameter = getParameterFunctions(name, config.generic)
 
   if (input[name] == null) applyDefaultValue(input, name, config, parameter)
   if (input[name] == null) {
@@ -79,6 +66,43 @@ const sanitizeParameter = (input, name, config, place, res) => {
   renameParameter(input, name, _.camelCase)
   renameParameter(input, name, parameter.rename)
 }
+
+const getParameterFunctions = (name, generic) => {
+  let parameter
+  if (generic) {
+    parameter = generics[generic]
+  } else if (prefixedParameterPattern.test(name)) {
+    const unprefixedName = name.replace(prefixedParameterPattern, '')
+    parameter = parameters[unprefixedName]
+  } else {
+    parameter = parameters[name]
+  }
+  return parameter
+}
+
+const validateSanitization = configs => {
+  for (const name in configs) {
+    if (!optionsNames.has(name)) {
+      const config = configs[name]
+      validateSanitizationParameter(name, config)
+    }
+  }
+  return configs
+}
+
+const validateSanitizationParameter = (name, config) => {
+  const { generic } = config
+  const parameter = getParameterFunctions(name, generic)
+  if (parameter == null) {
+    if (generic) {
+      throw error_.new('invalid generic name', 500, { name, generic })
+    } else {
+      throw error_.new('invalid parameter name', 500, { name })
+    }
+  }
+}
+
+const prefixedParameterPattern = /^(old|new)-/
 
 const getPlace = (method, configs) => {
   let place = 'query'
@@ -137,3 +161,5 @@ const addWarning = (res, message) => {
   _.warn(message)
   responses_.addWarning(res, 'parameters', message)
 }
+
+module.exports = { sanitize, validateSanitization }
