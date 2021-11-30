@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
+const isPrivateUrl = require('lib/network/is_private_url')
 const fetch = require('node-fetch')
 
 const sanitization = {
@@ -24,7 +25,10 @@ const headers = {
 }
 
 const getImageDataUrl = async url => {
-  const res = await fetch(url, { headers })
+  if (await isPrivateUrl(url)) {
+    throw error_.newInvalid('url', url)
+  }
+  const res = await fetch(url, { headers, sanitize: true })
   const contentType = res.headers.get('content-type')
 
   if (contentType.split('/')[0] !== 'image') {

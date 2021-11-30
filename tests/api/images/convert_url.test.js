@@ -76,4 +76,14 @@ describe('images:convert-url', () => {
     const { hash } = await convertUrl('entities', imageUrl)
     hash.should.equal('12f6bc6121725a1b28f57bdc10443db459119140')
   })
+
+  it('should reject private URLs', async () => {
+    const imageUrl = 'http://localhost/someimage.jpg'
+    await convertUrl('entities', imageUrl)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('invalid image url')
+      err.statusCode.should.equal(400)
+    })
+  })
 })
