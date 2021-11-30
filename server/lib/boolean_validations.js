@@ -11,7 +11,20 @@ const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
 const tests = module.exports = {
-  isUrl: bindedTest('Url'),
+  isUrl: url => {
+    try {
+      const { protocol, host, username, password } = new URL(url)
+      if (!(protocol === 'http:' || protocol === 'https:')) return false
+      // Basic check that this is not a private URL but not enough to be certain it isn't,
+      // as that would require to make a DNS lookup and check against private IP ranges
+      if (host === 'localhost') return false
+      if (username !== '' || password !== '') return false
+    } catch (err) {
+      if (err.code === 'ERR_INVALID_URL') return false
+      else throw err
+    }
+    return true
+  },
   isImageHash: bindedTest('ImageHash'),
   isAssetImg: bindedTest('AssetImg'),
   isEntityImg: bindedTest('EntityImg'),
