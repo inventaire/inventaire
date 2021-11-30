@@ -3,7 +3,7 @@ const entities_ = require('./entities')
 const formatEditionEntity = require('./format_edition_entity')
 const isbn_ = require('lib/isbn/isbn')
 const { prefixifyIsbn } = require('controllers/entities/lib/prefix')
-const getResolvedEntry = require('data/dataseed/get_resolved_entry')
+const { getResolvedEntity } = require('data/dataseed/get_resolved_entry')
 
 module.exports = async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
@@ -22,7 +22,7 @@ module.exports = async (rawIsbns, params = {}) => {
   const results = { entities }
 
   if (autocreate) {
-    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => getResolvedEntry(isbn)))
+    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => getResolvedEntity(isbn)))
     const newEntities = []
     const notFound = []
     for (const resolvedEdition of resolvedEditions) {

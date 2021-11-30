@@ -1,5 +1,6 @@
 const { oneHour } = require('lib/time')
 const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_create')
+const { getResolvedEntry } = require('data/dataseed/get_resolved_entry')
 
 // Entry example:
 // {
@@ -43,12 +44,25 @@ const sanitization = {
     generic: 'boolean',
     optional: true,
     default: true
+  },
+  createFromSeed: {
+    generic: 'boolean',
+    optional: true,
+    default: false
   }
 }
 
 const controller = async (params, req) => {
+  let res
   req.setTimeout(oneHour)
-  const { resolvedEntries, errors } = await resolveUpdateAndCreate(params)
+  if (params.createFromSeed) {
+    const [ entry ] = params.entries
+    if (!entry) return
+    res = await getResolvedEntry(entry.edition.isbn)
+  } else {
+    res = await resolveUpdateAndCreate(params)
+  }
+  const { resolvedEntries, errors } = res
   const data = { entries: resolvedEntries }
   if (!params.strict) data.errors = errors.map(formatError)
   return data
