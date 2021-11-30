@@ -41,7 +41,7 @@ describe('shelves:update', () => {
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('invalid name: name cannot be empty')
+      err.body.status_verbose.should.startWith('invalid name:')
       err.statusCode.should.equal(400)
     }
   })
