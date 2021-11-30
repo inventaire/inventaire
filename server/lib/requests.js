@@ -12,11 +12,19 @@ const { getAgent, insecureHttpsAgent } = require('./requests_agent')
 const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
 const { URL } = require('url')
 const { coloredElapsedTime } = require('./time')
+const { isUrl } = require('./boolean_validations')
+const isPrivateUrl = require('./network/is_private_url')
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
   assert_.object(options)
+
+  if (options.sanitize) {
+    if (!isUrl(url) || await isPrivateUrl(url)) {
+      throw error_.newInvalid('url', url)
+    }
+  }
 
   const { host } = new URL(url)
   throwIfTemporarilyBanned(host)
