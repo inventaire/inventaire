@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const Entity = require('models/entity')
 const entities_ = require('./entities')
 const validateEntity = require('./validate_entity')
 const { prefixifyInv } = require('./prefix')
@@ -9,9 +10,10 @@ module.exports = async params => {
 
   await validateEntity({ labels, claims })
 
-  const blankEntityDoc = await entities_.createBlank()
+  const blankEntityDoc = Entity.create()
 
   const entity = await entities_.edit({
+    create: true,
     userId,
     currentDoc: blankEntityDoc,
     updatedLabels: labels,
