@@ -60,4 +60,8 @@ module.exports = {
   oauthServer: {
     authorizationCodeLifetimeMs: 1000
   },
+
+  activitypub: {
+    sanitizeUrls: false
+  },
 }

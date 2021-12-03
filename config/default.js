@@ -217,5 +217,9 @@ const config = module.exports = {
 
   oauthServer: {
     authorizationCodeLifetimeMs: 5 * 60 * 1000
-  }
+  },
+
+  activitypub: {
+    sanitizeUrls: true
+  },
 }

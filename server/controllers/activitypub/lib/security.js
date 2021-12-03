@@ -1,3 +1,4 @@
+const CONFIG = require('config')
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const requests_ = require('lib/requests')
@@ -5,6 +6,7 @@ const crypto = require('crypto')
 const assert_ = require('lib/utils/assert_types')
 const { expired } = require('lib/time')
 const { getSha256Base64Digest } = require('lib/crypto')
+const sanitize = CONFIG.activitypub.sanitizeUrls
 
 const security_ = module.exports = {
   sign: params => {
@@ -85,7 +87,7 @@ const buildSignatureString = params => {
 }
 
 const fetchActorPublicKey = async actorUrl => {
-  const actor = await requests_.get(actorUrl)
+  const actor = await requests_.get(actorUrl, { sanitize })
   assert_.object(actor)
   const { publicKey } = actor
   if (!publicKey) {

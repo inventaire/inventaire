@@ -24,13 +24,22 @@ describe('images:data-url', () => {
     })
   })
 
+  it('should reject private URLs', async () => {
+    await authReq('get', `${endpoint}&url=${encodeURIComponent('http://localhost/someimage.jpg')}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('image could not be converted')
+    })
+  })
+
   it('should reject with an invalid content type', async () => {
     const invalidContentTypeUrl = encodeURIComponent('http://maxlath.eu/data.json')
     await authReq('get', `${endpoint}&url=${invalidContentTypeUrl}`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid content type')
+      err.body.status_verbose.should.equal('image could not be converted')
     })
   })
 
