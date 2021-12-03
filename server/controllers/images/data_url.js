@@ -1,4 +1,6 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
+const isPrivateUrl = require('lib/network/is_private_url')
 const fetch = require('node-fetch')
 
 const sanitization = {
@@ -7,8 +9,15 @@ const sanitization = {
 
 // Get an image data-url from a URL
 const controller = async ({ url }) => {
-  const dataUrl = await getImageDataUrl(url)
-  return { 'data-url': dataUrl }
+  try {
+    const dataUrl = await getImageDataUrl(url)
+    return { 'data-url': dataUrl }
+  } catch (err) {
+    // In case of server-side request forgery, do not let internal services
+    // error responses get out
+    _.error(err, 'data_url private error')
+    throw error_.new('image could not be converted', 400, { url })
+  }
 }
 
 const headers = {
@@ -16,7 +25,10 @@ const headers = {
 }
 
 const getImageDataUrl = async url => {
-  const res = await fetch(url, { headers })
+  if (await isPrivateUrl(url)) {
+    throw error_.newInvalid('url', url)
+  }
+  const res = await fetch(url, { headers, sanitize: true })
   const contentType = res.headers.get('content-type')
 
   if (contentType.split('/')[0] !== 'image') {

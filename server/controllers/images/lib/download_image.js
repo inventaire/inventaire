@@ -1,3 +1,4 @@
+const _ = require('builders/utils')
 const fetch = require('node-fetch')
 const AbortController = require('abort-controller')
 const error_ = require('lib/error/error')
@@ -9,15 +10,20 @@ const oneMB = Math.pow(1024, 2)
 module.exports = async (url, path) => {
   url = encodeURL(url)
   const controller = new AbortController()
-  const response = await fetch(url, {
-    timeout: 30000,
-    signal: controller.signal,
-    headers: {
-      accept: 'image/*'
-    },
-  })
-  validateResponse(response, controller, url, path)
-  return saveFile(response.body, path)
+  try {
+    const response = await fetch(url, {
+      timeout: 30000,
+      signal: controller.signal,
+      headers: {
+        accept: 'image/*'
+      },
+    })
+    validateResponse(response, controller, url, path)
+    return saveFile(response.body, path)
+  } catch (err) {
+    _.error(err, 'download image private error')
+    throw error_.new('could not download image', 400, { url })
+  }
 }
 
 const validateResponse = (response, controller, url, path) => {

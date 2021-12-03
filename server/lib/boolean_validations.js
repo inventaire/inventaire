@@ -11,7 +11,17 @@ const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
 const tests = module.exports = {
-  isUrl: bindedTest('Url'),
+  isUrl: url => {
+    try {
+      const { protocol, username, password } = new URL(url)
+      if (!(protocol === 'http:' || protocol === 'https:')) return false
+      if (username !== '' || password !== '') return false
+    } catch (err) {
+      if (err.code === 'ERR_INVALID_URL') return false
+      else throw err
+    }
+    return true
+  },
   isImageHash: bindedTest('ImageHash'),
   isAssetImg: bindedTest('AssetImg'),
   isEntityImg: bindedTest('EntityImg'),
