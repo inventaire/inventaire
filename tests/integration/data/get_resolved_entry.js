@@ -32,9 +32,9 @@ describe('get resolved seed', () => {
   })
 
   it('should get an edition from an ISBN found on Wikidata', async () => {
-    // Expect the following triple to exist: wd:Q81689 wdt:P957 "84-95618-60-5"
-    const edition = await getResolvedEntry('84-95618-60-5')
-    edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q81689' ])
+    // Expect the following triple to exist: wd:Q154763 wdt:P212 "978-85-359-1404-7"
+    const edition = await getResolvedEntry('978-85-359-1404-7')
+    edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q154763' ])
   })
 
   it('should create local entity when resolved entity has an unknown type', async () => {

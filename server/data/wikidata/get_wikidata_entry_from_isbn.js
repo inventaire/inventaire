@@ -7,7 +7,7 @@ const { isItemId } = require('wikidata-sdk')
 module.exports = async isbn => {
   const sparql = getQuery(isbn)
   const rows = await makeSparqlRequest(sparql)
-  return buildEntryFromFormattedRows(rows)
+  return buildEntryFromFormattedRows(rows, isbn)
 }
 
 const getQuery = isbn => {
@@ -30,7 +30,7 @@ const getQuery = isbn => {
   }`
 }
 
-const buildEntryFromFormattedRows = rows => {
+const buildEntryFromFormattedRows = (rows, isbn) => {
   // TODO: deal with more complex cases
   if (rows.length !== 1) return
   const row = rows[0]
@@ -50,7 +50,8 @@ const buildEntryFromFormattedRows = rows => {
   if (itemType === 'edition' && work) {
     entry = {
       edition: {
-        // Resolving the edtion to a Wikidata entity won't be possible
+        isbn,
+        // Resolving the edition to a Wikidata entity won't be possible
         // use until they are removed from quarantine
         // See https://github.com/inventaire/inventaire/issues/182
         uri: itemUri,
@@ -63,6 +64,7 @@ const buildEntryFromFormattedRows = rows => {
   } else if (itemType === 'work') {
     entry = {
       edition: {
+        isbn,
         claims: {
           // On a work item, prefer the item label to the title
           // as it might be a better fit to the edition language
@@ -74,6 +76,7 @@ const buildEntryFromFormattedRows = rows => {
   }
   if (entry) {
     entry.edition = {
+      isbn,
       claims: {
         'wdt:P1476': title || item.label
       }
