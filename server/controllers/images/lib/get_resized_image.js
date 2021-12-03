@@ -4,7 +4,6 @@ const images_ = require('lib/images')
 const { userAgent } = require('lib/requests')
 const { mediaStorage } = require('config')
 const { maxSize } = mediaStorage.images
-const { publicURL } = mediaStorage.swift
 const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
 const reqOptions = {
@@ -39,13 +38,10 @@ module.exports = async (req, res, url, dimensions) => {
   }
 
   if (errMessage) {
-    const context = url
-      // Keep IPs private
-      .replace(/(\d{1,3}\.){3}(\d{1,3}):\d{4}/, 'internal-host')
-      // Prevent leaking media container URLs
-      .replace(publicURL, 'swift-storage')
     statusCode = statusCode === 404 ? 404 : 400
-    const err = error_.new(errMessage, statusCode, context)
+    const err = error_.new(errMessage, statusCode)
+    // Do not pass the URL as error.context in the response to prevent leaking internal information
+    // but still get it logged with the error
     err.privateContext = url
     error_.handler(req, res, err, statusCode)
   } else {
