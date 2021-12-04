@@ -41,4 +41,12 @@ const relocateQualifierProperties = invEntity => {
   delete claims['wdt:P1545']
 }
 
-module.exports = { flattenQualifierProperties, relocateQualifierProperties }
+const qualifierProperties = {
+  P1545: {
+    claimProperty: 'P179',
+    noClaimErrorMessage: 'a serie needs to be set before setting an ordinal',
+    tooManyClaimsErrorMessage: 'there needs to be exactly one serie to be allowed to set an ordinal',
+  }
+}
+
+module.exports = { flattenQualifierProperties, relocateQualifierProperties, qualifierProperties }
