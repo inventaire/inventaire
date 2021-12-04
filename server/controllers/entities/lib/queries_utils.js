@@ -1,3 +1,5 @@
+const { isPositiveIntegerString } = require('lib/boolean_validations')
+
 module.exports = {
   getSimpleDayDate: date => {
     if (date) {
@@ -13,7 +15,7 @@ module.exports = {
   sortByScore: (a, b) => b.score - a.score
 }
 
-const earliestDate = -10000
+const earliestDate = -10e10
 const getPartScore = obj => {
   const { date, ordinal, subparts } = obj
   // Push parts with subparts up if they don't have a date or ordinal of their own
@@ -31,6 +33,15 @@ const lastYearTime = new Date('2100').getTime()
 
 const lastOrdinal = 1000
 const ordinalNum = ordinal => {
-  if (/^\d+$/.test(ordinal)) return parseInt(ordinal)
-  else return lastOrdinal
+  if (isPositiveIntegerString(ordinal)) {
+    return parseInt(ordinal)
+  } else {
+    // Allows to sort ordinals that combine letters and numbers
+    // ex: HS1 should come before HS2, but after numbers-only ordinals
+    return lastOrdinal + getStringNumericRepresentation(ordinal)
+  }
+}
+
+const getStringNumericRepresentation = ordinal => {
+  return parseInt(Buffer.from(ordinal).toString('hex'), 16)
 }
