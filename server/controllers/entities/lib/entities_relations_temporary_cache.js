@@ -26,6 +26,7 @@ module.exports = {
       { type: 'del', key },
       { type: 'del', key: expireTimeKey },
     ])
+    .catch(ignoreKeyNotFound)
   }
 }
 
@@ -78,6 +79,10 @@ const checkExpiredCache = async () => {
     batch.push({ type: 'del', key: expiredTimeKeys })
   }
   await db.batch(batch)
+}
+
+const ignoreKeyNotFound = err => {
+  if (err.name !== 'NotFoundError') throw err
 }
 
 setInterval(checkExpiredCache, checkFrequency)
