@@ -16,3 +16,4 @@ inventaire-i18n
 config/.sessions_keys
 *.ndjson
 jsconfig.json
+*.logs
