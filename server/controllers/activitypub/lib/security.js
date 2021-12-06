@@ -10,9 +10,15 @@ const sanitize = CONFIG.activitypub.sanitizeUrls
 
 const security_ = module.exports = {
   sign: params => {
-    const { keyId, privateKey, headers = '(request-target) host date' } = params
+    const { keyId, privateKey, method, pathname, reqHeaders } = params
+    const signedHeadersNames = Object.keys(reqHeaders).join(' ')
     const signer = crypto.createSign('rsa-sha256')
-    const stringToSign = buildSignatureString(params)
+    const stringToSign = buildSignatureString({
+      reqHeaders,
+      signedHeadersNames,
+      method,
+      pathname
+    })
     signer.update(stringToSign)
     signer.end()
     const signature = signer.sign(privateKey)
@@ -20,7 +26,7 @@ const security_ = module.exports = {
     // headers must respect signature string keys order
     // ie. (request-target) host date
     // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-    return `keyId="${keyId}",headers="${headers}",signature="${signatureB64}"`
+    return `keyId="${keyId}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
   },
 
   verifySignature: async req => {
@@ -30,7 +36,7 @@ const security_ = module.exports = {
     if (thirtySecondsTimeWindow(date)) throw error_.new('outdated request', 400, reqHeaders)
     if (signature === undefined) throw error_.new('no signature header', 400, reqHeaders)
     // "headers" below specify the list of HTTP headers included when generating the signature for the message
-    const { keyId: actorUrl, signature: signatureString, headers } = parseSignature(signature)
+    const { keyId: actorUrl, signature: signatureString, headers: signedHeadersNames } = parseSignature(signature)
     let publicKey
     try {
       publicKey = await fetchActorPublicKey(actorUrl)
@@ -39,7 +45,12 @@ const security_ = module.exports = {
       throw err
     }
     const verifier = crypto.createVerify('rsa-sha256')
-    const signedString = buildSignatureString(Object.assign(reqHeaders, { headers, method: method.toLowerCase(), pathname }))
+    const signedString = buildSignatureString({
+      reqHeaders,
+      signedHeadersNames,
+      method,
+      pathname
+    })
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
       throw error_.new('signature verification failed', 400, { publicKey })
@@ -54,33 +65,41 @@ const security_ = module.exports = {
     // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
     // The digest is additionnal required by Mastodon
     // Source: https://github.com/mastodon/mastodon/blob/main/app/controllers/concerns/signature_verification.rb
-    const signatureHeaders = { host, date }
+    const reqHeaders = { host, date }
     if (body) {
       assert_.object(body)
-      signatureHeaders.digest = `SHA-256=${getSha256Base64Digest(JSON.stringify(body))}`
+      reqHeaders.digest = `SHA-256=${getSha256Base64Digest(JSON.stringify(body))}`
     }
-    const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
-    const signature = security_.sign(Object.assign({
-      headers: signatureHeadersInfo,
-      method,
+    const signedHeadersNames = Object.keys(reqHeaders).join(' ')
+    reqHeaders.signature = security_.sign({
       keyId,
       privateKey,
+      signedHeadersNames,
+      reqHeaders,
+      method,
       pathname
-    }, signatureHeaders))
-    return Object.assign({ signature }, signatureHeaders)
+    })
+    return reqHeaders
   }
 }
 
+// 'date' must be a UTC string
+// 'method' must be lowercased
 const buildSignatureString = params => {
-  // 'method' must be lowercased
-  // 'date' must be a UTC string
-  const { headers, method, pathname } = params
-  // arrayfying because key order matters
-  const headersKeys = headers.split(' ')
+  const { reqHeaders, signedHeadersNames, pathname } = params
+  let { method } = params
+  method = method.toLowerCase()
   let signatureString = `(request-target): ${method} ${pathname}`
-  for (const key of headersKeys) {
-    if (params[key]) {
-      signatureString = signatureString.concat('\n', `${key}: ${params[key]}`)
+  const orderedSignedHeadersKeys = signedHeadersNames
+    .replace('(request-target)', '')
+    .trim()
+    .split(' ')
+  // Keys order matters, so we can't just loop over reqHeaders keys
+  for (const key of orderedSignedHeadersKeys) {
+    if (reqHeaders[key] != null) {
+      signatureString += `\n${key}: ${reqHeaders[key]}`
+    } else {
+      throw error_.new('missing header', 400, { key, params })
     }
   }
   return signatureString

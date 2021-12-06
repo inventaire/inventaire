@@ -91,24 +91,24 @@ describe('activitypub:signed:request', () => {
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
       const publicHost = CONFIG.host
-      const signatureHeaders = {
+      const reqHeaders = {
         host: publicHost,
         date: thirtySecondsAgo
       }
-      const signatureHeadersInfo = `(request-target) ${Object.keys(signatureHeaders).join(' ')}`
+      const signedHeadersNames = Object.keys(reqHeaders).join(' ')
       const method = 'post'
-      const signature = sign(Object.assign({
-        headers: signatureHeadersInfo,
+      reqHeaders.signature = sign({
         method,
         keyId,
         privateKey: emitterUser.privateKey,
-        endpoint
-      }, signatureHeaders))
-      const headers = Object.assign({ signature }, signatureHeaders)
+        endpoint,
+        signedHeadersNames,
+        reqHeaders,
+      })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const body = createActivity()
       await rawRequest(method, inboxUrl, {
-        headers,
+        headers: reqHeaders,
         body
       })
       .then(shouldNotBeCalled)
