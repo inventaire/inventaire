@@ -3,6 +3,7 @@ const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('
 
 const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13 } = require('../fixtures/entities')
 const { getByUris, merge, deleteByUris } = require('../utils/entities')
+const { throwWithSuggestions } = require('../utils/errors')
 const workWithAuthorPromise = createWorkWithAuthor()
 const getWdEntity = require('data/wikidata/get_entity')
 
@@ -158,8 +159,17 @@ describe('wikidata qualifiers adapter', () => {
     // The test relies on the state of an entity on Wikidata that needs
     // to be checked to assert that we are actually testing the desired behavior
     const rawEntity = await getWdEntity(id)
-    if (rawEntity.claims.P1545) throw new Error(`${id} should not have a P1545 claim`)
-
+    if (rawEntity.claims.P1545) {
+      const message = 'should not have a P1545 claim'
+      const suggestionsQuery = `SELECT DISTINCT ?work {
+          ?work wdt:P31 wd:Q47461344 .
+          ?work p:P179 ?serie_a.
+          FILTER NOT EXISTS { ?serie_a pq:P1545 ?ordinal_a. }
+        }
+        LIMIT 3
+        `
+      await throwWithSuggestions(message, suggestionsQuery, id)
+    }
     const { entities } = await getByUris(uri, null, true)
     const entity = entities[uri]
     entity.claims['wdt:P179'].should.deepEqual([ 'wd:Q1130014' ])
@@ -174,8 +184,20 @@ describe('wikidata qualifiers adapter', () => {
     // The test relies on the state of an entity on Wikidata that needs
     // to be checked to assert that we are actually testing the desired behavior
     const rawEntity = await getWdEntity(id)
-    if (rawEntity.claims.P179.length !== 2) throw new Error(`${id} should have 2 P179 claims`)
-    if (rawEntity.claims.P1545) throw new Error(`${id} should not have a P1545 claim`)
+    if (!rawEntity.claims.P179.length >= 2 || rawEntity.claims.P1545) {
+      const message = 'should have at least two P179 claims and no P1545 claim'
+      const suggestionsQuery = `SELECT DISTINCT ?work {
+          ?work wdt:P31 wd:Q47461344 .
+          ?work p:P179 ?serie_a.
+          ?work p:P179 ?serie_b.
+          FILTER NOT EXISTS { ?serie_a pq:P1545 ?ordinal_a. }
+          FILTER NOT EXISTS { ?serie_b pq:P1545 ?ordinal_b. }
+          FILTER (STR(?serie_a) > STR(?serie_b))
+        }
+        LIMIT 3
+        `
+      await throwWithSuggestions(message, suggestionsQuery, id)
+    }
 
     const { entities } = await getByUris(uri, null, true)
     const entity = entities[uri]
