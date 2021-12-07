@@ -7,7 +7,8 @@ const sanitization = {
     allowlist: [ 'public', 'private', 'network' ],
     optional: true
   },
-  name: { optional: true }
+  name: { optional: true },
+  color: { optional: true },
 }
 
 const controller = async params => {

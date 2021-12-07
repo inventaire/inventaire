@@ -13,8 +13,8 @@ module.exports = {
     const newShelf = {}
     Object.keys(shelf).forEach(key => {
       const value = shelf[key] || defaultValues[key]
-      if (!attributes.updatable.includes(key)) {
-        throw error_.new(`invalid attribute: ${value}`, 400, { shelf })
+      if (!attributes.validAtCreation.includes(key)) {
+        throw error_.new(`invalid attribute: ${value}`, 400, { shelf, key, value })
       }
       validations.pass(key, value)
       newShelf[key] = value

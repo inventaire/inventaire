@@ -22,6 +22,7 @@ const tests = module.exports = {
     }
     return true
   },
+  isColorHexCode: bindedTest('ColorHexCode'),
   isImageHash: bindedTest('ImageHash'),
   isAssetImg: bindedTest('AssetImg'),
   isEntityImg: bindedTest('EntityImg'),
