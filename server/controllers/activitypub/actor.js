@@ -12,5 +12,4 @@ const controller = async params => {
 module.exports = {
   sanitization,
   controller,
-  track: [ 'activitypub', 'actor' ]
 }
