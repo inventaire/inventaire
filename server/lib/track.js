@@ -6,12 +6,13 @@ const host = CONFIG.fullHost()
 const placeholderUrl = '/unknown'
 const requests_ = require('./requests')
 
-const track = (req, actionArray) => {
+const track = (req = {}, actionArray) => {
   if (!enabled) return
 
-  const { _id: userId, language } = (req.user || {})
-  const { 'user-agent': ua, 'accept-language': al } = req.headers
-  let { referer: url } = req.headers
+  const { user = {}, headers = {} } = req
+  const { _id: userId, language } = user
+  const { 'user-agent': ua, 'accept-language': al } = headers
+  let { referer: url } = headers
   const [ category, action, name, value ] = actionArray
 
   // a url is required so we use a placeholder if not provided in parameter
@@ -38,8 +39,15 @@ const track = (req, actionArray) => {
   requests_.get(_.buildPath(endpoint, data), { parseJson: false })
   .catch(_.Error('track error'))
 
-  // do not return the promise as a failing track request should make the rest
-  // of operations fail
+  // Do not return the promise as a failing track request
+  // should not make the rest of operations fail
+}
+
+const trackActor = (actorUri, actionArray) => {
+  const pseudoReq = {
+    user: { _id: actorUri }
+  }
+  track(pseudoReq, actionArray)
 }
 
 module.exports = {
@@ -48,5 +56,6 @@ module.exports = {
     // Do not wait for the track action
     track(...args)
     return res
-  }
+  },
+  trackActor,
 }

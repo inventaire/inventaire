@@ -6,6 +6,7 @@ const { signAndPostActivity } = require('./lib/post_activity')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
 const { makeUrl, getEntityUriFromActorName } = require('./lib/helpers')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
+const { trackActor } = require('lib/track')
 
 module.exports = async params => {
   const { id: externalId, type } = params
@@ -38,6 +39,7 @@ module.exports = async params => {
     followActivity = await createActivity({ id: externalId, type, actor, object })
   }
   await sendAcceptActivity(followActivity, actor, object)
+  trackActor(actor.uri, [ 'activitypub', 'follow' ])
   return { ok: true }
 }
 

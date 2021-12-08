@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { byExternalId, deleteById } = require('controllers/activitypub/lib/activities')
 const { isNonEmptyString } = require('lib/boolean_validations')
+const { trackActor } = require('lib/track')
 
 module.exports = async params => {
   let { actor, object } = params
@@ -16,6 +17,6 @@ module.exports = async params => {
   }
 
   await deleteById(activity._id, activity._rev)
-
+  trackActor(activity.actor.uri, [ 'activitypub', 'undo' ])
   return { ok: true }
 }
