@@ -1,31 +1,21 @@
 const CONFIG = require('config')
-const error_ = require('lib/error/error')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
-const { getEntityUriFromActorName } = require('./helpers')
+const { getActorTypeFromName } = require('./helpers')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 const { publicHost } = CONFIG
 const host = CONFIG.fullPublicHost()
-
-module.exports = name => {
-  if (isEntityUri(getEntityUriFromActorName(name))) {
-    return getEntityActor(name)
-  } else if (name.startsWith('shelf-')) {
-    return getShelfActor(name)
-  } else if (isUsername(name)) {
-    return getUserActor(name)
-  } else {
-    throw error_.notFound({ name })
-  }
-}
 
 const getShelfActor = async name => {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
   const links = [
-    { name: 'shelf', url: `${host}/shelves/${shelf._id}` }
+    {
+      name: 'shelf',
+      url: `${host}/shelves/${shelf._id}`
+    }
   ]
+
   return buildActorObject({
     actorName: name,
     displayName: `${shelf.name} [${owner.username}]`,
@@ -101,6 +91,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
       return {
         type: 'PropertyValue',
         name,
+        url,
         // Mimicking Mastodon
         value: `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank"><span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span></a>`
       }
@@ -119,4 +110,15 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
   }
 
   return actor
+}
+
+const getActorByType = {
+  user: getUserActor,
+  shelf: getShelfActor,
+  entity: getEntityActor,
+}
+
+module.exports = name => {
+  const type = getActorTypeFromName(name)
+  return getActorByType[type](name)
 }

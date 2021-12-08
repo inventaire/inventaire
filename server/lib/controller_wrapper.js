@@ -32,7 +32,9 @@ const controllerWrapper = async (controllerParams, req, res) => {
     if (sanitization) {
       const params = sanitize(req, res, sanitization)
       const result = await controller(params, req, res)
-      send(res, result)
+      // If the controller doesn't return a result, assume that it handled the response itself
+      // For example, with res.redirect
+      if (result != null) send(res, result)
       if (trackActionArray) track(req, trackActionArray)
     } else {
       await controller(req, res)
