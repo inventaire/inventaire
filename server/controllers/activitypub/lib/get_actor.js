@@ -1,4 +1,5 @@
 const CONFIG = require('config')
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
@@ -8,24 +9,40 @@ const { unprefixify } = require('controllers/entities/lib/prefix')
 const { publicHost } = CONFIG
 const host = CONFIG.fullPublicHost()
 
-module.exports = name => {
-  if (isEntityUri(getEntityUriFromActorName(name))) {
-    return getEntityActor(name)
-  } else if (name.startsWith('shelf-')) {
-    return getShelfActor(name)
-  } else if (isUsername(name)) {
-    return getUserActor(name)
-  } else {
-    throw error_.notFound({ name })
+module.exports = (name, returnHtml, res) => {
+  const actionsByType = {
+    inventory: {
+      getActor: getUserActor,
+      getUrlId: _.identity
+    },
+    shelves: {
+      getActor: getShelfActor,
+      getUrlId: name => name.split('-')[1]
+    },
+    entity: {
+      getActor: getEntityActor,
+      getUrlId: getEntityUriFromActorName
+    }
   }
+  let type
+  if (isEntityUri(getEntityUriFromActorName(name))) type = 'entity'
+  else if (name.startsWith('shelf-')) type = 'shelves'
+  else if (isUsername(name)) type = 'inventory'
+  else throw error_.notFound({ name })
+
+  const actionType = actionsByType[type]
+  if (returnHtml && type) return res.redirect(`/${type}/${actionType.getUrlId(name)}`)
+  return actionType.getActor(name)
 }
 
 const getShelfActor = async name => {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
-  const links = [
-    { name: 'shelf', url: `${host}/shelves/${shelf._id}` }
-  ]
+  const links = [ {
+    name: 'shelf',
+    url: `${host}/shelves/${shelf._id}`
+  } ]
+
   return buildActorObject({
     actorName: name,
     displayName: `${shelf.name} [${owner.username}]`,
