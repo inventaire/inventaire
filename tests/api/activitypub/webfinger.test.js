@@ -106,6 +106,15 @@ describe('activitypub:webfinger', () => {
       firstLink.href.should.equal(actorUrl)
     })
 
+    it('should ignore case', async () => {
+      const username = createUsername().toLowerCase()
+      const user = await createUser({ fediversable: true, username })
+      user.stableUsername.should.equal(username)
+      const resource = `acct:${username.toUpperCase()}@${publicHost}`
+      const res = await publicReq('get', `${endpoint}${resource}`)
+      res.subject.should.equal(`acct:${username}@${publicHost}`)
+    })
+
     it('should find a user after a username change', async () => {
       const initialUsername = createUsername()
       const user = await createUser({ fediversable: true, username: initialUsername })
