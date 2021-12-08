@@ -4,6 +4,7 @@ const { createHuman, createEdition } = require('../fixtures/entities')
 const { makeUrl, getEntityActorName } = require('controllers/activitypub/lib/helpers')
 const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
+const { rawRequest } = require('../utils/request')
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
 const CONFIG = require('config')
@@ -71,6 +72,17 @@ describe('activitypub:actor', () => {
       res2.publicKey.id.should.equal(`${canonicalActorUrl}#main-key`)
       res2.publicKey.owner.should.equal(canonicalActorUrl)
     })
+
+    it('should return html user inventory if accept header contains html', async () => {
+      const { username } = await createUser({ fediversable: true })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const res = await rawRequest('get', actorUrl, {
+        headers: {
+          accept: 'text/html'
+        }
+      })
+      res.headers['content-type'].should.startWith('text/html')
+    })
   })
 
   describe('entities', () => {
@@ -115,6 +127,18 @@ describe('activitypub:actor', () => {
       body.attachment[1].name.should.equal('wikidata.org')
       body.attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q237087')
     })
+
+    it('should return html entity page if accept header contains html', async () => {
+      const { uri } = await createHuman()
+      const name = getEntityActorName(uri)
+      const receiverUrl = makeUrl({ params: { action: 'actor', name } })
+      const res = await rawRequest('get', receiverUrl, {
+        headers: {
+          accept: 'text/html'
+        }
+      })
+      res.headers['content-type'].should.startWith('text/html')
+    })
   })
 
   describe('shelves', () => {
@@ -149,6 +173,19 @@ describe('activitypub:actor', () => {
       res.outbox.should.equal(outboxUrl)
       res.publicKey.id.should.equal(`${actorUrl}#main-key`)
       res.publicKey.owner.should.equal(actorUrl)
+    })
+
+    it('should return html shelf page if accept header contains html', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = getActorName(shelf)
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const res = await rawRequest('get', actorUrl, {
+        headers: {
+          accept: 'text/html'
+        }
+      })
+      res.headers['content-type'].should.startWith('text/html')
     })
   })
 })
