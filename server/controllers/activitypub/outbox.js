@@ -99,7 +99,6 @@ const getUserActivities = async ({ name, offset, limit }) => {
 module.exports = {
   sanitization,
   controller,
-  track: [ 'activitypub', 'outbox' ]
 }
 
 const buildPaginatedUserOutbox = async (user, offset, limit, outbox) => {
