@@ -7,6 +7,7 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
 const CONFIG = require('config')
+const { rawRequest } = require('../utils/request')
 const { publicHost } = CONFIG
 const fullPublicHost = CONFIG.fullPublicHost()
 
@@ -71,6 +72,14 @@ describe('activitypub:actor', () => {
       res2.publicKey.id.should.equal(`${canonicalActorUrl}#main-key`)
       res2.publicKey.owner.should.equal(canonicalActorUrl)
     })
+
+    it('should redirect to the user main url when requesting html', async () => {
+      const { username } = await createUser({ fediversable: true })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const { statusCode, headers } = await getHtml(actorUrl)
+      statusCode.should.equal(302)
+      headers.location.should.equal(`${fullPublicHost}/inventory/${username}`)
+    })
   })
 
   describe('entities', () => {
@@ -115,6 +124,14 @@ describe('activitypub:actor', () => {
       body.attachment[1].name.should.equal('wikidata.org')
       body.attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q237087')
     })
+
+    it('should redirect to the entity main url when requesting html', async () => {
+      const wdId = 'Q237087'
+      const actorUrl = makeUrl({ params: { action: 'actor', name: `wd-${wdId}` } })
+      const { statusCode, headers } = await getHtml(actorUrl)
+      statusCode.should.equal(302)
+      headers.location.should.equal(`${fullPublicHost}/entity/wd:${wdId}`)
+    })
   })
 
   describe('shelves', () => {
@@ -150,5 +167,23 @@ describe('activitypub:actor', () => {
       res.publicKey.id.should.equal(`${actorUrl}#main-key`)
       res.publicKey.owner.should.equal(actorUrl)
     })
+
+    it('should redirect to the shelf main url when requesting html', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = getActorName(shelf)
+      const actorUrl = makeUrl({ params: { action: 'actor', name } })
+      const { statusCode, headers } = await getHtml(actorUrl)
+      statusCode.should.equal(302)
+      headers.location.should.equal(`${fullPublicHost}/shelves/${shelf._id}`)
+    })
   })
 })
+
+const getHtml = url => {
+  return rawRequest('get', url, {
+    headers: {
+      accept: 'text/html'
+    }
+  })
+}

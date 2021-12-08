@@ -101,6 +101,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
       return {
         type: 'PropertyValue',
         name,
+        url,
         // Mimicking Mastodon
         value: `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank"><span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span></a>`
       }
