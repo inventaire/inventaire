@@ -8,7 +8,7 @@ const sanitization = {
 const controller = async (params, req, res) => {
   const { name } = params
   const { accept = '' } = req.headers
-  // TODO: detect cases were text/html is preceded by application/json
+  // TODO: detect cases where text/html is preceded by application/json
   const prefersHtml = accept.includes('text/html')
   if (prefersHtml) {
     const actorUrl = getActorHtmlUrl(name)
