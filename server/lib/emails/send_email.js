@@ -4,6 +4,7 @@ const helpers_ = require('./helpers')
 const transporter_ = require('./transporter')
 const email_ = require('./email')
 const user_ = require('controllers/user/lib/user')
+const groups_ = require('controllers/groups/lib/groups')
 
 module.exports = {
   validationEmail: (userData, token) => {
@@ -42,6 +43,18 @@ module.exports = {
     .then(transporter_.sendMail)
     .catch(helpers_.catchDisabledEmails)
     .catch(Err(`group ${action}`, actingUserId, userToNotifyId))
+  },
+
+  groupJoinRequest: async (groupId, requestingUserId) => {
+    const group = await groups_.byId(groupId)
+    if (group.open) return
+    const adminsIds = _.map(group.admins, 'user')
+    const admins = await user_.byIds(adminsIds)
+    const userData = await user_.byId(requestingUserId)
+    let emails = admins.map(email_.GroupJoinRequest(userData, group))
+    // Remove emails aborted due to user settings
+    emails = _.compact(emails)
+    return sendSequentially(emails, 'groupJoinRequest')
   },
 
   feedback: (subject, message, user, unknownUser, uris, context) => {

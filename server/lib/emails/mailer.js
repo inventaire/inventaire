@@ -31,6 +31,7 @@ const initMailerEventListeners = () => {
 
   radio.on('group:invite', sendEmail.group.bind(null, 'invite'))
   radio.on('group:acceptRequest', sendEmail.group.bind(null, 'acceptRequest'))
+  radio.on('group:request', sendEmail.groupJoinRequest)
 
   radio.on('received:feedback', sendEmail.feedback)
 

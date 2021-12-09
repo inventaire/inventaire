@@ -100,6 +100,40 @@ module.exports = {
     }
   },
 
+  GroupJoinRequest: (requester, group) => {
+    const emailKey = 'group_join_request'
+    const groupName = group.name
+    const requesterUsername = requester.username
+    return userToNotify => {
+      const { _id: userId, email, lang } = userToNotify
+      try {
+        checkUserNotificationsSettings(userToNotify, emailKey)
+      } catch (err) {
+        if (err.type === 'email_disabled') {
+          _.warn(`user ${userId} disabled ${emailKey} notifications: skip`)
+          return
+        } else {
+          throw err
+        }
+      }
+      const subject = i18n(lang, `${emailKey}_subject`, { groupName, requesterUsername })
+      return {
+        to: email,
+        subject,
+        template: emailKey,
+        context: {
+          title: subject,
+          button: `${emailKey}_button`,
+          buttonContext: { groupName, requesterUsername },
+          requester,
+          group,
+          lang,
+          host,
+        }
+      }
+    }
+  },
+
   feedback: (subject, message, user, unknownUser, uris, context) => {
     // no email settings to check here ;)
     const username = (user && user.username) || 'anonymous'
