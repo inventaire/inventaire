@@ -135,7 +135,7 @@ module.exports = {
   },
 
   feedback: (subject, message, user, unknownUser, uris, context) => {
-    // no email settings to check here ;)
+    // No email settings to check here
     const username = (user && user.username) || 'anonymous'
     return {
       to: defaultFrom,
