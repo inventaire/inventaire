@@ -5,25 +5,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <body style="height: 100% !important; width: 100% !important; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #222222; background: #F5F5F5; margin: 0; padding: 0;" bgcolor="#F5F5F5">
   <style type="text/css">
-    /*////// RESET STYLES //////*/
+    {{!-- RESET STYLES --}}
     body, #bodyTable, #bodyCell{height:100% !important; margin:0; padding:0; width:100% !important;}
     table{border-collapse:collapse;}
     img, a img{border:0; outline:none; text-decoration:none;}
     h1, h2, h3, h4, h5, h6{margin:0; padding:0;}
     p{margin: 1em 0;}
 
-    /*////// CLIENT-SPECIFIC STYLES //////*/
-    table, td{mso-table-lspace:0pt; mso-table-rspace:0pt;} /* Remove spacing between tables in Outlook 2007 and up. */
-    img{-ms-interpolation-mode: bicubic;} /* Force IE to smoothly render resized images. */
-    body, table, td, p, a, li, blockquote{-ms-text-size-adjust:100%; -webkit-text-size-adjust:100%;} /* Prevent Windows- and Webkit-based mobile platforms from changing declared text sizes. */
+    {{!-- CLIENT-SPECIFIC STYLES --}}
+    table, td{mso-table-lspace:0pt; mso-table-rspace:0pt;} {{!-- Remove spacing between tables in Outlook 2007 and up. --}}
+    img{-ms-interpolation-mode: bicubic;} {{!-- Force IE to smoothly render resized images. --}}
+    body, table, td, p, a, li, blockquote{-ms-text-size-adjust:100%; -webkit-text-size-adjust:100%;} {{!-- Prevent Windows- and Webkit-based mobile platforms from changing declared text sizes. --}}
 
-    /*////// FRAMEWORK STYLES //////*/
+    {{!-- FRAMEWORK STYLES --}}
     .flexibleContainerCell{padding-top:10px; padding-Right:20px; padding-Left:20px;}
     .flexibleImage{height:auto;}
     .bottomShim{padding-bottom:20px;}
     .imageContent, .imageContentLast{padding-bottom:20px;}
 
-    /*////// GENERAL STYLES //////*/
+    {{!-- GENERAL STYLES --}}
     body, #bodyTable{background-color:#F5F5F5;}
     #bodyCell{padding-top:20px; padding-bottom:20px;}
     #emailBody{background-color:#FFFFFF; border:1px solid #DDDDDD; border-collapse:separate; border-radius:4px;}
@@ -46,54 +46,47 @@
     .buttonContent{color:#FFFFFF; font-family:Helvetica; font-size:18px; font-weight:bold; line-height:100%; padding:15px; text-align:center;}
     .buttonContent a{color:#FFFFFF; display:block; text-decoration:none;}
 
-    /*////// MOBILE STYLES //////*/
+    {{!-- MOBILE STYLES --}}
     @media only screen and (max-width: 480px){
-      /*////// CLIENT-SPECIFIC STYLES //////*/
-      body{width:100% !important; min-width:100% !important;} /* Force iOS Mail to render the email at full width. */
+      {{!-- CLIENT-SPECIFIC STYLES --}}
+      body{width:100% !important; min-width:100% !important;} {{!-- Force iOS Mail to render the email at full width. --}}
 
-      /*////// FRAMEWORK STYLES //////*/
-      /*
-        CSS selectors are written in attribute
-        selector format to prevent Yahoo Mail
-        from rendering media query styles on
-        desktop.
-      */
+      {{!-- FRAMEWORK STYLES --}}
+      {{!-- CSS selectors are written in attribute
+      selector format to prevent Yahoo Mail
+      from rendering media query styles on
+      desktop. --}}
       table[id="emailBody"], table[class="flexibleContainer"]{width:100% !important;}
 
-      /*
-        The following style rule makes any
-        image classed with 'flexibleImage'
-        fluid when the query activates.
-        Make sure you add an inline max-width
-        to those images to prevent them
-        from blowing out.
-      */
+      {{!-- The following style rule makes any
+      image classed with 'flexibleImage'
+      fluid when the query activates.
+      Make sure you add an inline max-width
+      to those images to prevent them
+      from blowing out. --}}
       img[class="flexibleImage"]{height:auto !important; width:100% !important;}
 
-      /*
-        Make buttons in the email span the
-        full width of their container, allowing
-        for left- or right-handed ease of use.
-      */
+      {{!-- Make buttons in the email span the
+      full width of their container, allowing
+      for left- or right-handed ease of use. --}}
       table[class="emailButton"]{width:100% !important;}
       td[class="buttonContent"]{padding:0 !important;}
       td[class="buttonContent"] a{padding:15px !important;}
 
       td[class="textContentLast"], td[class="imageContentLast"]{padding-top:20px !important;}
 
-      /*////// GENERAL STYLES //////*/
+      {{!--GENERAL STYLES --}}
       td[id="bodyCell"]{padding-top:10px !important; padding-Right:10px !important; padding-Left:10px !important;}
       br{ display: block; margin: 10px 0; line-height:12px;}
     }
   </style>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width" /><title>Inventaire</title>
-<!--
-Outlook Conditional CSS
+{{!-- Outlook Conditional CSS
 These two style blocks target Outlook 2007 & 2010 specifically, forcing
 columns into a single vertical stack as on mobile clients. This is
 primarily done to avoid the 'page break bug' and is optional.
-More information here: http://templates.mailchimp.com/development/css/outlook-conditional-css
---><!--[if mso 12]>
+More information here: http://templates.mailchimp.com/development/css/outlook-conditional-css --}}
+<!--[if mso 12]>
 <style type="text/css">
   .flexibleContainer{display:block !important; width:100% !important;}
 </style>
