@@ -82,7 +82,7 @@ const sendSequentially = (emails, label) => {
     const nextEmail = emails.pop()
     if (!nextEmail) return
 
-    _.info(nextEmail, `${label}: next. Remaining: ${totalEmails}`)
+    _.info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
 
     // const email = emailFactory(nextEmail)
     return transporter_.sendMail(nextEmail)
