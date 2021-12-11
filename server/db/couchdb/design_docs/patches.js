@@ -26,13 +26,12 @@ module.exports = {
     }
   },
   byClaimValueAndDate: {
-    map: `
+    map: [
       function emitEntityClaim (property, claimValue, timestamp) {
         if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
           emit([ claimValue, timestamp ], property)
         }
-      }
-
+      },
       function (doc) {
         const { timestamp } = doc
         for (const operation of doc.patch) {
@@ -49,7 +48,8 @@ module.exports = {
             }
           }
         }
-      }`,
+      }
+    ],
     reduce: '_count'
   }
 }
