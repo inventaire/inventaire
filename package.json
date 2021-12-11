@@ -123,9 +123,9 @@
     "i18nSrc": "inventaire-i18n/original",
     "lib": "server/lib",
     "models": "server/models",
-    "root": ".",
     "scripts": "scripts",
     "server": "server",
-    "tests": "tests"
+    "tests": "tests",
+    "root": "."
   }
 }
