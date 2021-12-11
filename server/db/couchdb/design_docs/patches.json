@@ -1,26 +1,26 @@
 {
   "_id": "_design/patches",
-  "language": "coffeescript",
+  "language": "javascript",
   "views": {
     "byEntityId": {
-      "map": "(doc)->\n  emit doc._id.split(':')[0], null"
+      "map": "function (doc) { emit(doc._id.split(':')[0], null) }"
     },
     "byUserId": {
-      "map": "(doc)->\n  emit [doc.user, doc.timestamp], null",
+      "map": "function (doc) { emit([ doc.user, doc.timestamp ], null) }",
       "reduce": "_count"
     },
     "byDate": {
-      "map": "(doc)->\n  emit doc.timestamp, null"
+      "map": "function (doc) { emit(doc.timestamp, null) }"
     },
     "byDay": {
-      "map": "(doc)->\n  day = new Date(doc.timestamp).toISOString().split('T')[0]\n  emit [day, doc.user], null",
+      "map": "function (doc) {\n  const day = new Date(doc.timestamp).toISOString().split('T')[0]\n  emit([ day, doc.user ], null)\n}",
       "reduce": "_count"
     },
     "byRedirectUri": {
-      "map": "(doc)->\n  if doc.context?.redirectClaims?\n    fromUri = doc.context.redirectClaims.fromUri\n    emit fromUri, null"
+      "map": "function (doc) {\n  if (doc.context != null && doc.context.redirectClaims != null) {\n    emit(doc.context.redirectClaims.fromUri, null)\n  }\n}"
     },
     "byClaimValueAndDate": {
-      "map": "(doc)->\n  for operation in doc.patch\n    if operation.op is 'add'\n      pathParts = operation.path.split('/')\n      section = pathParts[1]\n      property = pathParts[2]\n      arrayIndex = pathParts[3]\n      if section is 'claims'\n        if arrayIndex?\n          value = operation.value\n          if typeof value is 'string' && (value.startsWith('wd:') or value.startsWith('inv:'))\n            emit [ operation.value, doc.timestamp ], property\n        else if property?\n          for subvalue in operation.value\n            if typeof subvalue is 'string' && (subvalue.startsWith('wd:') or subvalue.startsWith('inv:'))\n              emit [ subvalue, doc.timestamp ], property",
+      "map": "function emitEntityClaim (property, claimValue, timestamp) {\n  if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {\n    emit([ claimValue, timestamp ], property)\n  }\n}\n\nfunction (doc) {\n  const { timestamp } = doc\n  for (const operation of doc.patch) {\n    if (operation.op === 'add') {\n      const [ , section, property, arrayIndex ] = operation.path.split('/')\n      if (section === 'claims') {\n        if (arrayIndex != null) {\n          emitEntityClaim(property, operation.value, timestamp)\n        } else if (property != null) {\n          for (const subvalue of operation.value) {\n            emitEntityClaim(property, subvalue, timestamp)\n          }\n        }\n      }\n    }\n  }\n}",
       "reduce": "_count"
     }
   }
