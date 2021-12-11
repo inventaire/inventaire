@@ -27,7 +27,9 @@ const validate = (dbBaseName, designDocName) => {
     throw new Error(`unknown dbBaseName: ${dbBaseName}`)
   }
 
-  if (designDocName && !list[dbBaseName].includes(designDocName)) {
+  const jsDesignDocName = `${designDocName}.js`
+
+  if (designDocName && !(list[dbBaseName].includes(designDocName) || list[dbBaseName].includes(jsDesignDocName))) {
     throw new Error(`unknown designDocName: ${designDocName}`)
   }
 }

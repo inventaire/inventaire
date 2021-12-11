@@ -13,7 +13,7 @@ module.exports = {
   images: [ 'images' ],
   items: [ 'items' ],
   notifications: [ 'notifications' ],
-  patches: [ 'patches' ],
+  patches: [ 'patches.js' ],
   shelves: [ 'shelves' ],
   tasks: [ 'tasks' ],
   oauth_authorizations: [],

@@ -47,6 +47,8 @@
     "describe": "readonly",
     "xdescribe": "readonly",
     "beforeEach": "readonly",
-    "before": "readonly"
+    "before": "readonly",
+    // CouchDB design doc globals
+    "emit": "readonly"
   }
 }
