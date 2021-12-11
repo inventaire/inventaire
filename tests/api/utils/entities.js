@@ -97,7 +97,12 @@ const entitiesUtils = module.exports = {
   revertEdit: patchId => {
     assert_.string(patchId)
     return authReq('put', '/api/entities?action=revert-edit', { patch: patchId })
-  }
+  },
+
+  restoreVersion: patchId => {
+    assert_.string(patchId)
+    return authReq('put', '/api/entities?action=restore-version', { patch: patchId })
+  },
 }
 
 const normalizeUri = uri => _.isInvEntityId(uri) ? `inv:${uri}` : uri

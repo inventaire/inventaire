@@ -38,6 +38,7 @@ module.exports = {
       'update-claim': require('./update_claim'),
       'update-label': require('./update_label'),
       'revert-edit': require('./revert_edit'),
+      'restore-version': require('./restore_version'),
       'move-to-wikidata': require('./move_to_wikidata')
     },
     dataadmin: {
