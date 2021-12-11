@@ -1,6 +1,6 @@
 require('should')
 const { createEdition, createPublisher } = require('../../fixtures/entities')
-const { updateClaim } = require('../../utils/entities')
+const { addClaim } = require('../../utils/entities')
 
 describe('entities:create:publishers', () => {
   it('should create a local publisher entity', async () => {
@@ -12,10 +12,9 @@ describe('entities:create:publishers', () => {
     const edition = await createEdition()
     const editionUri = `inv:${edition._id}`
     const publisher = await createPublisher()
-    const oldVal = null
-    const newVal = `inv:${publisher._id}`
+    const newValue = `inv:${publisher._id}`
     const property = 'wdt:P123'
-    const res = await updateClaim(editionUri, property, oldVal, newVal)
+    const res = await addClaim(editionUri, property, newValue)
     res.ok.should.be.true()
   })
 })

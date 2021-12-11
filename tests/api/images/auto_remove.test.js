@@ -99,7 +99,7 @@ describe('images:auto-remove', () => {
       ])
       const { uri } = await createEdition({ image: hash })
       await wait(1000)
-      await updateClaim(uri, 'invp:P2', hash, hash2)
+      await updateClaim({ uri, property: 'invp:P2', oldValue: hash, newValue: hash2 })
       await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.false()
     })
@@ -117,7 +117,7 @@ describe('images:auto-remove', () => {
         createEdition({ image: hash }),
       ])
       await wait(1000)
-      await updateClaim(uri, 'invp:P2', hash, hash2)
+      await updateClaim({ uri, property: 'invp:P2', oldValue: hash, newValue: hash2 })
       await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.true()
     })

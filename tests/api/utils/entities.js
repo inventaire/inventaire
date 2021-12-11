@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
-const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser } = require('./utils')
+const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser, getUser } = require('./utils')
 const { getIndexedDoc } = require('../utils/search')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 const { waitForIndexation } = require('tests/api/utils/search')
@@ -73,16 +73,17 @@ const entitiesUtils = module.exports = {
     return authReq('put', '/api/entities?action=update-label', { uri, lang, value })
   },
 
-  updateClaim: (uri, property, oldValue, newValue) => {
+  updateClaim: ({ uri, property, oldValue, newValue, user }) => {
     uri = normalizeUri(uri)
+    user = user || getUser()
     const body = { uri, property }
     if (oldValue) body['old-value'] = oldValue
     if (newValue) body['new-value'] = newValue
-    return authReq('put', '/api/entities?action=update-claim', body)
+    return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
   },
 
-  addClaim: (uri, property, value) => entitiesUtils.updateClaim(uri, property, null, value),
-  removeClaim: (uri, property, value) => entitiesUtils.updateClaim(uri, property, value, null),
+  addClaim: (uri, property, newValue) => entitiesUtils.updateClaim({ uri, property, newValue }),
+  removeClaim: (uri, property, oldValue) => entitiesUtils.updateClaim({ uri, property, oldValue }),
 
   getRefreshedPopularityByUris: uris => {
     if (_.isArray(uris)) { uris = uris.join('|') }

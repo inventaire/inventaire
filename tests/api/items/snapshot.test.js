@@ -23,11 +23,11 @@ describe('items:snapshot', () => {
       addSerie(workEntity)
     ])
     await wait(100)
-    await updateClaim(workEntity.uri, 'wdt:P1545', null, '5')
+    await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', newValue: '5' })
     await wait(100)
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:ordinal'].should.equal('5')
-    await updateClaim(workEntity.uri, 'wdt:P1545', '5', '6')
+    await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', oldValue: '5', newValue: '6' })
     await wait(100)
     const reupdatedItem = await getItem(item)
     reupdatedItem.snapshot['entity:ordinal'].should.equal('6')
@@ -74,7 +74,7 @@ describe('items:snapshot', () => {
     const item = await authReq('post', '/api/items', { entity: edition.uri })
     item.snapshot['entity:image'].should.equal(edition.image.url)
     const workUri = edition.claims['wdt:P629'][0]
-    await updateClaim(workUri, 'wdt:P50', null, 'wd:Q535')
+    await updateClaim({ uri: workUri, property: 'wdt:P50', newValue: 'wd:Q535' })
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:image'].should.equal(edition.image.url)
   })
@@ -86,7 +86,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: uri })
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle.split('$$')[0]}$$${new Date().toISOString()}`
-      await updateClaim(entityId, 'wdt:P1476', currentTitle, updatedTitle)
+      await updateClaim({ uri: entityId, property: 'wdt:P1476', oldValue: currentTitle, newValue: updatedTitle })
       await wait(100)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)

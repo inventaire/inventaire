@@ -1,6 +1,6 @@
 require('should')
 const { createEdition, createCollection } = require('../../fixtures/entities')
-const { updateClaim, removeClaim } = require('../../utils/entities')
+const { addClaim, removeClaim } = require('../../utils/entities')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../../utils/utils')
 
 describe('entities:create:collections', () => {
@@ -36,7 +36,7 @@ describe('entities:create:collections', () => {
   it('should update an edition claim with a local collection entity', async () => {
     const { uri: editionUri } = await createEdition()
     const { uri: collectionUri } = await createCollection()
-    const res = await updateClaim(editionUri, 'wdt:P195', null, collectionUri)
+    const res = await addClaim(editionUri, 'wdt:P195', collectionUri)
     res.ok.should.be.true()
   })
 })

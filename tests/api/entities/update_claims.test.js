@@ -5,7 +5,7 @@ const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../util
 
 describe('entities:update-claims', () => {
   it('should reject without uri', async () => {
-    await updateClaim(null, 'wdt:P123')
+    await updateClaim({ property: 'wdt:P123' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: uri')
@@ -14,7 +14,7 @@ describe('entities:update-claims', () => {
   })
 
   it('should reject without property', async () => {
-    await updateClaim(someFakeUri)
+    await updateClaim({ uri: someFakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: property')
@@ -24,7 +24,7 @@ describe('entities:update-claims', () => {
 
   it('should reject without old-value or new-value', async () => {
     const property = 'wdt:P1104'
-    await updateClaim(someFakeUri, property)
+    await updateClaim({ uri: someFakeUri, property })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: old-value or new-value')
@@ -36,7 +36,7 @@ describe('entities:update-claims', () => {
     const uri = 'invalidprefix:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const property = 'wdt:P1104'
     const oldValue = '1312'
-    await updateClaim(uri, property, oldValue)
+    await updateClaim({ uri, property, oldValue })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid uri')
@@ -47,7 +47,7 @@ describe('entities:update-claims', () => {
   it('should reject unfound entity', async () => {
     const property = 'wdt:P1104'
     const oldValue = '1312'
-    await updateClaim(someFakeUri, property, oldValue)
+    await updateClaim({ uri: someFakeUri, property, oldValue })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('entity not found')
@@ -111,7 +111,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an update on an unexisting claim (property with no claim)', async () => {
     const edition = await createEdition()
-    await updateClaim(edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42')
+    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q23', newValue: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -122,7 +122,7 @@ describe('entities:update-claims', () => {
   it('should reject an update on an unexisting claim (property with claims)', async () => {
     const edition = await createEdition()
     await addClaim(edition.uri, 'wdt:P655', 'wd:Q535')
-    await updateClaim(edition.uri, 'wdt:P655', 'wd:Q23', 'wd:Q42')
+    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q23', newValue: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -162,7 +162,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an invalid value for a type-specific value format', async () => {
     const human = await createHuman()
-    await updateClaim(human.uri, 'wdt:P648', null, someOpenLibraryId('work'))
+    await updateClaim({ uri: human.uri, property: 'wdt:P648', newValue: someOpenLibraryId('work') })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -172,13 +172,13 @@ describe('entities:update-claims', () => {
 
   it('should accept an allowlisted value for a constrained property', async () => {
     const edition = await createEdition()
-    const res = await updateClaim(edition.uri, 'wdt:P437', null, 'wd:Q128093')
+    const res = await updateClaim({ uri: edition.uri, property: 'wdt:P437', newValue: 'wd:Q128093' })
     res.ok.should.be.true()
   })
 
   it('should reject a non-allowlisted value for a constrained property', async () => {
     const edition = await createEdition()
-    await updateClaim(edition.uri, 'wdt:P437', null, 'wd:Q123')
+    await updateClaim({ uri: edition.uri, property: 'wdt:P437', newValue: 'wd:Q123' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -188,7 +188,7 @@ describe('entities:update-claims', () => {
 
   it('should reject a non-allowlisted value for a given entity type', async () => {
     const edition = await createEdition()
-    await updateClaim(edition.uri, 'wdt:P31', 'wd:Q3331189', 'wd:Q5')
+    await updateClaim({ uri: edition.uri, property: 'wdt:P31', oldValue: 'wd:Q3331189', newValue: 'wd:Q5' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)

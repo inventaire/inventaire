@@ -80,7 +80,7 @@ const useImage = {
   entities: async hash => {
     const edition = await createEdition()
     const previousHash = edition.claims['invp:P2'][0]
-    await updateClaim(edition.uri, 'invp:P2', previousHash, hash)
+    await updateClaim({ uri: edition.uri, property: 'invp:P2', oldValue: previousHash, newValue: hash })
   },
   groups: async hash => {
     const group = await createGroup()

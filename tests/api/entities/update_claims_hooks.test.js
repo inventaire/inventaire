@@ -11,7 +11,8 @@ describe('entities:update-claims-hooks', () => {
       .then(edition => {
         const value = edition.claims['wdt:P1476'][0]
         const updatedValue = `${value}updated`
-        return updateClaim(edition.uri, 'wdt:P1476', value, updatedValue)
+        const { uri } = edition
+        return updateClaim({ uri, property: 'wdt:P1476', oldValue: value, newValue: updatedValue })
         .then(Wait(100))
         .then(() => {
           return getByUris(work.uri)
@@ -36,7 +37,8 @@ describe('entities:update-claims-hooks', () => {
       .then(([ editionA, editionB ]) => {
         const valueA = editionA.claims['wdt:P1476'][0]
         const updatedValueA = `${valueA}updated`
-        return updateClaim(editionA.uri, 'wdt:P1476', valueA, updatedValueA)
+        const { uri } = editionA
+        return updateClaim({ uri, property: 'wdt:P1476', oldValue: valueA, newValue: updatedValueA })
         .then(Wait(100))
         .then(() => {
           return getByUris(work.uri)
