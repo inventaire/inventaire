@@ -1,29 +1,24 @@
 const CONFIG = require('config')
 require('should')
-const { publicReq, undesiredRes } = require('../utils/utils')
+const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullPublicHost()
 const qs = require('querystring')
 const encodedCommonsUrlChunk = qs.escape('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {
-  it('should return an array of images associated with the passed uri', done => {
-    publicReq('get', '/api/entities?action=images&uris=wd:Q535')
-    .then(res => {
-      res.images.should.be.an.Object()
-      res.images['wd:Q535'].should.be.an.Array()
-      res.images['wd:Q535'][0].should.be.a.String()
-      done()
-    })
-    .catch(done)
+  it('should return an array of images associated with the passed uri', async () => {
+    const res = await publicReq('get', '/api/entities?action=images&uris=wd:Q535')
+    res.images.should.be.an.Object()
+    res.images['wd:Q535'].should.be.an.Array()
+    res.images['wd:Q535'][0].should.be.a.String()
   })
 
-  it('should reject redirect requests with multiple URIs', done => {
-    publicReq('get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true')
-    .then(undesiredRes(done))
+  it('should reject redirect requests with multiple URIs', async () => {
+    await publicReq('get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true')
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      done()
     })
   })
 

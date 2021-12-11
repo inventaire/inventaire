@@ -1,204 +1,146 @@
 const should = require('should')
-const { tap } = require('lib/promises')
-const { authReq, undesiredRes, dataadminReq } = require('../utils/utils')
+const { authReq, shouldNotBeCalled, dataadminReq } = require('../utils/utils')
 const randomString = require('lib/utils/random_string')
 const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
 const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 
 describe('entities:revert-merge', () => {
-  it('should require data admin rights', done => {
-    authReq('put', '/api/entities?action=revert-merge')
-    .then(undesiredRes(done))
+  it('should require data admin rights', async () => {
+    await authReq('put', '/api/entities?action=revert-merge')
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)
-      done()
     })
   })
 
-  it('should reject without "from" uri', done => {
+  it('should reject without "from" uri', async () => {
     // Not using utils/entities `revertMerge` function to avoid getting an error from `assert_.string(fromUri)`
-    dataadminReq('put', '/api/entities?action=revert-merge', {})
-    .then(undesiredRes(done))
+    await dataadminReq('put', '/api/entities?action=revert-merge', {})
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: from')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject invalid prefix', done => {
-    revertMerge('wd:Q42')
-    .then(undesiredRes(done))
+  it('should reject invalid prefix', async () => {
+    await revertMerge('wd:Q42')
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("invalid 'from' uri domain: wd. Accepted domains: inv")
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should revert merge two entities with an inv URI', done => {
-    Promise.all([
+  it('should revert merge two entities with an inv URI', async () => {
+    const [ workA, workB ] = await Promise.all([
       createWork(),
       createWork()
     ])
-    .then(([ workA, workB ]) => {
-      merge(workA.uri, workB.uri)
-      .then(() => getByUris(workA.uri))
-      .then(res => {
-        res.redirects[workA.uri].should.equal(workB.uri)
-        res.entities[workB.uri].should.be.ok()
-        revertMerge(workA.uri)
-        .then(() => getByUris(workA.uri))
-        .then(res => {
-          should(res.redirects[workA.uri]).not.be.ok()
-          res.entities[workA.uri].should.be.ok()
-          done()
-        })
-      })
-    })
-    .catch(done)
+    await merge(workA.uri, workB.uri)
+    const res = await getByUris(workA.uri)
+    res.redirects[workA.uri].should.equal(workB.uri)
+    res.entities[workB.uri].should.be.ok()
+    await revertMerge(workA.uri)
+    const res2 = await getByUris(workA.uri)
+    should(res2.redirects[workA.uri]).not.be.ok()
+    res2.entities[workA.uri].should.be.ok()
   })
 
-  it('should revert claims transfer', done => {
-    Promise.all([
+  it('should revert claims transfer', async () => {
+    const [ workA, workB, author ] = await Promise.all([
       createWork(),
       createWork(),
       createHuman()
     ])
-    .then(([ workA, workB, author ]) => {
-      return addClaim(workA.uri, 'wdt:P50', author.uri)
-      .then(() => merge(workA.uri, workB.uri))
-      .then(() => getByUris(workB.uri))
-      .then(res => {
-        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-        authorsUris.should.deepEqual([ author.uri ])
-        return revertMerge(workA.uri)
-        .then(() => getByUris(workB.uri))
-        .then(res => {
-          const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-          should(authorsUris).not.be.ok()
-          done()
-        })
-      })
-    })
-    .catch(done)
+    await addClaim(workA.uri, 'wdt:P50', author.uri)
+    await merge(workA.uri, workB.uri)
+    const res = await getByUris(workB.uri)
+    const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+    authorsUris.should.deepEqual([ author.uri ])
+    await revertMerge(workA.uri)
+    const res2 = await getByUris(workB.uri)
+    const authorsUris2 = res2.entities[workB.uri].claims['wdt:P50']
+    should(authorsUris2).not.be.ok()
   })
 
-  it('should revert labels transfer', done => {
+  it('should revert labels transfer', async () => {
     const label = randomString(6)
-    Promise.all([
+    const [ workA, workB ] = await Promise.all([
       createWork({ labels: { zh: label } }),
       createWork()
     ])
-    .then(([ workA, workB ]) => {
-      return merge(workA.uri, workB.uri)
-      .then(() => getByUris(workB.uri))
-      .then(res => {
-        res.entities[workB.uri].labels.zh.should.equal(label)
-        return revertMerge(workA.uri)
-        .then(() => getByUris(workB.uri))
-      })
-      .then(res => {
-        should(res.entities[workB.uri].labels.zh).not.be.ok()
-        done()
-      })
-    })
-    .catch(done)
+    await merge(workA.uri, workB.uri)
+    const res = await getByUris(workB.uri)
+    res.entities[workB.uri].labels.zh.should.equal(label)
+    await revertMerge(workA.uri)
+    const res2 = await getByUris(workB.uri)
+    should(res2.entities[workB.uri].labels.zh).not.be.ok()
   })
 
-  it('should revert claim transfers, even when several patches away', done => {
-    Promise.all([
+  it('should revert claim transfers, even when several patches away', async () => {
+    const [ workA, workB, authorA, authorB ] = await Promise.all([
       createWork(),
       createWork(),
       createHuman(),
       createHuman()
     ])
-    .then(([ workA, workB, authorA, authorB ]) => {
-      return addClaim(workA.uri, 'wdt:P50', authorA.uri)
-      .then(() => merge(workA.uri, workB.uri))
-      .then(() => getByUris(workB.uri))
-      // Make another edit between the merge and the revert-merge
-      .then(tap(() => addClaim(workB.uri, 'wdt:P50', authorB.uri)))
-      .then(res => {
-        const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-        authorsUris.should.deepEqual([ authorA.uri ])
-        return revertMerge(workA.uri)
-        .then(() => getByUris(workB.uri))
-        .then(res => {
-          const authorsUris = res.entities[workB.uri].claims['wdt:P50']
-          authorsUris.should.deepEqual([ authorB.uri ])
-          done()
-        })
-      })
-    })
-    .catch(done)
+    await addClaim(workA.uri, 'wdt:P50', authorA.uri)
+    await merge(workA.uri, workB.uri)
+    const res = await getByUris(workB.uri)
+    const authorsUris = res.entities[workB.uri].claims['wdt:P50']
+    authorsUris.should.deepEqual([ authorA.uri ])
+    // Make another edit between the merge and the revert-merge
+    await addClaim(workB.uri, 'wdt:P50', authorB.uri)
+    await revertMerge(workA.uri)
+    const res2 = await getByUris(workB.uri)
+    const authorsUris2 = res2.entities[workB.uri].claims['wdt:P50']
+    authorsUris2.should.deepEqual([ authorB.uri ])
   })
 
-  it('should revert labels transfer', done => {
+  it('should revert labels transfer', async () => {
     const labelA = randomString(6)
     const labelB = randomString(6)
-    Promise.all([
+    const [ workA, workB ] = await Promise.all([
       createWork({ labels: { zh: labelA } }),
       createWork()
     ])
-    .then(([ workA, workB ]) => {
-      return merge(workA.uri, workB.uri)
-      .then(() => getByUris(workB.uri))
-      // Make another edit between the merge and the revert-merge
-      .then(tap(() => updateLabel(workB.uri, 'nl', labelB)))
-      .then(res => {
-        res.entities[workB.uri].labels.zh.should.equal(labelA)
-        return revertMerge(workA.uri)
-        .then(() => getByUris(workB.uri))
-      })
-      .then(res => {
-        should(res.entities[workB.uri].labels.zh).not.be.ok()
-        done()
-      })
-    })
-    .catch(done)
+    await merge(workA.uri, workB.uri)
+    const res = await getByUris(workB.uri)
+    res.entities[workB.uri].labels.zh.should.equal(labelA)
+    // Make another edit between the merge and the revert-merge
+    await updateLabel(workB.uri, 'nl', labelB)
+    await revertMerge(workA.uri)
+    const res2 = await getByUris(workB.uri)
+    should(res2.entities[workB.uri].labels.zh).not.be.ok()
   })
 
-  it('should revert redirected claims', done => {
-    Promise.all([
+  it('should revert redirected claims', async () => {
+    const [ humanA, humanB, work ] = await Promise.all([
       createHuman(),
       createHuman(),
       createWork()
     ])
-    .then(([ humanA, humanB, work ]) => {
-      return addClaim(work.uri, 'wdt:P50', humanA.uri)
-      .then(() => merge(humanA.uri, humanB.uri))
-      .then(() => revertMerge(humanA.uri))
-      .then(() => getByUris(work.uri))
-      .then(res => {
-        const authorsUris = res.entities[work.uri].claims['wdt:P50']
-        authorsUris.should.deepEqual([ humanA.uri ])
-        done()
-      })
-    })
-    .catch(done)
+    await addClaim(work.uri, 'wdt:P50', humanA.uri)
+    await merge(humanA.uri, humanB.uri)
+    await revertMerge(humanA.uri)
+    const res = await getByUris(work.uri)
+    const authorsUris = res.entities[work.uri].claims['wdt:P50']
+    authorsUris.should.deepEqual([ humanA.uri ])
   })
 
-  it('should restore removed human placeholders', done => {
-    Promise.all([
+  it('should restore removed human placeholders', async () => {
+    const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(),
       createWorkWithAuthor()
     ])
-    .then(([ workA, workB ]) => {
-      const humanAUri = workA.claims['wdt:P50'][0]
-      return merge(workA.uri, workB.uri)
-      .then(() => revertMerge(workA.uri))
-      .then(() => getByUris([ workA.uri, humanAUri ]))
-      .then(res => {
-        const humanA = res.entities[humanAUri]
-        workA = res.entities[workA.uri]
-        should(humanA._meta_type).not.be.ok()
-        workA.claims['wdt:P50'].should.deepEqual([ humanAUri ])
-        done()
-      })
-    })
-    .catch(done)
+    const humanAUri = workA.claims['wdt:P50'][0]
+    await merge(workA.uri, workB.uri)
+    await revertMerge(workA.uri)
+    const res = await getByUris([ workA.uri, humanAUri ])
+    const humanA = res.entities[humanAUri]
+    const updatedWorkA = res.entities[workA.uri]
+    should(humanA._meta_type).not.be.ok()
+    updatedWorkA.claims['wdt:P50'].should.deepEqual([ humanAUri ])
   })
 })
