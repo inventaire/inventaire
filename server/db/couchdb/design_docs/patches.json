@@ -20,7 +20,7 @@
       "map": "(doc)->\n  if doc.context?.redirectClaims?\n    fromUri = doc.context.redirectClaims.fromUri\n    emit fromUri, null"
     },
     "byClaimValueAndDate": {
-      "map": "(doc)->\n  for operation in doc.patch\n    if operation.op is 'add'\n      pathParts = operation.path.split('/')\n      section = pathParts[1]\n      property = pathParts[2]\n      if section is 'claims'\n        if pathParts[3]?\n          value = operation.value\n          if typeof value is 'string' && (value.startsWith('wd:') or value.startsWith('inv:'))\n            emit [ operation.value, doc.timestamp ], property\n        else\n          for subvalue in operation.value\n            if typeof subvalue is 'string' && (subvalue.startsWith('wd:') or subvalue.startsWith('inv:'))\n              emit [ subvalue, doc.timestamp ], property",
+      "map": "(doc)->\n  for operation in doc.patch\n    if operation.op is 'add'\n      pathParts = operation.path.split('/')\n      section = pathParts[1]\n      property = pathParts[2]\n      arrayIndex = pathParts[3]\n      if section is 'claims'\n        if arrayIndex?\n          value = operation.value\n          if typeof value is 'string' && (value.startsWith('wd:') or value.startsWith('inv:'))\n            emit [ operation.value, doc.timestamp ], property\n        else if property?\n          for subvalue in operation.value\n            if typeof subvalue is 'string' && (subvalue.startsWith('wd:') or subvalue.startsWith('inv:'))\n              emit [ subvalue, doc.timestamp ], property",
       "reduce": "_count"
     }
   }

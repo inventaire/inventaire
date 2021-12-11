@@ -23,28 +23,34 @@ const getActivitiesFromPatch = async patch => {
 
 // Mimick server/db/couchdb/design_docs/patches.json byClaimValueAndDate
 const byClaimValueAndDate = doc => {
-  const { _id: id } = doc
+  const { _id: id, timestamp } = doc
   const rows = []
   for (const operation of doc.patch) {
     if (operation.op === 'add') {
       const [ , section, property, arrayIndex ] = operation.path.split('/')
       if (section === 'claims') {
         if (arrayIndex != null) {
-          const { value } = operation
-          if (typeof value === 'string' && (value.startsWith('wd:') || value.startsWith('inv:'))) {
-            rows.push({ id, key: [ operation.value, doc.timestamp ], value: property })
-          }
-        } else {
+          // Example case: { op: 'add', path: '/claims/wdt:P1104', value: [ 150 ] }
+          addRow(rows, id, property, operation.value, timestamp)
+        } else if (property != null) {
+          // Example case: { op: 'add', path: '/claims/wdt:P50', value: [ 'wd:Q535' ] }
           for (const subvalue of operation.value) {
-            if (typeof subvalue === 'string' && (subvalue.startsWith('wd:') || subvalue.startsWith('inv:'))) {
-              rows.push({ id, key: [ subvalue, doc.timestamp ], value: property })
-            }
+            addRow(rows, id, property, subvalue, timestamp)
           }
         }
+        // Remaining case: { op: 'add', path: '/claims', value: { 'wdt:P31': [ 'wd:Q47461344' ] } }
+        // Ignored as it's only accuring after a revert-merge, were add operations
+        // would be dupplicates of previous add operations
       }
     }
   }
   return rows
+}
+
+const addRow = (rows, id, property, claimValue, timestamp) => {
+  if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
+    rows.push({ id, key: [ claimValue, timestamp ], value: property })
+  }
 }
 
 module.exports = {
