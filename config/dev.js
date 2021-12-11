@@ -7,9 +7,6 @@ module.exports = {
   dataseed: {
     enabled: true
   },
-  db: {
-    enableDesignDocSync: true
-  },
   piwik: {
     enabled: false
   },

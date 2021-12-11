@@ -4,7 +4,6 @@ const _ = require('builders/utils')
 const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.fullHost()
 const initHardCodedDocuments = require('./init_hard_coded_documents')
-const initDesignDocSync = require('./init_design_doc_sync')
 
 const dbsList = require('./list')
 const formattedList = []
@@ -26,7 +25,6 @@ const init = async () => {
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
     if (_.objLength(res.operations) !== 0) _.log(res, 'couch init')
     await initHardCodedDocuments()
-    initDesignDocSync()
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
 
