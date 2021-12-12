@@ -1,20 +1,16 @@
 require('should')
-const { undesiredRes } = require('../../utils/utils')
-const { updateLabel } = require('../../utils/entities')
-const { createEdition, randomLabel } = require('../../fixtures/entities')
+const { shouldNotBeCalled } = require('tests/api/utils/utils')
+const { updateLabel } = require('tests/api/utils/entities')
+const { createEdition, randomLabel } = require('tests/api/fixtures/entities')
 
 describe('entities:editions:update-labels', () => {
-  it('should reject labels update', done => {
-    createEdition()
-    .then(edition => {
-      return updateLabel(edition._id, 'fr', randomLabel())
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.body.status_verbose.should.equal("editions can't have labels")
-        err.statusCode.should.equal(400)
-        done()
-      })
+  it('should reject labels update', async () => {
+    const edition = await createEdition()
+    await updateLabel(edition._id, 'fr', randomLabel())
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal("editions can't have labels")
+      err.statusCode.should.equal(400)
     })
-    .catch(done)
   })
 })
