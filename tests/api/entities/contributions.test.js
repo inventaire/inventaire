@@ -3,7 +3,7 @@ const { adminReq, getUser, getReservedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
 const { wait } = require('lib/promises')
-const { updateClaim } = require('../utils/entities')
+const { updateClaim, updateLabel } = require('../utils/entities')
 
 describe('entities:contributions', () => {
   it('should return contributions from all users by default', async () => {
@@ -81,17 +81,32 @@ describe('entities:contributions', () => {
   describe('filter', () => {
     it('should filter by claim property', async () => {
       const user = await getReservedUser()
-      const work = await createWork({ user })
+      const { uri } = await createWork({ user })
       const property = 'wdt:P921'
-      await updateClaim({ uri: work.uri, property, newValue: 'wd:Q1', user })
-      await updateClaim({ uri: work.uri, property: 'wdt:P136', newValue: 'wd:Q2', user })
-      await updateClaim({ uri: work.uri, property, newValue: 'wd:Q3', user })
-      await updateClaim({ uri: work.uri, property, oldValue: 'wd:Q1', user })
+      await updateClaim({ uri, property, newValue: 'wd:Q1', user })
+      await updateClaim({ uri, property: 'wdt:P136', newValue: 'wd:Q2', user })
+      await updateClaim({ uri, property, newValue: 'wd:Q3', user })
+      await updateClaim({ uri, property, oldValue: 'wd:Q1', user })
       const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&property=${property}`)
       patches.length.should.equal(3)
       total.should.equal(3)
       patches.forEach(({ patch }) => {
-        patch.some(operation => operation.path.includes(property)).should.be.true()
+        patch.some(operation => operation.path.includes(`/${property}`)).should.be.true()
+      })
+    })
+
+    it('should filter by label lang', async () => {
+      const user = await getReservedUser()
+      const { uri } = await createWork({ user })
+      const lang = 'ca'
+      await updateLabel({ uri, lang, value: 'foo', user })
+      await updateLabel({ uri, lang: 'it', value: 'bar', user })
+      await updateLabel({ uri, lang, value: 'buzz', user })
+      const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&lang=${lang}`)
+      patches.length.should.equal(2)
+      total.should.equal(2)
+      patches.forEach(({ patch }) => {
+        patch.some(operation => operation.path.includes(`/${lang}`)).should.be.true()
       })
     })
   })
