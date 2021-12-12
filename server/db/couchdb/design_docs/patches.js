@@ -4,7 +4,7 @@ module.exports = {
       emit(doc._id.split(':')[0], null)
     }
   },
-  byUserId: {
+  byUserIdAndDate: {
     map: doc => emit([ doc.user, doc.timestamp ], null),
     reduce: '_count'
   },
@@ -51,5 +51,21 @@ module.exports = {
       }
     ],
     reduce: '_count'
-  }
+  },
+  byUserIdAndPropertyAndDate: {
+    map: doc => {
+      const { user, timestamp } = doc
+      for (const operation of doc.patch) {
+        if (operation.op !== 'test') {
+          const property = operation.path.split('/')[2]
+          // Here `property` can be both a label lang or a claim property
+          if (property != null) {
+            // return to only emit once per matching doc
+            return emit([ user, property, timestamp ])
+          }
+        }
+      }
+    },
+    reduce: '_count'
+  },
 }
