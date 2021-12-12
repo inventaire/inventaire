@@ -10,7 +10,7 @@ describe('entities:update-labels', () => {
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {
-      await updateLabel(_id, 'fr', null).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'fr', value: null }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: value')
@@ -37,7 +37,7 @@ describe('entities:update-labels', () => {
   it('should update a label', async () => {
     const { _id, uri } = await humanPromise
     const value = randomString(15)
-    await updateLabel(_id, 'fr', value)
+    await updateLabel({ uri: _id, lang: 'fr', value })
     const updatedHuman = await getByUri(uri)
     updatedHuman.labels.fr.should.equal(value)
   })
@@ -47,7 +47,7 @@ describe('entities:update-labels', () => {
     const trimValueLength = trimValue.length
     const value = `${trimValue}     `
     const { _id, uri } = await humanPromise
-    await updateLabel(_id, 'fr', value)
+    await updateLabel({ uri: _id, lang: 'fr', value })
     const updatedHuman = await getByUri(uri)
     updatedHuman.labels.fr.length.should.equal(trimValueLength)
   })
@@ -56,7 +56,7 @@ describe('entities:update-labels', () => {
     const value = randomString(15)
     const { _id } = await humanPromise
     try {
-      await updateLabel(_id, 'zz', value).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'zz', value }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -67,7 +67,7 @@ describe('entities:update-labels', () => {
   it('should reject an update with an invalid value', async () => {
     const { _id } = await humanPromise
     try {
-      await updateLabel(_id, 'en', 123).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'en', value: 123 }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -78,7 +78,7 @@ describe('entities:update-labels', () => {
   it('should reject an update with an empty string', async () => {
     const { _id } = await humanPromise
     try {
-      await updateLabel(_id, 'en', '').then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'en', value: '' }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -89,9 +89,9 @@ describe('entities:update-labels', () => {
   it('should reject an up-to-date value', async () => {
     const value = randomString(15)
     const { _id } = await humanPromise
-    await updateLabel(_id, 'en', value)
+    await updateLabel({ uri: _id, lang: 'en', value })
     try {
-      await updateLabel(_id, 'en', value).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'en', value }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -103,7 +103,7 @@ describe('entities:update-labels', () => {
     const name = 'Georges'
     const langs = [ 'en', 'fr' ]
     const { _id, uri } = await humanPromise
-    const responses = await Promise.all(langs.map(lang => updateLabel(_id, lang, name)))
+    const responses = await Promise.all(langs.map(lang => updateLabel({ uri: _id, lang, value: name })))
     responses.forEach(res => should(res.ok).be.true())
     const updatedHuman = await getByUri(uri)
     langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))

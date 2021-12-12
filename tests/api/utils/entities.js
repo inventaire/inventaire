@@ -68,9 +68,10 @@ const entitiesUtils = module.exports = {
     .then(({ patches }) => patches)
   },
 
-  updateLabel: (uri, lang, value) => {
+  updateLabel: ({ uri, lang, value, user }) => {
+    user = user || getUser()
     uri = normalizeUri(uri)
-    return authReq('put', '/api/entities?action=update-label', { uri, lang, value })
+    return customAuthReq(user, 'put', '/api/entities?action=update-label', { uri, lang, value })
   },
 
   updateClaim: ({ uri, property, oldValue, newValue, user }) => {

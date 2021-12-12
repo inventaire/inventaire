@@ -97,7 +97,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: uri })
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle} ${new Date().toISOString()}`
-      await updateLabel(entityId, 'en', updatedTitle)
+      await updateLabel({ uri: entityId, lang: 'en', value: updatedTitle })
       await wait(100)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
@@ -113,7 +113,7 @@ describe('items:snapshot', () => {
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:series'].should.equal(title)
       const updatedTitle = `${title}-updated`
-      await updateLabel(serieEntity._id, 'en', updatedTitle)
+      await updateLabel({ uri: serieEntity._id, lang: 'en', value: updatedTitle })
       await wait(200)
       const reupdatedItem = await getItem(item)
       reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
@@ -128,7 +128,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       await wait(200)
       const updateAuthorName = humanName()
-      await updateLabel(authorUri, 'en', updateAuthorName)
+      await updateLabel({ uri: authorUri, lang: 'en', value: updateAuthorName })
       await wait(200)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
@@ -139,7 +139,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       const updateAuthorName = humanName()
       const uri = workEntity.claims['wdt:P50'][0]
-      await updateLabel(uri, 'en', updateAuthorName)
+      await updateLabel({ uri, lang: 'en', value: updateAuthorName })
       await wait(100)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)

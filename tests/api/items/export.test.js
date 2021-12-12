@@ -91,10 +91,10 @@ describe('items:export', () => {
       const work = await getByUri(workUri)
       const author = await getByUri(work.claims['wdt:P50'][0])
       const frenchTitle = 'titre en français'
-      await updateLabel(work.uri, 'fr', frenchTitle)
+      await updateLabel({ uri: work.uri, lang: 'fr', value: frenchTitle })
       const item = await createItem(user, { entity: edition.uri })
       const authorLabel = parseLabel(author)
-      await updateLabel(author.uri, 'es', 'shall not display this')
+      await updateLabel({ uri: author.uri, lang: 'es', value: 'shall not display this' })
       const itemRow = await reqAndParse(item._id, user)
 
       itemRow['Works labels'].should.equal(frenchTitle)

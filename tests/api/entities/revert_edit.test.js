@@ -8,7 +8,7 @@ describe('entities:revert-edit', () => {
   it('should revert a label update', async () => {
     const { uri } = await createWork()
     const label = randomString(6)
-    await updateLabel(uri, 'es', label)
+    await updateLabel({ uri, lang: 'es', value: label })
     const lastPatchId = await getLastPatchId(uri)
     const res = await revertEdit(lastPatchId)
     res.should.be.ok()

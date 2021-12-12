@@ -109,7 +109,7 @@ describe('entities:revert-merge', () => {
     const res = await getByUris(workB.uri)
     res.entities[workB.uri].labels.zh.should.equal(labelA)
     // Make another edit between the merge and the revert-merge
-    await updateLabel(workB.uri, 'nl', labelB)
+    await updateLabel({ uri: workB.uri, lang: 'nl', value: labelB })
     await revertMerge(workA.uri)
     const res2 = await getByUris(workB.uri)
     should(res2.entities[workB.uri].labels.zh).not.be.ok()

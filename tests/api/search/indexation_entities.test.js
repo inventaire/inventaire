@@ -27,7 +27,7 @@ describe('indexation:entities', () => {
     const editionImageHash = claims['invp:P2'][0]
     const workId = claims['wdt:P629'][0].split(':')[1]
     // Trigger a reindexation
-    await updateLabel(workId, 'es', 'foo')
+    await updateLabel({ uri: workId, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, workId)
     result._source.images[lang][0].should.equal(editionImageHash)
@@ -44,7 +44,7 @@ describe('indexation:entities', () => {
     const workUi = claims['wdt:P629'][0].split(':')[1]
     const { _id: serieId } = await addSerie(workUi)
     // Trigger a reindexation
-    await updateLabel(serieId, 'es', 'foo')
+    await updateLabel({ uri: serieId, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, serieId)
     result._source.images[lang][0].should.equal(editionImageHash)

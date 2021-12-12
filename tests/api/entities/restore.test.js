@@ -7,8 +7,8 @@ describe('entities:restore', () => {
   it('should restore after label updates', async () => {
     const originalLabel = randomString(6)
     const { uri } = await createWork({ labels: { en: originalLabel } })
-    await updateLabel(uri, 'en', randomString(6))
-    await updateLabel(uri, 'en', randomString(6))
+    await updateLabel({ uri, lang: 'en', value: randomString(6) })
+    await updateLabel({ uri, lang: 'en', value: randomString(6) })
     const firstVersionPatchId = `${uri.split(':')[1]}:2`
     const res = await restoreVersion(firstVersionPatchId)
     res.should.be.ok()
