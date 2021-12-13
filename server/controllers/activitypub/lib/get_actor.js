@@ -1,8 +1,9 @@
 const CONFIG = require('config')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
-const { getActorTypeFromName } = require('./helpers')
+const { buildLink, getActorTypeFromName, defaultLabel, entityUrl } = require('./helpers')
 const { unprefixify } = require('controllers/entities/lib/prefix')
+const buildAttachements = require('./build_attachements')
 const { publicHost } = CONFIG
 const host = CONFIG.fullPublicHost()
 
@@ -41,23 +42,26 @@ const getUserActor = async username => {
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
-  const label = entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
+  const label = defaultLabel(entity)
   const links = [
-    { name: publicHost, url: `${host}/entity/${entity.uri}` }
+    { name: publicHost, url: entityUrl(entity.uri) }
   ]
+
   if (entity.uri.startsWith('wd:')) {
     links.push({ name: 'wikidata.org', url: `https://www.wikidata.org/wiki/${unprefixify(entity.uri)}` })
   }
+  const attachment = await buildAttachements(entity)
   return buildActorObject({
     actorName: entity.actorName,
     displayName: label,
     summary: entity.descriptions?.en,
     imagePath: entity.image.url,
     links,
+    attachment
   })
 }
 
-const buildActorObject = async ({ actorName, displayName, summary, imagePath, links }) => {
+const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment }) => {
   const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
   const actor = {
     '@context': [
@@ -86,16 +90,17 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
   }
 
   if (links) {
-    actor.attachment = links.map(({ name, url }) => {
+    const linksAttachements = links.map(({ name, url }) => {
       const [ protocol, urlWithoutProtocol ] = url.split('://')
+      const value = `<span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span>`
       return {
         type: 'PropertyValue',
         name,
         url,
-        // Mimicking Mastodon
-        value: `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank"><span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span></a>`
+        value: buildLink(url, value)
       }
     })
+    actor.attachment = linksAttachements.concat(attachment)
   }
 
   const { publicKey } = await getSharedKeyPair()

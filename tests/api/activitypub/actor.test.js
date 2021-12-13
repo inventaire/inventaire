@@ -1,15 +1,24 @@
+const _ = require('builders/utils')
 require('should')
 const { createUser, createUsername } = require('../fixtures/users')
 const { createHuman, createEdition } = require('../fixtures/entities')
-const { makeUrl, getEntityActorName } = require('controllers/activitypub/lib/helpers')
+const { makeUrl, getEntityActorName, propertyLabel } = require('controllers/activitypub/lib/helpers')
+const propertiesDisplay = require('controllers/activitypub/lib/properties_display')
 const { updateUser } = require('../utils/users')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
-const CONFIG = require('config')
 const { rawRequest } = require('../utils/request')
+const { i18n } = require('lib/emails/i18n/i18n')
+const CONFIG = require('config')
 const { publicHost } = CONFIG
 const fullPublicHost = CONFIG.fullPublicHost()
+
+const getAttachement = async (actorName, prop) => {
+  const actorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
+  const { attachment } = await publicReq('get', actorUrl)
+  return _.find(attachment, { name: i18n('en', prop) })
+}
 
 describe('activitypub:actor', () => {
   it('should reject unknown actor', async () => {
@@ -115,14 +124,27 @@ describe('activitypub:actor', () => {
     })
 
     it('should set URLs as attachment', async () => {
-      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q237087' } })
-      const body = await publicReq('get', actorUrl)
-      body.attachment[0].type.should.equal('PropertyValue')
-      body.attachment[0].name.should.equal(publicHost)
-      body.attachment[0].value.should.containEql(`${fullPublicHost}/entity/wd:Q237087`)
-      body.attachment[1].type.should.equal('PropertyValue')
-      body.attachment[1].name.should.equal('wikidata.org')
-      body.attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q237087')
+      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q535' } })
+      const { attachment } = await publicReq('get', actorUrl)
+      attachment[0].type.should.equal('PropertyValue')
+      attachment[0].name.should.equal(publicHost)
+      attachment[0].value.should.containEql(`${fullPublicHost}/entity/wd:Q535`)
+      attachment[1].type.should.equal('PropertyValue')
+      attachment[1].name.should.equal('wikidata.org')
+      attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q535')
+    })
+
+    it('should set an ordered list of claims as attachment', async () => {
+      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q535' } })
+      const { attachment } = await publicReq('get', actorUrl)
+      attachment[2].type.should.equal('PropertyValue')
+      attachment[2].name.should.equal(i18n('en', 'P135'))
+      attachment[2].value.should.containEql(`${fullPublicHost}/entity/wd:`)
+      // check attachement order against "properties display"
+      const propertiesLabels = propertiesLabelsByType('human')
+      const name3 = propertiesLabels.indexOf(attachment[3].name)
+      const name4 = propertiesLabels.indexOf(attachment[4].name)
+      name3.should.be.below(name4)
     })
 
     it('should redirect to the entity main url when requesting html', async () => {
@@ -187,3 +209,5 @@ const getHtml = url => {
     }
   })
 }
+
+const propertiesLabelsByType = type => Object.keys(propertiesDisplay[type]).map(propertyLabel)
