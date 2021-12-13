@@ -147,6 +147,32 @@ describe('activitypub:actor', () => {
       name3.should.be.below(name4)
     })
 
+    it('should set entity claim as attachment', async () => {
+      const { value } = await getAttachement('wd-Q140057', 'P941')
+      value.should.containEql(`${fullPublicHost}/entity/wd:`)
+    })
+
+    it('should set entity string claim as attachment', async () => {
+      const { value } = await getAttachement('wd-Q140057', 'P407')
+      value.should.equal('French')
+    })
+
+    it('should set date claim as attachment', async () => {
+      const { value } = await getAttachement('wd-Q11859', 'P577')
+      value.should.equal('1837')
+    })
+
+    it('should set URL claim as attachment', async () => {
+      const { value } = await getAttachement('wd-Q856656', 'P856')
+      value.should.containEql('www.la-pleiade.fr')
+    })
+
+    it('should set platform claim as attachment', async () => {
+      const { value } = await getAttachement('wd-Q110436', 'P4033')
+      value.should.containEql('doctorow@mamot.fr')
+      value.should.containEql('https://mamot.fr/@doctorow')
+    })
+
     it('should redirect to the entity main url when requesting html', async () => {
       const wdId = 'Q237087'
       const actorUrl = makeUrl({ params: { action: 'actor', name: `wd-${wdId}` } })

@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const { buildLink, entityUrl, defaultLabel, propertyLabel } = require('./helpers')
+const platforms = require('./platforms')
 const propertiesDisplay = require('./properties_display.js')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const typesWithAttachements = Object.keys(propertiesDisplay)
@@ -50,11 +51,27 @@ const buildLinkWrapper = args => {
   const { claimValue, text } = args
   return buildLink(claimValue, text)
 }
+// only year for now
+const buildTime = ({ claimValue }) => parseInt(claimValue.split('-')[0])
+
+const buildPlatform = ({ claimValue, prop }) => {
+  const plateformProp = platforms[prop]
+  if (!plateformProp) return
+  const { url, text } = plateformProp
+  const attachementValue = buildLinkWrapper({
+    claimValue: url(claimValue),
+    text: text(claimValue)
+  })
+  if (attachementValue) return attachementValue
+}
 
 const claimTypesActions = {
   entity: buildEntity,
   entityString: buildEntity,
   string: _.identity,
+  time: buildTime,
+  platform: buildPlatform,
+  url: buildLinkWrapper
 }
 
 const buildAttachementValue = (claimType, prop) => async claimValue => {
