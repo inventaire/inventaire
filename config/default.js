@@ -71,8 +71,6 @@ const config = module.exports = {
     },
     // logs Couchdb requests parameters
     debug: false,
-    // Keep the design doc files in sync with CouchDB design docs
-    enableDesignDocSync: false,
     backupFolder: 'backups/couchdb'
   },
 

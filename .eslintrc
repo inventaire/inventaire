@@ -4,6 +4,7 @@
 {
   "root": true,
   "env": {
+    "node": true,
     "commonjs": true,
     "es2020": true
   },
@@ -39,14 +40,5 @@
     "prefer-arrow/prefer-arrow-functions": [ "error" ],
     "prefer-arrow-callback": [ "error" ],
     "prefer-const": [ "error" ]
-  },
-  "globals": {
-    // Mocha globals
-    "it": "readonly",
-    "xit": "readonly",
-    "describe": "readonly",
-    "xdescribe": "readonly",
-    "beforeEach": "readonly",
-    "before": "readonly"
   }
 }
