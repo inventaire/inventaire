@@ -100,7 +100,7 @@ module.exports = {
       group_level: 1,
       descending: true,
     })
-    return rows[0].value
+    return rows[0]?.value || 0
   }
 }
 
