@@ -2,6 +2,7 @@ const __ = require('config').universalPath
 const _ = require('builders/utils')
 const { readJsonFile, writeJsonFile } = require('lib/utils/json')
 const { isPropertyId } = require('wikidata-sdk')
+const { wait } = require('./promises')
 
 module.exports = {
   appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
@@ -14,6 +15,10 @@ module.exports = {
 
 // Don't use 'require' as it will be cached until next start
 const appendToI18nKeys = async (path, newKeys, fullValue) => {
+  // Add a random pause so that several calls at the same time
+  // are unlickly to conflict. Sort of a debounce ersatz
+  await wait(Math.trunc(Math.random() * 1000))
+
   const keys = await readJsonFile(path)
   const lengthBefore = _.objLength(keys)
   for (const key of newKeys) {
