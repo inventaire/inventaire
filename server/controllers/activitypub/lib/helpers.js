@@ -3,6 +3,8 @@ const host = CONFIG.fullPublicHost()
 const qs = require('querystring')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')
+const { unprefixify } = require('controllers/entities/lib/prefix')
+const { i18n } = require('lib/emails/i18n/i18n')
 
 const makeUrl = ({ origin, endpoint, params }) => {
   origin = origin || host
@@ -26,6 +28,18 @@ const getActorTypeFromName = name => {
   else throw error_.notFound({ name })
 }
 
+const defaultLabel = entity => entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
+
+const buildLink = (url, text) => {
+  if (!text) text = url.split('://')[1]
+  // Mimicking Mastodon
+  return `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank">${text}</a>`
+}
+
+const entityUrl = uri => `${host}/entity/${uri}`
+
+const propertyLabel = prop => i18n('en', unprefixify(prop))
+
 module.exports = {
   makeUrl,
   getEntityActorName,
@@ -33,4 +47,8 @@ module.exports = {
   getActivityIdFromPatchId,
   getActorTypeFromName,
   isEntityActivityId,
+  defaultLabel,
+  entityUrl,
+  propertyLabel,
+  buildLink
 }
