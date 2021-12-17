@@ -6,7 +6,7 @@ const getAuthorsUris = require('../get_authors_uris')
 
 // resolve :
 // - if seeds terms match entities terms
-// - if no other entities are in the search result (only one entity found)
+// - if no other entity matches those terms
 
 module.exports = async entry => {
   const { authors, works } = entry
@@ -24,14 +24,14 @@ const searchAuthorAndResolve = works => author => {
 }
 
 const searchUrisByAuthorTerms = terms => {
-  return Promise.all(terms.map(searchUrisByAuthorLabel))
+  return Promise.all(terms.map(searchUrisByAuthorTerm))
   .then(_.flatten)
   .then(_.uniq)
 }
 
 const types = [ 'humans' ]
 
-const searchUrisByAuthorLabel = async term => {
+const searchUrisByAuthorTerm = async term => {
   const hits = await typeSearch({ types, search: term, exact: true })
   return hits
   // Exact match on normalized author terms
@@ -52,17 +52,19 @@ const getWorkAndResolve = (authorSeed, authorsUris) => async work => {
 }
 
 const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms, authorsWorks) => {
+  const matchingSearchedWorks = authorsWorks.filter(isMatchingWork(workTerms))
   // Several authorsWorks could match authors homonyms/duplicates
-  if (authorsWorks.length !== 1) return
-  const searchedWork = authorsWorks[0]
-  const matchedAuthorsUris = _.intersection(getAuthorsUris(searchedWork), authorsUris)
+  if (matchingSearchedWorks.length !== 1) return
+  const matchingWork = matchingSearchedWorks[0]
+  const matchedAuthorsUris = _.intersection(getAuthorsUris(matchingWork), authorsUris)
   // If unique author to avoid assigning a work to a duplicated author
   if (matchedAuthorsUris.length !== 1) return
-  const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
-
-  if (!_.someMatch(workTerms, searchedWorkTerms)) return
-
   authorSeed.uri = matchedAuthorsUris[0]
-  workSeed.uri = searchedWork.uri
+  workSeed.uri = matchingWork.uri
   return workSeed.uri
+}
+
+const isMatchingWork = workTerms => searchedWork => {
+  const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
+  return _.someMatch(workTerms, searchedWorkTerms)
 }

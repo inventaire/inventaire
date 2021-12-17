@@ -372,13 +372,29 @@ describe('entities:resolve:on-labels', () => {
     should(entries3[0].works[0].uri).not.be.ok()
   })
 
-  it('should not resolve when several works exist', async () => {
+  it('should not resolve when several homonym works exist', async () => {
     const sameLabelAuthor = await createHuman({ labels: author.labels })
     const workB = await createWorkWithAuthor(sameLabelAuthor, workLabel)
     await waitForIndexation('entities', workB._id)
     const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()
+  })
+
+  it('should resolve when an author has several works but only one matches', async () => {
+    const author = await createHuman()
+    const workLabel = randomLabel()
+    const [ workA, workB ] = await Promise.all([
+      createWorkWithAuthor(author, workLabel),
+      createWorkWithAuthor(author, randomLabel())
+    ])
+    await Promise.all([
+      waitForIndexation('entities', workA._id),
+      waitForIndexation('entities', workB._id),
+    ])
+    const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
+    entries[0].works[0].uri.should.equal(workA.uri)
+    entries[0].authors[0].uri.should.equal(author.uri)
   })
 })
 
