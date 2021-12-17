@@ -9,7 +9,7 @@ module.exports = {
     }
   }),
   post: ActionsControllers({
-    signed: {
+    public: {
       inbox: require('./inbox')
     }
   })

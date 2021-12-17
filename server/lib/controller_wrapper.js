@@ -6,7 +6,6 @@ const { send } = require('./responses')
 const { sanitize, validateSanitization } = require('./sanitize/sanitize')
 const { track } = require('./track')
 const assert_ = require('./utils/assert_types')
-const { verifySignature } = require('../controllers/activitypub/lib/security')
 
 // A function to do the basic operations most controllers will need:
 // - check access rights
@@ -28,7 +27,6 @@ const controllerWrapper = async (controllerParams, req, res) => {
   }
 
   try {
-    if (access === 'signed') await verifySignature(req)
     if (sanitization) {
       const params = sanitize(req, res, sanitization)
       const result = await controller(params, req, res)

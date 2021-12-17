@@ -25,7 +25,7 @@ describe('activitypub:signed:request', () => {
     try {
       const username = createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity()
+      const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest('post', inboxUrl, {
         headers: {
           'content-type': 'application/activity+json'
@@ -106,7 +106,7 @@ describe('activitypub:signed:request', () => {
         reqHeaders,
       })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity()
+      const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest(method, inboxUrl, {
         headers: reqHeaders,
         body

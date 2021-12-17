@@ -1,7 +1,13 @@
+const { verifySignature } = require('./lib/security')
+
 const inboxActivityTypes = {
   Follow: require('./follow'),
   Undo: require('./undo'),
 }
+
+const ignoredTypes = [
+  'Delete'
+]
 
 const sanitization = {
   id: {
@@ -9,7 +15,7 @@ const sanitization = {
     generic: 'string'
   },
   type: {
-    allowlist: Object.keys(inboxActivityTypes)
+    allowlist: Object.keys(inboxActivityTypes).concat(ignoredTypes)
   },
   '@context': {
     allowlist: [ 'https://www.w3.org/ns/activitystreams' ]
@@ -20,8 +26,14 @@ const sanitization = {
   }
 }
 
-const controller = async params => {
-  return inboxActivityTypes[params.type](params)
+const controller = async (params, req) => {
+  const { type } = params
+  if (ignoredTypes.includes(type)) {
+    return { ok: true }
+  } else {
+    await verifySignature(req)
+    return inboxActivityTypes[type](params)
+  }
 }
 
 module.exports = {
