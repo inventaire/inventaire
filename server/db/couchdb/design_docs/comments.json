@@ -1,9 +1,0 @@
-{
-  "_id": "_design/comments",
-  "language": "coffeescript",
-  "views": {
-    "byTransactionId": {
-      "map": "(doc)->\n  if doc.transaction?\n    emit doc.transaction, null"
-    }
-  }
-}

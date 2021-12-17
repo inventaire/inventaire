@@ -1,9 +1,0 @@
-{
-  "_id": "_design/images",
-  "language": "coffeescript",
-  "views": {
-    "bySourcesCount": {
-      "map": "(doc)->\n  if doc.sources? then emit -doc.sources.length, null"
-    }
-  }
-}

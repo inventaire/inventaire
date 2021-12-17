@@ -8,13 +8,15 @@ const initHardCodedDocuments = require('./init_hard_coded_documents')
 const dbsList = require('./list')
 const formattedList = []
 
+const setJsExtension = filename => `${filename}.js`
+
 // Adapt the list to couch-init2 needs
 for (const dbName in dbsList) {
   const designDocsNames = dbsList[dbName]
   formattedList.push({
     // Adding a suffix if needed
     name: CONFIG.db.name(dbName),
-    designDocs: designDocsNames
+    designDocs: designDocsNames.map(setJsExtension)
   })
 }
 

@@ -1,9 +1,6 @@
-// 'default' keys/values are used by couch init
-// keys -> dbs names
-// values -> design docs
-
-// 'optional' keys/values are dbs names/design_docs
-// that aren't required to run on production
+// keys: CouchDB databases names
+// values: design docs names, corresponding to files in server/db/couchdb/design_docs,
+//         which will be converted to JSON design doc documents by couch-init2
 
 module.exports = {
   activities: [ 'activities' ],
@@ -13,7 +10,7 @@ module.exports = {
   images: [ 'images' ],
   items: [ 'items' ],
   notifications: [ 'notifications' ],
-  patches: [ 'patches.js' ],
+  patches: [ 'patches' ],
   shelves: [ 'shelves' ],
   tasks: [ 'tasks' ],
   oauth_authorizations: [],

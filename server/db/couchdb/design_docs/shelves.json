@@ -1,9 +1,0 @@
-{
-  "_id": "_design/shelves",
-  "language": "coffeescript",
-  "views": {
-    "byOwner": {
-      "map": "(doc)-> emit doc.owner, null"
-    }
-  }
-}
