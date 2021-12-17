@@ -16,14 +16,14 @@ module.exports = async entry => {
   return entry
 }
 
-const searchAuthorAndResolve = works => author => {
+const searchAuthorAndResolve = works => async author => {
   if (author == null || author.uri != null) return
   const authorTerms = getEntityNormalizedTerms(author)
-  return searchUrisByAuthorTerms(authorTerms)
-  .then(resolveWorksAndAuthor(works, author))
+  const foundAuthorsUris = await searchAuthorsBySeedAuthorTerms(authorTerms)
+  await resolveWorksAndAuthor(works, author, foundAuthorsUris)
 }
 
-const searchUrisByAuthorTerms = terms => {
+const searchAuthorsBySeedAuthorTerms = terms => {
   return Promise.all(terms.map(searchUrisByAuthorTerm))
   .then(_.flatten)
   .then(_.uniq)
@@ -40,28 +40,27 @@ const searchUrisByAuthorTerm = async term => {
   .filter(_.identity)
 }
 
-const resolveWorksAndAuthor = (works, author) => authorsUris => {
-  return Promise.all(works.map(getWorkAndResolve(author, authorsUris)))
+const resolveWorksAndAuthor = async (works, author, foundAuthorsUris) => {
+  await Promise.all(works.map(getWorkAndResolve(author, foundAuthorsUris)))
 }
 
-const getWorkAndResolve = (authorSeed, authorsUris) => async work => {
+const getWorkAndResolve = (authorSeed, foundAuthorsUris) => async work => {
   if (work == null || work.uri != null) return
   const workTerms = getEntityNormalizedTerms(work)
-  const authorsWorks = await getWorksFromAuthorsUris(authorsUris)
-  return resolveWorkAndAuthor(authorsUris, authorSeed, work, workTerms, authorsWorks)
+  const foundAuthorsWorks = await getWorksFromAuthorsUris(foundAuthorsUris)
+  resolveWorkAndAuthor(foundAuthorsUris, authorSeed, work, workTerms, foundAuthorsWorks)
 }
 
-const resolveWorkAndAuthor = (authorsUris, authorSeed, workSeed, workTerms, authorsWorks) => {
-  const matchingSearchedWorks = authorsWorks.filter(isMatchingWork(workTerms))
-  // Several authorsWorks could match authors homonyms/duplicates
+const resolveWorkAndAuthor = (foundAuthorsUris, authorSeed, workSeed, workTerms, foundAuthorsWorks) => {
+  const matchingSearchedWorks = foundAuthorsWorks.filter(isMatchingWork(workTerms))
+  // Several foundAuthorsWorks could match authors homonyms/duplicates
   if (matchingSearchedWorks.length !== 1) return
   const matchingWork = matchingSearchedWorks[0]
-  const matchedAuthorsUris = _.intersection(getAuthorsUris(matchingWork), authorsUris)
+  const matchedAuthorsUris = _.intersection(getAuthorsUris(matchingWork), foundAuthorsUris)
   // If unique author to avoid assigning a work to a duplicated author
   if (matchedAuthorsUris.length !== 1) return
   authorSeed.uri = matchedAuthorsUris[0]
   workSeed.uri = matchingWork.uri
-  return workSeed.uri
 }
 
 const isMatchingWork = workTerms => searchedWork => {
