@@ -398,6 +398,20 @@ describe('entities:resolve:on-labels', () => {
   })
 })
 
+describe('entities:resolve:on-external-terms', () => {
+  // Fragile test: its validity depends on the stability of Wikipedia and Wikidata
+  xit('should resolve the author when a work label appears in Wikipedia', async function () {
+    this.timeout(60000)
+    // The author is in Wikidata, but not his work (this test will become useless once that work is in Wikidata)
+    const workLabel = "Mémoires d'outre-espace"
+    const authorLabel = 'Enki Bilal'
+    const { entries } = await resolve(basicEntry(workLabel, authorLabel))
+    entries[0].works[0].resolved.should.be.false()
+    entries[0].authors[0].resolved.should.be.true()
+    entries[0].authors[0].uri.should.equal('wd:Q333668')
+  })
+})
+
 describe('entities:resolve:images', () => {
   it('should reject an invalid image URL', async () => {
     const editionSeed = {

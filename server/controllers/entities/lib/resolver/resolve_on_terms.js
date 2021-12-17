@@ -3,6 +3,8 @@ const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
 const typeSearch = require('controllers/search/lib/type_search')
 const { getEntityNormalizedTerms } = require('../terms_normalization')
 const getAuthorsUris = require('../get_authors_uris')
+const getOccurrencesFromExternalSources = require('../get_occurrences_from_external_sources')
+const { hasConvincingOccurrences } = require('server/controllers/tasks/lib/automerge')
 
 // resolve :
 // - if seeds terms match entities terms
@@ -21,6 +23,9 @@ const searchAuthorAndResolve = works => async author => {
   const authorTerms = getEntityNormalizedTerms(author)
   const foundAuthorsUris = await searchAuthorsBySeedAuthorTerms(authorTerms)
   await resolveWorksAndAuthor(works, author, foundAuthorsUris)
+  if (author.uri == null) {
+    await resolveAuthorFromExternalWorksTerms(author, works, foundAuthorsUris)
+  }
 }
 
 const searchAuthorsBySeedAuthorTerms = terms => {
@@ -66,4 +71,27 @@ const resolveWorkAndAuthor = (foundAuthorsUris, authorSeed, workSeed, workTerms,
 const isMatchingWork = workTerms => searchedWork => {
   const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
   return _.someMatch(workTerms, searchedWorkTerms)
+}
+
+const resolveAuthorFromExternalWorksTerms = async (authorSeed, worksSeeds, foundAuthorsUris) => {
+  const worksLabels = _.uniq(_.flatten(worksSeeds.map(getLabels)))
+  const worksLabelsLangs = _.uniq(_.flatten(worksSeeds.map(getLabelsLangs)))
+  const authorsUrisWithOccurrences = await Promise.all(foundAuthorsUris.map(getOccurrences(worksLabels, worksLabelsLangs)))
+  const matchingAuthors = authorsUrisWithOccurrences
+    .filter(({ occurrences }) => hasConvincingOccurrences(occurrences))
+
+  if (matchingAuthors.length === 1) {
+    authorSeed.uri = matchingAuthors[0].uri
+  }
+}
+
+const getLabels = work => Object.values(work.labels)
+const getLabelsLangs = work => Object.keys(work.labels)
+
+const getOccurrences = (worksLabels, worksLabelsLangs) => async authorUri => {
+  const occurrences = await getOccurrencesFromExternalSources(authorUri, worksLabels, worksLabelsLangs)
+  return {
+    uri: authorUri,
+    occurrences,
+  }
 }

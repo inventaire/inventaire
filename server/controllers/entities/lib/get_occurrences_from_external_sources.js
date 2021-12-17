@@ -13,15 +13,18 @@ const getOlAuthorWorksTitles = require('data/openlibrary/get_ol_author_works_tit
 const getEntityByUri = require('./get_entity_by_uri')
 const { normalizeTerm } = require('./terms_normalization')
 const promises_ = require('lib/promises')
+const { isWdEntityUri } = require('lib/boolean_validations')
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-module.exports = (wdAuthorUri, worksLabels, worksLabelsLangs) => {
+module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)
+
+  if (!isWdEntityUri(wdAuthorUri)) return []
 
   // get Wikipedia article title from URI
   return getEntityByUri({ uri: wdAuthorUri })

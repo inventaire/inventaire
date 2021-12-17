@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const automerge = require('./automerge')
+const { automerge } = require('./automerge')
 const typeSearch = require('controllers/search/lib/type_search')
 const entities_ = require('controllers/entities/lib/entities')
 const getOccurrencesFromEntities = require('controllers/entities/lib/get_occurrences_from_entities')
