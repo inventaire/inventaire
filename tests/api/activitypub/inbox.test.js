@@ -1,7 +1,7 @@
 require('should')
 const { createUser, createUsername } = require('../fixtures/users')
-const { signedReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { makeUrl, createActivity } = require('../utils/activitypub')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { signedReq, makeUrl, createActivity } = require('../utils/activitypub')
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {

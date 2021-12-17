@@ -32,7 +32,7 @@ const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
 }
 
 const createActivity = (params = {}) => {
-  const { object, actor, type = 'Follow', origin } = params
+  const { object, actor, type = 'Follow' } = params
   let { externalId } = params
   externalId = externalId || `${origin}/${getRandomBytes(20, 'hex')}`
   return {
