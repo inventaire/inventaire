@@ -1,9 +1,9 @@
 const CONFIG = require('config')
 require('should')
 const { createUsername, createUser } = require('../fixtures/users')
-const { makeUrl, createActivity, getSomeRemoteServerUser, createRemoteActivityPubServerUser } = require('../utils/activitypub')
+const { signedReq, makeUrl, createActivity, getSomeRemoteServerUser, createRemoteActivityPubServerUser } = require('../utils/activitypub')
 const { rawRequest } = require('../utils/request')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, signedReq } = require('../utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
 const { generateKeyPair } = require('lib/crypto').keyPair
 
@@ -25,7 +25,7 @@ describe('activitypub:signed:request', () => {
     try {
       const username = createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity()
+      const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest('post', inboxUrl, {
         headers: {
           'content-type': 'application/activity+json'
@@ -106,7 +106,7 @@ describe('activitypub:signed:request', () => {
         reqHeaders,
       })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity()
+      const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest(method, inboxUrl, {
         headers: reqHeaders,
         body

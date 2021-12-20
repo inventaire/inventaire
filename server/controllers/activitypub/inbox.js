@@ -1,3 +1,5 @@
+const { verifySignature } = require('./lib/security')
+
 const inboxActivityTypes = {
   Follow: require('./follow'),
   Undo: require('./undo'),
@@ -20,8 +22,10 @@ const sanitization = {
   }
 }
 
-const controller = async params => {
-  return inboxActivityTypes[params.type](params)
+const controller = async (params, req) => {
+  const { type } = params
+  await verifySignature(req)
+  return inboxActivityTypes[type](params)
 }
 
 module.exports = {
