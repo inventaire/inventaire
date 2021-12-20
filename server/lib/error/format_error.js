@@ -43,6 +43,7 @@ const getErrorEmittingLines = err => {
 
 const getErrorEmittingLine = line => {
   if (!line) return
+  if (!line.trim().startsWith('at ')) return line
   return line
   .trim()
   .replace(/^\s*at\s+/, '')
