@@ -41,11 +41,11 @@ module.exports = {
     return formatPatchesPage({ viewRes, total, limit, offset })
   },
 
-  byUserIdAndProperty: async ({ userId, property, limit, offset }) => {
+  byUserIdAndFilter: async ({ userId, filter, limit, offset }) => {
     const [ viewRes, total ] = await Promise.all([
-      db.view(designDocName, 'byUserIdAndPropertyAndDate', {
-        startkey: [ userId, property, maxKey ],
-        endkey: [ userId, property ],
+      db.view(designDocName, 'byUserIdAndFilterAndDate', {
+        startkey: [ userId, filter, maxKey ],
+        endkey: [ userId, filter ],
         descending: true,
         limit,
         skip: offset,
@@ -54,7 +54,7 @@ module.exports = {
       }),
       // Unfortunately, the response doesn't gives the total range length
       // so we need to query it separately
-      getUserPropertyContributionsCount(userId, property)
+      getUserPropertyContributionsCount(userId, filter)
     ])
 
     return formatPatchesPage({ viewRes, total, limit, offset })
@@ -166,11 +166,11 @@ const getUserContributionsCount = userId => {
   })
 }
 
-const getUserPropertyContributionsCount = (userId, property) => {
+const getUserPropertyContributionsCount = (userId, filter) => {
   return getRangeLength({
-    viewName: 'byUserIdAndPropertyAndDate',
-    startkey: [ userId, property ],
-    endkey: [ userId, property, maxKey ],
+    viewName: 'byUserIdAndFilterAndDate',
+    startkey: [ userId, filter ],
+    endkey: [ userId, filter, maxKey ],
   })
 }
 
