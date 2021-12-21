@@ -64,6 +64,8 @@ module.exports = {
             // return to only emit once per matching doc
             return emit([ user, filter, timestamp ])
           }
+          // TODO: handle case where path=/claims or path=/labels
+          // Known case: after a reverse merge
         }
       }
     },
