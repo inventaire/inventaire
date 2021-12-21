@@ -7,7 +7,11 @@ const sanitization = {
   limit: { default: 100, max: 1000 },
   offset: { default: 0 },
   property: { optional: true },
-  lang: { optional: true },
+  lang: {
+    optional: true,
+    // Override global parameter default
+    default: null,
+  },
 }
 
 const controller = params => {
