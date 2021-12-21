@@ -87,7 +87,7 @@ describe('entities:contributions', () => {
       await updateClaim({ uri, property: 'wdt:P136', newValue: 'wd:Q2', user })
       await updateClaim({ uri, property, newValue: 'wd:Q3', user })
       await updateClaim({ uri, property, oldValue: 'wd:Q1', user })
-      const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&property=${property}`)
+      const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${property}`)
       patches.length.should.equal(3)
       total.should.equal(3)
       patches.forEach(({ patch }) => {
@@ -102,7 +102,7 @@ describe('entities:contributions', () => {
       await updateLabel({ uri, lang, value: 'foo', user })
       await updateLabel({ uri, lang: 'it', value: 'bar', user })
       await updateLabel({ uri, lang, value: 'buzz', user })
-      const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&lang=${lang}`)
+      const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${lang}`)
       patches.length.should.equal(2)
       total.should.equal(2)
       patches.forEach(({ patch }) => {
