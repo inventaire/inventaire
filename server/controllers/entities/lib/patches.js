@@ -11,9 +11,20 @@ module.exports = {
   byId: db.get,
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
   byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
-  byUserId: async (userId, limit, offset) => {
+
+  byDate: async ({ limit, offset }) => {
+    const viewRes = await db.view(designDocName, 'byDate', {
+      limit,
+      skip: offset,
+      descending: true,
+      include_docs: true
+    })
+    return formatPatchesPage({ viewRes, limit, offset })
+  },
+
+  byUserId: async ({ userId, limit, offset }) => {
     const [ viewRes, total ] = await Promise.all([
-      db.view(designDocName, 'byUserId', {
+      db.view(designDocName, 'byUserIdAndDate', {
         startkey: [ userId, maxKey ],
         endkey: [ userId ],
         descending: true,
@@ -24,20 +35,29 @@ module.exports = {
       }),
       // Unfortunately, the response doesn't gives the total range length
       // so we need to query it separately
-      getUserTotalContributions(userId)
+      getUserContributionsCount(userId)
     ])
 
     return formatPatchesPage({ viewRes, total, limit, offset })
   },
 
-  byDate: async (limit, offset) => {
-    const viewRes = await db.view(designDocName, 'byDate', {
-      limit,
-      skip: offset,
-      descending: true,
-      include_docs: true
-    })
-    return formatPatchesPage({ viewRes, limit, offset })
+  byUserIdAndFilter: async ({ userId, filter, limit, offset }) => {
+    const [ viewRes, total ] = await Promise.all([
+      db.view(designDocName, 'byUserIdAndFilterAndDate', {
+        startkey: [ userId, filter, maxKey ],
+        endkey: [ userId, filter ],
+        descending: true,
+        limit,
+        skip: offset,
+        include_docs: true,
+        reduce: false
+      }),
+      // Unfortunately, the response doesn't gives the total range length
+      // so we need to query it separately
+      getUserPropertyContributionsCount(userId, filter)
+    ])
+
+    return formatPatchesPage({ viewRes, total, limit, offset })
   },
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
@@ -138,19 +158,29 @@ const sortAndFilterContributions = rows => {
 // see server/db/couchdb/hard_coded_documents.js
 const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
-const getUserTotalContributions = userId => {
-  return db.view(designDocName, 'byUserId', {
-    group_level: 1,
-    // Maybe there is a way to only pass the userId key
-    // but I couln't find it
+const getUserContributionsCount = userId => {
+  return getRangeLength({
+    viewName: 'byUserIdAndDate',
     startkey: [ userId ],
-    endkey: [ userId, maxKey ]
+    endkey: [ userId, maxKey ],
   })
-  // Testing the row existance in case we got an invalid user id
-  .then(res => {
-    const userRow = res.rows[0]
-    return userRow ? userRow.value : 0
+}
+
+const getUserPropertyContributionsCount = (userId, filter) => {
+  return getRangeLength({
+    viewName: 'byUserIdAndFilterAndDate',
+    startkey: [ userId, filter ],
+    endkey: [ userId, filter, maxKey ],
   })
+}
+
+const getRangeLength = async ({ viewName, startkey, endkey }) => {
+  const { rows } = await db.view(designDocName, viewName, {
+    group_level: startkey.length,
+    startkey,
+    endkey,
+  })
+  return rows[0] != null ? rows[0].value : 0
 }
 
 const formatPatchesPage = ({ viewRes, total, limit, offset }) => {

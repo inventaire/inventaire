@@ -4,7 +4,7 @@ module.exports = {
       emit(doc._id.split(':')[0], null)
     }
   },
-  byUserId: {
+  byUserIdAndDate: {
     map: doc => emit([ doc.user, doc.timestamp ], null),
     reduce: '_count'
   },
@@ -51,5 +51,24 @@ module.exports = {
       }
     ],
     reduce: '_count'
-  }
+  },
+  byUserIdAndFilterAndDate: {
+    map: doc => {
+      const { user, timestamp } = doc
+      for (const operation of doc.patch) {
+        // ops included: 'add', 'remove'
+        if (operation.op !== 'test') {
+          // `filter` can be both a label lang or a claim property
+          const filter = operation.path.split('/')[2]
+          if (filter != null) {
+            // return to only emit once per matching doc
+            return emit([ user, filter, timestamp ])
+          }
+          // TODO: handle case where path=/claims or path=/labels
+          // Known case: after a reverse merge
+        }
+      }
+    },
+    reduce: '_count'
+  },
 }
