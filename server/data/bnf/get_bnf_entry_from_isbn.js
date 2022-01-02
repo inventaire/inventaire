@@ -148,9 +148,12 @@ const addImage = async entry => {
   const { status: statusCode, headers } = await fetch(url)
   let contentLength = headers.get('content-length')
   if (contentLength) contentLength = parseInt(contentLength)
-  if (statusCode === 200 && contentLength !== placeholderContentLength) {
+  if (statusCode === 200 && !placeholderContentLengths.includes(contentLength)) {
     entry.edition.image = url
   }
 }
 
-const placeholderContentLength = 4566
+const placeholderContentLengths = [
+  4566,
+  4658,
+]
