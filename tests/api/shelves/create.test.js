@@ -39,11 +39,11 @@ describe('shelves:create', () => {
 
   it('should create shelf', async () => {
     const name = shelfName()
-    const params = {
-      name,
-      listing: 'public'
-    }
-    const res = await authReq('post', endpoint, params)
-    res.should.be.ok()
+    const listing = 'public'
+    const color = '#123412'
+    const { shelf } = await authReq('post', endpoint, { name, listing, color })
+    shelf.name.should.equal(name)
+    shelf.listing.should.equal(listing)
+    shelf.color.should.equal(color)
   })
 })

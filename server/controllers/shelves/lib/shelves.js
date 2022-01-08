@@ -1,11 +1,11 @@
 const _ = require('builders/utils')
-
 const Shelf = require('models/shelf')
 const items_ = require('controllers/items/lib/items')
 const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 const db = require('db/couchdb/base')('shelves')
 const error_ = require('lib/error/error')
 const { emit } = require('lib/radio')
+const { updatable: updateAttributes } = require('models/attributes/shelf')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
@@ -26,7 +26,7 @@ const shelves_ = module.exports = {
   },
   updateAttributes: async params => {
     const { shelfId, reqUserId } = params
-    const newAttributes = _.pick(params, [ 'name', 'description', 'listing' ])
+    const newAttributes = _.pick(params, updateAttributes)
     const shelf = await db.get(shelfId)
     const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
     return db.putAndReturn(updatedShelf)

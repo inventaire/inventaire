@@ -1,4 +1,5 @@
 const { pass, BoundedString, userId } = require('./common')
+const { isColorHexCode } = require('lib/boolean_validations')
 
 module.exports = {
   pass,
@@ -7,5 +8,6 @@ module.exports = {
     return [ 'private', 'network', 'public' ].includes(listing)
   },
   owner: userId,
-  name: BoundedString(0, 128)
+  name: BoundedString(0, 128),
+  color: isColorHexCode
 }

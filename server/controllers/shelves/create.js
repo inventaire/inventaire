@@ -6,6 +6,7 @@ const sanitization = {
   listing: {
     allowlist: [ 'public', 'private', 'network' ]
   },
+  color: { optional: true },
   items: { optional: true }
 }
 
@@ -15,12 +16,13 @@ const controller = async params => {
 }
 
 const formatNewShelf = params => {
-  const { name, description, listing, reqUserId: owner } = params
+  const { name, description, listing, color, reqUserId: owner } = params
   return shelves_.create({
     name,
     description,
     listing,
     owner,
+    color,
   })
 }
 

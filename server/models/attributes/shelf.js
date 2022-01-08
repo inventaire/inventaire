@@ -4,8 +4,12 @@ attributes.updatable = [
   'description',
   'listing',
   'name',
-  'owner'
+  'color',
 ]
+
+attributes.validAtCreation = attributes.updatable.concat([
+  'owner'
+])
 
 attributes.constrained = {
   listing: {

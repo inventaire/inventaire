@@ -50,16 +50,19 @@ describe('shelves:update', () => {
     const name = shelfName()
     const description = shelfDescription()
     const listing = 'network'
+    const color = '#ffaaee'
     const { shelf } = await shelfPromise
     const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       name,
       description,
-      listing
+      listing,
+      color,
     })
     updatedShelf.name.should.equal(name)
     updatedShelf.description.should.equal(description)
     updatedShelf.listing.should.equal(listing)
+    updatedShelf.color.should.equal(color)
   })
 
   it('should reject updating if different owner', async () => {

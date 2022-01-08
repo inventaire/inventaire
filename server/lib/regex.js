@@ -2,6 +2,7 @@
 
 module.exports = {
   AssetImg: /^\/img\/assets\/\w/,
+  ColorHexCode: /^#[0-9a-f]{6}$/,
   CouchUuid: /^[0-9a-f]{32}$/,
   // Source https://html.spec.whatwg.org/multipage/input.html#email-state-%28type=email%29
   Email: /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
