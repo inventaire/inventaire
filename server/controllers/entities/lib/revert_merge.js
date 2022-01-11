@@ -32,7 +32,7 @@ module.exports = async (userId, fromId) => {
 
 const findVersionBeforeRedirect = patches => {
   const versions = _.map(patches, 'snapshot')
-  const lastVersion = _.last(versions)
+  const lastVersion = versions.at(-1)
   if (lastVersion.redirect == null) {
     throw error_.new("last version isn't a redirection", 400, lastVersion)
   }
@@ -40,7 +40,7 @@ const findVersionBeforeRedirect = patches => {
   return versions
   .filter(isntRedirection)
   // Take the last
-  .slice(-1)[0]
+  .at(-1)
 }
 
 const isntRedirection = version => version.redirect == null

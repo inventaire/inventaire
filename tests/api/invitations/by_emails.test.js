@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 require('should')
 const { authReq, authReqB, authReqC, shouldNotBeCalled } = require('../utils/utils')
 const { groupPromise, getGroup } = require('../fixtures/groups')
@@ -123,7 +122,7 @@ describe('invitations:by-emails', () => {
       const prevInvitedCount = group.invited.length
       const invitedCount = updatedGroup.invited.length
       invitedCount.should.equal(prevInvitedCount + 1)
-      const lastUserId = _.last(updatedGroup.invited).user
+      const lastUserId = updatedGroup.invited.at(-1).user
       const { users } = await invite()
       users[0].email.should.equal(email)
       users[0]._id.should.equal(lastUserId)

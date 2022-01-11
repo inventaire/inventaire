@@ -7,6 +7,7 @@ module.exports = {
   },
   byBusyItem: {
     map: doc => {
+      // CouchDB JS engine can not use Array.prototype.at yet
       const lastAction = doc.actions.slice(-1)[0].action
       if (lastAction === 'accepted' || (doc.transaction === 'lending' && lastAction === 'confirmed')) {
         emit(doc.item, null)

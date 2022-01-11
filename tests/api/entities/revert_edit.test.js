@@ -52,5 +52,5 @@ describe('entities:revert-edit', () => {
 
 const getLastPatchId = async uri => {
   const history = await getHistory(uri)
-  return history.slice(-1)[0]._id
+  return history.at(-1)._id
 }
