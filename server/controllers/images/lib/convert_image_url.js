@@ -7,7 +7,7 @@ module.exports = ({ url: sourceImageUrl, container }) => importAndAddImage(conta
 
 const importAndAddImage = async (container, sourceImageUrl) => {
   const { url } = await importImage(container, sourceImageUrl)
-  const hash = url.split('/').slice(-1)[0]
+  const hash = url.split('/').at(-1)
 
   if (!_.isImageHash(hash)) {
     throw error_.new('invalid hash', 500, { sourceImageUrl, hash })

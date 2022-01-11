@@ -166,8 +166,8 @@ describe('entities:resolver:update-resolved', () => {
       getHistory(workA.uri),
       getHistory(workB.uri)
     ])
-    const lastWorkAPatch = workAPatches.slice(-1)[0]
-    const lastWorkBPatch = workBPatches.slice(-1)[0]
+    const lastWorkAPatch = workAPatches.at(-1)
+    const lastWorkBPatch = workBPatches.at(-1)
     lastWorkBPatch.batch.should.equal(lastWorkAPatch.batch)
     const { batch: batchId } = lastWorkAPatch
     batchId.should.be.a.Number()

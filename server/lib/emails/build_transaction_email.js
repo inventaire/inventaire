@@ -128,7 +128,7 @@ const extractTimelineLastSequence = (transaction, timeline) => {
 }
 
 const aliasUsers = transaction => {
-  const lastEvent = transaction.timeline.slice(-1)[0]
+  const lastEvent = transaction.timeline.at(-1)
   // deducing main and other user from the last sequence
   // as the user notified (mainUser) is necessarly the one that hasn't acted last
   transaction.other = lastEvent.user

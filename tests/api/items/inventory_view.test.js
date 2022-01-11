@@ -36,7 +36,7 @@ describe('items:inventory-view', () => {
     const { itemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
     const itemsCount = itemsByDate.length
     const allButOneItemsIds = itemsByDate.slice(0, itemsCount - 1)
-    const itemIdRemainingWithoutShelf = itemsByDate.slice(-1)[0]
+    const itemIdRemainingWithoutShelf = itemsByDate.at(-1)
     await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
       id: shelf._id,
       items: allButOneItemsIds

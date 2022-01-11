@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const _ = require('builders/utils')
 const host = CONFIG.fullPublicHost()
 require('should')
 const { customAuthReq, rawCustomAuthReq } = require('tests/api/utils/request')
@@ -24,7 +23,7 @@ const reqAndParse = async (itemId, user) => {
   // Checking that we generate standard CSV as validated by the papaparse lib
   errors.should.deepEqual([])
   return data.find(row => {
-    const dataItemId = _.last(row['Item URL'].split('/'))
+    const dataItemId = row['Item URL'].split('/').at(-1)
     return dataItemId === itemId
   })
 }

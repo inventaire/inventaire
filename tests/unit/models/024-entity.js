@@ -47,7 +47,7 @@ describe('entity model', () => {
   describe('create claim', () => {
     it('should add a claim value', () => {
       const doc = Entity.createClaim(workDoc(), 'wdt:P50', 'wd:Q42')
-      _.last(doc.claims['wdt:P50']).should.equal('wd:Q42')
+      doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
     })
 
     it('should return a doc with the new value for an existing property', () => {
@@ -66,7 +66,7 @@ describe('entity model', () => {
 
     it('should return a doc with the new value added last', () => {
       const updatedDoc = Entity.createClaim(workDoc(), 'wdt:P50', 'wd:Q42')
-      updatedDoc.claims['wdt:P50'].slice(-1)[0].should.equal('wd:Q42')
+      updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
     })
 
     it('should throw if the new value already exist', () => {
@@ -99,7 +99,7 @@ describe('entity model', () => {
 
       it('should return a doc with the new value added last', () => {
         const updatedDoc = Entity.updateClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
-        updatedDoc.claims['wdt:P50'].slice(-1)[0].should.equal('wd:Q42')
+        updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
       })
 
       it('should throw if the new value already exist', () => {
