@@ -24,7 +24,7 @@ describe('indexation:wikidata', () => {
     await deindex(wikidataIndex, id)
     await getByUri(uri, true)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(wikidataIndex, id)
+    const result = await getIndexedDoc(wikidataIndex, id, { retry: false })
     result.found.should.be.false()
   })
 
@@ -34,7 +34,7 @@ describe('indexation:wikidata', () => {
     await deindex(wikidataIndex, id)
     await getByUri(uri, true)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(wikidataIndex, id)
+    const result = await getIndexedDoc(wikidataIndex, id, { retry: false })
     result.found.should.be.false()
   })
 
@@ -54,7 +54,7 @@ describe('indexation:wikidata', () => {
     await indexPlaceholder(wikidataIndex, redirectedEntityId)
     await getByUri(`wd:${redirectedEntityId}`, true)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(wikidataIndex, redirectedEntityId)
+    const result = await getIndexedDoc(wikidataIndex, redirectedEntityId, { retry: false })
     result.found.should.be.false()
   })
 
@@ -63,7 +63,7 @@ describe('indexation:wikidata', () => {
     await indexPlaceholder(wikidataIndex, deletedEntityId)
     await getByUri(`wd:${deletedEntityId}`, true)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(wikidataIndex, deletedEntityId)
+    const result = await getIndexedDoc(wikidataIndex, deletedEntityId, { retry: false })
     result.found.should.be.false()
   })
 })

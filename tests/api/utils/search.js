@@ -9,16 +9,22 @@ const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
 
 const endpoint = '/api/search'
 
-const getIndexedDoc = async (index, id) => {
+const getIndexedDoc = async (index, id, options = {}) => {
   assert_.string(index)
   assert_.string(id)
+  const { retry = true, attempt = 0 } = options
   const url = `${elasticHost}/${index}/_doc/${id}`
   try {
     const { body } = await rawRequest('get', url)
     return JSON.parse(body)
   } catch (err) {
     if (err.statusCode === 404) {
-      return JSON.parse(err.context.resBody)
+      if (retry && attempt < 5) {
+        await wait(1000)
+        return getIndexedDoc(index, id, { attempt: attempt + 1 })
+      } else {
+        return JSON.parse(err.context.resBody)
+      }
     } else {
       throw err
     }

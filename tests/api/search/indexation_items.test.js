@@ -34,7 +34,7 @@ describe('deindexation:items', () => {
     await wait(elasticsearchUpdateDelay)
     await deleteByIds(item._id)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(index, item._id)
+    const result = await getIndexedDoc(index, item._id, { retry: false })
     result.found.should.be.false()
     should(result._source).not.be.ok()
   })

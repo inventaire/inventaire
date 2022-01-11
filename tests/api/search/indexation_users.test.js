@@ -24,7 +24,7 @@ describe('deindexation:users', () => {
     await wait(elasticsearchUpdateDelay)
     await deleteUser(user)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(index, user._id)
+    const result = await getIndexedDoc(index, user._id, { retry: false })
     result.found.should.be.false()
     should(result._source).not.be.ok()
   })

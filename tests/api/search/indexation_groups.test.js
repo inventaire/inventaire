@@ -25,7 +25,7 @@ describe('deindexation:groups', () => {
     await wait(elasticsearchUpdateDelay)
     await membershipAction(groupCreator, 'leave', group)
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(index, group._id)
+    const result = await getIndexedDoc(index, group._id, { retry: false })
     result.found.should.be.false()
     should(result._source).not.be.ok()
   })
