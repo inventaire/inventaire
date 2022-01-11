@@ -133,7 +133,9 @@ const applyDefaultValue = (input, name, config, parameter) => {
 }
 
 const obfuscateSecret = (parameter, err) => {
-  if (parameter.secret) err.context.value = _.obfuscate(err.context.value)
+  if (parameter.secret && typeof err.context.value === 'string') {
+    err.context.value = _.obfuscate(err.context.value)
+  }
 }
 
 const enforceBoundaries = (input, name, config, parameter, res) => {
