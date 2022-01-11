@@ -6,9 +6,9 @@ require('should')
 const someUserId = '1234567890a1234567890b1234567890'
 const { create, updateAttributes: update } = Shelf
 
-const faker = require('faker')
-const fakeName = faker.random.words(4)
-const fakeDesc = faker.random.words(15)
+const fakeText = require('tests/api/fixtures/text')
+const fakeName = fakeText.randomWords(4)
+const fakeDesc = fakeText.randomWords(15)
 
 const validShelf = {
   owner: someUserId,
