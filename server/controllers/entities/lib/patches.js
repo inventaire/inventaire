@@ -74,7 +74,7 @@ module.exports = {
   },
 
   getGlobalContributions: async () => {
-    let { rows } = await db.view(designDocName, 'byUserId', { group_level: 1 })
+    let { rows } = await db.view(designDocName, 'byUserIdAndDate', { group_level: 1 })
     rows = rows.map(formatRow)
     return sortAndFilterContributions(rows)
     // Return only the first hundred results
