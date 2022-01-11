@@ -17,13 +17,14 @@ const controller = async params => {
 
 const formatNewShelf = params => {
   const { name, description, listing, color, reqUserId: owner } = params
-  return shelves_.create({
+  const shelfData = {
     name,
     description,
     listing,
     owner,
-    color,
-  })
+  }
+  if (color != null) shelfData.color = color
+  return shelves_.create(shelfData)
 }
 
 module.exports = {
