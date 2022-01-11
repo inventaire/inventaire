@@ -1,5 +1,5 @@
 const { authReq, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
-const faker = require('faker')
+const fakeText = require('./text')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
 const { humanName } = require('../fixtures/entities')
@@ -62,8 +62,8 @@ const groupAndMemberPromise = () => {
   return [ createAndAddMember(memberPromise), memberPromise ]
 }
 
-const groupName = () => `${faker.lorem.words(3)} group`
-const groupDescription = () => faker.lorem.words(10)
+const groupName = () => fakeText.randomWords(3, ' group')
+const groupDescription = () => fakeText.randomWords(10)
 
 const createGroupWithAMember = async params => {
   const group = await createGroup(params)

@@ -4,11 +4,11 @@ require('should')
 const assert_ = require('lib/utils/assert_types')
 const host = CONFIG.fullHost()
 const authEndpoint = `${host}/api/auth`
-const faker = require('faker')
+const fakeText = require('./text')
+const { randomBytes } = require('crypto')
 const { addRole } = require('controllers/user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
-const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
 let getUser, getReservedUser, updateUser
@@ -33,7 +33,7 @@ const API = module.exports = {
     return signup({
       email,
       username: API.createUsername(),
-      password: faker.internet.password()
+      password: randomBytes(8).toString('base64')
     })
   },
 
@@ -72,10 +72,10 @@ const API = module.exports = {
   createUsername: () => {
     // Add a random string to prevent creating several users with the same username
     // and be rejected because of it
-    return faker.fake('{{name.firstName}}').replace(/\W/, '') + randomString(4)
+    return fakeText.username()
   },
 
-  createUserEmail: () => faker.internet.email(),
+  createUserEmail: () => fakeText.email(),
 
   getUsersWithoutRelation: async () => {
     const [ userA, userB ] = await Promise.all([

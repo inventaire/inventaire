@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
+const fakeText = require('./text')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')
 const { createEdition, createEditionWithWorkAndAuthor, createEditionWithWorkAuthorAndSerie } = require('./entities')
-const faker = require('faker')
 
 const getEditionUri = async (lang = 'en') => {
   const { uri } = await createEdition({ lang })
@@ -45,8 +45,8 @@ const listings = [ 'private', 'network', 'public' ]
 const fillItemWithRandomData = (itemData = {}) => {
   itemData.listing = itemData.listing || _.sample(listings)
   itemData.transaction = itemData.transaction || _.sample(transactions)
-  itemData.details = faker.hacker.phrase()
-  itemData.notes = faker.lorem.paragraph()
+  itemData.details = fakeText.sentence()
+  itemData.notes = fakeText.sentence()
   return itemData
 }
 
