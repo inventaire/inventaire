@@ -23,7 +23,7 @@ module.exports = async (openLibraryId, entityType) => {
   else return {}
 }
 
-const checkCoverExistance = async (url, expectedContentType) => {
+const checkCoverExistance = async url => {
   // The default=false flag triggers a 404 response if the cover is missing
   // instead of a 200 response with a single-pixel image
   // See https://openlibrary.org/dev/docs/api/covers
