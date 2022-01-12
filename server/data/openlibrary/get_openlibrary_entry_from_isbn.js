@@ -10,14 +10,16 @@ module.exports = async isbn => {
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
   const data = await requests_.get(url)
   const edition = getEditionSeed(normalizedIsbn, data)
-  const works = await Promise.all(data.works.map(getEntitySeedFromOlId))
+  const [ works, authors ] = await Promise.all([
+    Promise.all(data.works.map(getEntitySeedFromOlId)),
+    Promise.all(data.authors.map(getEntitySeedFromOlId)),
+  ])
   if (works.length === 1) {
     if (data.translated_from) {
       const languagesUris = compact(data.translated_from.map(parseLanguage))
       if (languagesUris.length > 0) works[0].claims['wdt:P407'] = languagesUris
     }
   }
-  const authors = await Promise.all(data.authors.map(getEntitySeedFromOlId))
   const publishers = data.publishers.map(getPublisherSeed)
   const entry = {
     edition,
