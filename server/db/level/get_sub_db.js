@@ -36,7 +36,7 @@ if (memoryBackend) {
   const level = require('level-test')()
   globalDb = level()
 } else {
-  const level = require('level-party')
+  const level = require('level')
   _.info(dbFolderPath, 'leveldb path')
   globalDb = level(dbFolderPath, leveldownOptions)
 }
