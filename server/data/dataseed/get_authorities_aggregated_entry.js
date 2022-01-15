@@ -80,6 +80,11 @@ const parseEntry = (entry, bestEntry) => entryKey => {
 
   if (!entryValue?.claims) return
 
+  if (!bestEntryValue) {
+    bestEntry[entryKey] = entry[entryKey]
+    return
+  }
+
   const entryClaims = entryValue.claims
   const bestEntryClaims = bestEntryValue.claims
   const claimsKeys = Object.keys(entryClaims)
