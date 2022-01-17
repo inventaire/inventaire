@@ -20,22 +20,21 @@ const sanitization = {
 const controller = async (params, req) => {
   const { userId, limit, offset, filter } = params
   const reqUserHasAdminAccess = hasAdminAccess(req.user)
+
   if (filter != null && !(isPropertyUri(filter) || isLang(filter))) {
     throw error_.new('invalid filter', 400, params)
   }
+
+  if (userId != null && !reqUserHasAdminAccess) await checkPublicContributionsStatus(userId)
+
   const patchesPage = await getPatchesPage({ userId, limit, offset, reqUserHasAdminAccess, filter })
   if (!reqUserHasAdminAccess) await anonymizePatches(patchesPage.patches)
+
   return patchesPage
 }
 
-const getPatchesPage = async ({ userId, limit, offset, reqUserHasAdminAccess, filter }) => {
+const getPatchesPage = async ({ userId, limit, offset, filter }) => {
   if (userId != null) {
-    if (!reqUserHasAdminAccess) {
-      const user = await user_.byId(userId)
-      if (shouldBeAnonymized(user)) {
-        throw error_.new('non-public contributions', 403, { userId })
-      }
-    }
     if (filter != null) {
       return byUserIdAndFilter({ userId, filter, limit, offset })
     } else {
@@ -43,6 +42,13 @@ const getPatchesPage = async ({ userId, limit, offset, reqUserHasAdminAccess, fi
     }
   } else {
     return byDate({ limit, offset })
+  }
+}
+
+const checkPublicContributionsStatus = async userId => {
+  const user = await user_.byId(userId)
+  if (shouldBeAnonymized(user)) {
+    throw error_.new('non-public contributions', 403, { userId })
   }
 }
 
