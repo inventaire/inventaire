@@ -1,5 +1,5 @@
 const should = require('should')
-const { adminReq, getUser, getReservedUser } = require('../utils/utils')
+const { adminReq, getUser, getReservedUser, authReq, shouldNotBeCalled, getDeanonymizedUser } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
 const { wait } = require('lib/promises')
@@ -110,6 +110,33 @@ describe('entities:contributions', () => {
       })
     })
   })
+
+  describe('non-admin access level', () => {
+    it('should reject requests for private contributions', async () => {
+      const { user } = await get2WorksAndUser()
+      await authReq('get', `${endpoint}&user=${user._id}`)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(403)
+      })
+    })
+
+    it('should accept requests for public contributions', async () => {
+      const deanonymizedUser = await getDeanonymizedUser()
+      const { patches } = await authReq('get', `${endpoint}&user=${deanonymizedUser._id}`)
+      patches.should.be.an.Array()
+    })
+
+    it('should get anonymized contributions', async () => {
+      const { workA, workB } = await get2WorksAndUser()
+      const deanonymizedUser = await getDeanonymizedUser()
+      const workC = await createWork({ user: deanonymizedUser })
+      const { patches } = await authReq('get', endpoint)
+      should(patches.find(isEntityPatch(workA)).user).not.be.ok()
+      should(patches.find(isEntityPatch(workB)).user).not.be.ok()
+      patches.find(isEntityPatch(workC)).user.should.equal(deanonymizedUser._id)
+    })
+  })
 })
 
 let worksAndUserPromise
@@ -125,9 +152,10 @@ const create2WorksAndGetUser = async () => {
   const workA = await createWork({ user })
   // Do not parallelize so that we can assume that workB creation is the last patch
   const workB = await createWork({ user })
-  await wait(1000)
+  await wait(100)
   return { workA, workB, user }
 }
 
 const getWorkId = id => id.split(':')[0]
 const getPatchEntityId = patch => patch._id.split(':')[0]
+const isEntityPatch = entity => patch => patch._id.split(':')[0] === entity._id

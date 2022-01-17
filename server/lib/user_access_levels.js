@@ -26,5 +26,6 @@ const getUserAccessLevels = user => {
 }
 
 const hasAdminAccess = user => getUserAccessLevels(user).includes('admin')
+const hasDataadminAccess = user => getUserAccessLevels(user).includes('dataadmin')
 
-module.exports = { rolesByAccess, getUserAccessLevels, hasAdminAccess }
+module.exports = { rolesByAccess, getUserAccessLevels, hasAdminAccess, hasDataadminAccess }

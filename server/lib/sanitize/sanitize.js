@@ -34,7 +34,9 @@ const sanitize = (req, res, configs) => {
     }
   }
 
-  if (req.user) input.reqUserId = req.user._id
+  if (req.user) {
+    input.reqUserId = req.user._id
+  }
 
   return input
 }
