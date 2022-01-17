@@ -21,6 +21,9 @@ module.exports = async isbn => {
       const languagesUris = compact(data.translated_from.map(parseLanguage))
       if (languagesUris.length > 0) works[0].claims['wdt:P407'] = languagesUris
     }
+    if (data.identifiers?.librarything?.[0]) {
+      works[0].claims['wdt:P1085'] = data.identifiers.librarything[0]
+    }
   }
   const publishers = data.publishers.map(getPublisherSeed)
   const entry = {
@@ -42,6 +45,7 @@ const getEditionSeed = (isbn, data) => {
       edition.claims['wdt:P407'] = compact(data.languages.map(parseLanguage))
     }
   }
+  if (data.lccn) edition.claims['wdt:P244'] = data.lccn[0]
   if (data.number_of_pages) edition.claims['wdt:P1104'] = data.number_of_pages
   if (data.title) edition.claims['wdt:P1476'] = data.title
   if (data.subtitle) edition.claims['wdt:P1680'] = data.subtitle
@@ -49,8 +53,10 @@ const getEditionSeed = (isbn, data) => {
     const day = parseSimpleDay(data.publish_date)
     if (day) edition.claims['wdt:P577'] = day
   }
-  if (data.covers) {
-    const coverId = data.covers[0]
+  const { identifiers = {}, covers } = data
+  if (identifiers.goodreads?.[0]) edition.claims['wdt:P2969'] = identifiers.goodreads[0]
+  if (covers) {
+    const coverId = covers[0]
     // See https://openlibrary.org/dev/docs/api/covers
     edition.image = `https://covers.openlibrary.org/b/id/${coverId}-L.jpg?default=false`
   }

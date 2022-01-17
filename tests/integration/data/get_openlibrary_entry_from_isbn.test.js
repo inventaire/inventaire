@@ -11,4 +11,25 @@ describe('get_openlibrary_entry_from_isbn', () => {
     entry.works[0].claims['wdt:P648'].should.equal('OL26437584W')
     entry.authors[0].claims['wdt:P648'].should.equal('OL9962491A')
   })
+
+  it('should find entries with only ISBN-10 from an ISBN-13', async () => {
+    const entry = await getOpenLibraryEntryFromIsbn('978-2-7152-1841-3')
+    entry.edition.claims['wdt:P648'].should.equal('OL914930M')
+    entry.edition.claims['wdt:P244'].should.equal('95211094')
+  })
+
+  it('should support year precision', async () => {
+    const entry = await getOpenLibraryEntryFromIsbn('978-2-7152-1841-3')
+    entry.edition.claims['wdt:P577'].should.equal('1993')
+  })
+
+  it('should resolve the publisher', async () => {
+    const entry = await getOpenLibraryEntryFromIsbn('978-3-99039-208-9')
+    entry.edition.claims['wdt:P123'].should.equal('wd:Q1825404')
+  })
+
+  it('should import identifiers', async () => {
+    const entry = await getOpenLibraryEntryFromIsbn('9782912107176')
+    entry.edition.claims['wdt:P577'].should.equal('1993')
+  })
 })
