@@ -9,6 +9,8 @@ module.exports = async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
   const data = await requests_.get(url)
+  data.works = data.works || []
+  data.authors = data.authors || []
   const edition = getEditionSeed(normalizedIsbn, data)
   const [ works, authors ] = await Promise.all([
     Promise.all(data.works.map(getEntitySeedFromOlId)),
