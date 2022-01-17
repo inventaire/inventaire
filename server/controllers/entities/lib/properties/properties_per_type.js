@@ -24,6 +24,7 @@ const workAndSerie = all.concat([
   'wdt:P144', // based on
   'wdt:P179', // series
   'wdt:P214', // VIAF ID
+  'wdt:P244', // Library of Congress authority ID
   'wdt:P269', // SUDOC authorities ID
   'wdt:P407', // language
   'wdt:P577', // publication date
@@ -59,6 +60,7 @@ module.exports = {
     'wdt:P1025', // SUDOC editions
     'wdt:P1044', // SWB editions
     'wdt:P1104', // number of pages
+    'wdt:P1144', // Library of Congress Control Number
     'wdt:P1182', // LIBRIS editions
     'wdt:P1274', // ISFDB title ID
     'wdt:P1292', // DNB editions
@@ -83,6 +85,7 @@ module.exports = {
     'wdt:P135', // movement
     'wdt:P213', // ISNI
     'wdt:P214', // VIAF ID
+    'wdt:P244', // Library of Congress authority ID
     'wdt:P269', // SUDOC authorities ID
     'wdt:P349', // NDL of Japan Auth ID
     'wdt:P496', // ORCID ID
@@ -108,6 +111,7 @@ module.exports = {
   publisher: all.concat([
     'wdt:P112', // founded by
     'wdt:P127', // owned by
+    'wdt:P244', // Library of Congress authority ID
     'wdt:P571', // inception
     'wdt:P576', // dissolution
     'wdt:P1983', // Anime News Network company ID
@@ -117,6 +121,7 @@ module.exports = {
 
   collection: all.concat([
     'wdt:P123', // publisher
+    'wdt:P244', // Library of Congress authority ID
     'wdt:P1476', // title
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject
