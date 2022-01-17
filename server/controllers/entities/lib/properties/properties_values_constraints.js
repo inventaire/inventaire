@@ -66,6 +66,8 @@ module.exports = {
   'wdt:P227': builders.externalId(/^1[01]?\d{7}[0-9X]|[47]\d{6}-\d|[1-9]\d{0,7}-[0-9X]|3\d{7}[0-9X]$/),
   // OCLC control number
   'wdt:P243': builders.externalId(/^0*[1-9]\d*$/),
+  // Library of Congress authority ID
+  'wdt:P244': builders.externalId(/^(gf|n|nb|nr|no|ns|sh|sj)([4-9][0-9]|00|20[0-2][0-9])[0-9]{6}$/),
   // BNF id
   'wdt:P268': builders.externalId(/^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/),
   // SUDOC authorities ID
@@ -128,6 +130,8 @@ module.exports = {
   'wdt:P1104': bases.positiveInteger,
   // BN (Argentine) editions
   'wdt:P1143': builders.externalId(/^\d{9}$/),
+  // Library of Congress Control Number (bibliographic)
+  'wdt:P1144': builders.externalId(/^[a-z]{0,3}\d{6,10}$/),
   // LIBRIS editions
   'wdt:P1182': builders.externalId(strictlyPositiveIntegerPattern),
   // ISFDB title ID
