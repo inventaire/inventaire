@@ -70,10 +70,14 @@ const patches_ = module.exports = {
       if (previousPatch && previousPatch.user === userId) {
         const beforeLastPatch = Patch.revert(currentDoc, previousPatch)
         const aggregatedPatch = Patch.getDiff(beforeLastPatch, updatedDoc)
-        const aggregatedPatchIsShorter = aggregatedPatch.length < (previousPatch.patch.length + newPatch.patch.length)
-        if (previousPatch.context == null && previousPatch.batch == null && aggregatedPatchIsShorter) {
-          previousPatch.patch = aggregatedPatch
-          return db.putAndReturn(previousPatch)
+        if (previousPatch.context == null && previousPatch.batch == null) {
+          if (aggregatedPatch.length === 0) {
+            await db.delete(previousPatch._id, previousPatch._rev)
+            return
+          } else if (aggregatedPatch.length < (previousPatch.patch.length + newPatch.patch.length)) {
+            previousPatch.patch = aggregatedPatch
+            return db.putAndReturn(previousPatch)
+          }
         }
       }
     }

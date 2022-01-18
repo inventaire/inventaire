@@ -1,7 +1,7 @@
 require('should')
 const { getUser: getUserA, getUserB } = require('../../utils/utils')
 const { createEdition } = require('../../fixtures/entities')
-const { updateClaim, getHistory, updateLabel } = require('../../utils/entities')
+const { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } = require('../../utils/entities')
 const { createWork } = require('tests/api/fixtures/entities')
 
 describe('patch compression', () => {
@@ -39,6 +39,24 @@ describe('patch compression', () => {
       patches.length.should.equal(2)
       patches[1]._rev.should.startWith('2')
       patches[1].patch.should.deepEqual([ { op: 'add', path: '/labels/es', value: 'bar' } ])
+    })
+  })
+
+  describe('delete', () => {
+    it('should delete a patch when the same user deletes the claim', async () => {
+      const edition = await createEdition()
+      await updateClaim({ uri: edition.uri, property: 'wdt:P1104', newValue: 5 })
+      await removeClaim({ uri: edition.uri, property: 'wdt:P1104', value: 5 })
+      const patches = await getHistory(edition.uri)
+      patches.length.should.equal(1)
+    })
+
+    it('should delete a patch when the same user reverts a claim', async () => {
+      const edition = await createEdition()
+      await updateClaim({ uri: edition.uri, property: 'wdt:P1104', newValue: 5 })
+      await revertEdit(`${edition._id}:3`)
+      const patches = await getHistory(edition.uri)
+      patches.length.should.equal(1)
     })
   })
 })

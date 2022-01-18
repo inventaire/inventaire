@@ -94,7 +94,7 @@ const entities_ = module.exports = {
 
     try {
       const patch = await patches_.create(params)
-      await emit('patch:created', patch)
+      if (patch) await emit('patch:created', patch)
     } catch (err) {
       err.type = 'patch_creation_failed'
       err.context = err.context || {}
