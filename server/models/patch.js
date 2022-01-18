@@ -5,7 +5,7 @@ const jiff = require('jiff')
 const validations = require('./validations/common')
 const { versionned } = require('./attributes/entity')
 
-module.exports = {
+const Patch = module.exports = {
   create: params => {
     const { userId, currentDoc, updatedDoc, context, batchId } = params
     validations.pass('userId', userId)
@@ -35,7 +35,11 @@ module.exports = {
       type: 'patch',
       user: userId,
       timestamp: now,
-      patch: getDiff(currentDoc, updatedDoc)
+      patch: Patch.getDiff(currentDoc, updatedDoc)
+    }
+
+    if (patch.patch.length === 0) {
+      throw error_.new('empty patch', 500, { currentDoc, updatedDoc })
     }
 
     // Let the consumer pass any data object helping to contextualize the patch
@@ -53,10 +57,15 @@ module.exports = {
     return patch
   },
 
+  getDiff: (currentDoc, updatedDoc) => {
+    currentDoc = _.pick(currentDoc, versionned)
+    updatedDoc = _.pick(updatedDoc, versionned)
+    return jiff.diff(currentDoc, updatedDoc)
+  },
+
   // Reverts the effects of a patch on a entity doc
   revert: (currentDoc, patch) => {
     const inversePatch = jiff.inverse(patch.patch)
-    _.log(inversePatch, `inverse patch ${patch._id}`)
     const updatedDoc = applyInversePatch(currentDoc, inversePatch)
     return updatedDoc
   },
@@ -76,19 +85,7 @@ module.exports = {
     }
 
     return patchesDocs
-  }
-}
-
-const getDiff = (currentDoc, updatedDoc) => {
-  currentDoc = _.pick(currentDoc, versionned)
-  updatedDoc = _.pick(updatedDoc, versionned)
-  const patch = jiff.diff(currentDoc, updatedDoc)
-
-  if (patch.length === 0) {
-    throw error_.new('empty patch', 500, { currentDoc, updatedDoc })
-  }
-
-  return patch
+  },
 }
 
 const applyInversePatch = (currentDoc, inversePatch) => {

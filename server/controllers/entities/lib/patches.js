@@ -6,7 +6,7 @@ const assert_ = require('lib/utils/assert_types')
 const { maxKey } = require('lib/couch')
 const { oneDay } = require('lib/time')
 
-module.exports = {
+const patches_ = module.exports = {
   db,
   byId: db.get,
   byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
@@ -63,12 +63,34 @@ module.exports = {
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
 
   create: async params => {
-    const patch = Patch.create(params)
-    return db.postAndReturn(patch)
+    const { currentDoc, updatedDoc, userId } = params
+    const newPatch = Patch.create(params)
+    if (currentDoc.version > 1) {
+      const [ previousPatch ] = await patches_.getLastPatches(currentDoc._id)
+      if (previousPatch && previousPatch.user === userId) {
+        const beforeLastPatch = Patch.revert(currentDoc, previousPatch)
+        const aggregatedPatch = Patch.getDiff(beforeLastPatch, updatedDoc)
+        const aggregatedPatchIsShorter = aggregatedPatch.length < (previousPatch.patch.length + newPatch.patch.length)
+        if (previousPatch.context == null && previousPatch.batch == null && aggregatedPatchIsShorter) {
+          previousPatch.patch = aggregatedPatch
+          return db.putAndReturn(previousPatch)
+        }
+      }
+    }
+    return db.postAndReturn(newPatch)
+  },
+
+  getLastPatches: async (entityId, length = 1) => {
+    return db.viewCustom('byEntityId', {
+      keys: [ entityId ],
+      descending: true,
+      limit: length,
+      include_docs: true,
+    })
   },
 
   getWithSnapshots: async entityId => {
-    const patches = await byEntityId(entityId)
+    const patches = await patches_.byEntityId(entityId)
     Patch.addSnapshots(patches)
     return patches
   },
@@ -123,8 +145,6 @@ module.exports = {
     return rows[0]?.value || 0
   }
 }
-
-const byEntityId = entityId => db.viewByKey('byEntityId', entityId)
 
 const formatRow = row => ({
   user: row.key[0],
