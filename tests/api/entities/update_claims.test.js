@@ -112,7 +112,7 @@ describe('entities:update-claims', () => {
     const edition = await createEdition()
     const oldValue = edition.claims['wdt:P629'][0]
     // An edition entity should always have at least one wdt:P629 claim
-    await removeClaim(edition.uri, 'wdt:P629', oldValue)
+    await removeClaim({ uri: edition.uri, property: 'wdt:P629', value: oldValue })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('an edition should have an associated work (wdt:P629)')

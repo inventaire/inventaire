@@ -84,7 +84,7 @@ const entitiesUtils = module.exports = {
   },
 
   addClaim: (uri, property, newValue) => entitiesUtils.updateClaim({ uri, property, newValue }),
-  removeClaim: (uri, property, oldValue) => entitiesUtils.updateClaim({ uri, property, oldValue }),
+  removeClaim: ({ uri, property, value }) => entitiesUtils.updateClaim({ uri, property, oldValue: value }),
 
   getRefreshedPopularityByUris: uris => {
     if (_.isArray(uris)) { uris = uris.join('|') }
