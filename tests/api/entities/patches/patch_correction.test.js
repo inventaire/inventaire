@@ -4,7 +4,7 @@ const { createEdition } = require('../../fixtures/entities')
 const { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } = require('../../utils/entities')
 const { createWork } = require('tests/api/fixtures/entities')
 
-describe('patch compression', () => {
+describe('patch correction', () => {
   describe('rewrite', () => {
     it('should rewrite a patch when the same user re-updates the same claim', async () => {
       const edition = await createEdition()
