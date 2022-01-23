@@ -37,7 +37,7 @@ const getPublisherClosestTerm = publisherLabel => entity => {
   }
 }
 
-const getClosestTerm = ({ labels, aliases }, publisherLabel) => {
+const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
   const allAliases = _.flatten(Object.values(aliases))
   const terms = Object.values(labels).concat(allAliases)
   return _.uniq(terms)
