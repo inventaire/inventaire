@@ -54,6 +54,7 @@ describe('activitypub:actor', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const outboxUrl = makeUrl({ params: { action: 'outbox', name: username } })
       const res = await publicReq('get', actorUrl)
+      _.every(res.attachment, [ 'type', 'PropertyValue' ]).should.be.True()
       res.type.should.equal('Person')
       res.id.should.equal(actorUrl)
       res.preferredUsername.should.equal(username)

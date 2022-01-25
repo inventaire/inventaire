@@ -12,7 +12,7 @@ module.exports = async entity => {
   const attachementsList = propertiesDisplay[type]
   const properties = Object.keys(attachementsList)
   const attachements = await Promise.all(properties.map(buildAttachement(claims, attachementsList)))
-  return _.compact(attachements)
+  return attachements
 }
 
 const buildAttachement = (claims, attachementsList) => async prop => {

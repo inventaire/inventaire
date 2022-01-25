@@ -1,4 +1,5 @@
 const CONFIG = require('config')
+const _ = require('builders/utils')
 const { validateShelf, validateUser, validateEntity } = require('./validations')
 const { getSharedKeyPair } = require('./shared_key_pair')
 const { buildLink, getActorTypeFromName, defaultLabel, entityUrl } = require('./helpers')
@@ -100,7 +101,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
         value: buildLink(url, value)
       }
     })
-    actor.attachment = linksAttachements.concat(attachment)
+    actor.attachment = _.compact(linksAttachements.concat(attachment))
   }
 
   const { publicKey } = await getSharedKeyPair()
