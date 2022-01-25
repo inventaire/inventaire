@@ -61,7 +61,7 @@ const getEntityActor = async name => {
   })
 }
 
-const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment }) => {
+const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }) => {
   const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
   const actor = {
     '@context': [
@@ -101,6 +101,8 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
       }
     })
     actor.attachment = linksAttachements.concat(attachment)
+  } else {
+    actor.attachment = attachment
   }
 
   const { publicKey } = await getSharedKeyPair()
