@@ -34,7 +34,7 @@ const updateInvClaim = async (user, id, property, oldVal, newVal) => {
 
   await inferredClaimUpdates(updatedDoc, property, oldVal)
 
-  await radio.emit('entity:update:claim', updatedDoc, property, oldVal, newVal)
+  await radio.emit('entity:update:claim', updatedDoc)
 
   if (property === 'invp:P2' && oldVal != null) {
     await radio.emit('image:needs:check', { container: 'entities', hash: oldVal, context: 'update' })
