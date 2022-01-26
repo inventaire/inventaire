@@ -1,3 +1,4 @@
+const { emit } = require('lib/radio')
 const Patch = require('models/patch')
 const entities_ = require('./entities')
 const patches_ = require('./patches')
@@ -20,7 +21,9 @@ module.exports = async (patchId, userId) => {
 
   await validateEntity(updatedDoc)
   const context = { restoredPatch: patchId }
-  return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  const docAfterUpdate = await entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  await emit('entity:restore:version', updatedDoc)
+  return docAfterUpdate
 }
 
 const getPatchIdNum = patchId => patchId.split(':')[1]

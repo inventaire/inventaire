@@ -1,3 +1,4 @@
+const { emit } = require('lib/radio')
 const Patch = require('models/patch')
 const entities_ = require('./entities')
 const patches_ = require('./patches')
@@ -9,7 +10,9 @@ const revertFromPatchDoc = async (patch, userId) => {
   const updatedDoc = Patch.revert(currentDoc, patch)
   await validateEntity(updatedDoc)
   const context = { revertPatch: patch._id }
-  return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  const docAfterUpdate = await entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  await emit('entity:revert:edit', updatedDoc)
+  return docAfterUpdate
 }
 
 const revertFromPatchId = async (patchId, userId) => {

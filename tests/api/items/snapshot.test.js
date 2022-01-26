@@ -3,7 +3,7 @@ require('should')
 const { wait } = require('lib/promises')
 const { authReq } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
-const { getByUris, merge, revertMerge, updateLabel, updateClaim } = require('../utils/entities')
+const { getByUris, merge, revertMerge, updateLabel, updateClaim, restoreVersion, revertEdit } = require('../utils/entities')
 const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 
 describe('items:snapshot', () => {
@@ -190,7 +190,7 @@ describe('items:snapshot', () => {
       updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
     })
 
-    it('should be updated when its local author entity is merged and reverted', async () => {
+    it('should be updated when its local author merge is reverted', async () => {
       const [ authorEntityA, authorEntityB ] = await Promise.all([
         createHuman(),
         createHuman()
@@ -208,6 +208,34 @@ describe('items:snapshot', () => {
       const reupdatedItem = await getItem(updatedItem)
       const oldAuthors = authorEntityA.labels.en
       reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
+    })
+
+    it('should be updated when a related local entity is restored', async () => {
+      const human = await createHuman()
+      const work = await createWorkWithAuthor(human)
+      const edition = await createEditionFromWorks(work)
+      const humanLabelLang = Object.keys(human.labels)[0]
+      const originalLabel = human.labels[humanLabelLang]
+      await updateLabel({ uri: human.uri, lang: humanLabelLang, value: 'foo' })
+      const item = await authReq('post', '/api/items', { entity: edition.uri })
+      item.snapshot['entity:authors'].should.equal('foo')
+      await restoreVersion(`${human._id}:2`)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
+    })
+
+    it('should be updated when a related local entity is reverted', async () => {
+      const human = await createHuman()
+      const work = await createWorkWithAuthor(human)
+      const edition = await createEditionFromWorks(work)
+      const humanLabelLang = Object.keys(human.labels)[0]
+      const originalLabel = human.labels[humanLabelLang]
+      await updateLabel({ uri: human.uri, lang: humanLabelLang, value: 'foo' })
+      const item = await authReq('post', '/api/items', { entity: edition.uri })
+      item.snapshot['entity:authors'].should.equal('foo')
+      await revertEdit(`${human._id}:3`)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
     })
 
     it('should be updated when its entity changes', async () => {

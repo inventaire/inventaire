@@ -21,6 +21,8 @@ const refreshSnapshot = require('./refresh_snapshot')
 module.exports = () => {
   radio.on('entity:update:label', refreshSnapshot.fromDoc)
   radio.on('entity:update:claim', refreshSnapshot.fromDoc)
+  radio.on('entity:revert:edit', refreshSnapshot.fromDoc)
+  radio.on('entity:restore:version', refreshSnapshot.fromDoc)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
   radio.on('entity:revert:merge', refreshSnapshot.fromUri)
 }
