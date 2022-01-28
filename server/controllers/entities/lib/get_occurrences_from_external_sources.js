@@ -12,7 +12,6 @@ const getNdlAuthorWorksTitle = require('data/ndl/get_ndl_author_works_titles')
 const getOlAuthorWorksTitles = require('data/openlibrary/get_ol_author_works_titles')
 const getEntityByUri = require('./get_entity_by_uri')
 const { normalizeTerm } = require('./terms_normalization')
-const promises_ = require('lib/promises')
 const { isWdEntityUri } = require('lib/boolean_validations')
 
 // - worksLabels: labels from works of an author suspected
@@ -27,12 +26,12 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
   if (!isWdEntityUri(wdAuthorUri)) return []
 
   // get Wikipedia article title from URI
-  return getEntityByUri({ uri: wdAuthorUri })
-  .then(authorEntity => {
-    // Known case: entities tagged as 'missing' or 'meta'
-    if (authorEntity.sitelinks == null) return []
+  const authorEntity = await getEntityByUri({ uri: wdAuthorUri })
+  // Known case: entities tagged as 'missing' or 'meta'
+  if (authorEntity.sitelinks == null) return []
 
-    return Promise.all([
+  try {
+    const occurrences = await Promise.all([
       getWikipediaOccurrences(authorEntity, worksLabels, worksLabelsLangs),
       getBnfOccurrences(authorEntity, worksLabels),
       getOpenLibraryOccurrences(authorEntity, worksLabels),
@@ -43,18 +42,16 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getKjkOccurrences(authorEntity, worksLabels),
       getNdlOccurrences(authorEntity, worksLabels)
     ])
-  })
-  .then(_.flatten)
-  .then(_.compact)
-  .catch(err => {
+    return _.compact(_.flatten(occurrences))
+  } catch (err) {
     _.error(err, 'has works labels occurrence err')
     return []
-  })
+  }
 }
 
-const getWikipediaOccurrences = (authorEntity, worksLabels, worksLabelsLangs) => {
-  return Promise.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
-  .then(promises_.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
+const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLangs) => {
+  const articles = await Promise.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
+  return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
 const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
@@ -69,14 +66,13 @@ const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   .map(getWikipediaArticle)
 }
 
-const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => (authorEntity, worksLabels) => {
+const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => async (authorEntity, worksLabels) => {
   // An author should normally have only 1 value per external id property
   // but if there are several, check every available ids
   const ids = authorEntity.claims[prop]
   if (ids == null) return
-  return Promise.all(ids.map(getWorkTitlesFn))
-  .then(_.flatten)
-  .then(promises_.map(createOccurrencesFromExactTitles(worksLabels)))
+  const results = await Promise.all(ids.map(getWorkTitlesFn)).then(_.flatten)
+  return Promise.all(results.map(createOccurrencesFromExactTitles(worksLabels)))
 }
 
 const getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAuthorWorksTitles)
