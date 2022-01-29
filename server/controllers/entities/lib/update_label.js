@@ -4,13 +4,16 @@ const entities_ = require('./entities')
 const Entity = require('models/entity')
 const getEntityType = require('./get_entity_type')
 const typeWithoutLabels = require('./type_without_labels')
+const { emit } = require('lib/radio')
 
-module.exports = (lang, value, userId, currentDoc) => {
+module.exports = async (lang, value, userId, currentDoc) => {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = _.cloneDeep(currentDoc)
   updatedDoc = Entity.setLabel(updatedDoc, lang, value)
-  return entities_.putUpdate({ userId, currentDoc, updatedDoc })
+  const docAfterUpdate = await entities_.putUpdate({ userId, currentDoc, updatedDoc })
+  await emit('entity:update:label', updatedDoc)
+  return docAfterUpdate
 }
 
 const checkEntityTypeCanHaveLabel = currentDoc => {
