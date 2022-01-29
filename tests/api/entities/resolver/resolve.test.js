@@ -6,6 +6,7 @@ const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someO
 const { addClaim, getByUri } = require('tests/api/utils/entities')
 const { waitForIndexation } = require('tests/api/utils/search')
 const { createEditionWithIsbn, randomLabel } = require('tests/api/fixtures/entities')
+const getWorksFromAuthorsUris = require('controllers/entities/lib/resolver/get_works_from_authors_uris')
 
 const resolve = entries => {
   entries = _.forceArray(entries)
@@ -400,11 +401,17 @@ describe('entities:resolve:on-labels', () => {
 
 describe('entities:resolve:on-external-terms', () => {
   // Fragile test: its validity depends on the stability of Wikipedia and Wikidata
-  xit('should resolve the author when a work label appears in Wikipedia', async function () {
+  it('should resolve the author when a work label appears in Wikipedia', async function () {
     this.timeout(60000)
-    // The author is in Wikidata, but not his work (this test will become useless once that work is in Wikidata)
     const workLabel = "Mémoires d'outre-espace"
     const authorLabel = 'Enki Bilal'
+
+    const works = await getWorksFromAuthorsUris([ 'wd:Q333668' ])
+    const matchingWdWork = works
+      .filter(work => work.uri.should.startWith('wd'))
+      .find(work => Object.values(work.labels).join(' ').includes('outre-espace'))
+    if (matchingWdWork) throw new Error(`This test is obsolete: the Wikidata work now exists (${matchingWdWork.uri})`)
+
     const { entries } = await resolve(basicEntry(workLabel, authorLabel))
     entries[0].works[0].resolved.should.be.false()
     entries[0].authors[0].resolved.should.be.true()
