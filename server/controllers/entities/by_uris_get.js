@@ -14,6 +14,9 @@ const sanitization = {
     ],
     optional: true
   },
+  lang: {
+    optional: true
+  },
   refresh: { optional: true },
   autocreate: {
     generic: 'boolean',
@@ -30,10 +33,10 @@ const sanitization = {
   }
 }
 
-const controller = async ({ uris, props, refresh, relatives, autocreate }) => {
+const controller = async ({ uris, props, lang, refresh, relatives, autocreate }) => {
   let results = await getEntitiesByUris({ uris, refresh, autocreate })
   if (relatives) results = addRelatives(results, relatives, refresh)
-  if (props) results.entities = pickProps(results.entities, props)
+  if (props) results.entities = pickProps(results.entities, props, lang)
   return results
 }
 
