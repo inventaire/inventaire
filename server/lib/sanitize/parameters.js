@@ -271,6 +271,7 @@ module.exports = {
   },
   prefix: allowlistedString,
   property: { validate: _.isPropertyUri },
+  props: allowlistedStrings,
   range: Object.assign({}, positiveInteger, {
     default: 50,
     max: 500
