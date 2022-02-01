@@ -14,6 +14,7 @@ module.exports = () => {
 const crawl = () => {
   return db.createReadStream()
   .on('data', onData)
+  .on('error', _.Error('crawl err'))
 }
 
 const onData = data => {
