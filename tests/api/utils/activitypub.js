@@ -1,5 +1,5 @@
 const { rawRequest } = require('../utils/request')
-const { signRequest } = require('controllers/activitypub/lib/security')
+const { signRequest, verifySignature } = require('controllers/activitypub/lib/security')
 const { getSharedKeyPair } = require('controllers/activitypub/lib/shared_key_pair')
 const { getRandomBytes } = require('lib/crypto')
 const express = require('express')
@@ -103,6 +103,7 @@ const startActivityPubServer = () => new Promise(resolve => {
   const inboxes = {}
 
   app.post(inboxEndpoint, async (req, res) => {
+    await verifySignature(req)
     let { username } = req.query
     // since shelf uri is contains ':'
     username = decodeURIComponent(username)
