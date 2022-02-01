@@ -4,7 +4,7 @@ const crypto = require('crypto')
 const { promisify } = require('util')
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
-exports.passwords = {
+const passwords = {
   hash: async password => {
     if (password == null) throw error_.new('missing password', 400)
     return pw.hash(password)
@@ -37,19 +37,19 @@ const createHexHashFromStream = algo => stream => new Promise((resolve, reject) 
   .on('error', reject)
 })
 
-exports.sha1 = createHexHash('sha1')
-exports.md5 = createHexHash('md5')
-exports.sha1FromStream = createHexHashFromStream('sha1')
+const sha1 = createHexHash('sha1')
+const md5 = createHexHash('md5')
+const sha1FromStream = createHexHashFromStream('sha1')
 
-exports.getSha256Base64Digest = input => {
+const getSha256Base64Digest = input => {
   return crypto.createHash('sha256')
   .update(input)
   .digest('base64')
 }
 
-exports.getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
+const getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
 
-exports.keyPair = {
+const keyPair = {
   generateKeyPair: async () => {
     // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
     return generateKeyPair('rsa', {
@@ -64,4 +64,14 @@ exports.keyPair = {
       }
     })
   }
+}
+
+module.exports = {
+  passwords,
+  sha1,
+  md5,
+  sha1FromStream,
+  getSha256Base64Digest,
+  getRandomBytes,
+  keyPair,
 }
