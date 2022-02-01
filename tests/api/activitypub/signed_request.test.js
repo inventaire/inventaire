@@ -5,7 +5,7 @@ const { signedReq, makeUrl, createActivity, getSomeRemoteServerUser, createRemot
 const { rawRequest } = require('../utils/request')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { sign } = require('controllers/activitypub/lib/security')
-const { generateKeyPair } = require('lib/crypto').keyPair
+const { generateRsaKeyPair } = require('lib/crypto')
 
 const endpoint = '/api/activitypub'
 
@@ -72,7 +72,7 @@ describe('activitypub:signed:request', () => {
   it('should reject when key verification fails', async () => {
     try {
       const emitterUser = await createRemoteActivityPubServerUser()
-      const { privateKey } = await generateKeyPair()
+      const { privateKey } = await generateRsaKeyPair()
       emitterUser.privateKey = privateKey
       await inboxReq({ emitterUser })
       .then(shouldNotBeCalled)
