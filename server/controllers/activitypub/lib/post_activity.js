@@ -43,9 +43,17 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
   })
   postHeaders['content-type'] = 'application/activity+json'
   try {
-    return requests_.post(inboxUri, { headers: postHeaders, body, timeout, parseJson: false })
+    await requests_.post(inboxUri, {
+      headers: postHeaders,
+      body,
+      timeout,
+      parseJson: false,
+      retryOnceOnError: true,
+    })
   } catch (err) {
-    throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity, err })
+    err.context = err.context || {}
+    Object.assign(err.context, { inboxUri, activity })
+    _.error(err, 'Posting activity to inbox failed')
   }
 }
 
