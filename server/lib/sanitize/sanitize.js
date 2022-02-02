@@ -46,6 +46,11 @@ const optionsNames = new Set([ 'nonJsonBody' ])
 const sanitizeParameter = (input, name, config, place, res) => {
   const parameter = getParameterFunctions(name, config.generic)
 
+  if (parameter.drop) {
+    delete input[name]
+    return
+  }
+
   if (input[name] == null) applyDefaultValue(input, name, config, parameter)
   if (input[name] == null) {
     if (config.canBeNull && input[name] === null) return

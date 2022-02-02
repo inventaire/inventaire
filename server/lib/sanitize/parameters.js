@@ -179,6 +179,9 @@ const generics = {
       return true
     }
   },
+  ignore: {
+    drop: true,
+  },
   object: {
     validate: _.isPlainObject
   },

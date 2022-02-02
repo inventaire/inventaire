@@ -143,6 +143,18 @@ describe('sanitize', () => {
       foo.should.deepEqual({})
       foo.should.not.equal(obj)
     })
+
+    it('should accept an ignored generic parameters', async () => {
+      const res = {}
+      const configs = {
+        foo: {
+          generic: 'ignore',
+        }
+      }
+      const { foo } = sanitize({ query: { foo: 'a' } }, res, configs)
+      should(foo).not.be.ok()
+      should(res.warnings).not.be.ok()
+    })
   })
 
   describe('strictly positive integer', () => {
