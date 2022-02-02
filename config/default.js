@@ -217,6 +217,6 @@ const config = module.exports = {
 
   activitypub: {
     sanitizeUrls: true,
-    activitiesDebounceTime: 5 * 60 * 1000,
+    activitiesDebounceTime: 60 * 1000,
   },
 }
