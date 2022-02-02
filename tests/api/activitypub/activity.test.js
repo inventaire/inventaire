@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const debounceTime = CONFIG.activitiesDebounceTime + 50
+const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
 require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')

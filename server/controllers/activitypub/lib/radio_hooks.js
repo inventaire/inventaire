@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const { activitiesDebounceTime } = require('config')
+const { activitiesDebounceTime } = require('config').activitypub
 const radio = require('lib/radio')
 const user_ = require('controllers/user/lib/user')
 const shelves_ = require('controllers/shelves/lib/shelves')
