@@ -22,6 +22,7 @@ const makeRequest = async (endpoint, query, requestOptions = {}) => {
   const escapedQuery = qs.escape(query)
   const base = `${endpoint}?query=`
   requestOptions.headers = { accept: 'application/sparql-results+json' }
+  requestOptions.timeout = 5000
   const url = base + escapedQuery
 
   const { results } = await requests_.get(url, requestOptions)

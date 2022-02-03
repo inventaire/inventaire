@@ -6,9 +6,9 @@ const automergeAuthorWorks = require('./automerge_author_works')
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough
-module.exports = (suspectUri, suggestion) => {
+const automerge = (suspectUri, suggestion) => {
   const { uri: suggestionUri } = suggestion
-  if (!isValidateAutomerge(suggestion.occurrences)) {
+  if (!hasConvincingOccurrences(suggestion.occurrences)) {
     return [ suggestion ]
   }
 
@@ -22,7 +22,7 @@ module.exports = (suspectUri, suggestion) => {
   .then(() => []) // merged suspect
 }
 
-const isValidateAutomerge = suggestionOccurrences => {
+const hasConvincingOccurrences = suggestionOccurrences => {
   const hasOccurencesInStructuredDataSources = _.some(_.map(suggestionOccurrences, 'structuredDataSource'))
   if (hasOccurencesInStructuredDataSources) return true
 
@@ -32,3 +32,5 @@ const isValidateAutomerge = suggestionOccurrences => {
 }
 
 const isLongTitle = title => title.length > longTitleLimit
+
+module.exports = { automerge, hasConvincingOccurrences }

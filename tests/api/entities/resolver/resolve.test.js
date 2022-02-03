@@ -6,6 +6,7 @@ const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someO
 const { addClaim, getByUri } = require('tests/api/utils/entities')
 const { waitForIndexation } = require('tests/api/utils/search')
 const { createEditionWithIsbn, randomLabel } = require('tests/api/fixtures/entities')
+const getWorksFromAuthorsUris = require('controllers/entities/lib/resolver/get_works_from_authors_uris')
 
 const resolve = entries => {
   entries = _.forceArray(entries)
@@ -372,13 +373,49 @@ describe('entities:resolve:on-labels', () => {
     should(entries3[0].works[0].uri).not.be.ok()
   })
 
-  it('should not resolve when several works exist', async () => {
+  it('should not resolve when several homonym works exist', async () => {
     const sameLabelAuthor = await createHuman({ labels: author.labels })
     const workB = await createWorkWithAuthor(sameLabelAuthor, workLabel)
     await waitForIndexation('entities', workB._id)
     const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
     should(entries[0].works[0].uri).not.be.ok()
     should(entries[0].authors[0].uri).not.be.ok()
+  })
+
+  it('should resolve when an author has several works but only one matches', async () => {
+    const author = await createHuman()
+    const workLabel = randomLabel()
+    const [ workA, workB ] = await Promise.all([
+      createWorkWithAuthor(author, workLabel),
+      createWorkWithAuthor(author, randomLabel())
+    ])
+    await Promise.all([
+      waitForIndexation('entities', workA._id),
+      waitForIndexation('entities', workB._id),
+    ])
+    const { entries } = await resolve(basicEntry(workLabel, author.labels.en))
+    entries[0].works[0].uri.should.equal(workA.uri)
+    entries[0].authors[0].uri.should.equal(author.uri)
+  })
+})
+
+describe('entities:resolve:on-external-terms', () => {
+  // Fragile test: its validity depends on the stability of Wikipedia and Wikidata
+  it('should resolve the author when a work label appears in Wikipedia', async function () {
+    this.timeout(60000)
+    const workLabel = "Mémoires d'outre-espace"
+    const authorLabel = 'Enki Bilal'
+
+    const works = await getWorksFromAuthorsUris([ 'wd:Q333668' ])
+    const matchingWdWork = works
+      .filter(work => work.uri.should.startWith('wd'))
+      .find(work => Object.values(work.labels).join(' ').includes('outre-espace'))
+    if (matchingWdWork) throw new Error(`This test is obsolete: the Wikidata work now exists (${matchingWdWork.uri})`)
+
+    const { entries } = await resolve(basicEntry(workLabel, authorLabel))
+    entries[0].works[0].resolved.should.be.false()
+    entries[0].authors[0].resolved.should.be.true()
+    entries[0].authors[0].uri.should.equal('wd:Q333668')
   })
 })
 
