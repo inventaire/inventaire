@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const debounceTime = CONFIG.activitiesDebounceTime + 100
+const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
 require('should')
 const { createItem } = require('../fixtures/items')
 const { createUser } = require('../fixtures/users')
@@ -96,7 +96,7 @@ describe('followers activity delivery', () => {
       }
     })
 
-    it('should post an activity to inbox shelves followers', async () => {
+    it('should post an activity to inbox shelves followers when adding an item to a shelf', async () => {
       const user = createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
@@ -112,10 +112,35 @@ describe('followers activity delivery', () => {
       await addItemsToShelf(user, shelf, [ itemId ])
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      const createActivity = inbox[0]
-      createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
-      createActivity.object.content.should.containEql(itemId)
-      createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
+      const activity = inbox[0]
+      activity.type.should.equal('Create')
+      activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
+      activity.object.content.should.containEql(itemId)
+      activity.to.should.deepEqual([ remoteUserId, 'Public' ])
+    })
+
+    it('should post an activity to inbox shelves followers when creating an item in a shelf', async () => {
+      const user = createUser({ fediversable: true })
+      const { shelf } = await createShelf(user)
+      const name = getActorName(shelf)
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const res = await signedReq({
+        url: inboxUrl,
+        object: followedActorUrl,
+        type: 'Follow',
+      })
+      const { remoteHost, remoteUserId, remoteUsername } = res
+      const { _id: itemId } = await createItem(user, {
+        shelves: [ shelf._id ]
+      })
+      await wait(debounceTime)
+      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
+      const activity = inbox[0]
+      activity.type.should.equal('Create')
+      activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
+      activity.object.content.should.containEql(itemId)
+      activity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })
   })
 })

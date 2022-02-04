@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const { activitiesDebounceTime } = require('config')
+const { activitiesDebounceTime } = require('config').activitypub
 const radio = require('lib/radio')
 const user_ = require('controllers/user/lib/user')
 const shelves_ = require('controllers/shelves/lib/shelves')
@@ -41,8 +41,7 @@ const createDebouncedActivity = ({ userId, shelfId }) => async () => {
     name = `shelf-${shelfId}`
   }
   const [ lastActivity ] = await byActorName({ name, limit: 1 })
-  const yesterdayTime = Date.now() - (24 * 60 * 60 * 1000)
-  const since = lastActivity?.updated || yesterdayTime
+  const since = lastActivity?.updated || 0
 
   const activityDoc = await createActivity({
     type: 'Create',

@@ -29,10 +29,12 @@ const req = method => async (url, options = {}) => {
   const { host } = new URL(url)
   throwIfTemporarilyBanned(host)
 
-  const { returnBodyOnly = true, parseJson = true, body: reqBody } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false } = options
   // Removing options that don't concern node-fetch
+  delete options.sanitize
   delete options.returnBodyOnly
   delete options.parseJson
+  delete options.retryOnceOnError
 
   completeOptions(method, options)
 
@@ -42,7 +44,7 @@ const req = method => async (url, options = {}) => {
   try {
     res = await fetch(url, options)
   } catch (err) {
-    if (err.code === 'ECONNRESET') {
+    if (err.code === 'ECONNRESET' || retryOnceOnError) {
       // Retry after a short delay when socket hang up
       await wait(100)
       res = await fetch(url, options)

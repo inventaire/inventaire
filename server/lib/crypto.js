@@ -49,21 +49,19 @@ const getSha256Base64Digest = input => {
 
 const getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
 
-const keyPair = {
-  generateKeyPair: async () => {
-    // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
-    return generateKeyPair('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem'
-      }
-    })
-  }
+const generateRsaKeyPair = async () => {
+  // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
+  return generateKeyPair('rsa', {
+    modulusLength: 4096,
+    publicKeyEncoding: {
+      type: 'spki',
+      format: 'pem'
+    },
+    privateKeyEncoding: {
+      type: 'pkcs8',
+      format: 'pem'
+    }
+  })
 }
 
 module.exports = {
@@ -73,5 +71,5 @@ module.exports = {
   sha1FromStream,
   getSha256Base64Digest,
   getRandomBytes,
-  keyPair,
+  generateRsaKeyPair,
 }

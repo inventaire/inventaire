@@ -101,8 +101,12 @@ const items_ = module.exports = {
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
-    const { docs } = await db.fetch(itemsIds)
-    await emit('user:inventory:update', userId)
+    const shelvesIds = _.deepCompact(_.map(items, 'shelves'))
+    const [ { docs } ] = await Promise.all([
+      db.fetch(itemsIds),
+      emit('user:inventory:update', userId),
+      emit('shelves:update', shelvesIds),
+    ])
     return docs
   },
 

@@ -60,7 +60,7 @@ describe('activitypub:actor', () => {
       res.publicKey.should.be.an.Object()
       res.inbox.should.equal(inboxUrl)
       res.outbox.should.equal(outboxUrl)
-      res.publicKey.id.should.equal(`${actorUrl}#main-key`)
+      res.publicKey.id.should.startWith(`${actorUrl}#`)
       res.publicKey.owner.should.equal(actorUrl)
     })
 
@@ -78,7 +78,7 @@ describe('activitypub:actor', () => {
       res2.preferredUsername.should.equal(initialUsername)
       res2.inbox.should.equal(canonicalInboxUrl)
       res2.outbox.should.equal(canonicalOutboxUrl)
-      res2.publicKey.id.should.equal(`${canonicalActorUrl}#main-key`)
+      res2.publicKey.id.should.startWith(`${canonicalActorUrl}#`)
       res2.publicKey.owner.should.equal(canonicalActorUrl)
     })
 
@@ -212,7 +212,7 @@ describe('activitypub:actor', () => {
       res.publicKey.should.be.an.Object()
       res.inbox.should.equal(inboxUrl)
       res.outbox.should.equal(outboxUrl)
-      res.publicKey.id.should.equal(`${actorUrl}#main-key`)
+      res.publicKey.id.should.startWith(`${actorUrl}#`)
       res.publicKey.owner.should.equal(actorUrl)
     })
 

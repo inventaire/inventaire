@@ -24,10 +24,12 @@ module.exports = (req, res, err, status) => {
     err.context = _.pick(req, err.attachReqContext)
   }
 
-  if (/^4/.test(statusCode)) {
-    _.warn(err, statusCode)
-  } else {
-    _.error(err, err.message)
+  if (err.mute !== true) {
+    if (/^4/.test(statusCode)) {
+      _.warn(err, statusCode)
+    } else {
+      _.error(err, err.message)
+    }
   }
 
   if (err.context) {

@@ -5,8 +5,8 @@ const { signRequest } = require('controllers/activitypub/lib/security')
 const error_ = require('lib/error/error')
 const { getFollowActivitiesByObject } = require('./activities')
 const assert_ = require('lib/utils/assert_types')
-const { publicHost } = require('config')
 const { getSharedKeyPair } = require('./shared_key_pair')
+const { makeUrl } = require('./helpers')
 // Arbitrary timeout
 const timeout = 30 * 1000
 const sanitize = CONFIG.activitypub.sanitizeUrls
@@ -27,19 +27,33 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
     return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
   }
 
-  const keyId = `acct:${actorName}@${publicHost}`
+  const { privateKey, publicKeyHash } = await getSharedKeyPair()
 
-  const { privateKey } = await getSharedKeyPair()
+  const keyActorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
 
   const body = Object.assign({}, activity)
 
   body.to = [ recipientActorUri, 'Public' ]
-  const postHeaders = signRequest({ url: inboxUri, method: 'post', keyId, privateKey, body })
+  const postHeaders = signRequest({
+    url: inboxUri,
+    method: 'post',
+    keyId: `${keyActorUrl}#${publicKeyHash}`,
+    privateKey,
+    body
+  })
   postHeaders['content-type'] = 'application/activity+json'
   try {
-    return requests_.post(inboxUri, { headers: postHeaders, body, timeout, parseJson: false })
+    await requests_.post(inboxUri, {
+      headers: postHeaders,
+      body,
+      timeout,
+      parseJson: false,
+      retryOnceOnError: true,
+    })
   } catch (err) {
-    throw error_.new('Posting activity to inbox failed', 400, { inboxUri, activity, err })
+    err.context = err.context || {}
+    Object.assign(err.context, { inboxUri, activity })
+    _.error(err, 'Posting activity to inbox failed')
   }
 }
 

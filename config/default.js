@@ -199,8 +199,6 @@ const config = module.exports = {
 
   itemsCountDebounceTime: 5000,
 
-  activitiesDebounceTime: 5 * 60 * 1000,
-
   jobs: {
     'inv:deduplicate': {
       run: true,
@@ -218,6 +216,7 @@ const config = module.exports = {
   },
 
   activitypub: {
-    sanitizeUrls: true
+    sanitizeUrls: true,
+    activitiesDebounceTime: 60 * 1000,
   },
 }

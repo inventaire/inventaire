@@ -62,7 +62,11 @@ const getEntityActor = async name => {
 }
 
 const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }) => {
+  const { publicKey, publicKeyHash } = await getSharedKeyPair()
   const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
+  // Use the key hash to bust any cached version of an old key
+  const keyUrl = `${actorUrl}#${publicKeyHash}`
+
   const actor = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
@@ -76,7 +80,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     inbox: `${host}/api/activitypub?action=inbox&name=${actorName}`,
     outbox: `${host}/api/activitypub?action=outbox&name=${actorName}`,
     publicKey: {
-      id: `${host}/api/activitypub?action=actor&name=${actorName}#main-key`,
+      id: keyUrl,
       owner: `${host}/api/activitypub?action=actor&name=${actorName}`
     }
   }
@@ -105,13 +109,10 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     actor.attachment = attachment
   }
 
-  const { publicKey } = await getSharedKeyPair()
-
   // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
   // shared public keys they already know
   actor.publicKey = {
-    // "#" is an identifier in order to host the key in a same document as the actor URL document
-    id: `${actorUrl}#main-key`,
+    id: keyUrl,
     owner: actorUrl, // must be actor.id
     publicKeyPem: publicKey
   }
