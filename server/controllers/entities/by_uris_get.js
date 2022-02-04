@@ -11,6 +11,8 @@ const sanitization = {
       'descriptions',
       'claims',
       'sitelinks',
+      'image',
+      'originalLang',
     ],
     optional: true
   },
