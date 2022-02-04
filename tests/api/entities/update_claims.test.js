@@ -44,10 +44,21 @@ describe('entities:update-claims', () => {
     })
   })
 
-  it('should reject unfound entity', async () => {
+  it('should reject an unknown entity', async () => {
     const property = 'wdt:P1104'
     const oldValue = '1312'
     await updateClaim({ uri: someFakeUri, property, oldValue })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('entity not found')
+      err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject an unknown entity value', async () => {
+    const work = await createWork()
+    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    await updateClaim({ uri: work.uri, property: 'wdt:P50', oldValue: null, newValue: fakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('entity not found')

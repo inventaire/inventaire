@@ -62,13 +62,16 @@ const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
-const verifyClaimEntityType = (restrictedType, value) => {
+const verifyClaimEntityType = async (restrictedType, value) => {
   if (restrictedType == null) return
 
-  return getEntityByUri({ uri: value })
-  .then(entity => {
-    if (entity.type !== restrictedType) {
-      throw error_.new(`invalid claim entity type: ${entity.type}`, 400, value)
-    }
-  })
+  const entity = await getEntityByUri({ uri: value })
+
+  if (!entity) {
+    throw error_.new('entity not found', 400, value)
+  }
+
+  if (entity.type !== restrictedType) {
+    throw error_.new(`invalid claim entity type: ${entity.type}`, 400, value)
+  }
 }
