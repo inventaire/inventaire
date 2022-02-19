@@ -59,6 +59,7 @@ const wikidataOnlyP31Values = {
     'wd:Q83818856', // grammar book
     'wd:Q12799318', // short novel
     'wd:Q10992055', // fantasy novel
+    'wd:Q1391417', // specialized dictionary
   ],
   editions: [
     'wd:Q3972943' // publishing
