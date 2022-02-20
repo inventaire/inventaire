@@ -45,13 +45,15 @@ describe('search:entities', () => {
       })
 
       // Ex: when requesting 'Myron Howe', 'Myron W Howe' will be considered an exact match
+      // This test might occasionnally fail as the current implementation uses an edge_ngram analyzer
+      // at indexation, leading to subparts of terms being considered a match.
+      // Ex: an exact search for "Charles Ben" will find "Charles Bent" as one of its generated tokens is "Ben"
       it('should return only results including exact matches of each words', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
         results.length.should.be.aboveOrEqual(1)
         const labelWords = humanLabel.split(' ')
         results.forEach(result => {
-          result.label.should.equal(humanLabel)
           const resultLabelWords = result.label.split(' ')
           labelWords.forEach(word => {
             resultLabelWords.includes(word).should.be.true()
