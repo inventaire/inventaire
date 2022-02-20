@@ -23,12 +23,25 @@ const buildSearcher = params => {
   }
 }
 
-const getHits = ({ hits, _shards }) => {
+const getHits = res => {
+  checkShardError(res)
+  const { hits } = res
+  return hits.hits
+}
+
+const getHitsAndTotal = res => {
+  checkShardError(res)
+  const { hits } = res
+  return {
+    hits: hits.hits,
+    total: hits.total.value
+  }
+}
+
+const checkShardError = ({ _shards }) => {
   if (_shards.failures) {
     const failure = _shards.failures[0]
     throw error_.new(failure.reason.reason, 500, failure)
-  } else {
-    return hits.hits
   }
 }
 
@@ -63,4 +76,4 @@ const parseHit = hit => {
   return data
 }
 
-module.exports = { buildSearcher, getHits, parseResponse, formatError }
+module.exports = { buildSearcher, getHits, getHitsAndTotal, parseResponse, formatError }

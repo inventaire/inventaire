@@ -3,14 +3,14 @@ const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const { host: elasticHost } = require('config').elasticsearch
-const { getHits, formatError } = require('lib/elasticsearch')
+const { formatError, getHitsAndTotal } = require('lib/elasticsearch')
 const { indexesNamesByBaseNames: indexes, indexedTypes, indexedEntitiesTypes } = require('db/elasticsearch/indexes')
 const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
 
 const typeSearch = async params => {
-  const { lang, types, search, limit = 20, filter, exact, minScore, claim, safe = false } = params
+  const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
   assert_.array(types)
   for (const type of types) {
     if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
@@ -38,13 +38,13 @@ const typeSearch = async params => {
   } else {
     queryIndexes = entitiesIndexesPerFilter[filter]
     if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
-    body = entitiesQueryBuilder({ lang, types, search, limit, exact, minScore, claim, safe })
+    body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
 
   const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
 
   return requests_.post(url, { body })
-  .then(getHits)
+  .then(getHitsAndTotal)
   .catch(formatError)
   .catch(err => {
     if (safe) {

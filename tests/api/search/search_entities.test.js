@@ -219,6 +219,31 @@ describe('search:entities', () => {
         foundIds.should.not.containEql(humanB._id)
       })
     })
+
+    describe('offset', () => {
+      it('should offset results', async () => {
+        const types = 'works'
+        const input = 'memoire'
+        // Make sure there are at least 3 results matching that input
+        const works = await Promise.all([
+          createWork({ labels: { en: `${input} a` } }),
+          createWork({ labels: { en: `${input} b` } }),
+          createWork({ labels: { en: `${input} c` } }),
+        ])
+        await Promise.all(works.map(work => {
+          return waitForIndexation('entities', work._id)
+        }))
+        const results = await search({ types, search: input, limit: 3, offset: 0 })
+        const [ [ resultA ], [ resultB ], [ resultC ] ] = await Promise.all([
+          search({ types, search: input, limit: 1, offset: 0 }),
+          search({ types, search: input, limit: 1, offset: 1 }),
+          search({ types, search: input, limit: 1, offset: 2 }),
+        ])
+        results[0].uri.should.equal(resultA.uri)
+        results[1].uri.should.equal(resultB.uri)
+        results[2].uri.should.equal(resultC.uri)
+      })
+    })
   })
 
   describe('humans', () => {

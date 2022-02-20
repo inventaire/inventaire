@@ -37,7 +37,7 @@ const searchAuthorsBySeedAuthorTerms = terms => {
 const types = [ 'humans' ]
 
 const searchUrisByAuthorTerm = async term => {
-  const hits = await typeSearch({ types, search: term, exact: true })
+  const { hits } = await typeSearch({ types, search: term, exact: true })
   return hits
   // Exact match on normalized author terms
   .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
