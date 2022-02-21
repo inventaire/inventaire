@@ -2,7 +2,6 @@ const qs = require('querystring')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
-const fetch = require('node-fetch')
 const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
@@ -145,8 +144,8 @@ const addImage = async entry => {
   const bnfId = entry?.edition.claims['wdt:P268']
   if (!bnfId) return
   const url = `https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb${bnfId}&couverture=1`
-  const { status: statusCode, headers } = await fetch(url)
-  let contentLength = headers.get('content-length')
+  const { statusCode, headers } = await requests_.head(url)
+  let { 'content-length': contentLength } = headers
   if (contentLength) contentLength = parseInt(contentLength)
   if (statusCode === 200 && !placeholderContentLengths.includes(contentLength)) {
     entry.edition.image = url
