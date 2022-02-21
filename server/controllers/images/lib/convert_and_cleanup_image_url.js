@@ -18,6 +18,12 @@ module.exports = async ({ container, url }) => {
     throw error_.new('invalid image url', 400, { url, originalUrl })
   }
   const data = await convertImageUrl({ container, url })
+  if (bannedHashes.has(data.hash)) return {}
   _.log({ originalUrl, cleanedUrl: url, ...data }, 'convert url')
   return data
 }
+
+const bannedHashes = new Set([
+  // BNF placeholder
+  '34ae223423391eeb6bcd31bf177e77c13aa013a4'
+])

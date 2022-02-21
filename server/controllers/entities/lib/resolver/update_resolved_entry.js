@@ -57,7 +57,7 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   const imageClaims = entity.claims['invp:P2']
   if (imageClaims) return
   const { hash: imageHash } = await convertAndCleanupImageUrl({ url: imageUrl, container: 'entities' })
-  newClaims['invp:P2'] = [ imageHash ]
+  if (imageHash) newClaims['invp:P2'] = [ imageHash ]
 }
 
 const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
