@@ -149,6 +149,7 @@ const addImage = async entry => {
   let contentLength = headers.get('content-length')
   if (contentLength) contentLength = parseInt(contentLength)
   if (statusCode === 200 && !placeholderContentLengths.includes(contentLength)) {
+    console.log('add bnf image', { bnfId, url, contentLength })
     entry.edition.image = url
   }
 }
