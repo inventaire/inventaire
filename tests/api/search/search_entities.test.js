@@ -293,4 +293,9 @@ describe('search:entities', () => {
       _.map(results, 'id').includes(serie._id).should.be.true()
     })
   })
+
+  it('should find a label with diacritics without those diacritics', async () => {
+    const results = await search({ types: 'publishers', search: 'liberent', filter: 'wd' })
+    _.map(results, 'uri').should.containEql('wd:Q3236382')
+  })
 })

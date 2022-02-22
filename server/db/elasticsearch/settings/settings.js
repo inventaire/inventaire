@@ -43,6 +43,7 @@ module.exports = {
           // not to be confused with the 'standard' analyzer, which does
           // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/analysis-standard-analyzer.html
           'lowercase',
+          'asciifolding',
           'autocomplete_filter'
         ]
       },
@@ -53,6 +54,7 @@ module.exports = {
         tokenizer: 'standard',
         filter: [
           'lowercase',
+          'asciifolding',
           'truncate_to_max_gram'
         ]
       },
