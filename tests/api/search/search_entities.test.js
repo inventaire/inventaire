@@ -6,7 +6,9 @@ const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.autocomplete_filter
+const assert_ = require('lib/utils/assert_types')
+const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
+assert_.number(maxGram)
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher
@@ -59,6 +61,13 @@ describe('search:entities', () => {
             resultLabelWords.includes(word).should.be.true()
           })
         })
+      })
+
+      it('should not return results that do not contain the exact searched words', async () => {
+        const humanLabel = human.labels.en
+        const humanLabelWithoutLastLetter = humanLabel.slice(0, -1)
+        const results = await search({ types: 'humans', search: humanLabelWithoutLastLetter, exact: true })
+        _.map(results, 'uri').should.not.containEql(human.uri)
       })
 
       it('should accept a different word order', async () => {

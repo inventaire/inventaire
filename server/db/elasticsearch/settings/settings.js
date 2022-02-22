@@ -58,6 +58,14 @@ module.exports = {
           'truncate_to_max_gram'
         ]
       },
+      standard_full: {
+        type: 'custom',
+        tokenizer: 'standard',
+        filter: [
+          'lowercase',
+          'asciifolding',
+        ]
+      },
     }
   }
 }

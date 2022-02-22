@@ -14,12 +14,19 @@ const autocompleteText = {
   // See https://www.elastic.co/guide/en/elasticsearch/guide/current/scoring-theory.html
 }
 
-const getTermsProperties = () => {
+const fullText = {
+  type: 'text',
+  // This analyzer won't produce ngram tokens, and can thus be used for exact match.
+  // Ex: Searching for "fruit" won't produce a hit on document with "fruitful"
+  analyzer: 'standard_full',
+}
+
+const getTermsProperties = datatype => {
   const properties = {}
   activeI18nLangs.forEach(lang => {
-    properties[lang] = autocompleteText
+    properties[lang] = datatype
   })
-  properties.fromclaims = autocompleteText
+  properties.fromclaims = datatype
   return properties
 }
 
@@ -32,7 +39,8 @@ module.exports = {
   keyword: { type: 'keyword' },
   // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
   objectNotIndexed: { type: 'object', enabled: false },
-  terms: { properties: getTermsProperties() },
+  autocompleteTerms: { properties: getTermsProperties(autocompleteText) },
+  fullTerms: { properties: getTermsProperties(fullText) },
   text: { type: 'text' },
   flattenedTerms: autocompleteText,
 }

@@ -6,7 +6,7 @@ const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
 
 module.exports = params => {
   const { lang: userLang, search, limit: size, exact, claim, safe = false } = params
-  let { types, minScore = 1 } = params
+  let { types, minScore = 0.5 } = params
   types = getSingularTypes(types)
 
   const filters = [
@@ -19,7 +19,11 @@ module.exports = params => {
 
   if (!search) minScore = 0
 
-  const shoulds = matchEntities(search, userLang, exact, safe)
+  // In case a claim alone is searched
+  const shoulds = []
+  if (search != null) {
+    shoulds.push(matchEntities(search, userLang, exact, safe))
+  }
 
   return {
     query: {
@@ -30,7 +34,7 @@ module.exports = params => {
             should: shoulds,
             // The default value would be 0 due to the presence of filters
             // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#bool-min-should-match
-            minimum_should_match: shoulds != null ? 1 : 0
+            minimum_should_match: shoulds.length > 0 ? 1 : 0
           }
         },
         // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
@@ -48,68 +52,63 @@ module.exports = params => {
 }
 
 const matchEntities = (search, userLang, exact, safe) => {
-  // In case a claim alone is searched
-  if (search == null) return
-
-  const fields = entitiesFields(userLang, exact)
-
-  // From time to time, cross_fields generates 'function score query returned an invalid score' errors
-  // See https://github.com/elastic/elasticsearch/issues/44700
-  // So, until there is a fix for that, requests that generate those errors will be retried in "safe" mode,
-  // that is, with best_fields instead of cross_fields
-  const matchType = safe ? 'best_fields' : 'cross_fields'
-
-  const queries = [
-    {
-      // Use query_string to give exact matches a boost.
-      // See query strings doc : https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-query-string-query.html
+  if (exact) {
+    return {
       multi_match: {
         query: search,
         operator: 'and',
-        fields,
-        analyzer: 'standard_truncated',
-        type: matchType,
-        boost: 3
+        fields: exactMatchEntitiesFields(userLang),
+        analyzer: 'standard_full',
+        type: 'best_fields',
       }
     }
-  ]
-
-  if (!exact) {
-    queries.push({
+  } else {
+    return {
       multi_match: {
         query: search,
         operator: 'or',
-        fields,
+        fields: autoCompleteEntitiesFields(userLang),
         analyzer: 'standard_truncated',
-        type: matchType,
+        // From time to time, cross_fields generates 'function score query returned an invalid score' errors
+        // See https://github.com/elastic/elasticsearch/issues/44700
+        // So, until there is a fix for that, requests that generate those errors will be retried in "safe" mode,
+        // that is, with best_fields instead of cross_fields
+        type: safe ? 'best_fields' : 'cross_fields',
       }
-    })
+    }
   }
-
-  return queries
 }
 
-const entitiesFields = (userLang, exact) => {
+const exactMatchEntitiesFields = userLang => {
   const fields = [
-    'labels.*',
-    'aliases.*^0.5',
+    'fullLabels.*^2',
+    'fullAliases.*',
   ]
   if (userLang) {
     fields.push(
-      `labels.${userLang}`,
+      `fullLabels.${userLang}^2`,
+      `fullAliases.${userLang}`
+    )
+  }
+  return fields
+}
+
+const autoCompleteEntitiesFields = userLang => {
+  const fields = [
+    'labels.*^2',
+    'aliases.*',
+    'flattenedLabels^0.5',
+    'flattenedAliases^0.5',
+    'descriptions.*^0.5',
+    'flattenedDescriptions^0.5',
+    'relationsTerms',
+  ]
+  if (userLang) {
+    fields.push(
+      `labels.${userLang}^2`,
       `aliases.${userLang}`
     )
   }
-  if (!exact) {
-    fields.push(
-      'flattenedLabels^0.25',
-      'flattenedAliases^0.25',
-      'descriptions.*^0.25',
-      'flattenedDescriptions^0.25',
-      'relationsTerms^0.25'
-    )
-  }
-
   return fields
 }
 

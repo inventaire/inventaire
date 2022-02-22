@@ -3,14 +3,22 @@ require('should')
 const { createHuman, createWorkWithAuthor } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation } = require('../utils/search')
+const { getByUris } = require('../utils/entities')
 const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
+const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925' ]
 
 describe('search:entities:by-claim', async () => {
   let workAuthor, workWithAuthor
   before(async () => {
     workAuthor = await createHuman()
     workWithAuthor = await createWorkWithAuthor(workAuthor)
-    await waitForIndexation('entities', workWithAuthor._id)
+    await Promise.all([
+      waitForIndexation('entities', workWithAuthor._id),
+      // Ensure wikidata uris are indexed in the current format
+      getByUris(wikidataUris, null, true),
+      // and wait for them to be indexed
+      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1])),
+    ])
   })
 
   it('should reject unknown properties', async () => {
@@ -31,10 +39,16 @@ describe('search:entities:by-claim', async () => {
     })
   })
 
-  it('should find an entity by one of its relation claims', async () => {
+  it('should find a local entity by one of its relation claims', async () => {
     const results = await search({ types: 'works', claim: `wdt:P50=${workAuthor.uri}`, lang: 'en', filter: 'inv' })
     const foundIds = _.map(results, 'id')
     foundIds.should.containEql(workWithAuthor._id)
+  })
+
+  it('should find a wikidata entity by one of its relation claims', async () => {
+    const results = await search({ types: 'works', claim: 'wdt:P50=wd:Q1345582', filter: 'wd' })
+    const foundIds = _.map(results, 'id')
+    foundIds.should.containEql('Q18120925')
   })
 
   it('should accept OR conditions', async () => {

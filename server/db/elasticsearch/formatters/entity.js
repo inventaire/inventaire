@@ -102,6 +102,10 @@ module.exports = async (entity, options = {}) => {
 
   if (Object.keys(entity.labels).length === 0) setTermsFromClaims(entity)
 
+  // Duplicating labels and aliases to have a different analyzer applied
+  entity.fullLabels = entity.labels
+  entity.fullAliases = entity.aliases
+
   entity.relationsTerms = await getRelationsTerms(entity)
 
   entity.claim = getFlattenedClaims(claims)
