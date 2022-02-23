@@ -72,7 +72,7 @@ describe('roles:dataadmin', () => {
       await dataadminReq('get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('unauthorized api access')
+      err.body.status_verbose.should.equal('non-public contributions')
       err.statusCode.should.equal(403)
     }
   })
