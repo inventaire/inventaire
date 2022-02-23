@@ -80,7 +80,7 @@ const formatValidEntity = async entity => {
   entity.aliases = simplify.aliases(entity.aliases)
   entity.descriptions = simplify.descriptions(entity.descriptions)
   entity.sitelinks = simplify.sitelinks(entity.sitelinks)
-  entity.claims = formatClaims(entity.claims, wdId)
+  entity.claims = formatClaims(entity.claims)
   entity.originalLang = getOriginalLang(entity.claims)
 
   await formatAndPropagateRedirection(entity)

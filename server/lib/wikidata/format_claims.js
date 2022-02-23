@@ -10,9 +10,8 @@ const options = {
   timeConverter: 'simple-day'
 }
 
-module.exports = (claims, wdId) => {
+module.exports = claims => {
   assert_.object(claims)
-  assert_.string(wdId)
   const allowlistedClaims = _.pick(claims, allowlistedProperties)
   const simplifiedClaims = simplifyClaims(allowlistedClaims, options)
 
