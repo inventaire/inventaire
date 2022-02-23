@@ -3,7 +3,7 @@ const Q535 = require('./fixtures/Q535.customized.json')
 require('should')
 const entityFormatter = require('db/elasticsearch/formatters/entity')
 
-describe('indexation: entity formatter', () => {
+describe('indexation: entity formatter: dump/API entity format', () => {
   describe('flatten fields', () => {
     it('should include words from inactive languages', async () => {
       const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
