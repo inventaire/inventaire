@@ -4,6 +4,16 @@ require('should')
 const entityFormatter = require('db/elasticsearch/formatters/entity')
 
 describe('indexation: entity formatter: dump/API entity format', () => {
+  it('should find the type', async () => {
+    const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+    doc.type.should.equal('human')
+  })
+
+  it('should format claims', async () => {
+    const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+    doc.claim.should.containEql('wdt:P31=wd:Q5')
+  })
+
   describe('flatten fields', () => {
     it('should include words from inactive languages', async () => {
       const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })

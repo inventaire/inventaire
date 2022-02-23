@@ -11,16 +11,22 @@ const specialEntityImagesGetter = require('controllers/entities/lib/special_enti
 const { getSingularTypes } = require('lib/wikidata/aliases')
 const { getEntityPopularity } = require('controllers/entities/lib/popularity')
 const getEntitiesList = require('controllers/entities/lib/get_entities_list')
+const formatClaims = require('lib/wikidata/format_claims')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 module.exports = async (entity, options = {}) => {
   entity._id = getEntityId(entity)
-  delete entity.id
 
   // Entities from Wikidata dump still have a type='item' set
   if (entity.type === 'item') delete entity.type
 
-  const { claims, type } = entity
+  let { claims, type } = entity
+
+  if (isRawWikidataClaims(claims)) {
+    claims = formatClaims(claims)
+  }
+
+  delete entity.id
 
   entity.type = dropPlural(getType({ claims, type }))
 
@@ -98,7 +104,7 @@ module.exports = async (entity, options = {}) => {
 
   entity.relationsTerms = await getRelationsTerms(entity)
 
-  entity.claim = getFlattenedClaims(entity.claims)
+  entity.claim = getFlattenedClaims(claims)
 
   // Those don't need to be indexed
   delete entity.claims
@@ -120,13 +126,7 @@ module.exports = async (entity, options = {}) => {
 
 const getType = ({ claims, type }) => {
   if (type && type !== 'entity') return type
-
-  let wdtP31
-  if (claims.P31) {
-    wdtP31 = simplify.propertyClaims(claims.P31, { entityPrefix: 'wd' })
-  } else {
-    wdtP31 = claims['wdt:P31']
-  }
+  const wdtP31 = claims['wdt:P31']
   return getEntityType(wdtP31)
 }
 
@@ -221,4 +221,9 @@ const getFlattenedClaims = claims => {
     }
   }
   return flattenedClaims
+}
+
+const isRawWikidataClaims = claims => {
+  const properties = Object.keys(claims)
+  return wdk.isPropertyId(properties[0])
 }
