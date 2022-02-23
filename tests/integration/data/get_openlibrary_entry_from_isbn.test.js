@@ -30,6 +30,10 @@ describe('get_openlibrary_entry_from_isbn', () => {
 
   it('should import identifiers', async () => {
     const entry = await getOpenLibraryEntryFromIsbn('9782912107176')
-    entry.edition.claims['wdt:P577'].should.equal('1993')
+    entry.edition.claims['wdt:P648'].should.equal('OL12654422M')
+    entry.edition.claims['wdt:P2969'].should.equal('4872992')
+    entry.works[0].claims['wdt:P648'].should.equal('OL10012680W')
+    entry.works[0].claims['wdt:P1085'].should.equal('8117078')
+    entry.authors[0].claims['wdt:P648'].should.equal('OL3979402A')
   })
 })
