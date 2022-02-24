@@ -1,11 +1,10 @@
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const addRelatives = require('./lib/add_relatives')
-const pickProps = require('./lib/pick_props')
+const pickAttributes = require('./lib/pick_attributes')
 
 const sanitization = {
   uris: {},
-  // Mimicking Wikibase wbgetentities props parameter
-  props: {
+  attributes: {
     allowlist: [
       'labels',
       'descriptions',
@@ -35,10 +34,10 @@ const sanitization = {
   }
 }
 
-const controller = async ({ uris, props, lang, refresh, relatives, autocreate }) => {
+const controller = async ({ uris, attributes, lang, refresh, relatives, autocreate }) => {
   let results = await getEntitiesByUris({ uris, refresh, autocreate })
   if (relatives) results = addRelatives(results, relatives, refresh)
-  if (props) results.entities = pickProps(results.entities, props, lang)
+  if (attributes) results.entities = pickAttributes(results.entities, attributes, lang)
   return results
 }
 

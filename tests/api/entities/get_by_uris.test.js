@@ -69,8 +69,8 @@ describe('entities:get:by-uris', () => {
     entity.uri.should.equal(uri)
   })
 
-  describe('props', () => {
-    it("should return only the requested 'props'", async () => {
+  describe('attributes', () => {
+    it("should return only the requested 'attributes'", async () => {
       const work = await workWithAuthorPromise
       const { uri: invWorkUri } = work
       const invAuthorUri = work.claims['wdt:P50'][0]
@@ -78,7 +78,7 @@ describe('entities:get:by-uris', () => {
       const url = buildPath('/api/entities', {
         action: 'by-uris',
         uris: `${invWorkUri}|${invAuthorUri}|${wdUri}`,
-        props: 'labels|descriptions',
+        attributes: 'labels|descriptions',
       })
       const { entities } = await publicReq('get', url)
       entities[invWorkUri].uri.should.be.ok()
@@ -103,7 +103,7 @@ describe('entities:get:by-uris', () => {
       const url = buildPath('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}|${wdHumanUri}`,
-        props: 'labels',
+        attributes: 'labels',
         lang: 'es'
       })
       const { entities } = await publicReq('get', url)
@@ -117,7 +117,7 @@ describe('entities:get:by-uris', () => {
       const url = buildPath('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}`,
-        props: 'labels',
+        attributes: 'labels',
         lang: 'fr'
       })
       const { entities } = await publicReq('get', url)
