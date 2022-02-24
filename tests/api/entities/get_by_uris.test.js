@@ -108,11 +108,11 @@ describe('entities:get:by-uris', () => {
       const edition = entities.find(entity => entity.type === 'edition')
       const work = entities.find(entity => entity.type === 'work')
       const serie = entities.find(entity => entity.type === 'serie')
-      const author = entities.find(entity => entity.type === 'author')
+      const human = entities.find(entity => entity.type === 'human')
       edition.labels.should.be.ok()
       work.labels.en.should.be.ok()
       serie.labels.en.should.be.ok()
-      author.labels.en.should.be.ok()
+      human.labels.en.should.be.ok()
     })
   })
 
