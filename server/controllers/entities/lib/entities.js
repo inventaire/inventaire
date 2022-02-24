@@ -108,10 +108,6 @@ const entities_ = module.exports = {
 
   getUrlFromEntityImageHash: getUrlFromImageHash.bind(null, 'entities'),
 
-  firstClaim: (entity, property) => {
-    if (entity.claims[property] != null) return entity.claims[property][0]
-  },
-
   uniqByUri: entities => _.uniqBy(entities, getUri),
 
   imageIsUsed: async imageHash => {
@@ -122,3 +118,20 @@ const entities_ = module.exports = {
 }
 
 const getUri = entity => entity.uri
+
+const firstClaim = entities_.firstClaim = (entity, property) => {
+  if (entity.claims[property] != null) return entity.claims[property][0]
+}
+
+entities_.setTermsFromClaims = entity => {
+  const title = firstClaim(entity, 'wdt:P1476')
+  const subtitle = firstClaim(entity, 'wdt:P1680')
+  if (title) {
+    entity.labels = entity.labels || {}
+    entity.labels.fromclaims = title
+  }
+  if (subtitle) {
+    entity.descriptions = entity.descriptions || {}
+    entity.descriptions.fromclaims = subtitle
+  }
+}

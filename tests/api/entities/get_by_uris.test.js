@@ -1,7 +1,7 @@
 const should = require('should')
 const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 
-const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13 } = require('../fixtures/entities')
+const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13, createEdition } = require('../fixtures/entities')
 const { getByUris, merge, deleteByUris } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 const getWdEntity = require('data/wikidata/get_entity')
@@ -69,6 +69,14 @@ describe('entities:get:by-uris', () => {
     entity.uri.should.equal(uri)
   })
 
+  it('should set terms from claims on editions', async () => {
+    const { uri, claims } = await createEdition()
+    const { entities } = await getByUris(uri)
+    const entity = entities[uri]
+    entity.labels.fromclaims.should.equal(claims['wdt:P1476'][0])
+    entity.descriptions.fromclaims.should.equal(claims['wdt:P1680'][0])
+  })
+
   describe('attributes', () => {
     it("should return only the requested 'attributes'", async () => {
       const work = await workWithAuthorPromise
@@ -109,7 +117,7 @@ describe('entities:get:by-uris', () => {
       const work = entities.find(entity => entity.type === 'work')
       const serie = entities.find(entity => entity.type === 'serie')
       const human = entities.find(entity => entity.type === 'human')
-      edition.labels.should.be.ok()
+      edition.labels.fromclaims.should.be.ok()
       work.labels.en.should.be.ok()
       serie.labels.en.should.be.ok()
       human.labels.en.should.be.ok()
