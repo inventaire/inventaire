@@ -94,6 +94,26 @@ describe('entities:get:by-uris', () => {
       should(entities[wdUri].claims).not.be.ok()
       should(entities[wdUri].sitelinks).not.be.ok()
     })
+
+    it('should get relatives attributes', async () => {
+      const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+      const url = buildPath('/api/entities', {
+        action: 'by-uris',
+        uris: editionUri,
+        attributes: 'type|labels',
+        relatives: 'wdt:P50|wdt:P179|wdt:P629'
+      })
+      let { entities } = await publicReq('get', url)
+      entities = Object.values(entities)
+      const edition = entities.find(entity => entity.type === 'edition')
+      const work = entities.find(entity => entity.type === 'work')
+      const serie = entities.find(entity => entity.type === 'serie')
+      const author = entities.find(entity => entity.type === 'author')
+      edition.labels.should.be.ok()
+      work.labels.en.should.be.ok()
+      serie.labels.en.should.be.ok()
+      author.labels.en.should.be.ok()
+    })
   })
 
   describe('lang', () => {

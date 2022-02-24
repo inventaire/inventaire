@@ -6,6 +6,7 @@ const sanitization = {
   uris: {},
   attributes: {
     allowlist: [
+      'type',
       'labels',
       'descriptions',
       'claims',
@@ -36,7 +37,7 @@ const sanitization = {
 
 const controller = async ({ uris, attributes, lang, refresh, relatives, autocreate }) => {
   let results = await getEntitiesByUris({ uris, refresh, autocreate })
-  if (relatives) results = addRelatives(results, relatives, refresh)
+  if (relatives) results = await addRelatives(results, relatives, refresh)
   if (attributes) results.entities = pickAttributes(results.entities, attributes, lang)
   return results
 }
