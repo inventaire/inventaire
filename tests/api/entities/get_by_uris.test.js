@@ -1,10 +1,11 @@
 const should = require('should')
-const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
+const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
 
 const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13 } = require('../fixtures/entities')
 const { getByUris, merge, deleteByUris } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 const getWdEntity = require('data/wikidata/get_entity')
+const { buildPath } = require('lib/utils/base')
 
 describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {
@@ -66,6 +67,63 @@ describe('entities:get:by-uris', () => {
     const { entities } = await getByUris(uri)
     const entity = entities[uri]
     entity.uri.should.equal(uri)
+  })
+
+  describe('attributes', () => {
+    it("should return only the requested 'attributes'", async () => {
+      const work = await workWithAuthorPromise
+      const { uri: invWorkUri } = work
+      const invAuthorUri = work.claims['wdt:P50'][0]
+      const wdUri = 'wd:Q2300248'
+      const url = buildPath('/api/entities', {
+        action: 'by-uris',
+        uris: `${invWorkUri}|${invAuthorUri}|${wdUri}`,
+        attributes: 'labels|descriptions',
+      })
+      const { entities } = await publicReq('get', url)
+      entities[invWorkUri].uri.should.be.ok()
+      entities[invAuthorUri].uri.should.be.ok()
+      entities[wdUri].uri.should.be.ok()
+      entities[invWorkUri].labels.should.be.ok()
+      entities[invAuthorUri].labels.should.be.ok()
+      entities[wdUri].labels.should.be.ok()
+      entities[wdUri].descriptions.should.be.ok()
+      should(entities[invWorkUri].claims).not.be.ok()
+      should(entities[invAuthorUri].claims).not.be.ok()
+      should(entities[wdUri].aliases).not.be.ok()
+      should(entities[wdUri].claims).not.be.ok()
+      should(entities[wdUri].sitelinks).not.be.ok()
+    })
+  })
+
+  describe('lang', () => {
+    it('should return only the requested lang', async () => {
+      const wdHumanUri = 'wd:Q2300248'
+      const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo', fr: 'bar' } })
+      const url = buildPath('/api/entities', {
+        action: 'by-uris',
+        uris: `${invHumanUri}|${wdHumanUri}`,
+        attributes: 'labels',
+        lang: 'es'
+      })
+      const { entities } = await publicReq('get', url)
+      Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])
+      entities[invHumanUri].labels.es.should.equal('foo')
+      Object.keys(entities[wdHumanUri].labels).should.deepEqual([ 'es' ])
+    })
+
+    it('should fallback on what is available', async () => {
+      const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo' } })
+      const url = buildPath('/api/entities', {
+        action: 'by-uris',
+        uris: `${invHumanUri}`,
+        attributes: 'labels',
+        lang: 'fr'
+      })
+      const { entities } = await publicReq('get', url)
+      Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])
+      entities[invHumanUri].labels.es.should.equal('foo')
+    })
   })
 
   describe('relatives', () => {

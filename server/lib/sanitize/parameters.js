@@ -202,6 +202,7 @@ module.exports = {
   '@context': allowlistedStrings,
   actor: nonEmptyString,
   attribute: nonEmptyString,
+  attributes: allowlistedStrings,
   bbox: {
     format: value => {
       return JSON.parse(value)
