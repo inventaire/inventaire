@@ -5,6 +5,7 @@ const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
+const randomString = require('lib/utils/random_string')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const assert_ = require('lib/utils/assert_types')
 const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
@@ -108,6 +109,14 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      it('should find a label with single letter words', async () => {
+        const label = randomString(1)
+        const work = await createWork({ labels: { en: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'en', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
       it('should ignore the case', async () => {
         // Insert random words in the middle to mitigate a too low score due to a high term frequency
         // when running the tests several times without emptying the database
@@ -134,6 +143,14 @@ describe('search:entities', () => {
         const firstTwoFlattenedLabelsWords = doc._source.flattenedLabels.split(' ').slice(0, 2).join(' ')
         const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords })
         _.map(results, 'uri').should.containEql('wd:Q8337')
+      })
+
+      it('should find a label with single letter words', async () => {
+        const label = randomString(1)
+        const work = await createWork({ labels: { en: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'en' })
+        _.map(results, 'uri').should.containEql(work.uri)
       })
     })
 

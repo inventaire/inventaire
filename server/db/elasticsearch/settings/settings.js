@@ -9,6 +9,7 @@
 // - Reopen index
 //   curl -XPOST ${elastic_host}/${index_name}/_open
 
+const minNgram = 2
 const maxGram = 10
 
 module.exports = {
@@ -17,12 +18,21 @@ module.exports = {
   // number_of_shards: 1,
   analysis: {
     filter: {
-      // emits N-grams of each word
+      // Emits ege N-grams of each word
       // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/analysis-edgengram-tokenizer.html
-      autocomplete_filter: {
+      edge_ngram: {
         type: 'edge_ngram',
-        min_gram: 2,
-        max_gram: maxGram
+        min_gram: minNgram,
+        max_gram: maxGram,
+      },
+      // Applies the edge_ngram filter to terms above minNgram. Terms below the minNgram
+      // will generate a single unmodified token
+      autocomplete_filter: {
+        type: 'condition',
+        filter: [ 'edge_ngram' ],
+        script: {
+          source: `token.getTerm().length() > ${minNgram}`
+        }
       },
       // An analyzer to apply at search time to match the autocomplete analyzer used at index time
       // See: https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-truncate-tokenfilter.html
