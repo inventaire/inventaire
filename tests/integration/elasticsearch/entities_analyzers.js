@@ -28,6 +28,11 @@ describe('entities analyzers', () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'o', analyzer })
       tokens.should.deepEqual([ 'o' ])
     })
+
+    it('should drop dashes', async () => {
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'foo-bar', analyzer })
+      tokens.should.deepEqual([ 'fo', 'foo', 'ba', 'bar' ])
+    })
   })
 
   describe('standard_truncated', () => {
@@ -56,6 +61,11 @@ describe('entities analyzers', () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'o', analyzer })
       tokens.should.deepEqual([ 'o' ])
     })
+
+    it('should drop dashes', async () => {
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'foo-bar', analyzer })
+      tokens.should.deepEqual([ 'foo', 'bar' ])
+    })
   })
 
   describe('standard_full', () => {
@@ -83,6 +93,11 @@ describe('entities analyzers', () => {
     it('should generate a single letter token', async () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'o', analyzer })
       tokens.should.deepEqual([ 'o' ])
+    })
+
+    it('should drop dashes', async () => {
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'foo-bar', analyzer })
+      tokens.should.deepEqual([ 'foo', 'bar' ])
     })
   })
 })
