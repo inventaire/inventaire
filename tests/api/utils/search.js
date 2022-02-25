@@ -31,6 +31,23 @@ const getIndexedDoc = async (index, id, options = {}) => {
   }
 }
 
+const getAnalyze = async ({ indexBaseName, text, analyzer }) => {
+  assert_.string(indexBaseName)
+  assert_.string(text)
+  assert_.string(analyzer)
+  const index = indexesNamesByBaseNames[indexBaseName]
+  const url = `${elasticHost}/${index}/_analyze`
+  const { body } = await rawRequest('post', url, {
+    body: { text, analyzer }
+  })
+  return JSON.parse(body)
+}
+
+const getAnalyzedTokens = async ({ indexBaseName, text, analyzer }) => {
+  const analyze = await getAnalyze({ indexBaseName, text, analyzer })
+  return _.map(analyze.tokens, 'token')
+}
+
 const waitForIndexation = async (indexBaseName, id) => {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
@@ -66,6 +83,9 @@ module.exports = {
   },
 
   getIndexedDoc,
+
+  getAnalyze,
+  getAnalyzedTokens,
 
   waitForIndexation,
 
