@@ -135,6 +135,26 @@ describe('search:entities', () => {
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
         _.map(results, 'uri').should.containEql(work.uri)
       })
+
+      it('should favor matches in the requested language', async () => {
+        const label = randomWords(2)
+        const [ workEs, workFr ] = await Promise.all([
+          createWork({ labels: { es: label } }),
+          createWork({ labels: { fr: label } }),
+        ])
+        await Promise.all([
+          waitForIndexation('entities', workEs._id),
+          waitForIndexation('entities', workFr._id),
+        ])
+        const [ resultsEs, resultsFr ] = await Promise.all([
+          search({ types: 'works', search: label, lang: 'es', exact: true }),
+          search({ types: 'works', search: label, lang: 'fr', exact: true }),
+        ])
+        const resultsEsUris = _.map(resultsEs, 'uri')
+        const resultsFrUris = _.map(resultsFr, 'uri')
+        resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
+        resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
+      })
     })
 
     describe('not exact', () => {
@@ -151,6 +171,26 @@ describe('search:entities', () => {
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en' })
         _.map(results, 'uri').should.containEql(work.uri)
+      })
+
+      it('should favor matches in the requested language', async () => {
+        const label = randomWords(2)
+        const [ workEs, workFr ] = await Promise.all([
+          createWork({ labels: { es: label } }),
+          createWork({ labels: { fr: label } }),
+        ])
+        await Promise.all([
+          waitForIndexation('entities', workEs._id),
+          waitForIndexation('entities', workFr._id),
+        ])
+        const [ resultsEs, resultsFr ] = await Promise.all([
+          search({ types: 'works', search: label, lang: 'es' }),
+          search({ types: 'works', search: label, lang: 'fr' }),
+        ])
+        const resultsEsUris = _.map(resultsEs, 'uri')
+        const resultsFrUris = _.map(resultsFr, 'uri')
+        resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
+        resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
       })
     })
 
