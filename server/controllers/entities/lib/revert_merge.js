@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const entities_ = require('./entities')
-const patches_ = require('./patches')
+const patches_ = require('./patches/patches')
 const placeholders_ = require('./placeholders')
 const updateItemEntity = require('controllers/items/lib/update_entity')
 const { revertFromPatchDoc } = require('./revert_edit')

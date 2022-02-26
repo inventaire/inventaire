@@ -1,5 +1,5 @@
 // An endpoint to list entities edits made by a user
-const { byUserId, byDate, byUserIdAndFilter } = require('./lib/patches')
+const { byUserId, byDate, byUserIdAndFilter } = require('./lib/patches/patches')
 const error_ = require('lib/error/error')
 const { isPropertyUri, isLang } = require('lib/boolean_validations')
 const user_ = require('controllers/user/lib/user')

@@ -84,7 +84,9 @@ const entitiesUtils = module.exports = {
   },
 
   addClaim: (uri, property, newValue) => entitiesUtils.updateClaim({ uri, property, newValue }),
-  removeClaim: (uri, property, oldValue) => entitiesUtils.updateClaim({ uri, property, oldValue }),
+  removeClaim: ({ user, uri, property, value }) => {
+    return entitiesUtils.updateClaim({ user, uri, property, oldValue: value })
+  },
 
   getRefreshedPopularityByUris: uris => {
     if (_.isArray(uris)) { uris = uris.join('|') }
@@ -96,14 +98,20 @@ const entitiesUtils = module.exports = {
     .then(res => res.scores[uri])
   },
 
-  revertEdit: patchId => {
+  revertEdit: async ({ patchId, user }) => {
     assert_.string(patchId)
-    return authReq('put', '/api/entities?action=revert-edit', { patch: patchId })
+    user = user || getUser()
+    return customAuthReq(user, 'put', '/api/entities?action=revert-edit', {
+      patch: patchId
+    })
   },
 
-  restoreVersion: patchId => {
+  restoreVersion: async ({ patchId, user }) => {
     assert_.string(patchId)
-    return authReq('put', '/api/entities?action=restore-version', { patch: patchId })
+    user = user || getUser()
+    return customAuthReq(user, 'put', '/api/entities?action=restore-version', {
+      patch: patchId
+    })
   },
 }
 

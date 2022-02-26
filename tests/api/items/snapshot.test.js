@@ -233,7 +233,7 @@ describe('items:snapshot', () => {
       await updateLabel({ uri: human.uri, lang: humanLabelLang, value: 'foo' })
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
-      await revertEdit(`${human._id}:3`)
+      await revertEdit({ patchId: `${human._id}:3` })
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
     })

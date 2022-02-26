@@ -13,7 +13,7 @@ describe('entities:create:collections', () => {
     const { uri: collectionUri, claims } = await createCollection()
     const publisherUri = claims['wdt:P123'][0]
     try {
-      await removeClaim(collectionUri, 'wdt:P123', publisherUri).then(shouldNotBeCalled)
+      await removeClaim({ uri: collectionUri, property: 'wdt:P123', value: publisherUri }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)
@@ -25,7 +25,7 @@ describe('entities:create:collections', () => {
     const { uri: collectionUri, claims } = await createCollection()
     const title = claims['wdt:P1476'][0]
     try {
-      await removeClaim(collectionUri, 'wdt:P1476', title).then(shouldNotBeCalled)
+      await removeClaim({ uri: collectionUri, property: 'wdt:P1476', value: title }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.statusCode.should.equal(400)

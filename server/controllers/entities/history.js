@@ -1,5 +1,5 @@
 // An endpoint to get entities history as snapshots and diffs
-const patches_ = require('./lib/patches')
+const patches_ = require('./lib/patches/patches')
 const { hasAdminAccess } = require('lib/user_access_levels')
 const anonymizePatches = require('./lib/anonymize_patches')
 

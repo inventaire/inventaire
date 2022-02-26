@@ -4,7 +4,7 @@ const formatShelfItemsActivities = require('./lib/format_shelf_items_activities'
 const { isEntityActivityId } = require('./lib/helpers')
 const { isCouchUuid } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')
-const patches_ = require('controllers/entities/lib/patches')
+const patches_ = require('controllers/entities/lib/patches/patches')
 const { getActivitiesFromPatch } = require('./lib/entity_patch_activities')
 const { validateShelf, validateUser } = require('./lib/validations')
 

@@ -2,7 +2,6 @@ const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const db = require('db/couchdb/base')('entities')
 const Entity = require('models/entity')
-const patches_ = require('./patches')
 const isbn_ = require('lib/isbn/isbn')
 const couch_ = require('lib/couch')
 const validateAndFormatClaims = require('./validate_and_format_claims')
@@ -12,6 +11,7 @@ const { getUrlFromImageHash } = require('lib/images')
 const { emit } = require('lib/radio')
 
 const { validateProperty } = require('./properties/validations')
+const createPatch = require('./patches/create_patch')
 
 const entities_ = module.exports = {
   byId: db.get,
@@ -93,8 +93,8 @@ const entities_ = module.exports = {
     }
 
     try {
-      const patch = await patches_.create(params)
-      await emit('patch:created', patch)
+      const patch = await createPatch(params)
+      if (patch) await emit('patch:created', patch)
     } catch (err) {
       err.type = 'patch_creation_failed'
       err.context = err.context || {}

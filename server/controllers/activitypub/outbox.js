@@ -4,7 +4,7 @@ const { makeUrl, getEntityUriFromActorName } = require('./lib/helpers')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const patches_ = require('controllers/entities/lib/patches')
+const patches_ = require('controllers/entities/lib/patches/patches')
 const formatEntityPatchesActivities = require('./lib/format_entity_patches_activities')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
 
