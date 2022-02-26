@@ -1,7 +1,7 @@
 const { emit } = require('lib/radio')
 const Patch = require('models/patch')
 const entities_ = require('./entities')
-const patches_ = require('./patches')
+const patches_ = require('./patches/patches')
 const validateEntity = require('./validate_entity')
 
 module.exports = async (patchId, userId) => {

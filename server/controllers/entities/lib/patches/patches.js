@@ -62,28 +62,6 @@ const patches_ = module.exports = {
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
 
-  create: async params => {
-    const { currentDoc, updatedDoc, userId } = params
-    const newPatch = Patch.create(params)
-    if (currentDoc.version > 1) {
-      const [ previousPatch ] = await patches_.getLastPatches(currentDoc._id)
-      if (previousPatch && previousPatch.user === userId) {
-        const beforeLastPatch = Patch.revert(currentDoc, previousPatch)
-        const aggregatedPatch = Patch.getDiff(beforeLastPatch, updatedDoc)
-        if (previousPatch.context == null && previousPatch.batch == null) {
-          if (aggregatedPatch.length === 0) {
-            await db.delete(previousPatch._id, previousPatch._rev)
-            return
-          } else if (aggregatedPatch.length < (previousPatch.patch.length + newPatch.patch.length)) {
-            previousPatch.patch = aggregatedPatch
-            return db.putAndReturn(previousPatch)
-          }
-        }
-      }
-    }
-    return db.postAndReturn(newPatch)
-  },
-
   getLastPatches: async (entityId, length = 1) => {
     return db.viewCustom('byEntityId', {
       keys: [ entityId ],
