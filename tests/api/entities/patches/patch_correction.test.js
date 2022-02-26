@@ -51,12 +51,30 @@ describe('patch correction', () => {
       patches.length.should.equal(1)
     })
 
+    it('should not delete a patch when another user deletes the claim', async () => {
+      const [ userA, userB ] = await Promise.all([ getUserA(), getUserB() ])
+      const edition = await createEdition()
+      await updateClaim({ user: userA, uri: edition.uri, property: 'wdt:P1104', newValue: 5 })
+      await removeClaim({ user: userB, uri: edition.uri, property: 'wdt:P1104', value: 5 })
+      const patches = await getHistory(edition.uri)
+      patches.length.should.equal(3)
+    })
+
     it('should delete a patch when the same user reverts a claim', async () => {
       const edition = await createEdition()
       await updateClaim({ uri: edition.uri, property: 'wdt:P1104', newValue: 5 })
-      await revertEdit(`${edition._id}:3`)
+      await revertEdit({ patchId: `${edition._id}:3` })
       const patches = await getHistory(edition.uri)
       patches.length.should.equal(1)
+    })
+
+    it('should not delete a patch when another user reverts a claim', async () => {
+      const [ userA, userB ] = await Promise.all([ getUserA(), getUserB() ])
+      const edition = await createEdition()
+      await updateClaim({ user: userA, uri: edition.uri, property: 'wdt:P1104', newValue: 5 })
+      await revertEdit({ user: userB, patchId: `${edition._id}:3` })
+      const patches = await getHistory(edition.uri)
+      patches.length.should.equal(3)
     })
   })
 })

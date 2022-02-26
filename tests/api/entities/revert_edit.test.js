@@ -10,7 +10,7 @@ describe('entities:revert-edit', () => {
     const label = randomString(6)
     await updateLabel({ uri, lang: 'es', value: label })
     const lastPatchId = await getLastPatchId(uri)
-    const res = await revertEdit(lastPatchId)
+    const res = await revertEdit({ patchId: lastPatchId })
     res.should.be.ok()
     const work = await getByUri(uri)
     should(work.labels.es).not.be.ok()
@@ -20,7 +20,7 @@ describe('entities:revert-edit', () => {
     const { uri } = await createWork()
     await addClaim(uri, 'wdt:P50', 'wd:Q1174579')
     const lastPatchId = await getLastPatchId(uri)
-    const res = await revertEdit(lastPatchId)
+    const res = await revertEdit({ patchId: lastPatchId })
     res.should.be.ok()
     const work = await getByUri(uri)
     should(work.claims['wdt:P50']).not.be.ok()
@@ -29,7 +29,7 @@ describe('entities:revert-edit', () => {
   it('should reject reverts that would make P31 empty', async () => {
     const { uri } = await createWork()
     const lastPatchId = await getLastPatchId(uri)
-    await revertEdit(lastPatchId)
+    await revertEdit({ patchId: lastPatchId })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -43,7 +43,7 @@ describe('entities:revert-edit', () => {
     const invUri = `inv:${_id}`
     await addClaim(invUri, 'wdt:P2635', 123)
     const lastPatchId = await getLastPatchId(invUri)
-    const res = await revertEdit(lastPatchId)
+    const res = await revertEdit({ patchId: lastPatchId })
     res.should.be.ok()
     const work = await getByUri(uri)
     should(work.claims['wdt:P2635']).not.be.ok()
