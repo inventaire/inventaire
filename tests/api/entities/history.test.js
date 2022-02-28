@@ -1,5 +1,5 @@
 const should = require('should')
-const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
+const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled, getReservedUser } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
 const { deleteByUris } = require('../utils/entities')
@@ -74,6 +74,21 @@ describe('entities:history', () => {
       value: 'foo'
     })
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
+    should(patches[0].user).not.be.ok()
+    patches[1].user.should.equal(user._id)
+  })
+
+  it('should not anonymize patches when the author is the requesting user', async () => {
+    const [ user, human ] = await Promise.all([
+      getReservedUser(),
+      createHuman()
+    ])
+    await customAuthReq(user, 'put', '/api/entities?action=update-label', {
+      uri: human.uri,
+      lang: 'es',
+      value: 'foo'
+    })
+    const { patches } = await customAuthReq(user, 'get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()
     patches[1].user.should.equal(user._id)
   })

@@ -8,9 +8,9 @@ const sanitization = {
 }
 
 const controller = async (params, req) => {
-  const { id } = params
+  const { id, reqUserId } = params
   const patches = await patches_.getWithSnapshots(id)
-  if (!hasAdminAccess(req.user)) await anonymizePatches(patches)
+  if (!hasAdminAccess(req.user)) await anonymizePatches({ patches, reqUserId })
   return { patches }
 }
 

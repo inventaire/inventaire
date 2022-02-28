@@ -18,7 +18,7 @@ const sanitization = {
 }
 
 const controller = async (params, req) => {
-  const { userId, limit, offset, filter } = params
+  const { userId, limit, offset, filter, reqUserId } = params
   const reqUserHasAdminAccess = hasAdminAccess(req.user)
 
   if (filter != null && !(isPropertyUri(filter) || isLang(filter))) {
@@ -28,7 +28,8 @@ const controller = async (params, req) => {
   if (userId != null && !reqUserHasAdminAccess) await checkPublicContributionsStatus(userId)
 
   const patchesPage = await getPatchesPage({ userId, limit, offset, reqUserHasAdminAccess, filter })
-  if (!reqUserHasAdminAccess) await anonymizePatches(patchesPage.patches)
+  const { patches } = patchesPage
+  if (!reqUserHasAdminAccess) await anonymizePatches({ patches, reqUserId })
 
   return patchesPage
 }
