@@ -5,8 +5,11 @@ describe('entities analyzers', () => {
   describe('autocomplete', () => {
     const analyzer = 'autocomplete'
     it('should generate edge-ngrams tokens', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles', analyzer })
-      tokens.should.deepEqual([ 'ch', 'cha', 'char', 'charl', 'charle', 'charles' ])
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles dickens', analyzer })
+      tokens.should.deepEqual([
+        'ch', 'cha', 'char', 'charl', 'charle', 'charles',
+        'di', 'dic', 'dick', 'dicke', 'dicken', 'dickens',
+      ])
     })
 
     it('should generate lowercased tokens', async () => {
