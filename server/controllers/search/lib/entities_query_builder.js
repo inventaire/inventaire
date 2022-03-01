@@ -88,8 +88,8 @@ const exactMatchEntitiesFields = userLang => {
   ]
   if (userLang) {
     fields.push(
-      `fullLabels.${userLang}^2`,
-      `fullAliases.${userLang}`
+      `fullLabels.${userLang}^4`,
+      `fullAliases.${userLang}^2`
     )
   }
   return fields
@@ -107,8 +107,8 @@ const autoCompleteEntitiesFields = userLang => {
   ]
   if (userLang) {
     fields.push(
-      `labels.${userLang}^2`,
-      `aliases.${userLang}`
+      `labels.${userLang}^4`,
+      `aliases.${userLang}^2`
     )
   }
   return fields
