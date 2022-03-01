@@ -1,5 +1,5 @@
 require('should')
-const { publicReq, authReq, adminReq, dataadminReq, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled } = require('../utils/utils')
+const { publicReq, authReq, adminReq, dataadminReq, getUserA, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled, customAuthReq } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 
 describe('roles:public', () => {
@@ -23,11 +23,12 @@ describe('roles:public', () => {
 describe('roles:authentified', () => {
   it('should not access private resources from another user', async () => {
     try {
-      const endpoint = '/api/entities?action=contributions'
-      await authReq('get', endpoint).then(shouldNotBeCalled)
+      const [ userA, userB ] = await Promise.all([ getUserA(), getUserB() ])
+      const endpoint = `/api/entities?action=contributions&user=${userB._id}`
+      await customAuthReq(userA, 'get', endpoint).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('unauthorized api access')
+      err.body.status_verbose.should.equal('non-public contributions')
       err.statusCode.should.equal(403)
     }
   })

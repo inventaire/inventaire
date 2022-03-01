@@ -24,9 +24,10 @@ const API = module.exports = {
 
   // Create users only if needed by the current test suite
   getUser: getUserGetter('a'),
-  getUserId: () => API.getUser().then(({ _id }) => _id),
+  getUserA: getUserGetter('a'),
   getUserB: getUserGetter('b'),
   getUserC: getUserGetter('c'),
+  getUserId: () => API.getUser().then(({ _id }) => _id),
   getFediversableUser: getUserGetter(null, null, { fediversable: true }),
   getAdminUser: getUserGetter('admin', 'admin'),
   getDataadminUser: getUserGetter('dataadmin', 'dataadmin'),
