@@ -5,8 +5,11 @@ const { randomLongWord, randomWords } = require('../fixtures/text')
 const { getByUris } = require('../utils/entities')
 const { shouldNotBeCalled } = require('../utils/utils')
 const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
+const randomString = require('lib/utils/random_string')
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.autocomplete_filter
+const assert_ = require('lib/utils/assert_types')
+const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
+assert_.number(maxGram)
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher
@@ -35,6 +38,19 @@ describe('search:entities', () => {
 
   describe('parameters', () => {
     describe('exact', () => {
+      it('should return results that contains the exact searched words', async () => {
+        const humanLabel = human.labels.en
+        const results = await search({ types: 'humans', search: humanLabel, exact: true })
+        _.map(results, 'uri').should.containEql(human.uri)
+      })
+
+      it('should not return results that do not contain the exact searched words', async () => {
+        const humanLabel = human.labels.en
+        const humanLabelWithoutLastLetter = humanLabel.slice(0, -1)
+        const results = await search({ types: 'humans', search: humanLabelWithoutLastLetter, exact: true })
+        _.map(results, 'uri').should.not.containEql(human.uri)
+      })
+
       it('should reject types that are not entity related', async () => {
         try {
           await search({ types: [ 'groups', 'users' ], search: 'foo', exact: true }).then(shouldNotBeCalled)
@@ -44,10 +60,6 @@ describe('search:entities', () => {
         }
       })
 
-      // Ex: when requesting 'Myron Howe', 'Myron W Howe' will be considered an exact match
-      // This test might occasionnally fail as the current implementation uses an edge_ngram analyzer
-      // at indexation, leading to subparts of terms being considered a match.
-      // Ex: an exact search for "Charles Ben" will find "Charles Bent" as one of its generated tokens is "Ben"
       it('should return only results including exact matches of each words', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
@@ -99,6 +111,14 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      it('should find a label with single letter words', async () => {
+        const label = randomString(1)
+        const work = await createWork({ labels: { en: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'en', exact: true })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
       it('should ignore the case', async () => {
         // Insert random words in the middle to mitigate a too low score due to a high term frequency
         // when running the tests several times without emptying the database
@@ -117,6 +137,26 @@ describe('search:entities', () => {
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
         _.map(results, 'uri').should.containEql(work.uri)
       })
+
+      it('should favor matches in the requested language', async () => {
+        const label = randomWords(2)
+        const [ workEs, workFr ] = await Promise.all([
+          createWork({ labels: { es: label } }),
+          createWork({ labels: { fr: label } }),
+        ])
+        await Promise.all([
+          waitForIndexation('entities', workEs._id),
+          waitForIndexation('entities', workFr._id),
+        ])
+        const [ resultsEs, resultsFr ] = await Promise.all([
+          search({ types: 'works', search: label, lang: 'es', exact: true }),
+          search({ types: 'works', search: label, lang: 'fr', exact: true }),
+        ])
+        const resultsEsUris = _.map(resultsEs, 'uri')
+        const resultsFrUris = _.map(resultsFr, 'uri')
+        resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
+        resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
+      })
     })
 
     describe('not exact', () => {
@@ -125,6 +165,34 @@ describe('search:entities', () => {
         const firstTwoFlattenedLabelsWords = doc._source.flattenedLabels.split(' ').slice(0, 2).join(' ')
         const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords })
         _.map(results, 'uri').should.containEql('wd:Q8337')
+      })
+
+      it('should find a label with single letter words', async () => {
+        const label = randomString(1)
+        const work = await createWork({ labels: { en: label } })
+        await waitForIndexation('entities', work._id)
+        const results = await search({ types: 'works', search: label, lang: 'en' })
+        _.map(results, 'uri').should.containEql(work.uri)
+      })
+
+      it('should favor matches in the requested language', async () => {
+        const label = randomWords(2)
+        const [ workEs, workFr ] = await Promise.all([
+          createWork({ labels: { es: label } }),
+          createWork({ labels: { fr: label } }),
+        ])
+        await Promise.all([
+          waitForIndexation('entities', workEs._id),
+          waitForIndexation('entities', workFr._id),
+        ])
+        const [ resultsEs, resultsFr ] = await Promise.all([
+          search({ types: 'works', search: label, lang: 'es' }),
+          search({ types: 'works', search: label, lang: 'fr' }),
+        ])
+        const resultsEsUris = _.map(resultsEs, 'uri')
+        const resultsFrUris = _.map(resultsFr, 'uri')
+        resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
+        resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
       })
     })
 
