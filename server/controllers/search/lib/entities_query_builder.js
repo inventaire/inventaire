@@ -19,11 +19,7 @@ module.exports = params => {
 
   if (!search) minScore = 0
 
-  // In case a claim alone is searched
-  const shoulds = []
-  if (search != null) {
-    shoulds.push(matchEntities(search, userLang, exact, safe))
-  }
+  const shoulds = matchEntities(search, userLang, exact, safe)
 
   return {
     query: {
@@ -52,18 +48,22 @@ module.exports = params => {
 }
 
 const matchEntities = (search, userLang, exact, safe) => {
-  if (exact) {
-    return {
-      multi_match: {
-        query: search,
-        operator: 'and',
-        fields: exactMatchEntitiesFields(userLang),
-        analyzer: 'standard_full',
-        type: 'best_fields',
-      }
+  const shoulds = []
+  if (search == null) return shoulds
+
+  shoulds.push({
+    multi_match: {
+      query: search,
+      operator: 'and',
+      fields: exactMatchEntitiesFields(userLang),
+      analyzer: 'standard_full',
+      type: 'best_fields',
+      boost: 3,
     }
-  } else {
-    return {
+  })
+
+  if (!exact) {
+    shoulds.push({
       multi_match: {
         query: search,
         operator: 'or',
@@ -75,8 +75,10 @@ const matchEntities = (search, userLang, exact, safe) => {
         // that is, with best_fields instead of cross_fields
         type: safe ? 'best_fields' : 'cross_fields',
       }
-    }
+    })
   }
+
+  return shoulds
 }
 
 const exactMatchEntitiesFields = userLang => {
