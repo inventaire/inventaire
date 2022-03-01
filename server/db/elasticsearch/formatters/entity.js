@@ -22,7 +22,7 @@ module.exports = async (entity, options = {}) => {
 
   let { claims, type } = entity
 
-  if (isRawWikidataClaims(claims)) {
+  if (claims != null && isRawWikidataClaims(claims)) {
     claims = formatClaims(claims)
   }
 
