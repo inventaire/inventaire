@@ -33,8 +33,8 @@ describe('entities:publisher-publications', () => {
       createCollection()
     ])
     await Promise.all([
-      addClaim(collection.uri, 'wdt:P123', publisherUri),
-      addClaim(editionA.uri, 'wdt:P195', collection.uri)
+      addClaim({ uri: collection.uri, property: 'wdt:P123', value: publisherUri }),
+      addClaim({ uri: editionA.uri, property: 'wdt:P195', value: collection.uri })
     ])
     const { collections, editions } = await publicReq('get', `${endpoint}&uri=${publisherUri}`)
     collections.should.deepEqual([ { uri: collection.uri } ])

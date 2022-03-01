@@ -53,7 +53,7 @@ describe('entities:revert-merge', () => {
       createWork(),
       createHuman()
     ])
-    await addClaim(workA.uri, 'wdt:P50', author.uri)
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: author.uri })
     await merge(workA.uri, workB.uri)
     const res = await getByUris(workB.uri)
     const authorsUris = res.entities[workB.uri].claims['wdt:P50']
@@ -85,13 +85,13 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createHuman()
     ])
-    await addClaim(workA.uri, 'wdt:P50', authorA.uri)
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: authorA.uri })
     await merge(workA.uri, workB.uri)
     const res = await getByUris(workB.uri)
     const authorsUris = res.entities[workB.uri].claims['wdt:P50']
     authorsUris.should.deepEqual([ authorA.uri ])
     // Make another edit between the merge and the revert-merge
-    await addClaim(workB.uri, 'wdt:P50', authorB.uri)
+    await addClaim({ uri: workB.uri, property: 'wdt:P50', value: authorB.uri })
     await revertMerge(workA.uri)
     const res2 = await getByUris(workB.uri)
     const authorsUris2 = res2.entities[workB.uri].claims['wdt:P50']
@@ -121,7 +121,7 @@ describe('entities:revert-merge', () => {
       createHuman(),
       createWork()
     ])
-    await addClaim(work.uri, 'wdt:P50', humanA.uri)
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanA.uri })
     await merge(humanA.uri, humanB.uri)
     await revertMerge(humanA.uri)
     const res = await getByUris(work.uri)

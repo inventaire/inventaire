@@ -184,7 +184,7 @@ const addEntityClaim = (createFnName, property) => async (subjectEntity, objectE
     entity = await API[createFnName]()
     objectUri = entity.uri
   }
-  await addClaim(subjectUri, property, objectUri)
+  await addClaim({ uri: subjectUri, property, value: objectUri })
   return entity
 }
 

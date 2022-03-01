@@ -74,7 +74,7 @@ describe('items:export', () => {
       const edition = await createEdition({ lang: 'fr' })
       const workUri = edition.claims['wdt:P629'][0]
       const work = await getByUri(workUri)
-      await addClaim(work.uri, 'wdt:P407', edition.claims['wdt:P407'][0])
+      await addClaim({ uri: work.uri, property: 'wdt:P407', value: edition.claims['wdt:P407'][0] })
 
       const item = await createItem(user, { entity: edition.uri })
 
@@ -106,7 +106,7 @@ describe('items:export', () => {
       const edition = await createEditionWithWorkAuthorAndSerie()
       const translator = await addTranslator(edition)
       const translatorLabel = parseLabel(translator)
-      await addClaim(edition.uri, 'wdt:P1104', 10)
+      await addClaim({ uri: edition.uri, property: 'wdt:P1104', value: 10 })
       const workUri = edition.claims['wdt:P629'][0]
       const publisherUri = edition.claims['wdt:P123'][0]
       const publicationDate = edition.claims['wdt:P577'][0]
@@ -114,9 +114,9 @@ describe('items:export', () => {
       const authorUri = work.claims['wdt:P50'][0]
       const serieUri = work.claims['wdt:P179'][0]
       await Promise.all([
-        addClaim(work.uri, 'wdt:P921', subjectUri),
-        addClaim(work.uri, 'wdt:P136', genresUris[0]),
-        addClaim(work.uri, 'wdt:P136', genresUris[1])
+        addClaim({ uri: work.uri, property: 'wdt:P921', value: subjectUri }),
+        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[0] }),
+        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[1] })
       ])
       const item = await createItem(userPromise, { entity: edition.uri })
 

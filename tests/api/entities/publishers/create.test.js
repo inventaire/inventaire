@@ -14,7 +14,7 @@ describe('entities:create:publishers', () => {
     const publisher = await createPublisher()
     const newValue = `inv:${publisher._id}`
     const property = 'wdt:P123'
-    const res = await addClaim(editionUri, property, newValue)
+    const res = await addClaim({ uri: editionUri, property, value: newValue })
     res.ok.should.be.true()
   })
 })

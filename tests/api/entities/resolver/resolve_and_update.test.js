@@ -29,8 +29,8 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     const work = await createWork()
-    await addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)
-    await addClaim(work.uri, 'wdt:P50', authorUri2)
+    await addClaim({ uri: work.uri, property: 'wdt:P1085', value: libraryThingsWorkId })
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: authorUri2 })
     const { entries } = await resolveAndUpdate(entry)
     const entityUri = entries[0].works[0].uri
     const { claims } = await getByUri(entityUri)
@@ -44,8 +44,8 @@ describe('entities:resolver:update-resolved', () => {
     const libraryThingsWorkIdB = entryB.works[0].claims['wdt:P1085'][0]
     const [ workA, workB ] = await Promise.all([ createWork(), createWork() ])
     await Promise.all([
-      addClaim(workA.uri, 'wdt:P1085', libraryThingsWorkIdA),
-      addClaim(workB.uri, 'wdt:P1085', libraryThingsWorkIdB)
+      addClaim({ uri: workA.uri, property: 'wdt:P1085', value: libraryThingsWorkIdA }),
+      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB })
     ])
     const { entries } = await resolveAndUpdate([ entryA, entryB ])
     const workAUri = entries[0].works[0].uri
@@ -71,7 +71,7 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     const human = await createHuman()
-    await addClaim(human.uri, 'wdt:P2963', goodReadsId)
+    await addClaim({ uri: human.uri, property: 'wdt:P2963', value: goodReadsId })
     const { entries } = await resolveAndUpdate(entry)
     const authorUri = entries[0].authors[0].uri
     authorUri.should.equal(human.uri)
@@ -158,8 +158,8 @@ describe('entities:resolver:update-resolved', () => {
     const libraryThingsWorkIdB = entryB.works[0].claims['wdt:P1085'][0]
     const [ workA, workB ] = await Promise.all([ createWork(), createWork() ])
     await Promise.all([
-      addClaim(workA.uri, 'wdt:P1085', libraryThingsWorkIdA),
-      addClaim(workB.uri, 'wdt:P1085', libraryThingsWorkIdB)
+      addClaim({ uri: workA.uri, property: 'wdt:P1085', value: libraryThingsWorkIdA }),
+      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB })
     ])
     await resolveAndUpdate([ entryA, entryB ])
     const [ workAPatches, workBPatches ] = await Promise.all([
@@ -261,8 +261,8 @@ describe('entities:resolver:update-resolved', () => {
       ]
     }
     const human = await createHuman()
-    await addClaim(human.uri, 'wdt:P2963', goodReadsId)
-    await addClaim(human.uri, 'wdt:P569', entityDate)
+    await addClaim({ uri: human.uri, property: 'wdt:P2963', value: goodReadsId })
+    await addClaim({ uri: human.uri, property: 'wdt:P569', value: entityDate })
     const { entries } = await resolveAndUpdate(entry)
     const authorUri = entries[0].authors[0].uri
     const { claims } = await getByUri(authorUri)

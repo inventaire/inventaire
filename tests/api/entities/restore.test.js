@@ -20,8 +20,8 @@ describe('entities:restore', () => {
 
   it('should restore after claim update', async () => {
     const { uri } = await createWork({ claims: { 'wdt:P50': [ 'wd:Q1174579' ] } })
-    await addClaim(uri, 'wdt:P921', 'wd:Q3196867')
-    await addClaim(uri, 'wdt:P50', 'wd:Q216092')
+    await addClaim({ uri, property: 'wdt:P921', value: 'wd:Q3196867' })
+    await addClaim({ uri, property: 'wdt:P50', value: 'wd:Q216092' })
     const firstVersionPatchId = `${uri.split(':')[1]}:2`
     const res = await restoreVersion(firstVersionPatchId)
     res.should.be.ok()

@@ -83,7 +83,9 @@ const entitiesUtils = module.exports = {
     return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
   },
 
-  addClaim: (uri, property, newValue) => entitiesUtils.updateClaim({ uri, property, newValue }),
+  addClaim: ({ user, uri, property, value }) => {
+    return entitiesUtils.updateClaim({ user, uri, property, newValue: value })
+  },
   removeClaim: ({ user, uri, property, value }) => {
     return entitiesUtils.updateClaim({ user, uri, property, oldValue: value })
   },

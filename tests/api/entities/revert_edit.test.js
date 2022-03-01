@@ -18,7 +18,7 @@ describe('entities:revert-edit', () => {
 
   it('should revert a claim update', async () => {
     const { uri } = await createWork()
-    await addClaim(uri, 'wdt:P50', 'wd:Q1174579')
+    await addClaim({ uri, property: 'wdt:P50', value: 'wd:Q1174579' })
     const lastPatchId = await getLastPatchId(uri)
     const res = await revertEdit({ patchId: lastPatchId })
     res.should.be.ok()
@@ -41,7 +41,7 @@ describe('entities:revert-edit', () => {
     // Sets wdt:P212, which should be a unique value
     const { uri, _id } = await createEditionWithIsbn()
     const invUri = `inv:${_id}`
-    await addClaim(invUri, 'wdt:P2635', 123)
+    await addClaim({ uri: invUri, property: 'wdt:P2635', value: 123 })
     const lastPatchId = await getLastPatchId(invUri)
     const res = await revertEdit({ patchId: lastPatchId })
     res.should.be.ok()

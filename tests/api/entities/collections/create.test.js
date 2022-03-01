@@ -36,7 +36,7 @@ describe('entities:create:collections', () => {
   it('should update an edition claim with a local collection entity', async () => {
     const { uri: editionUri } = await createEdition()
     const { uri: collectionUri } = await createCollection()
-    const res = await addClaim(editionUri, 'wdt:P195', collectionUri)
+    const res = await addClaim({ uri: editionUri, property: 'wdt:P195', value: collectionUri })
     res.ok.should.be.true()
   })
 })

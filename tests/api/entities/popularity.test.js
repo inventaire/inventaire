@@ -83,7 +83,7 @@ const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
   ])
   const [ edition ] = await Promise.all([
     createEdition({ work }),
-    addClaim(work.uri, 'wdt:P179', serie.uri)
+    addClaim({ uri: work.uri, property: 'wdt:P179', value: serie.uri })
   ])
   const item = await createItemFromEntityUri({
     uri: edition.uri,
@@ -95,8 +95,8 @@ const createHumanWithAWorkWithAnEditionWithAnItem = async () => {
   const human = await createHuman()
   const [ serie, work, edition, item ] = await createSerieWithAWorkWithAnEditionWithAnItem()
   await Promise.all([
-    addClaim(work.uri, 'wdt:P50', human.uri),
-    addClaim(serie.uri, 'wdt:P50', human.uri)
+    addClaim({ uri: work.uri, property: 'wdt:P50', value: human.uri }),
+    addClaim({ uri: serie.uri, property: 'wdt:P50', value: human.uri })
   ])
   return [ human, serie, work, edition, item ]
 }

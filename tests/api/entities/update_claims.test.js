@@ -69,7 +69,7 @@ describe('entities:update-claims', () => {
   it('should reject an update with an inappropriate property', async () => {
     const work = await createWork()
     // A work entity should not have pages count
-    await addClaim(work.uri, 'wdt:P1104', 124)
+    await addClaim({ uri: work.uri, property: 'wdt:P1104', value: 124 })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
@@ -79,7 +79,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an update with an inappropriate property datatype', async () => {
     const work = await createWork()
-    await addClaim(work.uri, 'wdt:P50', 124)
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: 124 })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid value type: expected string, got number')
@@ -90,7 +90,7 @@ describe('entities:update-claims', () => {
   it('should reject adding an extra value to a property that accepts only one value', async () => {
     const edition = await createEdition()
     // An edition entity should have only one date of publication
-    await addClaim(edition.uri, 'wdt:P577', '2010')
+    await addClaim({ uri: edition.uri, property: 'wdt:P577', value: '2010' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('this property accepts only one value')
@@ -100,7 +100,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an update with an invalid property value', async () => {
     const edition = await createEdition()
-    await addClaim(edition.uri, 'wdt:P123', 'not an entity uri')
+    await addClaim({ uri: edition.uri, property: 'wdt:P123', value: 'not an entity uri' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid property value')
@@ -132,7 +132,7 @@ describe('entities:update-claims', () => {
 
   it('should reject an update on an unexisting claim (property with claims)', async () => {
     const edition = await createEdition()
-    await addClaim(edition.uri, 'wdt:P655', 'wd:Q535')
+    await addClaim({ uri: edition.uri, property: 'wdt:P655', value: 'wd:Q535' })
     await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q23', newValue: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -147,7 +147,7 @@ describe('entities:update-claims', () => {
       createWork()
     ])
     await merge(workA.uri, workB.uri)
-    await addClaim(workA.uri, 'wdt:P50', 'wd:Q535')
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -158,7 +158,13 @@ describe('entities:update-claims', () => {
   it('should accept rapid updates on the same entity', async () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     const work = await createWork()
-    const responses = await Promise.all(authorsUris.map(uri => addClaim(work.uri, 'wdt:P50', uri)))
+    const responses = await Promise.all(authorsUris.map(uri => {
+      return addClaim({
+        uri: work.uri,
+        property: 'wdt:P50',
+        value: uri
+      })
+    }))
     responses.forEach(res => res.ok.should.be.true())
     const updatedWork = await getByUri(work.uri)
     const addedAuthorsUris = updatedWork.claims['wdt:P50']
@@ -167,7 +173,7 @@ describe('entities:update-claims', () => {
 
   it('should accept a non-duplicated concurrent value', async () => {
     const human = await createHuman()
-    const res = await addClaim(human._id, 'wdt:P648', someOpenLibraryId())
+    const res = await addClaim({ uri: human._id, property: 'wdt:P648', value: someOpenLibraryId() })
     res.ok.should.be.true()
   })
 
@@ -210,10 +216,10 @@ describe('entities:update-claims', () => {
   it('should reject an update with a duplicated concurrent value', async () => {
     const id = someOpenLibraryId()
     const human = await createHuman()
-    const res = await addClaim(human.uri, 'wdt:P648', id)
+    const res = await addClaim({ uri: human.uri, property: 'wdt:P648', value: id })
     res.ok.should.be.true()
     const human2 = await createHuman()
-    await addClaim(human2.uri, 'wdt:P648', id)
+    await addClaim({ uri: human2.uri, property: 'wdt:P648', value: id })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -225,7 +231,7 @@ describe('entities:update-claims', () => {
     const human = await createHuman()
     const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
     const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
-    await addClaim(human.uri, 'wdt:P213', someRecoverableIsni)
+    await addClaim({ uri: human.uri, property: 'wdt:P213', value: someRecoverableIsni })
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
   })

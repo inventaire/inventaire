@@ -122,7 +122,7 @@ describe('entities:merge', () => {
       createWork(),
       createWork()
     ])
-    await addClaim(workA.uri, 'wdt:P50', 'wd:Q535')
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
     await merge(workA.uri, workB.uri)
     const { entities } = await getByUris(workB.uri)
     const authorsUris = entities[workB.uri].claims['wdt:P50']
@@ -145,7 +145,7 @@ describe('entities:merge', () => {
       createWork(),
       createWork()
     ])
-    await addClaim(workA.uri, 'wdt:P50', 'wd:Q535')
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
     await merge(workA.uri, workB.uri)
     const patches = await getHistory(workB._id)
     patches[1].context.mergeFrom.should.equal(workA.uri)
@@ -157,7 +157,7 @@ describe('entities:merge', () => {
       createHuman(),
       createWork()
     ])
-    await addClaim(work.uri, 'wdt:P50', humanA.uri)
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanA.uri })
     await merge(humanA.uri, humanB.uri)
     const { entities } = await getByUris(work.uri)
     const authorsUris = entities[work.uri].claims['wdt:P50']

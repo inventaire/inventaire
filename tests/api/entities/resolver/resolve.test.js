@@ -35,7 +35,7 @@ describe('entities:resolve', () => {
   it('should resolve an edition from a known edition external id', async () => {
     const openLibraryId = someOpenLibraryId('edition')
     const { invUri, uri } = await createEditionWithIsbn()
-    await addClaim(invUri, 'wdt:P648', openLibraryId)
+    await addClaim({ uri: invUri, property: 'wdt:P648', value: openLibraryId })
     const editionSeed = { claims: { 'wdt:P648': [ openLibraryId ] } }
     const entry = { edition: editionSeed }
     const { entries } = await resolve(entry)
@@ -175,7 +175,7 @@ describe('entities:resolve:external-id', () => {
   it('should resolve inventaire work from external ids claim', async () => {
     const libraryThingsWorkId = someLibraryThingsWorkId()
     const work = await createWork()
-    await addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)
+    await addClaim({ uri: work.uri, property: 'wdt:P1085', value: libraryThingsWorkId })
     await wait(10)
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
@@ -205,7 +205,7 @@ describe('entities:resolve:external-id', () => {
     const goodReadsId = someGoodReadsId()
     const author = await createHuman()
     await wait(10)
-    await addClaim(author.uri, 'wdt:P2963', goodReadsId)
+    await addClaim({ uri: author.uri, property: 'wdt:P2963', value: goodReadsId })
     await wait(10)
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
@@ -262,7 +262,7 @@ describe('entities:resolve:in-context', () => {
     const otherWorkLabel = randomLabel()
     const author = await createHuman()
     await wait(10)
-    await addClaim(author.uri, 'wdt:P2963', goodReadsId)
+    await addClaim({ uri: author.uri, property: 'wdt:P2963', value: goodReadsId })
     await wait(10)
     await Promise.all([
       createWorkWithAuthor(author, missingWorkLabel),
@@ -291,7 +291,7 @@ describe('entities:resolve:in-context', () => {
     const workLabel = randomLabel()
     const author = await createHuman()
     await wait(10)
-    await addClaim(author.uri, 'wdt:P2963', goodReadsId)
+    await addClaim({ uri: author.uri, property: 'wdt:P2963', value: goodReadsId })
     await wait(10)
     await Promise.all([
       createWorkWithAuthor(author, workLabel),
@@ -312,7 +312,7 @@ describe('entities:resolve:in-context', () => {
     const author = await createHuman()
     await wait(10)
     const work = await createWorkWithAuthor(author, workLabel)
-    await addClaim(work.uri, 'wdt:P1085', libraryThingsWorkId)
+    await addClaim({ uri: work.uri, property: 'wdt:P1085', value: libraryThingsWorkId })
     const entry = {
       edition: { isbn: generateIsbn13() },
       works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ],
