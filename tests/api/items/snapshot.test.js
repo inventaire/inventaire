@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
-const { authReq } = require('../utils/utils')
+const { authReq, getUserB } = require('../utils/utils')
 const { getById: getItem } = require('../utils/items')
 const { getByUris, merge, revertMerge, updateLabel, updateClaim, restoreVersion, revertEdit } = require('../utils/entities')
 const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
@@ -216,10 +216,10 @@ describe('items:snapshot', () => {
       const edition = await createEditionFromWorks(work)
       const humanLabelLang = Object.keys(human.labels)[0]
       const originalLabel = human.labels[humanLabelLang]
-      await updateLabel({ uri: human.uri, lang: humanLabelLang, value: 'foo' })
+      await updateLabel({ user: getUserB(), uri: human.uri, lang: humanLabelLang, value: 'foo' })
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
-      await restoreVersion(`${human._id}:2`)
+      await restoreVersion({ patchId: `${human._id}:2` })
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
     })
@@ -230,7 +230,7 @@ describe('items:snapshot', () => {
       const edition = await createEditionFromWorks(work)
       const humanLabelLang = Object.keys(human.labels)[0]
       const originalLabel = human.labels[humanLabelLang]
-      await updateLabel({ uri: human.uri, lang: humanLabelLang, value: 'foo' })
+      await updateLabel({ user: getUserB(), uri: human.uri, lang: humanLabelLang, value: 'foo' })
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
       await revertEdit({ patchId: `${human._id}:3` })
