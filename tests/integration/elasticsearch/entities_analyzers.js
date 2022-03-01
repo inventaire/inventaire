@@ -40,20 +40,7 @@ describe('entities analyzers', () => {
 
   describe('standard_truncated', () => {
     const analyzer = 'standard_truncated'
-    it('should not generate edge-ngrams tokens', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
-
-    it('should generate a lowercased token', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'ChArLes', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
-
-    it('should generate an asciifolded token', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'chärlés', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
+    standardAnalyzersCommonTests(analyzer)
 
     it('should truncate above the max ngram of 10', async () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charleshenrydecomptesponville', analyzer })
@@ -73,20 +60,7 @@ describe('entities analyzers', () => {
 
   describe('standard_full', () => {
     const analyzer = 'standard_full'
-    it('should not generate edge-ngrams tokens', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
-
-    it('should generate a lowercased token', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'ChArLes', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
-
-    it('should generate an asciifolded token', async () => {
-      const tokens = await getAnalyzedTokens({ indexBaseName, text: 'chärlés', analyzer })
-      tokens.should.deepEqual([ 'charles' ])
-    })
+    standardAnalyzersCommonTests(analyzer)
 
     it('should not truncate tokens', async () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charleshenrydecomptesponville', analyzer })
@@ -104,3 +78,21 @@ describe('entities analyzers', () => {
     })
   })
 })
+
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+function standardAnalyzersCommonTests (analyzer) {
+  it('should not generate edge-ngrams tokens', async () => {
+    const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles', analyzer })
+    tokens.should.deepEqual([ 'charles' ])
+  })
+
+  it('should generate a lowercased token', async () => {
+    const tokens = await getAnalyzedTokens({ indexBaseName, text: 'ChArLes', analyzer })
+    tokens.should.deepEqual([ 'charles' ])
+  })
+
+  it('should generate an asciifolded token', async () => {
+    const tokens = await getAnalyzedTokens({ indexBaseName, text: 'chärlés', analyzer })
+    tokens.should.deepEqual([ 'charles' ])
+  })
+}
