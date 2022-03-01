@@ -11,6 +11,7 @@ module.exports = {
   },
   // Applies the edge_ngram filter to terms above minNgram. Terms below the minNgram
   // will generate a single unmodified token
+  // See https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-condition-tokenfilter.html
   autocomplete_filter: {
     type: 'condition',
     filter: [ 'edge_ngram' ],
