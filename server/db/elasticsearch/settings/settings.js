@@ -5,7 +5,7 @@
 //   curl -XPOST ${elastic_host}/${index_name}/_close
 // - Update index settings:
 //   settings_json=$(node -p 'JSON.stringify(require("./server/db/elasticsearch/settings/settings.js"))')
-//   curl -XPUT ${elastic_host}/${index_name}/_settings -d "$settings_json"
+//   curl -XPUT ${elastic_host}/${index_name}/_settings -d "$settings_json" -H "Content-Type: application/json"
 // - Reopen index
 //   curl -XPOST ${elastic_host}/${index_name}/_open
 
