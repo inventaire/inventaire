@@ -38,6 +38,19 @@ describe('search:entities', () => {
 
   describe('parameters', () => {
     describe('exact', () => {
+      it('should return results that contains the exact searched words', async () => {
+        const humanLabel = human.labels.en
+        const results = await search({ types: 'humans', search: humanLabel, exact: true })
+        _.map(results, 'uri').should.containEql(human.uri)
+      })
+
+      it('should not return results that do not contain the exact searched words', async () => {
+        const humanLabel = human.labels.en
+        const humanLabelWithoutLastLetter = humanLabel.slice(0, -1)
+        const results = await search({ types: 'humans', search: humanLabelWithoutLastLetter, exact: true })
+        _.map(results, 'uri').should.not.containEql(human.uri)
+      })
+
       it('should reject types that are not entity related', async () => {
         try {
           await search({ types: [ 'groups', 'users' ], search: 'foo', exact: true }).then(shouldNotBeCalled)
@@ -47,10 +60,6 @@ describe('search:entities', () => {
         }
       })
 
-      // Ex: when requesting 'Myron Howe', 'Myron W Howe' will be considered an exact match
-      // This test might occasionnally fail as the current implementation uses an edge_ngram analyzer
-      // at indexation, leading to subparts of terms being considered a match.
-      // Ex: an exact search for "Charles Ben" will find "Charles Bent" as one of its generated tokens is "Ben"
       it('should return only results including exact matches of each words', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
@@ -62,13 +71,6 @@ describe('search:entities', () => {
             resultLabelWords.includes(word).should.be.true()
           })
         })
-      })
-
-      it('should not return results that do not contain the exact searched words', async () => {
-        const humanLabel = human.labels.en
-        const humanLabelWithoutLastLetter = humanLabel.slice(0, -1)
-        const results = await search({ types: 'humans', search: humanLabelWithoutLastLetter, exact: true })
-        _.map(results, 'uri').should.not.containEql(human.uri)
       })
 
       it('should accept a different word order', async () => {
