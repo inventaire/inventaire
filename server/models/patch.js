@@ -65,6 +65,9 @@ const Patch = module.exports = {
 
   // Reverts the effects of a patch on a entity doc
   revert: (currentDoc, patch) => {
+    if (patch._id.split(':')[0] !== currentDoc._id) {
+      throw error_.new('entity and patch ids do not match', 500, { currentDoc, patch })
+    }
     const inversePatch = jiff.inverse(patch.patch)
     const updatedDoc = applyInversePatch(currentDoc, inversePatch)
     return updatedDoc

@@ -4,6 +4,7 @@ const jiff = require('jiff')
 const randomString = require('lib/utils/random_string')
 const Entity = require('models/entity')
 const Patch = require('models/patch')
+const { shouldNotBeCalled } = require('../utils')
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId
@@ -266,6 +267,21 @@ describe('patch', () => {
       // index of the value
       revertedDoc = Patch.revert(revertedDoc, patchC)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
+    })
+
+    it('should reject mismatching entity and patch', () => {
+      const currentDoc = {
+        _id: '10b3006aab5842379c06109b8f09530e'
+      }
+      const patch = {
+        _id: 'e03590f8b90160c9732485baa6003e18:2'
+      }
+      try {
+        const res = Patch.revert(currentDoc, patch)
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.message.should.equal('entity and patch ids do not match')
+      }
     })
   })
 
