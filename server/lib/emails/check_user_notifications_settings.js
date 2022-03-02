@@ -13,7 +13,7 @@ module.exports = (user, notificationLabel) => {
 
   const { notifications = {} } = settings
   checkSetting(_id, notifications, 'global')
-  return checkSetting(_id, notifications, notificationLabel)
+  checkSetting(_id, notifications, notificationLabel)
 }
 
 const checkSetting = (userId, notifications, label) => {

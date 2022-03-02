@@ -4,6 +4,7 @@ const helpers_ = require('./helpers')
 const transporter_ = require('./transporter')
 const email_ = require('./email')
 const user_ = require('controllers/user/lib/user')
+const groups_ = require('controllers/groups/lib/groups')
 
 module.exports = {
   validationEmail: (userData, token) => {
@@ -44,6 +45,18 @@ module.exports = {
     .catch(Err(`group ${action}`, actingUserId, userToNotifyId))
   },
 
+  groupJoinRequest: async (groupId, requestingUserId) => {
+    const group = await groups_.byId(groupId)
+    if (group.open) return
+    const adminsIds = _.map(group.admins, 'user')
+    const admins = await user_.byIds(adminsIds)
+    const userData = await user_.byId(requestingUserId)
+    let emails = admins.map(email_.GroupJoinRequest(userData, group))
+    // Remove emails aborted due to user settings
+    emails = _.compact(emails)
+    return sendSequentially(emails, 'groupJoinRequest')
+  },
+
   feedback: (subject, message, user, unknownUser, uris, context) => {
     const email = email_.feedback(subject, message, user, unknownUser, uris, context)
     return transporter_.sendMail(email)
@@ -52,29 +65,28 @@ module.exports = {
 
   friendInvitations: (userData, emailAddresses, message) => {
     userData = user_.serializeData(userData)
-    const emailFactory = email_.FriendInvitation(userData, message)
-    return sendSequentially(emailAddresses, emailFactory, 'friendInvitations')
+    const emails = emailAddresses.map(email_.FriendInvitation(userData, message))
+    return sendSequentially(emails, 'friendInvitations')
   },
 
   groupInvitations: (userData, group, emailAddresses, message) => {
     userData = user_.serializeData(userData)
-    const emailFactory = email_.GroupInvitation(userData, group, message)
-    return sendSequentially(emailAddresses, emailFactory, 'groupInvitations')
+    const emails = emailAddresses.map(email_.GroupInvitation(userData, group, message))
+    return sendSequentially(emails, 'groupInvitations')
   }
 }
 
-const sendSequentially = (emailAddresses, emailFactory, label) => {
-  // Do not mutate the original object
-  const addresses = _.clone(emailAddresses)
+const sendSequentially = (emails, label) => {
+  const totalEmails = emails.length
   const sendNext = () => {
-    const nextAddress = addresses.pop()
-    if (!nextAddress) return
+    const nextEmail = emails.pop()
+    if (!nextEmail) return
 
-    _.info(nextAddress, `${label}: next. Remaining: ${addresses.length}`)
+    _.info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
 
-    const email = emailFactory(nextAddress)
-    return transporter_.sendMail(email)
-    .catch(_.Error(`${label} (address: ${nextAddress} err)`))
+    // const email = emailFactory(nextEmail)
+    return transporter_.sendMail(nextEmail)
+    .catch(_.Error(`${label} (address: ${nextEmail.to} err)`))
     // Wait to lower risk to trigger any API quota issue from the email service
     .then(Wait(500))
     // In any case, send the next

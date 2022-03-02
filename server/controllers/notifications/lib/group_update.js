@@ -10,13 +10,17 @@ const groupAttributeWithNotification = [
 ]
 
 module.exports = async data => {
-  const { attribute } = data
-  if (!groupAttributeWithNotification.includes(attribute)) return
+  try {
+    const { attribute } = data
+    if (!groupAttributeWithNotification.includes(attribute)) return
 
-  const { usersToNotify, groupId } = data
-  const existingNotificationsByUsers = await getUnreadGroupNotificationsByUsers({ groupId, attribute })
-  const docs = usersToNotify.map(getNotificationUpdateOrCreation(data, existingNotificationsByUsers))
-  return db.bulk(docs)
+    const { usersToNotify, groupId } = data
+    const existingNotificationsByUsers = await getUnreadGroupNotificationsByUsers({ groupId, attribute })
+    const docs = usersToNotify.map(getNotificationUpdateOrCreation(data, existingNotificationsByUsers))
+    await db.bulk(docs)
+  } catch (err) {
+    _.error(err, 'group update notification error')
+  }
 }
 
 const getNotificationUpdateOrCreation = (data, existingNotificationsByUsers) => userToNotify => {
