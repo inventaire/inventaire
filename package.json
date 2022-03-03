@@ -70,6 +70,7 @@
     "module-alias": "^2.2.2",
     "moment": "^2.21.0",
     "mv": "^2.1.1",
+    "ndjson-apply": "^1.2.5",
     "node-fetch": "^2.6.1",
     "node-polyglot": "^1.0.0",
     "nodemailer": "^6.7.1",
