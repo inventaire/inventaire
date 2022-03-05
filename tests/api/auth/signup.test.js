@@ -65,11 +65,11 @@ describe('auth:username-availability', () => {
 
   it('should normalize unicode letters', async () => {
     const usernameBase = createUsername()
-    const unicodeLetter = '\u0065\u0301'
-    const nonNormalizedUnicodeUsername = usernameBase + unicodeLetter
+    const nonNormalizedUnicodeLetter = '\u0065\u0301'
+    const nonNormalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter
     const user = await createUser({ username: nonNormalizedUnicodeUsername })
     await wait(10)
-    const normalizedUnicodeUsername = usernameBase + unicodeLetter.normalize()
+    const normalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter.normalize()
     user.username.should.equal(normalizedUnicodeUsername)
     await signup({ username: nonNormalizedUnicodeUsername })
     .then(shouldNotBeCalled)

@@ -37,4 +37,14 @@ describe('auth:login', () => {
       // err.body.status_verbose.should.equal('unauthorized user')
     })
   })
+
+  it('should login a user with a non-normalized username', async () => {
+    const nonNormalizedUnicodeLetter = '\u0065\u0301'
+    const username = createUsername() + nonNormalizedUnicodeLetter
+    const password = '12345678'
+    await createUser({ username: username.normalize(), password })
+    await wait(10)
+    const res = await publicReq('post', endpoint, { username, password })
+    res.ok.should.be.true()
+  })
 })
