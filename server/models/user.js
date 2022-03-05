@@ -5,6 +5,7 @@ const error_ = require('lib/error/error')
 const randomString = require('lib/utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
 const { truncateLatLng } = require('lib/geo')
+const { normalizeString } = require('lib/utils/base')
 
 const User = module.exports = {}
 
@@ -167,5 +168,6 @@ User.shouldBeAnonymized = user => {
 }
 
 User.formatters = {
-  position: truncateLatLng
+  username: normalizeString,
+  position: truncateLatLng,
 }

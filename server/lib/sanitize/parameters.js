@@ -5,6 +5,7 @@ const host = CONFIG.fullPublicHost()
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
+const { normalizeString } = require('lib/utils/base')
 
 // Parameters attributes:
 // - format (optional)
@@ -16,8 +17,6 @@ const validations = {
   common: require('models/validations/common'),
   user: require('models/validations/user')
 }
-
-const normalizeString = str => str.trim().normalize()
 
 const parseNumberString = value => {
   if (_.isNumber(value)) return value
