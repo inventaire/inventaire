@@ -34,19 +34,15 @@ describe('auth:signup', () => {
   })
 
   it('should create a user', async () => {
-    const res = await publicReq('post', endpoint, {
-      username: randomString(4),
+    const res = await signup({
       email: `bla${randomString(4)}@foo.bar`,
-      password: randomString(8)
     })
     res.ok.should.be.true()
   })
 
   it('should reject an invalid email', async () => {
-    await publicReq('post', endpoint, {
-      username: randomString(4),
-      email: `bla${randomString(4)}@foo..bar`,
-      password: randomString(8)
+    await signup({
+      email: `bla${randomString(4)}@foo..bar`
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -90,7 +86,7 @@ describe('auth:username-availability', () => {
 
 const signup = ({ username, email, password }) => {
   return publicReq('post', endpoint, {
-    username,
+    username: username || randomString(8),
     email: email || `bla${randomString(8)}@foo.bar`,
     password: password || randomString(8)
   })
