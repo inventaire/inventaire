@@ -24,6 +24,6 @@ module.exports = {
   StrictlyPositiveInteger: /^[1-9]\d*$/,
   UserImg: /^\/img\/users\/[0-9a-f]{40}$/,
   // all 1 letter strings are reserved for the application
-  Username: /^\w{2,20}$/,
+  Username: /^[\p{Letter}0-9_]{2,20}$/u,
   Uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 }

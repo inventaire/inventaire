@@ -19,8 +19,8 @@ const logoutRedirect = (redirect, req, res) => {
 module.exports = {
   // TODO: rate limit to 10 signup per IP per 10 minutes
   signup: (req, res) => {
-    // `sanitize` is only used as pre-validation here
-    sanitize(req, res, signupSanitization)
+    // Use sanitize to format and validate body parameters
+    req.body = sanitize(req, res, signupSanitization)
     const next = loggedIn(req, res)
     passport_.authenticate.localSignup(req, res, next)
   },

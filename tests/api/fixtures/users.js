@@ -9,6 +9,7 @@ const { randomBytes } = require('crypto')
 const { addRole } = require('controllers/user/lib/user')
 const { request, rawRequest } = require('../utils/request')
 const { makeFriends } = require('../utils/relations')
+const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
 let getUser, getReservedUser, updateUser
@@ -43,7 +44,7 @@ const API = module.exports = {
     const userData = {
       username,
       password: customData.password || '12345678',
-      email: `${username}@adomain.org`,
+      email: `${randomString(10)}@adomain.org`,
       language: customData.language || 'en'
     }
 

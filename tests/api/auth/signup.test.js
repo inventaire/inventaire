@@ -56,17 +56,42 @@ describe('auth:signup', () => {
 })
 
 describe('auth:username-availability', () => {
-  it('should reject an account with already created username', async () => {
+  it('should reject an account with an already used username', async () => {
     const username = createUsername()
     await createUser({ username })
     await wait(10)
-    await publicReq('post', endpoint, {
-      username,
-      email: `bla${username}@foo.bar`,
-      password: randomString(8)
+    await signup({ username })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
     })
+  })
+
+  it('should normalize unicode letters', async () => {
+    const usernameBase = createUsername()
+    const unicodeLetter = '\u0065\u0301'
+    const nonNormalizedUnicodeUsername = usernameBase + unicodeLetter
+    const user = await createUser({ username: nonNormalizedUnicodeUsername })
+    await wait(10)
+    const normalizedUnicodeUsername = usernameBase + unicodeLetter.normalize()
+    user.username.should.equal(normalizedUnicodeUsername)
+    await signup({ username: nonNormalizedUnicodeUsername })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+    })
+    await signup({ username: normalizedUnicodeUsername })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
     })
   })
 })
+
+const signup = ({ username, email, password }) => {
+  return publicReq('post', endpoint, {
+    username,
+    email: email || `bla${randomString(8)}@foo.bar`,
+    password: password || randomString(8)
+  })
+}
