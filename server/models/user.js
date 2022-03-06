@@ -17,6 +17,8 @@ User._create = (username, email, creationStrategy, language, password) => {
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
 
+  username = User.formatters.username(username)
+
   validations.pass('username', username)
   validations.pass('email', email)
   validations.pass('creationStrategy', creationStrategy)
