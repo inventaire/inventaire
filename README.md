@@ -180,4 +180,4 @@ see wiki: [API](https://wiki.inventaire.io/wiki/Technic#About_the_API)
 see [Administration](./docs/administration.md)
 
 ## License
-[AGPL](LICENSE)
+Inventaire is an open-sourced project licensed under [AGPLv3](./LICENSES/AGPL-3.0-only.txt).
