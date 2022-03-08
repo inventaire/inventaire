@@ -11,7 +11,9 @@ const sanitization = {
 }
 
 const controller = async params => {
+  const { items, reqUserId } = params
   const shelf = await formatNewShelf(params)
+  if (items) await shelves_.addItems([ shelf._id ], items, reqUserId)
   return { shelf }
 }
 
