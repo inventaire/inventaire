@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
+const error_ = require('lib/error/error')
 const db = require('db/couchdb/base')('entities')
 const Entity = require('models/entity')
 const isbn_ = require('lib/isbn/isbn')
@@ -96,10 +97,10 @@ const entities_ = module.exports = {
       const patch = await createPatch(params)
       if (patch) await emit('patch:created', patch)
     } catch (err) {
-      err.type = 'patch_creation_failed'
-      err.context = err.context || {}
-      err.context.data = { currentDoc, updatedDoc }
-      throw err
+      const patchErr = error_.new('patch creation failed', 500, { currentDoc, updatedDoc })
+      patchErr.name = 'patch_creation_failed'
+      patchErr.cause = err
+      throw patchErr
     }
 
     return docAfterUpdate
