@@ -19,31 +19,13 @@ module.exports = (user, uris) => {
 
     _.warn(uri, 'removing entity')
 
-    await tolerantRemove(reqUserId, id)
+    await placeholders_.remove(reqUserId, id)
     await deleteUriValueClaims(user, uri)
     await wait(100)
     return removeNext()
   }
 
   return removeNext()
-}
-
-// Turning deleted entities into removed:placeholder as it as largely the same effect
-// as deleting (not indexed by views any more) but it's reversible, and already
-// understood by other services, that will either unindex it (search engine updater)
-// or ignore it (client)
-const tolerantRemove = (reqUserId, id) => {
-  return placeholders_.remove(reqUserId, id)
-  .catch(err => {
-    // If the entity was already turned into a removed:placeholder
-    // there is no new change and this operation produces and 'empty patch' error
-    // that we can ignore, as it's simply already in the desired state
-    if (err.message === 'empty patch') {
-      _.warn(id, 'this entity is already a removed:placeholder: ignored')
-    } else {
-      throw err
-    }
-  })
 }
 
 const deleteUriValueClaims = async (user, uri) => {

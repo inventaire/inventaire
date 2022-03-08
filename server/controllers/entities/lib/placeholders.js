@@ -18,6 +18,10 @@ const PlaceholderHandler = actionName => {
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
     const currentDoc = await db.get(entityId)
+    if (actionName === 'remove' && currentDoc.type === 'removed:placeholder') {
+      _.warn(entityId, 'this entity is already a removed:placeholder: ignored')
+      return
+    }
     let updatedDoc
     try {
       updatedDoc = Entity[modelFnName](currentDoc)
