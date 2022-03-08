@@ -23,7 +23,7 @@ module.exports = params => {
       .catch(err => {
         // Retry only if the conflict comes from then entity
         if (err.statusCode === 409 && err.type !== 'patch_creation_failed') {
-          return runAfterDelay(run, attemptsCount, err)
+          return runAfterDelay(run, attemptsCount)
         } else {
           throw err
         }
@@ -34,7 +34,7 @@ module.exports = params => {
   }
 }
 
-const runAfterDelay = async (run, attemptsCount, err) => {
+const runAfterDelay = async (run, attemptsCount) => {
   const delay = (attemptsCount * 100) + Math.trunc(Math.random() * 100)
   await wait(delay)
   return run(attemptsCount)
