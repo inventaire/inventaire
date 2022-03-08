@@ -1,14 +1,14 @@
 const designDocName = 'patches'
 const db = require('db/couchdb/base')('patches', designDocName)
 const Patch = require('models/patch')
-const { getLastPatches } = require('./patches')
+const { getEntityLastPatches } = require('./patches')
 
 module.exports = async params => {
   const { currentDoc, updatedDoc, userId } = params
   const newPatchDoc = Patch.create(params)
 
   if (entityHasPreviousVersions(currentDoc)) {
-    const [ previousPatchDoc ] = await getLastPatches(currentDoc._id)
+    const [ previousPatchDoc ] = await getEntityLastPatches(currentDoc._id)
     if (lastPatchWasFromSameUser(previousPatchDoc, userId)) {
       const aggregatedPatch = getAggregatedPatch(currentDoc, updatedDoc, previousPatchDoc)
       if (isNotSpecialPatch(previousPatchDoc)) {

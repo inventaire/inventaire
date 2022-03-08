@@ -299,27 +299,6 @@ describe('patch', () => {
       should(patch.snapshot.version).not.be.ok()
       should(patch.snapshot.created).not.be.ok()
     })
-
-    it('should recover from disordered patches', () => {
-      const base = Entity.create()
-
-      let patches = []
-      let i = 0
-      let previousVersion = base
-      while (i++ < 20) {
-        const { patch, newVersion } = generateSomePatch(previousVersion)
-        previousVersion = newVersion
-        patches.push(patch)
-      }
-
-      patches = _.shuffle(patches)
-
-      Patch.addSnapshots(patches)
-
-      for (const patch of patches) {
-        patch.snapshot.should.be.an.Object()
-      }
-    })
   })
 })
 

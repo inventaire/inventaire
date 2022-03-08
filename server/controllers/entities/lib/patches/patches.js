@@ -9,8 +9,26 @@ const { oneDay } = require('lib/time')
 const patches_ = module.exports = {
   db,
   byId: db.get,
-  byEntityId: entityId => db.viewByKeys('byEntityId', [ entityId ]),
-  byEntityIds: entityIds => db.viewByKeys('byEntityId', entityIds),
+
+  byEntityId: async entityId => {
+    const { rows } = await db.view(designDocName, 'byEntityId', {
+      startkey: [ entityId, 0 ],
+      endkey: [ entityId, maxKey ],
+      include_docs: true,
+    })
+    return _.map(rows, 'doc')
+  },
+
+  getEntityLastPatches: async (entityId, length = 1) => {
+    const { rows } = await db.view(designDocName, 'byEntityId', {
+      startkey: [ entityId, maxKey ],
+      endkey: [ entityId, 0 ],
+      descending: true,
+      include_docs: true,
+      limit: length,
+    })
+    return _.map(rows, 'doc')
+  },
 
   byDate: async ({ limit, offset }) => {
     const viewRes = await db.view(designDocName, 'byDate', {
@@ -61,15 +79,6 @@ const patches_ = module.exports = {
   },
 
   byRedirectUri: db.viewByKey.bind(null, 'byRedirectUri'),
-
-  getLastPatches: async (entityId, length = 1) => {
-    return db.viewCustom('byEntityId', {
-      keys: [ entityId ],
-      descending: true,
-      limit: length,
-      include_docs: true,
-    })
-  },
 
   getWithSnapshots: async entityId => {
     const patches = await patches_.byEntityId(entityId)

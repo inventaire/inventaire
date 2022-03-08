@@ -76,10 +76,7 @@ const Patch = module.exports = {
   addSnapshots: patchesDocs => {
     let previousVersion = { labels: {}, claims: {} }
 
-    // patchesDocs is typically the output a CouchDB view
-    // which is likely to order patches alphabetically (ex: 10 will come before 2)
-    patchesDocs = patchesDocs.sort(byPatchId)
-
+    // Assumes that patchesDocs are ordered from oldest to newest
     for (const patchDoc of patchesDocs) {
       patchDoc.snapshot = jiff.patch(patchDoc.patch, previousVersion)
       // jiff.patch is non-mutating: we get a new object
@@ -155,10 +152,4 @@ const operationFix = {
 const getFromPatchPath = (obj, path) => {
   const key = path.slice(1).replace(/\//g, '.')
   return _.get(obj, key)
-}
-
-const byPatchId = (patchA, patchB) => {
-  const numIdA = parseInt(patchA._id.split(':')[1])
-  const numIdB = parseInt(patchB._id.split(':')[1])
-  return numIdA - numIdB
 }

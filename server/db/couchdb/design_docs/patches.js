@@ -1,7 +1,8 @@
 module.exports = {
   byEntityId: {
     map: doc => {
-      emit(doc._id.split(':')[0], null)
+      const [ entityId, patchNumber ] = doc._id.split(':')
+      emit([ entityId, parseInt(patchNumber) ], null)
     }
   },
   byUserIdAndDate: {
