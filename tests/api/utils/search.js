@@ -12,6 +12,7 @@ const endpoint = '/api/search'
 const getIndexedDoc = async (index, id, options = {}) => {
   assert_.string(index)
   assert_.string(id)
+  if (options) assert_.object(options)
   const { retry = true, attempt = 0 } = options
   const url = `${elasticHost}/${index}/_doc/${id}`
   try {

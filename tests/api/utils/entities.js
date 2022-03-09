@@ -26,7 +26,7 @@ const entitiesUtils = module.exports = {
 
   findOrIndexEntities: async (uris, index = 'wikidata') => {
     const ids = _.map(uris, unprefixify)
-    const results = await Promise.all(ids.map(entitiesUtils.getElasticEntity(index)))
+    const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))
     const entitiesFound = _.filter(results, _.property('found'))
     const entitiesFoundUris = entitiesFound.map(_.property('_source.uri'))
     const entitiesNotFoundUris = _.difference(uris, entitiesFoundUris)
@@ -36,8 +36,6 @@ const entitiesUtils = module.exports = {
       await Promise.all(ids.map(id => waitForIndexation('wikidata', id)))
     }
   },
-
-  getElasticEntity: index => id => getIndexedDoc(index, 'humans', id),
 
   parseLabel: entity => Object.values(entity.labels)[0],
 
