@@ -1,5 +1,4 @@
-const _ = require('builders/utils')
-const { Wait, tap } = require('lib/promises')
+const { wait } = require('lib/promises')
 require('should')
 
 const automergeAuthorWorks = require('controllers/tasks/lib/automerge_author_works')
@@ -14,88 +13,59 @@ describe('automerge_author_works: only from inv works to wd works', () => {
     await findOrIndexEntities(wikidataUris)
   })
 
-  it('should automerge inv works to a wd work', done => {
+  it('should automerge inv works to a wd work', async () => {
     const authorUri = 'wd:Q205739' // Alan Moore uri
     const workLabel = 'Voice of the Fire'
     const workWdUri = 'wd:Q3825051' // 'Voice of the Fire' uri
 
-    Promise.all([
+    const [ work1, work2 ] = await Promise.all([
       createWorkWithAuthor({ uri: authorUri }, workLabel),
       createWorkWithAuthor({ uri: authorUri }, workLabel)
     ])
-    .then(([ work1, work2 ]) => {
-      return automergeAuthorWorks(authorUri)
-      .then(Wait(300))
-      .then(() => getByUris([ work1.uri, work2.uri ]))
-      .then(res => {
-        res.redirects[work1.uri].should.equal(workWdUri)
-        res.redirects[work2.uri].should.equal(workWdUri)
-        done()
-      })
-    })
-    .catch(done)
+    await automergeAuthorWorks(authorUri)
+    await wait(300)
+    const { redirects } = await getByUris([ work1.uri, work2.uri ])
+    redirects[work1.uri].should.equal(workWdUri)
+    redirects[work2.uri].should.equal(workWdUri)
   })
 
-  it('should automerge if suspect and suggestion wd and inv short works labels match', done => {
+  it('should automerge if suspect and suggestion wd and inv short works labels match', async () => {
     const humanLabel = 'Michael Crichton'
     const workLabel = 'Timeline' // wd:Q732060
     const workWdUri = 'wd:Q732060'
-    createHuman({ labels: { en: humanLabel } })
-    .then(human => {
-      return createWorkWithAuthor({ uri: human.uri }, workLabel)
-      .then(work => {
-        return checkEntities(human.uri)
-        .then(_.Log('tasks'))
-        .then(tasks => {
-          tasks.length.should.equal(0)
-          return getByUris(work.uri)
-          .then(res => {
-            res.redirects[work.uri].should.equal(workWdUri)
-            done()
-          })
-        })
-      })
-    })
-    .catch(done)
+    const human = await createHuman({ labels: { en: humanLabel } })
+    const work = await createWorkWithAuthor({ uri: human.uri }, workLabel)
+    const tasks = await checkEntities(human.uri)
+    tasks.length.should.equal(0)
+    const { redirects } = await getByUris(work.uri)
+    redirects[work.uri].should.equal(workWdUri)
   })
 
-  it('should not automerge if authors works do not match', done => {
+  it('should not automerge if authors works do not match', async () => {
     // Alan Moore uri
     const authorUri = 'wd:Q205739'
     // Corresponding to wd:Q3825051 label
     const workLabel = 'Voice of the Fire'
 
-    createWorkWithAuthor({ uri: authorUri }, `${workLabel} Vol. 1`)
-    .then(invWork => {
-      return automergeAuthorWorks(authorUri)
-      .then(Wait(300))
-      .then(() => getByUris(invWork.uri))
-      .then(res => {
-        res.entities[invWork.uri].should.be.ok()
-        done()
-      })
-    })
-    .catch(done)
+    const invWork = await createWorkWithAuthor({ uri: authorUri }, `${workLabel} Vol. 1`)
+    await automergeAuthorWorks(authorUri)
+    await wait(300)
+    const { entities } = await getByUris(invWork.uri)
+    entities[invWork.uri].should.be.ok()
   })
 
-  it('should not automerge work if suggestion is a serie or part of a serie', done => {
+  it('should not automerge work if suggestion is a serie or part of a serie', async () => {
     // Alan Moore uri
     const authorUri = 'wd:Q205739'
     // Corresponding to wd:Q3825051 label
     const workLabel = 'Voice of the Fire'
 
-    createWorkWithAuthor({ uri: authorUri }, workLabel)
-    .then(tap(invWork => addSerie(invWork)))
-    .then(Wait(300))
-    .then(invWork => {
-      return automergeAuthorWorks(authorUri)
-      .then(Wait(300))
-      .then(() => getByUris(invWork.uri))
-      .then(res => {
-        res.entities[invWork.uri].should.be.ok()
-        done()
-      })
-    })
-    .catch(done)
+    const invWork = await createWorkWithAuthor({ uri: authorUri }, workLabel)
+    await addSerie(invWork)
+    await wait(300)
+    await automergeAuthorWorks(authorUri)
+    await wait(300)
+    const { entities } = await getByUris(invWork.uri)
+    entities[invWork.uri].should.be.ok()
   })
 })

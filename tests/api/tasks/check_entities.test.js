@@ -10,6 +10,7 @@ describe('tasks:check-entities', () => {
     const wikidataUris = [ 'wd:Q237087' ]
     await findOrIndexEntities(wikidataUris)
   })
+
   it('should refuse to check entities of non-allowlisted types', async () => {
     // Currently, only humans can be checked for duplicates,
     // or at least are the entrypoint for duplicate checks
