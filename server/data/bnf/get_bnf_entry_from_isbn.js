@@ -99,6 +99,7 @@ const formatRow = async (isbn, result, rawResult) => {
     })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
+      'wdt:P577': edition.publicationDate,
       ...claims
     }
     if (expressionLang && wdIdByIso6392Code[expressionLang]) {
@@ -135,6 +136,7 @@ const formatRow = async (isbn, result, rawResult) => {
       labels: { fr: publisherLabel }
     }
   }
+  console.log('🚀 ~ file: get_bnf_entry_from_isbn.js ~ line 141 ~ formatRow ~ entry', entry)
   return entry
 }
 

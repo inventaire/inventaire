@@ -21,7 +21,7 @@ describe('get resolved seed', () => {
     authorUri.should.equal('wd:Q470568')
     // it should aggregate claims results
     // BNE property which does not exist on BNF
-    edition.claims['wdt:P577'][0].should.equal('1988')
+    edition.claims['wdt:P577'][0].should.equal('1987')
     // BNF and BNE property, with a BNF value as BNF has a higher score
     edition.claims['wdt:P407'][0].should.equal('wd:Q397')
   })
