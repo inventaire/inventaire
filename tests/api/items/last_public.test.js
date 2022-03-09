@@ -4,30 +4,22 @@ const { populate } = require('../fixtures/populate')
 const lastPublicUrl = '/api/items?action=last-public'
 
 describe('items:last-public', () => {
-  it('can take an limit parameter', done => {
+  it('can take an limit parameter', async () => {
     const limit = 2
-    populate({
+    await populate({
       usersCount: 1,
       publicItemsPerUser: limit + 1
     })
-    .then(() => publicReq('get', `${lastPublicUrl}&limit=${limit}`))
-    .then(res => {
-      res.items.length.should.equal(limit)
-      done()
-    })
-    .catch(done)
+    const res = await publicReq('get', `${lastPublicUrl}&limit=${limit}`)
+    res.items.length.should.equal(limit)
   })
 
-  it('should fetch 15 last-public items', done => {
-    populate({
+  it('should fetch 15 last-public items', async () => {
+    await populate({
       usersCount: 1,
       publicItemsPerUser: 16
     })
-    .then(() => publicReq('get', lastPublicUrl))
-    .then(res => {
-      res.items.length.should.equal(15)
-      done()
-    })
-    .catch(done)
+    const res = await publicReq('get', lastPublicUrl)
+    res.items.length.should.equal(15)
   })
 })

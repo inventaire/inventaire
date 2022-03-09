@@ -4,7 +4,7 @@ const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled,
 const { createUser, createUsername } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const { getTwoFriends } = require('../fixtures/users')
-const { Wait } = require('lib/promises')
+const { wait } = require('lib/promises')
 const { deleteUser, updateUser } = require('../utils/users')
 const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
 
@@ -24,7 +24,8 @@ describe('users:by-usernames', () => {
   it('should get a user with a non lowercase username', async () => {
     let username = `notAllLowerCase${randomString(4)}`
     const lowerCasedUsername = username.toLowerCase()
-    const user = await createUser({ username }).then(Wait(10))
+    const user = await createUser({ username })
+    await wait(10)
     username = user.username
     const res = await publicReq('get', `${endpoint}&usernames=${username}`)
     const { users } = res

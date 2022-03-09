@@ -1,45 +1,40 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 require('should')
-const { publicReq, undesiredRes } = require('../utils/utils')
+const { publicReq } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { createUserEmail } = require('../fixtures/users')
 const endpoint = '/api/token?action=reset-password'
 const randomString = require('lib/utils/random_string')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('token:reset-password', () => {
-  it('should reject requests without email', done => {
-    publicReq('get', endpoint)
-    .then(undesiredRes(done))
+  it('should reject requests without email', async () => {
+    await publicReq('get', endpoint)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: email')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject requests without token', done => {
+  it('should reject requests without token', async () => {
     const email = createUserEmail()
-    publicReq('get', `${endpoint}&email=${email}`)
-    .then(undesiredRes(done))
+    await publicReq('get', `${endpoint}&email=${email}`)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in query: token')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject requests with too short token', done => {
+  it('should reject requests with too short token', async () => {
     const email = createUserEmail()
     const token = randomString(31)
 
-    publicReq('get', `${endpoint}&email=${email}&token=${token}`)
-    .then(undesiredRes(done))
+    await publicReq('get', `${endpoint}&email=${email}&token=${token}`)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid token length')
-      done()
     })
-    .catch(done)
   })
 
   it('should reject random token', async () => {

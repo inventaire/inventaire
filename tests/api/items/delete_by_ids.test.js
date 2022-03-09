@@ -1,10 +1,11 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
-const { Wait } = require('lib/promises')
+const { wait } = require('lib/promises')
 require('should')
-const { authReq, authReqB, getUser, undesiredRes } = require('../utils/utils')
+const { authReq, authReqB, getUser } = require('../utils/utils')
 const { CountChange } = require('./helpers')
 const { createItem } = require('../fixtures/items')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {
@@ -14,86 +15,51 @@ const deleteByIds = (ids, authReqFn) => {
 }
 
 describe('items:delete-by-ids', () => {
-  it('should reject an empty list of ids', done => {
-    deleteByIds([])
-    .then(undesiredRes(done))
+  it('should reject an empty list of ids', async () => {
+    await deleteByIds([])
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("ids array can't be empty")
-      done()
     })
-    .catch(done)
   })
 
-  it('should ignore already deleted items', done => {
-    createItem()
-    .then(item => {
-      const { _id: itemId } = item
-      return deleteByIds(itemId)
-      .then(res => {
-        res.ok.should.be.true()
-        return deleteByIds(itemId)
-        .then(res => {
-          res.ok.should.be.true()
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should ignore already deleted items', async () => {
+    const item = await createItem()
+    const { _id: itemId } = item
+    await deleteByIds(itemId)
+    await deleteByIds(itemId)
   })
 
-  it('should delete an item', done => {
-    createItem()
-    .then(item => {
-      const { _id: itemId } = item
-      return deleteByIds(itemId)
-      .then(res => {
-        res.ok.should.be.true()
-        return authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
-        .then(res => {
-          res.items.length.should.equal(0)
-          done()
-        })
-      })
-    })
-    .catch(done)
+  it('should delete an item', async () => {
+    const item = await createItem()
+    const { _id: itemId } = item
+    await deleteByIds(itemId)
+    const { items } = await authReq('get', `/api/items?action=by-ids&ids=${itemId}`)
+    items.length.should.equal(0)
   })
 
-  it('should trigger an update of the users items counters', done => {
-    createItem()
+  it('should trigger an update of the users items counters', async () => {
+    const item = await createItem()
     // Delay to let the time to the item counter to be updated
-    .then(Wait(debounceDelay))
-    .then(item => {
-      return getUser()
-      .then(userBefore => {
-        return deleteByIds(item._id)
-        // Delay to request the user after its items count was updated
-        .then(Wait(debounceDelay))
-        .then(res => {
-          return getUser()
-          .then(userAfter => {
-            const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
-            countChange('public').should.equal(-1)
-            done()
-          })
-        })
-      })
-    })
-    .catch(done)
+    await wait(debounceDelay)
+    const userBefore = await getUser()
+    await deleteByIds(item._id)
+    // Delay to request the user after its items count was updated
+    await wait(debounceDelay)
+    const userAfter = await getUser()
+    const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
+    countChange('public').should.equal(-1)
   })
 
-  it('should reject deletion of an item owned by another user', done => {
-    createItem()
-    .then(item => {
-      const { _id: itemId } = item
-      return deleteByIds(itemId, authReqB)
-      .then(undesiredRes(done))
-      .catch(err => {
-        err.statusCode.should.equal(403)
-        err.body.status_verbose.should.equal("user isn't item owner")
-        done()
-      })
+  it('should reject deletion of an item owned by another user', async () => {
+    const item = await createItem()
+    const { _id: itemId } = item
+    await deleteByIds(itemId, authReqB)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      err.body.status_verbose.should.equal("user isn't item owner")
     })
-    .catch(done)
   })
 })

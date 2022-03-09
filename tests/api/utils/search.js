@@ -65,6 +65,22 @@ const waitForIndexation = async (indexBaseName, id) => {
   }
 }
 
+const waitForDeindexation = async (indexBaseName, id) => {
+  assert_.string(indexBaseName)
+  const index = indexesNamesByBaseNames[indexBaseName]
+  assert_.string(index)
+  assert_.string(id)
+  const { found } = await getIndexedDoc(index, id, { retry: false })
+  if (found) {
+    _.warn(`waiting for ${index}/${id} deindexation`)
+    await wait(500)
+    return waitForDeindexation(indexBaseName, id)
+  } else {
+    // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
+    await wait(elasticsearchUpdateDelay)
+  }
+}
+
 module.exports = {
   search: async (...args) => {
     let types, search, lang, filter, limit, exact, minScore, claim
@@ -89,6 +105,7 @@ module.exports = {
   getAnalyzedTokens,
 
   waitForIndexation,
+  waitForDeindexation,
 
   deindex: async (index, id) => {
     assert_.string(index)

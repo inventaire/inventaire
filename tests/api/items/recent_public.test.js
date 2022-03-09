@@ -1,75 +1,56 @@
 const _ = require('builders/utils')
 require('should')
-const { publicReq, undesiredRes } = require('tests/api/utils/utils')
-const { Wait } = require('lib/promises')
+const { publicReq } = require('tests/api/utils/utils')
 const { populate } = require('../fixtures/populate')
 const { expired } = require('lib/time')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {
-  it('should fetch 15 recent-public items', done => {
-    populate()
-    .then(() => publicReq('get', recentPublicUrl))
-    .then(res => res.items.length.should.equal(15))
-    .then(Wait(10))
-    .then(() => done())
-    .catch(done)
+  it('should fetch 15 recent-public items', async () => {
+    await populate()
+    const res = await publicReq('get', recentPublicUrl)
+    res.items.length.should.equal(15)
   })
 
-  it('should fetch items from different owners', done => {
-    populate()
-    .then(() => publicReq('get', recentPublicUrl))
-    .then(res => res.users.length.should.be.above(1))
-    .then(Wait(10))
-    .then(() => done())
-    .catch(done)
+  it('should fetch items from different owners', async () => {
+    await populate()
+    const res = await publicReq('get', recentPublicUrl)
+    res.users.length.should.be.above(1)
   })
 
-  it('should take a limit parameter', done => {
-    populate()
-    .then(() => publicReq('get', `${recentPublicUrl}&limit=3`))
-    .then(res => res.items.length.should.equal(3))
-    .then(Wait(10))
-    .then(() => done())
-    .catch(done)
+  it('should take a limit parameter', async () => {
+    await populate()
+    const res = await publicReq('get', `${recentPublicUrl}&limit=3`)
+    res.items.length.should.equal(3)
   })
 
-  it('should take a lang parameter', done => {
-    populate()
-    .then(() => publicReq('get', `${recentPublicUrl}&lang=en`))
-    .then(res => _.some(res.items, itemLangIs('en')).should.be.true())
-    .then(Wait(10))
-    .then(() => done())
-    .catch(done)
+  it('should take a lang parameter', async () => {
+    await populate()
+    const res = await publicReq('get', `${recentPublicUrl}&lang=en`)
+    _.some(res.items, itemLangIs('en')).should.be.true()
   })
 
-  it('should return some of the most recent items', done => {
-    populate()
-    .then(() => publicReq('get', recentPublicUrl))
-    .then(res => _.some(res.items, createdLately).should.be.true())
-    .then(Wait(10))
-    .then(() => done())
-    .catch(done)
+  it('should return some of the most recent items', async () => {
+    await populate()
+    const res = await publicReq('get', recentPublicUrl)
+    _.some(res.items, createdLately).should.be.true()
   })
 
-  it('should reject invalid limit', done => {
-    publicReq('get', `${recentPublicUrl}&limit=bla`)
-    .then(undesiredRes(done))
+  it('should reject invalid limit', async () => {
+    await publicReq('get', `${recentPublicUrl}&limit=bla`)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid limit: bla')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject invalid lang', done => {
-    publicReq('get', `${recentPublicUrl}&lang=bla`)
-    .then(undesiredRes(done))
+  it('should reject invalid lang', async () => {
+    await publicReq('get', `${recentPublicUrl}&lang=bla`)
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid lang: bla')
-      done()
     })
-    .catch(done)
   })
 })
 

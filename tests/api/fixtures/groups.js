@@ -1,8 +1,7 @@
-const { authReq, getUser, getUserB, customAuthReq, getUserGetter } = require('../utils/utils')
+const { authReq, getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
 const fakeText = require('./text')
 const endpointBase = '/api/groups'
 const endpointAction = `${endpointBase}?action`
-const { humanName } = require('../fixtures/entities')
 
 const getGroup = async group => {
   group = await group
@@ -57,9 +56,9 @@ const createAndAddMember = async user => {
   return refreshedGroup
 }
 
-const groupAndMemberPromise = () => {
-  const memberPromise = getUserGetter(humanName())()
-  return [ createAndAddMember(memberPromise), memberPromise ]
+const createGroupAndMember = async () => {
+  const member = await getReservedUser()
+  return Promise.all([ createAndAddMember(member), member ])
 }
 
 const groupName = () => fakeText.randomWords(3, ' group')
@@ -85,6 +84,6 @@ module.exports = {
   createGroup,
   addMember,
   addAdmin,
-  groupAndMemberPromise,
+  createGroupAndMember,
   membershipAction
 }

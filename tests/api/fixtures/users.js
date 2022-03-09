@@ -20,12 +20,13 @@ setImmediate(requireCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 const signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-const loginOrSignup = userData => {
-  return connect(`${authEndpoint}?action=login`, userData)
-  .catch(err => {
+const loginOrSignup = async userData => {
+  try {
+    return await connect(`${authEndpoint}?action=login`, userData)
+  } catch (err) {
     if (err.statusCode !== 401) throw err
     return signup(userData)
-  })
+  }
 }
 
 const API = module.exports = {

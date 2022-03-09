@@ -168,14 +168,16 @@ describe('cache', () => {
     })
 
     it('should return a rejected promise if not passed a key', async () => {
-      cache_.put(null, 'somevalue')
+      await cache_.put(null, 'somevalue')
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('invalid key')
       })
     })
 
     it('should return a rejected promise if not passed a value', async () => {
-      cache_.put('whatever', null)
+      await cache_.put('whatever', null)
+      .then(shouldNotBeCalled)
       .catch(err => {
         err.message.should.equal('missing value')
       })

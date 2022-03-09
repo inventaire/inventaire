@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 require('should')
-const { Wait, wait } = require('lib/promises')
+const { wait } = require('lib/promises')
 const { authReq, getUser, getUserB, customAuthReq } = require('../utils/utils')
 const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 const { createItem } = require('../fixtures/items')
@@ -14,85 +14,65 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 
 describe('items:create', () => {
-  it('should create an item', done => {
-    Promise.all([
+  it('should create an item', async () => {
+    const [ user, editionUri ] = await Promise.all([
       getUser(),
       editionUriPromise
     ])
-    .then(([ user, editionUri ]) => {
-      const userId = user._id
-      return authReq('post', '/api/items', { entity: editionUri })
-      .then(item => {
-        item.entity.should.equal(editionUri)
-        item.listing.should.equal('private')
-        item.transaction.should.equal('inventorying')
-        return item.owner.should.equal(userId)
-      })
-      .then(() => done())
-    })
-    .catch(done)
+    const userId = user._id
+    const item = await authReq('post', '/api/items', { entity: editionUri })
+    item.entity.should.equal(editionUri)
+    item.listing.should.equal('private')
+    item.transaction.should.equal('inventorying')
+    item.owner.should.equal(userId)
   })
 
-  it('should create items in bulk', done => {
-    Promise.all([
+  it('should create items in bulk', async () => {
+    const [ user, editionUri ] = await Promise.all([
       getUser(),
       editionUriPromise
     ])
-    .then(([ user, editionUri ]) => {
-      const userId = user._id
-      return authReq('post', '/api/items', [
-        { entity: editionUri, listing: 'network', transaction: 'giving' },
-        { entity: editionUri, listing: 'public', transaction: 'lending' }
-      ])
-      .then(items => {
-        items[0].entity.should.equal(editionUri)
-        items[0].listing.should.equal('network')
-        items[0].transaction.should.equal('giving')
-        items[0].owner.should.equal(userId)
-        items[1].entity.should.equal(editionUri)
-        items[1].listing.should.equal('public')
-        items[1].transaction.should.equal('lending')
-        return items[1].owner.should.equal(userId)
-      })
-      .then(() => done())
-    })
-    .catch(done)
+    const userId = user._id
+    const items = await authReq('post', '/api/items', [
+      { entity: editionUri, listing: 'network', transaction: 'giving' },
+      { entity: editionUri, listing: 'public', transaction: 'lending' }
+    ])
+    items[0].entity.should.equal(editionUri)
+    items[0].listing.should.equal('network')
+    items[0].transaction.should.equal('giving')
+    items[0].owner.should.equal(userId)
+    items[1].entity.should.equal(editionUri)
+    items[1].listing.should.equal('public')
+    items[1].transaction.should.equal('lending')
+    items[1].owner.should.equal(userId)
   })
 
   describe('user:snapshot', () => {
-    it('should increment the user items counter', done => {
+    it('should increment the user items counter', async () => {
       const userPromise = createUser()
       const timestamp = Date.now()
-      createItem(userPromise, { listing: 'public' })
-      .then(Wait(debounceDelay))
-      .then(() => getRefreshedUser(userPromise))
-      .then(user => {
-        user.snapshot.public['items:count'].should.equal(1)
-        user.snapshot.public['items:last-add'].should.be.greaterThan(timestamp)
-        user.snapshot.network['items:count'].should.equal(0)
-        user.snapshot.private['items:count'].should.equal(0)
-        done()
-      })
-      .catch(done)
+      await createItem(userPromise, { listing: 'public' })
+      await wait(debounceDelay)
+      const user = await getRefreshedUser(userPromise)
+      user.snapshot.public['items:count'].should.equal(1)
+      user.snapshot.public['items:last-add'].should.be.greaterThan(timestamp)
+      user.snapshot.network['items:count'].should.equal(0)
+      user.snapshot.private['items:count'].should.equal(0)
     })
 
     // Should not create edition conflicts on the user document
-    it('should keep the snapshot data updated even when created in bulk', done => {
-      const userPromise = createUser()
-      Promise.all([
-        createItem(userPromise, { listing: 'public' }),
-        createItem(userPromise, { listing: 'network' }),
-        createItem(userPromise, { listing: 'private' })
+    it('should keep the snapshot data updated even when created in bulk', async () => {
+      const user = await createUser()
+      await Promise.all([
+        createItem(user, { listing: 'public' }),
+        createItem(user, { listing: 'network' }),
+        createItem(user, { listing: 'private' })
       ])
-      .then(Wait(debounceDelay))
-      .then(() => getRefreshedUser(userPromise))
-      .then(user => {
-        user.snapshot.public['items:count'].should.equal(1)
-        user.snapshot.network['items:count'].should.equal(1)
-        user.snapshot.private['items:count'].should.equal(1)
-        done()
-      })
-      .catch(done)
+      await wait(debounceDelay)
+      const refreshedUser = await getRefreshedUser(user)
+      refreshedUser.snapshot.public['items:count'].should.equal(1)
+      refreshedUser.snapshot.network['items:count'].should.equal(1)
+      refreshedUser.snapshot.private['items:count'].should.equal(1)
     })
   })
 
@@ -106,25 +86,17 @@ describe('items:create', () => {
       item.snapshot['entity:title'].should.equal(title)
     })
 
-    it('should deduce the author from a work entity', done => {
-      createHuman()
-      .then(author => {
-        return createWorkWithAuthor(author)
-        .then(workEntity => {
-          return authReq('post', '/api/items', { entity: workEntity.uri })
-          .then(item => {
-            item.snapshot.should.be.an.Object()
-            item.snapshot['entity:authors'].should.equal(author.labels.en)
-            done()
-          })
-        })
-      })
-      .catch(done)
+    it('should deduce the author from a work entity', async () => {
+      const author = await createHuman()
+      const workEntity = await createWorkWithAuthor(author)
+      const item = await authReq('post', '/api/items', { entity: workEntity.uri })
+      item.snapshot.should.be.an.Object()
+      item.snapshot['entity:authors'].should.equal(author.labels.en)
     })
 
     it('should deduce the author from an edition entity', async () => {
       const { uri: editionUri } = await createEditionWithWorkAndAuthor()
-      await wait(1000)
+      await wait(100)
       const { entities } = await getEntitiesByUris(editionUri, 'wdt:P629|wdt:P50')
       const item = await authReq('post', '/api/items', { entity: editionUri })
       const edition = entities[editionUri]
@@ -135,46 +107,39 @@ describe('items:create', () => {
       item.snapshot['entity:authors'].should.equal(authorLabel)
     })
 
-    it('should use the original language label for an item created from a work without specifying in which lang the title is', done => {
-      authReq('post', '/api/items', { entity: 'wd:Q3548806' })
-      .then(item => {
-        item.snapshot.should.be.an.Object()
-        item.snapshot['entity:title'].should.equal('Die Hochzeit von Lyon')
-        item.snapshot['entity:lang'].should.equal('de')
-        done()
-      })
-      .catch(done)
+    it('should use the original language label for an item created from a work without specifying in which lang the title is', async () => {
+      const item = await authReq('post', '/api/items', { entity: 'wd:Q3548806' })
+      item.snapshot.should.be.an.Object()
+      item.snapshot['entity:title'].should.equal('Die Hochzeit von Lyon')
+      item.snapshot['entity:lang'].should.equal('de')
     })
   })
 
-  it('should reject an item created with an unknown entity', done => {
-    authReq('post', '/api/items', { entity: 'isbn:9782290711217' })
+  it('should reject an item created with an unknown entity', async () => {
+    await authReq('post', '/api/items', { entity: 'isbn:9782290711217' })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('entity not found')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject an item created with a non-allowlisted entity type', done => {
-    authReq('post', '/api/items', { entity: 'wd:Q1' })
+  it('should reject an item created with a non-allowlisted entity type', async () => {
+    await authReq('post', '/api/items', { entity: 'wd:Q1' })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid entity type')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject an item created with an invalid URI', done => {
-    authReq('post', '/api/items', { entity: 'isbn:9782800051922' })
+  it('should reject an item created with an invalid URI', async () => {
+    await authReq('post', '/api/items', { entity: 'isbn:9782800051922' })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid uri id: 9782800051922 (uri: isbn:9782800051922)')
-      done()
     })
-    .catch(done)
   })
 
   describe('shelves', () => {

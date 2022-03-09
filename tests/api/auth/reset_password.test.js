@@ -1,45 +1,38 @@
 require('should')
-const { publicReq, undesiredRes, getUser } = require('../utils/utils')
+const { shouldNotBeCalled } = require('tests/unit/utils')
+const { publicReq, getUser } = require('../utils/utils')
 const endpoint = '/api/auth?action=reset-password'
 
 describe('auth:reset-password', () => {
-  it('should reject requests without email', done => {
-    publicReq('post', endpoint, {})
-    .then(undesiredRes(done))
+  it('should reject requests without email', async () => {
+    await publicReq('post', endpoint, {})
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: email')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject invalid email', done => {
+  it('should reject invalid email', async () => {
     const invalidEmail = 'foo'
-    publicReq('post', endpoint, { email: invalidEmail })
+    await publicReq('post', endpoint, { email: invalidEmail })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid email')
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject inexistant email', done => {
+  it('should reject inexistant email', async () => {
     const wrongEmail = 'validBut@wrongEmail.org'
-    publicReq('post', endpoint, { email: wrongEmail })
+    await publicReq('post', endpoint, { email: wrongEmail })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('email not found')
-      done()
     })
-    .catch(done)
   })
 
-  it('should send a reset password email', done => {
-    getUser()
-    .then(user => publicReq('post', endpoint, { email: user.email }))
-    .then(res => {
-      res.ok.should.be.true()
-      done()
-    })
-    .catch(done)
+  it('should send a reset password email', async () => {
+    const user = await getUser()
+    const res = await publicReq('post', endpoint, { email: user.email })
+    res.ok.should.be.true()
   })
 })

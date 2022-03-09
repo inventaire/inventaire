@@ -1,21 +1,20 @@
 require('should')
-const { publicReq, undesiredRes } = require('tests/api/utils/utils')
+const { publicReq } = require('tests/api/utils/utils')
 const { customAuthReq } = require('tests/api/utils/request')
 const endpoint = '/api/items?action=inventory-view'
 const { groupPromise } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')
 const { createUserWithItems } = require('../fixtures/populate')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('items:inventory-view', () => {
-  it('should reject requests without a user or a group', done => {
+  it('should reject requests without a user or a group', async () => {
     publicReq('get', endpoint)
-    .then(undesiredRes(done))
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('missing parameter in query: user or group or shelf')
-      done()
     })
-    .catch(done)
   })
 
   it('should return a user inventory-view', async () => {
@@ -46,21 +45,16 @@ describe('items:inventory-view', () => {
     updatedItemsByDate[0].should.equal(itemIdRemainingWithoutShelf)
   })
 
-  it('should return a group inventory-view', done => {
-    groupPromise
-    .then(({ _id }) => _id)
-    .then(groupId => publicReq('get', `${endpoint}&group=${groupId}`))
-    .then(res => {
-      res.worksTree.should.be.an.Object()
-      res.worksTree.author.should.be.an.Object()
-      res.worksTree.genre.should.be.an.Object()
-      res.worksTree.subject.should.be.an.Object()
-      res.worksTree.owner.should.be.an.Object()
-      res.workUriItemsMap.should.be.an.Object()
-      res.itemsByDate.should.be.an.Array()
-      done()
-    })
-    .catch(done)
+  it('should return a group inventory-view', async () => {
+    const group = await groupPromise
+    const res = await publicReq('get', `${endpoint}&group=${group._id}`)
+    res.worksTree.should.be.an.Object()
+    res.worksTree.author.should.be.an.Object()
+    res.worksTree.genre.should.be.an.Object()
+    res.worksTree.subject.should.be.an.Object()
+    res.worksTree.owner.should.be.an.Object()
+    res.workUriItemsMap.should.be.an.Object()
+    res.itemsByDate.should.be.an.Array()
   })
 
   it('should return a shelf inventory-view', async () => {

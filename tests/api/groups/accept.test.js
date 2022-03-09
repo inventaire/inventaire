@@ -1,50 +1,42 @@
 const _ = require('builders/utils')
 require('should')
-const { authReq, authReqB, undesiredRes, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
+const { authReq, authReqB, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
 const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
 const { humanName } = require('../fixtures/entities')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('groups:update:accept', () => {
-  it('should reject without group', done => {
-    authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+  it('should reject without group', async () => {
+    await authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: group')
       err.statusCode.should.equal(400)
-      done()
     })
   })
 
-  it('should reject non invited users', done => {
-    Promise.all([ groupPromise, getUserC() ])
-    .then(([ group, user ]) => {
-      return authReq('put', endpoint, { user: user._id, group: group._id })
-    })
-    .then(undesiredRes(done))
+  it('should reject non invited users', async () => {
+    const [ group, user ] = await Promise.all([ groupPromise, getUserC() ])
+    await authReq('put', endpoint, { user: user._id, group: group._id })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('membership not found')
       err.statusCode.should.equal(403)
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject invite accepted by another user', done => {
-    Promise.all([ groupPromise, getUserC() ])
-    .then(([ group, user ]) => {
-      const { _id: userId } = user
-      return authReq('put', '/api/groups?action=invite', { user: userId, group: group._id })
-      .then(() => {
-        group.members.length.should.equal(1)
-        return authReqB('put', endpoint, { user: userId, group: group._id })
-      })
-    })
+  it('should reject invite accepted by another user', async () => {
+    const [ group, user ] = await Promise.all([ groupPromise, getUserC() ])
+    const { _id: userId } = user
+    await authReq('put', '/api/groups?action=invite', { user: userId, group: group._id })
+    group.members.length.should.equal(1)
+    await authReqB('put', endpoint, { user: userId, group: group._id })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('membership not found')
       err.statusCode.should.equal(403)
-      done()
     })
-    .catch(done)
   })
 
   it('should add a member when user is accepting an invite', async () => {

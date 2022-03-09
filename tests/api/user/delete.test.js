@@ -1,6 +1,5 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { wait } = require('lib/promises')
 const { getReservedUser, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { getRefreshedUser, getRandomPosition } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
@@ -11,6 +10,7 @@ const { createTransaction } = require('../fixtures/transactions')
 const { getTransaction, updateTransaction } = require('../utils/transactions')
 const { createShelf } = require('../fixtures/shelves')
 const { getShelfById } = require('../utils/shelves')
+const { waitForIndexation, waitForDeindexation } = require('../utils/search')
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
@@ -33,13 +33,11 @@ describe('user:delete', () => {
   it('should remove the user from the geo index', async () => {
     const position = getRandomPosition()
     const user = await getReservedUser({ position })
-    // Using long pauses as the position indexation sometimes fails
-    // to update before the request by position
-    await wait(1000)
+    await waitForIndexation('users', user._id)
     const users = await getUsersNearPosition(position)
     _.map(users, '_id').should.containEql(user._id)
     await deleteUser(user)
-    await wait(1000)
+    await waitForDeindexation('users', user._id)
     const refreshedUsers = await getUsersNearPosition(position)
     _.map(refreshedUsers, '_id').should.not.containEql(user._id)
   })

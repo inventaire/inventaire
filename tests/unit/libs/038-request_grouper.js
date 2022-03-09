@@ -32,15 +32,12 @@ describe('Request Grouper', () => {
     singleRequest.should.be.a.Function()
   })
 
-  it('should return a function that returns a promise', done => {
+  it('should return a function that returns a promise', async () => {
     const singleRequest = requestGrouper({
       delay: 10,
       requester: MockRequester()
     })
-
-    singleRequest('input1')
-    .then(() => done())
-    .catch(done)
+    await singleRequest('input1')
   })
 
   it('should return a function that returns just the input value', async () => {
@@ -59,7 +56,7 @@ describe('Request Grouper', () => {
     spy.callCount.should.equal(1)
   })
 
-  it('should throttle, not debounce: not waiting for inputs after the delay', done => {
+  it('should throttle, not debounce: not waiting for inputs after the delay', async () => {
     const spy = sinon.spy()
     const fn = requestGrouper({
       delay: 10,
@@ -69,13 +66,10 @@ describe('Request Grouper', () => {
     fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1')))
     fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2')))
 
-    const late = () => {
-      fn('input3')
-      .then(res => {
-        res.should.equal(mockRequesterSingleSync('input3'))
-        spy.callCount.should.equal(2)
-        done()
-      })
+    const late = async () => {
+      const res = await fn('input3')
+      res.should.equal(mockRequesterSingleSync('input3'))
+      spy.callCount.should.equal(2)
     }
 
     setTimeout(late, 11)

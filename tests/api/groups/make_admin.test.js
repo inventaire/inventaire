@@ -1,66 +1,50 @@
 const _ = require('builders/utils')
 require('should')
-const { authReq, authReqB, undesiredRes, getUserGetter } = require('../utils/utils')
+const { authReq, authReqB, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
 const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=make-admin'
 const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:make-admin', () => {
-  it('should reject without group', done => {
-    authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+  it('should reject without group', async () => {
+    await authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: group')
       err.statusCode.should.equal(400)
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject non member users', done => {
-    groupPromise
-    .then(group => {
-      return authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
-    })
-    .then(undesiredRes(done))
+  it('should reject non member users', async () => {
+    const group = await groupPromise
+    await authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('membership not found')
       err.statusCode.should.equal(403)
-      done()
     })
-    .catch(done)
   })
 
-  it('should reject request by non admin', done => {
+  it('should reject request by non admin', async () => {
     const memberPromise = getUserGetter(humanName())()
-
-    addMember(groupPromise, memberPromise)
-    .then(([ group, member ]) => {
-      const { _id: memberId } = member
-      return authReqB('put', endpoint, { user: memberId, group: group._id })
-    })
+    const [ group, member ] = await addMember(groupPromise, memberPromise)
+    const { _id: memberId } = member
+    await authReqB('put', endpoint, { user: memberId, group: group._id })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('user is not a group admin')
       err.statusCode.should.equal(403)
-      done()
     })
-    .catch(done)
   })
 
-  it('should add an admin', done => {
+  it('should add an admin', async () => {
     const memberPromise = getUserGetter(humanName())()
-
-    addMember(groupPromise, memberPromise)
-    .then(([ group, member ]) => {
-      const { _id: memberId } = member
-      const adminsCount = group.admins.length
-      return authReq('put', endpoint, { user: memberId, group: group._id })
-      .then(() => getGroup(group))
-      .then(group => {
-        group.admins.length.should.equal(adminsCount + 1)
-        group.admins.map(_.property('user')).should.containEql(memberId)
-        done()
-      })
-    })
-    .catch(done)
+    const [ group, member ] = await addMember(groupPromise, memberPromise)
+    const { _id: memberId } = member
+    const adminsCount = group.admins.length
+    await authReq('put', endpoint, { user: memberId, group: group._id })
+    const updatedGroup = await getGroup(group)
+    updatedGroup.admins.length.should.equal(adminsCount + 1)
+    updatedGroup.admins.map(_.property('user')).should.containEql(memberId)
   })
 })

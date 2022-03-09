@@ -1,6 +1,6 @@
 const { request, customAuthReq, rawCustomAuthReq } = require('./request')
-const randomString = require('lib/utils/random_string')
 const { createUser, getRefreshedUser } = require('../fixtures/users')
+const { humanName } = require('../fixtures/text')
 require('should')
 
 const userPromises = {}
@@ -33,7 +33,7 @@ const API = module.exports = {
   getDataadminUser: getUserGetter('dataadmin', 'dataadmin'),
   getUserGetter,
   // To be used when you need a user not used by any other tests
-  getReservedUser: customData => getUserGetter(randomString(8), null, customData)(),
+  getReservedUser: customData => getUserGetter(humanName(), null, customData)(),
   getDeanonymizedUser: getUserGetter('deanonymized', null, {
     'settings.contributions.anonymize': false
   })
