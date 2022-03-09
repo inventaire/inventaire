@@ -7,7 +7,7 @@ const sanitization = {
 
 const controller = async ({ uris }) => {
   const tasks = await Promise.all(uris.map(checkEntity))
-  return { tasks: _.flatten(tasks) }
+  return { tasks: _.compact(_.flatten(tasks)) }
 }
 
 module.exports = { sanitization, controller }
