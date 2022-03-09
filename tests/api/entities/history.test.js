@@ -2,6 +2,7 @@ const should = require('should')
 const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { createHuman } = require('../fixtures/entities')
 const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
+const { deleteByUris } = require('../utils/entities')
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {
@@ -23,6 +24,13 @@ describe('entities:history', () => {
 
   it('should return entity patches', async () => {
     const human = await createHuman()
+    const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
+    patches[0].snapshot.labels.should.deepEqual(human.labels)
+  })
+
+  it('should return removed placeholder patches', async () => {
+    const human = await createHuman()
+    await deleteByUris(human.uri)
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
     patches[0].snapshot.labels.should.deepEqual(human.labels)
   })

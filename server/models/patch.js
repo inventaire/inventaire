@@ -4,6 +4,7 @@ const assert_ = require('lib/utils/assert_types')
 const jiff = require('jiff')
 const validations = require('./validations/common')
 const { versioned } = require('./attributes/entity')
+const Entity = require('models/entity')
 
 const Patch = module.exports = {
   create: params => {
@@ -74,7 +75,7 @@ const Patch = module.exports = {
   },
 
   addSnapshots: patchesDocs => {
-    let previousVersion = { labels: {}, claims: {} }
+    let previousVersion = getEntityHistoryBase()
 
     // Assumes that patchesDocs are ordered from oldest to newest
     for (const patchDoc of patchesDocs) {
@@ -152,4 +153,9 @@ const operationFix = {
 const getFromPatchPath = (obj, path) => {
   const key = path.slice(1).replace(/\//g, '.')
   return _.get(obj, key)
+}
+
+const getEntityHistoryBase = () => {
+  const entityBase = Entity.create()
+  return _.pick(entityBase, versioned)
 }

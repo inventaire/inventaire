@@ -295,7 +295,7 @@ describe('patch', () => {
       patch.snapshot.should.be.an.Object()
       patch.snapshot.claims.should.deepEqual({})
       patch.snapshot.labels.en.should.equal(newVersion.labels.en)
-      should(patch.snapshot.type).not.be.ok()
+      patch.snapshot.type.should.equal('entity')
       should(patch.snapshot.version).not.be.ok()
       should(patch.snapshot.created).not.be.ok()
     })
