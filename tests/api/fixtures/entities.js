@@ -146,9 +146,9 @@ const API = module.exports = {
   someImageHash,
 
   someOpenLibraryId: (type = 'human') => {
-    const numbers = Math.random().toString().slice(2, 7)
+    const numbers = Math.random().toString().slice(2, 6)
     const typeLetter = openLibraryTypeLetters[type]
-    return `OL1${numbers}${typeLetter}`
+    return `OL999${numbers}${typeLetter}`
   },
 
   someGoodReadsId: () => {
@@ -156,7 +156,7 @@ const API = module.exports = {
     return `100000000${numbers}`
   },
 
-  someLibraryThingsWorkId: () => Math.random().toString().slice(2, 10),
+  someLibraryThingsWorkId: () => `999${Math.random().toString().slice(2, 7)}`,
 
   generateIsbn13: () => {
     const isbn = `9780${_.join(_.sampleSize(_.split('0123456789', ''), 9), '')}`
