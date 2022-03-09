@@ -109,7 +109,7 @@ describe('patch', () => {
       updateFromPatch.labels.should.deepEqual(updatedDoc.labels)
     })
 
-    it('should ignore data out of versionned attributes', () => {
+    it('should ignore data out of versioned attributes', () => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       const updateFromPatch = jiff.patch(patch.patch, currentDoc)
       updateFromPatch.notTrackedAttr.should.equal(currentDoc.notTrackedAttr)

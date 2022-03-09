@@ -1,5 +1,5 @@
 module.exports = {
-  versionned: [
+  versioned: [
     'type',
     'labels',
     'claims',

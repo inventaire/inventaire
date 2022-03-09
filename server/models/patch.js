@@ -3,7 +3,7 @@ const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const jiff = require('jiff')
 const validations = require('./validations/common')
-const { versionned } = require('./attributes/entity')
+const { versioned } = require('./attributes/entity')
 
 const Patch = module.exports = {
   create: params => {
@@ -58,8 +58,8 @@ const Patch = module.exports = {
   },
 
   getDiff: (currentDoc, updatedDoc) => {
-    currentDoc = _.pick(currentDoc, versionned)
-    updatedDoc = _.pick(updatedDoc, versionned)
+    currentDoc = _.pick(currentDoc, versioned)
+    updatedDoc = _.pick(updatedDoc, versioned)
     return jiff.diff(currentDoc, updatedDoc)
   },
 
