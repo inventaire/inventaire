@@ -1,3 +1,4 @@
+const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const tasks_ = require('./tasks')
@@ -6,6 +7,8 @@ const updateRelationScore = require('./relation_score')
 const supportedTypes = [ 'human' ]
 
 module.exports = async uri => {
+  _.info(`check entity: ${uri}`)
+
   if (uri.split(':')[0] !== 'inv') {
     throw error_.new('invalid uri domain', 400, { uri })
   }
