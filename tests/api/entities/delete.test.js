@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const should = require('should')
 const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('../utils/utils')
-const { getByUris, deleteByUris } = require('../utils/entities')
+const { getByUri, getByUris, deleteByUris } = require('../utils/entities')
 const { getByIds: getItemsByIds } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
 
@@ -35,16 +35,10 @@ describe('entities:delete', () => {
   })
 
   it('should turn entity into removed:placeholder', async () => {
-    await createHuman()
-    .then(entity => {
-      const { uri } = entity
-      return deleteByUris(uri)
-      .then(() => getByUris(uri))
-      .then(res => {
-        entity = res.entities[uri]
-        entity._meta_type.should.equal('removed:placeholder')
-      })
-    })
+    const { uri } = await createHuman()
+    await deleteByUris(uri)
+    const entity = await getByUri(uri)
+    entity._meta_type.should.equal('removed:placeholder')
   })
 
   it('should remove several entities', async () => {
@@ -64,8 +58,7 @@ describe('entities:delete', () => {
     const work = await createWorkWithAuthor()
     const authorUri = work.claims['wdt:P50'][0]
     await deleteByUris(authorUri)
-    const { entities } = await getByUris(work.uri)
-    const updatedWork = entities[work.uri]
+    const updatedWork = await getByUri(work.uri)
     should(updatedWork.claims['wdt:P50']).not.be.ok()
   })
 
@@ -142,8 +135,8 @@ describe('entities:delete', () => {
   it('should ignore entities that where already turned into removed:placeholder', async () => {
     const { uri } = await createHuman()
     await deleteByUris(uri)
-    const { entities } = await getByUris(uri)
-    should(entities[uri]._meta_type).equal('removed:placeholder')
+    const entity = await getByUri(uri)
+    should(entity._meta_type).equal('removed:placeholder')
     await deleteByUris(uri)
   })
 
