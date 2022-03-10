@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 require('should')
 const { checkEntities, getBySuspectUri } = require('../utils/tasks')
-const { findOrIndexEntities } = require('../utils/entities')
+const { findOrIndexEntities, deleteByUris } = require('../utils/entities')
 const { createHuman, createWork } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('tests/api/utils/utils')
 
@@ -44,5 +44,13 @@ describe('tasks:check-entities', () => {
     const tasks = await getBySuspectUri(human.uri)
     const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
     tasks.length.should.equal(uniqSuggestiontUris.length)
+  })
+
+  it('should not create a task for a removed placeholders', async () => {
+    const human = await createHuman({ labels: { en: 'Fred Vargas' } })
+    await deleteByUris(human.uri)
+    await checkEntities(human.uri)
+    const tasks = await getBySuspectUri(human.uri)
+    tasks.length.should.equal(0)
   })
 })
