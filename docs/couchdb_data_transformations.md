@@ -1,9 +1,8 @@
-# Data transformation
+# CouchDB data transformation
 Suggested workflow to apply transformations to documents in a CouchDB database
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [0 - environement](#0---environement)
 - [1 - Get the documents locally](#1---get-the-documents-locally)

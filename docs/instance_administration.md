@@ -4,7 +4,6 @@ Tips and scripts to administrate an instance
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Users](#users)
   - [Update user role](#update-user-role)
   - [Prevent sending further emails to an email address](#prevent-sending-further-emails-to-an-email-address)
