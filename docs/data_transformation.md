@@ -15,6 +15,8 @@ Suggested workflow to apply transformations to documents in a CouchDB database
   - [By modifying the document as text](#by-modifying-the-document-as-text)
 - [3 - Post back in bulk](#3---post-back-in-bulk)
 - [4 - Check for conflicts](#4---check-for-conflicts)
+- [Examples](#examples)
+  - [Delete tasks documents in bulk](#delete-tasks-documents-in-bulk)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -22,6 +24,9 @@ Suggested workflow to apply transformations to documents in a CouchDB database
 
 ```sh
 db_host="http://${db_username}:${db_password}@localhost:5984"
+curljson () {
+	curl -s -H "Content-Type: application/json" -H 'Accept: application/json' $@
+}
 ```
 
 ## 1 - Get the documents locally
@@ -42,7 +47,7 @@ curl "$db_host/users/_design/users/_view/byUsername" | jq '.rows[] | .doc' -c > 
 ### Get only documents emitted by a certain view for a certain key
 ```sh
 # Get only documents matching the keys 'foo' and 'bar' in the 'byUsername' view
-curl "$db_host/users/_design/users/_view/byUsername?include_docs=true" -d '{"keys":["foo","bar"]}' | jq '.rows[] | .doc' -c > documents.ndjson
+curljson "$db_host/users/_design/users/_view/byUsername?include_docs=true" -d '{"keys":["foo","bar"]}' | jq '.rows[] | .doc' -c > documents.ndjson
 ```
 
 For more complex keys, curl alone can get painful, as CouchDB expects a valid JSON object. It could then be easier to use a tool such as [`couchdb-view-by-keys`](https://github.com/maxlath/couchdb-view-by-keys) `>= v4`:
@@ -55,7 +60,7 @@ couchdb-view-by-keys --docs "$db_host/entities/_design/entities/_view/byClaim" '
 
 ## 2 - Apply transformation
 ### By modifying the document as a JS object
-Here, we use [`ndjson-apply`](https://github.com/maxlath/ndjson-apply) to apply a transformation on all the downloaded documents, using a JS function.
+Here, we use [`ndjson-apply`](https://github.com/maxlath/ndjson-apply) to apply a transformation on all the downloaded documents, using a JS function. Note that for simpler transformations, `jq` would also be an option, see [examples](#examples).
 
 Write your transform function in a file:
 ```js
@@ -105,4 +110,12 @@ cat updated_documents.ndjson | couchdb-bulk2 "$db_host/users" > update.success 2
 ## 4 - Check for conflicts
 ```sh
 grep conflict update.errors
+```
+
+## Examples
+
+### Delete tasks documents in bulk
+```sh
+curljson "$db_host/tasks/_design/tasks/_view/byEntitiesType?include_docs=true" -d '{"key":"human"}' | jq '.rows[].doc | { _id: ._id, _rev: ._rev, _deleted: true }' -cr > docs_to_delete.ndjson
+cat docs_to_delete.ndjson | couchdb-bulk2 "$db_host/tasks"
 ```
