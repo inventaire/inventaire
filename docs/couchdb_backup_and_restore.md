@@ -1,10 +1,9 @@
 # CouchDB backup and restore
 
 ## Backup Couch
-Assuming that we are
+Assuming that CouchDB is running on localhost:5984, and that we want to backup `prod`-suffixed databases
 ```sh
-mkdir -p ./backups/couchdb
-npm run backup-databases prod
+npm run backup-databases http://username:password@localhost:5984 prod
 ```
 
 ## Restore
