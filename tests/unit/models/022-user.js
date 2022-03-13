@@ -54,6 +54,13 @@ describe('user model', () => {
         const args = replaceParam(0, 'with$special%characters');
         (() => _create(args)).should.throw()
       })
+
+      it('should normalize usernames', () => {
+        const nfdNormalizedUsername = 'àéï'.normalize('NFD')
+        const args = replaceParam(0, nfdNormalizedUsername)
+        const { username } = _create(args)
+        username.should.equal(nfdNormalizedUsername.normalize())
+      })
     })
 
     describe('email validation', () => {

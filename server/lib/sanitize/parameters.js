@@ -5,6 +5,7 @@ const host = CONFIG.fullPublicHost()
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
+const { normalizeString } = require('lib/utils/base')
 
 // Parameters attributes:
 // - format (optional)
@@ -39,7 +40,7 @@ const positiveInteger = {
 const nonEmptyString = {
   format: (str, name, config) => {
     if (str === '' && config.optional) return
-    if (typeof str === 'string') return str.normalize().trim()
+    if (typeof str === 'string') return normalizeString(str)
     // Let the validation throw an error
     else return str
   },
@@ -90,7 +91,7 @@ const arrayOfAType = validation => (values, type) => {
 
 const arrayOrSeparatedString = separator => value => {
   if (_.isString(value)) value = value.split(separator)
-  if (_.isArray(value)) return _.uniq(value)
+  if (_.isArray(value)) return _.uniq(value).map(normalizeString)
   // Let the 'validate' function reject non-arrayfied values
   else return value
 }
@@ -303,7 +304,10 @@ module.exports = {
   url: imgUrl,
   user: couchUuid,
   users: couchUuids,
-  username: { validate: validations.common.username },
+  username: {
+    format: normalizeString,
+    validate: validations.common.username
+  },
   usernames,
   relatives: allowlistedStrings,
   requester: couchUuid,

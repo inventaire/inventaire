@@ -34,19 +34,15 @@ describe('auth:signup', () => {
   })
 
   it('should create a user', async () => {
-    const res = await publicReq('post', endpoint, {
-      username: randomString(4),
+    const res = await signup({
       email: `bla${randomString(4)}@foo.bar`,
-      password: randomString(8)
     })
     res.ok.should.be.true()
   })
 
   it('should reject an invalid email', async () => {
-    await publicReq('post', endpoint, {
-      username: randomString(4),
-      email: `bla${randomString(4)}@foo..bar`,
-      password: randomString(8)
+    await signup({
+      email: `bla${randomString(4)}@foo..bar`
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -56,17 +52,42 @@ describe('auth:signup', () => {
 })
 
 describe('auth:username-availability', () => {
-  it('should reject an account with already created username', async () => {
+  it('should reject an account with an already used username', async () => {
     const username = createUsername()
     await createUser({ username })
     await wait(10)
-    await publicReq('post', endpoint, {
-      username,
-      email: `bla${username}@foo.bar`,
-      password: randomString(8)
+    await signup({ username })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
     })
+  })
+
+  it('should normalize unicode letters', async () => {
+    const usernameBase = createUsername()
+    const nonNormalizedUnicodeLetter = '\u0065\u0301'
+    const nonNormalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter
+    const user = await createUser({ username: nonNormalizedUnicodeUsername })
+    await wait(10)
+    const normalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter.normalize()
+    user.username.should.equal(normalizedUnicodeUsername)
+    await signup({ username: nonNormalizedUnicodeUsername })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+    })
+    await signup({ username: normalizedUnicodeUsername })
+    .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
     })
   })
 })
+
+const signup = ({ username, email, password }) => {
+  return publicReq('post', endpoint, {
+    username: username || randomString(8),
+    email: email || `bla${randomString(8)}@foo.bar`,
+    password: password || randomString(8)
+  })
+}

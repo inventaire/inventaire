@@ -5,6 +5,7 @@ const error_ = require('lib/error/error')
 const randomString = require('lib/utils/random_string')
 const generateReadToken = randomString.bind(null, 32)
 const { truncateLatLng } = require('lib/geo')
+const { normalizeString } = require('lib/utils/base')
 
 const User = module.exports = {}
 
@@ -15,6 +16,8 @@ User._create = (username, email, creationStrategy, language, password) => {
   _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
+
+  username = User.formatters.username(username)
 
   validations.pass('username', username)
   validations.pass('email', email)
@@ -167,5 +170,6 @@ User.shouldBeAnonymized = user => {
 }
 
 User.formatters = {
-  position: truncateLatLng
+  username: normalizeString,
+  position: truncateLatLng,
 }

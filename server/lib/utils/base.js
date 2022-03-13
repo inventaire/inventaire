@@ -165,7 +165,9 @@ module.exports = {
   // Decode first, so that any pre-encoded character isn't re-encoded
   encodeURL: url => encodeURI(decodeURI(url)),
 
-  isNotEmpty: value => value != null
+  isNotEmpty: value => value != null,
+
+  normalizeString: str => str.trim().normalize(),
 }
 
 const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {

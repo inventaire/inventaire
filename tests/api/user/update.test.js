@@ -1,7 +1,7 @@
 const should = require('should')
 const _ = require('lodash')
 const { customAuthReq, getReservedUser, getUser, getUserB } = require('../utils/utils')
-const { getRefreshedUser } = require('../fixtures/users')
+const { getRefreshedUser, createUser, createUsername } = require('../fixtures/users')
 const { getToken } = require('../utils/oauth')
 const { bearerTokenReq } = require('../utils/request')
 const { shouldNotBeCalled } = require('../../unit/utils')
@@ -69,6 +69,35 @@ describe('user:update', () => {
       await customAuthReq(userA, 'put', endpoint, {
         attribute: 'username',
         value: userB.username
+      })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('this username is already used')
+      })
+    })
+
+    it('should accept unicode usernames', async () => {
+      const username = createUsername()
+      const user = await createUser({ username })
+      await customAuthReq(user, 'put', endpoint, {
+        attribute: 'username',
+        value: username + 'éäàĝ'
+      })
+    })
+
+    it('should reject an update to an existing unicode username', async () => {
+      const usernameBase = createUsername()
+      const nonNormalizedUnicodeLetter = '\u0065\u0301'
+      const nonNormalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter
+      const normalizedUnicodeUsername = nonNormalizedUnicodeUsername.normalize()
+      const [ userA ] = await Promise.all([
+        getUser(),
+        createUser({ username: normalizedUnicodeUsername }),
+      ])
+      await customAuthReq(userA, 'put', endpoint, {
+        attribute: 'username',
+        value: nonNormalizedUnicodeUsername
       })
       .then(shouldNotBeCalled)
       .catch(err => {
