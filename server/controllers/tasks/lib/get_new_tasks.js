@@ -78,14 +78,14 @@ const searchEntityDuplicatesSuggestions = async entity => {
   const name = _.values(entity.labels)[0]
   if (!_.isNonEmptyString(name)) return []
 
-  const results = await typeSearch({
+  const { hits } = await typeSearch({
     search: name,
     types: [ 'humans' ],
     filter: 'wd',
     exact: true,
   })
 
-  return results.map(formatResult)
+  return hits.map(formatResult)
 }
 
 const formatResult = result => ({

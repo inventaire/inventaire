@@ -6,6 +6,7 @@ const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elas
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
 const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
+const { buildPath } = require('lib/utils/base')
 
 const endpoint = '/api/search'
 
@@ -83,18 +84,21 @@ const waitForDeindexation = async (indexBaseName, id) => {
 
 module.exports = {
   search: async (...args) => {
-    let types, search, lang, filter, limit, exact, minScore, claim
-    if (args.length === 1) ({ types, search, lang, filter, limit, exact, minScore, claim } = args[0])
+    let types, search, lang, filter, limit, offset, exact, minScore, claim
+    if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])
     else [ types, search, lang, filter ] = args
-    lang = lang || 'en'
-    limit = limit || 10
-    exact = exact || false
     if (_.isArray(types)) types = types.join('|')
-    let url = `${endpoint}?types=${types}&lang=${lang}&limit=${limit}&exact=${exact}`
-    if (search) url += `&search=${encodeURIComponent(search)}`
-    if (filter) url += `&filter=${filter}`
-    if (minScore) url += `&min-score=${minScore}`
-    if (claim) url += `&claim=${encodeURIComponent(claim)}`
+    const url = buildPath(endpoint, {
+      types,
+      search: search ? encodeURIComponent(search) : undefined,
+      lang: lang || 'en',
+      limit: limit || 10,
+      offset: offset || 0,
+      exact,
+      filter,
+      'min-score': minScore,
+      claim: claim ? encodeURIComponent(claim) : undefined,
+    })
     const { results } = await publicReq('get', url)
     return results
   },

@@ -5,7 +5,7 @@ const { trim } = require('lodash')
 const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
 
 module.exports = params => {
-  const { lang: userLang, search, limit: size, exact, claim, safe = false } = params
+  const { lang: userLang, search, limit: size, offset: from, exact, claim, safe = false } = params
   let { types, minScore = 0.5 } = params
   types = getSingularTypes(types)
 
@@ -42,6 +42,7 @@ module.exports = params => {
         },
       },
     },
+    from,
     size,
     min_score: minScore
   }
