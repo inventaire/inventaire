@@ -4,6 +4,10 @@
 // effectively updated on server reboot the views are already indexed
 // See https://docs.couchdb.org/en/3.2.0/best-practices/views.html#deploying-a-view-change-in-a-live-environment
 
+// Should typically be run as follow, before restarting the server:
+//
+//   export NODE_ENV=production; npm run couchdb:preload-design-docs-changes
+
 require('module-alias/register')
 const CONFIG = require('config')
 const __ = CONFIG.universalPath

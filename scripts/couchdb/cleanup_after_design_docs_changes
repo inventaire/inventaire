@@ -6,6 +6,11 @@
 // - Trigger view cleanups to recover the disk space used by now outdated view indexes
 //   See https://docs.couchdb.org/en/3.1.2/maintenance/compaction.html#compact-views-cleanup
 
+// Should typically be run as follow, after having restarted the server and made sure that
+// everything runs fine and that they will be no need to rollback those changes:
+//
+//    export NODE_ENV=production; npm run couchdb:cleanup-after-design-docs-changes
+
 require('module-alias/register')
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
