@@ -1,8 +1,7 @@
 const _ = require('builders/utils')
-const { tap } = require('lib/promises')
+const { wait } = require('lib/promises')
 const tasks_ = require('./lib/tasks')
 const db = require('db/couchdb/base')('entities')
-const { Wait } = require('lib/promises')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const jobs_ = require('db/level/jobs')
 const checkEntity = require('./lib/check_entity')
@@ -25,30 +24,31 @@ const controller = async ({ refresh }) => {
 const addEntitiesToQueueSequentially = refresh => {
   const pagination = { offset: 0, total: 0 }
 
-  const addNextBatch = () => {
+  const addNextBatch = async () => {
     _.info(pagination, 'get entities next batch')
-    return getNextInvHumanUrisBatch(pagination)
-    .then(uris => {
-      pagination.total += uris.length
-      if (uris.length === 0) return _.success(pagination.total, 'done. total entities queued:')
-      return getFilteredUris(uris, refresh)
-      .then(invTasksEntitiesQueue.pushBatch)
-      .then(addNextBatch)
-    })
+    const uris = await getNextInvHumanUrisBatch(pagination)
+    pagination.total += uris.length
+    if (uris.length === 0) {
+      _.success(pagination.total, 'done. total entities queued:')
+    } else {
+      const filteredUris = await getFilteredUris(uris, refresh)
+      await invTasksEntitiesQueue.pushBatch(filteredUris)
+      return addNextBatch()
+    }
   }
 
   return addNextBatch()
 }
 
-const getNextInvHumanUrisBatch = pagination => {
+const getNextInvHumanUrisBatch = async pagination => {
   const { offset } = pagination
-  return db.view('entities', 'byClaim', {
+  const { rows } = await db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
     limit: batchLength,
     skip: offset
   })
-  .then(tap(() => { pagination.offset += batchLength }))
-  .then(getUris)
+  pagination.offset += batchLength
+  return getUris(rows)
 }
 
 const getFilteredUris = async (uris, refresh) => {
@@ -56,26 +56,25 @@ const getFilteredUris = async (uris, refresh) => {
   else return filterNotAlreadySuspectEntities(uris)
 }
 
-const getUris = res => _.map(res.rows, 'id').map(prefixifyInv)
+const getUris = rows => _.map(rows, 'id').map(prefixifyInv)
 
-const deduplicateWorker = (jobId, uri) => {
-  return checkEntity(uri)
-  .then(Wait(interval))
-  .catch(err => {
+const deduplicateWorker = async (jobId, uri) => {
+  try {
+    await checkEntity(uri)
+    await wait(interval)
+  } catch (err) {
     // Prevent crashing the queue for non-critical errors
     // Example of 400 error: the entity has already been redirected
     if (err.statusCode === 400) return
     _.error(err, 'deduplicateWorker err')
     throw err
-  })
+  }
 }
 
-const filterNotAlreadySuspectEntities = uris => {
-  return tasks_.bySuspectUris(uris, { includeArchived: true })
-  .then(res => {
-    const alreadyCheckedUris = _.map(res.rows, 'suspectUri')
-    return _.difference(uris, alreadyCheckedUris)
-  })
+const filterNotAlreadySuspectEntities = async uris => {
+  const { rows } = await tasks_.bySuspectUris(uris, { includeArchived: true })
+  const alreadyCheckedUris = _.map(rows, 'suspectUri')
+  return _.difference(uris, alreadyCheckedUris)
 }
 
 module.exports = { sanitization, controller }
