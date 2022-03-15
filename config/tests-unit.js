@@ -8,4 +8,5 @@ module.exports = {
   leveldb: {
     memoryBackend: true,
   },
+  useSlowPasswordHashFunction: false,
 }

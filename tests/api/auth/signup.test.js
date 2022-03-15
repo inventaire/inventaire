@@ -52,14 +52,27 @@ describe('auth:signup', () => {
 })
 
 describe('auth:username-availability', () => {
-  it('should reject an account with an already used username', async () => {
+  it('should reject an account with a username ', async () => {
     const username = createUsername()
     await createUser({ username })
-    await wait(10)
+    // Wait for prevent_multi_accounts_creation username lock time to be over
+    await wait(600)
     await signup({ username })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+      err.body.status_verbose.should.equal('this username is already used')
+    })
+  })
+
+  it('should reject an account with a used username', async () => {
+    const username = createUsername()
+    await createUser({ username: username.toLowerCase() })
+    // Wait for prevent_multi_accounts_creation username lock time to be over
+    await wait(600)
+    await signup({ username: username.toUpperCase() })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('this username is already used')
     })
   })
 
@@ -68,18 +81,21 @@ describe('auth:username-availability', () => {
     const nonNormalizedUnicodeLetter = '\u0065\u0301'
     const nonNormalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter
     const user = await createUser({ username: nonNormalizedUnicodeUsername })
-    await wait(10)
+    // Wait for prevent_multi_accounts_creation username lock time to be over
+    await wait(600)
     const normalizedUnicodeUsername = usernameBase + nonNormalizedUnicodeLetter.normalize()
     user.username.should.equal(normalizedUnicodeUsername)
     await signup({ username: nonNormalizedUnicodeUsername })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+      err.body.status_verbose.should.equal('this username is already used')
     })
+    // Wait for prevent_multi_accounts_creation normalizedUnicodeUsername lock time to be over
+    await wait(600)
     await signup({ username: normalizedUnicodeUsername })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('an account is already in the process of being created with this username')
+      err.body.status_verbose.should.equal('this username is already used')
     })
   })
 })
