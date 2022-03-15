@@ -125,7 +125,9 @@ const regroupSameAsMatches = simplifiedResults => {
     }
   })
   simplifiedResults.forEach(({ author }) => {
-    if (authorsMatches[author.value]) author.matches = authorsMatches[author.value]
+    if (author && authorsMatches[author.value]) {
+      author.matches = authorsMatches[author.value]
+    }
   })
   const editionAuthorCouples = []
   return simplifiedResults.filter(result => {
