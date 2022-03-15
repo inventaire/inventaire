@@ -4,7 +4,7 @@ const promises_ = require('lib/promises')
 const host = CONFIG.fullPublicHost()
 const { i18n } = require('../i18n/i18n')
 const { contactAddress } = CONFIG
-const { newsKey, didYouKnowKeyCount } = CONFIG.activitySummary
+const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
@@ -134,6 +134,6 @@ const newsData = user => {
 }
 
 const getDidYouKnowKey = () => {
-  const num = _.random(1, didYouKnowKeyCount)
+  const num = _.sample(didYouKnowKeys)
   return `did_you_know_${num}`
 }

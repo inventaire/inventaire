@@ -128,7 +128,7 @@ const config = module.exports = {
     maxEmailsPerHour: 5,
     // the key to find the current news string
     newsKey: 'news_1',
-    didYouKnowKeyCount: 5
+    didYouKnowKeys: [ 1, 2, 4, 5 ]
   },
   // time of validity for email validation tokens
   tokenDaysToLive: 3,
