@@ -202,7 +202,7 @@ const config = module.exports = {
   jobs: {
     'inv:deduplicate': {
       run: true,
-      interval: 3000
+      nice: true,
     }
   },
 
