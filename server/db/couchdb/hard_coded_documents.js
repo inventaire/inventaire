@@ -5,6 +5,9 @@ const userDoc = (username, idLastCharacters) => ({
   // Data required to avoid crashing users logic
   snapshot: {},
   settings: {
+    notifications: {
+      global: false
+    },
     contributions: {
       anonymize: false
     }
