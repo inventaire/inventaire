@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+// Preloading design docs so that when design docs are
+// effectively updated on server reboot the views are already indexed
+// See https://docs.couchdb.org/en/3.2.0/best-practices/views.html#deploying-a-view-change-in-a-live-environment
+
+require('module-alias/register')
+const CONFIG = require('config')
+const __ = CONFIG.universalPath
+const designDocFolder = __.path('db', 'couchdb/design_docs')
+const dbsList = require('db/couchdb/list')
+const initCouchdb = require('db/couchdb/init')
+const { symlink } = require('fs').promises
+
+const designDocsNames = Object.values(dbsList).flat()
+
+const createDesignDocSymbolicLink = async designDocName => {
+  try {
+    await symlink(`${designDocFolder}/${designDocName}.js`, `${designDocFolder}/${designDocName}_preload.js`)
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err
+  }
+}
+
+const createDesignDocsSymbolicLinks = async () => {
+  await Promise.all(designDocsNames.map(createDesignDocSymbolicLink))
+}
+
+createDesignDocsSymbolicLinks()
+.then(() => initCouchdb({ preload: true }))
+.catch(console.error)
