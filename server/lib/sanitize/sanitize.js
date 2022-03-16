@@ -127,7 +127,14 @@ const removeUnexpectedParameter = (input, name, configs, res) => {
 }
 
 const format = (input, name, formatFn, config) => {
-  if (formatFn) input[name] = formatFn(input[name], name, config)
+  if (!formatFn) return
+  try {
+    input[name] = formatFn(input[name], name, config)
+  } catch (err) {
+    const formatError = error_.new('could not format input', 500, { input, name, formatFn, config })
+    formatError.cause = err
+    throw formatError
+  }
 }
 
 const applyDefaultValue = (input, name, config, parameter) => {

@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const CONFIG = require('config')
+const { isNonEmptyArray } = require('lib/boolean_validations')
 const { publicHost } = CONFIG
 const host = CONFIG.fullPublicHost()
 const error_ = require('lib/error/error')
@@ -91,9 +92,15 @@ const arrayOfAType = validation => (values, type) => {
 
 const arrayOrSeparatedString = separator => value => {
   if (_.isString(value)) value = value.split(separator)
-  if (_.isArray(value)) return _.uniq(value).map(normalizeString)
+  if (_.isArray(value)) return _.uniq(value).map(formatStringArrayElement)
   // Let the 'validate' function reject non-arrayfied values
   else return value
+}
+
+const formatStringArrayElement = str => {
+  if (typeof str === 'string') return normalizeString(str)
+  // Let the 'validate' function reject non-string values
+  else return str
 }
 
 const arrayOrPipedString = arrayOrSeparatedString('|')
@@ -151,6 +158,7 @@ const allowlistedString = {
 const allowlistedStrings = {
   format: arrayOrPipedString,
   validate: (values, name, config) => {
+    if (!isNonEmptyArray(values)) return false
     for (const value of values) {
       allowlistedString.validate(value, name, config)
     }

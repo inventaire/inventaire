@@ -129,6 +129,39 @@ describe('sanitize', () => {
       }
     })
 
+    it('should reject non-string allowlist value', async () => {
+      const req = { method: 'POST', query: {}, body: { attributes: 123 } }
+      const res = {}
+      const configs = {
+        attributes: {
+          allowlist: [ 'foo' ]
+        }
+      }
+      try {
+        sanitize(req, res, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        console.log('046-sanitize.js', 144, err)
+        err.message.should.startWith('invalid attributes')
+      }
+    })
+
+    it('should reject non-string array-wrapped allowlist value', async () => {
+      const req = { method: 'POST', query: {}, body: { attributes: [ 123 ] } }
+      const res = {}
+      const configs = {
+        attributes: {
+          allowlist: [ 'foo' ]
+        }
+      }
+      try {
+        sanitize(req, res, configs)
+        shouldNotBeCalled()
+      } catch (err) {
+        err.message.should.startWith('invalid attributes')
+      }
+    })
+
     it('should clone default values', async () => {
       const req = { query: {} }
       const res = {}
