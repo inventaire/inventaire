@@ -25,6 +25,7 @@ const nonEditedProperties = [
   'P106', // occupation
   'P109', // signature
   'P110', // illustrator
+  'P138', // named after
   'P154', // logo image
   'P155', // follow
   'P156', // is follow by
@@ -44,6 +45,7 @@ const nonEditedProperties = [
   'P2093', // author name string
   'P2716', // collage image
   'P2860', // cite
+  'P2959', // permanent duplicated item
   'P4258', // Gallica ID
   'P6338', // colorist
 ]
