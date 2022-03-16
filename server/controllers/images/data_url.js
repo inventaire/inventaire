@@ -1,7 +1,9 @@
 const _ = require('builders/utils')
+const { cleanupImageUrl } = require('data/dataseed/dataseed')
 const error_ = require('lib/error/error')
 const isPrivateUrl = require('lib/network/is_private_url')
 const fetch = require('node-fetch')
+const { enabled: dataseedEnabled } = require('config').dataseed
 
 const sanitization = {
   url: {}
@@ -28,6 +30,12 @@ const getImageDataUrl = async url => {
   if (await isPrivateUrl(url)) {
     throw error_.newInvalid('url', url)
   }
+
+  if (dataseedEnabled) {
+    const res = await cleanupImageUrl(url)
+    url = res.url
+  }
+
   const res = await fetch(url, { headers, sanitize: true })
   const contentType = res.headers.get('content-type')
 
