@@ -13,7 +13,7 @@ const waitForCPUsLoadToBeBelow = async ({ threshold, checkInterval = 10000 }) =>
   assert_.number(checkInterval)
   if (getCPUsAverageLoad() > threshold) {
     await wait(checkInterval)
-    return waitForCPUsLoadToBeBelow()
+    return waitForCPUsLoadToBeBelow({ threshold, checkInterval })
   }
 }
 
