@@ -13,7 +13,7 @@ module.exports = {
   jobs: {
     'inv:deduplicate': {
       run: true,
-      interval: 0
+      nice: false,
     }
   }
 }

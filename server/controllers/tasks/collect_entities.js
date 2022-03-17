@@ -1,11 +1,11 @@
 const _ = require('builders/utils')
-const { wait } = require('lib/promises')
 const tasks_ = require('./lib/tasks')
 const db = require('db/couchdb/base')('entities')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const jobs_ = require('db/level/jobs')
 const checkEntity = require('./lib/check_entity')
-const { interval } = require('config').jobs['inv:deduplicate']
+const { nice } = require('config').jobs['inv:deduplicate']
+const { waitForCPUsLoadToBeBelow } = require('lib/os')
 const batchLength = 1000
 
 const sanitization = {
@@ -60,8 +60,11 @@ const getUris = rows => _.map(rows, 'id').map(prefixifyInv)
 
 const deduplicateWorker = async (jobId, uri) => {
   try {
+    // Run the worker when the CPUs activity is below 50% load
+    // to give the priority to more urgent matters,
+    // such as answering users requests
+    if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
     await checkEntity(uri)
-    await wait(interval)
   } catch (err) {
     // Prevent crashing the queue for non-critical errors
     // Example of 400 error: the entity has already been redirected
