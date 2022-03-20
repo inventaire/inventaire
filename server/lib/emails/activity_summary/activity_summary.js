@@ -9,11 +9,14 @@ const emailsInterval = oneHour / maxEmailsPerHour
 
 module.exports = () => {
   _.info(CONFIG.activitySummary, 'activity summary')
-  return setInterval(sendOneUserSummary, emailsInterval)
+  setInterval(sendOneUserSummary, emailsInterval)
 }
 
-const sendOneUserSummary = () => {
-  return findOneWaitingForSummary()
-  .then(sendActivitySummary)
-  .catch(_.Error('waitingForSummary err'))
+const sendOneUserSummary = async () => {
+  try {
+    const user = await findOneWaitingForSummary()
+    await sendActivitySummary(user)
+  } catch (err) {
+    _.error(err, 'waitingForSummary err')
+  }
 }
