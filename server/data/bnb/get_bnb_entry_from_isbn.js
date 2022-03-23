@@ -6,6 +6,8 @@ const { parseSameasMatches } = require('data/lib/external_ids')
 const wdIdByIso6393Code = require('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
+// Using a shorter timeout as the query is never critically needed but can make a user wait
+const timeout = 10000
 
 const headers = {
   'content-type': 'application/sparql-query',
@@ -14,7 +16,7 @@ const headers = {
 
 module.exports = async isbn => {
   const url = `https://bnb.data.bl.uk/sparql?format=json&query=${getQuery(isbn)}`
-  const response = await requests_.get(url, { headers })
+  const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results
   const rows = await Promise.all(simplifiedResults.map((result, i) => {

@@ -9,6 +9,8 @@ const { isPositiveIntegerString } = require('lib/boolean_validations')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
 const { formatAuthorName } = require('data/commons/format_author_name')
+// Using a shorter timeout as the query is never critically needed but can make a user wait
+const timeout = 10000
 
 const headers = {
   'content-type': 'application/sparql-query',
@@ -16,8 +18,8 @@ const headers = {
 }
 
 module.exports = async isbn => {
-  const url = `https://datos.bne.es/sparql?timeout=10000&format=json&query=${getQuery(isbn)}`
-  const response = await requests_.get(url, { headers })
+  const url = `https://datos.bne.es/sparql?timeout=${timeout}&format=json&query=${getQuery(isbn)}`
+  const response = await requests_.get(url, { headers, timeout })
   let simplifiedResults = simplifySparqlResults(response)
   // Work around the absence of support for GROUP_CONCAT
   simplifiedResults = regroupSameAsMatches(simplifiedResults)

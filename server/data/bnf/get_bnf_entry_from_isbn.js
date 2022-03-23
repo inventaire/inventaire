@@ -9,13 +9,15 @@ const { parseSameasMatches } = require('data/lib/external_ids')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
 const { formatAuthorName } = require('data/commons/format_author_name')
+// Using a shorter timeout as the query is never critically needed but can make a user wait
+const timeout = 10000
 
 const headers = { accept: '*/*' }
-const base = 'https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=60000&query='
+const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
 module.exports = async isbn => {
   const url = base + getQuery(isbn)
-  const response = await requests_.get(url, { headers })
+  const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results
   const rows = await Promise.all(simplifiedResults.map((result, i) => {
