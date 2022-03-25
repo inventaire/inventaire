@@ -1,31 +1,17 @@
 const { offline, verbose } = require('config')
 const loggers_ = require('inv-loggers')
 const chalk = require('chalk')
-const { grey, red } = chalk
+const { red } = chalk
 
 let errorCounter = 0
 
 // Log full objects
 require('util').inspect.defaultOptions.depth = 20
 
-const print = str => process.stdout.write(str + '\n')
-
-const BaseLogger = (color, operation) => (obj, label) => {
-  // fully display deep objects
-  print(grey('****') + chalk[color](`${label}`) + grey('****'))
-  print(operation(obj))
-  print(grey('----------'))
-  return obj
-}
-
 module.exports = _ => {
   if (!verbose) loggers_.log = _.identity
 
-  const stringify = BaseLogger('yellow', JSON.stringify)
-
   const customLoggers = {
-    stringify,
-
     error: (err, label) => {
       if (!(err instanceof Error)) {
         throw new Error('invalid error object')
@@ -86,7 +72,6 @@ module.exports = _ => {
   }
 
   // Overriding inv-loggers partial loggers with the above customized loggers
-  customLoggers.Warn = loggers_.partialLogger(customLoggers.warn)
   customLoggers.Error = loggers_.partialLogger(customLoggers.error)
   customLoggers.ErrorRethrow = loggers_.partialLogger(errorRethrow)
 
