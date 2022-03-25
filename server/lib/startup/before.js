@@ -4,11 +4,12 @@ const _ = require('builders/utils')
 // so that the configuration applies to all
 
 const { red } = require('chalk')
+const { logErrorsCount } = require('lib/utils/logs')
 
 module.exports = () => {
   initUncaughtExceptionCatcher()
 
-  _.logErrorsCount()
+  logErrorsCount()
   _.log(`pid: ${process.pid}`)
   _.log(`env: ${CONFIG.env}`)
   _.log(`host: ${CONFIG.fullHost()}`)

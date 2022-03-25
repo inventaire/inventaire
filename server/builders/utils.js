@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const server_ = require('lib/utils/base')
-const logs_ = require('lib/utils/logs')(_)
+const loggers = require('lib/utils/logs')
 const booleanValidations_ = require('lib/boolean_validations')
 
-module.exports = Object.assign(_, server_, logs_, booleanValidations_)
+module.exports = Object.assign(_, server_, loggers, booleanValidations_)

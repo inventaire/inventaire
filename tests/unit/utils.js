@@ -1,4 +1,4 @@
-const { warn } = require('inv-loggers')
+const { warn } = require('lib/utils/logs')
 const util = require('util')
 
 module.exports = {

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const should = require('should')
 
 const User = require('models/user')
@@ -17,7 +16,7 @@ const validUser = () => [
 const replaceParam = (index, value, baseArgGen = validUser) => {
   const args = baseArgGen()
   args[index] = value
-  return _.log(args, 'args')
+  return args
 }
 
 describe('user model', () => {
