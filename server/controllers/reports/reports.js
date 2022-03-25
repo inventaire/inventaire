@@ -25,9 +25,8 @@ const errorReport = (req, res) => {
 }
 
 const buildError = (message, labels, errData, req) => {
-  const context = _.omit(errData, 'stack')
   const statusCode = errData.statusCode || 500
-  const err = error_.new(message, statusCode, context)
+  const err = error_.new(message, statusCode, errData)
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
   delete err.emitter
