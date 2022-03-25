@@ -18,22 +18,21 @@ module.exports = () => {
   return sequentialUpdate()
 }
 
-const updateDoc = (db, doc) => {
+const updateDoc = async (db, doc) => {
   const { _id: id } = doc
-  return db.get(id)
-  .then(currentDoc => {
+  try {
+    const currentDoc = await db.get(id)
     // Copy the _rev so that the doc have a chance to match
     // and, if not, so that we can use db.put
     const docPath = `${db.name}/${id}`
     doc._rev = currentDoc._rev
     if (!_.isEqual(currentDoc, doc)) {
-      return db.put(doc)
-      .then(_.Success(`${docPath} updated`))
+      const res = await db.put(doc)
+      _.success(res, `${docPath} updated`)
     }
-  })
-  .catch(err => {
+  } catch (err) {
     // If the doc is missing, create it
     if (err.statusCode === 404) return db.put(doc)
     else throw err
-  })
+  }
 }
