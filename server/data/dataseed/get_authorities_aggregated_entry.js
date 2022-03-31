@@ -1,6 +1,7 @@
 const _ = require('builders/utils')
 const { resolveEntrySeedsByExternalIds } = require('controllers/entities/lib/resolver/resolve_by_external_ids')
 const { isNotEmpty, objLength } = require('lib/utils/base')
+const { offline } = require('config')
 
 const authorities = {
   bnb: require('data/bnb/get_bnb_entry_from_isbn'),
@@ -12,6 +13,7 @@ const authorities = {
 const authoritiesNames = Object.keys(authorities)
 
 module.exports = async isbn => {
+  if (offline) return
   const entries = await Promise.all(authoritiesNames.map(wrap(isbn)))
   return sortAndAggregateEntries(isbn, entries)
 }
