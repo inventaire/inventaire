@@ -1,5 +1,5 @@
-const { Agent: HttpAgent } = require('http')
-const { Agent: HttpsAgent } = require('https')
+const { Agent: HttpAgent } = require('node:http')
+const { Agent: HttpsAgent } = require('node:https')
 const httpAgent = new HttpAgent({ keepAlive: true })
 const httpsAgent = new HttpsAgent({ keepAlive: true })
 

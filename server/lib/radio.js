@@ -1,7 +1,7 @@
 // A server-wide event bus
 
 const _ = require('builders/utils')
-const { EventEmitter } = require('events')
+const { EventEmitter } = require('node:events')
 const radio = new EventEmitter()
 
 // It's convenient in tests to have the guaranty that event listeners were called,

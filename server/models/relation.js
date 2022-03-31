@@ -1,5 +1,5 @@
 const couch_ = require('lib/couch')
-const assert = require('assert')
+const assert = require('node:assert')
 const assert_ = require('lib/utils/assert_types')
 const { userId } = require('./validations/common')
 

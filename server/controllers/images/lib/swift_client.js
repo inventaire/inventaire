@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
-const { createReadStream } = require('fs')
+const { createReadStream } = require('node:fs')
 const { getContentLength } = require('lib/fs')
 const getToken = require('./get_swift_token')
 const { publicURL } = require('config').mediaStorage.swift

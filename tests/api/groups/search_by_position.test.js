@@ -5,7 +5,7 @@ const { createGroup } = require('../fixtures/groups')
 const { getRandomPosition } = require('../fixtures/users')
 const { waitForIndexation } = require('../utils/search')
 const endpoint = '/api/groups?action=search-by-position'
-const qs = require('querystring')
+const qs = require('node:querystring')
 
 describe('groups:search-by-position', () => {
   it('should reject without bbox', async () => {

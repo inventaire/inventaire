@@ -1,5 +1,5 @@
-const { stat, unlink } = require('fs').promises
-const { promisify } = require('util')
+const { stat, unlink } = require('node:fs').promises
+const { promisify } = require('node:util')
 const mv = require('mv')
 
 module.exports = {

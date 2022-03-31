@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
-const qs = require('querystring')
+const qs = require('node:querystring')
 const cache_ = require('lib/cache')
 const { oneMonth } = require('lib/time')
 const { fixedEncodeURIComponent } = require('lib/utils/base')

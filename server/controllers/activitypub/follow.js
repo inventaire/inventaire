@@ -1,5 +1,5 @@
 const error_ = require('lib/error/error')
-const qs = require('querystring')
+const qs = require('node:querystring')
 const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')

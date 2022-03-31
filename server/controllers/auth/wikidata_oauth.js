@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const requests_ = require('lib/requests')
 const root = CONFIG.fullPublicHost()
 const OAuth = require('oauth-1.0a')
-const crypto = require('crypto')
+const crypto = require('node:crypto')
 const createHmacSha1Hash = (baseString, key) => {
   return crypto.createHmac('sha1', key)
   .update(baseString)
@@ -21,7 +21,7 @@ const oauth = OAuth({
   hash_function: createHmacSha1Hash
 })
 
-const qs = require('querystring')
+const qs = require('node:querystring')
 const user_ = require('controllers/user/lib/user')
 
 // Alternatively using the nice or the non-nice URL

@@ -1,7 +1,7 @@
 const pw = require('./password_hashing')
 const error_ = require('lib/error/error')
-const crypto = require('crypto')
-const { promisify } = require('util')
+const crypto = require('node:crypto')
+const { promisify } = require('node:util')
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
 const passwords = {

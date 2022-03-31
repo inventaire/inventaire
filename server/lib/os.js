@@ -1,4 +1,4 @@
-const { cpus, loadavg } = require('os')
+const { cpus, loadavg } = require('node:os')
 const { wait } = require('./promises')
 const assert_ = require('./utils/assert_types')
 const cpusCount = cpus().length

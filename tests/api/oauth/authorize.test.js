@@ -2,7 +2,7 @@ const { publicReq, authReq, rawAuthReq, shouldNotBeCalled } = require('../utils/
 const { getClient } = require('../utils/oauth')
 const randomString = require('lib/utils/random_string')
 const endpoint = '/api/oauth/authorize'
-const { parse: parseQuery } = require('querystring')
+const { parse: parseQuery } = require('node:querystring')
 
 describe('oauth:authorize', () => {
   it('should reject unauthentified requests', async () => {

@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const getSubDb = require('./get_sub_db')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 
 module.exports = {
   // always return an object with 'push' and 'pushBatch' function

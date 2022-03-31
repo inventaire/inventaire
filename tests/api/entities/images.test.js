@@ -3,7 +3,7 @@ require('should')
 const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullPublicHost()
-const qs = require('querystring')
+const qs = require('node:querystring')
 const encodedCommonsUrlChunk = qs.escape('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {
