@@ -6,6 +6,7 @@ const { getByUri, addClaim } = require('../utils/entities')
 const fakeText = require('./text')
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 const { humanName, randomWords } = require('./text')
+const calculateCheckDigit = require('isbn3/lib/calculate_check_digit')
 
 const createEntity = (P31, options = {}) => (params = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
@@ -159,7 +160,9 @@ const API = module.exports = {
   someLibraryThingsWorkId: () => `999${Math.random().toString().slice(2, 7)}`,
 
   generateIsbn13: () => {
-    const isbn = `9780${_.join(_.sampleSize(_.split('0123456789', ''), 9), '')}`
+    const isbnWithoutChecksum = `978${_.sampleSize('0123456789'.split(''), 9).join('')}`
+    const checksum = calculateCheckDigit(isbnWithoutChecksum)
+    const isbn = `${isbnWithoutChecksum}${checksum}`
     if (isbn_.isValidIsbn(isbn)) return isbn
     return API.generateIsbn13()
   },
