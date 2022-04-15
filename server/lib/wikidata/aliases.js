@@ -87,7 +87,8 @@ const wikidataOnlyP31Values = {
     'wd:Q19720188', // small publisher
     'wd:Q19720190', // medium size publisher
     'wd:Q19720191', // large publisher
-    'wd:Q45400320' // open access publisher
+    'wd:Q45400320', // open access publisher
+    'wd:Q479716', // publisher associated with a university
   ],
   collections: [],
   movements: [
