@@ -26,7 +26,7 @@
     "lint": "./scripts/lint",
     "lint-fix": "./scripts/lint_fix",
     "lint-staged": "./scripts/lint_staged",
-    "populate-users-fixtures": "./scripts/populate_users_fixtures.js",
+    "populate-users": "./scripts/populate_users.js",
     "postinstall": "./scripts/postinstall",
     "replicate-tests-db": "./scripts/replicate_tests_db.js",
     "start": "node server/server.js",

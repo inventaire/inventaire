@@ -33,7 +33,7 @@ describe('items:inventory-view', () => {
   })
 
   it('should return an inventory-view for user items without shelf', async () => {
-    const user = await createUserWithItems()
+    const { user } = await createUserWithItems()
     const { shelf } = await createShelf(user)
     const { itemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
     const itemsCount = itemsByDate.length

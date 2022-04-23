@@ -92,7 +92,6 @@ const formatRichResults = results => {
   }
 
   response.entities = _.keyBy(response.entities, 'uri')
-
   if (response.notFound.length === 0) delete response.notFound
 
   return response
