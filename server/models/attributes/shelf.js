@@ -2,7 +2,7 @@ const attributes = module.exports = {}
 
 attributes.updatable = [
   'description',
-  'listing',
+  'visibility',
   'name',
   'color',
 ]
@@ -10,10 +10,3 @@ attributes.updatable = [
 attributes.validAtCreation = attributes.updatable.concat([
   'owner'
 ])
-
-attributes.constrained = {
-  listing: {
-    possibilities: [ 'private', 'network', 'public' ],
-    defaultValue: 'private'
-  }
-}

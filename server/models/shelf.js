@@ -11,6 +11,7 @@ module.exports = {
     assert_.string(shelf.name)
 
     const newShelf = {}
+    newShelf.visibility = shelf.visibility || []
     Object.keys(shelf).forEach(key => {
       const value = shelf[key] || defaultValues[key]
       if (!attributes.validAtCreation.includes(key)) {
@@ -57,5 +58,5 @@ module.exports = {
 
 const defaultValues = {
   description: '',
-  listing: 'private'
+  visibility: []
 }
