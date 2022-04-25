@@ -40,6 +40,7 @@ const wikidataOnlyP31Values = {
     'wd:Q34620', // Greek tragedy
     'wd:Q128093', // ebook
     'wd:Q17518461', // posthumous work
+    'wd:Q12765855', // philosophical work
     'wd:Q179461', // religious text
     'wd:Q27560760', // сollection of fairy tales
     'wd:Q23622', // dictionary
