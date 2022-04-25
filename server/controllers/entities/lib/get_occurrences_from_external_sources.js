@@ -15,6 +15,7 @@ const getOlAuthorWorksTitles = require('data/openlibrary/get_ol_author_works_tit
 const getEntityByUri = require('./get_entity_by_uri')
 const { normalizeTerm } = require('./terms_normalization')
 const { isWdEntityUri } = require('lib/boolean_validations')
+const ASCIIFolder = require('fold-to-ascii')
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
@@ -89,10 +90,10 @@ const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuth
 const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
 
 const createOccurrencesFromUnstructuredArticle = worksLabels => {
-  const worksLabelsPattern = new RegExp(worksLabels.join('|'), 'gi')
+  const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
   return article => {
     if (!article.extract) return
-    const matchedTitles = _.uniq(article.extract.match(worksLabelsPattern))
+    const matchedTitles = _.uniq(normalize(article.extract).match(worksLabelsPattern))
     if (matchedTitles.length <= 0) return
     return { url: article.url, matchedTitles, structuredDataSource: false }
   }
@@ -108,3 +109,7 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
     }
   }
 }
+
+// Example of a case requiring ascii-folding:
+// when "’" is used on one side and "'" on the other
+const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
