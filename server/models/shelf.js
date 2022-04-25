@@ -12,13 +12,13 @@ module.exports = {
 
     const newShelf = {}
     newShelf.visibility = shelf.visibility || []
-    Object.keys(shelf).forEach(key => {
-      const value = shelf[key] || defaultValues[key]
-      if (!attributes.validAtCreation.includes(key)) {
-        throw error_.new(`invalid attribute: ${value}`, 400, { shelf, key, value })
+    Object.keys(shelf).forEach(attribute => {
+      if (!attributes.validAtCreation.includes(attribute)) {
+        throw error_.new('invalid attribute', 400, { attribute, shelf })
       }
-      validations.pass(key, value)
-      newShelf[key] = value
+      const value = shelf[attribute] || defaultValues[attribute]
+      validations.pass(attribute, value)
+      newShelf[attribute] = value
     })
 
     newShelf.created = Date.now()
