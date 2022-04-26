@@ -1,10 +1,10 @@
 module.exports = reqUserId => ([ shelves, userFriendsIds ]) => {
-  if (!(shelves[0])) return []
   return shelves.filter(isVisibleBy(userFriendsIds, reqUserId))
 }
 
 const isVisibleBy = (userFriendsIds, reqUserId) => shelf => {
-  if (shelf.owner === reqUserId) return true
-  if (shelf.listing === 'public') return true
-  if (shelf.listing === 'network' && userFriendsIds.includes(shelf.owner)) return true
+  const { owner, visibility } = shelf
+  if (owner === reqUserId) return true
+  if (visibility.includes('public')) return true
+  if (visibility.includes('network') && userFriendsIds.includes(owner)) return true
 }
