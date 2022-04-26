@@ -56,7 +56,7 @@ describe('user:delete', () => {
   describe('shelves', () => {
     it('should delete the user shelves', async () => {
       const user = await getReservedUser()
-      const { shelf } = await createShelf(user, { listing: 'public' })
+      const { shelf } = await createShelf(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
       const updatedShelf = await getShelfById(getUser(), shelf._id)
