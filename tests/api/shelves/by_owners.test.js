@@ -8,7 +8,7 @@ const { createUser } = require('../fixtures/users')
 const endpoint = '/api/shelves?action=by-owners'
 
 describe('shelves:by-owners', () => {
-  describe('listing:public', () => {
+  describe('visibility:public', () => {
     it('should reject without owners', async () => {
       try {
         const res = await authReq('get', endpoint)
@@ -22,22 +22,22 @@ describe('shelves:by-owners', () => {
 
     it('should get a public shelf', async () => {
       const { shelf } = await createShelf()
-      shelf.listing.should.equal('public')
+      shelf.visibility.should.deepEqual([ 'public' ])
       const res = await publicReq('get', `${endpoint}&owners=${shelf.owner}`)
-      res.shelves.should.be.ok()
+      res.shelves[shelf._id].should.be.ok()
     })
   })
 
-  describe('listing:private', () => {
+  describe('visibility:private', () => {
     it('should return user shelf', async () => {
-      const { shelf } = await createShelf(null, { listing: 'private' })
+      const { shelf } = await createShelf(null, { visibility: [] })
       const user = await getUser()
       const res = await authReq('get', `${endpoint}&owners=${user._id}`)
       _.map(res.shelves, _.property('_id')).should.containEql(shelf._id)
     })
 
     it('should not return private shelves', async () => {
-      const { shelf } = await createShelf(getUserB(), { listing: 'private' })
+      const { shelf } = await createShelf(getUserB(), { visibility: [] })
       const user = await getUserB()
       const res = await authReq('get', `${endpoint}&owners=${user._id}`)
       const resIds = Object.keys(res.shelves)
@@ -49,7 +49,7 @@ describe('shelves:by-owners', () => {
       const friendB = await createUser()
       await makeFriends(friendA, friendB)
 
-      const { shelf } = await createShelf(friendB, { listing: 'private' })
+      const { shelf } = await createShelf(friendB, { visibility: [] })
       const { _id: friendBId } = await friendB
       const res = await authReq('get', `${endpoint}&owners=${friendBId}`)
       const resIds = Object.keys(res.shelves)
@@ -57,11 +57,11 @@ describe('shelves:by-owners', () => {
     })
   })
 
-  describe('listing:network', () => {
+  describe('visibility:network', () => {
     it('should not return non friends network shelves', async () => {
       const friendA = await createUser()
       const friendB = await createUser()
-      const { shelf } = await createShelf(friendB, { listing: 'network' })
+      const { shelf } = await createShelf(friendB, { visibility: [ 'network' ] })
       const { _id: friendBId } = await friendB
       const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
       const resIds = Object.keys(res.shelves)
@@ -73,7 +73,7 @@ describe('shelves:by-owners', () => {
       const friendB = await createUser()
       await makeFriends(friendA, friendB)
 
-      const { shelf } = await createShelf(friendB, { listing: 'network' })
+      const { shelf } = await createShelf(friendB, { visibility: [ 'network' ] })
       const { _id: friendBId } = await friendB
       const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
       const resIds = Object.keys(res.shelves)
