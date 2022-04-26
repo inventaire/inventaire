@@ -17,6 +17,7 @@ const startMockServer = () => new Promise(resolve => {
   // Always timeout
   app.get('/timeout', () => {})
   app.get('/error', (req, res) => res.status(500).json({ ok: false }))
+  app.get('/html', (req, res) => res.status(200).send('<p>hello</p>'))
 
   app.listen(port, () => resolve({
     port,
@@ -25,6 +26,7 @@ const startMockServer = () => new Promise(resolve => {
     timeoutEndpoint: `${origin}/timeout`,
     noTimeoutEndpoint: `${origin}/no-timeout`,
     errorEndpoint: `${origin}/error`,
+    htmlEndpoint: `${origin}/html`,
   }))
 })
 
@@ -141,16 +143,31 @@ describe('requests:hosts-bans', function () {
     await requests_.get(errorEndpoint)
     .then(shouldNotBeCalled)
     .catch(err => err.statusCode.should.equal(500))
-    try {
-      await requests_.get(noTimeoutEndpoint).then(shouldNotBeCalled)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
-      err.message.should.startWith('temporary ban')
-      err.context.host.should.equal(host)
-      const { banTime, expire } = err.context.hostBanData
-      banTime.should.equal(baseBanTime)
-      should(expire > Date.now()).be.true()
-      should(expire < Date.now() + baseBanTime).be.true()
-    }
+    await hostIsCurrentlyBanned({ host, noTimeoutEndpoint })
+  })
+
+  it('should not re-request a host that just returned html rather than json', async () => {
+    const { htmlEndpoint, noTimeoutEndpoint, host } = await startMockServer()
+    await requests_.get(htmlEndpoint)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.name.should.equal('SyntaxError')
+      err.context.statusCode.should.equal(200)
+    })
+    await hostIsCurrentlyBanned({ host, noTimeoutEndpoint })
   })
 })
+
+const hostIsCurrentlyBanned = async ({ host, noTimeoutEndpoint }) => {
+  try {
+    await requests_.get(noTimeoutEndpoint).then(shouldNotBeCalled)
+  } catch (err) {
+    rethrowShouldNotBeCalledErrors(err)
+    err.message.should.startWith('temporary ban')
+    err.context.host.should.equal(host)
+    const { banTime, expire } = err.context.hostBanData
+    banTime.should.equal(baseBanTime)
+    should(expire > Date.now()).be.true()
+    should(expire < Date.now() + baseBanTime).be.true()
+  }
+}

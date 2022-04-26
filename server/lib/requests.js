@@ -77,6 +77,7 @@ const req = method => async (url, options = {}) => {
       if (statusCode < 400) {
         err.context = { url, options, statusCode, responseText }
         addContextToStack(err)
+        declareHostError(host)
         throw err
       } else {
         // Above 400, let it be raised as a request error hereafter
