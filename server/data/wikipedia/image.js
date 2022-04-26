@@ -10,7 +10,7 @@ module.exports = async title => {
 
   const { query } = await requests_.get(url)
   const { pages } = query
-  const page = _.values(pages)[0]
+  const page = Object.values(pages)[0]
   const source = _.get(page, 'thumbnail.source')
   if (!source) throw error_.notFound(title)
 

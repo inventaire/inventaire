@@ -21,8 +21,8 @@ const normalizeTerm = term => {
 }
 
 const getEntityNormalizedTerms = entity => {
-  const labels = _.values(entity.labels)
-  const aliases = _.flatten(_.values(entity.aliases))
+  const labels = Object.values(entity.labels)
+  const aliases = Object.values(entity.aliases || {}).flat()
   const terms = labels.concat(aliases).map(normalizeTerm)
   return _.uniq(terms)
 }

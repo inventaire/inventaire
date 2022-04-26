@@ -51,7 +51,7 @@ describe('users:by-ids', () => {
     const users = await Promise.all([ getUser(), getUserB() ])
     const ids = users.map(_.property('_id'))
     const res = await publicReq('get', `${endpoint}&ids=${ids.join('|')}`)
-    _.keys(res.users).should.deepEqual(ids)
+    Object.keys(res.users).should.deepEqual(ids)
   })
 
   it('should get deleted users', async () => {

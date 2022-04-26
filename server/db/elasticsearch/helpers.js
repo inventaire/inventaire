@@ -45,7 +45,7 @@ const getLoggerColor = globalStatus => {
 }
 
 const aggregateAttribute = (globalStatus, attribute) => {
-  return _.values(globalStatus)
+  return Object.values(globalStatus)
   .map(obj => obj[attribute])
   .reduce(sum, 0)
 }

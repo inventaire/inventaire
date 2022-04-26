@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
@@ -38,7 +37,7 @@ describe('shelves:remove-items', () => {
       items: [ item._id ]
     })
     res.shelves.should.be.ok()
-    _.values(res.shelves)[0].items.length.should.equal(0)
+    Object.values(res.shelves)[0].items.length.should.equal(0)
   })
 
   it('should reject removing different owner items', async () => {

@@ -31,7 +31,7 @@ describe('indexation: entity formatter: dump/API entity format', () => {
       const flattenedDescriptionsWords = doc.flattenedDescriptions.split(' ')
       const mainFieldsTerms = Object.values(doc.labels)
         .concat(Object.values(doc.descriptions))
-        .concat(_.flatten(Object.values(doc.aliases)))
+        .concat(Object.values(doc.aliases).flat())
       mainFieldsTerms.forEach(term => {
         term.split(' ').forEach(termWord => {
           flattenedLabelsWords.should.not.containEql(termWord)

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const entities_ = require('./entities')
 const items_ = require('controllers/items/lib/items')
@@ -45,7 +44,7 @@ const entitiesItemsChecks = async uris => {
 const getAllUris = async uris => {
   const { redirects } = await getEntitiesByUris({ uris })
   if (redirects == null) return uris
-  const missingCanonicalUris = _.values(redirects)
+  const missingCanonicalUris = Object.values(redirects)
   return uris.concat(missingCanonicalUris)
 }
 

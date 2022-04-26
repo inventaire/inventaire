@@ -1,5 +1,4 @@
 const CONFIG = require('config')
-const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
 const { authReq, getUser, getUserB, customAuthReq } = require('../utils/utils')
@@ -102,7 +101,7 @@ describe('items:create', () => {
       const edition = entities[editionUri]
       const work = entities[edition.claims['wdt:P629'][0]]
       const author = entities[work.claims['wdt:P50'][0]]
-      const authorLabel = _.values(author.labels)[0]
+      const authorLabel = Object.values(author.labels)[0]
       item.snapshot.should.be.an.Object()
       item.snapshot['entity:authors'].should.equal(authorLabel)
     })

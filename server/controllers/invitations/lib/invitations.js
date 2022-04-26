@@ -36,7 +36,7 @@ const invitations_ = module.exports = {
     if (inviters == null && invitersGroups == null) return
 
     invitersGroups = invitersGroups || {}
-    const groupInvitersIds = _.values(invitersGroups)
+    const groupInvitersIds = Object.values(invitersGroups)
     _.log(groupInvitersIds, 'groupInvitersIds')
 
     const invitersIds = _.difference(Object.keys(inviters), groupInvitersIds)

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const deduplicateWork = require('./lib/deduplicate_works')
 
 const sanitization = {
@@ -9,7 +8,7 @@ const sanitization = {
 const controller = async ({ uri, isbn, reqUserId }) => {
   const tasks = await deduplicateWork(uri, isbn, reqUserId)
   return {
-    tasks: _.flatten(tasks)
+    tasks: (tasks || []).flat()
   }
 }
 

@@ -38,7 +38,7 @@ const getPublisherClosestTerm = publisherLabel => entity => {
 }
 
 const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
-  const allAliases = _.flatten(Object.values(aliases))
+  const allAliases = Object.values(aliases).flat()
   const terms = Object.values(labels).concat(allAliases)
   return _.uniq(terms)
   .map(term => ({ term, distance: leven(term, publisherLabel) }))

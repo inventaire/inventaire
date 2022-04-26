@@ -18,7 +18,7 @@ module.exports = {
     return results
   },
 
-  sumValues: obj => _.sum(_.values(obj)),
+  sumValues: obj => _.sum(Object.values(obj)),
 
   sameObjects: (a, b) => JSON.stringify(a) === JSON.stringify(b),
 
@@ -100,7 +100,7 @@ module.exports = {
     return false
   },
 
-  objLength: obj => _.keys(obj).length,
+  objLength: obj => Object.keys(obj).length,
 
   expired: (timestamp, ttl) => (Date.now() - timestamp) > ttl,
 

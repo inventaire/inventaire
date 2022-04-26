@@ -73,7 +73,7 @@ const getUri = _.property('uri')
 
 const getEntitiesPopularityTotal = uris => {
   return getEntitiesPopularities({ uris, refresh: true })
-  .then(_.values)
+  .then(Object.values)
   // Total = sum of all popularities + number of subentities
   .then(results => _.sum(results) + results.length)
 }

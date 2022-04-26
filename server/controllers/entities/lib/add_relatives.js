@@ -33,6 +33,6 @@ const getAdditionalEntitiesUris = (entities, relatives) => {
   .value()
 }
 
-const getEntityRelativesUris = relatives => entity => _.values(_.pick(entity.claims, relatives))
+const getEntityRelativesUris = relatives => entity => Object.values(_.pick(entity.claims, relatives))
 
 module.exports = addRelatives

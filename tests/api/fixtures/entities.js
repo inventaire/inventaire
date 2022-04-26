@@ -49,7 +49,7 @@ const API = module.exports = {
     const worksPromise = works ? Promise.resolve(works) : API.createWork()
     works = await worksPromise
     works = _.forceArray(works)
-    title = title || _.values(works[0].labels)[0]
+    title = title || Object.values(works[0].labels)[0]
     const worksUris = _.map(works, 'uri')
     const editionClaims = Object.assign({
       'wdt:P31': [ 'wd:Q3331189' ],

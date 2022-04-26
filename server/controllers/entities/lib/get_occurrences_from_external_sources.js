@@ -42,7 +42,7 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getKjkOccurrences(authorEntity, worksLabels),
       getNdlOccurrences(authorEntity, worksLabels)
     ])
-    return _.compact(_.flatten(occurrences))
+    return _.compact(occurrences.flat())
   } catch (err) {
     _.error(err, 'has works labels occurrence err')
     return []

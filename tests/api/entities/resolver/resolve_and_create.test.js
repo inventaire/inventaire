@@ -43,7 +43,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { edition } = result
 
     const { entities } = await getByUris(edition.uri)
-    const editionClaims = _.values(entities)[0].claims
+    const editionClaims = Object.values(entities)[0].claims
     const newEditionTitle = editionClaims['wdt:P1476'][0]
 
     should(editionClaims['wdt:P212'][0]).be.ok()
@@ -71,7 +71,7 @@ describe('entities:resolve:create-unresolved', () => {
     should(result.edition.uri).be.ok()
     const { edition } = result
     const { entities } = await getByUris(edition.uri)
-    const newWorkClaimValue = _.values(entities)[0].claims['wdt:P407'][0]
+    const newWorkClaimValue = Object.values(entities)[0].claims['wdt:P407'][0]
     newWorkClaimValue.should.equal(frenchLang)
   })
 
@@ -99,7 +99,7 @@ describe('entities:resolve:create-unresolved', () => {
     should(result.edition.uri).be.ok()
     const { works } = result
     const { entities } = await getByUris(works.map(_.property('uri')))
-    const newWorkClaimValue = _.values(entities)[0].claims['wdt:P1085'][0]
+    const newWorkClaimValue = Object.values(entities)[0].claims['wdt:P1085'][0]
     newWorkClaimValue.should.equal(libraryThingsWorkId)
   })
 
@@ -114,7 +114,7 @@ describe('entities:resolve:create-unresolved', () => {
     should(result.edition.uri).be.ok()
     const { authors } = result
     const { entities } = await getByUris(authors.map(_.property('uri')))
-    const newWorkClaimValue = _.values(entities)[0].claims['wdt:P2963'][0]
+    const newWorkClaimValue = Object.values(entities)[0].claims['wdt:P2963'][0]
     newWorkClaimValue.should.equal(goodReadsId)
   })
 

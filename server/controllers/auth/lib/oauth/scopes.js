@@ -1,5 +1,3 @@
-const _ = require('builders/utils')
-
 const scopeByMethodAndRoute = {
   get: {
     '/api/user': [ 'username', 'stable-username', 'email' ]
@@ -13,5 +11,5 @@ module.exports = {
       return scopeByMethodAndRoute[method][url]
     }
   },
-  allScopes: _.flattenDeep(Object.values(scopeByMethodAndRoute).map(Object.values))
+  allScopes: Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)
 }

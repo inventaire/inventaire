@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const getByAccessLevel = require('./get_by_access_level')
 const items_ = require('controllers/items/lib/items')
 const groups_ = require('controllers/groups/lib/groups')
@@ -23,7 +22,7 @@ module.exports = {
 
   byShelves: async (shelves, reqUserId) => {
     const keysArray = await Promise.all(shelves.map(buildKeysFromShelf(reqUserId)))
-    const keys = _.flatten(keysArray)
+    const keys = keysArray.flat()
     return items_.byShelvesAndListing(keys, reqUserId)
   },
 

@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const should = require('should')
 const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('../utils/utils')
@@ -49,7 +48,7 @@ describe('entities:delete', () => {
     const uris = [ entityA.uri, entityB.uri ]
     await deleteByUris(uris)
     let { entities } = await getByUris(uris)
-    entities = _.values(entities)
+    entities = Object.values(entities)
     entities[0]._meta_type.should.equal('removed:placeholder')
     entities[0]._meta_type.should.equal('removed:placeholder')
   })

@@ -61,7 +61,7 @@ describe('users:by-usernames', () => {
     const usernames = users.map(_.property('username'))
     const res = await publicReq('get', `${endpoint}&usernames=${usernames.join('|')}`)
     const lowercasedUsernames = usernames.map(_.toLowerCase)
-    _.keys(res.users).should.deepEqual(lowercasedUsernames)
+    Object.keys(res.users).should.deepEqual(lowercasedUsernames)
   })
 
   it('should get a special user', async () => {

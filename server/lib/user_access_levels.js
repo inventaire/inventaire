@@ -22,7 +22,7 @@ const getUserAccessLevels = user => {
   const { roles: userRoles } = user
   if (!userRoles || userRoles.length === 0) return []
   if (userRoles.length === 1) return accessByRoles[userRoles[0]]
-  return _.uniq(_.flatten(userRoles.map(role => accessByRoles[role])))
+  return _.uniq(userRoles.map(role => accessByRoles[role]).flat())
 }
 
 const hasAdminAccess = user => getUserAccessLevels(user).includes('admin')

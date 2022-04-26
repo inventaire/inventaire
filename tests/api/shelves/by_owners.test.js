@@ -40,7 +40,7 @@ describe('shelves:by-owners', () => {
       const { shelf } = await createShelf(getUserB(), { listing: 'private' })
       const user = await getUserB()
       const res = await authReq('get', `${endpoint}&owners=${user._id}`)
-      const resIds = _.keys(res.shelves)
+      const resIds = Object.keys(res.shelves)
       resIds.should.not.containEql(shelf._id)
     })
 
@@ -52,7 +52,7 @@ describe('shelves:by-owners', () => {
       const { shelf } = await createShelf(friendB, { listing: 'private' })
       const { _id: friendBId } = await friendB
       const res = await authReq('get', `${endpoint}&owners=${friendBId}`)
-      const resIds = _.keys(res.shelves)
+      const resIds = Object.keys(res.shelves)
       resIds.should.not.containEql(shelf._id)
     })
   })
@@ -64,7 +64,7 @@ describe('shelves:by-owners', () => {
       const { shelf } = await createShelf(friendB, { listing: 'network' })
       const { _id: friendBId } = await friendB
       const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
-      const resIds = _.keys(res.shelves)
+      const resIds = Object.keys(res.shelves)
       resIds.should.not.containEql(shelf._id)
     })
 
@@ -76,7 +76,7 @@ describe('shelves:by-owners', () => {
       const { shelf } = await createShelf(friendB, { listing: 'network' })
       const { _id: friendBId } = await friendB
       const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
-      const resIds = _.keys(res.shelves)
+      const resIds = Object.keys(res.shelves)
       resIds.should.containEql(shelf._id)
     })
   })

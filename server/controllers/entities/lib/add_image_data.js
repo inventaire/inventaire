@@ -28,7 +28,7 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   .then(results => {
     const order = getPicSourceOrder(entity)
     const orderedResults = _.pick(results, order)
-    const bestPicData = _.compact(_.values(orderedResults))[0]
+    const bestPicData = _.compact(Object.values(orderedResults))[0]
     return bestPicData
   })
 }

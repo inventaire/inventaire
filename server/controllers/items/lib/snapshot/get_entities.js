@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
@@ -8,7 +7,7 @@ const getRelativeEntities = relationProperty => async entity => {
   const uris = entity.claims[relationProperty]
   if (uris == null || uris.length === 0) return []
   return getEntitiesByUris({ uris })
-  .then(res => _.values(res.entities))
+  .then(res => Object.values(res.entities))
 }
 
 const getEditionWorks = getRelativeEntities('wdt:P629')

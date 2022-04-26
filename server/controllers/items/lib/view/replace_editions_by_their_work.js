@@ -12,14 +12,14 @@ module.exports = entities => {
   .then(({ entities }) => entities)
   .then(editionsWorksEntities => {
     return {
-      works: works.concat(_.values(editionsWorksEntities)),
+      works: works.concat(Object.values(editionsWorksEntities)),
       editionWorkMap
     }
   })
 }
 
 const splitEntities = entities => {
-  return _.values(entities)
+  return Object.values(entities)
   .reduce(splitWorksAndEditions, { works: [], editions: [] })
 }
 

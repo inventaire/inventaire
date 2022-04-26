@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 require('should')
 const { wait } = require('lib/promises')
 const { authReq, getUserB } = require('../utils/utils')
@@ -12,7 +11,7 @@ describe('items:snapshot', () => {
     const serieEntity = await addSerie(workEntity)
     await wait(100)
     const item = await authReq('post', '/api/items', { entity: workEntity.uri })
-    const title = _.values(serieEntity.labels)[0]
+    const title = Object.values(serieEntity.labels)[0]
     item.snapshot['entity:series'].should.equal(title)
   })
 
@@ -109,7 +108,7 @@ describe('items:snapshot', () => {
       await wait(200)
       const serieEntity = await addSerie(workEntity)
       await wait(200)
-      const title = _.values(serieEntity.labels)[0]
+      const title = Object.values(serieEntity.labels)[0]
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:series'].should.equal(title)
       const updatedTitle = `${title}-updated`
@@ -123,7 +122,7 @@ describe('items:snapshot', () => {
       const edition = await createEditionWithWorkAndAuthor()
       const workUri = edition.claims['wdt:P629'][0]
       const { entities } = await getByUris(workUri)
-      const workEntity = _.values(entities)[0]
+      const workEntity = Object.values(entities)[0]
       const authorUri = workEntity.claims['wdt:P50'][0]
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       await wait(200)
@@ -171,7 +170,7 @@ describe('items:snapshot', () => {
       await merge(workEntityA.uri, workEntityB.uri)
       await wait(200)
       const updatedItem = await getItem(item)
-      const authorName = _.values(addedAuthor.labels)[0]
+      const authorName = Object.values(addedAuthor.labels)[0]
       updatedItem.snapshot['entity:authors'].should.equal(authorName)
     })
 

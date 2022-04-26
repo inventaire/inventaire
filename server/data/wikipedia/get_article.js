@@ -32,7 +32,7 @@ const getArticle = async (lang, title, introOnly) => {
   title = fixedEncodeURIComponent(title)
 
   return {
-    extract: getCleanExtract(_.values(pages)),
+    extract: getCleanExtract(Object.values(pages)),
     url: `https://${lang}.wikipedia.org/wiki/${title}`
   }
 }

@@ -66,8 +66,8 @@ const getAuthorWorksData = authorId => {
     //   { labels: { fr: 'Matiere et Memoire'} },
     //   { labels: { en: 'foo' } }
     // ]
-    const labels = _.uniq(_.flatten(works.map(getEntityNormalizedTerms)))
-    const langs = _.uniq(_.flatten(works.map(getLangs)))
+    const labels = _.uniq(works.map(getEntityNormalizedTerms).flat())
+    const langs = _.uniq(works.map(getLangs).flat())
     return { authorId, labels, langs }
   })
 }
@@ -75,7 +75,7 @@ const getAuthorWorksData = authorId => {
 const getLangs = work => Object.keys(work.labels)
 
 const searchEntityDuplicatesSuggestions = async entity => {
-  const name = _.values(entity.labels)[0]
+  const name = Object.values(entity.labels)[0]
   if (!_.isNonEmptyString(name)) return []
 
   const { hits } = await typeSearch({

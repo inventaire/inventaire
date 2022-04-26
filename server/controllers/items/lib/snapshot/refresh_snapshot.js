@@ -33,7 +33,7 @@ module.exports = { fromDoc, fromUri }
 const multiWorkRefresh = relationProperty => async uri => {
   const uris = await entities_.urisByClaim(relationProperty, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
-  return _.flatten(snapshots)
+  return snapshots.flat()
 }
 
 const getSnapshotsByType = {
@@ -80,7 +80,7 @@ const getEditionsSnapshots = async (uri, works, authors, series) => {
 
   return entities_.urisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
-  .then(res => _.values(res.entities))
+  .then(res => Object.values(res.entities))
   .then(promises_.map(edition => getEditionSnapshot([ edition, works, authors, series ])))
 }
 

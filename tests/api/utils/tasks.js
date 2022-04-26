@@ -52,6 +52,6 @@ const utils = module.exports = {
     uris = _.forceArray(uris)
     return adminReq('post', `${endpoint}check-entities`, { uris })
     .then(() => utils.getBySuspectUris(uris))
-    .then(tasksBySuspectUris => _.flatten(_.values(tasksBySuspectUris)))
+    .then(tasksBySuspectUris => Object.values(tasksBySuspectUris).flat())
   }
 }

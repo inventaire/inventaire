@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
 const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
@@ -33,10 +32,10 @@ describe('shelves:delete', () => {
     res.shelves.should.be.an.Array()
 
     const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelf._id}`)
-    _.values(getShelfRes.shelves).length.should.equal(0)
+    Object.values(getShelfRes.shelves).length.should.equal(0)
 
     const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
-    _.values(getItemsRes.items).length.should.not.equal(0)
+    Object.values(getItemsRes.items).length.should.not.equal(0)
   })
 
   describe('with-items', () => {
@@ -45,7 +44,7 @@ describe('shelves:delete', () => {
       const res = await authReq('post', endpoint, { ids: shelf._id, 'with-items': true })
       res.items.should.be.an.Array()
       const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
-      _.values(getItemsRes.items).length.should.equal(0)
+      Object.values(getItemsRes.items).length.should.equal(0)
     })
   })
 })

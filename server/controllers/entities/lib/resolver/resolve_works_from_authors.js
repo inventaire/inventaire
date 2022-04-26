@@ -4,7 +4,7 @@ const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpe
 const getAuthorsUris = require('../get_authors_uris')
 
 module.exports = async (works, authors) => {
-  const worksAuthorsUris = _.compact(_.flatten(works.map(getAuthorsUris)))
+  const worksAuthorsUris = _.compact(works.map(getAuthorsUris).flat())
   const authorsUris = _.uniq(getAlreadyResolvedUris(authors).concat(worksAuthorsUris))
   if (authorsUris.length === 0) return works
   return Promise.all(works.map(resolveWork(authorsUris)))

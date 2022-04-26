@@ -22,7 +22,7 @@ const redirectEntitiesClaims = (results, userId, fromUri, toUri) => entities => 
   results.forEach(applyRedirections(entitiesIndex, fromUri, toUri))
 
   // Then, post the updates all at once
-  const updatesPromises = _.values(entitiesIndex).map(updatedDoc => {
+  const updatesPromises = Object.values(entitiesIndex).map(updatedDoc => {
     const currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
     // Add a context in case we need to revert those redirections later on
     const context = { redirectClaims: { fromUri } }

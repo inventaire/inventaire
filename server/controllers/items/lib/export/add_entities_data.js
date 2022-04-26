@@ -61,7 +61,7 @@ const aggregateWorks = (works, getWorkEntitiesUris) => {
   return _.deepCompact(works.map(getWorkEntitiesUris))
 }
 
-const getWorkAuthorsUris = work => _.flatten(_.values(_.pick(work.claims, authorProperties)))
+const getWorkAuthorsUris = work => Object.values(_.pick(work.claims, authorProperties)).flat()
 const authorProperties = [
   'wdt:P50',
   'wdt:P58',

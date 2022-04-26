@@ -154,7 +154,7 @@ const setTermsFromClaims = entity => {
 const flattenTerms = (terms, mainFieldsWords) => {
   terms = Object.values(terms)
   // Required for aliases
-  if (_.isArray(terms[0])) terms = _.flatten(terms)
+  if (_.isArray(terms[0])) terms = terms.flat()
 
   return _.chain(terms)
     .map(term => term.split(' '))
@@ -172,7 +172,7 @@ const removeUnusedLangs = terms => _.pick(terms, activeI18nLangs)
 const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
   const labelsTerms = Object.values(labels)
   const descriptionsTerms = Object.values(descriptions)
-  const aliasesTerms = _.flatten(Object.values(aliases))
+  const aliasesTerms = Object.values(aliases).flat()
   const allTerms = labelsTerms.concat(descriptionsTerms, aliasesTerms)
   return _.chain(allTerms)
     .map(term => term.toLowerCase().split(' '))
@@ -184,9 +184,9 @@ const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
 const getRelationsTerms = async ({ type, claims }) => {
   const indexedRelations = indexedRelationsPerType[type]
   if (!indexedRelations) return ''
-  const relationsUris = _.flatten(_.values(_.pick(claims, indexedRelations)))
+  const relationsUris = Object.values(_.pick(claims, indexedRelations)).flat()
   const relationsEntities = await getEntitiesList(relationsUris)
-  return _.flatten(relationsEntities.map(getEntityTerms)).join(' ')
+  return relationsEntities.map(getEntityTerms).flat().join(' ')
 }
 
 const worksAndSeriesProperties = [

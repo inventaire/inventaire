@@ -41,7 +41,7 @@ const shelves_ = module.exports = {
   },
   bulkDelete: db.bulkDelete,
   deleteShelvesItems: async shelves => {
-    const itemsIds = _.uniq(_.flatten(shelves.map(_.property('items'))))
+    const itemsIds = _.uniq(_.map(shelves, 'items').flat())
     const docs = await items_.byIds(itemsIds).then(_.compact)
     await items_.bulkDelete(docs)
     return docs

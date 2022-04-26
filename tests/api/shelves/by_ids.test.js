@@ -1,4 +1,3 @@
-const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
 const { createUser } = require('../fixtures/users')
@@ -34,21 +33,21 @@ describe('shelves:by-ids', () => {
   it('should not return non friends network shelves', async () => {
     const { shelf } = await createShelf(null, { listing: 'private' })
     const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
 
   it('should return owner private shelves', async () => {
     const { shelf } = await createShelf(null, { listing: 'private' })
     const res = await authReq('get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.containEql(shelf._id)
   })
 
   it('should not return private shelves', async () => {
     const { shelf } = await createShelf(null, { listing: 'private' })
     const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
 
@@ -57,7 +56,7 @@ describe('shelves:by-ids', () => {
     const userB = await createUser()
     const { shelf } = await createShelf(userB, { listing: 'network' })
     const res = await customAuthReq(userA, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
 
@@ -67,7 +66,7 @@ describe('shelves:by-ids', () => {
     await makeFriends(friend, user)
     const { shelf } = await createShelf(null, { listing: 'network' })
     const res = await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.containEql(shelf._id)
   })
 
@@ -77,7 +76,7 @@ describe('shelves:by-ids', () => {
     await makeFriends(friend, user)
     const { shelf } = await createShelf(null, { listing: 'private' })
     const res = await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = _.keys(res.shelves)
+    const resIds = Object.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
 
@@ -85,7 +84,7 @@ describe('shelves:by-ids', () => {
     it('should get shelves items when passing with-items params', async () => {
       const { shelf } = await createShelf()
       const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-      _.values(res.shelves)[0].items.should.be.an.Array()
+      Object.values(res.shelves)[0].items.should.be.an.Array()
     })
 
     describe('public shelf', () => {
@@ -94,7 +93,7 @@ describe('shelves:by-ids', () => {
         const { shelf } = await createShelf()
         await addItem(shelf._id, item._id)
         const res = await authReqB('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.containEql(item._id)
       })
 
@@ -105,7 +104,7 @@ describe('shelves:by-ids', () => {
         const { shelf } = await createShelf(userA)
         await addItem(shelf._id, item._id, userA)
         const res = await customAuthReq(userB, 'get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.not.containEql(item._id)
       })
 
@@ -114,7 +113,7 @@ describe('shelves:by-ids', () => {
         const { shelf } = await createShelf()
         await addItem(shelf._id, item._id)
         const res = await authReqB('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.not.containEql(item._id)
       })
     })
@@ -128,7 +127,7 @@ describe('shelves:by-ids', () => {
         const { shelf } = await createShelf(friend, { listing: 'network' })
         await addItem(shelf._id, item._id, friend)
         const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.not.containEql(item._id)
       })
 
@@ -140,7 +139,7 @@ describe('shelves:by-ids', () => {
         const { shelf } = await createShelf(friend, { listing: 'network' })
         await addItem(shelf._id, item._id, friend)
         const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.containEql(item._id)
       })
 
@@ -152,7 +151,7 @@ describe('shelves:by-ids', () => {
         const user = await getUser()
         await makeFriends(friend, user)
         const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
-        const resShelf = _.values(res.shelves)[0]
+        const resShelf = Object.values(res.shelves)[0]
         resShelf.items.should.containEql(item._id)
       })
     })
