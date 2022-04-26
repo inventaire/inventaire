@@ -58,7 +58,7 @@ describe('shelves:remove-items', () => {
 
   it('should reject removing items of a different owner shelf', async () => {
     try {
-      const { shelf } = await createShelf(getUserB(), { listing: 'public' })
+      const { shelf } = await createShelf(getUserB(), { visibility: [ 'public' ] })
       const item = await createItem()
       await authReq('post', endpoint, {
         id: shelf._id,
