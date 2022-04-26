@@ -3,7 +3,6 @@ const { authReq, authReqB, getUser } = require('../utils/utils')
 const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
 
 const endpoint = '/api/shelves?action=update'
-const shelfPromise = createShelf()
 
 describe('shelves:update', () => {
   it('should reject without shelf id', async () => {
@@ -17,7 +16,7 @@ describe('shelves:update', () => {
   })
 
   it('should filter out non updatable attributes', async () => {
-    const { shelf } = await shelfPromise
+    const { shelf } = await createShelf()
     try {
       const params = {
         shelf: shelf._id,
@@ -32,7 +31,7 @@ describe('shelves:update', () => {
   })
 
   it('should reject an empty name', async () => {
-    const { shelf } = await shelfPromise
+    const { shelf } = await createShelf()
     try {
       const params = {
         shelf: shelf._id,
@@ -51,7 +50,7 @@ describe('shelves:update', () => {
     const description = shelfDescription()
     const listing = 'network'
     const color = '#ffaaee'
-    const { shelf } = await shelfPromise
+    const { shelf } = await createShelf()
     const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       name,
@@ -67,7 +66,7 @@ describe('shelves:update', () => {
 
   it('should reject updating if different owner', async () => {
     try {
-      const { shelf } = await shelfPromise
+      const { shelf } = await createShelf()
       const params = {
         shelf: shelf._id,
         name: 'foo'
