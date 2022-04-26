@@ -263,7 +263,7 @@ describe('outbox', () => {
     it('should not return network shelf', async () => {
       try {
         const user = createUser({ fediversable: true })
-        const { shelf } = await createShelf(user, { listing: 'network' })
+        const { shelf } = await createShelf(user, { visibility: [ 'network' ] })
         const name = getActorName(shelf)
         const outboxUrl = `${endpoint}${name}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)

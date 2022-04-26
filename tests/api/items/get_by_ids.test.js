@@ -70,15 +70,13 @@ describe('items:get-by-ids', () => {
   })
 
   it('should include shelves id', async () => {
-    const shelfData = { listing: 'public' }
-    const { shelf, item } = await createShelfWithItem(shelfData)
+    const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
     const res = await authReq('get', `${endpoint}&ids=${item._id}`)
     res.items[0].shelves.should.deepEqual([ shelf._id ])
   })
 
   xit('should not include private shelf id', async () => {
-    const shelfData = { listing: 'private' }
-    const { item } = await createShelfWithItem(shelfData)
+    const { item } = await createShelfWithItem({ visibility: [] })
     const res = await authReq('get', `${endpoint}&ids=${item._id}`)
     res.items[0].shelves.should.deepEqual([])
   })

@@ -132,7 +132,7 @@ describe('feeds:get', () => {
 
   describe('shelf', () => {
     it('should return a shelf RSS feed', async () => {
-      const { shelf } = await createShelf(getUser(), { listing: 'public' })
+      const { shelf } = await createShelf(getUser(), { visibility: [ 'public' ] })
       const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}`)
       body.startsWith('<?xml').should.be.true()
     })
@@ -144,7 +144,7 @@ describe('feeds:get', () => {
         { listing: 'network' },
         { listing: 'private' },
       ])
-      const { shelf } = await createShelfWithItems({ listing: 'public' }, items)
+      const { shelf } = await createShelfWithItems({ visibility: [ 'public' ] }, items)
       const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}`)
       body.startsWith('<?xml').should.be.true()
       body.includes(items[0]._id).should.be.true()
@@ -160,7 +160,7 @@ describe('feeds:get', () => {
         { listing: 'private' },
       ])
       const { _id: userId, readToken: token } = user
-      const { shelf } = await createShelfWithItems({ listing: 'public' }, items)
+      const { shelf } = await createShelfWithItems({ visibility: [ 'public' ] }, items)
       const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}&requester=${userId}&token=${token}`)
       body.startsWith('<?xml').should.be.true()
       body.includes(items[0]._id).should.be.true()
