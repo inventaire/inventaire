@@ -48,19 +48,19 @@ describe('shelves:update', () => {
   it('should update attributes', async () => {
     const name = shelfName()
     const description = shelfDescription()
-    const listing = 'network'
+    const visibility = [ 'network' ]
     const color = '#ffaaee'
     const { shelf } = await createShelf()
     const { shelf: updatedShelf } = await authReq('post', endpoint, {
       shelf: shelf._id,
       name,
       description,
-      listing,
+      visibility,
       color,
     })
     updatedShelf.name.should.equal(name)
     updatedShelf.description.should.equal(description)
-    updatedShelf.listing.should.equal(listing)
+    updatedShelf.visibility.should.deepEqual(visibility)
     updatedShelf.color.should.equal(color)
   })
 

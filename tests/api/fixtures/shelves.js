@@ -14,7 +14,7 @@ const fixtures = module.exports = {
   createShelf: async (userPromise, shelfData = {}) => {
     userPromise = userPromise || getUser()
     shelfData.name = shelfData.name || fixtures.shelfName()
-    shelfData.listing = shelfData.listing || 'public'
+    shelfData.visibility = shelfData.visibility || [ 'public' ]
     shelfData.color = shelfData.color || '#222222'
     shelfData.description = shelfData.description || fixtures.shelfDescription()
     const user = await userPromise
