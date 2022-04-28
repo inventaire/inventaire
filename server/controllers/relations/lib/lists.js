@@ -34,7 +34,7 @@ const lists = module.exports = {
   getUserFriendsAndCoGroupsMembers: userId => {
     return Promise.all([
       lists.getUserFriends(userId),
-      groups_.findUserGroupsCoMembers(userId)
+      groups_.getUserGroupsCoMembers(userId)
     ])
     .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
   }

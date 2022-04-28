@@ -57,5 +57,5 @@ const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {
 
 const getFriendsAndGroupCoMembers = userId => Promise.all([
   relations_.getUserFriends(userId),
-  groups_.findUserGroupsCoMembers(userId)
+  groups_.getUserGroupsCoMembers(userId)
 ])

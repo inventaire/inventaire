@@ -50,7 +50,7 @@ const groups_ = module.exports = {
     .then(_.Log('group created'))
   },
 
-  findUserGroupsCoMembers: userId => {
+  getUserGroupsCoMembers: userId => {
     return groups_.byUser(userId)
     .then(lists_.allGroupsMembers)
     // Deduplicate and remove the user own id from the list
