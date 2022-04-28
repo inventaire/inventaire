@@ -11,6 +11,8 @@ module.exports = {
   post: ActionsControllers({
     authentified: {
       create: require('./create'),
+      // TODO: harmonize with other endpoints to have 'update'
+      // and assimilated actions use the PUT verb
       update: require('./update'),
       'add-items': addItems,
       'remove-items': removeItems,

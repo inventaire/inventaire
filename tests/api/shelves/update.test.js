@@ -1,6 +1,7 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
 const { authReq, authReqB, getUser } = require('../utils/utils')
 const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
+const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
 
 const endpoint = '/api/shelves?action=update'
 
@@ -62,6 +63,35 @@ describe('shelves:update', () => {
     updatedShelf.description.should.equal(description)
     updatedShelf.visibility.should.deepEqual(visibility)
     updatedShelf.color.should.equal(color)
+  })
+
+  it('should update a group-specific visibility', async () => {
+    const { group, member } = await createGroupWithAMember()
+    const { shelf } = await createShelf(member)
+    const visibility = [ `group:${group._id}` ]
+    const { shelf: updatedShelf } = await customAuthReq(member, 'post', endpoint, {
+      shelf: shelf._id,
+      visibility,
+    })
+    updatedShelf.visibility.should.deepEqual(visibility)
+  })
+
+  it("should reject the update of a shelf with a group-specific visibility from a group the user isn't a member of", async () => {
+    const [ user, group ] = await Promise.all([
+      getReservedUser(),
+      getSomeGroup(),
+    ])
+    const { shelf } = await createShelf(user)
+    const visibility = [ `group:${group._id}` ]
+    await customAuthReq(user, 'post', endpoint, {
+      shelf: shelf._id,
+      visibility,
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('owner is not in that group')
+    })
   })
 
   it('should reject updating if different owner', async () => {

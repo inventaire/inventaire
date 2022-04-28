@@ -1,4 +1,4 @@
-const createShelf = require('controllers/shelves/lib/create')
+const shelves_ = require('controllers/shelves/lib/shelves')
 
 const sanitization = {
   name: {},
@@ -24,7 +24,7 @@ const formatNewShelf = params => {
     owner,
   }
   if (color != null) shelfData.color = color
-  return createShelf(shelfData)
+  return shelves_.create(shelfData)
 }
 
 module.exports = {

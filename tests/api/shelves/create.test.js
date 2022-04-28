@@ -63,7 +63,7 @@ describe('shelves:create', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('shelf owner is not in that group')
+      err.body.status_verbose.should.equal('owner is not in that group')
     })
   })
 })
