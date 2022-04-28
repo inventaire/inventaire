@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const { getUserGroupsIdsAndCoMembersIds } = require('controllers/groups/lib/groups')
 const groups_ = require('controllers/groups/lib/groups')
 const relations_ = require('controllers/relations/lib/queries')
 const assert_ = require('lib/utils/assert_types')
@@ -27,6 +28,16 @@ module.exports = {
     if (userId == null) return []
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
+  },
+
+  getNetworkUsersAndGroupsIds: async userId => {
+    if (userId == null) return []
+    const [ friendsIds, { groupsIds, coMembersIds } ] = await Promise.all([
+      relations_.getUserFriends(userId),
+      getUserGroupsIdsAndCoMembersIds(userId)
+    ])
+    const networkUsersIds = _.uniq(friendsIds.concat(coMembersIds))
+    return { friendsIds, coMembersIds, networkUsersIds, groupsIds }
   }
 }
 

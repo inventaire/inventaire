@@ -58,9 +58,14 @@ const groups_ = module.exports = {
 
   getUserGroupsCoMembers: async userId => {
     const groups = await groups_.byUser(userId)
-    const usersIds = lists_.allGroupsMembers(groups)
-    // Deduplicate and remove the user own id from the list
-    return _.uniq(_.without(usersIds, userId))
+    return getCoMembersIds(groups, userId)
+  },
+
+  getUserGroupsIdsAndCoMembersIds: async userId => {
+    const groups = await groups_.byUser(userId)
+    const coMembersIds = getCoMembersIds(groups, userId)
+    const groupsIds = _.map(groups, '_id')
+    return { groupsIds, coMembersIds }
   },
 
   userInvited: async (userId, groupId) => {
@@ -81,4 +86,10 @@ const groups_ = module.exports = {
     const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
     return rows.length > 0
   },
+}
+
+const getCoMembersIds = (groups, userId) => {
+  const usersIds = lists_.allGroupsMembers(groups)
+  // Deduplicate and remove the user own id from the list
+  return _.uniq(_.without(usersIds, userId))
 }

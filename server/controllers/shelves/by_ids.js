@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkIds } = require('controllers/user/lib/relations_status')
+const { getNetworkUsersAndGroupsIds } = require('controllers/user/lib/relations_status')
 
 const sanitization = {
   ids: {},
@@ -20,7 +20,7 @@ const getShelvesByIds = async ({ ids, withItems, reqUserId }) => {
   const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
   return Promise.all([
     shelves_[byIdsFnName](ids, reqUserId),
-    getNetworkIds(reqUserId)
+    getNetworkUsersAndGroupsIds(reqUserId),
   ])
   .then(filterVisibleShelves(reqUserId))
   .then(_.compact)

@@ -4,6 +4,7 @@ const { createUser } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 const { makeFriends } = require('../utils/relations')
+const { createGroupWithAMember } = require('tests/api/fixtures/groups')
 
 const endpoint = '/api/shelves?action=by-ids'
 
@@ -76,6 +77,23 @@ describe('shelves:by-ids', () => {
     await makeFriends(friend, user)
     const { shelf } = await createShelf(null, { visibility: [] })
     const res = await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
+    const resIds = Object.keys(res.shelves)
+    resIds.should.not.containEql(shelf._id)
+  })
+
+  it('should return a group-allowed shelf to a group member', async () => {
+    const { group, member: memberA, admin: memberB } = await createGroupWithAMember()
+    const { shelf } = await createShelf(memberA, { visibility: [ `group:${group._id}` ] })
+    const res = await customAuthReq(memberB, 'get', `${endpoint}&ids=${shelf._id}`)
+    const resIds = Object.keys(res.shelves)
+    resIds.should.containEql(shelf._id)
+  })
+
+  it('should not return a group-allowed shelf to a friend', async () => {
+    const user = await createUser()
+    const { group, member } = await createGroupWithAMember()
+    const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
+    const res = await customAuthReq(user, 'get', `${endpoint}&ids=${shelf._id}`)
     const resIds = Object.keys(res.shelves)
     resIds.should.not.containEql(shelf._id)
   })
