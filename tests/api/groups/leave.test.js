@@ -1,6 +1,7 @@
 require('should')
 const { authReq, authReqC, customAuthReq } = require('../utils/utils')
-const { getGroup, createGroupAndMember } = require('../fixtures/groups')
+const { createGroupAndMember } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/groups?action=leave'
 

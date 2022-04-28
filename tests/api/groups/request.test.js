@@ -1,6 +1,7 @@
 require('should')
 const { customAuthReq, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { groupPromise, getGroup, createGroup } = require('../fixtures/groups')
+const { groupPromise, createGroup } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { createUser } = require('../fixtures/users')
 const endpoint = '/api/groups?action=request'
 

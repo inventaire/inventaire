@@ -1,13 +1,7 @@
-const { authReq, getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
+const { getGroup } = require('tests/api/utils/groups')
+const { getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
 const fakeText = require('./text')
 const endpointBase = '/api/groups'
-const endpointAction = `${endpointBase}?action`
-
-const getGroup = async group => {
-  group = await group
-  const { group: refreshedGroup } = await authReq('get', `${endpointAction}=by-id&id=${group._id}`)
-  return refreshedGroup
-}
 
 const createGroup = (params = {}) => {
   const {
@@ -78,7 +72,6 @@ const groupPromise = createGroupWithAMember().then(({ group }) => group)
 module.exports = {
   endpointBase,
   groupPromise,
-  getGroup,
   createGroupWithAMember,
   groupName,
   createGroup,

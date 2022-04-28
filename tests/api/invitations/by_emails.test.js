@@ -1,6 +1,7 @@
 require('should')
 const { authReq, authReqB, authReqC, shouldNotBeCalled } = require('../utils/utils')
-const { groupPromise, getGroup } = require('../fixtures/groups')
+const { groupPromise } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { signup } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
 const randomEmail = () => `a${randomString(4).toLowerCase()}@foo.org`

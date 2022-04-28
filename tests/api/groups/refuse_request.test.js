@@ -1,6 +1,7 @@
 require('should')
 const { authReq, authReqC, customAuthReq, getReservedUser } = require('../utils/utils')
-const { createGroup, getGroup } = require('../fixtures/groups')
+const { createGroup } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const endpoint = '/api/groups?action=refuse-request'
 const { shouldNotBeCalled } = require('tests/unit/utils')
 

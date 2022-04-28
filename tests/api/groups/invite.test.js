@@ -1,6 +1,7 @@
 require('should')
 const { authReq, authReqB, getUserB } = require('../utils/utils')
-const { createGroup, getGroup, addMember } = require('../fixtures/groups')
+const { createGroup, addMember } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/groups?action=invite'
 

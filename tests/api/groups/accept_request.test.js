@@ -1,10 +1,11 @@
 const _ = require('builders/utils')
 require('should')
 const { authReq, authReqC, getUserGetter, customAuthReq } = require('../utils/utils')
-const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
+const { groupPromise, createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept-request'
 const { humanName } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('tests/unit/utils')
+const { getGroup } = require('tests/api/utils/groups')
 
 describe('groups:update:accept-request', () => {
   it('should reject without a group', async () => {

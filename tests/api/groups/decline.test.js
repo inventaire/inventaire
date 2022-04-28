@@ -1,6 +1,7 @@
 require('should')
 const { authReq, authReqB, authReqC, getUserC } = require('../utils/utils')
-const { groupPromise, getGroup } = require('../fixtures/groups')
+const { groupPromise } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/groups?action=decline'
 

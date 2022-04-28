@@ -1,7 +1,8 @@
 const _ = require('builders/utils')
 require('should')
 const { authReq, authReqB, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
-const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
+const { groupPromise, addMember } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const endpoint = '/api/groups?action=make-admin'
 const { humanName } = require('../fixtures/entities')
 
