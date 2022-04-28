@@ -66,12 +66,16 @@ const createGroupWithAMember = async params => {
   return { group: refreshedGroup, admin, member }
 }
 
-// Resolves to a group with userA as admin and userB as member
-const groupPromise = createGroupWithAMember().then(({ group }) => group)
+let groupPromise
+const getSomeGroup = () => {
+  // Resolves to a group with userA as admin and userB as member
+  groupPromise = groupPromise || createGroupWithAMember().then(({ group }) => group)
+  return groupPromise
+}
 
 module.exports = {
   endpointBase,
-  groupPromise,
+  getSomeGroup,
   createGroupWithAMember,
   groupName,
   createGroup,

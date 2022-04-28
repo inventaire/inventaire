@@ -2,7 +2,7 @@ require('should')
 const { publicReq } = require('tests/api/utils/utils')
 const { customAuthReq } = require('tests/api/utils/request')
 const endpoint = '/api/items?action=inventory-view'
-const { groupPromise } = require('../fixtures/groups')
+const { getSomeGroup } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')
 const { createUserWithItems } = require('../fixtures/populate')
 const { shouldNotBeCalled } = require('tests/unit/utils')
@@ -46,7 +46,7 @@ describe('items:inventory-view', () => {
   })
 
   it('should return a group inventory-view', async () => {
-    const group = await groupPromise
+    const group = await getSomeGroup()
     const res = await publicReq('get', `${endpoint}&group=${group._id}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()

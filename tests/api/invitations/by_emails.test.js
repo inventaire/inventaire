@@ -1,6 +1,6 @@
 require('should')
 const { authReq, authReqB, authReqC, shouldNotBeCalled } = require('../utils/utils')
-const { groupPromise } = require('../fixtures/groups')
+const { getSomeGroup } = require('../fixtures/groups')
 const { getGroup } = require('tests/api/utils/groups')
 const { signup } = require('../fixtures/users')
 const randomString = require('lib/utils/random_string')
@@ -81,7 +81,7 @@ describe('invitations:by-emails', () => {
     })
 
     it('should accept valid group ids', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const { emails } = await authReq('post', endpoint, {
         emails: 'a@foo.org',
         group: group._id
@@ -90,7 +90,7 @@ describe('invitations:by-emails', () => {
     })
 
     it('should accept non-user admin requests to invite to a group', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       // User B is a member (see ../fixtures/groups.js)
       const { emails } = await authReqB('post', endpoint, {
         emails: 'a@foo.org',
@@ -100,7 +100,7 @@ describe('invitations:by-emails', () => {
     })
 
     it('should reject non-member requests to invite to a group', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       // User C isnt a member
       await authReqC('post', endpoint, {
         emails: 'a@foo.org',
@@ -115,7 +115,7 @@ describe('invitations:by-emails', () => {
 
     it('should trigger an invite on signup', async () => {
       const email = randomEmail()
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const invite = () => authReq('post', endpoint, { emails: email, group: group._id })
       await invite()
       await signup(email)

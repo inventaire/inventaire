@@ -2,7 +2,7 @@ require('should')
 const { getUser, getReservedUser } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const { createItem, createItems } = require('../fixtures/items')
-const { groupPromise, createGroup } = require('../fixtures/groups')
+const { getSomeGroup, createGroup } = require('../fixtures/groups')
 const { createShelf, createShelfWithItems } = require('../fixtures/shelves')
 
 describe('feeds:get', () => {
@@ -75,13 +75,13 @@ describe('feeds:get', () => {
 
   describe('group', () => {
     it('should return a group RSS feed', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const { body } = await rawRequest('get', `/api/feeds?group=${group._id}`)
       body.startsWith('<?xml').should.be.true()
     })
 
     it('should not return private items when not authentified', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const user = await getUser()
       const items = await createItems(user, [
         { listing: 'public' },
@@ -113,7 +113,7 @@ describe('feeds:get', () => {
     })
 
     it('should return private items when authorized', async () => {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const user = await getUser()
       const items = await createItems(user, [
         { listing: 'public' },
