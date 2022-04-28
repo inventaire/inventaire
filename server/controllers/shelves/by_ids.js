@@ -1,7 +1,6 @@
 const _ = require('builders/utils')
-const shelves_ = require('controllers/shelves/lib/shelves')
+const { byIds, byIdsWithItems } = require('controllers/shelves/lib/shelves')
 const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkUsersAndGroupsIds } = require('controllers/user/lib/relations_status')
 
 const sanitization = {
   ids: {},
@@ -17,14 +16,12 @@ const controller = async params => {
 }
 
 const getShelvesByIds = async ({ ids, withItems, reqUserId }) => {
-  const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
-  return Promise.all([
-    shelves_[byIdsFnName](ids, reqUserId),
-    getNetworkUsersAndGroupsIds(reqUserId),
-  ])
-  .then(filterVisibleShelves(reqUserId))
-  .then(_.compact)
-  .then(_.KeyBy('_id'))
+  const getShelves = withItems ? byIdsWithItems : byIds
+  const shelves = await getShelves(ids, reqUserId)
+  // TODO: return a warning when some shelves can't be returned
+  // an error when no shelf can be returned
+  const authorizedShelves = await filterVisibleShelves(shelves, reqUserId)
+  return _.keyBy(authorizedShelves, '_id')
 }
 
 module.exports = { sanitization, controller }

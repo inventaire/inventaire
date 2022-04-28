@@ -10,6 +10,7 @@ const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
 const groups_ = module.exports = {
   // using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId'),
+  byIds: db.byIds,
   bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
   byUser: db.viewByKey.bind(db, 'byUser'),
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser'),
@@ -59,13 +60,6 @@ const groups_ = module.exports = {
   getUserGroupsCoMembers: async userId => {
     const groups = await groups_.byUser(userId)
     return getCoMembersIds(groups, userId)
-  },
-
-  getUserGroupsIdsAndCoMembersIds: async userId => {
-    const groups = await groups_.byUser(userId)
-    const coMembersIds = getCoMembersIds(groups, userId)
-    const groupsIds = _.map(groups, '_id')
-    return { groupsIds, coMembersIds }
   },
 
   userInvited: async (userId, groupId) => {
