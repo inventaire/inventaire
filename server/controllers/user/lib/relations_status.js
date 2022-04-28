@@ -17,13 +17,6 @@ module.exports = {
     .then(spreadRelations(usersIds))
   },
 
-  // // Not used at the moment
-  // areFriends: (userId, otherId) => {
-  //   assert_.strings([ userId, otherId ])
-  //   return relations_.getStatus(userId, otherId)
-  //   .then(status => status === 'friends')
-  // },
-
   areFriendsOrGroupCoMembers: (userId, otherId) => {
     assert_.strings([ userId, otherId ])
     return getFriendsAndGroupCoMembers(userId)
