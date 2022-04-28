@@ -8,10 +8,6 @@ const { emit } = require('lib/radio')
 const { updatable: updateAttributes } = require('models/attributes/shelf')
 
 const shelves_ = module.exports = {
-  create: async newShelf => {
-    const shelf = Shelf.create(newShelf)
-    return db.postAndReturn(shelf)
-  },
   byId: db.get,
   byIds: db.byIds,
   byIdsWithItems: async (ids, reqUserId) => {

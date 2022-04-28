@@ -42,6 +42,14 @@ const groups_ = module.exports = {
     .then(groups => _.union(...groups))
   },
 
+  getUserGroupsIds: async userId => {
+    const { rows } = await db.view('groups', 'byUser', {
+      include_docs: false,
+      key: userId,
+    })
+    return _.map(rows, 'id')
+  },
+
   create: async options => {
     const group = Group.create(options)
     await addSlug(group)
