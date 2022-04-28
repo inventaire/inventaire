@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
 const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkIds } = require('controllers/user/lib/relations_status')
+const { getNetworkUsersAndGroupsIds } = require('controllers/user/lib/relations_status')
 
 const sanitization = {
   owners: {},
@@ -20,7 +20,7 @@ const getShelvesByOwners = async params => {
   owners = _.forceArray(owners)
   return Promise.all([
     shelves_.byOwners(owners),
-    getNetworkIds(reqUserId)
+    getNetworkUsersAndGroupsIds(reqUserId),
   ])
   .then(filterVisibleShelves(reqUserId))
   .then(_.KeyBy('_id'))

@@ -4,6 +4,7 @@ const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../uti
 const { createShelf } = require('../fixtures/shelves')
 const { makeFriends } = require('../utils/relations')
 const { createUser } = require('../fixtures/users')
+const { createGroupWithAMember } = require('tests/api/fixtures/groups')
 
 const endpoint = '/api/shelves?action=by-owners'
 
@@ -72,10 +73,28 @@ describe('shelves:by-owners', () => {
       const friendA = await createUser()
       const friendB = await createUser()
       await makeFriends(friendA, friendB)
-
       const { shelf } = await createShelf(friendB, { visibility: [ 'network' ] })
       const { _id: friendBId } = await friendB
       const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
+      const resIds = Object.keys(res.shelves)
+      resIds.should.containEql(shelf._id)
+    })
+  })
+
+  describe('visibility:group', () => {
+    it('should not return a group-allowed shelf to a non-member', async () => {
+      const user = await createUser()
+      const { group, member } = await createGroupWithAMember()
+      const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
+      const res = await customAuthReq(user, 'get', `${endpoint}&owners=${member._id}`)
+      const resIds = Object.keys(res.shelves)
+      resIds.should.not.containEql(shelf._id)
+    })
+
+    it('should return a group-allowed shelf to a member', async () => {
+      const { group, member: memberA, admin: memberB } = await createGroupWithAMember()
+      const { shelf } = await createShelf(memberA, { visibility: [ `group:${group._id}` ] })
+      const res = await customAuthReq(memberB, 'get', `${endpoint}&owners=${memberA._id}`)
       const resIds = Object.keys(res.shelves)
       resIds.should.containEql(shelf._id)
     })
