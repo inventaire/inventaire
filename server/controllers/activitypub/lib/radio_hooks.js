@@ -40,7 +40,7 @@ const _createDebouncedActivity = async ({ userId, shelfId }) => {
     // TODO: if this throws an error because the shelf was deleted
     // create a type=Delete activity instead, to notify the followers
     const shelf = await shelves_.byId(shelfId)
-    if (shelf.listing !== 'public') return
+    if (!shelf.visibility.includes('public')) return
     const owner = await user_.byId(shelf.owner)
     if (!owner.fediversable) return
     // todo: use group slugify to create shelf name

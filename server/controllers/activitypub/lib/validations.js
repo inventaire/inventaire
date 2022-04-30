@@ -10,7 +10,7 @@ module.exports = {
     const id = name.split('-')[1]
     if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })
     const shelf = await shelves_.byId(id)
-    if (!shelf || shelf.listing !== 'public') throw error_.notFound({ name })
+    if (!shelf || !shelf.visibility.includes('public')) throw error_.notFound({ name })
     const owner = await user_.byId(shelf.owner)
     if (!owner) throw error_.notFound({ name })
     if (!owner.fediversable) throw error_.new("shelf's owner is not on the fediverse", 404, { name })
