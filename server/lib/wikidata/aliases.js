@@ -8,7 +8,10 @@ const wikidataOnlyP31Values = {
     'wd:Q10648343', // duo
     'wd:Q14073567', // sibling duo
     'wd:Q19913602', // house name
-    'wd:Q61002' // pseudonym
+    'wd:Q61002', // pseudonym
+    'wd:Q16017119', // collective pseudonym
+    'wd:Q1400264', // artist collective
+    'wd:Q334471', // manga artist group
   ],
   series: [
     'wd:Q3297186', // limited series
