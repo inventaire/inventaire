@@ -24,6 +24,11 @@ module.exports = () => {
 }
 
 const createDebouncedActivity = ({ userId, shelfId }) => async () => {
+  _createDebouncedActivity({ userId, shelfId })
+  .catch(_.Error('createDebouncedActivity error'))
+}
+
+const _createDebouncedActivity = async ({ userId, shelfId }) => {
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
@@ -32,6 +37,8 @@ const createDebouncedActivity = ({ userId, shelfId }) => async () => {
     name = user.stableUsername
   } else if (shelfId) {
     delete debouncedActivities[shelfId]
+    // TODO: if this throws an error because the shelf was deleted
+    // create a type=Delete activity instead, to notify the followers
     const shelf = await shelves_.byId(shelfId)
     if (shelf.listing !== 'public') return
     const owner = await user_.byId(shelf.owner)
