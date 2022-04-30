@@ -1,7 +1,8 @@
 const { wait } = require('lib/promises')
 require('should')
 const Notification = require('models/notification')
-const someCouchUuid = '1234567890a1234567890b1234567890'
+const { someCouchUuid } = require('tests/api/fixtures/general')
+
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({
   group: '5b855aa912e3f4d6265846d3cd035382',
