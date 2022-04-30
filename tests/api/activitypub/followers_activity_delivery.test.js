@@ -27,7 +27,7 @@ describe('followers activity delivery', () => {
       const item = await createItem(user)
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      const createActivity = inbox[0]
+      const createActivity = inbox.find(a => a.type === 'Create')
       createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.object.content.should.containEql(item._id)
       createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
@@ -48,7 +48,7 @@ describe('followers activity delivery', () => {
       await addAuthor(workUri, authorUri)
       await wait(500)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      const createActivity = inbox[0]
+      const createActivity = inbox.find(a => a.type === 'Create')
       createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.type.should.equal('Create')
       createActivity.object.type.should.equal('Note')
@@ -61,7 +61,7 @@ describe('followers activity delivery', () => {
   describe('shelves followers', () => {
     it('should reject if owner is not fediversable', async () => {
       try {
-        const user = createUser({ fediversable: false })
+        const user = await createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
         const name = getActorName(shelf)
 
@@ -80,7 +80,7 @@ describe('followers activity delivery', () => {
 
     it('should reject if shelf is not public', async () => {
       try {
-        const user = createUser({ fediversable: true })
+        const user = await createUser({ fediversable: true })
         const { shelf } = await createShelf(user, { listing: 'network' })
         const name = getActorName(shelf)
         const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
@@ -97,7 +97,7 @@ describe('followers activity delivery', () => {
     })
 
     it('should post an activity to inbox shelves followers when adding an item to a shelf', async () => {
-      const user = createUser({ fediversable: true })
+      const user = await createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
@@ -112,15 +112,14 @@ describe('followers activity delivery', () => {
       await addItemsToShelf(user, shelf, [ itemId ])
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      const activity = inbox[0]
-      activity.type.should.equal('Create')
+      const activity = inbox.find(a => a.type === 'Create')
       activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       activity.object.content.should.containEql(itemId)
       activity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })
 
     it('should post an activity to inbox shelves followers when creating an item in a shelf', async () => {
-      const user = createUser({ fediversable: true })
+      const user = await createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
@@ -136,8 +135,7 @@ describe('followers activity delivery', () => {
       })
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      const activity = inbox[0]
-      activity.type.should.equal('Create')
+      const activity = inbox.find(a => a.type === 'Create')
       activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       activity.object.content.should.containEql(itemId)
       activity.to.should.deepEqual([ remoteUserId, 'Public' ])

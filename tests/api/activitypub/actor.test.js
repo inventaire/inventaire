@@ -185,7 +185,7 @@ describe('activitypub:actor', () => {
   describe('shelves', () => {
     it('should reject if receiver user is not on the fediverse', async () => {
       try {
-        const user = createUser({ fediversable: false })
+        const user = await createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
         const name = getActorName(shelf)
         const actorUrl = makeUrl({ params: { action: 'actor', name } })
@@ -199,7 +199,7 @@ describe('activitypub:actor', () => {
     })
 
     it('should return a json ld file with a receiver actor url', async () => {
-      const user = createUser({ fediversable: true })
+      const user = await createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
@@ -217,7 +217,7 @@ describe('activitypub:actor', () => {
     })
 
     it('should redirect to the shelf main url when requesting html', async () => {
-      const user = createUser({ fediversable: true })
+      const user = await createUser({ fediversable: true })
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
