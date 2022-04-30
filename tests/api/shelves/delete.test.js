@@ -30,10 +30,11 @@ describe('shelves:delete', () => {
     const { shelf, item } = await createShelfWithItem()
     const res = await authReq('post', endpoint, { ids: shelf._id })
     res.shelves.should.be.an.Array()
-
-    const getShelfRes = await authReq('get', `/api/shelves?action=by-ids&ids=${shelf._id}`)
-    Object.values(getShelfRes.shelves).length.should.equal(0)
-
+    await authReq('get', `/api/shelves?action=by-ids&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(404)
+    })
     const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
     Object.values(getItemsRes.items).length.should.not.equal(0)
   })

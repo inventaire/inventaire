@@ -60,8 +60,11 @@ describe('user:delete', () => {
       const { shelf } = await createShelf(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
-      const updatedShelf = await getShelfById(getUser(), shelf._id)
-      should(updatedShelf).not.be.ok()
+      await getShelfById(getUser(), shelf._id)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(404)
+      })
     })
   })
 

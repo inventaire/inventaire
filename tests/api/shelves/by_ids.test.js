@@ -5,6 +5,7 @@ const { createShelf } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 const { makeFriends } = require('../utils/relations')
 const { createGroupWithAMember } = require('tests/api/fixtures/groups')
+const { someCouchUuid } = require('tests/api/fixtures/general')
 
 const endpoint = '/api/shelves?action=by-ids'
 
@@ -20,8 +21,11 @@ describe('shelves:by-ids', () => {
   })
 
   it('should be empty when the id does not exist', async () => {
-    const res = await authReq('get', `${endpoint}&ids=00000000000000000000000000000000`)
-    res.shelves.should.deepEqual({})
+    await authReqB('get', `${endpoint}&ids=${someCouchUuid}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(404)
+    })
   })
 
   it('should get a public shelf', async () => {
@@ -33,9 +37,11 @@ describe('shelves:by-ids', () => {
 
   it('should not return non friends network shelves', async () => {
     const { shelf } = await createShelf(null, { visibility: [] })
-    const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = Object.keys(res.shelves)
-    resIds.should.not.containEql(shelf._id)
+    await authReqB('get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
   })
 
   it('should return owner private shelves', async () => {
@@ -45,20 +51,45 @@ describe('shelves:by-ids', () => {
     resIds.should.containEql(shelf._id)
   })
 
-  it('should not return private shelves', async () => {
+  it('should not return a private shelf to an authentified user', async () => {
     const { shelf } = await createShelf(null, { visibility: [] })
-    const res = await authReqB('get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = Object.keys(res.shelves)
-    resIds.should.not.containEql(shelf._id)
+    await authReqB('get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
+  })
+
+  it('should not return a private shelf to a non-authentified user', async () => {
+    const { shelf } = await createShelf(null, { visibility: [] })
+    await publicReq('get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(401)
+    })
+  })
+
+  it('should set warnings when some requested shelves can not be returned', async () => {
+    const [ { shelf: privateShelf }, { shelf: publicShelf } ] = await Promise.all([
+      createShelf(null, { visibility: [] }),
+      createShelf(null, { visibility: [ 'public' ] }),
+    ])
+    const ids = [ someCouchUuid, privateShelf._id, publicShelf._id ]
+    const res = await publicReq('get', `${endpoint}&ids=${ids.join('|')}`)
+    Object.keys(res.shelves).should.deepEqual([ publicShelf._id ])
+    res.warnings.should.containEql(`shelves not found: ${someCouchUuid}`)
+    res.warnings.should.containEql(`unauthorized shelves access: ${privateShelf._id}`)
   })
 
   it('should not return network shelves', async () => {
     const userA = await createUser()
     const userB = await createUser()
     const { shelf } = await createShelf(userB, { visibility: [ 'network' ] })
-    const res = await customAuthReq(userA, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = Object.keys(res.shelves)
-    resIds.should.not.containEql(shelf._id)
+    await customAuthReq(userA, 'get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
   })
 
   it('should return friends network shelves', async () => {
@@ -76,9 +107,11 @@ describe('shelves:by-ids', () => {
     const user = await getUser()
     await makeFriends(friend, user)
     const { shelf } = await createShelf(null, { visibility: [] })
-    const res = await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = Object.keys(res.shelves)
-    resIds.should.not.containEql(shelf._id)
+    await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
   })
 
   it('should return a group-allowed shelf to a group member', async () => {
@@ -93,9 +126,11 @@ describe('shelves:by-ids', () => {
     const user = await createUser()
     const { group, member } = await createGroupWithAMember()
     const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
-    const res = await customAuthReq(user, 'get', `${endpoint}&ids=${shelf._id}`)
-    const resIds = Object.keys(res.shelves)
-    resIds.should.not.containEql(shelf._id)
+    await customAuthReq(user, 'get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
   })
 
   describe('with-items', () => {
