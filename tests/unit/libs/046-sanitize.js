@@ -21,7 +21,7 @@ describe('sanitize', () => {
     const input = sanitize(req, res, configs)
     input.should.deepEqual({})
     res.warnings.should.be.an.Object()
-    res.warnings.parameters.should.deepEqual([
+    res.warnings.should.deepEqual([
       'unexpected parameter: limit'
     ])
   })
@@ -212,7 +212,7 @@ describe('sanitize', () => {
       const { limit } = sanitize(req, res, configs)
       limit.should.equal(500)
       res.warnings.should.be.an.Object()
-      res.warnings.parameters.should.deepEqual([
+      res.warnings.should.deepEqual([
         "limit can't be over 500"
       ])
     })

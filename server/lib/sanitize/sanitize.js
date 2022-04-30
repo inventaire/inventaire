@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const responses_ = require('lib/responses')
+const { addWarning } = require('lib/responses')
 const parameters = require('./parameters')
 const { generics } = parameters
 
@@ -171,11 +171,6 @@ const renameParameter = (input, name, renameFn) => {
   if (renameFn == null) return
   const aliasedName = renameFn(name)
   input[aliasedName] = input[name]
-}
-
-const addWarning = (res, message) => {
-  _.warn(message)
-  responses_.addWarning(res, 'parameters', message)
 }
 
 module.exports = { sanitize, validateSanitization }

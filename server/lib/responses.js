@@ -1,3 +1,4 @@
+const _ = require('builders/utils')
 
 let assert_
 const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
@@ -45,10 +46,12 @@ const responses_ = module.exports = {
 
   Send: res => responses_.send.bind(null, res),
 
-  addWarning: (res, category, message) => {
-    res.warnings = res.warnings || {}
-    res.warnings[category] = res.warnings[category] || []
-    res.warnings[category].push(message)
+  addWarning: (res, message) => {
+    assert_.object(res)
+    assert_.string(message)
+    _.warn(message)
+    res.warnings = res.warnings || []
+    res.warnings.push(message)
   }
 }
 
