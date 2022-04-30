@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+./tests/api/scripts/test_api $@ | tee ./logs/tests.log
+./scripts/extract_tests_results
