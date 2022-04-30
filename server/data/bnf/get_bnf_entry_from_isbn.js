@@ -138,7 +138,6 @@ const formatRow = async (isbn, result, rawResult) => {
       labels: { fr: publisherLabel }
     }
   }
-  console.log('🚀 ~ file: get_bnf_entry_from_isbn.js ~ line 141 ~ formatRow ~ entry', entry)
   return entry
 }
 
