@@ -9,17 +9,11 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const shelves = await getShelvesByOwners(params)
+  const { reqUserId, owners } = params
+  const foundShelves = await shelves_.byOwners(owners)
+  const authorizedShelves = await filterVisibleShelves(foundShelves, reqUserId)
+  const shelves = _.keyBy(authorizedShelves, '_id')
   return { shelves }
-}
-
-const getShelvesByOwners = async params => {
-  const { reqUserId } = params
-  let { owners } = params
-  owners = _.forceArray(owners)
-  const shelves = await shelves_.byOwners(owners)
-  const authorizedShelves = await filterVisibleShelves(shelves, reqUserId)
-  return _.keyBy(authorizedShelves, '_id')
 }
 
 module.exports = { sanitization, controller }
