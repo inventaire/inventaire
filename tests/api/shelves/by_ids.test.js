@@ -1,10 +1,10 @@
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
-const { createUser } = require('../fixtures/users')
+const { createUser, getTwoFriends } = require('../fixtures/users')
 const { createShelf } = require('../fixtures/shelves')
 const { createItem } = require('../fixtures/items')
 const { makeFriends } = require('../utils/relations')
-const { createGroupWithAMember } = require('tests/api/fixtures/groups')
+const { getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
 const { someCouchUuid } = require('tests/api/fixtures/general')
 
 const endpoint = '/api/shelves?action=by-ids'
@@ -115,7 +115,7 @@ describe('shelves:by-ids', () => {
   })
 
   it('should return a group-allowed shelf to a group member', async () => {
-    const { group, member: memberA, admin: memberB } = await createGroupWithAMember()
+    const { group, member: memberA, admin: memberB } = await getSomeGroupWithAMember()
     const { shelf } = await createShelf(memberA, { visibility: [ `group:${group._id}` ] })
     const res = await customAuthReq(memberB, 'get', `${endpoint}&ids=${shelf._id}`)
     const resIds = Object.keys(res.shelves)
@@ -123,10 +123,30 @@ describe('shelves:by-ids', () => {
   })
 
   it('should not return a group-allowed shelf to a friend', async () => {
-    const user = await createUser()
-    const { group, member } = await createGroupWithAMember()
+    const [ user, { group, member } ] = await Promise.all([
+      createUser(),
+      getSomeGroupWithAMember()
+    ])
+    await makeFriends(user, member)
     const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
     await customAuthReq(user, 'get', `${endpoint}&ids=${shelf._id}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+    })
+  })
+
+  it('should return a friends-only shelf to a friend', async () => {
+    const [ userA, userB ] = await getTwoFriends()
+    const { shelf } = await createShelf(userA, { visibility: [ 'friends' ] })
+    const res = await customAuthReq(userB, 'get', `${endpoint}&ids=${shelf._id}`)
+    res.shelves[shelf._id].should.be.ok()
+  })
+
+  it('should not return a friends-only shelf to a group co-member', async () => {
+    const { member: memberA, admin: memberB } = await getSomeGroupWithAMember()
+    const { shelf } = await createShelf(memberA, { visibility: [ 'friends' ] })
+    await customAuthReq(memberB, 'get', `${endpoint}&ids=${shelf._id}`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)

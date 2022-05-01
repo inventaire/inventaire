@@ -12,12 +12,11 @@ module.exports = async (shelves, reqUserId) => {
   const [
     groups = [],
     friendsIds = [],
-    coMembersIds = [],
+    coGroupsMembersIds = [],
   ] = await getMinimalRequiredUserNetworkData(shelves, reqUserId)
 
-  const networkUsersIds = friendsIds.concat(coMembersIds)
   const groupsMembersIds = getGroupsMembersIdsSets(groups)
-  return shelves.filter(isVisible(networkUsersIds, groupsMembersIds, reqUserId))
+  return shelves.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId }))
 }
 
 const shelvesOwnerRequest = (shelves, reqUserId) => {
@@ -41,12 +40,12 @@ const getMinimalRequiredUserNetworkData = async (shelves, reqUserId) => {
   }
 
   const needToFetchGroupsCoMembers = allVisibilityKeys.some(keyRequiresGroupsCoMembers)
-  let coMembersIdsPromise
+  let coGroupsMembersIdsPromise
   if (needToFetchGroupsCoMembers) {
-    coMembersIdsPromise = getUserGroupsCoMembers(reqUserId)
+    coGroupsMembersIdsPromise = getUserGroupsCoMembers(reqUserId)
   }
 
-  return Promise.all([ groupsPromise, friendsIdsPromise, coMembersIdsPromise ])
+  return Promise.all([ groupsPromise, friendsIdsPromise, coGroupsMembersIdsPromise ])
 }
 
 const getGroupsMembersIdsSets = groups => {
@@ -57,14 +56,19 @@ const getGroupsMembersIdsSets = groups => {
   return groupsMembersIds
 }
 
-const keyRequiresFriendsIds = key => key === 'network'
+const keyRequiresFriendsIds = key => key === 'network' || key === 'friends'
 const keyRequiresGroupsCoMembers = key => key === 'network'
 
-const isVisible = (networkUsersIds, groupsMembersIds, reqUserId) => shelf => {
+const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId }) => shelf => {
   const { owner, visibility } = shelf
   if (owner === reqUserId) return true
   if (visibility.includes('public')) return true
-  if (visibility.includes('network') && networkUsersIds.includes(owner)) return true
+  if (visibility.includes('network')) {
+    if (friendsIds.includes(owner) || coGroupsMembersIds.includes(owner)) {
+      return true
+    }
+  }
+  if (visibility.includes('friends') && friendsIds.includes(owner)) return true
   for (const key of visibility) {
     if (isVisibilityGroupKey(key)) {
       const groupId = getGroupIdFromKey(key)
