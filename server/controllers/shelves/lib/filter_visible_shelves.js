@@ -10,13 +10,13 @@ module.exports = async (shelves, reqUserId) => {
   if (shelves.every(isOwnedByReqUser(reqUserId))) return shelves
 
   const [
-    groups = [],
     friendsIds = [],
+    groups = [],
     coGroupsMembersIds = [],
   ] = await getMinimalRequiredUserNetworkData(shelves, reqUserId)
 
-  const groupsMembersIds = getGroupsMembersIdsSets(groups)
-  return shelves.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId }))
+  const groupsMembersIdsSets = getGroupsMembersIdsSets(groups)
+  return shelves.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }))
 }
 
 const isOwnedByReqUser = reqUserId => shelf => shelf.owner === reqUserId
@@ -24,16 +24,16 @@ const isOwnedByReqUser = reqUserId => shelf => shelf.owner === reqUserId
 const getMinimalRequiredUserNetworkData = async (shelves, reqUserId) => {
   const allVisibilityKeys = _.uniq(_.map(shelves, 'visibility').flat())
 
-  const groupsIds = allVisibilityKeys.filter(isVisibilityGroupKey).map(getGroupIdFromKey)
-  let groupsPromise
-  if (groupsIds.length > 0) {
-    groupsPromise = getGroupsByIds(groupsIds)
-  }
-
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)
   let friendsIdsPromise
   if (needToFetchFriends) {
     friendsIdsPromise = getUserFriends(reqUserId)
+  }
+
+  const groupsIds = allVisibilityKeys.filter(isVisibilityGroupKey).map(getGroupIdFromKey)
+  let groupsPromise
+  if (groupsIds.length > 0) {
+    groupsPromise = getGroupsByIds(groupsIds)
   }
 
   const needToFetchGroupsCoMembers = allVisibilityKeys.some(keyRequiresGroupsCoMembers)
@@ -42,21 +42,21 @@ const getMinimalRequiredUserNetworkData = async (shelves, reqUserId) => {
     coGroupsMembersIdsPromise = getUserGroupsCoMembers(reqUserId)
   }
 
-  return Promise.all([ groupsPromise, friendsIdsPromise, coGroupsMembersIdsPromise ])
+  return Promise.all([ friendsIdsPromise, groupsPromise, coGroupsMembersIdsPromise ])
 }
 
 const getGroupsMembersIdsSets = groups => {
-  const groupsMembersIds = {}
+  const groupsMembersIdsSets = {}
   for (const group of groups) {
-    groupsMembersIds[group._id] = new Set(parseAllGroupMembersIds(group))
+    groupsMembersIdsSets[group._id] = new Set(parseAllGroupMembersIds(group))
   }
-  return groupsMembersIds
+  return groupsMembersIdsSets
 }
 
 const keyRequiresFriendsIds = key => key === 'network' || key === 'friends'
-const keyRequiresGroupsCoMembers = key => key === 'network'
+const keyRequiresGroupsCoMembers = key => key === 'network' || key === 'groups'
 
-const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId }) => shelf => {
+const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => shelf => {
   const { owner, visibility } = shelf
   if (owner === reqUserId) return true
   if (visibility.includes('public')) return true
@@ -65,11 +65,12 @@ const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId
       return true
     }
   }
+  if (visibility.includes('groups') && coGroupsMembersIds.includes(owner)) return true
   if (visibility.includes('friends') && friendsIds.includes(owner)) return true
   for (const key of visibility) {
     if (isVisibilityGroupKey(key)) {
       const groupId = getGroupIdFromKey(key)
-      const membersIdsSet = groupsMembersIds[groupId]
+      const membersIdsSet = groupsMembersIdsSets[groupId]
       if (membersIdsSet.has(reqUserId)) return true
     }
   }

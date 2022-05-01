@@ -127,6 +127,25 @@ describe('shelves:by-ids', () => {
     })
   })
 
+  describe('visibility:groups', () => {
+    it('should return a groups-only shelf to a group co-member', async () => {
+      const { member: memberA, admin: memberB } = await getSomeGroupWithAMember()
+      const { shelf } = await createShelf(memberA, { visibility: [ 'groups' ] })
+      const res = await customAuthReq(memberB, 'get', `${endpoint}&ids=${shelf._id}`)
+      res.shelves[shelf._id].should.be.ok()
+    })
+
+    it('should not return a groups-only shelf to a friend', async () => {
+      const [ userA, userB ] = await getTwoFriends()
+      const { shelf } = await createShelf(userA, { visibility: [ 'groups' ] })
+      await customAuthReq(userB, 'get', `${endpoint}&ids=${shelf._id}`)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(403)
+      })
+    })
+  })
+
   describe('visibility:group', () => {
     it('should return a group-allowed shelf to a group member', async () => {
       const { group, member: memberA, admin: memberB } = await getSomeGroupWithAMember()

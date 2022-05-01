@@ -46,6 +46,18 @@ describe('shelves:create', () => {
     resShelf.items.should.containEql(item._id)
   })
 
+  it('should create a shelf with friends-only visibility', async () => {
+    const visibility = [ 'friends' ]
+    const { shelf } = await authReq('post', endpoint, { name: shelfName(), visibility })
+    shelf.visibility.should.deepEqual(visibility)
+  })
+
+  it('should create a shelf with groups-only visibility', async () => {
+    const visibility = [ 'groups' ]
+    const { shelf } = await authReq('post', endpoint, { name: shelfName(), visibility })
+    shelf.visibility.should.deepEqual(visibility)
+  })
+
   it('should create a shelf with group-specific visibility', async () => {
     const { group, member } = await createGroupWithAMember()
     const visibility = [ `group:${group._id}` ]

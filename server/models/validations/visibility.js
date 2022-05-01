@@ -4,6 +4,7 @@ const { isVisibilityGroupKey } = require('lib/boolean_validations')
 const keywordValues = [
   'network',
   'friends',
+  'groups',
   'public',
 ]
 

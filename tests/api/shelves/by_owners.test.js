@@ -77,6 +77,38 @@ describe('shelves:by-owners', () => {
     })
   })
 
+  describe('visibility:friends', () => {
+    it('should return a friends-only shelf to a friend', async () => {
+      const [ userA, userB ] = await getTwoFriends()
+      const { shelf } = await createShelf(userA, { visibility: [ 'friends' ] })
+      const res = await customAuthReq(userB, 'get', `${endpoint}&owners=${userA._id}`)
+      res.shelves[shelf._id].should.be.ok()
+    })
+
+    it('should not return a friends-only shelf to a group co-member', async () => {
+      const { member: memberA, admin: memberB } = await getSomeGroupWithAMember()
+      const { shelf } = await createShelf(memberA, { visibility: [ 'friends' ] })
+      const res = await customAuthReq(memberB, 'get', `${endpoint}&owners=${memberA._id}`)
+      should(res.shelves[shelf._id]).not.be.ok()
+    })
+  })
+
+  describe('visibility:groups', () => {
+    it('should return a groups-only shelf to a group co-member', async () => {
+      const { member: memberA, admin: memberB } = await getSomeGroupWithAMember()
+      const { shelf } = await createShelf(memberA, { visibility: [ 'groups' ] })
+      const res = await customAuthReq(memberB, 'get', `${endpoint}&owners=${memberA._id}`)
+      should(res.shelves[shelf._id]).be.ok()
+    })
+
+    it('should not return a groups-only shelf to a friend', async () => {
+      const [ userA, userB ] = await getTwoFriends()
+      const { shelf } = await createShelf(userA, { visibility: [ 'groups' ] })
+      const res = await customAuthReq(userB, 'get', `${endpoint}&owners=${userA._id}`)
+      should(res.shelves[shelf._id]).not.be.ok()
+    })
+  })
+
   describe('visibility:group', () => {
     it('should not return a group-allowed shelf to a non-member', async () => {
       const user = await createUser()
@@ -91,22 +123,6 @@ describe('shelves:by-owners', () => {
       const { shelf } = await createShelf(memberA, { visibility: [ `group:${group._id}` ] })
       const res = await customAuthReq(memberB, 'get', `${endpoint}&owners=${memberA._id}`)
       res.shelves[shelf._id].should.be.ok()
-    })
-  })
-
-  describe('visibility:friends', () => {
-    it('should return a friends-only shelf to a friend', async () => {
-      const [ userA, userB ] = await getTwoFriends()
-      const { shelf } = await createShelf(userA, { visibility: [ 'friends' ] })
-      const res = await customAuthReq(userB, 'get', `${endpoint}&owners=${userA._id}`)
-      res.shelves[shelf._id].should.be.ok()
-    })
-
-    it('should not return a friends-only shelf to a group co-member', async () => {
-      const { member: memberA, admin: memberB } = await getSomeGroupWithAMember()
-      const { shelf } = await createShelf(memberA, { visibility: [ 'friends' ] })
-      const { shelves } = await customAuthReq(memberB, 'get', `${endpoint}&owners=${memberA._id}`)
-      should(shelves[shelf._id]).not.be.ok()
     })
   })
 })
