@@ -81,7 +81,7 @@ describe('followers activity delivery', () => {
     it('should reject if shelf is not public', async () => {
       try {
         const user = await createUser({ fediversable: true })
-        const { shelf } = await createShelf(user, { visibility: [ 'network' ] })
+        const { shelf } = await createShelf(user, { visibility: [ 'friends' ] })
         const name = getActorName(shelf)
         const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
         const inboxUrl = makeUrl({ params: { action: 'inbox', name } })

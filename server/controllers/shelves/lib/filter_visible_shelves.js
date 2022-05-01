@@ -53,18 +53,13 @@ const getGroupsMembersIdsSets = groups => {
   return groupsMembersIdsSets
 }
 
-const keyRequiresFriendsIds = key => key === 'network' || key === 'friends'
-const keyRequiresGroupsCoMembers = key => key === 'network' || key === 'groups'
+const keyRequiresFriendsIds = key => key === 'friends'
+const keyRequiresGroupsCoMembers = key => key === 'groups'
 
 const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => shelf => {
   const { owner, visibility } = shelf
   if (owner === reqUserId) return true
   if (visibility.includes('public')) return true
-  if (visibility.includes('network')) {
-    if (friendsIds.includes(owner) || coGroupsMembersIds.includes(owner)) {
-      return true
-    }
-  }
   if (visibility.includes('groups') && coGroupsMembersIds.includes(owner)) return true
   if (visibility.includes('friends') && friendsIds.includes(owner)) return true
   for (const key of visibility) {

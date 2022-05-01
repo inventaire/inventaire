@@ -56,27 +56,6 @@ describe('shelves:by-owners', () => {
     })
   })
 
-  describe('visibility:network', () => {
-    it('should not return non friends network shelves', async () => {
-      const friendA = await createUser()
-      const friendB = await createUser()
-      const { shelf } = await createShelf(friendB, { visibility: [ 'network' ] })
-      const { _id: friendBId } = await friendB
-      const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
-      should(res.shelves[shelf._id]).not.be.ok()
-    })
-
-    it('should return friends network shelves', async () => {
-      const friendA = await createUser()
-      const friendB = await createUser()
-      await makeFriends(friendA, friendB)
-      const { shelf } = await createShelf(friendB, { visibility: [ 'network' ] })
-      const { _id: friendBId } = await friendB
-      const res = await customAuthReq(friendA, 'get', `${endpoint}&owners=${friendBId}`)
-      res.shelves[shelf._id].should.be.ok()
-    })
-  })
-
   describe('visibility:friends', () => {
     it('should return a friends-only shelf to a friend', async () => {
       const [ userA, userB ] = await getTwoFriends()

@@ -76,38 +76,6 @@ describe('shelves:by-ids', () => {
     })
   })
 
-  describe('visibility:network', () => {
-    it('should not return non-friends network shelves', async () => {
-      const { shelf } = await createShelf(null, { visibility: [ 'network' ] })
-      await authReqB('get', `${endpoint}&ids=${shelf._id}`)
-      .then(shouldNotBeCalled)
-      .catch(err => {
-        err.statusCode.should.equal(403)
-      })
-    })
-
-    it('should not return network shelves', async () => {
-      const userA = await createUser()
-      const userB = await createUser()
-      const { shelf } = await createShelf(userB, { visibility: [ 'network' ] })
-      await customAuthReq(userA, 'get', `${endpoint}&ids=${shelf._id}`)
-      .then(shouldNotBeCalled)
-      .catch(err => {
-        err.statusCode.should.equal(403)
-      })
-    })
-
-    it('should return friends network shelves', async () => {
-      const friend = await createUser()
-      const user = await getUser()
-      await makeFriends(friend, user)
-      const { shelf } = await createShelf(null, { visibility: [ 'network' ] })
-      const res = await customAuthReq(friend, 'get', `${endpoint}&ids=${shelf._id}`)
-      const resIds = Object.keys(res.shelves)
-      resIds.should.containEql(shelf._id)
-    })
-  })
-
   describe('visibility:friends', () => {
     it('should return a friends-only shelf to a friend', async () => {
       const [ userA, userB ] = await getTwoFriends()
@@ -217,13 +185,13 @@ describe('shelves:by-ids', () => {
       })
     })
 
-    describe('network shelf', () => {
+    describe('friends shelf', () => {
       it('should not get private items', async () => {
         const friend = await createUser()
         const user = await getUser()
         await makeFriends(friend, user)
         const item = await createItem(friend, { listing: 'private' })
-        const { shelf } = await createShelf(friend, { visibility: [ 'network' ] })
+        const { shelf } = await createShelf(friend, { visibility: [ 'friends' ] })
         await addItem(shelf._id, item._id, friend)
         const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
         res.shelves[shelf._id].items.should.not.containEql(item._id)
@@ -234,7 +202,7 @@ describe('shelves:by-ids', () => {
         const user = await getUser()
         await makeFriends(friend, user)
         const item = await createItem(friend, { listing: 'network' })
-        const { shelf } = await createShelf(friend, { visibility: [ 'network' ] })
+        const { shelf } = await createShelf(friend, { visibility: [ 'friends' ] })
         await addItem(shelf._id, item._id, friend)
         const res = await authReq('get', `${endpoint}&ids=${shelf._id}&with-items=true`)
         res.shelves[shelf._id].items.should.containEql(item._id)
@@ -243,7 +211,7 @@ describe('shelves:by-ids', () => {
       it('should get public items', async () => {
         const friend = await createUser()
         const item = await createItem(friend)
-        const { shelf } = await createShelf(friend, { visibility: [ 'network' ] })
+        const { shelf } = await createShelf(friend, { visibility: [ 'friends' ] })
         await addItem(shelf._id, item._id, friend)
         const user = await getUser()
         await makeFriends(friend, user)
