@@ -1,6 +1,7 @@
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
 const { shelfName } = require('../fixtures/shelves')
+const { createItem } = require('../fixtures/items')
 const endpoint = '/api/shelves?action=create'
 
 describe('shelves:create', () => {
@@ -45,5 +46,14 @@ describe('shelves:create', () => {
     shelf.name.should.equal(name)
     shelf.listing.should.equal(listing)
     shelf.color.should.equal(color)
+  })
+
+  it('should create shelf with items', async () => {
+    const name = shelfName()
+    const item = await createItem()
+    const { shelf } = await authReq('post', endpoint, { name, listing: 'public', items: [ item._id ] })
+    const res = await authReq('get', `/api/shelves?action=by-ids&ids=${shelf._id}&with-items=true`)
+    const resShelf = res.shelves[shelf._id]
+    resShelf.items.should.containEql(item._id)
   })
 })
