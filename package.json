@@ -108,6 +108,9 @@
     "sinon": "^1.17.1",
     "supervisor": "^0.10.0"
   },
+  "overrides": {
+    "leveldown": "github:inventaire/leveldown#2428724"
+  },
   "engines": {
     "node": ">= 16.6"
   },
