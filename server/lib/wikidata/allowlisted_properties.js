@@ -30,7 +30,6 @@ const nonEditedProperties = [
   'P155', // follow
   'P156', // is follow by
   'P166', // award received
-  'P279', // subclass of
   'P356', // DOI
   'P361', // part of
   'P349', // NDL of Japan Auth ID

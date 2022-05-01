@@ -7,7 +7,7 @@
 
 # Index Wikidata entities from dump
 # This implementation reflects the current state of the getEntityType function (server/controllers/entities/lib/get_entity_type.js)
-# which only lets in entities that have a P31 or P279 value identified in server/lib/wikidata/aliases
+# which only lets in entities that have a P31 value identified in server/lib/wikidata/aliases
 
 indexed_types_ids=$(mktemp)
 

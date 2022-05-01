@@ -50,11 +50,10 @@ const getEnrichedEntity = async wdId => {
 const format = async entity => {
   if (entity.missing != null) return formatEmpty('missing', entity)
 
-  const { P31, P279 } = entity.claims
-  if (P31 || P279) {
+  const { P31 } = entity.claims
+  if (P31) {
     const simplifiedP31 = simplifyPropertyClaims(P31, simplifyClaimsOptions)
-    const simplifiedP279 = simplifyPropertyClaims(P279, simplifyClaimsOptions)
-    entity.type = getEntityType(simplifiedP31, simplifiedP279)
+    entity.type = getEntityType(simplifiedP31)
   } else {
     // Make sure to override the type as Wikidata entities have a type with
     // another role in Wikibase, and we need this absence of known type to
