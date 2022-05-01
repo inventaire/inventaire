@@ -7,7 +7,7 @@ const { allGroupMembers: parseAllGroupMembersIds } = require('server/controllers
 module.exports = async (shelves, reqUserId) => {
   // Optimizing for the case where all requested shelves belong to the requester
   // as that's a frequent case
-  if (shelvesOwnerRequest(shelves, reqUserId)) return shelves
+  if (shelves.every(isOwnedByReqUser(reqUserId))) return shelves
 
   const [
     groups = [],
@@ -19,10 +19,7 @@ module.exports = async (shelves, reqUserId) => {
   return shelves.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIds, reqUserId }))
 }
 
-const shelvesOwnerRequest = (shelves, reqUserId) => {
-  const ownersIds = _.uniq(_.map(shelves, 'owner'))
-  return (ownersIds.length === 1 && ownersIds[0] === reqUserId)
-}
+const isOwnedByReqUser = reqUserId => shelf => shelf.owner === reqUserId
 
 const getMinimalRequiredUserNetworkData = async (shelves, reqUserId) => {
   const allVisibilityKeys = _.uniq(_.map(shelves, 'visibility').flat())
