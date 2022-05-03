@@ -38,7 +38,7 @@ describe('tasks:automerge', () => {
   })
 
   it('should not automerge if author name is in work title', async () => {
-    const humanLabel = 'Frédéric Lordon'
+    const humanLabel = 'Frédéric Lordon' // wd:Q2300248
     const workLabel = humanLabel
     const human = await createHuman({ labels: { en: humanLabel } })
     await createWorkWithAuthor(human, workLabel)
