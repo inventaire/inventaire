@@ -18,20 +18,19 @@ module.exports = params => {
 const getArticle = async (lang, title, introOnly) => {
   const url = apiQuery(lang, title, introOnly)
   const { query } = await requests_.get(url)
-  const { pages } = query
-  if (pages == null) {
-    throw error_.new('invalid extract response', 500, { lang, title }, query)
-  }
-
-  // Replace spaces by underscores before URI encoding
-  // as Mediawiki considers them interchangeable
-  // and _ is more readable than %20
-  title = title.replace(/\s/g, '_')
-  title = fixedEncodeURIComponent(title)
-
-  return {
-    extract: getCleanExtract(Object.values(pages)),
-    url: `https://${lang}.wikipedia.org/wiki/${title}`
+  const { pages = [] } = query
+  const extract = getCleanExtract(Object.values(pages))
+  if (extract) {
+    // Replace spaces by underscores before URI encoding
+    // as Mediawiki considers them interchangeable
+    // and _ is more readable than %20
+    title = title.replace(/\s/g, '_')
+    title = fixedEncodeURIComponent(title)
+    const url = `https://${lang}.wikipedia.org/wiki/${title}`
+    return { extract, url }
+  } else {
+    if (pages['-1']?.missing === '') throw error_.notFound({ lang, title, url, pages })
+    else throw error_.new('invalid extract response', 500, { lang, title, url, pages })
   }
 }
 
@@ -57,7 +56,7 @@ const apiQuery = (lang, title, introOnly) => {
 
 // Commas between references aren't removed, thus the presence of aggregated commas
 const getCleanExtract = pages => {
-  const extract = pages && pages[0] && pages[0].extract
+  const extract = pages?.[0]?.extract
   if (extract) {
     return extract
     // Commas between references aren't removed, thus the presence of aggregated commas

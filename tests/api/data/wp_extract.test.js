@@ -1,4 +1,4 @@
-const should = require('should')
+require('should')
 const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const endpoint = '/api/data?action=wp-extract'
 const randomString = require('lib/utils/random_string')
@@ -12,11 +12,12 @@ describe('wikipedia:extract', () => {
     })
   })
 
-  it('should return empty response when no page is found', async () => {
+  it('should reject when no page is found', async () => {
     const randomTitle = randomString(15)
     await publicReq('get', `${endpoint}&title=${randomTitle}`)
-    .then(res => {
-      should(res.extract).not.be.ok()
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(404)
     })
   })
 
