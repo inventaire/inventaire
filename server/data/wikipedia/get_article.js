@@ -36,8 +36,6 @@ const getArticle = async (lang, title, introOnly) => {
 }
 
 const apiQuery = (lang, title, introOnly) => {
-  title = fixedEncodeURIComponent(title)
-
   // doc:
   // - https://en.wikipedia.org/w/api.php?action=help&modules=query
   // - https://www.mediawiki.org/wiki/Extension:TextExtracts

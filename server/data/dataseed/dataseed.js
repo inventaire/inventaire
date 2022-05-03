@@ -36,7 +36,7 @@ module.exports = {
   },
 
   cleanupImageUrl: imageUrl => {
-    const url = buildUrl(`${host}/images`, { url: encodeURIComponent(imageUrl) })
+    const url = buildUrl(`${host}/images`, { url: imageUrl })
     return requests_.get(url, reqOptions)
   }
 }

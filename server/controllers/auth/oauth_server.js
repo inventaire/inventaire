@@ -28,7 +28,7 @@ module.exports = {
 
       const { scope } = req.query
       if (!scope) return error_.bundleMissingQuery(req, res, 'scope')
-      const scopes = scope.split(' ')
+      const scopes = scope.split(/[\s+]/)
 
       for (const scopeName of scopes) {
         if (!allScopes.includes(scopeName)) {

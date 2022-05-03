@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 // Doc: http://developer.piwik.org/api-reference/tracking-api
 const _ = require('builders/utils')
-const { fixedEncodeURIComponent, buildUrl } = require('lib/utils/url')
+const { buildUrl } = require('lib/utils/url')
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const host = CONFIG.fullHost()
 const placeholderUrl = '/unknown'
@@ -33,8 +33,8 @@ const track = (req = {}, actionArray) => {
     e_a: `${category}:${action}`,
     e_n: name,
     e_v: value,
-    ua: fixedEncodeURIComponent(ua),
-    lang: language || fixedEncodeURIComponent(al)
+    ua,
+    lang: language || al,
   }
 
   requests_.get(buildUrl(endpoint, data), { parseJson: false })

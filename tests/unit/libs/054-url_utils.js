@@ -14,15 +14,11 @@ describe('url utils', () => {
       path.should.equal('/api?action=man')
     })
 
-    it('should stringify object value', () => {
-      const path = buildUrl('/api', { action: 'man', data: { a: [ 'abc', 2 ] } })
-      path.should.equal('/api?action=man&data={"a":["abc",2]}')
-    })
-
-    it('should URI encode object values problematic query string characters', () => {
-      const data = { a: 'some string with ?!MM%** problematic characters' }
-      const path = buildUrl('/api', { data })
-      path.should.equal('/api?data={"a":"some string with %3F!MM%** problematic characters"}')
+    it('should URI encode special characters', () => {
+      buildUrl('/api', { key: '?!MM%**', email: 'fo+o@bar.baz' })
+      .should.equal('/api?key=%3F%21MM%25**&email=fo%2Bo%40bar.baz')
+      buildUrl('/api', { url: 'https://developer.mozilla.org/fr/docs/Web/API/URLSearchParams' })
+      .should.equal('/api?url=https%3A%2F%2Fdeveloper.mozilla.org%2Ffr%2Fdocs%2FWeb%2FAPI%2FURLSearchParams')
     })
   })
 })

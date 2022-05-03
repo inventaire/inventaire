@@ -90,14 +90,14 @@ module.exports = {
     if (_.isArray(types)) types = types.join('|')
     const url = buildUrl(endpoint, {
       types,
-      search: search ? encodeURIComponent(search) : undefined,
+      search,
       lang: lang || 'en',
       limit: limit || 10,
       offset: offset || 0,
       exact,
       filter,
       'min-score': minScore,
-      claim: claim ? encodeURIComponent(claim) : undefined,
+      claim,
     })
     const { results } = await publicReq('get', url)
     return results
