@@ -168,6 +168,6 @@ const hostIsCurrentlyBanned = async ({ host, noTimeoutEndpoint }) => {
     const { banTime, expire } = err.context.hostBanData
     banTime.should.equal(baseBanTime)
     should(expire > Date.now()).be.true()
-    should(expire < Date.now() + baseBanTime).be.true()
+    should(expire <= Date.now() + baseBanTime).be.true()
   }
 }
