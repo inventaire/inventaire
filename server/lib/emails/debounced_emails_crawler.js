@@ -11,8 +11,8 @@ module.exports = () => {
 
 // key structure: sendEmailFunctionName:id:time
 
-const crawl = () => {
-  return db.createReadStream()
+const crawl = async () => {
+  return (await db.spiedCreateReadStream())
   .on('data', onData)
   .on('error', _.Error('crawl err'))
 }

@@ -24,11 +24,11 @@ module.exports = {
 
 // Delete and repost with new time to wait
 // as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-const addToWaitingList = (domain, id) => {
-  return db.createKeyStream({
+const addToWaitingList = async (domain, id) => {
+  return (await db.spiedCreateKeyStream({
     gt: `${domain}:${id}:0`,
     lt: `${domain}:${id}::`
-  })
+  }))
   // TODO: refactor to delete in batch
   .on('data', db.del.bind(db))
   .on('end', createNewWaiter.bind(null, domain, id))

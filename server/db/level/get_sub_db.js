@@ -45,5 +45,58 @@ if (memoryBackend) {
 module.exports = memoize((dbName, valueEncoding) => {
   assert_.string(dbName)
   assert_.string(valueEncoding)
-  return sub(globalDb, dbName, { valueEncoding })
+  const subDb = sub(globalDb, dbName, { valueEncoding })
+  return spiedDb(subDb, dbName)
 })
+
+let count = 0
+const spiedDb = (db, dbName) => {
+  db.original_get = db.get
+  db.original_put = db.put
+  db.original_batch = db.batch
+  db.original_createReadStream = db.createReadStream
+  db.get = spiedFunction(db, dbName, 'get')
+  db.put = spiedFunction(db, dbName, 'put')
+  db.batch = spiedFunction(db, dbName, 'batch')
+  db.spiedCreateReadStream = spiedFunction(db, dbName, 'createReadStream')
+  db.spiedCreateKeyStream = spiedFunction(db, dbName, 'createKeyStream')
+  return db
+}
+
+const spiedFunction = (db, dbName, dbFnName) => async (...args) => {
+  const key = args[0]
+  let timerKey
+  const start = Date.now()
+  if (typeof key === 'string') {
+    timerKey = `${dbFnName}:!${dbName}!${key} [${++count}]`
+    // process.stderr.write(`[start] ${timerKey}\n`)
+  } else {
+    timerKey = `${dbFnName}:!${dbName} [${++count}]`
+    process.stderr.write(`[level][start] ${timerKey} data=${JSON.stringify(args)}\n`)
+  }
+  const interval = setInterval(() => {
+    if (typeof key === 'string') {
+      process.stderr.write(`[level][hanging ${Date.now() - start}ms] ${timerKey}\n`)
+    } else {
+      process.stderr.write(`[level][hanging ${Date.now() - start}ms] ${timerKey}\n`)
+    }
+  }, 2000)
+  try {
+    const res = await db[`original_${dbFnName}`](...args)
+    if (res?.on) {
+      res.on('close', () => {
+        process.stderr.write(`[level][finished ${Date.now() - start}ms] ${timerKey}\n`)
+        clearInterval(interval)
+      })
+      return res
+    } else {
+      process.stderr.write(`[level][finished ${Date.now() - start}ms] ${timerKey}\n`)
+      clearInterval(interval)
+      return res
+    }
+  } catch (err) {
+    clearInterval(interval)
+    process.stderr.write(`[level][finished ${Date.now() - start}ms] ${timerKey}\n`)
+    throw err
+  }
+}
