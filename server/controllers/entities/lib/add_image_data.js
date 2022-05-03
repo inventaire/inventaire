@@ -22,8 +22,8 @@ const findAnImage = entity => {
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   return promises_.props({
     wm: getThumbData(commonsFilename),
-    wp: getSourcePromise(getEnwikiImage, enwikiTitle),
-    ol: getSourcePromise(getOpenLibraryCover, openLibraryId, entity.type)
+    wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
+    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type)
   })
   .then(results => {
     const order = getPicSourceOrder(entity)
@@ -33,13 +33,16 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   })
 }
 
-const getSourcePromise = (fn, ...args) => {
+const getSourcePromise = (sourceName, fn, ...args) => {
   if (args[0] == null) return null
 
   return fn.apply(null, args)
-  // Prevent to throw all the sources
-  // eslint-disable-next-line handle-callback-err
-  .catch(err => { })
+  .catch(err => {
+    err.context = err.context || {}
+    err.context.args = args
+    // Do not rethrow the error to let a chance to other sources
+    _.error(err, `${sourceName} image not found`)
+  })
 }
 
 const getPicSourceOrder = entity => {

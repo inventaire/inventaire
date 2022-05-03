@@ -5,8 +5,9 @@ const split = require('split')
 const through = require('through')
 const { readFileSync } = require('node:fs')
 const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
+const path = require('path')
 
-const headers = readFileSync(`${__dirname}/headers.ttl`).toString()
+const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
 // Prefix the dump by the headers
 process.stdout.write(headers + '\n')
 

@@ -9,13 +9,12 @@ const createHmacSha1Hash = (baseString, key) => {
   .digest('base64')
 }
 
-// eslint-disable-next-line camelcase
-const { consumer_key, consumer_secret } = CONFIG.wikidataOAuth
+const { consumer_key: consumerKey, consumer_secret: consumerSecret } = CONFIG.wikidataOAuth
 // Documentation: https://github.com/ddo/oauth-1.0a#readme
 const oauth = OAuth({
   consumer: {
-    key: consumer_key,
-    secret: consumer_secret
+    key: consumerKey,
+    secret: consumerSecret
   },
   signature_method: 'HMAC-SHA1',
   hash_function: createHmacSha1Hash
