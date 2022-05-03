@@ -1,6 +1,6 @@
 const gm = require('gm')
 const crypto_ = require('lib/crypto')
-const { readFile } = require('fs').promises
+const { readFile } = require('node:fs').promises
 const { maxSize } = require('config').mediaStorage.images
 
 // gm accepts either a path string or a stream

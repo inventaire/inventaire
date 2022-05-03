@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
-const qs = require('querystring')
+const qs = require('node:querystring')
 const checkUserNotificationsSettings = require('./check_user_notifications_settings')
 
 const host = CONFIG.fullPublicHost()

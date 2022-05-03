@@ -1,4 +1,4 @@
-const { randomBytes } = require('crypto')
+const { randomBytes } = require('node:crypto')
 const nonAlphaNumericCharacters = /\W/g
 
 // Generated strings should:

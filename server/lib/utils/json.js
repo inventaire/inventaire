@@ -1,4 +1,4 @@
-const { readFile, writeFile } = require('fs').promises
+const { readFile, writeFile } = require('node:fs').promises
 const stringify = data => JSON.stringify(data, null, 2)
 const assert_ = require('./assert_types')
 

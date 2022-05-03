@@ -14,9 +14,9 @@ const _ = require('builders/utils')
 const { getRandomBytes } = require('lib/crypto')
 const { oneDay, msToHumanTime, msToHumanAge } = require('lib/time')
 const error_ = require('lib/error/error')
-const { readFileSync } = require('fs')
+const { readFileSync } = require('node:fs')
 const { invert } = require('lodash')
-const { writeFile } = require('fs').promises
+const { writeFile } = require('node:fs').promises
 // If a session is started at the end-of-life of a key
 // that session should be allowed to live for cookieMaxAge time
 const keysHalfTtl = cookieMaxAge

@@ -1,5 +1,5 @@
 const { warn } = require('lib/utils/logs')
-const util = require('util')
+const util = require('node:util')
 
 module.exports = {
   shouldNotBeCalled: res => {

@@ -2,7 +2,7 @@
 // So using 1000px as max width and resizing from that seems acceptable for a large majority of cases
 // Known exception: panoramas, but we don't use those much
 const width = 1000
-const qs = require('querystring')
+const qs = require('node:querystring')
 
 module.exports = file => {
   if (!file) return {}

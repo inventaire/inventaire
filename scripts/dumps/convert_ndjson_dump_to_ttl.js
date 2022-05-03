@@ -3,7 +3,7 @@ require('module-alias/register')
 const _ = require('builders/utils')
 const split = require('split')
 const through = require('through')
-const { readFileSync } = require('fs')
+const { readFileSync } = require('node:fs')
 const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
 
 const headers = readFileSync(`${__dirname}/headers.ttl`).toString()

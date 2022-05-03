@@ -1,4 +1,4 @@
-const qs = require('querystring')
+const qs = require('node:querystring')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify

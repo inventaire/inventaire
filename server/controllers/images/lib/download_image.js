@@ -3,7 +3,7 @@ const fetch = require('node-fetch')
 const AbortController = require('abort-controller')
 const error_ = require('lib/error/error')
 const { encodeURL } = require('builders/utils')
-const fs = require('fs')
+const fs = require('node:fs')
 const isValidImageContentType = require('./is_valid_image_content_type')
 const oneMB = Math.pow(1024, 2)
 

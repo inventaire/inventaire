@@ -1,5 +1,5 @@
-const dns = require('dns')
-const { promisify } = require('util')
+const dns = require('node:dns')
+const { promisify } = require('node:util')
 const dnsLookup = promisify(dns.lookup)
 
 const getHostname = host => host ? new URL(host).hostname : null

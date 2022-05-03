@@ -7,7 +7,7 @@ const responses_ = require('lib/responses')
 const getResizedImage = require('./lib/get_resized_image')
 const { offline } = CONFIG
 const containersList = Object.keys(require('controllers/images/lib/containers').containers)
-const { URL } = require('url')
+const { URL } = require('node:url')
 
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"

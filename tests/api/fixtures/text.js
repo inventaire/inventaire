@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const __ = require('config').universalPath
 const randomString = require('lib/utils/random_string')
-const { readFileSync } = require('fs')
+const { readFileSync } = require('node:fs')
 const getFixtureWords = filename => {
   return readFileSync(__.path('tests', `api/fixtures/${filename}`))
   .toString()

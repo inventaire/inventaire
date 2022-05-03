@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const { red, grey } = chalk
 const { isArguments } = require('lodash')
 // Log full objects
-require('util').inspect.defaultOptions.depth = 20
+require('node:util').inspect.defaultOptions.depth = 20
 let errorCounter = 0
 
 const print = str => process.stdout.write(str + '\n')

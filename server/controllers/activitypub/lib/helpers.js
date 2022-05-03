@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
-const qs = require('querystring')
+const qs = require('node:querystring')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')
 const { unprefixify } = require('controllers/entities/lib/prefix')

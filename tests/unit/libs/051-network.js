@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const { getIpBinaryRepresentation } = require('lib/network/ip_binary_representation')
 const isPrivateUrl = require('lib/network/is_private_url')
-const hostname = require('os').hostname()
+const hostname = require('node:os').hostname()
 
 require('should')
 

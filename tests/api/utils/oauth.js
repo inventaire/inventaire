@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const clientsDb = require('db/couchdb/base')('oauth_clients')
 const randomString = require('lib/utils/random_string')
-const { parse: parseQuery } = require('querystring')
+const { parse: parseQuery } = require('node:querystring')
 const { sha1, passwords, getRandomBytes } = require('lib/crypto')
 const { waitForTestServer, postUrlencoded, rawCustomAuthReq } = require('./request')
 const { getUser } = require('./utils')
