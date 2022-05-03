@@ -13,7 +13,7 @@ module.exports = {
     return encodeURIComponent(str).replace(extraEncodedCharacters, encodeCharacter)
   },
 
-  buildUrl: (pathname, queryObj, escape) => {
+  buildUrl: (pathname, queryObj) => {
     queryObj = removeUndefined(queryObj)
     if (queryObj == null || isEmpty(queryObj)) return pathname
 
@@ -21,9 +21,6 @@ module.exports = {
 
     for (const key in queryObj) {
       let value = queryObj[key]
-      if (escape) {
-        value = dropSpecialCharacters(value)
-      }
       if (isObject(value)) {
         value = escapeQueryStringValue(JSON.stringify(value))
       }
@@ -41,14 +38,6 @@ const removeUndefined = obj => {
     if (value != null) newObj[key] = value
   }
   return newObj
-}
-
-const multipleSpacesPattern = /\s+/g
-const specialCharactersPattern = /(\?|:)/g
-const dropSpecialCharacters = str => {
-  return str
-  .replace(multipleSpacesPattern, ' ')
-  .replace(specialCharactersPattern, '')
 }
 
 // Only escape values that are problematic in a query string:
