@@ -3,8 +3,8 @@ require('should')
 const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
 const host = CONFIG.fullPublicHost()
-const qs = require('node:querystring')
-const encodedCommonsUrlChunk = qs.escape('https://commons.wikimedia.org/wiki/Special:FilePath/')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
+const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {
   it('should return an array of images associated with the passed uri', async () => {

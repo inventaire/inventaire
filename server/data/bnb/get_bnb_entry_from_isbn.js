@@ -1,4 +1,3 @@
-const qs = require('node:querystring')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
@@ -6,6 +5,7 @@ const { parseSameasMatches } = require('data/lib/external_ids')
 const wdIdByIso6393Code = require('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
 const { prefixifyWd } = require('controllers/entities/lib/prefix')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 // Using a shorter timeout as the query is never critically needed but can make a user wait
 const timeout = 10000
 
@@ -55,7 +55,7 @@ const getQuery = isbn => {
     }
   }
   `
-  return qs.escape(query)
+  return fixedEncodeURIComponent(query)
 }
 
 const formatRow = async (isbn, result) => {

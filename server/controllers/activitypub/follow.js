@@ -1,5 +1,5 @@
 const error_ = require('lib/error/error')
-const qs = require('node:querystring')
+const { parseQuery } = require('lib/utils/url')
 const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
@@ -12,7 +12,7 @@ module.exports = async params => {
   const { id: externalId, type } = params
   let { actor, object } = params
   if (!object?.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
-  const { name: requestedObjectName } = qs.parse(object)
+  const { name: requestedObjectName } = parseQuery(object)
 
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)

@@ -5,7 +5,7 @@ const host = CONFIG.fullPublicHost()
 const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
 const error_ = require('lib/error/error')
-const { stringify: stringifyQuery } = require('node:querystring')
+const { stringifyQuery } = require('lib/utils/url')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return

@@ -1,10 +1,8 @@
-const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
-const qs = require('node:querystring')
 const cache_ = require('lib/cache')
 const { oneMonth } = require('lib/time')
-const { fixedEncodeURIComponent } = require('lib/utils/base')
+const { fixedEncodeURIComponent, buildUrl } = require('lib/utils/url')
 
 module.exports = params => {
   const { lang, title, introOnly } = params
@@ -38,7 +36,7 @@ const getArticle = async (lang, title, introOnly) => {
 }
 
 const apiQuery = (lang, title, introOnly) => {
-  title = qs.escape(title)
+  title = fixedEncodeURIComponent(title)
 
   // doc:
   // - https://en.wikipedia.org/w/api.php?action=help&modules=query
@@ -56,7 +54,7 @@ const apiQuery = (lang, title, introOnly) => {
   // will be interpreted as true
   if (introOnly) queryObj.exintro = true
 
-  return _.buildPath(`https://${lang}.wikipedia.org/w/api.php`, queryObj)
+  return buildUrl(`https://${lang}.wikipedia.org/w/api.php`, queryObj)
 }
 
 // Commas between references aren't removed, thus the presence of aggregated commas

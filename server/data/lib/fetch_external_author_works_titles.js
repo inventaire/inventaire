@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
-const qs = require('node:querystring')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 const cache_ = require('lib/cache')
 const { oneMonth } = require('lib/time')
 const timespan = 3 * oneMonth
@@ -19,7 +19,7 @@ module.exports = (name, endpoint, getQuery, requestOptions) => id => {
 }
 
 const makeRequest = async (endpoint, query, requestOptions = {}) => {
-  const escapedQuery = qs.escape(query)
+  const escapedQuery = fixedEncodeURIComponent(query)
   const base = `${endpoint}?query=`
   requestOptions.headers = { accept: 'application/sparql-results+json' }
   requestOptions.timeout = 5000

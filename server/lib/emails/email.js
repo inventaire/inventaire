@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
-const qs = require('node:querystring')
+const { fixedEncodeURIComponent, buildUrl } = require('lib/utils/url')
 const checkUserNotificationsSettings = require('./check_user_notifications_settings')
 
 const host = CONFIG.fullPublicHost()
@@ -231,9 +231,9 @@ const validateOptions = options => {
 }
 
 const buildTokenUrl = (action, email, token) => {
-  return _.buildPath(`${host}/api/token`, {
+  return buildUrl(`${host}/api/token`, {
     action,
-    email: qs.escape(email),
+    email: fixedEncodeURIComponent(email),
     token
   })
 }

@@ -6,7 +6,7 @@ const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elas
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
 const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
-const { buildPath } = require('lib/utils/base')
+const { buildUrl } = require('lib/utils/url')
 
 const endpoint = '/api/search'
 
@@ -88,7 +88,7 @@ module.exports = {
     if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])
     else [ types, search, lang, filter ] = args
     if (_.isArray(types)) types = types.join('|')
-    const url = buildPath(endpoint, {
+    const url = buildUrl(endpoint, {
       types,
       search: search ? encodeURIComponent(search) : undefined,
       lang: lang || 'en',

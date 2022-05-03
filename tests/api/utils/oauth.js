@@ -1,11 +1,10 @@
-const _ = require('builders/utils')
 const clientsDb = require('db/couchdb/base')('oauth_clients')
 const randomString = require('lib/utils/random_string')
-const { parse: parseQuery } = require('node:querystring')
 const { sha1, passwords, getRandomBytes } = require('lib/crypto')
 const { waitForTestServer, postUrlencoded, rawCustomAuthReq } = require('./request')
 const { getUser } = require('./utils')
 const assert_ = require('lib/utils/assert_types')
+const { buildUrl, parseQuery } = require('lib/utils/url')
 
 const getClient = async (params = {}) => {
   await waitForTestServer
@@ -46,7 +45,7 @@ const getClientWithAuthorization = async (params = {}) => {
     user = getUser()
   } = params
   const client = await getClient(params)
-  const url = _.buildPath('/api/oauth/authorize', {
+  const url = buildUrl('/api/oauth/authorize', {
     client_id: client._id,
     state: randomString(20),
     response_type: 'code',

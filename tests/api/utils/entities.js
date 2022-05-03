@@ -4,13 +4,14 @@ const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminU
 const { getIndexedDoc } = require('../utils/search')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 const { waitForIndexation } = require('tests/api/utils/search')
+const { buildUrl } = require('lib/utils/url')
 
 const entitiesUtils = module.exports = {
   getByUris: (uris, relatives, refresh) => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
     uris = uris.join('|')
-    const url = _.buildPath('/api/entities', {
+    const url = buildUrl('/api/entities', {
       action: 'by-uris',
       uris,
       relatives,

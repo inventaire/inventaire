@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
-const qs = require('node:querystring')
+const { stringifyQuery } = require('lib/utils/url')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')
 const { unprefixify } = require('controllers/entities/lib/prefix')
@@ -10,7 +10,7 @@ const makeUrl = ({ origin, endpoint, params }) => {
   origin = origin || host
   endpoint = endpoint || '/api/activitypub'
   let url = `${origin}${endpoint}`
-  if (params) url = `${url}?${qs.stringify(params)}`
+  if (params) url = `${url}?${stringifyQuery(params)}`
   return url
 }
 

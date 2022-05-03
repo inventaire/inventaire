@@ -5,7 +5,7 @@ const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthor
 const { getByUris, merge, deleteByUris } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
 const getWdEntity = require('data/wikidata/get_entity')
-const { buildPath } = require('lib/utils/base')
+const { buildUrl } = require('lib/utils/url')
 
 describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {
@@ -75,7 +75,7 @@ describe('entities:get:by-uris', () => {
       const { uri: invWorkUri } = work
       const invAuthorUri = work.claims['wdt:P50'][0]
       const wdUri = 'wd:Q2300248'
-      const url = buildPath('/api/entities', {
+      const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: `${invWorkUri}|${invAuthorUri}|${wdUri}`,
         attributes: 'labels|descriptions',
@@ -97,7 +97,7 @@ describe('entities:get:by-uris', () => {
 
     it('should get relatives attributes', async () => {
       const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
-      const url = buildPath('/api/entities', {
+      const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: editionUri,
         attributes: 'type|labels',
@@ -120,7 +120,7 @@ describe('entities:get:by-uris', () => {
     it('should return only the requested lang', async () => {
       const wdHumanUri = 'wd:Q2300248'
       const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo', fr: 'bar' } })
-      const url = buildPath('/api/entities', {
+      const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}|${wdHumanUri}`,
         attributes: 'labels',
@@ -134,7 +134,7 @@ describe('entities:get:by-uris', () => {
 
     it('should fallback on what is available', async () => {
       const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo' } })
-      const url = buildPath('/api/entities', {
+      const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}`,
         attributes: 'labels',

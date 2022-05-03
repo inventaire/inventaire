@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const { buildUrl } = require('lib/utils/url')
 const root = require('config').fullPublicHost()
 
 module.exports = {
@@ -17,10 +18,9 @@ module.exports = {
       return `${root}/img/${container}/${width}x${height}/${filename}`
     } else if (/^http/.test(path)) {
       const key = _.hashCode(path)
-      const href = _.fixedEncodeURIComponent(path)
-      return `${root}/img/remote/${width}x${height}/${key}?href=${href}`
+      return buildUrl(`${root}/img/remote/${width}x${height}/${key}`, { href: path })
     } else if (_.isEntityUri(path)) {
-      return _.buildPath(`${root}/api/entities`, {
+      return buildUrl(`${root}/api/entities`, {
         action: 'images',
         uris: path,
         redirect: true,
@@ -30,8 +30,7 @@ module.exports = {
 
     // Assumes this is a Wikimedia Commons filename
     } else if (path[0] !== '/') {
-      const file = _.fixedEncodeURIComponent(path)
-      return `https://commons.wikimedia.org/w/thumb.php?width=${width}&f=${file}`
+      return buildUrl('https://commons.wikimedia.org/w/thumb.php', { width, f: path })
     } else {
       path = path.replace('/img/', '')
       return `${root}/img/${width}x${height}/${path}`

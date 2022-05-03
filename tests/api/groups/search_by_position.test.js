@@ -5,7 +5,7 @@ const { createGroup } = require('../fixtures/groups')
 const { getRandomPosition } = require('../fixtures/users')
 const { waitForIndexation } = require('../utils/search')
 const endpoint = '/api/groups?action=search-by-position'
-const qs = require('node:querystring')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 
 describe('groups:search-by-position', () => {
   it('should reject without bbox', async () => {
@@ -21,7 +21,7 @@ describe('groups:search-by-position', () => {
   it('should get groups by position', async () => {
     const position = getRandomPosition()
     const [ lat, lng ] = position
-    const bbox = qs.escape(JSON.stringify([
+    const bbox = fixedEncodeURIComponent(JSON.stringify([
       lng - 1, // minLng
       lat - 1, // minLat
       lng + 1, // maxLng

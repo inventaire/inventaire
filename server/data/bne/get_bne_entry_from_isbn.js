@@ -1,4 +1,4 @@
-const qs = require('node:querystring')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 const parseIsbn = require('lib/isbn/parse')
 const requests_ = require('lib/requests')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
@@ -66,7 +66,7 @@ const getQuery = isbn => {
       OPTIONAL { ?author bnep:P5011 ?authorDeath . }
     }
   }`
-  return qs.escape(query)
+  return fixedEncodeURIComponent(query)
 }
 
 const formatRow = async (isbn, result) => {

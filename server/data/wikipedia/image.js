@@ -3,9 +3,10 @@ const requests_ = require('lib/requests')
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
 const error_ = require('lib/error/error')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 
 module.exports = async title => {
-  title = _.fixedEncodeURIComponent(title)
+  title = fixedEncodeURIComponent(title)
   const url = `${apiBase}${title}`
 
   const { query } = await requests_.get(url)

@@ -21,8 +21,8 @@ const oauth = OAuth({
   hash_function: createHmacSha1Hash
 })
 
-const qs = require('node:querystring')
 const user_ = require('controllers/user/lib/user')
+const { parseQuery } = require('lib/utils/url')
 
 // Alternatively using the nice or the non-nice URL
 // see https://mediawiki.org/wiki/OAuth/For_Developers#Notes
@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
 
   if (step1) {
     const step1Res = await getStep1Token(redirect)
-    const { oauth_token_secret: reqTokenSecret } = qs.parse(step1Res)
+    const { oauth_token_secret: reqTokenSecret } = parseQuery(step1Res)
     reqTokenSecrets[reqUserId] = reqTokenSecret
     res.redirect(`${step2Url}?${step1Res}`)
   } else {
@@ -87,7 +87,7 @@ const getOauthHeaders = (reqData, tokenData) => {
 }
 
 const saveUserTokens = (step3Res, reqUserId) => {
-  const { oauth_token_secret: userTokenSecret, oauth_token: userToken } = qs.parse(step3Res)
+  const { oauth_token_secret: userTokenSecret, oauth_token: userToken } = parseQuery(step3Res)
   const data = { token: userToken, token_secret: userTokenSecret }
   return user_.setOauthTokens(reqUserId, 'wikidata', data)
 }

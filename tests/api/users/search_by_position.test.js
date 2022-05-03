@@ -3,11 +3,11 @@ const { publicReq, customAuthReq, getUser } = require('../utils/utils')
 const { createUser, getRandomPosition } = require('../fixtures/users')
 const { makeFriends } = require('../utils/relations')
 const { waitForIndexation } = require('../utils/search')
-const qs = require('node:querystring')
+const { fixedEncodeURIComponent } = require('lib/utils/url')
 const position = getRandomPosition()
 const [ lat, lng ] = position
 const someUserWithPosition = createUser({ position })
-const bbox = qs.escape(JSON.stringify([
+const bbox = fixedEncodeURIComponent(JSON.stringify([
   lng - 1, // minLng
   lat - 1, // minLat
   lng + 1, // maxLng

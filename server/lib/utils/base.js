@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const multipleSpacesPattern = /\s+/g
-const extraEncodedCharacters = /[!'()*]/g
+
 const {
   Integer: integerPattern,
   PositiveInteger: PositiveIntegerPattern,
@@ -69,26 +69,6 @@ module.exports = {
     return Math.abs(hash)
   },
 
-  buildPath: (pathname, queryObj, escape) => {
-    queryObj = removeUndefined(queryObj)
-    if (queryObj == null || _.isEmpty(queryObj)) return pathname
-
-    let queryString = ''
-
-    for (const key in queryObj) {
-      let value = queryObj[key]
-      if (escape) {
-        value = dropSpecialCharacters(value)
-      }
-      if (_.isObject(value)) {
-        value = escapeQueryStringValue(JSON.stringify(value))
-      }
-      queryString += `&${key}=${value}`
-    }
-
-    return `${pathname}?${queryString.slice(1)}`
-  },
-
   someMatch: (arrayA, arrayB) => {
     if (!_.isArray(arrayA) || !_.isArray(arrayB)) return false
     for (const valueA of arrayA) {
@@ -105,12 +85,6 @@ module.exports = {
   expired: (timestamp, ttl) => (Date.now() - timestamp) > ttl,
 
   shortLang: lang => lang && lang.slice(0, 2),
-
-  // encodeURIComponent ignores !, ', (, ), and *
-  // cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
-  fixedEncodeURIComponent: str => {
-    return encodeURIComponent(str).replace(extraEncodedCharacters, encodeCharacter)
-  },
 
   pickOne: obj => {
     const key = Object.keys(obj)[0]
@@ -187,29 +161,6 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   newObj[newKey] = newValue
   return newObj
 }
-
-const encodeCharacter = character => `%${character.charCodeAt(0).toString(16)}`
-
-const removeUndefined = obj => {
-  const newObj = {}
-  for (const key in obj) {
-    const value = obj[key]
-    if (value != null) newObj[key] = value
-  }
-  return newObj
-}
-
-const specialCharactersPattern = /(\?|:)/g
-const dropSpecialCharacters = str => {
-  return str
-  .replace(multipleSpacesPattern, ' ')
-  .replace(specialCharactersPattern, '')
-}
-
-// Only escape values that are problematic in a query string:
-// for the moment, only '?'
-const questionMarks = /\?/g
-const escapeQueryStringValue = str => str.replace(questionMarks, '%3F')
 
 const aggregateCollections = (index, name) => {
   index[name] = []
