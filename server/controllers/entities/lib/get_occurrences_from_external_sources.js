@@ -50,20 +50,22 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
 }
 
 const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLangs) => {
-  const articles = await Promise.all(getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs))
+  const articles = await getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
   return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
 const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
+  const langs = _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
+  const articlesParams = langs
+    .map(getArticleParams(sitelinks))
+    .filter(_.identity)
+  return Promise.all(articlesParams.map(getWikipediaArticle))
+}
 
-  return _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
-  .map(lang => {
-    const title = sitelinks[`${lang}wiki`]
-    if (title) return { lang, title }
-  })
-  .filter(_.identity)
-  .map(getWikipediaArticle)
+const getArticleParams = sitelinks => lang => {
+  const title = sitelinks[`${lang}wiki`]
+  if (title) return { lang, title }
 }
 
 const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => async (authorEntity, worksLabels) => {
