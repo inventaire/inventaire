@@ -4,7 +4,9 @@ const { isNotEmpty, objLength } = require('lib/utils/base')
 const { offline } = require('config')
 
 const authorities = {
-  bnb: require('data/bnb/get_bnb_entry_from_isbn'),
+// BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
+// "The Linked Open BNB is moving to a new home in Spring 2022"
+  // bnb: require('data/bnb/get_bnb_entry_from_isbn'),
   bne: require('data/bne/get_bne_entry_from_isbn'),
   bnf: require('data/bnf/get_bnf_entry_from_isbn'),
   wikidata: require('data/wikidata/get_wikidata_entry_from_isbn'),

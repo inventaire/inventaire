@@ -3,7 +3,9 @@ const _ = require('builders/utils')
 const assert_ = require('lib/utils/assert_types')
 const getWikipediaArticle = require('data/wikipedia/get_article')
 const getBnfAuthorWorksTitles = require('data/bnf/get_bnf_author_works_titles')
-const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
+// BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
+// "The Linked Open BNB is moving to a new home in Spring 2022"
+// const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
 const getBneAuthorWorksTitles = require('data/bne/get_bne_author_works_titles')
 const getGndAuthorWorksTitles = require('data/gnd/get_gnd_author_works_titles')
 const getSelibrAuthorWorksTitle = require('data/selibr/get_selibr_author_works_titles')
@@ -35,7 +37,7 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getWikipediaOccurrences(authorEntity, worksLabels, worksLabelsLangs),
       getBnfOccurrences(authorEntity, worksLabels),
       getOpenLibraryOccurrences(authorEntity, worksLabels),
-      getBnbOccurrences(authorEntity, worksLabels),
+      // getBnbOccurrences(authorEntity, worksLabels),
       getBneOccurrences(authorEntity, worksLabels),
       getGndOccurrences(authorEntity, worksLabels),
       getSelibrOccurrences(authorEntity, worksLabels),
@@ -79,7 +81,7 @@ const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => async (authorE
 
 const getBnfOccurrences = getAndCreateOccurrencesFromIds('wdt:P268', getBnfAuthorWorksTitles)
 const getOpenLibraryOccurrences = getAndCreateOccurrencesFromIds('wdt:P648', getOlAuthorWorksTitles)
-const getBnbOccurrences = getAndCreateOccurrencesFromIds('wdt:P5361', getBnbAuthorWorksTitles)
+// const getBnbOccurrences = getAndCreateOccurrencesFromIds('wdt:P5361', getBnbAuthorWorksTitles)
 const getBneOccurrences = getAndCreateOccurrencesFromIds('wdt:P950', getBneAuthorWorksTitles)
 const getGndOccurrences = getAndCreateOccurrencesFromIds('wdt:P227', getGndAuthorWorksTitles)
 const getSelibrOccurrences = getAndCreateOccurrencesFromIds('wdt:P906', getSelibrAuthorWorksTitle)
