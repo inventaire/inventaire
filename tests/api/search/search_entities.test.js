@@ -115,7 +115,7 @@ describe('search:entities', () => {
         const label = randomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', search: label, lang: 'en', exact: true })
+        const results = await search({ types: 'works', search: label, lang: 'en', exact: true, filter: 'inv' })
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
@@ -171,7 +171,7 @@ describe('search:entities', () => {
         const label = randomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
-        const results = await search({ types: 'works', search: label, lang: 'en' })
+        const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
