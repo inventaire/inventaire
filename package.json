@@ -98,6 +98,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-unicorn": "^42.0.0",
     "form-data": "^4.0.0",
     "level-test": "^8.0.0",
     "mailcomposer": "^2.1.0",

@@ -16,7 +16,8 @@
     "standard"
   ],
   "plugins": [
-    "prefer-arrow"
+    "prefer-arrow",
+    "unicorn"
   ],
   "rules": {
     "array-bracket-spacing": [ "error", "always" ],
@@ -39,6 +40,21 @@
     "one-var": [ "off" ],
     "prefer-arrow/prefer-arrow-functions": [ "error" ],
     "prefer-arrow-callback": [ "error" ],
-    "prefer-const": [ "error" ]
+    "prefer-const": [ "error" ],
+    // "unicorn/better-regex": [ "error" ],
+    "unicorn/no-useless-promise-resolve-reject": [ "error" ],
+    "unicorn/prefer-array-find": [ "error" ],
+    "unicorn/prefer-array-flat": [ "error" ],
+    "unicorn/prefer-array-some": [ "error" ],
+    "unicorn/prefer-at": [ "error" ],
+    "unicorn/prefer-date-now": [ "error" ],
+    "unicorn/prefer-includes": [ "error" ],
+    "unicorn/prefer-negative-index": [ "error" ],
+    "unicorn/prefer-node-protocol": [ "error", { "checkRequire": true } ],
+    "unicorn/prefer-object-from-entries": [ "error" ],
+    // "unicorn/prefer-set-has": [ "error" ],
+    "unicorn/prefer-string-replace-all": [ "error" ],
+    "unicorn/prefer-string-slice": [ "error" ],
+    "unicorn/prefer-string-starts-ends-with": [ "error" ],
   }
 }
