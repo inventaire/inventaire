@@ -2,11 +2,10 @@ const { rawRequest } = require('../utils/request')
 const { signRequest, verifySignature } = require('controllers/activitypub/lib/security')
 const { getSharedKeyPair } = require('controllers/activitypub/lib/shared_key_pair')
 const { getRandomBytes } = require('lib/crypto')
-const express = require('express')
 const { createUsername } = require('../fixtures/users')
 const { makeUrl } = require('controllers/activitypub/lib/helpers')
-const requestsLogger = require('server/middlewares/requests_logger')
 const { jsonBodyParser } = require('server/middlewares/content')
+const { startGenericMockServer } = require('tests/integration/utils/mock_server')
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
@@ -79,47 +78,44 @@ const getSomeRemoteServerUser = async emitterUser => {
 
 const remoteActivityPubServerUsers = {}
 
-const port = 1024 + Math.trunc(Math.random() * 10000)
-const host = `localhost:${port}`
-const origin = `http://${host}`
 const inboxEndpoint = '/inbox'
 const inboxInspectionEndpoint = '/inbox_inspection'
 
-const startActivityPubServer = () => new Promise(resolve => {
-  const app = express()
-  app.use(requestsLogger)
-  app.use(jsonBodyParser)
+let port, host, origin
+const startActivityPubServer = async () => {
+  ({ port, host, origin } = await startGenericMockServer(app => {
+    app.use(jsonBodyParser)
+    app.get(actorEndpoint, async (req, res) => {
+      const { name } = req.query
+      const user = remoteActivityPubServerUsers[name]
+      if (user) {
+        res.json(user)
+      } else {
+        res.status(404).json({ found: false })
+      }
+    })
 
-  app.get(actorEndpoint, async (req, res) => {
-    const { name } = req.query
-    const user = remoteActivityPubServerUsers[name]
-    if (user) {
-      res.json(user)
-    } else {
-      res.status(404).json({ found: false })
-    }
-  })
+    const inboxes = {}
 
-  const inboxes = {}
+    app.post(inboxEndpoint, async (req, res) => {
+      await verifySignature(req)
+      let { username } = req.query
+      // since shelf uri is contains ':'
+      username = decodeURIComponent(username)
+      const activity = req.body
+      inboxes[username] = inboxes[username] || []
+      inboxes[username].unshift(activity)
+      res.json({ ok: true })
+    })
 
-  app.post(inboxEndpoint, async (req, res) => {
-    await verifySignature(req)
-    let { username } = req.query
-    // since shelf uri is contains ':'
-    username = decodeURIComponent(username)
-    const activity = req.body
-    inboxes[username] = inboxes[username] || []
-    inboxes[username].unshift(activity)
-    res.json({ ok: true })
-  })
+    app.get(inboxInspectionEndpoint, async (req, res) => {
+      const { username } = req.query
+      res.json({ inbox: inboxes[username] })
+    })
+  }))
 
-  app.get(inboxInspectionEndpoint, async (req, res) => {
-    const { username } = req.query
-    res.json({ inbox: inboxes[username] })
-  })
-
-  app.listen(port, () => resolve({ port, host, origin }))
-})
+  return { port, host, origin }
+}
 
 module.exports = {
   getSomeRemoteServerUser,

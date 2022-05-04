@@ -1,25 +1,19 @@
 const should = require('should')
-const express = require('express')
 const requests_ = require('lib/requests')
 const { wait } = require('lib/promises')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { startGenericMockServer } = require('../utils/mock_server')
 const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
-// Avoid reusing ports from the previous test session, as hosts bans data might be restored
-let port = 1024 + parseInt(Date.now().toString().slice(-4))
 
-const startMockServer = () => new Promise(resolve => {
-  port++
-  const app = express()
-  const host = `127.0.0.1:${port}`
-  const origin = `http://${host}`
-
-  app.get('/no-timeout', (req, res) => res.json({ ok: true }))
-  // Always timeout
-  app.get('/timeout', () => {})
-  app.get('/error', (req, res) => res.status(500).json({ ok: false }))
-  app.get('/html', (req, res) => res.status(200).send('<p>hello</p>'))
-
-  app.listen(port, () => resolve({
+const startMockServer = async () => {
+  const { port, host, origin } = await startGenericMockServer(app => {
+    app.get('/no-timeout', (req, res) => res.json({ ok: true }))
+    // Always timeout
+    app.get('/timeout', () => {})
+    app.get('/error', (req, res) => res.status(500).json({ ok: false }))
+    app.get('/html', (req, res) => res.status(200).send('<p>hello</p>'))
+  })
+  return {
     port,
     host,
     origin,
@@ -27,8 +21,8 @@ const startMockServer = () => new Promise(resolve => {
     noTimeoutEndpoint: `${origin}/no-timeout`,
     errorEndpoint: `${origin}/error`,
     htmlEndpoint: `${origin}/html`,
-  }))
-})
+  }
+}
 
 describe('requests:hosts-bans', function () {
   this.timeout(5 * 1000)

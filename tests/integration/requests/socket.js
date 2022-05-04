@@ -1,20 +1,16 @@
 require('should')
-const express = require('express')
 const requests_ = require('lib/requests')
 const { wait } = require('lib/promises')
-let port = 39463
+const { startGenericMockServer } = require('../utils/mock_server')
 
-const startHangingupServer = () => new Promise(resolve => {
-  port++
-  const app = express()
-  const host = `localhost:${port}`
-  const origin = `http://${host}`
+const startHangingupServer = async () => {
   let firstConnexion = true
-  app.get('/', async (req, res) => {
-    await wait(100)
-    res.json({ ok: true })
+  const { server, host, origin } = await startGenericMockServer(app => {
+    app.get('/', async (req, res) => {
+      await wait(100)
+      res.json({ ok: true })
+    })
   })
-  const server = app.listen(port, () => resolve({ port, host, origin }))
   server.on('connection', socket => {
     if (firstConnexion) {
       console.log('hang up on first attempt', host)
@@ -24,7 +20,8 @@ const startHangingupServer = () => new Promise(resolve => {
       console.log('not hanging up on following attemps', host)
     }
   })
-})
+  return { origin }
+}
 
 describe('socket', () => {
   it('should retry after a socket hang-out', async () => {
