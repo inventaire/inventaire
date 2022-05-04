@@ -34,7 +34,7 @@ module.exports = {
 }
 
 const getActorName = resource => {
-  const actorWithHost = resource.substr(5)
+  const actorWithHost = resource.slice(5)
   return actorWithHost.split('@')[0]
 }
 

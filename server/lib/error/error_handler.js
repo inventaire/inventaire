@@ -25,7 +25,7 @@ module.exports = (req, res, err, status) => {
   }
 
   if (err.mute !== true) {
-    if (/^4/.test(statusCode)) {
+    if (statusCode.toString().startsWith('4')) {
       _.warn(err, statusCode)
     } else {
       _.error(err, err.message)

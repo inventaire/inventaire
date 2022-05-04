@@ -53,7 +53,7 @@ module.exports = {
 
   initCollectionsIndex: names => names.reduce(aggregateCollections, {}),
 
-  obfuscate: str => str.replace(/.{1}/g, '*'),
+  obfuscate: str => str.replace(/./g, '*'),
 
   // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
   hashCode: string => {

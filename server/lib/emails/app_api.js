@@ -16,7 +16,7 @@ module.exports = {
     if (_.isLocalImg(path) || _.isAssetImg(path)) {
       const [ container, filename ] = path.split('/').slice(2)
       return `${root}/img/${container}/${width}x${height}/${filename}`
-    } else if (/^http/.test(path)) {
+    } else if (path.startsWith('http')) {
       const key = _.hashCode(path)
       return buildUrl(`${root}/img/remote/${width}x${height}/${key}`, { href: path })
     } else if (_.isEntityUri(path)) {

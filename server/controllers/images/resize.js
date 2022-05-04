@@ -36,7 +36,7 @@ module.exports = {
     let url
     if (/^[0-9a-f]{40}$/.test(rest) || (container === 'assets')) {
       url = `${mediaStorageEndpoint}${container}/${rest}`
-    } else if (/^[0-9]+$/.test(rest)) {
+    } else if (/^\d+$/.test(rest)) {
       url = req.query.href
       if (!_.isUrl(url)) {
         return error_.bundle(req, res, 'invalid href query', 400, url)

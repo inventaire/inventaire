@@ -23,7 +23,7 @@ module.exports = {
   firstName,
   sentence: () => capitalize(randomWords(20)) + '.',
   randomLongWord: wordLength => {
-    const longWord = randomWords(wordLength).replace(/ /g, '').slice(0, wordLength + 10)
+    const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
     return capitalize(longWord)
   },
   humanName: () => `${firstName()} ${firstName()}`,

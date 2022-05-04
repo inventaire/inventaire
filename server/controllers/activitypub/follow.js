@@ -63,6 +63,5 @@ const sendAcceptActivity = async (followActivity, actor, object) => {
 
 const getExistingFollowActivity = async (actor, name) => {
   const followActivities = await getFollowActivitiesByObject(name)
-  const followActivitiesByActor = followActivities.filter(activity => activity.actor.uri === actor.uri)
-  return followActivitiesByActor[0]
+  return followActivities.find(activity => activity.actor.uri === actor.uri)
 }

@@ -60,10 +60,10 @@ const getCleanExtract = pages => {
   if (extract) {
     return extract
     // Commas between references aren't removed, thus the presence of aggregated commas
-    .replace(/,,/g, ',')
-    .replace(/,\./g, '.')
+    .replaceAll(',,', ',')
+    .replaceAll(',.', '.')
     // Some empty parenthesis need to be removed
     // ex: https://fr.wikipedia.org/wiki/France
-    .replace(/\(\)/g, '')
+    .replaceAll('()', '')
   }
 }

@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { red } = require('chalk')
 const { promisify } = require('node:util')
-const exec = promisify(require('child_process').exec)
+const exec = promisify(require('node:child_process').exec)
 
 module.exports = {
   logErrorAndExit: (label, err) => {

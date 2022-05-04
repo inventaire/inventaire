@@ -97,5 +97,5 @@ module.exports = {
   }
 }
 
-const scopeSeparators = /[+\s]/
+const scopeSeparators = /[\s+]/
 const getScopeArray = scopeStr => scopeStr.split(scopeSeparators)

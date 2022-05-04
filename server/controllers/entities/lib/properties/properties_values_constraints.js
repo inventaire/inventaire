@@ -151,7 +151,7 @@ module.exports = {
   // Project Gutenberg author ID
   'wdt:P1938': builders.externalId(/^[1-9]\d{0,4}$/),
   // Google Scholar author ID
-  'wdt:P1960': builders.externalId(/^[-\w]{12}$/),
+  'wdt:P1960': builders.externalId(/^[\w-]{12}$/),
   // Anime News Network person ID
   'wdt:P1982': builders.externalId(/^[1-9]\d{0,5}$/),
   // Anime News Network company ID

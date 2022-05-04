@@ -29,9 +29,9 @@ module.exports = emails => {
 const prepareEmails = emails => {
   return emails.trim()
   // Replace line breaks, tabs, semi-colons by a comma
-  .replace(/(\n|\t|;)/g, ',')
+  .replace(/([\t\n;])/g, ',')
   // Replace successive commas
-  .replace(/,,/g, ',')
+  .replaceAll(',,', ',')
   // Delete a possible trailing comma
   .replace(/,$/, '')
 }

@@ -73,7 +73,7 @@ const formatField = text => {
   if (text.includes('"')) {
     // Escaping double quotes
     // See https://tools.ietf.org/html/rfc4180#section-2
-    text = text.replace(/"/g, '""')
+    text = text.replaceAll('"', '""')
     text = `"${text}"`
   } else if (text.includes(',')) {
     // Quoting text that contains a comma to prevent it

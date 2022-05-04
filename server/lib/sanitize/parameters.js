@@ -290,7 +290,7 @@ module.exports = {
     validate: resource => {
       _.isString(resource)
       if (resource.startsWith('acct:') === false) return false
-      const actorWithHost = resource.substr(5)
+      const actorWithHost = resource.slice(5)
       const actorParts = actorWithHost.split('@')
       if (actorParts.length !== 2) return false
       const reqHost = actorParts[1]

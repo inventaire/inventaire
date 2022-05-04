@@ -72,9 +72,9 @@ const formatStringValue = str => {
     // Replace any special spaces (including line breaks) by a normal space
     .replace(/\s/g, ' ')
     // Remove double quotes
-    .replace(/"/g, '')
+    .replaceAll('"', '')
     // Remove escape caracters
-    .replace(/\\/g, '')
+    .replaceAll('\\', '')
 
   return `"${_.superTrim(str)}"`
 }

@@ -54,7 +54,7 @@ module.exports = async (req, res, url, dimensions) => {
 // Accepting image/*
 // Accepting application/octet-stream (known case: media storages 'dumb' content type)
 // Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
-const validImageContentType = /^(image\/[+\w]+|application\/octet-stream)/
+const validImageContentType = /^(image\/[\w+]+|application\/octet-stream)/
 
 const resizeFromStream = (imageStream, width, height, req, res) => {
   let alreadySent = false

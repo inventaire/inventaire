@@ -4,7 +4,7 @@ module.exports = {
       function normalize (label) {
         return label
         .trim()
-        .replace(/\s\w{1}\.\s?/g, ' ')
+        .replace(/\s\w\.\s?/g, ' ')
         .replace(/\s\s/g, ' ')
         .toLowerCase()
       },
