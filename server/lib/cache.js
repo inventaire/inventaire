@@ -49,7 +49,7 @@ module.exports = {
     .catch(err => {
       const label = `final cache_ err: ${key}`
       // not logging the stack trace in case of 404 and alikes
-      if (err.statusCode.toString().startsWith('4')) _.warn(err, label)
+      if (err.statusCode?.toString().startsWith('4')) _.warn(err, label)
       else _.error(err, label)
       throw err
     })
