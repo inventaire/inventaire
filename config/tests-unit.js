@@ -7,6 +7,7 @@ module.exports = {
   verbose: false,
   leveldb: {
     memoryBackend: true,
+    ttlCheckFrequency: 100,
   },
   useSlowPasswordHashFunction: false,
 }

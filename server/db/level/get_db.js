@@ -34,12 +34,13 @@ if (memoryBackend) {
   _.warn('leveldb in memory')
   const level = require('level-test')()
   generalDb = level()
-  cacheDb = level({ valueEncoding: 'json' })
+  cacheDb = level()
 } else {
   const level = require('level-party')
   _.info(generalDbFolderPath, 'general leveldb path')
+  _.info(cacheDbFolderPath, 'cache leveldb path')
   generalDb = level(generalDbFolderPath, leveldownOptions)
-  cacheDb = level(cacheDbFolderPath, { valueEncoding: 'json', ...leveldownOptions })
+  cacheDb = level(cacheDbFolderPath, leveldownOptions)
 }
 
 module.exports = { generalDb, cacheDb }

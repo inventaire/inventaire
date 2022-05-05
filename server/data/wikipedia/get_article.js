@@ -1,7 +1,6 @@
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const cache_ = require('lib/cache')
-const { oneMonth } = require('lib/time')
 const { fixedEncodeURIComponent, buildUrl } = require('lib/utils/url')
 
 module.exports = params => {
@@ -11,7 +10,6 @@ module.exports = params => {
   return cache_.get({
     key,
     fn: getArticle.bind(null, lang, title, introOnly),
-    timespan: 3 * oneMonth
   })
 }
 

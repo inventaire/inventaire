@@ -1,7 +1,6 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const cache_ = require('lib/cache')
-const { oneMonth } = require('lib/time')
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`
@@ -12,7 +11,6 @@ module.exports = olId => {
   return cache_.get({
     key,
     fn: getAuthorWorksTitles.bind(null, olId),
-    timespan: 3 * oneMonth
   })
 }
 
