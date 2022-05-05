@@ -2,9 +2,14 @@
 const CONFIG = require('config')
 const __ = CONFIG.universalPath
 
-const dbFolderPathBase = __.path('root', 'db/leveldb')
 const { suffix } = CONFIG.db
 const { inMemoryLRUCacheSize } = CONFIG.leveldb
+let dbFolderPathBase = __.path('root', 'db/leveldb')
+
+const [ customDb ] = process.argv.slice(2)
+
+if (customDb === 'cache') dbFolderPathBase += '_cache'
+
 const dbFolderPath = suffix ? `${dbFolderPathBase}-${suffix}` : dbFolderPathBase
 
 // See https://github.com/Level/leveldown#options
