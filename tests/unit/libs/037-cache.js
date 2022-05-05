@@ -11,7 +11,7 @@ const cache_ = require('lib/cache')
 const randomString = require('lib/utils/random_string')
 
 const hashKey = async key => _.hashCode(key)
-const workingFn = key => hashKey(key + randomString(8))
+const getSomeRandomValue = async () => randomString(8)
 const failingFn = async () => {
   const err = new Error('Jag är Döden')
   err.type = 'that_failing_fn_error'
@@ -58,11 +58,11 @@ describe('cache', () => {
 
     it('should return the outdated version if the new version returns an error', async () => {
       const key = randomString(8)
-      const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'foo'), timespan: 0 })
+      const res1 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 0 })
       // returns an error: should return old value
       const res2 = await cache_.get({ key, fn: failingFn, timespan: 1 })
       // the error shouldnt have overriden the value
-      const res3 = await cache_.get({ key, fn: workingFn.bind(null, 'foo'), timespan: 5000 })
+      const res3 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 5000 })
       res1.should.equal(res2)
       res1.should.equal(res3)
     })
@@ -82,7 +82,7 @@ describe('cache', () => {
     describe('timespan', () => {
       it('should refuse old value when passed a 0 timespan', async () => {
         const key = randomString(8)
-        const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'Vem är du?'), timespan: 0 })
+        const res1 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 0 })
         res1.should.be.ok()
         await wait(10)
         await cache_.get({ key, fn: failingFn, timespan: 0 })
@@ -95,11 +95,11 @@ describe('cache', () => {
 
     it('should also accept an expiration timespan', async () => {
       const key = randomString(8)
-      const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'bla') })
+      const res1 = await cache_.get({ key, fn: getSomeRandomValue })
       await wait(10)
-      const res2 = await cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
+      const res2 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 10000 })
       await wait(10)
-      const res3 = await cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
+      const res3 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 0 })
       await wait(10)
       res1.should.equal(res2)
       res2.should.not.equal(res3)
@@ -108,11 +108,10 @@ describe('cache', () => {
     describe('refresh', () => {
       it('should accept a refresh parameter', async () => {
         const key = randomString(8)
-        const fn = workingFn.bind(null, 'foo')
-        const res1 = await cache_.get({ key, fn, timespan: 10000 })
+        const res1 = await cache_.get({ key, fn: getSomeRandomValue, timespan: 10000 })
         await wait(100)
-        const res2 = await cache_.get({ key, fn })
-        const res3 = await cache_.get({ key, fn, refresh: true })
+        const res2 = await cache_.get({ key, fn: getSomeRandomValue })
+        const res3 = await cache_.get({ key, fn: getSomeRandomValue, refresh: true })
         res1.should.equal(res2)
         res1.should.not.equal(res3)
       })
@@ -121,8 +120,7 @@ describe('cache', () => {
     describe('dry', () => {
       it('should get a cached value with a dry parameter', async () => {
         const key = randomString(8)
-        const fn = workingFn.bind(null, 'foo')
-        const res1 = await cache_.get({ key, fn })
+        const res1 = await cache_.get({ key, fn: getSomeRandomValue })
         await wait(100)
         const res2 = await cache_.get({ key, dry: true })
         res1.should.equal(res2)
@@ -143,7 +141,7 @@ describe('cache', () => {
 
       it('should populate the cache when requested', async () => {
         const key = randomString(8)
-        const fn = workingFn.bind(null, 'foo')
+        const fn = getSomeRandomValue.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, dryAndCache: true })
         should(res1).not.be.ok()
         await wait(10)
@@ -153,7 +151,7 @@ describe('cache', () => {
 
       it('should be overriden by refresh', async () => {
         const key = randomString(8)
-        const fn = workingFn.bind(null, 'foo')
+        const fn = getSomeRandomValue.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, refresh: true, dryAndCache: true })
         await wait(10)
         should(res1).be.ok()
