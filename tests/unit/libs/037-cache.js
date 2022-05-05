@@ -96,10 +96,11 @@ describe('cache', () => {
     it('should also accept an expiration timespan', async () => {
       const key = randomString(8)
       const res1 = await cache_.get({ key, fn: workingFn.bind(null, 'bla') })
+      await wait(10)
       const res2 = await cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 10000 })
-      await wait(100)
+      await wait(10)
       const res3 = await cache_.get({ key, fn: workingFn.bind(null, 'different arg'), timespan: 0 })
-      await wait(100)
+      await wait(10)
       res1.should.equal(res2)
       res2.should.not.equal(res3)
     })
