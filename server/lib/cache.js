@@ -13,6 +13,7 @@ module.exports = {
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
+  // - dryAndCache: return what's in cache, but will then populate the cache in the background
   get: async params => {
     const { key, fn, refresh, dryFallbackValue } = params
     let { timespan, dry, dryAndCache } = params
