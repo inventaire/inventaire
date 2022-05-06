@@ -67,13 +67,17 @@ const runQuery = (params, key) => {
   .catch(_.ErrorRethrow(key))
 }
 
-radio.on('invalidate:wikidata:entities:relations', async ({ property, valueUri }) => {
+radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch => {
+  const keys = invalidatedQueriesBatch.map(getQueriesKeys).flat()
+  _.info(keys, 'invalidating queries cache')
+  await cache_.batchDelete(keys)
+})
+
+const getQueriesKeys = ({ property, valueUri }) => {
   const queriesToInvalidate = (queriesPerProperty[property] || [])
     // Add queries that should be invalidated for any property
     .concat(queriesPerProperty['*'])
   const pid = unprefixify(property)
   const qid = unprefixify(valueUri)
-  const keys = queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
-  _.info(keys, 'invalidating queries cache')
-  await cache_.batchDelete(keys)
-})
+  return queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
+}

@@ -74,13 +74,15 @@ const checkExpiredCache = async () => {
   if (expiredTimeKeys.length === 0) return
 
   const batch = []
+  const invalidatedQueriesBatch = []
   for (const expiredTimeKey of expiredTimeKeys) {
     const key = expiredTimeKey.split('!')[2]
-    const [ property, valueUri, subjectUri ] = key.split('-')
-    await radio.emit('invalidate:wikidata:entities:relations', { subjectUri, property, valueUri })
+    const [ property, valueUri ] = key.split('-')
+    invalidatedQueriesBatch.push({ property, valueUri })
     batch.push({ type: 'del', key })
     batch.push({ type: 'del', key: expiredTimeKey })
   }
+  await radio.emit('invalidate:wikidata:entities:relations', invalidatedQueriesBatch)
   _.info(expiredTimeKeys, 'expired entities relations cache')
   await db.batch(batch)
 }
