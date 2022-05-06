@@ -203,9 +203,11 @@ const config = module.exports = {
   jobs: {
     'inv:deduplicate': {
       run: true,
-      nice: true,
     }
   },
+
+  // give priority to more urgent matters
+  nice: true,
 
   entitiesRelationsTemporaryCache: {
     checkFrequency: 10 * 60 * 1000,

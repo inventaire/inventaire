@@ -4,7 +4,7 @@ const db = require('db/couchdb/base')('entities')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const jobs_ = require('db/level/jobs')
 const checkEntity = require('./lib/check_entity')
-const { nice } = require('config').jobs['inv:deduplicate']
+const { nice } = require('config')
 const { waitForCPUsLoadToBeBelow } = require('lib/os')
 const batchLength = 1000
 

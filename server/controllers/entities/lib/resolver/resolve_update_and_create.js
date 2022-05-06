@@ -3,6 +3,8 @@ const resolve = require('./resolve')
 const UpdateResolvedEntry = require('./update_resolved_entry')
 const CreateUnresolvedEntry = require('./create_unresolved_entry')
 const sanitizeEntry = require('./sanitize_entry')
+const { waitForCPUsLoadToBeBelow } = require('lib/os')
+const { nice } = require('config')
 
 const resolveUpdateAndCreate = async params => {
   params.batchId = Date.now()
@@ -16,7 +18,8 @@ const resolveUpdateAndCreate = async params => {
   const createUnresolvedEntry = buildActionFn(create, CreateUnresolvedEntry, params)
   const addResolvedEntry = entry => resolvedEntries.push(entry)
 
-  const resolveNext = () => {
+  const resolveNext = async () => {
+    if (nice) await waitForCPUsLoadToBeBelow({ threshold: 1 })
     const nextEntry = entries.shift()
     if (nextEntry == null) return { resolvedEntries, errors }
 
