@@ -76,7 +76,7 @@ const checkExpiredCache = async () => {
     const [ property, valueUri, subjectUri ] = key.split('-')
     await radio.emit('invalidate:wikidata:entities:relations', { subjectUri, property, valueUri })
     batch.push({ type: 'del', key })
-    batch.push({ type: 'del', key: expiredTimeKeys })
+    batch.push({ type: 'del', key: expiredTimeKey })
   }
   await db.batch(batch)
 }
