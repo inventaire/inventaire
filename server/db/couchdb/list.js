@@ -9,6 +9,7 @@ module.exports = {
   groups: [ 'groups' ],
   images: [ 'images' ],
   items: [ 'items' ],
+  lists: [ 'lists' ],
   notifications: [ 'notifications' ],
   patches: [ 'patches' ],
   shelves: [ 'shelves' ],
