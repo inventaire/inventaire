@@ -77,6 +77,7 @@ const config = module.exports = {
   leveldb: {
     inMemoryLRUCacheSize: 64 * 1024 ** 2,
     memoryBackend: false,
+    ttlCheckFrequency: 60000,
   },
 
   elasticsearch: {

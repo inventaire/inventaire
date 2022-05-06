@@ -1,90 +1,73 @@
+const { ttlCheckFrequency } = require('config').leveldb
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const db = require('db/level/get_sub_db')('cache', 'json')
-const { offline } = require('config')
-const { oneMonth, expired } = require('lib/time')
+const { promisify } = require('util')
+const levelTtl = require('level-ttl')
+const { cacheDb } = require('db/level/get_db')
+const { oneMonth } = require('lib/time')
+const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
+const dbPut = promisify(db.put)
+const dbBatch = promisify(db.batch)
+// It's convenient in tests to have the guaranty that the cached value was saved
+// but in production, that means delaying API responses in case LevelDB writes get slow
+const alwaysWaitForSavedValue = require('config').env.startsWith('tests')
 
 module.exports = {
   // - key: the cache key
   // - fn: a function with its context and arguments binded
-  // - timespan: maximum acceptable age of the cached value in ms
   // - refresh: alias for timespan=0
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
   // - dryAndCache: return what's in cache, but will then populate the cache in the background
   get: async params => {
-    const { key, fn, refresh, dryFallbackValue } = params
-    let { timespan, dry, dryAndCache } = params
+    const { key, fn, refresh, dryFallbackValue, ttl = oneMonth } = params
+    let { dry, dryAndCache } = params
 
     if (refresh) {
-      timespan = 0
       dry = false
       dryAndCache = false
     }
-    if (timespan == null) timespan = oneMonth
     if (dry == null) dry = false
     if (dryAndCache == null) dryAndCache = false
 
+    assert_.string(key)
+    if (fn || !dry) assert_.function(fn)
+
     try {
-      assert_.string(key)
-      if (!dry) {
-        assert_.function(fn)
-        assert_.number(timespan)
-      }
+      const cachedValue = refresh ? null : await checkCache(key)
+      return await requestOnlyIfNeeded(key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl)
     } catch (err) {
-      throw error_.new(err, 500)
-    }
-
-    // Try to avoid cache miss when making a dry get
-    // or when working offline (only useful in development)
-    if (dry || offline) timespan = Infinity
-
-    // When passed a 0 timespan, it is expected to get a fresh value.
-    // Refusing the old value is also a way to invalidate the current cache
-    const refuseOldValue = timespan === 0
-
-    return checkCache(key, timespan)
-    .then(requestOnlyIfNeeded(key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue))
-    .catch(err => {
       const label = `final cache_ err: ${key}`
       // not logging the stack trace in case of 404 and alikes
       if (err.statusCode?.toString().startsWith('4')) _.warn(err, label)
       else _.error(err, label)
       throw err
-    })
+    }
   },
 
-  put: async (key, value) => {
+  put: async (key, value, ttl = oneMonth) => {
     if (!_.isNonEmptyString(key)) throw error_.new('invalid key', 500)
     if (value == null) throw error_.new('missing value', 500)
-    return putResponseInCache(key, value)
+    return putValue(key, value, { ttl })
   },
 
   batchDelete: keys => {
     const batch = _.forceArray(keys).map(key => ({ type: 'del', key }))
-    return db.batch(batch)
+    return dbBatch(batch)
   }
 }
 
-const checkCache = (key, timespan) => {
+const checkCache = async key => {
   return db.get(key)
   .catch(error_.catchNotFound)
-  .then(res => {
-    // Returning nothing will trigger a new request
-    if (res == null) return
-    const { timestamp } = res
-    // Reject outdated cached values
-    if (!isFreshEnough(timestamp, timespan)) return
-    return res
-  })
 }
 
-const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuseOldValue) => cached => {
-  if (cached != null) {
+const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl) => {
+  if (cachedValue != null) {
     // _.info(`from cache: ${key}`)
-    return cached.body
+    return JSON.parse(cachedValue)
   }
 
   if (dry) {
@@ -94,20 +77,30 @@ const requestOnlyIfNeeded = (key, fn, dry, dryAndCache, dryFallbackValue, refuse
 
   if (dryAndCache) {
     // _.info(`returning and populating cache: ${key}`)
-    populate(key, fn, refuseOldValue)
-    .catch(_.Error(`dryAndCache err: ${key}`))
+    populate(key, fn, ttl).catch(_.Error(`dryAndCache err: ${key}`))
     return dryFallbackValue
   }
 
-  return populate(key, fn, refuseOldValue)
+  return populate(key, fn, ttl)
 }
 
-const populate = (key, fn, refuseOldValue) => {
-  return fn()
-  .then(res => {
-    // _.info(`from remote data source: ${key}`)
+const populate = async (key, fn, ttl) => {
+  const res = await fn()
+  // _.info(`from remote data source: ${key}`)
+  await putValue(key, res, { ttl, waitWrite: false })
+  return res
+}
 
-    putResponseInCache(key, res)
+const putValue = async (key, value, { ttl, waitWrite = true }) => {
+  // undefined can not be stringified
+  if (value === undefined) value = null
+  // Run JSON.stringify/JSON.parse rather than using level valueEncoding=json option
+  // to be able to store null values and avoid `[WriteError]: value cannot be `null` or `undefined``
+  const storedValue = JSON.stringify(value)
+  if (alwaysWaitForSavedValue || waitWrite) {
+    return dbPut(key, storedValue, { ttl })
+  } else {
+    dbPut(key, storedValue, { ttl })
     // Failing to put the response in cache should not crash the process
     // as it is not critical: operations will continue without cache
     // everything will just be slower
@@ -116,39 +109,5 @@ const populate = (key, fn, refuseOldValue) => {
     //   - restart process
     //   - increase leveldown `maxOpenFiles` option (see https://github.com/Level/leveldown#options)
     .catch(_.Error(`cache populate err: ${key}`))
-
-    return res
-  })
-  .catch(err => {
-    if (refuseOldValue) {
-      _.error(err, `${key} request err while refusing old value: rethrow`)
-      throw err
-    } else {
-      _.warn(err, `${key} request err: returning old value`)
-      return returnOldValue(key, err)
-    }
-  })
-}
-
-const putResponseInCache = (key, res) => {
-  // _.info(`caching ${key}`)
-  return db.put(key, {
-    body: res,
-    timestamp: Date.now()
-  })
-}
-
-const isFreshEnough = (timestamp, timespan) => !expired(timestamp, timespan)
-
-const returnOldValue = (key, err) => {
-  return checkCache(key, Infinity)
-  .then(res => {
-    if (res != null) {
-      return res.body
-    } else {
-      // rethrowing the previous error as it's probably more meaningful
-      err.old_value = null
-      throw err
-    }
-  })
+  }
 }

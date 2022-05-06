@@ -4,6 +4,9 @@ const { checkFrequency, ttl } = require('config').entitiesRelationsTemporaryCach
 const db = require('db/level/get_sub_db')('entities-relations', 'utf8')
 const radio = require('lib/radio')
 
+// This module implements a custom ttl, rather than using level-ttl
+// to be able to trigger actions once the ttl expired
+
 module.exports = {
   get: async (property, valueUri) => {
     const keys = await getKeyRange(property, valueUri)
@@ -71,13 +74,16 @@ const checkExpiredCache = async () => {
   if (expiredTimeKeys.length === 0) return
 
   const batch = []
+  const invalidatedQueriesBatch = []
   for (const expiredTimeKey of expiredTimeKeys) {
     const key = expiredTimeKey.split('!')[2]
-    const [ property, valueUri, subjectUri ] = key.split('-')
-    await radio.emit('invalidate:wikidata:entities:relations', { subjectUri, property, valueUri })
+    const [ property, valueUri ] = key.split('-')
+    invalidatedQueriesBatch.push({ property, valueUri })
     batch.push({ type: 'del', key })
-    batch.push({ type: 'del', key: expiredTimeKeys })
+    batch.push({ type: 'del', key: expiredTimeKey })
   }
+  await radio.emit('invalidate:wikidata:entities:relations', invalidatedQueriesBatch)
+  _.info(expiredTimeKeys, 'expired entities relations cache')
   await db.batch(batch)
 }
 
