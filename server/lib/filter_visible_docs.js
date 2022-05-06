@@ -4,25 +4,25 @@ const { byIds: getGroupsByIds, getUserGroupsCoMembers } = require('controllers/g
 const { getUserFriends } = require('controllers/relations/lib/lists')
 const { allGroupMembers: parseAllGroupMembersIds } = require('server/controllers/groups/lib/users_lists')
 
-module.exports = async (shelves, reqUserId) => {
-  // Optimizing for the case where all requested shelves belong to the requester
+module.exports = async (docs, reqUserId) => {
+  // Optimizing for the case where all requested docs belong to the requester
   // as that's a frequent case
-  if (shelves.every(isOwnedByReqUser(reqUserId))) return shelves
+  if (docs.every(isOwnedByReqUser(reqUserId))) return docs
 
   const [
     friendsIds = [],
     groups = [],
     coGroupsMembersIds = [],
-  ] = await getMinimalRequiredUserNetworkData(shelves, reqUserId)
+  ] = await getMinimalRequiredUserNetworkData(docs, reqUserId)
 
   const groupsMembersIdsSets = getGroupsMembersIdsSets(groups)
-  return shelves.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }))
+  return docs.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }))
 }
 
-const isOwnedByReqUser = reqUserId => shelf => shelf.owner === reqUserId
+const isOwnedByReqUser = reqUserId => doc => doc.owner === reqUserId
 
-const getMinimalRequiredUserNetworkData = async (shelves, reqUserId) => {
-  const allVisibilityKeys = _.uniq(_.map(shelves, 'visibility').flat())
+const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
+  const allVisibilityKeys = _.uniq(_.map(docs, 'visibility').flat())
 
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)
   let friendsIdsPromise
@@ -56,8 +56,8 @@ const getGroupsMembersIdsSets = groups => {
 const keyRequiresFriendsIds = key => key === 'friends'
 const keyRequiresGroupsCoMembers = key => key === 'groups'
 
-const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => shelf => {
-  const { owner, visibility } = shelf
+const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => doc => {
+  const { owner, visibility } = doc
   if (owner === reqUserId) return true
   if (visibility.includes('public')) return true
   if (visibility.includes('groups') && coGroupsMembersIds.includes(owner)) return true

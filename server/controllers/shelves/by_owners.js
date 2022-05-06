@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const filterVisibleShelves = require('./lib/filter_visible_shelves')
+const filterVisibleDocs = require('lib/filter_visible_docs')
 
 const sanitization = {
   owners: {},
@@ -11,7 +11,7 @@ const sanitization = {
 const controller = async params => {
   const { reqUserId, owners } = params
   const foundShelves = await shelves_.byOwners(owners)
-  const authorizedShelves = await filterVisibleShelves(foundShelves, reqUserId)
+  const authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
   const shelves = _.keyBy(authorizedShelves, '_id')
   return { shelves }
 }
