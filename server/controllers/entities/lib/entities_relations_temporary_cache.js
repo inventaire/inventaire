@@ -4,6 +4,9 @@ const { checkFrequency, ttl } = require('config').entitiesRelationsTemporaryCach
 const db = require('db/level/get_sub_db')('entities-relations', 'utf8')
 const radio = require('lib/radio')
 
+// This module implements a custom ttl, rather than using level-ttl
+// to be able to trigger actions once the ttl expired
+
 module.exports = {
   get: async (property, valueUri) => {
     const keys = await getKeyRange(property, valueUri)
@@ -78,6 +81,7 @@ const checkExpiredCache = async () => {
     batch.push({ type: 'del', key })
     batch.push({ type: 'del', key: expiredTimeKey })
   }
+  _.info(expiredTimeKeys, 'expired entities relations cache')
   await db.batch(batch)
 }
 
