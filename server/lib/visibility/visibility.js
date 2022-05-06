@@ -22,7 +22,7 @@ const validateGroupKeys = (visibilityKeys, userGroupsIds) => {
 const validateGroupKey = (userGroupsIds, visibilityKeys) => key => {
   const groupId = key.split(':')[1]
   if (!userGroupsIds.includes(groupId)) {
-    throw error_.new('owner is not in that group', 400, { visibilityKeys, groupId })
+    throw error_.new('user is not in that group', 400, { visibilityKeys, groupId })
   }
 }
 
