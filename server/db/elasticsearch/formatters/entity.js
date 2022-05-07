@@ -4,7 +4,7 @@ const { simplify } = wdk
 const { getEntityId } = require('./entity_helpers')
 const { activeI18nLangs } = require('../helpers')
 const getEntityImagesFromClaims = require('controllers/entities/lib/get_entity_images_from_claims')
-const { firstClaim } = require('controllers/entities/lib/entities')
+const { setTermsFromClaims } = require('controllers/entities/lib/entities')
 const getEntityType = require('controllers/entities/lib/get_entity_type')
 const { indexedEntitiesTypes } = require('db/elasticsearch/indexes')
 const specialEntityImagesGetter = require('controllers/entities/lib/special_entity_images_getter')
@@ -137,17 +137,6 @@ const getType = ({ claims, type }) => {
 const dropPlural = type => {
   if (type) {
     return type.replace(/s$/, '')
-  }
-}
-
-const setTermsFromClaims = entity => {
-  const title = firstClaim(entity, 'wdt:P1476')
-  const subtitle = firstClaim(entity, 'wdt:P1680')
-  if (title) {
-    entity.labels = { fromclaims: title }
-  }
-  if (subtitle) {
-    entity.descriptions = { fromclaims: subtitle }
   }
 }
 
