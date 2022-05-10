@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
-const { makeUrl, getEntityUriFromActorName } = require('./lib/helpers')
+const { makeUrl, getEntityUriFromActorName, context } = require('./lib/helpers')
 const formatUserItemsActivities = require('./lib/format_user_items_activities')
 const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
@@ -50,7 +50,7 @@ const getEntityActivities = async ({ name, offset, limit }) => {
   if (!entity) throw error_.notFound({ name })
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: entity.actorName } })
   const baseOutbox = {
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',
     first: `${fullOutboxUrl}&offset=0`,
@@ -66,7 +66,7 @@ const getEntityActivities = async ({ name, offset, limit }) => {
 
 const getBaseOutbox = url => {
   return {
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    '@context': context,
     id: url,
     type: 'OrderedCollection',
     first: `${url}&offset=0`,
@@ -78,7 +78,7 @@ const getUserActivities = async ({ name, offset, limit }) => {
   const { user } = await validateUser(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
   const baseOutbox = {
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',
     first: `${fullOutboxUrl}&offset=0`,

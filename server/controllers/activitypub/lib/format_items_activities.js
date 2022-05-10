@@ -3,6 +3,7 @@ const CONFIG = require('config')
 const host = CONFIG.fullPublicHost()
 const { i18n } = require('lib/emails/i18n/i18n')
 const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
+const { context } = require('controllers/activitypub/lib/helpers')
 const maxLinksToDisplay = 3
 
 module.exports = {
@@ -30,7 +31,7 @@ module.exports = {
     }
     return {
       id: `${id}#create`,
-      '@context': 'https://www.w3.org/ns/activitystreams',
+      '@context': context,
       type: 'Create',
       object,
       actor,

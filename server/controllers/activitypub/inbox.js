@@ -18,7 +18,10 @@ const sanitization = {
     allowlist: Object.keys(inboxActivityTypes)
   },
   '@context': {
-    allowlist: [ 'https://www.w3.org/ns/activitystreams' ]
+    allowlist: [
+      'https://www.w3.org/ns/activitystreams',
+      'https://w3id.org/security/v1',
+    ]
   },
   actor: {},
   object: {
