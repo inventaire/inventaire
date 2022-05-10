@@ -4,7 +4,7 @@ const host = require('config').fullPublicHost()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
-const { makeUrl, getEntityUriFromActorName } = require('./lib/helpers')
+const { makeUrl, getEntityUriFromActorName, context } = require('./lib/helpers')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const { trackActor } = require('lib/track')
 
@@ -46,7 +46,7 @@ module.exports = async params => {
 const sendAcceptActivity = async (followActivity, actor, object) => {
   const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
   const activity = {
-    '@context': [ 'https://www.w3.org/ns/activitystreams' ],
+    '@context': context,
     type: 'Accept',
     actor: followedActorUri,
     object: followActivity.externalId

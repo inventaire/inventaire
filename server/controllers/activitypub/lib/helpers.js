@@ -40,6 +40,10 @@ const entityUrl = uri => `${host}/entity/${uri}`
 
 const propertyLabel = prop => i18n('en', unprefixify(prop))
 
+const context = [
+  'https://www.w3.org/ns/activitystreams',
+]
+
 module.exports = {
   makeUrl,
   getEntityActorName,
@@ -50,5 +54,6 @@ module.exports = {
   defaultLabel,
   entityUrl,
   propertyLabel,
-  buildLink
+  buildLink,
+  context,
 }
