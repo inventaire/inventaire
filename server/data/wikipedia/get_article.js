@@ -18,7 +18,7 @@ const getArticle = async (lang, title, introOnly) => {
   const { query } = await requests_.get(url)
   const { pages = [] } = query
   const extract = getCleanExtract(Object.values(pages))
-  if (extract) {
+  if (extract != null) {
     // Replace spaces by underscores before URI encoding
     // as Mediawiki considers them interchangeable
     // and _ is more readable than %20
@@ -55,7 +55,7 @@ const apiQuery = (lang, title, introOnly) => {
 // Commas between references aren't removed, thus the presence of aggregated commas
 const getCleanExtract = pages => {
   const extract = pages?.[0]?.extract
-  if (extract) {
+  if (extract != null) {
     return extract
     // Commas between references aren't removed, thus the presence of aggregated commas
     .replaceAll(',,', ',')
