@@ -67,8 +67,8 @@ const actorEndpoint = '/some_actor_endpoint'
 
 let removeActivityPubServer
 const getSomeRemoteServerUser = async emitterUser => {
-  emitterUser = emitterUser || await createRemoteActivityPubServerUser()
   removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
+  emitterUser = emitterUser || await createRemoteActivityPubServerUser()
   const { origin } = removeActivityPubServer
   const { id, username, privateKey } = emitterUser
   const query = { name: username }
