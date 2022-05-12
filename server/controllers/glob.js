@@ -37,4 +37,4 @@ module.exports = {
   }
 }
 
-const imageHeader = req => req.headers.accept.startsWith('image')
+const imageHeader = req => req.headers.accept?.startsWith('image')
