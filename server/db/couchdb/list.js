@@ -12,6 +12,7 @@ module.exports = {
   lists: [ 'lists' ],
   notifications: [ 'notifications' ],
   patches: [ 'patches' ],
+  selections: [ 'selections' ],
   shelves: [ 'shelves' ],
   tasks: [ 'tasks' ],
   oauth_authorizations: [],

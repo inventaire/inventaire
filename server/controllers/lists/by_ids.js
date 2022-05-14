@@ -1,15 +1,20 @@
 const _ = require('builders/utils')
-const { byIds } = require('controllers/lists/lib/lists')
+const { byIds, byIdsWithSelections } = require('controllers/lists/lib/lists')
 const { addWarning } = require('lib/responses')
 const filterVisibleDocs = require('lib/filter_visible_docs')
 const error_ = require('lib/error/error')
 
 const sanitization = {
   ids: {},
+  'with-selections': {
+    optional: true,
+    generic: 'boolean'
+  }
 }
 
-const controller = async ({ ids, reqUserId }, req, res) => {
-  const foundLists = await byIds(ids, reqUserId)
+const controller = async ({ ids, withSelections, reqUserId }, req, res) => {
+  const getLists = withSelections ? byIdsWithSelections : byIds
+  const foundLists = await getLists(ids, reqUserId)
   const foundListsIds = _.map(foundLists, '_id')
   checkNotFoundList(ids, foundLists, foundListsIds, res)
   const authorizedLists = await filterVisibleDocs(foundLists, reqUserId)

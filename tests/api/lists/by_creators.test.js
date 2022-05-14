@@ -1,8 +1,7 @@
 const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
+const { publicReq, customAuthReq, authReq, getUser, getUserB, getReservedUser } = require('../utils/utils')
 const { createList } = require('../fixtures/lists')
-const { makeFriends } = require('../utils/relations')
 const { createUser, getTwoFriends } = require('../fixtures/users')
 const { createGroupWithAMember, getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
 
@@ -19,6 +18,13 @@ describe('lists:by-creators', () => {
         err.body.status_verbose.should.equal('missing parameter in query: users')
         err.statusCode.should.equal(400)
       }
+    })
+
+    it('should be empty without lists', async () => {
+      const user = await getReservedUser()
+      const { _id: userId } = user
+      const res = await publicReq('get', `${endpoint}&users=${userId}`)
+      res.lists.should.deepEqual({})
     })
 
     it('should get a public list', async () => {
@@ -45,13 +51,9 @@ describe('lists:by-creators', () => {
     })
 
     it('should not return friends private lists', async () => {
-      const friendA = await createUser()
-      const friendB = await createUser()
-      await makeFriends(friendA, friendB)
-
-      const { list } = await createList(friendB, { visibility: [] })
-      const { _id: friendBId } = await friendB
-      const res = await authReq('get', `${endpoint}&users=${friendBId}`)
+      const [ userA, userB ] = await getTwoFriends()
+      const { list } = await createList(userA, { visibility: [] })
+      const res = await customAuthReq(userB, 'get', `${endpoint}&users=${userA._id}`)
       should(res.lists[list._id]).not.be.ok()
     })
   })

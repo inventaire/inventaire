@@ -23,6 +23,7 @@ module.exports = async (docs, reqUserId) => {
 
 const isPublic = doc => doc.visibility.includes('public')
 const belongToRequester = reqUserId => doc => {
+  if (!doc) return
   if (doc.owner) return doc.owner === reqUserId
   if (doc.creator) return doc.creator === reqUserId
 }

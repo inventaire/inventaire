@@ -29,7 +29,7 @@ module.exports = {
     assert_.object(oldList)
     assert_.object(newAttributes)
     if (oldList.creator !== creatorId) {
-      throw error_.new('wrong creator', 403, oldList.creator)
+      throw error_.new('wrong user', 403, oldList.creator)
     }
     for (const attr of Object.keys(newAttributes)) {
       if (!(attributes.updatable.includes(attr))) {

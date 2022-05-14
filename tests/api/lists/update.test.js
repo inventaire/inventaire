@@ -2,6 +2,7 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getRes
 const { authReq, authReqB, getUser } = require('../utils/utils')
 const { createList, listName, listDescription } = require('../fixtures/lists')
 const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
+const { someCouchUuid } = require('tests/api/fixtures/general')
 
 const endpoint = '/api/lists'
 
@@ -43,6 +44,20 @@ describe('lists:update', () => {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.startWith('invalid name:')
       err.statusCode.should.equal(400)
+    }
+  })
+
+  it('should reject when list is not found', async () => {
+    try {
+      const params = {
+        id: someCouchUuid,
+        name: ''
+      }
+      await authReq('put', endpoint, params).then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('not_found:')
+      err.statusCode.should.equal(404)
     }
   })
 

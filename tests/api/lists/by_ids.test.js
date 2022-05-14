@@ -1,7 +1,8 @@
+const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
+const { publicReq, authReq, authReqB, getUser, getUserB, customAuthReq } = require('../utils/utils')
 const { createUser, getTwoFriends } = require('../fixtures/users')
-const { createList } = require('../fixtures/lists')
+const { createList, createSelection } = require('../fixtures/lists')
 const { makeFriends } = require('../utils/relations')
 const { getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
 const { someCouchUuid } = require('tests/api/fixtures/general')
@@ -147,5 +148,14 @@ describe('lists:by-ids', () => {
     Object.keys(res.lists).should.deepEqual([ publiclist._id ])
     res.warnings.should.containEql(`lists not found: ${someCouchUuid}`)
     res.warnings.should.containEql(`unauthorized lists access: ${privatelist._id}`)
+  })
+
+  describe('with-selections', () => {
+    it('should get lists with selections', async () => {
+      const { uri, list } = await createSelection({}, getUserB())
+      const res = await authReq('get', `${endpoint}&ids=${list._id}&with-selections=true`)
+      const { selections } = res.lists[list._id]
+      selections.map(_.property('uri')).should.containEql(uri)
+    })
   })
 })
