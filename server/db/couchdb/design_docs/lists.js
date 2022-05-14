@@ -1,5 +1,5 @@
 module.exports = {
-  byUser: {
-    map: doc => emit(doc.user, null)
+  byCreator: {
+    map: doc => emit(doc.creator, null)
   }
 }

@@ -11,7 +11,7 @@ module.exports = {
   byIds: db.byIds,
   create: async params => {
     const list = List.create(params)
-    const invalidGroupId = await validateVisibilityKeys(list.visibility, list.user)
+    const invalidGroupId = await validateVisibilityKeys(list.visibility, list.creator)
     if (invalidGroupId) {
       throw error_.new('list user is not in that group', 400, {
         visibilityKeys: list.visibility,
@@ -31,8 +31,8 @@ module.exports = {
     return db.putAndReturn(updatedList)
   },
   bulkDelete: db.bulkDelete,
-  byUsers: ids => {
-    return db.viewByKeys('byUser', ids)
+  byCreators: ids => {
+    return db.viewByKeys('byCreator', ids)
   },
   deleteListsEntities: async lists => {
     const entitiesIds = _.uniq(_.map(lists, 'entities').flat())
@@ -43,7 +43,7 @@ module.exports = {
   validateOwnership: (userId, lists) => {
     lists = _.forceArray(lists)
     for (const list of lists) {
-      if (list.user !== userId) {
+      if (list.creator !== userId) {
         throw error_.new('wrong user', 403, { userId, listId: list._id })
       }
     }

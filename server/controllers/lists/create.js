@@ -12,12 +12,12 @@ const controller = async params => {
 }
 
 const formatNewList = params => {
-  const { name, description, visibility, reqUserId: user } = params
+  const { name, description, visibility, reqUserId: creator } = params
   const listData = {
     name,
     description,
     visibility,
-    user,
+    creator,
   }
   return lists_.create(listData)
 }

@@ -24,7 +24,7 @@ module.exports = async (docs, reqUserId) => {
 const isPublic = doc => doc.visibility.includes('public')
 const belongToRequester = reqUserId => doc => {
   if (doc.owner) return doc.owner === reqUserId
-  if (doc.user) return doc.user === reqUserId
+  if (doc.creator) return doc.creator === reqUserId
 }
 
 const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
@@ -63,9 +63,9 @@ const keyRequiresFriendsIds = key => key === 'friends'
 const keyRequiresGroupsCoMembers = key => key === 'groups'
 
 const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => doc => {
-  const { user, owner, visibility } = doc
-  // known cases : shelf.owner or list.user
-  const docUserId = owner || user
+  const { creator, owner, visibility } = doc
+  // known cases : shelf.owner or list.creator
+  const docUserId = owner || creator
   if (docUserId === reqUserId) return true
   if (visibility.includes('public')) return true
   if (visibility.includes('groups') && coGroupsMembersIds.includes(docUserId)) return true

@@ -4,6 +4,6 @@ module.exports = {
   pass,
   description: BoundedString(0, 5000),
   visibility: require('./visibility'),
-  user: userId,
+  creator: userId,
   name: BoundedString(0, 128),
 }

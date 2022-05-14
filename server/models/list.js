@@ -7,7 +7,7 @@ const error_ = require('lib/error/error')
 module.exports = {
   create: list => {
     assert_.object(list)
-    assert_.string(list.user)
+    assert_.string(list.creator)
     assert_.string(list.name)
 
     const newList = {}
@@ -25,11 +25,11 @@ module.exports = {
     return newList
   },
 
-  updateAttributes: (oldList, newAttributes, userId) => {
+  updateAttributes: (oldList, newAttributes, creatorId) => {
     assert_.object(oldList)
     assert_.object(newAttributes)
-    if (oldList.user !== userId) {
-      throw error_.new('wrong user', 403, oldList.user)
+    if (oldList.creator !== creatorId) {
+      throw error_.new('wrong creator', 403, oldList.creator)
     }
     for (const attr of Object.keys(newAttributes)) {
       if (!(attributes.updatable.includes(attr))) {

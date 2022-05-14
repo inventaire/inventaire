@@ -4,7 +4,7 @@ module.exports = {
   get: ActionsControllers({
     public: {
       'by-ids': require('./by_ids'),
-      'by-users': require('./by_users')
+      'by-creators': require('./by_creators')
     }
   }),
   post: ActionsControllers({

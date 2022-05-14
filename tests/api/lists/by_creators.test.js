@@ -6,9 +6,9 @@ const { makeFriends } = require('../utils/relations')
 const { createUser, getTwoFriends } = require('../fixtures/users')
 const { createGroupWithAMember, getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
 
-const endpoint = '/api/lists?action=by-users'
+const endpoint = '/api/lists?action=by-creators'
 
-describe('lists:by-users', () => {
+describe('lists:by-creators', () => {
   describe('visibility:public', () => {
     it('should reject without users', async () => {
       try {
@@ -24,7 +24,7 @@ describe('lists:by-users', () => {
     it('should get a public list', async () => {
       const { list } = await createList()
       list.visibility.should.deepEqual([ 'public' ])
-      const res = await publicReq('get', `${endpoint}&users=${list.user}`)
+      const res = await publicReq('get', `${endpoint}&users=${list.creator}`)
       res.lists[list._id].should.be.ok()
     })
   })

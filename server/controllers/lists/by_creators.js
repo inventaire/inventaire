@@ -10,7 +10,7 @@ const sanitization = {
 
 const controller = async params => {
   const { reqUserId, users } = params
-  const foundLists = await lists_.byUsers(users)
+  const foundLists = await lists_.byCreators(users)
   const authorizedLists = await filterVisibleDocs(foundLists, reqUserId)
   const lists = _.keyBy(authorizedLists, '_id')
   return { lists }
