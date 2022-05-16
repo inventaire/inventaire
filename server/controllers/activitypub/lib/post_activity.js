@@ -7,6 +7,7 @@ const { getFollowActivitiesByObject } = require('./activities')
 const assert_ = require('lib/utils/assert_types')
 const { getSharedKeyPair } = require('./shared_key_pair')
 const { makeUrl } = require('./helpers')
+const { isUrl } = require('lib/boolean_validations')
 // Arbitrary timeout
 const timeout = 30 * 1000
 const sanitize = CONFIG.activitypub.sanitizeUrls
@@ -24,7 +25,11 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
   }
   const inboxUri = actorRes.inbox
   if (!inboxUri) {
-    return _.warn({ recipientActorUri }, 'No inbox found, cannot post activity')
+    return _.warn({ actorName, recipientActorUri, activity }, 'No inbox found, cannot post activity')
+  }
+
+  if (!isUrl(inboxUri)) {
+    return _.warn({ actorName, recipientActorUri, activity, inboxUri }, 'Invalid inbox URL, cannot post activity')
   }
 
   const { privateKey, publicKeyHash } = await getSharedKeyPair()
