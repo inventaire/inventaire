@@ -31,7 +31,7 @@ const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
 }
 
 const createActivity = (params = {}) => {
-  const { object, actor, type = 'Follow' } = params
+  const { object, actor, origin, type = 'Follow' } = params
   let { externalId } = params
   externalId = externalId || `${origin}/${getRandomBytes(20, 'hex')}`
   return {
@@ -45,6 +45,7 @@ const createActivity = (params = {}) => {
 
 const createRemoteActivityPubServerUser = async () => {
   const { publicKey, privateKey } = await getSharedKeyPair()
+  const { host, origin } = await getActivityPubServer()
   const username = createUsername()
   const actorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const user = {
@@ -65,11 +66,9 @@ const createRemoteActivityPubServerUser = async () => {
 
 const actorEndpoint = '/some_actor_endpoint'
 
-let removeActivityPubServer
 const getSomeRemoteServerUser = async emitterUser => {
-  removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
+  const { origin } = await getActivityPubServer()
   emitterUser = emitterUser || await createRemoteActivityPubServerUser()
-  const { origin } = removeActivityPubServer
   const { id, username, privateKey } = emitterUser
   const query = { name: username }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
@@ -81,9 +80,14 @@ const remoteActivityPubServerUsers = {}
 const inboxEndpoint = '/inbox'
 const inboxInspectionEndpoint = '/inbox_inspection'
 
-let port, host, origin
+let removeActivityPubServer
+const getActivityPubServer = async () => {
+  removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
+  return removeActivityPubServer
+}
+
 const startActivityPubServer = async () => {
-  ({ port, host, origin } = await startGenericMockServer(app => {
+  const { port, host, origin } = await startGenericMockServer(app => {
     app.use(jsonBodyParser)
     app.get(actorEndpoint, async (req, res) => {
       const { name } = req.query
@@ -112,7 +116,7 @@ const startActivityPubServer = async () => {
       const { username } = req.query
       res.json({ inbox: inboxes[username] })
     })
-  }))
+  })
 
   return { port, host, origin }
 }
