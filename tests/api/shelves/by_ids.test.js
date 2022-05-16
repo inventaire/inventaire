@@ -30,8 +30,8 @@ describe('shelves:by-ids', () => {
 
   describe('visibility:public', () => {
     it('should get a public shelf', async () => {
-      const { shelf } = await createShelf()
-      shelf.visibility.should.deepEqual([ 'public' ])
+      const { shelf } = await createShelf(null, { visibility: [ 'public', 'groups' ] })
+      shelf.visibility.should.deepEqual([ 'public', 'groups' ])
       const { shelves } = await publicReq('get', `${endpoint}&ids=${shelf._id}`)
       shelves[shelf._id].should.be.an.Object()
     })
