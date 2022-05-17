@@ -3,7 +3,7 @@ const shelves_ = require('controllers/shelves/lib/shelves')
 const sanitization = {
   name: {},
   description: { optional: true },
-  visibility: {},
+  visibility: { optional: true },
   color: { optional: true },
   items: { optional: true }
 }

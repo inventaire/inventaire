@@ -16,6 +16,11 @@ describe('shelves:create', () => {
     }
   })
 
+  it('should default to private visibility', async () => {
+    const { shelf } = await authReq('post', endpoint, { name: shelfName() })
+    shelf.visibility.should.deepEqual([])
+  })
+
   it('should reject an empty name', async () => {
     try {
       const params = { name: '' }
