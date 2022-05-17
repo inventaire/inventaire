@@ -2,7 +2,6 @@ const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createShelf } = require('../fixtures/shelves')
-const { makeFriends } = require('../utils/relations')
 const { createUser, getTwoFriends } = require('../fixtures/users')
 const { createGroupWithAMember, getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
 
@@ -45,13 +44,9 @@ describe('shelves:by-owners', () => {
     })
 
     it('should not return friends private shelves', async () => {
-      const friendA = await createUser()
-      const friendB = await createUser()
-      await makeFriends(friendA, friendB)
-
-      const { shelf } = await createShelf(friendB, { visibility: [] })
-      const { _id: friendBId } = await friendB
-      const res = await authReq('get', `${endpoint}&owners=${friendBId}`)
+      const [ userA, userB ] = await getTwoFriends()
+      const { shelf } = await createShelf(userA, { visibility: [] })
+      const res = await customAuthReq(userB, 'get', `${endpoint}&owners=${userA._id}`)
       should(res.shelves[shelf._id]).not.be.ok()
     })
   })
