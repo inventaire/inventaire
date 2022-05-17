@@ -1,8 +1,7 @@
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
 const { createList } = require('../fixtures/lists')
-const { createEdition } = require('../fixtures/entities')
-const { someEntityUri } = require('tests/api/fixtures/general')
+const { createEdition, someFakeUri } = require('../fixtures/entities')
 
 const endpoint = '/api/lists?action='
 const byIds = `${endpoint}by-ids&with-selections=true`
@@ -36,7 +35,7 @@ describe('lists:add-selections', () => {
     const { list } = await createList()
     await authReq('post', `${endpoint}add-selections`, {
       id: list._id,
-      uris: [ someEntityUri ]
+      uris: [ someFakeUri ]
     })
     .then(shouldNotBeCalled)
     .catch(err => {

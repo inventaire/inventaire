@@ -1,6 +1,5 @@
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
-const { someEntityUri } = require('tests/api/fixtures/general')
 const { createList, createSelection } = require('../fixtures/lists')
 
 const endpoint = '/api/lists?action='
