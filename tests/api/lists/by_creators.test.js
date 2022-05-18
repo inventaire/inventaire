@@ -41,8 +41,25 @@ describe('lists:by-creators', () => {
     })
   })
 
+  describe('pagination', () => {
+    it('should take a limit parameter', async () => {
+      const { list } = await createList()
+      await createList()
+      const res = await publicReq('get', `${endpoint}&users=${list.creator}`)
+      Object.values(res.lists).length.should.be.aboveOrEqual(2)
+      const res2 = await publicReq('get', `${endpoint}&users=${list.creator}&limit=1`)
+      Object.values(res2.lists).length.should.equal(1)
     })
 
+    it('should take an offset parameter', async () => {
+      const { list } = await createList()
+      await createList()
+      const offset = 1
+      const { lists } = await publicReq('get', `${endpoint}&users=${list.creator}`)
+      const { lists: lists2 } = await publicReq('get', `${endpoint}&users=${list.creator}&offset=${offset}`)
+      const listsLength = Object.values(lists).length
+      const lists2Length = Object.values(lists2).length
+      should(listsLength - offset).equal(lists2Length)
     })
   })
 })

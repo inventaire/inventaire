@@ -1,12 +1,14 @@
 const _ = require('builders/utils')
 
 module.exports = {
-  filterFoundSelectionsUris: (selections, uris, selectionsToDelete, notFoundUris) => {
+  filterFoundSelectionsUris: (selections, uris, foundSelections, notFoundUris) => {
     const selectionsByUris = _.keyBy(selections, 'uri')
-    return uris.forEach(uri => {
-      const selection = selectionsByUris[uri]
-      if (selection) selectionsToDelete.push(selection)
-      else notFoundUris.push(uri)
-    })
+    return uris.forEach(assignSelection(selectionsByUris, foundSelections, notFoundUris))
   }
+}
+
+const assignSelection = (selectionsByUris, foundSelections, notFoundUris) => uri => {
+  const selection = selectionsByUris[uri]
+  if (selection) foundSelections.push(selection)
+  else notFoundUris.push(uri)
 }

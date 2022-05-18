@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, authReq, authReqB, getUserB } = require('../utils/utils')
+const { publicReq, authReq, authReqB } = require('../utils/utils')
 const { createList, createSelection } = require('../fixtures/lists')
 const { someCouchUuid } = require('tests/api/fixtures/general')
 
@@ -57,7 +57,7 @@ describe('lists:by-ids', () => {
 
   describe('with-selections', () => {
     it('should get lists with selections', async () => {
-      const { uri, list } = await createSelection({}, getUserB())
+      const { uri, list } = await createSelection({})
       const res = await authReq('get', `${endpoint}&ids=${list._id}&with-selections=true`)
       const { selections } = res.lists[list._id]
       selections.map(_.property('uri')).should.containEql(uri)

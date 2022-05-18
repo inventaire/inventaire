@@ -30,8 +30,25 @@ describe('lists:by-entities', () => {
     })
   })
 
+  describe('pagination', () => {
+    it('should take a limit parameter', async () => {
+      const { uri } = await createSelection({})
+      await createSelection({ uri })
+      const res = await publicReq('get', `${endpoint}&uris=${uri}`)
+      Object.values(res.lists[uri]).length.should.be.aboveOrEqual(2)
+      const res2 = await publicReq('get', `${endpoint}&uris=${uri}&limit=1`)
+      Object.values(res2.lists[uri]).length.should.equal(1)
     })
 
+    it('should take an offset parameter', async () => {
+      const { uri } = await createSelection({})
+      await createSelection({ uri })
+      const res = await publicReq('get', `${endpoint}&uris=${uri}`)
+      const offset = 1
+      const res2 = await publicReq('get', `${endpoint}&uris=${uri}&offset=${offset}`)
+      const listsLength = Object.values(res.lists[uri]).length
+      const lists2Length = Object.values(res2.lists[uri]).length
+      should(listsLength - offset).equal(lists2Length)
     })
   })
 })
