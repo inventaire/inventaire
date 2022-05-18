@@ -3,6 +3,7 @@ const ActionsControllers = require('lib/actions_controllers')
 module.exports = {
   get: ActionsControllers({
     public: {
+      'by-id': require('./by_id'),
       'by-ids': require('./by_ids'),
       'by-entities': require('./by_entities'),
       'by-creators': require('./by_creators')

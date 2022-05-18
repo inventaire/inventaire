@@ -22,19 +22,25 @@ const fixtures = module.exports = {
     return { list, user }
   },
 
-  createSelection: async ({ visibility = [ 'public' ] }, userPromise) => {
+  createSelection: async ({ visibility = [ 'public' ], uri, list }, userPromise) => {
     const selectionData = {}
-
-    const { list } = await fixtures.createList(userPromise, { visibility })
+    let userId
+    if (!list) {
+      const fixtureList = await fixtures.createList(userPromise, { visibility })
+      list = fixtureList.list
+      userId = fixtureList.user._id
+    } else {
+      userId = list.creator
+    }
     selectionData.list = list
 
-    const { uri } = await createEdition()
+    if (!uri) {
+      const edition = await createEdition()
+      uri = edition.uri
+    }
     selectionData.uris = [ uri ]
 
-    userPromise = userPromise || getUser()
-    const user = await userPromise
-    selectionData.userId = user._id
-
+    selectionData.userId = userId
     const selections = await selections_.create(selectionData)
     return {
       selection: selections[0],
