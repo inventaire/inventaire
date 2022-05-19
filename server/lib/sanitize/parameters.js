@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
 const CONFIG = require('config')
-const { isNonEmptyArray } = require('lib/boolean_validations')
-const { publicHost } = CONFIG
-const host = CONFIG.fullPublicHost()
+const { isNonEmptyArray, isLocalActivityPubActorUrl } = require('lib/boolean_validations')
+const fullPublicHost = CONFIG.fullPublicHost()
+const publicHost = fullPublicHost.split('://')[1]
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
@@ -139,7 +139,7 @@ const arrayOfNumbers = {
 const imgUrl = {
   format: (value, name, config) => {
     let decodedUrl = decodeURIComponent(value)
-    if (decodedUrl[0] === '/') decodedUrl = `${host}${decodedUrl}`
+    if (decodedUrl[0] === '/') decodedUrl = `${fullPublicHost}${decodedUrl}`
     return decodedUrl
   },
   validate: validations.common.imgUrl
@@ -287,14 +287,27 @@ module.exports = {
   }),
   refresh: generics.boolean,
   resource: {
+    format: resource => {
+      if (isLocalActivityPubActorUrl(resource)) {
+        const { host, searchParams } = new URL(resource)
+        return `acct:${searchParams.get('name')}@${host}`
+      } else {
+        return resource
+      }
+    },
     validate: resource => {
-      _.isString(resource)
-      if (resource.startsWith('acct:') === false) return false
-      const actorWithHost = resource.slice(5)
-      const actorParts = actorWithHost.split('@')
-      if (actorParts.length !== 2) return false
-      const reqHost = actorParts[1]
-      return reqHost === publicHost
+      if (!_.isString(resource)) return false
+      if (resource.startsWith('acct:')) {
+        const actorWithHost = resource.slice(5)
+        const actorParts = actorWithHost.split('@')
+        if (actorParts.length !== 2) return false
+        const reqHost = actorParts[1]
+        return reqHost === publicHost
+      } else if (isLocalActivityPubActorUrl(resource)) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   search: nonEmptyString,
