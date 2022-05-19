@@ -1,4 +1,5 @@
-const { publicHost } = require('config')
+const fullPublicHost = require('config').fullPublicHost()
+const publicHost = fullPublicHost.split('://')[1]
 const error_ = require('lib/error/error')
 const { ControllerWrapper } = require('lib/controller_wrapper')
 const { makeUrl, getEntityUriFromActorName, getEntityActorName } = require('controllers/activitypub/lib/helpers')
