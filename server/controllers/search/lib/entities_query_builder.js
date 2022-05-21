@@ -59,7 +59,7 @@ const matchEntities = (search, userLang, exact, safe) => {
       fields: exactMatchEntitiesFields(userLang),
       analyzer: 'standard_full',
       type: 'best_fields',
-      boost: 3,
+      boost: 10,
     }
   })
 
