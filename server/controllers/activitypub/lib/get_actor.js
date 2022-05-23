@@ -4,8 +4,8 @@ const { getSharedKeyPair } = require('./shared_key_pair')
 const { buildLink, getActorTypeFromName, defaultLabel, entityUrl } = require('./helpers')
 const { unprefixify } = require('controllers/entities/lib/prefix')
 const buildAttachements = require('./build_attachements')
-const { publicHost } = CONFIG
-const host = CONFIG.fullPublicHost()
+const origin = CONFIG.getPublicOrigin()
+const publicHost = origin.split('://')[1]
 
 const getShelfActor = async name => {
   const { shelf, owner } = await validateShelf(name)
@@ -13,7 +13,7 @@ const getShelfActor = async name => {
   const links = [
     {
       name: 'shelf',
-      url: `${host}/shelves/${shelf._id}`
+      url: `${origin}/shelves/${shelf._id}`
     }
   ]
 
@@ -29,7 +29,7 @@ const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links = [
-    { name: 'inventory', url: `${host}/inventory/${username}` }
+    { name: 'inventory', url: `${origin}/inventory/${username}` }
   ]
   return buildActorObject({
     actorName: stableUsername,
@@ -63,7 +63,7 @@ const getEntityActor = async name => {
 
 const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }) => {
   const { publicKey, publicKeyHash } = await getSharedKeyPair()
-  const actorUrl = `${host}/api/activitypub?action=actor&name=${actorName}`
+  const actorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}`
   // Use the key hash to bust any cached version of an old key
   const keyUrl = `${actorUrl}#${publicKeyHash}`
 
@@ -77,11 +77,11 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     name: displayName,
     preferredUsername: actorName,
     summary,
-    inbox: `${host}/api/activitypub?action=inbox&name=${actorName}`,
-    outbox: `${host}/api/activitypub?action=outbox&name=${actorName}`,
+    inbox: `${origin}/api/activitypub?action=inbox&name=${actorName}`,
+    outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
     publicKey: {
       id: keyUrl,
-      owner: `${host}/api/activitypub?action=actor&name=${actorName}`
+      owner: `${origin}/api/activitypub?action=actor&name=${actorName}`
     }
   }
 
@@ -89,7 +89,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     actor.icon = {
       mediaType: 'image/jpeg',
       type: 'Image',
-      url: imagePath.startsWith('http') ? imagePath : `${host}${imagePath}`
+      url: imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`
     }
   }
 

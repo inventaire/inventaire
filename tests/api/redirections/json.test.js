@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 require('should')
 const { rawRequest } = require('../utils/request')
 const { createHuman } = require('../fixtures/entities')

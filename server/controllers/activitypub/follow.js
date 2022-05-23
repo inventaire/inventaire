@@ -1,6 +1,6 @@
 const error_ = require('lib/error/error')
 const { parseQuery } = require('lib/utils/url')
-const host = require('config').fullPublicHost()
+const host = require('config').getPublicOrigin()
 const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
 const { signAndPostActivity } = require('./lib/post_activity')
 const { validateUser, validateShelf, validateEntity } = require('./lib/validations')

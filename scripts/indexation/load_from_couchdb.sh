@@ -19,9 +19,9 @@ database_base_name=$1
 database_name=$(node -p "require('config').db.name('$1')")
 
 couchdb_database_url=$(node -p "require('config').db.databaseUrl('$1')")
-couchdb_auth_host=$(node -p "require('config').db.fullHost()")
+couchdb_auth_host=$(node -p "require('config').db.getOrigin()")
 
-elastic_host=$(node -p "require('config').elasticsearch.host")
+elastic_host=$(node -p "require('config').elasticsearch.origin")
 elastic_index_url="${elastic_host}/${database_name}"
 
 leveldb_folder_path_base=$(node -p "require('config').universalPath.path('root', 'db/leveldb')")

@@ -1,11 +1,11 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
-const { host } = require('config').elasticsearch
+const { origin } = require('config').elasticsearch
 const mappings = require('db/elasticsearch/mappings/mappings')
 const settings = require('db/elasticsearch/settings/settings')
 
 module.exports = async index => {
-  const url = `${host}/${index}`
+  const url = `${origin}/${index}`
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]
   const body = { settings }

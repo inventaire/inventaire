@@ -4,7 +4,7 @@ set -eu
 source ./scripts/dumps/lib/utils.sh
 
 items_dump="${today_folder}/items.ttl"
-dbHost=$(node -p "require('config').db.fullHost()")
+dbHost=$(node -p "require('config').db.getOrigin()")
 
 echo "
 @prefix wd: <http://www.wikidata.org/entity/> .

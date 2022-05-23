@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const promises_ = require('lib/promises')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { i18n } = require('../i18n/i18n')
 const { contactAddress } = CONFIG
 const { newsKey, didYouKnowKeys } = CONFIG.activitySummary

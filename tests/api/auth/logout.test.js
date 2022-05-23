@@ -1,10 +1,10 @@
 const CONFIG = require('config')
 require('should')
-const host = CONFIG.fullHost()
+const origin = CONFIG.getLocalOrigin()
 const { getUser, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
-const endpoint = `${host}/api/auth?action=logout`
-const authentifiedEndpoint = `${host}/api/user`
+const endpoint = `${origin}/api/auth?action=logout`
+const authentifiedEndpoint = `${origin}/api/user`
 const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
 
 describe('auth:logout', () => {

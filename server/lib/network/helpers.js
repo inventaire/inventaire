@@ -2,7 +2,7 @@ const dns = require('node:dns')
 const { promisify } = require('node:util')
 const dnsLookup = promisify(dns.lookup)
 
-const getHostname = host => host ? new URL(host).hostname : null
+const getHostname = origin => origin ? new URL(origin).hostname : null
 
 const getHostnameIp = async hostname => {
   const { address } = await dnsLookup(hostname)

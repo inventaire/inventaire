@@ -40,7 +40,7 @@ describe('isPrivateUrl', () => {
   // which is already covered by rules on private networks
   // This test would need to be run with a service on a public IP
   xit('should detect internal services', async () => {
-    ;(await isPrivateUrl(CONFIG.elasticsearch.host)).should.be.true()
+    ;(await isPrivateUrl(CONFIG.elasticsearch.origin)).should.be.true()
   })
 })
 

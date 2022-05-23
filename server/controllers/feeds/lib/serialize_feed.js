@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const Rss = require('rss')
-const root = CONFIG.fullPublicHost()
+const root = CONFIG.getPublicOrigin()
 const { feed: feedConfig } = CONFIG
 const templateHelpers = require('lib/emails/handlebars_helpers')
 const getItemDescription = require('./get_item_description')

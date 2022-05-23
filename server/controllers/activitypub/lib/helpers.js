@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { stringifyQuery } = require('lib/utils/url')
 const { isEntityUri, isUsername } = require('lib/boolean_validations')
 const error_ = require('lib/error/error')

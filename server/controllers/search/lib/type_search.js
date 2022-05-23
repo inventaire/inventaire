@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
-const { host: elasticHost } = require('config').elasticsearch
+const { origin: elasticOrigin } = require('config').elasticsearch
 const { formatError, getHitsAndTotal } = require('lib/elasticsearch')
 const { indexesNamesByBaseNames: indexes, indexedTypes, indexedEntitiesTypes } = require('db/elasticsearch/indexes')
 const indexedTypesSet = new Set(indexedTypes)
@@ -41,7 +41,7 @@ const typeSearch = async params => {
     body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
 
-  const url = `${elasticHost}/${queryIndexes.join(',')}/_search`
+  const url = `${elasticOrigin}/${queryIndexes.join(',')}/_search`
 
   return requests_.post(url, { body })
   .then(getHitsAndTotal)

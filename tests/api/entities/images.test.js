@@ -2,7 +2,7 @@ const CONFIG = require('config')
 require('should')
 const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { fixedEncodeURIComponent } = require('lib/utils/url')
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')
 

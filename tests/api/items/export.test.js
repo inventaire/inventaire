@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 require('should')
 const { customAuthReq, rawCustomAuthReq } = require('tests/api/utils/request')
 const { getReservedUser } = require('tests/api/utils/utils')

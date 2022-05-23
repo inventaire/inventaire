@@ -4,7 +4,7 @@ const wdk = require('wikidata-sdk')
 const regex_ = require('lib/regex')
 const { isNormalizedIsbn } = require('./isbn/isbn')
 const { PositiveInteger: PositiveIntegerPattern } = regex_
-const host = require('config').fullPublicHost()
+const publicOrigin = require('config').getPublicOrigin()
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 
@@ -90,7 +90,7 @@ const tests = module.exports = {
   isLocalActivityPubActorUrl: url => {
     if (!tests.isUrl(url)) return false
     const { origin, pathname, searchParams } = new URL(url)
-    if (origin !== host) return false
+    if (origin !== publicOrigin) return false
     if (pathname !== '/api/activitypub') return false
     if (searchParams.get('action') !== 'actor') return false
     return isNonEmptyString(searchParams.get('name'))

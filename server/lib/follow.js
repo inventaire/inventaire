@@ -8,7 +8,7 @@ const error_ = require('lib/error/error')
 const follow = require('cloudant-follow')
 const metaDb = require('db/level/get_sub_db')('meta', 'utf8')
 const requests_ = require('lib/requests')
-const dbHost = CONFIG.db.fullHost()
+const dbHost = CONFIG.db.getOrigin()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 let waitForCouchInit

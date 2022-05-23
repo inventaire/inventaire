@@ -8,8 +8,8 @@ const { updateUser } = require('../utils/users')
 const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
-const fullPublicHost = CONFIG.fullPublicHost()
-const publicHost = fullPublicHost.split('://')[1]
+const publicOrigin = CONFIG.getPublicOrigin()
+const publicHost = publicOrigin.split('://')[1]
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
 
@@ -20,7 +20,7 @@ describe('activitypub:webfinger', () => {
     try {
       const endpoint = '/.well-known/webfinger?rezzzzzz='
       const invalidResource = 'bar.org'
-      invalidResource.should.not.equal(CONFIG.host)
+      invalidResource.should.not.equal(CONFIG.hostname)
       const actor = `acct:foo@${invalidResource}`
       await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
     } catch (err) {
@@ -33,7 +33,7 @@ describe('activitypub:webfinger', () => {
   it('should reject invalid host', async () => {
     try {
       const invalidResource = 'bar.org'
-      invalidResource.should.not.equal(CONFIG.host)
+      invalidResource.should.not.equal(CONFIG.hostname)
       const actor = `acct:foo@${invalidResource}`
       await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
     } catch (err) {
@@ -96,7 +96,7 @@ describe('activitypub:webfinger', () => {
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
       subject.should.equal(resource)
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
+      const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${username}`
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
@@ -138,7 +138,7 @@ describe('activitypub:webfinger', () => {
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
       subject.should.equal(resource)
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${actorName}`
+      const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${actorName}`
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
@@ -169,7 +169,7 @@ describe('activitypub:webfinger', () => {
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
       subject.should.equal(resource)
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${name}`
+      const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${name}`
       decodeURIComponent(aliases[0]).should.equal(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
       decodeURIComponent(firstLink.href).should.equal(actorUrl)
@@ -180,7 +180,7 @@ describe('activitypub:webfinger', () => {
     it('should accept an actor URL as resource', async () => {
       const username = createUsername()
       await createUser({ username, fediversable: true })
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
+      const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${username}`
       const res = await publicReq('get', `${endpoint}${encodeURIComponent(actorUrl)}`)
       const { subject } = res
       subject.should.equal(`acct:${username}@${publicHost}`)

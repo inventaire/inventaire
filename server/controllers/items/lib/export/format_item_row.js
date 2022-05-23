@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const { getNames } = require('../snapshot/helpers')
-const host = require('config').fullPublicHost()
+const host = require('config').getPublicOrigin()
 
 module.exports = lang => item => {
   const { _id, entity: uri, details, notes, shelfNames, created, listing, transaction } = item

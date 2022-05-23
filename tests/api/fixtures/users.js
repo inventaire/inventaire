@@ -2,8 +2,8 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 require('should')
 const assert_ = require('lib/utils/assert_types')
-const host = CONFIG.fullHost()
-const authEndpoint = `${host}/api/auth`
+const origin = CONFIG.getLocalOrigin()
+const authEndpoint = `${origin}/api/auth`
 const fakeText = require('./text')
 const { randomBytes } = require('node:crypto')
 const { addRole } = require('controllers/user/lib/user')

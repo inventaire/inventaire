@@ -4,7 +4,7 @@ const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 
-const dbHost = require('config').db.fullHost()
+const dbHost = require('config').db.getOrigin()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
 const dbsBaseNames = Object.keys(require('db/couchdb/list'))

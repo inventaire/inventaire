@@ -1,8 +1,8 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const origin = CONFIG.getPublicOrigin()
 const { getRandomBytes } = require('lib/crypto')
 
-const randomActivityId = (origin = host) => `${origin}/${getRandomBytes(20, 'hex')}`
+const randomActivityId = (customOrigin = origin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`
 
 const randomActivity = ({ externalId, emitterActorUrl, activityObject, type }) => {
   if (!externalId) externalId = randomActivityId(CONFIG.publicHost)

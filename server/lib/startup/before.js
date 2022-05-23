@@ -12,7 +12,8 @@ module.exports = () => {
   logErrorsCount()
   _.log(`pid: ${process.pid}`)
   _.log(`env: ${CONFIG.env}`)
-  _.log(`host: ${CONFIG.fullHost()}`)
+  _.log(`local origin: ${CONFIG.getLocalOrigin()}`)
+  _.log(`public origin: ${CONFIG.getPublicOrigin()}`)
 }
 
 const initUncaughtExceptionCatcher = () => {

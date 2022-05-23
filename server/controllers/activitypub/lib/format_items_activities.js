@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { i18n } = require('lib/emails/i18n/i18n')
 const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
 const { context } = require('controllers/activitypub/lib/helpers')
