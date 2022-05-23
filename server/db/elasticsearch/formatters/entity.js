@@ -146,8 +146,7 @@ const flattenTerms = (terms, mainFieldsWords) => {
   if (_.isArray(terms[0])) terms = terms.flat()
 
   return _.chain(terms)
-    .map(term => term.split(' '))
-    .flatten()
+    .flatMap(term => term.split(' '))
     .filter(word => !mainFieldsWords.has(word.toLowerCase()))
     .uniq()
     .join(' ')
@@ -164,8 +163,7 @@ const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
   const aliasesTerms = Object.values(aliases).flat()
   const allTerms = labelsTerms.concat(descriptionsTerms, aliasesTerms)
   return _.chain(allTerms)
-    .map(term => term.toLowerCase().split(' '))
-    .flatten()
+    .flatMap(term => term.toLowerCase().split(' '))
     .uniq()
     .value()
 }

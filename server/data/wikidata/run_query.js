@@ -68,7 +68,7 @@ const runQuery = (params, key) => {
 }
 
 radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch => {
-  const keys = invalidatedQueriesBatch.map(getQueriesKeys).flat()
+  const keys = invalidatedQueriesBatch.flatMap(getQueriesKeys)
   _.info(keys, 'invalidating queries cache')
   await cache_.batchDelete(keys)
 })

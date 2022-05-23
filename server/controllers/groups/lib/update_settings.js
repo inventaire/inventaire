@@ -70,6 +70,6 @@ const getUsersToNotify = groupDoc => {
   .pick('admins', 'members')
   .values()
   .flatten()
-  .map(_.property('user'))
+  .map('user')
   .value()
 }

@@ -55,7 +55,7 @@ const getDomainsPromises = (domains, params) => {
   return Promise.all(promises)
 }
 
-const formatList = results => _.map(results, 'entities').flat()
+const formatList = results => _.flatMap(results, 'entities')
 
 const formatRichResults = results => {
   const response = {

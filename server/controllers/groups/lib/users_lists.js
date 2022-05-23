@@ -61,7 +61,7 @@ const lists_ = module.exports = {
     .pick(categories)
     .values()
     .flatten()
-    .map(_.property('user'))
+    .map('user')
     .value()
   }
 }

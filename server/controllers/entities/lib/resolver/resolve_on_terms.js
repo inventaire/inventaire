@@ -74,8 +74,8 @@ const isMatchingWork = workTerms => searchedWork => {
 }
 
 const resolveAuthorFromExternalWorksTerms = async (authorSeed, worksSeeds, foundAuthorsUris) => {
-  const worksLabels = _.uniq(worksSeeds.map(getLabels).flat())
-  const worksLabelsLangs = _.uniq(worksSeeds.map(getLabelsLangs).flat())
+  const worksLabels = _.uniq(worksSeeds.flatMap(getLabels))
+  const worksLabelsLangs = _.uniq(worksSeeds.flatMap(getLabelsLangs))
   const authorsUrisWithOccurrences = await Promise.all(foundAuthorsUris.map(getOccurrences(worksLabels, worksLabelsLangs)))
   const matchingAuthors = authorsUrisWithOccurrences
     .filter(({ occurrences }) => hasConvincingOccurrences(occurrences))

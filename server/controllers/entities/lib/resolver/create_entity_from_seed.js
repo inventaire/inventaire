@@ -111,8 +111,7 @@ const buildBestEditionTitle = (edition, works) => {
 // if this one is known
 const guessEditionTitleFromWorksLabels = works => {
   return _(works)
-  .map(work => Object.values(work.labels))
-  .flatten()
+  .flatMap(work => Object.values(work.labels))
   .uniq()
   .join(' - ')
 }

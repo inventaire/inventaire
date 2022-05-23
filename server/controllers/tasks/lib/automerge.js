@@ -26,7 +26,7 @@ const hasConvincingOccurrences = suggestionOccurrences => {
   const hasOccurencesInStructuredDataSources = _.some(_.map(suggestionOccurrences, 'structuredDataSource'))
   if (hasOccurencesInStructuredDataSources) return true
 
-  const matchedTitles = _.map(suggestionOccurrences, 'matchedTitles').flat()
+  const matchedTitles = _.flatMap(suggestionOccurrences, 'matchedTitles')
   const longTitles = matchedTitles.filter(isLongTitle)
   return longTitles.length > 0
 }

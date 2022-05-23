@@ -66,8 +66,8 @@ const getAuthorWorksData = authorId => {
     //   { labels: { fr: 'Matiere et Memoire'} },
     //   { labels: { en: 'foo' } }
     // ]
-    const labels = _.uniq(works.map(getEntityNormalizedTerms).flat())
-    const langs = _.uniq(works.map(getLangs).flat())
+    const labels = _.uniq(works.flatMap(getEntityNormalizedTerms))
+    const langs = _.uniq(works.flatMap(getLangs))
     return { authorId, labels, langs }
   })
 }
