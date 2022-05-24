@@ -4,7 +4,7 @@ const assert_ = require('lib/utils/assert_types')
 const { buildUrl } = require('lib/utils/url')
 const checkUserNotificationsSettings = require('./check_user_notifications_settings')
 
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { defaultFrom } = CONFIG.mailer
 const { i18n } = require('./i18n/i18n')
 const { kmBetween } = require('lib/geo')

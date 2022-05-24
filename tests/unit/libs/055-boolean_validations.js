@@ -1,7 +1,7 @@
 require('should')
 const { isLocalActivityPubActorUrl } = require('lib/boolean_validations')
 const { buildUrl } = require('lib/utils/url')
-const host = require('config').fullPublicHost()
+const host = require('config').getPublicOrigin()
 
 describe('boolean validations', () => {
   describe('isLocalActivityPubActorUrl', () => {

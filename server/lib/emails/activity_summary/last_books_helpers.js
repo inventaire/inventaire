@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { allowTransaction } = require('models/item')
 const { kmBetween } = require('lib/geo')
-const host = require('config').fullPublicHost()
+const host = require('config').getPublicOrigin()
 const transactionsColors = require('./transactions_colors')
 const user_ = require('controllers/user/lib/user')
 

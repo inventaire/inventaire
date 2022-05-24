@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 require('should')
 const { publicReq } = require('../utils/utils')
 const { rawRequest } = require('../utils/request')

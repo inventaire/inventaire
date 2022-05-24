@@ -90,9 +90,9 @@ describe('activitypub:signed:request', () => {
       const { username, keyId } = await getSomeRemoteServerUser(emitterUser)
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
-      const publicHost = CONFIG.host
+      const { publicHostname } = CONFIG
       const reqHeaders = {
-        host: publicHost,
+        host: publicHostname,
         date: thirtySecondsAgo
       }
       const signedHeadersNames = Object.keys(reqHeaders).join(' ')

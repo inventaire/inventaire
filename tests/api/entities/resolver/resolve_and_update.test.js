@@ -111,7 +111,7 @@ describe('entities:resolver:update-resolved', () => {
 
   // Requires a running dataseed service and CONFIG.dataseed.enabled=true
   xit('should refuse to add an invalid image', async () => {
-    const validUrlButNotAnImage = `${CONFIG.fullHost()}/api/tests`
+    const validUrlButNotAnImage = `${CONFIG.getLocalOrigin()}/api/tests`
     const { isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {

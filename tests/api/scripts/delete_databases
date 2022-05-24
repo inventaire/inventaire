@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/list.js')).join(' '))")
-dbHost=$(node -e "console.log(require('config').db.fullHost())")
-elasticHost=$(node -e "console.log(require('config').elasticsearch.host)")
+dbHost=$(node -e "console.log(require('config').db.getOrigin())")
+elasticOrigin=$(node -e "console.log(require('config').elasticsearch.origin)")
 leveldbPathBase=$(node -e "console.log(require('config').universalPath.path('root', 'db/leveldb'))")
 leveldbPath="${leveldbPathBase}-tests"
 
@@ -10,7 +10,7 @@ do
   echo "\ndeleting ${db}-tests in couchdb... " &&
   curl -sXDELETE "${dbHost}/${db}-tests"
   echo "\ndeleting ${db}-tests in elastic search... " &&
-  curl -sXDELETE "${elasticHost}/${db}-tests"
+  curl -sXDELETE "${elasticOrigin}/${db}-tests"
 done
 
 echo "\ndeleting ${leveldbPath}... " &&

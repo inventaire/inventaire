@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const { buildUrl } = require('lib/utils/url')
-const root = require('config').fullPublicHost()
+const root = require('config').getPublicOrigin()
 
 module.exports = {
   // Keep in sync with client/app/api/img

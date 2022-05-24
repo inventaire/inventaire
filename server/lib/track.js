@@ -3,7 +3,7 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 const { buildUrl } = require('lib/utils/url')
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
-const host = CONFIG.fullHost()
+const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'
 const requests_ = require('./requests')
 
@@ -19,7 +19,7 @@ const track = (req = {}, actionArray) => {
   // a url is required so we use a placeholder if not provided in parameter
   if (!url) url = placeholderUrl
   // allow to pass a relative path to let this module turn it into the expected full url
-  if (url[0] === '/') url = `${host}${url}`
+  if (url[0] === '/') url = `${origin}${url}`
 
   const data = {
     idsite,

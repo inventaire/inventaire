@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const { coloredElapsedTime } = require('lib/time')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const { mutedDomains, mutedPath } = CONFIG.requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1

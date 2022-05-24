@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
-const { host: elasticHost } = require('config').elasticsearch
+const { origin: elasticOrigin } = require('config').elasticsearch
 const { logBulkRes } = require('./helpers')
 const assert_ = require('lib/utils/assert_types')
 const headers = { 'content-type': 'application/x-ndjson' }
@@ -21,7 +21,7 @@ const postBatch = async batch => {
   // It is required to end by a newline break
   const body = batch.join('\n') + '\n'
   try {
-    const res = await requests_.post(`${elasticHost}/_doc/_bulk`, {
+    const res = await requests_.post(`${elasticOrigin}/_doc/_bulk`, {
       headers,
       body
     })

@@ -5,8 +5,8 @@ const { dnsLookup, getHostname, getHostnameIp } = require('./helpers')
 
 const servicesHostnames = _.uniq(_.compact([
   db.hostname,
-  getHostname(elasticsearch.host),
-  getHostname(dataseed.host),
+  getHostname(elasticsearch.origin),
+  getHostname(dataseed.origin),
   getHostname(mediaStorage.swift.publicUrl),
 ]))
 

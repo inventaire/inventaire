@@ -7,11 +7,11 @@ const port = 3009
 module.exports = {
   env: 'tests-api',
   protocol: 'http',
-  host: 'localhost',
+  hostname: 'localhost',
   port,
   verbose: false,
-  fullHost: function () {
-    return `${this.protocol}://${this.host}:${this.port}`
+  getLocalOrigin: function () {
+    return `${this.protocol}://${this.hostname}:${this.port}`
   },
   db: {
     suffix: 'tests',

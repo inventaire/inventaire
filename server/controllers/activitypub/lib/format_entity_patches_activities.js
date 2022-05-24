@@ -4,7 +4,7 @@ const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const { i18n } = require('lib/emails/i18n/i18n')
 const getBestLangValue = require('lib/get_best_lang_value')
 const { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } = require('./helpers')
-const host = CONFIG.fullPublicHost()
+const origin = CONFIG.getPublicOrigin()
 
 module.exports = rows => {
   rows = rows.filter(hasActivityText)
@@ -28,11 +28,11 @@ const formatEntityPatchActivity = async (row, rowIndex) => {
   const subjectLabel = getLabel(subjectEntity)
   const objectLabel = getLabel(objectEntity)
   const activityId = getActivityIdFromPatchId(patchId, rowIndex)
-  const id = `${host}/api/activitypub?action=activity&id=${activityId}`
+  const id = `${origin}/api/activitypub?action=activity&id=${activityId}`
   const name = getEntityActorName(objectUri)
   const actor = makeUrl({ params: { action: 'actor', name } })
-  const subjectUrl = `${host}/entity/${subjectUri}`
-  const objectUrl = `${host}/entity/${objectUri}`
+  const subjectUrl = `${origin}/entity/${subjectUri}`
+  const objectUrl = `${origin}/entity/${objectUri}`
 
   const object = {
     id,

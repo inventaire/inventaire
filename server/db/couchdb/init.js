@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const __ = CONFIG.universalPath
 const _ = require('builders/utils')
 const couchInit = require('couch-init2')
-const dbBaseUrl = CONFIG.db.fullHost()
+const dbBaseUrl = CONFIG.db.getOrigin()
 const initHardCodedDocuments = require('./init_hard_coded_documents')
 
 const dbsList = require('./list')

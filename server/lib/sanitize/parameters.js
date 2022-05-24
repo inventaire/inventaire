@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
 const CONFIG = require('config')
 const { isNonEmptyArray, isLocalActivityPubActorUrl } = require('lib/boolean_validations')
-const fullPublicHost = CONFIG.fullPublicHost()
-const publicHost = fullPublicHost.split('://')[1]
+const origin = CONFIG.getPublicOrigin()
+const publicHost = origin.split('://')[1]
 const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
@@ -139,7 +139,7 @@ const arrayOfNumbers = {
 const imgUrl = {
   format: (value, name, config) => {
     let decodedUrl = decodeURIComponent(value)
-    if (decodedUrl[0] === '/') decodedUrl = `${fullPublicHost}${decodedUrl}`
+    if (decodedUrl[0] === '/') decodedUrl = `${origin}${decodedUrl}`
     return decodedUrl
   },
   validate: validations.common.imgUrl

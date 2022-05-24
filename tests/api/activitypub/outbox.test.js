@@ -1,5 +1,5 @@
 const CONFIG = require('config')
-const host = CONFIG.fullPublicHost()
+const origin = CONFIG.getPublicOrigin()
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
@@ -37,11 +37,11 @@ describe('outbox', () => {
       await wait(debounceTime)
       const outboxUrl = `${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
-      const fullHostUrl = `${host}${outboxUrl}`
-      res.id.should.equal(fullHostUrl)
+      const url = `${origin}${outboxUrl}`
+      res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
+      res.first.should.equal(`${url}&offset=0`)
     })
 
     it('should paginate activities', async () => {
@@ -68,12 +68,12 @@ describe('outbox', () => {
       const { username } = await user
       await wait(debounceTime)
       const outboxUrl = `${endpoint}${username}&offset=0`
-      const fullHostUrl = `${host}${endpoint}${username}`
+      const url = `${origin}${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
       res.type.should.equal('OrderedCollectionPage')
-      res.partOf.should.equal(fullHostUrl)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
-      res.next.should.equal(`${fullHostUrl}&offset=10`)
+      res.partOf.should.equal(url)
+      res.first.should.equal(`${url}&offset=0`)
+      res.next.should.equal(`${url}&offset=10`)
       res.orderedItems.should.be.an.Array()
       res.orderedItems.length.should.equal(1)
       const createActivity = res.orderedItems[0]
@@ -183,12 +183,12 @@ describe('outbox', () => {
       await addAuthor(workUri, authorUri)
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', outboxUrl)
-      const fullHostUrl = `${host}${outboxUrl}`
-      res.id.should.equal(fullHostUrl)
+      const url = `${origin}${outboxUrl}`
+      res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
-      res.next.should.equal(`${fullHostUrl}&offset=0`)
+      res.first.should.equal(`${url}&offset=0`)
+      res.next.should.equal(`${url}&offset=0`)
     })
 
     it('should return entities activities', async () => {
@@ -198,11 +198,11 @@ describe('outbox', () => {
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       await wait(500)
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
-      const fullHostUrl = `${host}${outboxUrl}`
+      const url = `${origin}${outboxUrl}`
       res.type.should.equal('OrderedCollectionPage')
-      res.partOf.should.equal(fullHostUrl)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
-      res.next.should.equal(`${fullHostUrl}&offset=10`)
+      res.partOf.should.equal(url)
+      res.first.should.equal(`${url}&offset=0`)
+      res.next.should.equal(`${url}&offset=10`)
       res.orderedItems.should.be.an.Array()
       res.orderedItems.length.should.equal(1)
       const createActivity = res.orderedItems[0]
@@ -280,12 +280,12 @@ describe('outbox', () => {
       const name = getActorName(shelf)
       const outboxUrl = `${endpoint}${name}`
       const res = await publicReq('get', outboxUrl)
-      const fullHostUrl = `${host}${outboxUrl}`
-      res.id.should.equal(fullHostUrl)
+      const url = `${origin}${outboxUrl}`
+      res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
-      res.next.should.equal(`${fullHostUrl}&offset=0`)
+      res.first.should.equal(`${url}&offset=0`)
+      res.next.should.equal(`${url}&offset=0`)
     })
 
     it('should return content with items link', async () => {
@@ -294,11 +294,11 @@ describe('outbox', () => {
       await wait(debounceTime)
       const outboxUrl = `${endpoint}${name}&offset=0`
       const res = await publicReq('get', outboxUrl)
-      const fullHostUrl = `${host}${endpoint}${name}`
+      const url = `${origin}${endpoint}${name}`
       res.type.should.equal('OrderedCollectionPage')
-      res.partOf.should.equal(fullHostUrl)
-      res.first.should.equal(`${fullHostUrl}&offset=0`)
-      res.next.should.equal(`${fullHostUrl}&offset=10`)
+      res.partOf.should.equal(url)
+      res.first.should.equal(`${url}&offset=0`)
+      res.next.should.equal(`${url}&offset=10`)
       res.orderedItems.should.be.an.Array()
       res.orderedItems.length.should.equal(1)
       const createActivity = res.orderedItems[0]

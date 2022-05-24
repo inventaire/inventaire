@@ -11,8 +11,8 @@ const { getActorName } = require('../utils/shelves')
 const { rawRequest } = require('../utils/request')
 const { i18n } = require('lib/emails/i18n/i18n')
 const CONFIG = require('config')
-const { publicHost } = CONFIG
-const fullPublicHost = CONFIG.fullPublicHost()
+const origin = CONFIG.getPublicOrigin()
+const publicHost = origin.split('://')[1]
 
 const getAttachement = async (actorName, prop) => {
   const actorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
@@ -87,7 +87,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${fullPublicHost}/inventory/${username}`)
+      headers.location.should.equal(`${origin}/inventory/${username}`)
     })
   })
 
@@ -128,7 +128,7 @@ describe('activitypub:actor', () => {
       const { attachment } = await publicReq('get', actorUrl)
       attachment[0].type.should.equal('PropertyValue')
       attachment[0].name.should.equal(publicHost)
-      attachment[0].value.should.containEql(`${fullPublicHost}/entity/wd:Q535`)
+      attachment[0].value.should.containEql(`${origin}/entity/wd:Q535`)
       attachment[1].type.should.equal('PropertyValue')
       attachment[1].name.should.equal('wikidata.org')
       attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q535')
@@ -139,7 +139,7 @@ describe('activitypub:actor', () => {
       const { attachment } = await publicReq('get', actorUrl)
       attachment[2].type.should.equal('PropertyValue')
       attachment[2].name.should.equal(i18n('en', 'P135'))
-      attachment[2].value.should.containEql(`${fullPublicHost}/entity/wd:`)
+      attachment[2].value.should.containEql(`${origin}/entity/wd:`)
       // check attachement order against "properties display"
       const propertiesLabels = propertiesLabelsByType('human')
       const name3 = propertiesLabels.indexOf(attachment[3].name)
@@ -149,7 +149,7 @@ describe('activitypub:actor', () => {
 
     it('should set entity claim as attachment', async () => {
       const { value } = await getAttachement('wd-Q140057', 'P941')
-      value.should.containEql(`${fullPublicHost}/entity/wd:`)
+      value.should.containEql(`${origin}/entity/wd:`)
     })
 
     it('should set entity string claim as attachment', async () => {
@@ -178,7 +178,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: `wd-${wdId}` } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${fullPublicHost}/entity/wd:${wdId}`)
+      headers.location.should.equal(`${origin}/entity/wd:${wdId}`)
     })
   })
 
@@ -223,7 +223,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${fullPublicHost}/shelves/${shelf._id}`)
+      headers.location.should.equal(`${origin}/shelves/${shelf._id}`)
     })
   })
 })

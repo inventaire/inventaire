@@ -9,25 +9,24 @@ const contactAddress = 'hello@inventaire.io'
 const config = module.exports = {
   name: 'inventaire',
   env: 'default',
-  host: 'localhost',
   universalPath: require('./universal_path'),
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
   // protocol: 'http'
   verbose: true,
+  hostname: 'localhost',
   protocol: 'http',
   port,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
-  fullHost: function () {
-    return `${this.protocol}://${this.host}:${this.port}`
+  getLocalOrigin: function () {
+    return `${this.protocol}://${this.hostname}:${this.port}`
   },
   publicProtocol: 'http',
-  publicHost: 'localhost',
-  fullPublicHost: function () {
-    return `${this.publicProtocol}://${this.publicHost}:${this.port}`
+  publicHostname: 'localhost',
+  getPublicOrigin: function () {
+    return `${this.publicProtocol}://${this.publicHostname}:${this.port}`
   },
-  invHost: 'https://inventaire.io',
   // To allow fallback between servers, they need to share the same session keys:
   // one should have autoRotateKeys=true and the others autoRotateKeys=false
   autoRotateKeys: true,
@@ -51,7 +50,7 @@ const config = module.exports = {
     username: 'yourcouchdbusername',
     password: 'yourcouchdbpassword',
     suffix: null,
-    fullHost: function () {
+    getOrigin: function () {
       return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
     },
     databaseUrl: function (dbBaseName) {
@@ -81,14 +80,14 @@ const config = module.exports = {
   },
 
   elasticsearch: {
-    host: 'http://localhost:9200',
+    origin: 'http://localhost:9200',
     updateDelay: 1000
   },
 
   // See server/data/dataseed/dataseed.js
   dataseed: {
     enabled: false,
-    host: 'http://localhost:9898'
+    origin: 'http://localhost:9898'
   },
 
   serveStaticFiles: true,
@@ -111,6 +110,7 @@ const config = module.exports = {
     // Relies on SMTP: make sure the appropriate ports are not blocked by your server provider
     // - Scaleway: https://community.online.net/t/solved-smtp-connection-blocked/2262/3
     nodemailer: {
+      // This would be the `hostname`, but that's what nodemailer `createTransport` function expect as host value
       host: 'smtp.ethereal.email',
       port: 587,
       // Get some username and password at https://ethereal.email/create

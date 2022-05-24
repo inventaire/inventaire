@@ -54,7 +54,7 @@ describe('images:data-url', () => {
     await authReq('get', `${endpoint}&url=${encodeURIComponent(imageUrl)}`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.context.url.should.equal(`${CONFIG.fullPublicHost()}${imageUrl}`)
+      err.body.context.url.should.equal(`${CONFIG.getPublicOrigin()}${imageUrl}`)
     })
   })
 })

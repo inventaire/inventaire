@@ -1,6 +1,6 @@
 const CONFIG = require('config')
 const requests_ = require('lib/requests')
-const root = CONFIG.fullPublicHost()
+const root = CONFIG.getPublicOrigin()
 const OAuth = require('oauth-1.0a')
 const crypto = require('node:crypto')
 const createHmacSha1Hash = (baseString, key) => {

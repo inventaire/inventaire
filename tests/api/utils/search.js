@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
 const { publicReq } = require('../utils/utils')
-const { host: elasticHost, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
 const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
@@ -15,7 +15,7 @@ const getIndexedDoc = async (index, id, options = {}) => {
   assert_.string(id)
   if (options) assert_.object(options)
   const { retry = true, attempt = 0 } = options
-  const url = `${elasticHost}/${index}/_doc/${id}`
+  const url = `${elasticOrigin}/${index}/_doc/${id}`
   try {
     const { body } = await rawRequest('get', url)
     return JSON.parse(body)
@@ -38,7 +38,7 @@ const getAnalyze = async ({ indexBaseName, text, analyzer }) => {
   assert_.string(text)
   assert_.string(analyzer)
   const index = indexesNamesByBaseNames[indexBaseName]
-  const url = `${elasticHost}/${index}/_analyze`
+  const url = `${elasticOrigin}/${index}/_analyze`
   const { body } = await rawRequest('post', url, {
     body: { text, analyzer }
   })
@@ -114,7 +114,7 @@ module.exports = {
   deindex: async (index, id) => {
     assert_.string(index)
     assert_.string(id)
-    const url = `${elasticHost}/${index}/_doc/${id}`
+    const url = `${elasticOrigin}/${index}/_doc/${id}`
     try {
       await rawRequest('delete', url)
       _.success(url, 'deindexed')
@@ -130,7 +130,7 @@ module.exports = {
   indexPlaceholder: async (index, id) => {
     assert_.string(index)
     assert_.string(id)
-    const url = `${elasticHost}/${index}/_doc/${id}`
+    const url = `${elasticOrigin}/${index}/_doc/${id}`
     await rawRequest('put', url, { body: { testPlaceholder: true } })
     _.success(url, 'placeholder added')
   }

@@ -1,7 +1,7 @@
 require('should')
 const CONFIG = require('config')
 const { mediaStorage } = CONFIG
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
 const randomString = require('lib/utils/random_string')

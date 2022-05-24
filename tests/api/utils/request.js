@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
-const host = CONFIG.fullPublicHost()
+const host = CONFIG.getPublicOrigin()
 const requests_ = require('lib/requests')
 const assert_ = require('lib/utils/assert_types')
 const error_ = require('lib/error/error')
