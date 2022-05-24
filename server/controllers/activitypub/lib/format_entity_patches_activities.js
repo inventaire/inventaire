@@ -3,7 +3,7 @@ const getEntitiesList = require('controllers/entities/lib/get_entities_list')
 const { prefixifyInv } = require('controllers/entities/lib/prefix')
 const { i18n } = require('lib/emails/i18n/i18n')
 const getBestLangValue = require('lib/get_best_lang_value')
-const { makeUrl, getEntityActorName, getActivityIdFromPatchId } = require('./helpers')
+const { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } = require('./helpers')
 const host = CONFIG.fullPublicHost()
 
 module.exports = rows => {
@@ -43,7 +43,7 @@ const formatEntityPatchActivity = async (row, rowIndex) => {
 
   return {
     id: `${id}#create`,
-    '@context': 'https://www.w3.org/ns/activitystreams',
+    '@context': context,
     type: 'Create',
     object,
     actor,
