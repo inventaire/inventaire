@@ -4,6 +4,7 @@ const wdk = require('wikidata-sdk')
 const regex_ = require('lib/regex')
 const { isNormalizedIsbn } = require('./isbn/isbn')
 const { PositiveInteger: PositiveIntegerPattern } = regex_
+const host = require('config').fullPublicHost()
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 
@@ -84,5 +85,14 @@ const tests = module.exports = {
   isPositiveIntegerString: str => _.isString(str) && PositiveIntegerPattern.test(str),
   isStrictlyPositiveInteger: num => Number.isInteger(num) && num > 0,
   isExtendedUrl: str => tests.isUrl(str) || tests.isLocalImg(str),
-  isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject)
+  isCollection: array => (_.typeOf(array) === 'array') && _.every(array, _.isPlainObject),
+
+  isLocalActivityPubActorUrl: url => {
+    if (!tests.isUrl(url)) return false
+    const { origin, pathname, searchParams } = new URL(url)
+    if (origin !== host) return false
+    if (pathname !== '/api/activitypub') return false
+    if (searchParams.get('action') !== 'actor') return false
+    return isNonEmptyString(searchParams.get('name'))
+  }
 }

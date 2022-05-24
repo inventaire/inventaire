@@ -9,7 +9,7 @@ const { wait } = require('lib/promises')
 const { createHuman } = require('../fixtures/entities')
 const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 const fullPublicHost = CONFIG.fullPublicHost()
-const { publicHost } = CONFIG
+const publicHost = fullPublicHost.split('://')[1]
 const { createShelf } = require('../fixtures/shelves')
 const { getActorName } = require('../utils/shelves')
 
@@ -95,7 +95,6 @@ describe('activitypub:webfinger', () => {
       const resource = `acct:${username}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
-      res.should.be.an.Object()
       subject.should.equal(resource)
       const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
       aliases[0].should.equal(actorUrl)
@@ -138,7 +137,6 @@ describe('activitypub:webfinger', () => {
       const resource = `acct:${actorName}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
-      res.should.be.an.Object()
       subject.should.equal(resource)
       const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${actorName}`
       aliases[0].should.equal(actorUrl)
@@ -170,12 +168,22 @@ describe('activitypub:webfinger', () => {
       const resource = `acct:${name}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
       const { subject, aliases, links } = res
-      res.should.be.an.Object()
       subject.should.equal(resource)
       const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${name}`
       decodeURIComponent(aliases[0]).should.equal(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
       decodeURIComponent(firstLink.href).should.equal(actorUrl)
+    })
+  })
+
+  describe('actor URL as resource', () => {
+    it('should accept an actor URL as resource', async () => {
+      const username = createUsername()
+      await createUser({ username, fediversable: true })
+      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
+      const res = await publicReq('get', `${endpoint}${encodeURIComponent(actorUrl)}`)
+      const { subject } = res
+      subject.should.equal(`acct:${username}@${publicHost}`)
     })
   })
 })
