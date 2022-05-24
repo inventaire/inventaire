@@ -2,6 +2,7 @@ require('should')
 const { checkEntities } = require('../utils/tasks')
 const { getByUris, findOrIndexEntities } = require('../utils/entities')
 const { createHuman, createWorkWithAuthor, randomLabel } = require('../fixtures/entities')
+const ASCIIFolder = require('fold-to-ascii')
 
 describe('tasks:automerge', () => {
   before(async () => {
@@ -45,6 +46,8 @@ describe('tasks:automerge', () => {
     const tasks = await checkEntities(human.uri)
     tasks.length.should.aboveOrEqual(1)
     const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
-    firstOccurenceMatch.should.equal(humanLabel)
+    firstOccurenceMatch.should.equal(normalize(humanLabel))
   })
 })
+
+const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
