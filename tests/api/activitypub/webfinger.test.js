@@ -128,15 +128,6 @@ describe('activitypub:webfinger', () => {
       const res2 = await publicReq('get', `${endpoint}${resourceAlias}`)
       res2.subject.should.equal(resource)
     })
-
-    it('should accept an actor URL as resource', async () => {
-      const username = createUsername()
-      await createUser({ username, fediversable: true })
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
-      const res = await publicReq('get', `${endpoint}${encodeURIComponent(actorUrl)}`)
-      const { subject } = res
-      subject.should.equal(`acct:${username}@${publicHost}`)
-    })
   })
 
   describe('entities', () => {
@@ -152,16 +143,6 @@ describe('activitypub:webfinger', () => {
       aliases.should.matchAny(actorUrl)
       const firstLink = _.find(links, { rel: 'self' })
       firstLink.href.should.equal(actorUrl)
-    })
-
-    it('should accept an actor URL as resource', async () => {
-      const { uri } = await createHuman()
-      const actorName = getEntityActorName(uri)
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${actorName}`
-      const resource = `acct:${actorName}@${publicHost}`
-      const res = await publicReq('get', `${endpoint}${encodeURIComponent(actorUrl)}`)
-      const { subject } = res
-      subject.should.equal(resource)
     })
   })
 
@@ -193,16 +174,16 @@ describe('activitypub:webfinger', () => {
       const firstLink = _.find(links, { rel: 'self' })
       decodeURIComponent(firstLink.href).should.equal(actorUrl)
     })
+  })
 
+  describe('actor URL as resource', () => {
     it('should accept an actor URL as resource', async () => {
-      const user = createUser({ fediversable: true })
-      const { shelf } = await createShelf(user)
-      const name = getActorName(shelf)
-      const resource = `acct:${name}@${publicHost}`
-      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${name}`
+      const username = createUsername()
+      await createUser({ username, fediversable: true })
+      const actorUrl = `${fullPublicHost}/api/activitypub?action=actor&name=${username}`
       const res = await publicReq('get', `${endpoint}${encodeURIComponent(actorUrl)}`)
       const { subject } = res
-      subject.should.equal(resource)
+      subject.should.equal(`acct:${username}@${publicHost}`)
     })
   })
 })
