@@ -8,16 +8,16 @@ const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const isbn_ = require('lib/isbn/isbn')
 const { buildUrl } = require('lib/utils/url')
-const { enabled, host } = require('config').dataseed
+const { enabled, origin } = require('config').dataseed
 const reqOptions = { timeout: 60 * 1000 }
-if (host.startsWith('https')) reqOptions.ignoreCertificateErrors = true
+if (origin.startsWith('https')) reqOptions.ignoreCertificateErrors = true
 
 module.exports = {
   getByIsbns: async (isbns, refresh) => {
     isbns = _.forceArray(isbns)
     if (!enabled) return isbns.map(emptySeed)
     isbns = isbns.join('|')
-    const url = buildUrl(`${host}/books`, { isbns, refresh })
+    const url = buildUrl(`${origin}/books`, { isbns, refresh })
     try {
       return await requests_.get(url, reqOptions)
     } catch (err) {
@@ -31,12 +31,12 @@ module.exports = {
     if (!enabled || isbn == null) return {}
     isbn = isbn_.toIsbn13(isbn)
     if (!isbn) throw new Error('invalid isbn')
-    const url = buildUrl(`${host}/images`, { isbn })
+    const url = buildUrl(`${origin}/images`, { isbn })
     return requests_.get(url, reqOptions)
   },
 
   cleanupImageUrl: imageUrl => {
-    const url = buildUrl(`${host}/images`, { url: imageUrl })
+    const url = buildUrl(`${origin}/images`, { url: imageUrl })
     return requests_.get(url, reqOptions)
   }
 }
