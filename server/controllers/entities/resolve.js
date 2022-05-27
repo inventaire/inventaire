@@ -1,4 +1,4 @@
-const { oneHour } = require('lib/time')
+const { oneDay } = require('lib/time')
 const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_create')
 
 // Entry example:
@@ -47,7 +47,7 @@ const sanitization = {
 }
 
 const controller = async (params, req) => {
-  req.setTimeout(oneHour)
+  req.setTimeout(oneDay)
   const { resolvedEntries, errors } = await resolveUpdateAndCreate(params)
   const data = { entries: resolvedEntries }
   if (!params.strict) data.errors = errors.map(formatError)
