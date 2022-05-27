@@ -4,17 +4,17 @@ const cache_ = require('lib/cache')
 const { oneWeek } = require('lib/time')
 const { buildUrl } = require('lib/utils/url')
 
-module.exports = (name, endpoint, getQuery, requestOptions) => id => {
-  const key = `${name}:author-works-titles:${id}`
-  return cache_.get({
-    key,
-    fn: makeRequest.bind(null, endpoint, getQuery(id), requestOptions),
-    ttl: oneWeek,
-  })
-  .catch(err => {
+module.exports = (name, endpoint, getQuery, requestOptions) => async id => {
+  try {
+    return await cache_.get({
+      key: `${name}:author-works-titles:${id}`,
+      fn: makeRequest.bind(null, endpoint, getQuery(id), requestOptions),
+      ttl: oneWeek,
+    })
+  } catch (err) {
     _.error(err, `${name} error fetching ${id}`)
     return []
-  })
+  }
 }
 
 const makeRequest = async (endpoint, query, requestOptions = {}) => {
