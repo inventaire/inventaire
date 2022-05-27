@@ -16,11 +16,12 @@ const alwaysWaitForSavedValue = require('config').env.startsWith('tests')
 module.exports = {
   // - key: the cache key
   // - fn: a function with its context and arguments binded
-  // - refresh: alias for timespan=0
+  // - refresh: force a cache miss
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
   // - dryAndCache: return what's in cache, but will then populate the cache in the background
+  // - ttl: customize how long the cached data should be kept before being deleted
   get: async params => {
     const { key, fn, refresh, dryFallbackValue, ttl = oneMonth } = params
     let { dry, dryAndCache } = params

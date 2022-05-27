@@ -28,6 +28,7 @@ module.exports = {
   fiveMinutes: 5 * oneMinute,
   oneHour,
   oneDay,
+  oneWeek: 7 * oneDay,
   oneMonth: 30 * oneDay,
   oneYear: 365 * oneDay,
 

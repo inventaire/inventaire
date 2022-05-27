@@ -1,16 +1,15 @@
 const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const cache_ = require('lib/cache')
-const { oneMonth } = require('lib/time')
+const { oneWeek } = require('lib/time')
 const { buildUrl } = require('lib/utils/url')
-const timespan = 3 * oneMonth
 
 module.exports = (name, endpoint, getQuery, requestOptions) => id => {
   const key = `${name}:author-works-titles:${id}`
   return cache_.get({
     key,
     fn: makeRequest.bind(null, endpoint, getQuery(id), requestOptions),
-    timespan
+    ttl: oneWeek,
   })
   .catch(err => {
     _.error(err, `${name} error fetching ${id}`)
