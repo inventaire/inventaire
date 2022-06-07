@@ -3,6 +3,7 @@ const { expired } = require('lib/time')
 const should = require('should')
 
 const Item = require('models/item')
+const { shouldNotBeCalled } = require('tests/unit/utils')
 
 const someUserId = '1234567890a1234567890b1234567890'
 const create = Item.create.bind(null, someUserId)
@@ -10,7 +11,7 @@ const update = Item.update.bind(null, someUserId)
 
 const validItem = {
   entity: 'wd:Q35160',
-  listing: 'public',
+  visibility: [ 'public' ],
   transaction: 'giving'
 }
 
@@ -48,20 +49,24 @@ describe('item model', () => {
       })
     })
 
-    describe('listing', () => {
-      it('should return an object with a listing', () => {
+    describe('visibility', () => {
+      it('should return an object with a visibility', () => {
         const item = create(validItem)
-        item.listing.should.equal(validItem.listing)
+        item.visibility.should.deepEqual(validItem.visibility)
       })
 
-      it('should use a default listing value', () => {
-        const item = create(extendItem({ listing: null }))
-        item.listing.should.equal('private')
+      it('should use a default visibility value', () => {
+        const item = create(extendItem({ visibility: null }))
+        item.visibility.should.deepEqual([])
       })
 
-      it('should throw on invalid listing value', () => {
-        const createItem = () => create(extendItem({ listing: 'notalist' }))
-        createItem.should.throw('invalid listing: notalist')
+      it('should throw on invalid visibility value', () => {
+        try {
+          const item = create(extendItem({ visibility: [ 'notalist' ] }))
+          shouldNotBeCalled(item)
+        } catch (err) {
+          err.message.should.startWith('invalid visibility')
+        }
       })
     })
 
@@ -105,7 +110,7 @@ describe('item model', () => {
   describe('update', () => {
     it('should not throw when updated with a valid attribute', () => {
       const doc = create(validItem)
-      const updateAttributesData = { listing: 'private' };
+      const updateAttributesData = { visibility: [] };
       (() => update(updateAttributesData, doc)).should.not.throw()
     })
 
@@ -117,7 +122,7 @@ describe('item model', () => {
 
     it('should throw when updated with an invalid attribute value', () => {
       const doc = create(validItem)
-      const updateAttributesData = { listing: 'chocolat' };
+      const updateAttributesData = { visibility: [ 'chocolat' ] };
       (() => update(updateAttributesData, doc)).should.throw()
     })
   })

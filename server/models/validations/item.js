@@ -14,9 +14,7 @@ module.exports = {
   transaction: transaction => {
     return constrained.transaction.possibilities.includes(transaction)
   },
-  listing: listing => {
-    return constrained.listing.possibilities.includes(listing)
-  },
+  visibility: require('./visibility'),
   details: _.isString,
   notes: _.isString,
   snapshotValidations: {
