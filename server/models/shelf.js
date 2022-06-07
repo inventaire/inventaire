@@ -16,7 +16,7 @@ module.exports = {
       if (!attributes.validAtCreation.includes(attribute)) {
         throw error_.new('invalid attribute', 400, { attribute, shelf })
       }
-      const value = shelf[attribute] || defaultValues[attribute]
+      const value = shelf[attribute] || defaultValues[attribute]?.()
       validations.pass(attribute, value)
       newShelf[attribute] = value
     })
@@ -42,7 +42,7 @@ module.exports = {
 
     const updatedShelf = _.clone(oldShelf)
     for (const attr of Object.keys(newAttributes)) {
-      const newVal = newAttributes[attr] || defaultValues[attr]
+      const newVal = newAttributes[attr] || defaultValues[attr]?.()
       validations.pass(attr, newVal)
       updatedShelf[attr] = newVal
     }
@@ -57,6 +57,6 @@ module.exports = {
 }
 
 const defaultValues = {
-  description: '',
-  visibility: []
+  description: () => '',
+  visibility: () => []
 }
