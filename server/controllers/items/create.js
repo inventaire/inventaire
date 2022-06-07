@@ -2,9 +2,9 @@ const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
 const snapshot_ = require('./lib/snapshot/snapshot')
 const error_ = require('lib/error/error')
-const { Track } = require('lib/track')
+const { track } = require('lib/track')
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   let { body: items, user } = req
   const singleItemMode = _.isPlainObject(items)
 
@@ -14,20 +14,20 @@ module.exports = (req, res) => {
 
   for (const item of items) {
     const { entity: entityUri } = item
-    if (entityUri == null) return error_.bundleMissingBody(req, res, 'entity')
+    if (entityUri == null) throw error_.newMissingBody('entity')
 
     if (!_.isEntityUri(entityUri)) {
-      return error_.bundleInvalid(req, res, 'entity', entityUri)
+      throw error_.newInvalid('entity', entityUri)
     }
   }
 
-  return items_.create(user._id, items)
-  .then(getItemsWithSnapshots(singleItemMode))
-  .then(data => res.status(201).json(data))
-  .then(Track(req, [ 'item', 'creation', null, items.length ]))
+  const itemsDocs = await items_.create(user._id, items)
+  const itemsWithSnaphots = await getItemsWithSnapshots(itemsDocs, singleItemMode)
+  res.status(201).json(itemsWithSnaphots)
+  track(req, [ 'item', 'creation', null, items.length ])
 }
 
-const getItemsWithSnapshots = singleItemMode => async itemsDocs => {
+const getItemsWithSnapshots = async (itemsDocs, singleItemMode) => {
   // When only one item was sent, without being wrapped in an array
   // return the created item object, instead of an array
   if (singleItemMode) {
