@@ -53,5 +53,5 @@ module.exports = {
 
 const defaultValues = {
   description: '',
-  listing: 'private'
+  visibility: []
 }

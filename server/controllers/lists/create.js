@@ -3,7 +3,10 @@ const lists_ = require('controllers/lists/lib/lists')
 const sanitization = {
   name: {},
   description: { optional: true },
-  visibility: {}
+  visibility: {
+    optional: true,
+    default: []
+  },
 }
 
 const controller = async params => {
