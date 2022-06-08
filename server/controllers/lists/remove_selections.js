@@ -16,9 +16,7 @@ const controller = async ({ id, uris, reqUserId }, req, res) => {
 
   lists_.validateOwnership(reqUserId, list)
 
-  const selectionsToDelete = []
-  const notFoundUris = []
-  filterFoundSelectionsUris(list.selections, uris, selectionsToDelete, notFoundUris)
+  const { foundSelections: selectionsToDelete, notFoundUris } = filterFoundSelectionsUris(list.selections, uris)
   if (selectionsToDelete.length === 0) {
     throw error_.notFound({ uris })
   }

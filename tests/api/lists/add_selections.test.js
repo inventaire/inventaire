@@ -1,6 +1,6 @@
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
-const { createList } = require('../fixtures/lists')
+const { createList, createSelection } = require('../fixtures/lists')
 const { createEdition, someFakeUri } = require('../fixtures/entities')
 
 const endpoint = '/api/lists?action='
@@ -59,7 +59,23 @@ describe('lists:add-selections', () => {
     firstList.selections[0].uri.should.equal(uri)
   })
 
-  it('should reject adding a selection to a list of another user', async () => {
+  it('should not add twice a selection already in list', async () => {
+    const { list, uri } = await createSelection({})
+
+    const res = await authReq('post', `${endpoint}add-selections`, {
+      id: list._id,
+      uris: [ uri ]
+    })
+    res.ok.should.be.true()
+    res.alreadyInList[0].uri.should.equal(uri)
+
+    const { lists } = await authReq('get', `${byIds}&ids=${list._id}`)
+    const firstList = lists[list._id]
+    firstList.selections.length.should.equal(1)
+    firstList.selections[0].uri.should.equal(uri)
+  })
+
+  it('should reject adding a selection to a list of another creator', async () => {
     try {
       const { list } = await createList(getUserB())
       const { uri } = await createEdition()

@@ -10,12 +10,11 @@ const controller = async ({ id, uris, reqUserId }) => {
   const list = await lists_.getListWithSelections(id, uris, reqUserId)
   if (!list) throw error_.notFound({ id })
   lists_.validateOwnership(reqUserId, list)
-  await lists_.addSelection({ list, uris, userId: reqUserId })
-  return { ok: true }
+  return lists_.addSelections({ list, uris, userId: reqUserId })
 }
 
 module.exports = {
   sanitization,
   controller,
-  track: [ 'list', 'addSelection' ]
+  track: [ 'list', 'addSelections' ]
 }

@@ -45,13 +45,15 @@ const lists_ = module.exports = {
     return db.putAndReturn(updatedList)
   },
   bulkDelete: db.bulkDelete,
-  addSelection: async ({ list, uris, userId }) => {
+  addSelections: async ({ list, uris, userId }) => {
     const currentSelections = list.selections
-    const notFoundUris = []
-    filterFoundSelectionsUris(currentSelections, uris, null, notFoundUris)
+    const { foundSelections, notFoundUris } = filterFoundSelectionsUris(currentSelections, uris)
     await validateExistingEntities(notFoundUris)
-    return selections_.create({ uris: notFoundUris, list, userId })
-    .then(() => { return { ok: true } })
+    await selections_.create({ uris: notFoundUris, list, userId })
+    if (_.isNonEmptyArray(foundSelections)) {
+      return { ok: true, alreadyInList: foundSelections }
+    }
+    return { ok: true }
   },
   validateOwnership: (userId, lists) => {
     lists = _.forceArray(lists)

@@ -57,6 +57,12 @@ describe('lists:by-ids', () => {
 
   describe('with-selections', () => {
     it('should get lists with selections', async () => {
+      const { list } = await createList()
+      const res = await authReq('get', `${endpoint}&ids=${list._id}&with-selections=true`)
+      res.lists[list._id].selections.should.be.deepEqual([])
+    })
+
+    it('should get lists with selections', async () => {
       const { uri, list } = await createSelection({})
       const res = await authReq('get', `${endpoint}&ids=${list._id}&with-selections=true`)
       const { selections } = res.lists[list._id]
