@@ -42,32 +42,28 @@ const groups_ = module.exports = {
     .then(groups => _.union(...groups))
   },
 
-  create: options => {
-    return Promise.resolve()
-    .then(() => Group.create(options))
-    .then(addSlug)
-    .then(db.postAndReturn)
-    .then(_.Log('group created'))
+  create: async options => {
+    const group = Group.create(options)
+    await addSlug(group)
+    return db.postAndReturn(group).then(_.Log('group created'))
   },
 
-  getUserGroupsCoMembers: userId => {
-    return groups_.byUser(userId)
-    .then(lists_.allGroupsMembers)
+  getUserGroupsCoMembers: async userId => {
+    const groups = await groups_.byUser(userId)
+    const usersIds = lists_.allGroupsMembers(groups)
     // Deduplicate and remove the user own id from the list
-    .then(usersIds => _.uniq(_.without(usersIds, userId)))
+    return _.uniq(_.without(usersIds, userId))
   },
 
-  userInvited: (userId, groupId) => {
-    return groups_.byId(groupId)
-    .then(_.partial(Group.findInvitation, userId, _, true))
+  userInvited: async (userId, groupId) => {
+    const group = await groups_.byId(groupId)
+    return Group.findInvitation(userId, group, true)
   },
 
-  getGroupMembersIds: groupId => {
-    return groups_.byId(groupId)
-    .then(group => {
-      if (group == null) throw error_.notFound({ group: groupId })
-      return Group.getAllMembersIds(group)
-    })
+  getGroupMembersIds: async groupId => {
+    const group = await groups_.byId(groupId)
+    if (group == null) throw error_.notFound({ group: groupId })
+    return Group.getAllMembersIds(group)
   },
 
   byPosition: searchGroupsByPosition,

@@ -10,12 +10,10 @@ const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
 module.exports = {
   get: getSlug,
 
-  add: group => {
-    return getSlug(group.name, group._id)
-    .then(slug => {
-      group.slug = slug
-      return group
-    })
+  add: async group => {
+    const slug = await getSlug(group.name, group._id)
+    group.slug = slug
+    return group
   }
 }
 
