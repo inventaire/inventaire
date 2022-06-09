@@ -5,6 +5,8 @@ const { getUserFriends } = require('controllers/relations/lib/lists')
 const { allGroupMembers: parseAllGroupMembersIds } = require('server/controllers/groups/lib/users_lists')
 
 module.exports = async (docs, reqUserId) => {
+  if (!reqUserId) return docs.filter(isPublic)
+
   // Optimizing for the case where all requested docs belong to the requester
   // as that's a frequent case
   if (docs.every(isOwnedByReqUser(reqUserId))) return docs
@@ -19,11 +21,10 @@ module.exports = async (docs, reqUserId) => {
   return docs.filter(isVisible({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }))
 }
 
+const isPublic = doc => doc.visibility.includes('public')
 const isOwnedByReqUser = reqUserId => doc => doc.owner === reqUserId
 
 const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
-  if (!reqUserId) return []
-
   const allVisibilityKeys = _.uniq(_.map(docs, 'visibility').flat())
 
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)
