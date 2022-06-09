@@ -21,7 +21,7 @@ describe('items:create', () => {
     const userId = user._id
     const item = await authReq('post', '/api/items', { entity: editionUri })
     item.entity.should.equal(editionUri)
-    item.listing.should.equal('private')
+    item.visibility.should.deepEqual([])
     item.transaction.should.equal('inventorying')
     item.owner.should.equal(userId)
   })
@@ -33,15 +33,15 @@ describe('items:create', () => {
     ])
     const userId = user._id
     const items = await authReq('post', '/api/items', [
-      { entity: editionUri, listing: 'network', transaction: 'giving' },
-      { entity: editionUri, listing: 'public', transaction: 'lending' }
+      { entity: editionUri, visibility: [ 'friends', 'groups' ], transaction: 'giving' },
+      { entity: editionUri, visibility: [ 'public' ], transaction: 'lending' }
     ])
     items[0].entity.should.equal(editionUri)
-    items[0].listing.should.equal('network')
+    items[0].visibility.should.deepEqual([ 'friends', 'groups' ])
     items[0].transaction.should.equal('giving')
     items[0].owner.should.equal(userId)
     items[1].entity.should.equal(editionUri)
-    items[1].listing.should.equal('public')
+    items[1].visibility.should.deepEqual([ 'public' ])
     items[1].transaction.should.equal('lending')
     items[1].owner.should.equal(userId)
   })
@@ -50,7 +50,7 @@ describe('items:create', () => {
     it('should increment the user items counter', async () => {
       const userPromise = createUser()
       const timestamp = Date.now()
-      await createItem(userPromise, { listing: 'public' })
+      await createItem(userPromise, { visibility: [ 'public' ] })
       await wait(debounceDelay)
       const user = await getRefreshedUser(userPromise)
       user.snapshot.public['items:count'].should.equal(1)
@@ -63,9 +63,9 @@ describe('items:create', () => {
     it('should keep the snapshot data updated even when created in bulk', async () => {
       const user = await createUser()
       await Promise.all([
-        createItem(user, { listing: 'public' }),
-        createItem(user, { listing: 'network' }),
-        createItem(user, { listing: 'private' })
+        createItem(user, { visibility: [ 'public' ] }),
+        createItem(user, { visibility: [ 'friends', 'groups' ] }),
+        createItem(user, { visibility: [] })
       ])
       await wait(debounceDelay)
       const refreshedUser = await getRefreshedUser(user)

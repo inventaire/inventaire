@@ -24,7 +24,7 @@ const API = module.exports = {
 
   createItem: async (user, itemData = {}) => {
     user = user || getUser()
-    itemData.listing = itemData.listing || 'public'
+    itemData.visibility = itemData.visibility || [ 'public' ]
     await addDefaultEntity(itemData)
     const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
     return item
@@ -40,10 +40,16 @@ const API = module.exports = {
 }
 
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
-const listings = [ 'private', 'network', 'public' ]
+const someVisibilityValues = [
+  [],
+  [ 'friends' ],
+  [ 'groups' ],
+  [ 'friends', 'groups' ],
+  [ 'public' ],
+]
 
 const fillItemWithRandomData = (itemData = {}) => {
-  itemData.listing = itemData.listing || _.sample(listings)
+  itemData.visibility = itemData.visibility || _.sample(someVisibilityValues)
   itemData.transaction = itemData.transaction || _.sample(transactions)
   itemData.details = fakeText.sentence()
   itemData.notes = fakeText.sentence()
