@@ -22,6 +22,8 @@ module.exports = async (docs, reqUserId) => {
 const isOwnedByReqUser = reqUserId => doc => doc.owner === reqUserId
 
 const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
+  if (!reqUserId) return []
+
   const allVisibilityKeys = _.uniq(_.map(docs, 'visibility').flat())
 
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)

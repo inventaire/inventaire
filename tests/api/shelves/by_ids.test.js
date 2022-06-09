@@ -93,6 +93,16 @@ describe('shelves:by-ids', () => {
         err.statusCode.should.equal(403)
       })
     })
+
+    it('should not return a friends-only shelf to a public request', async () => {
+      const [ userA ] = await getTwoFriends()
+      const { shelf } = await createShelf(userA, { visibility: [ 'friends' ] })
+      await publicReq('get', `${endpoint}&ids=${shelf._id}`)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(401)
+      })
+    })
   })
 
   describe('visibility:groups', () => {
@@ -110,6 +120,16 @@ describe('shelves:by-ids', () => {
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(403)
+      })
+    })
+
+    it('should not return a groups-only shelf to a public request', async () => {
+      const { member } = await getSomeGroupWithAMember()
+      const { shelf } = await createShelf(member, { visibility: [ 'groups' ] })
+      await publicReq('get', `${endpoint}&ids=${shelf._id}`)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(401)
       })
     })
   })
