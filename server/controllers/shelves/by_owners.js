@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const filterVisibleDocs = require('lib/filter_visible_docs')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 
 const sanitization = {
   owners: {},

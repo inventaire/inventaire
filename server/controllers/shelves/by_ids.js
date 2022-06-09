@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { byIds, byIdsWithItems } = require('controllers/shelves/lib/shelves')
 const { addWarning } = require('lib/responses')
-const filterVisibleDocs = require('lib/filter_visible_docs')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const error_ = require('lib/error/error')
 
 const sanitization = {

@@ -6,7 +6,7 @@ const db = require('db/couchdb/base')('shelves')
 const error_ = require('lib/error/error')
 const { emit } = require('lib/radio')
 const { updatable: updateAttributes } = require('models/attributes/shelf')
-const { validateVisibilityKeys } = require('controllers/shelves/lib/visibility')
+const { validateVisibilityKeys } = require('lib/visibility/visibility')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
