@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
-require('should')
-const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = require('tests/api/utils/utils')
+const should = require('should')
+const { getUser, authReq, publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter, customAuthReq } = require('tests/api/utils/utils')
 const { getSomeGroup, addMember } = require('../fixtures/groups')
 const { createItem, createItems } = require('../fixtures/items')
 const { humanName } = require('../fixtures/entities')
@@ -43,41 +43,63 @@ describe('items:get-by-ids', () => {
     res.users[0]._id.should.equal(item.owner)
   })
 
-  it('should include public items of other users', async () => {
-    const item = await createItem(userPromise, { listing: 'public' })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items.map(_.property('_id')).should.containEql(item._id)
+  describe('private attributes', () => {
+    it('should remove private attributes when requested by non-owner users', async () => {
+      const item = await createItem(userPromise, { visibility: [ 'public' ] })
+      const res = await publicReq('get', `${endpoint}&ids=${item._id}`)
+      should(res.items[0].visibility).not.be.ok()
+    })
+
+    it('should include private attributes when requested by owner', async () => {
+      const item = await createItem(userPromise, { visibility: [ 'public' ] })
+      const res = await customAuthReq(userPromise, 'get', `${endpoint}&ids=${item._id}`)
+      should(res.items[0].visibility).be.ok()
+    })
   })
 
-  it('should not include private items of other users', async () => {
-    const item = await createItem(userPromise, { listing: 'private' })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items.map(_.property('_id')).should.not.containEql(item._id)
+  describe('visibility:public', () => {
+    it('should include public items of other users', async () => {
+      const item = await createItem(userPromise, { visibility: [ 'public' ] })
+      const res = await publicReq('get', `${endpoint}&ids=${item._id}`)
+      _.map(res.items, '_id').should.containEql(item._id)
+    })
   })
 
-  it('should include group items of other group users', async () => {
-    await addMember(getSomeGroup(), userPromise)
-    const item = await createItem(userPromise, { listing: 'network' })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items.map(_.property('_id')).should.containEql(item._id)
+  describe('visibility:private', () => {
+    it('should not include private items of other users', async () => {
+      const item = await createItem(userPromise, { visibility: [] })
+      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      _.map(res.items, '_id').should.not.containEql(item._id)
+    })
   })
 
-  it('should not include group items of other group users', async () => {
-    const userPromise = getUserGetter(humanName())()
-    const item = await createItem(userPromise, { listing: 'network' })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items.map(_.property('_id')).should.not.containEql(item._id)
+  describe('visibility:groups', () => {
+    it('should include group items of other group users', async () => {
+      await addMember(getSomeGroup(), userPromise)
+      const item = await createItem(userPromise, { visibility: [ 'groups' ] })
+      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      _.map(res.items, '_id').should.containEql(item._id)
+    })
+
+    it('should not include group items of non-group co-members', async () => {
+      const userPromise = getUserGetter(humanName())()
+      const item = await createItem(userPromise, { visibility: [ 'groups' ] })
+      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      _.map(res.items, '_id').should.not.containEql(item._id)
+    })
   })
 
-  it('should include shelves id', async () => {
-    const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items[0].shelves.should.deepEqual([ shelf._id ])
-  })
+  describe('shelves', () => {
+    it('should include shelves id', async () => {
+      const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
+      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      res.items[0].shelves.should.deepEqual([ shelf._id ])
+    })
 
-  xit('should not include private shelf id', async () => {
-    const { item } = await createShelfWithItem({ visibility: [] })
-    const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-    res.items[0].shelves.should.deepEqual([])
+    xit('should not include private shelf id', async () => {
+      const { item } = await createShelfWithItem({ visibility: [] })
+      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      res.items[0].shelves.should.deepEqual([])
+    })
   })
 })
