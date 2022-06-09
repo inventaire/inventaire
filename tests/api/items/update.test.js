@@ -52,12 +52,12 @@ describe('items:update', () => {
     // Delay to let the time to the item counter to be updated
     await wait(debounceDelay)
     const userBefore = await getUser()
-    item.listing.should.equal('private')
-    const newListing = item.listing = 'public'
+    item.visibility.should.deepEqual([])
+    const newVisibility = item.visibility = [ 'public' ]
     const updatedItem = await authReq('put', '/api/items', item)
     // Delay to request the user after its items count was updated
     await wait(debounceDelay)
-    updatedItem.listing.should.equal(newListing)
+    updatedItem.visibility.should.deepEqual(newVisibility)
     const userAfter = await getUser()
     const countChange = CountChange(userBefore.snapshot, userAfter.snapshot)
     countChange('private').should.equal(-1)
@@ -67,7 +67,7 @@ describe('items:update', () => {
 
   it('should reject item from another owner', async () => {
     const item = await authReqB('post', '/api/items', newItemBase())
-    item.listing = 'public'
+    item.visibility = [ 'public' ]
     await authReq('put', '/api/items', item)
     .then(shouldNotBeCalled)
     .catch(err => {
