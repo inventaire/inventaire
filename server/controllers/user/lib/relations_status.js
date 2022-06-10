@@ -10,13 +10,6 @@ module.exports = {
     return relations_.getUserRelations(userId)
   },
 
-  getRelationsStatuses: async (userId, usersIds) => {
-    if (userId == null) return [ [], [], usersIds ]
-
-    return getFriendsAndGroupCoMembers(userId)
-    .then(spreadRelations(usersIds))
-  },
-
   areFriendsOrGroupCoMembers: (userId, otherId) => {
     assert_.strings([ userId, otherId ])
     return getFriendsAndGroupCoMembers(userId)
@@ -28,24 +21,6 @@ module.exports = {
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
   },
-}
-
-const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {
-  const friends = []
-  const coGroupMembers = []
-  const publik = []
-
-  for (const id of usersIds) {
-    if (friendsIds.includes(id)) {
-      friends.push(id)
-    } else if (coGroupMembersIds.includes(id)) {
-      coGroupMembers.push(id)
-    } else {
-      publik.push(id)
-    }
-  }
-
-  return [ friends, coGroupMembers, publik ]
 }
 
 const getFriendsAndGroupCoMembers = userId => Promise.all([

@@ -5,8 +5,8 @@ const snapshot_ = require('./snapshot/snapshot')
 
 const filters = {
   // Prevent showing private items in group context to avoid giving the false
-  // impresssion that those are visible by other members of the group
-  group: item => item.listing !== 'private'
+  // impression that those are visible by other members of the group
+  group: item => item.visibility.length > 0
 }
 
 const validFilters = Object.keys(filters)

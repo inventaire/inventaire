@@ -4,6 +4,11 @@ module.exports = {
       emit(doc.created, [ doc._id, doc.title ])
     }
   },
+  byOwner: {
+    map: doc => {
+      emit(doc.owner, null)
+    }
+  },
   byListing: {
     map: doc => {
       if (doc.listing != null) {
@@ -43,9 +48,9 @@ module.exports = {
       }
     }
   },
-  byOwnerAndEntityAndListing: {
+  byOwnerAndEntity: {
     map: doc => {
-      emit([ doc.owner, doc.entity, doc.listing ], null)
+      emit([ doc.owner, doc.entity ], null)
     }
   },
   byEntity: {

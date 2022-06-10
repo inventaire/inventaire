@@ -44,6 +44,7 @@ const groups_ = module.exports = {
   },
 
   getUserGroupsIds: async userId => {
+    assert_.string(userId)
     const { rows } = await db.view('groups', 'byUser', {
       include_docs: false,
       key: userId,

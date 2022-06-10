@@ -5,7 +5,6 @@ const assert_ = require('lib/utils/assert_types')
 const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const { maxKey } = require('lib/couch')
 const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
@@ -17,13 +16,8 @@ const validateEntityAndShelves = require('./validate_entity_and_shelves')
 const items_ = module.exports = {
   byId: db.get,
   byIds: db.byIds,
-  byOwner: ownerId => {
-    return db.viewCustom('byOwnerAndEntityAndListing', {
-      startkey: [ ownerId ],
-      endkey: [ ownerId, maxKey, maxKey ],
-      include_docs: true
-    })
-  },
+  byOwner: ownerId => db.viewByKeys('byOwner', [ ownerId ]),
+  byOwners: ownersIds => db.viewByKeys('byOwner', ownersIds),
 
   byEntity: entityUri => {
     assert_.string(entityUri)

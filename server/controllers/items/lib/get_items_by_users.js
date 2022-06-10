@@ -1,55 +1,21 @@
-const _ = require('builders/utils')
 const { addAssociatedData, Paginate } = require('./queries_commons')
-const getByAccessLevel = require('./get_by_access_level')
-const { getRelationsStatuses } = require('controllers/user/lib/relations_status')
+const items_ = require('controllers/items/lib/items')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
+const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
 
-module.exports = (page, usersIds) => {
-  // Allow to pass users ids either through the page object
+module.exports = async (params, usersIds) => {
+  // Allow to pass users ids either through the params object
   // or as an additional argument
-  if (!usersIds) usersIds = page.users
-  const { reqUserId } = page
+  if (!usersIds) usersIds = params.users
+  const { reqUserId } = params
 
-  return getRelations(reqUserId, usersIds)
-  .then(fetchRelationsItems(reqUserId))
-  .then(Paginate(page))
-  .then(addAssociatedData)
-}
-
-const getRelations = async (reqUserId, usersIds) => {
-  // All users are considered public users when the request isn't authentified
-  if (reqUserId == null) return { public: usersIds }
-
-  const relations = {}
-  if (usersIds.includes(reqUserId)) {
-    relations.user = reqUserId
-    usersIds = _.without(usersIds, reqUserId)
-  }
-
-  if (usersIds.length === 0) return relations
-
-  return getRelationsStatuses(reqUserId, usersIds)
-  .then(([ friends, coGroupMembers, publik ]) => {
-    relations.network = friends.concat(coGroupMembers)
-    relations.public = publik
-    return relations
-  })
-}
-
-const fetchRelationsItems = reqUserId => relations => {
-  const itemsPromises = []
-  const { user, network, public: publik } = relations
-
-  if (user) {
-    itemsPromises.push(getByAccessLevel.private(user, reqUserId))
-  }
-
-  if (network) {
-    itemsPromises.push(getByAccessLevel.network(network, reqUserId))
-  }
-
-  if (publik) {
-    itemsPromises.push(getByAccessLevel.public(publik, reqUserId))
-  }
-
-  return Promise.all(itemsPromises).then(_.flatten)
+  // There is room for optimization here, as we are fetching all document
+  // to return just a fraction of it. More filtering could be done at the view level,
+  // possibly using CouchDB Mango queries to let the database handle the filtering
+  // and pagination in a possibly much more efficient way
+  const foundItems = await items_.byOwners(usersIds)
+  const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)
+  const page = Paginate(params)(authorizedItems)
+  page.items = page.items.map(filterPrivateAttributes(reqUserId))
+  return addAssociatedData(page)
 }

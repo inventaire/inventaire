@@ -1,21 +1,21 @@
 const _ = require('builders/utils')
 require('should')
-const { getUser, getUserB, authReq } = require('tests/api/utils/utils')
+const { getUser, getUserB, authReq, publicReq } = require('tests/api/utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const { createItem } = require('../fixtures/items')
 
 describe('items:get-by-users', () => {
-  it('should get an item by id', async () => {
-    const item = await createItem(getUser())
-    const { items } = await authReq('get', `/api/items?action=by-users&users=${item.owner}`)
+  it('should get an item by user', async () => {
+    const item = await createItem(null, { visibility: [ 'public' ] })
+    const { items } = await publicReq('get', `/api/items?action=by-users&users=${item.owner}`)
     items[0]._id.should.equal(item._id)
   })
 
-  it('should get items by ids', async () => {
+  it('should get items by users', async () => {
     const items = await Promise.all([
-      createItem(getUser(), { listing: 'private' }),
-      createItem(getUser(), { listing: 'public' }),
-      createItem(getUserB(), { listing: 'public' })
+      createItem(getUser(), { visibility: [] }),
+      createItem(getUser(), { visibility: [ 'public' ] }),
+      createItem(getUserB(), { visibility: [ 'public' ] })
     ])
     const usersIds = _.map(items.slice(1), 'owner')
     const itemsIds = _.map(items, '_id')
@@ -26,11 +26,11 @@ describe('items:get-by-users', () => {
     resItemsIds.should.containDeep(itemsIds)
   })
 
-  it("should get items by ids with a filter set to 'group'", async () => {
+  it("should get items by users with a filter set to 'group'", async () => {
     const items = await Promise.all([
-      createItem(getUser(), { listing: 'private' }),
-      createItem(getUser(), { listing: 'public' }),
-      createItem(getUserB(), { listing: 'public' })
+      createItem(getUser(), { visibility: [] }),
+      createItem(getUser(), { visibility: [ 'public' ] }),
+      createItem(getUserB(), { visibility: [ 'public' ] })
     ])
     const privateItemId = items[0]._id
     const usersIds = _.map(items.slice(1), 'owner')
