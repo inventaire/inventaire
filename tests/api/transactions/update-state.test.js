@@ -4,7 +4,6 @@ const { authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils
 const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
 const { updateTransaction } = require('../utils/transactions')
 const { getById: getItem } = require('../utils/items')
-const { wait } = require('lib/promises')
 const { getUserC } = require('../utils/utils')
 
 const endpoint = '/api/transactions?action=update-state'
@@ -55,7 +54,6 @@ describe('transactions:update-state', () => {
       it('should be true when the transaction is accepted', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.true()
       })
@@ -63,7 +61,6 @@ describe('transactions:update-state', () => {
       it('should be false when the transaction is just declined', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'declined')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
       })
@@ -73,7 +70,6 @@ describe('transactions:update-state', () => {
         userBItem.owner.should.equal(userB._id)
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.owner.should.equal(userA._id)
         updatedItem.busy.should.be.false()
@@ -83,7 +79,6 @@ describe('transactions:update-state', () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'cancelled')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
       })
@@ -100,7 +95,6 @@ describe('transactions:update-state', () => {
       it('should be true when the transaction is accepted', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.true()
       })
@@ -108,7 +102,6 @@ describe('transactions:update-state', () => {
       it('should be false when the transaction is just declined', async () => {
         const { transaction, userBItem, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'declined')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
       })
@@ -117,7 +110,6 @@ describe('transactions:update-state', () => {
         const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.true()
       })
@@ -127,7 +119,6 @@ describe('transactions:update-state', () => {
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
         await updateTransaction(userB, transaction, 'returned')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
       })
@@ -137,7 +128,6 @@ describe('transactions:update-state', () => {
         await updateTransaction(userB, transaction, 'accepted')
         await updateTransaction(userA, transaction, 'confirmed')
         await updateTransaction(userA, transaction, 'cancelled')
-        await wait(100)
         const updatedItem = await getItem(userBItem)
         updatedItem.busy.should.be.false()
       })
@@ -149,7 +139,6 @@ describe('transactions:update-state', () => {
       const { transaction: transactionX, userB, userBItem } = await createTransaction()
       const { transaction: transactionY } = await createTransaction({ userA: getUserC(), item: userBItem })
       await updateTransaction(userB, transactionX, 'accepted')
-      await wait(100)
       await updateTransaction(userB, transactionY, 'accepted')
       .then(shouldNotBeCalled)
       .catch(err => {
