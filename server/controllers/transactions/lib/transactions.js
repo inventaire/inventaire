@@ -80,9 +80,8 @@ const transactions_ = module.exports = {
 
   setItemsBusyFlag: async items => {
     assert_.objects(items)
-    if (items.length === 0) return items
-    const itemsIds = _.map(items, '_id')
-    const rows = await getBusyItems(itemsIds)
+    const itemsIdsToCheck = _.map(items.filter(mayBeBusy), '_id')
+    const rows = await getBusyItems(itemsIdsToCheck)
     const busyItemsIds = new Set(_.map(rows, 'key'))
     return items.map(item => {
       item.busy = busyItemsIds.has(item._id)
@@ -91,7 +90,10 @@ const transactions_ = module.exports = {
   }
 }
 
+const mayBeBusy = item => item.transaction !== 'inventorying'
+
 const getBusyItems = async itemsIds => {
+  if (itemsIds.length === 0) return []
   const { rows } = await db.viewKeys('transactions', 'byBusyItem', itemsIds, { include_docs: false })
   return rows
 }
