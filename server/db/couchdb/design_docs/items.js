@@ -56,7 +56,7 @@ module.exports = {
   byEntity: {
     map: doc => {
       if (doc.entity != null) {
-        emit([ doc.entity, doc.listing ], null)
+        emit(doc.entity, null)
       }
     }
   },

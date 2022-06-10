@@ -1,6 +1,5 @@
 const _ = require('builders/utils')
 const Item = require('models/item')
-const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = require('lib/utils/assert_types')
 const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
@@ -19,10 +18,8 @@ const items_ = module.exports = {
   byOwner: ownerId => db.viewByKeys('byOwner', [ ownerId ]),
   byOwners: ownersIds => db.viewByKeys('byOwner', ownersIds),
 
-  byEntity: entityUri => {
-    assert_.string(entityUri)
-    return db.viewByKeys('byEntity', entityUriKeys(entityUri))
-  },
+  byEntity: entityUri => db.viewByKeys('byEntity', [ entityUri ]),
+  byEntities: entitiesUris => db.viewByKeys('byEntity', entitiesUris),
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
@@ -53,15 +50,6 @@ const items_ = module.exports = {
       endkey: [ shelf, since ],
       descending: true,
     })
-  },
-
-  // all items from an entity that require a specific authorization
-  authorizedByEntities: (uris, reqUserId) => {
-    return listingByEntities('network', uris, reqUserId)
-  },
-
-  publicByEntities: (uris, reqUserId) => {
-    return listingByEntities('public', uris, reqUserId)
   },
 
   publicByDate: (limit = 15, offset = 0, assertImage = false, reqUserId) => {
@@ -184,14 +172,6 @@ const formatItems = reqUserId => async items => {
   items = await Promise.all(items.map(snapshot_.addToItem))
   return items.map(filterPrivateAttributes(reqUserId))
 }
-
-const listingByEntities = async (listing, uris, reqUserId) => {
-  const keys = uris.map(uri => [ uri, listing ])
-  const items = await db.viewByKeys('byEntity', keys)
-  return items.map(filterPrivateAttributes(reqUserId))
-}
-
-const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
 
 const filterWithImage = assertImage => items => {
   return Promise.all(items.map(snapshot_.addToItem))
