@@ -25,7 +25,7 @@ module.exports = {
   },
   publicByDate: {
     map: doc => {
-      if (doc.listing === 'public') {
+      if (doc.visibility.includes('public')) {
         emit(doc.created, null)
       }
     }
