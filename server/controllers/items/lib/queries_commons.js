@@ -14,17 +14,17 @@ const validFilters = Object.keys(filters)
 const queriesCommons = module.exports = {
   validFilters,
 
-  addAssociatedData: async page => {
+  addAssociatedData: async (page, reqParams) => {
     await Promise.all([
       queriesCommons.addItemsSnapshots(page.items),
-      queriesCommons.addUsersData(page),
+      queriesCommons.addUsersData(page, reqParams),
       transactions_.setItemsBusyFlag(page.items),
     ])
     return page
   },
 
-  addUsersData: page => {
-    const { reqUserId, includeUsers } = page
+  addUsersData: (page, reqParams) => {
+    const { reqUserId, includeUsers } = reqParams
     if (includeUsers === false) return page
 
     const { items } = page

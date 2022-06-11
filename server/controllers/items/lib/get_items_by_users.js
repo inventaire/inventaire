@@ -17,5 +17,5 @@ module.exports = async (params, usersIds) => {
   const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)
   const page = Paginate(params)(authorizedItems)
   page.items = page.items.map(filterPrivateAttributes(reqUserId))
-  return addAssociatedData(page)
+  return addAssociatedData(page, params)
 }

@@ -4,7 +4,6 @@ const assert_ = require('lib/utils/assert_types')
 const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
 const getByAccessLevel = require('./get_by_access_level')
 const user_ = require('controllers/user/lib/user')
@@ -20,6 +19,11 @@ const items_ = module.exports = {
 
   byEntity: entityUri => db.viewByKeys('byEntity', [ entityUri ]),
   byEntities: entitiesUris => db.viewByKeys('byEntity', entitiesUris),
+
+  byOwnerAndEntities: (ownerId, entitiesUris) => {
+    const keys = entitiesUris.map(uri => [ ownerId, uri ])
+    return db.viewByKeys('byOwnerAndEntity', keys)
+  },
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
@@ -60,20 +64,6 @@ const items_ = module.exports = {
       include_docs: true
     })
     .then(filterWithImage(assertImage))
-    .then(formatItems(reqUserId))
-  },
-
-  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId) => {
-    const keys = []
-    for (const ownerId of ownersIds) {
-      for (const uri of uris) {
-        for (const listing of listingsLists[listingsKey]) {
-          keys.push([ ownerId, uri, listing ])
-        }
-      }
-    }
-
-    return db.viewByKeys('byOwnerAndEntityAndListing', keys)
     .then(formatItems(reqUserId))
   },
 

@@ -63,7 +63,7 @@ describe('items:get-by-user-and-entities', () => {
 
     it('should get a network item', async () => {
       const [ userA, userB ] = await getTwoFriends()
-      const item = await createItemWithEditionAndWork(userA, { listing: 'network' })
+      const item = await createItemWithEditionAndWork(userA, { visibility: [ 'friends' ] })
       const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       const foundItem = items[0]
       foundItem._id.should.equal(item._id)
@@ -72,7 +72,7 @@ describe('items:get-by-user-and-entities', () => {
     })
 
     it('should get a private item', async () => {
-      const item = await createItemWithEditionAndWork(getUser(), { listing: 'private' })
+      const item = await createItemWithEditionAndWork(getUser(), { visibility: [] })
       const { items } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       const foundItem = items[0]
       foundItem._id.should.equal(item._id)
@@ -83,14 +83,14 @@ describe('items:get-by-user-and-entities', () => {
 
   describe('without access rights', () => {
     it('should not get a network item', async () => {
-      const item = await createItemWithEditionAndWork(getUser(), { listing: 'network' })
+      const item = await createItemWithEditionAndWork(getUser(), { visibility: [ 'friends' ] })
       const { items } = await publicReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       items.length.should.equal(0)
     })
 
     it('should not get a private item', async () => {
       const [ userA, userB ] = await getTwoFriends()
-      const item = await createItemWithEditionAndWork(userA, { listing: 'private' })
+      const item = await createItemWithEditionAndWork(userA, { visibility: [] })
       const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       items.length.should.equal(0)
     })
