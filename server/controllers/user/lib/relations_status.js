@@ -10,9 +10,14 @@ const areFriends = async (userId, otherId) => {
   return relationStatus === 'friends'
 }
 
+const getSharedGroupsIds = async (userAId, userBId) => {
+  const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getUsersGroupsIds([ userAId, userBId ])
+  return intersection(aGroupsIds, bGroupsIds)
+}
+
 const areGroupsCoMembers = async (userId, otherId) => {
-  const coGroupMembersIds = await groups_.getUserGroupsCoMembers(userId)
-  return coGroupMembersIds.includes(otherId)
+  const sharedGroupsIds = await getSharedGroupsIds(userId, otherId)
+  return sharedGroupsIds.length > 0
 }
 
 module.exports = {
@@ -33,10 +38,7 @@ module.exports = {
     return a || b
   },
 
-  getSharedGroupsIds: async (userAId, userBId) => {
-    const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getUsersGroupsIds([ userAId, userBId ])
-    return intersection(aGroupsIds, bGroupsIds)
-  },
+  getSharedGroupsIds,
 
   getNetworkIds: async userId => {
     if (userId == null) return []
