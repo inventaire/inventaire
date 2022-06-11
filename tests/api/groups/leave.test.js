@@ -5,7 +5,11 @@ const { getGroup } = require('tests/api/utils/groups')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const endpoint = '/api/groups?action=leave'
 
-const groupAndMemberPromise = createGroupAndMember()
+let someReservedGroupPromise
+const getGroupAndMember = () => {
+  someReservedGroupPromise = someReservedGroupPromise || createGroupAndMember()
+  return someReservedGroupPromise
+}
 
 describe('groups:update:leave', () => {
   it('should reject without group', async () => {
@@ -18,7 +22,7 @@ describe('groups:update:leave', () => {
   })
 
   it('should reject leaving non group members', async () => {
-    const [ group ] = await groupAndMemberPromise
+    const { group } = await getGroupAndMember()
     await authReqC('put', endpoint, { group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -28,7 +32,7 @@ describe('groups:update:leave', () => {
   })
 
   it('should reject last admin to leave', async () => {
-    const [ group ] = await groupAndMemberPromise
+    const { group } = await getGroupAndMember()
     await authReq('put', endpoint, { group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -38,7 +42,7 @@ describe('groups:update:leave', () => {
   })
 
   it('should leave group', async () => {
-    const [ group, member ] = await groupAndMemberPromise
+    const { group, member } = await getGroupAndMember()
     const memberCount = group.members.length
     await customAuthReq(member, 'put', endpoint, { group: group._id })
     const updatedGroup = await getGroup(group)

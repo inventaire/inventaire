@@ -73,3 +73,8 @@ attributes.snapshot = [
   'entity',
   'details'
 ]
+
+attributes.notIndexed = [
+  'previousEntity',
+  'notes',
+]

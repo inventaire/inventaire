@@ -30,7 +30,10 @@ const getVisibilitySummaryKey = visibilityKeys => {
   return 'network'
 }
 
+const getGroupVisibilityKey = groupId => `group:${groupId}`
+
 module.exports = {
   validateVisibilityKeys,
   getVisibilitySummaryKey,
+  getGroupVisibilityKey,
 }

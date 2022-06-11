@@ -43,4 +43,8 @@ module.exports = {
   fullTerms: { properties: getTermsProperties(fullText) },
   text: { type: 'text' },
   flattenedTerms: autocompleteText,
+  // Array types are equivalent to there values type,
+  // see https://www.elastic.co/guide/en/elasticsearch/reference/current/array.html
+  // so those are just aliases for documentation purpose
+  keywordArray: { type: 'keyword' },
 }

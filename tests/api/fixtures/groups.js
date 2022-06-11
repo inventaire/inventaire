@@ -52,7 +52,8 @@ const createAndAddMember = async user => {
 
 const createGroupAndMember = async () => {
   const member = await getReservedUser()
-  return Promise.all([ createAndAddMember(member), member ])
+  const group = await createAndAddMember(member)
+  return { group, member }
 }
 
 const groupName = () => fakeText.randomWords(3, ' group')

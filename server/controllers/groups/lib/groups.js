@@ -52,6 +52,18 @@ const groups_ = module.exports = {
     return _.map(rows, 'id')
   },
 
+  getUsersGroupsIds: async usersIds => {
+    assert_.strings(usersIds)
+    const { rows } = await db.view('groups', 'byUser', {
+      include_docs: false,
+      keys: usersIds,
+    })
+    const groupsIdsByMembersIds = {}
+    usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
+    rows.forEach(({ id: groupId, key: userId }) => groupsIdsByMembersIds[userId].push(groupId))
+    return groupsIdsByMembersIds
+  },
+
   create: async options => {
     const group = Group.create(options)
     await addSlug(group)
