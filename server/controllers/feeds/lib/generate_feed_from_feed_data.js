@@ -5,6 +5,7 @@ const serializeFeed = require('./serialize_feed')
 const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')
 const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 const user_ = require('controllers/user/lib/user')
+const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
 
 module.exports = lang => async ({ accessLevel, reqUserId, feedOptions, users, shelves }) => {
   users = users.map(user_.serializeData)
@@ -15,6 +16,7 @@ module.exports = lang => async ({ accessLevel, reqUserId, feedOptions, users, sh
   } else {
     items = await getLastItemsFromUsersIds(usersIds, accessLevel)
   }
+  items = items.map(filterPrivateAttributes(reqUserId))
   return serializeFeed(feedOptions, users, items, lang)
 }
 
