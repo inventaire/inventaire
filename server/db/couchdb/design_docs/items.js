@@ -9,6 +9,36 @@ module.exports = {
       emit(doc.owner, null)
     }
   },
+  byOwnerAndVisibilityKey: {
+    map: doc => {
+      emit([ doc.owner, 'private' ], null)
+      for (const visibilityKey of doc.visibility) {
+        emit([ doc.owner, visibilityKey ], null)
+      }
+    }
+  },
+  byOwnerAndVisibilityKeyWithoutShelf: {
+    map: doc => {
+      if (doc.shelves == null || doc.shelves.length === 0) {
+        emit([ doc.owner, 'private' ], null)
+        for (const visibilityKey of doc.visibility) {
+          emit([ doc.owner, visibilityKey ], null)
+        }
+      }
+    }
+  },
+  byShelfAndVisibilityKey: {
+    map: doc => {
+      if (doc.shelves != null) {
+        for (const shelf of doc.shelves) {
+          emit([ shelf, 'private' ], null)
+          for (const visibilityKey of doc.visibility) {
+            emit([ shelf, visibilityKey ], null)
+          }
+        }
+      }
+    }
+  },
   byListing: {
     map: doc => {
       if (doc.listing != null) {
@@ -74,15 +104,6 @@ module.exports = {
       if (doc.previousEntity != null) {
         for (const uri of doc.previousEntity) {
           emit(uri, null)
-        }
-      }
-    }
-  },
-  byShelvesAndListing: {
-    map: doc => {
-      if (doc.shelves != null) {
-        for (const shelf of doc.shelves) {
-          emit([ shelf, doc.listing ], null)
         }
       }
     }

@@ -3,7 +3,7 @@ const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 
 const getAllowedVisibilityKeys = async (userId, reqUserId) => {
   // This special case should be handled by consumers
-  if (userId === reqUserId) return
+  if (userId === reqUserId) return [ 'private' ]
 
   const keys = [ 'public' ]
 

@@ -27,11 +27,6 @@ const items_ = module.exports = {
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
 
-  byShelvesAndListing: (keys, reqUserId) => {
-    return db.viewByKeys('byShelvesAndListing', keys)
-    .then(formatItems(reqUserId))
-  },
-
   publicByOwnerAndDate: ({ ownerId, since, until }) => {
     assert_.string(ownerId)
     assert_.number(since)

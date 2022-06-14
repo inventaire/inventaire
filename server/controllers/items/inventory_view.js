@@ -30,10 +30,9 @@ const getItems = async params => {
   const { user, group, shelf, reqUserId, 'without-shelf': withoutShelf } = params
   if (user) {
     return getAuthorizedItems.byUser(user, reqUserId, { withoutShelf })
-  }
-  if (shelf) {
+  } else if (shelf) {
     const shelfDoc = await shelves_.byId(shelf)
-    return getAuthorizedItems.byShelf(shelfDoc, reqUserId)
+    return getAuthorizedItems.byShelves([ shelfDoc ], reqUserId)
   } else {
     return getAuthorizedItems.byGroup(group, reqUserId)
   }
