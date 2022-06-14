@@ -1,8 +1,10 @@
-const responses_ = require('lib/responses')
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
-let _
-const requireCircularDependencies = () => { _ = require('builders/utils') }
+let _, responses_
+const requireCircularDependencies = () => {
+  _ = require('builders/utils')
+  responses_ = require('lib/responses')
+}
 setImmediate(requireCircularDependencies)
 
 module.exports = (req, res, err, status) => {

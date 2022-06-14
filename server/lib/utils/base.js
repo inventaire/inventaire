@@ -7,6 +7,9 @@ const {
   Float: floatPattern
 } = require('lib/regex')
 
+const { typeOf } = require('./types')
+const assert_ = require('lib/utils/assert_types')
+
 module.exports = {
   combinations: (array1, array2) => {
     const results = []
@@ -50,6 +53,12 @@ module.exports = {
   superTrim: str => str.replace(multipleSpacesPattern, ' ').trim(),
 
   KeyBy: attribute => array => _.keyBy(array, attribute),
+
+  uniqByKey: (collection, key) => {
+    assert_.array(collection)
+    assert_.string(key)
+    return Object.values(_.keyBy(collection, key))
+  },
 
   initCollectionsIndex: names => names.reduce(aggregateCollections, {}),
 
@@ -101,19 +110,7 @@ module.exports = {
     return dateObj.toISOString().split('T')[0]
   },
 
-  typeOf: obj => {
-    // just handling what differes from typeof
-    const type = typeof obj
-    if (type === 'object') {
-      if (_.isNull(obj)) return 'null'
-      if (_.isArray(obj)) return 'array'
-      if (obj instanceof Promise) return 'promise'
-    }
-    if (type === 'number') {
-      if (_.isNaN(obj)) return 'NaN'
-    }
-    return type
-  },
+  typeOf,
 
   // Helpers to simplify polymorphisms
   forceArray: keys => {

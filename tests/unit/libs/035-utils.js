@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const { uniqByKey } = require('lib/utils/base')
 require('should')
 
 describe('utils', () => {
@@ -96,6 +97,13 @@ describe('utils', () => {
       const obj = { a: 1, b: 2 }
       const fn = (key, value) => [ key + key, value + value ]
       _.mapKeysValues(obj, fn).should.deepEqual({ aa: 2, bb: 4 })
+    })
+  })
+
+  describe('uniqByKey', () => {
+    it('should return a deduplicated collection', () => {
+      const collection = [ { a: 1 }, { a: 1 }, { a: 2 } ]
+      uniqByKey(collection, 'a').should.deepEqual([ { a: 1 }, { a: 2 } ])
     })
   })
 })
