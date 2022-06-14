@@ -8,6 +8,11 @@ module.exports = async (params, usersIds) => {
   if (!usersIds) usersIds = params.users
   const { reqUserId } = params
 
+  // Possible optimization:
+  // - fetching only ids and item creation date (as view values)
+  // - sort and paginate on those ids+timestamp
+  // - fetch remaining docs
+  // Limitation: the paginate function might need to filter on items visibility
   const authorizedItems = await getAuthorizedItems.byUsers(usersIds, reqUserId)
   const page = Paginate(params)(authorizedItems)
   page.items = page.items.map(filterPrivateAttributes(reqUserId))
