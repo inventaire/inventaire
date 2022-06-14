@@ -4,7 +4,8 @@ const { red, grey } = chalk
 const { isArguments } = require('lodash')
 // Log full objects
 require('node:util').inspect.defaultOptions.depth = 20
-let errorCounter = 0
+let errorCount = 0
+const countsByErrorStatusCode = {}
 
 const print = str => process.stdout.write(str + '\n')
 
@@ -72,7 +73,10 @@ const loggers = {
 
     log(err, label, 'red')
 
-    errorCounter++
+    const errorStatusCode = err.statusCode || 'no-status-code'
+    countsByErrorStatusCode[errorStatusCode] = countsByErrorStatusCode[errorStatusCode] || 0
+    countsByErrorStatusCode[errorStatusCode]++
+    errorCount++
   },
 }
 
@@ -97,9 +101,9 @@ loggers.ErrorRethrow = tapLogger(errorRethrow)
 const logErrorsCount = () => {
   let prev = 0
   const counter = () => {
-    if (errorCounter !== prev) {
-      prev = errorCounter
-      console.log(red('errors: ') + errorCounter)
+    if (errorCount !== prev) {
+      prev = errorCount
+      console.log(red('errors by status codes:'), countsByErrorStatusCode)
     }
   }
   setInterval(counter, 5000)
