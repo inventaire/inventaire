@@ -8,6 +8,7 @@ const snapshot_ = require('./snapshot/snapshot')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
+const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
 
 const items_ = module.exports = {
   byId: db.get,
@@ -139,19 +140,17 @@ const validateOwnership = (userId, items) => {
 }
 
 const formatItems = reqUserId => async items => {
-  items = await Promise.all(items.map(snapshot_.addToItem))
+  items = await addItemsSnapshots(items)
   return items.map(filterPrivateAttributes(reqUserId))
 }
 
-const filterWithImage = assertImage => items => {
-  return Promise.all(items.map(snapshot_.addToItem))
-  .then(items => {
-    if (assertImage) return items.filter(itemWithImage)
-    else return items
-  })
+const filterWithImage = assertImage => async items => {
+  items = await addItemsSnapshots(items)
+  if (assertImage) return items.filter(itemWithImage)
+  else return items
 }
 
-const itemWithImage = item => item.snapshot['entity:image']
+const itemWithImage = item => item.snapshot['entity:image'] != null
 
 const actionFunctions = {
   addShelves: _.union,
