@@ -35,9 +35,11 @@ describe('items:update', () => {
     const item = await createItem()
     const newTransaction = item.transaction = 'lending'
     const newDetails = item.details = 'hello'
+    const newVisibility = item.visibility = [ 'friends' ]
     const updatedItem = await authReq('put', '/api/items', item)
     updatedItem.transaction.should.equal(newTransaction)
     updatedItem.details.should.equal(newDetails)
+    updatedItem.visibility.should.deepEqual(newVisibility)
   })
 
   it('should not be able to update non updatable attributes', async () => {
