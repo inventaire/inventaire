@@ -46,7 +46,7 @@ describe('user:delete', () => {
   describe('items', () => {
     it('should delete the user items', async () => {
       const user = await getReservedUser()
-      const item = await createItem(user, { listing: 'public' })
+      const item = await createItem(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
       const updatedItem = await getItemById(item)
