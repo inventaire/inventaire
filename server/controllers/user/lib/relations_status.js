@@ -3,22 +3,6 @@ const { intersection } = require('lodash')
 const { getUsersGroupsIds } = require('controllers/groups/lib/groups')
 const groups_ = require('controllers/groups/lib/groups')
 const relations_ = require('controllers/relations/lib/queries')
-const assert_ = require('lib/utils/assert_types')
-
-const areFriends = async (userId, otherId) => {
-  const relationStatus = await relations_.getStatus(userId, otherId)
-  return relationStatus === 'friends'
-}
-
-const getSharedGroupsIds = async (userAId, userBId) => {
-  const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getUsersGroupsIds([ userAId, userBId ])
-  return intersection(aGroupsIds, bGroupsIds)
-}
-
-const areGroupsCoMembers = async (userId, otherId) => {
-  const sharedGroupsIds = await getSharedGroupsIds(userId, otherId)
-  return sharedGroupsIds.length > 0
-}
 
 module.exports = {
   getUserRelations: userId => {
@@ -27,18 +11,15 @@ module.exports = {
     return relations_.getUserRelations(userId)
   },
 
-  areFriends,
-
-  areFriendsOrGroupCoMembers: async (userId, otherId) => {
-    assert_.strings([ userId, otherId ])
-    const { a, b } = await Promise.all([
-      areFriends(userId, otherId),
-      areGroupsCoMembers(userId, otherId),
-    ])
-    return a || b
+  areFriends: async (userId, otherId) => {
+    const relationStatus = await relations_.getStatus(userId, otherId)
+    return relationStatus === 'friends'
   },
 
-  getSharedGroupsIds,
+  getSharedGroupsIds: async (userAId, userBId) => {
+    const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getUsersGroupsIds([ userAId, userBId ])
+    return intersection(aGroupsIds, bGroupsIds)
+  },
 
   getNetworkIds: async userId => {
     if (userId == null) return []

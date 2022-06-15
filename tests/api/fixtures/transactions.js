@@ -9,7 +9,7 @@ const createTransaction = async (params = {}) => {
   const userB = await (params.userB || getUserB())
   let { item, itemData } = params
   if (!item) {
-    itemData = itemData || { listing: 'public', transaction: 'giving' }
+    itemData = itemData || { visibility: [ 'public' ], transaction: 'giving' }
     item = await createItem(userB, itemData)
   }
   await wait(100)
