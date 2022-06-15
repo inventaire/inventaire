@@ -1,4 +1,4 @@
-const { addAssociatedData, Paginate } = require('./queries_commons')
+const { addAssociatedData, paginate } = require('./queries_commons')
 const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
 const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 
@@ -14,7 +14,7 @@ module.exports = async (params, usersIds) => {
   // - fetch remaining docs
   // Limitation: the paginate function might need to filter on items visibility
   const authorizedItems = await getAuthorizedItems.byUsers(usersIds, reqUserId)
-  const page = Paginate(params)(authorizedItems)
+  const page = paginate(authorizedItems, params)
   page.items = page.items.map(filterPrivateAttributes(reqUserId))
   return addAssociatedData(page, params)
 }

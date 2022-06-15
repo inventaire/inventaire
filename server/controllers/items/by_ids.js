@@ -1,5 +1,5 @@
 const items_ = require('controllers/items/lib/items')
-const { addAssociatedData, Paginate } = require('./lib/queries_commons')
+const { addAssociatedData, paginate } = require('./lib/queries_commons')
 const { filterPrivateAttributes } = require('./lib/filter_private_attributes')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 
@@ -17,7 +17,7 @@ const controller = async params => {
   const { ids, reqUserId } = params
   const foundItems = await items_.byIds(ids)
   const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)
-  const page = Paginate(params)(authorizedItems)
+  const page = paginate(authorizedItems, params)
   page.items = page.items.map(filterPrivateAttributes(reqUserId))
   return addAssociatedData(page, params)
 }

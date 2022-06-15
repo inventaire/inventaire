@@ -50,8 +50,8 @@ const queriesCommons = module.exports = {
 
   listingIs: listing => item => item.listing === listing,
 
-  Paginate: page => items => {
-    let { limit, offset, filter } = page
+  paginate: (items, params) => {
+    let { limit, offset, filter } = params
     items = items.sort(byCreationDate)
     if (filter != null) items = items.filter(filters[filter])
     const total = items.length
