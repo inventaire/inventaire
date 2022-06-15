@@ -48,7 +48,7 @@ module.exports = {
   },
   publicByOwnerAndDate: {
     map: doc => {
-      if (doc.listing === 'public') {
+      if (doc.visibility.includes('public')) {
         emit([ doc.owner, doc.created ], null)
       }
     }
@@ -56,8 +56,9 @@ module.exports = {
   publicByShelfAndDate: {
     map: doc => {
       if (doc.shelves != null) {
+        const isPublic = doc.visibility.includes('public')
         for (const shelf of doc.shelves) {
-          if (doc.listing === 'public') {
+          if (isPublic) {
             emit([ shelf, doc.created ], null)
           }
         }
