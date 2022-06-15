@@ -8,11 +8,8 @@ module.exports = async (groupId, reqUserId) => {
   const users = await user_.byIds(membersIds)
   return {
     users,
-
-    // Give access to semi-private ('network') items only if the requester
-    // is a group member
-    accessLevel: membersIds.includes(reqUserId) ? 'network' : 'public',
-
+    reqUserId,
+    filter: 'group',
     feedOptions: {
       title: group.name,
       description: group.description,

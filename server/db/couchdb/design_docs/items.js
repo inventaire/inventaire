@@ -39,20 +39,6 @@ module.exports = {
       }
     }
   },
-  byListing: {
-    map: doc => {
-      if (doc.listing != null) {
-        emit([ doc.owner, doc.listing ], null)
-      }
-    }
-  },
-  byListingWithoutShelf: {
-    map: doc => {
-      if (doc.shelves == null || doc.shelves.length === 0) {
-        emit([ doc.owner, doc.listing ], null)
-      }
-    }
-  },
   publicByDate: {
     map: doc => {
       if (doc.visibility.includes('public')) {
