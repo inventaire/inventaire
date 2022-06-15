@@ -5,8 +5,6 @@ const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
 const snapshot_ = require('./snapshot/snapshot')
-const getByAccessLevel = require('./get_by_access_level')
-const user_ = require('controllers/user/lib/user')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
 const validateEntityAndShelves = require('./validate_entity_and_shelves')
@@ -110,11 +108,6 @@ const items_ = module.exports = {
 
   bulkDelete: db.bulkDelete,
 
-  nearby: async (reqUserId, range = 50, strict = false) => {
-    const usersIds = await user_.nearby(reqUserId, range, strict)
-    return getUsersAndItemsPublicData(usersIds, reqUserId)
-  },
-
   // Data serializa emails and rss feeds templates
   serializeData: async item => {
     item = await snapshot_.addToItem(item)
@@ -134,14 +127,6 @@ const items_ = module.exports = {
     })
     return db.bulk(updatedItems)
   }
-}
-
-const getUsersAndItemsPublicData = (usersIds, reqUserId) => {
-  if (usersIds.length <= 0) return [ [], [] ]
-  return Promise.all([
-    user_.getUsersByIds(usersIds, reqUserId),
-    getByAccessLevel.public(usersIds)
-  ])
 }
 
 const validateOwnership = (userId, items) => {
