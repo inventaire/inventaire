@@ -4,7 +4,7 @@ const error_ = require('lib/error/error')
 const sanitization = {
   ids: {},
   attribute: {},
-  value: { type: 'string' }
+  value: {}
 }
 
 const controller = async params => {
@@ -14,9 +14,9 @@ const controller = async params => {
 }
 
 const validateAttributes = attribute => {
-  // bulk update cannot update collections values of some attributes
-  // as there is no way to know what to do with the values (ie. add it, remove it)
-  // Known attributes : shelves
+  // Shelves have a dedicated update endpoint, which allows
+  // to add and remove shelves from items arrays without
+  // requiring that all the updated items end up with the same shelves
   if (attribute === 'shelves') {
     let errorMessage = 'invalid attribute'
     errorMessage += ': use /api/shelves?action=add-items or /api/shelves?action=remove-items instead'

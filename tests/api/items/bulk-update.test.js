@@ -1,22 +1,47 @@
 require('should')
-const { authReq, authReqB } = require('../utils/utils')
+const { getUser, authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
+const { createItem } = require('../fixtures/items')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 
 describe('items:bulk-update', () => {
-  it('should update items details', async () => {
-    const item = await authReq('post', '/api/items', newItemBase())
+  it('should update items attributes', async () => {
+    const item = await createItem(getUser(), { transaction: 'giving' })
     const newTransaction = 'lending'
-    item.transaction.should.not.equal(newTransaction)
     const ids = [ item._id ]
-    const res = await authReq('put', '/api/items?action=bulk-update', {
+    await authReq('put', '/api/items?action=bulk-update', {
       ids,
       attribute: 'transaction',
       value: newTransaction
     })
-    res.ok.should.be.true()
     const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
     updatedItems[0].transaction.should.equal(newTransaction)
+  })
+
+  it('should reject invalid items attributes', async () => {
+    const item = await createItem()
+    await authReq('put', '/api/items?action=bulk-update', {
+      ids: [ item._id ],
+      attribute: 'transaction',
+      value: 'zalgo'
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.error_name.should.equal('invalid_transaction')
+    })
+  })
+
+  it('should update items attributes', async () => {
+    const item = await createItem(getUser(), { visibility: [ 'friends' ] })
+    const ids = [ item._id ]
+    await authReq('put', '/api/items?action=bulk-update', {
+      ids,
+      attribute: 'visibility',
+      value: [ 'groups' ]
+    })
+    const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
+    updatedItems[0].visibility.should.deepEqual([ 'groups' ])
   })
 
   it('should not update items from another owner', async () => {
