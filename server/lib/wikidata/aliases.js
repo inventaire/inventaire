@@ -93,6 +93,7 @@ const wikidataOnlyP31Values = {
     'wd:Q19720191', // large publisher
     'wd:Q45400320', // open access publisher
     'wd:Q479716', // publisher associated with a university
+    'wd:Q3579158', // board game publishing company
   ],
   collections: [],
   movements: [
