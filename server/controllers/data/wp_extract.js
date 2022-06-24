@@ -1,4 +1,4 @@
-const getArticle = require('./get_article')
+const getArticle = require('data/wikipedia/get_article')
 
 const sanitization = {
   title: {},

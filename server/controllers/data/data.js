@@ -1,0 +1,11 @@
+const ActionsControllers = require('lib/actions_controllers')
+
+module.exports = {
+  get: ActionsControllers({
+    public: {
+      'wp-extract': require('./wp_extract'),
+      isbn: require('./isbn'),
+      'property-values': require('./property_values')
+    }
+  })
+}
