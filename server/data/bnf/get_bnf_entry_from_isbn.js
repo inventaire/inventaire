@@ -129,8 +129,12 @@ const formatRow = async (isbn, result, rawResult) => {
     })
     entry.author = {
       uri,
-      labels: { fr: formatAuthorName(author.label) },
       claims
+    }
+    if (author.label) {
+      entry.author.labels = {
+        fr: formatAuthorName(author.label)
+      }
     }
   }
   if (publisherLabel) {
