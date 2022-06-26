@@ -1,7 +1,6 @@
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const requests_ = require('lib/requests')
 const { keyBy, compact } = require('lodash')
-const cache_ = require('lib/cache')
+const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+const { propertiesWithGetters, summaryGettersByClaimProperty } = require('controllers/data/lib/summaries_getters')
 
 const sanitization = {
   uri: {}
@@ -16,7 +15,6 @@ const controller = async ({ uri }) => {
 }
 
 const getSummariesFromClaims = async claims => {
-  const propertiesWithGetters = Object.keys(summaryGettersByClaimProperty)
   return Promise.all(propertiesWithGetters.map(getSummaryFromPropertyClaims(claims)))
 }
 
@@ -26,25 +24,5 @@ const getSummaryFromPropertyClaims = claims => property => {
     return summaryGettersByClaimProperty[property](claimValues)
   }
 }
-
-const summaryGettersByClaimProperty = {
-  'wdt:P648': async claimValues => {
-    const olId = claimValues[0]
-    const url = `https://openlibrary.org/works/${olId}.json`
-    const source = 'wdt:P648'
-    const text = await cache_.get({
-      key: `summary:${source}:${olId}`,
-      fn: async () => {
-        const { description } = await requests_.get(url, { timeout })
-        if (!description) return
-        if (description.value) return description.value
-        else if (typeof description === 'string') return description
-      }
-    })
-    if (text) return { source, text }
-  }
-}
-
-const timeout = 10 * 1000
 
 module.exports = { sanitization, controller }
