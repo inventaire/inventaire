@@ -129,15 +129,19 @@ describe('entities:resolve', () => {
   })
 
   it('should reject when claims value is invalid', async () => {
+    const isbn = generateIsbn13()
     try {
       await resolve({
-        edition: { isbn: generateIsbn13() },
+        edition: { isbn },
         works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ]
       })
       .then(shouldNotBeCalled)
     } catch (err) {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid property value')
+      err.body.context.entry.should.be.an.Object()
+      err.body.context.entry.edition.isbn.should.equal(isbn)
+      err.body.context.entry.works[0].should.be.an.Object()
     }
   })
 

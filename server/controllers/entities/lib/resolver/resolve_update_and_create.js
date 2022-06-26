@@ -42,6 +42,8 @@ const buildActionFn = (flag, ActionFn, params) => {
 }
 
 const handleError = (strict, errors, err, entry) => {
+  err.context = err.context || {}
+  err.context.entry = entry
   if (strict) {
     throw err
   } else {
