@@ -14,11 +14,15 @@ const getQuery = isbn => {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn13h, isbn13, isbn10h, isbn10, groupLang } = isbnData
+  let isbn10Queries = ''
+  if (isbn10 != null) {
+    isbn10Queries = `UNION { ?item wdt:P957 "${isbn10h}" . }
+                     UNION { ?item wdt:P957 "${isbn10}" . }`
+  }
   return `SELECT DISTINCT ?item ?itemLabel ?title ?type ?work ?workLabel WHERE {
     { ?item wdt:P212 "${isbn13h}" . }
     UNION { ?item wdt:P212 "${isbn13}" . }
-    UNION { ?item wdt:P957 "${isbn10h}" . }
-    UNION { ?item wdt:P957 "${isbn10}" . }
+    ${isbn10Queries}
     ?item wdt:P31 ?type .
     OPTIONAL { ?item wdt:P1476 ?title . }
     OPTIONAL {
