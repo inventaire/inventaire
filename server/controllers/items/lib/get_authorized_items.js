@@ -8,9 +8,9 @@ const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 // Return what the reqUserId user is allowed to see
 module.exports = {
   byUsers: async (usersIds, reqUserId, options = {}) => {
-    const keys = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
+    const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
     const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
-    return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
+    return getItemsFromViewAndAllowedVisibilityKeys(view, ownersIdsAndVisibilityKeysCombinations)
   },
 
   byGroup: async (groupId, reqUserId) => {
@@ -50,8 +50,8 @@ const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
 }
 
 const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
-  const keys = await getAllowedVisibilityKeys(ownerId, reqUserId)
-  return [ ownerId, keys ]
+  const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
+  return [ ownerId, visibilityKeys ]
 }
 
 const getUsersItems = async ({ usersIds, reqUserId, allowedVisibilityKeys, withoutShelf = false }) => {
@@ -60,7 +60,7 @@ const getUsersItems = async ({ usersIds, reqUserId, allowedVisibilityKeys, witho
   return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
 }
 
-// Alternative implementation:
+// The function below could be implementated another way:
 // - do not include_docs in the first request
 // - deduplicate ids
 // - fetch deduplicate docs by ids
