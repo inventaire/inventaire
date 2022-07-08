@@ -1,4 +1,4 @@
-const items_ = require('controllers/items/lib/items')
+const { bulkItemsUpdate } = require('controllers/items/lib/bulk_update')
 const error_ = require('lib/error/error')
 
 const sanitization = {
@@ -9,7 +9,7 @@ const sanitization = {
 
 const controller = async params => {
   validateAttributes(params.attribute)
-  await items_.bulkUpdate(params)
+  await bulkItemsUpdate(params)
   return { ok: true }
 }
 

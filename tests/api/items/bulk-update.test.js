@@ -3,6 +3,7 @@ const { getUser, authReq, authReqB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
 const { createItem } = require('../fixtures/items')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { wait } = require('lib/promises')
 
 describe('items:bulk-update', () => {
   it('should update items attributes', async () => {
@@ -75,5 +76,19 @@ describe('items:bulk-update', () => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid attribute')
     }
+  })
+
+  it('should retry before rejecting rapid updates', async () => {
+    const item = await createItem(getUser(), { visibility: [] })
+    const ids = [ item._id ]
+    const attribute = 'visibility'
+    await Promise.all([
+      authReq('put', '/api/items?action=bulk-update', { ids, attribute, value: [ 'public' ] }),
+      wait(5).then(() => authReq('put', '/api/items?action=bulk-update', { ids, attribute, value: [ 'friends' ] })),
+      // If a 3rd update was attempted, the current implementation can not guarantee
+      // that the last request will be the last performed
+    ])
+    const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
+    updatedItems[0].visibility.should.deepEqual([ 'friends' ])
   })
 })

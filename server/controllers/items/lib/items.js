@@ -11,6 +11,7 @@ const validateEntityAndShelves = require('./validate_entity_and_shelves')
 const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
 
 const items_ = module.exports = {
+  db,
   byId: db.get,
   byIds: db.byIds,
   byOwner: ownerId => db.viewByKeys('byOwner', [ ownerId ]),
@@ -83,15 +84,6 @@ const items_ = module.exports = {
     updatedItem = await db.putAndReturn(updatedItem)
     await emit('user:inventory:update', userId)
     return updatedItem
-  },
-
-  bulkUpdate: async ({ reqUserId, ids, attribute, value }) => {
-    const itemUpdateData = { [attribute]: value }
-    const currentItems = await items_.byIds(ids)
-    let updatedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
-    updatedItems = await db.bulk(updatedItems)
-    await emit('user:inventory:update', reqUserId)
-    return updatedItems
   },
 
   setBusyness: (id, busy) => {
