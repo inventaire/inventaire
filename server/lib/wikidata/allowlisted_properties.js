@@ -47,6 +47,7 @@ const nonEditedProperties = [
   'P2959', // permanent duplicated item
   'P4258', // Gallica ID
   'P6338', // colorist
+  'P6802', // related image
 ]
 
 module.exports = editedProperties.concat(nonEditedProperties)

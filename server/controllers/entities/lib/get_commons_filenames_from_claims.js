@@ -8,7 +8,9 @@ const imageClaims = [
   // logo image
   'wdt:P154',
   // collage image
-  'wdt:P2716'
+  'wdt:P2716',
+  // related image
+  'wdt:P6802',
 ]
 
 const nonPrefixedImageClaims = imageClaims.map(unprefixify)
