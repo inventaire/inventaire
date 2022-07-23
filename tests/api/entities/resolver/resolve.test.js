@@ -14,7 +14,7 @@ const resolve = entries => {
 }
 
 describe('entities:resolve', () => {
-  it('should throw when invalid isbn is passed', async () => {
+  it('should throw when an invalid isbn is passed', async () => {
     const invalidIsbn = '9780000000000'
     try {
       await resolve({ edition: { isbn: invalidIsbn } }).then(shouldNotBeCalled)
@@ -73,19 +73,6 @@ describe('entities:resolve', () => {
     } catch (err) {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('missing edition in entry')
-    }
-  })
-
-  it('should reject when no isbn is found', async () => {
-    const entry = {
-      edition: [ { claims: { 'wdt:P1476': randomLabel() } } ],
-      works: [ { labels: { en: randomLabel() } } ]
-    }
-    try {
-      await resolve(entry).then(shouldNotBeCalled)
-    } catch (err) {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('no isbn or external id claims found')
     }
   })
 

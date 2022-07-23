@@ -4,11 +4,11 @@ const { randomLabel, generateIsbn13 } = require('tests/api/fixtures/entities')
 
 describe('entities:resolve:non-strict mode', () => {
   it('should ignore and report sanitization errors', async () => {
-    const entry = { edition: {} }
+    const entry = { edition: { isbn: '978000000000' } }
     const res = await authReq('post', '/api/entities?action=resolve', { entries: [ entry ], strict: false })
     res.entries.should.deepEqual([])
     res.errors.should.be.an.Array()
-    res.errors[0].message.should.equal('no isbn or external id claims found')
+    res.errors[0].message.should.equal('invalid isbn')
     res.errors[0].entry.should.be.an.Object()
   })
 
