@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const should = require('should')
 const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { getByUris, getHistory } = require('tests/api/utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = require('tests/api/fixtures/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn, createWork } = require('tests/api/fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
@@ -191,5 +191,18 @@ describe('entities:resolve:create-unresolved', () => {
     } catch (err) {
       err.body.status_verbose.should.startWith('invalid labels')
     }
+  })
+
+  it('should reject an edition with no title', async () => {
+    const { uri: workUri } = await createWork()
+    await resolveAndCreate({
+      edition: { claims: {} },
+      works: [ { uri: workUri } ]
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('an edition should have a title')
+    })
   })
 })

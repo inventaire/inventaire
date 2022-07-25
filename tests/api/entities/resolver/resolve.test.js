@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const should = require('should')
 const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13 } = require('tests/api/fixtures/entities')
+const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13, createPublisher } = require('tests/api/fixtures/entities')
 const { addClaim, getByUri } = require('tests/api/utils/entities')
 const { waitForIndexation } = require('tests/api/utils/search')
 const { createEditionWithIsbn, randomLabel } = require('tests/api/fixtures/entities')
@@ -49,6 +49,56 @@ describe('entities:resolve', () => {
     const { entries } = await resolve(entry)
     entries[0].should.be.an.Object()
     entries[0].edition.uri.should.equal(`isbn:${isbn}`)
+  })
+
+  it('should resolve an edition with no ISBN to an existing edition, if the title matches', async () => {
+    const { isbn, claims } = await createEditionWithIsbn()
+    const editionTitle = claims['wdt:P1476'][0]
+    const workUri = claims['wdt:P629'][0]
+    const entry = {
+      edition: { claims: { 'wdt:P1476': `${editionTitle}: novel` } },
+      works: [
+        { uri: workUri }
+      ]
+    }
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal(`isbn:${isbn}`)
+  })
+
+  it('should not resolve an edition with no ISBN to an existing edition, if the title does not matches', async () => {
+    const { claims } = await createEditionWithIsbn()
+    const workUri = claims['wdt:P629'][0]
+    const entry = {
+      edition: { claims: { 'wdt:P1476': 'some title' } },
+      works: [
+        { uri: workUri }
+      ]
+    }
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.resolved.should.be.false()
+  })
+
+  it('should not resolve an edition with no ISBN to an existing edition, if a claim is missing on the resolved entity', async () => {
+    const { claims } = await createEditionWithIsbn()
+    const somePublisher = await createPublisher()
+    const editionTitle = claims['wdt:P1476'][0]
+    const workUri = claims['wdt:P629'][0]
+    const entry = {
+      edition: {
+        claims: {
+          'wdt:P123': somePublisher.uri,
+          'wdt:P1476': editionTitle,
+        }
+      },
+      works: [
+        { uri: workUri }
+      ]
+    }
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.resolved.should.be.false()
   })
 
   it('should resolve multiple entries', async () => {
