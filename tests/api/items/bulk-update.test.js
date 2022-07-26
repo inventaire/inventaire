@@ -1,9 +1,11 @@
 require('should')
-const { getUser, authReq, authReqB } = require('../utils/utils')
+const { getUser, authReq, authReqB, getUserB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
 const { createItem } = require('../fixtures/items')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { wait } = require('lib/promises')
+const { createShelf } = require('tests/api/fixtures/shelves')
+const { createGroup } = require('tests/api/fixtures/groups')
 
 describe('items:bulk-update', () => {
   it('should update items attributes', async () => {
@@ -90,5 +92,23 @@ describe('items:bulk-update', () => {
     ])
     const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
     updatedItems[0].visibility.should.deepEqual([ 'friends' ])
+  })
+
+  describe('visibility', () => {
+    it('should reject an invalid visibility value', async () => {
+      const group = await createGroup({ user: getUserB() })
+      const item = await createItem(getUser(), { visibility: [ 'friends' ] })
+      const ids = [ item._id ]
+      await authReq('put', '/api/items?action=bulk-update', {
+        ids,
+        attribute: 'visibility',
+        value: [ `group:${group._id}` ]
+      })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.body.status_verbose.should.equal('owner is not in that group')
+        err.statusCode.should.equal(400)
+      })
+    })
   })
 })

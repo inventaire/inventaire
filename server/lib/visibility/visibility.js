@@ -2,6 +2,8 @@ const { isVisibilityGroupKey } = require('lib/boolean_validations')
 const { getUserGroupsIds } = require('controllers/groups/lib/groups')
 const error_ = require('lib/error/error')
 
+// This does async validations that can not be performed sync
+// by models/validations/visibility.js
 const validateVisibilityKeys = async (visibilityKeys, ownerId) => {
   if (hasGroupKeys(visibilityKeys)) {
     const userGroupsIds = await getUserGroupsIds(ownerId)
