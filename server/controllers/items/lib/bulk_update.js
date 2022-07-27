@@ -4,6 +4,7 @@ const { emit } = require('lib/radio')
 const { partition } = require('lodash')
 const _ = require('builders/utils')
 const { validateVisibilityKeys } = require('lib/visibility/visibility')
+const { validateShelves } = require('controllers/items/lib/validate_entity_and_shelves')
 
 const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }
@@ -36,6 +37,8 @@ const getId = ({ id }) => id
 const validateValue = async ({ attribute, value, reqUserId }) => {
   if (attribute === 'visibility') {
     await validateVisibilityKeys(value, reqUserId)
+  } else if (attribute === 'shelves') {
+    await validateShelves(reqUserId, value)
   }
 }
 

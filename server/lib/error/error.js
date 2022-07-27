@@ -22,6 +22,12 @@ error_.Complete = (...args) => err => {
   throw error_.complete.apply(null, [ err ].concat(args))
 }
 
+error_.addContext = (err, additionalContext) => {
+  err.context = err.context || {}
+  Object.assign(err.context, additionalContext)
+  return err
+}
+
 const errorHandler = error_.handler = require('./error_handler')
 
 // error_.handler with a binded res object

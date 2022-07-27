@@ -2,7 +2,7 @@ require('should')
 const { getUser, authReq, authReqB, getUserB } = require('../utils/utils')
 const { newItemBase } = require('./helpers')
 const { createItem } = require('../fixtures/items')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { shouldNotBeCalled } = require('tests/api/utils/utils')
 const { wait } = require('lib/promises')
 const { createShelf } = require('tests/api/fixtures/shelves')
 const { createGroup } = require('tests/api/fixtures/groups')
@@ -63,24 +63,6 @@ describe('items:bulk-update', () => {
     }
   })
 
-  it('should not update shelves attribute', async () => {
-    // as there is no way to know what to do with the value
-    const item = await authReq('post', '/api/items', newItemBase())
-    const ids = [ item._id ]
-    try {
-      const updatedItems = await authReq('put', '/api/items?action=bulk-update', {
-        ids,
-        attribute: 'shelves',
-        value: 'whatever'
-      })
-      shouldNotBeCalled(updatedItems)
-    } catch (err) {
-      rethrowShouldNotBeCalledErrors(err)
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('invalid attribute')
-    }
-  })
-
   it('should retry before rejecting rapid updates', async () => {
     const item = await createItem(getUser(), { visibility: [] })
     const ids = [ item._id ]
@@ -108,6 +90,36 @@ describe('items:bulk-update', () => {
       .then(shouldNotBeCalled)
       .catch(err => {
         err.body.status_verbose.should.equal('owner is not in that group')
+        err.statusCode.should.equal(400)
+      })
+    })
+  })
+
+  describe('shelves', () => {
+    it('should update shelves', async () => {
+      const { shelf } = await createShelf()
+      const item = await createItem()
+      const { _id: itemId } = item
+      await authReq('put', '/api/items?action=bulk-update', {
+        ids: itemId,
+        attribute: 'shelves',
+        value: [ shelf._id ]
+      })
+      const updatedItem = await getItem(item)
+      updatedItem.shelves.should.deepEqual([ shelf._id ])
+    })
+
+    it('should reject adding different owner shelves', async () => {
+      const { shelf } = await createShelf(getUserB())
+      const item = await createItem()
+      await authReq('put', '/api/items?action=bulk-update', {
+        ids: item._id,
+        attribute: 'shelves',
+        value: [ shelf._id ]
+      })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.body.status_verbose.should.startWith('invalid owner')
         err.statusCode.should.equal(400)
       })
     })

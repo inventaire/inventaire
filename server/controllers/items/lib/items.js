@@ -7,7 +7,7 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 const snapshot_ = require('./snapshot/snapshot')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
-const validateEntityAndShelves = require('./validate_entity_and_shelves')
+const { validateEntityAndShelves } = require('./validate_entity_and_shelves')
 const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
 
 const items_ = module.exports = {
