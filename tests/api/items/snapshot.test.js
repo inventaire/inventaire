@@ -1,7 +1,7 @@
 require('should')
 const { wait } = require('lib/promises')
 const { authReq, getUserB } = require('../utils/utils')
-const { getById: getItem } = require('../utils/items')
+const { getItem } = require('../utils/items')
 const { getByUris, merge, revertMerge, updateLabel, updateClaim, restoreVersion, revertEdit } = require('../utils/entities')
 const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
 

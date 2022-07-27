@@ -2,7 +2,7 @@ require('should')
 const { getUser, getUserB, authReq, customAuthReq } = require('tests/api/utils/utils')
 const { wait } = require('lib/promises')
 const { createItem } = require('./items')
-const { getById: getRefreshedItem } = require('../utils/items')
+const { getItem } = require('../utils/items')
 
 const createTransaction = async (params = {}) => {
   const userA = await (params.userA || getUser())
@@ -13,7 +13,7 @@ const createTransaction = async (params = {}) => {
     item = await createItem(userB, itemData)
   }
   await wait(100)
-  const refreshedItem = await getRefreshedItem(item)
+  const refreshedItem = await getItem(item)
   const res = await customAuthReq(userA, 'post', '/api/transactions?action=request', {
     item: item._id,
     message: 'yo'

@@ -6,6 +6,7 @@ const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api
 const { wait } = require('lib/promises')
 const { createShelf } = require('tests/api/fixtures/shelves')
 const { createGroup } = require('tests/api/fixtures/groups')
+const { getItem } = require('tests/api/utils/items')
 
 describe('items:bulk-update', () => {
   it('should update items attributes', async () => {
