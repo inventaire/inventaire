@@ -21,17 +21,10 @@ const log = (obj, label, color = 'cyan') => {
     } else {
       print(chalk[color]('******************************'))
     }
-    let objCopy = obj
-    let context
-    if (obj && obj.context) {
-      context = obj.context
-      objCopy = Object.assign({}, obj)
-      delete objCopy.context
-    }
-    if (typeof objCopy === 'object') console.log(objCopy)
-    else print(objCopy)
-    if (context != null) {
-      console.log('Context:', context)
+    if (typeof obj === 'object') {
+      console.log(obj)
+    } else {
+      print(obj)
     }
     print(grey('-----'))
   }
