@@ -133,6 +133,21 @@ module.exports = {
     .value()
   },
 
+  mapUniq: (collection, key) => {
+    return _(collection)
+    .map(key)
+    .uniq()
+    .value()
+  },
+
+  flatMapUniq: (collection, key) => {
+    return _(collection)
+    .map(key)
+    .flatten()
+    .uniq()
+    .value()
+  },
+
   // Decode first, so that any pre-encoded character isn't re-encoded
   encodeURL: url => encodeURI(decodeURI(url)),
 

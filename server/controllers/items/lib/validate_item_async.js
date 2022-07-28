@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { validateVisibilityKeys } = require('lib/visibility/visibility')
 const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+const { flatMapUniq, mapUniq } = require('lib/utils/base')
 const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
 
 let shelves_
@@ -11,13 +12,13 @@ const requireCircularDependencies = () => {
 setImmediate(requireCircularDependencies)
 
 const validateItemsAsync = async items => {
-  const owners = _.uniq(_.map(items, 'owner'))
+  const owners = mapUniq(items, 'owner')
   if (owners.length !== 1) {
     throw error_.new('items should belong to a unique owner', 500, { items })
   }
   const userId = owners[0]
-  const shelvesIds = _.uniq(_.map(items, 'shelves').flat())
-  const visibilityKeys = _.uniq(_.map(items, 'visibility').flat())
+  const shelvesIds = flatMapUniq(items, 'shelves')
+  const visibilityKeys = flatMapUniq(items, 'visibility')
 
   await Promise.all([
     validateEntities(items),
@@ -31,7 +32,7 @@ const validateItemsAsync = async items => {
 }
 
 const validateEntities = async items => {
-  const uris = _.uniq(_.map(items, 'entity'))
+  const uris = mapUniq(items, 'entity')
   const { entities, redirects, notFound } = await getEntitiesByUris({ uris })
   if (notFound?.length > 0) {
     throw error_.new('some entities could not be found', 400, { uris, notFound })
