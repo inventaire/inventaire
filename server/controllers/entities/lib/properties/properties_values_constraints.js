@@ -161,7 +161,7 @@ module.exports = {
   // Twitter account
   'wdt:P2002': builders.externalId(/^\w{1,15}$/),
   // Instagram username
-  'wdt:P2003': builders.externalId(/^(\w(?:(?:\w|(?:\\.(?!\\.))){0,28}(?:\w))?)$/),
+  'wdt:P2003': builders.externalId(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/),
   // Facebook profile id
   'wdt:P2013': builders.externalId(/^(\d+|[.\w]+)$/),
   // YouTube channel ID
