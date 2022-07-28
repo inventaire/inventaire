@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
+const { validateVisibilityKeys } = require('lib/visibility/visibility')
 const allowlistedEntityTypes = [ 'edition', 'work' ]
 
 let getEntityByUri, shelves_
@@ -9,10 +10,11 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-const validateEntityAndShelves = async (userId, item) => {
+const validateItemAsync = async (userId, item) => {
   await Promise.all([
     validateEntity(item),
     validateShelves(userId, item.shelves),
+    validateVisibilityKeys(item.visibility, userId)
   ])
   .catch(err => {
     error_.addContext(err, { userId, item })
@@ -52,6 +54,6 @@ const validateEntityType = (entity, item) => {
 }
 
 module.exports = {
-  validateEntityAndShelves,
+  validateItemAsync,
   validateShelves,
 }

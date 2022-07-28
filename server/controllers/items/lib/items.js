@@ -7,7 +7,7 @@ const { filterPrivateAttributes } = require('./filter_private_attributes')
 const snapshot_ = require('./snapshot/snapshot')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
-const { validateEntityAndShelves } = require('./validate_entity_and_shelves')
+const { validateItemAsync } = require('./validate_item_async')
 const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
 
 const items_ = module.exports = {
@@ -64,7 +64,7 @@ const items_ = module.exports = {
 
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityAndShelves.bind(null, userId)))
+    await Promise.all(items.map(validateItemAsync.bind(null, userId)))
     items = items.map(item => Item.create(userId, item))
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
@@ -78,7 +78,7 @@ const items_ = module.exports = {
   },
 
   update: async (userId, itemUpdateData) => {
-    await validateEntityAndShelves(userId, itemUpdateData)
+    await validateItemAsync(userId, itemUpdateData)
     const currentItem = await db.get(itemUpdateData._id)
     let updatedItem = Item.update(userId, itemUpdateData, currentItem)
     updatedItem = await db.putAndReturn(updatedItem)

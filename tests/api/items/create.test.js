@@ -9,6 +9,7 @@ const { createShelf } = require('../fixtures/shelves')
 const { getByUris: getEntitiesByUris } = require('../utils/entities')
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
+const { createGroup } = require('tests/api/fixtures/groups')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 
@@ -182,6 +183,20 @@ describe('items:create', () => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('invalid owner')
       }
+    })
+  })
+
+  describe('visibility', () => {
+    it('should reject an invalid visibility value', async () => {
+      const group = await createGroup({ user: getUserB() })
+      await createItem(getUser(), {
+        visibility: [ `group:${group._id}` ]
+      })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.body.status_verbose.should.equal('owner is not in that group')
+        err.statusCode.should.equal(400)
+      })
     })
   })
 })
