@@ -120,7 +120,7 @@ describe('items:create', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('entity not found')
+      err.body.status_verbose.should.equal('some entities could not be found')
     })
   })
 

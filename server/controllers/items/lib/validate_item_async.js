@@ -1,30 +1,52 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const allowlistedEntityTypes = [ 'edition', 'work' ]
+const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
 
-let getEntityByUri, shelves_
+let shelves_
 const requireCircularDependencies = () => {
-  getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
   shelves_ = require('controllers/shelves/lib/shelves')
 }
 setImmediate(requireCircularDependencies)
 
-const validateItemAsync = async (userId, item) => {
+const validateItemsAsync = async items => {
+  const owners = _.uniq(_.map(items, 'owner'))
+  if (owners.length !== 1) {
+    throw error_.new('items should belong to a unique owner', 500, { items })
+  }
+  const userId = owners[0]
+  const shelvesIds = _.uniq(_.map(items, 'shelves').flat())
+  const visibilityKeys = _.uniq(_.map(items, 'visibility').flat())
+
   await Promise.all([
-    validateEntity(item),
-    validateShelves(userId, item.shelves),
-    validateVisibilityKeys(item.visibility, userId)
+    validateEntities(items),
+    validateShelves(userId, shelvesIds),
+    validateVisibilityKeys(visibilityKeys, userId),
   ])
   .catch(err => {
-    error_.addContext(err, { userId, item })
+    error_.addContext(err, { userId, items })
     throw err
   })
 }
 
-const validateEntity = async item => {
-  const entity = await getEntityByUri({ uri: item.entity })
-  validateEntityType(entity, item)
+const validateEntities = async items => {
+  const uris = _.uniq(_.map(items, 'entity'))
+  const { entities, redirects, notFound } = await getEntitiesByUris({ uris })
+  if (notFound?.length > 0) {
+    throw error_.new('some entities could not be found', 400, { uris, notFound })
+  }
+  if (redirects && Object.keys(redirects).length > 0) {
+    throw error_.new('some entities are redirections', 400, { redirects })
+  }
+  Object.values(entities).forEach(validateEntityType)
+}
+
+const validateEntityType = entity => {
+  const { type } = entity
+  if (!allowlistedEntityTypes.has(type)) {
+    throw error_.new('invalid entity type', 400, { type })
+  }
 }
 
 const validateShelves = async (userId, shelvesIds) => {
@@ -43,17 +65,7 @@ const validateShelvesOwnership = (userId, shelves) => {
   }
 }
 
-const validateEntityType = (entity, item) => {
-  if (entity == null) throw error_.new('entity not found', 400, { item })
-
-  const { type } = entity
-
-  if (!allowlistedEntityTypes.includes(type)) {
-    throw error_.new('invalid entity type', 400, { item, type })
-  }
-}
-
 module.exports = {
-  validateItemAsync,
+  validateItemsAsync,
   validateShelves,
 }
