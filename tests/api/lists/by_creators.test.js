@@ -2,6 +2,7 @@ const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, getUserB, getReservedUser } = require('../utils/utils')
 const { createList } = require('../fixtures/lists')
+const { map } = require('lodash')
 
 const endpoint = '/api/lists?action=by-creators'
 
@@ -21,7 +22,7 @@ describe('lists:by-creators', () => {
     const user = await getReservedUser()
     const { _id: userId } = user
     const res = await publicReq('get', `${endpoint}&users=${userId}`)
-    res.lists.should.deepEqual({})
+    res.lists.should.deepEqual([])
   })
 
   describe('visibility:overview', () => {
@@ -30,14 +31,16 @@ describe('lists:by-creators', () => {
       const { list } = await createList()
       list.visibility.should.deepEqual([ 'public' ])
       const res = await publicReq('get', `${endpoint}&users=${list.creator}`)
-      res.lists[list._id].should.be.ok()
+      const listsIds = map(res.lists, '_id')
+      listsIds.should.containEql(list._id)
     })
 
     it('should not return private lists', async () => {
       const { list } = await createList(getUserB(), { visibility: [] })
       const user = await getUserB()
       const res = await authReq('get', `${endpoint}&users=${user._id}`)
-      should(res.lists[list._id]).not.be.ok()
+      const listsIds = map(res.lists, '_id')
+      listsIds.should.not.containEql(list._id)
     })
   })
 
