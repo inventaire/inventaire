@@ -203,5 +203,7 @@ module.exports = {
   // NooSFere book ID
   'wdt:P5571': builders.externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
-  'wdt:P7400': builders.externalId(/^[^\s/]+$/)
+  'wdt:P7400': builders.externalId(/^[^\s/]+$/),
+  // Goodreads work ID
+  'wdt:P8383': builders.externalId(strictlyPositiveIntegerPattern),
 }

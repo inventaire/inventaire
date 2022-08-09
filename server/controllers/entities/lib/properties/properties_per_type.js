@@ -40,6 +40,7 @@ const workAndSerie = all.concat([
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331', // OCLC work ID
+  'wdt:P8383', // Goodreads work ID
   ...socialNetworks
 ])
 
@@ -69,7 +70,7 @@ module.exports = {
     'wdt:P2635', // number of volumes
     'wdt:P2679', // author of foreword
     'wdt:P2680', // author of afterword
-    'wdt:P2969', // GoodReads book ID
+    'wdt:P2969', // GoodReads edition ID
     'wdt:P3184', // Czech National Bibliography book ID
     'wdt:P5199', // British Library system number
     'wdt:P5571', // NooSFere book ID
