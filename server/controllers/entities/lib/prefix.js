@@ -16,9 +16,10 @@ const prefixify = (id, prefix) => {
 const Prefixify = prefix => id => prefixify(id, prefix)
 
 const prefixifyWd = Prefixify('wd')
+const prefixifyWdProperty = Prefixify('wdt')
 const prefixifyInv = Prefixify('inv')
 const prefixifyIsbn = isbn => prefixify(isbn_.normalizeIsbn(isbn), 'isbn')
 
 const unprefixify = uri => uri.split(':')[1]
 
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyInv, prefixifyIsbn }
+module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyWdProperty, prefixifyInv, prefixifyIsbn }

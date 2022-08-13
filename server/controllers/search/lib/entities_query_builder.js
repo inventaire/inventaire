@@ -3,6 +3,9 @@ const properties = require('controllers/entities/lib/properties/properties_value
 const error_ = require('lib/error/error')
 const { trim } = require('lodash')
 const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
+const { prefixifyWdProperty } = require('controllers/entities/lib/prefix')
+const allowlistedProperties = require('lib/wikidata/allowlisted_properties').map(prefixifyWdProperty)
+const allowedProperties = new Set(allowlistedProperties)
 
 module.exports = params => {
   const { lang: userLang, search, limit: size, offset: from, exact, claim, safe = false } = params
@@ -134,7 +137,7 @@ const validatePropertyAndValue = condition => {
   if (!isPropertyUri(property)) {
     throw error_.new('invalid property', 400, { property })
   }
-  if (properties[property] == null) {
+  if (!allowedProperties.has(property)) {
     throw error_.new('unknown property', 400, { property, value })
   }
   // Using a custom validation for wdt:P31, to avoid having to pass an entityType
@@ -143,8 +146,11 @@ const validatePropertyAndValue = condition => {
       throw error_.new('invalid property value', 400, { property, value })
     }
   } else {
-    if (!properties[property].validate(value)) {
-      throw error_.new('invalid property value', 400, { property, value })
+    // Some allowed properties do not have a validation function
+    if (properties[property]) {
+      if (!properties[property].validate(value)) {
+        throw error_.new('invalid property value', 400, { property, value })
+      }
     }
   }
 }
