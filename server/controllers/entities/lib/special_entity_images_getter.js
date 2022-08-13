@@ -48,7 +48,7 @@ const aggregateWorkImages = (images, workImages) => {
   for (const key in workImages) {
     // Ignore work claims images
     const values = workImages[key]
-    if (_.isLang(key)) addImage(images, key, 3, values[0])
+    if (_.isLang(key)) addImage(images, key, 4, values[0])
   }
 
   return images
