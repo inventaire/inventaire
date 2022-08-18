@@ -1,7 +1,9 @@
 const { getAnalyzedTokens } = require('tests/api/utils/search')
+// Testing on the entities index, but as all index are created with the same settings
+// by server/db/elasticsearch/create_index.js, they all get the same analyzers
 const indexBaseName = 'entities'
 
-describe('entities analyzers', () => {
+describe('analyzers', () => {
   describe('autocomplete', () => {
     const analyzer = 'autocomplete'
     it('should generate edge-ngrams tokens', async () => {
