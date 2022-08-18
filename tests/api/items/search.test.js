@@ -265,14 +265,94 @@ describe('items:search:user', () => {
 })
 
 describe('items:search:group', () => {
-  it('should find a group member item by title', async () => {
-    const { group, member } = await getSomeGroupWithAMember()
-    const [ item ] = await Promise.all([
-      createItemWithEditionAndWork(member, { visibility: [ 'public' ] }),
-    ])
-    await waitForIndexation('items', item._id)
-    const { 'entity:title': title } = item.snapshot
-    const { items } = await search(null, { group: group._id, search: title })
-    items[0]._id.should.equal(item._id)
+  describe('visibility:public', () => {
+    it('should find a group member public item', async () => {
+      const { group, member } = await getSomeGroupWithAMember()
+      const [ item ] = await Promise.all([
+        createItemWithEditionAndWork(member, { visibility: [ 'public' ] }),
+      ])
+      await waitForIndexation('items', item._id)
+      const { 'entity:title': title } = item.snapshot
+      const { items } = await search(null, { group: group._id, search: title })
+      items[0]._id.should.equal(item._id)
+    })
+  })
+
+  describe('visibility:private', () => {
+    it('should not find a group member private item', async () => {
+      const { group, member } = await getSomeGroupWithAMember()
+      const [ item ] = await Promise.all([
+        createItemWithEditionAndWork(member, { visibility: [] }),
+      ])
+      await waitForIndexation('items', item._id)
+      const { 'entity:title': title } = item.snapshot
+      const { items } = await search(null, { group: group._id, search: title })
+      _.map(items, '_id').should.not.containEql(item._id)
+    })
+  })
+
+  describe('visibility:groups', () => {
+    it('should find items visible by groups', async () => {
+      const { group, admin, member } = await getSomeGroupWithAMember()
+      const { uri } = await createEdition()
+      const [ privateItem, friendsOnlyItem, groupsOnlyItem ] = await Promise.all([
+        createItem(admin, { entity: uri, visibility: [] }),
+        createItem(admin, { entity: uri, visibility: [ 'friends' ] }),
+        createItem(admin, { entity: uri, visibility: [ 'groups' ] }),
+      ])
+      await Promise.all([
+        waitForIndexation('items', privateItem._id),
+        waitForIndexation('items', friendsOnlyItem._id),
+        waitForIndexation('items', groupsOnlyItem._id),
+      ])
+      const { 'entity:title': title } = privateItem.snapshot
+      const { items } = await search(member, { group: group._id, search: title })
+      const itemsIds = _.map(items, '_id')
+      itemsIds.should.not.containEql(privateItem._id)
+      itemsIds.should.not.containEql(friendsOnlyItem._id)
+      itemsIds.should.containEql(groupsOnlyItem._id)
+      items.forEach(item => should(item.visibility).not.be.ok())
+    })
+
+    it('should not find items visible by groups while the users are friends but not in a common group', async () => {
+      const { group, member } = await getSomeGroupWithAMember()
+      const { member: memberOfAnotherGroup } = await createGroupAndMember()
+      await makeFriends(member, memberOfAnotherGroup)
+      const { uri } = await createEdition()
+      const groupsOnlyItem = await createItem(member, { entity: uri, visibility: [ 'groups' ] })
+      await waitForIndexation('items', groupsOnlyItem._id)
+      const { 'entity:title': title } = groupsOnlyItem.snapshot
+      const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
+      const itemsIds = _.map(items, '_id')
+      itemsIds.should.not.containEql(groupsOnlyItem._id)
+    })
+  })
+
+  describe('visibility:group-specific', () => {
+    it('should find items visible by a specific group to which the requester belongs', async () => {
+      const { group, admin, member } = await getSomeGroupWithAMember()
+      const { uri } = await createEdition()
+      const groupSpecificItem = await createItem(admin, { entity: uri, visibility: [ `group:${group._id}` ] })
+      await waitForIndexation('items', groupSpecificItem._id)
+      const { 'entity:title': title } = groupSpecificItem.snapshot
+      const { items } = await search(member, { group: group._id, search: title })
+      const itemsIds = _.map(items, '_id')
+      itemsIds.should.containEql(groupSpecificItem._id)
+      items.forEach(item => should(item.visibility).not.be.ok())
+    })
+
+    it('should not find items visible by a specific group to which the requester does not belong', async () => {
+      const { group, member } = await getSomeGroupWithAMember()
+      const { member: memberOfAnotherGroup } = await createGroupAndMember()
+      await makeFriends(member, memberOfAnotherGroup)
+      const { uri } = await createEdition()
+      const groupSpecificItem = await createItem(member, { entity: uri, visibility: [ `group:${group._id}` ] })
+      await waitForIndexation('items', groupSpecificItem._id)
+      const { 'entity:title': title } = groupSpecificItem.snapshot
+      const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
+      const itemsIds = _.map(items, '_id')
+      itemsIds.should.not.containEql(groupSpecificItem._id)
+      items.forEach(item => should(item.visibility).not.be.ok())
+    })
   })
 })
