@@ -1,4 +1,4 @@
-const { text, keyword, keywordArray, date } = require('./mappings_datatypes')
+const { autocompleteText, keyword, keywordArray, date } = require('./mappings_datatypes')
 
 module.exports = {
   properties: {
@@ -8,14 +8,14 @@ module.exports = {
     visibility: keywordArray,
     transaction: keyword,
     created: date,
-    details: text,
+    details: autocompleteText,
     shelves: keywordArray,
     snapshot: {
       properties: {
-        'entity:title': text,
-        'entity:subtitle': text,
-        'entity:authors': text,
-        'entity:series': text,
+        'entity:title': autocompleteText,
+        'entity:subtitle': autocompleteText,
+        'entity:authors': autocompleteText,
+        'entity:series': autocompleteText,
         'entity:lang': keyword,
         // Stored to be accessible from search results.
         // Indexation can not be disabled here as it's not possible with type=keyword

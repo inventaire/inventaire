@@ -1,5 +1,12 @@
 const { buildSearcher } = require('lib/elasticsearch')
 const assert_ = require('lib/utils/assert_types')
+const textFields = [
+  'snapshot.entity:title',
+  'snapshot.entity:subtitle',
+  'snapshot.entity:authors',
+  'snapshot.entity:series',
+  'details',
+]
 
 module.exports = buildSearcher({
   dbBaseName: 'items',
@@ -23,13 +30,14 @@ module.exports = buildSearcher({
       })
     }
 
-    const should = [
-      { match: { 'snapshot.entity:title': search } },
-      { match: { 'snapshot.entity:subtitle': search } },
-      { match: { 'snapshot.entity:authors': search } },
-      { match: { 'snapshot.entity:series': search } },
-      { match: { details: search } }
-    ]
+    const should = {
+      multi_match: {
+        type: 'cross_fields',
+        analyzer: 'standard_truncated',
+        fields: textFields,
+        query: search,
+      }
+    }
 
     const query = {
       bool: {

@@ -39,10 +39,11 @@ module.exports = {
   keyword: { type: 'keyword' },
   // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
   objectNotIndexed: { type: 'object', enabled: false },
+  autocompleteText,
   autocompleteTerms: { properties: getTermsProperties(autocompleteText) },
   fullTerms: { properties: getTermsProperties(fullText) },
-  text: { type: 'text' },
   flattenedTerms: autocompleteText,
+  text: { type: 'text' },
   // Array types are equivalent to there values type,
   // see https://www.elastic.co/guide/en/elasticsearch/reference/current/array.html
   // so those are just aliases for documentation purpose
