@@ -1,6 +1,6 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { getUser, getReservedUser, customAuthReq } = require('../utils/utils')
+const { getUser, getReservedUser, customAuthReq, publicReq } = require('../utils/utils')
 const { waitForIndexation } = require('../utils/search')
 const { getTwoFriends } = require('../fixtures/users')
 const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
@@ -16,7 +16,11 @@ const search = (reqUser, userId, search) => {
   let url = endpoint
   if (userId) url += `&user=${userId}`
   if (search) url += `&search=${encodeURIComponent(search)}`
-  return customAuthReq(reqUser, 'get', url)
+  if (reqUser === 'public') {
+    return publicReq('get', url)
+  } else {
+    return customAuthReq(reqUser, 'get', url)
+  }
 }
 
 describe('items:search', () => {
@@ -122,7 +126,7 @@ describe('items:search', () => {
       should(items[0].visibility).not.be.ok()
     })
 
-    it('should find items visible by a public user', async () => {
+    it('should find items visible by an authentified non-network user', async () => {
       const userA = await getUser()
       const userB = await getReservedUser()
       const privateItem = await createItemWithEditionAndWork(userA, { visibility: [] })
@@ -135,6 +139,24 @@ describe('items:search', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(userB, userA._id, title)
+      const itemsIds = _.map(items, '_id')
+      itemsIds.should.not.containEql(privateItem._id)
+      itemsIds.should.not.containEql(networkItem._id)
+      itemsIds.should.containEql(publicItem._id)
+    })
+
+    it('should find items visible by an non-authentified user', async () => {
+      const userA = await getUser()
+      const privateItem = await createItemWithEditionAndWork(userA, { visibility: [] })
+      const networkItem = await createItem(userA, { entity: privateItem.entity, visibility: [ 'friends' ] })
+      const publicItem = await createItem(userA, { entity: privateItem.entity, visibility: [ 'public' ] })
+      await Promise.all([
+        waitForIndexation('items', privateItem._id),
+        waitForIndexation('items', networkItem._id),
+        waitForIndexation('items', publicItem._id),
+      ])
+      const { 'entity:title': title } = privateItem.snapshot
+      const { items } = await search('public', userA._id, title)
       const itemsIds = _.map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(networkItem._id)

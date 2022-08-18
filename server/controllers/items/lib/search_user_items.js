@@ -7,7 +7,7 @@ module.exports = buildSearcher({
     const { search, userId, limit = 10, reqUserId, allowedVisibilityKeys } = params
 
     assert_.string(userId)
-    assert_.string(reqUserId)
+
     if (userId !== reqUserId) assert_.array(allowedVisibilityKeys)
 
     const filter = [
