@@ -5,6 +5,11 @@ const _ = require('builders/utils')
 const { uniqByKey } = require('lib/utils/base')
 const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 
+const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
+  const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
+  return [ ownerId, visibilityKeys ]
+}
+
 // Return what the reqUserId user is allowed to see
 module.exports = {
   byUsers: async (usersIds, reqUserId, options = {}) => {
@@ -28,7 +33,9 @@ module.exports = {
   byShelves: async (shelves, reqUserId) => {
     const keys = await getShelvesAllowedVisibilityKeys(shelves, reqUserId)
     return getItemsFromViewAndAllowedVisibilityKeys('byShelfAndVisibilityKey', keys)
-  }
+  },
+
+  getOwnerIdAndVisibilityKeys,
 }
 
 const getUsersAllowedVisibilityKeys = async (usersIds, reqUserId) => {
@@ -46,11 +53,6 @@ const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
     const allowedVisibilityKeys = allowedVisibilityKeysByOwner[shelf.owner]
     return _.combinations([ shelf._id ], allowedVisibilityKeys)
   })
-}
-
-const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
-  const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
-  return [ ownerId, visibilityKeys ]
 }
 
 const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) => {

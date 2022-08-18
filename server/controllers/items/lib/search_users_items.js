@@ -1,5 +1,5 @@
+const error_ = require('lib/error/error')
 const { buildSearcher } = require('lib/elasticsearch')
-const assert_ = require('lib/utils/assert_types')
 const textFields = [
   'snapshot.entity:title',
   'snapshot.entity:subtitle',
@@ -11,24 +11,13 @@ const textFields = [
 module.exports = buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
-    const { search, userId, limit = 10, reqUserId, allowedVisibilityKeys } = params
+    const { search, limit = 10, ownersIdsAndVisibilityKeys } = params
 
-    assert_.string(userId)
-
-    if (userId !== reqUserId) assert_.array(allowedVisibilityKeys)
-
-    const filter = [
-      { term: { owner: userId } }
-    ]
-
-    if (userId !== reqUserId) {
-      filter.push({
-        bool: {
-          should: allowedVisibilityKeys.map(buildVisibilityMatchClause),
-          minimum_should_match: 1
-        }
-      })
+    if (ownersIdsAndVisibilityKeys.length === 0) {
+      throw error_.new('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
     }
+
+    const filter = docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs(ownersIdsAndVisibilityKeys)
 
     const should = {
       multi_match: {
@@ -50,4 +39,35 @@ module.exports = buildSearcher({
   }
 })
 
-const buildVisibilityMatchClause = key => ({ match: { visibility: key } })
+const docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs = ownersIdsAndVisibilityKeys => {
+  return {
+    bool: {
+      should: ownersIdsAndVisibilityKeys.map(getOwnerClauses),
+      minimum_should_match: 1
+    }
+  }
+}
+
+const getOwnerClauses = ([ ownerId, visibilityKeys ]) => {
+  if (visibilityKeys[0] === 'private') {
+    // The 'private' keyword signify that `reqUserId === ownerId`
+    // and thus there is no need to check visibility keys
+    return { term: { owner: ownerId } }
+  } else {
+    return {
+      bool: {
+        should: visibilityKeys.map(docMustMatchOwnerAndVisibility(ownerId)),
+        minimum_should_match: 1
+      }
+    }
+  }
+}
+
+const docMustMatchOwnerAndVisibility = ownerId => key => ({
+  bool: {
+    filter: [
+      { term: { owner: ownerId } },
+      { term: { visibility: key } },
+    ]
+  }
+})

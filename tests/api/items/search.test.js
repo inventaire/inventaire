@@ -11,10 +11,11 @@ const { makeFriends } = require('tests/api/utils/relations')
 const { buildUrl } = require('lib/utils/url')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
 
-const search = (reqUser, { user, search }) => {
+const search = (reqUser, { user, group, search }) => {
   const url = buildUrl('/api/items', {
     action: 'search',
     user,
+    group,
     search,
   })
   if (reqUser) {
@@ -24,14 +25,14 @@ const search = (reqUser, { user, search }) => {
   }
 }
 
-describe('items:search', () => {
+describe('items:search:user', () => {
   it('should reject if no user id is set', async () => {
     const user = await getUser()
     try {
       await search(user, { user: null, search: 'foo' }).then(shouldNotBeCalled)
     } catch (err) {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('missing parameter in query: user')
+      err.body.status_verbose.should.equal('missing parameter in query: user or group')
     }
   })
 
@@ -260,5 +261,18 @@ describe('items:search', () => {
       itemsIds.should.not.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })
+  })
+})
+
+describe('items:search:group', () => {
+  it('should find a group member item by title', async () => {
+    const { group, member } = await getSomeGroupWithAMember()
+    const [ item ] = await Promise.all([
+      createItemWithEditionAndWork(member, { visibility: [ 'public' ] }),
+    ])
+    await waitForIndexation('items', item._id)
+    const { 'entity:title': title } = item.snapshot
+    const { items } = await search(null, { group: group._id, search: title })
+    items[0]._id.should.equal(item._id)
   })
 })
