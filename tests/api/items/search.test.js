@@ -100,6 +100,20 @@ describe('items:search', () => {
     _.map(items, '_id').should.containEql(item._id)
   })
 
+  it('should find a user item by title with punctuation and diacritics', async () => {
+    const user = await getUser()
+    const title = "L'éscadre"
+    const edition = await createEdition({
+      claims: {
+        'wdt:P1476': [ title ]
+      }
+    })
+    const item = await createItem(user, { entity: edition.uri })
+    await waitForIndexation('items', item._id)
+    const { items } = await search(user, { user: user._id, search: 'esc' })
+    _.map(items, '_id').should.containEql(item._id)
+  })
+
   it('should find a user item by title and author', async () => {
     const user = await getUser()
     const [ item ] = await Promise.all([

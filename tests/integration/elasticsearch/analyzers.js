@@ -38,6 +38,11 @@ describe('analyzers', () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'foo-bar', analyzer })
       tokens.should.deepEqual([ 'fo', 'foo', 'ba', 'bar' ])
     })
+
+    it('should drop apostrophes', async () => {
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: "l'eau", analyzer })
+      tokens.should.deepEqual([ 'le', 'lea', 'leau', 'l', 'ea', 'eau' ])
+    })
   })
 
   describe('standard_truncated', () => {
