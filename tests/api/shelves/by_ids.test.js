@@ -1,3 +1,4 @@
+const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
 const { createUser, getTwoFriends } = require('../fixtures/users')
@@ -34,6 +35,7 @@ describe('shelves:by-ids', () => {
       shelf.visibility.should.deepEqual([ 'public', 'groups' ])
       const { shelves } = await publicReq('get', `${endpoint}&ids=${shelf._id}`)
       shelves[shelf._id].should.be.an.Object()
+      should(shelves[shelf._id].visibility).not.be.ok()
     })
   })
 

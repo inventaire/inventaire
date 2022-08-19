@@ -3,6 +3,7 @@ const { byIds, byIdsWithItems } = require('controllers/shelves/lib/shelves')
 const { addWarning } = require('lib/responses')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const error_ = require('lib/error/error')
+const { filterPrivateAttributes } = require('controllers/shelves/lib/filter_private_attributes')
 
 const sanitization = {
   ids: {},
@@ -17,8 +18,9 @@ const controller = async ({ ids, withItems, reqUserId }, req, res) => {
   const foundShelves = await getShelves(ids, reqUserId)
   const foundShelvesIds = _.map(foundShelves, '_id')
   checkNotFoundShelves(ids, foundShelves, foundShelvesIds, res)
-  const authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
+  let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
   checkUnauthorizedShelves(ids, authorizedShelves, foundShelvesIds, req, res)
+  authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
   const shelves = _.keyBy(authorizedShelves, '_id')
   return { shelves }
 }

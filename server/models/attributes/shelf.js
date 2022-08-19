@@ -10,3 +10,7 @@ attributes.updatable = [
 attributes.validAtCreation = attributes.updatable.concat([
   'owner'
 ])
+
+attributes.private = [
+  'visibility',
+]

@@ -25,6 +25,7 @@ describe('shelves:by-owners', () => {
       shelf.visibility.should.deepEqual([ 'public' ])
       const res = await publicReq('get', `${endpoint}&owners=${shelf.owner}`)
       res.shelves[shelf._id].should.be.ok()
+      should(res.shelves[shelf._id].visibility).not.be.ok()
     })
   })
 
