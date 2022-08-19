@@ -11,13 +11,19 @@ const textFields = [
 module.exports = buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
-    const { search, limit = 10, ownersIdsAndVisibilityKeys } = params
+    const { search, limit = 10, ownersIdsAndVisibilityKeys, shelfId } = params
 
     if (ownersIdsAndVisibilityKeys.length === 0) {
       throw error_.new('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
     }
 
-    const filter = docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs(ownersIdsAndVisibilityKeys)
+    const filter = [
+      docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs(ownersIdsAndVisibilityKeys)
+    ]
+
+    if (shelfId) {
+      filter.push({ term: { shelves: shelfId } })
+    }
 
     const should = {
       multi_match: {

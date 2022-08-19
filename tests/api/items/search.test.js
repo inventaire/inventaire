@@ -10,12 +10,14 @@ const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fix
 const { makeFriends } = require('tests/api/utils/relations')
 const { buildUrl } = require('lib/utils/url')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
+const { createShelf, createShelfWithItem } = require('tests/api/fixtures/shelves')
 
-const search = (reqUser, { user, group, search }) => {
+const search = (reqUser, { user, group, shelf, search }) => {
   const url = buildUrl('/api/items', {
     action: 'search',
     user,
     group,
+    shelf,
     search,
   })
   if (reqUser) {
@@ -32,7 +34,7 @@ describe('items:search:user', () => {
       await search(user, { user: null, search: 'foo' }).then(shouldNotBeCalled)
     } catch (err) {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('missing parameter in query: user or group')
+      err.body.status_verbose.should.equal('missing parameter in query: user or group or shelf')
     }
   })
 
@@ -274,7 +276,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', item._id)
       const { 'entity:title': title } = item.snapshot
       const { items } = await search(null, { group: group._id, search: title })
-      items[0]._id.should.equal(item._id)
+      _.map(items, '_id').should.containEql(item._id)
     })
   })
 
@@ -354,5 +356,27 @@ describe('items:search:group', () => {
       itemsIds.should.not.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })
+  })
+})
+
+describe('items:search:shelf', () => {
+  it('should find a public shelf public item', async () => {
+    const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] }, { visibility: [ 'public' ] })
+    await waitForIndexation('items', item._id)
+    const { 'entity:title': title } = item.snapshot
+    const { items } = await search(null, { shelf: shelf._id, search: title })
+    _.map(items, '_id').should.containEql(item._id)
+  })
+
+  it('should not find an item not in the shelf', async () => {
+    const user = getUser()
+    const [ { shelf }, item ] = await Promise.all([
+      createShelf(user, { visibility: [ 'public' ] }),
+      createItem(user, { visibility: [ 'public' ] }),
+    ])
+    await waitForIndexation('items', item._id)
+    const { 'entity:title': title } = item.snapshot
+    const { items } = await search(null, { shelf: shelf._id, search: title })
+    _.map(items, '_id').should.not.containEql(item._id)
   })
 })
