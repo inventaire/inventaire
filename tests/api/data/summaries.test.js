@@ -15,9 +15,9 @@ describe('summaries', () => {
   })
 
   describe('openlibrary', () => {
+    const property = 'wdt:P648'
     it('should return summaries', async () => {
       const olId = 'OL45883W'
-      const property = 'wdt:P648'
       const work = await existsOrCreate({
         claims: {
           [property]: [ olId ]
@@ -25,7 +25,7 @@ describe('summaries', () => {
       })
       const { uri } = work
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries[property]
+      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
       summaryData.text.should.startWith('The main character')
       summaryData.id.should.equal(olId)
       summaryData.property.should.equal(property)
@@ -38,20 +38,20 @@ describe('summaries', () => {
       const olId = 'OL4104668W'
       const work = await existsOrCreate({
         claims: {
-          'wdt:P648': [ olId ]
+          [property]: [ olId ]
         }
       })
       const { uri } = work
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      Object.keys(res.summaries).should.not.containEql('wdt:P648')
-
-      if (res.summaries['wdt:P648']) {
+      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      if (summaryData) {
         const url = `https://openlibrary.org/works/${olId}.json`
         const { description } = await requests_.get(url, { timeout: 10 * 1000 })
         if (description) {
           throw new Error(`This test is obsolete: the OpenLibrary response contains a description (${olId})`)
         }
       }
+      should(summaryData).not.be.ok()
     })
 
     it('should return a summary when a bio is available', async () => {
@@ -59,28 +59,29 @@ describe('summaries', () => {
       const human = await existsOrCreate({
         createFn: createHuman,
         claims: {
-          'wdt:P648': [ olId ]
+          [property]: [ olId ]
         }
       })
       const { uri } = human
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      res.summaries['wdt:P648'].text.should.containEql('Pratchett')
+      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      summaryData.text.should.containEql('Pratchett')
     })
   })
 
   describe('bnf', () => {
+    const property = 'wdt:P268'
     it('should return summaries', async () => {
       const bnfId = '458412245'
-      const property = 'wdt:P268'
       const edition = await existsOrCreate({
         createFn: createEdition,
         claims: {
-          'wdt:P268': [ bnfId ]
+          [property]: [ bnfId ]
         }
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries[property]
+      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
       summaryData.property.should.equal(property)
       summaryData.id.should.equal(bnfId)
       summaryData.source.should.equal('BNF')
@@ -94,12 +95,13 @@ describe('summaries', () => {
       const edition = await existsOrCreate({
         createFn: createEdition,
         claims: {
-          'wdt:P268': [ invalidBnfId ]
+          [property]: [ invalidBnfId ]
         }
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      should(res.summaries['wdt:P268']).not.be.ok()
+      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      should(summaryData).not.be.ok()
     })
   })
 })

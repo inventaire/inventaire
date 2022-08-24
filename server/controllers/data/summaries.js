@@ -1,4 +1,4 @@
-const { keyBy, compact } = require('lodash')
+const { compact } = require('lodash')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
 const { propertiesWithGetters, summaryGettersByClaimProperty } = require('controllers/data/lib/summaries/getters')
 
@@ -12,7 +12,7 @@ const controller = async ({ uri, refresh }) => {
   const { claims } = entity
   const summaries = await getSummariesFromClaims({ claims, refresh })
   return {
-    summaries: keyBy(compact(summaries), 'property')
+    summaries: compact(summaries)
   }
 }
 
