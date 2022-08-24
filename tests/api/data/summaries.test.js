@@ -1,5 +1,5 @@
 const should = require('should')
-const { createWork, createEdition } = require('tests/api/fixtures/entities')
+const { createWork, createEdition, createHuman } = require('tests/api/fixtures/entities')
 const { getByUri } = require('tests/api/utils/entities')
 const { publicReq, shouldNotBeCalled } = require('../utils/utils')
 const requests_ = require('lib/requests')
@@ -41,9 +41,22 @@ describe('summaries', () => {
         const url = `https://openlibrary.org/works/${olId}.json`
         const { description } = await requests_.get(url, { timeout: 10 * 1000 })
         if (description) {
-          throw new Error(`This test is obsolete: the Openlibrary response contains a description (${olId})`)
+          throw new Error(`This test is obsolete: the OpenLibrary response contains a description (${olId})`)
         }
       }
+    })
+
+    it('should return a summary when a bio is available', async () => {
+      const olId = 'OL25712A'
+      const human = await existsOrCreate({
+        createFn: createHuman,
+        claims: {
+          'wdt:P648': [ olId ]
+        }
+      })
+      const { uri } = human
+      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
+      res.summaries['wdt:P648'].text.should.containEql('Pratchett')
     })
   })
 

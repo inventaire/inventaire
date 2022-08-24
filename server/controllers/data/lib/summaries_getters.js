@@ -24,18 +24,20 @@ const summaryGettersByClaimProperty = {
     })
     if (text) return { source, text, link: `https://catalogue.bnf.fr/ark:/12148/cb${id}` }
   },
+
   'wdt:P648': async ({ claimValues, refresh }) => {
     const id = claimValues[0]
-    const url = `https://openlibrary.org/works/${id}.json`
+    const url = `https://openlibrary.org/any/${id}.json`
     const source = 'wdt:P648'
     const text = await cache_.get({
       key: `summary:${source}:${id}`,
       refresh,
       fn: async () => {
-        const { description } = await requests_.get(url, { timeout })
-        if (!description) return
-        if (description.value) return description.value
-        else if (typeof description === 'string') return description
+        const { bio, description } = await requests_.get(url, { timeout })
+        const text = bio || description
+        if (!text) return
+        if (text.value) return text.value
+        else if (typeof text === 'string') return text
       }
     })
     if (text) return { source, text }
