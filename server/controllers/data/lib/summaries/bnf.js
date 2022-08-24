@@ -9,11 +9,11 @@ module.exports = async ({ claimValues, refresh }) => {
   const sparql = `SELECT * {
     <http://data.bnf.fr/ark:/12148/cb${id}#about> <http://purl.org/dc/terms/abstract> ?summary .
   }`
-  const source = 'wdt:P268'
+  const property = 'wdt:P268'
   const headers = { accept: '*/*' }
   const url = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=${fixedEncodeURIComponent(sparql)}`
   const text = await cache_.get({
-    key: `summary:${source}:${id}`,
+    key: `summary:${property}:${id}`,
     refresh,
     fn: async () => {
       const response = await requests_.get(url, { headers, timeout })
@@ -21,5 +21,14 @@ module.exports = async ({ claimValues, refresh }) => {
       return simplifiedResults[0]?.summary
     }
   })
-  if (text) return { source, text, link: `https://catalogue.bnf.fr/ark:/12148/cb${id}` }
+  if (text) {
+    return {
+      text,
+      id,
+      property,
+      source: 'BNF',
+      link: `https://catalogue.bnf.fr/ark:/12148/cb${id}`,
+      lang: 'fr',
+    }
+  }
 }

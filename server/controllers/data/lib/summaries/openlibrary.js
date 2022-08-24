@@ -4,10 +4,13 @@ const timeout = 10 * 1000
 
 module.exports = async ({ claimValues, refresh }) => {
   const id = claimValues[0]
-  const url = `https://openlibrary.org/any/${id}.json`
-  const source = 'wdt:P648'
+  const lastLetter = id.slice(-1)[0]
+  const section = openLibrarySectionByLetter[lastLetter]
+  const link = `https://openlibrary.org/${section}/${id}`
+  const url = `${link}.json`
+  const property = 'wdt:P648'
   const text = await cache_.get({
-    key: `summary:${source}:${id}`,
+    key: `summary:${property}:${id}`,
     refresh,
     fn: async () => {
       const { bio, description } = await requests_.get(url, { timeout })
@@ -17,5 +20,20 @@ module.exports = async ({ claimValues, refresh }) => {
       else if (typeof text === 'string') return text
     }
   })
-  if (text) return { source, text }
+  if (text) {
+    return {
+      text,
+      id,
+      property,
+      source: 'OpenLibrary',
+      link,
+      lang: 'en',
+    }
+  }
+}
+
+const openLibrarySectionByLetter = {
+  A: 'authors',
+  W: 'works',
+  M: 'books',
 }

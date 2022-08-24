@@ -12,7 +12,7 @@ const controller = async ({ uri, refresh }) => {
   const { claims } = entity
   const summaries = await getSummariesFromClaims({ claims, refresh })
   return {
-    summaries: keyBy(compact(summaries), 'source')
+    summaries: keyBy(compact(summaries), 'property')
   }
 }
 

@@ -16,14 +16,22 @@ describe('summaries', () => {
 
   describe('openlibrary', () => {
     it('should return summaries', async () => {
+      const olId = 'OL45883W'
+      const property = 'wdt:P648'
       const work = await existsOrCreate({
         claims: {
-          'wdt:P648': [ 'OL45883W' ]
+          [property]: [ olId ]
         }
       })
       const { uri } = work
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      res.summaries['wdt:P648'].text.startsWith('The main character')
+      const summaryData = res.summaries[property]
+      summaryData.text.should.startWith('The main character')
+      summaryData.id.should.equal(olId)
+      summaryData.property.should.equal(property)
+      summaryData.source.should.equal('OpenLibrary')
+      summaryData.link.should.equal(`https://openlibrary.org/works/${olId}`)
+      summaryData.lang.should.equal('en')
     })
 
     it('should return empty summaries when no description is provided', async () => {
@@ -62,18 +70,23 @@ describe('summaries', () => {
 
   describe('bnf', () => {
     it('should return summaries', async () => {
+      const bnfId = '458412245'
+      const property = 'wdt:P268'
       const edition = await existsOrCreate({
         createFn: createEdition,
         claims: {
-          'wdt:P268': [ '458412245' ]
+          'wdt:P268': [ bnfId ]
         }
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries['wdt:P268']
-      summaryData.source.equal('BNF')
+      const summaryData = res.summaries[property]
+      summaryData.property.should.equal(property)
+      summaryData.id.should.equal(bnfId)
+      summaryData.source.should.equal('BNF')
       summaryData.text.startsWith("C'est au beau milieu de la steppe")
       summaryData.link.should.equal('https://catalogue.bnf.fr/ark:/12148/cb458412245')
+      summaryData.lang.should.equal('fr')
     })
 
     it('should not return a summary when none exists', async () => {
