@@ -4,8 +4,7 @@ const timeout = 10 * 1000
 const { fixedEncodeURIComponent } = require('lib/utils/url')
 const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 
-module.exports = async ({ claimValues, refresh }) => {
-  const id = claimValues[0]
+module.exports = async ({ id, refresh }) => {
   const sparql = `SELECT * {
     <http://data.bnf.fr/ark:/12148/cb${id}#about> <http://purl.org/dc/terms/abstract> ?summary .
   }`
@@ -24,9 +23,7 @@ module.exports = async ({ claimValues, refresh }) => {
   if (text) {
     return {
       text,
-      id,
-      property,
-      source: 'BNF',
+      name: 'BNF',
       link: `https://catalogue.bnf.fr/ark:/12148/cb${id}`,
       lang: 'fr',
     }

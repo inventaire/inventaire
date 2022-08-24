@@ -25,11 +25,12 @@ describe('summaries', () => {
       })
       const { uri } = work
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      summaryData.key.should.equal(property)
       summaryData.text.should.startWith('The main character')
-      summaryData.id.should.equal(olId)
-      summaryData.property.should.equal(property)
-      summaryData.source.should.equal('OpenLibrary')
+      summaryData.claim.id.should.equal(olId)
+      summaryData.claim.property.should.equal(property)
+      summaryData.name.should.equal('OpenLibrary')
       summaryData.link.should.equal(`https://openlibrary.org/works/${olId}`)
       summaryData.lang.should.equal('en')
     })
@@ -43,7 +44,7 @@ describe('summaries', () => {
       })
       const { uri } = work
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
       if (summaryData) {
         const url = `https://openlibrary.org/works/${olId}.json`
         const { description } = await requests_.get(url, { timeout: 10 * 1000 })
@@ -64,7 +65,7 @@ describe('summaries', () => {
       })
       const { uri } = human
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
       summaryData.text.should.containEql('Pratchett')
     })
   })
@@ -81,10 +82,11 @@ describe('summaries', () => {
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
-      summaryData.property.should.equal(property)
-      summaryData.id.should.equal(bnfId)
-      summaryData.source.should.equal('BNF')
+      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      summaryData.key.should.equal(property)
+      summaryData.claim.property.should.equal(property)
+      summaryData.claim.id.should.equal(bnfId)
+      summaryData.name.should.equal('BNF')
       summaryData.text.startsWith("C'est au beau milieu de la steppe")
       summaryData.link.should.equal('https://catalogue.bnf.fr/ark:/12148/cb458412245')
       summaryData.lang.should.equal('fr')
@@ -100,7 +102,7 @@ describe('summaries', () => {
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.property === property)
+      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
       should(summaryData).not.be.ok()
     })
   })
@@ -109,28 +111,26 @@ describe('summaries', () => {
     it('should return a reference to an available wikipedia article', async () => {
       const uri = 'wd:Q4980986'
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const svwikiSitelinkData = res.summaries.find(summaryData => summaryData.sitelink.key === 'svwiki')
-      const enwikiSitelinkData = res.summaries.find(summaryData => summaryData.sitelink.key === 'enwiki')
+      const svwikiSitelinkData = res.summaries.find(summaryData => summaryData.key === 'svwiki')
+      const enwikiSitelinkData = res.summaries.find(summaryData => summaryData.key === 'enwiki')
       svwikiSitelinkData.should.deepEqual({
+        key: 'svwiki',
         lang: 'sv',
-        source: 'Wikipedia',
+        name: 'Wikipedia (sv)',
         link: 'https://sv.wikipedia.org/wiki/Liv_Str%C3%B6mquist',
         sitelink: {
           title: 'Liv Strömquist',
           lang: 'sv',
-          key: 'svwiki',
-          project: 'wikipedia'
         }
       })
       enwikiSitelinkData.should.deepEqual({
+        key: 'enwiki',
         lang: 'en',
-        source: 'Wikipedia',
+        name: 'Wikipedia (en)',
         link: 'https://en.wikipedia.org/wiki/Liv_Str%C3%B6mquist',
         sitelink: {
           title: 'Liv Strömquist',
           lang: 'en',
-          key: 'enwiki',
-          project: 'wikipedia'
         }
       })
     })

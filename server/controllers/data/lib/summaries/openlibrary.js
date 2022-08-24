@@ -2,8 +2,7 @@ const requests_ = require('lib/requests')
 const cache_ = require('lib/cache')
 const timeout = 10 * 1000
 
-module.exports = async ({ claimValues, refresh }) => {
-  const id = claimValues[0]
+module.exports = async ({ id, refresh }) => {
   const lastLetter = id.slice(-1)[0]
   const section = openLibrarySectionByLetter[lastLetter]
   const link = `https://openlibrary.org/${section}/${id}`
@@ -23,9 +22,7 @@ module.exports = async ({ claimValues, refresh }) => {
   if (text) {
     return {
       text,
-      id,
-      property,
-      source: 'OpenLibrary',
+      name: 'OpenLibrary',
       link,
       lang: 'en',
     }
