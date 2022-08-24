@@ -57,7 +57,10 @@ describe('summaries', () => {
       })
       const { uri } = edition
       const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      res.summaries['wdt:P268'].text.startsWith("C'est au beau milieu de la steppe")
+      const summaryData = res.summaries['wdt:P268']
+      summaryData.source.equal('BNF')
+      summaryData.text.startsWith("C'est au beau milieu de la steppe")
+      summaryData.link.should.equal('https://catalogue.bnf.fr/ark:/12148/cb458412245')
     })
 
     it('should not return a summary when none exists', async () => {
