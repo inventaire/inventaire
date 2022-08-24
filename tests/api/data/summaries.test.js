@@ -104,6 +104,37 @@ describe('summaries', () => {
       should(summaryData).not.be.ok()
     })
   })
+
+  describe('wikipedia', () => {
+    it('should return a reference to an available wikipedia article', async () => {
+      const uri = 'wd:Q4980986'
+      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const svwikiSitelinkData = res.summaries.find(summaryData => summaryData.sitelink.key === 'svwiki')
+      const enwikiSitelinkData = res.summaries.find(summaryData => summaryData.sitelink.key === 'enwiki')
+      svwikiSitelinkData.should.deepEqual({
+        lang: 'sv',
+        source: 'Wikipedia',
+        link: 'https://sv.wikipedia.org/wiki/Liv_Str%C3%B6mquist',
+        sitelink: {
+          title: 'Liv Strömquist',
+          lang: 'sv',
+          key: 'svwiki',
+          project: 'wikipedia'
+        }
+      })
+      enwikiSitelinkData.should.deepEqual({
+        lang: 'en',
+        source: 'Wikipedia',
+        link: 'https://en.wikipedia.org/wiki/Liv_Str%C3%B6mquist',
+        sitelink: {
+          title: 'Liv Strömquist',
+          lang: 'en',
+          key: 'enwiki',
+          project: 'wikipedia'
+        }
+      })
+    })
+  })
 })
 
 const existsOrCreate = async ({ claims, createFn = createWork }) => {
