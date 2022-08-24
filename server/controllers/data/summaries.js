@@ -1,6 +1,6 @@
 const { keyBy, compact } = require('lodash')
 const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { propertiesWithGetters, summaryGettersByClaimProperty } = require('controllers/data/lib/summaries_getters')
+const { propertiesWithGetters, summaryGettersByClaimProperty } = require('controllers/data/lib/summaries/getters')
 
 const sanitization = {
   uri: {},
