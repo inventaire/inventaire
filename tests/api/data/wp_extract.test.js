@@ -38,4 +38,10 @@ describe('wikipedia:extract', () => {
     const res = await publicReq('get', `${endpoint}&lang=fr&title=${title}`)
     res.url.should.equal('https://fr.wikipedia.org/wiki/Qu%27est-ce_que_la_vie_%3F')
   })
+
+  it('should support wikimedia language codes', async () => {
+    const res = await publicReq('get', `${endpoint}&lang=be_x_old&title=Віктор%20Юго`)
+    res.url.should.equal(encodeURI('https://be-x-old.wikipedia.org/wiki/Віктор_Юго'))
+    res.extract.should.containEql('1802')
+  })
 })

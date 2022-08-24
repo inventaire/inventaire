@@ -7,6 +7,7 @@ const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
 const { normalizeString } = require('lib/utils/base')
+const { isWikimediaLanguageCode } = require('lib/wikimedia')
 
 // Parameters attributes:
 // - format (optional)
@@ -255,7 +256,13 @@ module.exports = {
   items: couchUuids,
   lang: {
     default: 'en',
-    validate: _.isLang
+    validate: (value, name, config) => {
+      if (config.type === 'wikimedia') {
+        return isWikimediaLanguageCode(value)
+      } else {
+        return _.isLang(value)
+      }
+    }
   },
   limit: Object.assign({}, positiveInteger, {
     min: 1,
