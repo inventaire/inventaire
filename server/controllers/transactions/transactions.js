@@ -5,6 +5,7 @@ module.exports = {
     authentified: {
       default: require('./get'),
       'get-messages': require('./get_messages'),
+      'by-item': require('./get_by_item'),
     }
   }),
 
