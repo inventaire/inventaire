@@ -27,7 +27,7 @@ const validateUserOrGroup = params => {
 }
 
 const getItems = async params => {
-  const { userId, groupId, shelfId, reqUserId, 'without-shelf': withoutShelf } = params
+  const { user: userId, group: groupId, shelf: shelfId, reqUserId, 'without-shelf': withoutShelf } = params
   if (userId) {
     return getAuthorizedItems.byUsers([ userId ], reqUserId, { withoutShelf })
   } else if (shelfId) {
