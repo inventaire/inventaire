@@ -118,7 +118,7 @@ describe('items:search', () => {
       const publicItem = await createItemWithEditionAndWork(userA, { visibility: [ 'public' ] })
       const { 'entity:title': title } = publicItem.snapshot
       await waitForIndexation('items', publicItem._id)
-      const { items } = await search(userB, userA._id, title)
+      const { items } = await search(userB, { user: userA._id, search: title })
       should(items[0].visibility).not.be.ok()
     })
 
