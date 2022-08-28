@@ -21,7 +21,6 @@ module.exports = {
     }
     return getUsersItems({
       usersIds: allGroupMembersIds,
-      reqUserId,
       allowedVisibilityKeys,
     })
   },
@@ -54,7 +53,7 @@ const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
   return [ ownerId, visibilityKeys ]
 }
 
-const getUsersItems = async ({ usersIds, reqUserId, allowedVisibilityKeys, withoutShelf = false }) => {
+const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) => {
   const view = withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
   const keys = _.combinations(usersIds, allowedVisibilityKeys)
   return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
