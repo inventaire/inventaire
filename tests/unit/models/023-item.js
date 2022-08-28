@@ -62,6 +62,15 @@ describe('item model', () => {
 
       it('should throw on invalid visibility value', () => {
         try {
+          const item = create(extendItem({ visibility: 'notalist' }))
+          shouldNotBeCalled(item)
+        } catch (err) {
+          err.message.should.startWith('invalid visibility')
+        }
+      })
+
+      it('should throw on invalid visibility element list', () => {
+        try {
           const item = create(extendItem({ visibility: [ 'notalist' ] }))
           shouldNotBeCalled(item)
         } catch (err) {
