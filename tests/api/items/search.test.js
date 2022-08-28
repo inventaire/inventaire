@@ -113,6 +113,16 @@ describe('items:search', () => {
   })
 
   describe('visibility:public', () => {
+    it('should remove private attributes when requested by non-owner users', async () => {
+      const userA = await getUser()
+      const userB = await getReservedUser()
+      const publicItem = await createItemWithEditionAndWork(userA, { visibility: [ 'public' ] })
+      const { 'entity:title': title } = publicItem.snapshot
+      await waitForIndexation('items', publicItem._id)
+      const { items } = await search(userB, userA._id, title)
+      should(items[0].visibility).not.be.ok()
+    })
+
     it('should find items visible by a public user', async () => {
       const userA = await getUser()
       const userB = await getReservedUser()
