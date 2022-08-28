@@ -51,8 +51,7 @@ describe('items:search', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(user, user._id, title)
-    // There might be other results, but the searched item should come first
-    items[0]._id.should.equal(item._id)
+    _.map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by subtitle', async () => {
@@ -66,7 +65,7 @@ describe('items:search', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:subtitle': subtitle } = item.snapshot
     const { items } = await search(user, user._id, subtitle)
-    items[0]._id.should.equal(item._id)
+    _.map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by author', async () => {
@@ -80,7 +79,7 @@ describe('items:search', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:authors': authors } = item.snapshot
     const { items } = await search(user, user._id, authors)
-    items[0]._id.should.equal(item._id)
+    _.map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by serie', async () => {
@@ -94,7 +93,7 @@ describe('items:search', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:series': series } = item.snapshot
     const { items } = await search(user, user._id, series)
-    items[0]._id.should.equal(item._id)
+    _.map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by title and author', async () => {
@@ -109,7 +108,7 @@ describe('items:search', () => {
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, user._id, input)
-    items[0]._id.should.equal(item._id)
+    _.map(items, '_id').should.containEql(item._id)
   })
 
   describe('visibility:public', () => {
