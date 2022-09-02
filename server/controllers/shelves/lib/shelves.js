@@ -7,6 +7,7 @@ const error_ = require('lib/error/error')
 const { emit } = require('lib/radio')
 const { updatable: updateAttributes } = require('models/attributes/shelf')
 const { validateVisibilityKeys } = require('lib/visibility/visibility')
+const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
@@ -20,7 +21,8 @@ const shelves_ = module.exports = {
     const shelves = await shelves_.byIds(ids)
     const shelvesCount = _.compact(shelves).length
     if (shelvesCount === 0) return []
-    const items = await getAuthorizedItems.byShelves(shelves, reqUserId)
+    let items = await getAuthorizedItems.byShelves(shelves, reqUserId)
+    items = items.map(filterPrivateAttributes(reqUserId))
     return assignItemsToShelves(shelves, items)
   },
   byOwners: ownersIds => {

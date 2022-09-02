@@ -4,30 +4,51 @@ module.exports = {
       emit(doc.created, [ doc._id, doc.title ])
     }
   },
-  byListing: {
+  byOwner: {
     map: doc => {
-      if (doc.listing != null) {
-        emit([ doc.owner, doc.listing ], null)
+      emit(doc.owner, null)
+    }
+  },
+  byOwnerAndVisibilityKey: {
+    map: doc => {
+      emit([ doc.owner, 'private' ], null)
+      for (const visibilityKey of doc.visibility) {
+        emit([ doc.owner, visibilityKey ], null)
       }
     }
   },
-  byListingWithoutShelf: {
+  byOwnerAndVisibilityKeyWithoutShelf: {
     map: doc => {
       if (doc.shelves == null || doc.shelves.length === 0) {
-        emit([ doc.owner, doc.listing ], null)
+        emit([ doc.owner, 'private' ], null)
+        for (const visibilityKey of doc.visibility) {
+          emit([ doc.owner, visibilityKey ], null)
+        }
+      }
+    }
+  },
+  byShelfAndVisibilityKey: {
+    map: doc => {
+      if (doc.shelves != null) {
+        for (const shelf of doc.shelves) {
+          emit([ shelf, 'private' ], null)
+          for (const visibilityKey of doc.visibility) {
+            emit([ shelf, visibilityKey ], null)
+          }
+        }
       }
     }
   },
   publicByDate: {
     map: doc => {
-      if (doc.listing === 'public') {
+      if (doc.visibility.includes('public')) {
         emit(doc.created, null)
       }
     }
   },
   publicByOwnerAndDate: {
     map: doc => {
-      if (doc.listing === 'public') {
+      if (doc.visibility.includes('public')) {
         emit([ doc.owner, doc.created ], null)
       }
     }
@@ -35,23 +56,24 @@ module.exports = {
   publicByShelfAndDate: {
     map: doc => {
       if (doc.shelves != null) {
+        const isPublic = doc.visibility.includes('public')
         for (const shelf of doc.shelves) {
-          if (doc.listing === 'public') {
+          if (isPublic) {
             emit([ shelf, doc.created ], null)
           }
         }
       }
     }
   },
-  byOwnerAndEntityAndListing: {
+  byOwnerAndEntity: {
     map: doc => {
-      emit([ doc.owner, doc.entity, doc.listing ], null)
+      emit([ doc.owner, doc.entity ], null)
     }
   },
   byEntity: {
     map: doc => {
       if (doc.entity != null) {
-        emit([ doc.entity, doc.listing ], null)
+        emit(doc.entity, null)
       }
     }
   },
@@ -69,15 +91,6 @@ module.exports = {
       if (doc.previousEntity != null) {
         for (const uri of doc.previousEntity) {
           emit(uri, null)
-        }
-      }
-    }
-  },
-  byShelvesAndListing: {
-    map: doc => {
-      if (doc.shelves != null) {
-        for (const shelf of doc.shelves) {
-          emit([ shelf, doc.listing ], null)
         }
       }
     }

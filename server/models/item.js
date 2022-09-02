@@ -6,7 +6,6 @@ const Item = module.exports = {}
 
 const validations = Item.validations = require('./validations/item')
 const attributes = Item.attributes = require('./attributes/item')
-const { defaultValue: defaultListing } = attributes.constrained.listing
 const { defaultValue: defaultTransaction } = attributes.constrained.transaction
 
 Item.create = (userId, item) => {
@@ -17,7 +16,7 @@ Item.create = (userId, item) => {
   item = _.omit(item, [ '_id', 'owner', 'created' ])
   const passedAttributes = Object.keys(item)
 
-  item.listing = item.listing || defaultListing
+  item.visibility = item.visibility || []
   item.transaction = item.transaction || defaultTransaction
 
   for (const attr of passedAttributes) {
@@ -90,7 +89,7 @@ Item.changeOwner = (transacDoc, item) => {
     owner: requester,
     // default values
     transaction: 'inventorying',
-    listing: 'private',
+    visibility: [],
     updated: Date.now()
   })
 }

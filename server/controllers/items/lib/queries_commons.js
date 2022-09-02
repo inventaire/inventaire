@@ -1,57 +1,52 @@
 const _ = require('builders/utils')
 const user_ = require('controllers/user/lib/user')
-const transactions_ = require('controllers/transactions/lib/transactions')
+const { setItemsBusyFlag } = require('controllers/transactions/lib/transactions')
 const snapshot_ = require('./snapshot/snapshot')
 
 const filters = {
   // Prevent showing private items in group context to avoid giving the false
-  // impresssion that those are visible by other members of the group
-  group: item => item.listing !== 'private'
+  // impression that those are visible by other members of the group
+  group: item => item.visibility.length > 0
 }
 
 const validFilters = Object.keys(filters)
 
-const queriesCommons = module.exports = {
-  validFilters,
+const addUsersData = async (page, reqParams) => {
+  const { reqUserId, includeUsers } = reqParams
+  if (includeUsers === false) return page
 
-  addAssociatedData: async page => {
+  const { items } = page
+  if (items.length === 0) {
+    page.users = []
+    return page
+  }
+
+  const ownersIds = _.uniq(items.map(_.property('owner')))
+
+  const users = await user_.getUsersByIds(ownersIds, reqUserId)
+  page.users = users
+  return page
+}
+
+const addItemsSnapshots = items => {
+  return Promise.all(items.map(snapshot_.addToItem))
+}
+
+module.exports = {
+  validFilters,
+  addItemsSnapshots,
+
+  addAssociatedData: async (page, reqParams) => {
     await Promise.all([
-      queriesCommons.addItemsSnapshots(page.items),
-      queriesCommons.addUsersData(page),
-      transactions_.setItemsBusyFlag(page.items),
+      addItemsSnapshots(page.items),
+      addUsersData(page, reqParams),
+      setItemsBusyFlag(page.items),
     ])
     return page
   },
 
-  addUsersData: page => {
-    const { reqUserId, includeUsers } = page
-    if (includeUsers === false) return page
-
-    const { items } = page
-    if (items.length === 0) {
-      page.users = []
-      return page
-    }
-
-    const ownersIds = _.uniq(items.map(_.property('owner')))
-
-    return user_.getUsersByIds(ownersIds, reqUserId)
-    .then(users => {
-      page.users = users
-      return page
-    })
-  },
-
-  addItemsSnapshots: items => {
-    return Promise.all(items.map(snapshot_.addToItem))
-  },
-
-  ownerIs: userId => item => item.owner === userId,
-
-  listingIs: listing => item => item.listing === listing,
-
-  Paginate: page => items => {
-    let { limit, offset, filter } = page
+  paginate: (items, params) => {
+    let { limit, offset, filter } = params
     items = items.sort(byCreationDate)
     if (filter != null) items = items.filter(filters[filter])
     const total = items.length

@@ -1,41 +1,31 @@
 const _ = require('builders/utils')
 const Item = require('models/item')
-const listingsPossibilities = Item.attributes.constrained.listing.possibilities
 const assert_ = require('lib/utils/assert_types')
 const { BasicUpdater } = require('lib/doc_updates')
 const { emit } = require('lib/radio')
 const { filterPrivateAttributes } = require('./filter_private_attributes')
-const { maxKey } = require('lib/couch')
-const listingsLists = require('./listings_lists')
 const snapshot_ = require('./snapshot/snapshot')
-const getByAccessLevel = require('./get_by_access_level')
-const user_ = require('controllers/user/lib/user')
 const db = require('db/couchdb/base')('items')
 const error_ = require('lib/error/error')
-const validateEntityAndShelves = require('./validate_entity_and_shelves')
+const { validateItemsAsync } = require('./validate_item_async')
+const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
 
 const items_ = module.exports = {
+  db,
   byId: db.get,
   byIds: db.byIds,
-  byOwner: ownerId => {
-    return db.viewCustom('byOwnerAndEntityAndListing', {
-      startkey: [ ownerId ],
-      endkey: [ ownerId, maxKey, maxKey ],
-      include_docs: true
-    })
-  },
+  byOwner: ownerId => db.viewByKeys('byOwner', [ ownerId ]),
+  byOwners: ownersIds => db.viewByKeys('byOwner', ownersIds),
 
-  byEntity: entityUri => {
-    assert_.string(entityUri)
-    return db.viewByKeys('byEntity', entityUriKeys(entityUri))
+  byEntity: entityUri => db.viewByKeys('byEntity', [ entityUri ]),
+  byEntities: entitiesUris => db.viewByKeys('byEntity', entitiesUris),
+
+  byOwnerAndEntities: (ownerId, entitiesUris) => {
+    const keys = entitiesUris.map(uri => [ ownerId, uri ])
+    return db.viewByKeys('byOwnerAndEntity', keys)
   },
 
   byPreviousEntity: entityUri => db.viewByKey('byPreviousEntity', entityUri),
-
-  byShelvesAndListing: (keys, reqUserId) => {
-    return db.viewByKeys('byShelvesAndListing', keys)
-    .then(formatItems(reqUserId))
-  },
 
   publicByOwnerAndDate: ({ ownerId, since, until }) => {
     assert_.string(ownerId)
@@ -61,15 +51,6 @@ const items_ = module.exports = {
     })
   },
 
-  // all items from an entity that require a specific authorization
-  authorizedByEntities: (uris, reqUserId) => {
-    return listingByEntities('network', uris, reqUserId)
-  },
-
-  publicByEntities: (uris, reqUserId) => {
-    return listingByEntities('public', uris, reqUserId)
-  },
-
   publicByDate: (limit = 15, offset = 0, assertImage = false, reqUserId) => {
     return db.viewCustom('publicByDate', {
       limit,
@@ -81,24 +62,10 @@ const items_ = module.exports = {
     .then(formatItems(reqUserId))
   },
 
-  byOwnersAndEntitiesAndListings: (ownersIds, uris, listingsKey, reqUserId) => {
-    const keys = []
-    for (const ownerId of ownersIds) {
-      for (const uri of uris) {
-        for (const listing of listingsLists[listingsKey]) {
-          keys.push([ ownerId, uri, listing ])
-        }
-      }
-    }
-
-    return db.viewByKeys('byOwnerAndEntityAndListing', keys)
-    .then(formatItems(reqUserId))
-  },
-
   create: async (userId, items) => {
     assert_.array(items)
-    await Promise.all(items.map(validateEntityAndShelves.bind(null, userId)))
     items = items.map(item => Item.create(userId, item))
+    await validateItemsAsync(items)
     const res = await db.bulk(items)
     const itemsIds = _.map(res, 'id')
     const shelvesIds = _.deepCompact(_.map(items, 'shelves'))
@@ -111,21 +78,12 @@ const items_ = module.exports = {
   },
 
   update: async (userId, itemUpdateData) => {
-    await validateEntityAndShelves(userId, itemUpdateData)
+    await validateItemsAsync([ itemUpdateData ])
     const currentItem = await db.get(itemUpdateData._id)
     let updatedItem = Item.update(userId, itemUpdateData, currentItem)
     updatedItem = await db.putAndReturn(updatedItem)
     await emit('user:inventory:update', userId)
     return updatedItem
-  },
-
-  bulkUpdate: async ({ reqUserId, ids, attribute, value }) => {
-    const itemUpdateData = { [attribute]: value }
-    const currentItems = await items_.byIds(ids)
-    let updatedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
-    updatedItems = await db.bulk(updatedItems)
-    await emit('user:inventory:update', reqUserId)
-    return updatedItems
   },
 
   setBusyness: (id, busy) => {
@@ -142,11 +100,6 @@ const items_ = module.exports = {
   },
 
   bulkDelete: db.bulkDelete,
-
-  nearby: async (reqUserId, range = 50, strict = false) => {
-    const usersIds = await user_.nearby(reqUserId, range, strict)
-    return getUsersAndItemsPublicData(usersIds, reqUserId)
-  },
 
   // Data serializa emails and rss feeds templates
   serializeData: async item => {
@@ -169,14 +122,6 @@ const items_ = module.exports = {
   }
 }
 
-const getUsersAndItemsPublicData = (usersIds, reqUserId) => {
-  if (usersIds.length <= 0) return [ [], [] ]
-  return Promise.all([
-    user_.getUsersByIds(usersIds, reqUserId),
-    getByAccessLevel.public(usersIds)
-  ])
-}
-
 const validateOwnership = (userId, items) => {
   items = _.forceArray(items)
   for (const item of items) {
@@ -187,27 +132,17 @@ const validateOwnership = (userId, items) => {
 }
 
 const formatItems = reqUserId => async items => {
-  items = await Promise.all(items.map(snapshot_.addToItem))
+  items = await addItemsSnapshots(items)
   return items.map(filterPrivateAttributes(reqUserId))
 }
 
-const listingByEntities = async (listing, uris, reqUserId) => {
-  const keys = uris.map(uri => [ uri, listing ])
-  const items = await db.viewByKeys('byEntity', keys)
-  return items.map(filterPrivateAttributes(reqUserId))
+const filterWithImage = assertImage => async items => {
+  items = await addItemsSnapshots(items)
+  if (assertImage) return items.filter(itemWithImage)
+  else return items
 }
 
-const entityUriKeys = entityUri => listingsPossibilities.map(listing => [ entityUri, listing ])
-
-const filterWithImage = assertImage => items => {
-  return Promise.all(items.map(snapshot_.addToItem))
-  .then(items => {
-    if (assertImage) return items.filter(itemWithImage)
-    else return items
-  })
-}
-
-const itemWithImage = item => item.snapshot['entity:image']
+const itemWithImage = item => item.snapshot['entity:image'] != null
 
 const actionFunctions = {
   addShelves: _.union,

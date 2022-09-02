@@ -30,7 +30,7 @@ describe('transactions:request', () => {
 
   it('should not request your own items', async () => {
     try {
-      const item = await createItem()
+      const item = await createItem(getUser(), { transaction: 'giving', visibility: [ 'public' ] })
       await authReq('post', endpoint, {
         item: item._id,
         message: 'yo'
@@ -57,7 +57,7 @@ describe('transactions:request', () => {
   })
 
   it('should not request inventorying items', async () => {
-    const item = await createItem(getUser(), { listing: 'public', transaction: 'giving' })
+    const item = await createItem(getUser(), { visibility: [ 'public' ], transaction: 'giving' })
     const res = await authReqB('post', endpoint, {
       item: item._id,
       message: 'yo'
@@ -67,7 +67,7 @@ describe('transactions:request', () => {
 
   it('should create a transaction', async () => {
     const edition = await createEditionFromWorkWithAuthor()
-    const itemData = { entity: edition.uri, listing: 'public', transaction: 'lending' }
+    const itemData = { entity: edition.uri, visibility: [ 'public' ], transaction: 'lending' }
     const { transaction, userA, userB, userBItem } = await createTransaction({ itemData })
     transaction.should.be.an.Object()
     transaction.item.should.equal(userBItem._id)

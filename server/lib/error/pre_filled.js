@@ -1,6 +1,6 @@
 // Pre-formatted error handlers to make error responses consistent
 const { pick } = require('lodash')
-const { typeOf } = require('../utils/base')
+const { typeOf } = require('../utils/types')
 
 module.exports = error_ => {
   const newFunctions = {

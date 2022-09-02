@@ -1,54 +1,119 @@
 const _ = require('builders/utils')
 require('should')
-const { getUser, getUserB, authReq } = require('tests/api/utils/utils')
+const { getUser, authReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const { createItem } = require('../fixtures/items')
+const { getSomeGroup, addMember } = require('../fixtures/groups')
+const { humanName } = require('../fixtures/entities')
+const userPromise = getUserGetter(humanName())()
+
+const endpoint = '/api/items?action=by-users'
 
 describe('items:get-by-users', () => {
-  it('should get an item by id', async () => {
-    const item = await createItem(getUser())
-    const { items } = await authReq('get', `/api/items?action=by-users&users=${item.owner}`)
+  it('should get an item by user', async () => {
+    const item = await createItem(null, { visibility: [ 'public' ] })
+    const { items } = await publicReq('get', `${endpoint}&users=${item.owner}`)
     items[0]._id.should.equal(item._id)
   })
 
-  it('should get items by ids', async () => {
+  it('should get user items', async () => {
     const items = await Promise.all([
-      createItem(getUser(), { listing: 'private' }),
-      createItem(getUser(), { listing: 'public' }),
-      createItem(getUserB(), { listing: 'public' })
+      createItem(getUser(), { visibility: [] }),
+      createItem(getUser(), { visibility: [ 'public' ] }),
+      createItem(getUser(), { visibility: [ 'friends' ] }),
     ])
-    const usersIds = _.map(items.slice(1), 'owner')
     const itemsIds = _.map(items, '_id')
-    const res = await authReq('get', `/api/items?action=by-users&users=${usersIds.join('|')}`)
-    const resUsersIds = _.uniq(_.map(res.items, 'owner'))
-    resUsersIds.should.containDeep(usersIds)
-    const resItemsIds = _.uniq(_.map(res.items, '_id'))
+    const userId = items[0].owner
+    const { items: resItems } = await authReq('get', `${endpoint}&users=${userId}`)
+    const resUserId = _.map(resItems, 'owner')
+    const resItemsIds = _.map(resItems, '_id')
+    resUserId.should.containEql(userId)
     resItemsIds.should.containDeep(itemsIds)
   })
 
-  it("should get items by ids with a filter set to 'group'", async () => {
-    const items = await Promise.all([
-      createItem(getUser(), { listing: 'private' }),
-      createItem(getUser(), { listing: 'public' }),
-      createItem(getUserB(), { listing: 'public' })
+  it('should not get private own user items in a group context', async () => {
+    // to avoid giving the false impression that those are visible by other members of the group
+    const [ groupsItem, privateItem, publicItem, friendsItem ] = await Promise.all([
+      createItem(getUser(), { visibility: [ 'groups' ] }),
+      createItem(getUser(), { visibility: [] }),
+      createItem(getUser(), { visibility: [ 'public' ] }),
+      createItem(getUser(), { visibility: [ 'friends' ] }),
     ])
-    const privateItemId = items[0]._id
-    const usersIds = _.map(items.slice(1), 'owner')
-    const res = await authReq('get', `/api/items?action=by-users&users=${usersIds.join('|')}&filter=group`)
-    const resUsersIds = _.uniq(_.map(res.items, 'owner'))
-    resUsersIds.should.containDeep(usersIds)
-    const resItemsIds = _.uniq(_.map(res.items, '_id'))
-    resItemsIds.should.not.containEql(privateItemId)
+    const userId = groupsItem.owner
+    const { items } = await authReq('get', `${endpoint}&users=${userId}&filter=group`)
+    const resUserId = _.map(items, 'owner')
+    resUserId.should.containEql(userId)
+    const resItemsIds = items.map(_.property('_id'))
+    resItemsIds.should.containEql(publicItem._id)
+    resItemsIds.should.containEql(groupsItem._id)
+    resItemsIds.should.containEql(friendsItem._id)
+    resItemsIds.should.not.containEql(privateItem._id)
   })
 
   it("should reject invalid filters'", async () => {
     const user = await getUser()
     const { _id: userId } = user
-    await authReq('get', `/api/items?action=by-users&users=${userId}&filter=bla`)
+    await authReq('get', `${endpoint}&users=${userId}&filter=bla`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.startWith('invalid filter')
+    })
+  })
+
+  describe('visibility:public', () => {
+    it('should include public items of other users', async () => {
+      const user = await userPromise
+      const userId = user._id
+      const item = await createItem(userPromise, { visibility: [ 'public' ] })
+      const res = await publicReq('get', `${endpoint}&users=${userId}`)
+      _.map(res.items, '_id').should.containEql(item._id)
+    })
+  })
+
+  describe('visibility:friends', () => {
+    it('should get someone else public items', async () => {
+      const [ publicItem, privateItem, friendsItem ] = await Promise.all([
+        createItem(userPromise, { visibility: [ 'public' ] }),
+        createItem(userPromise, { visibility: [] }),
+        createItem(userPromise, { visibility: [ 'friends' ] }),
+      ])
+      const userId = publicItem.owner
+      const { items: resItems } = await authReq('get', `${endpoint}&users=${userId}`)
+      const resItemsIds = _.map(resItems, '_id')
+      resItemsIds.should.containEql(publicItem._id)
+      resItemsIds.should.not.containEql(friendsItem._id)
+      resItemsIds.should.not.containEql(privateItem._id)
+    })
+  })
+
+  describe('visibility:private', () => {
+    it('should not include private items of other users', async () => {
+      const user = await userPromise
+      const userId = user._id
+      const item = await createItem(userPromise, { visibility: [] })
+      const res = await authReq('get', `${endpoint}&users=${userId}`)
+      _.map(res.items, '_id').should.not.containEql(item._id)
+    })
+  })
+
+  describe('visibility:groups', () => {
+    it('should include group items of other group users', async () => {
+      await addMember(getSomeGroup(), userPromise)
+      const user = await userPromise
+      const userId = user._id
+      const item = await createItem(userPromise, { visibility: [ 'groups' ] })
+      const res = await authReq('get', `${endpoint}&users=${userId}`)
+      _.map(res.items, '_id').should.containEql(item._id)
+    })
+
+    it('should not include group items of non-group co-members', async () => {
+      const userPromise = getUserGetter(humanName())()
+      const user = await userPromise
+      const userId = user._id
+      const item = await createItem(userPromise, { visibility: [ 'groups' ] })
+      const res = await authReq('get', `${endpoint}&users=${userId}`)
+      _.map(res.items, '_id').should.not.containEql(item._id)
     })
   })
 })

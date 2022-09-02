@@ -3,7 +3,7 @@ const attributes = module.exports = {}
 attributes.updatable = [
   'transaction',
   'pictures',
-  'listing',
+  'visibility',
   'details',
   'notes',
   'shelves',
@@ -15,7 +15,7 @@ attributes.validAtCreation = [
   'entity',
   'transaction',
   'pictures',
-  'listing',
+  'visibility',
   'details',
   'notes',
   'shelves',
@@ -43,7 +43,7 @@ attributes.known = attributes.notUpdatable.concat(attributes.updatable)
 
 attributes.private = [
   'notes',
-  'listing'
+  'visibility'
 ]
 
 // Attribute to reset on owner change
@@ -61,10 +61,6 @@ attributes.constrained = {
   transaction: {
     possibilities: allowTransaction.concat(doesntAllowTransaction),
     defaultValue: 'inventorying'
-  },
-  listing: {
-    possibilities: [ 'private', 'network', 'public' ],
-    defaultValue: 'private'
   }
 }
 
@@ -76,4 +72,9 @@ attributes.constrained = {
 attributes.snapshot = [
   'entity',
   'details'
+]
+
+attributes.notIndexed = [
+  'previousEntity',
+  'notes',
 ]

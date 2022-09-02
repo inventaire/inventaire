@@ -2,7 +2,7 @@ const should = require('should')
 const { wait } = require('lib/promises')
 const { authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getByUri, getByUris, deleteByUris } = require('../utils/entities')
-const { getByIds: getItemsByIds } = require('../utils/items')
+const { getItemById } = require('../utils/items')
 const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
 
 describe('entities:delete', () => {
@@ -125,8 +125,7 @@ describe('entities:delete', () => {
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris(author.uri)
     await wait(100)
-    const { items } = await getItemsByIds(item._id)
-    const updatedItem = items[0]
+    const updatedItem = await getItemById(item._id)
     updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
     should(updatedItem.snapshot['entity:authors']).not.be.ok()
   })
