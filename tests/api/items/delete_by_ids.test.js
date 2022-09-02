@@ -28,8 +28,6 @@ describe('items:delete-by-ids', () => {
     const item = await createItem()
     const { _id: itemId } = item
     await deleteByIds(itemId)
-    // avoids duplicated requests
-    await wait(2000)
     await deleteByIds(itemId)
   })
 
