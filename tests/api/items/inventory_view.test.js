@@ -2,10 +2,11 @@ require('should')
 const { publicReq } = require('tests/api/utils/utils')
 const { customAuthReq } = require('tests/api/utils/request')
 const endpoint = '/api/items?action=inventory-view'
-const { getSomeGroup } = require('../fixtures/groups')
-const { createShelf } = require('../fixtures/shelves')
+const { getSomeGroupWithAMember } = require('../fixtures/groups')
+const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
 const { createUserWithItems } = require('../fixtures/populate')
 const { shouldNotBeCalled } = require('tests/unit/utils')
+const { createItem } = require('tests/api/fixtures/items')
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', async () => {
@@ -18,8 +19,8 @@ describe('items:inventory-view', () => {
   })
 
   it('should return a user inventory-view', async () => {
-    const { _id: userId } = await createUserWithItems()
-    const res = await publicReq('get', `${endpoint}&user=${userId}`)
+    const item = await createItem()
+    const res = await publicReq('get', `${endpoint}&user=${item.owner}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()
     res.worksTree.genre.should.be.an.Object()
@@ -27,6 +28,7 @@ describe('items:inventory-view', () => {
     res.worksTree.owner.should.be.an.Object()
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
+    res.itemsByDate.should.containEql(item._id)
   })
 
   it('should return an inventory-view for user items without shelf', async () => {
@@ -46,7 +48,8 @@ describe('items:inventory-view', () => {
   })
 
   it('should return a group inventory-view', async () => {
-    const group = await getSomeGroup()
+    const { group, member } = await getSomeGroupWithAMember()
+    const item = await createItem(member, { visibility: [ 'public' ] })
     const res = await publicReq('get', `${endpoint}&group=${group._id}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()
@@ -55,10 +58,11 @@ describe('items:inventory-view', () => {
     res.worksTree.owner.should.be.an.Object()
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
+    res.itemsByDate.should.containEql(item._id)
   })
 
   it('should return a shelf inventory-view', async () => {
-    const { shelf } = await createShelf()
+    const { shelf, item } = await createShelfWithItem()
     const res = await publicReq('get', `${endpoint}&shelf=${shelf._id}`)
     res.worksTree.should.be.an.Object()
     res.worksTree.author.should.be.an.Object()
@@ -67,5 +71,6 @@ describe('items:inventory-view', () => {
     res.worksTree.owner.should.be.an.Object()
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
+    res.itemsByDate.should.containEql(item._id)
   })
 })

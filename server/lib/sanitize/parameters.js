@@ -261,7 +261,6 @@ module.exports = {
     min: 1,
     default: 100
   }),
-  listing: allowlistedString,
   message: nonEmptyString,
   name: nonEmptyString,
   object: nonEmptyString,

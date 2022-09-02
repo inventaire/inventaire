@@ -3,7 +3,7 @@ const origin = CONFIG.getPublicOrigin()
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
 require('should')
 const { createItem, createItems } = require('../fixtures/items')
-const { update: updateItem } = require('../utils/items')
+const { updateItems } = require('../utils/items')
 const { createUser } = require('../fixtures/users')
 const { publicReq, customAuthReq, getFediversableUser } = require('../utils/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
@@ -46,9 +46,9 @@ describe('outbox', () => {
 
     it('should paginate activities', async () => {
       const user = createUser({ fediversable: true })
-      const itemA = await createItem(user)
+      const itemA = await createItem(user, { visibility: [ 'public' ] })
       await wait(debounceTime)
-      const itemB = await createItem(user)
+      const itemB = await createItem(user, { visibility: [ 'public' ] })
       await wait(debounceTime)
       const { username } = await user
       const firstOutboxPage = `${endpoint}${username}&offset=0&limit=1`
@@ -89,7 +89,7 @@ describe('outbox', () => {
 
     it('should not return network items', async () => {
       const user = createUser({ fediversable: true })
-      await createItem(user, { listing: 'network' })
+      await createItem(user, { visibility: [ 'friends', 'groups' ] })
       const { username } = await user
       await wait(debounceTime)
       const outboxUrl = `${endpoint}${username}&offset=0`
@@ -114,7 +114,10 @@ describe('outbox', () => {
 
       it('should including an item previously private after it was updated to public', async () => {
         const user = createUser({ fediversable: true })
-        const [ publicItem, privateItem ] = await createItems(user, [ { listing: 'public' }, { listing: 'private' } ])
+        const [ publicItem, privateItem ] = await createItems(user, [
+          { visibility: [ 'public' ] },
+          { visibility: [] },
+        ])
         await wait(debounceTime)
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
@@ -122,7 +125,7 @@ describe('outbox', () => {
         res1.orderedItems.length.should.equal(1)
         res1.orderedItems[0].object.content.should.containEql(publicItem._id)
         res1.orderedItems[0].object.content.should.not.containEql(privateItem._id)
-        await updateItem({ user, ids: privateItem._id, attribute: 'listing', value: 'public' })
+        await updateItems({ user, ids: privateItem._id, attribute: 'visibility', value: [ 'public' ] })
         await wait(debounceTime)
         const res2 = await publicReq('get', outboxUrl)
         res2.orderedItems.length.should.equal(1)
@@ -134,7 +137,7 @@ describe('outbox', () => {
     describe('create:items', () => {
       it('should return an activity when creating items in bulk', async () => {
         const user = createUser({ fediversable: true })
-        await createItems(user, [ { listing: 'public' }, { listing: 'public' } ])
+        await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
         const { username } = await user
         const outboxUrl = `${endpoint}${username}&offset=0`
         await wait(debounceTime)
@@ -195,8 +198,8 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       await wait(500)
+      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const url = `${origin}${outboxUrl}`
       res.type.should.equal('OrderedCollectionPage')
@@ -221,10 +224,12 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId1 } = await createWork()
       const { uri: workUri2, _id: workId2 } = await createWork()
-      await addAuthor(workUri, authorUri)
-      await addAuthor(workUri2, authorUri)
-      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
+      await Promise.all([
+        addAuthor(workUri, authorUri),
+        addAuthor(workUri2, authorUri),
+      ])
       await wait(500)
+      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
       res1.orderedItems.length.should.equal(1)
       new URL(res1.orderedItems[0].object.id).searchParams.get('id').should.containEql(workId2)

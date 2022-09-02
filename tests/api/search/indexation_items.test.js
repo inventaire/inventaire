@@ -2,7 +2,7 @@ const CONFIG = require('config')
 const should = require('should')
 const { wait } = require('lib/promises')
 const { createItem } = require('../fixtures/items')
-const { deleteByIds, update } = require('../utils/items')
+const { deleteItemsByIds, updateItems } = require('../utils/items')
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { getIndexedDoc } = require('../utils/search')
 const { index } = require('db/elasticsearch/indexes').indexes.items
@@ -21,7 +21,7 @@ describe('indexation:items', () => {
 
   it('should reindex an updated item', async () => {
     const { _id } = await createItem()
-    await update({ ids: _id, attribute: 'details', value: 'foo' })
+    await updateItems({ ids: _id, attribute: 'details', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, _id)
     result._source.details.should.equal('foo')
@@ -32,7 +32,7 @@ describe('deindexation:items', () => {
   it('should unindex a deleted user', async () => {
     const item = await createItem()
     await wait(elasticsearchUpdateDelay)
-    await deleteByIds(item._id)
+    await deleteItemsByIds(item._id)
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(index, item._id, { retry: false })
     result.found.should.be.false()

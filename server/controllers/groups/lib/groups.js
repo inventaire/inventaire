@@ -44,11 +44,24 @@ const groups_ = module.exports = {
   },
 
   getUserGroupsIds: async userId => {
+    assert_.string(userId)
     const { rows } = await db.view('groups', 'byUser', {
       include_docs: false,
       key: userId,
     })
     return _.map(rows, 'id')
+  },
+
+  getUsersGroupsIds: async usersIds => {
+    assert_.strings(usersIds)
+    const { rows } = await db.view('groups', 'byUser', {
+      include_docs: false,
+      keys: usersIds,
+    })
+    const groupsIdsByMembersIds = {}
+    usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
+    rows.forEach(({ id: groupId, key: userId }) => groupsIdsByMembersIds[userId].push(groupId))
+    return groupsIdsByMembersIds
   },
 
   create: async options => {

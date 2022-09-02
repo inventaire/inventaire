@@ -30,9 +30,9 @@ describe('feeds:get', () => {
     it('should not return private items when not authentified', async () => {
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { body } = await rawRequest('get', `/api/feeds?user=${user._id}`)
       body.startsWith('<?xml').should.be.true()
@@ -44,9 +44,9 @@ describe('feeds:get', () => {
     it('should not return private items when not authorized', async () => {
       const unknownUser = await getReservedUser()
       const items = await createItems(unknownUser, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const user = await getUser()
       const { _id: userId, readToken: token } = user
@@ -60,9 +60,9 @@ describe('feeds:get', () => {
     it('should return private items when authorized', async () => {
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { _id: userId, readToken: token } = user
       const { body } = await rawRequest('get', `/api/feeds?user=${userId}&requester=${userId}&token=${token}`)
@@ -84,9 +84,9 @@ describe('feeds:get', () => {
       const group = await getSomeGroup()
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { body } = await rawRequest('get', `/api/feeds?group=${group._id}`)
       body.startsWith('<?xml').should.be.true()
@@ -99,9 +99,9 @@ describe('feeds:get', () => {
       const groupMember = await getReservedUser()
       const group = await createGroup({ user: groupMember })
       const items = await createItems(groupMember, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const nonMemberUser = await getUser()
       const { _id: userId, readToken: token } = nonMemberUser
@@ -116,9 +116,9 @@ describe('feeds:get', () => {
       const group = await getSomeGroup()
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { _id: userId, readToken: token } = user
       const { body } = await rawRequest('get', `/api/feeds?group=${group._id}&requester=${userId}&token=${token}`)
@@ -140,9 +140,9 @@ describe('feeds:get', () => {
     it('should not return private items when not authorized', async () => {
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { shelf } = await createShelfWithItems({ visibility: [ 'public' ] }, items)
       const { body } = await rawRequest('get', `/api/feeds?shelf=${shelf._id}`)
@@ -155,9 +155,9 @@ describe('feeds:get', () => {
     it('should return private items when authorized', async () => {
       const user = await getUser()
       const items = await createItems(user, [
-        { listing: 'public' },
-        { listing: 'network' },
-        { listing: 'private' },
+        { visibility: [ 'public' ] },
+        { visibility: [ 'friends', 'groups' ] },
+        { visibility: [] },
       ])
       const { _id: userId, readToken: token } = user
       const { shelf } = await createShelfWithItems({ visibility: [ 'public' ] }, items)

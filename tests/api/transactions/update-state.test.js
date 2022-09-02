@@ -3,7 +3,7 @@ const _ = require('builders/utils')
 const { authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
 const { updateTransaction } = require('../utils/transactions')
-const { getById: getItem } = require('../utils/items')
+const { getItem } = require('../utils/items')
 const { getUserC } = require('../utils/utils')
 
 const endpoint = '/api/transactions?action=update-state'
@@ -44,7 +44,7 @@ describe('transactions:update-state', () => {
 
   describe('side effects: item.busy flag', () => {
     describe('giving and selling transactions', () => {
-      const itemData = { transaction: _.sample([ 'giving', 'selling' ]), listing: 'public' }
+      const itemData = { transaction: _.sample([ 'giving', 'selling' ]), visibility: [ 'public' ] }
 
       it('should be false when the transaction is just requested', async () => {
         const { userBItem } = await createTransaction({ itemData })
@@ -85,7 +85,7 @@ describe('transactions:update-state', () => {
     })
 
     describe('lending transactions', () => {
-      const itemData = { transaction: 'lending', listing: 'public' }
+      const itemData = { transaction: 'lending', visibility: [ 'public' ] }
 
       it('should be false when the transaction is just requested', async () => {
         const { userBItem } = await createTransaction({ itemData })

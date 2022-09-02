@@ -2,5 +2,7 @@ const { addToItem: addSnapshot } = require('controllers/items/lib/snapshot/snaps
 
 module.exports = async doc => {
   await addSnapshot(doc)
+  delete doc.notes
+  delete doc.previousEntity
   return doc
 }

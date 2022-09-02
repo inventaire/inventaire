@@ -1,13 +1,13 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
-const getItemsByAccessLevel = require('controllers/items/lib/get_by_access_level')
 const relations_ = require('controllers/relations/lib/queries')
 const user_ = require('controllers/user/lib/user')
 const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
+const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
 
 module.exports = async (userId, lang, limitDate = 0) => {
   const networkUsersIds = await relations_.getUserFriendsAndCoGroupsMembers(userId)
-  const networkItems = await getItemsByAccessLevel.network(networkUsersIds)
+  const networkItems = await getAuthorizedItems.byUsers(networkUsersIds)
   const lastNetworkItems = getLastItems(limitDate, networkItems)
   const selectionData = await extractHighlightedItems(lastNetworkItems, lang)
   // Serializing items last, as fetching items snapshots data can be expensive,

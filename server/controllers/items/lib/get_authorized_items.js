@@ -1,33 +1,71 @@
-const getByAccessLevel = require('./get_by_access_level')
-const items_ = require('controllers/items/lib/items')
 const groups_ = require('controllers/groups/lib/groups')
-const buildKeysFromShelf = require('controllers/items/lib/build_keys_from_shelf')
-const getInventoryAccessLevel = require('./get_inventory_access_level')
+const { getAllowedVisibilityKeys } = require('lib/visibility/allowed_visibility_keys')
+const db = require('db/couchdb/base')('items')
+const _ = require('builders/utils')
+const { uniqByKey } = require('lib/utils/base')
+const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 
 // Return what the reqUserId user is allowed to see
 module.exports = {
-  byUser: async (userId, reqUserId, options = {}) => {
-    const accessLevel = await getInventoryAccessLevel(userId, reqUserId)
-    return getByAccessLevel[accessLevel](userId, reqUserId, options)
+  byUsers: async (usersIds, reqUserId, options = {}) => {
+    const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
+    const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
+    return getItemsFromViewAndAllowedVisibilityKeys(view, ownersIdsAndVisibilityKeysCombinations)
   },
 
   byGroup: async (groupId, reqUserId) => {
-    const allGroupMembers = await groups_.getGroupMembersIds(groupId)
-    if (reqUserId && allGroupMembers.includes(reqUserId)) {
-      return getByAccessLevel.network(allGroupMembers)
-    } else {
-      return getByAccessLevel.public(allGroupMembers)
+    const allGroupMembersIds = await groups_.getGroupMembersIds(groupId)
+    const allowedVisibilityKeys = [ 'public' ]
+    if (reqUserId && allGroupMembersIds.includes(reqUserId)) {
+      allowedVisibilityKeys.push('groups', getGroupVisibilityKey(groupId))
     }
+    return getUsersItems({
+      usersIds: allGroupMembersIds,
+      allowedVisibilityKeys,
+    })
   },
 
   byShelves: async (shelves, reqUserId) => {
-    const keysArray = await Promise.all(shelves.map(buildKeysFromShelf(reqUserId)))
-    const keys = keysArray.flat()
-    return items_.byShelvesAndListing(keys, reqUserId)
-  },
-
-  byShelf: async (shelf, reqUserId) => {
-    const keys = await buildKeysFromShelf(reqUserId)(shelf)
-    return items_.byShelvesAndListing(keys, reqUserId)
+    const keys = await getShelvesAllowedVisibilityKeys(shelves, reqUserId)
+    return getItemsFromViewAndAllowedVisibilityKeys('byShelfAndVisibilityKey', keys)
   }
+}
+
+const getUsersAllowedVisibilityKeys = async (usersIds, reqUserId) => {
+  const ownersIdsAndVisibilityKeys = await Promise.all(usersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
+  return ownersIdsAndVisibilityKeys.flatMap(([ ownerId, allowedVisibilityKeys ]) => {
+    return _.combinations([ ownerId ], allowedVisibilityKeys)
+  })
+}
+
+const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
+  const ownersIds = _.uniq(_.map(shelves, 'owner'))
+  const ownersIdsAndVisibilityKeys = await Promise.all(ownersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
+  const allowedVisibilityKeysByOwner = Object.fromEntries(ownersIdsAndVisibilityKeys)
+  return shelves.flatMap(shelf => {
+    const allowedVisibilityKeys = allowedVisibilityKeysByOwner[shelf.owner]
+    return _.combinations([ shelf._id ], allowedVisibilityKeys)
+  })
+}
+
+const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
+  const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
+  return [ ownerId, visibilityKeys ]
+}
+
+const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) => {
+  const view = withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
+  const keys = _.combinations(usersIds, allowedVisibilityKeys)
+  return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
+}
+
+// The function below could be implementated another way:
+// - do not include_docs in the first request
+// - deduplicate ids
+// - fetch deduplicate docs by ids
+const getItemsFromViewAndAllowedVisibilityKeys = async (view, keys) => {
+  const items = await db.viewByKeys(view, keys)
+  // Items with several visibility keys might be returned several times,
+  // thus the need to deduplicate items
+  return uniqByKey(items, '_id')
 }

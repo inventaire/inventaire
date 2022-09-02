@@ -4,15 +4,24 @@ const assert_ = require('lib/utils/assert_types')
 module.exports = buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
-    const { search, userId, limit = 10, accessLevel } = params
+    const { search, userId, limit = 10, reqUserId, allowedVisibilityKeys } = params
 
-    assert_.string(accessLevel)
+    assert_.string(userId)
+    assert_.string(reqUserId)
+    if (userId !== reqUserId) assert_.array(allowedVisibilityKeys)
 
-    const must = [
+    const filter = [
       { term: { owner: userId } }
     ]
 
-    const mustNot = mustNotByAccessLevel[accessLevel]
+    if (userId !== reqUserId) {
+      filter.push({
+        bool: {
+          should: allowedVisibilityKeys.map(buildVisibilityMatchClause),
+          minimum_should_match: 1
+        }
+      })
+    }
 
     const should = [
       { match: { 'snapshot.entity:title': search } },
@@ -22,19 +31,15 @@ module.exports = buildSearcher({
       { match: { details: search } }
     ]
 
-    const query = { bool: { must, must_not: mustNot, should } }
+    const query = {
+      bool: {
+        filter,
+        should
+      }
+    }
 
     return { query, size: limit, min_score: 0.2 }
   }
 })
 
-const mustNotByAccessLevel = {
-  private: [],
-  network: [
-    { term: { listing: 'private' } }
-  ],
-  public: [
-    { term: { listing: 'private' } },
-    { term: { listing: 'network' } }
-  ]
-}
+const buildVisibilityMatchClause = key => ({ match: { visibility: key } })

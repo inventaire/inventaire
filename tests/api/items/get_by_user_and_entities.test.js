@@ -1,8 +1,11 @@
 const _ = require('builders/utils')
 const should = require('should')
-const { getUser, authReq, customAuthReq, publicReq } = require('tests/api/utils/utils')
+const { getUser, authReq, customAuthReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
 const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
 const { getTwoFriends } = require('../fixtures/users')
+const { getSomeGroup, addMember } = require('../fixtures/groups')
+const { humanName } = require('../fixtures/entities')
+const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-user-and-entities'
 
@@ -63,7 +66,7 @@ describe('items:get-by-user-and-entities', () => {
 
     it('should get a network item', async () => {
       const [ userA, userB ] = await getTwoFriends()
-      const item = await createItemWithEditionAndWork(userA, { listing: 'network' })
+      const item = await createItemWithEditionAndWork(userA, { visibility: [ 'friends' ] })
       const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       const foundItem = items[0]
       foundItem._id.should.equal(item._id)
@@ -72,25 +75,39 @@ describe('items:get-by-user-and-entities', () => {
     })
 
     it('should get a private item', async () => {
-      const item = await createItemWithEditionAndWork(getUser(), { listing: 'private' })
+      const item = await createItemWithEditionAndWork(getUser(), { visibility: [] })
       const { items } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       const foundItem = items[0]
       foundItem._id.should.equal(item._id)
       foundItem.entity.should.equal(item.entity)
       foundItem.owner.should.equal(item.owner)
     })
+
+    it('should include group items of other group users', async () => {
+      const item = await createItemWithEditionAndWork(userPromise, { visibility: [ 'groups' ] })
+      await addMember(getSomeGroup(), userPromise)
+      const { items } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
+      _.map(items, '_id').should.containEql(item._id)
+    })
+
+    it('should not include group items of non-group co-members', async () => {
+      const [ userA, userB ] = await getTwoFriends()
+      const item = await createItemWithEditionAndWork(userA, { visibility: [ 'groups' ] })
+      const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
+      _.map(items, '_id').should.not.containEql(item._id)
+    })
   })
 
   describe('without access rights', () => {
     it('should not get a network item', async () => {
-      const item = await createItemWithEditionAndWork(getUser(), { listing: 'network' })
+      const item = await createItemWithEditionAndWork(getUser(), { visibility: [ 'friends' ] })
       const { items } = await publicReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       items.length.should.equal(0)
     })
 
     it('should not get a private item', async () => {
       const [ userA, userB ] = await getTwoFriends()
-      const item = await createItemWithEditionAndWork(userA, { listing: 'private' })
+      const item = await createItemWithEditionAndWork(userA, { visibility: [] })
       const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
       items.length.should.equal(0)
     })

@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { typeOf } = require('./base')
+const { typeOf } = require('./types')
 const error_ = require('../error/error')
 
 const assertType = (type, obj) => {
@@ -10,7 +10,7 @@ const assertType = (type, obj) => {
 
 const assertTypes = (types, args) => {
   if (_.isArguments(args)) {
-    args = _.toArray(args)
+    args = Array.from(args)
     if (!_.isArray(types)) {
       // Do not accept doted syntax types as we wouldn't know how many arguments are expected
       const errMessage = "types should be an array when used with 'arguments'"

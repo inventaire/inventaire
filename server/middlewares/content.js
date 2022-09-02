@@ -20,7 +20,7 @@ module.exports = {
 
   acceptUrlencoded: endpoint => [ endpoint, urlencodedBodyParser ],
 
-  // Assumes that a requests made twice with the same body within 2 secondes
+  // Assumes that a request made twice with the same body within 2 seconds
   // is an erronous request that should be blocked
   deduplicateRequests: (req, res, next) => {
     if (!deduplicateRequests) return next()

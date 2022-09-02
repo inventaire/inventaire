@@ -1,5 +1,6 @@
 const _ = require('builders/utils')
 const items_ = require('controllers/items/lib/items')
+const { getVisibilitySummaryKey } = require('lib/visibility/visibility')
 const User = require('models/user')
 const db = require('db/couchdb/base')('users')
 
@@ -19,7 +20,8 @@ const getItemsCounts = items => {
   }
 
   items.forEach(item => {
-    const { listing, created } = item
+    const { visibility, created } = item
+    const listing = getVisibilitySummaryKey(visibility)
     counts[listing]['items:count'] += 1
     const lastAdd = counts[listing]['items:last-add'] || 0
     if (created > lastAdd) {

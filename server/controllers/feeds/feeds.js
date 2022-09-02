@@ -1,13 +1,13 @@
 const error_ = require('lib/error/error')
 const headers_ = require('lib/headers')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
 const getAuthentifiedUser = require('./lib/get_authentified_user')
 const userFeedData = require('./lib/user_feed_data')
 const groupFeedData = require('./lib/group_feed_data')
 const shelfFeedData = require('./lib/shelf_feed_data')
 const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
+const { ControllerWrapper } = require('lib/controller_wrapper')
 
-const sanitization = validateSanitization({
+const sanitization = {
   user: {
     optional: true
   },
@@ -28,16 +28,13 @@ const sanitization = validateSanitization({
     // Set the defaults manually after having checked req.headers
     default: null
   }
-})
+}
 
-module.exports = {
-  get: async (req, res) => {
-    const headersLang = headers_.getLang(req.headers)
-    const params = sanitize(req, res, sanitization)
-    const xml = await getFeed(headersLang, params)
-    res.header('content-type', 'application/rss+xml')
-    res.send(xml)
-  }
+const controller = async (params, req, res) => {
+  const headersLang = headers_.getLang(req.headers)
+  const xml = await getFeed(headersLang, params)
+  res.header('content-type', 'application/rss+xml')
+  res.send(xml)
 }
 
 const getFeed = async (headersLang, params) => {
@@ -71,4 +68,12 @@ const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
   else if (groupId) return groupFeedData(groupId, reqUserId)
   else if (shelfId) return shelfFeedData(shelfId, reqUserId)
   else throw error_.newMissingQuery('user|group|shelf', 400)
+}
+
+module.exports = {
+  get: ControllerWrapper({
+    access: 'public',
+    sanitization,
+    controller,
+  })
 }

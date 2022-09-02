@@ -27,15 +27,14 @@ const validateUserOrGroup = params => {
 }
 
 const getItems = async params => {
-  const { user, group, shelf, reqUserId, 'without-shelf': withoutShelf } = params
-  if (user) {
-    return getAuthorizedItems.byUser(user, reqUserId, { withoutShelf })
-  }
-  if (shelf) {
-    const shelfDoc = await shelves_.byId(shelf)
-    return getAuthorizedItems.byShelf(shelfDoc, reqUserId)
+  const { user: userId, group: groupId, shelf: shelfId, reqUserId, 'without-shelf': withoutShelf } = params
+  if (userId) {
+    return getAuthorizedItems.byUsers([ userId ], reqUserId, { withoutShelf })
+  } else if (shelfId) {
+    const shelfDoc = await shelves_.byId(shelfId)
+    return getAuthorizedItems.byShelves([ shelfDoc ], reqUserId)
   } else {
-    return getAuthorizedItems.byGroup(group, reqUserId)
+    return getAuthorizedItems.byGroup(groupId, reqUserId)
   }
 }
 
