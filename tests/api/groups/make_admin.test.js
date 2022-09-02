@@ -1,7 +1,8 @@
 const _ = require('builders/utils')
 require('should')
 const { authReq, authReqB, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
-const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
+const { getSomeGroup, addMember } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const endpoint = '/api/groups?action=make-admin'
 const { humanName } = require('../fixtures/entities')
 
@@ -16,7 +17,7 @@ describe('groups:update:make-admin', () => {
   })
 
   it('should reject non member users', async () => {
-    const group = await groupPromise
+    const group = await getSomeGroup()
     await authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -27,7 +28,7 @@ describe('groups:update:make-admin', () => {
 
   it('should reject request by non admin', async () => {
     const memberPromise = getUserGetter(humanName())()
-    const [ group, member ] = await addMember(groupPromise, memberPromise)
+    const [ group, member ] = await addMember(getSomeGroup(), memberPromise)
     const { _id: memberId } = member
     await authReqB('put', endpoint, { user: memberId, group: group._id })
     .then(shouldNotBeCalled)
@@ -39,7 +40,7 @@ describe('groups:update:make-admin', () => {
 
   it('should add an admin', async () => {
     const memberPromise = getUserGetter(humanName())()
-    const [ group, member ] = await addMember(groupPromise, memberPromise)
+    const [ group, member ] = await addMember(getSomeGroup(), memberPromise)
     const { _id: memberId } = member
     const adminsCount = group.admins.length
     await authReq('put', endpoint, { user: memberId, group: group._id })

@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 require('should')
 const { getUser, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter } = require('tests/api/utils/utils')
-const { groupPromise, addMember } = require('../fixtures/groups')
+const { getSomeGroup, addMember } = require('../fixtures/groups')
 const { createItem, createItems } = require('../fixtures/items')
 const { humanName } = require('../fixtures/entities')
 const { createShelfWithItem } = require('../fixtures/shelves')
@@ -56,7 +56,7 @@ describe('items:get-by-ids', () => {
   })
 
   it('should include group items of other group users', async () => {
-    await addMember(groupPromise, userPromise)
+    await addMember(getSomeGroup(), userPromise)
     const item = await createItem(userPromise, { listing: 'network' })
     const res = await authReq('get', `${endpoint}&ids=${item._id}`)
     res.items.map(_.property('_id')).should.containEql(item._id)
@@ -70,15 +70,13 @@ describe('items:get-by-ids', () => {
   })
 
   it('should include shelves id', async () => {
-    const shelfData = { listing: 'public' }
-    const { shelf, item } = await createShelfWithItem(shelfData)
+    const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
     const res = await authReq('get', `${endpoint}&ids=${item._id}`)
     res.items[0].shelves.should.deepEqual([ shelf._id ])
   })
 
   xit('should not include private shelf id', async () => {
-    const shelfData = { listing: 'private' }
-    const { item } = await createShelfWithItem(shelfData)
+    const { item } = await createShelfWithItem({ visibility: [] })
     const res = await authReq('get', `${endpoint}&ids=${item._id}`)
     res.items[0].shelves.should.deepEqual([])
   })

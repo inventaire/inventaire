@@ -1,6 +1,7 @@
 const _ = require('builders/utils')
 const { expired } = require('lib/time')
 const Shelf = require('models/shelf')
+const { shouldNotBeCalled } = require('../utils')
 require('should')
 
 const someUserId = '1234567890a1234567890b1234567890'
@@ -13,7 +14,7 @@ const fakeDesc = fakeText.randomWords(15)
 const validShelf = {
   owner: someUserId,
   description: fakeDesc,
-  listing: 'private',
+  visibility: [],
   name: fakeName
 }
 
@@ -27,7 +28,7 @@ describe('shelf model', () => {
       shelf.name.should.equal(fakeName)
       shelf.description.should.equal(fakeDesc)
       shelf.owner.should.equal(someUserId)
-      shelf.listing.should.equal('private')
+      shelf.visibility.should.deepEqual([])
       shelf.created.should.be.a.Number()
     })
 
@@ -53,15 +54,20 @@ describe('shelf model', () => {
       })
     })
 
-    describe('listing', () => {
-      it('should use a default listing value', () => {
-        const shelf = create(extendShelf({ listing: null }))
-        shelf.listing.should.equal('private')
+    describe('visibility', () => {
+      it('should use a default visibility value', () => {
+        const shelf = create(extendShelf({ visibility: null }))
+        shelf.visibility.should.deepEqual([])
       })
 
-      it('should override a bad listing with default value', () => {
-        const shelf = () => create(extendShelf({ listing: 'notalist' }))
-        shelf.should.throw()
+      it('should reject a bad visibility value', () => {
+        const shelf = (extendShelf({ visibility: [ 'notalist' ] }))
+        try {
+          const res = create(shelf)
+          shouldNotBeCalled(res)
+        } catch (err) {
+          err.message.should.startWith('invalid visibility')
+        }
       })
     })
 
@@ -83,9 +89,9 @@ describe('shelf model', () => {
   describe('update', () => {
     it('should update when passing a valid attribute', () => {
       const shelf = create(validShelf)
-      const updateAttributesData = { listing: 'public' }
+      const updateAttributesData = { visibility: [ 'public' ] }
       const res = update(shelf, updateAttributesData, someUserId)
-      res.listing.should.equal('public')
+      res.visibility.should.deepEqual([ 'public' ])
     })
 
     it('should throw when passing an invalid attribute', () => {
@@ -97,9 +103,13 @@ describe('shelf model', () => {
 
     it('should throw when passing an invalid attribute value', () => {
       const doc = create(validShelf)
-      const updateAttributesData = { listing: 'kikken' }
-      const updater = () => update(doc, updateAttributesData, someUserId)
-      updater.should.throw('invalid listing: kikken')
+      const updateAttributesData = { visibility: [ 'kikken' ] }
+      try {
+        const res = update(doc, updateAttributesData, someUserId)
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.message.should.startWith('invalid visibility')
+      }
     })
   })
 })

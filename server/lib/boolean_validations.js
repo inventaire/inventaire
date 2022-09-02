@@ -94,5 +94,10 @@ const tests = module.exports = {
     if (pathname !== '/api/activitypub') return false
     if (searchParams.get('action') !== 'actor') return false
     return isNonEmptyString(searchParams.get('name'))
-  }
+  },
+
+  isVisibilityGroupKey: value => {
+    const [ prefix, id ] = value.split(':')
+    return prefix === 'group' && isCouchUuid(id)
+  },
 }

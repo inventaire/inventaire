@@ -20,6 +20,8 @@ const controller = async params => {
     items_.byIds(ids),
     getNetworkIds(reqUserId)
   ])
+  // TODO: return a warning when some of the requested items
+  // can't be returned, and an error when none can be
   .then(filterAuthorizedItems(reqUserId))
   // Paginating isn't really required when requesting items by ids
   // but it also handles sorting and the consistency of the API

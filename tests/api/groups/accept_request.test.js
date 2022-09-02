@@ -1,10 +1,11 @@
 const _ = require('builders/utils')
 require('should')
 const { authReq, authReqC, getUserGetter, customAuthReq } = require('../utils/utils')
-const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
+const { getSomeGroup, createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept-request'
 const { humanName } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('tests/unit/utils')
+const { getGroup } = require('tests/api/utils/groups')
 
 describe('groups:update:accept-request', () => {
   it('should reject without a group', async () => {
@@ -18,7 +19,7 @@ describe('groups:update:accept-request', () => {
 
   it('should move requested user to members', async () => {
     const requesterPromise = getUserGetter(humanName())()
-    const [ group, requester ] = await Promise.all([ groupPromise, requesterPromise ])
+    const [ group, requester ] = await Promise.all([ getSomeGroup(), requesterPromise ])
     const { _id: requesterId } = requester
     await customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
     await authReq('put', endpoint, { user: requesterId, group: group._id })

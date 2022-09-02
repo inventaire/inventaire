@@ -1,6 +1,7 @@
 require('should')
 const { authReq, getUserGetter } = require('../utils/utils')
-const { groupPromise, getGroup, addMember } = require('../fixtures/groups')
+const { getSomeGroup, addMember } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const endpoint = '/api/groups?action=kick'
 const { wait } = require('lib/promises')
 const { humanName } = require('../fixtures/entities')
@@ -18,7 +19,7 @@ describe('groups:update:kick', () => {
   })
 
   it('should reject non member users', async () => {
-    const [ group, nonInvitedUser ] = await Promise.all([ groupPromise, userPromise ])
+    const [ group, nonInvitedUser ] = await Promise.all([ getSomeGroup(), userPromise ])
     await authReq('put', endpoint, { user: nonInvitedUser._id, group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -28,7 +29,7 @@ describe('groups:update:kick', () => {
   })
 
   it('should kick a member', async () => {
-    const [ group, member ] = await addMember(groupPromise, userPromise)
+    const [ group, member ] = await addMember(getSomeGroup(), userPromise)
     const membersCount = group.members.length
     await authReq('put', endpoint, { user: member._id, group: group._id })
     await wait(100)
@@ -37,7 +38,7 @@ describe('groups:update:kick', () => {
   })
 
   it('should reject kicking an admin', async () => {
-    const [ group, member ] = await addMember(groupPromise, userPromise)
+    const [ group, member ] = await addMember(getSomeGroup(), userPromise)
     const { _id: memberId } = member
     await authReq('put', '/api/groups?action=make-admin', { user: memberId, group: group._id })
     await authReq('put', endpoint, { user: memberId, group: group._id })

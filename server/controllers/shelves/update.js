@@ -3,10 +3,7 @@ const { updateAttributes } = require('controllers/shelves/lib/shelves')
 const sanitization = {
   shelf: {},
   description: { optional: true },
-  listing: {
-    allowlist: [ 'public', 'private', 'network' ],
-    optional: true
-  },
+  visibility: { optional: true },
   name: { optional: true },
   color: { optional: true },
 }

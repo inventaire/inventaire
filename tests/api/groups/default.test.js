@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const should = require('should')
 const { authReq, publicReq } = require('../utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
-const { groupPromise } = require('../fixtures/groups')
+const { getSomeGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups'
 
 describe('groups:get:default', () => {
@@ -15,7 +15,7 @@ describe('groups:get:default', () => {
   })
 
   it('should get all user groups', async () => {
-    const group = await groupPromise
+    const group = await getSomeGroup()
     const { groups } = await authReq('get', endpoint)
     groups.should.be.an.Array()
     const groupsIds = _.map(groups, '_id')

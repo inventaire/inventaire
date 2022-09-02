@@ -3,7 +3,7 @@ const host = CONFIG.getPublicOrigin()
 require('should')
 const { rawRequest } = require('../utils/request')
 const { getUser } = require('../utils/utils')
-const { groupPromise } = require('../fixtures/groups')
+const { getSomeGroup } = require('../fixtures/groups')
 const { createShelf } = require('../fixtures/shelves')
 
 describe('rss redirections', () => {
@@ -20,13 +20,13 @@ describe('rss redirections', () => {
   })
 
   it('should redirect to a group feed by id', async () => {
-    const { _id } = await groupPromise
+    const { _id } = await getSomeGroup()
     const { headers } = await rawRequest('get', `/groups/${_id}.rss`)
     headers.location.should.equal(`${host}/api/feeds?group=${_id}`)
   })
 
   it('should redirect to a group feed by slug', async () => {
-    const { _id, slug } = await groupPromise
+    const { _id, slug } = await getSomeGroup()
     const { headers } = await rawRequest('get', `/groups/${slug}.rss`)
     headers.location.should.equal(`${host}/api/feeds?group=${_id}`)
   })

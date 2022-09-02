@@ -3,9 +3,7 @@ const shelves_ = require('controllers/shelves/lib/shelves')
 const sanitization = {
   name: {},
   description: { optional: true },
-  listing: {
-    allowlist: [ 'public', 'private', 'network' ]
-  },
+  visibility: { optional: true },
   color: { optional: true },
   items: { optional: true }
 }
@@ -18,11 +16,11 @@ const controller = async params => {
 }
 
 const formatNewShelf = params => {
-  const { name, description, listing, color, reqUserId: owner } = params
+  const { name, description, visibility, color, reqUserId: owner } = params
   const shelfData = {
     name,
     description,
-    listing,
+    visibility,
     owner,
   }
   if (color != null) shelfData.color = color

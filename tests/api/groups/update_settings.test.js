@@ -1,7 +1,7 @@
 const should = require('should')
 const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
 const { getNotifications } = require('../utils/notifications')
-const { groupPromise, createGroup, createGroupWithAMember } = require('../fixtures/groups')
+const { getSomeGroup, createGroup, createGroupWithAMember } = require('../fixtures/groups')
 const slugify = require('controllers/groups/lib/slugify')
 const { importSomeImage } = require('../utils/images')
 const endpoint = '/api/groups?action=update-settings'
@@ -17,7 +17,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should update the group slug when updating the name', async () => {
-    const { _id: groupId, name } = await groupPromise
+    const { _id: groupId, name } = await getSomeGroup()
     const updatedName = `${name}-updated`
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
@@ -31,7 +31,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should request a group slug update when updating the name', async () => {
-    const { _id: groupId, name } = await groupPromise
+    const { _id: groupId, name } = await getSomeGroup()
     const updatedName = `${name}-updated-again`
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
@@ -44,7 +44,7 @@ describe('groups:update-settings', () => {
 
   it('should update description', async () => {
     const updatedDescription = 'Lorem ipsum dolor sit amet'
-    const { _id: groupId } = await groupPromise
+    const { _id: groupId } = await getSomeGroup()
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
       attribute: 'description',
@@ -57,7 +57,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should set a position', async () => {
-    const { _id: groupId } = await groupPromise
+    const { _id: groupId } = await getSomeGroup()
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'position',
@@ -68,7 +68,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should delete a position', async () => {
-    const { _id: groupId } = await groupPromise
+    const { _id: groupId } = await getSomeGroup()
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'position',
@@ -84,7 +84,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should set a picture', async () => {
-    const { _id: groupId } = await groupPromise
+    const { _id: groupId } = await getSomeGroup()
     const { url } = await importSomeImage({ container: 'groups' })
     await authReq('put', endpoint, {
       group: groupId,
@@ -96,7 +96,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should delete a picture', async () => {
-    const { _id: groupId } = await groupPromise
+    const { _id: groupId } = await getSomeGroup()
     const { url } = await importSomeImage({ container: 'groups' })
     await authReq('put', endpoint, {
       group: groupId,
@@ -113,7 +113,7 @@ describe('groups:update-settings', () => {
   })
 
   it('should update searchable parameter', async () => {
-    const { _id: groupId, searchable } = await groupPromise
+    const { _id: groupId, searchable } = await getSomeGroup()
     searchable.should.be.true()
     await authReq('put', endpoint, {
       group: groupId,

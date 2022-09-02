@@ -1,7 +1,9 @@
 const _ = require('builders/utils')
-const shelves_ = require('controllers/shelves/lib/shelves')
-const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkIds } = require('controllers/user/lib/relations_status')
+const { byIds, byIdsWithItems } = require('controllers/shelves/lib/shelves')
+const { addWarning } = require('lib/responses')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
+const error_ = require('lib/error/error')
+const { filterPrivateAttributes } = require('controllers/shelves/lib/filter_private_attributes')
 
 const sanitization = {
   ids: {},
@@ -11,20 +13,35 @@ const sanitization = {
   }
 }
 
-const controller = async params => {
-  const shelves = await getShelvesByIds(params)
+const controller = async ({ ids, withItems, reqUserId }, req, res) => {
+  const getShelves = withItems ? byIdsWithItems : byIds
+  const foundShelves = await getShelves(ids, reqUserId)
+  const foundShelvesIds = _.map(foundShelves, '_id')
+  checkNotFoundShelves(ids, foundShelves, foundShelvesIds, res)
+  let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
+  checkUnauthorizedShelves(ids, authorizedShelves, foundShelvesIds, req, res)
+  authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
+  const shelves = _.keyBy(authorizedShelves, '_id')
   return { shelves }
 }
 
-const getShelvesByIds = async ({ ids, withItems, reqUserId }) => {
-  const byIdsFnName = withItems === true ? 'byIdsWithItems' : 'byIds'
-  return Promise.all([
-    shelves_[byIdsFnName](ids, reqUserId),
-    getNetworkIds(reqUserId)
-  ])
-  .then(filterVisibleShelves(reqUserId))
-  .then(_.compact)
-  .then(_.KeyBy('_id'))
+const checkNotFoundShelves = (ids, foundShelves, foundShelvesIds, res) => {
+  if (foundShelves.length === 0) throw error_.notFound({ ids })
+  if (foundShelves.length !== ids.length) {
+    const notFoundShelvesIds = _.difference(ids, foundShelvesIds)
+    addWarning(res, `shelves not found: ${notFoundShelvesIds.join(', ')}`)
+  }
+}
+
+const checkUnauthorizedShelves = (ids, authorizedShelves, foundShelvesIds, req, res) => {
+  if (authorizedShelves.length === 0) {
+    throw error_.unauthorized(req, 'unauthorized shelves access', { ids: foundShelvesIds })
+  }
+  if (authorizedShelves.length !== ids.length) {
+    const authorizedShelvesIds = _.map(authorizedShelves, '_id')
+    const unauthorizedShelvesIds = _.difference(foundShelvesIds, authorizedShelvesIds)
+    addWarning(res, `unauthorized shelves access: ${unauthorizedShelvesIds.join(', ')}`)
+  }
 }
 
 module.exports = { sanitization, controller }

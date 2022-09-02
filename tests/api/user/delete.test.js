@@ -5,7 +5,8 @@ const { getRefreshedUser, getRandomPosition } = require('../fixtures/users')
 const { createItem } = require('../fixtures/items')
 const { getById: getItemById } = require('../utils/items')
 const { getUsersNearPosition, deleteUser } = require('../utils/users')
-const { createGroup, getGroup, addMember, addAdmin } = require('../fixtures/groups')
+const { createGroup, addMember, addAdmin } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { createTransaction } = require('../fixtures/transactions')
 const { getTransaction, updateTransaction } = require('../utils/transactions')
 const { createShelf } = require('../fixtures/shelves')
@@ -56,11 +57,14 @@ describe('user:delete', () => {
   describe('shelves', () => {
     it('should delete the user shelves', async () => {
       const user = await getReservedUser()
-      const { shelf } = await createShelf(user, { listing: 'public' })
+      const { shelf } = await createShelf(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
-      const updatedShelf = await getShelfById(getUser(), shelf._id)
-      should(updatedShelf).not.be.ok()
+      await getShelfById(getUser(), shelf._id)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(404)
+      })
     })
   })
 

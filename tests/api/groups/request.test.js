@@ -1,6 +1,7 @@
 require('should')
 const { customAuthReq, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { groupPromise, getGroup, createGroup } = require('../fixtures/groups')
+const { getSomeGroup, createGroup } = require('../fixtures/groups')
+const { getGroup } = require('tests/api/utils/groups')
 const { createUser } = require('../fixtures/users')
 const endpoint = '/api/groups?action=request'
 
@@ -17,7 +18,7 @@ describe('groups:update:request', () => {
 
   it('should reject request from already member users', async () => {
     try {
-      const group = await groupPromise
+      const group = await getSomeGroup()
       const userPromise = createUser()
       await customAuthReq(userPromise, 'put', endpoint, { group: group._id })
       await customAuthReq(userPromise, 'put', endpoint, { group: group._id }).then(shouldNotBeCalled)

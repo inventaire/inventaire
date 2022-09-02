@@ -27,7 +27,7 @@ module.exports = {
     if (userId == null) return []
     return getFriendsAndGroupCoMembers(userId)
     .then(_.flatten)
-  }
+  },
 }
 
 const spreadRelations = usersIds => ([ friendsIds, coGroupMembersIds ]) => {

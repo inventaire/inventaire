@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
+const { filterPrivateAttributes } = require('controllers/shelves/lib/filter_private_attributes')
 const shelves_ = require('controllers/shelves/lib/shelves')
-const filterVisibleShelves = require('./lib/filter_visible_shelves')
-const { getNetworkIds } = require('controllers/user/lib/relations_status')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 
 const sanitization = {
   owners: {},
@@ -10,20 +10,12 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const shelves = await getShelvesByOwners(params)
+  const { reqUserId, owners } = params
+  const foundShelves = await shelves_.byOwners(owners)
+  let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
+  authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
+  const shelves = _.keyBy(authorizedShelves, '_id')
   return { shelves }
-}
-
-const getShelvesByOwners = async params => {
-  const { reqUserId } = params
-  let { owners } = params
-  owners = _.forceArray(owners)
-  return Promise.all([
-    shelves_.byOwners(owners),
-    getNetworkIds(reqUserId)
-  ])
-  .then(filterVisibleShelves(reqUserId))
-  .then(_.KeyBy('_id'))
 }
 
 module.exports = { sanitization, controller }

@@ -4,7 +4,7 @@ require('should')
 const { rawRequest } = require('../utils/request')
 const { createHuman } = require('../fixtures/entities')
 const { createUser } = require('../fixtures/users')
-const { groupPromise } = require('../fixtures/groups')
+const { getSomeGroup } = require('../fixtures/groups')
 const { createItem } = require('../fixtures/items')
 const someEntityPromise = createHuman()
 const someUserPromise = createUser()
@@ -31,13 +31,13 @@ describe('json redirections', () => {
   })
 
   it('should redirect to a group by id', async () => {
-    const { _id } = await groupPromise
+    const { _id } = await getSomeGroup()
     const { headers } = await rawRequest('get', `/groups/${_id}.json`)
     headers.location.should.equal(`${host}/api/groups?action=by-id&id=${_id}`)
   })
 
   it('should redirect to a group by slug', async () => {
-    const { slug } = await groupPromise
+    const { slug } = await getSomeGroup()
     const { headers } = await rawRequest('get', `/groups/${slug}.json`)
     headers.location.should.equal(`${host}/api/groups?action=by-slug&slug=${slug}`)
   })

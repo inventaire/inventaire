@@ -16,7 +16,8 @@ const { normalizeString } = require('lib/utils/base')
 
 const validations = {
   common: require('models/validations/common'),
-  user: require('models/validations/user')
+  user: require('models/validations/user'),
+  visibility: require('models/validations/visibility'),
 }
 
 const parseNumberString = value => {
@@ -346,5 +347,8 @@ module.exports = {
       }
       return true
     },
+  },
+  visibility: {
+    validate: validations.visibility,
   },
 }

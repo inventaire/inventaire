@@ -1,5 +1,9 @@
 const formatError = require('./format_error')
 
+let assert_
+const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
+setImmediate(requireCircularDependencies)
+
 const error_ = module.exports = {}
 
 // help bundling information at error instanciation
@@ -29,6 +33,15 @@ error_.notFound = context => {
   const err = error_.new('not found', 404, context)
   err.notFound = true
   return err
+}
+
+error_.unauthorized = (req, message, context) => {
+  assert_.object(req)
+  assert_.string(message)
+  // If the requested is authentified, its a forbidden access
+  // If not, the requested might be fullfilled after authentification
+  const statusCode = req.user ? 403 : 401
+  return error_.new(message, statusCode, context)
 }
 
 error_.catchNotFound = err => {

@@ -1,10 +1,11 @@
 const _ = require('builders/utils')
 require('should')
 const { authReq, authReqB, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
-const { groupPromise, createGroup, getGroup } = require('../fixtures/groups')
+const { getSomeGroup, createGroup } = require('../fixtures/groups')
 const endpoint = '/api/groups?action=accept'
 const { humanName } = require('../fixtures/entities')
 const { shouldNotBeCalled } = require('tests/unit/utils')
+const { getGroup } = require('tests/api/utils/groups')
 
 describe('groups:update:accept', () => {
   it('should reject without group', async () => {
@@ -17,7 +18,7 @@ describe('groups:update:accept', () => {
   })
 
   it('should reject non invited users', async () => {
-    const [ group, user ] = await Promise.all([ groupPromise, getUserC() ])
+    const [ group, user ] = await Promise.all([ getSomeGroup(), getUserC() ])
     await authReq('put', endpoint, { user: user._id, group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -27,7 +28,7 @@ describe('groups:update:accept', () => {
   })
 
   it('should reject invite accepted by another user', async () => {
-    const [ group, user ] = await Promise.all([ groupPromise, getUserC() ])
+    const [ group, user ] = await Promise.all([ getSomeGroup(), getUserC() ])
     const { _id: userId } = user
     await authReq('put', '/api/groups?action=invite', { user: userId, group: group._id })
     group.members.length.should.equal(1)
@@ -40,7 +41,7 @@ describe('groups:update:accept', () => {
   })
 
   it('should add a member when user is accepting an invite', async () => {
-    // Re-creating a group instead of using groupPromise,
+    // Re-creating a group instead of using getSomeGroup(),
     // to be isolated from other tests
     const group = await createGroup()
     const user = await getUserGetter(humanName())()

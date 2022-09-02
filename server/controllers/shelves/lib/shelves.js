@@ -6,10 +6,12 @@ const db = require('db/couchdb/base')('shelves')
 const error_ = require('lib/error/error')
 const { emit } = require('lib/radio')
 const { updatable: updateAttributes } = require('models/attributes/shelf')
+const { validateVisibilityKeys } = require('lib/visibility/visibility')
 
 const shelves_ = module.exports = {
   create: async newShelf => {
     const shelf = Shelf.create(newShelf)
+    await validateVisibilityKeys(shelf.visibility, shelf.owner)
     return db.postAndReturn(shelf)
   },
   byId: db.get,
@@ -27,6 +29,9 @@ const shelves_ = module.exports = {
   updateAttributes: async params => {
     const { shelfId, reqUserId } = params
     const newAttributes = _.pick(params, updateAttributes)
+    if (newAttributes.visibility) {
+      await validateVisibilityKeys(newAttributes.visibility, reqUserId)
+    }
     const shelf = await db.get(shelfId)
     const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
     return db.putAndReturn(updatedShelf)

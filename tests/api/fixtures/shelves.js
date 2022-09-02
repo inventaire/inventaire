@@ -14,18 +14,13 @@ const fixtures = module.exports = {
   createShelf: async (userPromise, shelfData = {}) => {
     userPromise = userPromise || getUser()
     shelfData.name = shelfData.name || fixtures.shelfName()
-    shelfData.listing = shelfData.listing || 'public'
+    shelfData.visibility = shelfData.visibility || [ 'public' ]
     shelfData.color = shelfData.color || '#222222'
     shelfData.description = shelfData.description || fixtures.shelfDescription()
     const user = await userPromise
     const endpoint = '/api/shelves?action=create'
-    await customAuthReq(user, 'post', endpoint, shelfData)
-    const ownerEndpoint = '/api/shelves?action=by-owners'
-    const { shelves } = await customAuthReq(user, 'get', `${ownerEndpoint}&owners=${user._id}`)
-    return {
-      shelf: Object.values(shelves).find(shelf => shelf.name === shelfData.name),
-      user
-    }
+    const { shelf } = await customAuthReq(user, 'post', endpoint, shelfData)
+    return { shelf, user }
   },
 
   createShelfWithItem: async (shelfData = {}, item, userPromise) => {

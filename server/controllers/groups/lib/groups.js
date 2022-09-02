@@ -10,6 +10,7 @@ const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
 const groups_ = module.exports = {
   // using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId'),
+  byIds: db.byIds,
   bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
   byUser: db.viewByKey.bind(db, 'byUser'),
   byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser'),
@@ -42,6 +43,14 @@ const groups_ = module.exports = {
     .then(groups => _.union(...groups))
   },
 
+  getUserGroupsIds: async userId => {
+    const { rows } = await db.view('groups', 'byUser', {
+      include_docs: false,
+      key: userId,
+    })
+    return _.map(rows, 'id')
+  },
+
   create: async options => {
     const group = Group.create(options)
     await addSlug(group)
@@ -50,9 +59,7 @@ const groups_ = module.exports = {
 
   getUserGroupsCoMembers: async userId => {
     const groups = await groups_.byUser(userId)
-    const usersIds = lists_.allGroupsMembers(groups)
-    // Deduplicate and remove the user own id from the list
-    return _.uniq(_.without(usersIds, userId))
+    return getCoMembersIds(groups, userId)
   },
 
   userInvited: async (userId, groupId) => {
@@ -73,4 +80,10 @@ const groups_ = module.exports = {
     const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
     return rows.length > 0
   },
+}
+
+const getCoMembersIds = (groups, userId) => {
+  const usersIds = lists_.allGroupsMembers(groups)
+  // Deduplicate and remove the user own id from the list
+  return _.uniq(_.without(usersIds, userId))
 }
