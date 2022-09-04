@@ -18,7 +18,7 @@ module.exports = buildSearcher({
     }
 
     const filter = [
-      docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs(ownersIdsAndVisibilityKeys)
+      buildOwnerAndVisibilityKeysClauses(ownersIdsAndVisibilityKeys)
     ]
 
     if (shelfId) {
@@ -44,30 +44,29 @@ module.exports = buildSearcher({
     return { query, size: limit, min_score: 0.2 }
   }
 })
-
-const docMustMatchAtLeastOneOfTheAllowedOwnerAndVisibilityKeyPairs = ownersIdsAndVisibilityKeys => {
+const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
   return {
     bool: {
-      should: ownersIdsAndVisibilityKeys.map(getOwnerClause),
+      should: ownersIdsAndVisibilityKeys.map(buildOwnerFilterClause),
       minimum_should_match: 1
     }
   }
 }
 
-const getOwnerClause = ([ ownerId, visibilityKeys ]) => {
-  const clause = [
+const buildOwnerFilterClause = ([ ownerId, visibilityKeys ]) => {
+  const filter = [
     { term: { owner: ownerId } }
   ]
   // The 'private' keyword signify that `reqUserId === ownerId`
   // and thus there is no need to check visibility keys
   if (visibilityKeys[0] !== 'private') {
-    clause.push({
+    filter.push({
       terms: { visibility: visibilityKeys }
     })
   }
   return {
     bool: {
-      filter: clause
+      filter
     }
   }
 }
