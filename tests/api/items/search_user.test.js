@@ -10,14 +10,11 @@ const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fix
 const { makeFriends } = require('tests/api/utils/relations')
 const { buildUrl } = require('lib/utils/url')
 const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
-const { createShelf, createShelfWithItem } = require('tests/api/fixtures/shelves')
 
-const search = (reqUser, { user, group, shelf, search }) => {
+const search = (reqUser, { user, search }) => {
   const url = buildUrl('/api/items', {
     action: 'search',
     user,
-    group,
-    shelf,
     search,
   })
   if (reqUser) {
@@ -265,120 +262,5 @@ describe('items:search:user', () => {
       itemsIds.should.not.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })
-  })
-})
-
-describe('items:search:group', () => {
-  describe('visibility:public', () => {
-    it('should find a group member public item', async () => {
-      const { group, member } = await getSomeGroupWithAMember()
-      const [ item ] = await Promise.all([
-        createItemWithEditionAndWork(member, { visibility: [ 'public' ] }),
-      ])
-      await waitForIndexation('items', item._id)
-      const { 'entity:title': title } = item.snapshot
-      const { items } = await search(null, { group: group._id, search: title })
-      _.map(items, '_id').should.containEql(item._id)
-    })
-  })
-
-  describe('visibility:private', () => {
-    it('should not find a group member private item', async () => {
-      const { group, member } = await getSomeGroupWithAMember()
-      const [ item ] = await Promise.all([
-        createItemWithEditionAndWork(member, { visibility: [] }),
-      ])
-      await waitForIndexation('items', item._id)
-      const { 'entity:title': title } = item.snapshot
-      const { items } = await search(null, { group: group._id, search: title })
-      _.map(items, '_id').should.not.containEql(item._id)
-    })
-  })
-
-  describe('visibility:groups', () => {
-    it('should find items visible by groups', async () => {
-      const { group, admin, member } = await getSomeGroupWithAMember()
-      const { uri } = await createEdition()
-      const [ privateItem, friendsOnlyItem, groupsOnlyItem ] = await Promise.all([
-        createItem(admin, { entity: uri, visibility: [] }),
-        createItem(admin, { entity: uri, visibility: [ 'friends' ] }),
-        createItem(admin, { entity: uri, visibility: [ 'groups' ] }),
-      ])
-      await Promise.all([
-        waitForIndexation('items', privateItem._id),
-        waitForIndexation('items', friendsOnlyItem._id),
-        waitForIndexation('items', groupsOnlyItem._id),
-      ])
-      const { 'entity:title': title } = privateItem.snapshot
-      const { items } = await search(member, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
-      itemsIds.should.not.containEql(privateItem._id)
-      itemsIds.should.not.containEql(friendsOnlyItem._id)
-      itemsIds.should.containEql(groupsOnlyItem._id)
-      items.forEach(item => should(item.visibility).not.be.ok())
-    })
-
-    it('should not find items visible by groups while the users are friends but not in a common group', async () => {
-      const { group, member } = await getSomeGroupWithAMember()
-      const { member: memberOfAnotherGroup } = await createGroupAndMember()
-      await makeFriends(member, memberOfAnotherGroup)
-      const { uri } = await createEdition()
-      const groupsOnlyItem = await createItem(member, { entity: uri, visibility: [ 'groups' ] })
-      await waitForIndexation('items', groupsOnlyItem._id)
-      const { 'entity:title': title } = groupsOnlyItem.snapshot
-      const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
-      itemsIds.should.not.containEql(groupsOnlyItem._id)
-    })
-  })
-
-  describe('visibility:group-specific', () => {
-    it('should find items visible by a specific group to which the requester belongs', async () => {
-      const { group, admin, member } = await getSomeGroupWithAMember()
-      const { uri } = await createEdition()
-      const groupSpecificItem = await createItem(admin, { entity: uri, visibility: [ `group:${group._id}` ] })
-      await waitForIndexation('items', groupSpecificItem._id)
-      const { 'entity:title': title } = groupSpecificItem.snapshot
-      const { items } = await search(member, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
-      itemsIds.should.containEql(groupSpecificItem._id)
-      items.forEach(item => should(item.visibility).not.be.ok())
-    })
-
-    it('should not find items visible by a specific group to which the requester does not belong', async () => {
-      const { group, member } = await getSomeGroupWithAMember()
-      const { member: memberOfAnotherGroup } = await createGroupAndMember()
-      await makeFriends(member, memberOfAnotherGroup)
-      const { uri } = await createEdition()
-      const groupSpecificItem = await createItem(member, { entity: uri, visibility: [ `group:${group._id}` ] })
-      await waitForIndexation('items', groupSpecificItem._id)
-      const { 'entity:title': title } = groupSpecificItem.snapshot
-      const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
-      itemsIds.should.not.containEql(groupSpecificItem._id)
-      items.forEach(item => should(item.visibility).not.be.ok())
-    })
-  })
-})
-
-describe('items:search:shelf', () => {
-  it('should find a public shelf public item', async () => {
-    const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] }, { visibility: [ 'public' ] })
-    await waitForIndexation('items', item._id)
-    const { 'entity:title': title } = item.snapshot
-    const { items } = await search(null, { shelf: shelf._id, search: title })
-    _.map(items, '_id').should.containEql(item._id)
-  })
-
-  it('should not find an item not in the shelf', async () => {
-    const user = getUser()
-    const [ { shelf }, item ] = await Promise.all([
-      createShelf(user, { visibility: [ 'public' ] }),
-      createItem(user, { visibility: [ 'public' ] }),
-    ])
-    await waitForIndexation('items', item._id)
-    const { 'entity:title': title } = item.snapshot
-    const { items } = await search(null, { shelf: shelf._id, search: title })
-    _.map(items, '_id').should.not.containEql(item._id)
   })
 })
