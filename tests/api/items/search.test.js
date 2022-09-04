@@ -114,7 +114,7 @@ describe('items:search:user', () => {
     })
     const item = await createItem(user, { entity: edition.uri })
     await waitForIndexation('items', item._id)
-    const { items } = await search(user, { user: user._id, search: 'esc' })
+    const { items } = await search(user, { user: user._id, search: 'Lesc' })
     _.map(items, '_id').should.containEql(item._id)
   })
 
