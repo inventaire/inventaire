@@ -23,7 +23,7 @@ const search = (reqUser, { group, search }) => {
 
 describe('items:search:group', () => {
   describe('visibility:public', () => {
-    it('should find a group member public item', async () => {
+    it('should find an public item of common group member', async () => {
       const { group, member } = await getSomeGroupWithAMember()
       const [ item ] = await Promise.all([
         createItemWithEditionAndWork(member, { visibility: [ 'public' ] }),
@@ -36,20 +36,21 @@ describe('items:search:group', () => {
   })
 
   describe('visibility:private', () => {
-    it('should not find a group member private item', async () => {
+    it('should not find private item of a group member by another group member', async () => {
       const { group, member } = await getSomeGroupWithAMember()
+      const { member: memberOfAnotherGroup } = await createGroupAndMember()
       const [ item ] = await Promise.all([
         createItemWithEditionAndWork(member, { visibility: [] }),
       ])
       await waitForIndexation('items', item._id)
       const { 'entity:title': title } = item.snapshot
-      const { items } = await search(null, { group: group._id, search: title })
+      const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
       _.map(items, '_id').should.not.containEql(item._id)
     })
   })
 
   describe('visibility:groups', () => {
-    it('should find items visible by groups', async () => {
+    it('should find items visible by all user groups but not visible to friends', async () => {
       const { group, admin, member } = await getSomeGroupWithAMember()
       const { uri } = await createEdition()
       const [ privateItem, friendsOnlyItem, groupsOnlyItem ] = await Promise.all([
@@ -86,7 +87,7 @@ describe('items:search:group', () => {
   })
 
   describe('visibility:group-specific', () => {
-    it('should find items visible by a specific group to which the requester belongs', async () => {
+    it('should find items visible by a specific group', async () => {
       const { group, admin, member } = await getSomeGroupWithAMember()
       const { uri } = await createEdition()
       const groupSpecificItem = await createItem(admin, { entity: uri, visibility: [ `group:${group._id}` ] })
