@@ -120,7 +120,7 @@ describe('items:search:user', () => {
 
   it('should find a user item by title and author', async () => {
     const user = await getUser()
-    const [ item ] = await Promise.all([
+    const [ item, item2 ] = await Promise.all([
       createItemWithAuthorAndSerie(user),
       // Create more items to check that we are not just getting all user items
       createItemWithAuthorAndSerie(user),
@@ -130,7 +130,9 @@ describe('items:search:user', () => {
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, { user: user._id, search: input })
-    _.map(items, '_id').should.containEql(item._id)
+    const foundItemsIds = _.map(items, '_id')
+    foundItemsIds.should.containEql(item._id)
+    foundItemsIds.should.not.containEql(item2._id)
   })
 
   describe('visibility:public', () => {
