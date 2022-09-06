@@ -23,10 +23,15 @@ const fixtures = module.exports = {
     return { shelf, user }
   },
 
-  createShelfWithItem: async (shelfData = {}, item, userPromise) => {
+  createShelfWithItem: async (shelfData = {}, itemData, userPromise) => {
     userPromise = userPromise || getUser()
     const { shelf, user } = await fixtures.createShelf(userPromise, shelfData)
-    item = await (item || createItem(user))
+    let item
+    if (itemData._id) {
+      item = itemData
+    } else {
+      item = await createItem(user, itemData)
+    }
     const itemId = item._id
     await addItemsToShelf(user, shelf, [ itemId ])
     return { shelf, item, user }

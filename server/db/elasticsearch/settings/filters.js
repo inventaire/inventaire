@@ -24,5 +24,11 @@ module.exports = {
   truncate_to_max_gram: {
     type: 'truncate',
     length: maxGram
-  }
+  },
+
+  // See https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-word-delimiter-graph-tokenfilter.html
+  custom_word_delimiter: {
+    type: 'word_delimiter_graph',
+    catenate_words: true,
+  },
 }

@@ -11,7 +11,8 @@ module.exports = {
       // https://www.elastic.co/guide/en/elasticsearch/reference/7.10/analysis-standard-analyzer.html
       'lowercase',
       'asciifolding',
-      'autocomplete_filter'
+      'custom_word_delimiter',
+      'autocomplete_filter',
     ]
   },
   standard_truncated: {
@@ -22,7 +23,8 @@ module.exports = {
     filter: [
       'lowercase',
       'asciifolding',
-      'truncate_to_max_gram'
+      'custom_word_delimiter',
+      'truncate_to_max_gram',
     ]
   },
   standard_full: {
@@ -31,6 +33,7 @@ module.exports = {
     filter: [
       'lowercase',
       'asciifolding',
+      'custom_word_delimiter',
     ]
   },
 }

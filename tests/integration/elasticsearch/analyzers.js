@@ -1,7 +1,9 @@
 const { getAnalyzedTokens } = require('tests/api/utils/search')
+// Testing on the entities index, but as all index are created with the same settings
+// by server/db/elasticsearch/create_index.js, they all get the same analyzers
 const indexBaseName = 'entities'
 
-describe('entities analyzers', () => {
+describe('analyzers', () => {
   describe('autocomplete', () => {
     const analyzer = 'autocomplete'
     it('should generate edge-ngrams tokens', async () => {
@@ -35,6 +37,11 @@ describe('entities analyzers', () => {
     it('should drop dashes', async () => {
       const tokens = await getAnalyzedTokens({ indexBaseName, text: 'foo-bar', analyzer })
       tokens.should.deepEqual([ 'fo', 'foo', 'ba', 'bar' ])
+    })
+
+    it('should drop apostrophes', async () => {
+      const tokens = await getAnalyzedTokens({ indexBaseName, text: "l'eau", analyzer })
+      tokens.should.deepEqual([ 'le', 'lea', 'leau', 'l', 'ea', 'eau' ])
     })
   })
 

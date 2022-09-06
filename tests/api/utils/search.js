@@ -61,7 +61,7 @@ const waitForIndexation = async (indexBaseName, id) => {
     await wait(elasticsearchUpdateDelay)
   } else {
     _.warn(`waiting for ${index}/${id} indexation`)
-    await wait(500)
+    await wait(200)
     return waitForIndexation(indexBaseName, id)
   }
 }
