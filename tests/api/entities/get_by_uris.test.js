@@ -38,9 +38,21 @@ describe('entities:get:by-uris', () => {
     res.entities[work.uri].should.be.an.Object()
   })
 
-  it('should return uris not found', async () => {
+  it('should return inventaire uris not found', async () => {
     const { notFound } = await getByUris(someFakeUri)
     notFound.should.deepEqual([ someFakeUri ])
+  })
+
+  it('should return isbn uris not found', async () => {
+    const someMissingIsbn = 'isbn:9789871453023'
+    const { notFound } = await getByUris(someMissingIsbn)
+    notFound.should.deepEqual([ someMissingIsbn ])
+  })
+
+  it('should return wikidata uris not found', async () => {
+    const nonExistingUri = 'wd:Q5359999999999999'
+    const { notFound } = await getByUris(nonExistingUri, null, true)
+    notFound.should.deepEqual([ nonExistingUri ])
   })
 
   it('should return redirected uris', async () => {

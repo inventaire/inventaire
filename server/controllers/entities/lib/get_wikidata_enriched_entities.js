@@ -17,6 +17,7 @@ const addImageData = require('./add_image_data')
 const radio = require('lib/radio')
 const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
+const { partition, map } = require('lodash')
 
 let reindex
 const requireCircularDependencies = () => {
@@ -24,13 +25,17 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-module.exports = (ids, params) => {
-  return Promise.all(ids.map(getCachedEnrichedEntity(params)))
-  .then(entities => {
-    if (params.dry) { entities = _.compact(entities) }
-    return { entities }
-  })
+module.exports = async (ids, params) => {
+  const entities = await Promise.all(ids.map(getCachedEnrichedEntity(params)))
+  let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
+  if (params.dry) foundEntities = _.compact(foundEntities)
+  return {
+    entities: foundEntities,
+    notFound: map(notFoundEntities, 'uri')
+  }
 }
+
+const isNotMissing = entity => entity && entity.type !== 'missing'
 
 const getCachedEnrichedEntity = params => wdId => {
   const key = `wd:enriched:${wdId}`
@@ -40,11 +45,13 @@ const getCachedEnrichedEntity = params => wdId => {
 }
 
 const getEnrichedEntity = async wdId => {
-  const entity = await getWdEntity(wdId).then(format)
-  const indexationCopy = _.cloneDeep(entity)
+  let entity = await getWdEntity(wdId)
+  entity = entity || { id: wdId, missing: true }
+  const formattedEntity = await format(entity)
+  const indexationCopy = _.cloneDeep(formattedEntity)
   indexationCopy._id = wdId
   reindex(indexationCopy)
-  return entity
+  return formattedEntity
 }
 
 const format = async entity => {
