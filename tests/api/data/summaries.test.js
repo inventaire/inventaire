@@ -24,8 +24,8 @@ describe('summaries', () => {
         }
       })
       const { uri } = work
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
       summaryData.key.should.equal(property)
       summaryData.text.should.startWith('The main character')
       summaryData.claim.id.should.equal(olId)
@@ -43,8 +43,8 @@ describe('summaries', () => {
         }
       })
       const { uri } = work
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
       if (summaryData) {
         const url = `https://openlibrary.org/works/${olId}.json`
         const { description } = await requests_.get(url, { timeout: 10 * 1000 })
@@ -64,8 +64,8 @@ describe('summaries', () => {
         }
       })
       const { uri } = human
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
       summaryData.text.should.containEql('Pratchett')
     })
   })
@@ -81,8 +81,8 @@ describe('summaries', () => {
         }
       })
       const { uri } = edition
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
       summaryData.key.should.equal(property)
       summaryData.claim.property.should.equal(property)
       summaryData.claim.id.should.equal(bnfId)
@@ -101,8 +101,8 @@ describe('summaries', () => {
         }
       })
       const { uri } = edition
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = res.summaries.find(summaryData => summaryData.key === property)
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
       should(summaryData).not.be.ok()
     })
   })
@@ -110,9 +110,9 @@ describe('summaries', () => {
   describe('wikipedia', () => {
     it('should return a reference to an available wikipedia article', async () => {
       const uri = 'wd:Q4980986'
-      const res = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const svwikiSitelinkData = res.summaries.find(summaryData => summaryData.key === 'svwiki')
-      const enwikiSitelinkData = res.summaries.find(summaryData => summaryData.key === 'enwiki')
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const svwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'svwiki')
+      const enwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'enwiki')
       svwikiSitelinkData.should.deepEqual({
         key: 'svwiki',
         lang: 'sv',
