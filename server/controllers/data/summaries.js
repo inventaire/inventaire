@@ -6,14 +6,18 @@ const { getWikipediaSitelinksData } = require('controllers/data/lib/summaries/si
 const sanitization = {
   uri: {},
   refresh: { optional: true },
+  langs: { optional: true },
 }
 
-const controller = async ({ uri, refresh }) => {
+const controller = async ({ uri, refresh, langs }) => {
   const entity = await getEntityByUri({ uri, refresh })
   const { claims, sitelinks } = entity
   const externalIdsSummaries = await getSummariesFromClaims({ claims, refresh })
   const wikipediaSummaries = getWikipediaSitelinksData(sitelinks)
-  const summaries = compact(externalIdsSummaries.concat(wikipediaSummaries))
+  let summaries = compact(externalIdsSummaries.concat(wikipediaSummaries))
+  if (langs) {
+    summaries = summaries.filter(summary => langs.includes(summary.lang))
+  }
   return { summaries }
 }
 

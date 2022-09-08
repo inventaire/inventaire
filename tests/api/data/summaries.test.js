@@ -135,6 +135,17 @@ describe('summaries', () => {
       })
     })
   })
+
+  it('should return a tailored subset when passed langs parameters', async () => {
+    const uri = 'wd:Q4980986'
+    const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}&langs=sv|de`)
+    const svwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'svwiki')
+    const dewikiSitelinkData = summaries.find(summaryData => summaryData.key === 'dewiki')
+    const enwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'enwiki')
+    svwikiSitelinkData.should.be.ok()
+    dewikiSitelinkData.should.be.ok()
+    should(enwikiSitelinkData).not.be.ok()
+  })
 })
 
 const existsOrCreate = async ({ claims, createFn = createWork }) => {
