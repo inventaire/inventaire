@@ -27,7 +27,7 @@ const fixtures = module.exports = {
     userPromise = userPromise || getUser()
     const { shelf, user } = await fixtures.createShelf(userPromise, shelfData)
     let item
-    if (itemData._id) {
+    if (itemData?._id) {
       item = itemData
     } else {
       item = await createItem(user, itemData)
