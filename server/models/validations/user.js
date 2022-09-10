@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 
 const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common')
 const { creationStrategies, settings } = require('../attributes/user')
+const { isPropertyUri } = require('lib/boolean_validations')
 
 const validations = module.exports = {
   pass,
@@ -17,6 +18,7 @@ const validations = module.exports = {
   settings: boolean,
   position,
   fediversable: boolean,
+  customProperties: props => _.isArray(props) && props.every(isPropertyUri),
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1
 }
 
