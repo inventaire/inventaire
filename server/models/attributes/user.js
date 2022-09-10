@@ -21,7 +21,8 @@ attributes.ownerSafe = [
   'readToken',
   'roles',
   'fediversable',
-  'snapshot'
+  'customProperties',
+  'snapshot',
 ]
 
 attributes.public = [
@@ -55,7 +56,8 @@ attributes.updatable = [
   'settings',
   'position',
   'fediversable',
-  'summaryPeriodicity'
+  'summaryPeriodicity',
+  'customProperties'
 ]
 
 // Attributes that are kept after a user deleted her account

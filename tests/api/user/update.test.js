@@ -160,4 +160,15 @@ describe('user:update', () => {
       updatedUser.stableUsername.should.equal(user.username)
     })
   })
+
+  describe('custom properties', () => {
+    it('should update custom properties', async () => {
+      const user = await getReservedUser()
+      const attribute = 'customProperties'
+      const value = [ 'wdt:P268' ]
+      await customAuthReq(user, 'put', endpoint, { attribute, value })
+      const updatedUser = await getRefreshedUser(user)
+      updatedUser[attribute].should.deepEqual(value)
+    })
+  })
 })
