@@ -7,6 +7,7 @@ const error_ = require('lib/error/error')
 const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
 const { normalizeString } = require('lib/utils/base')
+const { isWikimediaLanguageCode } = require('lib/wikimedia')
 
 // Parameters attributes:
 // - format (optional)
@@ -69,7 +70,7 @@ const nonEmptyString = {
   }
 }
 
-const arrayOfAType = validation => (values, type) => {
+const arrayOfAType = validation => (values, type, config) => {
   if (!_.isArray(values)) {
     const details = `expected array, got ${_.typeOf(values)}`
     throw error_.new(`invalid ${type}: ${details}`, 400, { values })
@@ -80,7 +81,7 @@ const arrayOfAType = validation => (values, type) => {
   }
 
   for (const value of values) {
-    if (!validation(value)) {
+    if (!validation(value, type, config)) {
       // approximative way to get singular of a word
       const singularType = type.replace(/s$/, '')
       const details = `expected ${singularType}, got ${value} (${_.typeOf(value)})`
@@ -165,6 +166,22 @@ const allowlistedStrings = {
     }
     return true
   }
+}
+
+const lang = {
+  default: 'en',
+  validate: (value, name, config) => {
+    if (config.type === 'wikimedia') {
+      return isWikimediaLanguageCode(value)
+    } else {
+      return _.isLang(value)
+    }
+  }
+}
+
+const langs = {
+  format: arrayOrPipedString,
+  validate: arrayOfAType(lang.validate)
 }
 
 const generics = {
@@ -253,10 +270,8 @@ module.exports = {
   isbn,
   item: couchUuid,
   items: couchUuids,
-  lang: {
-    default: 'en',
-    validate: _.isLang
-  },
+  lang,
+  langs,
   limit: Object.assign({}, positiveInteger, {
     min: 1,
     default: 100

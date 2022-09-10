@@ -1,7 +1,8 @@
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const cache_ = require('lib/cache')
-const { fixedEncodeURIComponent, buildUrl } = require('lib/utils/url')
+const { buildUrl } = require('lib/utils/url')
+const { getSitelinkUrl } = require('wikidata-sdk')
 
 module.exports = params => {
   const { lang, title, introOnly } = params
@@ -14,17 +15,13 @@ module.exports = params => {
 }
 
 const getArticle = async (lang, title, introOnly) => {
-  const url = apiQuery(lang, title, introOnly)
-  const { query } = await requests_.get(url)
+  const url = getSitelinkUrl({ site: `${lang}wiki`, title })
+  const { host } = new URL(url)
+  const queryUrl = apiQuery(host, title, introOnly)
+  const { query } = await requests_.get(queryUrl)
   const { pages = [] } = query
   const extract = getCleanExtract(Object.values(pages))
   if (extract != null) {
-    // Replace spaces by underscores before URI encoding
-    // as Mediawiki considers them interchangeable
-    // and _ is more readable than %20
-    title = title.replace(/\s/g, '_')
-    title = fixedEncodeURIComponent(title)
-    const url = `https://${lang}.wikipedia.org/wiki/${title}`
     return { extract, url }
   } else {
     if (pages['-1']?.missing === '') throw error_.notFound({ lang, title, url, pages })
@@ -32,7 +29,7 @@ const getArticle = async (lang, title, introOnly) => {
   }
 }
 
-const apiQuery = (lang, title, introOnly) => {
+const apiQuery = (host, title, introOnly) => {
   // doc:
   // - https://en.wikipedia.org/w/api.php?action=help&modules=query
   // - https://www.mediawiki.org/wiki/Extension:TextExtracts
@@ -49,7 +46,7 @@ const apiQuery = (lang, title, introOnly) => {
   // will be interpreted as true
   if (introOnly) queryObj.exintro = true
 
-  return buildUrl(`https://${lang}.wikipedia.org/w/api.php`, queryObj)
+  return buildUrl(`https://${host}/w/api.php`, queryObj)
 }
 
 // Commas between references aren't removed, thus the presence of aggregated commas
