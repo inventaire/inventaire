@@ -41,9 +41,9 @@ const fixtures = module.exports = {
     selectionData.uris = [ uri ]
 
     selectionData.userId = userId
-    const selections = await selections_.create(selectionData)
+    const { docs } = await selections_.create(selectionData)
     return {
-      selection: selections[0],
+      selection: docs[0],
       list,
       uri
     }

@@ -20,7 +20,7 @@ describe('lists:by-entities', () => {
       listsRes.should.be.ok()
       const { selections } = listsRes[0]
       selections.should.be.ok()
-      Object.values(selections)[0]._id.should.equal(selection._id)
+      selections[0]._id.should.equal(selection._id)
     })
 
     it('should not return private selections', async () => {

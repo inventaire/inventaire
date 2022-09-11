@@ -1,7 +1,7 @@
 const { byIdsWithSelections } = require('controllers/lists/lib/lists')
-const filterVisibleDocs = require('lib/filter_visible_docs')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const error_ = require('lib/error/error')
-const { Paginate } = require('controllers/items/lib/queries_commons')
+const { paginate } = require('controllers/items/lib/queries_commons')
 
 const sanitization = {
   id: {},
@@ -24,7 +24,7 @@ const controller = async ({ id, withSelections, limit, offset, reqUserId }, req)
 
 const paginateSelections = async (list, offset, limit) => {
   const { selections } = list
-  const page = await Paginate({ offset, limit })(selections)
+  const page = await paginate(selections, { offset, limit })
   list.selections = page.items
 }
 

@@ -64,7 +64,7 @@ describe('lists:update', () => {
   it('should update attributes', async () => {
     const name = listName()
     const description = listDescription()
-    const visibility = [ 'network' ]
+    const visibility = [ 'friends' ]
     const { list } = await createList()
     const { list: updatedList } = await authReq('put', endpoint, {
       id: list._id,

@@ -1,8 +1,8 @@
 const _ = require('builders/utils')
 const selections_ = require('controllers/lists/lib/selections')
-const filterVisibleDocs = require('lib/filter_visible_docs')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const lists_ = require('controllers/lists/lib/lists')
-const { Paginate } = require('controllers/items/lib/queries_commons')
+const { paginate } = require('controllers/items/lib/queries_commons')
 
 const sanitization = {
   uris: { },
@@ -15,8 +15,8 @@ const controller = async ({ uris, offset, limit, reqUserId }) => {
   // uniq here implies that a list cannot refer several times to the same entity
   const listsIds = _.uniq(_.map(foundSelections, 'list'))
   const foundLists = await lists_.byIdsWithSelections(listsIds, reqUserId)
-  const { items: authorizedLists } = await filterVisibleDocs(foundLists, reqUserId)
-  .then(Paginate({ offset, limit }))
+  const lists = await filterVisibleDocs(foundLists, reqUserId)
+  const { items: authorizedLists } = paginate(lists, { offset, limit })
   const listsByUris = {}
   const selectionsByUris = _.groupBy(foundSelections, 'uri')
   uris.forEach(assignListsByUris(authorizedLists, selectionsByUris, listsByUris))
