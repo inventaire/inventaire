@@ -3,6 +3,7 @@ const selections_ = require('controllers/lists/lib/selections')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const lists_ = require('controllers/lists/lib/lists')
 const { paginate } = require('controllers/items/lib/queries_commons')
+const { isNonEmptyArray } = require('lib/boolean_validations')
 
 const sanitization = {
   uris: { },
@@ -29,7 +30,7 @@ module.exports = { sanitization, controller }
 
 const assignListsByUris = (lists, selectionsByUris, listsByUris) => uri => {
   const listsSelections = selectionsByUris[uri]
-  if (listsSelections && listsSelections.length === 0) {
+  if (!isNonEmptyArray(listsSelections)) {
     listsByUris[uri] = []
     return
   }

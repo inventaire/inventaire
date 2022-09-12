@@ -1,13 +1,14 @@
 const should = require('should')
 const { publicReq, authReq, getUserB } = require('../utils/utils')
 const { createSelection } = require('../fixtures/lists')
+const { someFakeUri } = require('tests/api/fixtures/entities')
 
 const endpoint = '/api/lists?action=by-entities'
 
 describe('lists:by-entities', () => {
   it('should be empty without lists', async () => {
-    const res = await publicReq('get', `${endpoint}&uris=inv:5157e0729573118860649f4f620e34d1`)
-    res.lists.should.deepEqual({})
+    const res = await publicReq('get', `${endpoint}&uris=${someFakeUri}`)
+    res.lists[someFakeUri].should.deepEqual([])
   })
 
   describe('visibility:overview', () => {
