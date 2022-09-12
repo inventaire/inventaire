@@ -18,14 +18,16 @@ const controller = async ({ id, withSelections, limit, offset, reqUserId }, req)
   if (authorizedLists.length === 0) {
     throw error_.unauthorized(req, 'unauthorized lists access', { id })
   }
-  await paginateSelections(list, offset, limit)
-  return list
+  return {
+    list,
+    selections: await paginateSelections(list, offset, limit)
+  }
 }
 
 const paginateSelections = async (list, offset, limit) => {
   const { selections } = list
   const page = await paginate(selections, { offset, limit })
-  list.selections = page.items
+  return page.items
 }
 
 module.exports = { sanitization, controller }

@@ -20,7 +20,7 @@ describe('lists:by-id', () => {
   // for detail visibility validations, see ./visibility.test.js
     it('should get a public list', async () => {
       const { list: reqList } = await createList()
-      const list = await publicReq('get', `${endpoint}&id=${reqList._id}`)
+      const { list } = await publicReq('get', `${endpoint}&id=${reqList._id}`)
       list.should.be.an.Object()
     })
 
