@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/list.js')).join(' '))")
+databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/databases.js')).join(' '))")
 dbHost=$(node -e "console.log(require('config').db.getOrigin())")
 elasticOrigin=$(node -e "console.log(require('config').elasticsearch.origin)")
 leveldbPathBase=$(node -e "console.log(require('config').universalPath.path('root', 'db/leveldb'))")

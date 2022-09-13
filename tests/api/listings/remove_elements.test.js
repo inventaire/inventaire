@@ -76,7 +76,7 @@ describe('listings:remove-elements', () => {
     }
   })
 
-  it('should remove from listing a element by its entity uris and delete the element', async () => {
+  it('should remove from listing an element by its entity uris and delete the element', async () => {
     const { listing, uri, element } = await createElement({})
     const resListing = await listings_.byIdsWithElements(listing._id, listing.user)
     resListing[0].elements.length.should.equal(1)

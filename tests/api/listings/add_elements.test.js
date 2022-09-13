@@ -31,7 +31,7 @@ describe('listings:add-elements', () => {
     }
   })
 
-  it('should reject creating a element with an unknown entity', async () => {
+  it('should reject creating an element with an unknown entity', async () => {
     const { listing } = await createListing()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
@@ -59,7 +59,7 @@ describe('listings:add-elements', () => {
     firstListing.elements[0].uri.should.equal(uri)
   })
 
-  it('should not add twice a element already in listing', async () => {
+  it('should not add twice an element already in listing', async () => {
     const { listing, uri } = await createElement({})
 
     const res = await authReq('post', `${endpoint}add-elements`, {
@@ -75,7 +75,7 @@ describe('listings:add-elements', () => {
     firstListing.elements[0].uri.should.equal(uri)
   })
 
-  it('should reject adding a element to a listing of another creator', async () => {
+  it('should reject adding an element to a listing of another creator', async () => {
     try {
       const { listing } = await createListing(getUserB())
       const { uri } = await createEdition()
