@@ -1,6 +1,6 @@
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq, authReqB } = require('../utils/utils')
-const { createListing, createSelection } = require('../fixtures/listings')
+const { createListing, createElement } = require('../fixtures/listings')
 
 const endpoint = '/api/lists?action=delete'
 
@@ -26,13 +26,13 @@ describe('listings:delete', () => {
     }
   })
 
-  it('should return the deleted listing and delete selections', async () => {
-    const selectionFixture = await createSelection({})
-    const { listing: createdListing } = selectionFixture
+  it('should return the deleted listing and delete elements', async () => {
+    const elementFixture = await createElement({})
+    const { listing: createdListing } = elementFixture
     const { lists: listings } = await authReq('post', endpoint, { ids: createdListing._id })
     const [ listing ] = listings
     listing._id.should.equal(createdListing._id)
     listing._deleted.should.be.true()
-    listing.selections[0]._deleted.should.be.true()
+    listing.elements[0]._deleted.should.be.true()
   })
 })

@@ -4,7 +4,7 @@ const { getUser } = require('../utils/utils')
 const { createEdition } = require('./entities')
 
 const endpoint = '/api/lists?action='
-const selections_ = require('controllers/listings/lib/selections')
+const elements_ = require('controllers/listings/lib/elements')
 
 const fixtures = module.exports = {
   listingName: () => fakeText.randomWords(3, ' listing'),
@@ -22,8 +22,8 @@ const fixtures = module.exports = {
     return { listing, user }
   },
 
-  createSelection: async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
-    const selectionData = {}
+  createElement: async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
+    const elementData = {}
     let userId
     if (!listing) {
       const fixtureListing = await fixtures.createListing(userPromise, { visibility })
@@ -32,18 +32,18 @@ const fixtures = module.exports = {
     } else {
       userId = listing.creator
     }
-    selectionData.listing = listing
+    elementData.listing = listing
 
     if (!uri) {
       const edition = await createEdition()
       uri = edition.uri
     }
-    selectionData.uris = [ uri ]
+    elementData.uris = [ uri ]
 
-    selectionData.userId = userId
-    const { docs } = await selections_.create(selectionData)
+    elementData.userId = userId
+    const { docs } = await elements_.create(elementData)
     return {
-      selection: docs[0],
+      element: docs[0],
       listing,
       uri
     }

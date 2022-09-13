@@ -4,8 +4,8 @@ const db = require('db/couchdb/base')('lists')
 const { updatable: updateAttributes } = require('models/attributes/listing')
 const { validateVisibilityKeys } = require('lib/visibility/visibility')
 const error_ = require('lib/error/error')
-const selections_ = require('controllers/listings/lib/selections')
-const { filterFoundSelectionsUris } = require('controllers/listings/lib/helpers')
+const elements_ = require('controllers/listings/lib/elements')
+const { filterFoundElementsUris } = require('controllers/listings/lib/helpers')
 const { tap } = require('lib/promises')
 const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
 
@@ -13,14 +13,14 @@ const listings_ = module.exports = {
   byId: db.get,
   byIds: db.byIds,
   byCreators: ids => db.viewByKeys('byCreator', ids),
-  byIdsWithSelections: async (ids, userId) => {
+  byIdsWithElements: async (ids, userId) => {
     const listings = await listings_.byIds(ids)
     if (!_.isNonEmptyArray(listings)) return []
     const listingIds = listings.map(_.property('_id'))
-    const selections = await selections_.byListings(listingIds, userId)
+    const elements = await elements_.byListings(listingIds, userId)
     if (!_.isNonEmptyArray(listings)) return []
-    const selectionsByListing = _.groupBy(selections, 'list')
-    listings.forEach(assignSelectionsToListing(selectionsByListing))
+    const elementsByListing = _.groupBy(elements, 'list')
+    listings.forEach(assignElementsToListing(elementsByListing))
     return listings
   },
   create: async params => {
@@ -45,13 +45,13 @@ const listings_ = module.exports = {
     return db.putAndReturn(updatedList)
   },
   bulkDelete: db.bulkDelete,
-  addSelections: async ({ listing, uris, userId }) => {
-    const currentSelections = listing.selections
-    const { foundSelections, notFoundUris } = filterFoundSelectionsUris(currentSelections, uris)
+  addElements: async ({ listing, uris, userId }) => {
+    const currentElements = listing.elements
+    const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
     await validateExistingEntities(notFoundUris)
-    await selections_.create({ uris: notFoundUris, listing, userId })
-    if (_.isNonEmptyArray(foundSelections)) {
-      return { ok: true, alreadyInList: foundSelections }
+    await elements_.create({ uris: notFoundUris, listing, userId })
+    if (_.isNonEmptyArray(foundElements)) {
+      return { ok: true, alreadyInList: foundElements }
     }
     return { ok: true }
   },
@@ -63,19 +63,19 @@ const listings_ = module.exports = {
       }
     }
   },
-  getListingWithSelections: async (listingId, userId) => {
-    const listings = await listings_.byIdsWithSelections(listingId, userId)
+  getListingWithElements: async (listingId, userId) => {
+    const listings = await listings_.byIdsWithElements(listingId, userId)
     return listings[0]
   },
-  deleteUserListingsAndSelections: userId => {
+  deleteUserListingsAndElements: userId => {
     return listings_.byCreators([ userId ])
-    .then(tap(selections_.deleteListingsSelections))
+    .then(tap(elements_.deleteListingsElements))
     .then(db.bulkDelete)
   },
 }
 
-const assignSelectionsToListing = selectionsByListing => listing => {
-  listing.selections = selectionsByListing[listing._id] || []
+const assignElementsToListing = elementsByListing => listing => {
+  listing.elements = elementsByListing[listing._id] || []
 }
 
 const validateExistingEntities = async uris => {

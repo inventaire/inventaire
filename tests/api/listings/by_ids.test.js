@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, authReqB } = require('../utils/utils')
-const { createListing, createSelection } = require('../fixtures/listings')
+const { createListing, createElement } = require('../fixtures/listings')
 const { someCouchUuid } = require('tests/api/fixtures/general')
 
 const endpoint = '/api/lists?action=by-ids'
@@ -55,18 +55,18 @@ describe('listings:by-ids', () => {
     res.warnings.should.containEql(`unauthorized listings access: ${privateListing._id}`)
   })
 
-  describe('with-selections', () => {
-    it('should get lists with selections', async () => {
+  describe('with-elements', () => {
+    it('should get lists with elements', async () => {
       const { listing } = await createListing()
-      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-selections=true`)
-      res.lists[listing._id].selections.should.be.deepEqual([])
+      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
+      res.lists[listing._id].elements.should.be.deepEqual([])
     })
 
-    it('should get lists with selections', async () => {
-      const { uri, listing } = await createSelection({})
-      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-selections=true`)
-      const { selections } = res.lists[listing._id]
-      selections.map(_.property('uri')).should.containEql(uri)
+    it('should get lists with elements', async () => {
+      const { uri, listing } = await createElement({})
+      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
+      const { elements } = res.lists[listing._id]
+      elements.map(_.property('uri')).should.containEql(uri)
     })
   })
 })

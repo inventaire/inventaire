@@ -1,17 +1,17 @@
-const { byIdsWithSelections } = require('controllers/listings/lib/listings')
+const { byIdsWithElements } = require('controllers/listings/lib/listings')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const error_ = require('lib/error/error')
 const { paginate } = require('controllers/items/lib/queries_commons')
 
 const sanitization = {
   id: {},
-  // Selections pagination
+  // Elements pagination
   limit: { optional: true },
   offset: { optional: true }
 }
 
-const controller = async ({ id, withSelections, limit, offset, reqUserId }, req) => {
-  const [ listing ] = await byIdsWithSelections(id, reqUserId)
+const controller = async ({ id, withElements, limit, offset, reqUserId }, req) => {
+  const [ listing ] = await byIdsWithElements(id, reqUserId)
   if (!listing) throw error_.notFound({ id })
 
   const authorizedListings = await filterVisibleDocs([ listing ], reqUserId)
@@ -20,13 +20,13 @@ const controller = async ({ id, withSelections, limit, offset, reqUserId }, req)
   }
   return {
     list: listing,
-    selections: await paginateSelections(listing, offset, limit)
+    elements: await paginateElements(listing, offset, limit)
   }
 }
 
-const paginateSelections = (listing, offset, limit) => {
-  const { selections } = listing
-  const page = paginate(selections, { offset, limit })
+const paginateElements = (listing, offset, limit) => {
+  const { elements } = listing
+  const page = paginate(elements, { offset, limit })
   return page.items
 }
 

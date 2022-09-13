@@ -1,29 +1,29 @@
 const _ = require('builders/utils')
-const Selection = require('models/selection')
-const db = require('db/couchdb/base')('selections')
+const Element = require('models/element')
+const db = require('db/couchdb/base')('elements')
 const error_ = require('lib/error/error')
 
-const selections_ = module.exports = {
+const elements_ = module.exports = {
   byId: db.get,
   byIds: db.byIds,
   byEntities: async uris => db.viewByKeys('byEntities', uris),
   byListings: async listingsIds => db.viewByKeys('byListings', listingsIds),
   bulkDelete: db.bulkDelete,
-  deleteListingsSelections: async listings => {
-    const listingsSelections = listings.flatMap(listing => listing.selections)
-    await selections_.bulkDelete(listingsSelections)
+  deleteListingsElements: async listings => {
+    const listingsElements = listings.flatMap(listing => listing.elements)
+    await elements_.bulkDelete(listingsElements)
   },
   create: async ({ listing, uris, userId }) => {
     const listingId = listing._id
     if (listing.creator !== userId) {
       throw error_.new('wrong user', 403, { userId, listingId })
     }
-    const selections = uris.map(uri => Selection.create({
+    const elements = uris.map(uri => Element.create({
       list: listingId,
       uri,
     }))
-    const res = await db.bulk(selections)
-    const selectionsIds = _.map(res, 'id')
-    return db.fetch(selectionsIds)
+    const res = await db.bulk(elements)
+    const elementsIds = _.map(res, 'id')
+    return db.fetch(elementsIds)
   },
 }

@@ -1,5 +1,5 @@
 const _ = require('builders/utils')
-const selections_ = require('controllers/listings/lib/selections')
+const elements_ = require('controllers/listings/lib/elements')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const listings_ = require('controllers/listings/lib/listings')
 const { paginate } = require('controllers/items/lib/queries_commons')
@@ -12,15 +12,15 @@ const sanitization = {
 }
 
 const controller = async ({ uris, offset, limit, reqUserId }) => {
-  const foundSelections = await selections_.byEntities(uris)
+  const foundElements = await elements_.byEntities(uris)
   // uniq here implies that a listng cannot refer several times to the same entity
-  const listingsIds = _.uniq(_.map(foundSelections, 'list'))
-  const foundListings = await listings_.byIdsWithSelections(listingsIds, reqUserId)
+  const listingsIds = _.uniq(_.map(foundElements, 'list'))
+  const foundListings = await listings_.byIdsWithElements(listingsIds, reqUserId)
   const listings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(listings, { offset, limit })
   const listingsByUris = {}
-  const selectionsByUris = _.groupBy(foundSelections, 'uri')
-  uris.forEach(assignListingsByUris(authorizedListings, selectionsByUris, listingsByUris))
+  const elementsByUris = _.groupBy(foundElements, 'uri')
+  uris.forEach(assignListingsByUris(authorizedListings, elementsByUris, listingsByUris))
   return {
     lists: listingsByUris
   }
@@ -28,9 +28,9 @@ const controller = async ({ uris, offset, limit, reqUserId }) => {
 
 module.exports = { sanitization, controller }
 
-const assignListingsByUris = (listings, selectionsByUris, listingsByUris) => uri => {
-  const listingsSelections = selectionsByUris[uri]
-  if (!isNonEmptyArray(listingsSelections)) {
+const assignListingsByUris = (listings, elementsByUris, listingsByUris) => uri => {
+  const listingsElements = elementsByUris[uri]
+  if (!isNonEmptyArray(listingsElements)) {
     listingsByUris[uri] = []
     return
   }

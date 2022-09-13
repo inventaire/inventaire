@@ -1,7 +1,7 @@
 const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReqB } = require('../utils/utils')
-const { createListing, createSelection } = require('../fixtures/listings')
+const { createListing, createElement } = require('../fixtures/listings')
 
 const endpoint = '/api/lists?action=by-id'
 
@@ -34,25 +34,25 @@ describe('listings:by-id', () => {
     })
   })
 
-  describe('paginate:selections', () => {
-    it('should return listing with a limited number of selections', async () => {
-      const { uri, listing } = await createSelection({})
-      await createSelection({ uri, listing })
-      const { selections } = await publicReq('get', `${endpoint}&id=${listing._id}`)
-      selections.length.should.be.aboveOrEqual(2)
-      const { selections: selections2 } = await publicReq('get', `${endpoint}&id=${listing._id}&limit=1`)
-      selections2.length.should.equal(1)
+  describe('paginate:elements', () => {
+    it('should return listing with a limited number of elements', async () => {
+      const { uri, listing } = await createElement({})
+      await createElement({ uri, listing })
+      const { elements } = await publicReq('get', `${endpoint}&id=${listing._id}`)
+      elements.length.should.be.aboveOrEqual(2)
+      const { elements: elements2 } = await publicReq('get', `${endpoint}&id=${listing._id}&limit=1`)
+      elements2.length.should.equal(1)
     })
 
     it('should take an offset parameter', async () => {
-      const { uri, listing } = await createSelection({})
-      await createSelection({ uri, listing })
-      const { selections } = await publicReq('get', `${endpoint}&id=${listing._id}`)
+      const { uri, listing } = await createElement({})
+      await createElement({ uri, listing })
+      const { elements } = await publicReq('get', `${endpoint}&id=${listing._id}`)
       const offset = 1
-      const { selections: selections2 } = await publicReq('get', `${endpoint}&id=${listing._id}&offset=${offset}`)
-      const selectionsLength = selections.length
-      const selections2Length = selections2.length
-      should(selectionsLength - offset).equal(selections2Length)
+      const { elements: elements2 } = await publicReq('get', `${endpoint}&id=${listing._id}&offset=${offset}`)
+      const elementsLength = elements.length
+      const elements2Length = elements2.length
+      should(elementsLength - offset).equal(elements2Length)
     })
   })
 })

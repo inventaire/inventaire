@@ -7,14 +7,14 @@ const sanitization = {
 }
 
 const controller = async ({ id, uris, reqUserId }) => {
-  const listing = await listings_.getListingWithSelections(id, uris, reqUserId)
+  const listing = await listings_.getListingWithElements(id, uris, reqUserId)
   if (!listing) throw error_.notFound({ id })
   listings_.validateOwnership(reqUserId, listing)
-  return listings_.addSelections({ listing, uris, userId: reqUserId })
+  return listings_.addElements({ listing, uris, userId: reqUserId })
 }
 
 module.exports = {
   sanitization,
   controller,
-  track: [ 'lists', 'addSelections' ]
+  track: [ 'lists', 'addElements' ]
 }

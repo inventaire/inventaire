@@ -12,8 +12,8 @@ module.exports = {
   post: ActionsControllers({
     authentified: {
       create: require('./create'),
-      'add-selections': require('./add_selections'),
-      'remove-selections': require('./remove_selections'),
+      'add-elements': require('./add_elements'),
+      'remove-elements': require('./remove_elements'),
       delete: require('./delete_by_ids')
     }
   }),

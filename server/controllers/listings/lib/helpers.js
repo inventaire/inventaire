@@ -1,17 +1,17 @@
 const _ = require('builders/utils')
 
 module.exports = {
-  filterFoundSelectionsUris: (selections, uris) => {
-    const foundSelections = []
+  filterFoundElementsUris: (elements, uris) => {
+    const foundElements = []
     const notFoundUris = []
-    const selectionsByUris = _.keyBy(selections, 'uri')
-    uris.forEach(assignSelection(selectionsByUris, foundSelections, notFoundUris))
-    return { foundSelections, notFoundUris }
+    const elementsByUris = _.keyBy(elements, 'uri')
+    uris.forEach(assignElement(elementsByUris, foundElements, notFoundUris))
+    return { foundElements, notFoundUris }
   }
 }
 
-const assignSelection = (selectionsByUris, foundSelections, notFoundUris) => uri => {
-  const selection = selectionsByUris[uri]
-  if (selection) foundSelections.push(selection)
+const assignElement = (elementsByUris, foundElements, notFoundUris) => uri => {
+  const element = elementsByUris[uri]
+  if (element) foundElements.push(element)
   else notFoundUris.push(uri)
 }

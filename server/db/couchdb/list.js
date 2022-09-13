@@ -12,7 +12,7 @@ module.exports = {
   lists: [ 'lists' ],
   notifications: [ 'notifications' ],
   patches: [ 'patches' ],
-  selections: [ 'selections' ],
+  elements: [ 'elements' ],
   shelves: [ 'shelves' ],
   tasks: [ 'tasks' ],
   oauth_authorizations: [],

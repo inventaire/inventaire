@@ -1,19 +1,19 @@
 const _ = require('builders/utils')
-const { byIds, byIdsWithSelections } = require('controllers/listings/lib/listings')
+const { byIds, byIdsWithElements } = require('controllers/listings/lib/listings')
 const { addWarning } = require('lib/responses')
 const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 const error_ = require('lib/error/error')
 
 const sanitization = {
   ids: {},
-  'with-selections': {
+  'with-elements': {
     optional: true,
     generic: 'boolean'
   }
 }
 
-const controller = async ({ ids, withSelections, reqUserId }, req, res) => {
-  const getListings = withSelections ? byIdsWithSelections : byIds
+const controller = async ({ ids, withElements, reqUserId }, req, res) => {
+  const getListings = withElements ? byIdsWithElements : byIds
   const foundListings = await getListings(ids, reqUserId)
   const foundListingsIds = _.map(foundListings, '_id')
   checkNotFoundListing(ids, foundListings, foundListingsIds, res)
