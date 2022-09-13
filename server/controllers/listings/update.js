@@ -1,4 +1,4 @@
-const { updateAttributes } = require('controllers/lists/lib/lists')
+const { updateAttributes } = require('controllers/listings/lib/listings')
 
 const sanitization = {
   id: {},
@@ -8,12 +8,12 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const list = await updateAttributes(params)
-  return { list }
+  const listing = await updateAttributes(params)
+  return { list: listing }
 }
 
 module.exports = {
   sanitization,
   controller,
-  track: [ 'list', 'update' ]
+  track: [ 'lists', 'update' ]
 }

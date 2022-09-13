@@ -1,10 +1,10 @@
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
 const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
 const { authReq } = require('../utils/utils')
-const { listName } = require('../fixtures/lists')
+const { listingName } = require('../fixtures/listings')
 const endpoint = '/api/lists?action=create'
 
-describe('lists:create', () => {
+describe('listings:create', () => {
   it('should reject without name', async () => {
     try {
       await authReq('post', endpoint).then(shouldNotBeCalled)
@@ -27,39 +27,39 @@ describe('lists:create', () => {
   })
 
   it('should default to private visibility', async () => {
-    const name = listName()
-    const { list } = await authReq('post', endpoint, { name })
-    list.visibility.should.deepEqual([])
-    list.name.should.equal(name)
+    const name = listingName()
+    const { list: listing } = await authReq('post', endpoint, { name })
+    listing.visibility.should.deepEqual([])
+    listing.name.should.equal(name)
   })
 
   describe('visibility', () => {
-    it('should create a list with friends-only visibility', async () => {
+    it('should create a listing with friends-only visibility', async () => {
       const visibility = [ 'friends' ]
-      const { list } = await authReq('post', endpoint, { name: listName(), visibility })
-      list.visibility.should.deepEqual(visibility)
+      const { list: listing } = await authReq('post', endpoint, { name: listingName(), visibility })
+      listing.visibility.should.deepEqual(visibility)
     })
 
-    it('should create a list with groups-only visibility', async () => {
+    it('should create a listing with groups-only visibility', async () => {
       const visibility = [ 'groups' ]
-      const { list } = await authReq('post', endpoint, { name: listName(), visibility })
-      list.visibility.should.deepEqual(visibility)
+      const { list: listing } = await authReq('post', endpoint, { name: listingName(), visibility })
+      listing.visibility.should.deepEqual(visibility)
     })
 
-    it('should create a list with group-specific visibility', async () => {
+    it('should create a listing with group-specific visibility', async () => {
       const { group, member } = await createGroupWithAMember()
       const visibility = [ `group:${group._id}` ]
-      const { list } = await customAuthReq(member, 'post', endpoint, { name: listName(), visibility })
-      list.visibility.should.deepEqual(visibility)
+      const { list: listing } = await customAuthReq(member, 'post', endpoint, { name: listingName(), visibility })
+      listing.visibility.should.deepEqual(visibility)
     })
 
-    it("should reject group-specific list if user isn't a member", async () => {
+    it("should reject group-specific listing if user isn't a member", async () => {
       const [ user, group ] = await Promise.all([
         getReservedUser(),
         getSomeGroup(),
       ])
       const visibility = [ `group:${group._id}` ]
-      await customAuthReq(user, 'post', endpoint, { name: listName(), visibility })
+      await customAuthReq(user, 'post', endpoint, { name: listingName(), visibility })
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(400)

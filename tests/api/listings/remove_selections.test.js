@@ -1,15 +1,15 @@
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
-const { createList, createSelection } = require('../fixtures/lists')
+const { createListing, createSelection } = require('../fixtures/listings')
 
 const endpoint = '/api/lists?action='
 const removeSelections = `${endpoint}remove-selections`
 
-const selections_ = require('controllers/lists/lib/selections')
-const lists_ = require('controllers/lists/lib/lists')
+const selections_ = require('controllers/listings/lib/selections')
+const listings_ = require('controllers/listings/lib/listings')
 
-describe('lists:remove-selections', () => {
-  it('should reject without list id', async () => {
+describe('listings:remove-selections', () => {
+  it('should reject without listing id', async () => {
     try {
       await authReq('post', removeSelections).then(shouldNotBeCalled)
     } catch (err) {
@@ -20,10 +20,10 @@ describe('lists:remove-selections', () => {
   })
 
   it('should reject without uris', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     try {
       await authReq('post', removeSelections, {
-        id: list._id
+        id: listing._id
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -33,11 +33,11 @@ describe('lists:remove-selections', () => {
     }
   })
 
-  it('should throw if no uris are found in list', async () => {
-    const { list } = await createList()
+  it('should throw if no uris are found in listing', async () => {
+    const { listing } = await createListing()
     const { uri } = await createSelection({})
     await authReq('post', removeSelections, {
-      id: list._id,
+      id: listing._id,
       uris: [ uri ]
     })
     .then(shouldNotBeCalled)
@@ -48,11 +48,11 @@ describe('lists:remove-selections', () => {
   })
 
   it('should set warnings when some uris are not found', async () => {
-    const { list, uri } = await createSelection({})
+    const { listing, uri } = await createSelection({})
     const { uri: uri2 } = await createSelection({})
     const randomUnkownUri = 'inv:a78c6d212de6be6f4aa29741933d276f'
     const res = await authReq('post', removeSelections, {
-      id: list._id,
+      id: listing._id,
       uris: [ uri, uri2, randomUnkownUri ]
     })
     const warning = res.warnings[0]
@@ -61,11 +61,11 @@ describe('lists:remove-selections', () => {
     warning.should.containEql(randomUnkownUri)
   })
 
-  it('should reject removing selections of a different user list', async () => {
+  it('should reject removing selections of a different user listing', async () => {
     try {
-      const { list, uri } = await createSelection({}, getUserB())
+      const { listing, uri } = await createSelection({}, getUserB())
       await authReq('post', removeSelections, {
-        id: list._id,
+        id: listing._id,
         uris: [ uri ]
       })
       .then(shouldNotBeCalled)
@@ -76,12 +76,12 @@ describe('lists:remove-selections', () => {
     }
   })
 
-  it('should remove from list a selection by its entity uris and delete the selection', async () => {
-    const { list, uri, selection } = await createSelection({})
-    const resList = await lists_.byIdsWithSelections(list._id, list.user)
-    resList[0].selections.length.should.equal(1)
+  it('should remove from listing a selection by its entity uris and delete the selection', async () => {
+    const { listing, uri, selection } = await createSelection({})
+    const resListing = await listings_.byIdsWithSelections(listing._id, listing.user)
+    resListing[0].selections.length.should.equal(1)
     await authReq('post', removeSelections, {
-      id: list._id,
+      id: listing._id,
       uris: [ uri ]
     })
 
@@ -92,7 +92,7 @@ describe('lists:remove-selections', () => {
       err.body.reason.should.equal('deleted')
     })
 
-    await lists_.byIdsWithSelections(list._id, list.user)
+    await listings_.byIdsWithSelections(listing._id, listing.user)
     .then(lists => lists[0].selections.length.should.equal(0))
   })
 })

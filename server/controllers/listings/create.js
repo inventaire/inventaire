@@ -1,4 +1,4 @@
-const lists_ = require('controllers/lists/lib/lists')
+const listings_ = require('controllers/listings/lib/listings')
 
 const sanitization = {
   name: {},
@@ -10,23 +10,23 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const list = await formatNewList(params)
-  return { list }
+  const listing = await formatNewListing(params)
+  return { list: listing }
 }
 
-const formatNewList = params => {
+const formatNewListing = params => {
   const { name, description, visibility, reqUserId: creator } = params
-  const listData = {
+  const listingData = {
     name,
     description,
     visibility,
     creator,
   }
-  return lists_.create(listData)
+  return listings_.create(listingData)
 }
 
 module.exports = {
   sanitization,
   controller,
-  track: [ 'list', 'creation' ]
+  track: [ 'lists', 'creation' ]
 }

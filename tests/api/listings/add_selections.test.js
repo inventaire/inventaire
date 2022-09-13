@@ -1,13 +1,13 @@
 const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { authReq } = require('../utils/utils')
-const { createList, createSelection } = require('../fixtures/lists')
+const { createListing, createSelection } = require('../fixtures/listings')
 const { createEdition, someFakeUri } = require('../fixtures/entities')
 
 const endpoint = '/api/lists?action='
 const byIds = `${endpoint}by-ids&with-selections=true`
 
-describe('lists:add-selections', () => {
-  it('should reject without list id', async () => {
+describe('listings:add-selections', () => {
+  it('should reject without listing id', async () => {
     try {
       await authReq('post', `${endpoint}add-selections`).then(shouldNotBeCalled)
     } catch (err) {
@@ -18,10 +18,10 @@ describe('lists:add-selections', () => {
   })
 
   it('should reject without uri', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     try {
       await authReq('post', `${endpoint}add-selections`, {
-        id: list._id
+        id: listing._id
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -32,9 +32,9 @@ describe('lists:add-selections', () => {
   })
 
   it('should reject creating a selection with an unknown entity', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     await authReq('post', `${endpoint}add-selections`, {
-      id: list._id,
+      id: listing._id,
       uris: [ someFakeUri ]
     })
     .then(shouldNotBeCalled)
@@ -42,45 +42,45 @@ describe('lists:add-selections', () => {
       err.statusCode.should.equal(403)
       err.body.status_verbose.should.equal('entities not found')
     })
-    const res = await authReq('get', `${byIds}&ids=${list._id}`)
-    const firstList = res.lists[list._id]
-    firstList.selections.length.should.equal(0)
+    const res = await authReq('get', `${byIds}&ids=${listing._id}`)
+    const firstListing = res.lists[listing._id]
+    firstListing.selections.length.should.equal(0)
   })
 
   it('should add uri and create selection', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     const { uri } = await createEdition()
     await authReq('post', `${endpoint}add-selections`, {
-      id: list._id,
+      id: listing._id,
       uris: [ uri ]
     })
-    const res = await authReq('get', `${byIds}&ids=${list._id}`)
-    const firstList = res.lists[list._id]
-    firstList.selections[0].uri.should.equal(uri)
+    const res = await authReq('get', `${byIds}&ids=${listing._id}`)
+    const firstListing = res.lists[listing._id]
+    firstListing.selections[0].uri.should.equal(uri)
   })
 
-  it('should not add twice a selection already in list', async () => {
-    const { list, uri } = await createSelection({})
+  it('should not add twice a selection already in listing', async () => {
+    const { listing, uri } = await createSelection({})
 
     const res = await authReq('post', `${endpoint}add-selections`, {
-      id: list._id,
+      id: listing._id,
       uris: [ uri ]
     })
     res.ok.should.be.true()
     res.alreadyInList[0].uri.should.equal(uri)
 
-    const { lists } = await authReq('get', `${byIds}&ids=${list._id}`)
-    const firstList = lists[list._id]
-    firstList.selections.length.should.equal(1)
-    firstList.selections[0].uri.should.equal(uri)
+    const { lists: listings } = await authReq('get', `${byIds}&ids=${listing._id}`)
+    const firstListing = listings[listing._id]
+    firstListing.selections.length.should.equal(1)
+    firstListing.selections[0].uri.should.equal(uri)
   })
 
-  it('should reject adding a selection to a list of another creator', async () => {
+  it('should reject adding a selection to a listing of another creator', async () => {
     try {
-      const { list } = await createList(getUserB())
+      const { listing } = await createListing(getUserB())
       const { uri } = await createEdition()
       await authReq('post', `${endpoint}add-selections`, {
-        id: list._id,
+        id: listing._id,
         uris: [ uri ]
       })
       .then(shouldNotBeCalled)

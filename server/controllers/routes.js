@@ -19,7 +19,7 @@ const routes = module.exports = {
   'api/images': endpoint('./images/images'),
   'api/invitations': endpoint('./invitations/invitations'),
   'api/items': endpoint('./items/items'),
-  'api/lists': endpoint('./lists/lists'),
+  'api/lists': endpoint('./listings/listings'),
   'api/notifications': endpoint('./notifications/notifications'),
   'api/oauth/authorize': oauthServer.authorize,
   'api/oauth/clients': endpoint('./auth/oauth_clients'),

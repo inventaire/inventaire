@@ -7,19 +7,19 @@ const selections_ = module.exports = {
   byId: db.get,
   byIds: db.byIds,
   byEntities: async uris => db.viewByKeys('byEntities', uris),
-  byLists: async listsIds => db.viewByKeys('byLists', listsIds),
+  byListings: async listingsIds => db.viewByKeys('byListings', listingsIds),
   bulkDelete: db.bulkDelete,
-  deleteListsSelections: async lists => {
-    const listsSelections = lists.flatMap(list => list.selections)
-    await selections_.bulkDelete(listsSelections)
+  deleteListingsSelections: async listings => {
+    const listingsSelections = listings.flatMap(listing => listing.selections)
+    await selections_.bulkDelete(listingsSelections)
   },
-  create: async ({ list, uris, userId }) => {
-    const listId = list._id
-    if (list.creator !== userId) {
-      throw error_.new('wrong user', 403, { userId, listId })
+  create: async ({ listing, uris, userId }) => {
+    const listingId = listing._id
+    if (listing.creator !== userId) {
+      throw error_.new('wrong user', 403, { userId, listingId })
     }
     const selections = uris.map(uri => Selection.create({
-      list: listId,
+      list: listingId,
       uri,
     }))
     const res = await db.bulk(selections)

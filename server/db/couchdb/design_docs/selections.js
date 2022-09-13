@@ -4,7 +4,7 @@ module.exports = {
       if (doc.uri != null) emit(doc.uri, null)
     }
   },
-  byLists: {
+  byListings: {
     map: doc => {
       if (doc.uri != null) emit(doc.list, null)
     }

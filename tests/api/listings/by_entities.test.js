@@ -1,25 +1,25 @@
 const should = require('should')
 const { publicReq, authReq, getUserB } = require('../utils/utils')
-const { createSelection } = require('../fixtures/lists')
+const { createSelection } = require('../fixtures/listings')
 const { someFakeUri } = require('tests/api/fixtures/entities')
 
 const endpoint = '/api/lists?action=by-entities'
 
-describe('lists:by-entities', () => {
-  it('should be empty without lists', async () => {
+describe('listings:by-entities', () => {
+  it('should be empty without listings', async () => {
     const res = await publicReq('get', `${endpoint}&uris=${someFakeUri}`)
     res.lists[someFakeUri].should.deepEqual([])
   })
 
   describe('visibility:overview', () => {
   // for detail visibility validations, see ./visibility.test.js
-    it('should get public lists by their selections entities uris', async () => {
-      const { selection, uri, list } = await createSelection({})
-      list.visibility.should.deepEqual([ 'public' ])
+    it('should get public listings by their selections entities uris', async () => {
+      const { selection, uri, listing } = await createSelection({})
+      listing.visibility.should.deepEqual([ 'public' ])
       const res = await publicReq('get', `${endpoint}&uris=${uri}`)
-      const listsRes = res.lists[uri]
-      listsRes.should.be.ok()
-      const { selections } = listsRes[0]
+      const listingsRes = res.lists[uri]
+      listingsRes.should.be.ok()
+      const { selections } = listingsRes[0]
       selections.should.be.ok()
       selections[0]._id.should.equal(selection._id)
     })
@@ -47,9 +47,9 @@ describe('lists:by-entities', () => {
       const res = await publicReq('get', `${endpoint}&uris=${uri}`)
       const offset = 1
       const res2 = await publicReq('get', `${endpoint}&uris=${uri}&offset=${offset}`)
-      const listsLength = Object.values(res.lists[uri]).length
-      const lists2Length = Object.values(res2.lists[uri]).length
-      should(listsLength - offset).equal(lists2Length)
+      const listingsLength = Object.values(res.lists[uri]).length
+      const listings2Length = Object.values(res2.lists[uri]).length
+      should(listingsLength - offset).equal(listings2Length)
     })
   })
 })

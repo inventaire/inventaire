@@ -65,7 +65,7 @@ const keyRequiresGroupsCoMembers = key => key === 'groups'
 
 const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => doc => {
   const { creator, owner, visibility } = doc
-  // known cases : shelf.owner or list.creator
+  // known cases : shelf.owner or listing.creator
   const docUserId = owner || creator
   if (docUserId === reqUserId) return true
   if (visibility.includes('public')) return true

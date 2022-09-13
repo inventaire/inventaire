@@ -1,13 +1,13 @@
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
 const { authReq, authReqB, getUser } = require('../utils/utils')
-const { createList, listName, listDescription } = require('../fixtures/lists')
+const { createListing, listingName, listingDescription } = require('../fixtures/listings')
 const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
 const { someCouchUuid } = require('tests/api/fixtures/general')
 
 const endpoint = '/api/lists'
 
-describe('lists:update', () => {
-  it('should reject without list id', async () => {
+describe('listings:update', () => {
+  it('should reject without listing id', async () => {
     try {
       await authReq('put', endpoint).then(shouldNotBeCalled)
     } catch (err) {
@@ -18,10 +18,10 @@ describe('lists:update', () => {
   })
 
   it('should filter out non updatable attributes', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     try {
       const params = {
-        id: list._id,
+        id: listing._id,
         foo: 'bar'
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
@@ -33,10 +33,10 @@ describe('lists:update', () => {
   })
 
   it('should reject an empty name', async () => {
-    const { list } = await createList()
+    const { listing } = await createListing()
     try {
       const params = {
-        id: list._id,
+        id: listing._id,
         name: ''
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
@@ -47,7 +47,7 @@ describe('lists:update', () => {
     }
   })
 
-  it('should reject when list is not found', async () => {
+  it('should reject when listing is not found', async () => {
     try {
       const params = {
         id: someCouchUuid,
@@ -62,41 +62,41 @@ describe('lists:update', () => {
   })
 
   it('should update attributes', async () => {
-    const name = listName()
-    const description = listDescription()
+    const name = listingName()
+    const description = listingDescription()
     const visibility = [ 'friends' ]
-    const { list } = await createList()
-    const { list: updatedList } = await authReq('put', endpoint, {
-      id: list._id,
+    const { listing } = await createListing()
+    const { list: updatedListing } = await authReq('put', endpoint, {
+      id: listing._id,
       name,
       description,
       visibility,
     })
-    updatedList.name.should.equal(name)
-    updatedList.description.should.equal(description)
-    updatedList.visibility.should.deepEqual(visibility)
+    updatedListing.name.should.equal(name)
+    updatedListing.description.should.equal(description)
+    updatedListing.visibility.should.deepEqual(visibility)
   })
 
   it('should update a group-specific visibility', async () => {
     const { group, member } = await createGroupWithAMember()
-    const { list } = await createList(member)
+    const { listing } = await createListing(member)
     const visibility = [ `group:${group._id}` ]
-    const { list: updatedList } = await customAuthReq(member, 'put', endpoint, {
-      id: list._id,
+    const { list: updatedListing } = await customAuthReq(member, 'put', endpoint, {
+      id: listing._id,
       visibility,
     })
-    updatedList.visibility.should.deepEqual(visibility)
+    updatedListing.visibility.should.deepEqual(visibility)
   })
 
-  it("should reject the update of a list with a group-specific visibility from a group the user isn't a member of", async () => {
+  it("should reject the update of a listing with a group-specific visibility from a group the user isn't a member of", async () => {
     const [ user, group ] = await Promise.all([
       getReservedUser(),
       getSomeGroup(),
     ])
-    const { list } = await createList(user)
+    const { listing } = await createListing(user)
     const visibility = [ `group:${group._id}` ]
     await customAuthReq(user, 'put', endpoint, {
-      id: list._id,
+      id: listing._id,
       visibility,
     })
     .then(shouldNotBeCalled)
@@ -108,9 +108,9 @@ describe('lists:update', () => {
 
   it('should reject updating if different user', async () => {
     try {
-      const { list } = await createList()
+      const { listing } = await createListing()
       const params = {
-        id: list._id,
+        id: listing._id,
         name: 'foo'
       }
       await authReqB('put', endpoint, params).then(shouldNotBeCalled)
@@ -123,10 +123,10 @@ describe('lists:update', () => {
 
   it('should throw when no new attribute to update', async () => {
     try {
-      const { list } = await createList(getUser())
+      const { listing } = await createListing(getUser())
       const params = {
-        id: list._id,
-        name: list.name
+        id: listing._id,
+        name: listing.name
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -136,12 +136,12 @@ describe('lists:update', () => {
     }
   })
 
-  it('should be able to remove a list description', async () => {
-    const { list } = await createList()
-    const { list: updatedList } = await authReq('put', endpoint, {
-      id: list._id,
+  it('should be able to remove a listing description', async () => {
+    const { listing } = await createListing()
+    const { list: updatedListing } = await authReq('put', endpoint, {
+      id: listing._id,
       description: null,
     })
-    updatedList.description.should.equal('')
+    updatedListing.description.should.equal('')
   })
 })
