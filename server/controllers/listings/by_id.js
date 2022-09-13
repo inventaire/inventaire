@@ -10,7 +10,7 @@ const sanitization = {
   offset: { optional: true }
 }
 
-const controller = async ({ id, withElements, limit, offset, reqUserId }, req) => {
+const controller = async ({ id, limit, offset, reqUserId }, req) => {
   const [ listing ] = await byIdsWithElements(id, reqUserId)
   if (!listing) throw error_.notFound({ id })
 
