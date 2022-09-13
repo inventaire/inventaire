@@ -49,11 +49,11 @@ const listings_ = module.exports = {
     const currentElements = listing.elements
     const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
     await validateExistingEntities(notFoundUris)
-    await elements_.create({ uris: notFoundUris, listing, userId })
+    const { docs: createdElements } = await elements_.create({ uris: notFoundUris, listing, userId })
     if (_.isNonEmptyArray(foundElements)) {
-      return { ok: true, alreadyInList: foundElements }
+      return { ok: true, alreadyInList: foundElements, createdElements }
     }
-    return { ok: true }
+    return { ok: true, createdElements }
   },
   validateOwnership: (userId, listings) => {
     listings = _.forceArray(listings)

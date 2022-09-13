@@ -11,4 +11,7 @@ module.exports = {
     const { lists } = await getByIds(user, id, 'lists')
     return lists[id]
   },
+  addElements: async (user, { id, uris }) => {
+    return customAuthReq(user, 'post', '/api/lists?action=add-elements', { id, uris })
+  },
 }

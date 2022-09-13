@@ -36,8 +36,8 @@ describe('listings:by-id', () => {
 
   describe('paginate:elements', () => {
     it('should return listing with a limited number of elements', async () => {
-      const { uri, listing } = await createElement({})
-      await createElement({ uri, listing })
+      const { listing } = await createElement({})
+      await createElement({ listing })
       const { elements } = await publicReq('get', `${endpoint}&id=${listing._id}`)
       elements.length.should.be.aboveOrEqual(2)
       const { elements: elements2 } = await publicReq('get', `${endpoint}&id=${listing._id}&limit=1`)

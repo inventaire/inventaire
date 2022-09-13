@@ -2,9 +2,8 @@ const fakeText = require('./text')
 const { customAuthReq } = require('../utils/request')
 const { getUser } = require('../utils/utils')
 const { createEdition } = require('./entities')
-
+const { addElements } = require('tests/api/utils/listings')
 const endpoint = '/api/lists?action='
-const elements_ = require('controllers/listings/lib/elements')
 
 const fixtures = module.exports = {
   listingName: () => fakeText.randomWords(3, ' listing'),
@@ -23,27 +22,22 @@ const fixtures = module.exports = {
   },
 
   createElement: async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
-    const elementData = {}
-    let userId
+    userPromise = userPromise || getUser()
     if (!listing) {
       const fixtureListing = await fixtures.createListing(userPromise, { visibility })
       listing = fixtureListing.listing
-      userId = fixtureListing.user._id
-    } else {
-      userId = listing.creator
     }
-    elementData.listing = listing
-
     if (!uri) {
       const edition = await createEdition()
       uri = edition.uri
     }
-    elementData.uris = [ uri ]
-
-    elementData.userId = userId
-    const { docs } = await elements_.create(elementData)
+    const res = await addElements(userPromise, {
+      id: listing._id,
+      uris: [ uri ]
+    })
+    const { createdElements } = res
     return {
-      element: docs[0],
+      element: createdElements[0],
       listing,
       uri
     }
