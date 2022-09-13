@@ -22,8 +22,9 @@ const API = module.exports = {
     return customAuthReq(user, 'post', '/api/items', items)
   },
 
-  createItem: async (user, itemData = {}) => {
+  createItem: async (user, itemData) => {
     user = user || getUser()
+    itemData = itemData || {}
     itemData.visibility = itemData.visibility || [ 'public' ]
     await addDefaultEntity(itemData)
     const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
