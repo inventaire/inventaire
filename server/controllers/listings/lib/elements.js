@@ -7,6 +7,10 @@ const elements_ = module.exports = {
   byId: db.get,
   byIds: db.byIds,
   byEntities: async uris => db.viewByKeys('byEntities', uris),
+  byListingsAndEntity: async (listingsIds, entitiesUris) => {
+    const keys = _.combinations(listingsIds, entitiesUris)
+    return db.viewByKeys('byListAndEntity', keys)
+  },
   byListings: async listingsIds => db.viewByKeys('byListings', listingsIds),
   bulkDelete: db.bulkDelete,
   deleteListingsElements: async listings => {

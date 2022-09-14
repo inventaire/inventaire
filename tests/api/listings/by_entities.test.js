@@ -1,5 +1,6 @@
+const _ = require('builders/utils')
 const should = require('should')
-const { publicReq, authReq, getUserB } = require('../utils/utils')
+const { publicReq, authReq, getUser, getUserB } = require('../utils/utils')
 const { createElement } = require('../fixtures/listings')
 const { someFakeUri } = require('tests/api/fixtures/entities')
 
@@ -50,6 +51,17 @@ describe('listings:by-entities', () => {
       const listingsLength = Object.values(res.lists[uri]).length
       const listings2Length = Object.values(res2.lists[uri]).length
       should(listingsLength - offset).equal(listings2Length)
+    })
+  })
+
+  describe('by listings', () => {
+    it('should get only requested listings', async () => {
+      const { uri, listing } = await createElement({}, getUser())
+      const { uri: anotherUri, listing: anotherListing } = await createElement({})
+      const { lists: listings } = await authReq('get', `${endpoint}&uris=${uri}|${anotherUri}&lists=${listing._id}`)
+      const listingsIds = listings[uri].map(_.property('_id'))
+      listingsIds.should.containEql(listing._id)
+      listingsIds.should.not.containEql(anotherListing._id)
     })
   })
 })
