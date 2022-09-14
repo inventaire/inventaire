@@ -12,13 +12,9 @@ const assert_ = require('lib/utils/assert_types')
 
 module.exports = {
   combinations: (array1, array2) => {
-    const results = []
-    array1.forEach(keys1 => {
-      array2.forEach(keys2 => {
-        results.push([ keys1, keys2 ])
-      })
+    return array1.flatMap(key1 => {
+      return array2.map(key2 => [ key1, key2 ])
     })
-    return results
   },
 
   sumValues: obj => _.sum(Object.values(obj)),
