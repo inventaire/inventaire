@@ -1,7 +1,7 @@
 const should = require('should')
 const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
 const { publicReq, authReq, getUserB, getReservedUser } = require('../utils/utils')
-const { createListing } = require('../fixtures/listings')
+const { createListing, createElement } = require('../fixtures/listings')
 const { map } = require('lodash')
 
 const endpoint = '/api/lists?action=by-creators'
@@ -63,6 +63,20 @@ describe('listings:by-creators', () => {
       const listsLength = Object.values(listings1).length
       const listings2Length = Object.values(listings2).length
       should(listsLength - offset).equal(listings2Length)
+    })
+  })
+
+  describe('with-elements', () => {
+    it('should get a listing without its elements by default', async () => {
+      const { listing } = await createElement({})
+      const res = await publicReq('get', `${endpoint}&users=${listing.creator}`)
+      should(res.lists[0].elements).not.be.ok()
+    })
+
+    it('should get a listing with its elements', async () => {
+      const { listing } = await createElement({})
+      const res = await publicReq('get', `${endpoint}&users=${listing.creator}&with-elements=true`)
+      res.lists[0].elements.should.be.an.Array()
     })
   })
 })
