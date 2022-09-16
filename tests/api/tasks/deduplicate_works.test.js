@@ -113,4 +113,12 @@ describe('tasks:deduplicate:works', () => {
     const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
     tasks.length.should.equal(uniqSuggestiontUris.length)
   })
+
+  it('should ignore when the edition is already associated to the work', async () => {
+    const edition = await createEditionWithIsbn()
+    const isbn = edition.isbn
+    const workUri = edition.claims['wdt:P629'][0]
+    const { tasks } = await authReq('post', endpoint, { uri: workUri, isbn })
+    tasks.length.should.equal(0)
+  })
 })

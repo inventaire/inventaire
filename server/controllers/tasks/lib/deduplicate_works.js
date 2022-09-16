@@ -18,6 +18,8 @@ module.exports = async (workUri, isbn, userId) => {
   const editionsRes = await getEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
+  if (_.isEqual(editionWorksUris, [ workUri ])) return
+
   const editionWorks = await getEntitiesList(editionWorksUris)
   const suggestions = await getSuggestionsOrAutomerge(work, editionWorks, userId)
 
