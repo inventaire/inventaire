@@ -1,11 +1,12 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const normalizeResult = require('./lib/normalize_result')
-const { indexedTypes } = require('db/elasticsearch/indexes')
+const { indexedTypes, socialTypes } = require('db/elasticsearch/indexes')
 const typeSearch = require('./lib/type_search')
 const Group = require('models/group')
 const { ControllerWrapper } = require('lib/controller_wrapper')
 const { addWarning } = require('lib/responses')
+const { someMatch } = require('lib/utils/base')
 
 const sanitization = {
   search: {
@@ -40,7 +41,7 @@ const controller = async (params, req, res) => {
     throw error_.newMissing('query', 'search or claim')
   }
 
-  const useSocialSearch = types.includes('users') || types.includes('groups')
+  const useSocialSearch = someMatch(socialTypes, types)
 
   if (useSocialSearch) {
     return socialSearch(params, res)

@@ -133,5 +133,7 @@ module.exports = {
     const url = `${elasticOrigin}/${index}/_doc/${id}`
     await rawRequest('put', url, { body: { testPlaceholder: true } })
     _.success(url, 'placeholder added')
-  }
+  },
+
+  firstNWords: (str, num) => str.split(' ').slice(0, num).join(' '),
 }

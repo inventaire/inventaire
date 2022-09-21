@@ -1,8 +1,9 @@
 const _ = require('builders/utils')
 require('should')
 const { publicReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation } = require('../utils/search')
+const { search, waitForIndexation, firstNWords } = require('../utils/search')
 const { createGroup } = require('../fixtures/groups')
+const { createListing } = require('tests/api/fixtures/listings')
 
 describe('search:global', () => {
   describe('parameters', () => {
@@ -57,7 +58,7 @@ describe('search:global', () => {
       await waitForIndexation('users', user._id)
       const results = await search('users', user.username)
       results.should.be.an.Array()
-      _.map(results, 'id').includes(user._id).should.be.true()
+      _.map(results, 'id').should.containEql(user._id)
     })
 
     it('should only return users', async () => {
@@ -76,17 +77,35 @@ describe('search:global', () => {
       const results = await search('groups', group.name)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('groups'))
-      _.map(results, 'id').includes(group._id).should.be.true()
+      _.map(results, 'id').should.containEql(group._id)
     })
 
     it('should not return a private group unless requester is a member', async () => {
       const group = await createGroup({ searchable: false })
       await waitForIndexation('groups', group._id)
       const results = await search('groups', group.name)
-      _.map(results, 'id').includes(group._id).should.be.false()
+      _.map(results, 'id').should.not.containEql(group._id)
       // The same request but authentified with a group member account should find the group
       const { results: refreshedResults } = await authReq('get', `/api/search?search=${group.name}&types=groups&lang=en`)
-      _.map(refreshedResults, 'id').includes(group._id).should.be.true()
+      _.map(refreshedResults, 'id').should.containEql(group._id)
+    })
+  })
+
+  describe('listing', () => {
+    it('should find a listing with words from the name', async () => {
+      const { listing } = await createListing()
+      await waitForIndexation('lists', listing._id)
+      const results = await search('lists', firstNWords(listing.name, 2))
+      results.should.be.an.Array()
+      _.map(results, 'id').should.containEql(listing._id)
+    })
+
+    it('should find a listing with words from the description', async () => {
+      const { listing } = await createListing()
+      await waitForIndexation('lists', listing._id)
+      const results = await search('lists', firstNWords(listing.description, 2))
+      results.should.be.an.Array()
+      _.map(results, 'id').should.containEql(listing._id)
     })
   })
 })
