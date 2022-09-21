@@ -249,7 +249,7 @@ module.exports = {
   color: {
     format: hash => {
       if (typeof hash === 'string') {
-        if (!hash[0]) hash = `#${hash}`
+        if (hash[0] !== '#') hash = `#${hash}`
         return hash.toLowerCase()
       } else {
         return hash
