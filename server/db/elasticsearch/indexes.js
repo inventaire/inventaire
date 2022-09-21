@@ -9,6 +9,7 @@ const indexesData = [
   { indexBaseName: 'items', sync: true },
   { indexBaseName: 'groups', sync: true },
   { indexBaseName: 'users', sync: true },
+  { indexBaseName: 'shelves', sync: true },
   { indexBaseName: 'lists', sync: true },
 ]
 .map(data => {
@@ -41,6 +42,7 @@ const indexedEntitiesTypes = [
 const socialTypes = [
   'users',
   'groups',
+  'shelves',
   'lists',
 ]
 

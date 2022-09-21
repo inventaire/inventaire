@@ -3,7 +3,7 @@ const getBestLangValue = require('lib/get_best_lang_value')
 module.exports = lang => result => {
   if (!lang) return result
   const { _source } = result
-  _source.type = `${_source.type}s`
+  _source.type = pluralizeType(_source.type)
   const { type } = _source
   return formatters[type](result, _source, lang)
 }
@@ -35,6 +35,11 @@ const socialDocsFormatter = (labelAttr, descAttr) => (result, _source, lang) => 
   _score: result._score,
 })
 
+const pluralizeType = singularType => {
+  if (singularType === 'shelf') return 'shelves'
+  return `${singularType}s`
+}
+
 const formatters = {
   works: entityFormatter,
   humans: entityFormatter,
@@ -45,5 +50,6 @@ const formatters = {
   collections: entityFormatter,
   users: socialDocsFormatter('username', 'bio'),
   groups: socialDocsFormatter('name', 'description'),
+  shelves: socialDocsFormatter('name', 'description'),
   lists: socialDocsFormatter('name', 'description'),
 }

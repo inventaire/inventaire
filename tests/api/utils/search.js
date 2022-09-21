@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
-const { publicReq } = require('../utils/utils')
+const { publicReq, customAuthReq } = require('../utils/utils')
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
@@ -100,6 +100,11 @@ module.exports = {
       claim,
     })
     const { results } = await publicReq('get', url)
+    return results
+  },
+
+  customAuthSearch: async (user, types, search) => {
+    const { results } = await customAuthReq(user, 'get', buildUrl(endpoint, { search, types, lang: 'en' }))
     return results
   },
 

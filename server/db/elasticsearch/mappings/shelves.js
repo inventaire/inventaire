@@ -4,7 +4,7 @@ module.exports = {
   properties: {
     name: text,
     description: text,
-    creator: keyword,
+    owner: keyword,
     visibility: keywordArray,
     created: date,
   }

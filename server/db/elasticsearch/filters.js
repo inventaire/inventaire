@@ -5,6 +5,7 @@ module.exports = {
   entities: isntDesignDoc,
   groups: doc => doc.type === 'group',
   items: isntDesignDoc,
+  shelves: isntDesignDoc,
   lists: isntDesignDoc,
   // Do not filter-out doc.type=deletedUser so that deleted users can be unindexed
   users: doc => doc.type === 'user' || doc.type === 'deletedUser',

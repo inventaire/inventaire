@@ -1,9 +1,11 @@
 const _ = require('builders/utils')
 require('should')
-const { publicReq, authReq, getUser, shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation, firstNWords } = require('../utils/search')
-const { createGroup } = require('../fixtures/groups')
+const { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } = require('../utils/utils')
+const { search, waitForIndexation, firstNWords, customAuthSearch } = require('../utils/search')
+const { createGroup, createGroupWithAMember } = require('../fixtures/groups')
 const { createListing } = require('tests/api/fixtures/listings')
+const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+const { createShelf } = require('tests/api/fixtures/shelves')
 
 describe('search:global', () => {
   describe('parameters', () => {
@@ -86,8 +88,73 @@ describe('search:global', () => {
       const results = await search('groups', group.name)
       _.map(results, 'id').should.not.containEql(group._id)
       // The same request but authentified with a group member account should find the group
-      const { results: refreshedResults } = await authReq('get', `/api/search?search=${group.name}&types=groups&lang=en`)
+      const refreshedResults = await customAuthSearch(getUser(), 'groups', group.name)
       _.map(refreshedResults, 'id').should.containEql(group._id)
+    })
+  })
+
+  describe('shelf', () => {
+    it('should find a shelf with words from the name', async () => {
+      const { shelf } = await createShelf()
+      await waitForIndexation('shelves', shelf._id)
+      const results = await search('shelves', firstNWords(shelf.name, 2))
+      results.should.be.an.Array()
+      _.map(results, 'id').should.containEql(shelf._id)
+    })
+
+    it('should find a shelf with words from the description', async () => {
+      const { shelf } = await createShelf()
+      await waitForIndexation('shelves', shelf._id)
+      const results = await search('shelves', firstNWords(shelf.description, 2))
+      results.should.be.an.Array()
+      _.map(results, 'id').should.containEql(shelf._id)
+    })
+
+    describe('public request', () => {
+      it('should not return a private shelf', async () => {
+        const { shelf } = await createShelf(getUser(), { visibility: [] })
+        await waitForIndexation('shelves', shelf._id)
+        const results = await search('shelves', firstNWords(shelf.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(shelf._id)
+      })
+    })
+
+    describe('authentified request', () => {
+      it('should return a private shelf from the requesting user', async () => {
+        const { shelf } = await createShelf(getUser(), { visibility: [] })
+        await waitForIndexation('shelves', shelf._id)
+        const results = await customAuthSearch(getUser(), 'shelves', firstNWords(shelf.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.containEql(shelf._id)
+      })
+
+      it('should not return a private shelf from another user', async () => {
+        const { shelf } = await createShelf(getUser(), { visibility: [] })
+        await waitForIndexation('shelves', shelf._id)
+        const results = await customAuthSearch(getUserB(), 'shelves', firstNWords(shelf.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(shelf._id)
+      })
+
+      it('should return a group-specific shelf when requested by a member', async () => {
+        const { group, admin, member } = await createGroupWithAMember()
+        const { shelf } = await createShelf(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
+        await waitForIndexation('shelves', shelf._id)
+        const results = await customAuthSearch(member, 'shelves', firstNWords(shelf.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.containEql(shelf._id)
+      })
+
+      it('should return a group-specific shelf when requested by a member', async () => {
+        const { group, admin } = await createGroupWithAMember()
+        const someOtherUser = await getReservedUser()
+        const { shelf } = await createShelf(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
+        await waitForIndexation('shelves', shelf._id)
+        const results = await customAuthSearch(someOtherUser, 'shelves', firstNWords(shelf.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(shelf._id)
+      })
     })
   })
 
@@ -106,6 +173,53 @@ describe('search:global', () => {
       const results = await search('lists', firstNWords(listing.description, 2))
       results.should.be.an.Array()
       _.map(results, 'id').should.containEql(listing._id)
+    })
+
+    describe('public request', () => {
+      it('should not return a private listing', async () => {
+        const { listing } = await createListing(getUser(), { visibility: [] })
+        await waitForIndexation('lists', listing._id)
+        const results = await search('lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(listing._id)
+      })
+    })
+
+    describe('authentified request', () => {
+      it('should return a private listing from the requesting user', async () => {
+        const { listing } = await createListing(getUser(), { visibility: [] })
+        await waitForIndexation('lists', listing._id)
+        const results = await customAuthSearch(getUser(), 'lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.containEql(listing._id)
+      })
+
+      it('should not return a private listing from another user', async () => {
+        const { listing } = await createListing(getUser(), { visibility: [] })
+        await waitForIndexation('lists', listing._id)
+        const results = await customAuthSearch(getUserB(), 'lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(listing._id)
+      })
+
+      it('should return a group-specific listing when requested by a member', async () => {
+        const { group, admin, member } = await createGroupWithAMember()
+        const { listing } = await createListing(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
+        await waitForIndexation('lists', listing._id)
+        const results = await customAuthSearch(member, 'lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.containEql(listing._id)
+      })
+
+      it('should return a group-specific listing when requested by a member', async () => {
+        const { group, admin } = await createGroupWithAMember()
+        const someOtherUser = await getReservedUser()
+        const { listing } = await createListing(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
+        await waitForIndexation('lists', listing._id)
+        const results = await customAuthSearch(someOtherUser, 'lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(listing._id)
+      })
     })
   })
 })
