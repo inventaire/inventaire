@@ -3,6 +3,8 @@ require('should')
 const { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } = require('../utils/utils')
 const { search, waitForIndexation, firstNWords, customAuthSearch } = require('../utils/search')
 const { createGroup, createGroupWithAMember } = require('../fixtures/groups')
+const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
+const { makeFriends } = require('tests/api/utils/relations')
 const { createListing } = require('tests/api/fixtures/listings')
 const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 const { createShelf } = require('tests/api/fixtures/shelves')
@@ -211,12 +213,23 @@ describe('search:global', () => {
         _.map(results, 'id').should.containEql(listing._id)
       })
 
-      it('should return a group-specific listing when requested by a member', async () => {
+      it('should not return a group-specific listing when requested by a non member', async () => {
         const { group, admin } = await createGroupWithAMember()
         const someOtherUser = await getReservedUser()
         const { listing } = await createListing(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(someOtherUser, 'lists', firstNWords(listing.name, 2))
+        results.should.be.an.Array()
+        _.map(results, 'id').should.not.containEql(listing._id)
+      })
+
+      it('should not find listings visible by groups while the users are friends but not in a common group', async () => {
+        const { member } = await getSomeGroupWithAMember()
+        const { member: memberOfAnotherGroup } = await createGroupAndMember()
+        await makeFriends(member, memberOfAnotherGroup)
+        const { listing } = await createListing(member, { visibility: [ 'groups' ] })
+        await waitForIndexation('lists', listing._id)
+        const results = await customAuthSearch(memberOfAnotherGroup, 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
         _.map(results, 'id').should.not.containEql(listing._id)
       })
