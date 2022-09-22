@@ -17,7 +17,7 @@ describe('summaries', () => {
   describe('openlibrary', () => {
     const property = 'wdt:P648'
     it('should return summaries', async () => {
-      const olId = 'OL45883W'
+      const olId = 'OL45804W'
       const work = await existsOrCreate({
         claims: {
           [property]: [ olId ]
