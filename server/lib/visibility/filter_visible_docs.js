@@ -9,7 +9,7 @@ module.exports = async (docs, reqUserId) => {
 
   // Optimizing for the case where all requested docs belong to the requester
   // as that's a frequent case
-  if (docs.every(isOwnedByReqUser(reqUserId))) return docs
+  if (docs.every(belongToRequester(reqUserId))) return docs
 
   const [
     friendsIds = [],
@@ -22,7 +22,11 @@ module.exports = async (docs, reqUserId) => {
 }
 
 const isPublic = doc => doc.visibility.includes('public')
-const isOwnedByReqUser = reqUserId => doc => doc.owner === reqUserId
+const belongToRequester = reqUserId => doc => {
+  if (!doc) return
+  if (doc.owner) return doc.owner === reqUserId
+  if (doc.creator) return doc.creator === reqUserId
+}
 
 const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
   const allVisibilityKeys = _.uniq(_.map(docs, 'visibility').flat())
@@ -60,11 +64,13 @@ const keyRequiresFriendsIds = key => key === 'friends'
 const keyRequiresGroupsCoMembers = key => key === 'groups'
 
 const isVisible = ({ friendsIds, coGroupsMembersIds, groupsMembersIdsSets, reqUserId }) => doc => {
-  const { owner, visibility } = doc
-  if (owner === reqUserId) return true
+  const { creator, owner, visibility } = doc
+  // known cases : shelf.owner or listing.creator
+  const docUserId = owner || creator
+  if (docUserId === reqUserId) return true
   if (visibility.includes('public')) return true
-  if (visibility.includes('groups') && coGroupsMembersIds.includes(owner)) return true
-  if (visibility.includes('friends') && friendsIds.includes(owner)) return true
+  if (visibility.includes('groups') && coGroupsMembersIds.includes(docUserId)) return true
+  if (visibility.includes('friends') && friendsIds.includes(docUserId)) return true
   for (const key of visibility) {
     if (isVisibilityGroupKey(key)) {
       const groupId = getGroupIdFromKey(key)

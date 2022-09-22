@@ -1,7 +1,7 @@
 const _ = require('builders/utils')
 const should = require('should')
 const { getUser, getReservedUser, customAuthReq, publicReq } = require('../utils/utils')
-const { waitForIndexation } = require('../utils/search')
+const { waitForIndexation, firstNWords } = require('../utils/search')
 const { getTwoFriends } = require('../fixtures/users')
 const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
 const { shouldNotBeCalled } = require('../utils/utils')
@@ -9,7 +9,6 @@ const { createEdition } = require('tests/api/fixtures/entities')
 const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
 const { makeFriends } = require('tests/api/utils/relations')
 const { buildUrl } = require('lib/utils/url')
-const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')
 
 const search = (reqUser, { user, search }) => {
   const url = buildUrl('/api/items', {

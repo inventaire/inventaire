@@ -9,6 +9,8 @@ const indexesData = [
   { indexBaseName: 'items', sync: true },
   { indexBaseName: 'groups', sync: true },
   { indexBaseName: 'users', sync: true },
+  { indexBaseName: 'shelves', sync: true },
+  { indexBaseName: 'lists', sync: true },
 ]
 .map(data => {
   data.index = data.index || CONFIG.db.name(data.indexBaseName)
@@ -40,8 +42,18 @@ const indexedEntitiesTypes = [
 const socialTypes = [
   'users',
   'groups',
+  'shelves',
+  'lists',
 ]
 
 const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
 
-module.exports = { indexes, indexesNamesByBaseNames, indexesList, syncIndexesList, indexedTypes, indexedEntitiesTypes }
+module.exports = {
+  indexes,
+  indexesNamesByBaseNames,
+  indexesList,
+  syncIndexesList,
+  indexedTypes,
+  socialTypes,
+  indexedEntitiesTypes,
+}

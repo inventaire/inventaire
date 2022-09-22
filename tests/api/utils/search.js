@@ -1,7 +1,7 @@
 const CONFIG = require('config')
 const _ = require('builders/utils')
 const { wait } = require('lib/promises')
-const { publicReq } = require('../utils/utils')
+const { publicReq, customAuthReq } = require('../utils/utils')
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { rawRequest } = require('./request')
 const assert_ = require('lib/utils/assert_types')
@@ -103,6 +103,11 @@ module.exports = {
     return results
   },
 
+  customAuthSearch: async (user, types, search) => {
+    const { results } = await customAuthReq(user, 'get', buildUrl(endpoint, { search, types, lang: 'en' }))
+    return results
+  },
+
   getIndexedDoc,
 
   getAnalyze,
@@ -133,5 +138,7 @@ module.exports = {
     const url = `${elasticOrigin}/${index}/_doc/${id}`
     await rawRequest('put', url, { body: { testPlaceholder: true } })
     _.success(url, 'placeholder added')
-  }
+  },
+
+  firstNWords: (str, num) => str.split(' ').slice(0, num).join(' '),
 }

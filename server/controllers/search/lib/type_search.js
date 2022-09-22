@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
 const requests_ = require('lib/requests')
 const error_ = require('lib/error/error')
 const assert_ = require('lib/utils/assert_types')
 const { origin: elasticOrigin } = require('config').elasticsearch
 const { formatError, getHitsAndTotal } = require('lib/elasticsearch')
-const { indexesNamesByBaseNames: indexes, indexedTypes, indexedEntitiesTypes } = require('db/elasticsearch/indexes')
+const { indexesNamesByBaseNames: indexes, indexedTypes, indexedEntitiesTypes, socialTypes } = require('db/elasticsearch/indexes')
 const indexedTypesSet = new Set(indexedTypes)
 const entitiesQueryBuilder = require('./entities_query_builder')
 const socialQueryBuilder = require('./social_query_builder')
+const { someMatch } = require('lib/utils/base')
 
 const typeSearch = async params => {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
@@ -17,8 +17,8 @@ const typeSearch = async params => {
   }
   if (search) assert_.string(search)
 
-  const hasSocialTypes = types.includes('users') || types.includes('groups')
-  const hasEntityTypes = _.someMatch(types, indexedEntitiesTypes)
+  const hasSocialTypes = someMatch(types, socialTypes)
+  const hasEntityTypes = someMatch(types, indexedEntitiesTypes)
 
   if (hasSocialTypes) {
     if (exact) typeParameterError('exact', types)

@@ -3,7 +3,7 @@ const getBestLangValue = require('lib/get_best_lang_value')
 module.exports = lang => result => {
   if (!lang) return result
   const { _source } = result
-  _source.type = _source.type.concat('s')
+  _source.type = pluralizeType(_source.type)
   const { type } = _source
   return formatters[type](result, _source, lang)
 }
@@ -26,7 +26,7 @@ const getShortDescription = (descriptions, lang) => {
 
 const getUri = id => id[0] === 'Q' ? `wd:${id}` : `inv:${id}`
 
-const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
+const socialDocsFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   id: result._id,
   type: _source.type,
   label: _source[labelAttr],
@@ -34,6 +34,11 @@ const networkFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
   image: _source.picture,
   _score: result._score,
 })
+
+const pluralizeType = singularType => {
+  if (singularType === 'shelf') return 'shelves'
+  return `${singularType}s`
+}
 
 const formatters = {
   works: entityFormatter,
@@ -43,6 +48,8 @@ const formatters = {
   genres: entityFormatter,
   movements: entityFormatter,
   collections: entityFormatter,
-  users: networkFormatter('username', 'bio'),
-  groups: networkFormatter('name', 'description')
+  users: socialDocsFormatter('username', 'bio'),
+  groups: socialDocsFormatter('name', 'description'),
+  shelves: socialDocsFormatter('name', 'description'),
+  lists: socialDocsFormatter('name', 'description'),
 }

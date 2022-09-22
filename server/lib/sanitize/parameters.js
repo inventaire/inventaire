@@ -276,6 +276,8 @@ module.exports = {
     min: 1,
     default: 100
   }),
+  list: couchUuid,
+  lists: couchUuids,
   message: nonEmptyString,
   name: nonEmptyString,
   object: nonEmptyString,

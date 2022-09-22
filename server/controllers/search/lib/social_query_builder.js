@@ -6,11 +6,11 @@ module.exports = ({ search, limit: size, minScore }) => {
     { fuzzy: { username: search } },
     // Bio
     { match: { bio: search } },
-    // Group name
+    // Group or listing name
     { match: { name: { query: search, boost: 5 } } },
     { match_phrase_prefix: { name: { query: search, boost: 4 } } },
     { fuzzy: { name: search } },
-    // Group description
+    // Group or listing description
     { match: { description: search } }
   ]
 

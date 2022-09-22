@@ -5,14 +5,14 @@ const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.getOrigin()
 const initHardCodedDocuments = require('./init_hard_coded_documents')
 
-const dbsList = require('./list')
+const databases = require('./databases')
 const formattedList = []
 
 const setJsExtension = filename => `${filename}.js`
 
 // Adapt the list to couch-init2 needs
-for (const dbName in dbsList) {
-  const designDocsNames = dbsList[dbName]
+for (const dbName in databases) {
+  const designDocsNames = databases[dbName]
   formattedList.push({
     // Adding a suffix if needed
     name: CONFIG.db.name(dbName),

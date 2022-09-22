@@ -194,7 +194,7 @@ describe('items:create', () => {
       })
       .then(shouldNotBeCalled)
       .catch(err => {
-        err.body.status_verbose.should.equal('owner is not in that group')
+        err.body.status_verbose.should.equal('user is not in that group')
         err.statusCode.should.equal(400)
       })
     })

@@ -1,11 +1,13 @@
 const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const normalizeResult = require('./lib/normalize_result')
-const { indexedTypes } = require('db/elasticsearch/indexes')
+const { indexedTypes, socialTypes } = require('db/elasticsearch/indexes')
 const typeSearch = require('./lib/type_search')
 const Group = require('models/group')
 const { ControllerWrapper } = require('lib/controller_wrapper')
 const { addWarning } = require('lib/responses')
+const { someMatch } = require('lib/utils/base')
+const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
 
 const sanitization = {
   search: {
@@ -40,7 +42,7 @@ const controller = async (params, req, res) => {
     throw error_.newMissing('query', 'search or claim')
   }
 
-  const useSocialSearch = types.includes('users') || types.includes('groups')
+  const useSocialSearch = someMatch(socialTypes, types)
 
   if (useSocialSearch) {
     return socialSearch(params, res)
@@ -62,7 +64,11 @@ const socialSearch = async (params, res) => {
 
   const { hits } = await typeSearch(params)
 
-  const results = hits
+  // Shelves and listings visibility checks need async ops,
+  // which can not be done in isSearchable
+  let results = await removeUnauthorizedDocs(hits, reqUserId)
+
+  results = results
     .filter(isSearchable(reqUserId))
     .map(normalizeResult(lang))
     .slice(0, limit)
@@ -98,6 +104,23 @@ const isSearchable = reqUserId => result => {
   } else {
     return true
   }
+}
+
+const typesWithVisibility = [ 'shelf', 'list' ]
+
+const removeUnauthorizedDocs = async (results, reqUserId) => {
+  const docsRequiringAuthorization = results
+    .filter(result => typesWithVisibility.includes(result._source.type))
+    .map(({ _id, _source }) => ({ _id, ..._source }))
+  const authorizedDocs = await filterVisibleDocs(docsRequiringAuthorization, reqUserId)
+  const authorizedDocsIds = _.map(authorizedDocs, '_id')
+  return results.filter(result => {
+    if (typesWithVisibility.includes(result._source.type)) {
+      return authorizedDocsIds.includes(result._id)
+    } else {
+      return true
+    }
+  })
 }
 
 module.exports = {
