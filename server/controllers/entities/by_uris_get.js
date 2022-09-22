@@ -1,6 +1,6 @@
 const getEntitiesByUris = require('./lib/get_entities_by_uris')
 const addRelatives = require('./lib/add_relatives')
-const pickAttributes = require('./lib/pick_attributes')
+const { pickAttributes, pickLanguages } = require('./lib/pick_attributes')
 
 const sanitization = {
   uris: {},
@@ -38,7 +38,8 @@ const sanitization = {
 const controller = async ({ uris, attributes, lang, refresh, relatives, autocreate }) => {
   let results = await getEntitiesByUris({ uris, refresh, autocreate })
   if (relatives) results = await addRelatives(results, relatives, refresh)
-  if (attributes) results.entities = pickAttributes(results.entities, attributes, lang)
+  if (attributes) results.entities = pickAttributes(results.entities, attributes)
+  if (lang) results.entities = pickLanguages(results.entities, lang)
   return results
 }
 

@@ -137,13 +137,27 @@ describe('entities:get:by-uris', () => {
   })
 
   describe('lang', () => {
-    it('should return only the requested lang', async () => {
+    it('should return only the requested lang (with attributes)', async () => {
       const wdHumanUri = 'wd:Q2300248'
       const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo', fr: 'bar' } })
       const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}|${wdHumanUri}`,
         attributes: 'labels',
+        lang: 'es'
+      })
+      const { entities } = await publicReq('get', url)
+      Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])
+      entities[invHumanUri].labels.es.should.equal('foo')
+      Object.keys(entities[wdHumanUri].labels).should.deepEqual([ 'es' ])
+    })
+
+    it('should return only the requested lang (without attributes)', async () => {
+      const wdHumanUri = 'wd:Q2300248'
+      const { uri: invHumanUri } = await createHuman({ labels: { es: 'foo', fr: 'bar' } })
+      const url = buildUrl('/api/entities', {
+        action: 'by-uris',
+        uris: `${invHumanUri}|${wdHumanUri}`,
         lang: 'es'
       })
       const { entities } = await publicReq('get', url)

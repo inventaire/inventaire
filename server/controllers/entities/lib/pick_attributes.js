@@ -2,24 +2,31 @@ const { pick } = require('lodash')
 const getBestLangValue = require('lib/get_best_lang_value')
 const getOriginalLang = require('lib/wikidata/get_original_lang')
 
-module.exports = (entities, attributes, lang) => {
+const pickAttributes = (entities, attributes) => {
   const formattedEntities = {}
-  for (const key of Object.keys(entities)) {
-    const entity = entities[key]
+  for (const uri of Object.keys(entities)) {
+    const entity = entities[uri]
     const formattedEntity = {
-      uri: entity.uri,
+      uri,
       ...pick(entity, attributes)
     }
-    if (lang != null) {
-      const originalLang = getOriginalLang(entity.claims)
-      pickLanguages(lang, originalLang, formattedEntity)
-    }
-    formattedEntities[key] = formattedEntity
+    formattedEntities[uri] = formattedEntity
   }
   return formattedEntities
 }
 
-const pickLanguages = (lang, originalLang, formattedEntity) => {
+const pickLanguages = (entities, lang) => {
+  const formattedEntities = {}
+  for (const uri of Object.keys(entities)) {
+    const entity = entities[uri]
+    const originalLang = getOriginalLang(entity.claims)
+    pickAttributesLanguages(lang, originalLang, entity)
+    formattedEntities[uri] = entity
+  }
+  return formattedEntities
+}
+
+const pickAttributesLanguages = (lang, originalLang, formattedEntity) => {
   if (formattedEntity.labels) {
     formattedEntity.labels = pickLanguage(lang, originalLang, formattedEntity.labels)
   }
@@ -36,4 +43,9 @@ const pickLanguage = (lang, originalLang, data) => {
   return {
     [pickedLang]: value
   }
+}
+
+module.exports = {
+  pickAttributes,
+  pickLanguages,
 }
