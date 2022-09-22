@@ -25,6 +25,16 @@ npm run indexation:load-from-couchdb users
 npm run indexation:load-from-couchdb groups
 ```
 
+## Shelves
+```sh
+npm run indexation:load-from-couchdb shelves
+```
+
+## Lists
+```sh
+npm run indexation:load-from-couchdb lists
+```
+
 ## Entities
 ### Inventaire entities
 ```sh
