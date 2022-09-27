@@ -2,4 +2,6 @@
 
 # Assumes inventaire/inventaire-i18n is installed or symboly linked from the project root
 cd ./inventaire-i18n
-npm run build-server
+git fetch origin dist
+git checkout origin/dist
+git checkout -B dist
