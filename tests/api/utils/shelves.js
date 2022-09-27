@@ -1,4 +1,5 @@
 const _ = require('builders/utils')
+const { forceArray } = require('lib/utils/base')
 const { customAuthReq } = require('./request')
 const { getUser } = require('./utils')
 
@@ -23,5 +24,21 @@ module.exports = {
     })
     return shelves
   },
-  getActorName: shelf => `shelf-${shelf._id}`
+  getActorName: shelf => `shelf-${shelf._id}`,
+
+  updateShelf: async ({ id, attribute, value, user }) => {
+    user = user || getUser()
+    return customAuthReq(user, 'post', '/api/shelves?action=update', {
+      shelf: id,
+      [attribute]: value
+    })
+  },
+
+  deleteShelves: async ({ user, ids }) => {
+    user = user || getUser()
+    ids = forceArray(ids)
+    return customAuthReq(user, 'post', '/api/shelves?action=delete', {
+      ids,
+    })
+  }
 }
