@@ -261,6 +261,21 @@ describe('entities:get:by-isbns', () => {
       entity.uri.should.equal(uri)
       should(res.notFound).not.be.ok()
     })
+
+    it('should not create duplicates when called in parallel', async () => {
+      const isbnKnownBySeedsSources = '9782207116746'
+      const uri = `isbn:${isbnKnownBySeedsSources}`
+      await deleteByUris([ uri ])
+      const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+      notFound.should.deepEqual([ uri ])
+      const [ res1, res2 ] = await Promise.all([
+        publicReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`),
+        publicReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`),
+      ])
+      const entity1 = res1.entities[uri]
+      const entity2 = res2.entities[uri]
+      entity1._id.should.equal(entity2._id)
+    })
   })
 })
 
