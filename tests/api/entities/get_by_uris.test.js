@@ -233,32 +233,34 @@ describe('entities:get:by-isbns', () => {
     should(res.notFound).not.be.ok()
   })
 
-  it('should return editions isbn in notFound array when autocreation is false', async () => {
-    const uri = `isbn:${generateIsbn13()}`
-    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
-    res.entities.should.deepEqual({})
-    res.notFound[0].should.equal(uri)
-  })
+  describe('autocreate', () => {
+    it('should return editions isbn in notFound array when autocreation is false', async () => {
+      const uri = `isbn:${generateIsbn13()}`
+      const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+      res.entities.should.deepEqual({})
+      res.notFound[0].should.equal(uri)
+    })
 
-  it('should return editions isbn in notFound array when autocreation is true', async () => {
-    const isbnUnknownBySeedsSources = '9783981898743'
-    const uri = `isbn:${isbnUnknownBySeedsSources}`
-    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
-    res.entities.should.deepEqual({})
-    res.notFound[0].should.equal(uri)
-  })
+    it('should return editions isbn in notFound array when autocreation is true', async () => {
+      const isbnUnknownBySeedsSources = '9783981898743'
+      const uri = `isbn:${isbnUnknownBySeedsSources}`
+      const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
+      res.entities.should.deepEqual({})
+      res.notFound[0].should.equal(uri)
+    })
 
-  it('should autocreate from seed when autocreation is true', async () => {
-    const isbnKnownBySeedsSources = '9782207116746'
-    const uri = `isbn:${isbnKnownBySeedsSources}`
-    await deleteByUris([ uri ])
-    const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
-    notFound.should.deepEqual([ uri ])
-    const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
-    const entity = res.entities[uri]
-    entity.should.be.an.Object()
-    entity.uri.should.equal(uri)
-    should(res.notFound).not.be.ok()
+    it('should autocreate from seed when autocreation is true', async () => {
+      const isbnKnownBySeedsSources = '9782207116746'
+      const uri = `isbn:${isbnKnownBySeedsSources}`
+      await deleteByUris([ uri ])
+      const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+      notFound.should.deepEqual([ uri ])
+      const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
+      const entity = res.entities[uri]
+      entity.should.be.an.Object()
+      entity.uri.should.equal(uri)
+      should(res.notFound).not.be.ok()
+    })
   })
 })
 
