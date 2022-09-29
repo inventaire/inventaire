@@ -70,7 +70,10 @@ const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }) => 
     const moreLink = `<a href="${host}${parentLink}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
     html += moreLink
   }
-  if (links.length === 1) html += links[0].details
+  if (links.length === 1) {
+    const firstLinkDetails = links[0].details
+    if (firstLinkDetails) html += firstLinkDetails
+  }
   html += '</p>'
   return html
 }

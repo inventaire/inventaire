@@ -11,6 +11,7 @@ const { createShelf } = require('../fixtures/shelves')
 const { rethrowShouldNotBeCalledErrors } = require('../utils/utils')
 const { addItemsToShelf, getActorName } = require('../utils/shelves')
 const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
+const { randomWords } = require('../fixtures/text')
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
@@ -24,12 +25,14 @@ describe('followers activity delivery', () => {
         object: followedActorUrl,
         type: 'Follow',
       })
-      const item = await createItem(user)
+      const details = randomWords(4)
+      const item = await createItem(user, { details })
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       const createActivity = inbox.find(a => a.type === 'Create')
       createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.object.content.should.containEql(item._id)
+      createActivity.object.content.should.containEql(details)
       createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })
   })
