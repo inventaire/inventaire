@@ -220,4 +220,13 @@ describe('entities:merge', () => {
     const entity = entities[humanAUri]
     entity._meta_type.should.equal('removed:placeholder')
   })
+
+  it('should merge an entity with a non-canonical uri', async () => {
+    const [ editionA, editionB ] = await Promise.all([
+      createEditionWithIsbn(),
+      createEdition()
+    ])
+    editionA.uri.should.startWith('isbn')
+    await merge(`inv:${editionA._id}`, editionB.uri)
+  })
 })

@@ -67,7 +67,7 @@ const validateEntity = (entity, originalUri, label) => {
   if (entity == null) {
     throw error_.new(`'${label}' entity not found`, 400, originalUri)
   }
-  if (entity.uri !== originalUri) {
+  if (entity.uri !== originalUri && `inv:${entity._id}` !== originalUri) {
     throw error_.new(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
   }
 }
