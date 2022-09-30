@@ -15,7 +15,7 @@ describe('get_openlibrary_entry_from_isbn', () => {
   it('should find entries with only ISBN-10 from an ISBN-13', async () => {
     const entry = await getOpenLibraryEntryFromIsbn('978-2-7152-1841-3')
     entry.edition.claims['wdt:P648'].should.equal('OL914930M')
-    entry.edition.claims['wdt:P244'].should.equal('95211094')
+    entry.edition.claims['wdt:P1144'].should.equal('95211094')
   })
 
   it('should support year precision', async () => {

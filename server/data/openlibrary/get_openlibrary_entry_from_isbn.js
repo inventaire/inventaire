@@ -45,7 +45,7 @@ const getEditionSeed = (isbn, data) => {
       edition.claims['wdt:P407'] = compact(data.languages.map(parseLanguage))
     }
   }
-  if (data.lccn) edition.claims['wdt:P244'] = data.lccn[0]
+  if (data.lccn) edition.claims['wdt:P1144'] = data.lccn[0]
   if (data.number_of_pages) edition.claims['wdt:P1104'] = data.number_of_pages
   if (data.title) edition.claims['wdt:P1476'] = data.title
   if (data.subtitle) edition.claims['wdt:P1680'] = data.subtitle
