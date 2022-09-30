@@ -4,6 +4,7 @@ const { getByIsbns: getSeedsByIsbns } = require('./dataseed')
 const { enabled: dataseedEnabled } = require('config').dataseed
 const parseIsbn = require('server/lib/isbn/parse')
 const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
+const temporarilyMemoize = require('lib/temporarily_memoize')
 
 const resolverParams = {
   create: true,
@@ -21,7 +22,7 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-module.exports = async isbn => {
+const getResolvedEntry = async isbn => {
   try {
     const entry = await getAuthoritiesAggregatedEntry(isbn)
     if (entry) {
@@ -42,6 +43,11 @@ module.exports = async isbn => {
   }
   return { isbn, notFound: true }
 }
+
+module.exports = temporarilyMemoize({
+  fn: getResolvedEntry,
+  ttlAfterFunctionCallReturned: 2000,
+})
 
 const getEditionEntityFromEntry = async entry => {
   const { resolvedEntries } = await resolveUpdateAndCreate({ entries: [ entry ], ...resolverParams })
