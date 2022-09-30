@@ -17,7 +17,9 @@ const sanitization = {
     optional: true
   },
   lang: {
-    optional: true
+    optional: true,
+    // Default to returning attributes in all languages
+    default: null,
   },
   refresh: { optional: true },
   autocreate: {
