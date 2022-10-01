@@ -15,7 +15,9 @@ const elements_ = module.exports = {
   bulkDelete: db.bulkDelete,
   deleteListingsElements: async listings => {
     const listingsElements = listings.flatMap(listing => listing.elements)
-    await elements_.bulkDelete(listingsElements)
+    if (_.isNonEmptyArray(listingsElements)) {
+      await elements_.bulkDelete(listingsElements)
+    }
   },
   create: async ({ listing, uris, userId }) => {
     const listingId = listing._id
