@@ -43,6 +43,12 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/inventory/${username}.json`)
       headers.location.should.equal(`${host}/api/users?action=by-usernames&usernames=${username}`)
     })
+
+    it("should redirect to a user's items", async () => {
+      const { _id, username } = await someUserPromise
+      const { headers } = await rawRequest('get', `/users/${username}/inventory.json`)
+      headers.location.should.equal(`${host}/api/items?action=by-users&users=${_id}&include-users=true`)
+    })
   })
 
   describe('groups', () => {

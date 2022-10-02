@@ -2,17 +2,17 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const groups_ = require('controllers/groups/lib/groups')
-const { isUsername } = require('lib/boolean_validations')
+const { isUsername, isCouchUuid } = require('lib/boolean_validations')
 
 const extensionRedirect = extension => async (req, res) => {
   try {
-    const { domain, id } = parseUrl(req, extension)
+    const { domain, id, section } = parseUrl(req, extension)
     const redirectionFn = redirections[extension][domain]
 
     if (redirectionFn == null) {
       throw error_.newInvalid('domain', domain)
     } else {
-      const url = await redirectionFn(id)
+      const url = await redirectionFn(id, section)
       res.redirect(url)
     }
   } catch (err) {
@@ -32,20 +32,30 @@ const extensionPatterns = {
 
 const parseUrl = (req, extension) => {
   const { pathname } = req._parsedUrl
-  let [ domain, id ] = pathname.split('/').slice(1)
-  if (id) id = id.replace(extensionPatterns[extension], '')
-  return { domain, id }
+  let [ domain, id, section ] = pathname.split('/').slice(1)
+  if (section) section = removeExtension(section, extension)
+  else if (id) id = removeExtension(id, extension)
+  return { domain, id, section }
+}
+
+const removeExtension = (str, extension) => {
+  return str.replace(extensionPatterns[extension], '')
 }
 
 const redirections = {
   json: {
     entity: uri => `/api/entities?action=by-uris&uris=${uri}`,
     inventory: username => `/api/users?action=by-usernames&usernames=${username}`,
-    users: id => {
-      if (isUsername(id)) {
-        return `/api/users?action=by-usernames&usernames=${id}`
+    users: async (id, section) => {
+      if (section === 'inventory') {
+        const userId = await getUserId(id)
+        return `/api/items?action=by-users&users=${userId}&include-users=true`
       } else {
-        return `/api/users?action=by-ids&ids=${id}`
+        if (isUsername(id)) {
+          return `/api/users?action=by-usernames&usernames=${id}`
+        } else {
+          return `/api/users?action=by-ids&ids=${id}`
+        }
       }
     },
     groups: id => {
@@ -62,10 +72,9 @@ const redirections = {
 
   rss: {
     users: id => `/api/feeds?user=${id}`,
-    inventory: username => {
-      return user_.findOneByUsername(username)
-      .then(({ _id }) => _id)
-      .then(userId => `/api/feeds?user=${userId}`)
+    inventory: async username => {
+      const userId = await getUserId(username)
+      return `/api/feeds?user=${userId}`
     },
     groups: id => {
       if (_.isGroupId(id)) {
@@ -77,5 +86,14 @@ const redirections = {
       }
     },
     shelves: id => `/api/feeds?shelf=${id}`,
+  }
+}
+
+const getUserId = async id => {
+  if (isCouchUuid(id)) {
+    return id
+  } else {
+    const { _id } = await user_.findOneByUsername(id)
+    return _id
   }
 }
