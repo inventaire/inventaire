@@ -4,18 +4,19 @@ const user_ = require('controllers/user/lib/user')
 const groups_ = require('controllers/groups/lib/groups')
 const { isUsername } = require('lib/boolean_validations')
 
-const extensionRedirect = extension => (req, res) => {
-  const { domain, id } = parseUrl(req, extension)
-  const redirectionFn = redirections[extension][domain]
+const extensionRedirect = extension => async (req, res) => {
+  try {
+    const { domain, id } = parseUrl(req, extension)
+    const redirectionFn = redirections[extension][domain]
 
-  if (redirectionFn == null) {
-    error_.bundleInvalid(req, res, 'domain', domain)
-  } else {
-    // redirectionFn might return a promise
-    // thus using Promise.resolve allows to normalize the returned value
-    Promise.resolve(redirectionFn(id))
-    .then(url => res.redirect(url))
-    .catch(_.Error('rssRedirection error'))
+    if (redirectionFn == null) {
+      throw error_.newInvalid('domain', domain)
+    } else {
+      const url = await redirectionFn(id)
+      res.redirect(url)
+    }
+  } catch (err) {
+    error_.handler(req, res, err)
   }
 }
 
