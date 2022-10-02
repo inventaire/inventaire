@@ -9,7 +9,6 @@ const authorities = {
   // bnb: require('data/bnb/get_bnb_entry_from_isbn'),
   bne: require('data/bne/get_bne_entry_from_isbn'),
   bnf: require('data/bnf/get_bnf_entry_from_isbn'),
-  openlibrary: require('data/openlibrary/get_openlibrary_entry_from_isbn'),
   wikidata: require('data/wikidata/get_wikidata_entry_from_isbn'),
 }
 

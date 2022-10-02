@@ -9,6 +9,7 @@ describe('get_openlibrary_entry_from_isbn', () => {
     entry.edition.claims['wdt:P1104'].should.equal(250)
     entry.edition.image.should.equal('https://covers.openlibrary.org/b/id/12457215-L.jpg?default=false')
     entry.works[0].claims['wdt:P648'].should.equal('OL26437584W')
+    entry.works[0].labels.en.should.be.a.String()
     entry.authors[0].claims['wdt:P648'].should.equal('OL9962491A')
   })
 

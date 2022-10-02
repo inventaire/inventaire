@@ -66,7 +66,7 @@ const getEditionSeed = (isbn, data) => {
 const getEntitySeedFromOlId = async ({ key }) => {
   const id = key.split('/').at(-1)
   const url = `https://openlibrary.org${key}.json`
-  const { name, type, location, remote_ids: remoteIds = {} } = await requests_.get(url)
+  const { name, title, type, location, remote_ids: remoteIds = {} } = await requests_.get(url)
   // Ex: https://openlibrary.org/works/OL15331214W.json redirects to /works/OL14933414W
   if (type.key === '/type/redirect') {
     return getEntitySeedFromOlId({ key: location })
@@ -77,7 +77,7 @@ const getEntitySeedFromOlId = async ({ key }) => {
       'wdt:P648': id
     }
   }
-  if (name) seed.labels.en = name
+  if (name || title) seed.labels.en = name || title
   if (remoteIds.wikidata) seed.uri = prefixifyWd(remoteIds.wikidata)
   if (remoteIds.isni) seed.claims['wdt:P213'] = remoteIds.isni
   if (remoteIds.viaf) seed.claims['wdt:P214'] = remoteIds.viaf
