@@ -55,6 +55,12 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/users/${username}/lists.json`)
       headers.location.should.equal(`${host}/api/lists?action=by-creators&users=${_id}`)
     })
+
+    it("should redirect to a user's contributions", async () => {
+      const { _id, username } = await someUserPromise
+      const { headers } = await rawRequest('get', `/users/${username}/contributions.json`)
+      headers.location.should.equal(`${host}/api/entities?action=contributions&user=${_id}`)
+    })
   })
 
   describe('groups', () => {

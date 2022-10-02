@@ -54,6 +54,8 @@ const redirections = {
           return `/api/items?action=by-users&users=${userId}&include-users=true`
         } else if (section === 'lists') {
           return `/api/lists?action=by-creators&users=${userId}`
+        } else if (section === 'contributions') {
+          return `/api/entities?action=contributions&user=${userId}`
         } else {
           throw error_.notFound({ id, section })
         }
