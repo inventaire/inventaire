@@ -3,6 +3,7 @@ const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const groups_ = require('controllers/groups/lib/groups')
 const { isUsername, isCouchUuid } = require('lib/boolean_validations')
+const { getGroupMembersIds } = require('controllers/groups/lib/groups')
 
 const extensionRedirect = extension => async (req, res) => {
   try {
@@ -64,11 +65,23 @@ const redirections = {
         }
       }
     },
-    groups: id => {
-      if (_.isGroupId(id)) {
-        return `/api/groups?action=by-id&id=${id}`
+    groups: async (id, section) => {
+      if (section) {
+        const groupId = await getGroupId(id)
+        const usersIds = await getGroupMembersIds(groupId)
+        if (section === 'inventory') {
+          return `/api/items?action=by-users&users=${usersIds.join('|')}&filter=group&include-users=true`
+        } else if (section === 'lists') {
+          return `/api/lists?action=by-creators&users=${usersIds.join('|')}`
+        } else {
+          throw error_.notFound({ id, section })
+        }
       } else {
-        return `/api/groups?action=by-slug&slug=${id}`
+        if (_.isGroupId(id)) {
+          return `/api/groups?action=by-id&id=${id}`
+        } else {
+          return `/api/groups?action=by-slug&slug=${id}`
+        }
       }
     },
     items: id => `/api/items?action=by-ids&ids=${id}`,
@@ -100,6 +113,15 @@ const getUserId = async id => {
     return id
   } else {
     const { _id } = await user_.findOneByUsername(id)
+    return _id
+  }
+}
+
+const getGroupId = async id => {
+  if (isCouchUuid(id)) {
+    return id
+  } else {
+    const { _id } = await groups_.bySlug(id)
     return _id
   }
 }

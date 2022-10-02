@@ -69,5 +69,42 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/groups/${slug}.json`)
       headers.location.should.equal(`${host}/api/groups?action=by-slug&slug=${slug}`)
     })
+
+    it("should redirect to a group's items", async () => {
+      const { _id, admins, members } = await getSomeGroup()
+      const { headers } = await rawRequest('get', `/groups/${_id}/inventory.json`)
+      const { location } = headers
+      const allUsersIds = getGroupMembersIds({ admins, members })
+      const parsedLocation = new URL(location)
+      const { searchParams } = parsedLocation
+      const paramsUsersIds = searchParams.get('users').split('|')
+      parsedLocation.origin.should.equal(host)
+      parsedLocation.pathname.should.equal('/api/items')
+      searchParams.get('action').should.equal('by-users')
+      searchParams.get('filter').should.equal('group')
+      paramsUsersIds.length.should.equal(allUsersIds.length)
+      paramsUsersIds.every(userId => allUsersIds.includes(userId))
+    })
+
+    it("should redirect to a group's listings", async () => {
+      const { slug, admins, members } = await getSomeGroup()
+      const { headers } = await rawRequest('get', `/groups/${slug}/lists.json`)
+      const { location } = headers
+      const allUsersIds = getGroupMembersIds({ admins, members })
+      const parsedLocation = new URL(location)
+      const { searchParams } = parsedLocation
+      const paramsUsersIds = searchParams.get('users').split('|')
+      parsedLocation.origin.should.equal(host)
+      parsedLocation.pathname.should.equal('/api/lists')
+      searchParams.get('action').should.equal('by-creators')
+      paramsUsersIds.length.should.equal(allUsersIds.length)
+      paramsUsersIds.every(userId => allUsersIds.includes(userId))
+    })
   })
 })
+
+const getGroupMembersIds = ({ admins, members }) => {
+  return admins.map(getGroupMemberId)
+  .concat(members.map(getGroupMemberId))
+}
+const getGroupMemberId = ({ user }) => user
