@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const error_ = require('lib/error/error')
 const user_ = require('controllers/user/lib/user')
 const groups_ = require('controllers/groups/lib/groups')
+const { isUsername } = require('lib/boolean_validations')
 
 const extensionRedirect = extension => (req, res) => {
   const { domain, id } = parseUrl(req, extension)
@@ -39,7 +40,13 @@ const redirections = {
   json: {
     entity: uri => `/api/entities?action=by-uris&uris=${uri}`,
     inventory: username => `/api/users?action=by-usernames&usernames=${username}`,
-    users: id => `/api/users?action=by-ids&ids=${id}`,
+    users: id => {
+      if (isUsername(id)) {
+        return `/api/users?action=by-usernames&usernames=${id}`
+      } else {
+        return `/api/users?action=by-ids&ids=${id}`
+      }
+    },
     groups: id => {
       if (_.isGroupId(id)) {
         return `/api/groups?action=by-id&id=${id}`
