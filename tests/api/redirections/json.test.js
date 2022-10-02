@@ -115,6 +115,14 @@ describe('json redirections', () => {
       headers.location.should.equal(`${host}/api/shelves?action=by-ids&ids=${_id}&with-items=true`)
     })
   })
+
+  describe('listings', () => {
+    it('should redirect to a listing with its elements', async () => {
+      const { _id } = await someUserPromise
+      const { headers } = await rawRequest('get', `/lists/${_id}.json`)
+      headers.location.should.equal(`${host}/api/lists?action=by-ids&ids=${_id}&with-elements=true`)
+    })
+  })
 })
 
 const getGroupMembersIds = ({ admins, members }) => {
