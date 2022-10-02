@@ -40,7 +40,7 @@ describe('items:get-by-users', () => {
       createItem(getUser(), { visibility: [ 'friends' ] }),
     ])
     const userId = groupsItem.owner
-    const { items } = await authReq('get', `${endpoint}&users=${userId}&filter=group`)
+    const { items } = await authReq('get', `${endpoint}&users=${userId}&context=group`)
     const resUserId = _.map(items, 'owner')
     resUserId.should.containEql(userId)
     const resItemsIds = items.map(_.property('_id'))

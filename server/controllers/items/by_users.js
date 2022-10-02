@@ -5,7 +5,8 @@ const sanitization = {
   users: {},
   limit: { optional: true },
   offset: { optional: true },
-  filter: {
+  context: {
+    generic: 'allowlist',
     allowlist: validFilters,
     optional: true
   },

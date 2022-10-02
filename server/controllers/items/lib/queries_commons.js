@@ -46,20 +46,20 @@ module.exports = {
   },
 
   paginate: (items, params) => {
-    let { limit, offset, filter } = params
+    let { limit, offset, context } = params
     items = items.sort(byCreationDate)
-    if (filter != null) items = items.filter(filters[filter])
+    if (context != null) items = items.filter(filters[context])
     const total = items.length
     if (offset == null) offset = 0
     const last = offset + limit
 
     if (limit != null) {
       items = items.slice(offset, last)
-      const data = { items, total, offset, filter }
+      const data = { items, total, offset, context }
       if (last < total) data.continue = last
       return data
     } else {
-      return { items, total, offset, filter }
+      return { items, total, offset, context }
     }
   }
 }
