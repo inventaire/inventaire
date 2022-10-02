@@ -47,9 +47,15 @@ const redirections = {
     entity: uri => `/api/entities?action=by-uris&uris=${uri}`,
     inventory: username => `/api/users?action=by-usernames&usernames=${username}`,
     users: async (id, section) => {
-      if (section === 'inventory') {
+      if (section) {
         const userId = await getUserId(id)
-        return `/api/items?action=by-users&users=${userId}&include-users=true`
+        if (section === 'inventory') {
+          return `/api/items?action=by-users&users=${userId}&include-users=true`
+        } else if (section === 'lists') {
+          return `/api/lists?action=by-creators&users=${userId}`
+        } else {
+          throw error_.notFound({ id, section })
+        }
       } else {
         if (isUsername(id)) {
           return `/api/users?action=by-usernames&usernames=${id}`
