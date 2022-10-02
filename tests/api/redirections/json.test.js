@@ -107,6 +107,14 @@ describe('json redirections', () => {
       paramsUsersIds.every(userId => allUsersIds.includes(userId))
     })
   })
+
+  describe('shelves', () => {
+    it('should redirect to a shelf with its items', async () => {
+      const { _id } = await someUserPromise
+      const { headers } = await rawRequest('get', `/shelves/${_id}.json`)
+      headers.location.should.equal(`${host}/api/shelves?action=by-ids&ids=${_id}&with-items=true`)
+    })
+  })
 })
 
 const getGroupMembersIds = ({ admins, members }) => {

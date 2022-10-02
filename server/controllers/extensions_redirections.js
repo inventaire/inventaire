@@ -87,7 +87,7 @@ const redirections = {
       }
     },
     items: id => `/api/items?action=by-ids&ids=${id}`,
-    shelves: id => `/api/shelves?action=by-ids&ids=${id}`
+    shelves: id => `/api/shelves?action=by-ids&ids=${id}&with-items=true`
     // transactions: id =>
   },
 
