@@ -43,7 +43,19 @@ const entitiesUtils = module.exports = {
   deleteByUris: uris => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
+    if (uris.length === 0) return
     return authReq('post', '/api/entities?action=delete', { uris })
+  },
+
+  getReverseClaims: async (property, value) => {
+    const url = buildUrl('/api/entities', { action: 'reverse-claims', property, value })
+    const { uris } = await publicReq('get', url)
+    return uris
+  },
+
+  deleteByExternalId: async (property, externalId) => {
+    const uris = await entitiesUtils.getReverseClaims(property, externalId)
+    return entitiesUtils.deleteByUris(uris)
   },
 
   merge: (fromUri, toUri, options = {}) => {
