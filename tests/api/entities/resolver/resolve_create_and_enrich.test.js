@@ -1,6 +1,7 @@
 const should = require('should')
 const { authReq } = require('tests/api/utils/utils')
 const { deleteByUris, deleteByExternalId } = require('tests/api/utils/entities')
+const { uploadSomeImage } = require('tests/api/utils/images')
 
 describe('entities:resolve:create-and-enrich', () => {
   // This tests requires to have CONFIG.dataseed.enabled = true
@@ -29,6 +30,26 @@ describe('entities:resolve:create-and-enrich', () => {
     }, true)
     edition.isbn.should.equal(isbn)
     should(edition.claims['invp:P2']).be.ok()
+  })
+
+  // This tests requires to have CONFIG.dataseed.enabled = true
+  xit('should not try to enrich an edition seed that already has an image claim', async () => {
+    // An image is expected to be found by dataseed for this isbn
+    const isbn = '9782070375165'
+    // Make sure the resolver will have to create the edition
+    await deleteByUris(`isbn:${isbn}`)
+    const { hash } = await uploadSomeImage({ container: 'entities', preventAutoRemove: true })
+    const edition = await resolveCreateAndEnrichEdition({
+      edition: {
+        isbn,
+        claims: {
+          'invp:P2': [ hash ]
+        }
+      },
+      works: [ { labels: { fr: 'La Ferme des animaux' } } ]
+    }, true)
+    edition.isbn.should.equal(isbn)
+    edition.claims['invp:P2'].should.deepEqual([ hash ])
   })
 
   it('should not crash if no isbn is set', async () => {

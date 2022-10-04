@@ -47,7 +47,7 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   // garantee that an edition shall not have label
   edition.labels = {}
 
-  if (!imageUrl && enrich === true && isbn != null) {
+  if (!imageUrl && !edition.claims['invp:P2']?.[0] && enrich === true && isbn != null) {
     try {
       const { url } = await getImageByIsbn(isbn)
       imageUrl = url
