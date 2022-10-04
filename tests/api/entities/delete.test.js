@@ -50,7 +50,6 @@ describe('entities:delete', () => {
     let { entities } = await getByUris(uris)
     entities = Object.values(entities)
     entities[0]._meta_type.should.equal('removed:placeholder')
-    entities[0]._meta_type.should.equal('removed:placeholder')
   })
 
   it('should delete claims where the entity is the value', async () => {
