@@ -16,7 +16,7 @@ describe('entities:delete', () => {
   })
 
   it('should reject empty array as uris', async () => {
-    await deleteByUris()
+    await authReq('post', '/api/entities?action=delete', { uris: [] })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("uris array can't be empty")
