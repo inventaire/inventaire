@@ -1,4 +1,3 @@
-const { validFilters } = require('./lib/queries_commons')
 const getItemsByUsers = require('./lib/get_items_by_users')
 
 const sanitization = {
@@ -6,8 +5,6 @@ const sanitization = {
   limit: { optional: true },
   offset: { optional: true },
   context: {
-    generic: 'allowlist',
-    allowlist: validFilters,
     optional: true
   },
   'include-users': {

@@ -8,6 +8,7 @@ const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
 const { normalizeString } = require('lib/utils/base')
 const { isWikimediaLanguageCode } = require('lib/wikimedia')
+const { isVisibilityKey, isVisibilityKeyArray } = require('models/validations/visibility')
 
 // Parameters attributes:
 // - format (optional)
@@ -18,7 +19,7 @@ const { isWikimediaLanguageCode } = require('lib/wikimedia')
 const validations = {
   common: require('models/validations/common'),
   user: require('models/validations/user'),
-  visibility: require('models/validations/visibility'),
+  visibility: isVisibilityKeyArray,
 }
 
 const parseNumberString = value => {
@@ -256,6 +257,14 @@ module.exports = {
       }
     },
     validate: _.isColorHexCode
+  },
+  context: {
+    validate: (value, name, config) => {
+      if (!isVisibilityKey(value)) {
+        throw error_.new(`invalid context: ${value}`, 400, { value })
+      }
+      return true
+    }
   },
   email: { validate: validations.common.email },
   emails,

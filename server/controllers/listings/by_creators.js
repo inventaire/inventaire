@@ -12,12 +12,16 @@ const sanitization = {
   'with-elements': {
     optional: true,
     generic: 'boolean',
-  }
+  },
+  context: {
+    optional: true
+  },
 }
-const controller = async ({ users, offset, limit, withElements, reqUserId }) => {
+
+const controller = async ({ users, offset, limit, context, withElements, reqUserId }) => {
   const foundListings = await listings_.byCreators(users)
   const allVisibleListings = await filterVisibleDocs(foundListings, reqUserId)
-  const { items: authorizedListings } = paginate(allVisibleListings, { offset, limit })
+  const { items: authorizedListings } = paginate(allVisibleListings, { offset, limit, context })
   if (withElements && isNonEmptyArray(authorizedListings)) {
     await assignElementsToLists(authorizedListings)
   }
