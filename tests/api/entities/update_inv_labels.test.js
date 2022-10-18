@@ -11,7 +11,7 @@ describe('entities:update-labels:inv', () => {
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {
-      await updateLabel({ uri: _id, lang: 'fr', value: null }).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'fr' }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: value')
@@ -108,5 +108,13 @@ describe('entities:update-labels:inv', () => {
     responses.forEach(res => should(res.ok).be.true())
     const updatedHuman = await getByUri(uri)
     langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
+  })
+
+  it('should remove a label', async () => {
+    const { _id, uri } = await humanPromise
+    const value = randomString(15)
+    await updateLabel({ uri: _id, lang: 'fr', value })
+    const updatedHuman = await getByUri(uri)
+    updatedHuman.labels.fr.should.equal(value)
   })
 })

@@ -7,7 +7,7 @@ const sanitization = {
   uri: { optional: true },
   id: { optional: true },
   lang: {},
-  value: { type: 'string' },
+  value: { type: 'string', optional: true },
 }
 
 const controller = async (params, req) => {
@@ -18,6 +18,8 @@ const controller = async (params, req) => {
 
   if (uri) id = unprefixify(uri)
 
+  // Let value=null through to allow to delete a label
+  if (value === undefined) throw error_.newMissingBody('value')
   if (value === '') throw error_.new('invalid value', 400, params)
 
   if (updater == null) {
