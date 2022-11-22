@@ -53,7 +53,7 @@ describe('entities:resolve', () => {
 
   it('should resolve an edition with no ISBN to an existing edition, if the title matches', async () => {
     const { isbn, claims } = await createEditionWithIsbn()
-    const editionTitle = claims['wdt:P1476'][0]
+    const editionTitle = claims['wdt:P1476'][0].toUpperCase()
     const workUri = claims['wdt:P629'][0]
     const entry = {
       edition: { claims: { 'wdt:P1476': `${editionTitle}: novel` } },

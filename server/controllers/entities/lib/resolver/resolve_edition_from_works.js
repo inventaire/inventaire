@@ -31,7 +31,7 @@ const isMatchingEdition = (editionSeed, editionSeedTitle) => edition => {
 const getNormalizedTitle = ({ claims }) => {
   const title = claims['wdt:P1476']?.[0]
   if (!title) return
-  return ASCIIFolder.foldMaintaining(normalizeString(title))
+  return ASCIIFolder.foldMaintaining(normalizeString(title)).toLowerCase()
 }
 
 const editionSeedHasNoContradictingClaim = (editionSeed, edition) => {
