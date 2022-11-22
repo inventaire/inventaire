@@ -14,16 +14,20 @@ module.exports = entry => {
 
   if (_.isArray(edition)) {
     if (edition.length > 1) throw error_.new('multiple editions not supported', 400, { edition })
-    else { edition = (entry.edition = edition[0]) }
+    else edition = entry.edition = edition[0]
   }
 
   if (edition == null) {
     throw error_.new('missing edition in entry', 400, { entry })
   }
 
+  if (Object.keys(edition).length === 0 && _.isEmpty(entry.works)) {
+    throw error_.new('either edition or works should not be empty', 400, { entry })
+  }
+
   const authorsSeeds = entry.authors != null ? entry.authors : (entry.authors = [])
 
-  if (!_.isNonEmptyArray(entry.works)) {
+  if (_.isEmpty(entry.works)) {
     const work = createWorkSeedFromEdition(edition)
     entry.works = (work != null) ? [ work ] : []
   }
