@@ -13,8 +13,8 @@ const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
 
 const relocateQualifierProperties = invEntity => {
   const { claims } = invEntity
-  const series = claims['wdt:P179']
-  const seriesOrdinals = claims['wdt:P1545']
+  const series = claims.P179
+  const seriesOrdinals = claims.P1545
 
   if (!seriesOrdinals) return
 
@@ -31,14 +31,14 @@ const relocateQualifierProperties = invEntity => {
   }
 
   // Using wikibase-edit compact notation
-  claims['wdt:P179'] = {
+  claims.P179 = {
     value: series[0],
     qualifiers: {
-      'wdt:P1545': seriesOrdinals[0],
+      P1545: seriesOrdinals[0],
     }
   }
 
-  delete claims['wdt:P1545']
+  delete claims.P1545
 }
 
 const qualifierProperties = {

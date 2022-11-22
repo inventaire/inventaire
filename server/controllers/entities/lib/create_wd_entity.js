@@ -65,6 +65,8 @@ const validateWikidataCompliance = entity => {
 const format = entity => {
   const { claims } = entity
   entity.claims = Object.keys(claims).reduce(unprefixifyClaims(claims), {})
+  // Relocate qualifier properties after unprefixifying,
+  // as the unprefixifyClaims function doesn't handle qualifiers
   relocateQualifierProperties(entity)
   return entity
 }

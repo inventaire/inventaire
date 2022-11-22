@@ -12,7 +12,7 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            'wdt:P1545': [ '1' ]
+            P1545: [ '1' ]
           }
         })
         shouldNotBeCalled()
@@ -24,7 +24,7 @@ describe('wikidata data model converter', () => {
     it('should not throw when several series are set but no ordinal', () => {
       relocateQualifierProperties({
         claims: {
-          'wdt:P179': [ 'wd:Q1', 'wd:Q2' ],
+          P179: [ 'Q1', 'Q2' ],
         }
       })
     })
@@ -33,8 +33,8 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            'wdt:P179': [ 'wd:Q1', 'wd:Q2' ],
-            'wdt:P1545': [ '1' ],
+            P179: [ 'Q1', 'Q2' ],
+            P1545: [ '1' ],
           }
         })
         shouldNotBeCalled()
@@ -47,8 +47,8 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            'wdt:P179': [ 'wd:Q1' ],
-            'wdt:P1545': [ '1', '2' ],
+            P179: [ 'Q1' ],
+            P1545: [ '1', '2' ],
           }
         })
         shouldNotBeCalled()
@@ -59,15 +59,15 @@ describe('wikidata data model converter', () => {
 
     it('should move a serie ordinal as qualifier of a claim', () => {
       const claims = {
-        'wdt:P179': [ 'wd:Q1' ],
-        'wdt:P1545': [ '1' ],
+        P179: [ 'Q1' ],
+        P1545: [ '1' ],
       }
       relocateQualifierProperties({ claims })
       claims.should.deepEqual({
-        'wdt:P179': {
-          value: 'wd:Q1',
+        P179: {
+          value: 'Q1',
           qualifiers: {
-            'wdt:P1545': '1',
+            P1545: '1',
           }
         }
       })
