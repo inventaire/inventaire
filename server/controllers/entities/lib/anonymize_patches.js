@@ -2,12 +2,14 @@ const _ = require('builders/utils')
 const user_ = require('controllers/user/lib/user')
 const { shouldBeAnonymized } = require('models/user')
 
-module.exports = async patches => {
+module.exports = async ({ patches, reqUserId }) => {
   const usersIds = _.uniq(_.map(patches, 'user'))
   const users = await user_.byIds(usersIds)
   const deanonymizedUsersIds = getDeanonymizedUsersIds(users)
   patches.forEach(patch => {
-    if (!deanonymizedUsersIds.has(patch.user)) anonymizePatch(patch)
+    if (patch.user === reqUserId) return
+    if (deanonymizedUsersIds.has(patch.user)) return
+    anonymizePatch(patch)
   })
 }
 

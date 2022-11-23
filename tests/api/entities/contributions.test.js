@@ -1,5 +1,5 @@
 const should = require('should')
-const { adminReq, getUser, getReservedUser, authReq, shouldNotBeCalled, getDeanonymizedUser } = require('../utils/utils')
+const { adminReq, getUser, getReservedUser, authReq, shouldNotBeCalled, getDeanonymizedUser, customAuthReq } = require('../utils/utils')
 const { createWork } = require('../fixtures/entities')
 const endpoint = '/api/entities?action=contributions'
 const { wait } = require('lib/promises')
@@ -135,6 +135,14 @@ describe('entities:contributions', () => {
       should(patches.find(isEntityPatch(workA)).user).not.be.ok()
       should(patches.find(isEntityPatch(workB)).user).not.be.ok()
       patches.find(isEntityPatch(workC)).user.should.equal(deanonymizedUser._id)
+    })
+
+    it('should not anonymize contributions when the patch author is the requesting user', async () => {
+      const user = await getReservedUser()
+      const { _id: workId } = await createWork({ user })
+      const { patches } = await customAuthReq(user, 'get', `${endpoint}&limit=1`)
+      patches[0]._id.should.startWith(workId)
+      patches[0].user.should.equal(user._id)
     })
   })
 })
