@@ -14,9 +14,14 @@ process.stdout.write(headers + '\n')
 const parse = line => {
   // Omit the last empty line
   if (!_.isNonEmptyString(line)) return
-  const json = JSON.parse(line.replace(/,$/, ''))
-  // Output on process.stdin
-  process.stdout.write(serializeEntityInTurtle(json) + '\n')
+  try {
+    const json = JSON.parse(line.replace(/,$/, ''))
+    // Output on process.stdin
+    process.stdout.write(serializeEntityInTurtle(json) + '\n')
+  } catch (err) {
+    console.error('error on line', line)
+    throw err
+  }
 }
 
 process.stdin
