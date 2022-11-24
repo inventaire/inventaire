@@ -2,6 +2,7 @@ const _ = require('builders/utils')
 const resolveWorksFromEdition = require('./resolve_works_from_edition')
 const resolveAuthorsFromWorks = require('./resolve_authors_from_works')
 const resolveWorksFromAuthors = require('./resolve_works_from_authors')
+const resolveEditionFromWorks = require('./resolve_edition_from_works')
 
 // Resolve a work(or author) seed when the author(or work) seed is already resolved
 
@@ -13,5 +14,6 @@ module.exports = async entry => {
   await resolveWorksFromEdition(works, edition)
   await resolveAuthorsFromWorks(authors, works)
   await resolveWorksFromAuthors(works, authors)
+  await resolveEditionFromWorks(edition, works)
   return entry
 }

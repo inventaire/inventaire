@@ -3,7 +3,6 @@ const error_ = require('lib/error/error')
 const isbn_ = require('lib/isbn/isbn')
 const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
 const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
-const properties = require('../properties/properties_values_constraints')
 const sanitizeSeed = require('./sanitize_seed')
 
 // Validate : requires only one edition to resolve from and a valid isbn
@@ -15,16 +14,20 @@ module.exports = entry => {
 
   if (_.isArray(edition)) {
     if (edition.length > 1) throw error_.new('multiple editions not supported', 400, { edition })
-    else { edition = (entry.edition = edition[0]) }
+    else edition = entry.edition = edition[0]
   }
 
   if (edition == null) {
     throw error_.new('missing edition in entry', 400, { entry })
   }
 
+  if (Object.keys(edition).length === 0 && _.isEmpty(entry.works)) {
+    throw error_.new('either edition or works should not be empty', 400, { entry })
+  }
+
   const authorsSeeds = entry.authors != null ? entry.authors : (entry.authors = [])
 
-  if (!_.isNonEmptyArray(entry.works)) {
+  if (_.isEmpty(entry.works)) {
     const work = createWorkSeedFromEdition(edition)
     entry.works = (work != null) ? [ work ] : []
   }
@@ -43,16 +46,8 @@ const sanitizeEdition = edition => {
   if (rawIsbn != null) {
     if (!isValidIsbn(rawIsbn)) throw error_.new('invalid isbn', 400, { edition })
     edition.isbn = normalizeIsbn(rawIsbn)
-  } else {
-    const claims = edition.claims || {}
-    const claimsProperties = Object.keys(claims)
-    if (!_.some(claimsProperties, isExternalIdProperty)) {
-      throw error_.new('no isbn or external id claims found', 400, { edition })
-    }
   }
 }
-
-const isExternalIdProperty = propertyId => properties[propertyId].isExternalId
 
 const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
 

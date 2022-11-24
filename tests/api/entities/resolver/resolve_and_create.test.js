@@ -2,7 +2,7 @@ const _ = require('builders/utils')
 const should = require('should')
 const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
 const { getByUris, getHistory } = require('tests/api/utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn } = require('tests/api/fixtures/entities')
+const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn, createWork } = require('tests/api/fixtures/entities')
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
@@ -32,7 +32,7 @@ describe('entities:resolve:create-unresolved', () => {
     entries[0].edition.uri.should.equal(uri)
   })
 
-  it('should create edition with title and isbn', async () => {
+  it('should create an edition with a title and an isbn', async () => {
     const editionLabel = randomLabel()
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } },
@@ -47,6 +47,21 @@ describe('entities:resolve:create-unresolved', () => {
     const newEditionTitle = editionClaims['wdt:P1476'][0]
 
     should(editionClaims['wdt:P212'][0]).be.ok()
+    newEditionTitle.should.equal(editionLabel)
+  })
+
+  it('should create an edition with a title and no isbn', async () => {
+    const editionLabel = randomLabel()
+    const { entries } = await resolveAndCreate({
+      edition: { claims: { 'wdt:P1476': editionLabel } },
+      works: [ { labels: { en: randomLabel() } } ]
+    })
+    const result = entries[0]
+    result.edition.uri.should.startWith('inv:')
+    const { edition } = result
+    const { entities } = await getByUris(edition.uri)
+    const editionClaims = Object.values(entities)[0].claims
+    const newEditionTitle = editionClaims['wdt:P1476'][0]
     newEditionTitle.should.equal(editionLabel)
   })
 
@@ -176,5 +191,18 @@ describe('entities:resolve:create-unresolved', () => {
     } catch (err) {
       err.body.status_verbose.should.startWith('invalid labels')
     }
+  })
+
+  it('should reject an edition with no title', async () => {
+    const { uri: workUri } = await createWork()
+    await resolveAndCreate({
+      edition: { claims: {} },
+      works: [ { uri: workUri } ]
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.startWith('an edition should have a title')
+    })
   })
 })
