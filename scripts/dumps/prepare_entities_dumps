@@ -16,12 +16,15 @@ password=$(db_param password)
 db_name='entities-prod'
 root_cwd="$(pwd)"
 
+echo "folder: $folder"
+
 cd "$folder"
 rm -f ./latest
 ln -sr "./${today}" latest
 
 raw_db_json_filename="${db_name}.json"
 output_file="${today_folder}/${raw_db_json_filename}"
+echo "backup output_file: $output_file"
 
 # Dumping the database only if the file doesn't already exist,
 # which means that this file should be deleted to start a new dump version
