@@ -37,7 +37,8 @@ const routes = module.exports = {
   'api/users': endpoint('./users/users'),
   'api/activitypub': endpoint('./activitypub/activitypub'),
   'img/*': endpoint('./images/resize'),
-  '.well-known/webfinger': endpoint('./activitypub/webfinger')
+  '.well-known/webfinger': endpoint('./activitypub/webfinger'),
+  '.well-known/host-meta': endpoint('./activitypub/host-meta'),
 }
 
 if (CONFIG.autofixI18n) {
