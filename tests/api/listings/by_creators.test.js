@@ -84,7 +84,18 @@ describe('listings:by-creators', () => {
   })
 
   describe('context', () => {
+    it('should reject invalid visibility key', async () => {
+      const user = await getReservedUser()
+      return customAuthReq(user, 'get', `${endpoint}&users=${user._id}&context=''`)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.startWith('invalid context')
+      })
+    })
+
     it('should not return the requesting user private listings in a group context', async () => {
+      // to avoid giving the false impression that those are visible by other members of the group
       const user = await getReservedUser()
       const group = await createGroup({ user })
       const groupVisibilityKey = getGroupVisibilityKey(group._id)
