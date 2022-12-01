@@ -249,9 +249,23 @@ describe('entities:get:by-isbns', () => {
       res.notFound[0].should.equal(uri)
     })
 
-    it('should autocreate from seed when autocreation is true', async () => {
+    it('should autocreate from authorities seed when autocreation is true', async () => {
       const isbnKnownBySeedsSources = '9782207116746'
       const uri = `isbn:${isbnKnownBySeedsSources}`
+      await deleteByUris([ uri ])
+      const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
+      notFound.should.deepEqual([ uri ])
+      const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
+      const entity = res.entities[uri]
+      entity.should.be.an.Object()
+      entity.uri.should.equal(uri)
+      should(res.notFound).not.be.ok()
+    })
+
+    // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+    xit('should autocreate from dataseed seed when autocreation is true', async () => {
+      const isbnKnownByDataseed = '9783030917043'
+      const uri = `isbn:${isbnKnownByDataseed}`
       await deleteByUris([ uri ])
       const { notFound } = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=false`)
       notFound.should.deepEqual([ uri ])

@@ -21,19 +21,23 @@ module.exports = entry => {
     throw error_.new('missing edition in entry', 400, { entry })
   }
 
-  if (Object.keys(edition).length === 0 && _.isEmpty(entry.works)) {
+  if (_.isPlainObject(entry.works)) entry.works = [ entry.works ]
+  if (_.isPlainObject(entry.authors)) entry.authors = [ entry.authors ]
+
+  entry.works = entry.works || []
+  entry.authors = entry.authors || []
+
+  if (Object.keys(edition).length === 0 && entry.works.length === 0) {
     throw error_.new('either edition or works should not be empty', 400, { entry })
   }
 
-  const authorsSeeds = entry.authors != null ? entry.authors : (entry.authors = [])
-
-  if (_.isEmpty(entry.works)) {
+  if (entry.works.length === 0) {
     const work = createWorkSeedFromEdition(edition)
-    entry.works = (work != null) ? [ work ] : []
+    if (work) entry.works = [ work ]
   }
 
   sanitizeEdition(entry.edition)
-  sanitizeCollection(authorsSeeds, 'human')
+  sanitizeCollection(entry.authors, 'human')
   sanitizeCollection(entry.works, 'work')
   return entry
 }

@@ -70,9 +70,11 @@ const buildEntry = async seed => {
       },
       image,
     },
-    works: {
-      labels: { [lang]: title }
-    },
+    works: [
+      {
+        labels: { [lang]: title }
+      },
+    ],
     authors: authors.map(authorName => ({
       labels: { [lang]: authorName }
     }))
