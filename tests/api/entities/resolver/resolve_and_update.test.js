@@ -125,7 +125,7 @@ describe('entities:resolver:update-resolved', () => {
       err.statusCode.should.equal(400)
       // Having a more specific error would be nice,
       // but that's better than nothing
-      err.body.status_verbose.should.equal('request error')
+      err.body.status_verbose.should.equal('invalid image url')
     }
   })
 
