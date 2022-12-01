@@ -7,11 +7,16 @@ const keywordValues = [
   'public',
 ]
 
-const isValidVisibilityValue = value => {
+const isVisibilityKey = value => {
   if (!_.isString(value)) return false
   if (keywordValues.includes(value)) return true
   if (isVisibilityGroupKey(value)) return true
   return false
 }
 
-module.exports = arr => _.isArray(arr) && arr.every(isValidVisibilityValue)
+const isVisibilityKeyArray = arr => _.isArray(arr) && arr.every(isVisibilityKey)
+
+module.exports = {
+  isVisibilityKey,
+  isVisibilityKeyArray,
+}

@@ -8,6 +8,7 @@ const { truncateLatLng } = require('lib/geo')
 const { isValidIsbn } = require('lib/isbn/isbn')
 const { normalizeString } = require('lib/utils/base')
 const { isWikimediaLanguageCode } = require('lib/wikimedia')
+const { isVisibilityKey, isVisibilityKeyArray } = require('models/validations/visibility')
 
 // Parameters attributes:
 // - format (optional)
@@ -18,7 +19,7 @@ const { isWikimediaLanguageCode } = require('lib/wikimedia')
 const validations = {
   common: require('models/validations/common'),
   user: require('models/validations/user'),
-  visibility: require('models/validations/visibility'),
+  visibility: isVisibilityKeyArray,
 }
 
 const parseNumberString = value => {
@@ -139,7 +140,7 @@ const arrayOfNumbers = {
 }
 
 const imgUrl = {
-  format: (value, name, config) => {
+  format: value => {
     let decodedUrl = decodeURIComponent(value)
     if (decodedUrl[0] === '/') decodedUrl = `${origin}${decodedUrl}`
     return decodedUrl
@@ -170,7 +171,7 @@ const allowlistedStrings = {
 
 const lang = {
   default: 'en',
-  validate: (value, name, config) => {
+  validate: (value, config) => {
     if (config.type === 'wikimedia') {
       return isWikimediaLanguageCode(value)
     } else {
@@ -234,7 +235,7 @@ module.exports = {
     format: value => {
       return JSON.parse(value)
     },
-    validate: (bbox, name, config) => {
+    validate: bbox => {
       if (_.typeOf(bbox) !== 'array') return false
       if (bbox.length !== 4) return false
       for (const coordinate of bbox) {
@@ -256,6 +257,14 @@ module.exports = {
       }
     },
     validate: _.isColorHexCode
+  },
+  context: {
+    validate: value => {
+      if (!isVisibilityKey(value)) {
+        throw error_.new(`invalid context: ${value}`, 400, { value })
+      }
+      return true
+    }
   },
   email: { validate: validations.common.email },
   emails,

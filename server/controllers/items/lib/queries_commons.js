@@ -2,14 +2,7 @@ const _ = require('builders/utils')
 const user_ = require('controllers/user/lib/user')
 const { setItemsBusyFlag } = require('controllers/transactions/lib/transactions')
 const snapshot_ = require('./snapshot/snapshot')
-
-const filters = {
-  // Prevent showing private items in group context to avoid giving the false
-  // impression that those are visible by other members of the group
-  group: item => item.visibility.length > 0
-}
-
-const validFilters = Object.keys(filters)
+const { isVisibilityGroupKey } = require('lib/boolean_validations')
 
 const addUsersData = async (page, reqParams) => {
   const { reqUserId, includeUsers } = reqParams
@@ -33,7 +26,6 @@ const addItemsSnapshots = items => {
 }
 
 module.exports = {
-  validFilters,
   addItemsSnapshots,
 
   addAssociatedData: async (page, reqParams) => {
@@ -46,22 +38,37 @@ module.exports = {
   },
 
   paginate: (items, params) => {
-    let { limit, offset, filter } = params
+    let { limit, offset, context } = params
     items = items.sort(byCreationDate)
-    if (filter != null) items = items.filter(filters[filter])
+    if (context != null) {
+      items = items.filter(canBeDisplayedInContext(context))
+    }
     const total = items.length
     if (offset == null) offset = 0
     const last = offset + limit
 
     if (limit != null) {
       items = items.slice(offset, last)
-      const data = { items, total, offset, filter }
+      const data = { items, total, offset, context }
       if (last < total) data.continue = last
       return data
     } else {
-      return { items, total, offset, filter }
+      return { items, total, offset, context }
     }
   }
 }
 
 const byCreationDate = (a, b) => b.created - a.created
+
+const canBeDisplayedInContext = context => item => {
+  if (isVisibilityGroupKey(context)) {
+    const { visibility } = item
+    if (visibility.includes('public') || visibility.includes('groups') || visibility.includes(context)) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return true
+  }
+}

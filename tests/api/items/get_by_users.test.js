@@ -3,8 +3,9 @@ require('should')
 const { getUser, authReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
 const { shouldNotBeCalled } = require('tests/unit/utils')
 const { createItem } = require('../fixtures/items')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
+const { getSomeGroup, addMember, createGroup } = require('../fixtures/groups')
 const { humanName } = require('../fixtures/entities')
+const { getGroupVisibilityKey } = require('lib/visibility/visibility')
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-users'
@@ -31,22 +32,24 @@ describe('items:get-by-users', () => {
     resItemsIds.should.containDeep(itemsIds)
   })
 
-  it('should not get private own user items in a group context', async () => {
-    // to avoid giving the false impression that those are visible by other members of the group
+  it('should not return the requesting user private and friend-only items in a group context', async () => {
+    const user = await getUser()
+    const group = await createGroup({ user })
+    const groupVisibilityKey = getGroupVisibilityKey(group._id)
     const [ groupsItem, privateItem, publicItem, friendsItem ] = await Promise.all([
-      createItem(getUser(), { visibility: [ 'groups' ] }),
-      createItem(getUser(), { visibility: [] }),
-      createItem(getUser(), { visibility: [ 'public' ] }),
-      createItem(getUser(), { visibility: [ 'friends' ] }),
+      createItem(user, { visibility: [ 'groups' ] }),
+      createItem(user, { visibility: [] }),
+      createItem(user, { visibility: [ 'public' ] }),
+      createItem(user, { visibility: [ 'friends' ] }),
     ])
     const userId = groupsItem.owner
-    const { items } = await authReq('get', `${endpoint}&users=${userId}&filter=group`)
+    const { items } = await authReq('get', `${endpoint}&users=${userId}&context=${groupVisibilityKey}`)
     const resUserId = _.map(items, 'owner')
     resUserId.should.containEql(userId)
     const resItemsIds = items.map(_.property('_id'))
     resItemsIds.should.containEql(publicItem._id)
     resItemsIds.should.containEql(groupsItem._id)
-    resItemsIds.should.containEql(friendsItem._id)
+    resItemsIds.should.not.containEql(friendsItem._id)
     resItemsIds.should.not.containEql(privateItem._id)
   })
 
