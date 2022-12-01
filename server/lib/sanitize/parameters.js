@@ -140,7 +140,7 @@ const arrayOfNumbers = {
 }
 
 const imgUrl = {
-  format: (value, name, config) => {
+  format: value => {
     let decodedUrl = decodeURIComponent(value)
     if (decodedUrl[0] === '/') decodedUrl = `${origin}${decodedUrl}`
     return decodedUrl
@@ -171,7 +171,7 @@ const allowlistedStrings = {
 
 const lang = {
   default: 'en',
-  validate: (value, name, config) => {
+  validate: (value, config) => {
     if (config.type === 'wikimedia') {
       return isWikimediaLanguageCode(value)
     } else {
@@ -235,7 +235,7 @@ module.exports = {
     format: value => {
       return JSON.parse(value)
     },
-    validate: (bbox, name, config) => {
+    validate: bbox => {
       if (_.typeOf(bbox) !== 'array') return false
       if (bbox.length !== 4) return false
       for (const coordinate of bbox) {
@@ -259,7 +259,7 @@ module.exports = {
     validate: _.isColorHexCode
   },
   context: {
-    validate: (value, name, config) => {
+    validate: value => {
       if (!isVisibilityKey(value)) {
         throw error_.new(`invalid context: ${value}`, 400, { value })
       }
