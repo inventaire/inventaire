@@ -18,6 +18,13 @@ describe('json redirections', () => {
     headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
   })
 
+  it('should redirect a claim to its entity value', async () => {
+    const { _id } = await someEntityPromise
+    const uri = `inv:${_id}`
+    const { headers } = await rawRequest('get', `/entity/wdt:P921-${uri}.json`)
+    headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
+  })
+
   it('should redirect to an item by id', async () => {
     const { _id } = await someItemPromise
     const { headers } = await rawRequest('get', `/items/${_id}.json`)
