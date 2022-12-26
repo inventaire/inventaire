@@ -69,7 +69,10 @@ export default {
   // Library of Congress authority ID
   'wdt:P244': externalId(/^(gf|n|nb|nr|no|ns|sh|sj)([4-9][0-9]|00|20[0-2][0-9])[0-9]{6}$/),
   // BNF id
-  'wdt:P268': externalId(/^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/),
+  'wdt:P268': externalIdWithFormatter({
+    regex: /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/,
+    format: id => id.replace(/^cb/, ''),
+  }),
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
   // language of work
