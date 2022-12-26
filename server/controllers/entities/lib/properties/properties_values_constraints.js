@@ -54,7 +54,7 @@ export default {
   'wdt:P212': isbnProperty(13),
   // ISNI
   'wdt:P213': externalIdWithFormatter({
-    regex: /^\d{4} ?\d{4} ?\d{4} ?\d{3}[0-9X]$/,
+    regex: /^\d{4} \d{4} \d{4} \d{3}[0-9X]$/,
     format: id => {
       id = id.replace(/\s/g, '')
       return `${id.slice(0, 4)} ${id.slice(4, 8)} ${id.slice(8, 12)} ${id.slice(12)}`
