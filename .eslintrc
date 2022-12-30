@@ -15,9 +15,6 @@
     // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
     "standard"
   ],
-  "plugins": [
-    "prefer-arrow"
-  ],
   "rules": {
     "array-bracket-spacing": [ "error", "always" ],
     "arrow-parens": [ "error", "as-needed" ],
@@ -37,7 +34,6 @@
     "object-curly-spacing": [ "error", "always" ],
     "object-shorthand": [ "error", "properties" ],
     "one-var": [ "off" ],
-    "prefer-arrow/prefer-arrow-functions": [ "error" ],
     "prefer-arrow-callback": [ "error" ],
     "prefer-const": [ "error" ]
   }
