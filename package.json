@@ -69,7 +69,6 @@
     "level-ttl": "^3.1.1",
     "leven": "^2.1.0",
     "lodash": "^4.17.15",
-    "module-alias": "^2.2.2",
     "moment": "^2.21.0",
     "mv": "^2.1.1",
     "ndjson-apply": "^1.2.5",
@@ -111,20 +110,17 @@
   "engines": {
     "node": ">= 16.6"
   },
-  "_moduleAliases": {
-    "builders": "server/builders",
-    "client": "client",
-    "controllers": "server/controllers",
-    "data": "server/data",
-    "db": "server/db",
-    "i18nAssets": "inventaire-i18n/assets",
-    "i18nDist": "inventaire-i18n/dist/server",
-    "i18nSrc": "inventaire-i18n/original",
-    "lib": "server/lib",
-    "models": "server/models",
-    "scripts": "scripts",
-    "server": "server",
-    "tests": "tests",
-    "root": "."
+  "imports": {
+    "#builders/*": "./server/builders/*.js",
+    "#controllers/*": "./server/controllers/*.js",
+    "#data/*": "./server/data/*.js",
+    "#db/*": "./server/db/*.js",
+    "#i18nAssets/*": "./inventaire-i18n/assets/*.js",
+    "#lib/*": "./server/lib/*.js",
+    "#models/*": "./server/models/*.js",
+    "#scripts/*": "./scripts/*.js",
+    "#server/*": "./server/*.js",
+    "#tests/*": "./tests/*.js",
+    "#root/*": "./*"
   }
 }
