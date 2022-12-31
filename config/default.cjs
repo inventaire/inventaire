@@ -9,7 +9,6 @@ const contactAddress = 'hello@inventaire.io'
 const config = module.exports = {
   name: 'inventaire',
   env: 'default',
-  universalPath: require('./universal_path'),
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
   // protocol: 'http'
