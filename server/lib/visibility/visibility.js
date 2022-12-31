@@ -1,6 +1,6 @@
-const { isVisibilityGroupKey } = require('lib/boolean_validations')
-const { getUserGroupsIds } = require('controllers/groups/lib/groups')
-const error_ = require('lib/error/error')
+import { isVisibilityGroupKey } from 'lib/boolean_validations'
+import { getUserGroupsIds } from 'controllers/groups/lib/groups'
+import error_ from 'lib/error/error'
 
 // This does async validations that can not be performed sync
 // by models/validations/visibility.js
@@ -34,7 +34,7 @@ const getVisibilitySummaryKey = visibilityKeys => {
 
 const getGroupVisibilityKey = groupId => `group:${groupId}`
 
-module.exports = {
+export default {
   validateVisibilityKeys,
   getVisibilitySummaryKey,
   getGroupVisibilityKey,

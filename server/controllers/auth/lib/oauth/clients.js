@@ -1,6 +1,7 @@
-const db = require('db/couchdb/base')('oauth_clients')
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('oauth_clients')
 
-module.exports = {
+export default {
   byId: async id => {
     const doc = await db.get(id)
     doc.id = doc._id

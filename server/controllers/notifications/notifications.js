@@ -1,7 +1,7 @@
-const radio = require('lib/radio')
-const ActionsControllers = require('lib/actions_controllers')
+import radio from 'lib/radio'
+import ActionsControllers from 'lib/actions_controllers'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
       default: require('./get')

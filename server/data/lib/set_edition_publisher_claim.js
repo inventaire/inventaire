@@ -1,4 +1,4 @@
-const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
+import { resolvePublisher } from 'controllers/entities/lib/resolver/resolve_publisher'
 
 const setEditionPublisherClaim = async entry => {
   if (!entry?.publishers) return
@@ -12,4 +12,4 @@ const setEditionPublisherClaim = async entry => {
   delete entry.publishers
 }
 
-module.exports = { setEditionPublisherClaim }
+export default { setEditionPublisherClaim }

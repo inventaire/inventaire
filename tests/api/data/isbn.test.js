@@ -1,8 +1,8 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { publicReq, shouldNotBeCalled } from '../utils/utils'
+import randomString from 'lib/utils/random_string'
+import { generateIsbn13 } from '../fixtures/entities'
 const endpoint = '/api/data?action=isbn'
-const randomString = require('lib/utils/random_string')
-const { generateIsbn13 } = require('../fixtures/entities')
 
 describe('data:isbn', () => {
   it('should reject requests without isbn', async () => {

@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const cache_ = require('lib/cache')
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import cache_ from 'lib/cache'
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`
 const headers = { accept: '*/*' }
 
-module.exports = olId => {
+export default olId => {
   const key = `ol:author-works-titles:${olId}`
   return cache_.get({
     key,

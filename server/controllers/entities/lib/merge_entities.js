@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
-const turnIntoRedirection = require('./turn_into_redirection')
-const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import entities_ from './entities'
+import Entity from 'models/entity'
+import turnIntoRedirection from './turn_into_redirection'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
 
-module.exports = ({ userId, fromUri, toUri, context }) => {
+export default ({ userId, fromUri, toUri, context }) => {
   let [ fromPrefix, fromId ] = fromUri.split(':')
   let [ toPrefix, toId ] = toUri.split(':')
 

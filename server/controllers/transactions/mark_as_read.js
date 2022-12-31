@@ -1,7 +1,8 @@
 // Mark the whole transaction as read
 
-const transactions_ = require('./lib/transactions')
-const { verifyRightToInteract } = require('./lib/rights_verification')
+import transactions_ from './lib/transactions'
+
+import { verifyRightToInteract } from './lib/rights_verification'
 
 const sanitization = {
   id: {}
@@ -14,4 +15,4 @@ const controller = async ({ id, reqUserId }) => {
   return { ok: true }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

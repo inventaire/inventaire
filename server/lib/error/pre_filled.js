@@ -1,8 +1,9 @@
 // Pre-formatted error handlers to make error responses consistent
-const { pick } = require('lodash')
-const { typeOf } = require('../utils/types')
+import { pick } from 'lodash'
 
-module.exports = error_ => {
+import { typeOf } from '../utils/types'
+
+export default error_ => {
   const newFunctions = {
     // A standardized way to return a 400 missing parameter
     // either in the request query or body

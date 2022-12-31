@@ -1,13 +1,13 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { signRequest } = require('controllers/activitypub/lib/security')
-const error_ = require('lib/error/error')
-const { getFollowActivitiesByObject } = require('./activities')
-const assert_ = require('lib/utils/assert_types')
-const { getSharedKeyPair } = require('./shared_key_pair')
-const { makeUrl } = require('./helpers')
-const { isUrl } = require('lib/boolean_validations')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import { signRequest } from 'controllers/activitypub/lib/security'
+import error_ from 'lib/error/error'
+import { getFollowActivitiesByObject } from './activities'
+import assert_ from 'lib/utils/assert_types'
+import { getSharedKeyPair } from './shared_key_pair'
+import { makeUrl } from './helpers'
+import { isUrl } from 'lib/boolean_validations'
 // Arbitrary timeout
 const timeout = 30 * 1000
 const sanitize = CONFIG.activitypub.sanitizeUrls
@@ -72,4 +72,4 @@ const postActivityToActorFollowersInboxes = async ({ activity, actorName }) => {
   }))
 }
 
-module.exports = { signAndPostActivity, postActivityToActorFollowersInboxes }
+export default { signAndPostActivity, postActivityToActorFollowersInboxes }

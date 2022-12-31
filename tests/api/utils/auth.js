@@ -1,10 +1,10 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
 const sessionCookieName = `${CONFIG.name}:session`
 const sessionSignatureCookieName = `${sessionCookieName}.sig`
 const sessionCookiePattern = new RegExp(`${sessionCookieName}=([^;]+);`)
 const sessionSignatureCookiePattern = new RegExp(`${sessionCookieName}\\.sig=([^;]+);`)
 
-module.exports = {
+export default {
   sessionCookieName,
   sessionSignatureCookieName,
 

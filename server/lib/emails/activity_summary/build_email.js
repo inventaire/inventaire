@@ -1,23 +1,22 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import { i18n } from '../i18n/i18n'
+
+import relations_ from 'controllers/relations/lib/queries'
+import groupsCounts from 'controllers/groups/lib/counts'
+import notifications_ from 'controllers/notifications/lib/notifications'
+import transactions_ from 'controllers/transactions/lib/transactions'
+import getLastNetworkBooks from './last_network_books'
+import getLastNearbyPublicBooks from './last_nearby_books'
 const host = CONFIG.getPublicOrigin()
-const { i18n } = require('../i18n/i18n')
 const { contactAddress } = CONFIG
 const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
 
-const relations_ = require('controllers/relations/lib/queries')
-const groupsCounts = require('controllers/groups/lib/counts')
-const notifications_ = require('controllers/notifications/lib/notifications')
-const transactions_ = require('controllers/transactions/lib/transactions')
-
-const getLastNetworkBooks = require('./last_network_books')
-const getLastNearbyPublicBooks = require('./last_nearby_books')
-
-module.exports = user => {
+export default user => {
   user.lang = _.shortLang(user.language)
 
   return getEmailData(user)

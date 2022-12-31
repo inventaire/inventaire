@@ -1,10 +1,9 @@
-const _ = require('builders/utils')
-const { intersection } = require('lodash')
-const { getUsersGroupsIds } = require('controllers/groups/lib/groups')
-const groups_ = require('controllers/groups/lib/groups')
-const relations_ = require('controllers/relations/lib/queries')
+import _ from 'builders/utils'
+import { intersection } from 'lodash'
+import groups_, { getUsersGroupsIds } from 'controllers/groups/lib/groups'
+import relations_ from 'controllers/relations/lib/queries'
 
-module.exports = {
+export default {
   getUserRelations: userId => {
     // just proxiing to let this module centralize
     // interactions with the social graph

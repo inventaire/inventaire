@@ -1,13 +1,17 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { checkFrequency, ttl } = require('config').entitiesRelationsTemporaryCache
-const db = require('db/level/get_sub_db')('entities-relations', 'utf8')
-const radio = require('lib/radio')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import CONFIG from 'config'
+import dbFactory from 'db/level/get_sub_db'
+import radio from 'lib/radio'
+
+const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
+
+const db = dbFactory('entities-relations', 'utf8')
 
 // This module implements a custom ttl, rather than using level-ttl
 // to be able to trigger actions once the ttl expired
 
-module.exports = {
+export default {
   get: async (property, valueUri) => {
     const keys = await getKeyRange(property, valueUri)
     return keys.map(getSubject)

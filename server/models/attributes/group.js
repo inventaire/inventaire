@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   // Attributes that can be changed by an admin with a simple validity check
   updatable: [
     'name',

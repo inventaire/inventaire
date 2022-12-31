@@ -1,8 +1,8 @@
-const should = require('should')
-const { createWork, createEdition, createHuman } = require('tests/api/fixtures/entities')
-const { getByUri } = require('tests/api/utils/entities')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const requests_ = require('lib/requests')
+import should from 'should'
+import { createWork, createEdition, createHuman } from 'tests/api/fixtures/entities'
+import { getByUri } from 'tests/api/utils/entities'
+import { publicReq, shouldNotBeCalled } from '../utils/utils'
+import requests_ from 'lib/requests'
 const endpoint = '/api/data?action=summaries'
 
 describe('summaries', () => {

@@ -1,11 +1,11 @@
-const error_ = require('lib/error/error')
-const headers_ = require('lib/headers')
-const getAuthentifiedUser = require('./lib/get_authentified_user')
-const userFeedData = require('./lib/user_feed_data')
-const groupFeedData = require('./lib/group_feed_data')
-const shelfFeedData = require('./lib/shelf_feed_data')
-const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
-const { ControllerWrapper } = require('lib/controller_wrapper')
+import error_ from 'lib/error/error'
+import headers_ from 'lib/headers'
+import getAuthentifiedUser from './lib/get_authentified_user'
+import userFeedData from './lib/user_feed_data'
+import groupFeedData from './lib/group_feed_data'
+import shelfFeedData from './lib/shelf_feed_data'
+import generateFeedFromFeedData from './lib/generate_feed_from_feed_data'
+import { ControllerWrapper } from 'lib/controller_wrapper'
 
 const sanitization = {
   user: {
@@ -70,7 +70,7 @@ const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
   else throw error_.newMissingQuery('user|group|shelf', 400)
 }
 
-module.exports = {
+export default {
   get: ControllerWrapper({
     access: 'public',
     sanitization,

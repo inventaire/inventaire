@@ -1,7 +1,7 @@
-require('should')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { authReq, shouldNotBeCalled } from '../utils/utils'
+import { createWork } from '../fixtures/entities'
 const endpoint = '/api/entities?action=move-to-wikidata'
-const { createWork } = require('../fixtures/entities')
 
 describe('entities:move-to-wikidata', () => {
   it('should reject without uri', async () => {

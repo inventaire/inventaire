@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const User = require('models/user')
-const { getUserAccessLevels } = require('lib/user_access_levels')
+import _ from 'builders/utils'
+import User from 'models/user'
+import { getUserAccessLevels } from 'lib/user_access_levels'
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
@@ -13,7 +13,7 @@ const ownerSafeData = user => {
   return safeUserDoc
 }
 
-module.exports = {
+export default {
   ownerSafeData,
 
   // Adapts the result to the requester authorization level

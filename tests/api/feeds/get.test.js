@@ -1,9 +1,9 @@
-require('should')
-const { getUser, getReservedUser } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { createItem, createItems } = require('../fixtures/items')
-const { getSomeGroup, createGroup } = require('../fixtures/groups')
-const { createShelf, createShelfWithItems } = require('../fixtures/shelves')
+import 'should'
+import { getUser, getReservedUser } from '../utils/utils'
+import { rawRequest } from '../utils/request'
+import { createItem, createItems } from '../fixtures/items'
+import { getSomeGroup, createGroup } from '../fixtures/groups'
+import { createShelf, createShelfWithItems } from '../fixtures/shelves'
 
 describe('feeds:get', () => {
   describe('user', () => {

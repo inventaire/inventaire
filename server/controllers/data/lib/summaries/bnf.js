@@ -1,10 +1,11 @@
-const requests_ = require('lib/requests')
-const cache_ = require('lib/cache')
+import requests_ from 'lib/requests'
+import cache_ from 'lib/cache'
+import { fixedEncodeURIComponent } from 'lib/utils/url'
+import wdk from 'wikidata-sdk'
+const { simplifySparqlResults } = wdk
 const timeout = 10 * 1000
-const { fixedEncodeURIComponent } = require('lib/utils/url')
-const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
 
-module.exports = async ({ id, refresh }) => {
+export default async ({ id, refresh }) => {
   const sparql = `SELECT * {
     <http://data.bnf.fr/ark:/12148/cb${id}#about> <http://purl.org/dc/terms/abstract> ?summary .
   }`

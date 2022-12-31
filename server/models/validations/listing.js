@@ -1,7 +1,7 @@
-const { isVisibilityKeyArray } = require('models/validations/visibility')
-const { pass, BoundedString, userId } = require('./common')
+import { isVisibilityKeyArray } from 'models/validations/visibility'
+import { pass, BoundedString, userId } from './common'
 
-module.exports = {
+export default {
   pass,
   description: BoundedString(0, 5000),
   visibility: isVisibilityKeyArray,

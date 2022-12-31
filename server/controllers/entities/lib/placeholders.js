@@ -5,11 +5,13 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
-const { emit } = require('lib/radio')
-const db = require('db/couchdb/base')('entities')
+import _ from 'builders/utils'
+
+import entities_ from './entities'
+import Entity from 'models/entity'
+import { emit } from 'lib/radio'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('entities')
 
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`
@@ -42,7 +44,7 @@ const PlaceholderHandler = actionName => {
   }
 }
 
-module.exports = {
+export default {
   remove: PlaceholderHandler('remove'),
   recover: PlaceholderHandler('recover')
 }

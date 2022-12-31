@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const Element = require('models/element')
-const db = require('db/couchdb/base')('elements')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import Element from 'models/element'
+import dbFactory from 'db/couchdb/base'
+import error_ from 'lib/error/error'
+const db = dbFactory('elements')
 
-const elements_ = module.exports = {
+const elements_ = {
   byId: db.get,
   byIds: db.byIds,
   byEntities: async uris => db.viewByKeys('byEntities', uris),
@@ -33,3 +34,4 @@ const elements_ = module.exports = {
     return db.fetch(elementsIds)
   },
 }
+export default elements_

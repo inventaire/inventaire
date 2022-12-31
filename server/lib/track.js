@@ -1,11 +1,13 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+
 // Doc: http://developer.piwik.org/api-reference/tracking-api
-const _ = require('builders/utils')
-const { buildUrl } = require('lib/utils/url')
+import _ from 'builders/utils'
+
+import { buildUrl } from 'lib/utils/url'
+import requests_ from './requests'
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'
-const requests_ = require('./requests')
 
 const track = (req = {}, actionArray) => {
   if (!enabled) return
@@ -51,7 +53,7 @@ const trackActor = (actorUri, actionArray) => {
   track(pseudoReq, actionArray)
 }
 
-module.exports = {
+export default {
   track,
   Track: (...args) => res => {
     // Do not wait for the track action

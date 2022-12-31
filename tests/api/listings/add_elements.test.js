@@ -1,7 +1,7 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
-const { createEdition, someFakeUri } = require('../fixtures/entities')
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { authReq } from '../utils/utils'
+import { createListing, createElement } from '../fixtures/listings'
+import { createEdition, someFakeUri } from '../fixtures/entities'
 
 const endpoint = '/api/lists?action='
 const byIds = `${endpoint}by-ids&with-elements=true`

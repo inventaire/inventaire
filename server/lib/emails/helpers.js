@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import user_ from 'controllers/user/lib/user'
+import groups_ from 'controllers/groups/lib/groups'
 
 const getUsersByIds = (user1Id, user2Id) => {
   return user_.byIds([ user1Id, user2Id ])
@@ -40,4 +40,4 @@ const catchDisabledEmails = err => {
   else throw err
 }
 
-module.exports = { getUsersByIds, getGroupAndUsersData, catchDisabledEmails }
+export default { getUsersByIds, getGroupAndUsersData, catchDisabledEmails }

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const elements_ = require('controllers/listings/lib/elements')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const listings_ = require('controllers/listings/lib/listings')
-const { paginate } = require('controllers/items/lib/queries_commons')
-const { isNonEmptyArray } = require('lib/boolean_validations')
+import _ from 'builders/utils'
+import elements_ from 'controllers/listings/lib/elements'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import listings_ from 'controllers/listings/lib/listings'
+import { paginate } from 'controllers/items/lib/queries_commons'
+import { isNonEmptyArray } from 'lib/boolean_validations'
 
 const sanitization = {
   uris: {},
@@ -32,7 +32,7 @@ const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }
 
 const assignListingsByUris = (listings, elementsByUris, listingsByUris) => uri => {
   const listingsElements = elementsByUris[uri]

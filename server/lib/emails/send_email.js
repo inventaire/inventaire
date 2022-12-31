@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const { Wait } = require('lib/promises')
-const helpers_ = require('./helpers')
-const transporter_ = require('./transporter')
-const email_ = require('./email')
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
+import _ from 'builders/utils'
+import { Wait } from 'lib/promises'
+import helpers_ from './helpers'
+import transporter_ from './transporter'
+import email_ from './email'
+import user_ from 'controllers/user/lib/user'
+import groups_ from 'controllers/groups/lib/groups'
 
-module.exports = {
+export default {
   validationEmail: (userData, token) => {
     userData = user_.serializeData(userData)
     const email = email_.validationEmail(userData, token)

@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const getOriginalLang = require('lib/wikidata/get_original_lang')
+import _ from 'builders/utils'
+import entities_ from './entities'
+import getOriginalLang from 'lib/wikidata/get_original_lang'
+import updateLabel from './update_label'
 const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
-const updateLabel = require('./update_label')
 
 // TODO: also check for edition subtitle
 
-module.exports = (edition, oldTitle) => {
+export default (edition, oldTitle) => {
   const workUris = edition.claims['wdt:P629']
   // Ignore composite editions
   if (workUris.length !== 1) return

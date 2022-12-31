@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const db = require('db/couchdb/base')('users', 'invited')
-const { findOneByEmail, byEmails } = require('controllers/user/lib/shared_user_handlers')
-const Invited = require('models/invited')
-const { makeRequest } = require('controllers/relations/lib/actions')
-const groupAction = require('controllers/groups/lib/model_action')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import dbFactory from 'db/couchdb/base'
+import { findOneByEmail, byEmails } from 'controllers/user/lib/shared_user_handlers'
+import Invited from 'models/invited'
+import { makeRequest } from 'controllers/relations/lib/actions'
+import groupAction from 'controllers/groups/lib/model_action'
+const db = dbFactory('users', 'invited')
 
-const invitations_ = module.exports = {
+const invitations_ = {
   findOneByEmail: findOneByEmail.bind(null, db),
 
   byEmails: byEmails.bind(null, db),
@@ -54,6 +55,8 @@ const invitations_ = module.exports = {
     .catch(_.ErrorRethrow('stopEmails'))
   }
 }
+
+export default invitations_
 
 const emailNotification = false
 const convertFriendInvitations = (invitersIds, newUserId) => {

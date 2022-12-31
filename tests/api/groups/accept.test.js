@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-require('should')
-const { authReq, authReqB, getUserC, getUserGetter, customAuthReq } = require('../utils/utils')
-const { getSomeGroup, createGroup } = require('../fixtures/groups')
+import _ from 'builders/utils'
+import 'should'
+import { authReq, authReqB, getUserC, getUserGetter, customAuthReq } from '../utils/utils'
+import { getSomeGroup, createGroup } from '../fixtures/groups'
+import { humanName } from '../fixtures/entities'
+import { shouldNotBeCalled } from 'tests/unit/utils'
+import { getGroup } from 'tests/api/utils/groups'
 const endpoint = '/api/groups?action=accept'
-const { humanName } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { getGroup } = require('tests/api/utils/groups')
 
 describe('groups:update:accept', () => {
   it('should reject without group', async () => {

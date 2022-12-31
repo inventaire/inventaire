@@ -1,4 +1,4 @@
-module.exports = ({ search, limit: size, minScore }) => {
+export default ({ search, limit: size, minScore }) => {
   const should = [
     // Username
     { match: { username: { query: search, boost: 5 } } },

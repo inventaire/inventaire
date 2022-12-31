@@ -1,4 +1,4 @@
-const tasks_ = require('./lib/tasks')
+import tasks_ from './lib/tasks'
 
 const sanitization = {
   uris: {}
@@ -12,7 +12,7 @@ const byEntityUris = fnName => ({
   }
 })
 
-module.exports = {
+export default {
   bySuspectUris: byEntityUris('bySuspectUris'),
   bySuggestionUris: byEntityUris('bySuggestionUris')
 }

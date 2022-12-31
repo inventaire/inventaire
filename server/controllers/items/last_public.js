@@ -1,5 +1,5 @@
-const items_ = require('controllers/items/lib/items')
-const bundleOwnersToItems = require('./lib/bundle_owners_to_items')
+import items_ from 'controllers/items/lib/items'
+import bundleOwnersToItems from './lib/bundle_owners_to_items'
 
 const sanitization = {
   limit: {
@@ -20,4 +20,4 @@ const controller = async ({ limit, offset, assertImage, reqUserId }) => {
   return bundleOwnersToItems(items, reqUserId)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,7 +1,7 @@
-const assert_ = require('lib/utils/assert_types')
-const notifications_ = require('./notifications')
+import assert_ from 'lib/utils/assert_types'
+import notifications_ from './notifications'
 
-module.exports = (groupId, actorAdminId, newAdminId) => {
+export default (groupId, actorAdminId, newAdminId) => {
   assert_.strings([ groupId, actorAdminId, newAdminId ])
   return notifications_.add(newAdminId, 'userMadeAdmin', {
     group: groupId,

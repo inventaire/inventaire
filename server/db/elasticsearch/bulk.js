@@ -1,8 +1,9 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { origin: elasticOrigin } = require('config').elasticsearch
-const { logBulkRes } = require('./helpers')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import CONFIG from 'config'
+import { logBulkRes } from './helpers'
+import assert_ from 'lib/utils/assert_types'
+const { origin: elasticOrigin } = CONFIG.elasticsearch
 const headers = { 'content-type': 'application/x-ndjson' }
 
 const addToBatch = (batch, action, index, doc) => {
@@ -31,4 +32,4 @@ const postBatch = async batch => {
   }
 }
 
-module.exports = { addToBatch, postBatch }
+export default { addToBatch, postBatch }

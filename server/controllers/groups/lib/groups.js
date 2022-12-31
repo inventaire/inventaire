@@ -1,13 +1,15 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const Group = require('models/group')
-const db = require('db/couchdb/base')('groups')
-const lists_ = require('./users_lists')
-const { add: addSlug } = require('./slug')
-const assert_ = require('lib/utils/assert_types')
-const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import Group from 'models/group'
+import dbFactory from 'db/couchdb/base'
+import lists_ from './users_lists'
+import { add as addSlug } from './slug'
+import assert_ from 'lib/utils/assert_types'
+import searchGroupsByPositionFactory from 'lib/search_by_position'
+const db = dbFactory('groups')
+const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-const groups_ = module.exports = {
+const groups_ = {
   // using a view to avoid returning users or relations
   byId: db.viewFindOneByKey.bind(db, 'byId'),
   byIds: db.byIds,
@@ -94,6 +96,8 @@ const groups_ = module.exports = {
     return rows.length > 0
   },
 }
+
+export default groups_
 
 const getCoMembersIds = (groups, userId) => {
   const usersIds = lists_.allGroupsMembers(groups)

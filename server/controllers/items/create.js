@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const snapshot_ = require('./lib/snapshot/snapshot')
-const error_ = require('lib/error/error')
-const { track } = require('lib/track')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import snapshot_ from './lib/snapshot/snapshot'
+import error_ from 'lib/error/error'
+import { track } from 'lib/track'
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   let { body: items, user } = req
   const singleItemMode = _.isPlainObject(items)
 

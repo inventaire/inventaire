@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const { createUserWithItems } = require('../tests/api/fixtures/populate')
-const { addRole } = require('controllers/user/lib/user')
-const { makeFriends } = require('../tests/api/utils/relations')
-const { createGroup, addMember, addAdmin } = require('../tests/api/fixtures/groups')
-const user_ = require('controllers/user/lib/user')
+#!/usr/bin/env nodeimport 'module-alias/register';
+import _ from 'builders/utils'
+import { createUserWithItems } from '../tests/api/fixtures/populate'
+import user_, { addRole } from 'controllers/user/lib/user'
+import { makeFriends } from '../tests/api/utils/relations'
+import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups'
 
 const [ username ] = process.argv.slice(2)
 

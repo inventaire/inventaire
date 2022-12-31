@@ -1,9 +1,9 @@
-const promises_ = require('lib/promises')
-const getEntitiesByUris = require('./get_entities_by_uris')
-const specialEntityImagesGetter = require('./special_entity_images_getter')
-const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
+import promises_ from 'lib/promises'
+import getEntitiesByUris from './get_entities_by_uris'
+import specialEntityImagesGetter from './special_entity_images_getter'
+import getEntityImagesFromClaims from './get_entity_images_from_claims'
 
-module.exports = async (uris, refresh) => {
+export default async (uris, refresh) => {
   const { entities } = await getEntitiesByUris({ uris, refresh })
   return getEntitiesImages(entities)
 }

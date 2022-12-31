@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const couch_ = require('lib/couch')
-const User = require('models/user')
-const db = require('db/couchdb/base')('users')
-const user_ = require('./user')
+import _ from 'builders/utils'
+import couch_ from 'lib/couch'
+import User from 'models/user'
+import dbFactory from 'db/couchdb/base'
+import user_ from './user'
+const db = dbFactory('users')
 
 const deleteUser = user => db.del(user._id, user._rev)
 
-module.exports = {
+export default {
   softDeleteById: userId => db.update(userId, User.softDelete),
 
   // Only used by tests so far

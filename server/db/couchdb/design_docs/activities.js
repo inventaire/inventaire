@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byActorNameAndDate: {
     map: doc => emit([ doc.actor.name, doc.updated ], null),
     reduce: '_count'

@@ -1,6 +1,6 @@
-require('should')
-const { publicReq } = require('tests/api/utils/utils')
-const { populate } = require('../fixtures/populate')
+import 'should'
+import { publicReq } from 'tests/api/utils/utils'
+import { populate } from '../fixtures/populate'
 const lastPublicUrl = '/api/items?action=last-public'
 
 describe('items:last-public', () => {

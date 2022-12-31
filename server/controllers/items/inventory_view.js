@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
-const replaceEditionsByTheirWork = require('./lib/view/replace_editions_by_their_work')
-const bundleViewData = require('./lib/view/bundle_view_data')
-const getAuthorizedItems = require('./lib/get_authorized_items')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work'
+import bundleViewData from './lib/view/bundle_view_data'
+import getAuthorizedItems from './lib/get_authorized_items'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   user: { optional: true },
@@ -45,4 +45,4 @@ const getItemsEntitiesData = items => {
   .then(replaceEditionsByTheirWork)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,15 +1,14 @@
 #!/usr/bin/env node
-
 // Usage:
 //   npm run backup-databases http://username:password@localhost:5984 prod
 
-const [ couchdbUrl, suffix ] = process.argv.slice(2)
+import 'module-alias/register'
+import _ from 'builders/utils'
+import getDatabasesNames from './lib/get_databases_names'
+import backupDatabase from './lib/backup_database'
+import zipBackupFolder from './lib/zip_backup_folder'
 
-require('module-alias/register')
-const _ = require('builders/utils')
-const getDatabasesNames = require('./lib/get_databases_names')
-const backupDatabase = require('./lib/backup_database')
-const zipBackupFolder = require('./lib/zip_backup_folder')
+const [ couchdbUrl, suffix ] = process.argv.slice(2)
 
 const { username, password, hostname, port } = new URL(couchdbUrl)
 

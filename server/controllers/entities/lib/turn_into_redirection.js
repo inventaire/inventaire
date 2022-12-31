@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
-const placeholders_ = require('./placeholders')
-const propagateRedirection = require('./propagate_redirection')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import entities_ from './entities'
+import Entity from 'models/entity'
+import placeholders_ from './placeholders'
+import propagateRedirection from './propagate_redirection'
 
-module.exports = async ({ userId, fromId, toUri, previousToUri, context }) => {
+export default async ({ userId, fromId, toUri, previousToUri, context }) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 

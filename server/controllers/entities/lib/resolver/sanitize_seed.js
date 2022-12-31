@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const properties = require('../properties/properties_values_constraints')
-const validateClaimValueSync = require('../validate_claim_value_sync')
-const { validateProperty } = require('../properties/validations')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import properties from '../properties/properties_values_constraints'
+import validateClaimValueSync from '../validate_claim_value_sync'
+import { validateProperty } from '../properties/validations'
 
-module.exports = (seed, type) => {
+export default (seed, type) => {
   seed.labels = seed.labels || {}
   seed.claims = seed.claims || {}
   validateLabels(seed, type)

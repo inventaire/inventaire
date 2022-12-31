@@ -4,7 +4,8 @@
 // (see https://code.visualstudio.com/docs/languages/jsconfig)
 // while not duplicating module aliases
 
-const { _moduleAliases } = require('../package.json')
+import { _moduleAliases } from '../package.json'
+
 const filename = __filename.replace(`${process.cwd()}/`, '')
 
 const jsconfig = {

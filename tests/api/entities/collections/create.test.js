@@ -1,7 +1,7 @@
-require('should')
-const { createEdition, createCollection } = require('../../fixtures/entities')
-const { addClaim, removeClaim } = require('../../utils/entities')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../../utils/utils')
+import 'should'
+import { createEdition, createCollection } from '../../fixtures/entities'
+import { addClaim, removeClaim } from '../../utils/entities'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../../utils/utils'
 
 describe('entities:create:collections', () => {
   it('should create a collection', async () => {

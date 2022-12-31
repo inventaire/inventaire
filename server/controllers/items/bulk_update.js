@@ -1,5 +1,5 @@
-const { bulkItemsUpdate } = require('controllers/items/lib/bulk_update')
-const { info } = require('lib/utils/logs')
+import { bulkItemsUpdate } from 'controllers/items/lib/bulk_update'
+import { info } from 'lib/utils/logs'
 
 const sanitization = {
   ids: {},
@@ -13,4 +13,4 @@ const controller = async params => {
   return { ok: true }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

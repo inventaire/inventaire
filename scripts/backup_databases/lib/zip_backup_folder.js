@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { shellExec } = require('scripts/scripts_utils')
-const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')
+import _ from 'builders/utils'
+import { shellExec } from 'scripts/scripts_utils'
+import { backupGeneralFolder, backupFolder, day } from './get_backup_folder_data'
 
-module.exports = async () => {
+export default async () => {
   await shellExec('tar', [
     '-zcf',
     // Output

@@ -1,17 +1,24 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { getReservedUser, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { getRefreshedUser, getRandomPosition } = require('../fixtures/users')
-const { createItem } = require('../fixtures/items')
-const { getItem } = require('../utils/items')
-const { getUsersNearPosition, deleteUser } = require('../utils/users')
-const { createGroup, addMember, addAdmin } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { createTransaction } = require('../fixtures/transactions')
-const { getTransaction, updateTransaction } = require('../utils/transactions')
-const { createShelf } = require('../fixtures/shelves')
-const { getShelfById } = require('../utils/shelves')
-const { waitForIndexation, waitForDeindexation } = require('../utils/search')
+import _ from 'builders/utils'
+import should from 'should'
+
+import {
+  getReservedUser,
+  getUser,
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+} from '../utils/utils'
+
+import { getRefreshedUser, getRandomPosition } from '../fixtures/users'
+import { createItem } from '../fixtures/items'
+import { getItem } from '../utils/items'
+import { getUsersNearPosition, deleteUser } from '../utils/users'
+import { createGroup, addMember, addAdmin } from '../fixtures/groups'
+import { getGroup } from 'tests/api/utils/groups'
+import { createTransaction } from '../fixtures/transactions'
+import { getTransaction, updateTransaction } from '../utils/transactions'
+import { createShelf } from '../fixtures/shelves'
+import { getShelfById } from '../utils/shelves'
+import { waitForIndexation, waitForDeindexation } from '../utils/search'
 
 describe('user:delete', () => {
   it('should delete the user', async () => {

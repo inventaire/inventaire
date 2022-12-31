@@ -1,7 +1,6 @@
-const { props, tap, wait, map } = require('lib/promises')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-
-const should = require('should')
+import { props, tap, wait, map } from 'lib/promises'
+import { shouldNotBeCalled } from 'tests/unit/utils'
+import should from 'should'
 
 describe('promises utils', () => {
   describe('props', () => {

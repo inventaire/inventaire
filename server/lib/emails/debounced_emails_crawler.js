@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const { crawlPeriod, debounceDelay, disabled } = require('config').debouncedEmail
-const { expired } = require('lib/time')
-const db = require('db/level/get_sub_db')('waiting', 'utf8')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import { expired } from 'lib/time'
+import dbFactory from 'db/level/get_sub_db'
+import sendDebouncedEmail from './send_debounced_email'
+const db = dbFactory('waiting', 'utf8')
+const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
-const sendDebouncedEmail = require('./send_debounced_email')
-
-module.exports = () => {
+export default () => {
   if (!disabled) setInterval(crawl, crawlPeriod)
 }
 

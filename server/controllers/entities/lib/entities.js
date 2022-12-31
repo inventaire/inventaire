@@ -1,20 +1,20 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const db = require('db/couchdb/base')('entities')
-const Entity = require('models/entity')
-const isbn_ = require('lib/isbn/isbn')
-const couch_ = require('lib/couch')
-const validateAndFormatClaims = require('./validate_and_format_claims')
-const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const getEntityType = require('./get_entity_type')
-const { getUrlFromImageHash } = require('lib/images')
-const { emit } = require('lib/radio')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import error_ from 'lib/error/error'
+import dbFactory from 'db/couchdb/base'
+import Entity from 'models/entity'
+import isbn_ from 'lib/isbn/isbn'
+import couch_ from 'lib/couch'
+import validateAndFormatClaims from './validate_and_format_claims'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
+import getEntityType from './get_entity_type'
+import { getUrlFromImageHash } from 'lib/images'
+import { emit } from 'lib/radio'
+import { validateProperty } from './properties/validations'
+import createPatch from './patches/create_patch'
+const db = dbFactory('entities')
 
-const { validateProperty } = require('./properties/validations')
-const createPatch = require('./patches/create_patch')
-
-const entities_ = module.exports = {
+const entities_ = {
   byId: db.get,
 
   byIds: db.byIds,
@@ -116,6 +116,8 @@ const entities_ = module.exports = {
     return rows.length > 0
   }
 }
+
+export default entities_
 
 const getUri = entity => entity.uri
 

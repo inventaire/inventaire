@@ -1,11 +1,12 @@
-const CONFIG = require('config')
-const should = require('should')
-const { wait } = require('lib/promises')
-const { createUser } = require('../fixtures/users')
-const { deleteUser } = require('../utils/users')
+import CONFIG from 'config'
+import should from 'should'
+import { wait } from 'lib/promises'
+import { createUser } from '../fixtures/users'
+import { deleteUser } from '../utils/users'
+import { getIndexedDoc } from '../utils/search'
+import { indexes } from 'db/elasticsearch/indexes'
+const { index } = indexes.users
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc } = require('../utils/search')
-const { index } = require('db/elasticsearch/indexes').indexes.users
 
 describe('indexation:users', () => {
   it('should index a new user', async () => {

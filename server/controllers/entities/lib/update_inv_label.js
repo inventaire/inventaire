@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const retryOnConflict = require('lib/retry_on_conflict')
-const updateLabel = require('./update_label')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import entities_ from './entities'
+import retryOnConflict from 'lib/retry_on_conflict'
+import updateLabel from './update_label'
 
 const updateInvLabel = async (user, id, lang, value) => {
   const { _id: reqUserId } = user
@@ -13,4 +13,4 @@ const updateInvLabel = async (user, id, lang, value) => {
   return updateLabel(lang, value, reqUserId, entity)
 }
 
-module.exports = retryOnConflict({ updateFn: updateInvLabel })
+export default retryOnConflict({ updateFn: updateInvLabel })

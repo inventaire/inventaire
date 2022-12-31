@@ -1,16 +1,16 @@
-const _ = require('lodash')
+import _ from 'lodash'
+
+import {
+  Integer as integerPattern,
+  PositiveInteger as PositiveIntegerPattern,
+  Float as floatPattern,
+} from 'lib/regex'
+
+import { typeOf } from './types'
+import assert_ from 'lib/utils/assert_types'
 const multipleSpacesPattern = /\s+/g
 
-const {
-  Integer: integerPattern,
-  PositiveInteger: PositiveIntegerPattern,
-  Float: floatPattern
-} = require('lib/regex')
-
-const { typeOf } = require('./types')
-const assert_ = require('lib/utils/assert_types')
-
-module.exports = {
+export default {
   combinations: (array1, array2) => {
     return array1.flatMap(key1 => {
       return array2.map(key2 => [ key1, key2 ])

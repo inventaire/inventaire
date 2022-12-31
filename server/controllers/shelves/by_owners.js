@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const { filterPrivateAttributes } = require('controllers/shelves/lib/filter_private_attributes')
-const shelves_ = require('controllers/shelves/lib/shelves')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
+import _ from 'builders/utils'
+import { filterPrivateAttributes } from 'controllers/shelves/lib/filter_private_attributes'
+import shelves_ from 'controllers/shelves/lib/shelves'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
 
 const sanitization = {
   owners: {},
@@ -18,4 +18,4 @@ const controller = async params => {
   return { shelves }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

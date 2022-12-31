@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const getEntityType = require('controllers/entities/lib/get_entity_type')
-const getInvEntityCanonicalUri = require('controllers/entities/lib/get_inv_entity_canonical_uri')
-const getBestLangValue = require('lib/get_best_lang_value')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import getEntityType from 'controllers/entities/lib/get_entity_type'
+import getInvEntityCanonicalUri from 'controllers/entities/lib/get_inv_entity_canonical_uri'
+import getBestLangValue from 'lib/get_best_lang_value'
 
-module.exports = {
+export default {
   getDocData: updatedDoc => {
     let { uri, type } = updatedDoc
     // Case when a formatted entity doc is passed

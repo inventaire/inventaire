@@ -1,6 +1,6 @@
-const error_ = require('lib/error/error')
+import error_ from 'lib/error/error'
 
-module.exports = (user, notificationLabel) => {
+export default (user, notificationLabel) => {
   const { _id, type, settings, undeliveredEmail } = user
 
   if (type === 'deletedUser') throw emailDisabled({ user: _id, reason: 'deleted user' })

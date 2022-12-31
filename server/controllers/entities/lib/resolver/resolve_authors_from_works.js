@@ -1,7 +1,7 @@
-const getAuthorsFromWorksUris = require('./get_authors_from_works_uris')
-const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpers')
+import getAuthorsFromWorksUris from './get_authors_from_works_uris'
+import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers'
 
-module.exports = async (authors, works) => {
+export default async (authors, works) => {
   const worksUris = getAlreadyResolvedUris(works)
   if (worksUris.length === 0) return authors
   return Promise.all(authors.map(resolveAuthor(worksUris)))

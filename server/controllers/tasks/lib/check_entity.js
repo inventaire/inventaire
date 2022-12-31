@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const tasks_ = require('./tasks')
-const getNewTasks = require('./get_new_tasks')
-const updateRelationScore = require('./relation_score')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import tasks_ from './tasks'
+import getNewTasks from './get_new_tasks'
+import updateRelationScore from './relation_score'
 const supportedTypes = [ 'human' ]
 
-module.exports = async uri => {
+export default async uri => {
   _.info(`check entity: ${uri}`)
 
   if (uri.split(':')[0] !== 'inv') {

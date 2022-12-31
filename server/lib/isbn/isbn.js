@@ -1,5 +1,5 @@
-const { parse: isbnParser } = require('isbn3')
-const parse = require('./parse')
+import { parse as isbnParser } from 'isbn3'
+import parse from './parse'
 
 // Removing any non-alpha numeric characters, especially '-' and spaces
 const normalizeIsbn = text => {
@@ -12,7 +12,7 @@ const normalizeIsbn = text => {
 
 const isNormalizedIsbn = text => /^(97(8|9))?\d{9}(\d|X)$/.test(text)
 
-module.exports = {
+export default {
   parse,
   normalizeIsbn,
   isNormalizedIsbn,

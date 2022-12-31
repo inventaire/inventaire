@@ -1,11 +1,19 @@
-const CONFIG = require('config')
-require('should')
-const { createUsername, createUser } = require('../fixtures/users')
-const { signedReq, makeUrl, createActivity, getSomeRemoteServerUser, createRemoteActivityPubServerUser } = require('../utils/activitypub')
-const { rawRequest } = require('../utils/request')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { sign } = require('controllers/activitypub/lib/security')
-const { generateRsaKeyPair } = require('lib/crypto')
+import CONFIG from 'config'
+import 'should'
+import { createUsername, createUser } from '../fixtures/users'
+
+import {
+  signedReq,
+  makeUrl,
+  createActivity,
+  getSomeRemoteServerUser,
+  createRemoteActivityPubServerUser,
+} from '../utils/activitypub'
+
+import { rawRequest } from '../utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
+import { sign } from 'controllers/activitypub/lib/security'
+import { generateRsaKeyPair } from 'lib/crypto'
 
 const endpoint = '/api/activitypub'
 

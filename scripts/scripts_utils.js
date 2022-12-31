@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { red } = require('chalk')
-const { promisify } = require('node:util')
+import _ from 'builders/utils'
+import { red } from 'chalk'
+import { promisify } from 'node:util'
 const exec = promisify(require('node:child_process').exec)
 
-module.exports = {
+export default {
   logErrorAndExit: (label, err) => {
     makeSureLogsAreWrittenBeforeExit()
     if (err) _.error(err, label)

@@ -1,8 +1,14 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
-const { authReq, authReqB, getUser } = require('../utils/utils')
-const { createListing, listingName, listingDescription } = require('../fixtures/listings')
-const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
-const { someCouchUuid } = require('tests/api/fixtures/general')
+import {
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+  customAuthReq,
+  getReservedUser,
+} from 'tests/api/utils/utils'
+
+import { authReq, authReqB, getUser } from '../utils/utils'
+import { createListing, listingName, listingDescription } from '../fixtures/listings'
+import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
+import { someCouchUuid } from 'tests/api/fixtures/general'
 
 const endpoint = '/api/lists'
 

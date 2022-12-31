@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const crypto_ = require('lib/crypto')
+import _ from 'builders/utils'
+import crypto_ from 'lib/crypto'
 
-module.exports = data => {
+export default data => {
   const fingerPrint = getFingerPrint(data)
   // If we have a user id, the user is logged in
   if (data.userId) onlineUsers[fingerPrint] = 1

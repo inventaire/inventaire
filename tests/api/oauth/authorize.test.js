@@ -1,7 +1,7 @@
-const { publicReq, authReq, rawAuthReq, shouldNotBeCalled } = require('../utils/utils')
-const { getClient } = require('../utils/oauth')
-const randomString = require('lib/utils/random_string')
-const { parseQuery } = require('lib/utils/url')
+import { publicReq, authReq, rawAuthReq, shouldNotBeCalled } from '../utils/utils'
+import { getClient } from '../utils/oauth'
+import randomString from 'lib/utils/random_string'
+import { parseQuery } from 'lib/utils/url'
 const endpoint = '/api/oauth/authorize'
 
 describe('oauth:authorize', () => {

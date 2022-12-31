@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const validations = require('./validations/shelf')
-const attributes = require('./attributes/shelf')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import validations from './validations/shelf'
+import attributes from './attributes/shelf'
+import error_ from 'lib/error/error'
 
-module.exports = {
+export default {
   create: shelf => {
     assert_.object(shelf)
     assert_.string(shelf.owner)

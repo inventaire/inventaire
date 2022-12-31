@@ -1,19 +1,22 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const wdk = require('wikidata-sdk')
-const { isValidIsbn } = require('lib/isbn/isbn')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import wdk from 'wikidata-sdk'
+import { isValidIsbn } from 'lib/isbn/isbn'
+import inv from './get_inv_entities'
+import wd from './get_wikidata_enriched_entities'
+import isbn from './get_entities_by_isbns'
 
 // Getters take ids, return an object on the model { entities, notFound }
 const getters = {
-  inv: require('./get_inv_entities'),
-  wd: require('./get_wikidata_enriched_entities'),
-  isbn: require('./get_entities_by_isbns')
+  inv,
+  wd,
+  isbn
 }
 
 const prefixes = Object.keys(getters)
 
-module.exports = async params => {
+export default async params => {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}

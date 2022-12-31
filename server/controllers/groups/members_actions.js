@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const modelAction = require('./lib/model_action')
-const membershipValidations = require('./lib/membership_validations')
+import _ from 'builders/utils'
+import modelAction from './lib/model_action'
+import membershipValidations from './lib/membership_validations'
 
 const sanitization = {
   group: {},
@@ -15,7 +15,7 @@ const controller = action => async params => {
   return { ok: true }
 }
 
-module.exports = action => ({
+export default action => ({
   sanitization,
   controller: controller(action),
   track: [ 'groups', action ]

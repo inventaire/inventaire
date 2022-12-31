@@ -1,10 +1,10 @@
-const getEntityType = require('controllers/entities/lib/get_entity_type')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const parseIsbn = require('lib/isbn/parse')
-const makeSparqlRequest = require('./make_sparql_request')
-const { isItemId } = require('wikidata-sdk')
+import getEntityType from 'controllers/entities/lib/get_entity_type'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
+import parseIsbn from 'lib/isbn/parse'
+import makeSparqlRequest from './make_sparql_request'
+import { isItemId } from 'wikidata-sdk'
 
-module.exports = async isbn => {
+export default async isbn => {
   const sparql = getQuery(isbn)
   const rows = await makeSparqlRequest(sparql)
   return buildEntryFromFormattedRows(rows, isbn)

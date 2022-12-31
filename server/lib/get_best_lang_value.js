@@ -1,7 +1,7 @@
-const { uniq } = require('lodash')
+import { uniq } from 'lodash'
 
 // data: labels or descriptions
-module.exports = (lang, originalLang, data) => {
+export default (lang, originalLang, data) => {
   if (!data) return {}
 
   const order = getLangPriorityOrder(lang, originalLang, data)

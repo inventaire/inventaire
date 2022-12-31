@@ -1,5 +1,5 @@
-const tasks_ = require('controllers/tasks/lib/tasks')
-const updateRelationScore = require('./lib/relation_score')
+import tasks_ from 'controllers/tasks/lib/tasks'
+import updateRelationScore from './lib/relation_score'
 
 const sanitization = {
   id: {},
@@ -20,7 +20,7 @@ const controller = async ({ id, attribute, value }) => {
   return { ok: true }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'task', 'update' ]

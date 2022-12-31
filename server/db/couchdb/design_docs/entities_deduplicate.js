@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   findHumansHomonymes: {
     map: [
       function normalize (label) {

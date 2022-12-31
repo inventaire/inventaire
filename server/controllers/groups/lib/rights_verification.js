@@ -1,7 +1,7 @@
-const error_ = require('lib/error/error')
-const groups_ = require('./groups')
-const lists_ = require('./users_lists')
-const leave_ = require('./lib/leave_groups')
+import error_ from 'lib/error/error'
+import groups_ from './groups'
+import lists_ from './users_lists'
+import leave_ from './lib/leave_groups'
 
 const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
   return Promise.all([
@@ -76,7 +76,7 @@ const validateCancelRequest = (reqUserId, groupId) => {
   })
 }
 
-module.exports = {
+export default {
   // /!\ groups_.userInvited returns a group doc, not a boolean
   accept: groups_.userInvited,
   decline: groups_.userInvited,

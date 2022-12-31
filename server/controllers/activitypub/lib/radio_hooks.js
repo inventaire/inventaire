@@ -1,16 +1,18 @@
-const _ = require('builders/utils')
-const { activitiesDebounceTime } = require('config').activitypub
-const radio = require('lib/radio')
-const user_ = require('controllers/user/lib/user')
-const shelves_ = require('controllers/shelves/lib/shelves')
-const { postActivityToActorFollowersInboxes } = require('./post_activity')
-const { byActorName, createActivity } = require('./activities')
-const formatUserItemsActivities = require('./format_user_items_activities')
-const formatShelfItemsActivities = require('./format_shelf_items_activities')
-const { deliverEntityActivitiesFromPatch } = require('./entity_patch_activities')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import radio from 'lib/radio'
+import user_ from 'controllers/user/lib/user'
+import shelves_ from 'controllers/shelves/lib/shelves'
+import { postActivityToActorFollowersInboxes } from './post_activity'
+import { byActorName, createActivity } from './activities'
+import formatUserItemsActivities from './format_user_items_activities'
+import formatShelfItemsActivities from './format_shelf_items_activities'
+import { deliverEntityActivitiesFromPatch } from './entity_patch_activities'
+
+const { activitiesDebounceTime } = CONFIG
 const debouncedActivities = {}
 
-module.exports = () => {
+export default () => {
   radio.on('user:inventory:update', userId => {
     if (!debouncedActivities[userId]) {
       debouncedActivities[userId] = _.debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)

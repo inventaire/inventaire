@@ -1,8 +1,17 @@
-const should = require('should')
-const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled, getReservedUser } = require('../utils/utils')
-const { createHuman } = require('../fixtures/entities')
-const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
-const { deleteByUris } = require('../utils/entities')
+import should from 'should'
+
+import {
+  adminReq,
+  dataadminReq,
+  publicReq,
+  authReq,
+  shouldNotBeCalled,
+  getReservedUser,
+  getDeanonymizedUser, customAuthReq
+} from '../utils/utils'
+
+import { createHuman } from '../fixtures/entities'
+import { deleteByUris } from '../utils/entities'
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {

@@ -1,7 +1,8 @@
-const gm = require('gm')
-const crypto_ = require('lib/crypto')
-const { readFile } = require('node:fs').promises
-const { maxSize } = require('config').mediaStorage.images
+import gm from 'gm'
+import crypto_ from 'lib/crypto'
+import { readFile } from 'node:fs/promises'
+import CONFIG from 'config'
+const { maxSize } = CONFIG.mediaStorage.images
 
 // gm accepts either a path string or a stream
 const shrinkAndFormat = (data, width, height) => {
@@ -19,7 +20,7 @@ const shrinkAndFormat = (data, width, height) => {
 
 const removeExif = data => gm(data).noProfile()
 
-module.exports = {
+export default {
   getHashFilename: path => {
     return readFile(path)
     .then(crypto_.sha1)

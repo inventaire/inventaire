@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { validateValueType, propertyType } = require('./properties/validations')
-const properties = require('./properties/properties_values_constraints')
-const { isEntityId } = require('lib/boolean_validations')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import { validateValueType, propertyType } from './properties/validations'
+import properties from './properties/properties_values_constraints'
+import { isEntityId } from 'lib/boolean_validations'
 
-module.exports = (property, value, entityType) => {
+export default (property, value, entityType) => {
   if (!validateValueType(property, value)) {
     const expected = propertyType(property)
     const actual = _.typeOf(value)

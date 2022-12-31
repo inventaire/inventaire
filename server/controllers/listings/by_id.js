@@ -1,7 +1,7 @@
-const { byIdsWithElements } = require('controllers/listings/lib/listings')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const error_ = require('lib/error/error')
-const { paginate } = require('controllers/items/lib/queries_commons')
+import { byIdsWithElements } from 'controllers/listings/lib/listings'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import error_ from 'lib/error/error'
+import { paginate } from 'controllers/items/lib/queries_commons'
 
 const sanitization = {
   id: {},
@@ -30,4 +30,4 @@ const paginateElements = (listing, offset, limit) => {
   return page.items
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

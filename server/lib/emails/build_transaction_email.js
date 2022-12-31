@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const transactions_ = require('controllers/transactions/lib/transactions')
-const items_ = require('controllers/items/lib/items')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const comments_ = require('controllers/comments/lib/comments')
-const { states } = require('models/attributes/transaction')
-const email_ = require('./email')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import transactions_ from 'controllers/transactions/lib/transactions'
+import items_ from 'controllers/items/lib/items'
+import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
+import comments_ from 'controllers/comments/lib/comments'
+import { states } from 'models/attributes/transaction'
+import email_ from './email'
 
-module.exports = async transactionId => {
+export default async transactionId => {
   const transaction = await transactions_.byId(transactionId)
   const role = findUserToNotify(transaction)
   // If no role needs to be notified, no email needs to be sent

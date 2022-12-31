@@ -9,7 +9,7 @@
 // - Reopen index
 //   curl -XPOST ${elastic_host}/${index_name}/_open
 
-module.exports = {
+export default {
   // use number_of_shards in testing environment only
   // See: https://www.elastic.co/guide/en/elasticsearch/guide/current/relevance-is-broken.html
   // number_of_shards: 1,

@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { getReverseClaims, simplify } = require('wikidata-sdk')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import { getReverseClaims, simplify } from 'wikidata-sdk'
+import requests_ from 'lib/requests'
+import entities_ from './entities'
+import { prefixifyWd, unprefixify } from 'controllers/entities/lib/prefix'
+import cache_ from 'lib/cache'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
+import runWdQuery from 'data/wikidata/run_query'
+import { getEntitiesPopularities } from './popularity'
 const { sparqlResults: simplifySparqlResults } = simplify
-const requests_ = require('lib/requests')
-const entities_ = require('./entities')
-const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
-const cache_ = require('lib/cache')
-const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const runWdQuery = require('data/wikidata/run_query')
-const { getEntitiesPopularities } = require('./popularity')
 
 const caseInsensitiveProperties = [
   'wdt:P2002'
@@ -29,7 +29,7 @@ const localOnlyProperties = [
   'wdt:P195'
 ]
 
-module.exports = async params => {
+export default async params => {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 

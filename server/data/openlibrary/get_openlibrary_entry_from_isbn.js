@@ -1,11 +1,11 @@
-const { normalizeIsbn } = require('lib/isbn/isbn')
-const requests_ = require('lib/requests')
-const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
-const { compact } = require('lodash')
+import { normalizeIsbn } from 'lib/isbn/isbn'
+import requests_ from 'lib/requests'
+import { setEditionPublisherClaim } from 'data/lib/set_edition_publisher_claim'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
+import wdIdByIso6392Code from 'wikidata-lang/mappings/wd_id_by_iso_639_2_code.json'
+import { compact } from 'lodash'
 
-module.exports = async isbn => {
+export default async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
   const data = await requests_.get(url)

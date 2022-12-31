@@ -1,11 +1,11 @@
-const isbn_ = require('lib/isbn/isbn')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { concurrentString, uniqueEntity } = require('./properties_config_bases')
-const allowedValuesPerTypePerProperty = require('./allowed_values_per_type_per_property')
-const { getPluralType } = require('lib/wikidata/aliases')
+import isbn_ from 'lib/isbn/isbn'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import { concurrentString, uniqueEntity } from './properties_config_bases'
+import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property'
+import { getPluralType } from 'lib/wikidata/aliases'
 
-module.exports = {
+export default {
   isbnProperty: num => {
     return Object.assign({}, concurrentString, {
       validate: isbn => {

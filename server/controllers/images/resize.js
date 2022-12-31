@@ -1,18 +1,18 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import getResizedImage from './lib/get_resized_image'
+import { URL } from 'node:url'
 const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
-const responses_ = require('lib/responses')
-const getResizedImage = require('./lib/get_resized_image')
 const { offline } = CONFIG
 const containersList = Object.keys(require('controllers/images/lib/containers').containers)
-const { URL } = require('node:url')
 
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
 
-module.exports = {
+export default {
   get: (req, res) => {
     // can be useful in development
     if (offline) {

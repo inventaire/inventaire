@@ -1,6 +1,6 @@
 // Keep in sync with client/lib/regex
 
-module.exports = {
+export default {
   AssetImg: /^\/img\/assets\/\w/,
   ColorHexCode: /^#[0-9a-f]{6}$/,
   CouchUuid: /^[0-9a-f]{32}$/,

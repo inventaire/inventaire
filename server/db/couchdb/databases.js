@@ -2,7 +2,7 @@
 // values: design docs names, corresponding to files in server/db/couchdb/design_docs,
 //         which will be converted to JSON design doc documents by couch-init2
 
-module.exports = {
+export default {
   activities: [ 'activities' ],
   comments: [ 'comments' ],
   entities: [ 'entities', 'entities_deduplicate' ],

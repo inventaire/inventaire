@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+import _ from 'builders/utils'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
 
-module.exports = entities => {
+export default entities => {
   const { works, editions } = splitEntities(entities)
   const worksUris = _.map(works, 'uri')
   const data = { editionsWorksUris: [], editionWorkMap: {} }

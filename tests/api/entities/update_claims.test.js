@@ -1,7 +1,7 @@
-const should = require('should')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } = require('../fixtures/entities')
-const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
+import should from 'should'
+import { shouldNotBeCalled } from '../utils/utils'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities'
+import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities'
 
 describe('entities:update-claims', () => {
   it('should reject without uri', async () => {

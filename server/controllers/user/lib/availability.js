@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const User = require('models/user')
-const isReservedWord = require('./is_reserved_word')
-const error_ = require('lib/error/error')
-const user_ = require('./user')
+import _ from 'builders/utils'
+import User from 'models/user'
+import isReservedWord from './is_reserved_word'
+import error_ from 'lib/error/error'
+import user_ from './user'
 
-module.exports = {
+export default {
   username: async (username, currentUsername) => {
     // If a currentUsername is provided
     // return true if the new username is the same but with a different case

@@ -1,8 +1,9 @@
-const { readFile, writeFile } = require('node:fs').promises
-const stringify = data => JSON.stringify(data, null, 2)
-const assert_ = require('./assert_types')
+import { readFile, writeFile } from 'node:fs/promises'
+import assert_ from './assert_types'
 
-module.exports = {
+const stringify = data => JSON.stringify(data, null, 2)
+
+export default {
   readJsonFile: path => {
     assert_.string(path)
     return readFile(path, 'utf-8')

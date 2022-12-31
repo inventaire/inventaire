@@ -1,11 +1,20 @@
-const should = require('should')
-const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
+import should from 'should'
+import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils'
 
-const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13, createEdition } = require('../fixtures/entities')
-const { getByUris, merge, deleteByUris } = require('../utils/entities')
+import {
+  createEditionWithIsbn,
+  createWorkWithAuthor,
+  createEditionWithWorkAuthorAndSerie,
+  createHuman,
+  someFakeUri,
+  generateIsbn13,
+  createEdition,
+} from '../fixtures/entities'
+
+import { getByUris, merge, deleteByUris } from '../utils/entities'
+import getWdEntity from 'data/wikidata/get_entity'
+import { buildUrl } from 'lib/utils/url'
 const workWithAuthorPromise = createWorkWithAuthor()
-const getWdEntity = require('data/wikidata/get_entity')
-const { buildUrl } = require('lib/utils/url')
 
 describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {

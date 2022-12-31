@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const { createHuman, createWork } = require('./entities')
-const { checkEntities } = require('../utils/tasks')
-const { createInBulk } = require('controllers/tasks/lib/tasks')
+import _ from 'builders/utils'
+import { createHuman, createWork } from './entities'
+import { checkEntities } from '../utils/tasks'
+import { createInBulk } from 'controllers/tasks/lib/tasks'
 const promises = {}
 
-module.exports = {
+export default {
   createSomeTasks: humanLabel => {
     if (promises[humanLabel] != null) return promises[humanLabel]
 

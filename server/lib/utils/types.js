@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   typeOf: obj => {
     // just handling what differes from typeof
     const type = typeof obj

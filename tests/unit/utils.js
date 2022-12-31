@@ -1,7 +1,7 @@
-const { warn } = require('lib/utils/logs')
-const util = require('node:util')
+import { warn } from 'lib/utils/logs'
+import util from 'node:util'
 
-module.exports = {
+export default {
   shouldNotBeCalled: res => {
     warn(util.inspect(res, false, null), 'undesired positive res')
     const err = new Error('function was expected not to be called')

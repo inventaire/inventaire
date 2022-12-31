@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import getEntitiesList from 'controllers/entities/lib/get_entities_list'
 
-module.exports = async item => {
+export default async item => {
   const { entity: uri } = item
   const entity = await getEntityByUri({ uri })
   if (!entity) throw error_.new('entity not found', 500, { item: item._id, uri })

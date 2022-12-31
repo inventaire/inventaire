@@ -1,10 +1,10 @@
-const { emit } = require('lib/radio')
-const Patch = require('models/patch')
-const entities_ = require('./entities')
-const patches_ = require('./patches/patches')
-const validateEntity = require('./validate_entity')
+import { emit } from 'lib/radio'
+import Patch from 'models/patch'
+import entities_ from './entities'
+import patches_ from './patches/patches'
+import validateEntity from './validate_entity'
 
-module.exports = async (patchId, userId) => {
+export default async (patchId, userId) => {
   const entityId = patchId.split(':')[0]
   const restoredPatchIdNum = parseInt(patchId.split(':')[1])
   const currentDoc = await entities_.byId(entityId)

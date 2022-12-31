@@ -1,6 +1,6 @@
-const items_ = require('controllers/items/lib/items')
+import items_ from 'controllers/items/lib/items'
 
-module.exports = userId => {
+export default userId => {
   return items_.byOwner(userId)
   .then(items_.bulkDelete)
 }

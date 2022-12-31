@@ -1,7 +1,7 @@
-const { db, elasticsearch, dataseed, mediaStorage } = require('config')
-const _ = require('lodash')
-const ipIsInPrivateIpRange = require('./is_in_private_ip_range')
-const { dnsLookup, getHostname, getHostnameIp } = require('./helpers')
+import { db, elasticsearch, dataseed, mediaStorage } from 'config'
+import _ from 'lodash'
+import ipIsInPrivateIpRange from './is_in_private_ip_range'
+import { dnsLookup, getHostname, getHostnameIp } from './helpers'
 
 const servicesHostnames = _.uniq(_.compact([
   db.hostname,
@@ -19,7 +19,7 @@ Promise.all(servicesHostnames.map(getHostnameIp))
 
 // It would be safer to run requests on submitted urls from an isolated process
 // but in the meantime, this mitigates risks of server-side request forgery
-module.exports = async url => {
+export default async url => {
   const { hostname } = new URL(url)
   // - resolve domain names to IP addresses
   // - converts alternative IP addresses representations to the classic representation

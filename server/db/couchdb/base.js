@@ -1,10 +1,10 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const getDbApi = require('./cot_base')
-const memoize = require('lib/utils/memoize')
-const databases = require('db/couchdb/databases')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import getDbApi from './cot_base'
+import memoize from 'lib/utils/memoize'
+import databases from 'db/couchdb/databases'
 
-module.exports = (dbBaseName, designDocName) => {
+export default (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,
   // assumes that it is the default design doc, which has the same name as the dbBaseName

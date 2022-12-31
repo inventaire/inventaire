@@ -1,5 +1,6 @@
-const Item = require('models/item')
-const db = require('db/couchdb/base')('items')
+import Item from 'models/item'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('items')
 
 let items_
 const requireCircularDependencies = () => { items_ = require('./items') }
@@ -11,7 +12,7 @@ const AfterFn = (viewName, modelFnName) => async (fromUri, toUri) => {
   return db.bulk(updatedItems)
 }
 
-module.exports = {
+export default {
   afterMerge: AfterFn('byEntity', 'updateEntity'),
   afterRevert: AfterFn('byPreviousEntity', 'revertEntity')
 }

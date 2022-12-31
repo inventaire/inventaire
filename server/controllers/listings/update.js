@@ -1,4 +1,4 @@
-const { updateAttributes } = require('controllers/listings/lib/listings')
+import { updateAttributes } from 'controllers/listings/lib/listings'
 
 const sanitization = {
   id: {},
@@ -12,7 +12,7 @@ const controller = async params => {
   return { list: listing }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'lists', 'update' ]

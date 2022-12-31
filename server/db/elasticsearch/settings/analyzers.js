@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   autocomplete: {
     type: 'custom',
     // define standard stop words

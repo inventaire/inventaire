@@ -1,9 +1,30 @@
-require('should')
-const { wait } = require('lib/promises')
-const { authReq, getUserB } = require('../utils/utils')
-const { getItem } = require('../utils/items')
-const { getByUris, merge, revertMerge, updateLabel, updateClaim, restoreVersion, revertEdit } = require('../utils/entities')
-const { createWork, createHuman, addAuthor, addSerie, createEdition, createEditionFromWorks, createWorkWithAuthor, humanName, someImageHash, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
+import 'should'
+import { wait } from 'lib/promises'
+import { authReq, getUserB } from '../utils/utils'
+import { getItem } from '../utils/items'
+
+import {
+  getByUris,
+  merge,
+  revertMerge,
+  updateLabel,
+  updateClaim,
+  restoreVersion,
+  revertEdit,
+} from '../utils/entities'
+
+import {
+  createWork,
+  createHuman,
+  addAuthor,
+  addSerie,
+  createEdition,
+  createEditionFromWorks,
+  createWorkWithAuthor,
+  humanName,
+  someImageHash,
+  createEditionWithWorkAndAuthor,
+} from '../fixtures/entities'
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {

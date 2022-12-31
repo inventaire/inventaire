@@ -1,6 +1,6 @@
 
-require('should')
-const slugify = require('controllers/groups/lib/slugify')
+import 'should'
+import slugify from 'controllers/groups/lib/slugify'
 
 describe('slugify', () => {
   it('should be a function', () => {

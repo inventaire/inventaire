@@ -1,4 +1,4 @@
-const fetchExternalAuthorWorksTitles = require('data/lib/fetch_external_author_works_titles')
+import fetchExternalAuthorWorksTitles from 'data/lib/fetch_external_author_works_titles'
 
 const endpoint = 'http://data.bnf.fr/sparql'
 
@@ -14,4 +14,4 @@ UNION
     rdfs:label ?title . }
 }`
 
-module.exports = fetchExternalAuthorWorksTitles('bnf', endpoint, getQuery)
+export default fetchExternalAuthorWorksTitles('bnf', endpoint, getQuery)

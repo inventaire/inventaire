@@ -1,13 +1,26 @@
-const _ = require('builders/utils')
-require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel, createWorkWithAuthor, createSerieWithAuthor, createWorkWithSerie, humanName } = require('../fixtures/entities')
-const { randomLongWord, randomWords } = require('../fixtures/text')
-const { getByUris } = require('../utils/entities')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
-const randomString = require('lib/utils/random_string')
+import _ from 'builders/utils'
+import 'should'
+
+import {
+  createWork,
+  createHuman,
+  createSerie,
+  createCollection,
+  createPublisher,
+  sameFirstNameLabel,
+  createWorkWithAuthor,
+  createSerieWithAuthor,
+  createWorkWithSerie,
+  humanName,
+} from '../fixtures/entities'
+
+import { randomLongWord, randomWords } from '../fixtures/text'
+import { getByUris } from '../utils/entities'
+import { shouldNotBeCalled } from '../utils/utils'
+import { search, waitForIndexation, getIndexedDoc } from '../utils/search'
+import randomString from 'lib/utils/random_string'
+import assert_ from 'lib/utils/assert_types'
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const assert_ = require('lib/utils/assert_types')
 const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
 assert_.number(maxGram)
 

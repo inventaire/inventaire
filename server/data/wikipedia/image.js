@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import error_ from 'lib/error/error'
+import { fixedEncodeURIComponent } from 'lib/utils/url'
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
-const error_ = require('lib/error/error')
-const { fixedEncodeURIComponent } = require('lib/utils/url')
 
-module.exports = async title => {
+export default async title => {
   title = fixedEncodeURIComponent(title)
   const url = `${apiBase}${title}`
 

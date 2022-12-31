@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { Lang } = require('lib/regex')
-const getEntityType = require('./get_entity_type')
-const validateAndFormatClaims = require('./validate_and_format_claims')
-const typeWithoutLabels = require('./type_without_labels')
-const propertiesPerType = require('controllers/entities/lib/properties/properties_per_type')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import { Lang } from 'lib/regex'
+import getEntityType from './get_entity_type'
+import validateAndFormatClaims from './validate_and_format_claims'
+import typeWithoutLabels from './type_without_labels'
+import propertiesPerType from 'controllers/entities/lib/properties/properties_per_type'
 const allowlistedTypes = Object.keys(propertiesPerType)
 
 // Can be used to validate both entities being created or existing entities
-module.exports = entity => {
+export default entity => {
   return validate(entity)
   .catch(addErrorContext(entity))
 }

@@ -1,5 +1,5 @@
 // Keep in sync with client/app/modules/general/scss/_colors.scss
-module.exports = {
+export default {
   giving: '#FEB1BA',
   lending: '#9FD5B3',
   selling: '#FFE567',

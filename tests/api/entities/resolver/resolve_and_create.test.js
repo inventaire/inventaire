@@ -1,8 +1,17 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { getByUris, getHistory } = require('tests/api/utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn, createWork } = require('tests/api/fixtures/entities')
+import _ from 'builders/utils'
+import should from 'should'
+import { authReq, shouldNotBeCalled } from 'tests/api/utils/utils'
+import { getByUris, getHistory } from 'tests/api/utils/entities'
+
+import {
+  randomLabel,
+  humanName,
+  generateIsbn13,
+  someGoodReadsId,
+  someLibraryThingsWorkId,
+  createEditionWithIsbn,
+  createWork,
+} from 'tests/api/fixtures/entities'
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

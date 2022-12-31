@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const properties = require('../properties/properties_values_constraints')
-const createInvEntity = require('../create_inv_entity')
-const isbn_ = require('lib/isbn/isbn')
-const { getImageByIsbn } = require('data/dataseed/dataseed')
-const convertAndCleanupImageUrl = require('controllers/images/lib/convert_and_cleanup_image_url')
+import _ from 'builders/utils'
+import properties from '../properties/properties_values_constraints'
+import createInvEntity from '../create_inv_entity'
+import isbn_ from 'lib/isbn/isbn'
+import { getImageByIsbn } from 'data/dataseed/dataseed'
+import convertAndCleanupImageUrl from 'controllers/images/lib/convert_and_cleanup_image_url'
 
 const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
@@ -116,4 +116,4 @@ const guessEditionTitleFromWorksLabels = works => {
   .join(' - ')
 }
 
-module.exports = { createAuthor, createWork, createEdition }
+export default { createAuthor, createWork, createEdition }

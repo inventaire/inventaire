@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const { imageIsUsed: entityImageIsUsed } = require('controllers/entities/lib/entities')
-const { imageIsUsed: groupImageIsUsed } = require('controllers/groups/lib/groups')
-const { imageIsUsed: userImageIsUsed } = require('controllers/user/lib/user')
-const assert_ = require('lib/utils/assert_types')
-const { containers } = require('controllers/images/lib/containers')
-const { checkDelays } = require('config').mediaStorage.images
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { imageIsUsed as entityImageIsUsed } from 'controllers/entities/lib/entities'
+import { imageIsUsed as groupImageIsUsed } from 'controllers/groups/lib/groups'
+import { imageIsUsed as userImageIsUsed } from 'controllers/user/lib/user'
+import assert_ from 'lib/utils/assert_types'
+import { containers } from 'controllers/images/lib/containers'
+const { checkDelays } = CONFIG.mediaStorage.images
 
-module.exports = async ({ container, hash, url, context }) => {
+export default async ({ container, hash, url, context }) => {
   if (url) [ container, hash ] = url.split('/').slice(2)
   assert_.string(container)
   assert_.string(hash)

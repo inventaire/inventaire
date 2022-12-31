@@ -1,13 +1,14 @@
-require('should')
-const { getUserB } = require('../utils/utils')
-const { wait } = require('lib/promises')
-const { importSomeImage, uploadSomeImage, localContainerHasImage } = require('../utils/images')
-const { updateUser } = require('../utils/users')
-const { createGroup } = require('../fixtures/groups')
-const { updateGroup } = require('../utils/groups')
-const { createEdition } = require('../fixtures/entities')
-const { updateClaim } = require('../utils/entities')
-const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = require('config').mediaStorage.images.checkDelays
+import 'should'
+import CONFIG from 'config'
+import { getUserB } from '../utils/utils'
+import { wait } from 'lib/promises'
+import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images'
+import { updateUser } from '../utils/users'
+import { createGroup } from '../fixtures/groups'
+import { updateGroup } from '../utils/groups'
+import { createEdition } from '../fixtures/entities'
+import { updateClaim } from '../utils/entities'
+const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
 
 describe('images:auto-remove', () => {
   describe('upload', () => {

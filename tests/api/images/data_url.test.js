@@ -1,6 +1,6 @@
-const CONFIG = require('config')
-require('should')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
+import CONFIG from 'config'
+import 'should'
+import { authReq, shouldNotBeCalled } from '../utils/utils'
 const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
 const dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'
 const endpoint = '/api/images?action=data-url'

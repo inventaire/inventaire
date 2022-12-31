@@ -1,6 +1,6 @@
-const validations = require('./validations/comment')
+import validations from './validations/comment'
 
-module.exports = {
+export default {
   createTransactionComment: (userId, message, transactionId) => {
     validations.pass('transactionId', transactionId)
     return createComment(userId, message, 'transaction', transactionId)

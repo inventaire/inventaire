@@ -1,17 +1,18 @@
 // Keep in sync with client/app/lib/boolean_tests
-const _ = require('lodash')
-const wdk = require('wikidata-sdk')
-const regex_ = require('lib/regex')
-const { isNormalizedIsbn } = require('./isbn/isbn')
+import _ from 'lodash'
+import CONFIG from 'config'
+import wdk from 'wikidata-sdk'
+import regex_ from 'lib/regex'
+import { isNormalizedIsbn } from './isbn/isbn'
 const { PositiveInteger: PositiveIntegerPattern } = regex_
-const publicOrigin = require('config').getPublicOrigin()
+const publicOrigin = CONFIG.getPublicOrigin()
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 
 const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
-const tests = module.exports = {
+const tests = {
   isUrl: url => {
     try {
       const { protocol, username, password } = new URL(url)
@@ -101,3 +102,4 @@ const tests = module.exports = {
     return prefix === 'group' && isCouchUuid(id)
   },
 }
+export default tests

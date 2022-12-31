@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const { automerge } = require('./automerge')
-const typeSearch = require('controllers/search/lib/type_search')
-const entities_ = require('controllers/entities/lib/entities')
-const getOccurrencesFromEntities = require('controllers/entities/lib/get_occurrences_from_entities')
-const getOccurrencesFromExternalSources = require('controllers/entities/lib/get_occurrences_from_external_sources')
-const { getEntityNormalizedTerms } = require('controllers/entities/lib/terms_normalization')
-const { haveExactMatch } = require('controllers/entities/lib/labels_match')
+import _ from 'builders/utils'
+import { automerge } from './automerge'
+import typeSearch from 'controllers/search/lib/type_search'
+import entities_ from 'controllers/entities/lib/entities'
+import getOccurrencesFromEntities from 'controllers/entities/lib/get_occurrences_from_entities'
+import getOccurrencesFromExternalSources from 'controllers/entities/lib/get_occurrences_from_external_sources'
+import { getEntityNormalizedTerms } from 'controllers/entities/lib/terms_normalization'
+import { haveExactMatch } from 'controllers/entities/lib/labels_match'
 
-module.exports = (entity, existingTasks) => {
+export default (entity, existingTasks) => {
   return Promise.all([
     searchEntityDuplicatesSuggestions(entity, existingTasks),
     getAuthorWorksData(entity._id)

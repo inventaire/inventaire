@@ -1,7 +1,7 @@
-const { compact } = require('lodash')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { getSummariesFromClaims } = require('controllers/data/lib/summaries/getters')
-const { getWikipediaSitelinksData } = require('controllers/data/lib/summaries/sitelinks')
+import { compact } from 'lodash'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import { getSummariesFromClaims } from 'controllers/data/lib/summaries/getters'
+import { getWikipediaSitelinksData } from 'controllers/data/lib/summaries/sitelinks'
 
 const sanitization = {
   uri: {},
@@ -21,4 +21,4 @@ const controller = async ({ uri, refresh, langs }) => {
   return { summaries }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

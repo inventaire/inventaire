@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import _ from 'lodash'
 const authorProperties = [
   // author
   'wdt:P50',
@@ -10,7 +10,7 @@ const authorProperties = [
   'wdt:P6338'
 ]
 
-module.exports = work => {
+export default work => {
   return _(work.claims)
   .pick(authorProperties)
   .values()

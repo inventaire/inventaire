@@ -1,8 +1,8 @@
-const { buildSearcher } = require('lib/elasticsearch')
-const { distanceBetween } = require('lib/geo')
-const assert_ = require('lib/utils/assert_types')
+import { buildSearcher } from 'lib/elasticsearch'
+import { distanceBetween } from 'lib/geo'
+import assert_ from 'lib/utils/assert_types'
 
-module.exports = dbBaseName => {
+export default dbBaseName => {
   const searchByDistance = buildSearcher({
     dbBaseName,
     queryBuilder

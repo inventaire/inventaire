@@ -1,6 +1,6 @@
-const { buildUrl } = require('lib/utils/url')
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
+import { buildUrl } from 'lib/utils/url'
+import 'should'
+import { publicReq, shouldNotBeCalled } from '../utils/utils'
 
 const buildReverseClaimsUrl = (property, value) => {
   return buildUrl('/api/entities', { action: 'reverse-claims', property, value })

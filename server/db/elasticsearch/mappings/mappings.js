@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   entities: require('./entities'),
   groups: require('./groups'),
   items: require('./items'),

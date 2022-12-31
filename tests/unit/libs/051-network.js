@@ -1,9 +1,9 @@
-const CONFIG = require('config')
-const { getIpBinaryRepresentation } = require('lib/network/ip_binary_representation')
-const isPrivateUrl = require('lib/network/is_private_url')
-const hostname = require('node:os').hostname()
+import CONFIG from 'config'
+import { getIpBinaryRepresentation } from 'lib/network/ip_binary_representation'
+import isPrivateUrl from 'lib/network/is_private_url'
 
-require('should')
+import 'should'
+const hostname = require('node:os').hostname()
 
 describe('getIpBinaryRepresentation', () => {
   it('should get an IPv4 binary representation', async () => {

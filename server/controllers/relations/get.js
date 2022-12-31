@@ -1,4 +1,4 @@
-const { getUserRelations, getNetworkIds } = require('controllers/user/lib/relations_status')
+import { getUserRelations, getNetworkIds } from 'controllers/user/lib/relations_status'
 
 const sanitization = {}
 
@@ -12,4 +12,4 @@ const controller = async ({ reqUserId }) => {
   return relations
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

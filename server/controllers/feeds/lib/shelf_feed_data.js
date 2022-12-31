@@ -1,7 +1,7 @@
-const user_ = require('controllers/user/lib/user')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import user_ from 'controllers/user/lib/user'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
-module.exports = async (shelfId, reqUserId) => {
+export default async (shelfId, reqUserId) => {
   const shelf = await shelves_.byId(shelfId)
   const user = await user_.byId(shelf.owner)
 

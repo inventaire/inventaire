@@ -1,13 +1,13 @@
-const { getSingularTypes } = require('lib/wikidata/aliases')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const error_ = require('lib/error/error')
-const { trim } = require('lodash')
-const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
-const { prefixifyWdProperty } = require('controllers/entities/lib/prefix')
+import { getSingularTypes } from 'lib/wikidata/aliases'
+import properties from 'controllers/entities/lib/properties/properties_values_constraints'
+import error_ from 'lib/error/error'
+import { trim } from 'lodash'
+import { isPropertyUri, isWdEntityUri } from 'lib/boolean_validations'
+import { prefixifyWdProperty } from 'controllers/entities/lib/prefix'
 const allowlistedProperties = require('lib/wikidata/allowlisted_properties').map(prefixifyWdProperty)
 const allowedProperties = new Set(allowlistedProperties)
 
-module.exports = params => {
+export default params => {
   const { lang: userLang, search, limit: size, offset: from, exact, claim, safe = false } = params
   let { types, minScore = 0.5 } = params
   types = getSingularTypes(types)

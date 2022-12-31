@@ -1,4 +1,4 @@
-const listings_ = require('controllers/listings/lib/listings')
+import listings_ from 'controllers/listings/lib/listings'
 
 const sanitization = {
   name: {},
@@ -25,7 +25,7 @@ const formatNewListing = params => {
   return listings_.create(listingData)
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'lists', 'creation' ]

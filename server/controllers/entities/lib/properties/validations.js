@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const properties = require('./properties_values_constraints')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import properties from './properties_values_constraints'
 const allowlist = Object.keys(properties)
 const allowset = new Set(allowlist)
 
 // Which type a property value should return when passed to _.typeOf
 const propertyType = property => properties[property].type || properties[property].datatype
 
-module.exports = {
+export default {
   propertyType,
 
   validateProperty: property => {

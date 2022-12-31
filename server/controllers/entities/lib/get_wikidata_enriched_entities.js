@@ -4,20 +4,21 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-const _ = require('builders/utils')
-const { simplify } = require('wikidata-sdk')
+import _ from 'builders/utils'
+
+import { simplify } from 'wikidata-sdk'
+import getOriginalLang from 'lib/wikidata/get_original_lang'
+import formatClaims from 'lib/wikidata/format_claims'
+import getEntityType from './get_entity_type'
+import { prefixifyWd, unprefixify } from 'controllers/entities/lib/prefix'
+import cache_ from 'lib/cache'
+import getWdEntity from 'data/wikidata/get_entity'
+import addImageData from './add_image_data'
+import radio from 'lib/radio'
+import propagateRedirection from './propagate_redirection'
+import { partition, map } from 'lodash'
 const { propertyClaims: simplifyPropertyClaims } = simplify
-const getOriginalLang = require('lib/wikidata/get_original_lang')
-const formatClaims = require('lib/wikidata/format_claims')
-const getEntityType = require('./get_entity_type')
-const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
-const cache_ = require('lib/cache')
-const getWdEntity = require('data/wikidata/get_entity')
-const addImageData = require('./add_image_data')
-const radio = require('lib/radio')
-const propagateRedirection = require('./propagate_redirection')
 const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
-const { partition, map } = require('lodash')
 
 let reindex
 const requireCircularDependencies = () => {
@@ -25,7 +26,7 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-module.exports = async (ids, params) => {
+export default async (ids, params) => {
   const entities = await Promise.all(ids.map(getCachedEnrichedEntity(params)))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (params.dry) foundEntities = _.compact(foundEntities)

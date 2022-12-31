@@ -1,6 +1,6 @@
-const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const { sendResetPasswordEmail } = require('controllers/user/lib/token')
+import error_ from 'lib/error/error'
+import user_ from 'controllers/user/lib/user'
+import { sendResetPasswordEmail } from 'controllers/user/lib/token'
 
 const sanitization = {
   email: {}
@@ -20,4 +20,4 @@ const catchEmailNotFoundErr = email => err => {
   else throw err
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
 
-const Item = module.exports = {}
+const Item = {}
+
+export default Item
 
 const validations = Item.validations = require('./validations/item')
 const attributes = Item.attributes = require('./attributes/item')

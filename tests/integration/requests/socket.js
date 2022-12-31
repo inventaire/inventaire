@@ -1,7 +1,7 @@
-require('should')
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
-const { startGenericMockServer } = require('../utils/mock_server')
+import 'should'
+import requests_ from 'lib/requests'
+import { wait } from 'lib/promises'
+import { startGenericMockServer } from '../utils/mock_server'
 
 const startHangingupServer = async () => {
   let firstConnexion = true

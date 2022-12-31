@@ -1,8 +1,8 @@
-const publicActions = require('./public_actions')
-const ActionsControllers = require('lib/actions_controllers')
-const membersActions = require('./members_actions')
+import publicActions from './public_actions'
+import ActionsControllers from 'lib/actions_controllers'
+import membersActions from './members_actions'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'by-id': publicActions.byId,

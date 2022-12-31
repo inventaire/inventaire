@@ -1,22 +1,21 @@
-require('should')
-const CONFIG = require('config')
+import 'should'
+import CONFIG from 'config'
+import randomString from 'lib/utils/random_string'
+import fs, { createReadStream } from 'node:fs'
+import downloadImage from 'controllers/images/lib/download_image'
+import { authReq, getUser } from '../utils/utils'
+import fetch from 'node-fetch'
+import FormData from 'form-data'
+import assert_ from 'lib/utils/assert_types'
+import { createEdition } from '../fixtures/entities'
+import { updateClaim } from './entities'
+import { createGroup } from '../fixtures/groups'
+import { updateGroup } from '../utils/groups'
+import { updateUser } from './users'
 const { mediaStorage } = CONFIG
 const host = CONFIG.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
-const randomString = require('lib/utils/random_string')
-const fs = require('node:fs')
-const downloadImage = require('controllers/images/lib/download_image')
-const { authReq, getUser } = require('../utils/utils')
-const { createReadStream } = require('node:fs')
-const fetch = require('node-fetch')
-const FormData = require('form-data')
-const assert_ = require('lib/utils/assert_types')
-const { createEdition } = require('../fixtures/entities')
-const { updateClaim } = require('./entities')
-const { createGroup } = require('../fixtures/groups')
-const { updateGroup } = require('../utils/groups')
-const { updateUser } = require('./users')
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
@@ -24,7 +23,7 @@ const uploadImageFromUrl = async ({ container, url }) => {
 
 const someImageUrl = () => `https://via.placeholder.com/1000x1000.jpg?text=${randomString(10)}`
 
-module.exports = {
+export default {
   getImageDataUrl: async url => {
     url = encodeURIComponent(url)
     const { 'data-url': dataUrl } = await authReq('get', `/api/images?action=data-url&url=${url}`)

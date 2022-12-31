@@ -1,10 +1,10 @@
-const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
-const cache_ = require('lib/cache')
-const { buildUrl } = require('lib/utils/url')
-const { getSitelinkUrl } = require('wikidata-sdk')
+import requests_ from 'lib/requests'
+import error_ from 'lib/error/error'
+import cache_ from 'lib/cache'
+import { buildUrl } from 'lib/utils/url'
+import { getSitelinkUrl } from 'wikidata-sdk'
 
-module.exports = params => {
+export default params => {
   const { lang, title, introOnly } = params
   const keyBase = introOnly ? 'wpextract' : 'wparticle'
   const key = `${keyBase}:${lang}:${title}`

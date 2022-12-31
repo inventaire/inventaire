@@ -1,20 +1,20 @@
-const _ = require('builders/utils')
-const wdk = require('wikidata-sdk')
+import _ from 'builders/utils'
+import wdk from 'wikidata-sdk'
+import { getEntityId } from './entity_helpers'
+import { activeI18nLangs } from '../helpers'
+import getEntityImagesFromClaims from 'controllers/entities/lib/get_entity_images_from_claims'
+import { setTermsFromClaims } from 'controllers/entities/lib/entities'
+import getEntityType from 'controllers/entities/lib/get_entity_type'
+import { indexedEntitiesTypes } from 'db/elasticsearch/indexes'
+import specialEntityImagesGetter from 'controllers/entities/lib/special_entity_images_getter'
+import { getSingularTypes } from 'lib/wikidata/aliases'
+import { getEntityPopularity } from 'controllers/entities/lib/popularity'
+import getEntitiesList from 'controllers/entities/lib/get_entities_list'
+import formatClaims from 'lib/wikidata/format_claims'
 const { simplify } = wdk
-const { getEntityId } = require('./entity_helpers')
-const { activeI18nLangs } = require('../helpers')
-const getEntityImagesFromClaims = require('controllers/entities/lib/get_entity_images_from_claims')
-const { setTermsFromClaims } = require('controllers/entities/lib/entities')
-const getEntityType = require('controllers/entities/lib/get_entity_type')
-const { indexedEntitiesTypes } = require('db/elasticsearch/indexes')
-const specialEntityImagesGetter = require('controllers/entities/lib/special_entity_images_getter')
-const { getSingularTypes } = require('lib/wikidata/aliases')
-const { getEntityPopularity } = require('controllers/entities/lib/popularity')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const formatClaims = require('lib/wikidata/format_claims')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
-module.exports = async (entity, options = {}) => {
+export default async (entity, options = {}) => {
   entity._id = getEntityId(entity)
 
   // Entities from Wikidata dump still have a type='item' set

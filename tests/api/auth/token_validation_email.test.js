@@ -1,14 +1,15 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { getUserGetter, publicReq, shouldNotBeCalled } from '../utils/utils'
+import { rawRequest } from '../utils/request'
+import { wait } from 'lib/promises'
+import { createUserEmail } from '../fixtures/users'
+import { BasicUpdater } from 'lib/doc_updates'
+import dbFactory from 'db/couchdb/base'
+import randomString from 'lib/utils/random_string'
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { getUserGetter, publicReq, shouldNotBeCalled } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { wait } = require('lib/promises')
-const { createUserEmail } = require('../fixtures/users')
-const { BasicUpdater } = require('lib/doc_updates')
-const db = require('db/couchdb/base')('users')
+const db = dbFactory('users')
 const endpoint = '/api/token?action=validation-email'
-const randomString = require('lib/utils/random_string')
 
 describe('token:validation-email', () => {
   it('should reject requests without email', async () => {

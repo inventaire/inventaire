@@ -1,4 +1,4 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
 // The simplest doc update: set one or several key/values
 const basicUpdater = (attribute, value, doc) => {
@@ -16,4 +16,4 @@ const wrappedUpdater = (db, id, attribute, value) => db.update(id, BasicUpdater(
 
 const WrappedUpdater = db => wrappedUpdater.bind(null, db)
 
-module.exports = { basicUpdater, BasicUpdater, wrappedUpdater, WrappedUpdater }
+export default { basicUpdater, BasicUpdater, wrappedUpdater, WrappedUpdater }

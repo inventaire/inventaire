@@ -1,11 +1,11 @@
-const auth = require('./auth')
-const security = require('./security')
-const statics = require('./statics')
-const cache = require('./cache')
-const requestsLogger = require('./requests_logger')
-const content = require('./content')
+import auth from './auth'
+import security from './security'
+import statics from './statics'
+import cache from './cache'
+import requestsLogger from './requests_logger'
+import content from './content'
 
-module.exports = [
+export default [
   // Place the request logger first so that even requests that generate an error
   // in the middleware are logged
   requestsLogger,

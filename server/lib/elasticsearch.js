@@ -1,9 +1,9 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
-const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
-const assert_ = require('./utils/assert_types')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import error_ from 'lib/error/error'
+import { indexesNamesByBaseNames } from 'db/elasticsearch/indexes'
+import assert_ from './utils/assert_types'
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
 const buildSearcher = params => {
@@ -76,4 +76,4 @@ const parseHit = hit => {
   return data
 }
 
-module.exports = { buildSearcher, getHits, getHitsAndTotal, parseResponse, formatError }
+export default { buildSearcher, getHits, getHitsAndTotal, parseResponse, formatError }

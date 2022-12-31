@@ -1,8 +1,8 @@
-const { emit } = require('lib/radio')
-const Patch = require('models/patch')
-const entities_ = require('./entities')
-const patches_ = require('./patches/patches')
-const validateEntity = require('./validate_entity')
+import { emit } from 'lib/radio'
+import Patch from 'models/patch'
+import entities_ from './entities'
+import patches_ from './patches/patches'
+import validateEntity from './validate_entity'
 
 const revertFromPatchDoc = async (patch, userId) => {
   const entityId = patch._id.split(':')[0]
@@ -20,4 +20,4 @@ const revertFromPatchId = async (patchId, userId) => {
   return revertFromPatchDoc(patch, userId)
 }
 
-module.exports = { revertFromPatchDoc, revertFromPatchId }
+export default { revertFromPatchDoc, revertFromPatchId }

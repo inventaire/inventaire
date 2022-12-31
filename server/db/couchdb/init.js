@@ -1,11 +1,10 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import couchInit from 'couch-init2'
+import initHardCodedDocuments from './init_hard_coded_documents'
+import databases from './databases'
 const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const couchInit = require('couch-init2')
 const dbBaseUrl = CONFIG.db.getOrigin()
-const initHardCodedDocuments = require('./init_hard_coded_documents')
-
-const databases = require('./databases')
 const formattedList = []
 
 const setJsExtension = filename => `${filename}.js`
@@ -40,7 +39,7 @@ const init = async () => {
 
 let waitForCouchInit
 
-module.exports = () => {
+export default () => {
   // Return the same promises to all consumers
   waitForCouchInit = waitForCouchInit || init()
   return waitForCouchInit

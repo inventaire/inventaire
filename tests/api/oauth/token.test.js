@@ -1,8 +1,9 @@
-const { authorizationCodeLifetimeMs } = require('config').oauthServer
-const { shouldNotBeCalled } = require('../utils/utils')
-const { postUrlencoded } = require('../utils/request')
-const { getClient, getClientWithAuthorization } = require('../utils/oauth')
-const { wait } = require('lib/promises')
+import CONFIG from 'config'
+import { shouldNotBeCalled } from '../utils/utils'
+import { postUrlencoded } from '../utils/request'
+import { getClient, getClientWithAuthorization } from '../utils/oauth'
+import { wait } from 'lib/promises'
+const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 const post = body => postUrlencoded('/api/oauth/token', body)
 
 describe('oauth:token', () => {

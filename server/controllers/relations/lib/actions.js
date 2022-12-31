@@ -1,7 +1,7 @@
-const queries_ = require('./queries')
-const radio = require('lib/radio')
+import queries_ from './queries'
+import radio from 'lib/radio'
 
-module.exports = {
+export default {
   acceptRequest: async (userId, otherId) => {
     const res = await queries_.putFriendStatus(userId, otherId)
     await radio.emit('notify:friend:request:accepted', otherId, userId)

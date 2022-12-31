@@ -1,15 +1,16 @@
-const _ = require('builders/utils')
-const Shelf = require('models/shelf')
-const items_ = require('controllers/items/lib/items')
-const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
-const db = require('db/couchdb/base')('shelves')
-const error_ = require('lib/error/error')
-const { emit } = require('lib/radio')
-const { updatable: updateAttributes } = require('models/attributes/shelf')
-const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
+import _ from 'builders/utils'
+import Shelf from 'models/shelf'
+import items_ from 'controllers/items/lib/items'
+import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
+import dbFactory from 'db/couchdb/base'
+import error_ from 'lib/error/error'
+import { emit } from 'lib/radio'
+import { updatable as updateAttributes } from 'models/attributes/shelf'
+import { validateVisibilityKeys } from 'lib/visibility/visibility'
+import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
+const db = dbFactory('shelves')
 
-const shelves_ = module.exports = {
+const shelves_ = {
   create: async newShelf => {
     const shelf = Shelf.create(newShelf)
     await validateVisibilityKeys(shelf.visibility, shelf.owner)
@@ -66,6 +67,8 @@ const shelves_ = module.exports = {
     .then(db.bulkDelete)
   },
 }
+
+export default shelves_
 
 const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   const shelves = await shelves_.byIds(shelvesIds)

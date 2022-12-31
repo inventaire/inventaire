@@ -1,17 +1,18 @@
 // This module implements a model object as expected by express-oauth-server and oauth2-server
 // See specification https://oauth2-server.readthedocs.io/en/latest/model/overview.html
 
-const user_ = require('controllers/user/lib/user')
-const error_ = require('lib/error/error')
-const { catchNotFound } = error_
-const assert_ = require('lib/utils/assert_types')
-const clients_ = require('./clients')
-const authorizations_ = require('./authorizations')
-const tokens_ = require('./tokens')
-const { passwords } = require('lib/crypto')
-const InvalidClientError = require('oauth2-server/lib/errors/invalid-client-error')
+import user_ from 'controllers/user/lib/user'
 
-module.exports = {
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import clients_ from './clients'
+import authorizations_ from './authorizations'
+import tokens_ from './tokens'
+import { passwords } from 'lib/crypto'
+import InvalidClientError from 'oauth2-server/lib/errors/invalid-client-error'
+const { catchNotFound } = error_
+
+export default {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getaccesstoken-accesstoken-callback
   getAccessToken: async bearerToken => {
     if (!bearerToken) return false

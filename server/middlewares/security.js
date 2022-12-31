@@ -15,4 +15,4 @@ const setCorsPolicy = (req, res, next) => {
   }
 }
 
-module.exports = { setCorsPolicy }
+export default { setCorsPolicy }

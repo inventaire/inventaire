@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const ActionsControllers = require('lib/actions_controllers')
-const token_ = require('controllers/user/lib/token')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const passport_ = require('lib/passport/passport')
-const setLoggedInCookie = require('./lib/set_logged_in_cookie')
+import _ from 'builders/utils'
+import ActionsControllers from 'lib/actions_controllers'
+import token_ from 'controllers/user/lib/token'
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import passport_ from 'lib/passport/passport'
+import setLoggedInCookie from './lib/set_logged_in_cookie'
 
 const sanitization = validateSanitization({
   email: {},
@@ -36,7 +36,7 @@ const Redirect = res => () => {
   res.redirect('/login/reset-password')
 }
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'validation-email': confirmEmailValidity,

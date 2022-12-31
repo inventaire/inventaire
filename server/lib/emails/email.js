@@ -1,15 +1,15 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const { buildUrl } = require('lib/utils/url')
-const checkUserNotificationsSettings = require('./check_user_notifications_settings')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import { buildUrl } from 'lib/utils/url'
+import checkUserNotificationsSettings from './check_user_notifications_settings'
+import { i18n } from './i18n/i18n'
+import { kmBetween } from 'lib/geo'
 
 const host = CONFIG.getPublicOrigin()
 const { defaultFrom } = CONFIG.mailer
-const { i18n } = require('./i18n/i18n')
-const { kmBetween } = require('lib/geo')
 
-module.exports = {
+export default {
   validationEmail: (user, token) => {
     // purposedly not checking notifications settings
     const { email, language } = user

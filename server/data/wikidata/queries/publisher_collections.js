@@ -1,6 +1,6 @@
 const relationProperty = 'wdt:P123'
 
-module.exports = {
+export default {
   parameters: [ 'qid' ],
 
   relationProperties: [ relationProperty ],

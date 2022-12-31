@@ -1,10 +1,9 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
+import { pass, userId, username, email, userImg, boolean, position, BoundedString } from './common'
+import { creationStrategies, settings } from '../attributes/user'
+import { isPropertyUri } from 'lib/boolean_validations'
 
-const { pass, userId, username, email, userImg, boolean, position, BoundedString } = require('./common')
-const { creationStrategies, settings } = require('../attributes/user')
-const { isPropertyUri } = require('lib/boolean_validations')
-
-const validations = module.exports = {
+const validations = {
   pass,
   userId,
   username,
@@ -21,6 +20,8 @@ const validations = module.exports = {
   customProperties: props => _.isArray(props) && props.every(isPropertyUri),
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1
 }
+
+export default validations
 
 const deepAttributes = {
   settings: {}

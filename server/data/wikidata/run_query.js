@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const cache_ = require('lib/cache')
-const error_ = require('lib/error/error')
-const wdk = require('wikidata-sdk')
-const makeSparqlRequest = require('./make_sparql_request')
-const { queries, queriesPerProperty } = require('./queries/queries')
-const { unprefixify } = require('controllers/entities/lib/prefix')
+import _ from 'builders/utils'
+import radio from 'lib/radio'
+import cache_ from 'lib/cache'
+import error_ from 'lib/error/error'
+import wdk from 'wikidata-sdk'
+import makeSparqlRequest from './make_sparql_request'
+import { queries, queriesPerProperty } from './queries/queries'
+import { unprefixify } from 'controllers/entities/lib/prefix'
 const possibleQueries = Object.keys(queries)
 const dashesPattern = /-/g
 
@@ -13,7 +13,7 @@ const dashesPattern = /-/g
 // - query: the name of the query to use from './queries/queries'
 // - refresh
 // - custom parameters: see the query file
-module.exports = async params => {
+export default async params => {
   const { refresh, dry } = params
   let { query: queryName } = params
 

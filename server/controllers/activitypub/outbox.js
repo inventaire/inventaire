@@ -1,12 +1,12 @@
-const error_ = require('lib/error/error')
-const { byActorName, getActivitiesCountByName } = require('controllers/activitypub/lib/activities')
-const { makeUrl, getEntityUriFromActorName, context } = require('./lib/helpers')
-const formatUserItemsActivities = require('./lib/format_user_items_activities')
-const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const patches_ = require('controllers/entities/lib/patches/patches')
-const formatEntityPatchesActivities = require('./lib/format_entity_patches_activities')
-const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
+import error_ from 'lib/error/error'
+import { byActorName, getActivitiesCountByName } from 'controllers/activitypub/lib/activities'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers'
+import formatUserItemsActivities from './lib/format_user_items_activities'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities'
+import { isEntityUri, isUsername } from 'lib/boolean_validations'
+import patches_ from 'controllers/entities/lib/patches/patches'
+import formatEntityPatchesActivities from './lib/format_entity_patches_activities'
+import { validateUser, validateShelf, validateEntity } from './lib/validations'
 
 const sanitization = {
   name: {},
@@ -96,7 +96,7 @@ const getUserActivities = async ({ name, offset, limit }) => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
 }

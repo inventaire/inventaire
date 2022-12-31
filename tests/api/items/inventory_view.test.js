@@ -1,12 +1,12 @@
-require('should')
-const { publicReq } = require('tests/api/utils/utils')
-const { customAuthReq } = require('tests/api/utils/request')
+import 'should'
+import { publicReq } from 'tests/api/utils/utils'
+import { customAuthReq } from 'tests/api/utils/request'
+import { getSomeGroupWithAMember } from '../fixtures/groups'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves'
+import { createUserWithItems } from '../fixtures/populate'
+import { shouldNotBeCalled } from 'tests/unit/utils'
+import { createItem } from 'tests/api/fixtures/items'
 const endpoint = '/api/items?action=inventory-view'
-const { getSomeGroupWithAMember } = require('../fixtures/groups')
-const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { createUserWithItems } = require('../fixtures/populate')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { createItem } = require('tests/api/fixtures/items')
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', async () => {

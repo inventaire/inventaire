@@ -1,4 +1,4 @@
-const notifications_ = require('./lib/notifications')
+import notifications_ from './lib/notifications'
 
 const sanitization = {
   limit: { optional: true, default: 10 },
@@ -26,4 +26,4 @@ const paginate = params => notifications => {
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

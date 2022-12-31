@@ -1,7 +1,7 @@
-const ActionsControllers = require('lib/actions_controllers')
-const relationsActions = require('./actions')
+import ActionsControllers from 'lib/actions_controllers'
+import relationsActions from './actions'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
       default: require('./get')

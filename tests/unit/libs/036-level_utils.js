@@ -1,5 +1,5 @@
-require('should')
-const { formatBatchOps } = require('db/level/utils')
+import 'should'
+import { formatBatchOps } from 'db/level/utils'
 
 describe('level utils', () => {
   describe('formatBatchOps', () => {

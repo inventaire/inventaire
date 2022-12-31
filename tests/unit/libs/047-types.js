@@ -1,5 +1,5 @@
-const assert_ = require('lib/utils/assert_types')
-require('should')
+import assert_ from 'lib/utils/assert_types'
+import 'should'
 
 describe('assert_', () => {
   describe('type', () => {
@@ -151,7 +151,6 @@ describe('assert_', () => {
 
     it("should not accept piped 's...' types if 'arguments' is passed", () => {
       const types = 'strings...';
-      // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
       (function () {
         assert_.types(types, arguments)
       }).should.throw("types should be an array when used with 'arguments'")

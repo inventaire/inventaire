@@ -1,11 +1,10 @@
-#!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const split = require('split')
-const through = require('through')
-const { readFileSync } = require('node:fs')
-const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
-const path = require('node:path')
+#!/usr/bin/env nodeimport 'module-alias/register';
+import _ from 'builders/utils'
+import split from 'split'
+import through from 'through'
+import { readFileSync } from 'node:fs'
+import serializeEntityInTurtle from './lib/serialize_entity_in_turtle'
+import path from 'node:path'
 
 const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
 // Prefix the dump by the headers

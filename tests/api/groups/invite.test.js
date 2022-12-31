@@ -1,8 +1,8 @@
-require('should')
-const { authReq, authReqB, getUserB } = require('../utils/utils')
-const { createGroup, addMember } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { authReq, authReqB, getUserB } from '../utils/utils'
+import { createGroup, addMember } from '../fixtures/groups'
+import { getGroup } from 'tests/api/utils/groups'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const endpoint = '/api/groups?action=invite'
 
 describe('groups:update:invite', () => {

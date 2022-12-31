@@ -1,12 +1,12 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { authReq } from '../utils/utils'
+import { createListing, createElement } from '../fixtures/listings'
+
+import elements_ from 'controllers/listings/lib/elements'
+import listings_ from 'controllers/listings/lib/listings'
 
 const endpoint = '/api/lists?action='
 const removeElements = `${endpoint}remove-elements`
-
-const elements_ = require('controllers/listings/lib/elements')
-const listings_ = require('controllers/listings/lib/listings')
 
 describe('listings:remove-elements', () => {
   it('should reject without listing id', async () => {

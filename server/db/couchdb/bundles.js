@@ -1,7 +1,7 @@
-const couch_ = require('lib/couch')
-const assert_ = require('lib/utils/assert_types')
+import couch_ from 'lib/couch'
+import assert_ from 'lib/utils/assert_types'
 
-module.exports = (db, _) => {
+export default (db, _) => {
   const actionAndReturn = (verb, doc) => {
     assert_.object(doc)
     return db[verb](doc)

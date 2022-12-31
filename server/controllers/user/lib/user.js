@@ -1,17 +1,20 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const couch_ = require('lib/couch')
-const User = require('models/user')
-const { byEmail, byEmails, findOneByEmail } = require('./shared_user_handlers')
-const { omitPrivateData } = require('./authorized_user_data_pickers')
-const db = require('db/couchdb/base')('users')
-const { getNetworkIds } = require('controllers/user/lib/relations_status')
-const { defaultAvatar } = require('lib/assets')
-const searchUsersByPosition = require('lib/search_by_position')(db, 'users')
-const searchUsersByDistance = require('lib/search_by_distance')('users')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import couch_ from 'lib/couch'
+import User from 'models/user'
+import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers'
+import { omitPrivateData } from './authorized_user_data_pickers'
+import dbFactory from 'db/couchdb/base'
+import { getNetworkIds } from 'controllers/user/lib/relations_status'
+import { defaultAvatar } from 'lib/assets'
+import searchUsersByPositionFactory from 'lib/search_by_position'
+import searchUsersByDistanceFactory from 'lib/search_by_distance'
+const db = dbFactory('users')
+const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
+const searchUsersByDistance = searchUsersByDistanceFactory('users')
 
-const user_ = module.exports = {
+const user_ = {
   byId: db.get,
   byIds: db.byIds,
   byEmail: byEmail.bind(null, db),
@@ -154,6 +157,8 @@ const user_ = module.exports = {
     return user
   }
 }
+
+export default user_
 
 const findNearby = async (latLng, meterRange, iterations = 0, strict = false) => {
   const usersIds = await searchUsersByDistance(latLng, meterRange)

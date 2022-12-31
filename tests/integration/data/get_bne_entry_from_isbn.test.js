@@ -1,5 +1,5 @@
-const should = require('should')
-const getBneEntryFromIsbn = require('data/bne/get_bne_entry_from_isbn')
+import should from 'should'
+import getBneEntryFromIsbn from 'data/bne/get_bne_entry_from_isbn'
 
 describe('get_bne_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {

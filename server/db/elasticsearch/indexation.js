@@ -1,16 +1,17 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const formatters = require('./formatters/formatters')
-const filters = require('./filters')
-const deindex = require('./deindex')
-const { addToBatch, postBatch } = require('./bulk')
-const { updateDelay } = require('config').elasticsearch
-const { indexesNamesByBaseNames } = require('./indexes')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import formatters from './formatters/formatters'
+import filters from './filters'
+import deindex from './deindex'
+import { addToBatch, postBatch } from './bulk'
+import CONFIG from 'config'
+import { indexesNamesByBaseNames } from './indexes'
+const { updateDelay } = CONFIG.elasticsearch
 const bulkThrottleDelay = updateDelay / 2
 
 let batch = []
 
-module.exports = indexBaseName => {
+export default indexBaseName => {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   const format = formatters[indexBaseName]

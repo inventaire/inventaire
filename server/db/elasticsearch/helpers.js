@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = {
+export default {
   activeI18nLangs: 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' '),
 
   logBulkRes: (res, label) => {

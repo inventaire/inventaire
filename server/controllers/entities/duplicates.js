@@ -4,8 +4,9 @@
 // to sort it by reduced values, which isn't supported by CouchDB
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
+import dbFactory from 'db/couchdb/base'
 const designDocName = 'entities_deduplicate'
-const db = require('db/couchdb/base')('entities', designDocName)
+const db = dbFactory('entities', designDocName)
 
 const controller = async () => {
   const names = await getHomonymes()
@@ -22,4 +23,4 @@ const getHomonymes = async () => {
   .slice(0, 100)
 }
 
-module.exports = { sanitization: {}, controller }
+export default { sanitization: {}, controller }

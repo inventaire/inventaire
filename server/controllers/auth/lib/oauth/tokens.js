@@ -1,9 +1,10 @@
-const db = require('db/couchdb/base')('oauth_tokens')
-const assert_ = require('lib/utils/assert_types')
-const { omit } = require('lodash')
+import dbFactory from 'db/couchdb/base'
+import assert_ from 'lib/utils/assert_types'
+import { omit } from 'lodash'
+const db = dbFactory('oauth_tokens')
 const idAttribute = 'accessToken'
 
-module.exports = {
+export default {
   byId: async id => {
     const doc = await db.get(id)
     doc[idAttribute] = doc._id

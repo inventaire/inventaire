@@ -1,6 +1,6 @@
 
-require('should')
-const memoize = require('lib/utils/memoize')
+import 'should'
+import memoize from 'lib/utils/memoize'
 
 describe('memoize', () => {
   it('should be a function', () => {

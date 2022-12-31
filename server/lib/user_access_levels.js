@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
 const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ],
@@ -28,4 +28,4 @@ const getUserAccessLevels = user => {
 const hasAdminAccess = user => getUserAccessLevels(user).includes('admin')
 const hasDataadminAccess = user => getUserAccessLevels(user).includes('dataadmin')
 
-module.exports = { rolesByAccess, getUserAccessLevels, hasAdminAccess, hasDataadminAccess }
+export default { rolesByAccess, getUserAccessLevels, hasAdminAccess, hasDataadminAccess }

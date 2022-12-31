@@ -1,10 +1,12 @@
-const formatError = require('./format_error')
+import formatError from './format_error'
 
 let assert_
 const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
 setImmediate(requireCircularDependencies)
 
-const error_ = module.exports = {}
+const error_ = {}
+
+export default error_
 
 // help bundling information at error instanciation
 // so that it can be catched and parsed in a standardized way

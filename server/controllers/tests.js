@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = {
+export default {
   all: (req, res, next) => {
     // _.log(req.headers, 'headers')
 

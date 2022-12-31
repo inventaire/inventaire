@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const validations = require('./validations/task')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import validations from './validations/task'
 
-module.exports = {
+export default {
   create: newTask => {
     assert_.object(newTask)
     const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask

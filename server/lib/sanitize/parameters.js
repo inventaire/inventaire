@@ -1,14 +1,16 @@
-const _ = require('builders/utils')
-const CONFIG = require('config')
-const { isNonEmptyArray, isLocalActivityPubActorUrl } = require('lib/boolean_validations')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import { isNonEmptyArray, isLocalActivityPubActorUrl } from 'lib/boolean_validations'
+import error_ from 'lib/error/error'
+import { truncateLatLng } from 'lib/geo'
+import { isValidIsbn } from 'lib/isbn/isbn'
+import { normalizeString } from 'lib/utils/base'
+import { isWikimediaLanguageCode } from 'lib/wikimedia'
+import { isVisibilityKey, isVisibilityKeyArray } from 'models/validations/visibility'
+import common from 'models/validations/common'
+import user from 'models/validations/user'
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
-const error_ = require('lib/error/error')
-const { truncateLatLng } = require('lib/geo')
-const { isValidIsbn } = require('lib/isbn/isbn')
-const { normalizeString } = require('lib/utils/base')
-const { isWikimediaLanguageCode } = require('lib/wikimedia')
-const { isVisibilityKey, isVisibilityKeyArray } = require('models/validations/visibility')
 
 // Parameters attributes:
 // - format (optional)
@@ -17,8 +19,8 @@ const { isVisibilityKey, isVisibilityKeyArray } = require('models/validations/vi
 //   an error object with an `invalid #{paramName}` message and throw it
 
 const validations = {
-  common: require('models/validations/common'),
-  user: require('models/validations/user'),
+  common,
+  user,
   visibility: isVisibilityKeyArray,
 }
 
@@ -226,7 +228,7 @@ const generics = {
   }
 }
 
-module.exports = {
+export default {
   '@context': allowlistedStrings,
   actor: nonEmptyString,
   attribute: nonEmptyString,

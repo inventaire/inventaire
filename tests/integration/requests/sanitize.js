@@ -1,6 +1,6 @@
-const CONFIG = require('config')
-const requests_ = require('lib/requests')
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
+import CONFIG from 'config'
+import requests_ from 'lib/requests'
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
 
 describe('requests:sanitize', () => {
   it('should reject private URLs', async () => {

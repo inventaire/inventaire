@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byEntities: {
     map: doc => {
       if (doc.uri != null) emit(doc.uri, null)

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const entities_ = require('../entities')
-const convertAndCleanupImageUrl = require('controllers/images/lib/convert_and_cleanup_image_url')
+import _ from 'builders/utils'
+import entities_ from '../entities'
+import convertAndCleanupImageUrl from 'controllers/images/lib/convert_and_cleanup_image_url'
 
-module.exports = ({ reqUserId, batchId }) => async entry => {
+export default ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)

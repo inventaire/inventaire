@@ -1,7 +1,7 @@
-const { parse: isbnParser } = require('isbn3')
-const groups = require('./groups')
+import { parse as isbnParser } from 'isbn3'
+import groups from './groups'
 
-const parse = module.exports = isbn => {
+const parse = isbn => {
   const isbnData = isbnParser(isbn)
 
   if (isbnData == null) {
@@ -31,3 +31,4 @@ const parse = module.exports = isbn => {
 
   return isbnData
 }
+export default parse

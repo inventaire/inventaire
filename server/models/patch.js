@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const jiff = require('jiff')
-const validations = require('./validations/common')
-const { versioned } = require('./attributes/entity')
-const Entity = require('models/entity')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import jiff from 'jiff'
+import validations from './validations/common'
+import { versioned } from './attributes/entity'
+import Entity from 'models/entity'
 
-const Patch = module.exports = {
+const Patch = {
   create: params => {
     const { userId, currentDoc, updatedDoc, context, batchId } = params
     validations.pass('userId', userId)
@@ -88,6 +88,8 @@ const Patch = module.exports = {
     return patchesDocs
   },
 }
+
+export default Patch
 
 const applyInversePatch = (currentDoc, inversePatch) => {
   currentDoc = _.cloneDeep(currentDoc)

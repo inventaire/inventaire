@@ -1,14 +1,14 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const entities_ = require('./entities')
-const radio = require('lib/radio')
-const retryOnConflict = require('lib/retry_on_conflict')
-const Entity = require('models/entity')
-const getEntityType = require('./get_entity_type')
-const validateAndFormatClaim = require('./validate_and_format_claim')
-const validateClaimProperty = require('./validate_claim_property')
-const inferredClaimUpdates = require('./inferred_claim_updates')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import entities_ from './entities'
+import radio from 'lib/radio'
+import retryOnConflict from 'lib/retry_on_conflict'
+import Entity from 'models/entity'
+import getEntityType from './get_entity_type'
+import validateAndFormatClaim from './validate_and_format_claim'
+import validateClaimProperty from './validate_claim_property'
+import inferredClaimUpdates from './inferred_claim_updates'
 
 const updateInvClaim = async (user, id, property, oldVal, newVal) => {
   assert_.object(user)
@@ -49,4 +49,4 @@ const updateClaim = async params => {
   return entities_.putUpdate({ userId, currentDoc, updatedDoc })
 }
 
-module.exports = retryOnConflict({ updateFn: updateInvClaim })
+export default retryOnConflict({ updateFn: updateInvClaim })

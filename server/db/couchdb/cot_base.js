@@ -1,2 +1,2 @@
-const CONFIG = require('config')
-module.exports = require('blue-cot')(CONFIG.db)
+import CONFIG from 'config'
+export default require('blue-cot')(CONFIG.db)

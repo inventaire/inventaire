@@ -1,4 +1,4 @@
-const tasks_ = require('./lib/tasks')
+import tasks_ from './lib/tasks'
 
 const sanitization = {
   limit: {
@@ -14,4 +14,4 @@ const controller = async params => {
   return { tasks }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

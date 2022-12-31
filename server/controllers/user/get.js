@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { ownerSafeData } = require('./lib/authorized_user_data_pickers')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import { ownerSafeData } from './lib/authorized_user_data_pickers'
 
 const controller = async (params, req, res) => {
   // The logged in user as its document set on req.user by passport.js
@@ -31,4 +31,4 @@ const attributesByScope = {
   email: 'email',
 }
 
-module.exports = { sanitization: {}, controller }
+export default { sanitization: {}, controller }

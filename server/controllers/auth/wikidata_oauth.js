@@ -1,8 +1,11 @@
-const CONFIG = require('config')
-const requests_ = require('lib/requests')
+import CONFIG from 'config'
+import requests_ from 'lib/requests'
+import OAuth from 'oauth-1.0a'
+import crypto from 'node:crypto'
+
+import user_ from 'controllers/user/lib/user'
+import { parseQuery } from 'lib/utils/url'
 const root = CONFIG.getPublicOrigin()
-const OAuth = require('oauth-1.0a')
-const crypto = require('node:crypto')
 const createHmacSha1Hash = (baseString, key) => {
   return crypto.createHmac('sha1', key)
   .update(baseString)
@@ -20,9 +23,6 @@ const oauth = OAuth({
   hash_function: createHmacSha1Hash
 })
 
-const user_ = require('controllers/user/lib/user')
-const { parseQuery } = require('lib/utils/url')
-
 // Alternatively using the nice or the non-nice URL
 // see https://mediawiki.org/wiki/OAuth/For_Developers#Notes
 const wdHost = 'https://www.wikidata.org'
@@ -33,7 +33,7 @@ const step2Url = `${wdBaseNice}Special:OAuth/authorize`
 const step3Url = `${wdBaseNonNice}Special:OAuth/token`
 const reqTokenSecrets = {}
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { _id: reqUserId } = req.user
   const { oauth_verifier: verifier, oauth_token: reqToken, redirect } = req.query
 

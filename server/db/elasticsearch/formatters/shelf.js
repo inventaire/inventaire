@@ -1,4 +1,4 @@
-module.exports = async doc => {
+export default async doc => {
   doc.type = 'shelf'
   return doc
 }

@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
+import _ from 'builders/utils'
+import entities_ from './entities'
+import runWdQuery from 'data/wikidata/run_query'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
+import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils'
+import { getCachedRelations } from './temporarily_cache_relations'
 const { firstClaim, uniqByUri } = entities_
-const runWdQuery = require('data/wikidata/run_query')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { getSimpleDayDate, sortByOrdinalOrDate } = require('./queries_utils')
-const { getCachedRelations } = require('./temporarily_cache_relations')
 
-module.exports = params => {
+export default params => {
   const { uri, refresh, dry } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []

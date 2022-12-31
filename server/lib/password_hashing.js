@@ -1,15 +1,19 @@
-const { useSlowPasswordHashFunction } = require('config')
+import { useSlowPasswordHashFunction } from 'config'
+
+let passwordHashing
 
 if (useSlowPasswordHashFunction) {
-  module.exports = require('credential')()
+  passwordHashing = require('credential')()
 } else {
   // Mimicking 'credential' API, should only be used in test environment
-  module.exports = {
+  passwordHashing = {
     hash: async password => fastHash(password),
     verify: async (hash, password) => hash === fastHash(password),
     // In this mode, tokens never expire
     expired: () => false
   }
 }
+
+export default passwordHashing
 
 const fastHash = str => Buffer.from(str).toString('hex')

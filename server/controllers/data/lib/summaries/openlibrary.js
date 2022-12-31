@@ -1,8 +1,8 @@
-const requests_ = require('lib/requests')
-const cache_ = require('lib/cache')
+import requests_ from 'lib/requests'
+import cache_ from 'lib/cache'
 const timeout = 10 * 1000
 
-module.exports = async ({ id, refresh }) => {
+export default async ({ id, refresh }) => {
   const lastLetter = id.slice(-1)[0]
   const section = openLibrarySectionByLetter[lastLetter]
   const link = `https://openlibrary.org/${section}/${id}`

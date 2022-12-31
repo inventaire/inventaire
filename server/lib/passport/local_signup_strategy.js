@@ -1,9 +1,8 @@
-const { track } = require('lib/track')
-const User = require('models/user')
-const headers_ = require('lib/headers')
-const createUser = require('controllers/user/lib/create')
-
-const { Strategy: LocalStrategy } = require('passport-local')
+import { track } from 'lib/track'
+import User from 'models/user'
+import headers_ from 'lib/headers'
+import createUser from 'controllers/user/lib/create'
+import { Strategy as LocalStrategy } from 'passport-local'
 
 const options = { passReqToCallback: true }
 
@@ -29,4 +28,4 @@ const findLanguage = req => {
   if (User.validations.language(lang)) return lang
 }
 
-module.exports = new LocalStrategy(options, verify)
+export default new LocalStrategy(options, verify)

@@ -14,7 +14,7 @@ const userDoc = (username, idLastCharacters) => ({
   },
 })
 
-module.exports = {
+export default {
   users: {
     // A fake user used to sign entities edit generated from dataseed
     // see server/data/dataseed/dataseed.js

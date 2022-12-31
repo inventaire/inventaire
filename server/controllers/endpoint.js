@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const validateObject = require('lib/validate_object')
+import _ from 'builders/utils'
+import validateObject from 'lib/validate_object'
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
 
 // Basic validation of controllers objects to ease debugging
-module.exports = path => {
+export default path => {
   const obj = require(`controllers/${path}`)
 
   try {

@@ -1,6 +1,6 @@
-const { forceArray } = require('builders/utils')
+import { forceArray } from 'builders/utils'
 
-module.exports = {
+export default {
   formatBatchOps: ops => forceArray(ops).map(setDefaultType),
 
   // Levelup rejects `null` or `undefined` values, so the empty value should

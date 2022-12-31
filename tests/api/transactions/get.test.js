@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-require('should')
-const { authReq, authReqC } = require('tests/api/utils/utils')
-const { createTransaction } = require('../fixtures/transactions')
+import _ from 'builders/utils'
+import 'should'
+import { authReq, authReqC } from 'tests/api/utils/utils'
+import { createTransaction } from '../fixtures/transactions'
 
 describe('transactions:get', () => {
   it('should get user transactions', async () => {

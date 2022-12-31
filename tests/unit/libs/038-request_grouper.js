@@ -1,9 +1,7 @@
-const _ = require('builders/utils')
-
-require('should')
-const sinon = require('sinon')
-
-const requestGrouper = require('lib/request_grouper')
+import _ from 'builders/utils'
+import 'should'
+import sinon from 'sinon'
+import requestGrouper from 'lib/request_grouper'
 
 const MockRequester = (spy = _.noop) => async ids => {
   spy()

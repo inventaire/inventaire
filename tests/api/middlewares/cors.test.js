@@ -1,5 +1,5 @@
-const should = require('should')
-const { rawRequest } = require('../utils/request')
+import should from 'should'
+import { rawRequest } from '../utils/request'
 
 describe('CORS', () => {
   describe('OPTIONS', () => {

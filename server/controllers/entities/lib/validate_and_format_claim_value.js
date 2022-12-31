@@ -1,4 +1,7 @@
-const error_ = require('lib/error/error')
+import error_ from 'lib/error/error'
+
+import properties from './properties/properties_values_constraints'
+import validateClaimValueSync from './validate_claim_value_sync'
 
 let getEntityByUri, entities_
 const requireCircularDependencies = () => {
@@ -7,10 +10,7 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-const properties = require('./properties/properties_values_constraints')
-const validateClaimValueSync = require('./validate_claim_value_sync')
-
-module.exports = async params => {
+export default async params => {
   const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin, _id } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null

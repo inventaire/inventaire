@@ -1,14 +1,14 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const requests_ = require('lib/requests')
-const crypto = require('node:crypto')
-const assert_ = require('lib/utils/assert_types')
-const { expired } = require('lib/time')
-const { getSha256Base64Digest } = require('lib/crypto')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import requests_ from 'lib/requests'
+import crypto from 'node:crypto'
+import assert_ from 'lib/utils/assert_types'
+import { expired } from 'lib/time'
+import { getSha256Base64Digest } from 'lib/crypto'
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
-const security_ = module.exports = {
+const security_ = {
   sign: params => {
     const { keyId, privateKey, method, pathname, reqHeaders } = params
     const signedHeadersNames = Object.keys(reqHeaders).join(' ')
@@ -82,6 +82,8 @@ const security_ = module.exports = {
     return reqHeaders
   }
 }
+
+export default security_
 
 // 'date' must be a UTC string
 // 'method' must be lowercased

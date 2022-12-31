@@ -1,6 +1,6 @@
 
-require('should')
-const randomString = require('lib/utils/random_string')
+import 'should'
+import randomString from 'lib/utils/random_string'
 
 describe('random string', () => {
   it('should return a string of the requested length', () => {

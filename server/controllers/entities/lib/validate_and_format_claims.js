@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const validateAndFormatClaim = require('./validate_and_format_claim')
-const getEntityType = require('./get_entity_type')
-const validateClaimProperty = require('./validate_claim_property')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import validateAndFormatClaim from './validate_and_format_claim'
+import getEntityType from './get_entity_type'
+import validateClaimProperty from './validate_claim_property'
 
-module.exports = async ({ claims, type, _id }) => {
+export default async ({ claims, type, _id }) => {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)

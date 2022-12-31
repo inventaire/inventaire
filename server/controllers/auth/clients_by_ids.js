@@ -1,5 +1,5 @@
-const _ = require('builders/utils')
-const clients_ = require('./lib/oauth/clients')
+import _ from 'builders/utils'
+import clients_ from './lib/oauth/clients'
 
 const sanitization = {
   ids: {},
@@ -19,4 +19,4 @@ const privateAttributes = [
   'secret'
 ]
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,7 +1,7 @@
-require('should')
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
-const { updateLabel } = require('tests/api/utils/entities')
-const { createEdition, randomLabel } = require('tests/api/fixtures/entities')
+import 'should'
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import { updateLabel } from 'tests/api/utils/entities'
+import { createEdition, randomLabel } from 'tests/api/fixtures/entities'
 
 describe('entities:editions:update-labels', () => {
   it('should reject labels update', async () => {

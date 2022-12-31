@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const entities_ = require('./entities')
-const updateInvClaim = require('./update_inv_claim')
-const placeholders_ = require('./placeholders')
-const { unprefixify } = require('controllers/entities/lib/prefix')
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import entities_ from './entities'
+import updateInvClaim from './update_inv_claim'
+import placeholders_ from './placeholders'
+import { unprefixify } from 'controllers/entities/lib/prefix'
 
-module.exports = (user, uris) => {
+export default (user, uris) => {
   const reqUserId = user._id
 
   // Removing sequentially to avoid edit conflicts if entities or items

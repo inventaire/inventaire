@@ -1,6 +1,6 @@
-const { createEdition, createWork, createAuthor } = require('./create_entity_from_seed')
+import { createEdition, createWork, createAuthor } from './create_entity_from_seed'
 
-module.exports = ({ reqUserId, batchId, enrich }) => async entry => {
+export default ({ reqUserId, batchId, enrich }) => async entry => {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works

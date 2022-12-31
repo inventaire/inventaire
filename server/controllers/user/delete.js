@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const responses_ = require('lib/responses')
-const { Track } = require('lib/track')
-const deleteUserAndCleanup = require('controllers/user/lib/delete_user_and_cleanup')
+import _ from 'builders/utils'
+import responses_ from 'lib/responses'
+import { Track } from 'lib/track'
+import deleteUserAndCleanup from 'controllers/user/lib/delete_user_and_cleanup'
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const reqUserId = req.user._id
 
   _.warn(req.user, 'deleting user')

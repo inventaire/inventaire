@@ -1,9 +1,9 @@
-const should = require('should')
-const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
-const { getNotifications } = require('../utils/notifications')
-const { getSomeGroup, createGroup, createGroupWithAMember } = require('../fixtures/groups')
-const slugify = require('controllers/groups/lib/slugify')
-const { importSomeImage } = require('../utils/images')
+import should from 'should'
+import { publicReq, authReq, shouldNotBeCalled } from '../utils/utils'
+import { getNotifications } from '../utils/notifications'
+import { getSomeGroup, createGroup, createGroupWithAMember } from '../fixtures/groups'
+import slugify from 'controllers/groups/lib/slugify'
+import { importSomeImage } from '../utils/images'
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {

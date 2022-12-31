@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const groups_ = require('./lib/groups')
-const getGroupPublicData = require('./lib/group_public_data')
-const { get: getSlug } = require('./lib/slug')
+import _ from 'builders/utils'
+import groups_ from './lib/groups'
+import getGroupPublicData from './lib/group_public_data'
+import { get as getSlug } from './lib/slug'
 
-module.exports = {
+export default {
   byId: {
     sanitization: { id: {} },
     controller: async ({ id, reqUserId }) => {

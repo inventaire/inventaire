@@ -1,8 +1,8 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
+import CONFIG from 'config'
+import _ from 'builders/utils'
 const { initDelay, disabled } = CONFIG.mailer
 
-module.exports = () => {
+export default () => {
   initMailer()
   initActivitySummary()
 }

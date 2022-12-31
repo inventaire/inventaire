@@ -1,9 +1,8 @@
-const should = require('should')
-const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-
-const { createHuman } = require('../fixtures/entities')
-const { getByUri, updateLabel } = require('../utils/entities')
-const randomString = require('lib/utils/random_string')
+import should from 'should'
+import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
+import { createHuman } from '../fixtures/entities'
+import { getByUri, updateLabel } from '../utils/entities'
+import randomString from 'lib/utils/random_string'
 const humanPromise = createHuman()
 
 describe('entities:update-labels', () => {

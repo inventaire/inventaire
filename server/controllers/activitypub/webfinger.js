@@ -1,11 +1,12 @@
-const origin = require('config').getPublicOrigin()
+import CONFIG from 'config'
+import error_ from 'lib/error/error'
+import { ControllerWrapper } from 'lib/controller_wrapper'
+import { makeUrl, getEntityUriFromActorName, getEntityActorName } from 'controllers/activitypub/lib/helpers'
+import { isEntityUri, isUsername } from 'lib/boolean_validations'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import { validateUser, validateShelf } from './lib/validations'
+const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
-const error_ = require('lib/error/error')
-const { ControllerWrapper } = require('lib/controller_wrapper')
-const { makeUrl, getEntityUriFromActorName, getEntityActorName } = require('controllers/activitypub/lib/helpers')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { validateUser, validateShelf } = require('./lib/validations')
 
 const sanitization = {
   resource: {}
@@ -26,7 +27,7 @@ const controller = async ({ resource }) => {
   throw error_.notFound({ resource, name })
 }
 
-module.exports = {
+export default {
   get: ControllerWrapper({
     access: 'public',
     sanitization,

@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
-const { justReceivedActivitySummary } = require('controllers/user/lib/summary')
-const transporter_ = require('../transporter')
-const buildEmail = require('./build_email')
-const { disableUserUpdate } = require('config').activitySummary
+import _ from 'builders/utils'
+import { justReceivedActivitySummary } from 'controllers/user/lib/summary'
+import transporter_ from '../transporter'
+import buildEmail from './build_email'
+import CONFIG from 'config'
+
+const { disableUserUpdate } = CONFIG.activitySummary
 
 let updateUser
 // It can be convenient in development to disable user update
@@ -13,7 +15,7 @@ if (disableUserUpdate) {
   updateUser = justReceivedActivitySummary
 }
 
-module.exports = async user => {
+export default async user => {
   if (user == null) return _.info('no user waiting for summary')
 
   const userId = user._id

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byClaim: {
     map: doc => {
       if (doc.type === 'entity') {

@@ -1,9 +1,9 @@
-const CONFIG = require('config')
-const { validateShelf, validateUser, validateEntity } = require('./validations')
-const { getSharedKeyPair } = require('./shared_key_pair')
-const { buildLink, getActorTypeFromName, defaultLabel, entityUrl } = require('./helpers')
-const { unprefixify } = require('controllers/entities/lib/prefix')
-const buildAttachements = require('./build_attachements')
+import CONFIG from 'config'
+import { validateShelf, validateUser, validateEntity } from './validations'
+import { getSharedKeyPair } from './shared_key_pair'
+import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers'
+import { unprefixify } from 'controllers/entities/lib/prefix'
+import buildAttachements from './build_attachements'
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
@@ -126,7 +126,7 @@ const getActorByType = {
   entity: getEntityActor,
 }
 
-module.exports = name => {
+export default name => {
   const type = getActorTypeFromName(name)
   return getActorByType[type](name)
 }

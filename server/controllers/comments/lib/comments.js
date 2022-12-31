@@ -1,9 +1,9 @@
-const Comment = require('models/comment')
-const assert_ = require('lib/utils/assert_types')
+import Comment from 'models/comment'
+import assert_ from 'lib/utils/assert_types'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('comments')
 
-const db = require('db/couchdb/base')('comments')
-
-module.exports = {
+export default {
   byId: db.get,
 
   byTransactionId: transactionId => {

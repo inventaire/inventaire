@@ -1,4 +1,4 @@
-const comments_ = require('controllers/comments/lib/comments')
+import comments_ from 'controllers/comments/lib/comments'
 
 const sanitization = {
   transaction: {},
@@ -9,7 +9,7 @@ const controller = async ({ transactionId }) => {
   return { messages }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
 }

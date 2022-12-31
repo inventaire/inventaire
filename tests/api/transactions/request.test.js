@@ -1,9 +1,18 @@
-require('should')
-const { authReq, authReqB, authReqC, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { createTransaction } = require('../fixtures/transactions')
-const { updateTransaction } = require('../utils/transactions')
-const { createItem } = require('../fixtures/items')
-const { createEditionFromWorkWithAuthor } = require('../fixtures/entities')
+import 'should'
+
+import {
+  authReq,
+  authReqB,
+  authReqC,
+  getUser,
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+} from 'tests/api/utils/utils'
+
+import { createTransaction } from '../fixtures/transactions'
+import { updateTransaction } from '../utils/transactions'
+import { createItem } from '../fixtures/items'
+import { createEditionFromWorkWithAuthor } from '../fixtures/entities'
 const endpoint = '/api/transactions?action=request'
 
 describe('transactions:request', () => {

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-require('should')
-const { getUserGetter, customAuthReq } = require('tests/api/utils/utils')
-const { createItem } = require('../fixtures/items')
-const { waitForIndexation } = require('../utils/search')
-const { getRandomPosition } = require('../fixtures/users')
+import _ from 'builders/utils'
+import 'should'
+import { getUserGetter, customAuthReq } from 'tests/api/utils/utils'
+import { createItem } from '../fixtures/items'
+import { waitForIndexation } from '../utils/search'
+import { getRandomPosition } from '../fixtures/users'
 const positionUser1 = getRandomPosition()
 const positionUser2 = [
   positionUser1[0] - 0.1,

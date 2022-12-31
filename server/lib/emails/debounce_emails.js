@@ -1,11 +1,13 @@
 // Add emails to the waiting list to let ./debounced_emails_crawler
 // find and send them
 
-const _ = require('builders/utils')
-const db = require('db/level/get_sub_db')('waiting', 'utf8')
-const { emptyValue } = require('db/level/utils')
+import _ from 'builders/utils'
 
-module.exports = {
+import dbFactory from 'db/level/get_sub_db'
+import { emptyValue } from 'db/level/utils'
+const db = dbFactory('waiting', 'utf8')
+
+export default {
   transactionUpdate: transaction => {
     // Polymorphism: accepts transaction doc or directly the transaction _id
     let transactionId

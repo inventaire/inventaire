@@ -1,5 +1,5 @@
-const token_ = require('controllers/user/lib/token')
-const error_ = require('lib/error/error')
+import token_ from 'controllers/user/lib/token'
+import error_ from 'lib/error/error'
 
 const sanitization = {}
 
@@ -21,4 +21,4 @@ const sendEmailValidation = async user => {
   return token_.sendValidationEmail(user)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

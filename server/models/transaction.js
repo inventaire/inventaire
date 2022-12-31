@@ -1,10 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const snapshotItemAttributes = require('./attributes/item').snapshot
-const snapshotUserAttributes = require('./attributes/user').snapshot
-const { states, basicNextActions, nextActionsWithReturn } = require('./attributes/transaction')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import { snapshot as snapshotItemAttributes } from './attributes/item'
+import { snapshot as snapshotUserAttributes } from './attributes/user'
+import { states, basicNextActions, nextActionsWithReturn } from './attributes/transaction'
 
-const Transaction = module.exports = {}
+const Transaction = {}
+
+export default Transaction
 
 const validations = Transaction.validations = require('./validations/transaction')
 

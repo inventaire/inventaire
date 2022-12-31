@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const parseForm = require('./lib/parse_form')
-const error_ = require('lib/error/error')
-const { containers, uploadContainersNames } = require('./lib/containers')
+import _ from 'builders/utils'
+import parseForm from './lib/parse_form'
+import error_ from 'lib/error/error'
+import { containers, uploadContainersNames } from './lib/containers'
 
 const sanitization = {
   nonJsonBody: true,
@@ -54,4 +54,4 @@ const indexUrlById = collection => {
   return index
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,7 +1,6 @@
 
-require('should')
-
-const couch_ = require('lib/couch')
+import 'should'
+import couch_ from 'lib/couch'
 
 describe('couch_', () => {
   it('env', () => {

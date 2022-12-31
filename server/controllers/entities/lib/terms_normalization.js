@@ -1,4 +1,4 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
 const normalizeTerm = term => {
   if (!term) return
@@ -27,4 +27,4 @@ const getEntityNormalizedTerms = entity => {
   return _.uniq(terms)
 }
 
-module.exports = { normalizeTerm, getEntityNormalizedTerms }
+export default { normalizeTerm, getEntityNormalizedTerms }

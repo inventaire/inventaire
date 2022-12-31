@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const listings_ = require('controllers/listings/lib/listings')
-const elements_ = require('controllers/listings/lib/elements')
+import _ from 'builders/utils'
+import listings_ from 'controllers/listings/lib/listings'
+import elements_ from 'controllers/listings/lib/elements'
 
 const sanitization = {
   ids: {},
@@ -19,7 +19,7 @@ const controller = async ({ ids, reqUserId }) => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'lists', 'deletion' ]

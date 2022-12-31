@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byEmail: {
     map: doc => {
       if (doc.type === 'user') {

@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const { expired } = require('lib/time')
-const Shelf = require('models/shelf')
-const { shouldNotBeCalled } = require('../utils')
-require('should')
+import _ from 'builders/utils'
+import { expired } from 'lib/time'
+import Shelf from 'models/shelf'
+import { shouldNotBeCalled } from '../utils'
+import 'should'
+
+import fakeText from 'tests/api/fixtures/text'
 
 const someUserId = '1234567890a1234567890b1234567890'
 const { create, updateAttributes: update } = Shelf
-
-const fakeText = require('tests/api/fixtures/text')
 const fakeName = fakeText.randomWords(4)
 const fakeDesc = fakeText.randomWords(15)
 

@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const parseIsbn = require('lib/isbn/parse')
-const leven = require('leven')
+import _ from 'builders/utils'
+import parseIsbn from 'lib/isbn/parse'
+import leven from 'leven'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
 
@@ -47,4 +47,4 @@ const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
 
 const byDistance = (a, b) => a.distance - b.distance
 
-module.exports = { resolvePublisher }
+export default { resolvePublisher }

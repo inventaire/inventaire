@@ -1,4 +1,4 @@
-const { randomBytes } = require('node:crypto')
+import { randomBytes } from 'node:crypto'
 const nonAlphaNumericCharacters = /\W/g
 
 // Generated strings should:
@@ -23,4 +23,4 @@ const getRandomString = length => {
   }
 }
 
-module.exports = getRandomString
+export default getRandomString

@@ -1,6 +1,7 @@
-const _ = require('builders/utils')
-const db = require('db/couchdb/base')('notifications')
-const Notification = require('models/notification')
+import _ from 'builders/utils'
+import dbFactory from 'db/couchdb/base'
+import Notification from 'models/notification'
+const db = dbFactory('notifications')
 
 const groupAttributeWithNotification = [
   'name',
@@ -9,7 +10,7 @@ const groupAttributeWithNotification = [
   'open',
 ]
 
-module.exports = async data => {
+export default async data => {
   try {
     const { attribute } = data
     if (!groupAttributeWithNotification.includes(attribute)) return

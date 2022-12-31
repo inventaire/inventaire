@@ -1,11 +1,11 @@
-const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } = require('tests/api/utils/utils')
-const { publicReq, authReq, getUserB, getReservedUser } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
-const { map } = require('lodash')
-const { createGroupWithAMember, createGroup, addMember } = require('tests/api/fixtures/groups')
-const { getTwoFriends } = require('tests/api/fixtures/users')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import should from 'should'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } from 'tests/api/utils/utils'
+import { publicReq, authReq, getUserB, getReservedUser } from '../utils/utils'
+import { createListing, createElement } from '../fixtures/listings'
+import { map } from 'lodash'
+import { createGroupWithAMember, createGroup, addMember } from 'tests/api/fixtures/groups'
+import { getTwoFriends } from 'tests/api/fixtures/users'
+import { getGroupVisibilityKey } from 'lib/visibility/visibility'
 
 const endpoint = '/api/lists?action=by-creators'
 

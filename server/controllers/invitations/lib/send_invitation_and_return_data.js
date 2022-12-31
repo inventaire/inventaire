@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const user_ = require('controllers/user/lib/user')
-const sendInvitation = require('./send_invitations')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import user_ from 'controllers/user/lib/user'
+import sendInvitation from './send_invitations'
 
-module.exports = params => {
+export default params => {
   const { user, message, group, parsedEmails, reqUserId } = params
   assert_.object(user)
   assert_.type('string|null', message)

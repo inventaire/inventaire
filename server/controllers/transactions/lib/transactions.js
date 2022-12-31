@@ -1,14 +1,15 @@
-const _ = require('builders/utils')
-const Transaction = require('models/transaction')
-const error_ = require('lib/error/error')
-const comments_ = require('controllers/comments/lib/comments')
-const { BasicUpdater } = require('lib/doc_updates')
-const { minKey, maxKey } = require('lib/couch')
-const assert_ = require('lib/utils/assert_types')
-const radio = require('lib/radio')
-const db = require('db/couchdb/base')('transactions')
+import _ from 'builders/utils'
+import Transaction from 'models/transaction'
+import error_ from 'lib/error/error'
+import comments_ from 'controllers/comments/lib/comments'
+import { BasicUpdater } from 'lib/doc_updates'
+import { minKey, maxKey } from 'lib/couch'
+import assert_ from 'lib/utils/assert_types'
+import radio from 'lib/radio'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('transactions')
 
-const transactions_ = module.exports = {
+const transactions_ = {
   byId: db.get,
   byUser: userId => {
     return db.viewCustom('byUserAndItem', {
@@ -89,6 +90,8 @@ const transactions_ = module.exports = {
     })
   }
 }
+
+export default transactions_
 
 const mayBeBusy = item => item.transaction !== 'inventorying'
 

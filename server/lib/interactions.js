@@ -1,9 +1,9 @@
-const error_ = require('lib/error/error')
-const { someMatch } = require('lib/utils/base')
-const { getAllowedVisibilityKeys } = require('lib/visibility/allowed_visibility_keys')
+import error_ from 'lib/error/error'
+import { someMatch } from 'lib/utils/base'
+import { getAllowedVisibilityKeys } from 'lib/visibility/allowed_visibility_keys'
 
 // MUST return the item or throw an error
-module.exports = {
+export default {
   verifyRightToInteract: async ({ reqUserId, item, ownerAllowed }) => {
     const { owner: ownerId, visibility } = item
 

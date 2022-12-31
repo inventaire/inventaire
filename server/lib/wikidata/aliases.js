@@ -147,7 +147,7 @@ const getSingularType = type => type.replace(/s$/, '')
 
 const getSingularTypes = types => types.map(getSingularType)
 
-module.exports = {
+export default {
   types,
   typesAliases,
   typesNames,

@@ -1,16 +1,16 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getWdEntity = require('data/wikidata/get_entity')
-const wdk = require('wikidata-sdk')
-const wdEdit = require('lib/wikidata/edit')
-const wdOauth = require('./wikidata_oauth')
-const properties = require('./properties/properties_values_constraints')
-const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
-const { cachedRelationProperties } = require('./temporarily_cache_relations')
-const { unprefixify, prefixifyWd } = require('./prefix')
-const { qualifierProperties } = require('lib/wikidata/data_model_adapter')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getWdEntity from 'data/wikidata/get_entity'
+import wdk from 'wikidata-sdk'
+import wdEdit from 'lib/wikidata/edit'
+import wdOauth from './wikidata_oauth'
+import properties from './properties/properties_values_constraints'
+import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache'
+import { cachedRelationProperties } from './temporarily_cache_relations'
+import { unprefixify, prefixifyWd } from './prefix'
+import { qualifierProperties } from 'lib/wikidata/data_model_adapter'
 
-module.exports = async (user, id, property, oldValue, newValue) => {
+export default async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
 
   if ((properties[property].datatype === 'entity')) {

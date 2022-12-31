@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { getUser, authReq, customAuthReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
-const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
-const { getTwoFriends } = require('../fixtures/users')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
-const { humanName } = require('../fixtures/entities')
+import _ from 'builders/utils'
+import should from 'should'
+import { getUser, authReq, customAuthReq, publicReq, getUserGetter } from 'tests/api/utils/utils'
+import { createItem, createItemWithEditionAndWork } from '../fixtures/items'
+import { getTwoFriends } from '../fixtures/users'
+import { getSomeGroup, addMember } from '../fixtures/groups'
+import { humanName } from '../fixtures/entities'
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-user-and-entities'

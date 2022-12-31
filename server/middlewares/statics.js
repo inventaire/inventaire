@@ -1,6 +1,8 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import pass from './pass'
 const __ = CONFIG.universalPath
-const pass = require('./pass')
+
+let statics = {}
 
 if (CONFIG.serveStaticFiles) {
   const express = require('express')
@@ -19,8 +21,9 @@ if (CONFIG.serveStaticFiles) {
 
   const faviconPath = __.path('client', 'public/favicon.ico')
   const favicon = require('serve-favicon')(faviconPath)
-
-  module.exports = { mountStaticFiles, favicon }
+  statics = { mountStaticFiles, favicon }
 } else {
-  module.exports = { mountStaticFiles: pass, favicon: pass }
+  statics = { mountStaticFiles: pass, favicon: pass }
 }
+
+export default statics

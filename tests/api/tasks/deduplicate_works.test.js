@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-require('should')
-const { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } = require('../fixtures/entities')
-const { getByUris, getByUri } = require('../utils/entities')
-const { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { getBySuspectUri } = require('../utils/tasks')
-const { wait } = require('lib/promises')
+import _ from 'builders/utils'
+import 'should'
+import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '../fixtures/entities'
+import { getByUris, getByUri } from '../utils/entities'
+import { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } from 'tests/api/utils/utils'
+import { getBySuspectUri } from '../utils/tasks'
+import { wait } from 'lib/promises'
 const endpoint = '/api/tasks?action=deduplicate-works'
 
 describe('tasks:deduplicate:works', () => {

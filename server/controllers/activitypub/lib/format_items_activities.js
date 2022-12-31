@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const CONFIG = require('config')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import { i18n } from 'lib/emails/i18n/i18n'
+import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
+import { context } from 'controllers/activitypub/lib/helpers'
 const host = CONFIG.getPublicOrigin()
-const { i18n } = require('lib/emails/i18n/i18n')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const { context } = require('controllers/activitypub/lib/helpers')
 const maxLinksToDisplay = 3
 
-module.exports = {
+export default {
   createItemsNote: ({ allActivitiesItems, lang, name, actor, parentLink }) => async activityDoc => {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range

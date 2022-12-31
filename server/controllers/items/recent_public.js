@@ -1,5 +1,5 @@
-const items_ = require('controllers/items/lib/items')
-const bundleOwnersToItems = require('./lib/bundle_owners_to_items')
+import items_ from 'controllers/items/lib/items'
+import bundleOwnersToItems from './lib/bundle_owners_to_items'
 const itemsQueryLimit = 100
 const offset = 0
 
@@ -44,4 +44,4 @@ const selectRecentItems = (items, lang, limit) => {
   return recentItems
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

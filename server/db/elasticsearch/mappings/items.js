@@ -1,6 +1,6 @@
-const { autocompleteText, keyword, keywordArray, date } = require('./mappings_datatypes')
+import { autocompleteText, keyword, keywordArray, date } from './mappings_datatypes'
 
-module.exports = {
+export default {
   properties: {
     _rev: keyword,
     owner: keyword,

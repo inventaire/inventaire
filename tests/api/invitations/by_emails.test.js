@@ -1,9 +1,9 @@
-require('should')
-const { authReq, authReqB, authReqC, shouldNotBeCalled } = require('../utils/utils')
-const { getSomeGroup } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { signup } = require('../fixtures/users')
-const randomString = require('lib/utils/random_string')
+import 'should'
+import { authReq, authReqB, authReqC, shouldNotBeCalled } from '../utils/utils'
+import { getSomeGroup } from '../fixtures/groups'
+import { getGroup } from 'tests/api/utils/groups'
+import { signup } from '../fixtures/users'
+import randomString from 'lib/utils/random_string'
 const randomEmail = () => `a${randomString(4).toLowerCase()}@foo.org`
 const endpoint = '/api/invitations?action=by-emails'
 

@@ -1,8 +1,8 @@
-const { stat, unlink } = require('node:fs').promises
-const { promisify } = require('node:util')
-const mv = require('mv')
+import { stat, unlink } from 'node:fs/promises'
+import { promisify } from 'node:util'
+import mv from 'mv'
 
-module.exports = {
+export default {
   mv: promisify(mv),
   // Using 'unlink' instead of 'rm' until the minimal node version gets above v14.14.0
   // See https://nodejs.org/api/fs.html#fs_fspromises_rm_path_options

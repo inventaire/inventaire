@@ -1,5 +1,5 @@
-const error_ = require('lib/error/error')
-const { buildSearcher } = require('lib/elasticsearch')
+import error_ from 'lib/error/error'
+import { buildSearcher } from 'lib/elasticsearch'
 const textFields = [
   'snapshot.entity:title',
   'snapshot.entity:subtitle',
@@ -8,7 +8,7 @@ const textFields = [
   'details',
 ]
 
-module.exports = buildSearcher({
+export default buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
     const { search, limit = 10, ownersIdsAndVisibilityKeys, shelfId } = params
@@ -44,6 +44,7 @@ module.exports = buildSearcher({
     return { query, size: limit, min_score: 0.2 }
   }
 })
+
 const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
   return {
     bool: {

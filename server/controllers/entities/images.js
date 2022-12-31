@@ -6,11 +6,12 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const error_ = require('lib/error/error')
-const getEntitiesImages = require('./lib/get_entities_images')
-const { img: imgUrlBuilder } = require('lib/emails/app_api')
-const getThumbData = require('data/commons/thumb')
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+
+import error_ from 'lib/error/error'
+import getEntitiesImages from './lib/get_entities_images'
+import { img as imgUrlBuilder } from 'lib/emails/app_api'
+import getThumbData from 'data/commons/thumb'
 
 const sanitization = validateSanitization({
   uris: {},
@@ -29,7 +30,7 @@ const sanitization = validateSanitization({
   }
 })
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { uris, refresh, redirect, width, height } = sanitize(req, res, sanitization)
   if (redirect) {
     if (uris.length !== 1) {

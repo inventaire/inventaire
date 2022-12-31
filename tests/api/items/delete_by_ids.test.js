@@ -1,11 +1,11 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-require('should')
-const { authReq, authReqB, getUser } = require('../utils/utils')
-const { CountChange } = require('./helpers')
-const { createItem } = require('../fixtures/items')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import 'should'
+import { authReq, authReqB, getUser } from '../utils/utils'
+import { CountChange } from './helpers'
+import { createItem } from '../fixtures/items'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {

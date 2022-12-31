@@ -7,16 +7,17 @@
 // the API tests server with CONFIG.autoRotateKeys=false
 // just make sure that both use the same CONFIG.cookieMaxAge value to avoid outdated keys errors
 
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { getRandomBytes } from 'lib/crypto'
+import { oneDay, msToHumanTime, msToHumanAge } from 'lib/time'
+import error_ from 'lib/error/error'
+import { readFileSync } from 'node:fs'
+import { writeFile } from 'node:fs/promises'
+import { invert } from 'lodash'
+
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const { getRandomBytes } = require('lib/crypto')
-const { oneDay, msToHumanTime, msToHumanAge } = require('lib/time')
-const error_ = require('lib/error/error')
-const { readFileSync } = require('node:fs')
-const { invert } = require('lodash')
-const { writeFile } = require('node:fs').promises
 // If a session is started at the end-of-life of a key
 // that session should be allowed to live for cookieMaxAge time
 const keysHalfTtl = cookieMaxAge
@@ -165,4 +166,4 @@ recoverKeysFromFile()
 checkState()
 
 // Share the keys array to be able to update it by mutation
-module.exports = keys
+export default keys

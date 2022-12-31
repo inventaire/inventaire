@@ -1,5 +1,6 @@
-const error_ = require('lib/error/error')
-const { qualifier: simplifyQualifier } = require('wikidata-sdk').simplify
+import error_ from 'lib/error/error'
+import wdk from 'wikidata-sdk'
+const { simplifyQualifier } = wdk
 
 const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   if (simplifiedClaims['wdt:P179']?.length === 1) {
@@ -49,4 +50,4 @@ const qualifierProperties = {
   }
 }
 
-module.exports = { flattenQualifierProperties, relocateQualifierProperties, qualifierProperties }
+export default { flattenQualifierProperties, relocateQualifierProperties, qualifierProperties }

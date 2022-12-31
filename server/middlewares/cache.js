@@ -1,5 +1,5 @@
-const { noCache } = require('config')
-const pass = require('./pass')
+import { noCache } from 'config'
+import pass from './pass'
 
 let cacheControl
 // Applies to both API and static files requests
@@ -12,4 +12,4 @@ if (noCache) {
   cacheControl = pass
 }
 
-module.exports = { cacheControl }
+export default { cacheControl }

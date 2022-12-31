@@ -1,5 +1,5 @@
-const _ = require('builders/utils')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import _ from 'builders/utils'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   ids: {},
@@ -23,4 +23,4 @@ const controller = async ({ ids, reqUserId, withItems }) => {
   return res
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

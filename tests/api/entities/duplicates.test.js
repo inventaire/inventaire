@@ -1,7 +1,7 @@
-const { wait } = require('lib/promises')
-const { adminReq } = require('../utils/utils')
+import { wait } from 'lib/promises'
+import { adminReq } from '../utils/utils'
+import { createHuman, humanName } from '../fixtures/entities'
 const endpoint = '/api/entities?action=duplicates'
-const { createHuman, humanName } = require('../fixtures/entities')
 
 describe('entities:duplicates', () => {
   it('should return names and duplicates number', async () => {

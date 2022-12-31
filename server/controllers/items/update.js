@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const snapshot_ = require('./lib/snapshot/snapshot')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { track } = require('lib/track')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import snapshot_ from './lib/snapshot/snapshot'
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import { track } from 'lib/track'
 
 // This controller doesn't use sanitization
 // as the item doc is passed unwrapped in the body
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { body: item } = req
   const { _id, entity } = item
 

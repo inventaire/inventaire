@@ -1,9 +1,8 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-
-const passport = require('passport')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import passport from 'passport'
 
 passport.serializeUser((user, done) => {
   assert_.object(user)
@@ -33,7 +32,7 @@ passport.use('local-signup', require('./local_signup_strategy'))
 passport.use('token', require('./token_strategy'))
 passport.use('basic', require('./basic_strategy'))
 
-module.exports = {
+export default {
   passport,
   authenticate: {
     localLogin: passport.authenticate('local-login'),

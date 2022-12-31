@@ -1,4 +1,4 @@
-const { getAnalyzedTokens } = require('tests/api/utils/search')
+import { getAnalyzedTokens } from 'tests/api/utils/search'
 // Testing on the entities index, but as all index are created with the same settings
 // by server/db/elasticsearch/create_index.js, they all get the same analyzers
 const indexBaseName = 'entities'
@@ -86,7 +86,6 @@ describe('analyzers', () => {
   })
 })
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 function standardAnalyzersCommonTests (analyzer) {
   it('should not generate edge-ngrams tokens', async () => {
     const tokens = await getAnalyzedTokens({ indexBaseName, text: 'charles', analyzer })

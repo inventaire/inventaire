@@ -1,8 +1,8 @@
-require('should')
-const { publicReq } = require('../utils/utils')
-const { createEdition, createEditionWithIsbn, createCollection, createPublisher } = require('../fixtures/entities')
-const { addClaim } = require('../utils/entities')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { publicReq } from '../utils/utils'
+import { createEdition, createEditionWithIsbn, createCollection, createPublisher } from '../fixtures/entities'
+import { addClaim } from '../utils/entities'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const endpoint = '/api/entities?action=publisher-publications'
 
 describe('entities:publisher-publications', () => {

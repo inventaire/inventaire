@@ -1,15 +1,15 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-require('should')
-const assert_ = require('lib/utils/assert_types')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import 'should'
+import assert_ from 'lib/utils/assert_types'
+import fakeText from './text'
+import { randomBytes } from 'node:crypto'
+import { addRole } from 'controllers/user/lib/user'
+import { request, rawRequest } from '../utils/request'
+import { makeFriends } from '../utils/relations'
+import randomString from 'lib/utils/random_string'
 const origin = CONFIG.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
-const fakeText = require('./text')
-const { randomBytes } = require('node:crypto')
-const { addRole } = require('controllers/user/lib/user')
-const { request, rawRequest } = require('../utils/request')
-const { makeFriends } = require('../utils/relations')
-const randomString = require('lib/utils/random_string')
 let twoFriendsPromise
 
 let getUser, getReservedUser, updateUser
@@ -30,7 +30,7 @@ const loginOrSignup = async userData => {
   }
 }
 
-const API = module.exports = {
+const API = {
   signup: email => {
     return signup({
       email,
@@ -101,6 +101,8 @@ const API = module.exports = {
     ]
   }
 }
+
+export default API
 
 const getTwoFriends = async () => {
   const [ userA, userB ] = await Promise.all([

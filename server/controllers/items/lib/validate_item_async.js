@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
-const { flatMapUniq, mapUniq } = require('lib/utils/base')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import { validateVisibilityKeys } from 'lib/visibility/visibility'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import { flatMapUniq, mapUniq } from 'lib/utils/base'
 const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
 
 let shelves_
@@ -66,7 +66,7 @@ const validateShelvesOwnership = (userId, shelves) => {
   }
 }
 
-module.exports = {
+export default {
   validateItemsAsync,
   validateShelves,
 }

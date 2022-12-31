@@ -1,9 +1,9 @@
-const { pick, without } = require('lodash')
-const publicAttributes = require('models/attributes/user').public
+import { pick, without } from 'lodash'
+import { public as publicAttributes } from 'models/attributes/user'
 // Omit snapshot as it contains private and semi priavte data
 const publicAttributesStrict = without(publicAttributes, 'snapshot')
 
-module.exports = doc => {
+export default doc => {
   const publicUserDoc = pick(doc, publicAttributesStrict)
   publicUserDoc.type = 'user'
   if (publicUserDoc.position != null) {

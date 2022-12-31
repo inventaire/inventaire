@@ -1,6 +1,6 @@
-require('should')
-const { authReq } = require('tests/api/utils/utils')
-const { randomLabel, generateIsbn13 } = require('tests/api/fixtures/entities')
+import 'should'
+import { authReq } from 'tests/api/utils/utils'
+import { randomLabel, generateIsbn13 } from 'tests/api/fixtures/entities'
 
 describe('entities:resolve:non-strict mode', () => {
   it('should ignore and report sanitization errors (invalid isbn)', async () => {

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const couch_ = require('lib/couch')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+import couch_ from 'lib/couch'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
 
-const handlers = module.exports = {
+const handlers = {
   byEmail: (db, email) => {
     assert_.string(email)
     return db.viewByKey('byEmail', email.toLowerCase())
@@ -23,3 +23,4 @@ const handlers = module.exports = {
     })
   }
 }
+export default handlers

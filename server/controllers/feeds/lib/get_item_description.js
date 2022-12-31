@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const templateHelpers = require('lib/emails/handlebars_helpers')
-const transactionsColors = require('lib/emails/activity_summary/transactions_colors')
+import _ from 'builders/utils'
+import templateHelpers from 'lib/emails/handlebars_helpers'
+import transactionsColors from 'lib/emails/activity_summary/transactions_colors'
 
-module.exports = (item, user, lang) => {
+export default (item, user, lang) => {
   const { transaction, snapshot, details } = item
   const image = snapshot['entity:image']
   const title = snapshot['entity:title']

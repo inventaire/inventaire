@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = {
+export default {
   'wdt:P4033': {
     text: _.identity,
     url: address => {

@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const invitations_ = require('./invitations')
-const Invited = require('models/invited')
-const radio = require('lib/radio')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import invitations_ from './invitations'
+import Invited from 'models/invited'
+import radio from 'lib/radio'
 
-module.exports = (user, group, emails, message) => {
+export default (user, group, emails, message) => {
   assert_.object(user)
   assert_.type('object|null', group)
   assert_.array(emails)

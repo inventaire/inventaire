@@ -2,7 +2,7 @@
 
 # Env variables required to get the right port
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
-server_port=$(node -p "require('config').port")
+server_port=$(node -p "CONFIG.port")
 supervisor_pid_path="./run/${server_port}-supervisor"
 
 if [[ -f "$supervisor_pid_path" ]] ;

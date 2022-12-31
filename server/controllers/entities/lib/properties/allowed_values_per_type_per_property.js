@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'wdt:P31': {
     collections: [
       'wd:Q20655472', // editorial collection

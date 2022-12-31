@@ -1,5 +1,5 @@
 // Types that have a monolingual title but no label
-module.exports = {
+export default {
   edition: true,
   collection: true
 }

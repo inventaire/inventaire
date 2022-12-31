@@ -1,6 +1,5 @@
-const should = require('should')
-
-const User = require('models/user')
+import should from 'should'
+import User from 'models/user'
 
 const _create = args => User._create.apply(null, args)
 const create = args => User.create.apply(null, args)

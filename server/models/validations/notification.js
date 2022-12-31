@@ -1,9 +1,9 @@
-const { pass } = require('./common')
-const { types } = require('../attributes/notification')
-const assert_ = require('lib/utils/assert_types')
-const Group = require('../group')
+import { pass } from './common'
+import { types } from '../attributes/notification'
+import assert_ from 'lib/utils/assert_types'
+import Group from '../group'
 
-const validations = module.exports = {
+const validations = {
   pass,
   type: type => types.includes(type),
   data: (data, { type }) => {
@@ -12,6 +12,8 @@ const validations = module.exports = {
     return true
   }
 }
+
+export default validations
 
 const dataValidationPerType = {
   friendAcceptedRequest: ({ user }) => {

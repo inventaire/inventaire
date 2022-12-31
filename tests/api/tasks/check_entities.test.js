@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-require('should')
-const { checkEntities, getBySuspectUri } = require('../utils/tasks')
-const { findOrIndexEntities, deleteByUris } = require('../utils/entities')
-const { createHuman, createWork } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
+import _ from 'builders/utils'
+import 'should'
+import { checkEntities, getBySuspectUri } from '../utils/tasks'
+import { findOrIndexEntities, deleteByUris } from '../utils/entities'
+import { createHuman, createWork } from '../fixtures/entities'
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
 
 describe('tasks:check-entities', () => {
   before(async () => {

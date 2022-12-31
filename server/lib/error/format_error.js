@@ -1,12 +1,12 @@
 // Using minimal dependencies to avoid circular dependencies
 // as this is depended on by lib/error which is called very early
-const { isNumber, isPlainObject, flatten, compact } = require('lodash')
+import { isNumber, isPlainObject, flatten, compact } from 'lodash'
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)
 //   this is already the case for errors rejected by the lib blue-cot and server/lib/requests
 
-module.exports = (err, filter, ...context) => {
+export default (err, filter, ...context) => {
   // numbers filters are used as HTTP codes
   // while string will be taken as a type
   const attribute = isNumber(filter) ? 'statusCode' : 'type'

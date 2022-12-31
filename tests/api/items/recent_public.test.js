@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-require('should')
-const { publicReq } = require('tests/api/utils/utils')
-const { populate } = require('../fixtures/populate')
-const { expired } = require('lib/time')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import _ from 'builders/utils'
+import 'should'
+import { publicReq } from 'tests/api/utils/utils'
+import { populate } from '../fixtures/populate'
+import { expired } from 'lib/time'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {

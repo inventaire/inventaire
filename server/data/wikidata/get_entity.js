@@ -1,9 +1,10 @@
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const requestGrouper = require('lib/request_grouper')
-const { getEntities, getManyEntities } = require('wikidata-sdk')
+import _ from 'builders/utils'
+
+import requests_ from 'lib/requests'
+import requestGrouper from 'lib/request_grouper'
+import { getEntities, getManyEntities } from 'wikidata-sdk'
 
 const requester = ids => {
   if (ids.length > 50) {
@@ -29,4 +30,4 @@ const mergeResults = results => Object.assign(..._.map(results, 'entities'))
 // Expose a single requester
 // Taking a Wikidata Id
 // Returning the corresponding entity object
-module.exports = requestGrouper({ requester, delay: 5 })
+export default requestGrouper({ requester, delay: 5 })

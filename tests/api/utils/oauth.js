@@ -1,10 +1,11 @@
-const clientsDb = require('db/couchdb/base')('oauth_clients')
-const randomString = require('lib/utils/random_string')
-const { sha1, passwords, getRandomBytes } = require('lib/crypto')
-const { waitForTestServer, postUrlencoded, rawCustomAuthReq } = require('./request')
-const { getUser } = require('./utils')
-const assert_ = require('lib/utils/assert_types')
-const { buildUrl, parseQuery } = require('lib/utils/url')
+import clientsDbFactory from 'db/couchdb/base'
+import randomString from 'lib/utils/random_string'
+import { sha1, passwords, getRandomBytes } from 'lib/crypto'
+import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request'
+import { getUser } from './utils'
+import assert_ from 'lib/utils/assert_types'
+import { buildUrl, parseQuery } from 'lib/utils/url'
+const clientsDb = clientsDbFactory('oauth_clients')
 
 const getClient = async (params = {}) => {
   await waitForTestServer
@@ -68,4 +69,4 @@ const getToken = async ({ user, scope }) => {
   return body
 }
 
-module.exports = { getClient, getClientWithAuthorization, getToken }
+export default { getClient, getClientWithAuthorization, getToken }

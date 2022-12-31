@@ -1,20 +1,22 @@
+import CONFIG from 'config'
+
+import _ from 'builders/utils'
+
+// Starting to make CouchDB initialization checks
+import waitForCouchInit from 'db/couchdb/init'
+
+import waitForElasticsearchInit from 'db/elasticsearch/init'
+
+// Meanwhile, start setting up the server.
+// Startup time is mostly due to the time needed to require
+// all files from controllers, middlewares, libs, etc
+import initExpress from './init_express'
 console.time('startup')
-const CONFIG = require('config')
 // Signal to other CONFIG consumers that they are in a server context
 // and not simply scripts being executed in the wild
 CONFIG.serverMode = true
 
-const _ = require('builders/utils')
-
 require('lib/startup/before')()
-
-// Starting to make CouchDB initialization checks
-const waitForCouchInit = require('db/couchdb/init')
-const waitForElasticsearchInit = require('db/elasticsearch/init')
-// Meanwhile, start setting up the server.
-// Startup time is mostly due to the time needed to require
-// all files from controllers, middlewares, libs, etc
-const initExpress = require('./init_express')
 
 Promise.all([
   waitForCouchInit(),

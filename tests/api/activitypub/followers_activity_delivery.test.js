@@ -1,17 +1,17 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { createItem } from '../fixtures/items'
+import { createUser } from '../fixtures/users'
+import { wait } from 'lib/promises'
+import { makeUrl, signedReq } from '../utils/activitypub'
+import requests_ from 'lib/requests'
+import { createHuman, createWork, addAuthor } from '../fixtures/entities'
+import { createShelf } from '../fixtures/shelves'
+import { rethrowShouldNotBeCalledErrors } from '../utils/utils'
+import { addItemsToShelf, getActorName } from '../utils/shelves'
+import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
+import { randomWords } from '../fixtures/text'
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
-require('should')
-const { createItem } = require('../fixtures/items')
-const { createUser } = require('../fixtures/users')
-const { wait } = require('lib/promises')
-const { makeUrl, signedReq } = require('../utils/activitypub')
-const requests_ = require('lib/requests')
-const { createHuman, createWork, addAuthor } = require('../fixtures/entities')
-const { createShelf } = require('../fixtures/shelves')
-const { rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { addItemsToShelf, getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
-const { randomWords } = require('../fixtures/text')
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {

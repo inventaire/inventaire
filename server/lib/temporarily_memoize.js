@@ -1,6 +1,6 @@
-const assert_ = require('lib/utils/assert_types')
+import assert_ from 'lib/utils/assert_types'
 
-module.exports = ({ fn, ttlAfterFunctionCallReturned }) => {
+export default ({ fn, ttlAfterFunctionCallReturned }) => {
   assert_.function(fn)
   assert_.number(ttlAfterFunctionCallReturned)
   const cache = {}

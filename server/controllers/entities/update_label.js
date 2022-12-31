@@ -1,5 +1,8 @@
-const error_ = require('lib/error/error')
-const { unprefixify } = require('./lib/prefix')
+import error_ from 'lib/error/error'
+import { unprefixify } from './lib/prefix'
+
+import inv from './lib/update_inv_label'
+import wd from './lib/update_wd_label'
 
 const sanitization = {
   uri: { optional: true },
@@ -32,8 +35,8 @@ const getPrefix = (uri, id) => {
 }
 
 const updaters = {
-  inv: require('./lib/update_inv_label'),
-  wd: require('./lib/update_wd_label')
+  inv,
+  wd
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

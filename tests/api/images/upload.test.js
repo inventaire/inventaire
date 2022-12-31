@@ -1,9 +1,9 @@
-require('should')
-const { authReq } = require('../utils/utils')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { authReq } from '../utils/utils'
+import { shouldNotBeCalled } from 'tests/unit/utils'
+import { isImageHash } from 'lib/boolean_validations'
+import { uploadSomeImage } from '../utils/images'
 const endpoint = '/api/images?action=upload'
-const { isImageHash } = require('lib/boolean_validations')
-const { uploadSomeImage } = require('../utils/images')
 
 describe('images:upload', () => {
   // Uploads on the assets container are done directly by an instance admin

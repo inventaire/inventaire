@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const validations = require('models/validations/common')
-const { BasicUpdater } = require('lib/doc_updates')
+import _ from 'builders/utils'
+import validations from 'models/validations/common'
+import { BasicUpdater } from 'lib/doc_updates'
 
 const create = (inviterId, groupId) => email => {
   validations.pass('email', email)
@@ -59,4 +59,4 @@ const canBeInvited = (inviterId, groupId) => doc => {
   return true
 }
 
-module.exports = { create, addInviter, canBeInvited, stopEmails }
+export default { create, addInviter, canBeInvited, stopEmails }

@@ -1,8 +1,8 @@
-require('should')
-const { createHuman } = require('../fixtures/entities')
-const { update } = require('../utils/tasks')
-const { createTask } = require('../fixtures/tasks')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { createHuman } from '../fixtures/entities'
+import { update } from '../utils/tasks'
+import { createTask } from '../fixtures/tasks'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 
 describe('tasks:update', () => {
   it('should update a task', async () => {

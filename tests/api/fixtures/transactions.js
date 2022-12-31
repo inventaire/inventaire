@@ -1,8 +1,8 @@
-require('should')
-const { getUser, getUserB, authReq, customAuthReq } = require('tests/api/utils/utils')
-const { wait } = require('lib/promises')
-const { createItem } = require('./items')
-const { getItem } = require('../utils/items')
+import 'should'
+import { getUser, getUserB, authReq, customAuthReq } from 'tests/api/utils/utils'
+import { wait } from 'lib/promises'
+import { createItem } from './items'
+import { getItem } from '../utils/items'
 
 const createTransaction = async (params = {}) => {
   const userA = await (params.userA || getUser())
@@ -24,11 +24,11 @@ const createTransaction = async (params = {}) => {
 
 let someTransactionData
 const getSomeTransaction = async () => {
-  someTransactionData = someTransactionData || await createTransaction()
+  someTransactionData = someTransactionData || (await createTransaction())
   return someTransactionData
 }
 
-module.exports = {
+export default {
   createTransaction,
 
   getSomeTransaction,

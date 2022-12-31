@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const db = require('db/couchdb/base')('users')
-const User = require('models/user')
-const pw_ = require('lib/crypto').passwords
-const { oneHour, expired } = require('lib/time')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import dbFactory from 'db/couchdb/base'
+import User from 'models/user'
+import { passwords as pw_ } from 'lib/crypto'
+import { oneHour, expired } from 'lib/time'
+const db = dbFactory('users')
 
 const sanitization = {
   'current-password': {
@@ -64,7 +65,7 @@ const testOpenResetPasswordWindow = async resetPassword => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
 }

@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const couch_ = require('lib/couch')
-const db = require('db/couchdb/base')('groups')
+import _ from 'builders/utils'
+import radio from 'lib/radio'
+import couch_ from 'lib/couch'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('groups')
 
-module.exports = () => {
+export default () => {
   radio.on('group:leave', deleteGroupIfEmpty)
 }
 

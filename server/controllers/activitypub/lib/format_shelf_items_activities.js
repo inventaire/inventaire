@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { makeUrl } = require('./helpers')
-const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
-const items_ = require('controllers/items/lib/items')
+import _ from 'builders/utils'
+import { makeUrl } from './helpers'
+import { createItemsNote, findFullRangeFromActivities } from './format_items_activities'
+import items_ from 'controllers/items/lib/items'
 
-module.exports = async (activitiesDocs, shelfId, name) => {
+export default async (activitiesDocs, shelfId, name) => {
   if (activitiesDocs.length === 0) return
   const actor = makeUrl({ params: { action: 'actor', name } })
   const parentLink = `/shelves/${shelfId}`

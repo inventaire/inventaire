@@ -1,10 +1,10 @@
-const items_ = require('controllers/items/lib/items')
-const Item = require('models/item')
-const { emit } = require('lib/radio')
-const { partition } = require('lodash')
-const _ = require('builders/utils')
-const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const { validateShelves } = require('controllers/items/lib/validate_item_async')
+import items_ from 'controllers/items/lib/items'
+import Item from 'models/item'
+import { emit } from 'lib/radio'
+import { partition } from 'lodash'
+import _ from 'builders/utils'
+import { validateVisibilityKeys } from 'lib/visibility/visibility'
+import { validateShelves } from 'controllers/items/lib/validate_item_async'
 
 const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }
@@ -42,4 +42,4 @@ const validateValue = async ({ attribute, value, reqUserId }) => {
   }
 }
 
-module.exports = { bulkItemsUpdate }
+export default { bulkItemsUpdate }

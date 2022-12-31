@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
+import dbFactory from 'db/couchdb/base'
+import Patch from 'models/patch'
+import assert_ from 'lib/utils/assert_types'
+import { maxKey } from 'lib/couch'
+import { oneDay } from 'lib/time'
 const designDocName = 'patches'
-const db = require('db/couchdb/base')('patches', designDocName)
-const Patch = require('models/patch')
-const assert_ = require('lib/utils/assert_types')
-const { maxKey } = require('lib/couch')
-const { oneDay } = require('lib/time')
+const db = dbFactory('patches', designDocName)
 
-const patches_ = module.exports = {
+const patches_ = {
   db,
   byId: db.get,
 
@@ -136,6 +137,8 @@ const patches_ = module.exports = {
     return rows[0]?.value || 0
   }
 }
+
+export default patches_
 
 const formatRow = row => ({
   user: row.key[0],

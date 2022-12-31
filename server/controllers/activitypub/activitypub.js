@@ -1,6 +1,6 @@
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from 'lib/actions_controllers'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       activity: require('./activity'),

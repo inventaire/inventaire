@@ -1,6 +1,6 @@
-const _ = require('lodash')
-const { typeOf } = require('./types')
-const error_ = require('../error/error')
+import _ from 'lodash'
+import { typeOf } from './types'
+import error_ from '../error/error'
 
 const assertType = (type, obj) => {
   const trueType = typeOf(obj)
@@ -47,7 +47,7 @@ const parseTypes = (types, args) => {
   return _.times(args.length, () => multiTypes)
 }
 
-module.exports = {
+export default {
   type: assertType,
   types: assertTypes,
 

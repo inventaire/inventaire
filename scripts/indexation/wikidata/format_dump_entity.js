@@ -1,8 +1,8 @@
-require('module-alias/register')
-const { simplify } = require('wikidata-sdk')
-const formatClaims = require('server/lib/wikidata/format_claims')
+import 'module-alias/register'
+import { simplify } from 'wikidata-sdk'
+import formatClaims from 'server/lib/wikidata/format_claims'
 
-module.exports = entity => {
+export default entity => {
   entity.uri = `wd:${entity.id}`
   entity.labels = simplify.labels(entity.labels)
   entity.descriptions = simplify.descriptions(entity.descriptions)

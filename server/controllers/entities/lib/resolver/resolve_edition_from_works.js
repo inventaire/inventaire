@@ -1,9 +1,9 @@
-const entities_ = require('controllers/entities/lib/entities')
-const getInvEntityCanonicalUri = require('controllers/entities/lib/get_inv_entity_canonical_uri')
-const ASCIIFolder = require('fold-to-ascii')
-const { normalizeString } = require('lib/utils/base')
+import entities_ from 'controllers/entities/lib/entities'
+import getInvEntityCanonicalUri from 'controllers/entities/lib/get_inv_entity_canonical_uri'
+import ASCIIFolder from 'fold-to-ascii'
+import { normalizeString } from 'lib/utils/base'
 
-module.exports = async (editionSeed, worksSeeds) => {
+export default async (editionSeed, worksSeeds) => {
   if (editionSeed.uri) return
   // Only edition seeds with no known isbns can be resolved this way
   if (editionSeed.isbn) return

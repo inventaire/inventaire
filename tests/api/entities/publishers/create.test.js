@@ -1,6 +1,6 @@
-require('should')
-const { createEdition, createPublisher } = require('../../fixtures/entities')
-const { addClaim } = require('../../utils/entities')
+import 'should'
+import { createEdition, createPublisher } from '../../fixtures/entities'
+import { addClaim } from '../../utils/entities'
 
 describe('entities:create:publishers', () => {
   it('should create a local publisher entity', async () => {

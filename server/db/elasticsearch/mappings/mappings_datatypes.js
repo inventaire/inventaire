@@ -1,4 +1,4 @@
-const { activeI18nLangs } = require('../helpers')
+import { activeI18nLangs } from '../helpers'
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/mapping-types.html
 
@@ -30,7 +30,7 @@ const getTermsProperties = datatype => {
   return properties
 }
 
-module.exports = {
+export default {
   boolean: { type: 'boolean' },
   date: { type: 'date' },
   flattened: { type: 'flattened' },

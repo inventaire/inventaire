@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation')
-const invitations_ = require('controllers/invitations/lib/invitations')
-const User = require('models/user')
-const db = require('db/couchdb/base')('users')
-const token_ = require('./token')
-const availability_ = require('./availability')
+import _ from 'builders/utils'
+import preventMultiAccountsCreation from './prevent_multi_accounts_creation'
+import invitations_ from 'controllers/invitations/lib/invitations'
+import User from 'models/user'
+import dbFactory from 'db/couchdb/base'
+import token_ from './token'
+import availability_ from './availability'
+const db = dbFactory('users')
 
-module.exports = async (username, email, creationStrategy, language, password) => {
+export default async (username, email, creationStrategy, language, password) => {
   preventMultiAccountsCreation(username)
 
   return availability_.username(username)

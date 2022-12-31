@@ -1,12 +1,14 @@
-const _ = require('builders/utils')
-const { verifySignature } = require('./lib/security')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import { verifySignature } from './lib/security'
+import error_ from 'lib/error/error'
+import Follow from './follow'
+import Undo from './undo'
 
 const inboxActivityTypes = {
   Create: null,
   Delete: null,
-  Follow: require('./follow'),
-  Undo: require('./undo'),
+  Follow,
+  Undo,
 }
 
 const sanitization = {
@@ -58,7 +60,7 @@ const controller = async (params, req) => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller
 }

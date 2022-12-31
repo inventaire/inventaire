@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const wdk = require('wikidata-sdk')
-const isbn_ = require('lib/isbn/isbn')
+import _ from 'builders/utils'
+import wdk from 'wikidata-sdk'
+import isbn_ from 'lib/isbn/isbn'
 
 const prefixify = (id, prefix) => {
   if (id == null) return
@@ -22,4 +22,4 @@ const prefixifyIsbn = isbn => prefixify(isbn_.normalizeIsbn(isbn), 'isbn')
 
 const unprefixify = uri => uri.split(':')[1]
 
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyWdProperty, prefixifyInv, prefixifyIsbn }
+export default { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyWdProperty, prefixifyInv, prefixifyIsbn }

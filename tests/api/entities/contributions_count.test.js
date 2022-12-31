@@ -1,6 +1,6 @@
-const { oneDay } = require('lib/time')
-const { simpleDay } = require('lib/utils/base')
-const { adminReq } = require('../utils/utils')
+import { oneDay } from 'lib/time'
+import { simpleDay } from 'lib/utils/base'
+import { adminReq } from '../utils/utils'
 const endpoint = '/api/entities?action=contributions-count'
 
 describe('entities:activity', () => {

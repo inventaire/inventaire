@@ -1,15 +1,15 @@
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const items_ = require('controllers/items/lib/items')
-const getEntitiesByUris = require('./get_entities_by_uris')
-const { prefixifyInv } = require('./prefix')
+import error_ from 'lib/error/error'
+import entities_ from './entities'
+import items_ from 'controllers/items/lib/items'
+import getEntitiesByUris from './get_entities_by_uris'
+import { prefixifyInv } from './prefix'
 
 const criticalClaimProperties = [
   // No edition should end up without an associated work because of a removed work
   'wdt:P629'
 ]
 
-module.exports = uris => {
+export default uris => {
   return Promise.all([
     entitiesRelationsChecks(uris),
     entitiesItemsChecks(uris)

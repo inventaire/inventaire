@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const { appendToFullKeys, appendToShortKeys } = require('lib/i18n_autofix')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import { appendToFullKeys, appendToShortKeys } from 'lib/i18n_autofix'
 const errorMessagePattern = /^(4|5)00/
 // Using _ as the convention to identify short keys: ex: awesome_title
 // (that is, keys with an English value different than the key itself)
@@ -48,4 +48,4 @@ const looksLikeAKey = key => {
 
 const areStrings = array => _.every(array, _.isString)
 
-module.exports = { post: i18nMissingKeys }
+export default { post: i18nMissingKeys }

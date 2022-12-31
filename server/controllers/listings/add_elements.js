@@ -1,5 +1,5 @@
-const listings_ = require('controllers/listings/lib/listings')
-const error_ = require('lib/error/error')
+import listings_ from 'controllers/listings/lib/listings'
+import error_ from 'lib/error/error'
 
 const sanitization = {
   id: {},
@@ -13,7 +13,7 @@ const controller = async ({ id, uris, reqUserId }) => {
   return listings_.addElements({ listing, uris, userId: reqUserId })
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'lists', 'addElements' ]

@@ -1,5 +1,5 @@
-const __ = require('config').universalPath
-const error_ = require('lib/error/error')
+import { universalPath as __ } from 'config'
+import error_ from 'lib/error/error'
 const publicFolder = __.path('client', 'public')
 const indexOptions = {
   root: publicFolder,
@@ -10,7 +10,7 @@ const indexOptions = {
   }
 }
 
-module.exports = {
+export default {
   get: (req, res) => {
     const { pathname } = req._parsedUrl
     const domain = pathname.split('/')[1]

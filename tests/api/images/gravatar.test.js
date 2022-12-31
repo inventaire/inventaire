@@ -1,5 +1,5 @@
-require('should')
-const { authReq } = require('../utils/utils')
+import 'should'
+import { authReq } from '../utils/utils'
 const endpoint = '/api/images?action=gravatar'
 
 describe('images:gravatar', () => {

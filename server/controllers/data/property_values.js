@@ -1,6 +1,6 @@
-const error_ = require('lib/error/error')
-const { typesNames } = require('lib/wikidata/aliases')
-const allowedValuesPerTypePerProperty = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
+import error_ from 'lib/error/error'
+import { typesNames } from 'lib/wikidata/aliases'
+import allowedValuesPerTypePerProperty from 'controllers/entities/lib/properties/allowed_values_per_type_per_property'
 
 const sanitization = {
   property: {
@@ -20,4 +20,4 @@ const getAllowedValues = ({ property, type }) => {
   return { values }
 }
 
-module.exports = { sanitization, controller: getAllowedValues }
+export default { sanitization, controller: getAllowedValues }

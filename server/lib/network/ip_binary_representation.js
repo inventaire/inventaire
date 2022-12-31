@@ -1,4 +1,4 @@
-const error_ = require('lib/error/error')
+import error_ from 'lib/error/error'
 
 const getIpBinaryRepresentation = ip => {
   const isIpv6 = ip.includes(':')
@@ -22,4 +22,4 @@ const getIpv6Parts = address => {
 
 const getPaddedBinary = (num, maxLenght) => parseInt(num).toString(2).padStart(maxLenght, '0')
 
-module.exports = { getIpBinaryRepresentation }
+export default { getIpBinaryRepresentation }

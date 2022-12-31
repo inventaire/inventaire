@@ -1,7 +1,8 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
-const isbn_ = require('lib/isbn/isbn')
-const { getByIsbns: getSeedsByIsbns } = require('data/dataseed/dataseed')
+import isbn_ from 'lib/isbn/isbn'
+
+import { getByIsbns as getSeedsByIsbns } from 'data/dataseed/dataseed'
 
 const sanitization = {
   isbn: {},
@@ -25,4 +26,4 @@ const controller = async ({ isbn, refresh }) => {
   return data
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

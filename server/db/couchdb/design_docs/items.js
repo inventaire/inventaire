@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byDate: {
     map: doc => {
       emit(doc.created, [ doc._id, doc.title ])

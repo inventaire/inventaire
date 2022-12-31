@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const { getEntityNormalizedTerms } = require('../terms_normalization')
+import _ from 'builders/utils'
+import { getEntityNormalizedTerms } from '../terms_normalization'
 
-module.exports = {
+export default {
   getAlreadyResolvedUris: seed => _.compact(_.map(seed, 'uri')),
 
   someTermsMatch: seed => {

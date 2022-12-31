@@ -1,5 +1,5 @@
-const express = require('express')
-const requestsLogger = require('server/middlewares/requests_logger')
+import express from 'express'
+import requestsLogger from 'server/middlewares/requests_logger'
 // Avoid reusing ports from the previous test session, as hosts bans data might be restored
 let port = 10000 + parseInt(Date.now().toString().slice(-4))
 
@@ -13,4 +13,4 @@ const startGenericMockServer = serverSetupFn => new Promise(resolve => {
   const server = app.listen(port, () => resolve({ port, host, origin, server }))
 })
 
-module.exports = { startGenericMockServer }
+export default { startGenericMockServer }

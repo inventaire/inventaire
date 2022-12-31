@@ -1,6 +1,6 @@
-const { omit } = require('lodash')
+import { omit } from 'lodash'
 
-module.exports = privateAttributes => {
+export default privateAttributes => {
   const omitPrivateAttributes = doc => omit(doc, privateAttributes)
 
   return {

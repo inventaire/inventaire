@@ -1,12 +1,12 @@
-const activities_ = require('./lib/activities')
-const formatUserItemsActivities = require('./lib/format_user_items_activities')
-const formatShelfItemsActivities = require('./lib/format_shelf_items_activities')
-const { isEntityActivityId } = require('./lib/helpers')
-const { isCouchUuid } = require('lib/boolean_validations')
-const error_ = require('lib/error/error')
-const patches_ = require('controllers/entities/lib/patches/patches')
-const { getActivitiesFromPatch } = require('./lib/entity_patch_activities')
-const { validateShelf, validateUser } = require('./lib/validations')
+import activities_ from './lib/activities'
+import formatUserItemsActivities from './lib/format_user_items_activities'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities'
+import { isEntityActivityId } from './lib/helpers'
+import { isCouchUuid } from 'lib/boolean_validations'
+import error_ from 'lib/error/error'
+import patches_ from 'controllers/entities/lib/patches/patches'
+import { getActivitiesFromPatch } from './lib/entity_patch_activities'
+import { validateShelf, validateUser } from './lib/validations'
 
 const sanitization = {
   id: {
@@ -57,7 +57,7 @@ const getShelfActivity = async (activityDoc, name) => {
   return activity
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
 }

@@ -1,7 +1,7 @@
-const CONFIG = require('config')
-const { wait } = require('lib/promises')
-const radio = require('lib/radio')
-require('should')
+import CONFIG from 'config'
+import { wait } from 'lib/promises'
+import radio from 'lib/radio'
+import 'should'
 
 // Do not run without having set NODE_ENV
 CONFIG.env.should.startWith('tests')

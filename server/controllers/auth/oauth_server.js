@@ -1,7 +1,8 @@
-const { authorizationCodeLifetimeMs } = require('config').oauthServer
-const error_ = require('lib/error/error')
-const OAuthServer = require('express-oauth-server')
-const { getAcceptedScopes, allScopes } = require('./lib/oauth/scopes')
+import CONFIG from 'config'
+import error_ from 'lib/error/error'
+import OAuthServer from 'express-oauth-server'
+import { getAcceptedScopes, allScopes } from './lib/oauth/scopes'
+const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 
 const oauthServer = new OAuthServer({
   useErrorHandler: true,
@@ -18,7 +19,7 @@ const authorize = oauthServer.authorize({
 })
 
 // See https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html
-module.exports = {
+export default {
   // Step 1: the user authorizes a client to get tokens on its behalf, for certain scopes
   // by doing a GET on the authorize endpoint
   // Implements https://aaronparecki.com/oauth-2-simplified/#web-server-apps "Authorization"

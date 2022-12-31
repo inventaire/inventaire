@@ -1,11 +1,11 @@
-const { rawRequest } = require('../utils/request')
-const { signRequest, verifySignature } = require('controllers/activitypub/lib/security')
-const { getSharedKeyPair } = require('controllers/activitypub/lib/shared_key_pair')
-const { getRandomBytes } = require('lib/crypto')
-const { createUsername } = require('../fixtures/users')
-const { makeUrl } = require('controllers/activitypub/lib/helpers')
-const { jsonBodyParser } = require('server/middlewares/content')
-const { startGenericMockServer } = require('tests/integration/utils/mock_server')
+import { rawRequest } from '../utils/request'
+import { signRequest, verifySignature } from 'controllers/activitypub/lib/security'
+import { getSharedKeyPair } from 'controllers/activitypub/lib/shared_key_pair'
+import { getRandomBytes } from 'lib/crypto'
+import { createUsername } from '../fixtures/users'
+import { makeUrl } from 'controllers/activitypub/lib/helpers'
+import { jsonBodyParser } from 'server/middlewares/content'
+import { startGenericMockServer } from 'tests/integration/utils/mock_server'
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
@@ -68,7 +68,7 @@ const actorEndpoint = '/some_actor_endpoint'
 
 const getSomeRemoteServerUser = async emitterUser => {
   const { origin } = await getActivityPubServer()
-  emitterUser = emitterUser || await createRemoteActivityPubServerUser()
+  emitterUser = emitterUser || (await createRemoteActivityPubServerUser())
   const { id, username, privateKey } = emitterUser
   const query = { name: username }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
@@ -82,7 +82,7 @@ const inboxInspectionEndpoint = '/inbox_inspection'
 
 let removeActivityPubServer
 const getActivityPubServer = async () => {
-  removeActivityPubServer = removeActivityPubServer || await startActivityPubServer()
+  removeActivityPubServer = removeActivityPubServer || (await startActivityPubServer())
   return removeActivityPubServer
 }
 
@@ -121,7 +121,7 @@ const startActivityPubServer = async () => {
   return { port, host, origin }
 }
 
-module.exports = {
+export default {
   getSomeRemoteServerUser,
   makeUrl,
   createActivity,

@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
 
-const validations = module.exports = {
+const validations = {
   attribute: _.isString,
   boolean: _.isBoolean,
   couchUuid: _.isCouchUuid,
@@ -28,6 +28,8 @@ const validations = module.exports = {
   username: _.isUsername,
   shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
 }
+
+export default validations
 
 validations.boundedString = (str, minLength, maxLength) => {
   return _.isString(str) && (minLength <= str.length && str.length <= maxLength)

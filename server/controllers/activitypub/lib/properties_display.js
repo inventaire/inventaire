@@ -74,7 +74,7 @@ const collectionProperties = {
   'wdt:P856': 'url', // official website
 }
 
-module.exports = {
+export default {
   human: authorProperties,
   work: workProperties,
   publisher: publisherProperties,

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const verifyThatEntitiesCanBeRemoved = require('./lib/verify_that_entities_can_be_removed')
-const removeEntitiesByInvId = require('./lib/remove_entities_by_inv_id')
-const entities_ = require('./lib/entities')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed'
+import removeEntitiesByInvId from './lib/remove_entities_by_inv_id'
+import entities_ from './lib/entities'
 
 const sanitization = {
   uris: {}
@@ -40,4 +40,4 @@ const getInvUrisFromIsbnUris = async uris => {
   return entities.map(entity => `inv:${entity._id}`)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

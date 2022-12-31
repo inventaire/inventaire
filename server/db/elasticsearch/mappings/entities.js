@@ -1,6 +1,14 @@
-const { flattenedTerms, integer, keyword, date, objectNotIndexed, autocompleteTerms, fullTerms } = require('./mappings_datatypes')
+import {
+  flattenedTerms,
+  integer,
+  keyword,
+  date,
+  objectNotIndexed,
+  autocompleteTerms,
+  fullTerms,
+} from './mappings_datatypes'
 
-module.exports = {
+export default {
   properties: {
     type: keyword,
     labels: autocompleteTerms,

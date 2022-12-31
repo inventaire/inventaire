@@ -1,12 +1,11 @@
-const _ = require('builders/utils')
-const { customAuthReq, authReq, getUser } = require('../utils/utils')
-const isbn_ = require('lib/isbn/isbn')
-const wdIdByWmLanguageCode = require('wikidata-lang/mappings/wd_id_by_wm_code.json')
-const { getByUri, addClaim } = require('../utils/entities')
-const fakeText = require('./text')
+import _ from 'builders/utils'
+import { customAuthReq, authReq, getUser } from '../utils/utils'
+import isbn_ from 'lib/isbn/isbn'
+import wdIdByWmLanguageCode from 'wikidata-lang/mappings/wd_id_by_wm_code.json'
+import { getByUri, addClaim } from '../utils/entities'
+import fakeText, { humanName, randomWords } from './text'
+import calculateCheckDigit from 'isbn3/lib/calculate_check_digit'
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
-const { humanName, randomWords } = require('./text')
-const calculateCheckDigit = require('isbn3/lib/calculate_check_digit')
 
 const createEntity = (P31, options = {}) => (params = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
@@ -22,7 +21,7 @@ const createEntity = (P31, options = {}) => (params = {}) => {
   return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
 }
 
-const API = module.exports = {
+const API = {
   createEntity,
   createHuman: createEntity('wd:Q5'),
   createWork: createEntity('wd:Q47461344'),
@@ -176,6 +175,8 @@ const API = module.exports = {
     return labelNames.join(' ')
   }
 }
+
+export default API
 
 const addEntityClaim = (createFnName, property) => async (subjectEntity, objectEntity) => {
   const subjectUri = _.isString(subjectEntity) ? subjectEntity : subjectEntity.uri

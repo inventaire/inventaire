@@ -4,11 +4,12 @@
 // in entities claims, and are used in the client to build entities URLs
 // to which alias URIs redirect
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
-const error_ = require('lib/error/error')
-const getInvUriFromDoc = require('./get_inv_uri_from_doc')
-const { prefixifyInv } = require('./prefix')
+import error_ from 'lib/error/error'
 
-module.exports = (entity, options) => {
+import getInvUriFromDoc from './get_inv_uri_from_doc'
+import { prefixifyInv } from './prefix'
+
+export default (entity, options) => {
   const { _id: invId, redirect } = entity
   if (invId == null) throw error_.new('missing id', 500, entity)
   const invUri = prefixifyInv(invId)

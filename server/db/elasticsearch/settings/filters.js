@@ -1,7 +1,7 @@
 const minNgram = 2
 const maxGram = 10
 
-module.exports = {
+export default {
   // Emits edge N-grams of each word
   // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/analysis-edgengram-tokenizer.html
   edge_ngram: {

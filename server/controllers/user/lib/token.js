@@ -1,17 +1,18 @@
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const error_ = require('lib/error/error')
-const pw_ = require('lib/crypto').passwords
-const { tokenDaysToLive } = require('config')
-const { WrappedUpdater } = require('lib/doc_updates')
-const randomString = require('lib/utils/random_string')
+import _ from 'builders/utils'
+import radio from 'lib/radio'
+import error_ from 'lib/error/error'
+import { passwords as pw_ } from 'lib/crypto'
+import { tokenDaysToLive } from 'config'
+import { WrappedUpdater } from 'lib/doc_updates'
+import randomString from 'lib/utils/random_string'
+import user_ from './user'
+import dbFactory from 'db/couchdb/base'
 const testToken = pw_.verify
-const user_ = require('./user')
-const db = require('db/couchdb/base')('users')
+const db = dbFactory('users')
 const wrappedUpdate = WrappedUpdater(db)
 const tokenLength = 32
 
-module.exports = {
+export default {
   tokenLength,
 
   sendValidationEmail: async user => {

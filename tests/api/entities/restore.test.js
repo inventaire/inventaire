@@ -1,8 +1,8 @@
-const should = require('should')
-const randomString = require('lib/utils/random_string')
-const { getByUri, updateLabel, restoreVersion, getHistory, addClaim } = require('../utils/entities')
-const { createWork } = require('../fixtures/entities')
-const { getUserA, getUserB } = require('../utils/utils')
+import should from 'should'
+import randomString from 'lib/utils/random_string'
+import { getByUri, updateLabel, restoreVersion, getHistory, addClaim } from '../utils/entities'
+import { createWork } from '../fixtures/entities'
+import { getUserA, getUserB } from '../utils/utils'
 
 describe('entities:restore', () => {
   it('should restore after label updates', async () => {

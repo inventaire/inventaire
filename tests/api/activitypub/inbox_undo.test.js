@@ -1,13 +1,13 @@
-require('should')
-const { createUser } = require('../fixtures/users')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { signedReq, makeUrl, createRemoteActivityPubServerUser } = require('../utils/activitypub')
-const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
-const { wait } = require('lib/promises')
-const { createHuman } = require('../fixtures/entities')
-const { createShelf } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
+import 'should'
+import { createUser } from '../fixtures/users'
+import { shouldNotBeCalled } from '../utils/utils'
+import { signedReq, makeUrl, createRemoteActivityPubServerUser } from '../utils/activitypub'
+import { getFollowActivitiesByObject } from 'controllers/activitypub/lib/activities'
+import { wait } from 'lib/promises'
+import { createHuman } from '../fixtures/entities'
+import { createShelf } from '../fixtures/shelves'
+import { getActorName } from '../utils/shelves'
+import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {

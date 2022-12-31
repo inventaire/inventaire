@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const wdEdit = require('lib/wikidata/edit')
-const wdOauth = require('./wikidata_oauth')
-const validateEntity = require('./validate_entity')
-const getEntityType = require('./get_entity_type')
-const properties = require('./properties/properties_values_constraints')
-const { prefixifyWd, unprefixify } = require('./prefix')
-const { relocateQualifierProperties } = require('lib/wikidata/data_model_adapter')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import wdEdit from 'lib/wikidata/edit'
+import wdOauth from './wikidata_oauth'
+import validateEntity from './validate_entity'
+import getEntityType from './get_entity_type'
+import properties from './properties/properties_values_constraints'
+import { prefixifyWd, unprefixify } from './prefix'
+import { relocateQualifierProperties } from 'lib/wikidata/data_model_adapter'
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
-module.exports = async params => {
+export default async params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
   const credentials = wdOauth.getOauthCredentials(user)

@@ -1,8 +1,7 @@
-#!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
+#!/usr/bin/env nodeimport 'module-alias/register';
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import error_ from 'lib/error/error'
 
 const dbHost = require('config').db.getOrigin()
 

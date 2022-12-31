@@ -1,3 +1,3 @@
-const { pass, userId, itemId } = require('./common')
+import { pass, userId, itemId } from './common'
 
-module.exports = { pass, userId, itemId }
+export default { pass, userId, itemId }

@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const Polyglot = require('node-polyglot')
-const { active: activeLangs } = require('i18nAssets/langs')
-const moment = require('moment')
-const { appendToServerKeys } = require('lib/i18n_autofix')
-const translate = require('./translate')
-const { autofixI18n } = require('config')
+import _ from 'builders/utils'
+import Polyglot from 'node-polyglot'
+import { active as activeLangs } from 'i18nAssets/langs'
+import moment from 'moment'
+import { appendToServerKeys } from 'lib/i18n_autofix'
+import translate from './translate'
+import { autofixI18n } from 'config'
 
 const polyglots = {}
 const translators = {}
@@ -35,7 +35,7 @@ const solveLang = lang => {
   else return 'en'
 }
 
-const helpers = module.exports = {
+const helpers = {
   i18n: (lang, key, args) => {
     lang = solveLang(lang)
     return translators[lang](key, args)
@@ -55,3 +55,4 @@ const helpers = module.exports = {
     return moment(epochTime).format(format)
   }
 }
+export default helpers

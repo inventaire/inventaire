@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-require('should')
-const { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } = require('../utils/utils')
-const { search, waitForIndexation, firstNWords, customAuthSearch } = require('../utils/search')
-const { createGroup, createGroupWithAMember } = require('../fixtures/groups')
-const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
-const { makeFriends } = require('tests/api/utils/relations')
-const { createListing } = require('tests/api/fixtures/listings')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
-const { createShelf } = require('tests/api/fixtures/shelves')
+import _ from 'builders/utils'
+import 'should'
+import { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } from '../utils/utils'
+import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search'
+import { createGroup, createGroupWithAMember } from '../fixtures/groups'
+import { getSomeGroupWithAMember, createGroupAndMember } from 'tests/api/fixtures/groups'
+import { makeFriends } from 'tests/api/utils/relations'
+import { createListing } from 'tests/api/fixtures/listings'
+import { getGroupVisibilityKey } from 'lib/visibility/visibility'
+import { createShelf } from 'tests/api/fixtures/shelves'
 
 describe('search:global', () => {
   describe('parameters', () => {

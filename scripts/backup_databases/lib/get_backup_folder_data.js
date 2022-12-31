@@ -1,7 +1,7 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const fs = require('node:fs')
-const path = require('node:path')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import fs from 'node:fs'
+import path from 'node:path'
 const day = _.simpleDay()
 const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
 const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
@@ -14,4 +14,4 @@ try {
 
 _.info(backupFolder, 'backup folder')
 
-module.exports = { backupFolder, backupGeneralFolder, day }
+export default { backupFolder, backupGeneralFolder, day }

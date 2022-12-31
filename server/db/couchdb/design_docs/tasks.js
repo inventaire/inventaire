@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   bySuspectUriAndState: {
     map: doc => {
       emit([ doc.suspectUri, doc.state ], null)

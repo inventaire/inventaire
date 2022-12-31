@@ -1,1 +1,1 @@
-module.exports = [ 'type', 'actor', 'object', 'externalId', 'content' ]
+export default [ 'type', 'actor', 'object', 'externalId', 'content' ]

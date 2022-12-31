@@ -1,11 +1,11 @@
-const entities_ = require('../entities')
-const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
-const resolveExternalIds = require('./resolve_external_ids')
+import entities_ from '../entities'
+import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri'
+import resolveExternalIds from './resolve_external_ids'
 // Do not try to resolve edition on Wikidata while Wikidata editions are in quarantine
 // cf https://github.com/inventaire/inventaire/issues/182
 const resolveOnWikidata = false
 
-module.exports = entry => {
+export default entry => {
   const { isbn, claims } = entry.edition
 
   return Promise.all([

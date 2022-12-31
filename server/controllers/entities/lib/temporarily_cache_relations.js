@@ -1,7 +1,7 @@
-const entities_ = require('./entities')
-const { unprefixify } = require('./prefix')
-const getEntitiesByUris = require('./get_entities_by_uris')
-const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
+import entities_ from './entities'
+import { unprefixify } from './prefix'
+import getEntitiesByUris from './get_entities_by_uris'
+import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache'
 const cachedRelationProperties = [
   'wdt:P50',
   'wdt:P179'
@@ -38,4 +38,4 @@ const relationIsConfirmedByPrimaryData = (property, valueUri) => entity => {
   return entity.claims[property] != null && entity.claims[property].includes(valueUri)
 }
 
-module.exports = { cacheEntityRelations, getCachedRelations, cachedRelationProperties }
+export default { cacheEntityRelations, getCachedRelations, cachedRelationProperties }

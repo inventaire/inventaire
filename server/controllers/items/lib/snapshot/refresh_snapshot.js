@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const assert_ = require('lib/utils/assert_types')
-const entities_ = require('controllers/entities/lib/entities')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
-const buildSnapshot = require('./build_snapshot')
-const { getWorkAuthorsAndSeries, getEditionGraphEntities } = require('./get_entities')
-const { getDocData } = require('./helpers')
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import assert_ from 'lib/utils/assert_types'
+import entities_ from 'controllers/entities/lib/entities'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import buildSnapshot from './build_snapshot'
+import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities'
+import { getDocData } from './helpers'
 
 let snapshot_
 const requireCircularDependencies = () => { snapshot_ = require('./snapshot') }
@@ -28,7 +28,7 @@ const fromUri = changedEntityUri => {
   .then(fromDoc)
 }
 
-module.exports = { fromDoc, fromUri }
+export default { fromDoc, fromUri }
 
 const multiWorkRefresh = relationProperty => async uri => {
   const uris = await entities_.urisByClaim(relationProperty, uri)

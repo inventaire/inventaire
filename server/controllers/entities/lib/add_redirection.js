@@ -1,4 +1,4 @@
-const assert_ = require('lib/utils/assert_types')
+import assert_ from 'lib/utils/assert_types'
 
 // Possibly overriding further redirects object
 // Notice a tricky naming issue here:
@@ -10,7 +10,7 @@ const assert_ = require('lib/utils/assert_types')
 
 // The entity is expected to be formatted, so that it's uri is defined
 
-module.exports = (fromUri, formattedEntity) => {
+export default (fromUri, formattedEntity) => {
   const { uri: toUri } = formattedEntity
   assert_.string(toUri)
   formattedEntity.redirects = { from: fromUri, to: toUri }

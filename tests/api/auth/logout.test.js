@@ -1,11 +1,11 @@
-const CONFIG = require('config')
-require('should')
+import CONFIG from 'config'
+import 'should'
+import { getUser, shouldNotBeCalled } from '../utils/utils'
+import { rawRequest } from '../utils/request'
+import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth'
 const origin = CONFIG.getLocalOrigin()
-const { getUser, shouldNotBeCalled } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
 const endpoint = `${origin}/api/auth?action=logout`
 const authentifiedEndpoint = `${origin}/api/user`
-const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
 
 describe('auth:logout', () => {
   it('should logout and unable to access an authentified endpoint', async () => {

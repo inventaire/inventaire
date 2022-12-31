@@ -7,9 +7,9 @@
 // - invitatitons: inviting people out of Inventaire
 // - users: finding users by their usernames, positions, etc
 
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from 'lib/actions_controllers'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
       default: require('./get')

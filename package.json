@@ -1,5 +1,6 @@
 {
   "name": "inventaire",
+  "type": "module",
   "homepage": "https://inventaire.io",
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "server/server.js",

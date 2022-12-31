@@ -1,4 +1,4 @@
-const assert_ = require('lib/utils/assert_types')
+import assert_ from 'lib/utils/assert_types'
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo
@@ -25,7 +25,7 @@ const R = 6378137
 // DEG_TO_RAD
 const d2r = Math.PI / 180
 
-module.exports = {
+export default {
   distanceBetween,
 
   kmBetween: (latLngA, latLngB) => {

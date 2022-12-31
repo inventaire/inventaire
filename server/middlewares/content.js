@@ -1,13 +1,13 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import bodyParser from 'body-parser'
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const bodyParser = require('body-parser')
 
 const urlencodedBodyParser = bodyParser.urlencoded({ extended: false })
 
-module.exports = {
+export default {
   // Assume JSON content-type for, among others:
   // - application/json
   // - application/x-www-form-urlencoded (used by /bin/curl and jquery default)

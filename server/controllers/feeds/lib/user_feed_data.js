@@ -1,6 +1,6 @@
-const user_ = require('controllers/user/lib/user')
+import user_ from 'controllers/user/lib/user'
 
-module.exports = async (userId, reqUserId) => {
+export default async (userId, reqUserId) => {
   const user = await user_.byId(userId)
   return {
     users: [ user ],

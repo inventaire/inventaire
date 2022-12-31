@@ -1,16 +1,15 @@
-#!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const { indexes } = require('db/elasticsearch/indexes')
-const { logErrorAndExit } = require('../scripts_utils')
-const split = require('split')
-const { red } = require('chalk')
-const formatters = require('db/elasticsearch/formatters/formatters')
-const filters = require('db/elasticsearch/filters')
-const deindex = require('db/elasticsearch/deindex')
-const { addToBatch, postBatch } = require('db/elasticsearch/bulk')
-const createIndex = require('db/elasticsearch/create_index')
-const { wait } = require('lib/promises')
+#!/usr/bin/env nodeimport 'module-alias/register';
+import _ from 'builders/utils'
+import { indexes } from 'db/elasticsearch/indexes'
+import { logErrorAndExit } from '../scripts_utils'
+import split from 'split'
+import { red } from 'chalk'
+import formatters from 'db/elasticsearch/formatters/formatters'
+import filters from 'db/elasticsearch/filters'
+import deindex from 'db/elasticsearch/deindex'
+import { addToBatch, postBatch } from 'db/elasticsearch/bulk'
+import createIndex from 'db/elasticsearch/create_index'
+import { wait } from 'lib/promises'
 const [ indexBaseName ] = process.argv.slice(2)
 const indexBaseNames = Object.keys(indexes)
 

@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const Task = require('models/task')
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import Task from 'models/task'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('tasks')
 
-const db = require('db/couchdb/base')('tasks')
-
-const tasks_ = module.exports = {
+const tasks_ = {
   create: async (suspectUri, type, entitiesType, suggestions) => {
     // suggestions may only be an array of objects with a 'uri' key
     const newTasksObjects = suggestions.map(suggestion => {
@@ -95,6 +95,8 @@ const tasks_ = module.exports = {
     })
   }
 }
+
+export default tasks_
 
 const getKeys = (uris, includeArchived) => {
   const keys = uris.map(buildKey(null))

@@ -1,9 +1,9 @@
-const assert_ = require('lib/utils/assert_types')
-const { customAuthReq, getUser } = require('./utils')
+import assert_ from 'lib/utils/assert_types'
+import { customAuthReq, getUser } from './utils'
 
-module.exports = {
+export default {
   getUsersNearPosition: async (position, user) => {
-    user = user || await getUser()
+    user = user || (await getUser())
     const bbox = getBboxFromPosition(position)
     const url = `/api/users?action=search-by-position&bbox=${JSON.stringify(bbox)}`
     const { users } = await customAuthReq(user, 'get', url)

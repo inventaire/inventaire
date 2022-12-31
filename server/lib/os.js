@@ -1,6 +1,6 @@
-const { cpus, loadavg } = require('node:os')
-const { wait } = require('./promises')
-const assert_ = require('./utils/assert_types')
+import { cpus, loadavg } from 'node:os'
+import { wait } from './promises'
+import assert_ from './utils/assert_types'
 const cpusCount = cpus().length
 const checkIntervalBase = 10000
 
@@ -21,6 +21,6 @@ const waitForCPUsLoadToBeBelow = async ({ threshold }) => {
   }
 }
 
-module.exports = {
+export default {
   waitForCPUsLoadToBeBelow,
 }

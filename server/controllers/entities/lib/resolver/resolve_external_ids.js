@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const properties = require('../properties/properties_values_constraints')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const entities_ = require('controllers/entities/lib/entities')
-const runWdQuery = require('data/wikidata/run_query')
-const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
-const { forceArray } = require('lib/utils/base')
+import _ from 'builders/utils'
+import properties from '../properties/properties_values_constraints'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
+import entities_ from 'controllers/entities/lib/entities'
+import runWdQuery from 'data/wikidata/run_query'
+import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri'
+import { forceArray } from 'lib/utils/base'
 
-module.exports = async (claims, resolveOnWikidata = true) => {
+export default async (claims, resolveOnWikidata = true) => {
   const externalIds = []
 
   for (const prop in claims) {

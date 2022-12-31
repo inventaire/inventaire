@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
-const error_ = require('lib/error/error')
-const wdk = require('wikidata-sdk')
-const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import { wait } from 'lib/promises'
+import error_ from 'lib/error/error'
+import wdk from 'wikidata-sdk'
+
+const { simplifySparqlResults } = wdk
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -11,7 +12,7 @@ const maxConcurrency = 4
 let waiting = 0
 let ongoing = 0
 
-module.exports = async sparql => {
+export default async sparql => {
   const url = wdk.sparqlQuery(sparql)
 
   if (waiting > 500) {

@@ -1,7 +1,7 @@
-const error_ = require('lib/error/error')
-const { wikidataOAuth } = require('config')
+import error_ from 'lib/error/error'
+import { wikidataOAuth } from 'config'
 
-module.exports = {
+export default {
   validate: user => {
     const userWikidataOAuth = user.oauth != null ? user.oauth.wikidata : undefined
     if (userWikidataOAuth == null) {

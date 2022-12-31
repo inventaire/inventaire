@@ -1,11 +1,10 @@
-const { port, host, name, publicProtocol } = require('config')
-const _ = require('builders/utils')
-const express = require('express')
+import { port, host, name, publicProtocol } from 'config'
+import _ from 'builders/utils'
+import express from 'express'
+import middlewares from './middlewares/middlewares'
+import routes from './controllers/routes'
 
-const middlewares = require('./middlewares/middlewares')
-const routes = require('./controllers/routes')
-
-module.exports = () => {
+export default () => {
   const app = express()
 
   for (const middleware of middlewares) {

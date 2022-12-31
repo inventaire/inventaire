@@ -1,19 +1,19 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import assert_ from 'lib/utils/assert_types'
+import { wait } from 'lib/promises'
+import fetch from 'node-fetch'
+import error_ from 'lib/error/error'
+import { magenta, green, cyan, yellow, red } from 'chalk'
+import { repository } from 'root/package.json'
+import { getAgent, insecureHttpsAgent } from './requests_agent'
+import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban'
+import { URL } from 'node:url'
+import { coloredElapsedTime } from './time'
+import { isUrl } from './boolean_validations'
+import isPrivateUrl from './network/is_private_url'
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const assert_ = require('lib/utils/assert_types')
-const { wait } = require('lib/promises')
-const fetch = require('node-fetch')
-const error_ = require('lib/error/error')
 const { addContextToStack } = error_
-const { magenta, green, cyan, yellow, red } = require('chalk')
-const { repository } = require('root/package.json')
 const userAgent = `${CONFIG.name} (${repository.url})`
-const { getAgent, insecureHttpsAgent } = require('./requests_agent')
-const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
-const { URL } = require('node:url')
-const { coloredElapsedTime } = require('./time')
-const { isUrl } = require('./boolean_validations')
-const isPrivateUrl = require('./network/is_private_url')
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {
@@ -21,7 +21,7 @@ const req = method => async (url, options = {}) => {
   assert_.object(options)
 
   if (options.sanitize) {
-    if (!isUrl(url) || await isPrivateUrl(url)) {
+    if (!isUrl(url) || (await isPrivateUrl(url))) {
       throw error_.newInvalid('url', url)
     }
   }
@@ -183,7 +183,7 @@ const getStatusColor = statusCode => {
   return red
 }
 
-module.exports = {
+export default {
   get: req('get'),
   post: req('post'),
   put: req('put'),

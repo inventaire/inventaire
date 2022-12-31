@@ -1,11 +1,11 @@
-const fakeText = require('./text')
-const { customAuthReq } = require('../utils/request')
-const { getUser } = require('../utils/utils')
-const { createEdition } = require('./entities')
-const { addElements } = require('tests/api/utils/listings')
+import fakeText from './text'
+import { customAuthReq } from '../utils/request'
+import { getUser } from '../utils/utils'
+import { createEdition } from './entities'
+import { addElements } from 'tests/api/utils/listings'
 const endpoint = '/api/lists?action='
 
-const fixtures = module.exports = {
+const fixtures = {
   listingName: () => fakeText.randomWords(3, ' listing'),
   listingDescription: () => {
     return fakeText.randomWords(3, ' listing')
@@ -43,3 +43,4 @@ const fixtures = module.exports = {
     }
   }
 }
+export default fixtures

@@ -14,15 +14,17 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-const _ = require('builders/utils')
-const db = require('db/level/get_sub_db')('snapshot', 'json')
-const { formatBatchOps } = require('db/level/utils')
-const refreshSnapshot = require('./refresh_snapshot')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const pTimeout = require('p-timeout')
+import _ from 'builders/utils'
 
-module.exports = {
+import dbFactory from 'db/level/get_sub_db'
+import { formatBatchOps } from 'db/level/utils'
+import refreshSnapshot from './refresh_snapshot'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import pTimeout from 'p-timeout'
+const db = dbFactory('snapshot', 'json')
+
+export default {
   addToItem: async item => {
     if (item.snapshot) return item
 

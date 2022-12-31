@@ -1,8 +1,8 @@
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
-const Group = require('models/group')
+import user_ from 'controllers/user/lib/user'
+import groups_ from 'controllers/groups/lib/groups'
+import Group from 'models/group'
 
-module.exports = async (groupId, reqUserId) => {
+export default async (groupId, reqUserId) => {
   const group = await groups_.byId(groupId)
   const membersIds = Group.getAllMembersIds(group)
   const users = await user_.byIds(membersIds)

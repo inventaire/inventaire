@@ -2,12 +2,13 @@
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)
 
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const Transaction = require('models/transaction')
-const items_ = require('controllers/items/lib/items')
+import _ from 'builders/utils'
 
-module.exports = () => radio.on('transaction:update', applySideEffects)
+import radio from 'lib/radio'
+import Transaction from 'models/transaction'
+import items_ from 'controllers/items/lib/items'
+
+export default () => radio.on('transaction:update', applySideEffects)
 
 const applySideEffects = (transacDoc, newState) => {
   _.log({ transacDoc, newState }, 'applySideEffects')

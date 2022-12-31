@@ -1,5 +1,5 @@
-const { buildSearcher } = require('lib/elasticsearch')
-const queryBuilder = require('controllers/search/lib/social_query_builder')
+import { buildSearcher } from 'lib/elasticsearch'
+import queryBuilder from 'controllers/search/lib/social_query_builder'
 
 const sanitization = {
   search: {}
@@ -15,4 +15,4 @@ const searchByText = buildSearcher({
   queryBuilder
 })
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,13 +1,13 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const Rss = require('rss')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import Rss from 'rss'
+import templateHelpers from 'lib/emails/handlebars_helpers'
+import getItemDescription from './get_item_description'
 const root = CONFIG.getPublicOrigin()
 const { feed: feedConfig } = CONFIG
-const templateHelpers = require('lib/emails/handlebars_helpers')
-const getItemDescription = require('./get_item_description')
 const oneDayInMinutes = 24 * 60
 
-module.exports = (feedOptions, users, items, lang) => {
+export default (feedOptions, users, items, lang) => {
   const { title, description, queryString, pathname } = feedOptions
   let { image } = feedOptions
 

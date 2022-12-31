@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const membershipValidations = require('./lib/membership_validations')
-const updateSettings = require('./lib/update_settings')
+import _ from 'builders/utils'
+import membershipValidations from './lib/membership_validations'
+import updateSettings from './lib/update_settings'
 
 const sanitization = {
   group: {},
@@ -22,7 +22,7 @@ const controller = async params => {
   return { ok: true, update: hooksUpdates }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'groups', 'updateSettings' ]

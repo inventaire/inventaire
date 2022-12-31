@@ -1,10 +1,9 @@
-const { wait } = require('lib/promises')
-require('should')
-
-const automergeAuthorWorks = require('controllers/tasks/lib/automerge_author_works')
-const { checkEntities } = require('../utils/tasks')
-const { getByUris, findOrIndexEntities } = require('../utils/entities')
-const { createHuman, createWorkWithAuthor, addSerie } = require('../fixtures/entities')
+import { wait } from 'lib/promises'
+import 'should'
+import automergeAuthorWorks from 'controllers/tasks/lib/automerge_author_works'
+import { checkEntities } from '../utils/tasks'
+import { getByUris, findOrIndexEntities } from '../utils/entities'
+import { createHuman, createWorkWithAuthor, addSerie } from '../fixtures/entities'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {

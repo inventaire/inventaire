@@ -1,19 +1,18 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { createItem, createItems } from '../fixtures/items'
+import { updateItems } from '../utils/items'
+import { createUser } from '../fixtures/users'
+import { publicReq, customAuthReq, getFediversableUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
+import { wait } from 'lib/promises'
+import { makeUrl } from '../utils/activitypub'
+import { createWork, createHuman, addAuthor } from '../fixtures/entities'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves'
+import { getActorName } from '../utils/shelves'
+import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
 const origin = CONFIG.getPublicOrigin()
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
-require('should')
-const { createItem, createItems } = require('../fixtures/items')
-const { updateItems } = require('../utils/items')
-const { createUser } = require('../fixtures/users')
-const { publicReq, customAuthReq, getFediversableUser } = require('../utils/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
-const { makeUrl } = require('../utils/activitypub')
-const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
-const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('outbox', () => {
   describe('users', () => {

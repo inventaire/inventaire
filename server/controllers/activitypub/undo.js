@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { byExternalId, deleteById } = require('controllers/activitypub/lib/activities')
-const { isNonEmptyString } = require('lib/boolean_validations')
-const { trackActor } = require('lib/track')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import { byExternalId, deleteById } from 'controllers/activitypub/lib/activities'
+import { isNonEmptyString } from 'lib/boolean_validations'
+import { trackActor } from 'lib/track'
 
-module.exports = async params => {
+export default async params => {
   let { actor, object } = params
 
   if (_.isPlainObject(object)) object = object.id

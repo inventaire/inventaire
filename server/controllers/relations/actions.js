@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const intent = require('./lib/intent')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import intent from './lib/intent'
+import error_ from 'lib/error/error'
 
 const sanitization = {
   user: {}
@@ -13,7 +13,7 @@ const controller = action => async params => {
   return { ok: true }
 }
 
-module.exports = action => ({
+export default action => ({
   sanitization,
   controller: controller(action),
   track: [ 'relation', action ]

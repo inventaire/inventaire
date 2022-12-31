@@ -1,7 +1,8 @@
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
-const requests_ = require('lib/requests')
-const { coverByOlId } = require('./api')
+import requests_ from 'lib/requests'
+
+import { coverByOlId } from './api'
 
 const keyByType = {
   human: 'a',
@@ -9,7 +10,7 @@ const keyByType = {
   edition: 'b'
 }
 
-module.exports = async (openLibraryId, entityType) => {
+export default async (openLibraryId, entityType) => {
   if (!openLibraryId) return null
 
   const type = keyByType[entityType]

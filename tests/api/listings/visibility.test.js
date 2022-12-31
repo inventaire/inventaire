@@ -1,9 +1,9 @@
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
-const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
-const { createUser, getTwoFriends } = require('../fixtures/users')
-const { createListing } = require('../fixtures/listings')
-const { makeFriends } = require('../utils/relations')
-const { getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils'
+import { createUser, getTwoFriends } from '../fixtures/users'
+import { createListing } from '../fixtures/listings'
+import { makeFriends } from '../utils/relations'
+import { getSomeGroupWithAMember } from 'tests/api/fixtures/groups'
 
 const endpoint = '/api/lists?action=by-ids'
 

@@ -1,5 +1,5 @@
 const coverBase = 'http://covers.openlibrary.org'
 
-module.exports = {
+export default {
   coverByOlId: (olId, type = 'b') => `${coverBase}/${type}/olid/${olId}.jpg`
 }

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const notifications_ = require('./notifications')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import notifications_ from './notifications'
 
-module.exports = (label, subjectId) => {
+export default (label, subjectId) => {
   assert_.strings([ label, subjectId ])
   _.log(`deleting ${label} notifications`)
   return notifications_.deleteAllBySubjectId(subjectId)

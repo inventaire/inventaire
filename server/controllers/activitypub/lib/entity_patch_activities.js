@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const { postActivityToActorFollowersInboxes } = require('./post_activity')
-const formatEntityPatchesActivities = require('./format_entity_patches_activities')
+import _ from 'builders/utils'
+import { postActivityToActorFollowersInboxes } from './post_activity'
+import formatEntityPatchesActivities from './format_entity_patches_activities'
 
 const deliverEntityActivitiesFromPatch = async patch => {
   try {
@@ -53,7 +53,7 @@ const addRow = (rows, id, property, claimValue, timestamp) => {
   }
 }
 
-module.exports = {
+export default {
   deliverEntityActivitiesFromPatch,
   getActivitiesFromPatch,
 }

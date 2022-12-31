@@ -1,10 +1,10 @@
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const transactions_ = require('./lib/transactions')
-const { verifyIsRequester, verifyIsOwner, verifyRightToInteract } = require('./lib/rights_verification')
-const { states, statesList } = require('models/attributes/transaction')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const { Track } = require('lib/track')
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import transactions_ from './lib/transactions'
+import { verifyIsRequester, verifyIsOwner, verifyRightToInteract } from './lib/rights_verification'
+import { states, statesList } from 'models/attributes/transaction'
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import { Track } from 'lib/track'
 
 const sanitization = validateSanitization({
   transaction: {},
@@ -13,7 +13,7 @@ const sanitization = validateSanitization({
   }
 })
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const params = sanitize(req, res, sanitization)
   return updateState(params)
   .then(Track(req, [ 'transaction', 'update', params.state ]))

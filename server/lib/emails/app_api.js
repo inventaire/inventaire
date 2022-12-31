@@ -1,8 +1,9 @@
-const _ = require('builders/utils')
-const { buildUrl } = require('lib/utils/url')
-const root = require('config').getPublicOrigin()
+import _ from 'builders/utils'
+import { buildUrl } from 'lib/utils/url'
+import CONFIG from 'config'
+const root = CONFIG.getPublicOrigin()
 
-module.exports = {
+export default {
   // Keep in sync with client/app/api/img
   img: (path, width = 1600, height = 1600) => {
     if (!_.isNonEmptyString(path)) return

@@ -1,8 +1,8 @@
-const ActionsControllers = require('lib/actions_controllers')
-const radio = require('lib/radio')
-const checkImage = require('./lib/check_image')
+import ActionsControllers from 'lib/actions_controllers'
+import radio from 'lib/radio'
+import checkImage from './lib/check_image'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
       'data-url': require('./data_url'),

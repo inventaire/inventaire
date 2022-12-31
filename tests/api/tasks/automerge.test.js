@@ -1,8 +1,8 @@
-require('should')
-const { checkEntities } = require('../utils/tasks')
-const { getByUris, findOrIndexEntities } = require('../utils/entities')
-const { createHuman, createWorkWithAuthor, randomLabel } = require('../fixtures/entities')
-const ASCIIFolder = require('fold-to-ascii')
+import 'should'
+import { checkEntities } from '../utils/tasks'
+import { getByUris, findOrIndexEntities } from '../utils/entities'
+import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities'
+import ASCIIFolder from 'fold-to-ascii'
 
 describe('tasks:automerge', () => {
   before(async () => {

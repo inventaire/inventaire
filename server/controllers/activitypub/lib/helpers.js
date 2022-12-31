@@ -1,10 +1,10 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import { stringifyQuery } from 'lib/utils/url'
+import { isEntityUri, isUsername } from 'lib/boolean_validations'
+import error_ from 'lib/error/error'
+import { unprefixify } from 'controllers/entities/lib/prefix'
+import { i18n } from 'lib/emails/i18n/i18n'
 const host = CONFIG.getPublicOrigin()
-const { stringifyQuery } = require('lib/utils/url')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const error_ = require('lib/error/error')
-const { unprefixify } = require('controllers/entities/lib/prefix')
-const { i18n } = require('lib/emails/i18n/i18n')
 
 const makeUrl = ({ origin, endpoint, params }) => {
   origin = origin || host
@@ -44,7 +44,7 @@ const context = [
   'https://www.w3.org/ns/activitystreams',
 ]
 
-module.exports = {
+export default {
   makeUrl,
   getEntityActorName,
   getEntityUriFromActorName,

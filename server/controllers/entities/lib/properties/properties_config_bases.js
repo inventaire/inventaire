@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const { EntityUri } = require('lib/regex')
-const { BoundedString } = require('models/validations/common')
+import _ from 'builders/utils'
+import { EntityUri } from 'lib/regex'
+import { BoundedString } from 'models/validations/common'
 
 const entity = {
   datatype: 'entity',
@@ -17,7 +17,7 @@ const uniqueString = {
 
 const restrictedEntityType = type => Object.assign({ restrictedType: type }, entity)
 
-module.exports = {
+export default {
   entity,
   workEntity: restrictedEntityType('work'),
   serieEntity: restrictedEntityType('serie'),

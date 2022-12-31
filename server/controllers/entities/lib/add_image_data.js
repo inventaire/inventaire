@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const getThumbData = require('data/commons/thumb')
-const getEnwikiImage = require('data/wikipedia/image')
-const getOpenLibraryCover = require('data/openlibrary/cover')
-const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import getThumbData from 'data/commons/thumb'
+import getEnwikiImage from 'data/wikipedia/image'
+import getOpenLibraryCover from 'data/openlibrary/cover'
+import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims'
 
-module.exports = async entity => {
+export default async entity => {
   const data = await findAnImage(entity)
   entity.image = data
   return entity

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntitiesByUris = require('./lib/get_entities_by_uris')
-const mergeEntities = require('./lib/merge_entities')
-const { emit } = require('lib/radio')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getEntitiesByUris from './lib/get_entities_by_uris'
+import mergeEntities from './lib/merge_entities'
+import { emit } from 'lib/radio'
 
 const sanitization = {
   from: {},
@@ -104,4 +104,4 @@ const replaceIsbnUriByInvUri = (uri, invId) => {
   return uri
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

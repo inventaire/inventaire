@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { byIds, byIdsWithElements } = require('controllers/listings/lib/listings')
-const { addWarning } = require('lib/responses')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import { byIds, byIdsWithElements } from 'controllers/listings/lib/listings'
+import { addWarning } from 'lib/responses'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import error_ from 'lib/error/error'
 
 const sanitization = {
   ids: {},
@@ -42,4 +42,4 @@ const checkUnauthorizedListings = (ids, authorizedListings, foundListingsIds, re
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

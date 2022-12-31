@@ -1,9 +1,9 @@
-require('should')
-const { authReq, authReqC, customAuthReq, getReservedUser } = require('../utils/utils')
-const { getSomeGroup } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
+import 'should'
+import { authReq, authReqC, customAuthReq, getReservedUser } from '../utils/utils'
+import { getSomeGroup } from '../fixtures/groups'
+import { getGroup } from 'tests/api/utils/groups'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const endpoint = '/api/groups?action=cancel-request'
-const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('groups:update:cancel-request', () => {
   it('should reject without group', async () => {

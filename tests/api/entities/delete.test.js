@@ -1,9 +1,16 @@
-const should = require('should')
-const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
-const { getByUri, getByUris, deleteByUris } = require('../utils/entities')
-const { getItemById } = require('../utils/items')
-const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
+import should from 'should'
+import { wait } from 'lib/promises'
+import { authReq, shouldNotBeCalled } from '../utils/utils'
+import { getByUri, getByUris, deleteByUris } from '../utils/entities'
+import { getItemById } from '../utils/items'
+
+import {
+  createHuman,
+  createWork,
+  createWorkWithAuthor,
+  createEdition,
+  createEditionWithIsbn,
+} from '../fixtures/entities'
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {

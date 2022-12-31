@@ -1,4 +1,4 @@
-const reverseClaims = require('./lib/reverse_claims')
+import reverseClaims from './lib/reverse_claims'
 
 const sanitization = {
   property: {},
@@ -17,4 +17,4 @@ const controller = async params => {
   return { uris }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

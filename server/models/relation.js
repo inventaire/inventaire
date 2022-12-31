@@ -1,9 +1,9 @@
-const couch_ = require('lib/couch')
-const assert = require('node:assert')
-const assert_ = require('lib/utils/assert_types')
-const { userId } = require('./validations/common')
+import couch_ from 'lib/couch'
+import assert from 'node:assert'
+import assert_ from 'lib/utils/assert_types'
+import { userId } from './validations/common'
 
-module.exports = {
+export default {
   create: (id, status) => {
     assertValidId(id)
     assertValidStatus(status)

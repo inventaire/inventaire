@@ -1,8 +1,8 @@
-const should = require('should')
-const { authReq, shouldNotBeCalled, dataadminReq } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
-const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
+import should from 'should'
+import { authReq, shouldNotBeCalled, dataadminReq } from '../utils/utils'
+import randomString from 'lib/utils/random_string'
+import { getByUris, merge, revertMerge, updateLabel, addClaim } from '../utils/entities'
+import { createWork, createHuman, createWorkWithAuthor } from '../fixtures/entities'
 
 describe('entities:revert-merge', () => {
   it('should require data admin rights', async () => {

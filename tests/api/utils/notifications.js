@@ -1,7 +1,7 @@
-const { customAuthReq } = require('./utils')
-const assert_ = require('lib/utils/assert_types')
+import { customAuthReq } from './utils'
+import assert_ from 'lib/utils/assert_types'
 
-module.exports = {
+export default {
   getNotifications: async ({ user, type, subject }) => {
     assert_.object(user)
     assert_.string(type)

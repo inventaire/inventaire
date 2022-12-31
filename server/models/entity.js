@@ -22,16 +22,17 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+
+import properties from 'controllers/entities/lib/properties/properties_values_constraints'
+import validateRequiredPropertiesValues from './validations/validate_required_properties_values'
+import inferences from 'controllers/entities/lib/inferences'
 const wikimediaLanguageCodes = new Set(Object.keys(require('wikidata-lang/indexes/by_wm_code')))
 
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const validateRequiredPropertiesValues = require('./validations/validate_required_properties_values')
-const inferences = require('controllers/entities/lib/inferences')
-
-const Entity = module.exports = {
+const Entity = {
   create: () => {
     return {
       type: 'entity',
@@ -226,6 +227,8 @@ const Entity = module.exports = {
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
   }
 }
+
+export default Entity
 
 const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const declaredProperties = doc._allClaimsProps || []

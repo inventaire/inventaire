@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const couch_ = require('lib/couch')
+import _ from 'builders/utils'
+import couch_ from 'lib/couch'
+import parseRelations from './parse_relations'
+import groups_ from 'controllers/groups/lib/groups'
+import dbFactory from 'db/couchdb/base'
 const { minKey, maxKey } = couch_
-const parseRelations = require('./parse_relations')
-const groups_ = require('controllers/groups/lib/groups')
-const db = require('db/couchdb/base')('users', 'relations')
+const db = dbFactory('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
   return db.view('relations', 'byStatus', {
@@ -13,7 +14,7 @@ const getAllUserRelations = (userId, includeDocs = false) => {
   })
 }
 
-const lists = module.exports = {
+const lists = {
   getUserRelations: userId => {
     return getAllUserRelations(userId)
     .then(parseRelations)
@@ -39,3 +40,4 @@ const lists = module.exports = {
     .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
   }
 }
+export default lists

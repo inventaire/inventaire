@@ -1,9 +1,9 @@
-const should = require('should')
-const { publicReq, customAuthReq, getUser } = require('../utils/utils')
-const { createUser, getRandomPosition } = require('../fixtures/users')
-const { makeFriends } = require('../utils/relations')
-const { waitForIndexation } = require('../utils/search')
-const { fixedEncodeURIComponent } = require('lib/utils/url')
+import should from 'should'
+import { publicReq, customAuthReq, getUser } from '../utils/utils'
+import { createUser, getRandomPosition } from '../fixtures/users'
+import { makeFriends } from '../utils/relations'
+import { waitForIndexation } from '../utils/search'
+import { fixedEncodeURIComponent } from 'lib/utils/url'
 const position = getRandomPosition()
 const [ lat, lng ] = position
 const someUserWithPosition = createUser({ position })

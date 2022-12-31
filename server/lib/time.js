@@ -1,4 +1,4 @@
-const { red, yellow, grey } = require('chalk')
+import { red, yellow, grey } from 'chalk'
 
 const oneSecond = 1000
 const oneMinute = 60 * oneSecond
@@ -22,7 +22,7 @@ const coloredElapsedTime = startTime => {
   else return grey(`${elapsedMs}ms`)
 }
 
-module.exports = {
+export default {
   oneMinute,
   tenMinutes: 10 * oneMinute,
   fiveMinutes: 5 * oneMinute,

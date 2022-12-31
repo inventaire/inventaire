@@ -1,6 +1,5 @@
-const _ = require('builders/utils')
-
-const getSerieParts = require('./get_serie_parts')
+import _ from 'builders/utils'
+import getSerieParts from './get_serie_parts'
 
 let items_, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
 const requireCircularDependencies = () => {
@@ -12,7 +11,7 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-module.exports = uri => {
+export default uri => {
   return getEntityByUri({ uri, dry: true })
   .then(entity => {
     // Case where the entity wasn't available in cache

@@ -1,5 +1,5 @@
-const user_ = require('controllers/user/lib/user')
-const getItemsByUsers = require('./lib/get_items_by_users')
+import user_ from 'controllers/user/lib/user'
+import getItemsByUsers from './lib/get_items_by_users'
 
 const sanitization = {
   limit: {},
@@ -21,4 +21,4 @@ const controller = async params => {
   return getItemsByUsers(params, usersIds)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

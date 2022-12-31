@@ -1,9 +1,9 @@
-require('module-alias/register')
-const _ = require('builders/utils')
-const { shellExec } = require('scripts/scripts_utils')
-const { backupFolder } = require('./get_backup_folder_data')
+import 'module-alias/register'
+import _ from 'builders/utils'
+import { shellExec } from 'scripts/scripts_utils'
+import { backupFolder } from './get_backup_folder_data'
 
-module.exports = async params => {
+export default async params => {
   const { dbName } = params
   const args = buildArgsArray(params)
 

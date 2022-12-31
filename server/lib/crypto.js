@@ -1,7 +1,7 @@
-const pw = require('./password_hashing')
-const error_ = require('lib/error/error')
-const crypto = require('node:crypto')
-const { promisify } = require('node:util')
+import pw from './password_hashing'
+import error_ from 'lib/error/error'
+import crypto from 'node:crypto'
+import { promisify } from 'node:util'
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
 const passwords = {
@@ -64,7 +64,7 @@ const generateRsaKeyPair = async () => {
   })
 }
 
-module.exports = {
+export default {
   passwords,
   sha1,
   md5,

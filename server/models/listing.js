@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const validations = require('./validations/listing')
-const attributes = require('./attributes/listing')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import validations from './validations/listing'
+import attributes from './attributes/listing'
+import error_ from 'lib/error/error'
 
-module.exports = {
+export default {
   create: listing => {
     assert_.object(listing)
     assert_.string(listing.creator)

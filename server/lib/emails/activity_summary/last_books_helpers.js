@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const { allowTransaction } = require('models/item')
-const { kmBetween } = require('lib/geo')
-const host = require('config').getPublicOrigin()
-const transactionsColors = require('./transactions_colors')
-const user_ = require('controllers/user/lib/user')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import { allowTransaction } from 'models/item'
+import { kmBetween } from 'lib/geo'
+import transactionsColors from './transactions_colors'
+import user_ from 'controllers/user/lib/user'
+const host = CONFIG.getPublicOrigin()
 
-module.exports = {
+export default {
   getLastItems: (limitDate, items) => {
     return items.filter(item => item.created > limitDate)
   },

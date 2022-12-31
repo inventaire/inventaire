@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import tasks_ from 'controllers/tasks/lib/tasks'
+import radio from 'lib/radio'
+import checkEntity from './lib/check_entity'
 const { tap } = promises_
-const tasks_ = require('controllers/tasks/lib/tasks')
-const radio = require('lib/radio')
-const checkEntity = require('./lib/check_entity')
 
-module.exports = () => {
+export default () => {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
   radio.on('entity:remove', archiveObsoleteEntityUriTasks)
   radio.on('entity:revert:merge', revertArchive)

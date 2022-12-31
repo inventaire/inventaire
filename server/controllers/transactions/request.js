@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const transactions_ = require('./lib/transactions')
-const user_ = require('controllers/user/lib/user')
-const { verifyRightToRequest } = require('./lib/rights_verification')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
+import transactions_ from './lib/transactions'
+import user_ from 'controllers/user/lib/user'
+import { verifyRightToRequest } from './lib/rights_verification'
 
 const sanitization = {
   item: {},
@@ -23,7 +23,7 @@ const controller = async ({ item, message, reqUserId }) => {
   return { transaction }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'transaction', 'request' ]

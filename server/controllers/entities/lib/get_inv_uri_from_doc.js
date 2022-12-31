@@ -1,7 +1,7 @@
-const { normalizeIsbn } = require('lib/isbn/isbn')
-const { prefixifyInv } = require('./prefix')
+import { normalizeIsbn } from 'lib/isbn/isbn'
+import { prefixifyInv } from './prefix'
 
-module.exports = entity => {
+export default entity => {
   // Case when the entity document is a proper entity document
   // but has a more broadly recognized URI available, currently only an ISBN
   const { claims } = entity

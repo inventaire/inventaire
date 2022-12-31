@@ -73,4 +73,4 @@ const nextActionsWithReturn = Object.assign({}, basicNextActions, {
 }
 )
 
-module.exports = { states, statesList, basicNextActions, nextActionsWithReturn }
+export default { states, statesList, basicNextActions, nextActionsWithReturn }

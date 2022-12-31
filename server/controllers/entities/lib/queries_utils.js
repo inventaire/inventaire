@@ -1,6 +1,6 @@
-const { isPositiveIntegerString } = require('lib/boolean_validations')
+import { isPositiveIntegerString } from 'lib/boolean_validations'
 
-module.exports = {
+export default {
   getSimpleDayDate: date => {
     if (date) {
       // Parse ISO date

@@ -1,7 +1,7 @@
-const { request, customAuthReq, rawCustomAuthReq } = require('./request')
-const { createUser, getRefreshedUser } = require('../fixtures/users')
-const { humanName } = require('../fixtures/text')
-require('should')
+import { request, customAuthReq, rawCustomAuthReq } from './request'
+import { createUser, getRefreshedUser } from '../fixtures/users'
+import { humanName } from '../fixtures/text'
+import 'should'
 
 const userPromises = {}
 const getUserGetter = (key, role, customData) => () => {
@@ -11,7 +11,7 @@ const getUserGetter = (key, role, customData) => () => {
   return getRefreshedUser(userPromises[key])
 }
 
-const API = module.exports = {
+const API = {
   publicReq: request,
   customAuthReq,
   authReq: (...args) => customAuthReq(API.getUser(), ...args),
@@ -38,5 +38,7 @@ const API = module.exports = {
     'settings.contributions.anonymize': false
   })
 }
+
+export default API
 
 Object.assign(API, require('../../unit/utils'))

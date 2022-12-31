@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const { isVisibilityGroupKey } = require('lib/boolean_validations')
-const { byIds: getGroupsByIds, getUserGroupsCoMembers } = require('controllers/groups/lib/groups')
-const { getUserFriends } = require('controllers/relations/lib/lists')
-const { allGroupMembers: parseAllGroupMembersIds } = require('server/controllers/groups/lib/users_lists')
+import _ from 'builders/utils'
+import { isVisibilityGroupKey } from 'lib/boolean_validations'
+import { byIds as getGroupsByIds, getUserGroupsCoMembers } from 'controllers/groups/lib/groups'
+import { getUserFriends } from 'controllers/relations/lib/lists'
+import { allGroupMembers as parseAllGroupMembersIds } from 'server/controllers/groups/lib/users_lists'
 
-module.exports = async (docs, reqUserId) => {
+export default async (docs, reqUserId) => {
   if (!reqUserId) return docs.filter(isPublic)
 
   // Optimizing for the case where all requested docs belong to the requester

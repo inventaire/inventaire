@@ -1,9 +1,9 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const getSubDb = require('./get_sub_db')
-const { promisify } = require('node:util')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import getSubDb from './get_sub_db'
+import { promisify } from 'node:util'
 
-module.exports = {
+export default {
   // always return an object with 'push' and 'pushBatch' function
   // taking a payload and returning a promise
   initQueue: (jobName, worker, maxConcurrency) => {

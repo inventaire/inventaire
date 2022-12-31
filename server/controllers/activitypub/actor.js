@@ -1,5 +1,5 @@
-const getActor = require('controllers/activitypub/lib/get_actor')
-const getActorHtmlUrl = require('controllers/activitypub/lib/get_actor_html_url')
+import getActor from 'controllers/activitypub/lib/get_actor'
+import getActorHtmlUrl from 'controllers/activitypub/lib/get_actor_html_url'
 
 const sanitization = {
   name: {}
@@ -18,7 +18,7 @@ const controller = async (params, req, res) => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
 }

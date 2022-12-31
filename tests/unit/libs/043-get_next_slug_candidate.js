@@ -1,6 +1,6 @@
 
-require('should')
-const getNextSlugCandidate = require('controllers/groups/lib/get_next_slug_candidate')
+import 'should'
+import getNextSlugCandidate from 'controllers/groups/lib/get_next_slug_candidate'
 
 describe('get next slug candidate', () => {
   it('should return an iterated slug', () => {

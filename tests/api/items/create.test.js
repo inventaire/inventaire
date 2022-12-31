@@ -1,15 +1,23 @@
-const CONFIG = require('config')
-require('should')
-const { wait } = require('lib/promises')
-const { authReq, getUser, getUserB, customAuthReq } = require('../utils/utils')
-const { createEditionWithIsbn, createEdition, createWorkWithAuthor, createHuman, createEditionWithWorkAndAuthor } = require('../fixtures/entities')
-const { createItem } = require('../fixtures/items')
-const { createUser, getRefreshedUser } = require('../fixtures/users')
-const { createShelf } = require('../fixtures/shelves')
-const { getByUris: getEntitiesByUris } = require('../utils/entities')
+import CONFIG from 'config'
+import 'should'
+import { wait } from 'lib/promises'
+import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils'
+
+import {
+  createEditionWithIsbn,
+  createEdition,
+  createWorkWithAuthor,
+  createHuman,
+  createEditionWithWorkAndAuthor,
+} from '../fixtures/entities'
+
+import { createItem } from '../fixtures/items'
+import { createUser, getRefreshedUser } from '../fixtures/users'
+import { createShelf } from '../fixtures/shelves'
+import { getByUris as getEntitiesByUris } from '../utils/entities'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { createGroup } from 'tests/api/fixtures/groups'
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { createGroup } = require('tests/api/fixtures/groups')
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)
 

@@ -4,15 +4,19 @@
 // while entities created internally ramp up toward getting us autonomous
 // Its place should be progressively decreased until complete removal
 
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const isbn_ = require('lib/isbn/isbn')
-const { buildUrl } = require('lib/utils/url')
-const { enabled, origin } = require('config').dataseed
+import _ from 'builders/utils'
+
+import requests_ from 'lib/requests'
+import isbn_ from 'lib/isbn/isbn'
+import { buildUrl } from 'lib/utils/url'
+import CONFIG from 'config'
+
+const { enabled, origin } = CONFIG.dataseed
+
 const reqOptions = { timeout: 60 * 1000 }
 if (origin.startsWith('https')) reqOptions.ignoreCertificateErrors = true
 
-module.exports = {
+export default {
   getByIsbns: async (isbns, refresh) => {
     isbns = _.forceArray(isbns)
     if (!enabled) return isbns.map(emptySeed)

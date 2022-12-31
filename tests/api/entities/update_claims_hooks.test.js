@@ -1,7 +1,7 @@
-require('should')
-const { wait } = require('lib/promises')
-const { getByUris, updateClaim } = require('../utils/entities')
-const { createWork, createEditionFromWorks } = require('../fixtures/entities')
+import 'should'
+import { wait } from 'lib/promises'
+import { getByUris, updateClaim } from '../utils/entities'
+import { createWork, createEditionFromWorks } from '../fixtures/entities'
 
 describe('entities:update-claims-hooks', () => {
   it('should update a work label from an edition title update if in sync', async () => {

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   type: [ 'deduplicate' ],
 
   entitiesType: [ 'work', 'human' ],

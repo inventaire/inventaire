@@ -1,10 +1,11 @@
 // Gathering entity formatting steps common to all the consumers
 // Keep in sync with get_wikidata_enriched_entities formatting
-const getOriginalLang = require('lib/wikidata/get_original_lang')
-const { setTermsFromClaims } = require('./entities')
-const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
+import getOriginalLang from 'lib/wikidata/get_original_lang'
 
-module.exports = entity => {
+import { setTermsFromClaims } from './entities'
+import getEntityImagesFromClaims from './get_entity_images_from_claims'
+
+export default entity => {
   entity.originalLang = getOriginalLang(entity.claims)
 
   // Matching Wikidata entities format for images

@@ -1,6 +1,6 @@
 // An endpoint to get statistics on users data contributions
 // Reserved to admins for the moment, as some data might be considered privacy issue
-const patches_ = require('./lib/patches/patches')
+import patches_ from './lib/patches/patches'
 
 const sanitization = {
   period: {
@@ -18,4 +18,4 @@ const controller = async ({ period }) => {
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

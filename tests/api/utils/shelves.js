@@ -1,14 +1,14 @@
-const _ = require('builders/utils')
-const { forceArray } = require('lib/utils/base')
-const { customAuthReq } = require('./request')
-const { getUser } = require('./utils')
+import _ from 'builders/utils'
+import { forceArray } from 'lib/utils/base'
+import { customAuthReq } from './request'
+import { getUser } from './utils'
 
 const getShelvesByIds = async (user, ids) => {
   if (_.isArray(ids)) ids = ids.join('|')
   return customAuthReq(user, 'get', `/api/shelves?action=by-ids&ids=${ids}`)
 }
 
-module.exports = {
+export default {
   getShelfById: async (user, shelfId) => {
     const { shelves } = await getShelvesByIds(user, shelfId)
     return shelves[shelfId]

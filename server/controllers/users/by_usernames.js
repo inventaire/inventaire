@@ -1,4 +1,4 @@
-const user_ = require('controllers/user/lib/user')
+import user_ from 'controllers/user/lib/user'
 
 const sanitization = {
   usernames: {}
@@ -9,4 +9,4 @@ const controller = async ({ usernames, reqUserId }) => {
   return { users }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,6 +1,6 @@
-const interactions_ = require('lib/interactions')
-const error_ = require('lib/error/error')
-const Transaction = require('models/transaction')
+import interactions_ from 'lib/interactions'
+import error_ from 'lib/error/error'
+import Transaction from 'models/transaction'
 
 let transactions_
 const requireCircularDependencies = () => { transactions_ = require('./transactions') }
@@ -17,7 +17,7 @@ const verifyNoExistingTransaction = async (reqUserId, item) => {
   }
 }
 
-module.exports = {
+export default {
   verifyRightToRequest: async (reqUserId, item) => {
     const itemIsBusy = await transactions_.itemIsBusy(item._id)
     if (itemIsBusy) {

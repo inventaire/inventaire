@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { setItemsBusyFlag } = require('controllers/transactions/lib/transactions')
-const snapshot_ = require('./snapshot/snapshot')
-const { isVisibilityGroupKey } = require('lib/boolean_validations')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import { setItemsBusyFlag } from 'controllers/transactions/lib/transactions'
+import snapshot_ from './snapshot/snapshot'
+import { isVisibilityGroupKey } from 'lib/boolean_validations'
 
 const addUsersData = async (page, reqParams) => {
   const { reqUserId, includeUsers } = reqParams
@@ -25,7 +25,7 @@ const addItemsSnapshots = items => {
   return Promise.all(items.map(snapshot_.addToItem))
 }
 
-module.exports = {
+export default {
   addItemsSnapshots,
 
   addAssociatedData: async (page, reqParams) => {

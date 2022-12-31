@@ -1,10 +1,12 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+
 // Identity: v3
 // Swift: v2
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { tenMinutes } = require('lib/time')
-const requests_ = require('lib/requests')
+import _ from 'builders/utils'
+
+import error_ from 'lib/error/error'
+import { tenMinutes } from 'lib/time'
+import requests_ from 'lib/requests'
 
 let lastToken
 let lastTokenExpirationTime = 0
@@ -37,7 +39,7 @@ const body = {
   }
 }
 
-module.exports = async () => {
+export default async () => {
   if (lastToken && !tokenExpired()) return lastToken
 
   return requests_.post(url, { body, headers: reqHeaders, returnBodyOnly: false })

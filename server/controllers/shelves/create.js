@@ -1,4 +1,4 @@
-const shelves_ = require('controllers/shelves/lib/shelves')
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   name: {},
@@ -27,7 +27,7 @@ const formatNewShelf = params => {
   return shelves_.create(shelfData)
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'shelf', 'creation' ]

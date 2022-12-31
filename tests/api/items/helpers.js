@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   newItemBase: () => ({ entity: 'wd:Q3548806' }),
 
   CountChange: (snapBefore, snapAfter) => {

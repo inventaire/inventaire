@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { openPasswordUpdateWindow } = require('controllers/user/lib/token')
-const pw_ = require('lib/crypto').passwords
-const error_ = require('lib/error/error')
-const loginAttempts = require('./login_attempts')
-const { Strategy: LocalStrategy } = require('passport-local')
-const { tokenDaysToLive } = require('config')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import { openPasswordUpdateWindow } from 'controllers/user/lib/token'
+import { passwords as pw_ } from 'lib/crypto'
+import error_ from 'lib/error/error'
+import loginAttempts from './login_attempts'
+import { Strategy as LocalStrategy } from 'passport-local'
+import { tokenDaysToLive } from 'config'
 
 // Reusing LocalStrategy but substituing username/password by email/token
 const options = {
@@ -59,4 +59,4 @@ const finalError = (done, err) => {
   done(err)
 }
 
-module.exports = new LocalStrategy(options, verify)
+export default new LocalStrategy(options, verify)

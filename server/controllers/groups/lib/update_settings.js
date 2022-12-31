@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const { attributes, validations, formatters } = require('models/group')
+import _ from 'builders/utils'
+import { attributes, validations, formatters } from 'models/group'
+import error_ from 'lib/error/error'
+import radio from 'lib/radio'
+import dbFactory from 'db/couchdb/base'
+import { add as addSlug } from './slug'
+import { acceptNullValue } from 'models/attributes/group'
 const { updatable } = attributes
-const error_ = require('lib/error/error')
-const radio = require('lib/radio')
-const db = require('db/couchdb/base')('groups')
-const { add: addSlug } = require('./slug')
-const { acceptNullValue } = require('models/attributes/group')
+const db = dbFactory('groups')
 
-module.exports = async (data, userId) => {
+export default async (data, userId) => {
   const { group: groupId, attribute } = data
   let { value } = data
 

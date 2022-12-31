@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = {
+export default {
   filterFoundElementsUris: (elements, uris) => {
     const foundElements = []
     const notFoundUris = []

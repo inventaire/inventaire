@@ -1,7 +1,7 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { authorWorks, serieParts, publisherPublications } = require('./get_entity_relatives')
+import ActionsControllers from 'lib/actions_controllers'
+import { authorWorks, serieParts, publisherPublications } from './get_entity_relatives'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'by-uris': require('./by_uris_get'),

@@ -1,8 +1,9 @@
-const db = require('db/couchdb/base')('users')
-const User = require('models/user')
-const token_ = require('./token')
+import dbFactory from 'db/couchdb/base'
+import User from 'models/user'
+import token_ from './token'
+const db = dbFactory('users')
 
-module.exports = (user, email) => {
+export default (user, email) => {
   user = User.updateEmail(user, email)
   return db.put(user)
   // sendValidationEmail doesn't need to access the last _rev

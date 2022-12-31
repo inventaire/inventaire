@@ -1,8 +1,8 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { signup, login, logout } = require('./connection')
-const { usernameAvailability, emailAvailability } = require('./availability')
+import ActionsControllers from 'lib/actions_controllers'
+import { signup, login, logout } from './connection'
+import { usernameAvailability, emailAvailability } from './availability'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'username-availability': usernameAvailability,

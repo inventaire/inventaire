@@ -1,8 +1,14 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { shelfName } = require('../fixtures/shelves')
-const { createItem } = require('../fixtures/items')
-const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
+import {
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+  customAuthReq,
+  getReservedUser,
+} from 'tests/api/utils/utils'
+
+import { authReq } from '../utils/utils'
+import { shelfName } from '../fixtures/shelves'
+import { createItem } from '../fixtures/items'
+import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
 const endpoint = '/api/shelves?action=create'
 
 describe('shelves:create', () => {

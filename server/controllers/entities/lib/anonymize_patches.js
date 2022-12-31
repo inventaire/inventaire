@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { shouldBeAnonymized } = require('models/user')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import { shouldBeAnonymized } from 'models/user'
 
-module.exports = async ({ patches, reqUserId }) => {
+export default async ({ patches, reqUserId }) => {
   const usersIds = _.uniq(_.map(patches, 'user'))
   const users = await user_.byIds(usersIds)
   const deanonymizedUsersIds = getDeanonymizedUsersIds(users)

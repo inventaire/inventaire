@@ -1,10 +1,10 @@
-const error_ = require('lib/error/error')
-const searchUsersItems = require('./lib/search_users_items')
-const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
-const { getGroupMembersIds } = require('controllers/groups/lib/groups')
-const { getOwnerIdAndVisibilityKeys } = require('controllers/items/lib/get_authorized_items')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import error_ from 'lib/error/error'
+import searchUsersItems from './lib/search_users_items'
+import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
+import { getGroupMembersIds } from 'controllers/groups/lib/groups'
+import { getOwnerIdAndVisibilityKeys } from 'controllers/items/lib/get_authorized_items'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   user: { optional: true },
@@ -45,4 +45,4 @@ const getAuthorizedShelf = async (shelfId, reqUserId) => {
   return res[0]
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

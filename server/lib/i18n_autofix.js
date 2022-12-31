@@ -1,10 +1,10 @@
-const __ = require('config').universalPath
-const _ = require('builders/utils')
-const { readJsonFile, writeJsonFile } = require('lib/utils/json')
-const { isPropertyId } = require('wikidata-sdk')
-const { wait } = require('./promises')
+import { universalPath as __ } from 'config'
+import _ from 'builders/utils'
+import { readJsonFile, writeJsonFile } from 'lib/utils/json'
+import { isPropertyId } from 'wikidata-sdk'
+import { wait } from './promises'
 
-module.exports = {
+export default {
   appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
   appendToShortKeys: keys => appendToI18nKeys(short, keys, false),
   appendToServerKeys: key => {

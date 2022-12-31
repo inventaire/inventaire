@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const radio = require('lib/radio')
-const { audit: auditIsbn } = require('isbn3')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import radio from 'lib/radio'
+import { audit as auditIsbn } from 'isbn3'
 
-module.exports = {
+export default {
   post: async (req, res) => {
     const { user, body } = req
     const { subject, message, uris, unknownUser } = body

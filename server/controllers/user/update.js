@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const { attributes, validations, formatters } = require('models/user')
+import _ from 'builders/utils'
+import { attributes, validations, formatters } from 'models/user'
+import updateEmail from 'controllers/user/lib/update_email'
+import { setStableUsername } from 'controllers/user/lib/user'
+import dbFactory from 'db/couchdb/base'
+import availability_ from 'controllers/user/lib/availability'
+import error_ from 'lib/error/error'
+import { basicUpdater } from 'lib/doc_updates'
+import radio from 'lib/radio'
 const { updatable, concurrencial, acceptNullValue } = attributes
-const updateEmail = require('controllers/user/lib/update_email')
-const { setStableUsername } = require('controllers/user/lib/user')
-const db = require('db/couchdb/base')('users')
-const availability_ = require('controllers/user/lib/availability')
-const error_ = require('lib/error/error')
-const { basicUpdater } = require('lib/doc_updates')
-const radio = require('lib/radio')
+const db = dbFactory('users')
 
 const sanitization = {
   attribute: {},
@@ -79,7 +80,7 @@ const updateAttribute = async (user, attribute, value) => {
   }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'user', 'update' ]

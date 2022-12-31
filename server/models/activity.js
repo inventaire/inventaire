@@ -1,9 +1,9 @@
-const assert_ = require('lib/utils/assert_types')
-const { baseActivityValidations } = require('./validations/activity')
-const attributes = require('./attributes/activity')
-const error_ = require('lib/error/error')
+import assert_ from 'lib/utils/assert_types'
+import { baseActivityValidations } from './validations/activity'
+import attributes from './attributes/activity'
+import error_ from 'lib/error/error'
 
-module.exports = {
+export default {
   create: activity => {
     assert_.object(activity)
     assert_.string(activity.type)

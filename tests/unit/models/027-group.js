@@ -1,11 +1,10 @@
-require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils')
+import 'should'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils'
+import { wait } from 'lib/promises'
+import Group from 'models/group'
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
 const someOtherUserId2 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac'
-const { wait } = require('lib/promises')
-
-const Group = require('models/group')
 
 const createSomeGroup = () => {
   return Group.create({

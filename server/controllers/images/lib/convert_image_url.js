@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const db = require('db/couchdb/base')('images')
-const importImage = require('./import_image')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import dbFactory from 'db/couchdb/base'
+import importImage from './import_image'
+const db = dbFactory('images')
 
-module.exports = ({ url: sourceImageUrl, container }) => importAndAddImage(container, sourceImageUrl)
+export default ({ url: sourceImageUrl, container }) => importAndAddImage(container, sourceImageUrl)
 
 const importAndAddImage = async (container, sourceImageUrl) => {
   const { url } = await importImage(container, sourceImageUrl)

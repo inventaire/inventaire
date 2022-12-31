@@ -1,8 +1,8 @@
-const onlineUsers = require('./lib/online_users')
-const responses_ = require('lib/responses')
-const headers_ = require('lib/headers')
+import onlineUsers from './lib/online_users'
+import responses_ from 'lib/responses'
+import headers_ from 'lib/headers'
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const { headers } = req
   const { 'user-agent': userAgent } = headers
 

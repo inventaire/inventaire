@@ -1,9 +1,9 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { createTransport, getTestMessageUrl } from 'nodemailer'
+import hbs from 'nodemailer-express-handlebars'
+import handlebarsHelpers from './handlebars_helpers'
 const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const { createTransport, getTestMessageUrl } = require('nodemailer')
-const hbs = require('nodemailer-express-handlebars')
-const handlebarsHelpers = require('./handlebars_helpers')
 const viewsPath = __.path('lib', 'emails/views')
 const debugMode = CONFIG.mailer.nodemailer.host === 'smtp.ethereal.email'
 
@@ -26,7 +26,7 @@ const transporter = createTransport(nodemailerOptions, defaults)
 
 transporter.use('compile', hbs(options))
 
-module.exports = {
+export default {
   sendMail: async email => {
     const { template, subject } = email
     try {

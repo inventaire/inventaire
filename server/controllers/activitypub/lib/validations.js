@@ -1,11 +1,11 @@
-const error_ = require('lib/error/error')
-const { isCouchUuid } = require('lib/boolean_validations')
-const user_ = require('controllers/user/lib/user')
-const shelves_ = require('controllers/shelves/lib/shelves')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const { getEntityUriFromActorName, getEntityActorName } = require('./helpers')
+import error_ from 'lib/error/error'
+import { isCouchUuid } from 'lib/boolean_validations'
+import user_ from 'controllers/user/lib/user'
+import shelves_ from 'controllers/shelves/lib/shelves'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import { getEntityUriFromActorName, getEntityActorName } from './helpers'
 
-module.exports = {
+export default {
   validateShelf: async name => {
     const id = name.split('-')[1]
     if (!isCouchUuid(id)) throw error_.new('invalid shelf id', 400, { id })

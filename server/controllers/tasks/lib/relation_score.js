@@ -1,8 +1,9 @@
-const _ = require('builders/utils')
-const tasks_ = require('./tasks')
+import _ from 'builders/utils'
+import tasks_ from './tasks'
+
 // relationScore (between 0 & 1) express the number of tasks for the same suspect
 
-module.exports = suspectUri => {
+export default suspectUri => {
   return tasks_.bySuspectUri(suspectUri)
   .then(tasks => {
     const relationScore = calculateRelationScore(tasks)

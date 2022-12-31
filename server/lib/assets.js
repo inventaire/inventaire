@@ -1,4 +1,4 @@
 // Keep in sync with client/app/lib/urls.coffee
-module.exports = {
+export default {
   defaultAvatar: '/img/assets/default_avatar'
 }

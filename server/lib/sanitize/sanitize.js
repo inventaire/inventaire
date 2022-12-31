@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { addWarning } = require('lib/responses')
-const parameters = require('./parameters')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import { addWarning } from 'lib/responses'
+import parameters from './parameters'
 const { generics } = parameters
 
 // The sanitize function doesn't need to be async
@@ -173,4 +173,4 @@ const renameParameter = (input, name, renameFn) => {
   input[aliasedName] = input[name]
 }
 
-module.exports = { sanitize, validateSanitization }
+export default { sanitize, validateSanitization }

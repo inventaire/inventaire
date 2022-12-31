@@ -1,6 +1,6 @@
-const { pass, userId, transactionId } = require('./common')
+import { pass, userId, transactionId } from './common'
 
-module.exports = {
+export default {
   pass,
   userId,
   transactionId,

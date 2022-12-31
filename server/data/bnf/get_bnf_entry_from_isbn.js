@@ -1,21 +1,23 @@
-const { fixedEncodeURIComponent } = require('lib/utils/url')
-const parseIsbn = require('lib/isbn/parse')
-const requests_ = require('lib/requests')
-const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
-const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
-const wmCodeByIso6392Code = require('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { parseSameasMatches } = require('data/lib/external_ids')
-const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
-const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
-const { formatAuthorName } = require('data/commons/format_author_name')
+import { fixedEncodeURIComponent } from 'lib/utils/url'
+import parseIsbn from 'lib/isbn/parse'
+import requests_ from 'lib/requests'
+import wdk from 'wikidata-sdk'
+import wdIdByIso6392Code from 'wikidata-lang/mappings/wd_id_by_iso_639_2_code.json'
+import wmCodeByIso6392Code from 'wikidata-lang/mappings/wm_code_by_iso_639_2_code.json'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
+import { parseSameasMatches } from 'data/lib/external_ids'
+import { buildEntryFromFormattedRows } from 'data/lib/build_entry_from_formatted_rows'
+import { setEditionPublisherClaim } from 'data/lib/set_edition_publisher_claim'
+import { formatAuthorName } from 'data/commons/format_author_name'
+const { simplifySparqlResults } = wdk
+
 // Using a shorter timeout as the query is never critically needed but can make a user wait
 const timeout = 10000
 
 const headers = { accept: '*/*' }
 const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
-module.exports = async isbn => {
+export default async isbn => {
   const url = base + getQuery(isbn)
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)

@@ -12,15 +12,17 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-require('module-alias/register')
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const entitiesDb = require('db/couchdb/base')('entities')
-const patchesDb = require('db/couchdb/base')('patches')
-const docDiff = require('db/couchdb/doc_diffs')
-const Entity = require('models/entity')
-const Patch = require('models/patch')
+import 'module-alias/register'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import dbFactory from 'db/couchdb/base'
+import docDiff from 'db/couchdb/doc_diffs'
+import Entity from 'models/entity'
+import Patch from 'models/patch'
+
+const entitiesDb = dbFactory('entities')
+const patchesDb = dbFactory('patches')
 const userId = require('db/couchdb/hard_coded_documents').users.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)

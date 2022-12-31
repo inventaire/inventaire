@@ -1,15 +1,16 @@
-const _ = require('builders/utils')
-const Listing = require('models/listing')
-const db = require('db/couchdb/base')('lists')
-const { updatable: updateAttributes } = require('models/attributes/listing')
-const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const error_ = require('lib/error/error')
-const elements_ = require('controllers/listings/lib/elements')
-const { filterFoundElementsUris } = require('controllers/listings/lib/helpers')
-const { tap } = require('lib/promises')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+import _ from 'builders/utils'
+import Listing from 'models/listing'
+import dbFactory from 'db/couchdb/base'
+import { updatable as updateAttributes } from 'models/attributes/listing'
+import { validateVisibilityKeys } from 'lib/visibility/visibility'
+import error_ from 'lib/error/error'
+import elements_ from 'controllers/listings/lib/elements'
+import { filterFoundElementsUris } from 'controllers/listings/lib/helpers'
+import { tap } from 'lib/promises'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+const db = dbFactory('lists')
 
-const listings_ = module.exports = {
+const listings_ = {
   byId: db.get,
   byIds: db.byIds,
   byCreators: ids => db.viewByKeys('byCreator', ids),
@@ -73,6 +74,8 @@ const listings_ = module.exports = {
     .then(db.bulkDelete)
   },
 }
+
+export default listings_
 
 const assignElementsToListing = elementsByListing => listing => {
   listing.elements = elementsByListing[listing._id] || []

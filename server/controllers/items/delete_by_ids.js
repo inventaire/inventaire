@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const error_ = require('lib/error/error')
-const { emit } = require('lib/radio')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import error_ from 'lib/error/error'
+import { emit } from 'lib/radio'
 
 const sanitization = {
   ids: {}
@@ -27,4 +27,4 @@ const verifyOwnership = reqUserId => items => {
   return items
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

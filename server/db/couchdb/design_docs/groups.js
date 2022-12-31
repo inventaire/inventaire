@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byId: {
     map: doc => {
       if (doc.type === 'group') emit(doc._id, null)

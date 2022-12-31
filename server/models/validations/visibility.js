@@ -1,5 +1,5 @@
-const _ = require('builders/utils')
-const { isVisibilityGroupKey } = require('lib/boolean_validations')
+import _ from 'builders/utils'
+import { isVisibilityGroupKey } from 'lib/boolean_validations'
 
 const keywordValues = [
   'friends',
@@ -16,7 +16,7 @@ const isVisibilityKey = value => {
 
 const isVisibilityKeyArray = arr => _.isArray(arr) && arr.every(isVisibilityKey)
 
-module.exports = {
+export default {
   isVisibilityKey,
   isVisibilityKeyArray,
 }

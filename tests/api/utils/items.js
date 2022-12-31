@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const { authReq, customAuthReq, getUser } = require('./utils')
+import _ from 'builders/utils'
+import { authReq, customAuthReq, getUser } from './utils'
 
-const utils = module.exports = {
+const utils = {
   getItemsByIds: ids => {
     if (_.isArray(ids)) ids = ids.join('|')
     return authReq('get', `/api/items?action=by-ids&ids=${ids}`)
@@ -25,3 +25,4 @@ const utils = module.exports = {
     return customAuthReq(user, 'put', '/api/items?action=bulk-update', { ids, attribute, value })
   }
 }
+export default utils

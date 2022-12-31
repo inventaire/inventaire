@@ -1,10 +1,10 @@
-require('should')
-const _ = require('builders/utils')
-const { authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
-const { updateTransaction } = require('../utils/transactions')
-const { getItem } = require('../utils/items')
-const { getUserC } = require('../utils/utils')
+import 'should'
+import _ from 'builders/utils'
+import { authReqB, authReqC, shouldNotBeCalled } from 'tests/api/utils/utils'
+import { createTransaction, getSomeTransaction } from '../fixtures/transactions'
+import { updateTransaction } from '../utils/transactions'
+import { getItem } from '../utils/items'
+import { getUserC } from '../utils/utils'
 
 const endpoint = '/api/transactions?action=update-state'
 

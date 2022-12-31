@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byUserAndItem: {
     map: doc => {
       emit([ doc.owner, doc.item ], null)

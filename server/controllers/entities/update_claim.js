@@ -1,5 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+
+// TODO: accept ISBN URIs
+import inv from './lib/update_inv_claim'
+
+import wd from './lib/update_wd_claim'
 
 const sanitization = {
   id: { optional: true },
@@ -37,9 +42,8 @@ const controller = async (params, req) => {
 const parseEmptyValue = value => value === '' ? null : value
 
 const updaters = {
-  // TODO: accept ISBN URIs
-  inv: require('./lib/update_inv_claim'),
-  wd: require('./lib/update_wd_claim')
+  inv,
+  wd
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

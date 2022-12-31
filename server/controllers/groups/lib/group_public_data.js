@@ -1,12 +1,12 @@
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const lists_ = require('./users_lists')
-const groups_ = require('./groups')
-const user_ = require('controllers/user/lib/user')
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import lists_ from './users_lists'
+import groups_ from './groups'
+import user_ from 'controllers/user/lib/user'
 
 // fnName: byId or bySlug
 // fnArgs: [ id ] or [ slug ]
-module.exports = (fnName, fnArgs, reqUserId) => {
+export default (fnName, fnArgs, reqUserId) => {
   assert_.array(fnArgs)
   return groups_[fnName].apply(null, fnArgs)
   .then(group => {

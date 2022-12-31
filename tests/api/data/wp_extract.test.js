@@ -1,7 +1,7 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { publicReq, shouldNotBeCalled } from '../utils/utils'
+import randomString from 'lib/utils/random_string'
 const endpoint = '/api/data?action=wp-extract'
-const randomString = require('lib/utils/random_string')
 
 describe('wikipedia:extract', () => {
   it('should reject without title', async () => {

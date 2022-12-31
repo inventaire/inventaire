@@ -1,8 +1,8 @@
-require('should')
-const { getUser: getUserA, getUserB } = require('../../utils/utils')
-const { createEdition } = require('../../fixtures/entities')
-const { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } = require('../../utils/entities')
-const { createWork } = require('tests/api/fixtures/entities')
+import 'should'
+import { getUser as getUserA, getUserB } from '../../utils/utils'
+import { createEdition } from '../../fixtures/entities'
+import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '../../utils/entities'
+import { createWork } from 'tests/api/fixtures/entities'
 
 describe('patch correction', () => {
   describe('rewrite', () => {

@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const tasks_ = require('./lib/tasks')
-const db = require('db/couchdb/base')('entities')
-const { prefixifyInv } = require('controllers/entities/lib/prefix')
-const jobs_ = require('db/level/jobs')
-const checkEntity = require('./lib/check_entity')
-const { nice } = require('config')
-const { waitForCPUsLoadToBeBelow } = require('lib/os')
+import _ from 'builders/utils'
+import tasks_ from './lib/tasks'
+import dbFactory from 'db/couchdb/base'
+import { prefixifyInv } from 'controllers/entities/lib/prefix'
+import jobs_ from 'db/level/jobs'
+import checkEntity from './lib/check_entity'
+import { nice } from 'config'
+import { waitForCPUsLoadToBeBelow } from 'lib/os'
+const db = dbFactory('entities')
 const batchLength = 1000
 
 const sanitization = {
@@ -80,6 +81,6 @@ const filterNotAlreadySuspectEntities = async uris => {
   return _.difference(uris, alreadyCheckedUris)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }
 
 const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)

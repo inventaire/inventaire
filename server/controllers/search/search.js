@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const normalizeResult = require('./lib/normalize_result')
-const { indexedTypes, socialTypes } = require('db/elasticsearch/indexes')
-const typeSearch = require('./lib/type_search')
-const Group = require('models/group')
-const { ControllerWrapper } = require('lib/controller_wrapper')
-const { addWarning } = require('lib/responses')
-const { someMatch } = require('lib/utils/base')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import normalizeResult from './lib/normalize_result'
+import { indexedTypes, socialTypes } from 'db/elasticsearch/indexes'
+import typeSearch from './lib/type_search'
+import Group from 'models/group'
+import { ControllerWrapper } from 'lib/controller_wrapper'
+import { addWarning } from 'lib/responses'
+import { someMatch } from 'lib/utils/base'
+import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
 
 const sanitization = {
   search: {
@@ -123,7 +123,7 @@ const removeUnauthorizedDocs = async (results, reqUserId) => {
   })
 }
 
-module.exports = {
+export default {
   get: ControllerWrapper({
     access: 'public',
     sanitization,

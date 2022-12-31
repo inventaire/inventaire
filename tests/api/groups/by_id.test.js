@@ -1,6 +1,6 @@
-const { publicReq } = require('../utils/utils')
-const { createGroup } = require('../fixtures/groups')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import { publicReq } from '../utils/utils'
+import { createGroup } from '../fixtures/groups'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const endpoint = '/api/groups?action=by-id'
 
 describe('groups:by-id', () => {

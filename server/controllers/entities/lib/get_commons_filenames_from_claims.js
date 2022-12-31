@@ -1,6 +1,6 @@
-const { flatten, pick, values } = require('lodash')
-const { simplify } = require('wikidata-sdk')
-const { unprefixify } = require('./prefix')
+import { flatten, pick, values } from 'lodash'
+import { simplify } from 'wikidata-sdk'
+import { unprefixify } from './prefix'
 
 const imageClaims = [
   // image
@@ -15,7 +15,7 @@ const imageClaims = [
 
 const nonPrefixedImageClaims = imageClaims.map(unprefixify)
 
-module.exports = (claims, needsSimplification = false) => {
+export default (claims, needsSimplification = false) => {
   if (needsSimplification) {
     const images = flatten(values(pick(claims, nonPrefixedImageClaims)))
     return images.map(simplify.claim)

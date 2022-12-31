@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = actions => {
+export default actions => {
   const API = {
     requestFriend: (userId, otherId, status) => {
       if (status === 'none') return actions.makeRequest(userId, otherId)

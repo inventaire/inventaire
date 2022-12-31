@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const relations_ = require('controllers/relations/lib/queries')
-const user_ = require('controllers/user/lib/user')
-const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
-const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import relations_ from 'controllers/relations/lib/queries'
+import user_ from 'controllers/user/lib/user'
+import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers'
+import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
 
-module.exports = async (userId, lang, limitDate = 0) => {
+export default async (userId, lang, limitDate = 0) => {
   const networkUsersIds = await relations_.getUserFriendsAndCoGroupsMembers(userId)
   const networkItems = await getAuthorizedItems.byUsers(networkUsersIds)
   const lastNetworkItems = getLastItems(limitDate, networkItems)

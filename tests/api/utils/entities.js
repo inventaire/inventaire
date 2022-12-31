@@ -1,12 +1,22 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const { publicReq, authReq, dataadminReq, adminReq, customAuthReq, getDataadminUser, getUser } = require('./utils')
-const { getIndexedDoc } = require('../utils/search')
-const { unprefixify } = require('controllers/entities/lib/prefix')
-const { waitForIndexation } = require('tests/api/utils/search')
-const { buildUrl } = require('lib/utils/url')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
 
-const entitiesUtils = module.exports = {
+import {
+  publicReq,
+  authReq,
+  dataadminReq,
+  adminReq,
+  customAuthReq,
+  getDataadminUser,
+  getUser,
+} from './utils'
+
+import { getIndexedDoc } from '../utils/search'
+import { unprefixify } from 'controllers/entities/lib/prefix'
+import { waitForIndexation } from 'tests/api/utils/search'
+import { buildUrl } from 'lib/utils/url'
+
+const entitiesUtils = {
   getByUris: (uris, relatives, refresh) => {
     uris = _.forceArray(uris)
     assert_.strings(uris)
@@ -127,5 +137,7 @@ const entitiesUtils = module.exports = {
     })
   },
 }
+
+export default entitiesUtils
 
 const normalizeUri = uri => _.isInvEntityId(uri) ? `inv:${uri}` : uri

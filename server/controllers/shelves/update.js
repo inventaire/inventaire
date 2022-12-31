@@ -1,4 +1,4 @@
-const { updateAttributes } = require('controllers/shelves/lib/shelves')
+import { updateAttributes } from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   shelf: {},
@@ -13,7 +13,7 @@ const controller = async params => {
   return { shelf }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'shelf', 'update' ]

@@ -1,6 +1,6 @@
-require('should')
-const { action, assertRelation } = require('../utils/relations')
-const { getUsersWithoutRelation } = require('../fixtures/users')
+import 'should'
+import { action, assertRelation } from '../utils/relations'
+import { getUsersWithoutRelation } from '../fixtures/users'
 
 describe('relations:accept', () => {
   it('should accept a friend request', async () => {

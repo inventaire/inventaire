@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const error_ = require('lib/error/error')
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import error_ from 'lib/error/error'
 
-module.exports = params => {
+export default params => {
   let { updateFn, maxAttempts } = params
   if (!maxAttempts) maxAttempts = 10
   return (...args) => {

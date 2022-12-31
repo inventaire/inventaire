@@ -14,21 +14,22 @@
 // Bases and builders are an attempt to keep those configuration objects DRY:
 // Bases represent the most common configuration objects, and can be extended
 // into more specific configs
-const bases = require('./properties_config_bases')
+import bases from './properties_config_bases'
+
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
-const builders = require('./properties_config_builders')
+import builders from './properties_config_builders'
+
+import {
+  PositiveInteger as positiveIntegerPattern,
+  StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
+} from 'lib/regex'
 
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)
 
-const {
-  PositiveInteger: positiveIntegerPattern,
-  StrictlyPositiveInteger: strictlyPositiveIntegerPattern
-} = require('lib/regex')
-
 // Keep in sync with ./properties_per_type
-module.exports = {
+export default {
   // image
   'invp:P2': bases.imageHash,
   // instance of

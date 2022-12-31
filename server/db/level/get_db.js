@@ -1,6 +1,6 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
 const __ = CONFIG.universalPath
-const _ = require('builders/utils')
 
 const dbFolder = __.path('root', 'db')
 const { suffix } = CONFIG.db
@@ -43,4 +43,4 @@ if (memoryBackend) {
   cacheDb = level(cacheDbFolderPath, leveldownOptions)
 }
 
-module.exports = { generalDb, cacheDb }
+export default { generalDb, cacheDb }

@@ -1,17 +1,16 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-require('should')
-const { publicReq } = require('../utils/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { createUser, createUsername } = require('../fixtures/users')
-const { updateUser } = require('../utils/users')
-const { wait } = require('lib/promises')
-const { createHuman } = require('../fixtures/entities')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import 'should'
+import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
+import { createUser, createUsername } from '../fixtures/users'
+import { updateUser } from '../utils/users'
+import { wait } from 'lib/promises'
+import { createHuman } from '../fixtures/entities'
+import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
+import { createShelf } from '../fixtures/shelves'
+import { getActorName } from '../utils/shelves'
 const publicOrigin = CONFIG.getPublicOrigin()
 const publicHost = publicOrigin.split('://')[1]
-const { createShelf } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
 
 const endpoint = '/.well-known/webfinger?resource='
 

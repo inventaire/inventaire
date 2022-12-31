@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = input => action => {
+export default input => action => {
   action(input)
   .then(_.Log('ok'))
   .catch(_.Error('err'))

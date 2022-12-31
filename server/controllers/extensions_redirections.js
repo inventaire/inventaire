@@ -1,9 +1,8 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
-const { isUsername, isCouchUuid } = require('lib/boolean_validations')
-const { getGroupMembersIds } = require('controllers/groups/lib/groups')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import user_ from 'controllers/user/lib/user'
+import groups_, { getGroupMembersIds } from 'controllers/groups/lib/groups'
+import { isUsername, isCouchUuid } from 'lib/boolean_validations'
 
 const extensionRedirect = extension => async (req, res) => {
   try {
@@ -21,7 +20,7 @@ const extensionRedirect = extension => async (req, res) => {
   }
 }
 
-module.exports = {
+export default {
   json: extensionRedirect('json'),
   rss: extensionRedirect('rss')
 }

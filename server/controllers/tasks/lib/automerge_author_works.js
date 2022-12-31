@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const mergeEntities = require('controllers/entities/lib/merge_entities')
-const getAuthorWorks = require('controllers/entities/lib/get_author_works')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const { getEntityNormalizedTerms } = require('controllers/entities/lib/terms_normalization')
+import _ from 'builders/utils'
+import mergeEntities from 'controllers/entities/lib/merge_entities'
+import getAuthorWorks from 'controllers/entities/lib/get_author_works'
+import getEntitiesList from 'controllers/entities/lib/get_entities_list'
+import { getEntityNormalizedTerms } from 'controllers/entities/lib/terms_normalization'
 const { _id: reconcilerUserId } = require('db/couchdb/hard_coded_documents').users.reconciler
 
-module.exports = authorUri => {
+export default authorUri => {
   return getAuthorWorksByDomain(authorUri)
   .then(findMergeableWorks)
   .then(automergeWorks(authorUri))

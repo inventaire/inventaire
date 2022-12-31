@@ -1,8 +1,8 @@
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const error_ = require('lib/error/error')
-const passport_ = require('lib/passport/passport')
-const setLoggedInCookie = require('./lib/set_logged_in_cookie')
-const { ownerSafeData } = require('controllers/user/lib/authorized_user_data_pickers')
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import error_ from 'lib/error/error'
+import passport_ from 'lib/passport/passport'
+import setLoggedInCookie from './lib/set_logged_in_cookie'
+import { ownerSafeData } from 'controllers/user/lib/authorized_user_data_pickers'
 
 const signupSanitization = validateSanitization({
   username: {},
@@ -16,7 +16,7 @@ const logoutRedirect = (redirect, req, res) => {
   res.redirect(redirect)
 }
 
-module.exports = {
+export default {
   // TODO: rate limit to 10 signup per IP per 10 minutes
   signup: (req, res) => {
     // Use sanitize to format and validate body parameters

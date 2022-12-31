@@ -1,9 +1,9 @@
-const runWdQuery = require('data/wikidata/run_query')
-const entities_ = require('./entities')
-const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
+import runWdQuery from 'data/wikidata/run_query'
+import entities_ from './entities'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
+import { prefixifyWd } from 'controllers/entities/lib/prefix'
 
-module.exports = async ({ uri, refresh, dry }) => {
+export default async ({ uri, refresh, dry }) => {
   const [ wdCollections, invPublications ] = await Promise.all([
     getWdPublisherCollections(uri, refresh, dry),
     getInvPublisherCollections(uri)

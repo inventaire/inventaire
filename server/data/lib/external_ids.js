@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { uniq, flatten } = require('lodash')
-const getEntityIdBySitelink = require('data/wikidata/get_entity_id_by_sitelink')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const assert_ = require('lib/utils/assert_types')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+import _ from 'builders/utils'
+import { uniq, flatten } from 'lodash'
+import getEntityIdBySitelink from 'data/wikidata/get_entity_id_by_sitelink'
+import properties from 'controllers/entities/lib/properties/properties_values_constraints'
+import assert_ from 'lib/utils/assert_types'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
 const parseSameasMatches = async ({ matches, expectedEntityType }) => {
@@ -91,4 +91,4 @@ const getPropertyAndIdFromWikipediaOrDbpedia = async (host, pathname) => {
   if (id) return { property: 'uri', value: `wd:${id}` }
 }
 
-module.exports = { parseSameasMatches }
+export default { parseSameasMatches }

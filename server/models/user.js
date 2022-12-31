@@ -1,13 +1,15 @@
-const _ = require('builders/utils')
-const pw_ = require('lib/crypto').passwords
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const randomString = require('lib/utils/random_string')
+import _ from 'builders/utils'
+import { passwords as pw_ } from 'lib/crypto'
+import assert_ from 'lib/utils/assert_types'
+import error_ from 'lib/error/error'
+import randomString from 'lib/utils/random_string'
+import { truncateLatLng } from 'lib/geo'
+import { normalizeString } from 'lib/utils/base'
 const generateReadToken = randomString.bind(null, 32)
-const { truncateLatLng } = require('lib/geo')
-const { normalizeString } = require('lib/utils/base')
 
-const User = module.exports = {}
+const User = {}
+
+export default User
 
 const validations = User.validations = require('./validations/user')
 

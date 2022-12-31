@@ -1,7 +1,7 @@
-const { normalizeIsbn } = require('lib/isbn/isbn')
-const formatEntityCommon = require('./format_entity_common')
+import { normalizeIsbn } from 'lib/isbn/isbn'
+import formatEntityCommon from './format_entity_common'
 
-module.exports = entity => {
+export default entity => {
   const isbn = entity.claims['wdt:P212'][0]
   entity.uri = `isbn:${normalizeIsbn(isbn)}`
   entity.type = 'edition'

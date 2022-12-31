@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const { createUser } = require('./users')
-const { createRandomizedItems } = require('./items')
+import _ from 'builders/utils'
+import { createUser } from './users'
+import { createRandomizedItems } from './items'
 
 let populatePromise
 const usersCount = 8
 const publicItemsPerUser = 10
 
-const API = module.exports = {
+const API = {
   populate: () => {
     if (populatePromise) return populatePromise
     populatePromise = Promise.all(_.times(usersCount, API.createUserWithItems))
@@ -20,3 +20,4 @@ const API = module.exports = {
     return user
   }
 }
+export default API

@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const patches_ = require('./patches/patches')
-const placeholders_ = require('./placeholders')
-const updateItemEntity = require('controllers/items/lib/update_entity')
-const { revertFromPatchDoc } = require('./revert_edit')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import entities_ from './entities'
+import patches_ from './patches/patches'
+import placeholders_ from './placeholders'
+import updateItemEntity from 'controllers/items/lib/update_entity'
+import { revertFromPatchDoc } from './revert_edit'
 
-module.exports = async (userId, fromId) => {
+export default async (userId, fromId) => {
   const patches = await patches_.getWithSnapshots(fromId)
   const targetVersion = await findVersionBeforeRedirect(patches)
   const currentVersion = await entities_.byId(fromId)

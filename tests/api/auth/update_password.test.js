@@ -1,11 +1,12 @@
-require('should')
-const { authReq, customAuthReq, getReservedUser } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { wait } = require('lib/promises')
+import 'should'
+import { authReq, customAuthReq, getReservedUser } from '../utils/utils'
+import randomString from 'lib/utils/random_string'
+import { wait } from 'lib/promises'
+import { BasicUpdater } from 'lib/doc_updates'
+import { shouldNotBeCalled } from 'root/tests/unit/utils'
+import dbFactory from 'db/couchdb/base'
 const endpoint = '/api/auth?action=update-password'
-const { BasicUpdater } = require('lib/doc_updates')
-const { shouldNotBeCalled } = require('root/tests/unit/utils')
-const db = require('db/couchdb/base')('users')
+const db = dbFactory('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', async () => {

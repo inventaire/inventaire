@@ -1,20 +1,25 @@
-const _ = require('builders/utils')
-const { resolveEntrySeedsByExternalIds } = require('controllers/entities/lib/resolver/resolve_by_external_ids')
-const { isNotEmpty, objLength } = require('lib/utils/base')
-const { offline } = require('config')
+import _ from 'builders/utils'
+import { resolveEntrySeedsByExternalIds } from 'controllers/entities/lib/resolver/resolve_by_external_ids'
+import { isNotEmpty, objLength } from 'lib/utils/base'
+import { offline } from 'config'
 
-const authorities = {
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
-  // bnb: require('data/bnb/get_bnb_entry_from_isbn'),
-  bne: require('data/bne/get_bne_entry_from_isbn'),
-  bnf: require('data/bnf/get_bnf_entry_from_isbn'),
-  wikidata: require('data/wikidata/get_wikidata_entry_from_isbn'),
+// bnb: require('data/bnb/get_bnb_entry_from_isbn'),
+import bne from 'data/bne/get_bne_entry_from_isbn'
+
+import bnf from 'data/bnf/get_bnf_entry_from_isbn'
+import wikidata from 'data/wikidata/get_wikidata_entry_from_isbn'
+
+const authorities = {
+  bne,
+  bnf,
+  wikidata,
 }
 
 const authoritiesNames = Object.keys(authorities)
 
-module.exports = async isbn => {
+export default async isbn => {
   if (offline) return
   const entries = await Promise.all(authoritiesNames.map(wrap(isbn)))
   return sortAndAggregateEntries(isbn, entries)

@@ -1,7 +1,7 @@
-const assert_ = require('lib/utils/assert_types')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
-const { aggregateClaims } = require('./helpers')
+import assert_ from 'lib/utils/assert_types'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import { aggregateClaims } from './helpers'
 
 const getRelativeEntities = relationProperty => async entity => {
   const uris = entity.claims[relationProperty]
@@ -53,7 +53,7 @@ const getWorkGraphFromWork = (lang, work) => {
   .then(([ authors, series ]) => [ lang, work, authors, series ])
 }
 
-module.exports = {
+export default {
   getWorkAuthorsAndSeries,
   getEditionGraphFromEdition,
   getEditionGraphEntities,

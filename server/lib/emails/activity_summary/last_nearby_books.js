@@ -1,11 +1,11 @@
-const user_ = require('controllers/user/lib/user')
-const items_ = require('controllers/items/lib/items')
-const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
-const { getLastItems, formatData, embedUsersData, getHighlightedItems } = require('./last_books_helpers')
+import user_ from 'controllers/user/lib/user'
+import items_ from 'controllers/items/lib/items'
+import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
+import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers'
 const range = 20
 const strictRange = true
 
-module.exports = async (user, limitDate = 0) => {
+export default async (user, limitDate = 0) => {
   const { _id: reqUserId, position, lang } = user
 
   if (position == null) return formatData([], 'nearby', lang, [])

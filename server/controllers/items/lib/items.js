@@ -1,16 +1,17 @@
-const _ = require('builders/utils')
-const Item = require('models/item')
-const assert_ = require('lib/utils/assert_types')
-const { BasicUpdater } = require('lib/doc_updates')
-const { emit } = require('lib/radio')
-const { filterPrivateAttributes } = require('./filter_private_attributes')
-const snapshot_ = require('./snapshot/snapshot')
-const db = require('db/couchdb/base')('items')
-const error_ = require('lib/error/error')
-const { validateItemsAsync } = require('./validate_item_async')
-const { addItemsSnapshots } = require('controllers/items/lib/queries_commons')
+import _ from 'builders/utils'
+import Item from 'models/item'
+import assert_ from 'lib/utils/assert_types'
+import { BasicUpdater } from 'lib/doc_updates'
+import { emit } from 'lib/radio'
+import { filterPrivateAttributes } from './filter_private_attributes'
+import snapshot_ from './snapshot/snapshot'
+import dbFactory from 'db/couchdb/base'
+import error_ from 'lib/error/error'
+import { validateItemsAsync } from './validate_item_async'
+import { addItemsSnapshots } from 'controllers/items/lib/queries_commons'
+const db = dbFactory('items')
 
-const items_ = module.exports = {
+const items_ = {
   db,
   byId: db.get,
   byIds: db.byIds,
@@ -121,6 +122,8 @@ const items_ = module.exports = {
     return db.bulk(updatedItems)
   }
 }
+
+export default items_
 
 const validateOwnership = (userId, items) => {
   items = _.forceArray(items)

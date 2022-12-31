@@ -1,15 +1,16 @@
-const should = require('should')
-const _ = require('lodash')
-const { customAuthReq, getReservedUser, getUser, getUserB } = require('../utils/utils')
-const { getRefreshedUser, createUser, createUsername } = require('../fixtures/users')
-const { getToken } = require('../utils/oauth')
-const { bearerTokenReq } = require('../utils/request')
-const { shouldNotBeCalled } = require('../../unit/utils')
+import should from 'should'
+import _ from 'lodash'
+import { customAuthReq, getReservedUser, getUser, getUserB } from '../utils/utils'
+import { getRefreshedUser, createUser, createUsername } from '../fixtures/users'
+import { getToken } from '../utils/oauth'
+import { bearerTokenReq } from '../utils/request'
+import { shouldNotBeCalled } from '../../unit/utils'
+import randomString from 'lib/utils/random_string'
+import { getIndexedDoc } from '../utils/search'
+import { wait } from 'lib/promises'
+import { indexesNamesByBaseNames } from 'db/elasticsearch/indexes'
+const { users: usersIndex } = indexesNamesByBaseNames
 const endpoint = '/api/user'
-const randomString = require('lib/utils/random_string')
-const { getIndexedDoc } = require('../utils/search')
-const { wait } = require('lib/promises')
-const { users: usersIndex } = require('db/elasticsearch/indexes').indexesNamesByBaseNames
 
 describe('user:update', () => {
   it('should update a user', async () => {

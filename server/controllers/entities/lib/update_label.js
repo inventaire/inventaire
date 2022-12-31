@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
-const getEntityType = require('./get_entity_type')
-const typeWithoutLabels = require('./type_without_labels')
-const { emit } = require('lib/radio')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import entities_ from './entities'
+import Entity from 'models/entity'
+import getEntityType from './get_entity_type'
+import typeWithoutLabels from './type_without_labels'
+import { emit } from 'lib/radio'
 
-module.exports = async (lang, value, userId, currentDoc) => {
+export default async (lang, value, userId, currentDoc) => {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = _.cloneDeep(currentDoc)

@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
-module.exports = slug => {
+export default slug => {
   const parts = slug.split('.')
   const lastPart = parts.at(-1)
   if (_.isPositiveIntegerString(lastPart)) {

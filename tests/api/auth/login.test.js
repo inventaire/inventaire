@@ -1,9 +1,9 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const { wait } = require('lib/promises')
+import 'should'
+import { publicReq, shouldNotBeCalled } from '../utils/utils'
+import { wait } from 'lib/promises'
+import randomString from 'lib/utils/random_string'
+import { createUser, createUsername } from '../fixtures/users'
 const endpoint = '/api/auth?action=login'
-const randomString = require('lib/utils/random_string')
-const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:login', () => {
   it('should login a user with a username and a password', async () => {

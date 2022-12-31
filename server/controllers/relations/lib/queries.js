@@ -1,8 +1,10 @@
-const couch_ = require('lib/couch')
-const userRelativeRequest = require('./user-relative_request')
-const db = require('db/couchdb/base')('users', 'relations')
+import couch_ from 'lib/couch'
+import userRelativeRequest from './user-relative_request'
+import dbFactory from 'db/couchdb/base'
+import Relation from 'models/relation'
 
-const Relation = require('models/relation')
+import lists from './lists'
+const db = dbFactory('users', 'relations')
 
 const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 
@@ -52,8 +54,6 @@ const queries = {
   }
 }
 
-const lists = require('./lists')
-
 const counts = {
   pendingFriendsRequestsCount: userId => {
     return lists.getUserRelations(userId)
@@ -61,4 +61,4 @@ const counts = {
   }
 }
 
-module.exports = Object.assign({}, queries, lists, counts)
+export default Object.assign({}, queries, lists, counts)

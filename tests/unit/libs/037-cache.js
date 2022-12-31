@@ -1,15 +1,14 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import { shouldNotBeCalled } from '../utils'
+
+import should from 'should'
+import sinon from 'sinon'
+import cache_ from 'lib/cache'
+import randomString from 'lib/utils/random_string'
 const { ttlCheckFrequency } = CONFIG.leveldb
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const { shouldNotBeCalled } = require('../utils')
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
-
-const should = require('should')
-const sinon = require('sinon')
-
-const cache_ = require('lib/cache')
-const randomString = require('lib/utils/random_string')
 
 const hashKey = async key => _.hashCode(key)
 const getSomeRandomValue = async () => randomString(8)

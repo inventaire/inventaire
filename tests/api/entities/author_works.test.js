@@ -1,7 +1,7 @@
-require('should')
-const { publicReq } = require('../utils/utils')
-const { createWorkWithAuthor, createHuman } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { publicReq } from '../utils/utils'
+import { createWorkWithAuthor, createHuman } from '../fixtures/entities'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const workWithAuthorPromise = createWorkWithAuthor()
 const endpoint = '/api/entities?action=author-works'
 

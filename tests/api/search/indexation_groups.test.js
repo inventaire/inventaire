@@ -1,11 +1,12 @@
-const CONFIG = require('config')
-const should = require('should')
-const { wait } = require('lib/promises')
-const { getUser } = require('../utils/utils')
-const { createGroup, membershipAction } = require('../fixtures/groups')
+import CONFIG from 'config'
+import should from 'should'
+import { wait } from 'lib/promises'
+import { getUser } from '../utils/utils'
+import { createGroup, membershipAction } from '../fixtures/groups'
+import { getIndexedDoc } from '../utils/search'
+import { indexes } from 'db/elasticsearch/indexes'
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc } = require('../utils/search')
-const { index } = require('db/elasticsearch/indexes').indexes.groups
+const { index } = indexes.groups
 
 describe('indexation:groups', () => {
   it('should index a new group', async () => {

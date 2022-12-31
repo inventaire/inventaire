@@ -1,13 +1,14 @@
-const Activity = require('models/activity')
-const db = require('db/couchdb/base')('activities')
-const assert_ = require('lib/utils/assert_types')
-const { firstDoc } = require('lib/couch')
+import Activity from 'models/activity'
+import dbFactory from 'db/couchdb/base'
+import assert_ from 'lib/utils/assert_types'
+import { firstDoc } from 'lib/couch'
+const db = dbFactory('activities')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
-module.exports = {
+export default {
   byId: db.get,
   byIds: db.byIds,
   deleteById: db.delete,

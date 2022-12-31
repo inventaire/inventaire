@@ -1,13 +1,12 @@
-const _ = require('builders/utils')
-const fetch = require('node-fetch')
-const AbortController = require('abort-controller')
-const error_ = require('lib/error/error')
-const { encodeURL } = require('builders/utils')
-const fs = require('node:fs')
-const isValidImageContentType = require('./is_valid_image_content_type')
+import _, { encodeURL } from 'builders/utils'
+import fetch from 'node-fetch'
+import AbortController from 'abort-controller'
+import error_ from 'lib/error/error'
+import fs from 'node:fs'
+import isValidImageContentType from './is_valid_image_content_type'
 const oneMB = Math.pow(1024, 2)
 
-module.exports = async (url, path) => {
+export default async (url, path) => {
   url = encodeURL(url)
   const controller = new AbortController()
   try {

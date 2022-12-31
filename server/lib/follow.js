@@ -1,13 +1,15 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const follow = require('cloudant-follow')
-const metaDb = require('db/level/get_sub_db')('meta', 'utf8')
-const requests_ = require('lib/requests')
+import CONFIG from 'config'
+
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import assert_ from 'lib/utils/assert_types'
+import error_ from 'lib/error/error'
+import follow from 'cloudant-follow'
+import metaDbFactory from 'db/level/get_sub_db'
+import requests_ from 'lib/requests'
+const metaDb = metaDbFactory('meta', 'utf8')
 const dbHost = CONFIG.db.getOrigin()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
@@ -24,7 +26,7 @@ const freezeFollow = CONFIG.db.follow.freeze || !CONFIG.serverMode
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
 
-module.exports = async params => {
+export default async params => {
   const { dbBaseName, filter, onChange, reset } = params
   assert_.string(dbBaseName)
   assert_.function(filter)

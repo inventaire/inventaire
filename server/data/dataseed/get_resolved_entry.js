@@ -1,10 +1,12 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
+import { getByIsbns as getSeedsByIsbns } from './dataseed'
+import CONFIG from 'config'
+import parseIsbn from 'server/lib/isbn/parse'
+import { resolvePublisher } from 'controllers/entities/lib/resolver/resolve_publisher'
+import temporarilyMemoize from 'lib/temporarily_memoize'
 const { _id: seedUserId } = require('db/couchdb/hard_coded_documents').users.seed
-const { getByIsbns: getSeedsByIsbns } = require('./dataseed')
-const { enabled: dataseedEnabled } = require('config').dataseed
-const parseIsbn = require('server/lib/isbn/parse')
-const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
-const temporarilyMemoize = require('lib/temporarily_memoize')
+
+const { enabled: dataseedEnabled } = CONFIG.dataseed
 
 const resolverParams = {
   create: true,
@@ -44,7 +46,7 @@ const getResolvedEntry = async isbn => {
   return { isbn, notFound: true }
 }
 
-module.exports = temporarilyMemoize({
+export default temporarilyMemoize({
   fn: getResolvedEntry,
   ttlAfterFunctionCallReturned: 2000,
 })

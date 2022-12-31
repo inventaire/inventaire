@@ -1,13 +1,14 @@
 // A server-wide event bus
 
-const _ = require('builders/utils')
-const { EventEmitter } = require('node:events')
+import _ from 'builders/utils'
+import CONFIG from 'config'
+import { EventEmitter } from 'node:events'
 const radio = new EventEmitter()
 
 // It's convenient in tests to have the guaranty that event listeners were called,
 // but in production, that would mean delaying API responses for secondary actions
 // (setting notifications, sending emails, analytics, etc)
-const waitForListeners = require('config').env.startsWith('tests')
+const waitForListeners = CONFIG.env.startsWith('tests')
 
 let emit
 
@@ -28,7 +29,7 @@ if (waitForListeners) {
   emit = radio.emit.bind(radio)
 }
 
-module.exports = {
+export default {
   emit,
   Emit: label => emit.bind(null, label),
   tapEmit: (...args) => res => {

@@ -1,5 +1,5 @@
-const convertAndCleanupImageUrl = require('./lib/convert_and_cleanup_image_url')
-const { uploadContainersNames } = require('controllers/images/lib/containers')
+import convertAndCleanupImageUrl from './lib/convert_and_cleanup_image_url'
+import { uploadContainersNames } from 'controllers/images/lib/containers'
 
 const sanitization = {
   url: {},
@@ -9,4 +9,4 @@ const sanitization = {
   },
 }
 
-module.exports = { sanitization, controller: convertAndCleanupImageUrl }
+export default { sanitization, controller: convertAndCleanupImageUrl }

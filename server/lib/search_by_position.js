@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { buildSearcher } = require('lib/elasticsearch')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+import { buildSearcher } from 'lib/elasticsearch'
+import assert_ from 'lib/utils/assert_types'
 
-module.exports = (db, dbBaseName) => {
+export default (db, dbBaseName) => {
   const searchByPosition = buildSearcher({
     dbBaseName,
     queryBuilder

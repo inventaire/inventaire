@@ -1,6 +1,6 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq, authReqB } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { authReq, authReqB } from '../utils/utils'
+import { createListing, createElement } from '../fixtures/listings'
 
 const endpoint = '/api/lists?action=delete'
 

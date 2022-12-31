@@ -1,6 +1,6 @@
 
-require('should')
-const isbn_ = require('lib/isbn/isbn')
+import 'should'
+import isbn_ from 'lib/isbn/isbn'
 
 describe('isbn', () => {
   // Test only what was added on top of the isbn3 module

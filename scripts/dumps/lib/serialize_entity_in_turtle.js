@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const { yellow } = require('chalk')
+import _ from 'builders/utils'
+import properties from 'controllers/entities/lib/properties/properties_values_constraints'
+import { yellow } from 'chalk'
 
-module.exports = entity => {
+export default entity => {
   const { _id, version, created, updated, type, redirect } = entity
 
   if (type !== 'entity' || redirect != null) return ''

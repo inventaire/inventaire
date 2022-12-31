@@ -1,7 +1,8 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const db = require('db/level/get_sub_db')('hosts-bans', 'json')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import dbFactory from 'db/level/get_sub_db'
+const db = dbFactory('hosts-bans', 'json')
 const { serverMode } = CONFIG
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // Using port to keep instances data separated
@@ -71,4 +72,4 @@ const lazyBackup = serverMode ? _.debounce(backup, 60 * 1000) : _.noop
 
 if (serverMode) restoreBanData()
 
-module.exports = { throwIfTemporarilyBanned, resetBanData, declareHostError }
+export default { throwIfTemporarilyBanned, resetBanData, declareHostError }

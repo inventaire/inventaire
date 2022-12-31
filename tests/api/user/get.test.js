@@ -1,8 +1,8 @@
-require('should')
-const { getUser, dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } = require('../utils/utils')
-const { deleteUser, updateUser } = require('../utils/users')
-const { getToken } = require('../utils/oauth')
-const { bearerTokenReq } = require('../utils/request')
+import 'should'
+import { getUser, dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } from '../utils/utils'
+import { deleteUser, updateUser } from '../utils/users'
+import { getToken } from '../utils/oauth'
+import { bearerTokenReq } from '../utils/request'
 const endpoint = '/api/user'
 
 describe('user:get', () => {

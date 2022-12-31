@@ -1,10 +1,10 @@
-const CONFIG = require('config')
-const { coloredElapsedTime } = require('lib/time')
+import CONFIG from 'config'
+import { coloredElapsedTime } from 'lib/time'
 const host = CONFIG.getPublicOrigin()
 const { mutedDomains, mutedPath } = CONFIG.requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1
-module.exports = (req, res, next) => {
+export default (req, res, next) => {
   req._startAt = process.hrtime()
 
   res.on('close', () => {

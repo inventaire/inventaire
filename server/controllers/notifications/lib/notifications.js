@@ -1,10 +1,11 @@
-const _ = require('builders/utils')
-const { minKey, maxKey } = require('lib/couch')
-const assert_ = require('lib/utils/assert_types')
-const Notification = require('models/notification')
-const db = require('db/couchdb/base')('notifications')
+import _ from 'builders/utils'
+import { minKey, maxKey } from 'lib/couch'
+import assert_ from 'lib/utils/assert_types'
+import Notification from 'models/notification'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('notifications')
 
-const notifications_ = module.exports = {
+const notifications_ = {
   byUserId: userId => {
     assert_.string(userId)
     return db.viewCustom('byUserAndTime', {
@@ -50,6 +51,8 @@ const notifications_ = module.exports = {
     .then(getUnreadCount)
   }
 }
+
+export default notifications_
 
 // Alias
 notifications_.deleteAllByUserId = notifications_.deleteAllBySubjectId

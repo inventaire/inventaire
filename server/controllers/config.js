@@ -1,5 +1,5 @@
-const { sendStaticJson } = require('lib/responses')
-const { piwik } = require('config')
+import { sendStaticJson } from 'lib/responses'
+import { piwik } from 'config'
 const endpoint = piwik.enabled ? piwik.endpoint : null
 
 const clientConfig = JSON.stringify({
@@ -7,6 +7,6 @@ const clientConfig = JSON.stringify({
 })
 
 // A endpoint dedicated to pass configuration parameters to the client
-module.exports = {
+export default {
   get: (req, res) => sendStaticJson(res, clientConfig)
 }

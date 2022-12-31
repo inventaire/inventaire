@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   parameters: [ 'externalIds' ],
   query: params => buildQuery(params.externalIds)
 }

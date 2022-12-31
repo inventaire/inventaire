@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const getOriginalLang = require('lib/wikidata/get_original_lang')
-const getSerieParts = require('./get_serie_parts')
-const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
+import _ from 'builders/utils'
+import entities_ from './entities'
+import getOriginalLang from 'lib/wikidata/get_original_lang'
+import getSerieParts from './get_serie_parts'
+import getEntityImagesFromClaims from './get_entity_images_from_claims'
 
-module.exports = {
+export default {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use
   // of the right to fair-use, thus the need to fetch editions covers instead
   work: (entity, limitPerLang = 1) => {

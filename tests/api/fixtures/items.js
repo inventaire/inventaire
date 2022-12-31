@@ -1,8 +1,13 @@
-const _ = require('builders/utils')
-const fakeText = require('./text')
-const { customAuthReq } = require('../utils/request')
-const { getUser } = require('../utils/utils')
-const { createEdition, createEditionWithWorkAndAuthor, createEditionWithWorkAuthorAndSerie } = require('./entities')
+import _ from 'builders/utils'
+import fakeText from './text'
+import { customAuthReq } from '../utils/request'
+import { getUser } from '../utils/utils'
+
+import {
+  createEdition,
+  createEditionWithWorkAndAuthor,
+  createEditionWithWorkAuthorAndSerie,
+} from './entities'
 
 const getEditionUri = async (lang = 'en') => {
   const { uri } = await createEdition({ lang })
@@ -15,7 +20,7 @@ const createItemWithEntities = createEntityFn => async (user, itemData = {}) => 
   return API.createItem(user, itemData)
 }
 
-const API = module.exports = {
+const API = {
   createItems: async (user, itemsData = []) => {
     user = user || getUser()
     const items = await Promise.all(itemsData.map(addDefaultEntity))
@@ -39,6 +44,8 @@ const API = module.exports = {
   createItemWithAuthor: createItemWithEntities(createEditionWithWorkAndAuthor),
   createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie)
 }
+
+export default API
 
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 const someVisibilityValues = [

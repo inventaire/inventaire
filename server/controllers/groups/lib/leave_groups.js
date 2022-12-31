@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const Group = require('models/group')
-const db = require('db/couchdb/base')('groups')
-const promises_ = require('lib/promises')
+import _ from 'builders/utils'
+import Group from 'models/group'
+import dbFactory from 'db/couchdb/base'
+import promises_ from 'lib/promises'
+const db = dbFactory('groups')
 
 let groups_
 const requireCircularDependencies = () => { groups_ = require('./groups') }
 setImmediate(requireCircularDependencies)
 
-module.exports = {
+export default {
   userCanLeave: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(group => {

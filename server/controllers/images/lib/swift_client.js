@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { createReadStream } = require('node:fs')
-const { getContentLength } = require('lib/fs')
-const getToken = require('./get_swift_token')
-const { publicURL } = require('config').mediaStorage.swift
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import { createReadStream } from 'node:fs'
+import { getContentLength } from 'lib/fs'
+import getToken from './get_swift_token'
+const { publicURL } = CONFIG.mediaStorage.swift
 
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}`
 const relativeUrl = (container, filename) => `/img/${container}/${filename}`
@@ -20,7 +21,7 @@ const getParams = async (container, filename) => {
   }
 }
 
-module.exports = {
+export default {
   // inspired by https://github.com/Automattic/knox/blob/master/lib/client.js
   putImage: async (container, path, filename) => {
     const [ params, contentLength ] = await Promise.all([

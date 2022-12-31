@@ -1,12 +1,12 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { publicReq } from '../utils/utils'
+import { rawRequest } from '../utils/request'
+import { createUserEmail } from '../fixtures/users'
+import randomString from 'lib/utils/random_string'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { publicReq } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { createUserEmail } = require('../fixtures/users')
 const endpoint = '/api/token?action=reset-password'
-const randomString = require('lib/utils/random_string')
-const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('token:reset-password', () => {
   it('should reject requests without email', async () => {

@@ -1,16 +1,16 @@
-const _ = require('builders/utils')
-require('should')
-const { createUser, createUsername } = require('../fixtures/users')
-const { createHuman, createEdition } = require('../fixtures/entities')
-const { makeUrl, getEntityActorName, propertyLabel } = require('controllers/activitypub/lib/helpers')
-const propertiesDisplay = require('controllers/activitypub/lib/properties_display')
-const { updateUser } = require('../utils/users')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
-const { createShelf } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { rawRequest } = require('../utils/request')
-const { i18n } = require('lib/emails/i18n/i18n')
-const CONFIG = require('config')
+import _ from 'builders/utils'
+import 'should'
+import { createUser, createUsername } from '../fixtures/users'
+import { createHuman, createEdition } from '../fixtures/entities'
+import { makeUrl, getEntityActorName, propertyLabel } from 'controllers/activitypub/lib/helpers'
+import propertiesDisplay from 'controllers/activitypub/lib/properties_display'
+import { updateUser } from '../utils/users'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils'
+import { createShelf } from '../fixtures/shelves'
+import { getActorName } from '../utils/shelves'
+import { rawRequest } from '../utils/request'
+import { i18n } from 'lib/emails/i18n/i18n'
+import CONFIG from 'config'
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 

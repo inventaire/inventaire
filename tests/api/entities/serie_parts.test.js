@@ -1,7 +1,7 @@
-require('should')
-const { publicReq } = require('../utils/utils')
-const { createWorkWithAuthorAndSerie } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { publicReq } from '../utils/utils'
+import { createWorkWithAuthorAndSerie } from '../fixtures/entities'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const workWithSeriePromise = createWorkWithAuthorAndSerie()
 const endpoint = '/api/entities?action=serie-parts'
 

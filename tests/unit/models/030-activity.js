@@ -1,5 +1,5 @@
-require('should')
-const Activity = require('models/activity')
+import 'should'
+import Activity from 'models/activity'
 const someActitvityData = () => ({
   type: 'Create',
   actor: {

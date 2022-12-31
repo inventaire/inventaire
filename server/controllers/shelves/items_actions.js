@@ -1,5 +1,5 @@
-const _ = require('builders/utils')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import _ from 'builders/utils'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = {
   id: {},
@@ -13,7 +13,7 @@ const itemsActions = action => async ({ id, items, reqUserId }) => {
   }
 }
 
-module.exports = {
+export default {
   addItems: {
     sanitization,
     controller: itemsActions('addItems'),

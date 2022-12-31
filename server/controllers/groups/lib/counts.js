@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const groups_ = require('./groups')
+import _ from 'builders/utils'
+import groups_ from './groups'
 
-module.exports = {
+export default {
   pendingGroupInvitationsCount: userId => {
     return groups_.byInvitedUser(userId)
     .then(({ length }) => length)

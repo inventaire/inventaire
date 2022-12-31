@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const { buildLink, entityUrl, defaultLabel, propertyLabel } = require('./helpers')
-const platforms = require('./platforms')
-const propertiesDisplay = require('./properties_display.js')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+import _ from 'builders/utils'
+import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers'
+import platforms from './platforms'
+import propertiesDisplay from './properties_display.js'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
 const typesWithAttachements = Object.keys(propertiesDisplay)
 
-module.exports = async entity => {
+export default async entity => {
   const { claims, type } = entity
   if (!typesWithAttachements.includes(type)) return
 

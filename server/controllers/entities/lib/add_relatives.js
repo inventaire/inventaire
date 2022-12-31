@@ -1,8 +1,9 @@
 // Enrich ../by_uris results with entities related to the directly
 // requested entities, following those entities claims
 
-const _ = require('builders/utils')
-const getEntitiesByUris = require('./get_entities_by_uris')
+import _ from 'builders/utils'
+
+import getEntitiesByUris from './get_entities_by_uris'
 
 const addRelatives = (results, relatives, refresh) => {
   const { entities } = results
@@ -35,4 +36,4 @@ const getAdditionalEntitiesUris = (entities, relatives) => {
 
 const getEntityRelativesUris = relatives => entity => Object.values(_.pick(entity.claims, relatives))
 
-module.exports = addRelatives
+export default addRelatives

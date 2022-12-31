@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const Entity = require('models/entity')
-const entities_ = require('./entities')
-const validateEntity = require('./validate_entity')
-const { prefixifyInv } = require('./prefix')
+import _ from 'builders/utils'
+import Entity from 'models/entity'
+import entities_ from './entities'
+import validateEntity from './validate_entity'
+import { prefixifyInv } from './prefix'
 
-module.exports = async params => {
+export default async params => {
   const { labels, claims, userId, batchId } = params
   _.log(params, 'inv entity creation')
 

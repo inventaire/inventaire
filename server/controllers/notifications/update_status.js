@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const responses_ = require('lib/responses')
-const { updateReadStatus } = require('./lib/notifications')
+import _ from 'builders/utils'
+import responses_ from 'lib/responses'
+import { updateReadStatus } from './lib/notifications'
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const reqUserId = req.user._id
 
   const { times } = req.body

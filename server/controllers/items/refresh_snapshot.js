@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import refreshSnapshot from './lib/snapshot/refresh_snapshot'
 
 const sanitization = {
   uris: {}
@@ -33,4 +33,4 @@ const refreshSequentially = async uris => {
   return refreshNext()
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

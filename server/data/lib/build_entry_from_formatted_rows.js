@@ -35,4 +35,4 @@ const addByExternalId = (getSourceId, index, row, entityTypeName) => {
   index[bnfId] = draftEntity
 }
 
-module.exports = { buildEntryFromFormattedRows }
+export default { buildEntryFromFormattedRows }

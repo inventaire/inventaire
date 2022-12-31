@@ -1,7 +1,7 @@
 const extraEncodedCharacters = /[!'()*]/g
 const encodeCharacter = character => `%${character.charCodeAt(0).toString(16)}`
 
-module.exports = {
+export default {
   stringifyQuery: query => new URLSearchParams(query).toString(),
 
   parseQuery: query => Object.fromEntries(new URLSearchParams(query)),

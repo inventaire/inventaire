@@ -7,4 +7,4 @@ const formatAuthorName = name => {
   }
 }
 
-module.exports = { formatAuthorName }
+export default { formatAuthorName }

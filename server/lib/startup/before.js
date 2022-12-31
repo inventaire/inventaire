@@ -1,12 +1,14 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+
 // Needs to be run before the first promise is fired
 // so that the configuration applies to all
 
-const { red } = require('chalk')
-const { logErrorsCount } = require('lib/utils/logs')
+import { red } from 'chalk'
 
-module.exports = () => {
+import { logErrorsCount } from 'lib/utils/logs'
+
+export default () => {
   initUncaughtExceptionCatcher()
 
   logErrorsCount()

@@ -1,10 +1,20 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { getUser, authReq, publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getUserGetter, customAuthReq } = require('tests/api/utils/utils')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
-const { createItem, createItems } = require('../fixtures/items')
-const { humanName } = require('../fixtures/entities')
-const { createShelfWithItem } = require('../fixtures/shelves')
+import _ from 'builders/utils'
+import should from 'should'
+
+import {
+  getUser,
+  authReq,
+  publicReq,
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+  getUserGetter,
+  customAuthReq,
+} from 'tests/api/utils/utils'
+
+import { getSomeGroup, addMember } from '../fixtures/groups'
+import { createItem, createItems } from '../fixtures/items'
+import { humanName } from '../fixtures/entities'
+import { createShelfWithItem } from '../fixtures/shelves'
 
 const endpoint = '/api/items?action=by-ids'
 const userPromise = getUserGetter(humanName())()

@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const { customAuthReq } = require('./request')
+import _ from 'builders/utils'
+import { customAuthReq } from './request'
 
 const getByIds = async (user, ids, path) => {
   if (_.isArray(ids)) ids = ids.join('|')
   return customAuthReq(user, 'get', `/api/lists?action=by-ids&ids=${ids}`)
 }
 
-module.exports = {
+export default {
   getListingById: async (user, id) => {
     const { lists } = await getByIds(user, id, 'lists')
     return lists[id]

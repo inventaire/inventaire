@@ -1,6 +1,6 @@
-const transactions_ = require('./lib/transactions')
+import transactions_ from './lib/transactions'
 
-module.exports = {
+export default {
   sanitization: {},
   controller: async ({ reqUserId }) => {
     const transactions = await transactions_.byUser(reqUserId)

@@ -1,6 +1,6 @@
-require('should')
-const { authReq, authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createTransaction } = require('../fixtures/transactions')
+import 'should'
+import { authReq, authReqB, authReqC, shouldNotBeCalled } from 'tests/api/utils/utils'
+import { createTransaction } from '../fixtures/transactions'
 
 const endpoint = '/api/transactions?action=mark-as-read'
 

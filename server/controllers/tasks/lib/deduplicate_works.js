@@ -1,13 +1,13 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const tasks_ = require('./tasks')
-const getEntitiesByIsbns = require('controllers/entities/lib/get_entities_by_isbns')
-const mergeEntities = require('controllers/entities/lib/merge_entities')
-const { haveExactMatch } = require('controllers/entities/lib/labels_match')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import getEntitiesList from 'controllers/entities/lib/get_entities_list'
+import tasks_ from './tasks'
+import getEntitiesByIsbns from 'controllers/entities/lib/get_entities_by_isbns'
+import mergeEntities from 'controllers/entities/lib/merge_entities'
+import { haveExactMatch } from 'controllers/entities/lib/labels_match'
 
-module.exports = async (workUri, isbn, userId) => {
+export default async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })
   if (work == null) throw error_.notFound({ workUri })
 

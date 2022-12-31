@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const images_ = require('lib/images')
-const { userAgent } = require('lib/requests')
-const { mediaStorage } = require('config')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import images_ from 'lib/images'
+import { userAgent } from 'lib/requests'
+import { mediaStorage } from 'config'
+import fetch from 'node-fetch'
 const { maxSize } = mediaStorage.images
-const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
 const reqOptions = {
   headers: {
@@ -12,7 +12,7 @@ const reqOptions = {
   }
 }
 
-module.exports = async (req, res, url, dimensions) => {
+export default async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
   [ width, height ] = images_.applyLimits(width, height)
 

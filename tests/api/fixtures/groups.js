@@ -1,6 +1,6 @@
-const { getGroup } = require('tests/api/utils/groups')
-const { getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
-const fakeText = require('./text')
+import { getGroup } from 'tests/api/utils/groups'
+import { getUser, getUserB, customAuthReq, getReservedUser } from '../utils/utils'
+import fakeText from './text'
 const endpointBase = '/api/groups'
 
 const createGroup = (params = {}) => {
@@ -80,7 +80,7 @@ const getSomeGroup = () => {
   return groupPromise
 }
 
-module.exports = {
+export default {
   endpointBase,
   createGroupWithAMember,
   getSomeGroup,

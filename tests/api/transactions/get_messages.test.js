@@ -1,7 +1,6 @@
-const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { createTransaction, addMessage } = require('../fixtures/transactions')
-const { authReq } = require('tests/api/utils/utils')
+import should from 'should'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, authReq } from 'tests/api/utils/utils'
+import { createTransaction, addMessage } from '../fixtures/transactions'
 
 const endpoint = '/api/transactions?action=get-messages'
 

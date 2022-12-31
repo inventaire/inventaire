@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const ActionsControllers = require('lib/actions_controllers')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
+import _ from 'builders/utils'
+import ActionsControllers from 'lib/actions_controllers'
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
 
 const cspReport = (req, res) => {
   const report = req.body['csp-report'] || req.body
@@ -50,7 +50,7 @@ const getErrStack = err => {
   return stack
 }
 
-module.exports = {
+export default {
   post: ActionsControllers({
     public: {
       'csp-report': cspReport,

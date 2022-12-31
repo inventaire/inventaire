@@ -1,4 +1,4 @@
-const { getActorTypeFromName, getEntityUriFromActorName } = require('./helpers')
+import { getActorTypeFromName, getEntityUriFromActorName } from './helpers'
 
 const getActorHtmlUrlByType = {
   user: name => `/inventory/${name}`,
@@ -12,7 +12,7 @@ const getActorHtmlUrlByType = {
   },
 }
 
-module.exports = name => {
+export default name => {
   const type = getActorTypeFromName(name)
   return getActorHtmlUrlByType[type](name)
 }

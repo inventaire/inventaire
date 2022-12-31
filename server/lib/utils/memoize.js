@@ -13,7 +13,7 @@
 //
 // See memoize unit tests for more details
 
-module.exports = fn => {
+export default fn => {
   const cache = {}
   return (...args) => {
     args = addUndefinedArguments(args, fn.length)

@@ -1,10 +1,10 @@
-const assert_ = require('lib/utils/assert_types')
-const { pass, BoundedString } = require('./common')
+import assert_ from 'lib/utils/assert_types'
+import { pass, BoundedString } from './common'
+import error_ from 'lib/error/error'
 const activityTypes = [ 'Follow', 'Create' ]
 const objectTypes = [ 'Note' ]
 const actorTypes = [ 'Person' ]
 const contentLimit = 256
-const error_ = require('lib/error/error')
 
 const validateAnObject = validations => obj => {
   Object.keys(obj).forEach(key => {
@@ -43,4 +43,4 @@ const baseActivityValidations = {
   actor: validateAnObject(actorValidations),
 }
 
-module.exports = { baseActivityValidations, objectValidations }
+export default { baseActivityValidations, objectValidations }

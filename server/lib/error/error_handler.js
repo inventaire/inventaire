@@ -7,7 +7,7 @@ const requireCircularDependencies = () => {
 }
 setImmediate(requireCircularDependencies)
 
-module.exports = (req, res, err, status) => {
+export default (req, res, err, status) => {
   // only accepts Error instances
   if (!(err instanceof Error)) {
     _.error(err, 'bad error object')

@@ -1,8 +1,8 @@
-require('should')
-const { authReq, authReqC, customAuthReq } = require('../utils/utils')
-const { createGroupAndMember } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { authReq, authReqC, customAuthReq } from '../utils/utils'
+import { createGroupAndMember } from '../fixtures/groups'
+import { getGroup } from 'tests/api/utils/groups'
+import { shouldNotBeCalled } from 'tests/unit/utils'
 const endpoint = '/api/groups?action=leave'
 
 let someReservedGroupPromise

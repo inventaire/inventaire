@@ -1,6 +1,6 @@
-require('should')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
-const { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
+import 'should'
+import { authReq, shouldNotBeCalled } from '../utils/utils'
+import { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } from '../fixtures/entities'
 const endpoint = '/api/entities?action=create'
 
 describe('entities:create', () => {

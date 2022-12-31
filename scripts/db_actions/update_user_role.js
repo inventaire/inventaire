@@ -1,8 +1,7 @@
-#!/usr/bin/env node
-require('module-alias/register')
-const { addRole, removeRole } = require('controllers/user/lib/user')
+#!/usr/bin/env nodeimport 'module-alias/register';
+import { addRole, removeRole } from 'controllers/user/lib/user'
+import { logSuccessAndExit, logErrorAndExit } from '../scripts_utils'
 const [ userId, action, role ] = process.argv.slice(2)
-const { logSuccessAndExit, logErrorAndExit } = require('../scripts_utils')
 
 if (action === 'add') {
   addRole(userId, role)

@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
+import bnf from './bnf'
+import openlibrary from './openlibrary'
 
 const summaryGettersByClaimProperty = {
-  'wdt:P268': require('./bnf'),
-  'wdt:P648': require('./openlibrary'),
+  'wdt:P268': bnf,
+  'wdt:P648': openlibrary,
 }
 
 const propertiesWithGetters = Object.keys(summaryGettersByClaimProperty)

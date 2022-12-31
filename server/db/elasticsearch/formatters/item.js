@@ -1,6 +1,6 @@
-const { addToItem: addSnapshot } = require('controllers/items/lib/snapshot/snapshot')
+import { addToItem as addSnapshot } from 'controllers/items/lib/snapshot/snapshot'
 
-module.exports = async doc => {
+export default async doc => {
   await addSnapshot(doc)
   delete doc.notes
   delete doc.previousEntity

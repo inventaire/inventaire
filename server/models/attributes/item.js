@@ -1,4 +1,6 @@
-const attributes = module.exports = {}
+const attributes = {}
+
+export default attributes
 
 attributes.updatable = [
   'transaction',

@@ -1,6 +1,6 @@
-require('should')
-const { wait } = require('lib/promises')
-const temporarilyMemoize = require('lib/temporarily_memoize')
+import 'should'
+import { wait } from 'lib/promises'
+import temporarilyMemoize from 'lib/temporarily_memoize'
 const ttlAfterFunctionCallReturned = 200
 
 describe('temporarily memoize', () => {

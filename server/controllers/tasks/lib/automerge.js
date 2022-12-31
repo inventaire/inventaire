@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { Wait } = require('lib/promises')
-const mergeEntities = require('controllers/entities/lib/merge_entities')
+import _ from 'builders/utils'
+import { Wait } from 'lib/promises'
+import mergeEntities from 'controllers/entities/lib/merge_entities'
+import automergeAuthorWorks from './automerge_author_works'
 const { _id: reconcilerUserId } = require('db/couchdb/hard_coded_documents').users.reconciler
-const automergeAuthorWorks = require('./automerge_author_works')
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough
@@ -33,4 +33,4 @@ const hasConvincingOccurrences = suggestionOccurrences => {
 
 const isLongTitle = title => title.length > longTitleLimit
 
-module.exports = { automerge, hasConvincingOccurrences }
+export default { automerge, hasConvincingOccurrences }

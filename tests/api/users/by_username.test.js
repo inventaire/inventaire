@@ -1,11 +1,21 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
-const { createUser, createUsername } = require('../fixtures/users')
-const randomString = require('lib/utils/random_string')
-const { getTwoFriends } = require('../fixtures/users')
-const { wait } = require('lib/promises')
-const { deleteUser, updateUser } = require('../utils/users')
+import _ from 'builders/utils'
+import should from 'should'
+
+import {
+  publicReq,
+  authReq,
+  customAuthReq,
+  getUser,
+  getUserB,
+  shouldNotBeCalled,
+  rethrowShouldNotBeCalledErrors,
+  getReservedUser,
+} from 'tests/api/utils/utils'
+
+import { createUser, createUsername, getTwoFriends } from '../fixtures/users'
+import randomString from 'lib/utils/random_string'
+import { wait } from 'lib/promises'
+import { deleteUser, updateUser } from '../utils/users'
 const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
 
 const endpoint = '/api/users?action=by-usernames'

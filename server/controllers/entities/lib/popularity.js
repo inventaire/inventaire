@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const error_ = require('lib/error/error')
-const cache_ = require('lib/cache')
-const buildPopularityByUri = require('./build_popularity_by_uri')
+import _ from 'builders/utils'
+import promises_ from 'lib/promises'
+import error_ from 'lib/error/error'
+import cache_ from 'lib/cache'
+import buildPopularityByUri from './build_popularity_by_uri'
 
 const getEntitiesPopularities = async ({ uris, refresh, dry }) => {
   if (uris.length === 0) return {}
@@ -29,4 +29,4 @@ const getEntityPopularity = ({ uri, refresh, dry }) => {
   })
 }
 
-module.exports = { getEntitiesPopularities, getEntityPopularity }
+export default { getEntitiesPopularities, getEntityPopularity }

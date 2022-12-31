@@ -1,9 +1,8 @@
-const _ = require('builders/utils')
-const { pass, entityUri, userId, BoundedString } = require('./common')
+import _ from 'builders/utils'
+import { pass, entityUri, userId, BoundedString } from './common'
+import attributes from '../attributes/task'
 
-const attributes = require('../attributes/task')
-
-module.exports = {
+export default {
   pass,
   // in attributes/task.js, attributes keys should match
   // db keys to verify if attribute is updatable

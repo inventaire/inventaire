@@ -1,6 +1,8 @@
 
-require('should')
-const sinon = require('sinon')
+import 'should'
+import sinon from 'sinon'
+
+import solveIntentFactory from 'controllers/relations/lib/solve_intent'
 
 let spies = {}
 
@@ -26,8 +28,7 @@ const totalSpiesCount = () => {
   }
   return count
 }
-
-const solveIntent = require('controllers/relations/lib/solve_intent')(actions)
+const solveIntent = solveIntentFactory(actions)
 
 describe('relations', () => {
   describe('solveIntent', () => {

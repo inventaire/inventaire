@@ -1,14 +1,14 @@
-const CONFIG = require('config')
-const endpoint = require('./endpoint')
-const extensionsRedirections = require('./extensions_redirections')
-const glob = require('./glob')
-const oauthServer = require('./auth/oauth_server')
+import CONFIG from 'config'
+import endpoint from './endpoint'
+import extensionsRedirections from './extensions_redirections'
+import glob from './glob'
+import oauthServer from './auth/oauth_server'
 
 // Routes structure:
 // 1 - api is the default prefix for server-side routes
 // 2 - the controller / module name
 
-const routes = module.exports = {
+const routes = {
   'api/auth': endpoint('./auth/auth'),
   'api/config': endpoint('./config'),
   'api/data': endpoint('./data/data'),
@@ -39,6 +39,8 @@ const routes = module.exports = {
   'img/*': endpoint('./images/resize'),
   '.well-known/webfinger': endpoint('./activitypub/webfinger')
 }
+
+export default routes
 
 if (CONFIG.autofixI18n) {
   routes['api/i18n'] = require('./i18n')

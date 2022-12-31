@@ -1,6 +1,6 @@
-const should = require('should')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const { shouldNotBeCalled } = require('../utils')
+import should from 'should'
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import { shouldNotBeCalled } from '../utils'
 
 describe('sanitize', () => {
   it('should reject invalid req objects based on req.query existance', async () => {

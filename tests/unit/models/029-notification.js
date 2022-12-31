@@ -1,7 +1,7 @@
-const { wait } = require('lib/promises')
-require('should')
-const Notification = require('models/notification')
-const { someCouchUuid } = require('tests/api/fixtures/general')
+import { wait } from 'lib/promises'
+import 'should'
+import Notification from 'models/notification'
+import { someCouchUuid } from 'tests/api/fixtures/general'
 
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({

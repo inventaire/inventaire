@@ -1,8 +1,8 @@
-const should = require('should')
-const randomString = require('lib/utils/random_string')
-const { getByUri, updateLabel, revertEdit, getHistory, addClaim } = require('../utils/entities')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { createWork, createEditionWithIsbn } = require('../fixtures/entities')
+import should from 'should'
+import randomString from 'lib/utils/random_string'
+import { getByUri, updateLabel, revertEdit, getHistory, addClaim } from '../utils/entities'
+import { shouldNotBeCalled } from '../utils/utils'
+import { createWork, createEditionWithIsbn } from '../fixtures/entities'
 
 describe('entities:revert-edit', () => {
   it('should revert a label update', async () => {

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
+import _ from 'builders/utils'
+import entities_ from './entities'
+import Entity from 'models/entity'
 
-module.exports = (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
+export default (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
 .then(results => {
   const entitiesToEditIds = _.map(results, 'entity')
   _.log(entitiesToEditIds, 'entitiesToEditIds')

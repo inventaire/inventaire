@@ -1,8 +1,8 @@
-const { shouldNotBeCalled } = require('../utils/utils')
-const { bearerTokenReq } = require('../utils/request')
-const { getToken } = require('../utils/oauth')
-const randomString = require('lib/utils/random_string')
-const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
+import { shouldNotBeCalled } from '../utils/utils'
+import { bearerTokenReq } from '../utils/request'
+import { getToken } from '../utils/oauth'
+import randomString from 'lib/utils/random_string'
+import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth'
 
 describe('oauth:authenticate', () => {
   it('should accept a request authentified by a bearer token', async () => {

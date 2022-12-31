@@ -1,14 +1,12 @@
-const { name, cookieMaxAge, publicProtocol } = require('config')
-const { expired } = require('builders/utils')
-
-const passport = require('passport')
-const passport_ = require('lib/passport/passport')
-
-const cookieParser = require('cookie-parser')
-const cookieSession = require('cookie-session')
-const Keygrip = require('keygrip')
-const autoRotatedKeys = require('lib/auto_rotated_keys')
-const oauthServer = require('controllers/auth/oauth_server')
+import { name, cookieMaxAge, publicProtocol } from 'config'
+import { expired } from 'builders/utils'
+import passport from 'passport'
+import passport_ from 'lib/passport/passport'
+import cookieParser from 'cookie-parser'
+import cookieSession from 'cookie-session'
+import Keygrip from 'keygrip'
+import autoRotatedKeys from 'lib/auto_rotated_keys'
+import oauthServer from 'controllers/auth/oauth_server'
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {
@@ -28,7 +26,7 @@ const cookieSessionParams = {
   httpOnly: true,
 }
 
-module.exports = {
+export default {
   cookieParser: cookieParser(),
   session: cookieSession(cookieSessionParams),
 

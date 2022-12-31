@@ -1,10 +1,14 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
+
 // 'swift' or 'local'
-const { mode } = require('config').mediaStorage
+import CONFIG from 'config'
+import images_ from 'lib/images'
+import radio from 'lib/radio'
+
+const { mode } = CONFIG.mediaStorage
+
 _.info(`media storage: ${mode}`)
 const { putImage, deleteImage } = require(`./${mode}_client`)
-const images_ = require('lib/images')
-const radio = require('lib/radio')
 
 const transformAndPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
@@ -42,4 +46,4 @@ const containers = {
 const uploadContainersNames = Object.keys(containers)
   .filter(containerName => containers[containerName].putImage != null)
 
-module.exports = { containers, uploadContainersNames }
+export default { containers, uploadContainersNames }

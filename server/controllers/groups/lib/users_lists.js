@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const Group = require('models/group')
+import _ from 'builders/utils'
+import assert_ from 'lib/utils/assert_types'
+import Group from 'models/group'
 
 let groups_
 const requireCircularDependencies = () => { groups_ = require('./groups') }
 setImmediate(requireCircularDependencies)
 
-const lists_ = module.exports = {
+const lists_ = {
   userInGroup: (userId, groupId) => {
     return groups_.byId(groupId)
     .then(lists_.allGroupMembers)
@@ -65,5 +65,7 @@ const lists_ = module.exports = {
     .value()
   }
 }
+
+export default lists_
 
 const userIdInUsers = userId => users => users.includes(userId)

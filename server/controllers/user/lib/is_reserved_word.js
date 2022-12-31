@@ -52,4 +52,4 @@ const reservedWords = new Set([
   'wikidata'
 ])
 
-module.exports = username => reservedWords.has(username)
+export default username => reservedWords.has(username)

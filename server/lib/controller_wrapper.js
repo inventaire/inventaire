@@ -1,11 +1,11 @@
-const { someMatch } = require('builders/utils')
-const error_ = require('lib/error/error')
-const validateObject = require('lib/validate_object')
-const { rolesByAccess } = require('./user_access_levels')
-const { send } = require('./responses')
-const { sanitize, validateSanitization } = require('./sanitize/sanitize')
-const { track } = require('./track')
-const assert_ = require('./utils/assert_types')
+import { someMatch } from 'builders/utils'
+import error_ from 'lib/error/error'
+import validateObject from 'lib/validate_object'
+import { rolesByAccess } from './user_access_levels'
+import { send } from './responses'
+import { sanitize, validateSanitization } from './sanitize/sanitize'
+import { track } from './track'
+import assert_ from './utils/assert_types'
 
 // A function to do the basic operations most controllers will need:
 // - check access rights
@@ -70,7 +70,7 @@ const controllerParamsKeys = [
   'track',
 ]
 
-module.exports = {
+export default {
   controllerWrapper,
   ControllerWrapper,
   validateControllerWrapperParams

@@ -1,15 +1,14 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const isbn_ = require('lib/isbn/isbn')
-const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
-const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
-const sanitizeSeed = require('./sanitize_seed')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import isbn_, { isValidIsbn, normalizeIsbn } from 'lib/isbn/isbn'
+import wmLanguageCodeByWdId from 'wikidata-lang/mappings/wm_code_by_wd_id.json'
+import sanitizeSeed from './sanitize_seed'
 
 // Validate : requires only one edition to resolve from and a valid isbn
 // Format : if edition is a list, force pick the first edition
 // Warn : when a property is unknown
 
-module.exports = entry => {
+export default entry => {
   let { edition } = entry
 
   if (_.isArray(edition)) {

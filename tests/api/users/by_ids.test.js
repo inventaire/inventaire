@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
-const { publicReq, authReq, customAuthReq, getUser, getUserB } = require('../utils/utils')
-const { getTwoFriends } = require('../fixtures/users')
-const { deleteUser } = require('../utils/users')
+import _ from 'builders/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } from 'tests/api/utils/utils'
+import { publicReq, authReq, customAuthReq, getUser, getUserB } from '../utils/utils'
+import { getTwoFriends } from '../fixtures/users'
+import { deleteUser } from '../utils/users'
 
 const endpoint = '/api/users?action=by-ids'
 

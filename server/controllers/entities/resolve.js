@@ -1,5 +1,5 @@
-const { oneDay } = require('lib/time')
-const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_create')
+import { oneDay } from 'lib/time'
+import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create'
 
 // Entry example:
 // {
@@ -60,4 +60,4 @@ const formatError = err => {
   else return { message, context, entry }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

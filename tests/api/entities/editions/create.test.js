@@ -1,6 +1,6 @@
-require('should')
-const { authReq, shouldNotBeCalled } = require('../../utils/utils')
-const { createWork, createSerie, randomLabel, generateIsbn13h } = require('../../fixtures/entities')
+import 'should'
+import { authReq, shouldNotBeCalled } from '../../utils/utils'
+import { createWork, createSerie, randomLabel, generateIsbn13h } from '../../fixtures/entities'
 const workEntityPromise = createWork()
 
 describe('entities:editions:create', () => {

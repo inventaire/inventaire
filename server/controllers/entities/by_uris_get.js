@@ -1,6 +1,6 @@
-const getEntitiesByUris = require('./lib/get_entities_by_uris')
-const addRelatives = require('./lib/add_relatives')
-const { pickAttributes, pickLanguages } = require('./lib/pick_attributes')
+import getEntitiesByUris from './lib/get_entities_by_uris'
+import addRelatives from './lib/add_relatives'
+import { pickAttributes, pickLanguages } from './lib/pick_attributes'
 
 const sanitization = {
   uris: {},
@@ -45,4 +45,4 @@ const controller = async ({ uris, attributes, lang, refresh, relatives, autocrea
   return results
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

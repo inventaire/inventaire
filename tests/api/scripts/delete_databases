@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 databases=$(node -e "console.log(Object.keys(require('./server/db/couchdb/databases.js')).join(' '))")
-dbHost=$(node -e "console.log(require('config').db.getOrigin())")
-elasticOrigin=$(node -e "console.log(require('config').elasticsearch.origin)")
-leveldbPathBase=$(node -e "console.log(require('config').universalPath.path('root', 'db/leveldb'))")
+dbHost=$(node -e "console.log(CONFIG.db.getOrigin())")
+elasticOrigin=$(node -e "console.log(CONFIG.elasticsearch.origin)")
+leveldbPathBase=$(node -e "console.log(CONFIG.universalPath.path('root', 'db/leveldb'))")
 leveldbPath="${leveldbPathBase}-tests"
 
 for db in $databases

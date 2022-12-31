@@ -1,7 +1,7 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createShelf } = require('../fixtures/shelves')
-const { createItem } = require('../fixtures/items')
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { authReq } from '../utils/utils'
+import { createShelf } from '../fixtures/shelves'
+import { createItem } from '../fixtures/items'
 
 const endpoint = '/api/shelves?action=add-items'
 const shelfPromise = createShelf()

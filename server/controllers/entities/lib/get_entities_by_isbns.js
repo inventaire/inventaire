@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const formatEditionEntity = require('./format_edition_entity')
-const isbn_ = require('lib/isbn/isbn')
-const { prefixifyIsbn } = require('controllers/entities/lib/prefix')
-const getResolvedEntry = require('data/dataseed/get_resolved_entry')
+import _ from 'builders/utils'
+import entities_ from './entities'
+import formatEditionEntity from './format_edition_entity'
+import isbn_ from 'lib/isbn/isbn'
+import { prefixifyIsbn } from 'controllers/entities/lib/prefix'
+import getResolvedEntry from 'data/dataseed/get_resolved_entry'
 
-module.exports = async (rawIsbns, params = {}) => {
+export default async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { autocreate } = params
   // search entities by isbn locally

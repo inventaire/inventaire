@@ -1,7 +1,7 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { bySuspectUris, bySuggestionUris } = require('./by_entity_uris')
+import ActionsControllers from 'lib/actions_controllers'
+import { bySuspectUris, bySuggestionUris } from './by_entity_uris'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'by-ids': require('./by_ids'),

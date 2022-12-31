@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const fakeText = require('./text')
-const { customAuthReq } = require('../utils/request')
-const { getUser } = require('../utils/utils')
-const { createItem } = require('../fixtures/items')
-const { addItemsToShelf } = require('../utils/shelves')
+import _ from 'builders/utils'
+import fakeText from './text'
+import { customAuthReq } from '../utils/request'
+import { getUser } from '../utils/utils'
+import { createItem } from '../fixtures/items'
+import { addItemsToShelf } from '../utils/shelves'
 
-const fixtures = module.exports = {
+const fixtures = {
   shelfName: () => fakeText.randomWords(3, ' shelf'),
   shelfDescription: () => {
     return fakeText.randomWords(3, ' shelf')
@@ -45,3 +45,4 @@ const fixtures = module.exports = {
     return { shelf, items }
   }
 }
+export default fixtures

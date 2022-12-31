@@ -1,5 +1,5 @@
-const getNextSlugCandidate = require('./get_next_slug_candidate')
-const slugify = require('./slugify')
+import getNextSlugCandidate from './get_next_slug_candidate'
+import slugify from './slugify'
 
 let groups_
 const requireCircularDependencies = () => { groups_ = require('./groups') }
@@ -7,7 +7,7 @@ setImmediate(requireCircularDependencies)
 
 const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
 
-module.exports = {
+export default {
   get: getSlug,
 
   add: async group => {

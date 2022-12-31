@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byEntityId: {
     map: doc => {
       const [ entityId, patchNumber ] = doc._id.split(':')

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
-const { makeUrl } = require('./helpers')
-const items_ = require('controllers/items/lib/items')
+import _ from 'builders/utils'
+import { createItemsNote, findFullRangeFromActivities } from './format_items_activities'
+import { makeUrl } from './helpers'
+import items_ from 'controllers/items/lib/items'
 
-module.exports = async (activitiesDocs, user) => {
+export default async (activitiesDocs, user) => {
   if (!_.isNonEmptyArray(activitiesDocs)) return []
   const { stableUsername: name } = user
   const actor = makeUrl({ params: { action: 'actor', name } })

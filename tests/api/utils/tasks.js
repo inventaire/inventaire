@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { publicReq, adminReq } = require('./utils')
+import _ from 'builders/utils'
+import { publicReq, adminReq } from './utils'
 const endpoint = '/api/tasks?action='
 
-const utils = module.exports = {
+const utils = {
   getByIds: ids => {
     ids = _.forceArray(ids).join('|')
     return publicReq('get', `${endpoint}by-ids&ids=${ids}`)
@@ -55,3 +55,4 @@ const utils = module.exports = {
     .then(tasksBySuspectUris => Object.values(tasksBySuspectUris).flat())
   }
 }
+export default utils

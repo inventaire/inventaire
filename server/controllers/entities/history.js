@@ -1,7 +1,8 @@
 // An endpoint to get entities history as snapshots and diffs
-const patches_ = require('./lib/patches/patches')
-const { hasAdminAccess } = require('lib/user_access_levels')
-const anonymizePatches = require('./lib/anonymize_patches')
+import patches_ from './lib/patches/patches'
+
+import { hasAdminAccess } from 'lib/user_access_levels'
+import anonymizePatches from './lib/anonymize_patches'
 
 const sanitization = {
   id: {}
@@ -14,4 +15,4 @@ const controller = async (params, req) => {
   return { patches }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

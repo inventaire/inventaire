@@ -2,12 +2,13 @@
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time
 
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
-const { itemsCountDebounceTime: delay } = require('config')
+import _ from 'builders/utils'
 
-module.exports = () => {
+import radio from 'lib/radio'
+import updateSnapshotItemsCounts from './update_snapshot_items_counts'
+import { itemsCountDebounceTime as delay } from 'config'
+
+export default () => {
   const debouncedUpdaters = {}
 
   const itemsCountsUpdater = userId => () => {

@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const { uniqByKey } = require('lib/utils/base')
-require('should')
+import _ from 'builders/utils'
+import { uniqByKey } from 'lib/utils/base'
+import 'should'
 
 describe('utils', () => {
   describe('env', () => {

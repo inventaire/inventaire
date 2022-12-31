@@ -1,6 +1,6 @@
-const availability_ = require('controllers/user/lib/availability')
+import availability_ from 'controllers/user/lib/availability'
 
-module.exports = {
+export default {
   usernameAvailability: {
     sanitization: { username: {} },
     controller: async ({ username }) => {

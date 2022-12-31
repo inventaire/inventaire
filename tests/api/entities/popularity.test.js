@@ -1,7 +1,14 @@
-require('should')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities')
-const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities')
+import 'should'
+import { shouldNotBeCalled } from '../utils/utils'
+import { addClaim, getRefreshedPopularityByUri } from '../utils/entities'
+
+import {
+  createEdition,
+  createWork,
+  createItemFromEntityUri,
+  createSerie,
+  createHuman,
+} from '../fixtures/entities'
 
 describe('entities:popularity', () => {
   describe('edition', () => {

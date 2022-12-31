@@ -1,8 +1,8 @@
-require('should')
-const { hashCode } = require('lib/utils/base')
-const { uploadSomeImage } = require('../utils/images')
-const { rawRequest } = require('../utils/request')
-const { shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { hashCode } from 'lib/utils/base'
+import { uploadSomeImage } from '../utils/images'
+import { rawRequest } from '../utils/request'
+import { shouldNotBeCalled } from '../utils/utils'
 
 describe('images:resize', () => {
   it('should return a resized local image', async () => {

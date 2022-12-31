@@ -44,7 +44,7 @@ const workAndSerie = all.concat([
   ...socialNetworks
 ])
 
-module.exports = {
+export default {
   edition: all.concat([
     'wdt:P123', // publisher
     'wdt:P195', // collection

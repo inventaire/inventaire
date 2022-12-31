@@ -1,14 +1,15 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const parseEmails = require('./lib/parse_emails')
-const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_data')
-const groups_ = require('controllers/groups/lib/groups')
-const Group = require('models/group')
-const { Track } = require('lib/track')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
+import _ from 'builders/utils'
+
+import error_ from 'lib/error/error'
+import responses_ from 'lib/responses'
+import parseEmails from './lib/parse_emails'
+import sendInvitationAndReturnData from './lib/send_invitation_and_return_data'
+import groups_ from 'controllers/groups/lib/groups'
+import Group from 'models/group'
+import { Track } from 'lib/track'
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
 
 const sanitization = validateSanitization({
   emails: {},
@@ -16,7 +17,7 @@ const sanitization = validateSanitization({
   group: { optional: true },
 })
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const params = sanitize(req, res, sanitization)
   const { emails, groupId, reqUserId } = params
   const { user } = req

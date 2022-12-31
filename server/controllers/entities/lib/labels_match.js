@@ -1,4 +1,4 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
 const haveExactMatch = (labels1, labels2) => {
   const formattedLabels1 = labels1.map(formatLabel)
@@ -8,4 +8,4 @@ const haveExactMatch = (labels1, labels2) => {
 
 const formatLabel = label => label.toLowerCase()
 
-module.exports = { haveExactMatch }
+export default { haveExactMatch }

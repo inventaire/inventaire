@@ -1,10 +1,9 @@
-const should = require('should')
-const { merge, revertMerge } = require('../utils/entities')
-const { wait } = require('lib/promises')
-const { createHuman } = require('../fixtures/entities')
-const { deleteByUris: deleteEntityByUris, findOrIndexEntities } = require('../utils/entities')
-const { createTask } = require('../fixtures/tasks')
-const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
+import should from 'should'
+import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities'
+import { wait } from 'lib/promises'
+import { createHuman } from '../fixtures/entities'
+import { createTask } from '../fixtures/tasks'
+import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks'
 
 describe('tasks:hooks', () => {
   describe('entity merge', () => {

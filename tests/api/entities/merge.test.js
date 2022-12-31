@@ -1,9 +1,18 @@
-require('should')
-const { authReq, dataadminReq, shouldNotBeCalled } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
-const { getItemsByIds } = require('../utils/items')
-const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor, someFakeUri } = require('../fixtures/entities')
+import 'should'
+import { authReq, dataadminReq, shouldNotBeCalled } from '../utils/utils'
+import randomString from 'lib/utils/random_string'
+import { getByUris, merge, getHistory, addClaim } from '../utils/entities'
+import { getItemsByIds } from '../utils/items'
+
+import {
+  createWork,
+  createHuman,
+  createEdition,
+  createEditionWithIsbn,
+  createItemFromEntityUri,
+  createWorkWithAuthor,
+  someFakeUri,
+} from '../fixtures/entities'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {

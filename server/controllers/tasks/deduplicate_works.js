@@ -1,4 +1,4 @@
-const deduplicateWork = require('./lib/deduplicate_works')
+import deduplicateWork from './lib/deduplicate_works'
 
 const sanitization = {
   uri: {},
@@ -12,4 +12,4 @@ const controller = async ({ uri, isbn, reqUserId }) => {
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

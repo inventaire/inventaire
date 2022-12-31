@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const should = require('should')
-const jiff = require('jiff')
-const randomString = require('lib/utils/random_string')
-const Entity = require('models/entity')
-const Patch = require('models/patch')
-const { shouldNotBeCalled } = require('../utils')
+import _ from 'builders/utils'
+import should from 'should'
+import jiff from 'jiff'
+import randomString from 'lib/utils/random_string'
+import Entity from 'models/entity'
+import Patch from 'models/patch'
+import { shouldNotBeCalled } from '../utils'
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId

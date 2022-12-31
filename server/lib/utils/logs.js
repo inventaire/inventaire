@@ -1,7 +1,7 @@
-const { offline, verbose } = require('config')
-const chalk = require('chalk')
+import { offline, verbose } from 'config'
+import chalk from 'chalk'
+import { isArguments } from 'lodash'
 const { red, grey } = chalk
-const { isArguments } = require('lodash')
 // Log full objects
 require('node:util').inspect.defaultOptions.depth = 20
 let errorCount = 0
@@ -102,7 +102,7 @@ const logErrorsCount = () => {
   setInterval(counter, 5000)
 }
 
-module.exports = {
+export default {
   ...loggers,
   logErrorsCount,
 }

@@ -1,4 +1,4 @@
-const { getEntitiesPopularities } = require('./lib/popularity')
+import { getEntitiesPopularities } from './lib/popularity'
 
 const sanitization = {
   uris: {},
@@ -10,4 +10,4 @@ const controller = async params => {
   return { scores }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

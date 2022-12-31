@@ -1,7 +1,7 @@
-const { userAgent } = require('lib/requests')
+import { userAgent } from 'lib/requests'
 
 // Return an instance of wikibase-edit with the general config pre-set
-module.exports = require('wikibase-edit')({
+export default require('wikibase-edit')({
   instance: 'https://www.wikidata.org',
   userAgent,
   // Most edits are isolated edits from humans using the GUI, maxlag could thus be omitted

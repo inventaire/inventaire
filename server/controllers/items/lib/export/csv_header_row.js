@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   'Item URL',
   'Item details',
   'Item notes',

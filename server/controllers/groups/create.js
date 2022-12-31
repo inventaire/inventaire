@@ -1,4 +1,4 @@
-const groups_ = require('./lib/groups')
+import groups_ from './lib/groups'
 
 const sanitization = {
   name: {},
@@ -30,7 +30,7 @@ const controller = async params => {
   })
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
   track: [ 'groups', 'create' ]

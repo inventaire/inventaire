@@ -1,9 +1,11 @@
-const _ = require('builders/utils')
-const { cleanupImageUrl } = require('data/dataseed/dataseed')
-const error_ = require('lib/error/error')
-const isPrivateUrl = require('lib/network/is_private_url')
-const fetch = require('node-fetch')
-const { enabled: dataseedEnabled } = require('config').dataseed
+import _ from 'builders/utils'
+import { cleanupImageUrl } from 'data/dataseed/dataseed'
+import error_ from 'lib/error/error'
+import isPrivateUrl from 'lib/network/is_private_url'
+import fetch from 'node-fetch'
+import CONFIG from 'config'
+
+const { enabled: dataseedEnabled } = CONFIG.dataseed
 
 const sanitization = {
   url: {}
@@ -48,4 +50,4 @@ const getImageDataUrl = async url => {
   return `data:${contentType};base64,${buffer}`
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

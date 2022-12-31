@@ -1,7 +1,7 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { addItems, removeItems } = require('./items_actions')
+import ActionsControllers from 'lib/actions_controllers'
+import { addItems, removeItems } from './items_actions'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'by-ids': require('./by_ids'),

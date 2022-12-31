@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
 let assert_
 const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
 setImmediate(requireCircularDependencies)
 
-const responses_ = module.exports = {
+const responses_ = {
   // returns a function triggering a standard confirmation response
   ok: (res, status = 200) => {
     res.status(status)
@@ -54,6 +54,8 @@ const responses_ = module.exports = {
     res.warnings.push(message)
   }
 }
+
+export default responses_
 
 const setWarnings = (res, data) => {
   if (res.warnings) data.warnings = res.warnings

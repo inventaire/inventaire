@@ -1,4 +1,6 @@
-const attributes = module.exports = {}
+const attributes = {}
+
+export default attributes
 
 // Attributes that can be send to the owner
 attributes.ownerSafe = [

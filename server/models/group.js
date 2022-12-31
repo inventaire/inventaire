@@ -1,9 +1,11 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { truncateLatLng } = require('lib/geo')
-const assert_ = require('lib/utils/assert_types')
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import { truncateLatLng } from 'lib/geo'
+import assert_ from 'lib/utils/assert_types'
 
-const Group = module.exports = {}
+const Group = {}
+
+export default Group
 
 const validations = Group.validations = require('./validations/group')
 const attributes = Group.attributes = require('./attributes/group')

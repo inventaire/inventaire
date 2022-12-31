@@ -1,4 +1,4 @@
-const _ = require('builders/utils')
+import _ from 'builders/utils'
 
 const base = () => ({
   author: {},
@@ -37,4 +37,4 @@ const addToTree = (tree, entity) => {
   return tree
 }
 
-module.exports = entities => entities.reduce(addToTree, base())
+export default entities => entities.reduce(addToTree, base())

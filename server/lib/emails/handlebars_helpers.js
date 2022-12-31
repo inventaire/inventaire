@@ -1,9 +1,8 @@
-const _ = require('builders/utils')
-const i18n = require('./i18n/i18n')
+import _ from 'builders/utils'
+import i18n from './i18n/i18n'
+import appApi from './app_api'
 
-const appApi = require('./app_api')
-
-module.exports = Object.assign({}, i18n, {
+export default Object.assign({}, i18n, {
   // Prevent passing more than 2 arguments
   debug: (obj, label) => {
     _.log(obj, label)

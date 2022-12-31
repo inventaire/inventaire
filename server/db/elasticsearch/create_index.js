@@ -1,10 +1,11 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { origin } = require('config').elasticsearch
-const mappings = require('db/elasticsearch/mappings/mappings')
-const settings = require('db/elasticsearch/settings/settings')
+import _ from 'builders/utils'
+import requests_ from 'lib/requests'
+import CONFIG from 'config'
+import mappings from 'db/elasticsearch/mappings/mappings'
+import settings from 'db/elasticsearch/settings/settings'
+const { origin } = CONFIG.elasticsearch
 
-module.exports = async index => {
+export default async index => {
   const url = `${origin}/${index}`
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const getWorksFromAuthorsLabels = require('./get_works_from_authors_uris')
-const { getAlreadyResolvedUris, someTermsMatch, resolveSeed } = require('./helpers')
-const getAuthorsUris = require('../get_authors_uris')
+import _ from 'builders/utils'
+import getWorksFromAuthorsLabels from './get_works_from_authors_uris'
+import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers'
+import getAuthorsUris from '../get_authors_uris'
 
-module.exports = async (works, authors) => {
+export default async (works, authors) => {
   const worksAuthorsUris = _.compact(works.flatMap(getAuthorsUris))
   const authorsUris = _.uniq(getAlreadyResolvedUris(authors).concat(worksAuthorsUris))
   if (authorsUris.length === 0) return works

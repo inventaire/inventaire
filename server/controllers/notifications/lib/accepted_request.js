@@ -1,7 +1,7 @@
-const assert_ = require('lib/utils/assert_types')
-const notifications_ = require('./notifications')
+import assert_ from 'lib/utils/assert_types'
+import notifications_ from './notifications'
 
-module.exports = (userToNotify, newFriend) => {
+export default (userToNotify, newFriend) => {
   assert_.strings([ userToNotify, newFriend ])
   return notifications_.add(userToNotify, 'friendAcceptedRequest', {
     user: newFriend

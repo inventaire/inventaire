@@ -1,9 +1,10 @@
-const groups_ = require('controllers/groups/lib/groups')
-const { getAllowedVisibilityKeys } = require('lib/visibility/allowed_visibility_keys')
-const db = require('db/couchdb/base')('items')
-const _ = require('builders/utils')
-const { uniqByKey } = require('lib/utils/base')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import groups_ from 'controllers/groups/lib/groups'
+import { getAllowedVisibilityKeys } from 'lib/visibility/allowed_visibility_keys'
+import dbFactory from 'db/couchdb/base'
+import _ from 'builders/utils'
+import { uniqByKey } from 'lib/utils/base'
+import { getGroupVisibilityKey } from 'lib/visibility/visibility'
+const db = dbFactory('items')
 
 const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
   const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
@@ -11,7 +12,7 @@ const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
 }
 
 // Return what the reqUserId user is allowed to see
-module.exports = {
+export default {
   byUsers: async (usersIds, reqUserId, options = {}) => {
     const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
     const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'

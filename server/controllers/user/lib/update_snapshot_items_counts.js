@@ -1,10 +1,11 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const { getVisibilitySummaryKey } = require('lib/visibility/visibility')
-const User = require('models/user')
-const db = require('db/couchdb/base')('users')
+import _ from 'builders/utils'
+import items_ from 'controllers/items/lib/items'
+import { getVisibilitySummaryKey } from 'lib/visibility/visibility'
+import User from 'models/user'
+import dbFactory from 'db/couchdb/base'
+const db = dbFactory('users')
 
-module.exports = userId => {
+export default userId => {
   return items_.byOwner(userId)
   .then(getItemsCounts)
   .then(itemsCounts => db.update(userId, User.updateItemsCounts(itemsCounts)))

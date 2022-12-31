@@ -1,8 +1,9 @@
-const _ = require('builders/utils')
-const { getNames } = require('../snapshot/helpers')
-const host = require('config').getPublicOrigin()
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { getNames } from '../snapshot/helpers'
+const host = CONFIG.getPublicOrigin()
 
-module.exports = lang => item => {
+export default lang => item => {
   const { _id, entity: uri, details, notes, shelfNames, created, visibility, transaction } = item
   const { edition, works, authors, translators, series, genres, subjects, publisher, editionLang, originalLangs } = item
   const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item

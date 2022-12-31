@@ -1,10 +1,10 @@
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const items_ = require('./lib/items')
-const addEntitiesData = require('./lib/export/add_entities_data')
-const FormatItemRow = require('./lib/export/format_item_row')
-const csvHeaderRow = require('./lib/export/csv_header_row')
-const responses_ = require('lib/responses')
-const shelves_ = require('controllers/shelves/lib/shelves')
+import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import items_ from './lib/items'
+import addEntitiesData from './lib/export/add_entities_data'
+import FormatItemRow from './lib/export/format_item_row'
+import csvHeaderRow from './lib/export/csv_header_row'
+import responses_ from 'lib/responses'
+import shelves_ from 'controllers/shelves/lib/shelves'
 
 const sanitization = validateSanitization({
   format: {
@@ -12,7 +12,7 @@ const sanitization = validateSanitization({
   }
 })
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { reqUserId } = sanitize(req, res, sanitization)
   const { language } = req.user
   let responseText = csvHeaderRow + '\n'

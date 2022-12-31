@@ -1,14 +1,23 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { customAuthReq, rawCustomAuthReq } from 'tests/api/utils/request'
+import { getReservedUser } from 'tests/api/utils/utils'
+import { createItem } from '../fixtures/items'
+import { createShelf } from '../fixtures/shelves'
+
+import {
+  createEdition,
+  createWork,
+  createEditionFromWorks,
+  createEditionWithWorkAuthorAndSerie,
+  addTranslator,
+  someImageHash,
+} from '../fixtures/entities'
+
+import { createUser } from '../fixtures/users'
+import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities'
+import { parse } from 'papaparse'
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { customAuthReq, rawCustomAuthReq } = require('tests/api/utils/request')
-const { getReservedUser } = require('tests/api/utils/utils')
-const { createItem } = require('../fixtures/items')
-const { createShelf } = require('../fixtures/shelves')
-const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addTranslator, someImageHash } = require('../fixtures/entities')
-const { createUser } = require('../fixtures/users')
-const { getByUri, addClaim, parseLabel, updateLabel } = require('../utils/entities')
-const { parse } = require('papaparse')
 
 const endpoint = '/api/items?action=export&format=csv'
 const generateUrl = path => `${host}${path}`

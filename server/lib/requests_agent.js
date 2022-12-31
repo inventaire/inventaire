@@ -1,5 +1,5 @@
-const { Agent: HttpAgent } = require('node:http')
-const { Agent: HttpsAgent } = require('node:https')
+import { Agent as HttpAgent } from 'node:http'
+import { Agent as HttpsAgent } from 'node:https'
 const httpAgent = new HttpAgent({ keepAlive: true })
 const httpsAgent = new HttpsAgent({ keepAlive: true })
 
@@ -16,4 +16,4 @@ const insecureHttpsAgent = new HttpsAgent({
 // https://github.com/bitinn/node-fetch#custom-agent
 const getAgent = ({ protocol }) => protocol === 'http:' ? httpAgent : httpsAgent
 
-module.exports = { getAgent, insecureHttpsAgent }
+export default { getAgent, insecureHttpsAgent }

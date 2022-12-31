@@ -1,11 +1,11 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { rawRequest } from '../utils/request'
+import { createHuman } from '../fixtures/entities'
+import { createUser } from '../fixtures/users'
+import { getSomeGroup } from '../fixtures/groups'
+import { createItem } from '../fixtures/items'
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { rawRequest } = require('../utils/request')
-const { createHuman } = require('../fixtures/entities')
-const { createUser } = require('../fixtures/users')
-const { getSomeGroup } = require('../fixtures/groups')
-const { createItem } = require('../fixtures/items')
 const someEntityPromise = createHuman()
 const someUserPromise = createUser()
 const someItemPromise = createItem()

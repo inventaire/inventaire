@@ -1,9 +1,10 @@
-const should = require('should')
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { startGenericMockServer } = require('../utils/mock_server')
-const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
+import should from 'should'
+import CONFIG from 'config'
+import requests_ from 'lib/requests'
+import { wait } from 'lib/promises'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
+import { startGenericMockServer } from '../utils/mock_server'
+const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const startMockServer = async () => {
   const { port, host, origin } = await startGenericMockServer(app => {

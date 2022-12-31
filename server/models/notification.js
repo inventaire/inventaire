@@ -1,6 +1,6 @@
-const validations = require('./validations/notification')
+import validations from './validations/notification'
 
-module.exports = {
+export default {
   create: ({ user, type, data }) => {
     validations.pass('userId', user)
     validations.pass('type', type)

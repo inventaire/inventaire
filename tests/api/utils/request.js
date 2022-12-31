@@ -1,11 +1,11 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import requests_ from 'lib/requests'
+import assert_ from 'lib/utils/assert_types'
+import error_ from 'lib/error/error'
+import { stringifyQuery } from 'lib/utils/url'
 const host = CONFIG.getPublicOrigin()
-const requests_ = require('lib/requests')
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const { stringifyQuery } = require('lib/utils/url')
 
 const testServerAvailability = async () => {
   if (!CONFIG.waitForServer) return
@@ -99,7 +99,7 @@ const bearerTokenReq = (token, method, endpoint, body) => {
   })
 }
 
-module.exports = {
+export default {
   waitForTestServer,
   request,
   rawRequest,

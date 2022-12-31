@@ -1,14 +1,15 @@
-const error_ = require('lib/error/error')
-const { parseQuery } = require('lib/utils/url')
-const host = require('config').getPublicOrigin()
-const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
-const { signAndPostActivity } = require('./lib/post_activity')
-const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
-const { makeUrl, getEntityUriFromActorName, context } = require('./lib/helpers')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const { trackActor } = require('lib/track')
+import CONFIG from 'config'
+import error_ from 'lib/error/error'
+import { parseQuery } from 'lib/utils/url'
+import { createActivity, getFollowActivitiesByObject } from 'controllers/activitypub/lib/activities'
+import { signAndPostActivity } from './lib/post_activity'
+import { validateUser, validateShelf, validateEntity } from './lib/validations'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers'
+import { isEntityUri, isUsername } from 'lib/boolean_validations'
+import { trackActor } from 'lib/track'
+const host = CONFIG.getPublicOrigin()
 
-module.exports = async params => {
+export default async params => {
   const { id: externalId, type } = params
   let { actor, object } = params
   if (!object?.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })

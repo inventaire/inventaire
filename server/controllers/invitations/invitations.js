@@ -1,6 +1,6 @@
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from 'lib/actions_controllers'
 
-module.exports = {
+export default {
   post: ActionsControllers({
     authentified: {
       'by-emails': require('./by_emails')

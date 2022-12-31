@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const { get } = require('lib/requests')
-const { wait } = require('lib/promises')
-const { origin: elasticOrigin } = require('config').elasticsearch
-const { indexesList, syncIndexesList } = require('db/elasticsearch/indexes')
-const createIndex = require('./create_index')
-const reindexOnChange = require('./reindex_on_change')
+import _ from 'builders/utils'
+import { get } from 'lib/requests'
+import { wait } from 'lib/promises'
+import CONFIG from 'config'
+import { indexesList, syncIndexesList } from 'db/elasticsearch/indexes'
+import createIndex from './create_index'
+import reindexOnChange from './reindex_on_change'
+const { origin: elasticOrigin } = CONFIG.elasticsearch
 
-module.exports = async () => {
+export default async () => {
   await waitForElastic()
   await ensureIndexesExist()
   startCouchElasticSync()

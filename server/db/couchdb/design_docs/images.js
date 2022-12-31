@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   bySourcesCount: {
     map: doc => {
       if (doc.sources != null) {

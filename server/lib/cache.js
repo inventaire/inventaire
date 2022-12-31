@@ -1,19 +1,20 @@
-const { ttlCheckFrequency } = require('config').leveldb
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { promisify } = require('util')
-const levelTtl = require('level-ttl')
-const { cacheDb } = require('db/level/get_db')
-const { oneMonth } = require('lib/time')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import error_ from 'lib/error/error'
+import assert_ from 'lib/utils/assert_types'
+import { promisify } from 'util'
+import levelTtl from 'level-ttl'
+import { cacheDb } from 'db/level/get_db'
+import { oneMonth } from 'lib/time'
+const { ttlCheckFrequency } = CONFIG.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
 const dbPut = promisify(db.put)
 const dbBatch = promisify(db.batch)
 // It's convenient in tests to have the guaranty that the cached value was saved
 // but in production, that means delaying API responses in case LevelDB writes get slow
-const alwaysWaitForSavedValue = require('config').env.startsWith('tests')
+const alwaysWaitForSavedValue = CONFIG.env.startsWith('tests')
 
-module.exports = {
+export default {
   // - key: the cache key
   // - fn: a function with its context and arguments binded
   // - refresh: force a cache miss

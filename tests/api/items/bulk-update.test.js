@@ -1,12 +1,12 @@
-require('should')
-const { getUser, authReq, authReqB, getUserB } = require('../utils/utils')
-const { newItemBase } = require('./helpers')
-const { createItem } = require('../fixtures/items')
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
-const { wait } = require('lib/promises')
-const { createShelf } = require('tests/api/fixtures/shelves')
-const { createGroup } = require('tests/api/fixtures/groups')
-const { getItem } = require('tests/api/utils/items')
+import 'should'
+import { getUser, authReq, authReqB, getUserB } from '../utils/utils'
+import { newItemBase } from './helpers'
+import { createItem } from '../fixtures/items'
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import { wait } from 'lib/promises'
+import { createShelf } from 'tests/api/fixtures/shelves'
+import { createGroup } from 'tests/api/fixtures/groups'
+import { getItem } from 'tests/api/utils/items'
 
 describe('items:bulk-update', () => {
   it('should update items attributes', async () => {

@@ -1,5 +1,5 @@
 
-module.exports = () => {
+export default () => {
   // Run once the databases are ready to prevent having multiple error messages
   // if databases aren't properly setup
   require('lib/emails/mailer')()

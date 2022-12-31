@@ -4,7 +4,7 @@ const scopeByMethodAndRoute = {
   }
 }
 
-module.exports = {
+export default {
   getAcceptedScopes: ({ method, url }) => {
     method = method.toLowerCase()
     if (scopeByMethodAndRoute[method] != null) {

@@ -1,4 +1,4 @@
-const { getSitelinkData, getSitelinkUrl } = require('wikidata-sdk')
+import { getSitelinkData, getSitelinkUrl } from 'wikidata-sdk'
 
 const getWikipediaSitelinksData = sitelinks => {
   if (!sitelinks) return []
@@ -21,6 +21,7 @@ const getWikipediaSummaryData = ([ key, title ]) => {
     }
   }
 }
-module.exports = {
+
+export default {
   getWikipediaSitelinksData,
 }

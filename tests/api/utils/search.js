@@ -1,12 +1,12 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const { publicReq, customAuthReq } = require('../utils/utils')
+import CONFIG from 'config'
+import _ from 'builders/utils'
+import { wait } from 'lib/promises'
+import { publicReq, customAuthReq } from '../utils/utils'
+import { rawRequest } from './request'
+import assert_ from 'lib/utils/assert_types'
+import { indexesNamesByBaseNames } from 'db/elasticsearch/indexes'
+import { buildUrl } from 'lib/utils/url'
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { rawRequest } = require('./request')
-const assert_ = require('lib/utils/assert_types')
-const { indexesNamesByBaseNames } = require('db/elasticsearch/indexes')
-const { buildUrl } = require('lib/utils/url')
 
 const endpoint = '/api/search'
 
@@ -82,7 +82,7 @@ const waitForDeindexation = async (indexBaseName, id) => {
   }
 }
 
-module.exports = {
+export default {
   search: async (...args) => {
     let types, search, lang, filter, limit, offset, exact, minScore, claim
     if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])

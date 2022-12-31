@@ -1,13 +1,12 @@
-const CONFIG = require('config')
-const { wait } = require('lib/promises')
-require('should')
+import CONFIG from 'config'
+import { wait } from 'lib/promises'
+import 'should'
+import { catchNotFound } from 'lib/error/error'
+import { someFakeUri } from 'tests/api/fixtures/entities'
+import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import { get, set, del } from 'controllers/entities/lib/entities_relations_temporary_cache'
+import runQuery from 'data/wikidata/run_query'
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
-const { catchNotFound } = require('lib/error/error')
-
-const { someFakeUri } = require('tests/api/fixtures/entities')
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
-const { get, set, del } = require('controllers/entities/lib/entities_relations_temporary_cache')
-const runQuery = require('data/wikidata/run_query')
 
 const property = 'wdt:P50'
 const targetEntityUri = 'wd:Q1'

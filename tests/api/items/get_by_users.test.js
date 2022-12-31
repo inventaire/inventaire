@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-require('should')
-const { getUser, authReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { createItem } = require('../fixtures/items')
-const { getSomeGroup, addMember, createGroup } = require('../fixtures/groups')
-const { humanName } = require('../fixtures/entities')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import _ from 'builders/utils'
+import 'should'
+import { getUser, authReq, publicReq, getUserGetter } from 'tests/api/utils/utils'
+import { shouldNotBeCalled } from 'tests/unit/utils'
+import { createItem } from '../fixtures/items'
+import { getSomeGroup, addMember, createGroup } from '../fixtures/groups'
+import { humanName } from '../fixtures/entities'
+import { getGroupVisibilityKey } from 'lib/visibility/visibility'
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-users'

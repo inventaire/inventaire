@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const pw_ = require('lib/crypto').passwords
-const loginAttempts = require('./login_attempts')
+import _ from 'builders/utils'
+import user_ from 'controllers/user/lib/user'
+import { passwords as pw_ } from 'lib/crypto'
+import loginAttempts from './login_attempts'
 
-module.exports = (username, password, done) => {
+export default (username, password, done) => {
   if (loginAttempts.tooMany(username)) {
     done(null, false, { message: 'too_many_attempts' })
   }

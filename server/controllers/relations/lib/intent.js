@@ -1,8 +1,9 @@
-const queries = require('./queries')
-const actions = require('./actions')
-const solve = require('./solve_intent')(actions)
+import queries from './queries'
+import actions from './actions'
+import solveFactory from './solve_intent'
+const solve = solveFactory(actions)
 
-module.exports = {
+export default {
   requestFriend: (reqUserId, otherId) => {
     return queries.getStatus(reqUserId, otherId)
     .then(solve.requestFriend.bind(null, reqUserId, otherId))

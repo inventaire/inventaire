@@ -1,4 +1,4 @@
-const { customAuthReq } = require('../utils/utils')
+import { customAuthReq } from '../utils/utils'
 
 const endpoint = '/api/transactions'
 
@@ -23,7 +23,7 @@ const updateTransaction = async (user, transactionId, state) => {
   })
 }
 
-module.exports = {
+export default {
   getTransaction,
   getTransactionsByItem,
   updateTransaction,

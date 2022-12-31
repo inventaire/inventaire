@@ -1,4 +1,4 @@
-const { customAuthReq } = require('./request')
+import { customAuthReq } from './request'
 const endpoint = '/api/relations'
 
 let getUser, getReservedUser
@@ -31,7 +31,7 @@ const action = (action, reqUser, otherUser) => {
   })
 }
 
-module.exports = {
+export default {
   action,
   getUsersWithoutRelation: () => {
     return Promise.all([

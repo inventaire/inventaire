@@ -1,8 +1,8 @@
-const { BasicUpdater } = require('lib/doc_updates')
+import { BasicUpdater } from 'lib/doc_updates'
 
 const mapResult = (res, type) => res.rows.map(row => row[type])
 
-const couch_ = module.exports = {
+const couch_ = {
   mapDoc: res => mapResult(res, 'doc'),
   mapValue: res => res.rows.map(row => row.value),
 
@@ -29,3 +29,4 @@ const couch_ = module.exports = {
   //   Use a string like "\ufff0" instead.
   maxKey: '\ufff0'
 }
+export default couch_

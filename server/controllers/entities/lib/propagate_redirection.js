@@ -1,7 +1,7 @@
-const redirectClaims = require('./redirect_claims')
-const updateItemEntity = require('controllers/items/lib/update_entity')
+import redirectClaims from './redirect_claims'
+import updateItemEntity from 'controllers/items/lib/update_entity'
 
-module.exports = (userId, fromUri, toUri, previousToUri) => {
+export default (userId, fromUri, toUri, previousToUri) => {
   const actions = [
     redirectClaims(userId, fromUri, toUri),
     updateItemEntity.afterMerge(fromUri, toUri)

@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const should = require('should')
-const fakeText = require('../fixtures/text')
-const { publicReq, customAuthReq, getUser, getUserB, getReservedUser } = require('../utils/utils')
-const { createUser } = require('../fixtures/users')
-const { waitForIndexation } = require('../utils/search')
+import _ from 'builders/utils'
+import should from 'should'
+import fakeText from '../fixtures/text'
+import { publicReq, customAuthReq, getUser, getUserB, getReservedUser } from '../utils/utils'
+import { createUser } from '../fixtures/users'
+import { waitForIndexation } from '../utils/search'
 
 describe('users:search', () => {
   it('should find a user', async () => {

@@ -1,5 +1,5 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
+import CONFIG from 'config'
+import _ from 'builders/utils'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [
@@ -17,15 +17,15 @@ const indexesData = [
   return data
 })
 
-const indexes = _.keyBy(indexesData, 'indexBaseName')
-const indexesList = _.map(indexesData, 'index')
-const indexesNamesByBaseNames = _.mapValues(indexes, 'index')
+export const indexes = _.keyBy(indexesData, 'indexBaseName')
+export const indexesList = _.map(indexesData, 'index')
+export const indexesNamesByBaseNames = _.mapValues(indexes, 'index')
 
-const syncIndexesList = indexesData
+export const syncIndexesList = indexesData
   .filter(indexData => indexData.sync)
   .map(_.property('indexBaseName'))
 
-const indexedEntitiesTypes = [
+export const indexedEntitiesTypes = [
   // inventaire and wikidata entities
   'works',
   'humans',
@@ -39,21 +39,11 @@ const indexedEntitiesTypes = [
   'movements',
 ]
 
-const socialTypes = [
+export const socialTypes = [
   'users',
   'groups',
   'shelves',
   'lists',
 ]
 
-const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
-
-module.exports = {
-  indexes,
-  indexesNamesByBaseNames,
-  indexesList,
-  syncIndexesList,
-  indexedTypes,
-  socialTypes,
-  indexedEntitiesTypes,
-}
+export const indexedTypes = indexedEntitiesTypes.concat(socialTypes)

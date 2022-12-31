@@ -1,4 +1,4 @@
-const getItemsByUsers = require('./lib/get_items_by_users')
+import getItemsByUsers from './lib/get_items_by_users'
 
 const sanitization = {
   users: {},
@@ -17,4 +17,4 @@ const sanitization = {
 
 const controller = params => getItemsByUsers(params)
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

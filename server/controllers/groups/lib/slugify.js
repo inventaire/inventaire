@@ -1,4 +1,4 @@
-module.exports = str => {
+export default str => {
   return str
   .trim()
   .toLowerCase()
