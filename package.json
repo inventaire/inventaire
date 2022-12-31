@@ -58,7 +58,6 @@
     "express-oauth-server": "^2.0.0",
     "fold-to-ascii": "^5.0.0",
     "formidable": "^1.0.17",
-    "git-hooks": "^1.1.10",
     "gm": "^1.23.1",
     "isbn-groups": "^2.0.1",
     "isbn3": "^1.1.27",
