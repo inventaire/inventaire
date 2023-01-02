@@ -2,7 +2,7 @@ import CONFIG from 'config'
 import express from 'express'
 import _ from '#builders/utils'
 import middlewares from './middlewares/middlewares.js'
-import routes from './controllers/routes.js'
+import { routes } from './controllers/routes.js'
 
 const { port, host, name, publicProtocol } = CONFIG
 
