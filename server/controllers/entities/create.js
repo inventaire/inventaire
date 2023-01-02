@@ -1,7 +1,6 @@
-import getEntityByUri from './lib/get_entity_by_uri'
-
-import inv from './lib/create_inv_entity'
-import wd from './lib/create_wd_entity'
+import getEntityByUri from './lib/get_entity_by_uri.js'
+import inv from './lib/create_inv_entity.js'
+import wd from './lib/create_wd_entity.js'
 
 const sanitization = {
   labels: {

@@ -1,10 +1,10 @@
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
-import transactions_ from './lib/transactions'
-import { verifyIsRequester, verifyIsOwner, verifyRightToInteract } from './lib/rights_verification'
-import { states, statesList } from 'models/attributes/transaction'
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
-import { Track } from 'lib/track'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
+import { states, statesList } from '#models/attributes/transaction'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import { Track } from '#lib/track'
+import { verifyIsRequester, verifyIsOwner, verifyRightToInteract } from './lib/rights_verification.js'
+import transactions_ from './lib/transactions.js'
 
 const sanitization = validateSanitization({
   transaction: {},

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import { verifySignature } from './lib/security'
-import error_ from 'lib/error/error'
-import Follow from './follow'
-import Undo from './undo'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { verifySignature } from './lib/security.js'
+import Follow from './follow.js'
+import Undo from './undo.js'
 
 const inboxActivityTypes = {
   Create: null,

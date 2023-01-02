@@ -1,10 +1,10 @@
-import CONFIG from 'config'
-import requests_ from 'lib/requests'
-import OAuth from 'oauth-1.0a'
 import crypto from 'node:crypto'
+import CONFIG from 'config'
+import OAuth from 'oauth-1.0a'
+import requests_ from '#lib/requests'
+import user_ from '#controllers/user/lib/user'
+import { parseQuery } from '#lib/utils/url'
 
-import user_ from 'controllers/user/lib/user'
-import { parseQuery } from 'lib/utils/url'
 const root = CONFIG.getPublicOrigin()
 const createHmacSha1Hash = (baseString, key) => {
   return crypto.createHmac('sha1', key)

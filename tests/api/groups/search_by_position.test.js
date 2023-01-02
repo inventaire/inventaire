@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { createGroup } from '../fixtures/groups'
-import { getRandomPosition } from '../fixtures/users'
-import { waitForIndexation } from '../utils/search'
-import { fixedEncodeURIComponent } from 'lib/utils/url'
+import _ from '#builders/utils'
+import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { createGroup } from '../fixtures/groups.js'
+import { getRandomPosition } from '../fixtures/users.js'
+import { waitForIndexation } from '../utils/search.js'
+
 const endpoint = '/api/groups?action=search-by-position'
 
 describe('groups:search-by-position', () => {

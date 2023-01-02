@@ -1,6 +1,7 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import properties from './properties_values_constraints'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import properties from './properties_values_constraints.js'
+
 const allowlist = Object.keys(properties)
 const allowset = new Set(allowlist)
 

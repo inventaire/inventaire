@@ -12,18 +12,18 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-import 'module-alias/register'
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import dbFactory from 'db/couchdb/base'
-import docDiff from 'db/couchdb/doc_diffs'
-import Entity from 'models/entity'
-import Patch from 'models/patch'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import dbFactory from '#db/couchdb/base'
+import docDiff from '#db/couchdb/doc_diffs'
+import Entity from '#models/entity'
+import Patch from '#models/patch'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 
 const entitiesDb = dbFactory('entities')
 const patchesDb = dbFactory('patches')
-const userId = require('db/couchdb/hard_coded_documents').users.updater._id
+const userId = hardCodedUsers.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
 const { getNextBatch, updateFn, stats } = require(updateFnFilePath)

@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import error_ from 'lib/error/error'
-import { fixedEncodeURIComponent } from 'lib/utils/url'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import error_ from '#lib/error/error'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
 

@@ -1,10 +1,11 @@
 import CONFIG from 'config'
-import error_ from 'lib/error/error'
-import { ControllerWrapper } from 'lib/controller_wrapper'
-import { makeUrl, getEntityUriFromActorName, getEntityActorName } from 'controllers/activitypub/lib/helpers'
-import { isEntityUri, isUsername } from 'lib/boolean_validations'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import { validateUser, validateShelf } from './lib/validations'
+import error_ from '#lib/error/error'
+import { ControllerWrapper } from '#lib/controller_wrapper'
+import { makeUrl, getEntityUriFromActorName, getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { validateUser, validateShelf } from './lib/validations.js'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 

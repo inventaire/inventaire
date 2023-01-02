@@ -1,4 +1,4 @@
-import formatError from './format_error'
+import formatError from './format_error.js'
 
 let assert_
 const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }

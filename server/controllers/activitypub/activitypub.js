@@ -1,4 +1,4 @@
-import ActionsControllers from 'lib/actions_controllers'
+import ActionsControllers from '#lib/actions_controllers'
 
 export default {
   get: ActionsControllers({

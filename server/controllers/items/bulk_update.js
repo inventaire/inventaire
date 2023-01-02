@@ -1,5 +1,5 @@
-import { bulkItemsUpdate } from 'controllers/items/lib/bulk_update'
-import { info } from 'lib/utils/logs'
+import { bulkItemsUpdate } from '#controllers/items/lib/bulk_update'
+import { info } from '#lib/utils/logs'
 
 const sanitization = {
   ids: {},

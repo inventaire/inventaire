@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import { byIds, byIdsWithItems } from 'controllers/shelves/lib/shelves'
-import { addWarning } from 'lib/responses'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
-import error_ from 'lib/error/error'
-import { filterPrivateAttributes } from 'controllers/shelves/lib/filter_private_attributes'
+import _ from '#builders/utils'
+import { byIds, byIdsWithItems } from '#controllers/shelves/lib/shelves'
+import { addWarning } from '#lib/responses'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import error_ from '#lib/error/error'
+import { filterPrivateAttributes } from '#controllers/shelves/lib/filter_private_attributes'
 
 const sanitization = {
   ids: {},

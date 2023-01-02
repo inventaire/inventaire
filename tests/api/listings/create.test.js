@@ -3,11 +3,11 @@ import {
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
-} from 'tests/api/utils/utils'
+} from '#tests/api/utils/utils'
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
+import { authReq } from '../utils/utils.js'
+import { listingName } from '../fixtures/listings.js'
 
-import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
-import { authReq } from '../utils/utils'
-import { listingName } from '../fixtures/listings'
 const endpoint = '/api/lists?action=create'
 
 describe('listings:create', () => {

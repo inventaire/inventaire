@@ -1,9 +1,10 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import error_ from 'lib/error/error'
-import { indexesNamesByBaseNames } from 'db/elasticsearch/indexes'
-import assert_ from './utils/assert_types'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import error_ from '#lib/error/error'
+import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import assert_ from './utils/assert_types.js'
+
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
 const buildSearcher = params => {

@@ -1,12 +1,13 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import wdEdit from 'lib/wikidata/edit'
-import wdOauth from './wikidata_oauth'
-import validateEntity from './validate_entity'
-import getEntityType from './get_entity_type'
-import properties from './properties/properties_values_constraints'
-import { prefixifyWd, unprefixify } from './prefix'
-import { relocateQualifierProperties } from 'lib/wikidata/data_model_adapter'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import wdEdit from '#lib/wikidata/edit'
+import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
+import wdOauth from './wikidata_oauth.js'
+import validateEntity from './validate_entity.js'
+import getEntityType from './get_entity_type.js'
+import properties from './properties/properties_values_constraints.js'
+import { prefixifyWd, unprefixify } from './prefix.js'
+
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
 export default async params => {

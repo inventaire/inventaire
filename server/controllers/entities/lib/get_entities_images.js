@@ -1,7 +1,7 @@
-import promises_ from 'lib/promises'
-import getEntitiesByUris from './get_entities_by_uris'
-import specialEntityImagesGetter from './special_entity_images_getter'
-import getEntityImagesFromClaims from './get_entity_images_from_claims'
+import promises_ from '#lib/promises'
+import getEntitiesByUris from './get_entities_by_uris.js'
+import specialEntityImagesGetter from './special_entity_images_getter.js'
+import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
 
 export default async (uris, refresh) => {
   const { entities } = await getEntitiesByUris({ uris, refresh })

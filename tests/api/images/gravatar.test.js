@@ -1,5 +1,6 @@
 import 'should'
-import { authReq } from '../utils/utils'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/images?action=gravatar'
 
 describe('images:gravatar', () => {

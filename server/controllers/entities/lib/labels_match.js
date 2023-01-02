@@ -1,4 +1,4 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 
 const haveExactMatch = (labels1, labels2) => {
   const formattedLabels1 = labels1.map(formatLabel)

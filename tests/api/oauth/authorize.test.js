@@ -1,7 +1,8 @@
-import { publicReq, authReq, rawAuthReq, shouldNotBeCalled } from '../utils/utils'
-import { getClient } from '../utils/oauth'
-import randomString from 'lib/utils/random_string'
-import { parseQuery } from 'lib/utils/url'
+import randomString from '#lib/utils/random_string'
+import { parseQuery } from '#lib/utils/url'
+import { publicReq, authReq, rawAuthReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getClient } from '../utils/oauth.js'
+
 const endpoint = '/api/oauth/authorize'
 
 describe('oauth:authorize', () => {

@@ -1,5 +1,6 @@
-import Item from 'models/item'
-import dbFactory from 'db/couchdb/base'
+import Item from '#models/item'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('items')
 
 let items_

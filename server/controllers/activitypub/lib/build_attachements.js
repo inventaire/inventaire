@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers'
-import platforms from './platforms'
-import propertiesDisplay from './properties_display.js'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
+import _ from '#builders/utils'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
+import platforms from './platforms.js'
+import propertiesDisplay from './properties_display.js.js'
+
 const typesWithAttachements = Object.keys(propertiesDisplay)
 
 export default async entity => {

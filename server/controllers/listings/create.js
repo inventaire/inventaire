@@ -1,4 +1,4 @@
-import listings_ from 'controllers/listings/lib/listings'
+import listings_ from '#controllers/listings/lib/listings'
 
 const sanitization = {
   name: {},

@@ -1,4 +1,6 @@
-import { useSlowPasswordHashFunction } from 'config'
+import CONFIG from 'config'
+
+const { useSlowPasswordHashFunction } = CONFIG
 
 let passwordHashing
 

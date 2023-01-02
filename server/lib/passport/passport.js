@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import user_ from 'controllers/user/lib/user'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import passport from 'passport'
+import _ from '#builders/utils'
+import user_ from '#controllers/user/lib/user'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
 
 passport.serializeUser((user, done) => {
   assert_.object(user)

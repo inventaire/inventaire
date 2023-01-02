@@ -1,7 +1,7 @@
-import { pass } from './common'
-import { types } from '../attributes/notification'
-import assert_ from 'lib/utils/assert_types'
-import Group from '../group'
+import assert_ from '#lib/utils/assert_types'
+import { types } from '../attributes/notification.js'
+import Group from '../group.js'
+import { pass } from './common.js'
 
 const validations = {
   pass,

@@ -1,12 +1,13 @@
-import _ from 'builders/utils'
 import CONFIG from 'config'
-import { expired } from 'lib/time'
-import dbFactory from 'db/level/get_sub_db'
-import sendDebouncedEmail from './send_debounced_email'
+import _ from '#builders/utils'
+import { expired } from '#lib/time'
+import dbFactory from '#db/level/get_sub_db'
+import sendDebouncedEmail from './send_debounced_email.js'
+
 const db = dbFactory('waiting', 'utf8')
 const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
-export default () => {
+export default function () {
   if (!disabled) setInterval(crawl, crawlPeriod)
 }
 

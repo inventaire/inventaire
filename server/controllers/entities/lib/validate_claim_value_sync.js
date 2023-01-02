@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import { validateValueType, propertyType } from './properties/validations'
-import properties from './properties/properties_values_constraints'
-import { isEntityId } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { isEntityId } from '#lib/boolean_validations'
+import { validateValueType, propertyType } from './properties/validations.js'
+import properties from './properties/properties_values_constraints.js'
 
 export default (property, value, entityType) => {
   if (!validateValueType(property, value)) {

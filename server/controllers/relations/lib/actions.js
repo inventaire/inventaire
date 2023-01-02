@@ -1,5 +1,5 @@
-import queries_ from './queries'
-import radio from 'lib/radio'
+import radio from '#lib/radio'
+import queries_ from './queries.js'
 
 export default {
   acceptRequest: async (userId, otherId) => {

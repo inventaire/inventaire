@@ -1,4 +1,4 @@
-import validations from './validations/notification'
+import validations from './validations/notification.js'
 
 export default {
   create: ({ user, type, data }) => {

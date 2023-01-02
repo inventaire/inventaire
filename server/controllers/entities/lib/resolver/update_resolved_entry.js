@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import entities_ from '../entities'
-import convertAndCleanupImageUrl from 'controllers/images/lib/convert_and_cleanup_image_url'
+import _ from '#builders/utils'
+import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import entities_ from '../entities.js'
 
 export default ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry

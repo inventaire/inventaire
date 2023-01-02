@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import error_ from 'lib/error/error'
-import { emit } from 'lib/radio'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import error_ from '#lib/error/error'
+import { emit } from '#lib/radio'
 
 const sanitization = {
   ids: {}

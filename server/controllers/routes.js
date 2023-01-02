@@ -1,8 +1,8 @@
 import CONFIG from 'config'
-import endpoint from './endpoint'
-import extensionsRedirections from './extensions_redirections'
-import glob from './glob'
-import oauthServer from './auth/oauth_server'
+import endpoint from './endpoint.js'
+import extensionsRedirections from './extensions_redirections.js'
+import glob from './glob.js'
+import oauthServer from './auth/oauth_server.js'
 
 // Routes structure:
 // 1 - api is the default prefix for server-side routes

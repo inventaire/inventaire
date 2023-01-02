@@ -1,4 +1,4 @@
-import { text, keyword, keywordArray, date } from './mappings_datatypes'
+import { text, keyword, keywordArray, date } from './mappings_datatypes.js'
 
 export default {
   properties: {

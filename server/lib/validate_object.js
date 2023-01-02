@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
 
 // Throws if the passed object doesn't respect the provided constraints:
 // - validKeys: a limited set of possible keys

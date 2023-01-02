@@ -1,7 +1,8 @@
-import pw from './password_hashing'
-import error_ from 'lib/error/error'
 import crypto from 'node:crypto'
 import { promisify } from 'node:util'
+import error_ from '#lib/error/error'
+import pw from './password_hashing.js'
+
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
 const passwords = {

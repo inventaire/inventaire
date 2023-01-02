@@ -1,6 +1,6 @@
-import publicActions from './public_actions'
-import ActionsControllers from 'lib/actions_controllers'
-import membersActions from './members_actions'
+import ActionsControllers from '#lib/actions_controllers'
+import publicActions from './public_actions.js'
+import membersActions from './members_actions.js'
 
 export default {
   get: ActionsControllers({

@@ -1,4 +1,4 @@
-import fetchExternalAuthorWorksTitles from 'data/lib/fetch_external_author_works_titles'
+import fetchExternalAuthorWorksTitles from '#data/lib/fetch_external_author_works_titles'
 
 const endpoint = 'https://datos.bne.es/sparql'
 

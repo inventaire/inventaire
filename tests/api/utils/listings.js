@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { customAuthReq } from './request'
+import _ from '#builders/utils'
+import { customAuthReq } from './request.js'
 
 const getByIds = async (user, ids, path) => {
   if (_.isArray(ids)) ids = ids.join('|')

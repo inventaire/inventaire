@@ -5,12 +5,12 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-import _ from 'builders/utils'
+import _ from '#builders/utils'
+import Entity from '#models/entity'
+import { emit } from '#lib/radio'
+import dbFactory from '#db/couchdb/base'
+import entities_ from './entities.js'
 
-import entities_ from './entities'
-import Entity from 'models/entity'
-import { emit } from 'lib/radio'
-import dbFactory from 'db/couchdb/base'
 const db = dbFactory('entities')
 
 const PlaceholderHandler = actionName => {

@@ -1,10 +1,10 @@
-import error_ from 'lib/error/error'
-import searchUsersItems from './lib/search_users_items'
-import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
-import { getGroupMembersIds } from 'controllers/groups/lib/groups'
-import { getOwnerIdAndVisibilityKeys } from 'controllers/items/lib/get_authorized_items'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
-import shelves_ from 'controllers/shelves/lib/shelves'
+import error_ from '#lib/error/error'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
+import { getGroupMembersIds } from '#controllers/groups/lib/groups'
+import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authorized_items'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import shelves_ from '#controllers/shelves/lib/shelves'
+import searchUsersItems from './lib/search_users_items.js'
 
 const sanitization = {
   user: { optional: true },

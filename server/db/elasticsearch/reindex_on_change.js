@@ -1,6 +1,6 @@
-import follow from 'lib/follow'
-import filters from './filters'
-import indexation from './indexation'
+import follow from '#lib/follow'
+import filters from './filters.js'
+import indexation from './indexation.js'
 
 export default indexBaseName => {
   follow({

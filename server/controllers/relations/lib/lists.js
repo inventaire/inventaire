@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import couch_ from 'lib/couch'
-import parseRelations from './parse_relations'
-import groups_ from 'controllers/groups/lib/groups'
-import dbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import couch_ from '#lib/couch'
+import groups_ from '#controllers/groups/lib/groups'
+import dbFactory from '#db/couchdb/base'
+import parseRelations from './parse_relations.js'
+
 const { minKey, maxKey } = couch_
 const db = dbFactory('users', 'relations')
 

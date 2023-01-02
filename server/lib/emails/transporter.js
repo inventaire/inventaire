@@ -1,10 +1,11 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
 import { createTransport, getTestMessageUrl } from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
-import handlebarsHelpers from './handlebars_helpers'
-const __ = CONFIG.universalPath
-const viewsPath = __.path('lib', 'emails/views')
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
+import handlebarsHelpers from './handlebars_helpers.js'
+
+const viewsPath = absolutePath('lib', 'emails/views')
 const debugMode = CONFIG.mailer.nodemailer.host === 'smtp.ethereal.email'
 
 const options = {

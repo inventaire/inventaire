@@ -1,12 +1,12 @@
-import activities_ from './lib/activities'
-import formatUserItemsActivities from './lib/format_user_items_activities'
-import formatShelfItemsActivities from './lib/format_shelf_items_activities'
-import { isEntityActivityId } from './lib/helpers'
-import { isCouchUuid } from 'lib/boolean_validations'
-import error_ from 'lib/error/error'
-import patches_ from 'controllers/entities/lib/patches/patches'
-import { getActivitiesFromPatch } from './lib/entity_patch_activities'
-import { validateShelf, validateUser } from './lib/validations'
+import { isCouchUuid } from '#lib/boolean_validations'
+import error_ from '#lib/error/error'
+import patches_ from '#controllers/entities/lib/patches/patches'
+import activities_ from './lib/activities.js'
+import formatUserItemsActivities from './lib/format_user_items_activities.js'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
+import { isEntityActivityId } from './lib/helpers.js'
+import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
+import { validateShelf, validateUser } from './lib/validations.js'
 
 const sanitization = {
   id: {

@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import { createHuman, createWork } from './entities'
-import { checkEntities } from '../utils/tasks'
-import { createInBulk } from 'controllers/tasks/lib/tasks'
+import _ from '#builders/utils'
+import { createInBulk } from '#controllers/tasks/lib/tasks'
+import { checkEntities } from '../utils/tasks.js'
+import { createHuman, createWork } from './entities.js'
+
 const promises = {}
 
 export default {

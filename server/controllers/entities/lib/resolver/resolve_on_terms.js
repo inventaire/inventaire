@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import getWorksFromAuthorsUris from './get_works_from_authors_uris'
-import typeSearch from 'controllers/search/lib/type_search'
-import { getEntityNormalizedTerms } from '../terms_normalization'
-import getAuthorsUris from '../get_authors_uris'
-import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources'
-import { hasConvincingOccurrences } from 'server/controllers/tasks/lib/automerge'
+import _ from '#builders/utils'
+import typeSearch from '#controllers/search/lib/type_search'
+import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
+import { getEntityNormalizedTerms } from '../terms_normalization.js'
+import getAuthorsUris from '../get_authors_uris.js'
+import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources.js'
+import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
 
 // resolve :
 // - if seeds terms match entities terms

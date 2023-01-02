@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import User from 'models/user'
-import { getUserAccessLevels } from 'lib/user_access_levels'
+import _ from '#builders/utils'
+import User from '#models/user'
+import { getUserAccessLevels } from '#lib/user_access_levels'
 
 const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)

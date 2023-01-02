@@ -1,7 +1,7 @@
 import should from 'should'
-import { shouldNotBeCalled } from '../utils/utils'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities'
-import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities'
+import { shouldNotBeCalled } from '../utils/utils.js'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities.js'
+import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
 describe('entities:update-claims', () => {
   it('should reject without uri', async () => {

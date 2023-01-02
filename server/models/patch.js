@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import jiff from 'jiff'
-import validations from './validations/common'
-import { versioned } from './attributes/entity'
-import Entity from 'models/entity'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import Entity from '#models/entity'
+import validations from './validations/common.js'
+import { versioned } from './attributes/entity.js'
 
 const Patch = {
   create: params => {

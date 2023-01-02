@@ -1,9 +1,10 @@
 import CONFIG from 'config'
 import 'should'
-import { rawRequest } from '../utils/request'
-import { getUser } from '../utils/utils'
-import { getSomeGroup } from '../fixtures/groups'
-import { createShelf } from '../fixtures/shelves'
+import { rawRequest } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+import { getSomeGroup } from '../fixtures/groups.js'
+import { createShelf } from '../fixtures/shelves.js'
+
 const host = CONFIG.getPublicOrigin()
 
 describe('rss redirections', () => {

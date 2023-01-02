@@ -1,6 +1,6 @@
-import { pass, BoundedString, userId } from './common'
-import { isColorHexCode } from 'lib/boolean_validations'
-import { isVisibilityKeyArray } from 'models/validations/visibility'
+import { isColorHexCode } from '#lib/boolean_validations'
+import { isVisibilityKeyArray } from '#models/validations/visibility'
+import { pass, BoundedString, userId } from './common.js'
 
 export default {
   pass,

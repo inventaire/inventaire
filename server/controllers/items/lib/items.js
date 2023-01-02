@@ -1,14 +1,15 @@
-import _ from 'builders/utils'
-import Item from 'models/item'
-import assert_ from 'lib/utils/assert_types'
-import { BasicUpdater } from 'lib/doc_updates'
-import { emit } from 'lib/radio'
-import { filterPrivateAttributes } from './filter_private_attributes'
-import snapshot_ from './snapshot/snapshot'
-import dbFactory from 'db/couchdb/base'
-import error_ from 'lib/error/error'
-import { validateItemsAsync } from './validate_item_async'
-import { addItemsSnapshots } from 'controllers/items/lib/queries_commons'
+import _ from '#builders/utils'
+import Item from '#models/item'
+import assert_ from '#lib/utils/assert_types'
+import { BasicUpdater } from '#lib/doc_updates'
+import { emit } from '#lib/radio'
+import dbFactory from '#db/couchdb/base'
+import error_ from '#lib/error/error'
+import { addItemsSnapshots } from '#controllers/items/lib/queries_commons'
+import { filterPrivateAttributes } from './filter_private_attributes.js'
+import snapshot_ from './snapshot/snapshot.js'
+import { validateItemsAsync } from './validate_item_async.js'
+
 const db = dbFactory('items')
 
 const items_ = {

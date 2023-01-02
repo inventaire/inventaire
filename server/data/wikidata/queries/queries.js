@@ -1,10 +1,10 @@
-import authorWorks from './author_works'
-import serieParts from './serie_parts'
-import publisherCollections from './publisher_collections'
-import editionsReverseClaims from './editions_reverse_claims'
-import worksReverseClaims from './works_reverse_claims'
-import humansReverseClaims from './humans_reverse_claims'
-import resolveExternalIds from './resolve_external_ids'
+import authorWorks from './author_works.js'
+import serieParts from './serie_parts.js'
+import publisherCollections from './publisher_collections.js'
+import editionsReverseClaims from './editions_reverse_claims.js'
+import worksReverseClaims from './works_reverse_claims.js'
+import humansReverseClaims from './humans_reverse_claims.js'
+import resolveExternalIds from './resolve_external_ids.js'
 
 const queries = {
   author_works: authorWorks,

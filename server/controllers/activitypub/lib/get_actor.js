@@ -1,9 +1,10 @@
 import CONFIG from 'config'
-import { validateShelf, validateUser, validateEntity } from './validations'
-import { getSharedKeyPair } from './shared_key_pair'
-import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers'
-import { unprefixify } from 'controllers/entities/lib/prefix'
-import buildAttachements from './build_attachements'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { validateShelf, validateUser, validateEntity } from './validations.js'
+import { getSharedKeyPair } from './shared_key_pair.js'
+import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
+import buildAttachements from './build_attachements.js'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 

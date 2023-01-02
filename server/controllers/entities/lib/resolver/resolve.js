@@ -1,7 +1,7 @@
-import resolveEdition from './resolve_edition'
-import { resolveAuthorsByExternalIds, resolveWorksByExternalIds } from './resolve_by_external_ids'
-import resolveInContext from './resolve_in_context'
-import resolveOnTerms from './resolve_on_terms'
+import resolveEdition from './resolve_edition.js'
+import { resolveAuthorsByExternalIds, resolveWorksByExternalIds } from './resolve_by_external_ids.js'
+import resolveInContext from './resolve_in_context.js'
+import resolveOnTerms from './resolve_on_terms.js'
 
 export default async entry => {
   await Promise.all([

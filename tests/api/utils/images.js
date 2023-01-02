@@ -1,17 +1,18 @@
 import 'should'
-import CONFIG from 'config'
-import randomString from 'lib/utils/random_string'
 import fs, { createReadStream } from 'node:fs'
-import downloadImage from 'controllers/images/lib/download_image'
-import { authReq, getUser } from '../utils/utils'
+import CONFIG from 'config'
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import assert_ from 'lib/utils/assert_types'
-import { createEdition } from '../fixtures/entities'
-import { updateClaim } from './entities'
-import { createGroup } from '../fixtures/groups'
-import { updateGroup } from '../utils/groups'
-import { updateUser } from './users'
+import downloadImage from '#controllers/images/lib/download_image'
+import randomString from '#lib/utils/random_string'
+import assert_ from '#lib/utils/assert_types'
+import { authReq, getUser } from '../utils/utils.js'
+import { createEdition } from '../fixtures/entities.js'
+import { createGroup } from '../fixtures/groups.js'
+import { updateGroup } from '../utils/groups.js'
+import { updateClaim } from './entities.js'
+import { updateUser } from './users.js'
+
 const { mediaStorage } = CONFIG
 const host = CONFIG.getPublicOrigin()
 mediaStorage.mode.should.equal('local')

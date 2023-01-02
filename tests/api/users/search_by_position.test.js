@@ -1,9 +1,10 @@
 import should from 'should'
-import { publicReq, customAuthReq, getUser } from '../utils/utils'
-import { createUser, getRandomPosition } from '../fixtures/users'
-import { makeFriends } from '../utils/relations'
-import { waitForIndexation } from '../utils/search'
-import { fixedEncodeURIComponent } from 'lib/utils/url'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { publicReq, customAuthReq, getUser } from '../utils/utils.js'
+import { createUser, getRandomPosition } from '../fixtures/users.js'
+import { makeFriends } from '../utils/relations.js'
+import { waitForIndexation } from '../utils/search.js'
+
 const position = getRandomPosition()
 const [ lat, lng ] = position
 const someUserWithPosition = createUser({ position })

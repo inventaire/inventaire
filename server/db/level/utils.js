@@ -1,4 +1,4 @@
-import { forceArray } from 'builders/utils'
+import { forceArray } from '#builders/utils'
 
 export default {
   formatBatchOps: ops => forceArray(ops).map(setDefaultType),

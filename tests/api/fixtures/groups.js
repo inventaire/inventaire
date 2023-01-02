@@ -1,6 +1,7 @@
-import { getGroup } from 'tests/api/utils/groups'
-import { getUser, getUserB, customAuthReq, getReservedUser } from '../utils/utils'
-import fakeText from './text'
+import { getGroup } from '#tests/api/utils/groups'
+import { getUser, getUserB, customAuthReq, getReservedUser } from '../utils/utils.js'
+import fakeText from './text.js'
+
 const endpointBase = '/api/groups'
 
 const createGroup = (params = {}) => {

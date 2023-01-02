@@ -1,7 +1,7 @@
-import entities_ from 'controllers/entities/lib/entities'
-import getInvEntityCanonicalUri from 'controllers/entities/lib/get_inv_entity_canonical_uri'
 import ASCIIFolder from 'fold-to-ascii'
-import { normalizeString } from 'lib/utils/base'
+import entities_ from '#controllers/entities/lib/entities'
+import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { normalizeString } from '#lib/utils/base'
 
 export default async (editionSeed, worksSeeds) => {
   if (editionSeed.uri) return

@@ -1,7 +1,7 @@
-import error_ from 'lib/error/error'
 import wdk from 'wikidata-sdk'
-import wdEdit from 'lib/wikidata/edit'
-import wdOauth from './wikidata_oauth'
+import error_ from '#lib/error/error'
+import wdEdit from '#lib/wikidata/edit'
+import wdOauth from './wikidata_oauth.js'
 
 export default async (user, id, language, value) => {
   if (!wdk.isItemId(id)) throw error_.newInvalid('id', id)

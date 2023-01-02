@@ -1,6 +1,6 @@
-import user_ from 'controllers/user/lib/user'
-import groups_ from 'controllers/groups/lib/groups'
-import Group from 'models/group'
+import user_ from '#controllers/user/lib/user'
+import groups_ from '#controllers/groups/lib/groups'
+import Group from '#models/group'
 
 export default async (groupId, reqUserId) => {
   const group = await groups_.byId(groupId)

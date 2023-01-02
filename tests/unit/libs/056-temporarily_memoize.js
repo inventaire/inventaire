@@ -1,6 +1,7 @@
 import 'should'
-import { wait } from 'lib/promises'
-import temporarilyMemoize from 'lib/temporarily_memoize'
+import { wait } from '#lib/promises'
+import temporarilyMemoize from '#lib/temporarily_memoize'
+
 const ttlAfterFunctionCallReturned = 200
 
 describe('temporarily memoize', () => {

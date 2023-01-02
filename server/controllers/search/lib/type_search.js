@@ -1,17 +1,18 @@
-import requests_ from 'lib/requests'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import CONFIG from 'config'
-import { formatError, getHitsAndTotal } from 'lib/elasticsearch'
+import requests_ from '#lib/requests'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import {
   indexesNamesByBaseNames as indexes,
   indexedTypes,
   indexedEntitiesTypes,
   socialTypes,
-} from 'db/elasticsearch/indexes'
-import entitiesQueryBuilder from './entities_query_builder'
-import socialQueryBuilder from './social_query_builder'
-import { someMatch } from 'lib/utils/base'
+} from '#db/elasticsearch/indexes'
+import { someMatch } from '#lib/utils/base'
+import entitiesQueryBuilder from './entities_query_builder.js'
+import socialQueryBuilder from './social_query_builder.js'
+
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
 const indexedTypesSet = new Set(indexedTypes)

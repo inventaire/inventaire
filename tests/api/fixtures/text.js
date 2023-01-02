@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import { universalPath as __ } from 'config'
-import randomString from 'lib/utils/random_string'
 import { readFileSync } from 'node:fs'
+import _ from '#builders/utils'
+import randomString from '#lib/utils/random_string'
+import { absolutePath } from '#lib/absolute_path'
 
 const getFixtureWords = filename => {
-  return readFileSync(__.path('tests', `api/fixtures/${filename}`))
+  return readFileSync(absolutePath('tests', `api/fixtures/${filename}`))
   .toString()
   .split('\n')
 }

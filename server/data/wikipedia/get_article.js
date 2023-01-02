@@ -1,8 +1,8 @@
-import requests_ from 'lib/requests'
-import error_ from 'lib/error/error'
-import cache_ from 'lib/cache'
-import { buildUrl } from 'lib/utils/url'
 import { getSitelinkUrl } from 'wikidata-sdk'
+import requests_ from '#lib/requests'
+import error_ from '#lib/error/error'
+import cache_ from '#lib/cache'
+import { buildUrl } from '#lib/utils/url'
 
 export default params => {
   const { lang, title, introOnly } = params

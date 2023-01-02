@@ -1,6 +1,7 @@
 import 'should'
-import { publicReq, shouldNotBeCalled } from '../utils/utils'
-import slugify from 'controllers/groups/lib/slugify'
+import slugify from '#controllers/groups/lib/slugify'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=slug'
 
 describe('groups:get:slug', () => {

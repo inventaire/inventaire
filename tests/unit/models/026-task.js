@@ -1,6 +1,6 @@
 import 'should'
-import Task from 'models/task'
-import { expired } from 'lib/time'
+import Task from '#models/task'
+import { expired } from '#lib/time'
 
 const validDoc = () => ({
   type: 'deduplicate',

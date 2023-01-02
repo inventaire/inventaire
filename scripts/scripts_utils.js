@@ -1,6 +1,7 @@
-import _ from 'builders/utils'
-import { red } from 'chalk'
 import { promisify } from 'node:util'
+import { red } from 'tiny-chalk'
+import _ from '#builders/utils'
+
 const exec = promisify(require('node:child_process').exec)
 
 export default {

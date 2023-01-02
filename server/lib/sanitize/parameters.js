@@ -1,14 +1,15 @@
-import _ from 'builders/utils'
 import CONFIG from 'config'
-import { isNonEmptyArray, isLocalActivityPubActorUrl } from 'lib/boolean_validations'
-import error_ from 'lib/error/error'
-import { truncateLatLng } from 'lib/geo'
-import { isValidIsbn } from 'lib/isbn/isbn'
-import { normalizeString } from 'lib/utils/base'
-import { isWikimediaLanguageCode } from 'lib/wikimedia'
-import { isVisibilityKey, isVisibilityKeyArray } from 'models/validations/visibility'
-import common from 'models/validations/common'
-import user from 'models/validations/user'
+import _ from '#builders/utils'
+import { isNonEmptyArray, isLocalActivityPubActorUrl } from '#lib/boolean_validations'
+import error_ from '#lib/error/error'
+import { truncateLatLng } from '#lib/geo'
+import { isValidIsbn } from '#lib/isbn/isbn'
+import { normalizeString } from '#lib/utils/base'
+import { isWikimediaLanguageCode } from '#lib/wikimedia'
+import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
+import common from '#models/validations/common'
+import user from '#models/validations/user'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 

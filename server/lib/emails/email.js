@@ -1,10 +1,10 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import { buildUrl } from 'lib/utils/url'
-import checkUserNotificationsSettings from './check_user_notifications_settings'
-import { i18n } from './i18n/i18n'
-import { kmBetween } from 'lib/geo'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import { buildUrl } from '#lib/utils/url'
+import { kmBetween } from '#lib/geo'
+import checkUserNotificationsSettings from './check_user_notifications_settings.js'
+import { i18n } from './i18n/i18n.js'
 
 const host = CONFIG.getPublicOrigin()
 const { defaultFrom } = CONFIG.mailer

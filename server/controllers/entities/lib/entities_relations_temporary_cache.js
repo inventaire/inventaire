@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
 import CONFIG from 'config'
-import dbFactory from 'db/level/get_sub_db'
-import radio from 'lib/radio'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import dbFactory from '#db/level/get_sub_db'
+import radio from '#lib/radio'
 
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 

@@ -2,11 +2,10 @@
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)
 
-import _ from 'builders/utils'
-
-import radio from 'lib/radio'
-import Transaction from 'models/transaction'
-import items_ from 'controllers/items/lib/items'
+import _ from '#builders/utils'
+import radio from '#lib/radio'
+import Transaction from '#models/transaction'
+import items_ from '#controllers/items/lib/items'
 
 export default () => radio.on('transaction:update', applySideEffects)
 

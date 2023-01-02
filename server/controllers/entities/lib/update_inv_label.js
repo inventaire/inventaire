@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import entities_ from './entities'
-import retryOnConflict from 'lib/retry_on_conflict'
-import updateLabel from './update_label'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import retryOnConflict from '#lib/retry_on_conflict'
+import entities_ from './entities.js'
+import updateLabel from './update_label.js'
 
 const updateInvLabel = async (user, id, lang, value) => {
   const { _id: reqUserId } = user

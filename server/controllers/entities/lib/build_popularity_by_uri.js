@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import getSerieParts from './get_serie_parts'
+import _ from '#builders/utils'
+import getSerieParts from './get_serie_parts.js'
 
 let items_, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
 const requireCircularDependencies = () => {

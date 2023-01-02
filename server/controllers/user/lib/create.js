@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import preventMultiAccountsCreation from './prevent_multi_accounts_creation'
-import invitations_ from 'controllers/invitations/lib/invitations'
-import User from 'models/user'
-import dbFactory from 'db/couchdb/base'
-import token_ from './token'
-import availability_ from './availability'
+import _ from '#builders/utils'
+import invitations_ from '#controllers/invitations/lib/invitations'
+import User from '#models/user'
+import dbFactory from '#db/couchdb/base'
+import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
+import token_ from './token.js'
+import availability_ from './availability.js'
+
 const db = dbFactory('users')
 
 export default async (username, email, creationStrategy, language, password) => {

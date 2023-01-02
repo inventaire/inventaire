@@ -1,5 +1,5 @@
-import ActionsControllers from 'lib/actions_controllers'
-import { authorWorks, serieParts, publisherPublications } from './get_entity_relatives'
+import ActionsControllers from '#lib/actions_controllers'
+import { authorWorks, serieParts, publisherPublications } from './get_entity_relatives.js'
 
 export default {
   get: ActionsControllers({

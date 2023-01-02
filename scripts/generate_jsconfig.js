@@ -4,15 +4,19 @@
 // (see https://code.visualstudio.com/docs/languages/jsconfig)
 // while not duplicating module aliases
 
-import { _moduleAliases } from '../package.json'
+import { fileURLToPath } from 'url'
+import { requireJson } from '#lib/utils/json'
+import { absolutePath } from '#lib/absolute_path'
 
-const filename = __filename.replace(`${process.cwd()}/`, '')
+const pkg = requireJson(absolutePath('root', 'package.json'))
+
+const filename = fileURLToPath(import.meta.url)
 
 const jsconfig = {
   __generatedBy: filename,
   compilerOptions: {
-    target: 'es2020',
-    module: 'commonJS',
+    target: 'esnext',
+    module: 'esnext',
     moduleResolution: 'node',
     baseUrl: '.',
     paths: {}
@@ -25,11 +29,9 @@ const jsconfig = {
   ],
 }
 
-for (const alias in _moduleAliases) {
-  let aliasPath = _moduleAliases[alias]
+for (let [ alias, aliasPath ] of Object.entries(pkg.imports)) {
   if (aliasPath.match(/^\w+/)) aliasPath = `./${aliasPath}`
-  aliasPath = aliasPath === '.' ? '*' : `${aliasPath}/*`
-  jsconfig.compilerOptions.paths[`${alias}/*`] = [ aliasPath ]
+  jsconfig.compilerOptions.paths[`${alias}`] = [ aliasPath ]
 }
 
 process.stdout.write(`${JSON.stringify(jsconfig, null, 2)}\n`)

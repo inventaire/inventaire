@@ -1,9 +1,10 @@
-import groups_ from 'controllers/groups/lib/groups'
-import { getAllowedVisibilityKeys } from 'lib/visibility/allowed_visibility_keys'
-import dbFactory from 'db/couchdb/base'
-import _ from 'builders/utils'
-import { uniqByKey } from 'lib/utils/base'
-import { getGroupVisibilityKey } from 'lib/visibility/visibility'
+import groups_ from '#controllers/groups/lib/groups'
+import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
+import dbFactory from '#db/couchdb/base'
+import _ from '#builders/utils'
+import { uniqByKey } from '#lib/utils/base'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+
 const db = dbFactory('items')
 
 const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {

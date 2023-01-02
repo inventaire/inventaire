@@ -1,4 +1,4 @@
-import { BasicUpdater } from 'lib/doc_updates'
+import { BasicUpdater } from '#lib/doc_updates'
 
 const mapResult = (res, type) => res.rows.map(row => row[type])
 

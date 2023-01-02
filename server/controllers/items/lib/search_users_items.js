@@ -1,5 +1,6 @@
-import error_ from 'lib/error/error'
-import { buildSearcher } from 'lib/elasticsearch'
+import error_ from '#lib/error/error'
+import { buildSearcher } from '#lib/elasticsearch'
+
 const textFields = [
   'snapshot.entity:title',
   'snapshot.entity:subtitle',

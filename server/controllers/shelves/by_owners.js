@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import { filterPrivateAttributes } from 'controllers/shelves/lib/filter_private_attributes'
-import shelves_ from 'controllers/shelves/lib/shelves'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import _ from '#builders/utils'
+import { filterPrivateAttributes } from '#controllers/shelves/lib/filter_private_attributes'
+import shelves_ from '#controllers/shelves/lib/shelves'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
   owners: {},

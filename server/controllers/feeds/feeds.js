@@ -1,11 +1,11 @@
-import error_ from 'lib/error/error'
-import headers_ from 'lib/headers'
-import getAuthentifiedUser from './lib/get_authentified_user'
-import userFeedData from './lib/user_feed_data'
-import groupFeedData from './lib/group_feed_data'
-import shelfFeedData from './lib/shelf_feed_data'
-import generateFeedFromFeedData from './lib/generate_feed_from_feed_data'
-import { ControllerWrapper } from 'lib/controller_wrapper'
+import error_ from '#lib/error/error'
+import headers_ from '#lib/headers'
+import { ControllerWrapper } from '#lib/controller_wrapper'
+import getAuthentifiedUser from './lib/get_authentified_user.js'
+import userFeedData from './lib/user_feed_data.js'
+import groupFeedData from './lib/group_feed_data.js'
+import shelfFeedData from './lib/shelf_feed_data.js'
+import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
 
 const sanitization = {
   user: {

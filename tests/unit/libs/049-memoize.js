@@ -1,6 +1,6 @@
 
 import 'should'
-import memoize from 'lib/utils/memoize'
+import memoize from '#lib/utils/memoize'
 
 describe('memoize', () => {
   it('should be a function', () => {

@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import groups_ from './groups'
+import _ from '#builders/utils'
+import groups_ from './groups.js'
 
 export default {
   pendingGroupInvitationsCount: userId => {

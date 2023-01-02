@@ -1,8 +1,10 @@
-import _ from 'builders/utils'
-import { Wait } from 'lib/promises'
-import mergeEntities from 'controllers/entities/lib/merge_entities'
-import automergeAuthorWorks from './automerge_author_works'
-const { _id: reconcilerUserId } = require('db/couchdb/hard_coded_documents').users.reconciler
+import _ from '#builders/utils'
+import { Wait } from '#lib/promises'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import automergeAuthorWorks from './automerge_author_works.js'
+
+const { _id: reconcilerUserId } = hardCodedUsers.reconciler
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough

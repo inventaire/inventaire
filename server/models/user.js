@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import { passwords as pw_ } from 'lib/crypto'
-import assert_ from 'lib/utils/assert_types'
-import error_ from 'lib/error/error'
-import randomString from 'lib/utils/random_string'
-import { truncateLatLng } from 'lib/geo'
-import { normalizeString } from 'lib/utils/base'
+import _ from '#builders/utils'
+import { passwords as pw_ } from '#lib/crypto'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import randomString from '#lib/utils/random_string'
+import { truncateLatLng } from '#lib/geo'
+import { normalizeString } from '#lib/utils/base'
+
 const generateReadToken = randomString.bind(null, 32)
 
 const User = {}

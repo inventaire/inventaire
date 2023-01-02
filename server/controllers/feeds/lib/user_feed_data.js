@@ -1,4 +1,4 @@
-import user_ from 'controllers/user/lib/user'
+import user_ from '#controllers/user/lib/user'
 
 export default async (userId, reqUserId) => {
   const user = await user_.byId(userId)

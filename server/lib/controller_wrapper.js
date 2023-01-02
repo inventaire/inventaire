@@ -1,11 +1,11 @@
-import { someMatch } from 'builders/utils'
-import error_ from 'lib/error/error'
-import validateObject from 'lib/validate_object'
-import { rolesByAccess } from './user_access_levels'
-import { send } from './responses'
-import { sanitize, validateSanitization } from './sanitize/sanitize'
-import { track } from './track'
-import assert_ from './utils/assert_types'
+import { someMatch } from '#builders/utils'
+import error_ from '#lib/error/error'
+import validateObject from '#lib/validate_object'
+import { rolesByAccess } from './user_access_levels.js'
+import { send } from './responses.js'
+import { sanitize, validateSanitization } from './sanitize/sanitize.js'
+import { track } from './track.js'
+import assert_ from './utils/assert_types.js'
 
 // A function to do the basic operations most controllers will need:
 // - check access rights

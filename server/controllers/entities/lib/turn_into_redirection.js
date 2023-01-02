@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import entities_ from './entities'
-import Entity from 'models/entity'
-import placeholders_ from './placeholders'
-import propagateRedirection from './propagate_redirection'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import Entity from '#models/entity'
+import entities_ from './entities.js'
+import placeholders_ from './placeholders.js'
+import propagateRedirection from './propagate_redirection.js'
 
 export default async ({ userId, fromId, toUri, previousToUri, context }) => {
   assert_.strings([ userId, fromId, toUri ])

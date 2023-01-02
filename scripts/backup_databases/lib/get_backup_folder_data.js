@@ -1,7 +1,8 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
 import fs from 'node:fs'
 import path from 'node:path'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+
 const day = _.simpleDay()
 const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
 const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)

@@ -1,4 +1,4 @@
-import { buildUrl } from 'lib/utils/url'
+import { buildUrl } from '#lib/utils/url'
 import 'should'
 
 describe('url utils', () => {

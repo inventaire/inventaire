@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import { get } from 'lib/requests'
-import { wait } from 'lib/promises'
 import CONFIG from 'config'
-import { indexesList, syncIndexesList } from 'db/elasticsearch/indexes'
-import createIndex from './create_index'
-import reindexOnChange from './reindex_on_change'
+import _ from '#builders/utils'
+import { get } from '#lib/requests'
+import { wait } from '#lib/promises'
+import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
+import createIndex from './create_index.js'
+import reindexOnChange from './reindex_on_change.js'
+
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
 export default async () => {

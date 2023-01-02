@@ -1,15 +1,16 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import couch_ from 'lib/couch'
-import User from 'models/user'
-import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers'
-import { omitPrivateData } from './authorized_user_data_pickers'
-import dbFactory from 'db/couchdb/base'
-import { getNetworkIds } from 'controllers/user/lib/relations_status'
-import { defaultAvatar } from 'lib/assets'
-import searchUsersByPositionFactory from 'lib/search_by_position'
-import searchUsersByDistanceFactory from 'lib/search_by_distance'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import couch_ from '#lib/couch'
+import User from '#models/user'
+import dbFactory from '#db/couchdb/base'
+import { getNetworkIds } from '#controllers/user/lib/relations_status'
+import { defaultAvatar } from '#lib/assets'
+import searchUsersByPositionFactory from '#lib/search_by_position'
+import searchUsersByDistanceFactory from '#lib/search_by_distance'
+import { omitPrivateData } from './authorized_user_data_pickers.js'
+import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
+
 const db = dbFactory('users')
 const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
 const searchUsersByDistance = searchUsersByDistanceFactory('users')

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import snapshot_ from './lib/snapshot/snapshot'
-import error_ from 'lib/error/error'
-import { track } from 'lib/track'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import error_ from '#lib/error/error'
+import { track } from '#lib/track'
+import snapshot_ from './lib/snapshot/snapshot.js'
 
 export default async (req, res) => {
   let { body: items, user } = req

@@ -1,6 +1,6 @@
-import { flatten, pick, values } from 'lodash'
+import { flatten, pick, values } from 'lodash-es'
 import { simplify } from 'wikidata-sdk'
-import { unprefixify } from './prefix'
+import { unprefixify } from './prefix.js'
 
 const imageClaims = [
   // image

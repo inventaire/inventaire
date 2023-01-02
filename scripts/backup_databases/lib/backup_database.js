@@ -1,7 +1,6 @@
-import 'module-alias/register'
-import _ from 'builders/utils'
-import { shellExec } from 'scripts/scripts_utils'
-import { backupFolder } from './get_backup_folder_data'
+import _ from '#builders/utils'
+import { shellExec } from '#scripts/scripts_utils'
+import { backupFolder } from './get_backup_folder_data.js'
 
 export default async params => {
   const { dbName } = params

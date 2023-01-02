@@ -1,5 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises'
-import assert_ from './assert_types'
+import { createRequire } from 'module'
+import assert_ from './assert_types.js'
 
 const stringify = data => JSON.stringify(data, null, 2)
 
@@ -17,3 +18,9 @@ export default {
     return writeFile(path, json)
   }
 }
+
+// Importing JSON is still experimental in Node v18 https://nodejs.org/api/esm.html#import-assertions
+// so ESlint doesn't support it and complains with "Parsing error: Unexpected token assert"
+// thus this work around to require json files the old CommonJS way
+// See https://www.stefanjudis.com/snippets/how-to-import-json-files-in-es-modules-node-js/
+export const requireJson = createRequire(import.meta.url)

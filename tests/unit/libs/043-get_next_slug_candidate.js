@@ -1,6 +1,6 @@
 
 import 'should'
-import getNextSlugCandidate from 'controllers/groups/lib/get_next_slug_candidate'
+import getNextSlugCandidate from '#controllers/groups/lib/get_next_slug_candidate'
 
 describe('get next slug candidate', () => {
   it('should return an iterated slug', () => {

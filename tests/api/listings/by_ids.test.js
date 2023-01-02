@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { publicReq, authReq, authReqB } from '../utils/utils'
-import { createListing, createElement } from '../fixtures/listings'
-import { someCouchUuid } from 'tests/api/fixtures/general'
+import _ from '#builders/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { someCouchUuid } from '#tests/api/fixtures/general'
+import { publicReq, authReq, authReqB } from '../utils/utils.js'
+import { createListing, createElement } from '../fixtures/listings.js'
 
 const endpoint = '/api/lists?action=by-ids'
 

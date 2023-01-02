@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import groups_ from './lib/groups'
-import getGroupPublicData from './lib/group_public_data'
-import { get as getSlug } from './lib/slug'
+import _ from '#builders/utils'
+import groups_ from './lib/groups.js'
+import getGroupPublicData from './lib/group_public_data.js'
+import { get as getSlug } from './lib/slug.js'
 
 export default {
   byId: {

@@ -1,8 +1,8 @@
-import { universalPath as __ } from 'config'
-import _ from 'builders/utils'
-import { readJsonFile, writeJsonFile } from 'lib/utils/json'
 import { isPropertyId } from 'wikidata-sdk'
-import { wait } from './promises'
+import _ from '#builders/utils'
+import { readJsonFile, writeJsonFile } from '#lib/utils/json'
+import { absolutePath } from '#lib/absolute_path'
+import { wait } from './promises.js'
 
 export default {
   appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
@@ -38,9 +38,9 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
   }
 }
 
-const full = __.path('i18nSrc', 'fullkey.en.json')
-const short = __.path('i18nSrc', 'shortkey.en.json')
-const server = __.path('i18nSrc', 'server.en.json')
+const full = absolutePath('i18nSrc', 'fullkey.en.json')
+const short = absolutePath('i18nSrc', 'shortkey.en.json')
+const server = absolutePath('i18nSrc', 'server.en.json')
 
 const reorder = keys => {
   const reordered = {}

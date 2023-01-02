@@ -1,9 +1,10 @@
 // Keep in sync with client/app/lib/boolean_tests
-import _ from 'lodash'
+import _ from 'lodash-es'
 import CONFIG from 'config'
 import wdk from 'wikidata-sdk'
-import regex_ from 'lib/regex'
-import { isNormalizedIsbn } from './isbn/isbn'
+import * as regex_ from '#lib/regex'
+import { isNormalizedIsbn } from './isbn/isbn.js'
+
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = CONFIG.getPublicOrigin()
 

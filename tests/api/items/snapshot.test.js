@@ -1,8 +1,7 @@
 import 'should'
-import { wait } from 'lib/promises'
-import { authReq, getUserB } from '../utils/utils'
-import { getItem } from '../utils/items'
-
+import { wait } from '#lib/promises'
+import { authReq, getUserB } from '../utils/utils.js'
+import { getItem } from '../utils/items.js'
 import {
   getByUris,
   merge,
@@ -11,8 +10,7 @@ import {
   updateClaim,
   restoreVersion,
   revertEdit,
-} from '../utils/entities'
-
+} from '../utils/entities.js'
 import {
   createWork,
   createHuman,
@@ -24,7 +22,7 @@ import {
   humanName,
   someImageHash,
   createEditionWithWorkAndAuthor,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {

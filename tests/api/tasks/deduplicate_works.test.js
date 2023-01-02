@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '../fixtures/entities'
-import { getByUris, getByUri } from '../utils/entities'
-import { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } from 'tests/api/utils/utils'
-import { getBySuspectUri } from '../utils/tasks'
-import { wait } from 'lib/promises'
+import { authReq, rethrowShouldNotBeCalledErrors, getUser, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { wait } from '#lib/promises'
+import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '../fixtures/entities.js'
+import { getByUris, getByUri } from '../utils/entities.js'
+import { getBySuspectUri } from '../utils/tasks.js'
+
 const endpoint = '/api/tasks?action=deduplicate-works'
 
 describe('tasks:deduplicate:works', () => {

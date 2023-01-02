@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import getWorksFromAuthorsLabels from './get_works_from_authors_uris'
-import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers'
-import getAuthorsUris from '../get_authors_uris'
+import _ from '#builders/utils'
+import getAuthorsUris from '../get_authors_uris.js'
+import getWorksFromAuthorsLabels from './get_works_from_authors_uris.js'
+import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers.js'
 
 export default async (works, authors) => {
   const worksAuthorsUris = _.compact(works.flatMap(getAuthorsUris))

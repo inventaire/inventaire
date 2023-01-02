@@ -1,5 +1,5 @@
-import token_ from 'controllers/user/lib/token'
-import error_ from 'lib/error/error'
+import token_ from '#controllers/user/lib/token'
+import error_ from '#lib/error/error'
 
 const sanitization = {}
 

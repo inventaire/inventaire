@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import user_ from 'controllers/user/lib/user'
-import { ownerSafeData } from './lib/authorized_user_data_pickers'
+import _ from '#builders/utils'
+import user_ from '#controllers/user/lib/user'
+import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
 const controller = async (params, req, res) => {
   // The logged in user as its document set on req.user by passport.js

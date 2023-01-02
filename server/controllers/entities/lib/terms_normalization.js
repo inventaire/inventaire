@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 const normalizeTerm = term => {
   if (!term) return

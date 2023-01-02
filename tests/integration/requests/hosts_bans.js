@@ -1,9 +1,10 @@
 import should from 'should'
 import CONFIG from 'config'
-import requests_ from 'lib/requests'
-import { wait } from 'lib/promises'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { startGenericMockServer } from '../utils/mock_server'
+import requests_ from '#lib/requests'
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { startGenericMockServer } from '../utils/mock_server.js'
+
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const startMockServer = async () => {

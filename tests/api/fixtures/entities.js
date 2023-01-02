@@ -1,10 +1,13 @@
-import _ from 'builders/utils'
-import { customAuthReq, authReq, getUser } from '../utils/utils'
-import isbn_ from 'lib/isbn/isbn'
-import wdIdByWmLanguageCode from 'wikidata-lang/mappings/wd_id_by_wm_code.json'
-import { getByUri, addClaim } from '../utils/entities'
-import fakeText, { humanName, randomWords } from './text'
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit'
+import _ from '#builders/utils'
+import isbn_ from '#lib/isbn/isbn'
+import { requireJson } from '#lib/utils/json'
+import { customAuthReq, authReq, getUser } from '../utils/utils.js'
+import { getByUri, addClaim } from '../utils/entities.js'
+import fakeText, { humanName, randomWords } from './text.js'
+
+const wdIdByWmLanguageCode = requireJson('wikidata-lang/mappings/wd_id_by_wm_code.json')
+
 const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
 const createEntity = (P31, options = {}) => (params = {}) => {

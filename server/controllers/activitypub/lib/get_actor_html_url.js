@@ -1,4 +1,4 @@
-import { getActorTypeFromName, getEntityUriFromActorName } from './helpers'
+import { getActorTypeFromName, getEntityUriFromActorName } from './helpers.js'
 
 const getActorHtmlUrlByType = {
   user: name => `/inventory/${name}`,

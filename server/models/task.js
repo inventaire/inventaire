@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import validations from './validations/task'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import validations from './validations/task.js'
 
 export default {
   create: newTask => {

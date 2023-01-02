@@ -1,11 +1,12 @@
 import CONFIG from 'config'
-import { wait } from 'lib/promises'
+import { wait } from '#lib/promises'
 import 'should'
-import { authReq, getUser, getUserB } from '../utils/utils'
-import { CountChange } from './helpers'
-import { createShelf } from '../fixtures/shelves'
-import { shouldNotBeCalled } from 'tests/api/utils/utils'
-import { createItem } from 'tests/api/fixtures/items'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { createItem } from '#tests/api/fixtures/items'
+import { authReq, getUser, getUserB } from '../utils/utils.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { CountChange } from './helpers.js'
+
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 describe('items:update', () => {

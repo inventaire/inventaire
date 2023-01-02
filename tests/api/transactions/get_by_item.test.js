@@ -1,7 +1,7 @@
 import 'should'
-import { getTransactionsByItem } from 'tests/api/utils/transactions'
-import { getUserC } from 'tests/api/utils/utils'
-import { createTransaction } from '../fixtures/transactions'
+import { getTransactionsByItem } from '#tests/api/utils/transactions'
+import { getUserC } from '#tests/api/utils/utils'
+import { createTransaction } from '../fixtures/transactions.js'
 
 describe('transactions:get:by-item', () => {
   it('should get a transaction by item, as item owner', async () => {

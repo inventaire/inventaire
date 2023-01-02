@@ -1,9 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import dbFactory from 'db/couchdb/base'
-import User from 'models/user'
-import { passwords as pw_ } from 'lib/crypto'
-import { oneHour, expired } from 'lib/time'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import dbFactory from '#db/couchdb/base'
+import User from '#models/user'
+import { passwords as pw_ } from '#lib/crypto'
+import { oneHour, expired } from '#lib/time'
+
 const db = dbFactory('users')
 
 const sanitization = {

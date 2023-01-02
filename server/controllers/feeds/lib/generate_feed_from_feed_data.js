@@ -1,11 +1,13 @@
-import _ from 'builders/utils'
-import { feed as feedConfig } from 'config'
-import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
-import serializeFeed from './serialize_feed'
-import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
-import user_ from 'controllers/user/lib/user'
-import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
-import { paginate } from 'controllers/items/lib/queries_commons'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import snapshot_ from '#controllers/items/lib/snapshot/snapshot'
+import getAuthorizedItems from '#controllers/items/lib/get_authorized_items'
+import user_ from '#controllers/user/lib/user'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
+import { paginate } from '#controllers/items/lib/queries_commons'
+import serializeFeed from './serialize_feed.js'
+
+const { feed: feedConfig } = CONFIG
 
 export default lang => async ({ reqUserId, feedOptions, users, shelves, filter }) => {
   users = users.map(user_.serializeData)

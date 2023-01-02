@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import getThumbData from 'data/commons/thumb'
-import getEnwikiImage from 'data/wikipedia/image'
-import getOpenLibraryCover from 'data/openlibrary/cover'
-import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import getThumbData from '#data/commons/thumb'
+import getEnwikiImage from '#data/wikipedia/image'
+import getOpenLibraryCover from '#data/openlibrary/cover'
+import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
 export default async entity => {
   const data = await findAnImage(entity)

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import user_ from 'controllers/user/lib/user'
-import { passwords as pw_ } from 'lib/crypto'
-import loginAttempts from './login_attempts'
+import _ from '#builders/utils'
+import user_ from '#controllers/user/lib/user'
+import { passwords as pw_ } from '#lib/crypto'
+import loginAttempts from './login_attempts.js'
 
 export default (username, password, done) => {
   if (loginAttempts.tooMany(username)) {

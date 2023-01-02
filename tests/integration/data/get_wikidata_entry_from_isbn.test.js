@@ -1,5 +1,5 @@
 import should from 'should'
-import getWikidataEntryFromIsbn from 'data/wikidata/get_wikidata_entry_from_isbn'
+import getWikidataEntryFromIsbn from '#data/wikidata/get_wikidata_entry_from_isbn'
 
 describe('get_wikidata_entry_from_isbn', () => {
   it('should get an entry from a known ISBN: ISBN statement on an edition', async () => {

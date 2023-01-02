@@ -1,6 +1,6 @@
-import { buildSearcher } from 'lib/elasticsearch'
-import { distanceBetween } from 'lib/geo'
-import assert_ from 'lib/utils/assert_types'
+import { buildSearcher } from '#lib/elasticsearch'
+import { distanceBetween } from '#lib/geo'
+import assert_ from '#lib/utils/assert_types'
 
 export default dbBaseName => {
   const searchByDistance = buildSearcher({

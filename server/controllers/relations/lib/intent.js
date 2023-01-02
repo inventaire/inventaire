@@ -1,6 +1,7 @@
-import queries from './queries'
-import actions from './actions'
-import solveFactory from './solve_intent'
+import queries from './queries.js'
+import actions from './actions.js'
+import solveFactory from './solve_intent.js'
+
 const solve = solveFactory(actions)
 
 export default {

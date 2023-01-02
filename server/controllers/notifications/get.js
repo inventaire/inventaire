@@ -1,4 +1,4 @@
-import notifications_ from './lib/notifications'
+import notifications_ from './lib/notifications.js'
 
 const sanitization = {
   limit: { optional: true, default: 10 },

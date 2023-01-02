@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import relations_ from 'controllers/relations/lib/queries'
-import user_ from 'controllers/user/lib/user'
-import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers'
-import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import relations_ from '#controllers/relations/lib/queries'
+import user_ from '#controllers/user/lib/user'
+import getAuthorizedItems from '#controllers/items/lib/get_authorized_items'
+import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers.js'
 
 export default async (userId, lang, limitDate = 0) => {
   const networkUsersIds = await relations_.getUserFriendsAndCoGroupsMembers(userId)

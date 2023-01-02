@@ -1,4 +1,4 @@
-import tasks_ from './lib/tasks'
+import tasks_ from './lib/tasks.js'
 
 const sanitization = {
   uris: {}

@@ -1,8 +1,7 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { authReq, shouldNotBeCalled } from 'tests/api/utils/utils'
-import { getByUris, getHistory } from 'tests/api/utils/entities'
-
+import _ from '#builders/utils'
+import { authReq, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { getByUris, getHistory } from '#tests/api/utils/entities'
 import {
   randomLabel,
   humanName,
@@ -11,7 +10,7 @@ import {
   someLibraryThingsWorkId,
   createEditionWithIsbn,
   createWork,
-} from 'tests/api/fixtures/entities'
+} from '#tests/api/fixtures/entities'
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

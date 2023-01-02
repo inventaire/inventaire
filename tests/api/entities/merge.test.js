@@ -1,9 +1,8 @@
 import 'should'
-import { authReq, dataadminReq, shouldNotBeCalled } from '../utils/utils'
-import randomString from 'lib/utils/random_string'
-import { getByUris, merge, getHistory, addClaim } from '../utils/entities'
-import { getItemsByIds } from '../utils/items'
-
+import randomString from '#lib/utils/random_string'
+import { authReq, dataadminReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getByUris, merge, getHistory, addClaim } from '../utils/entities.js'
+import { getItemsByIds } from '../utils/items.js'
 import {
   createWork,
   createHuman,
@@ -12,7 +11,7 @@ import {
   createItemFromEntityUri,
   createWorkWithAuthor,
   someFakeUri,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {

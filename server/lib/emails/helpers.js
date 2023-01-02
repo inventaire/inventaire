@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import user_ from 'controllers/user/lib/user'
-import groups_ from 'controllers/groups/lib/groups'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import user_ from '#controllers/user/lib/user'
+import groups_ from '#controllers/groups/lib/groups'
 
 const getUsersByIds = (user1Id, user2Id) => {
   return user_.byIds([ user1Id, user2Id ])

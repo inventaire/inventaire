@@ -1,9 +1,10 @@
-#!/usr/bin/env nodeimport 'module-alias/register';
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import error_ from 'lib/error/error'
+#!/usr/bin/env node
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import error_ from '#lib/error/error'
 
-const dbHost = require('config').db.getOrigin()
+const dbHost = CONFIG.db.getOrigin()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
 const dbsBaseNames = Object.keys(require('db/couchdb/databases'))

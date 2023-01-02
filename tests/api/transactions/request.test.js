@@ -1,5 +1,4 @@
 import 'should'
-
 import {
   authReq,
   authReqB,
@@ -7,12 +6,12 @@ import {
   getUser,
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
-} from 'tests/api/utils/utils'
+} from '#tests/api/utils/utils'
+import { createTransaction } from '../fixtures/transactions.js'
+import { updateTransaction } from '../utils/transactions.js'
+import { createItem } from '../fixtures/items.js'
+import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
 
-import { createTransaction } from '../fixtures/transactions'
-import { updateTransaction } from '../utils/transactions'
-import { createItem } from '../fixtures/items'
-import { createEditionFromWorkWithAuthor } from '../fixtures/entities'
 const endpoint = '/api/transactions?action=request'
 
 describe('transactions:request', () => {

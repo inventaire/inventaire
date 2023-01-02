@@ -1,11 +1,12 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import { Lang } from 'lib/regex'
-import getEntityType from './get_entity_type'
-import validateAndFormatClaims from './validate_and_format_claims'
-import typeWithoutLabels from './type_without_labels'
-import propertiesPerType from 'controllers/entities/lib/properties/properties_per_type'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { Lang } from '#lib/regex'
+import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
+import getEntityType from './get_entity_type.js'
+import validateAndFormatClaims from './validate_and_format_claims.js'
+import typeWithoutLabels from './type_without_labels.js'
+
 const allowlistedTypes = Object.keys(propertiesPerType)
 
 // Can be used to validate both entities being created or existing entities

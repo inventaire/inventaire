@@ -1,13 +1,14 @@
-import _ from 'builders/utils'
-import Shelf from 'models/shelf'
-import items_ from 'controllers/items/lib/items'
-import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
-import dbFactory from 'db/couchdb/base'
-import error_ from 'lib/error/error'
-import { emit } from 'lib/radio'
-import { updatable as updateAttributes } from 'models/attributes/shelf'
-import { validateVisibilityKeys } from 'lib/visibility/visibility'
-import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
+import _ from '#builders/utils'
+import Shelf from '#models/shelf'
+import items_ from '#controllers/items/lib/items'
+import getAuthorizedItems from '#controllers/items/lib/get_authorized_items'
+import dbFactory from '#db/couchdb/base'
+import error_ from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { updatable as updateAttributes } from '#models/attributes/shelf'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
+
 const db = dbFactory('shelves')
 
 const shelves_ = {

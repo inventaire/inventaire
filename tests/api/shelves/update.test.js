@@ -3,11 +3,10 @@ import {
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
-} from 'tests/api/utils/utils'
-
-import { authReq, authReqB, getUser } from '../utils/utils'
-import { createShelf, shelfName, shelfDescription } from '../fixtures/shelves'
-import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
+} from '#tests/api/utils/utils'
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
+import { createShelf, shelfName, shelfDescription } from '../fixtures/shelves.js'
 
 const endpoint = '/api/shelves?action=update'
 

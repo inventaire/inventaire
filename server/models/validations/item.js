@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import { pass, itemId, userId, entityUri, BoundedString, imgUrl } from './common'
-import { constrained } from '../attributes/item'
-import { isVisibilityKeyArray } from 'models/validations/visibility'
+import _ from '#builders/utils'
+import { isVisibilityKeyArray } from '#models/validations/visibility'
+import { constrained } from '../attributes/item.js'
+import { pass, itemId, userId, entityUri, BoundedString, imgUrl } from './common.js'
+
 const constrainedAttributes = Object.keys(constrained)
 
 export default {

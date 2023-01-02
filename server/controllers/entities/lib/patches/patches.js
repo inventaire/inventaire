@@ -1,9 +1,10 @@
-import _ from 'builders/utils'
-import dbFactory from 'db/couchdb/base'
-import Patch from 'models/patch'
-import assert_ from 'lib/utils/assert_types'
-import { maxKey } from 'lib/couch'
-import { oneDay } from 'lib/time'
+import _ from '#builders/utils'
+import dbFactory from '#db/couchdb/base'
+import Patch from '#models/patch'
+import assert_ from '#lib/utils/assert_types'
+import { maxKey } from '#lib/couch'
+import { oneDay } from '#lib/time'
+
 const designDocName = 'patches'
 const db = dbFactory('patches', designDocName)
 

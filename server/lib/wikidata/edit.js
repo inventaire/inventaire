@@ -1,4 +1,4 @@
-import { userAgent } from 'lib/requests'
+import { userAgent } from '#lib/requests'
 
 // Return an instance of wikibase-edit with the general config pre-set
 export default require('wikibase-edit')({

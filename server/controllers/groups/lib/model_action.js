@@ -1,7 +1,8 @@
-import Group from 'models/group'
-import radio from 'lib/radio'
-import initMembershipUpdateHooks from './membership_update_hooks'
-import dbFactory from 'db/couchdb/base'
+import Group from '#models/group'
+import radio from '#lib/radio'
+import dbFactory from '#db/couchdb/base'
+import initMembershipUpdateHooks from './membership_update_hooks.js'
+
 const db = dbFactory('groups')
 
 export default async (action, params) => {

@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import properties from '../properties/properties_values_constraints'
-import { prefixifyWd } from 'controllers/entities/lib/prefix'
-import entities_ from 'controllers/entities/lib/entities'
-import runWdQuery from 'data/wikidata/run_query'
-import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri'
-import { forceArray } from 'lib/utils/base'
+import _ from '#builders/utils'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import entities_ from '#controllers/entities/lib/entities'
+import runWdQuery from '#data/wikidata/run_query'
+import { forceArray } from '#lib/utils/base'
+import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
+import properties from '../properties/properties_values_constraints.js'
 
 export default async (claims, resolveOnWikidata = true) => {
   const externalIds = []

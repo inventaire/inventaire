@@ -1,14 +1,14 @@
 import CONFIG from 'config'
 import 'should'
-import { createItem } from '../fixtures/items'
-import { createUser } from '../fixtures/users'
-import { createShelfWithItem } from '../fixtures/shelves'
-import { publicReq, getFediversableUser } from '../utils/utils'
-import { wait } from 'lib/promises'
-import { makeUrl } from '../utils/activitypub'
-import { createWork, createHuman, addAuthor } from '../fixtures/entities'
-import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
-import { getActorName } from '../utils/shelves'
+import { wait } from '#lib/promises'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { createItem } from '../fixtures/items.js'
+import { createUser } from '../fixtures/users.js'
+import { createShelfWithItem } from '../fixtures/shelves.js'
+import { publicReq, getFediversableUser } from '../utils/utils.js'
+import { makeUrl } from '../utils/activitypub.js'
+import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
+import { getActorName } from '../utils/shelves.js'
 
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
 

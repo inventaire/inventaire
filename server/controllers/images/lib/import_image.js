@@ -1,7 +1,7 @@
-import error_ from 'lib/error/error'
-import { md5 } from 'lib/crypto'
-import downloadImage from './download_image'
-import { containers } from 'controllers/images/lib/containers'
+import error_ from '#lib/error/error'
+import { md5 } from '#lib/crypto'
+import { containers } from '#controllers/images/lib/containers'
+import downloadImage from './download_image.js'
 
 export default async (container, sourceUrl) => {
   if (containers[container] == null || containers[container].putImage == null) {

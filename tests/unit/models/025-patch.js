@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
 import should from 'should'
 import jiff from 'jiff'
-import randomString from 'lib/utils/random_string'
-import Entity from 'models/entity'
-import Patch from 'models/patch'
-import { shouldNotBeCalled } from '../utils'
+import _ from '#builders/utils'
+import randomString from '#lib/utils/random_string'
+import Entity from '#models/entity'
+import Patch from '#models/patch'
+import { shouldNotBeCalled } from '../utils.js'
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import getEntitiesByUris from './lib/get_entities_by_uris'
-import mergeEntities from './lib/merge_entities'
-import { emit } from 'lib/radio'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { emit } from '#lib/radio'
+import getEntitiesByUris from './lib/get_entities_by_uris.js'
+import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {
   from: {},

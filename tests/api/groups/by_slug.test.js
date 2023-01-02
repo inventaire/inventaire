@@ -1,6 +1,7 @@
-import { publicReq } from '../utils/utils'
-import { createGroup } from '../fixtures/groups'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+import { createGroup } from '../fixtures/groups.js'
+
 const endpoint = '/api/groups?action=by-slug'
 
 describe('groups:by-slug', () => {

@@ -1,6 +1,7 @@
 import 'should'
-import { publicReq, shouldNotBeCalled } from '../utils/utils'
-import randomString from 'lib/utils/random_string'
+import randomString from '#lib/utils/random_string'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=wp-extract'
 
 describe('wikipedia:extract', () => {

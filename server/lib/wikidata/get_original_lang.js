@@ -1,6 +1,8 @@
-import _ from 'builders/utils'
-import wmLanguageCodeByWdId from 'wikidata-lang/mappings/wm_code_by_wd_id.json'
-import { unprefixify } from 'controllers/entities/lib/prefix'
+import _ from '#builders/utils'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { requireJson } from '#lib/utils/json'
+
+const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
 export default claims => {
   const langPropertiesClaims = _.pick(claims, langProperties)

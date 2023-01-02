@@ -1,11 +1,12 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { wait } from 'lib/promises'
-import { publicReq, customAuthReq } from '../utils/utils'
-import { rawRequest } from './request'
-import assert_ from 'lib/utils/assert_types'
-import { indexesNamesByBaseNames } from 'db/elasticsearch/indexes'
-import { buildUrl } from 'lib/utils/url'
+import _ from '#builders/utils'
+import { wait } from '#lib/promises'
+import assert_ from '#lib/utils/assert_types'
+import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { buildUrl } from '#lib/utils/url'
+import { publicReq, customAuthReq } from '../utils/utils.js'
+import { rawRequest } from './request.js'
+
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 
 const endpoint = '/api/search'

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import ActionsControllers from 'lib/actions_controllers'
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
+import _ from '#builders/utils'
+import ActionsControllers from '#lib/actions_controllers'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
 
 const cspReport = (req, res) => {
   const report = req.body['csp-report'] || req.body

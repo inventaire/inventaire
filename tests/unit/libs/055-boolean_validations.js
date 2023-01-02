@@ -1,7 +1,8 @@
 import 'should'
 import CONFIG from 'config'
-import { isLocalActivityPubActorUrl } from 'lib/boolean_validations'
-import { buildUrl } from 'lib/utils/url'
+import { isLocalActivityPubActorUrl } from '#lib/boolean_validations'
+import { buildUrl } from '#lib/utils/url'
+
 const host = CONFIG.getPublicOrigin()
 
 describe('boolean validations', () => {

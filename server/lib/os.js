@@ -1,6 +1,7 @@
 import { cpus, loadavg } from 'node:os'
-import { wait } from './promises'
-import assert_ from './utils/assert_types'
+import { wait } from './promises.js'
+import assert_ from './utils/assert_types.js'
+
 const cpusCount = cpus().length
 const checkIntervalBase = 10000
 

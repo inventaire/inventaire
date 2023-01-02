@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
 import should from 'should'
-import Entity from 'models/entity'
+import _ from '#builders/utils'
+import Entity from '#models/entity'
 
 const workDoc = () => {
   const doc = Entity.create()

@@ -1,11 +1,12 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import Group from 'models/group'
-import dbFactory from 'db/couchdb/base'
-import lists_ from './users_lists'
-import { add as addSlug } from './slug'
-import assert_ from 'lib/utils/assert_types'
-import searchGroupsByPositionFactory from 'lib/search_by_position'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import Group from '#models/group'
+import dbFactory from '#db/couchdb/base'
+import assert_ from '#lib/utils/assert_types'
+import searchGroupsByPositionFactory from '#lib/search_by_position'
+import lists_ from './users_lists.js'
+import { add as addSlug } from './slug.js'
+
 const db = dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 

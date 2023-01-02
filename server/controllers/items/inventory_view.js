@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
-import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work'
-import bundleViewData from './lib/view/bundle_view_data'
-import getAuthorizedItems from './lib/get_authorized_items'
-import shelves_ from 'controllers/shelves/lib/shelves'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import shelves_ from '#controllers/shelves/lib/shelves'
+import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work.js'
+import bundleViewData from './lib/view/bundle_view_data.js'
+import getAuthorizedItems from './lib/get_authorized_items.js'
 
 const sanitization = {
   user: { optional: true },

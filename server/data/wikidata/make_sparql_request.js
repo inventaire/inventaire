@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import { wait } from 'lib/promises'
-import error_ from 'lib/error/error'
 import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import { wait } from '#lib/promises'
+import error_ from '#lib/error/error'
 
 const { simplifySparqlResults } = wdk
 

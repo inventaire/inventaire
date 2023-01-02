@@ -1,20 +1,18 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { getUser, getReservedUser, customAuthReq, publicReq, shouldNotBeCalled } from '../utils/utils'
-import { waitForIndexation, firstNWords } from '../utils/search'
-import { getTwoFriends } from '../fixtures/users'
-
+import _ from '#builders/utils'
+import { createEdition } from '#tests/api/fixtures/entities'
+import { getSomeGroupWithAMember, createGroupAndMember } from '#tests/api/fixtures/groups'
+import { makeFriends } from '#tests/api/utils/relations'
+import { buildUrl } from '#lib/utils/url'
+import { getUser, getReservedUser, customAuthReq, publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { waitForIndexation, firstNWords } from '../utils/search.js'
+import { getTwoFriends } from '../fixtures/users.js'
 import {
   createItem,
   createItemWithEditionAndWork,
   createItemWithAuthor,
   createItemWithAuthorAndSerie,
-} from '../fixtures/items'
-
-import { createEdition } from 'tests/api/fixtures/entities'
-import { getSomeGroupWithAMember, createGroupAndMember } from 'tests/api/fixtures/groups'
-import { makeFriends } from 'tests/api/utils/relations'
-import { buildUrl } from 'lib/utils/url'
+} from '../fixtures/items.js'
 
 const search = (reqUser, { user, search }) => {
   const url = buildUrl('/api/items', {

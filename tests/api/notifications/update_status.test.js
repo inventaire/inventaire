@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { getUser, getReservedUser, customAuthReq } from 'tests/api/utils/utils'
-import { makeFriends } from 'tests/api/utils/relations'
-import { getNotifications } from 'tests/api/utils/notifications'
+import { getUser, getReservedUser, customAuthReq } from '#tests/api/utils/utils'
+import { makeFriends } from '#tests/api/utils/relations'
+import { getNotifications } from '#tests/api/utils/notifications'
 
 describe('notifications:update status', () => {
   it('should update a notification', async () => {

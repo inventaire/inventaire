@@ -1,9 +1,10 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
 import { createReadStream } from 'node:fs'
-import { getContentLength } from 'lib/fs'
-import getToken from './get_swift_token'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import { getContentLength } from '#lib/fs'
+import getToken from './get_swift_token.js'
+
 const { publicURL } = CONFIG.mediaStorage.swift
 
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}`

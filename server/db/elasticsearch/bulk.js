@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
 import CONFIG from 'config'
-import { logBulkRes } from './helpers'
-import assert_ from 'lib/utils/assert_types'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import assert_ from '#lib/utils/assert_types'
+import { logBulkRes } from './helpers.js'
+
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 const headers = { 'content-type': 'application/x-ndjson' }
 

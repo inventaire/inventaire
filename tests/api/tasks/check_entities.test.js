@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { checkEntities, getBySuspectUri } from '../utils/tasks'
-import { findOrIndexEntities, deleteByUris } from '../utils/entities'
-import { createHuman, createWork } from '../fixtures/entities'
-import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { checkEntities, getBySuspectUri } from '../utils/tasks.js'
+import { findOrIndexEntities, deleteByUris } from '../utils/entities.js'
+import { createHuman, createWork } from '../fixtures/entities.js'
 
 describe('tasks:check-entities', () => {
   before(async () => {

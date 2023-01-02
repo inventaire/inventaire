@@ -1,6 +1,7 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { getNames } from '../snapshot/helpers'
+import _ from '#builders/utils'
+import { getNames } from '../snapshot/helpers.js'
+
 const host = CONFIG.getPublicOrigin()
 
 export default lang => item => {

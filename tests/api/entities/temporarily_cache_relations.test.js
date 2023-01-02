@@ -1,14 +1,14 @@
 import CONFIG from 'config'
-import _ from 'lodash'
+import _ from 'lodash-es'
 import 'should'
-import { createWorkWithAuthor, createWorkWithSerie } from '../fixtures/entities'
-import { merge } from '../utils/entities'
-import { publicReq } from '../utils/utils'
-import { wait } from 'lib/promises'
+import { wait } from '#lib/promises'
+import { cacheEntityRelations, getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
+import { createWorkWithAuthor, createWorkWithSerie } from '../fixtures/entities.js'
+import { merge } from '../utils/entities.js'
+import { publicReq } from '../utils/utils.js'
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
-import { cacheEntityRelations, getCachedRelations } from 'controllers/entities/lib/temporarily_cache_relations'
 
 if (CONFIG.leveldbMemoryBackend) {
   throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import { makeUrl } from './helpers'
-import { createItemsNote, findFullRangeFromActivities } from './format_items_activities'
-import items_ from 'controllers/items/lib/items'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import { makeUrl } from './helpers.js'
+import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
 
 export default async (activitiesDocs, shelfId, name) => {
   if (activitiesDocs.length === 0) return

@@ -1,4 +1,4 @@
-import getItemsByUsers from './lib/get_items_by_users'
+import getItemsByUsers from './lib/get_items_by_users.js'
 
 const sanitization = {
   users: {},

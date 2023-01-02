@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { getUserGetter, customAuthReq } from '../utils/utils'
-import { waitForIndexation } from '../utils/search'
-import { getRandomPosition } from '../fixtures/users'
+import { getUserGetter, customAuthReq } from '../utils/utils.js'
+import { waitForIndexation } from '../utils/search.js'
+import { getRandomPosition } from '../fixtures/users.js'
+
 const positionUser1 = getRandomPosition()
 const positionUser2 = [
   positionUser1[0] - 0.1,

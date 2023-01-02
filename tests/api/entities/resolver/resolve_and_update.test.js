@@ -1,10 +1,9 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { wait } from 'lib/promises'
-import { authReq, shouldNotBeCalled } from 'tests/api/utils/utils'
-import { getByUris, getByUri, addClaim, getHistory } from 'tests/api/utils/entities'
-
+import { wait } from '#lib/promises'
+import { authReq, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import {
   createWork,
   createHuman,
@@ -14,7 +13,7 @@ import {
   generateIsbn13,
   createEdition,
   generateIsbn13h,
-} from 'tests/api/fixtures/entities'
+} from '#tests/api/fixtures/entities'
 
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)

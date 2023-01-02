@@ -1,24 +1,22 @@
-import _ from 'builders/utils'
 import should from 'should'
-
+import _ from '#builders/utils'
+import { getGroup } from '#tests/api/utils/groups'
 import {
   getReservedUser,
   getUser,
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
-} from '../utils/utils'
-
-import { getRefreshedUser, getRandomPosition } from '../fixtures/users'
-import { createItem } from '../fixtures/items'
-import { getItem } from '../utils/items'
-import { getUsersNearPosition, deleteUser } from '../utils/users'
-import { createGroup, addMember, addAdmin } from '../fixtures/groups'
-import { getGroup } from 'tests/api/utils/groups'
-import { createTransaction } from '../fixtures/transactions'
-import { getTransaction, updateTransaction } from '../utils/transactions'
-import { createShelf } from '../fixtures/shelves'
-import { getShelfById } from '../utils/shelves'
-import { waitForIndexation, waitForDeindexation } from '../utils/search'
+} from '../utils/utils.js'
+import { getRefreshedUser, getRandomPosition } from '../fixtures/users.js'
+import { createItem } from '../fixtures/items.js'
+import { getItem } from '../utils/items.js'
+import { getUsersNearPosition, deleteUser } from '../utils/users.js'
+import { createGroup, addMember, addAdmin } from '../fixtures/groups.js'
+import { createTransaction } from '../fixtures/transactions.js'
+import { getTransaction, updateTransaction } from '../utils/transactions.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { getShelfById } from '../utils/shelves.js'
+import { waitForIndexation, waitForDeindexation } from '../utils/search.js'
 
 describe('user:delete', () => {
   it('should delete the user', async () => {

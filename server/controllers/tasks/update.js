@@ -1,5 +1,5 @@
-import tasks_ from 'controllers/tasks/lib/tasks'
-import updateRelationScore from './lib/relation_score'
+import tasks_ from '#controllers/tasks/lib/tasks'
+import updateRelationScore from './lib/relation_score.js'
 
 const sanitization = {
   id: {},

@@ -1,4 +1,4 @@
-import { boolean, geoPoint, text } from './mappings_datatypes'
+import { boolean, geoPoint, text } from './mappings_datatypes.js'
 
 export default {
   properties: {

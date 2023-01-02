@@ -1,8 +1,9 @@
 import 'should'
-import { authReq, authReqC, customAuthReq, getReservedUser } from '../utils/utils'
-import { createGroup } from '../fixtures/groups'
-import { getGroup } from 'tests/api/utils/groups'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { authReq, authReqC, customAuthReq, getReservedUser } from '../utils/utils.js'
+import { createGroup } from '../fixtures/groups.js'
+
 const endpoint = '/api/groups?action=refuse-request'
 
 describe('groups:update:refuse-request', () => {

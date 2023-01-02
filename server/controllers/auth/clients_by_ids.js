@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import clients_ from './lib/oauth/clients'
+import _ from '#builders/utils'
+import clients_ from './lib/oauth/clients.js'
 
 const sanitization = {
   ids: {},

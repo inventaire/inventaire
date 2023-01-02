@@ -1,10 +1,11 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { wait } from 'lib/promises'
-import requests_ from 'lib/requests'
-import assert_ from 'lib/utils/assert_types'
-import error_ from 'lib/error/error'
-import { stringifyQuery } from 'lib/utils/url'
+import _ from '#builders/utils'
+import { wait } from '#lib/promises'
+import requests_ from '#lib/requests'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import { stringifyQuery } from '#lib/utils/url'
+
 const host = CONFIG.getPublicOrigin()
 
 const testServerAvailability = async () => {

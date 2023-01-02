@@ -1,5 +1,4 @@
 import 'should'
-
 import {
   publicReq,
   authReq,
@@ -12,9 +11,8 @@ import {
   rethrowShouldNotBeCalledErrors,
   shouldNotBeCalled,
   customAuthReq,
-} from '../utils/utils'
-
-import { createWork } from '../fixtures/entities'
+} from '../utils/utils.js'
+import { createWork } from '../fixtures/entities.js'
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {

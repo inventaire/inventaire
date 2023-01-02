@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import couch_ from 'lib/couch'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
+import _ from '#builders/utils'
+import couch_ from '#lib/couch'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
 
 const handlers = {
   byEmail: (db, email) => {

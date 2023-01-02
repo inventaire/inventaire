@@ -1,8 +1,9 @@
 import should from 'should'
-import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
-import { createHuman } from '../fixtures/entities'
-import { getByUri, updateLabel } from '../utils/entities'
-import randomString from 'lib/utils/random_string'
+import randomString from '#lib/utils/random_string'
+import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { createHuman } from '../fixtures/entities.js'
+import { getByUri, updateLabel } from '../utils/entities.js'
+
 const humanPromise = createHuman()
 
 describe('entities:update-labels', () => {

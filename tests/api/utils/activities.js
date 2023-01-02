@@ -1,5 +1,6 @@
 import CONFIG from 'config'
-import { getRandomBytes } from 'lib/crypto'
+import { getRandomBytes } from '#lib/crypto'
+
 const origin = CONFIG.getPublicOrigin()
 
 const randomActivityId = (customOrigin = origin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`

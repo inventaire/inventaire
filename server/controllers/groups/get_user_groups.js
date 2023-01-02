@@ -1,4 +1,4 @@
-import { allUserGroups } from './lib/groups'
+import { allUserGroups } from './lib/groups.js'
 
 export default {
   sanitization: {},

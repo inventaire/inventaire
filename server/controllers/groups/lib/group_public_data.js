@@ -1,8 +1,8 @@
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import lists_ from './users_lists'
-import groups_ from './groups'
-import user_ from 'controllers/user/lib/user'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import user_ from '#controllers/user/lib/user'
+import lists_ from './users_lists.js'
+import groups_ from './groups.js'
 
 // fnName: byId or bySlug
 // fnArgs: [ id ] or [ slug ]

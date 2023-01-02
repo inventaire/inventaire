@@ -1,6 +1,7 @@
-import _ from 'builders/utils'
-import { buildUrl } from 'lib/utils/url'
 import CONFIG from 'config'
+import _ from '#builders/utils'
+import { buildUrl } from '#lib/utils/url'
+
 const root = CONFIG.getPublicOrigin()
 
 export default {

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { publicReq, authReq, getUser, getUserB } from '../utils/utils'
-import { createElement } from '../fixtures/listings'
-import { someFakeUri } from 'tests/api/fixtures/entities'
+import _ from '#builders/utils'
+import { someFakeUri } from '#tests/api/fixtures/entities'
+import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
+import { createElement } from '../fixtures/listings.js'
 
 const endpoint = '/api/lists?action=by-entities'
 

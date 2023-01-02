@@ -1,8 +1,7 @@
 
 import 'should'
 import sinon from 'sinon'
-
-import solveIntentFactory from 'controllers/relations/lib/solve_intent'
+import solveIntentFactory from '#controllers/relations/lib/solve_intent'
 
 let spies = {}
 

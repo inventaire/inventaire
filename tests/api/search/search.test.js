@@ -1,13 +1,13 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } from '../utils/utils'
-import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search'
-import { createGroup, createGroupWithAMember } from '../fixtures/groups'
-import { getSomeGroupWithAMember, createGroupAndMember } from 'tests/api/fixtures/groups'
-import { makeFriends } from 'tests/api/utils/relations'
-import { createListing } from 'tests/api/fixtures/listings'
-import { getGroupVisibilityKey } from 'lib/visibility/visibility'
-import { createShelf } from 'tests/api/fixtures/shelves'
+import { getSomeGroupWithAMember, createGroupAndMember } from '#tests/api/fixtures/groups'
+import { makeFriends } from '#tests/api/utils/relations'
+import { createListing } from '#tests/api/fixtures/listings'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import { createShelf } from '#tests/api/fixtures/shelves'
+import { createGroup, createGroupWithAMember } from '../fixtures/groups.js'
+import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search.js'
+import { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } from '../utils/utils.js'
 
 describe('search:global', () => {
   describe('parameters', () => {

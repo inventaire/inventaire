@@ -1,6 +1,6 @@
 
 import 'should'
-import parseEmails from 'controllers/invitations/lib/parse_emails'
+import parseEmails from '#controllers/invitations/lib/parse_emails'
 
 describe('parse emails', () => {
   it('should be a function', () => {

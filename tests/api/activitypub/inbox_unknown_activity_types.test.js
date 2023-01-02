@@ -1,8 +1,8 @@
 import 'should'
-import { shouldNotBeCalled } from 'tests/unit/utils'
-import { createUser } from '../fixtures/users'
-import { makeUrl, createRemoteActivityPubServerUser, signedReq } from '../utils/activitypub'
-import { rawRequest } from '../utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUser } from '../fixtures/users.js'
+import { makeUrl, createRemoteActivityPubServerUser, signedReq } from '../utils/activitypub.js'
+import { rawRequest } from '../utils/request.js'
 
 describe('activitypub:inbox:unknown_types', () => {
   it('should reject signed unknown activity type requests', async () => {

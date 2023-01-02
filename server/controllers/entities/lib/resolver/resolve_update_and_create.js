@@ -1,10 +1,12 @@
-import _ from 'builders/utils'
-import resolve from './resolve'
-import UpdateResolvedEntry from './update_resolved_entry'
-import CreateUnresolvedEntry from './create_unresolved_entry'
-import sanitizeEntry from './sanitize_entry'
-import { waitForCPUsLoadToBeBelow } from 'lib/os'
-import { nice } from 'config'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import resolve from './resolve.js'
+import UpdateResolvedEntry from './update_resolved_entry.js'
+import CreateUnresolvedEntry from './create_unresolved_entry.js'
+import sanitizeEntry from './sanitize_entry.js'
+
+const { nice } = CONFIG
 
 const resolveUpdateAndCreate = async params => {
   params.batchId = Date.now()

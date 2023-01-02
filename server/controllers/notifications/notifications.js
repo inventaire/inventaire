@@ -1,5 +1,5 @@
-import radio from 'lib/radio'
-import ActionsControllers from 'lib/actions_controllers'
+import radio from '#lib/radio'
+import ActionsControllers from '#lib/actions_controllers'
 
 export default {
   get: ActionsControllers({

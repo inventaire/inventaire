@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import resolveWorksFromEdition from './resolve_works_from_edition'
-import resolveAuthorsFromWorks from './resolve_authors_from_works'
-import resolveWorksFromAuthors from './resolve_works_from_authors'
-import resolveEditionFromWorks from './resolve_edition_from_works'
+import _ from '#builders/utils'
+import resolveWorksFromEdition from './resolve_works_from_edition.js'
+import resolveAuthorsFromWorks from './resolve_authors_from_works.js'
+import resolveWorksFromAuthors from './resolve_works_from_authors.js'
+import resolveEditionFromWorks from './resolve_edition_from_works.js'
 
 // Resolve a work(or author) seed when the author(or work) seed is already resolved
 

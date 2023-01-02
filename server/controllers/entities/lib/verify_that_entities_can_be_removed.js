@@ -1,8 +1,8 @@
-import error_ from 'lib/error/error'
-import entities_ from './entities'
-import items_ from 'controllers/items/lib/items'
-import getEntitiesByUris from './get_entities_by_uris'
-import { prefixifyInv } from './prefix'
+import error_ from '#lib/error/error'
+import items_ from '#controllers/items/lib/items'
+import entities_ from './entities.js'
+import getEntitiesByUris from './get_entities_by_uris.js'
+import { prefixifyInv } from './prefix.js'
 
 const criticalClaimProperties = [
   // No edition should end up without an associated work because of a removed work

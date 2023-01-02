@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
+import CONFIG from 'config'
+import _ from '#builders/utils'
 
 // 'swift' or 'local'
-import CONFIG from 'config'
-import images_ from 'lib/images'
-import radio from 'lib/radio'
+import images_ from '#lib/images'
+import radio from '#lib/radio'
 
 const { mode } = CONFIG.mediaStorage
 

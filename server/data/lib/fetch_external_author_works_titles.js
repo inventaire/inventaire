@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import cache_ from 'lib/cache'
-import { oneWeek } from 'lib/time'
-import { buildUrl } from 'lib/utils/url'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import cache_ from '#lib/cache'
+import { oneWeek } from '#lib/time'
+import { buildUrl } from '#lib/utils/url'
 
 export default (name, endpoint, getQuery, requestOptions) => async id => {
   try {

@@ -1,4 +1,4 @@
-import { getUserRelations, getNetworkIds } from 'controllers/user/lib/relations_status'
+import { getUserRelations, getNetworkIds } from '#controllers/user/lib/relations_status'
 
 const sanitization = {}
 

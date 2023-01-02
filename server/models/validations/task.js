@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { pass, entityUri, userId, BoundedString } from './common'
-import attributes from '../attributes/task'
+import _ from '#builders/utils'
+import attributes from '../attributes/task.js'
+import { pass, entityUri, userId, BoundedString } from './common.js'
 
 export default {
   pass,

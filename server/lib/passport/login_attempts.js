@@ -1,4 +1,4 @@
-import { oneMinute } from 'lib/time'
+import { oneMinute } from '#lib/time'
 
 const attemptsLimit = 10
 const periodMinutes = 5

@@ -1,5 +1,5 @@
-import user_ from 'controllers/user/lib/user'
-import shelves_ from 'controllers/shelves/lib/shelves'
+import user_ from '#controllers/user/lib/user'
+import shelves_ from '#controllers/shelves/lib/shelves'
 
 export default async (shelfId, reqUserId) => {
   const shelf = await shelves_.byId(shelfId)

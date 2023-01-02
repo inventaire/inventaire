@@ -1,4 +1,5 @@
-import { identity } from 'lodash'
+import { identity } from 'lodash-es'
+
 const isntDesignDoc = doc => !doc._id.startsWith('_design/')
 
 export default {

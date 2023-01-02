@@ -1,16 +1,17 @@
-import isbn_ from 'lib/isbn/isbn'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import { concurrentString, uniqueEntity } from './properties_config_bases'
-import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property'
-import { getPluralType } from 'lib/wikidata/aliases'
+import isbn_ from '#lib/isbn/isbn'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { getPluralType } from '#lib/wikidata/aliases'
+import { parseIsbn } from '#lib/isbn/parse'
+import { concurrentString, uniqueEntity } from './properties_config_bases.js'
+import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
 
 export default {
   isbnProperty: num => {
     return Object.assign({}, concurrentString, {
       validate: isbn => {
         if (isbn == null) return false
-        const isbnData = isbn_.parse(isbn)
+        const isbnData = parseIsbn(isbn)
         if (isbnData == null) return false
         return isbn === isbnData[`isbn${num}h`]
       },

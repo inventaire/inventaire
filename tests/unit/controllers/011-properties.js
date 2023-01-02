@@ -1,5 +1,5 @@
 import 'should'
-import { validateValueType } from 'controllers/entities/lib/properties/validations'
+import { validateValueType } from '#controllers/entities/lib/properties/validations'
 
 describe('properties', () => {
   describe('validateValueType', () => {

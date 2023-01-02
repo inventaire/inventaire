@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import 'should'
-import { customAuthReq, rawCustomAuthReq } from 'tests/api/utils/request'
-import { getReservedUser } from 'tests/api/utils/utils'
-import { createItem } from '../fixtures/items'
-import { createShelf } from '../fixtures/shelves'
-
+import { parse } from 'papaparse'
+import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
 import {
   createEdition,
   createWork,
@@ -12,11 +12,10 @@ import {
   createEditionWithWorkAuthorAndSerie,
   addTranslator,
   someImageHash,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
+import { createUser } from '../fixtures/users.js'
+import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
 
-import { createUser } from '../fixtures/users'
-import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities'
-import { parse } from 'papaparse'
 const host = CONFIG.getPublicOrigin()
 
 const endpoint = '/api/items?action=export&format=csv'

@@ -1,7 +1,8 @@
 import 'should'
-import { publicReq } from '../utils/utils'
-import { createWorkWithAuthorAndSerie } from '../fixtures/entities'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+import { createWorkWithAuthorAndSerie } from '../fixtures/entities.js'
+
 const workWithSeriePromise = createWorkWithAuthorAndSerie()
 const endpoint = '/api/entities?action=serie-parts'
 

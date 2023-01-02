@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import notifications_ from './notifications'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import notifications_ from './notifications.js'
 
 export default (label, subjectId) => {
   assert_.strings([ label, subjectId ])

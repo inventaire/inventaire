@@ -1,7 +1,7 @@
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import getEntityType from 'controllers/entities/lib/get_entity_type'
-import properties from 'controllers/entities/lib/properties/properties_values_constraints'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 
 export default (claims, checkedProperties) => {
   assert_.string(claims['wdt:P31'][0])

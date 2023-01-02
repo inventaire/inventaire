@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import dbFactory from 'db/couchdb/base'
-import { findOneByEmail, byEmails } from 'controllers/user/lib/shared_user_handlers'
-import Invited from 'models/invited'
-import { makeRequest } from 'controllers/relations/lib/actions'
-import groupAction from 'controllers/groups/lib/model_action'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import dbFactory from '#db/couchdb/base'
+import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
+import Invited from '#models/invited'
+import { makeRequest } from '#controllers/relations/lib/actions'
+import groupAction from '#controllers/groups/lib/model_action'
+
 const db = dbFactory('users', 'invited')
 
 const invitations_ = {

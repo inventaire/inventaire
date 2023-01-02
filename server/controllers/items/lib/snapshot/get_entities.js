@@ -1,7 +1,7 @@
-import assert_ from 'lib/utils/assert_types'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
-import { aggregateClaims } from './helpers'
+import assert_ from '#lib/utils/assert_types'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { aggregateClaims } from './helpers.js'
 
 const getRelativeEntities = relationProperty => async entity => {
   const uris = entity.claims[relationProperty]

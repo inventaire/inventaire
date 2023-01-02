@@ -1,10 +1,9 @@
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
-import _ from 'builders/utils'
-
-import requests_ from 'lib/requests'
-import requestGrouper from 'lib/request_grouper'
 import { getEntities, getManyEntities } from 'wikidata-sdk'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import requestGrouper from '#lib/request_grouper'
 
 const requester = ids => {
   if (ids.length > 50) {

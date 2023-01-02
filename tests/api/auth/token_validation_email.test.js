@@ -1,12 +1,13 @@
 import CONFIG from 'config'
 import 'should'
-import { getUserGetter, publicReq, shouldNotBeCalled } from '../utils/utils'
-import { rawRequest } from '../utils/request'
-import { wait } from 'lib/promises'
-import { createUserEmail } from '../fixtures/users'
-import { BasicUpdater } from 'lib/doc_updates'
-import dbFactory from 'db/couchdb/base'
-import randomString from 'lib/utils/random_string'
+import { wait } from '#lib/promises'
+import { BasicUpdater } from '#lib/doc_updates'
+import dbFactory from '#db/couchdb/base'
+import randomString from '#lib/utils/random_string'
+import { createUserEmail } from '../fixtures/users.js'
+import { rawRequest } from '../utils/request.js'
+import { getUserGetter, publicReq, shouldNotBeCalled } from '../utils/utils.js'
+
 const host = CONFIG.getPublicOrigin()
 const db = dbFactory('users')
 const endpoint = '/api/token?action=validation-email'

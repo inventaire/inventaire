@@ -1,6 +1,6 @@
-import ActionsControllers from 'lib/actions_controllers'
-import { signup, login, logout } from './connection'
-import { usernameAvailability, emailAvailability } from './availability'
+import ActionsControllers from '#lib/actions_controllers'
+import { signup, login, logout } from './connection.js'
+import { usernameAvailability, emailAvailability } from './availability.js'
 
 export default {
   get: ActionsControllers({

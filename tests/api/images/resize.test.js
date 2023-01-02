@@ -1,8 +1,8 @@
 import 'should'
-import { hashCode } from 'lib/utils/base'
-import { uploadSomeImage } from '../utils/images'
-import { rawRequest } from '../utils/request'
-import { shouldNotBeCalled } from '../utils/utils'
+import { hashCode } from '#lib/utils/base'
+import { uploadSomeImage } from '../utils/images.js'
+import { rawRequest } from '../utils/request.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
 
 describe('images:resize', () => {
   it('should return a resized local image', async () => {

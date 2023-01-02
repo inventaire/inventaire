@@ -1,4 +1,5 @@
-import dbFactory from 'db/couchdb/base'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('oauth_clients')
 
 export default {

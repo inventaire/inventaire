@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import getOriginalLang from 'lib/wikidata/get_original_lang'
-import getSerieParts from './get_serie_parts'
-import getEntityImagesFromClaims from './get_entity_images_from_claims'
+import _ from '#builders/utils'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
+import entities_ from './entities.js'
+import getSerieParts from './get_serie_parts.js'
+import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
 
 export default {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use

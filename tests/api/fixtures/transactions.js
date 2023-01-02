@@ -1,8 +1,8 @@
 import 'should'
-import { getUser, getUserB, authReq, customAuthReq } from 'tests/api/utils/utils'
-import { wait } from 'lib/promises'
-import { createItem } from './items'
-import { getItem } from '../utils/items'
+import { getUser, getUserB, authReq, customAuthReq } from '#tests/api/utils/utils'
+import { wait } from '#lib/promises'
+import { getItem } from '../utils/items.js'
+import { createItem } from './items.js'
 
 const createTransaction = async (params = {}) => {
   const userA = await (params.userA || getUser())

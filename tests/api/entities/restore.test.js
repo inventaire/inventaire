@@ -1,8 +1,8 @@
 import should from 'should'
-import randomString from 'lib/utils/random_string'
-import { getByUri, updateLabel, restoreVersion, getHistory, addClaim } from '../utils/entities'
-import { createWork } from '../fixtures/entities'
-import { getUserA, getUserB } from '../utils/utils'
+import randomString from '#lib/utils/random_string'
+import { getByUri, updateLabel, restoreVersion, getHistory, addClaim } from '../utils/entities.js'
+import { createWork } from '../fixtures/entities.js'
+import { getUserA, getUserB } from '../utils/utils.js'
 
 describe('entities:restore', () => {
   it('should restore after label updates', async () => {

@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import { cleanupImageUrl } from 'data/dataseed/dataseed'
-import error_ from 'lib/error/error'
-import isPrivateUrl from 'lib/network/is_private_url'
 import fetch from 'node-fetch'
 import CONFIG from 'config'
+import _ from '#builders/utils'
+import { cleanupImageUrl } from '#data/dataseed/dataseed'
+import error_ from '#lib/error/error'
+import isPrivateUrl from '#lib/network/is_private_url'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 

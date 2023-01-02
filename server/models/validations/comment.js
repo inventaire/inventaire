@@ -1,4 +1,4 @@
-import { pass, userId, transactionId } from './common'
+import { pass, userId, transactionId } from './common.js'
 
 export default {
   pass,

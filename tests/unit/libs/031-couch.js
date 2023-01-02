@@ -1,6 +1,6 @@
 
 import 'should'
-import couch_ from 'lib/couch'
+import couch_ from '#lib/couch'
 
 describe('couch_', () => {
   it('env', () => {

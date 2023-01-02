@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import parseForm from './lib/parse_form'
-import error_ from 'lib/error/error'
-import { containers, uploadContainersNames } from './lib/containers'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import parseForm from './lib/parse_form.js'
+import { containers, uploadContainersNames } from './lib/containers.js'
 
 const sanitization = {
   nonJsonBody: true,

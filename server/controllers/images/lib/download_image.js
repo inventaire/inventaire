@@ -1,9 +1,10 @@
-import _, { encodeURL } from 'builders/utils'
+import fs from 'node:fs'
 import fetch from 'node-fetch'
 import AbortController from 'abort-controller'
-import error_ from 'lib/error/error'
-import fs from 'node:fs'
-import isValidImageContentType from './is_valid_image_content_type'
+import _, { encodeURL } from '#builders/utils'
+import error_ from '#lib/error/error'
+import isValidImageContentType from './is_valid_image_content_type.js'
+
 const oneMB = Math.pow(1024, 2)
 
 export default async (url, path) => {

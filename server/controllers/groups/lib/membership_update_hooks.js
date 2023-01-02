@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import radio from 'lib/radio'
-import couch_ from 'lib/couch'
-import dbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import radio from '#lib/radio'
+import couch_ from '#lib/couch'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('groups')
 
-export default () => {
+export default function () {
   radio.on('group:leave', deleteGroupIfEmpty)
 }
 

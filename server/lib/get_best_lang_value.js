@@ -1,4 +1,4 @@
-import { uniq } from 'lodash'
+import { uniq } from 'lodash-es'
 
 // data: labels or descriptions
 export default (lang, originalLang, data) => {

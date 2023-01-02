@@ -1,7 +1,8 @@
-import gm from 'gm'
-import crypto_ from 'lib/crypto'
 import { readFile } from 'node:fs/promises'
+import gm from 'gm'
 import CONFIG from 'config'
+import crypto_ from '#lib/crypto'
+
 const { maxSize } = CONFIG.mediaStorage.images
 
 // gm accepts either a path string or a stream

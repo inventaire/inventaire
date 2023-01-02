@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import ActionsControllers from 'lib/actions_controllers'
-import token_ from 'controllers/user/lib/token'
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
-import passport_ from 'lib/passport/passport'
-import setLoggedInCookie from './lib/set_logged_in_cookie'
+import _ from '#builders/utils'
+import ActionsControllers from '#lib/actions_controllers'
+import token_ from '#controllers/user/lib/token'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import passport_ from '#lib/passport/passport'
+import setLoggedInCookie from './lib/set_logged_in_cookie.js'
 
 const sanitization = validateSanitization({
   email: {},

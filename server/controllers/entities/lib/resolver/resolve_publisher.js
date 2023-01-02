@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import parseIsbn from 'lib/isbn/parse'
 import leven from 'leven'
+import _ from '#builders/utils'
+import { parseIsbn } from '#lib/isbn/parse'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
 

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import getEntitiesList from 'controllers/entities/lib/get_entities_list'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import getEntitiesList from '#controllers/entities/lib/get_entities_list'
 
 export default async item => {
   const { entity: uri } = item

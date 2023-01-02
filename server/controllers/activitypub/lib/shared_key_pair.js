@@ -7,7 +7,7 @@
 // cached keys will get refreshed at their next attempt
 // See https://socialhub.activitypub.rocks/t/caching-public-keys/688
 
-import { generateRsaKeyPair, sha1 } from 'lib/crypto'
+import { generateRsaKeyPair, sha1 } from '#lib/crypto'
 
 let sharedKeyPair
 

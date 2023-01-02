@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import buildInvertedClaimTree from './build_inverted_claim_tree'
+import _ from '#builders/utils'
+import buildInvertedClaimTree from './build_inverted_claim_tree.js'
 
 export default (items, entitiesData) => {
   const { works, editionWorkMap } = entitiesData

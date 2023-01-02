@@ -1,7 +1,7 @@
-import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { authReq } from '../utils/utils'
-import { createShelf, createShelfWithItem } from '../fixtures/shelves'
-import { createItem } from '../fixtures/items'
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { authReq } from '../utils/utils.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
+import { createItem } from '../fixtures/items.js'
 
 const endpoint = '/api/shelves?action=remove-items'
 

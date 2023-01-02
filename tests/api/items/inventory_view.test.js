@@ -1,11 +1,12 @@
 import 'should'
-import { publicReq } from 'tests/api/utils/utils'
-import { customAuthReq } from 'tests/api/utils/request'
-import { getSomeGroupWithAMember } from '../fixtures/groups'
-import { createShelf, createShelfWithItem } from '../fixtures/shelves'
-import { createUserWithItems } from '../fixtures/populate'
-import { shouldNotBeCalled } from 'tests/unit/utils'
-import { createItem } from 'tests/api/fixtures/items'
+import { publicReq } from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createItem } from '#tests/api/fixtures/items'
+import { getSomeGroupWithAMember } from '../fixtures/groups.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
+import { createUserWithItems } from '../fixtures/populate.js'
+
 const endpoint = '/api/items?action=inventory-view'
 
 describe('items:inventory-view', () => {

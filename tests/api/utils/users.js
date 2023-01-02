@@ -1,5 +1,5 @@
-import assert_ from 'lib/utils/assert_types'
-import { customAuthReq, getUser } from './utils'
+import assert_ from '#lib/utils/assert_types'
+import { customAuthReq, getUser } from './utils.js'
 
 export default {
   getUsersNearPosition: async (position, user) => {

@@ -1,10 +1,10 @@
-import items_ from 'controllers/items/lib/items'
-import Item from 'models/item'
-import { emit } from 'lib/radio'
-import { partition } from 'lodash'
-import _ from 'builders/utils'
-import { validateVisibilityKeys } from 'lib/visibility/visibility'
-import { validateShelves } from 'controllers/items/lib/validate_item_async'
+import { partition } from 'lodash-es'
+import items_ from '#controllers/items/lib/items'
+import Item from '#models/item'
+import { emit } from '#lib/radio'
+import _ from '#builders/utils'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import { validateShelves } from '#controllers/items/lib/validate_item_async'
 
 const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }

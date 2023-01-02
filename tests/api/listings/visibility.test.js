@@ -1,9 +1,9 @@
-import { shouldNotBeCalled } from 'tests/api/utils/utils'
-import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils'
-import { createUser, getTwoFriends } from '../fixtures/users'
-import { createListing } from '../fixtures/listings'
-import { makeFriends } from '../utils/relations'
-import { getSomeGroupWithAMember } from 'tests/api/fixtures/groups'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
+import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
+import { createUser, getTwoFriends } from '../fixtures/users.js'
+import { createListing } from '../fixtures/listings.js'
+import { makeFriends } from '../utils/relations.js'
 
 const endpoint = '/api/lists?action=by-ids'
 

@@ -1,11 +1,12 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import { promisify } from 'util'
+import CONFIG from 'config'
 import levelTtl from 'level-ttl'
-import { cacheDb } from 'db/level/get_db'
-import { oneMonth } from 'lib/time'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { cacheDb } from '#db/level/get_db'
+import { oneMonth } from '#lib/time'
+
 const { ttlCheckFrequency } = CONFIG.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
 const dbPut = promisify(db.put)

@@ -1,10 +1,12 @@
-import { port, host, name, publicProtocol } from 'config'
-import _ from 'builders/utils'
+import CONFIG from 'config'
 import express from 'express'
-import middlewares from './middlewares/middlewares'
-import routes from './controllers/routes'
+import _ from '#builders/utils'
+import middlewares from './middlewares/middlewares.js'
+import routes from './controllers/routes.js'
 
-export default () => {
+const { port, host, name, publicProtocol } = CONFIG
+
+export function initExpress () {
   const app = express()
 
   for (const middleware of middlewares) {

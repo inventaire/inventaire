@@ -1,4 +1,4 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 
 let assert_
 const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import { pass, userId, username, email, userImg, boolean, position, BoundedString } from './common'
-import { creationStrategies, settings } from '../attributes/user'
-import { isPropertyUri } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import { isPropertyUri } from '#lib/boolean_validations'
+import { creationStrategies, settings } from '../attributes/user.js'
+import { pass, userId, username, email, userImg, boolean, position, BoundedString } from './common.js'
 
 const validations = {
   pass,

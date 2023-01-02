@@ -1,7 +1,7 @@
 // An endpoint to get the request user email and convert it to a gravatar url
 // so that a client can offer to import an existing avatar
 
-import { md5 } from 'lib/crypto'
+import { md5 } from '#lib/crypto'
 
 const sanitization = {}
 

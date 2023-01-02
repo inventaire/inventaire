@@ -1,5 +1,5 @@
-import listings_ from 'controllers/listings/lib/listings'
-import error_ from 'lib/error/error'
+import listings_ from '#controllers/listings/lib/listings'
+import error_ from '#lib/error/error'
 
 const sanitization = {
   id: {},

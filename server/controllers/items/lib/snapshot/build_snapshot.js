@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import { getNames, aggregateClaims } from './helpers'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import { snapshotValidations } from 'models/validations/item'
-import getBestLangValue from 'lib/get_best_lang_value'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { snapshotValidations } from '#models/validations/item'
+import getBestLangValue from '#lib/get_best_lang_value'
+import { getNames, aggregateClaims } from './helpers.js'
 
 export default {
   edition: (edition, works, authors, series) => {

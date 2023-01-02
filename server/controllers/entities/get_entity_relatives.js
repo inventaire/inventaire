@@ -1,6 +1,6 @@
-import getAuthorWorks from './lib/get_author_works'
-import getSerieParts from './lib/get_serie_parts'
-import getPublisherPublications from './lib/get_publisher_publications'
+import getAuthorWorks from './lib/get_author_works.js'
+import getSerieParts from './lib/get_serie_parts.js'
+import getPublisherPublications from './lib/get_publisher_publications.js'
 
 const sanitization = {
   uri: {},

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import validations from './validations/listing'
-import attributes from './attributes/listing'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import validations from './validations/listing.js'
+import attributes from './attributes/listing.js'
 
 export default {
   create: listing => {

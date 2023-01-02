@@ -1,13 +1,13 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import normalizeResult from './lib/normalize_result'
-import { indexedTypes, socialTypes } from 'db/elasticsearch/indexes'
-import typeSearch from './lib/type_search'
-import Group from 'models/group'
-import { ControllerWrapper } from 'lib/controller_wrapper'
-import { addWarning } from 'lib/responses'
-import { someMatch } from 'lib/utils/base'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
+import Group from '#models/group'
+import { ControllerWrapper } from '#lib/controller_wrapper'
+import { addWarning } from '#lib/responses'
+import { someMatch } from '#lib/utils/base'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import typeSearch from './lib/type_search.js'
+import normalizeResult from './lib/normalize_result.js'
 
 const sanitization = {
   search: {

@@ -1,5 +1,5 @@
-import { isVisibilityKeyArray } from 'models/validations/visibility'
-import { pass, BoundedString, userId } from './common'
+import { isVisibilityKeyArray } from '#models/validations/visibility'
+import { pass, BoundedString, userId } from './common.js'
 
 export default {
   pass,

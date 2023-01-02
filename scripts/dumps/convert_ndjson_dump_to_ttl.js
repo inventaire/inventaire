@@ -1,10 +1,10 @@
-#!/usr/bin/env nodeimport 'module-alias/register';
-import _ from 'builders/utils'
+#!/usr/bin/env node
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import split from 'split'
 import through from 'through'
-import { readFileSync } from 'node:fs'
-import serializeEntityInTurtle from './lib/serialize_entity_in_turtle'
-import path from 'node:path'
+import _ from '#builders/utils'
+import serializeEntityInTurtle from './lib/serialize_entity_in_turtle.js'
 
 const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
 // Prefix the dump by the headers

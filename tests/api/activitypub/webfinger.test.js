@@ -1,14 +1,15 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
-import { createUser, createUsername } from '../fixtures/users'
-import { updateUser } from '../utils/users'
-import { wait } from 'lib/promises'
-import { createHuman } from '../fixtures/entities'
-import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
-import { createShelf } from '../fixtures/shelves'
-import { getActorName } from '../utils/shelves'
+import { wait } from '#lib/promises'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { updateUser } from '../utils/users.js'
+import { createHuman } from '../fixtures/entities.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { getActorName } from '../utils/shelves.js'
+
 const publicOrigin = CONFIG.getPublicOrigin()
 const publicHost = publicOrigin.split('://')[1]
 

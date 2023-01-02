@@ -1,6 +1,6 @@
-import interactions_ from 'lib/interactions'
-import error_ from 'lib/error/error'
-import Transaction from 'models/transaction'
+import interactions_ from '#lib/interactions'
+import error_ from '#lib/error/error'
+import Transaction from '#models/transaction'
 
 let transactions_
 const requireCircularDependencies = () => { transactions_ = require('./transactions') }

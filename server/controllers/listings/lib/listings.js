@@ -1,13 +1,14 @@
-import _ from 'builders/utils'
-import Listing from 'models/listing'
-import dbFactory from 'db/couchdb/base'
-import { updatable as updateAttributes } from 'models/attributes/listing'
-import { validateVisibilityKeys } from 'lib/visibility/visibility'
-import error_ from 'lib/error/error'
-import elements_ from 'controllers/listings/lib/elements'
-import { filterFoundElementsUris } from 'controllers/listings/lib/helpers'
-import { tap } from 'lib/promises'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import _ from '#builders/utils'
+import Listing from '#models/listing'
+import dbFactory from '#db/couchdb/base'
+import { updatable as updateAttributes } from '#models/attributes/listing'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import error_ from '#lib/error/error'
+import elements_ from '#controllers/listings/lib/elements'
+import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
+import { tap } from '#lib/promises'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+
 const db = dbFactory('lists')
 
 const listings_ = {

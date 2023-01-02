@@ -1,4 +1,4 @@
-import comments_ from 'controllers/comments/lib/comments'
+import comments_ from '#controllers/comments/lib/comments'
 
 const sanitization = {
   transaction: {},

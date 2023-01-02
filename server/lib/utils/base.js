@@ -1,13 +1,12 @@
-import _ from 'lodash'
-
+import _ from 'lodash-es'
 import {
   Integer as integerPattern,
   PositiveInteger as PositiveIntegerPattern,
   Float as floatPattern,
-} from 'lib/regex'
+} from '#lib/regex'
+import assert_ from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
 
-import { typeOf } from './types'
-import assert_ from 'lib/utils/assert_types'
 const multipleSpacesPattern = /\s+/g
 
 export default {

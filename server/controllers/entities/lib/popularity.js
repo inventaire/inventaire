@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import error_ from 'lib/error/error'
-import cache_ from 'lib/cache'
-import buildPopularityByUri from './build_popularity_by_uri'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import error_ from '#lib/error/error'
+import cache_ from '#lib/cache'
+import buildPopularityByUri from './build_popularity_by_uri.js'
 
 const getEntitiesPopularities = async ({ uris, refresh, dry }) => {
   if (uris.length === 0) return {}

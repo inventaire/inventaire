@@ -1,8 +1,7 @@
 // Get the amount of entities linking to a given entity
-import _ from 'builders/utils'
-
-import entities_ from './entities'
-import runWdQuery from 'data/wikidata/run_query'
+import _ from '#builders/utils'
+import runWdQuery from '#data/wikidata/run_query'
+import entities_ from './entities.js'
 
 export default (uri, refresh) => {
   const [ prefix, id ] = uri.split(':')

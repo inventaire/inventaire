@@ -1,8 +1,9 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
+import _ from '#builders/utils'
+
 const { initDelay, disabled } = CONFIG.mailer
 
-export default () => {
+export function initEmailServices () {
   initMailer()
   initActivitySummary()
 }

@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { createUser } from './users'
-import { createRandomizedItems } from './items'
+import _ from '#builders/utils'
+import { createUser } from './users.js'
+import { createRandomizedItems } from './items.js'
 
 let populatePromise
 const usersCount = 8

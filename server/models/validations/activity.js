@@ -1,6 +1,7 @@
-import assert_ from 'lib/utils/assert_types'
-import { pass, BoundedString } from './common'
-import error_ from 'lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import { pass, BoundedString } from './common.js'
+
 const activityTypes = [ 'Follow', 'Create' ]
 const objectTypes = [ 'Note' ]
 const actorTypes = [ 'Person' ]

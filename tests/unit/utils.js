@@ -1,5 +1,5 @@
-import { warn } from 'lib/utils/logs'
 import util from 'node:util'
+import { warn } from '#lib/utils/logs'
 
 export default {
   shouldNotBeCalled: res => {

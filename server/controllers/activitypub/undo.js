@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import { byExternalId, deleteById } from 'controllers/activitypub/lib/activities'
-import { isNonEmptyString } from 'lib/boolean_validations'
-import { trackActor } from 'lib/track'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { byExternalId, deleteById } from '#controllers/activitypub/lib/activities'
+import { isNonEmptyString } from '#lib/boolean_validations'
+import { trackActor } from '#lib/track'
 
 export default async params => {
   let { actor, object } = params

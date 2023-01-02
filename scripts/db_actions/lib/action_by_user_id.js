@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import ActionByInput from './action_by_input'
+import _ from '#builders/utils'
+import ActionByInput from './action_by_input.js'
 
 const [ userId ] = process.argv.slice(2)
 

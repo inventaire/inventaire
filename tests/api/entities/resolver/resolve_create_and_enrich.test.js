@@ -1,7 +1,7 @@
 import should from 'should'
-import { authReq } from 'tests/api/utils/utils'
-import { deleteByUris, deleteByExternalId } from 'tests/api/utils/entities'
-import { uploadSomeImage } from 'tests/api/utils/images'
+import { authReq } from '#tests/api/utils/utils'
+import { deleteByUris, deleteByExternalId } from '#tests/api/utils/entities'
+import { uploadSomeImage } from '#tests/api/utils/images'
 
 describe('entities:resolve:create-and-enrich', () => {
   // This tests requires to have CONFIG.dataseed.enabled = true

@@ -1,6 +1,6 @@
-import getEntitiesByUris from './lib/get_entities_by_uris'
-import addRelatives from './lib/add_relatives'
-import { pickAttributes, pickLanguages } from './lib/pick_attributes'
+import getEntitiesByUris from './lib/get_entities_by_uris.js'
+import addRelatives from './lib/add_relatives.js'
+import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
 
 const sanitization = {
   uris: {},

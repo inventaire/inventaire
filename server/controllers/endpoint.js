@@ -1,5 +1,6 @@
-import _ from 'builders/utils'
-import validateObject from 'lib/validate_object'
+import _ from '#builders/utils'
+import validateObject from '#lib/validate_object'
+
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
 
 // Basic validation of controllers objects to ease debugging

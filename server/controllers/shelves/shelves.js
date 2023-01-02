@@ -1,5 +1,5 @@
-import ActionsControllers from 'lib/actions_controllers'
-import { addItems, removeItems } from './items_actions'
+import ActionsControllers from '#lib/actions_controllers'
+import { addItems, removeItems } from './items_actions.js'
 
 export default {
   get: ActionsControllers({

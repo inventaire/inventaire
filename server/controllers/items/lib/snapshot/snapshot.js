@@ -14,14 +14,14 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-import _ from 'builders/utils'
-
-import dbFactory from 'db/level/get_sub_db'
-import { formatBatchOps } from 'db/level/utils'
-import refreshSnapshot from './refresh_snapshot'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import pTimeout from 'p-timeout'
+import _ from '#builders/utils'
+import dbFactory from '#db/level/get_sub_db'
+import { formatBatchOps } from '#db/level/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import refreshSnapshot from './refresh_snapshot.js'
+
 const db = dbFactory('snapshot', 'json')
 
 export default {

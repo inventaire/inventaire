@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
 import should from 'should'
-import loginAttemps from 'lib/passport/login_attempts'
+import _ from '#builders/utils'
+import loginAttemps from '#lib/passport/login_attempts'
 
 describe('loginAttemps', () => {
   it('env', () => {

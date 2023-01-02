@@ -1,7 +1,6 @@
 // Pre-formatted error handlers to make error responses consistent
-import { pick } from 'lodash'
-
-import { typeOf } from '../utils/types'
+import { pick } from 'lodash-es'
+import { typeOf } from '../utils/types.js'
 
 export default error_ => {
   const newFunctions = {

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import User from 'models/user'
-import isReservedWord from './is_reserved_word'
-import error_ from 'lib/error/error'
-import user_ from './user'
+import _ from '#builders/utils'
+import User from '#models/user'
+import error_ from '#lib/error/error'
+import isReservedWord from './is_reserved_word.js'
+import user_ from './user.js'
 
 export default {
   username: async (username, currentUsername) => {

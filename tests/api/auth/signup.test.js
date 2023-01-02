@@ -1,8 +1,9 @@
 import 'should'
-import { publicReq, shouldNotBeCalled } from '../utils/utils'
-import { wait } from 'lib/promises'
-import randomString from 'lib/utils/random_string'
-import { createUser, createUsername } from '../fixtures/users'
+import { wait } from '#lib/promises'
+import randomString from '#lib/utils/random_string'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { createUser, createUsername } from '../fixtures/users.js'
+
 const endpoint = '/api/auth?action=signup'
 
 describe('auth:signup', () => {

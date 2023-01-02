@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import { truncateLatLng } from 'lib/geo'
-import assert_ from 'lib/utils/assert_types'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { truncateLatLng } from '#lib/geo'
+import assert_ from '#lib/utils/assert_types'
 
 const Group = {}
 

@@ -1,12 +1,13 @@
-import _ from 'builders/utils'
-import Transaction from 'models/transaction'
-import error_ from 'lib/error/error'
-import comments_ from 'controllers/comments/lib/comments'
-import { BasicUpdater } from 'lib/doc_updates'
-import { minKey, maxKey } from 'lib/couch'
-import assert_ from 'lib/utils/assert_types'
-import radio from 'lib/radio'
-import dbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import Transaction from '#models/transaction'
+import error_ from '#lib/error/error'
+import comments_ from '#controllers/comments/lib/comments'
+import { BasicUpdater } from '#lib/doc_updates'
+import { minKey, maxKey } from '#lib/couch'
+import assert_ from '#lib/utils/assert_types'
+import radio from '#lib/radio'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('transactions')
 
 const transactions_ = {

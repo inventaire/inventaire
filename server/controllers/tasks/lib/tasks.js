@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import Task from 'models/task'
-import dbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import Task from '#models/task'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('tasks')
 
 const tasks_ = {

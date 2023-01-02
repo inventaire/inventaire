@@ -1,4 +1,4 @@
-import { authReq, getUser, customAuthReq } from './utils'
+import { authReq, getUser, customAuthReq } from './utils.js'
 
 const getGroup = async group => {
   group = await group

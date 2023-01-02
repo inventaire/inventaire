@@ -1,6 +1,6 @@
 import CONFIG from 'config'
-import { wait } from 'lib/promises'
-import radio from 'lib/radio'
+import { wait } from '#lib/promises'
+import radio from '#lib/radio'
 import 'should'
 
 // Do not run without having set NODE_ENV

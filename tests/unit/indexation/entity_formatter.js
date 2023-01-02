@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import Q535 from './fixtures/Q535.customized.json'
 import 'should'
-import entityFormatter from 'db/elasticsearch/formatters/entity'
+import _ from '#builders/utils'
+import entityFormatter from '#db/elasticsearch/formatters/entity'
+import Q535 from './fixtures/Q535.customized.json.js'
 
 describe('indexation: entity formatter: dump/API entity format', () => {
   it('should find the type', async () => {

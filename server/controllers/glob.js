@@ -1,6 +1,8 @@
-import { universalPath as __ } from 'config'
-import error_ from 'lib/error/error'
-const publicFolder = __.path('client', 'public')
+import error_ from '#lib/error/error'
+import { absolutePath } from '#lib/absolute_path'
+
+const publicFolder = absolutePath('client', 'public')
+
 const indexOptions = {
   root: publicFolder,
   headers: {

@@ -1,4 +1,4 @@
-import { createEdition, createWork, createAuthor } from './create_entity_from_seed'
+import { createEdition, createWork, createAuthor } from './create_entity_from_seed.js'
 
 export default ({ reqUserId, batchId, enrich }) => async entry => {
   const { edition, works, authors } = entry

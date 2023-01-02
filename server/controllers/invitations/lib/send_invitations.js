@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import invitations_ from './invitations'
-import Invited from 'models/invited'
-import radio from 'lib/radio'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import Invited from '#models/invited'
+import radio from '#lib/radio'
+import invitations_ from './invitations.js'
 
 export default (user, group, emails, message) => {
   assert_.object(user)

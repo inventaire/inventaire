@@ -4,10 +4,9 @@
 // in entities claims, and are used in the client to build entities URLs
 // to which alias URIs redirect
 // Ex: /entity/inv:#{invId} redirects to /entity/isbn:#{isbn}
-import error_ from 'lib/error/error'
-
-import getInvUriFromDoc from './get_inv_uri_from_doc'
-import { prefixifyInv } from './prefix'
+import error_ from '#lib/error/error'
+import getInvUriFromDoc from './get_inv_uri_from_doc.js'
+import { prefixifyInv } from './prefix.js'
 
 export default (entity, options) => {
   const { _id: invId, redirect } = entity

@@ -1,10 +1,10 @@
 import 'should'
-import _ from 'builders/utils'
-import { authReqB, authReqC, shouldNotBeCalled } from 'tests/api/utils/utils'
-import { createTransaction, getSomeTransaction } from '../fixtures/transactions'
-import { updateTransaction } from '../utils/transactions'
-import { getItem } from '../utils/items'
-import { getUserC } from '../utils/utils'
+import _ from '#builders/utils'
+import { authReqB, authReqC, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
+import { updateTransaction } from '../utils/transactions.js'
+import { getItem } from '../utils/items.js'
+import { getUserC } from '../utils/utils.js'
 
 const endpoint = '/api/transactions?action=update-state'
 

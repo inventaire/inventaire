@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import checkEntity from './lib/check_entity'
+import _ from '#builders/utils'
+import checkEntity from './lib/check_entity.js'
 
 const sanitization = {
   uris: {}

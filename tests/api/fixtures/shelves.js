@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import fakeText from './text'
-import { customAuthReq } from '../utils/request'
-import { getUser } from '../utils/utils'
-import { createItem } from '../fixtures/items'
-import { addItemsToShelf } from '../utils/shelves'
+import _ from '#builders/utils'
+import { customAuthReq } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+import { createItem } from '../fixtures/items.js'
+import { addItemsToShelf } from '../utils/shelves.js'
+import fakeText from './text.js'
 
 const fixtures = {
   shelfName: () => fakeText.randomWords(3, ' shelf'),

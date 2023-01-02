@@ -1,7 +1,7 @@
-import assert_ from 'lib/utils/assert_types'
-import { baseActivityValidations } from './validations/activity'
-import attributes from './attributes/activity'
-import error_ from 'lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import { baseActivityValidations } from './validations/activity.js'
+import attributes from './attributes/activity.js'
 
 export default {
   create: activity => {

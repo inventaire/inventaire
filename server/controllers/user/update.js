@@ -1,12 +1,13 @@
-import _ from 'builders/utils'
-import { attributes, validations, formatters } from 'models/user'
-import updateEmail from 'controllers/user/lib/update_email'
-import { setStableUsername } from 'controllers/user/lib/user'
-import dbFactory from 'db/couchdb/base'
-import availability_ from 'controllers/user/lib/availability'
-import error_ from 'lib/error/error'
-import { basicUpdater } from 'lib/doc_updates'
-import radio from 'lib/radio'
+import _ from '#builders/utils'
+import { attributes, validations, formatters } from '#models/user'
+import updateEmail from '#controllers/user/lib/update_email'
+import { setStableUsername } from '#controllers/user/lib/user'
+import dbFactory from '#db/couchdb/base'
+import availability_ from '#controllers/user/lib/availability'
+import error_ from '#lib/error/error'
+import { basicUpdater } from '#lib/doc_updates'
+import radio from '#lib/radio'
+
 const { updatable, concurrencial, acceptNullValue } = attributes
 const db = dbFactory('users')
 

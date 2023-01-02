@@ -2,11 +2,10 @@ import CONFIG from 'config'
 
 // Identity: v3
 // Swift: v2
-import _ from 'builders/utils'
-
-import error_ from 'lib/error/error'
-import { tenMinutes } from 'lib/time'
-import requests_ from 'lib/requests'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { tenMinutes } from '#lib/time'
+import requests_ from '#lib/requests'
 
 let lastToken
 let lastTokenExpirationTime = 0

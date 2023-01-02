@@ -1,4 +1,4 @@
-import getBestLangValue from 'lib/get_best_lang_value'
+import getBestLangValue from '#lib/get_best_lang_value'
 
 export default lang => result => {
   if (!lang) return result

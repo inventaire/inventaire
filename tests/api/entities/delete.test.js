@@ -1,16 +1,15 @@
 import should from 'should'
-import { wait } from 'lib/promises'
-import { authReq, shouldNotBeCalled } from '../utils/utils'
-import { getByUri, getByUris, deleteByUris } from '../utils/entities'
-import { getItemById } from '../utils/items'
-
+import { wait } from '#lib/promises'
+import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
+import { getItemById } from '../utils/items.js'
 import {
   createHuman,
   createWork,
   createWorkWithAuthor,
   createEdition,
   createEditionWithIsbn,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {

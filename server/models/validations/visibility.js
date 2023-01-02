@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { isVisibilityGroupKey } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import { isVisibilityGroupKey } from '#lib/boolean_validations'
 
 const keywordValues = [
   'friends',

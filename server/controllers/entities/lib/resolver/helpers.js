@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { getEntityNormalizedTerms } from '../terms_normalization'
+import _ from '#builders/utils'
+import { getEntityNormalizedTerms } from '../terms_normalization.js'
 
 export default {
   getAlreadyResolvedUris: seed => _.compact(_.map(seed, 'uri')),

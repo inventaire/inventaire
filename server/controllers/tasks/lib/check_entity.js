@@ -1,9 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import tasks_ from './tasks'
-import getNewTasks from './get_new_tasks'
-import updateRelationScore from './relation_score'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import tasks_ from './tasks.js'
+import getNewTasks from './get_new_tasks.js'
+import updateRelationScore from './relation_score.js'
+
 const supportedTypes = [ 'human' ]
 
 export default async uri => {

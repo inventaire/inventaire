@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { postActivityToActorFollowersInboxes } from './post_activity'
-import formatEntityPatchesActivities from './format_entity_patches_activities'
+import _ from '#builders/utils'
+import { postActivityToActorFollowersInboxes } from './post_activity.js'
+import formatEntityPatchesActivities from './format_entity_patches_activities.js'
 
 const deliverEntityActivitiesFromPatch = async patch => {
   try {

@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import elements_ from 'controllers/listings/lib/elements'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
-import listings_ from 'controllers/listings/lib/listings'
-import { paginate } from 'controllers/items/lib/queries_commons'
-import { isNonEmptyArray } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import elements_ from '#controllers/listings/lib/elements'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import listings_ from '#controllers/listings/lib/listings'
+import { paginate } from '#controllers/items/lib/queries_commons'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 
 const sanitization = {
   uris: {},

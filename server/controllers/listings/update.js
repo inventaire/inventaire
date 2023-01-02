@@ -1,4 +1,4 @@
-import { updateAttributes } from 'controllers/listings/lib/listings'
+import { updateAttributes } from '#controllers/listings/lib/listings'
 
 const sanitization = {
   id: {},

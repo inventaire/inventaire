@@ -1,11 +1,13 @@
-import _ from 'builders/utils'
-import user_ from 'controllers/user/lib/user'
-import { openPasswordUpdateWindow } from 'controllers/user/lib/token'
-import { passwords as pw_ } from 'lib/crypto'
-import error_ from 'lib/error/error'
-import loginAttempts from './login_attempts'
 import { Strategy as LocalStrategy } from 'passport-local'
-import { tokenDaysToLive } from 'config'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import user_ from '#controllers/user/lib/user'
+import { openPasswordUpdateWindow } from '#controllers/user/lib/token'
+import { passwords as pw_ } from '#lib/crypto'
+import error_ from '#lib/error/error'
+import loginAttempts from './login_attempts.js'
+
+const { tokenDaysToLive } = CONFIG
 
 // Reusing LocalStrategy but substituing username/password by email/token
 const options = {

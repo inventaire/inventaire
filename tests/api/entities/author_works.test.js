@@ -1,7 +1,8 @@
 import 'should'
-import { publicReq } from '../utils/utils'
-import { createWorkWithAuthor, createHuman } from '../fixtures/entities'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+import { createWorkWithAuthor, createHuman } from '../fixtures/entities.js'
+
 const workWithAuthorPromise = createWorkWithAuthor()
 const endpoint = '/api/entities?action=author-works'
 

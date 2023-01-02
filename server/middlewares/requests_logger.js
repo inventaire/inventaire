@@ -1,5 +1,6 @@
 import CONFIG from 'config'
-import { coloredElapsedTime } from 'lib/time'
+import { coloredElapsedTime } from '#lib/time'
+
 const host = CONFIG.getPublicOrigin()
 const { mutedDomains, mutedPath } = CONFIG.requestsLogger
 

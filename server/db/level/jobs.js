@@ -1,7 +1,7 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
-import getSubDb from './get_sub_db'
 import { promisify } from 'node:util'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import getSubDb from './get_sub_db.js'
 
 export default {
   // always return an object with 'push' and 'pushBatch' function

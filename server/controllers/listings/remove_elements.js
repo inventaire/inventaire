@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import listings_ from 'controllers/listings/lib/listings'
-import { filterFoundElementsUris } from 'controllers/listings/lib/helpers'
-import error_ from 'lib/error/error'
-import elements_ from 'controllers/listings/lib/elements'
-import { addWarning } from 'lib/responses'
+import _ from '#builders/utils'
+import listings_ from '#controllers/listings/lib/listings'
+import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
+import error_ from '#lib/error/error'
+import elements_ from '#controllers/listings/lib/elements'
+import { addWarning } from '#lib/responses'
 
 const sanitization = {
   id: {},

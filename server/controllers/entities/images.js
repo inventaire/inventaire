@@ -6,12 +6,11 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
-
-import error_ from 'lib/error/error'
-import getEntitiesImages from './lib/get_entities_images'
-import { img as imgUrlBuilder } from 'lib/emails/app_api'
-import getThumbData from 'data/commons/thumb'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import error_ from '#lib/error/error'
+import { img as imgUrlBuilder } from '#lib/emails/app_api'
+import getThumbData from '#data/commons/thumb'
+import getEntitiesImages from './lib/get_entities_images.js'
 
 const sanitization = validateSanitization({
   uris: {},

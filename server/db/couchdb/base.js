@@ -1,8 +1,8 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import getDbApi from './cot_base'
-import memoize from 'lib/utils/memoize'
-import databases from 'db/couchdb/databases'
+import _ from '#builders/utils'
+import memoize from '#lib/utils/memoize'
+import databases from '#db/couchdb/databases'
+import getDbApi from './cot_base.js'
 
 export default (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)

@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [

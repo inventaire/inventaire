@@ -1,11 +1,11 @@
-import relations_ from 'controllers/relations/lib/queries'
-import deleteUserItems from 'controllers/items/lib/delete_user_items'
-import { deleteUserShelves } from 'controllers/shelves/lib/shelves'
-import { deleteUserListingsAndElements } from 'controllers/listings/lib/listings'
-import { leaveAllGroups } from 'controllers/groups/lib/leave_groups'
-import { cancelAllActiveTransactions } from 'controllers/transactions/lib/transactions'
-import notifications_ from 'controllers/notifications/lib/notifications'
-import { softDeleteById } from 'controllers/user/lib/delete'
+import relations_ from '#controllers/relations/lib/queries'
+import deleteUserItems from '#controllers/items/lib/delete_user_items'
+import { deleteUserShelves } from '#controllers/shelves/lib/shelves'
+import { deleteUserListingsAndElements } from '#controllers/listings/lib/listings'
+import { leaveAllGroups } from '#controllers/groups/lib/leave_groups'
+import { cancelAllActiveTransactions } from '#controllers/transactions/lib/transactions'
+import notifications_ from '#controllers/notifications/lib/notifications'
+import { softDeleteById } from '#controllers/user/lib/delete'
 
 export default async userId => {
   const res = await softDeleteById(userId)

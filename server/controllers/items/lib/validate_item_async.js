@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import { validateVisibilityKeys } from 'lib/visibility/visibility'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
-import { flatMapUniq, mapUniq } from 'lib/utils/base'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { flatMapUniq, mapUniq } from '#lib/utils/base'
+
 const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
 
 let shelves_

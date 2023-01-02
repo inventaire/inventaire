@@ -1,9 +1,10 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
 import couchInit from 'couch-init2'
-import initHardCodedDocuments from './init_hard_coded_documents'
-import databases from './databases'
-const __ = CONFIG.universalPath
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
+import initHardCodedDocuments from './init_hard_coded_documents.js'
+import databases from './databases.js'
+
 const dbBaseUrl = CONFIG.db.getOrigin()
 const formattedList = []
 
@@ -19,7 +20,7 @@ for (const dbName in databases) {
   })
 }
 
-const designDocFolder = __.path('db', 'couchdb/design_docs')
+const designDocFolder = absolutePath('db', 'couchdb/design_docs')
 
 const init = async () => {
   try {
@@ -39,7 +40,7 @@ const init = async () => {
 
 let waitForCouchInit
 
-export default () => {
+export default function () {
   // Return the same promises to all consumers
   waitForCouchInit = waitForCouchInit || init()
   return waitForCouchInit

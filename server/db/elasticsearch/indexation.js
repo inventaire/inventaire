@@ -1,11 +1,12 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import formatters from './formatters/formatters'
-import filters from './filters'
-import deindex from './deindex'
-import { addToBatch, postBatch } from './bulk'
 import CONFIG from 'config'
-import { indexesNamesByBaseNames } from './indexes'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import formatters from './formatters/formatters.js'
+import filters from './filters.js'
+import deindex from './deindex.js'
+import { addToBatch, postBatch } from './bulk.js'
+import { indexesNamesByBaseNames } from './indexes.js'
+
 const { updateDelay } = CONFIG.elasticsearch
 const bulkThrottleDelay = updateDelay / 2
 

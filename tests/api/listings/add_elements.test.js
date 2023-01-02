@@ -1,7 +1,7 @@
-import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { authReq } from '../utils/utils'
-import { createListing, createElement } from '../fixtures/listings'
-import { createEdition, someFakeUri } from '../fixtures/entities'
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { authReq } from '../utils/utils.js'
+import { createListing, createElement } from '../fixtures/listings.js'
+import { createEdition, someFakeUri } from '../fixtures/entities.js'
 
 const endpoint = '/api/lists?action='
 const byIds = `${endpoint}by-ids&with-elements=true`

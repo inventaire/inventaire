@@ -1,8 +1,9 @@
 import 'should'
-import { customAuthReq, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
-import { getSomeGroup, createGroup } from '../fixtures/groups'
-import { getGroup } from 'tests/api/utils/groups'
-import { createUser } from '../fixtures/users'
+import { getGroup } from '#tests/api/utils/groups'
+import { customAuthReq, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { createUser } from '../fixtures/users.js'
+
 const endpoint = '/api/groups?action=request'
 
 describe('groups:update:request', () => {

@@ -1,7 +1,8 @@
 import CONFIG from 'config'
-import error_ from 'lib/error/error'
 import OAuthServer from 'express-oauth-server'
-import { getAcceptedScopes, allScopes } from './lib/oauth/scopes'
+import error_ from '#lib/error/error'
+import { getAcceptedScopes, allScopes } from './lib/oauth/scopes.js'
+
 const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 
 const oauthServer = new OAuthServer({

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import validations from './validations/shelf'
-import attributes from './attributes/shelf'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import validations from './validations/shelf.js'
+import attributes from './attributes/shelf.js'
 
 export default {
   create: shelf => {

@@ -1,5 +1,7 @@
-import wdIdByIso6391Code from 'wikidata-lang/mappings/wd_id_by_iso_639_1_code.json'
 import groupsData from 'isbn-groups'
+import { requireJson } from '#lib/utils/json'
+
+const wdIdByIso6391Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_1_code.json')
 
 const groupsMap = {}
 

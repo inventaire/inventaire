@@ -1,9 +1,11 @@
-import _ from 'builders/utils'
-import usersDbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import usersDbFactory from '#db/couchdb/base'
+
 const users = Object.values(require('./hard_coded_documents').users)
+
 const usersDb = usersDbFactory('users')
 
-export default () => {
+export default function () {
   // Updating sequentially so that blue-cot initialize only a cookie session only once.
   // This seems to be required to avoid getting a 401 from CouchDB,
   // especially when CouchDB just started

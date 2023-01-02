@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { authReq, authReqC, getUserGetter, customAuthReq } from '../utils/utils'
-import { getSomeGroup, createGroup } from '../fixtures/groups'
-import { humanName } from '../fixtures/entities'
-import { shouldNotBeCalled } from 'tests/unit/utils'
-import { getGroup } from 'tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getGroup } from '#tests/api/utils/groups'
+import { authReq, authReqC, getUserGetter, customAuthReq } from '../utils/utils.js'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { humanName } from '../fixtures/entities.js'
+
 const endpoint = '/api/groups?action=accept-request'
 
 describe('groups:update:accept-request', () => {

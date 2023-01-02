@@ -1,12 +1,12 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { wait } from 'lib/promises'
-import { shouldNotBeCalled } from '../utils'
-
 import should from 'should'
 import sinon from 'sinon'
-import cache_ from 'lib/cache'
-import randomString from 'lib/utils/random_string'
+import { wait } from '#lib/promises'
+import _ from '#builders/utils'
+import cache_ from '#lib/cache'
+import randomString from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '../utils.js'
+
 const { ttlCheckFrequency } = CONFIG.leveldb
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 

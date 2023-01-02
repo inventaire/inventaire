@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import validateAndFormatClaim from './validate_and_format_claim'
-import getEntityType from './get_entity_type'
-import validateClaimProperty from './validate_claim_property'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import validateAndFormatClaim from './validate_and_format_claim.js'
+import getEntityType from './get_entity_type.js'
+import validateClaimProperty from './validate_claim_property.js'
 
 export default async ({ claims, type, _id }) => {
   const wdtP31 = claims['wdt:P31']

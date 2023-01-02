@@ -1,4 +1,5 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
+
 const authorProperties = [
   // author
   'wdt:P50',

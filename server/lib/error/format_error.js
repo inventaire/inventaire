@@ -1,6 +1,6 @@
 // Using minimal dependencies to avoid circular dependencies
 // as this is depended on by lib/error which is called very early
-import { isNumber, isPlainObject, flatten, compact } from 'lodash'
+import { isNumber, isPlainObject, flatten, compact } from 'lodash-es'
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)

@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import entities_ from './entities'
-import patches_ from './patches/patches'
-import placeholders_ from './placeholders'
-import updateItemEntity from 'controllers/items/lib/update_entity'
-import { revertFromPatchDoc } from './revert_edit'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import updateItemEntity from '#controllers/items/lib/update_entity'
+import entities_ from './entities.js'
+import patches_ from './patches/patches.js'
+import placeholders_ from './placeholders.js'
+import { revertFromPatchDoc } from './revert_edit.js'
 
 export default async (userId, fromId) => {
   const patches = await patches_.getWithSnapshots(fromId)

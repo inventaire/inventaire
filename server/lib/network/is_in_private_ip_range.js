@@ -1,4 +1,4 @@
-import { getIpBinaryRepresentation } from './ip_binary_representation'
+import { getIpBinaryRepresentation } from './ip_binary_representation.js'
 
 // resolvedIp: ip as returned by dns.lookup
 export default resolvedIp => {

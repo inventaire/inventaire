@@ -1,13 +1,12 @@
-import _ from 'builders/utils'
-import fakeText from './text'
-import { customAuthReq } from '../utils/request'
-import { getUser } from '../utils/utils'
-
+import _ from '#builders/utils'
+import { customAuthReq } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+import fakeText from './text.js'
 import {
   createEdition,
   createEditionWithWorkAndAuthor,
   createEditionWithWorkAuthorAndSerie,
-} from './entities'
+} from './entities.js'
 
 const getEditionUri = async (lang = 'en') => {
   const { uri } = await createEdition({ lang })

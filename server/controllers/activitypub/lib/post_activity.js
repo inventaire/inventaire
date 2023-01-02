@@ -1,13 +1,13 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import { signRequest } from 'controllers/activitypub/lib/security'
-import error_ from 'lib/error/error'
-import { getFollowActivitiesByObject } from './activities'
-import assert_ from 'lib/utils/assert_types'
-import { getSharedKeyPair } from './shared_key_pair'
-import { makeUrl } from './helpers'
-import { isUrl } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import { signRequest } from '#controllers/activitypub/lib/security'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { isUrl } from '#lib/boolean_validations'
+import { getFollowActivitiesByObject } from './activities.js'
+import { getSharedKeyPair } from './shared_key_pair.js'
+import { makeUrl } from './helpers.js'
 // Arbitrary timeout
 const timeout = 30 * 1000
 const sanitize = CONFIG.activitypub.sanitizeUrls

@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
 import wdk from 'wikidata-sdk'
-import isbn_ from 'lib/isbn/isbn'
+import _ from '#builders/utils'
+import isbn_ from '#lib/isbn/isbn'
 
 const prefixify = (id, prefix) => {
   if (id == null) return

@@ -1,7 +1,7 @@
-import items_ from 'controllers/items/lib/items'
-import { addAssociatedData, paginate } from './lib/queries_commons'
-import { filterPrivateAttributes } from './lib/filter_private_attributes'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
+import items_ from '#controllers/items/lib/items'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import { addAssociatedData, paginate } from './lib/queries_commons.js'
+import { filterPrivateAttributes } from './lib/filter_private_attributes.js'
 
 const sanitization = {
   ids: {},

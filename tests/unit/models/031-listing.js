@@ -1,10 +1,9 @@
-import _ from 'builders/utils'
-import { expired } from 'lib/time'
-import Listing from 'models/listing'
-import { shouldNotBeCalled } from '../utils'
 import 'should'
-
-import fakeText from 'tests/api/fixtures/text'
+import _ from '#builders/utils'
+import { expired } from '#lib/time'
+import Listing from '#models/listing'
+import fakeText from '#tests/api/fixtures/text'
+import { shouldNotBeCalled } from '../utils.js'
 
 const someUserId = '1234567890a1234567890b1234567890'
 const { create, updateAttributes: update } = Listing

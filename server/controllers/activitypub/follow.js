@@ -1,12 +1,13 @@
 import CONFIG from 'config'
-import error_ from 'lib/error/error'
-import { parseQuery } from 'lib/utils/url'
-import { createActivity, getFollowActivitiesByObject } from 'controllers/activitypub/lib/activities'
-import { signAndPostActivity } from './lib/post_activity'
-import { validateUser, validateShelf, validateEntity } from './lib/validations'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers'
-import { isEntityUri, isUsername } from 'lib/boolean_validations'
-import { trackActor } from 'lib/track'
+import error_ from '#lib/error/error'
+import { parseQuery } from '#lib/utils/url'
+import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
+import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import { trackActor } from '#lib/track'
+import { signAndPostActivity } from './lib/post_activity.js'
+import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
+
 const host = CONFIG.getPublicOrigin()
 
 export default async params => {

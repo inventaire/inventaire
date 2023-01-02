@@ -1,8 +1,9 @@
 import 'should'
-import { authReq } from '../utils/utils'
-import { shouldNotBeCalled } from 'tests/unit/utils'
-import { isImageHash } from 'lib/boolean_validations'
-import { uploadSomeImage } from '../utils/images'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { isImageHash } from '#lib/boolean_validations'
+import { authReq } from '../utils/utils.js'
+import { uploadSomeImage } from '../utils/images.js'
+
 const endpoint = '/api/images?action=upload'
 
 describe('images:upload', () => {

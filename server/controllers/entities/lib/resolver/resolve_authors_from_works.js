@@ -1,5 +1,5 @@
-import getAuthorsFromWorksUris from './get_authors_from_works_uris'
-import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers'
+import getAuthorsFromWorksUris from './get_authors_from_works_uris.js'
+import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers.js'
 
 export default async (authors, works) => {
   const worksUris = getAlreadyResolvedUris(works)

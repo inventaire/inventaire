@@ -1,6 +1,7 @@
-import { wait } from 'lib/promises'
-import { adminReq } from '../utils/utils'
-import { createHuman, humanName } from '../fixtures/entities'
+import { wait } from '#lib/promises'
+import { adminReq } from '../utils/utils.js'
+import { createHuman, humanName } from '../fixtures/entities.js'
+
 const endpoint = '/api/entities?action=duplicates'
 
 describe('entities:duplicates', () => {

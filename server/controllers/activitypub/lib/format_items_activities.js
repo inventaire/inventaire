@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
 import CONFIG from 'config'
-import { i18n } from 'lib/emails/i18n/i18n'
-import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
-import { context } from 'controllers/activitypub/lib/helpers'
+import _ from '#builders/utils'
+import { i18n } from '#lib/emails/i18n/i18n'
+import snapshot_ from '#controllers/items/lib/snapshot/snapshot'
+import { context } from '#controllers/activitypub/lib/helpers'
+
 const host = CONFIG.getPublicOrigin()
 const maxLinksToDisplay = 3
 

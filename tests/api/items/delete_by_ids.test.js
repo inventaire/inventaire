@@ -1,11 +1,12 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { wait } from 'lib/promises'
+import _ from '#builders/utils'
+import { wait } from '#lib/promises'
 import 'should'
-import { authReq, authReqB, getUser } from '../utils/utils'
-import { CountChange } from './helpers'
-import { createItem } from '../fixtures/items'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
+import { createItem } from '../fixtures/items.js'
+import { CountChange } from './helpers.js'
+
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {

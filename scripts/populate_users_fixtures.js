@@ -1,9 +1,9 @@
-#!/usr/bin/env nodeimport 'module-alias/register';
-import _ from 'builders/utils'
-import { createUserWithItems } from '../tests/api/fixtures/populate'
-import user_, { addRole } from 'controllers/user/lib/user'
-import { makeFriends } from '../tests/api/utils/relations'
-import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups'
+#!/usr/bin/env node
+import _ from '#builders/utils'
+import user_, { addRole } from '#controllers/user/lib/user'
+import { createUserWithItems } from '../tests/api/fixtures/populate.js'
+import { makeFriends } from '../tests/api/utils/relations.js'
+import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups.js'
 
 const [ username ] = process.argv.slice(2)
 

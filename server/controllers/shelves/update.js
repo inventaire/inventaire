@@ -1,4 +1,4 @@
-import { updateAttributes } from 'controllers/shelves/lib/shelves'
+import { updateAttributes } from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   shelf: {},

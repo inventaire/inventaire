@@ -1,9 +1,9 @@
-import couch_ from 'lib/couch'
-import userRelativeRequest from './user-relative_request'
-import dbFactory from 'db/couchdb/base'
-import Relation from 'models/relation'
+import couch_ from '#lib/couch'
+import dbFactory from '#db/couchdb/base'
+import Relation from '#models/relation'
+import userRelativeRequest from './user-relative_request.js'
+import lists from './lists.js'
 
-import lists from './lists'
 const db = dbFactory('users', 'relations')
 
 const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))

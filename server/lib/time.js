@@ -1,4 +1,4 @@
-import { red, yellow, grey } from 'chalk'
+import { red, yellow, grey } from 'tiny-chalk'
 
 const oneSecond = 1000
 const oneMinute = 60 * oneSecond

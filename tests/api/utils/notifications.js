@@ -1,5 +1,5 @@
-import { customAuthReq } from './utils'
-import assert_ from 'lib/utils/assert_types'
+import assert_ from '#lib/utils/assert_types'
+import { customAuthReq } from './utils.js'
 
 export default {
   getNotifications: async ({ user, type, subject }) => {

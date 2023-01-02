@@ -1,8 +1,7 @@
 // An endpoint to get entities history as snapshots and diffs
-import patches_ from './lib/patches/patches'
-
-import { hasAdminAccess } from 'lib/user_access_levels'
-import anonymizePatches from './lib/anonymize_patches'
+import { hasAdminAccess } from '#lib/user_access_levels'
+import patches_ from './lib/patches/patches.js'
+import anonymizePatches from './lib/anonymize_patches.js'
 
 const sanitization = {
   id: {}

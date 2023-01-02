@@ -1,9 +1,8 @@
-import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { authReq } from '../utils/utils'
-import { createListing, createElement } from '../fixtures/listings'
-
-import elements_ from 'controllers/listings/lib/elements'
-import listings_ from 'controllers/listings/lib/listings'
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import elements_ from '#controllers/listings/lib/elements'
+import listings_ from '#controllers/listings/lib/listings'
+import { authReq } from '../utils/utils.js'
+import { createListing, createElement } from '../fixtures/listings.js'
 
 const endpoint = '/api/lists?action='
 const removeElements = `${endpoint}remove-elements`

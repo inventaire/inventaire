@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { wait } from 'lib/promises'
-import refreshSnapshot from './lib/snapshot/refresh_snapshot'
+import _ from '#builders/utils'
+import { wait } from '#lib/promises'
+import refreshSnapshot from './lib/snapshot/refresh_snapshot.js'
 
 const sanitization = {
   uris: {}

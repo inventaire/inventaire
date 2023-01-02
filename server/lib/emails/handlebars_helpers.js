@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import i18n from './i18n/i18n'
-import appApi from './app_api'
+import _ from '#builders/utils'
+import i18n from './i18n/i18n.js'
+import appApi from './app_api.js'
 
 export default Object.assign({}, i18n, {
   // Prevent passing more than 2 arguments

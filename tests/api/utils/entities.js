@@ -1,6 +1,9 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { buildUrl } from '#lib/utils/url'
+import { getIndexedDoc } from '../utils/search.js'
 import {
   publicReq,
   authReq,
@@ -9,12 +12,7 @@ import {
   customAuthReq,
   getDataadminUser,
   getUser,
-} from './utils'
-
-import { getIndexedDoc } from '../utils/search'
-import { unprefixify } from 'controllers/entities/lib/prefix'
-import { waitForIndexation } from 'tests/api/utils/search'
-import { buildUrl } from 'lib/utils/url'
+} from './utils.js'
 
 const entitiesUtils = {
   getByUris: (uris, relatives, refresh) => {

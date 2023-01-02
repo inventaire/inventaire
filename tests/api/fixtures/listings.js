@@ -1,8 +1,9 @@
-import fakeText from './text'
-import { customAuthReq } from '../utils/request'
-import { getUser } from '../utils/utils'
-import { createEdition } from './entities'
-import { addElements } from 'tests/api/utils/listings'
+import { addElements } from '#tests/api/utils/listings'
+import { customAuthReq } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+import fakeText from './text.js'
+import { createEdition } from './entities.js'
+
 const endpoint = '/api/lists?action='
 
 const fixtures = {

@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import snapshot_ from 'controllers/items/lib/snapshot/snapshot'
-import transactions_ from './lib/transactions'
-import user_ from 'controllers/user/lib/user'
-import { verifyRightToRequest } from './lib/rights_verification'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import snapshot_ from '#controllers/items/lib/snapshot/snapshot'
+import user_ from '#controllers/user/lib/user'
+import transactions_ from './lib/transactions.js'
+import { verifyRightToRequest } from './lib/rights_verification.js'
 
 const sanitization = {
   item: {},

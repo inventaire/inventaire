@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import shelves_ from 'controllers/shelves/lib/shelves'
+import _ from '#builders/utils'
+import shelves_ from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   id: {},

@@ -14,16 +14,15 @@
 // Bases and builders are an attempt to keep those configuration objects DRY:
 // Bases represent the most common configuration objects, and can be extended
 // into more specific configs
-import bases from './properties_config_bases'
-
-// Builders are functions to generate config objects tailored as closely
-// as possible to the property exact needs
-import builders from './properties_config_builders'
-
 import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
-} from 'lib/regex'
+} from '#lib/regex'
+import bases from './properties_config_bases.js'
+
+// Builders are functions to generate config objects tailored as closely
+// as possible to the property exact needs
+import builders from './properties_config_builders.js'
 
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)

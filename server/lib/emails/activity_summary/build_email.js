@@ -1,14 +1,14 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import { i18n } from '../i18n/i18n'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import relations_ from '#controllers/relations/lib/queries'
+import groupsCounts from '#controllers/groups/lib/counts'
+import notifications_ from '#controllers/notifications/lib/notifications'
+import transactions_ from '#controllers/transactions/lib/transactions'
+import { i18n } from '../i18n/i18n.js'
+import getLastNetworkBooks from './last_network_books.js'
+import getLastNearbyPublicBooks from './last_nearby_books.js'
 
-import relations_ from 'controllers/relations/lib/queries'
-import groupsCounts from 'controllers/groups/lib/counts'
-import notifications_ from 'controllers/notifications/lib/notifications'
-import transactions_ from 'controllers/transactions/lib/transactions'
-import getLastNetworkBooks from './last_network_books'
-import getLastNearbyPublicBooks from './last_nearby_books'
 const host = CONFIG.getPublicOrigin()
 const { contactAddress } = CONFIG
 const { newsKey, didYouKnowKeys } = CONFIG.activitySummary

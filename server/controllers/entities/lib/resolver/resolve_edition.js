@@ -1,6 +1,6 @@
-import entities_ from '../entities'
-import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri'
-import resolveExternalIds from './resolve_external_ids'
+import entities_ from '../entities.js'
+import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
+import resolveExternalIds from './resolve_external_ids.js'
 // Do not try to resolve edition on Wikidata while Wikidata editions are in quarantine
 // cf https://github.com/inventaire/inventaire/issues/182
 const resolveOnWikidata = false

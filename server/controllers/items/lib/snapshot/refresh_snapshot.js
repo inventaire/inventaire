@@ -1,12 +1,12 @@
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import assert_ from 'lib/utils/assert_types'
-import entities_ from 'controllers/entities/lib/entities'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
-import buildSnapshot from './build_snapshot'
-import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities'
-import { getDocData } from './helpers'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import assert_ from '#lib/utils/assert_types'
+import entities_ from '#controllers/entities/lib/entities'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import buildSnapshot from './build_snapshot.js'
+import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
+import { getDocData } from './helpers.js'
 
 let snapshot_
 const requireCircularDependencies = () => { snapshot_ = require('./snapshot') }

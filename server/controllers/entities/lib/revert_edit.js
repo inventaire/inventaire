@@ -1,8 +1,8 @@
-import { emit } from 'lib/radio'
-import Patch from 'models/patch'
-import entities_ from './entities'
-import patches_ from './patches/patches'
-import validateEntity from './validate_entity'
+import { emit } from '#lib/radio'
+import Patch from '#models/patch'
+import entities_ from './entities.js'
+import patches_ from './patches/patches.js'
+import validateEntity from './validate_entity.js'
 
 const revertFromPatchDoc = async (patch, userId) => {
   const entityId = patch._id.split(':')[0]

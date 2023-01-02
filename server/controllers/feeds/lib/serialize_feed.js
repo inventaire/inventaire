@@ -1,8 +1,9 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
 import Rss from 'rss'
-import templateHelpers from 'lib/emails/handlebars_helpers'
-import getItemDescription from './get_item_description'
+import _ from '#builders/utils'
+import templateHelpers from '#lib/emails/handlebars_helpers'
+import getItemDescription from './get_item_description.js'
+
 const root = CONFIG.getPublicOrigin()
 const { feed: feedConfig } = CONFIG
 const oneDayInMinutes = 24 * 60

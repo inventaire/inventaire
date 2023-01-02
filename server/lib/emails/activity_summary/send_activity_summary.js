@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import { justReceivedActivitySummary } from 'controllers/user/lib/summary'
-import transporter_ from '../transporter'
-import buildEmail from './build_email'
 import CONFIG from 'config'
+import _ from '#builders/utils'
+import { justReceivedActivitySummary } from '#controllers/user/lib/summary'
+import transporter_ from '../transporter.js'
+import buildEmail from './build_email.js'
 
 const { disableUserUpdate } = CONFIG.activitySummary
 

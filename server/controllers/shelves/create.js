@@ -1,4 +1,4 @@
-import shelves_ from 'controllers/shelves/lib/shelves'
+import shelves_ from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   name: {},

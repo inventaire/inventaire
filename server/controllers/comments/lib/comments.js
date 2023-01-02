@@ -1,6 +1,7 @@
-import Comment from 'models/comment'
-import assert_ from 'lib/utils/assert_types'
-import dbFactory from 'db/couchdb/base'
+import Comment from '#models/comment'
+import assert_ from '#lib/utils/assert_types'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('comments')
 
 export default {

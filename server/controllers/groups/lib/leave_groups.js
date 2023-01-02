@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import Group from 'models/group'
-import dbFactory from 'db/couchdb/base'
-import promises_ from 'lib/promises'
+import _ from '#builders/utils'
+import Group from '#models/group'
+import dbFactory from '#db/couchdb/base'
+import promises_ from '#lib/promises'
+
 const db = dbFactory('groups')
 
 let groups_

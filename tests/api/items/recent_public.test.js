@@ -1,9 +1,10 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { publicReq } from 'tests/api/utils/utils'
-import { populate } from '../fixtures/populate'
-import { expired } from 'lib/time'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { publicReq } from '#tests/api/utils/utils'
+import { expired } from '#lib/time'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { populate } from '../fixtures/populate.js'
+
 const recentPublicUrl = '/api/items?action=recent-public'
 
 describe('items:recent-public', () => {

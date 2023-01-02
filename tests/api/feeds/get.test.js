@@ -1,9 +1,9 @@
 import 'should'
-import { getUser, getReservedUser } from '../utils/utils'
-import { rawRequest } from '../utils/request'
-import { createItem, createItems } from '../fixtures/items'
-import { getSomeGroup, createGroup } from '../fixtures/groups'
-import { createShelf, createShelfWithItems } from '../fixtures/shelves'
+import { getUser, getReservedUser } from '../utils/utils.js'
+import { rawRequest } from '../utils/request.js'
+import { createItem, createItems } from '../fixtures/items.js'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { createShelf, createShelfWithItems } from '../fixtures/shelves.js'
 
 describe('feeds:get', () => {
   describe('user', () => {

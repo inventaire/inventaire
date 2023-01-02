@@ -1,6 +1,6 @@
-import ActionsControllers from 'lib/actions_controllers'
-import radio from 'lib/radio'
-import checkImage from './lib/check_image'
+import ActionsControllers from '#lib/actions_controllers'
+import radio from '#lib/radio'
+import checkImage from './lib/check_image.js'
 
 export default {
   get: ActionsControllers({

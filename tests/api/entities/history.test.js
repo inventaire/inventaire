@@ -1,5 +1,4 @@
 import should from 'should'
-
 import {
   adminReq,
   dataadminReq,
@@ -8,10 +7,10 @@ import {
   shouldNotBeCalled,
   getReservedUser,
   getDeanonymizedUser, customAuthReq
-} from '../utils/utils'
+} from '../utils/utils.js'
+import { createHuman } from '../fixtures/entities.js'
+import { deleteByUris } from '../utils/entities.js'
 
-import { createHuman } from '../fixtures/entities'
-import { deleteByUris } from '../utils/entities'
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {

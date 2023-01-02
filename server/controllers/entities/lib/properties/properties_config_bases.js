@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { EntityUri } from 'lib/regex'
-import { BoundedString } from 'models/validations/common'
+import _ from '#builders/utils'
+import { EntityUri } from '#lib/regex'
+import { BoundedString } from '#models/validations/common'
 
 const entity = {
   datatype: 'entity',

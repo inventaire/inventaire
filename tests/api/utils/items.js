@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { authReq, customAuthReq, getUser } from './utils'
+import _ from '#builders/utils'
+import { authReq, customAuthReq, getUser } from './utils.js'
 
 const utils = {
   getItemsByIds: ids => {

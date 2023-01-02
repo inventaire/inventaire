@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 
 // Doc: http://developer.piwik.org/api-reference/tracking-api
-import _ from 'builders/utils'
+import _ from '#builders/utils'
+import { buildUrl } from '#lib/utils/url'
+import requests_ from './requests.js'
 
-import { buildUrl } from 'lib/utils/url'
-import requests_ from './requests'
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'

@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import Group from 'models/group'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import Group from '#models/group'
 
 let groups_
 const requireCircularDependencies = () => { groups_ = require('./groups') }

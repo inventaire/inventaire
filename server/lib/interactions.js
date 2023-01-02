@@ -1,6 +1,6 @@
-import error_ from 'lib/error/error'
-import { someMatch } from 'lib/utils/base'
-import { getAllowedVisibilityKeys } from 'lib/visibility/allowed_visibility_keys'
+import error_ from '#lib/error/error'
+import { someMatch } from '#lib/utils/base'
+import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 
 // MUST return the item or throw an error
 export default {

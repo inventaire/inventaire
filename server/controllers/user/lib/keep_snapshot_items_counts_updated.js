@@ -2,13 +2,14 @@
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time
 
-import _ from 'builders/utils'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import radio from '#lib/radio'
+import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
-import radio from 'lib/radio'
-import updateSnapshotItemsCounts from './update_snapshot_items_counts'
-import { itemsCountDebounceTime as delay } from 'config'
+const { itemsCountDebounceTime: delay } = CONFIG
 
-export default () => {
+export default function () {
   const debouncedUpdaters = {}
 
   const itemsCountsUpdater = userId => () => {

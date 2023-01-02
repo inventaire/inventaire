@@ -1,8 +1,9 @@
 // A server-wide event bus
 
-import _ from 'builders/utils'
-import CONFIG from 'config'
 import { EventEmitter } from 'node:events'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+
 const radio = new EventEmitter()
 
 // It's convenient in tests to have the guaranty that event listeners were called,

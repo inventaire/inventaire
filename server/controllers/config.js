@@ -1,5 +1,8 @@
-import { sendStaticJson } from 'lib/responses'
-import { piwik } from 'config'
+import CONFIG from 'config'
+import { sendStaticJson } from '#lib/responses'
+
+const { piwik } = CONFIG
+
 const endpoint = piwik.enabled ? piwik.endpoint : null
 
 const clientConfig = JSON.stringify({

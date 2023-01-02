@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import 'should'
 import fetch from 'node-fetch'
+
 const origin = CONFIG.getLocalOrigin()
 
 describe('content', () => {

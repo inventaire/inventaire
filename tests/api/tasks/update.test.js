@@ -1,8 +1,8 @@
 import 'should'
-import { createHuman } from '../fixtures/entities'
-import { update } from '../utils/tasks'
-import { createTask } from '../fixtures/tasks'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createHuman } from '../fixtures/entities.js'
+import { update } from '../utils/tasks.js'
+import { createTask } from '../fixtures/tasks.js'
 
 describe('tasks:update', () => {
   it('should update a task', async () => {

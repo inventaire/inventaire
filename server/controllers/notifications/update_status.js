@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import responses_ from 'lib/responses'
-import { updateReadStatus } from './lib/notifications'
+import _ from '#builders/utils'
+import responses_ from '#lib/responses'
+import { updateReadStatus } from './lib/notifications.js'
 
 export default (req, res) => {
   const reqUserId = req.user._id

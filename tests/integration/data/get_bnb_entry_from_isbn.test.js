@@ -1,5 +1,5 @@
 import should from 'should'
-import getBnbEntryFromIsbn from 'data/bnb/get_bnb_entry_from_isbn'
+import getBnbEntryFromIsbn from '#data/bnb/get_bnb_entry_from_isbn'
 
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"

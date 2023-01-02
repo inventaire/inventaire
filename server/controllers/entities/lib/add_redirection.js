@@ -1,4 +1,4 @@
-import assert_ from 'lib/utils/assert_types'
+import assert_ from '#lib/utils/assert_types'
 
 // Possibly overriding further redirects object
 // Notice a tricky naming issue here:

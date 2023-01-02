@@ -1,6 +1,7 @@
-#!/usr/bin/env nodeimport 'module-alias/register';
-import { addRole, removeRole } from 'controllers/user/lib/user'
-import { logSuccessAndExit, logErrorAndExit } from '../scripts_utils'
+#!/usr/bin/env node
+import { addRole, removeRole } from '#controllers/user/lib/user'
+import { logSuccessAndExit, logErrorAndExit } from '../scripts_utils.js'
+
 const [ userId, action, role ] = process.argv.slice(2)
 
 if (action === 'add') {

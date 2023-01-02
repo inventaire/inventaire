@@ -3,12 +3,11 @@ import {
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
-} from 'tests/api/utils/utils'
-
-import { authReq, authReqB, getUser } from '../utils/utils'
-import { createListing, listingName, listingDescription } from '../fixtures/listings'
-import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
-import { someCouchUuid } from 'tests/api/fixtures/general'
+} from '#tests/api/utils/utils'
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
+import { someCouchUuid } from '#tests/api/fixtures/general'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
+import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
 
 const endpoint = '/api/lists'
 

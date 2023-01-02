@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { defer } from 'lib/promises'
+import _ from '#builders/utils'
+import { defer } from '#lib/promises'
 
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time

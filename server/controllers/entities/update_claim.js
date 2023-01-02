@@ -1,10 +1,9 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
 
 // TODO: accept ISBN URIs
-import inv from './lib/update_inv_claim'
-
-import wd from './lib/update_wd_claim'
+import inv from './lib/update_inv_claim.js'
+import wd from './lib/update_wd_claim.js'
 
 const sanitization = {
   id: { optional: true },

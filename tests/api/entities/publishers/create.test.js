@@ -1,6 +1,6 @@
 import 'should'
-import { createEdition, createPublisher } from '../../fixtures/entities'
-import { addClaim } from '../../utils/entities'
+import { createEdition, createPublisher } from '../../fixtures/entities.js'
+import { addClaim } from '../../utils/entities.js'
 
 describe('entities:create:publishers', () => {
   it('should create a local publisher entity', async () => {

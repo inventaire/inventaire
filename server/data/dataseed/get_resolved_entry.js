@@ -1,10 +1,12 @@
-import _ from 'builders/utils'
-import { getByIsbns as getSeedsByIsbns } from './dataseed'
 import CONFIG from 'config'
-import parseIsbn from 'server/lib/isbn/parse'
-import { resolvePublisher } from 'controllers/entities/lib/resolver/resolve_publisher'
-import temporarilyMemoize from 'lib/temporarily_memoize'
-const { _id: seedUserId } = require('db/couchdb/hard_coded_documents').users.seed
+import _ from '#builders/utils'
+import { parseIsbn } from '#lib/isbn/parse'
+import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
+import temporarilyMemoize from '#lib/temporarily_memoize'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { getByIsbns as getSeedsByIsbns } from './dataseed.js'
+
+const { _id: seedUserId } = hardCodedUsers.seed
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 

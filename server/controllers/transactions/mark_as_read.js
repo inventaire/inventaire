@@ -1,8 +1,7 @@
 // Mark the whole transaction as read
 
-import transactions_ from './lib/transactions'
-
-import { verifyRightToInteract } from './lib/rights_verification'
+import transactions_ from './lib/transactions.js'
+import { verifyRightToInteract } from './lib/rights_verification.js'
 
 const sanitization = {
   id: {}

@@ -1,5 +1,7 @@
-import error_ from 'lib/error/error'
-import { wikidataOAuth } from 'config'
+import CONFIG from 'config'
+import error_ from '#lib/error/error'
+
+const { wikidataOAuth } = CONFIG
 
 export default {
   validate: user => {

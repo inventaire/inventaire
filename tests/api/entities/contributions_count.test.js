@@ -1,6 +1,7 @@
-import { oneDay } from 'lib/time'
-import { simpleDay } from 'lib/utils/base'
-import { adminReq } from '../utils/utils'
+import { oneDay } from '#lib/time'
+import { simpleDay } from '#lib/utils/base'
+import { adminReq } from '../utils/utils.js'
+
 const endpoint = '/api/entities?action=contributions-count'
 
 describe('entities:activity', () => {

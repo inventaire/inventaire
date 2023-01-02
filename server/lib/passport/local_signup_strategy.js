@@ -1,8 +1,8 @@
-import { track } from 'lib/track'
-import User from 'models/user'
-import headers_ from 'lib/headers'
-import createUser from 'controllers/user/lib/create'
 import { Strategy as LocalStrategy } from 'passport-local'
+import { track } from '#lib/track'
+import User from '#models/user'
+import headers_ from '#lib/headers'
+import createUser from '#controllers/user/lib/create'
 
 const options = { passReqToCallback: true }
 

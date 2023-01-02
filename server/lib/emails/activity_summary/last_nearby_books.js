@@ -1,7 +1,8 @@
-import user_ from 'controllers/user/lib/user'
-import items_ from 'controllers/items/lib/items'
-import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
-import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers'
+import user_ from '#controllers/user/lib/user'
+import items_ from '#controllers/items/lib/items'
+import getAuthorizedItems from '#controllers/items/lib/get_authorized_items'
+import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers.js'
+
 const range = 20
 const strictRange = true
 

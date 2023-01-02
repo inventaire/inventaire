@@ -1,8 +1,9 @@
 import 'should'
-import { getUser, dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } from '../utils/utils'
-import { deleteUser, updateUser } from '../utils/users'
-import { getToken } from '../utils/oauth'
-import { bearerTokenReq } from '../utils/request'
+import { getUser, dataadminReq, adminReq, authReq, customAuthReq, getReservedUser } from '../utils/utils.js'
+import { deleteUser, updateUser } from '../utils/users.js'
+import { getToken } from '../utils/oauth.js'
+import { bearerTokenReq } from '../utils/request.js'
+
 const endpoint = '/api/user'
 
 describe('user:get', () => {

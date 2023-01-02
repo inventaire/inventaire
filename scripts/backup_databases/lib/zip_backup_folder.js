@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import { shellExec } from 'scripts/scripts_utils'
-import { backupGeneralFolder, backupFolder, day } from './get_backup_folder_data'
+import _ from '#builders/utils'
+import { shellExec } from '#scripts/scripts_utils'
+import { backupGeneralFolder, backupFolder, day } from './get_backup_folder_data.js'
 
 export default async () => {
   await shellExec('tar', [

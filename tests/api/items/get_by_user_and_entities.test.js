@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { getUser, authReq, customAuthReq, publicReq, getUserGetter } from 'tests/api/utils/utils'
-import { createItem, createItemWithEditionAndWork } from '../fixtures/items'
-import { getTwoFriends } from '../fixtures/users'
-import { getSomeGroup, addMember } from '../fixtures/groups'
-import { humanName } from '../fixtures/entities'
+import _ from '#builders/utils'
+import { getUser, authReq, customAuthReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
+import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
+import { getTwoFriends } from '../fixtures/users.js'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { humanName } from '../fixtures/entities.js'
+
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-user-and-entities'

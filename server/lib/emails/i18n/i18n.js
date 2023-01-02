@@ -1,10 +1,12 @@
-import _ from 'builders/utils'
 import Polyglot from 'node-polyglot'
-import { active as activeLangs } from 'i18nAssets/langs'
 import moment from 'moment'
-import { appendToServerKeys } from 'lib/i18n_autofix'
-import translate from './translate'
-import { autofixI18n } from 'config'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { active as activeLangs } from '#i18nAssets/langs'
+import { appendToServerKeys } from '#lib/i18n_autofix'
+import translate from './translate.js'
+
+const { autofixI18n } = CONFIG
 
 const polyglots = {}
 const translators = {}

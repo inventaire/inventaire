@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
 import should from 'should'
-import { authReq, publicReq } from '../utils/utils'
-import { shouldNotBeCalled } from 'tests/unit/utils'
-import { getSomeGroup } from '../fixtures/groups'
+import _ from '#builders/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { authReq, publicReq } from '../utils/utils.js'
+import { getSomeGroup } from '../fixtures/groups.js'
+
 const endpoint = '/api/groups'
 
 describe('groups:get:default', () => {

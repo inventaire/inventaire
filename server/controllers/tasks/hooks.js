@@ -1,11 +1,12 @@
-import _ from 'builders/utils'
-import promises_ from 'lib/promises'
-import tasks_ from 'controllers/tasks/lib/tasks'
-import radio from 'lib/radio'
-import checkEntity from './lib/check_entity'
+import _ from '#builders/utils'
+import promises_ from '#lib/promises'
+import tasks_ from '#controllers/tasks/lib/tasks'
+import radio from '#lib/radio'
+import checkEntity from './lib/check_entity.js'
+
 const { tap } = promises_
 
-export default () => {
+export default function () {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
   radio.on('entity:remove', archiveObsoleteEntityUriTasks)
   radio.on('entity:revert:merge', revertArchive)

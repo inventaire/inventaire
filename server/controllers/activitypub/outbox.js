@@ -1,12 +1,12 @@
-import error_ from 'lib/error/error'
-import { byActorName, getActivitiesCountByName } from 'controllers/activitypub/lib/activities'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers'
-import formatUserItemsActivities from './lib/format_user_items_activities'
-import formatShelfItemsActivities from './lib/format_shelf_items_activities'
-import { isEntityUri, isUsername } from 'lib/boolean_validations'
-import patches_ from 'controllers/entities/lib/patches/patches'
-import formatEntityPatchesActivities from './lib/format_entity_patches_activities'
-import { validateUser, validateShelf, validateEntity } from './lib/validations'
+import error_ from '#lib/error/error'
+import { byActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
+import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import patches_ from '#controllers/entities/lib/patches/patches'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
+import formatUserItemsActivities from './lib/format_user_items_activities.js'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
+import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
+import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const sanitization = {
   name: {},

@@ -1,9 +1,9 @@
 import should from 'should'
-import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities'
-import { wait } from 'lib/promises'
-import { createHuman } from '../fixtures/entities'
-import { createTask } from '../fixtures/tasks'
-import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks'
+import { wait } from '#lib/promises'
+import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities.js'
+import { createHuman } from '../fixtures/entities.js'
+import { createTask } from '../fixtures/tasks.js'
+import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks.js'
 
 describe('tasks:hooks', () => {
   describe('entity merge', () => {

@@ -1,8 +1,8 @@
-import getEntityType from 'controllers/entities/lib/get_entity_type'
-import { prefixifyWd } from 'controllers/entities/lib/prefix'
-import parseIsbn from 'lib/isbn/parse'
-import makeSparqlRequest from './make_sparql_request'
 import { isItemId } from 'wikidata-sdk'
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { parseIsbn } from '#lib/isbn/parse'
+import makeSparqlRequest from './make_sparql_request.js'
 
 export default async isbn => {
   const sparql = getQuery(isbn)

@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import user_ from 'controllers/user/lib/user'
-import sendInvitation from './send_invitations'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import user_ from '#controllers/user/lib/user'
+import sendInvitation from './send_invitations.js'
 
 export default params => {
   const { user, message, group, parsedEmails, reqUserId } = params

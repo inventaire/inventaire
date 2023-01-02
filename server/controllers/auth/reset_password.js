@@ -1,6 +1,6 @@
-import error_ from 'lib/error/error'
-import user_ from 'controllers/user/lib/user'
-import { sendResetPasswordEmail } from 'controllers/user/lib/token'
+import error_ from '#lib/error/error'
+import user_ from '#controllers/user/lib/user'
+import { sendResetPasswordEmail } from '#controllers/user/lib/token'
 
 const sanitization = {
   email: {}

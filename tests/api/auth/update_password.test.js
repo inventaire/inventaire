@@ -1,10 +1,11 @@
 import 'should'
-import { authReq, customAuthReq, getReservedUser } from '../utils/utils'
-import randomString from 'lib/utils/random_string'
-import { wait } from 'lib/promises'
-import { BasicUpdater } from 'lib/doc_updates'
-import { shouldNotBeCalled } from 'root/tests/unit/utils'
-import dbFactory from 'db/couchdb/base'
+import randomString from '#lib/utils/random_string'
+import { wait } from '#lib/promises'
+import { BasicUpdater } from '#lib/doc_updates'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import dbFactory from '#db/couchdb/base'
+import { authReq, customAuthReq, getReservedUser } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=update-password'
 const db = dbFactory('users')
 

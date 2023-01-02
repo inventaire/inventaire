@@ -1,6 +1,7 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-
+import randomString from '#lib/utils/random_string'
+import assert_ from '#lib/utils/assert_types'
 import {
   createWork,
   createHuman,
@@ -12,16 +13,15 @@ import {
   createSerieWithAuthor,
   createWorkWithSerie,
   humanName,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
+import { randomLongWord, randomWords } from '../fixtures/text.js'
+import { getByUris } from '../utils/entities.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
+import { search, waitForIndexation, getIndexedDoc } from '../utils/search.js'
 
-import { randomLongWord, randomWords } from '../fixtures/text'
-import { getByUris } from '../utils/entities'
-import { shouldNotBeCalled } from '../utils/utils'
-import { search, waitForIndexation, getIndexedDoc } from '../utils/search'
-import randomString from 'lib/utils/random_string'
-import assert_ from 'lib/utils/assert_types'
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
+
 assert_.number(maxGram)
 
 describe('search:entities', () => {

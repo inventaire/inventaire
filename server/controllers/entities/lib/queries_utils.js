@@ -1,4 +1,4 @@
-import { isPositiveIntegerString } from 'lib/boolean_validations'
+import { isPositiveIntegerString } from '#lib/boolean_validations'
 
 export default {
   getSimpleDayDate: date => {

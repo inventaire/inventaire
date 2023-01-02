@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import getEntityType from './get_entity_type'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
-import formatEntityCommon from './format_entity_common'
-import addRedirection from './add_redirection'
-import { prefixifyInv, unprefixify } from 'controllers/entities/lib/prefix'
+import _ from '#builders/utils'
+import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
+import entities_ from './entities.js'
+import getEntityType from './get_entity_type.js'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import formatEntityCommon from './format_entity_common.js'
+import addRedirection from './add_redirection.js'
 
 let getEntityByUri
 const requireCircularDependencies = () => { getEntityByUri = require('./get_entity_by_uri') }

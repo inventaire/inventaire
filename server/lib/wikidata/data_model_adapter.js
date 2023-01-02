@@ -1,5 +1,6 @@
-import error_ from 'lib/error/error'
 import wdk from 'wikidata-sdk'
+import error_ from '#lib/error/error'
+
 const { simplifyQualifier } = wdk
 
 const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {

@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import { getUser, customAuthReq, publicReq } from '../utils/utils'
-import { waitForIndexation } from '../utils/search'
-import { createItem } from '../fixtures/items'
-import { buildUrl } from 'lib/utils/url'
-import { createShelf, createShelfWithItem } from 'tests/api/fixtures/shelves'
+import _ from '#builders/utils'
+import { buildUrl } from '#lib/utils/url'
+import { createShelf, createShelfWithItem } from '#tests/api/fixtures/shelves'
+import { getUser, customAuthReq, publicReq } from '../utils/utils.js'
+import { waitForIndexation } from '../utils/search.js'
+import { createItem } from '../fixtures/items.js'
 
 const search = (reqUser, { shelf, search }) => {
   const url = buildUrl('/api/items', {

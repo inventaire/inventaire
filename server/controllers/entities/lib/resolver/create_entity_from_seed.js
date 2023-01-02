@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import properties from '../properties/properties_values_constraints'
-import createInvEntity from '../create_inv_entity'
-import isbn_ from 'lib/isbn/isbn'
-import { getImageByIsbn } from 'data/dataseed/dataseed'
-import convertAndCleanupImageUrl from 'controllers/images/lib/convert_and_cleanup_image_url'
+import _ from '#builders/utils'
+import isbn_ from '#lib/isbn/isbn'
+import { getImageByIsbn } from '#data/dataseed/dataseed'
+import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import createInvEntity from '../create_inv_entity.js'
+import properties from '../properties/properties_values_constraints.js'
 
 const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author

@@ -6,9 +6,8 @@
 // - saving space in server and client cache
 // - saving everyone's bandwidth
 
-import { unprefixify } from 'controllers/entities/lib/prefix'
-
-import propertiesValuesConstraints from 'controllers/entities/lib/properties/properties_values_constraints'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import propertiesValuesConstraints from '#controllers/entities/lib/properties/properties_values_constraints'
 
 const editedProperties = Object.keys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))

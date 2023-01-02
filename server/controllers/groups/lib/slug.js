@@ -1,5 +1,5 @@
-import getNextSlugCandidate from './get_next_slug_candidate'
-import slugify from './slugify'
+import getNextSlugCandidate from './get_next_slug_candidate.js'
+import slugify from './slugify.js'
 
 let groups_
 const requireCircularDependencies = () => { groups_ = require('./groups') }

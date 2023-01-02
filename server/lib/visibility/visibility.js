@@ -1,6 +1,6 @@
-import { isVisibilityGroupKey } from 'lib/boolean_validations'
-import { getUserGroupsIds } from 'controllers/groups/lib/groups'
-import error_ from 'lib/error/error'
+import { isVisibilityGroupKey } from '#lib/boolean_validations'
+import { getUserGroupsIds } from '#controllers/groups/lib/groups'
+import error_ from '#lib/error/error'
 
 // This does async validations that can not be performed sync
 // by models/validations/visibility.js

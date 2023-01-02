@@ -1,5 +1,5 @@
-import user_ from 'controllers/user/lib/user'
-import getItemsByUsers from './lib/get_items_by_users'
+import user_ from '#controllers/user/lib/user'
+import getItemsByUsers from './lib/get_items_by_users.js'
 
 const sanitization = {
   limit: {},

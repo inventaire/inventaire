@@ -1,7 +1,8 @@
-import requests_ from 'lib/requests'
-import cache_ from 'lib/cache'
-import { fixedEncodeURIComponent } from 'lib/utils/url'
 import wdk from 'wikidata-sdk'
+import requests_ from '#lib/requests'
+import cache_ from '#lib/cache'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+
 const { simplifySparqlResults } = wdk
 const timeout = 10 * 1000
 

@@ -1,13 +1,14 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
 import 'should'
-import assert_ from 'lib/utils/assert_types'
-import fakeText from './text'
 import { randomBytes } from 'node:crypto'
-import { addRole } from 'controllers/user/lib/user'
-import { request, rawRequest } from '../utils/request'
-import { makeFriends } from '../utils/relations'
-import randomString from 'lib/utils/random_string'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import { addRole } from '#controllers/user/lib/user'
+import randomString from '#lib/utils/random_string'
+import { request, rawRequest } from '../utils/request.js'
+import { makeFriends } from '../utils/relations.js'
+import fakeText from './text.js'
+
 const origin = CONFIG.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
 let twoFriendsPromise

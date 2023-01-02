@@ -1,9 +1,10 @@
-import CONFIG from 'config'
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
-import getResizedImage from './lib/get_resized_image'
 import { URL } from 'node:url'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
+import getResizedImage from './lib/get_resized_image.js'
+
 const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
 const { offline } = CONFIG

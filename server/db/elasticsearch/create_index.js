@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
 import CONFIG from 'config'
-import mappings from 'db/elasticsearch/mappings/mappings'
-import settings from 'db/elasticsearch/settings/settings'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import mappings from '#db/elasticsearch/mappings/mappings'
+import settings from '#db/elasticsearch/settings/settings'
+
 const { origin } = CONFIG.elasticsearch
 
 export default async index => {

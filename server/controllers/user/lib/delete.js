@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import couch_ from 'lib/couch'
-import User from 'models/user'
-import dbFactory from 'db/couchdb/base'
-import user_ from './user'
+import _ from '#builders/utils'
+import couch_ from '#lib/couch'
+import User from '#models/user'
+import dbFactory from '#db/couchdb/base'
+import user_ from './user.js'
+
 const db = dbFactory('users')
 
 const deleteUser = user => db.del(user._id, user._rev)

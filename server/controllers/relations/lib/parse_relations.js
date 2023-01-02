@@ -1,4 +1,4 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 
 export default res => {
   const relations = _.initCollectionsIndex(relationsTypes)

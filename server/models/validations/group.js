@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import slugify from 'controllers/groups/lib/slugify'
-import { pass, boundedString, BoundedString, localImg, boolean, position, userId } from './common'
+import _ from '#builders/utils'
+import slugify from '#controllers/groups/lib/slugify'
+import { pass, boundedString, BoundedString, localImg, boolean, position, userId } from './common.js'
 
 export default {
   pass,

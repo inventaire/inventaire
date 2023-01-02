@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import getEntitiesByUris from 'controllers/entities/lib/get_entities_by_uris'
+import _ from '#builders/utils'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 
 export default entities => {
   const { works, editions } = splitEntities(entities)

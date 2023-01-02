@@ -1,11 +1,11 @@
-import _ from 'builders/utils'
-import { automerge } from './automerge'
-import typeSearch from 'controllers/search/lib/type_search'
-import entities_ from 'controllers/entities/lib/entities'
-import getOccurrencesFromEntities from 'controllers/entities/lib/get_occurrences_from_entities'
-import getOccurrencesFromExternalSources from 'controllers/entities/lib/get_occurrences_from_external_sources'
-import { getEntityNormalizedTerms } from 'controllers/entities/lib/terms_normalization'
-import { haveExactMatch } from 'controllers/entities/lib/labels_match'
+import _ from '#builders/utils'
+import typeSearch from '#controllers/search/lib/type_search'
+import entities_ from '#controllers/entities/lib/entities'
+import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
+import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
+import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
+import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import { automerge } from './automerge.js'
 
 export default (entity, existingTasks) => {
   return Promise.all([

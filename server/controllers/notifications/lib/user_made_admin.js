@@ -1,5 +1,5 @@
-import assert_ from 'lib/utils/assert_types'
-import notifications_ from './notifications'
+import assert_ from '#lib/utils/assert_types'
+import notifications_ from './notifications.js'
 
 export default (groupId, actorAdminId, newAdminId) => {
   assert_.strings([ groupId, actorAdminId, newAdminId ])

@@ -1,7 +1,8 @@
 import 'should'
-import { publicReq } from '../utils/utils'
-import allowedValuesPerTypePerProperty from 'controllers/entities/lib/properties/allowed_values_per_type_per_property'
-import { shouldNotBeCalled } from 'tests/api/utils/utils'
+import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=property-values'
 
 describe('data:property-values', () => {

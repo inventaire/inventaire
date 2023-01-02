@@ -1,10 +1,11 @@
 import CONFIG from 'config'
 import 'should'
-import { publicReq } from '../utils/utils'
-import { rawRequest } from '../utils/request'
-import { createUserEmail } from '../fixtures/users'
-import randomString from 'lib/utils/random_string'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import randomString from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+import { rawRequest } from '../utils/request.js'
+import { createUserEmail } from '../fixtures/users.js'
+
 const host = CONFIG.getPublicOrigin()
 const endpoint = '/api/token?action=reset-password'
 

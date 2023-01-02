@@ -1,16 +1,20 @@
-import CONFIG from 'config'
-import assert_ from 'lib/utils/assert_types'
-import { wait } from 'lib/promises'
-import fetch from 'node-fetch'
-import error_ from 'lib/error/error'
-import { magenta, green, cyan, yellow, red } from 'chalk'
-import { repository } from 'root/package.json'
-import { getAgent, insecureHttpsAgent } from './requests_agent'
-import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban'
 import { URL } from 'node:url'
-import { coloredElapsedTime } from './time'
-import { isUrl } from './boolean_validations'
-import isPrivateUrl from './network/is_private_url'
+import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
+import fetch from 'node-fetch'
+import CONFIG from 'config'
+import error_ from '#lib/error/error'
+import { wait } from '#lib/promises'
+import assert_ from '#lib/utils/assert_types'
+import { absolutePath } from '#lib/absolute_path'
+import { requireJson } from '#lib/utils/json'
+import { getAgent, insecureHttpsAgent } from './requests_agent.js'
+import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
+import { coloredElapsedTime } from './time.js'
+import { isUrl } from './boolean_validations.js'
+import isPrivateUrl from './network/is_private_url.js'
+
+const { repository } = requireJson(absolutePath('root', 'package.json'))
+
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
 const { addContextToStack } = error_
 const userAgent = `${CONFIG.name} (${repository.url})`

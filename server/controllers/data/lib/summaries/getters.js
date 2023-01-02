@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import bnf from './bnf'
-import openlibrary from './openlibrary'
+import _ from '#builders/utils'
+import bnf from './bnf.js'
+import openlibrary from './openlibrary.js'
 
 const summaryGettersByClaimProperty = {
   'wdt:P268': bnf,

@@ -1,7 +1,8 @@
-import Activity from 'models/activity'
-import dbFactory from 'db/couchdb/base'
-import assert_ from 'lib/utils/assert_types'
-import { firstDoc } from 'lib/couch'
+import Activity from '#models/activity'
+import dbFactory from '#db/couchdb/base'
+import assert_ from '#lib/utils/assert_types'
+import { firstDoc } from '#lib/couch'
+
 const db = dbFactory('activities')
 
 // activities are stored as documents in order to allow

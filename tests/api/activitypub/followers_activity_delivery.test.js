@@ -1,16 +1,17 @@
 import CONFIG from 'config'
 import 'should'
-import { createItem } from '../fixtures/items'
-import { createUser } from '../fixtures/users'
-import { wait } from 'lib/promises'
-import { makeUrl, signedReq } from '../utils/activitypub'
-import requests_ from 'lib/requests'
-import { createHuman, createWork, addAuthor } from '../fixtures/entities'
-import { createShelf } from '../fixtures/shelves'
-import { rethrowShouldNotBeCalledErrors } from '../utils/utils'
-import { addItemsToShelf, getActorName } from '../utils/shelves'
-import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
-import { randomWords } from '../fixtures/text'
+import { wait } from '#lib/promises'
+import requests_ from '#lib/requests'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { createItem } from '../fixtures/items.js'
+import { createUser } from '../fixtures/users.js'
+import { makeUrl, signedReq } from '../utils/activitypub.js'
+import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { addItemsToShelf, getActorName } from '../utils/shelves.js'
+import { randomWords } from '../fixtures/text.js'
+
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
 
 describe('followers activity delivery', () => {

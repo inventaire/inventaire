@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import tasks_ from './tasks'
+import _ from '#builders/utils'
+import tasks_ from './tasks.js'
 
 // relationScore (between 0 & 1) express the number of tasks for the same suspect
 

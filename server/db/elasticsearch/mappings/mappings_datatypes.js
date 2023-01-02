@@ -1,4 +1,4 @@
-import { activeI18nLangs } from '../helpers'
+import { activeI18nLangs } from '../helpers.js'
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/mapping-types.html
 

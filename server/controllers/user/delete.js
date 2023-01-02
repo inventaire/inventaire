@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import responses_ from 'lib/responses'
-import { Track } from 'lib/track'
-import deleteUserAndCleanup from 'controllers/user/lib/delete_user_and_cleanup'
+import _ from '#builders/utils'
+import responses_ from '#lib/responses'
+import { Track } from '#lib/track'
+import deleteUserAndCleanup from '#controllers/user/lib/delete_user_and_cleanup'
 
 export default (req, res) => {
   const reqUserId = req.user._id

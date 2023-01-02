@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import { forceArray } from 'lib/utils/base'
-import { customAuthReq } from './request'
-import { getUser } from './utils'
+import _ from '#builders/utils'
+import { forceArray } from '#lib/utils/base'
+import { customAuthReq } from './request.js'
+import { getUser } from './utils.js'
 
 const getShelvesByIds = async (user, ids) => {
   if (_.isArray(ids)) ids = ids.join('|')

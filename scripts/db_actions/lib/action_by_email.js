@@ -1,7 +1,6 @@
-import _ from 'builders/utils'
-import ActionByInput from './action_by_input'
-
-import validations from 'models/validations/common'
+import _ from '#builders/utils'
+import validations from '#models/validations/common'
+import ActionByInput from './action_by_input.js'
 
 const [ email ] = process.argv.slice(2)
 

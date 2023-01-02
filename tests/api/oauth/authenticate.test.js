@@ -1,8 +1,8 @@
-import { shouldNotBeCalled } from '../utils/utils'
-import { bearerTokenReq } from '../utils/request'
-import { getToken } from '../utils/oauth'
-import randomString from 'lib/utils/random_string'
-import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth'
+import randomString from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '../utils/utils.js'
+import { bearerTokenReq } from '../utils/request.js'
+import { getToken } from '../utils/oauth.js'
+import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'
 
 describe('oauth:authenticate', () => {
   it('should accept a request authentified by a bearer token', async () => {

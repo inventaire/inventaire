@@ -1,6 +1,7 @@
-import dbFactory from 'db/couchdb/base'
-import User from 'models/user'
-import token_ from './token'
+import dbFactory from '#db/couchdb/base'
+import User from '#models/user'
+import token_ from './token.js'
+
 const db = dbFactory('users')
 
 export default (user, email) => {

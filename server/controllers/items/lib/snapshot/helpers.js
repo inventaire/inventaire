@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import assert_ from 'lib/utils/assert_types'
-import getEntityType from 'controllers/entities/lib/get_entity_type'
-import getInvEntityCanonicalUri from 'controllers/entities/lib/get_inv_entity_canonical_uri'
-import getBestLangValue from 'lib/get_best_lang_value'
+import _ from '#builders/utils'
+import assert_ from '#lib/utils/assert_types'
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import getBestLangValue from '#lib/get_best_lang_value'
 
 export default {
   getDocData: updatedDoc => {

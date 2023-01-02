@@ -1,6 +1,6 @@
-import _ from 'lodash'
-import { typeOf } from './types'
-import error_ from '../error/error'
+import _ from 'lodash-es'
+import error_ from '../error/error.js'
+import { typeOf } from './types.js'
 
 const assertType = (type, obj) => {
   const trueType = typeOf(obj)

@@ -1,5 +1,5 @@
 import should from 'should'
-import getBnfEntryFromIsbn from 'data/bnf/get_bnf_entry_from_isbn'
+import getBnfEntryFromIsbn from '#data/bnf/get_bnf_entry_from_isbn'
 
 describe('get_bnf_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {

@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import formatEditionEntity from './format_edition_entity'
-import isbn_ from 'lib/isbn/isbn'
-import { prefixifyIsbn } from 'controllers/entities/lib/prefix'
-import getResolvedEntry from 'data/dataseed/get_resolved_entry'
+import _ from '#builders/utils'
+import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
+import getResolvedEntry from '#data/dataseed/get_resolved_entry'
+import { parseIsbn } from '#lib/isbn/parse'
+import formatEditionEntity from './format_edition_entity.js'
+import entities_ from './entities.js'
 
 export default async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
@@ -49,7 +49,7 @@ const getRedirections = isbns => {
 // Redirection mechanism is coupled with the way
 // ./get_entities_by_uris 'mergeResponses' parses redirections
 const aggregateIsbnRedirections = (accumulator, rawIsbn) => {
-  const { isbn13: uriIsbn, isbn13h: claimIsbn } = isbn_.parse(rawIsbn)
+  const { isbn13: uriIsbn, isbn13h: claimIsbn } = parseIsbn(rawIsbn)
   const rawUri = `isbn:${rawIsbn}`
   const uri = `isbn:${uriIsbn}`
   accumulator[0].push(claimIsbn)

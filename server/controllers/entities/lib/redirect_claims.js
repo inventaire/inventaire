@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import Entity from 'models/entity'
+import _ from '#builders/utils'
+import Entity from '#models/entity'
+import entities_ from './entities.js'
 
 export default (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
 .then(results => {

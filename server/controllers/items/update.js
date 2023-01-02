@@ -1,9 +1,9 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import snapshot_ from './lib/snapshot/snapshot'
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
-import { track } from 'lib/track'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
+import { track } from '#lib/track'
+import snapshot_ from './lib/snapshot/snapshot.js'
 
 // This controller doesn't use sanitization
 // as the item doc is passed unwrapped in the body

@@ -1,9 +1,9 @@
-import error_ from 'lib/error/error'
-import entities_ from './entities'
-import mergeEntities from './merge_entities'
-import { cacheEntityRelations } from './temporarily_cache_relations'
-import { unprefixify } from './prefix'
-import createWdEntity from './create_wd_entity'
+import error_ from '#lib/error/error'
+import entities_ from './entities.js'
+import mergeEntities from './merge_entities.js'
+import { cacheEntityRelations } from './temporarily_cache_relations.js'
+import { unprefixify } from './prefix.js'
+import createWdEntity from './create_wd_entity.js'
 
 export default async (user, invEntityUri) => {
   const { _id: reqUserId } = user

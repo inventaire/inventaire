@@ -5,11 +5,7 @@
   "root": true,
   "env": {
     "node": true,
-    "commonjs": true,
-    "es2020": true
-  },
-  "parserOptions": {
-    "ecmaVersion": 2020
+    "es2022": true
   },
   "extends": [
     // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
@@ -27,6 +23,18 @@
     }],
     "eqeqeq": [ "error", "smart" ],
     "implicit-arrow-linebreak": [ "error", "beside" ],
+    "import/newline-after-import": "error",
+    "import/order": [
+      "error",
+      {
+        "pathGroups": [
+          { "pattern": "#*/**", "group": "internal", "position": "before" }
+        ],
+        "groups": [ "builtin", "external", "internal", "parent", "sibling" ],
+        "newlines-between": "never",
+        "alphabetize": { "order": "asc" }
+      }
+    ],
     "indent": [ "error", 2, { "MemberExpression": "off" } ],
     "no-ex-assign": [ "off" ],
     "no-var": [ "error" ],

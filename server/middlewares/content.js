@@ -1,7 +1,8 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
 import bodyParser from 'body-parser'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
 

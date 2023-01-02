@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto'
+
 const nonAlphaNumericCharacters = /\W/g
 
 // Generated strings should:

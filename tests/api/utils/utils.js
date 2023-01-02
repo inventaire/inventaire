@@ -1,6 +1,6 @@
-import { request, customAuthReq, rawCustomAuthReq } from './request'
-import { createUser, getRefreshedUser } from '../fixtures/users'
-import { humanName } from '../fixtures/text'
+import { createUser, getRefreshedUser } from '../fixtures/users.js'
+import { humanName } from '../fixtures/text.js'
+import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 import 'should'
 
 const userPromises = {}

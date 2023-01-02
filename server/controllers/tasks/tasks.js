@@ -1,5 +1,5 @@
-import ActionsControllers from 'lib/actions_controllers'
-import { bySuspectUris, bySuggestionUris } from './by_entity_uris'
+import ActionsControllers from '#lib/actions_controllers'
+import { bySuspectUris, bySuggestionUris } from './by_entity_uris.js'
 
 export default {
   get: ActionsControllers({

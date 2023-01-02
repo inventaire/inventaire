@@ -1,8 +1,9 @@
 import 'should'
-import { publicReq } from '../utils/utils'
-import { createEdition, createEditionWithIsbn, createCollection, createPublisher } from '../fixtures/entities'
-import { addClaim } from '../utils/entities'
-import { shouldNotBeCalled } from 'tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+import { createEdition, createEditionWithIsbn, createCollection, createPublisher } from '../fixtures/entities.js'
+import { addClaim } from '../utils/entities.js'
+
 const endpoint = '/api/entities?action=publisher-publications'
 
 describe('entities:publisher-publications', () => {

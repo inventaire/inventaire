@@ -1,6 +1,6 @@
-import transporter_ from './transporter'
-import buildTransactionEmail from './build_transaction_email'
-import { catchDisabledEmails } from './helpers'
+import transporter_ from './transporter.js'
+import buildTransactionEmail from './build_transaction_email.js'
+import { catchDisabledEmails } from './helpers.js'
 
 export default {
   transactionUpdate: async transactionId => {

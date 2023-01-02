@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import Entity from 'models/entity'
-import entities_ from './entities'
-import validateEntity from './validate_entity'
-import { prefixifyInv } from './prefix'
+import _ from '#builders/utils'
+import Entity from '#models/entity'
+import entities_ from './entities.js'
+import validateEntity from './validate_entity.js'
+import { prefixifyInv } from './prefix.js'
 
 export default async params => {
   const { labels, claims, userId, batchId } = params

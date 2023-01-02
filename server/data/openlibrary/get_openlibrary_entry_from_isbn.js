@@ -1,9 +1,11 @@
-import { normalizeIsbn } from 'lib/isbn/isbn'
-import requests_ from 'lib/requests'
-import { setEditionPublisherClaim } from 'data/lib/set_edition_publisher_claim'
-import { prefixifyWd } from 'controllers/entities/lib/prefix'
-import wdIdByIso6392Code from 'wikidata-lang/mappings/wd_id_by_iso_639_2_code.json'
-import { compact } from 'lodash'
+import { compact } from 'lodash-es'
+import { normalizeIsbn } from '#lib/isbn/isbn'
+import requests_ from '#lib/requests'
+import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { requireJson } from '#lib/utils/json'
+
+const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
 export default async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)

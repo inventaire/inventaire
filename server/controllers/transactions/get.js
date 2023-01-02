@@ -1,4 +1,4 @@
-import transactions_ from './lib/transactions'
+import transactions_ from './lib/transactions.js'
 
 export default {
   sanitization: {},

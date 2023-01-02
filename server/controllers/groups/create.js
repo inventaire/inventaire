@@ -1,4 +1,4 @@
-import groups_ from './lib/groups'
+import groups_ from './lib/groups.js'
 
 const sanitization = {
   name: {},

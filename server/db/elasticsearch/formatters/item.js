@@ -1,4 +1,4 @@
-import { addToItem as addSnapshot } from 'controllers/items/lib/snapshot/snapshot'
+import { addToItem as addSnapshot } from '#controllers/items/lib/snapshot/snapshot'
 
 export default async doc => {
   await addSnapshot(doc)

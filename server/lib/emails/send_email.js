@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import { Wait } from 'lib/promises'
-import helpers_ from './helpers'
-import transporter_ from './transporter'
-import email_ from './email'
-import user_ from 'controllers/user/lib/user'
-import groups_ from 'controllers/groups/lib/groups'
+import _ from '#builders/utils'
+import { Wait } from '#lib/promises'
+import user_ from '#controllers/user/lib/user'
+import groups_ from '#controllers/groups/lib/groups'
+import helpers_ from './helpers.js'
+import transporter_ from './transporter.js'
+import email_ from './email.js'
 
 export default {
   validationEmail: (userData, token) => {

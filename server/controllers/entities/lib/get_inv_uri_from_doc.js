@@ -1,5 +1,5 @@
-import { normalizeIsbn } from 'lib/isbn/isbn'
-import { prefixifyInv } from './prefix'
+import { normalizeIsbn } from '#lib/isbn/isbn'
+import { prefixifyInv } from './prefix.js'
 
 export default entity => {
   // Case when the entity document is a proper entity document

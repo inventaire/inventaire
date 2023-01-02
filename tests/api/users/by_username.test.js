@@ -1,6 +1,5 @@
-import _ from 'builders/utils'
 import should from 'should'
-
+import _ from '#builders/utils'
 import {
   publicReq,
   authReq,
@@ -10,13 +9,14 @@ import {
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
   getReservedUser,
-} from 'tests/api/utils/utils'
+} from '#tests/api/utils/utils'
+import randomString from '#lib/utils/random_string'
+import { wait } from '#lib/promises'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { deleteUser, updateUser } from '../utils/users.js'
+import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
 
-import { createUser, createUsername, getTwoFriends } from '../fixtures/users'
-import randomString from 'lib/utils/random_string'
-import { wait } from 'lib/promises'
-import { deleteUser, updateUser } from '../utils/users'
-const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
+const specialUsersNames = Object.keys(hardCodedUsers)
 
 const endpoint = '/api/users?action=by-usernames'
 

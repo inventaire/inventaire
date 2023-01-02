@@ -1,4 +1,4 @@
-import moveToWikidata from './lib/move_to_wikidata'
+import moveToWikidata from './lib/move_to_wikidata.js'
 
 const sanitization = {
   uri: {}

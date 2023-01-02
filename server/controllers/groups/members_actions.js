@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import modelAction from './lib/model_action'
-import membershipValidations from './lib/membership_validations'
+import _ from '#builders/utils'
+import modelAction from './lib/model_action.js'
+import membershipValidations from './lib/membership_validations.js'
 
 const sanitization = {
   group: {},

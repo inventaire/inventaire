@@ -6,7 +6,7 @@ import {
   objectNotIndexed,
   autocompleteTerms,
   fullTerms,
-} from './mappings_datatypes'
+} from './mappings_datatypes.js'
 
 export default {
   properties: {

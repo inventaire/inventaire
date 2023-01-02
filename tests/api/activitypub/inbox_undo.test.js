@@ -1,13 +1,13 @@
 import 'should'
-import { createUser } from '../fixtures/users'
-import { shouldNotBeCalled } from '../utils/utils'
-import { signedReq, makeUrl, createRemoteActivityPubServerUser } from '../utils/activitypub'
-import { getFollowActivitiesByObject } from 'controllers/activitypub/lib/activities'
-import { wait } from 'lib/promises'
-import { createHuman } from '../fixtures/entities'
-import { createShelf } from '../fixtures/shelves'
-import { getActorName } from '../utils/shelves'
-import { getEntityActorName } from 'controllers/activitypub/lib/helpers'
+import { getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
+import { wait } from '#lib/promises'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { createUser } from '../fixtures/users.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
+import { signedReq, makeUrl, createRemoteActivityPubServerUser } from '../utils/activitypub.js'
+import { createHuman } from '../fixtures/entities.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { getActorName } from '../utils/shelves.js'
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {

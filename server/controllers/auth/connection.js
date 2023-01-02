@@ -1,8 +1,8 @@
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
-import error_ from 'lib/error/error'
-import passport_ from 'lib/passport/passport'
-import setLoggedInCookie from './lib/set_logged_in_cookie'
-import { ownerSafeData } from 'controllers/user/lib/authorized_user_data_pickers'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import error_ from '#lib/error/error'
+import passport_ from '#lib/passport/passport'
+import { ownerSafeData } from '#controllers/user/lib/authorized_user_data_pickers'
+import setLoggedInCookie from './lib/set_logged_in_cookie.js'
 
 const signupSanitization = validateSanitization({
   username: {},

@@ -1,4 +1,4 @@
-import validations from './validations/comment'
+import validations from './validations/comment.js'
 
 export default {
   createTransactionComment: (userId, message, transactionId) => {

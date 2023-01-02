@@ -1,19 +1,17 @@
 import CONFIG from 'config'
 import 'should'
-import { createUsername, createUser } from '../fixtures/users'
-
+import { sign } from '#controllers/activitypub/lib/security'
+import { generateRsaKeyPair } from '#lib/crypto'
+import { createUsername, createUser } from '../fixtures/users.js'
 import {
   signedReq,
   makeUrl,
   createActivity,
   getSomeRemoteServerUser,
   createRemoteActivityPubServerUser,
-} from '../utils/activitypub'
-
-import { rawRequest } from '../utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils'
-import { sign } from 'controllers/activitypub/lib/security'
-import { generateRsaKeyPair } from 'lib/crypto'
+} from '../utils/activitypub.js'
+import { rawRequest } from '../utils/request.js'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
 
 const endpoint = '/api/activitypub'
 

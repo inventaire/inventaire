@@ -1,11 +1,11 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import getEntitiesList from 'controllers/entities/lib/get_entities_list'
-import tasks_ from './tasks'
-import getEntitiesByIsbns from 'controllers/entities/lib/get_entities_by_isbns'
-import mergeEntities from 'controllers/entities/lib/merge_entities'
-import { haveExactMatch } from 'controllers/entities/lib/labels_match'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import getEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import tasks_ from './tasks.js'
 
 export default async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })

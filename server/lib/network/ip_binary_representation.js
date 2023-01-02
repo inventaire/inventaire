@@ -1,6 +1,6 @@
-import error_ from 'lib/error/error'
+import error_ from '#lib/error/error'
 
-const getIpBinaryRepresentation = ip => {
+export const getIpBinaryRepresentation = ip => {
   const isIpv6 = ip.includes(':')
   const maxLength = isIpv6 ? 16 : 8
   const parts = isIpv6 ? getIpv6Parts(ip) : getIpv4Parts(ip)
@@ -21,5 +21,3 @@ const getIpv6Parts = address => {
 }
 
 const getPaddedBinary = (num, maxLenght) => parseInt(num).toString(2).padStart(maxLenght, '0')
-
-export default { getIpBinaryRepresentation }

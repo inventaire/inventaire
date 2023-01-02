@@ -3,10 +3,13 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
+const path = require('path')
+
+const root = path.resolve(__dirname, '..')
 const port = 3006
 const contactAddress = 'hello@inventaire.io'
 
-const config = module.exports = {
+module.exports = {
   name: 'inventaire',
   env: 'default',
   // Only http is supported: in production, TLS is delegated to Nginx
@@ -153,7 +156,7 @@ const config = module.exports = {
     // object storage service such as Swift
     mode: 'local',
     local: {
-      folder: () => config.universalPath.path('root', 'storage'),
+      folder: () => `${root}/storage`,
       internalEndpoint: () => `http://localhost:${port}/local/`
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'

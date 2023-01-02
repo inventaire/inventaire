@@ -1,5 +1,6 @@
-import _ from 'builders/utils'
-import { publicReq, adminReq } from './utils'
+import _ from '#builders/utils'
+import { publicReq, adminReq } from './utils.js'
+
 const endpoint = '/api/tasks?action='
 
 const utils = {

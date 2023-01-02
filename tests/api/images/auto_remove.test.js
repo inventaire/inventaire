@@ -1,13 +1,14 @@
 import 'should'
 import CONFIG from 'config'
-import { getUserB } from '../utils/utils'
-import { wait } from 'lib/promises'
-import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images'
-import { updateUser } from '../utils/users'
-import { createGroup } from '../fixtures/groups'
-import { updateGroup } from '../utils/groups'
-import { createEdition } from '../fixtures/entities'
-import { updateClaim } from '../utils/entities'
+import { wait } from '#lib/promises'
+import { getUserB } from '../utils/utils.js'
+import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images.js'
+import { updateUser } from '../utils/users.js'
+import { createGroup } from '../fixtures/groups.js'
+import { updateGroup } from '../utils/groups.js'
+import { createEdition } from '../fixtures/entities.js'
+import { updateClaim } from '../utils/entities.js'
+
 const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
 
 describe('images:auto-remove', () => {

@@ -1,7 +1,8 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import dbFactory from 'db/level/get_sub_db'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import dbFactory from '#db/level/get_sub_db'
+
 const db = dbFactory('hosts-bans', 'json')
 const { serverMode } = CONFIG
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests

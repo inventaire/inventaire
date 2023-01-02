@@ -1,5 +1,6 @@
 import 'should'
-import Activity from 'models/activity'
+import Activity from '#models/activity'
+
 const someActitvityData = () => ({
   type: 'Create',
   actor: {

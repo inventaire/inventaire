@@ -1,4 +1,4 @@
-import deduplicateWork from './lib/deduplicate_works'
+import deduplicateWork from './lib/deduplicate_works.js'
 
 const sanitization = {
   uri: {},

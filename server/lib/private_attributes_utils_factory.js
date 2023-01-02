@@ -1,4 +1,4 @@
-import { omit } from 'lodash'
+import { omit } from 'lodash-es'
 
 export default privateAttributes => {
   const omitPrivateAttributes = doc => omit(doc, privateAttributes)

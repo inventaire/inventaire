@@ -1,4 +1,4 @@
-import transactions_ from 'controllers/transactions/lib/transactions'
+import transactions_ from '#controllers/transactions/lib/transactions'
 
 const sanitization = {
   item: {},

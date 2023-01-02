@@ -1,6 +1,7 @@
 import 'should'
-import { authReq, shouldNotBeCalled } from '../utils/utils'
-import { isImageHash, isEntityImg, isUserImg, isGroupImg } from 'lib/boolean_validations'
+import { isImageHash, isEntityImg, isUserImg, isGroupImg } from '#lib/boolean_validations'
+import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+
 const endpoint = '/api/images?action=convert-url'
 
 const convertUrl = (container, url) => authReq('post', endpoint, { container, url })

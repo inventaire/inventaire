@@ -1,6 +1,6 @@
-import { addAssociatedData, paginate } from './queries_commons'
-import { filterPrivateAttributes } from 'controllers/items/lib/filter_private_attributes'
-import getAuthorizedItems from 'controllers/items/lib/get_authorized_items'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
+import getAuthorizedItems from '#controllers/items/lib/get_authorized_items'
+import { addAssociatedData, paginate } from './queries_commons.js'
 
 export default async (params, usersIds) => {
   // Allow to pass users ids either through the params object

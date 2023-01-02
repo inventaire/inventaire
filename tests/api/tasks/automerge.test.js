@@ -1,8 +1,8 @@
 import 'should'
-import { checkEntities } from '../utils/tasks'
-import { getByUris, findOrIndexEntities } from '../utils/entities'
-import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities'
 import ASCIIFolder from 'fold-to-ascii'
+import { checkEntities } from '../utils/tasks.js'
+import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities.js'
 
 describe('tasks:automerge', () => {
   before(async () => {

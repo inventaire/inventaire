@@ -1,4 +1,4 @@
-import assert_ from 'lib/utils/assert_types'
+import assert_ from '#lib/utils/assert_types'
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo

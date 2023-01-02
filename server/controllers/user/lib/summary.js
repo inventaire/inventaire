@@ -1,7 +1,8 @@
 import CONFIG from 'config'
-import { BasicUpdater } from 'lib/doc_updates'
-import couch_ from 'lib/couch'
-import dbFactory from 'db/couchdb/base'
+import { BasicUpdater } from '#lib/doc_updates'
+import couch_ from '#lib/couch'
+import dbFactory from '#db/couchdb/base'
+
 const { newsKey } = CONFIG.activitySummary
 const db = dbFactory('users')
 

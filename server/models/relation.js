@@ -1,7 +1,7 @@
-import couch_ from 'lib/couch'
 import assert from 'node:assert'
-import assert_ from 'lib/utils/assert_types'
-import { userId } from './validations/common'
+import couch_ from '#lib/couch'
+import assert_ from '#lib/utils/assert_types'
+import { userId } from './validations/common.js'
 
 export default {
   create: (id, status) => {

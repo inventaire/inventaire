@@ -1,8 +1,7 @@
-import error_ from 'lib/error/error'
-import { unprefixify } from './lib/prefix'
-
-import inv from './lib/update_inv_label'
-import wd from './lib/update_wd_label'
+import error_ from '#lib/error/error'
+import { unprefixify } from './lib/prefix.js'
+import inv from './lib/update_inv_label.js'
+import wd from './lib/update_wd_label.js'
 
 const sanitization = {
   uri: { optional: true },

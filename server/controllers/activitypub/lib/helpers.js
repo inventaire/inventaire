@@ -1,9 +1,10 @@
 import CONFIG from 'config'
-import { stringifyQuery } from 'lib/utils/url'
-import { isEntityUri, isUsername } from 'lib/boolean_validations'
-import error_ from 'lib/error/error'
-import { unprefixify } from 'controllers/entities/lib/prefix'
-import { i18n } from 'lib/emails/i18n/i18n'
+import { stringifyQuery } from '#lib/utils/url'
+import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import error_ from '#lib/error/error'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { i18n } from '#lib/emails/i18n/i18n'
+
 const host = CONFIG.getPublicOrigin()
 
 const makeUrl = ({ origin, endpoint, params }) => {

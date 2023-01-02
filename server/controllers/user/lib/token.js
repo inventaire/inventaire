@@ -1,12 +1,15 @@
-import _ from 'builders/utils'
-import radio from 'lib/radio'
-import error_ from 'lib/error/error'
-import { passwords as pw_ } from 'lib/crypto'
-import { tokenDaysToLive } from 'config'
-import { WrappedUpdater } from 'lib/doc_updates'
-import randomString from 'lib/utils/random_string'
-import user_ from './user'
-import dbFactory from 'db/couchdb/base'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import radio from '#lib/radio'
+import error_ from '#lib/error/error'
+import { passwords as pw_ } from '#lib/crypto'
+import { WrappedUpdater } from '#lib/doc_updates'
+import randomString from '#lib/utils/random_string'
+import dbFactory from '#db/couchdb/base'
+import user_ from './user.js'
+
+const { tokenDaysToLive } = CONFIG
+
 const testToken = pw_.verify
 const db = dbFactory('users')
 const wrappedUpdate = WrappedUpdater(db)

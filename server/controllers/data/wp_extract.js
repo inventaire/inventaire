@@ -1,4 +1,4 @@
-import getArticle from 'data/wikipedia/get_article'
+import getArticle from '#data/wikipedia/get_article'
 
 const sanitization = {
   title: {},

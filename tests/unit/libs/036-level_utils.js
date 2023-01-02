@@ -1,5 +1,5 @@
 import 'should'
-import { formatBatchOps } from 'db/level/utils'
+import { formatBatchOps } from '#db/level/utils'
 
 describe('level utils', () => {
   describe('formatBatchOps', () => {

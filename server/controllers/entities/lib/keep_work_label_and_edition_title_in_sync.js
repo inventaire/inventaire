@@ -1,8 +1,10 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import getOriginalLang from 'lib/wikidata/get_original_lang'
-import updateLabel from './update_label'
-const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
+import _ from '#builders/utils'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import entities_ from './entities.js'
+import updateLabel from './update_label.js'
+
+const { _id: hookUserId } = hardCodedUsers.hook
 
 // TODO: also check for edition subtitle
 

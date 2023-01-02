@@ -1,10 +1,11 @@
 import CONFIG from 'config'
 import should from 'should'
-import { wait } from 'lib/promises'
-import { createUser } from '../fixtures/users'
-import { deleteUser } from '../utils/users'
-import { getIndexedDoc } from '../utils/search'
-import { indexes } from 'db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { indexes } from '#db/elasticsearch/indexes'
+import { createUser } from '../fixtures/users.js'
+import { deleteUser } from '../utils/users.js'
+import { getIndexedDoc } from '../utils/search.js'
+
 const { index } = indexes.users
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 

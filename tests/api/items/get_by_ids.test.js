@@ -1,6 +1,5 @@
-import _ from 'builders/utils'
 import should from 'should'
-
+import _ from '#builders/utils'
 import {
   getUser,
   authReq,
@@ -9,12 +8,11 @@ import {
   rethrowShouldNotBeCalledErrors,
   getUserGetter,
   customAuthReq,
-} from 'tests/api/utils/utils'
-
-import { getSomeGroup, addMember } from '../fixtures/groups'
-import { createItem, createItems } from '../fixtures/items'
-import { humanName } from '../fixtures/entities'
-import { createShelfWithItem } from '../fixtures/shelves'
+} from '#tests/api/utils/utils'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { createItem, createItems } from '../fixtures/items.js'
+import { humanName } from '../fixtures/entities.js'
+import { createShelfWithItem } from '../fixtures/shelves.js'
 
 const endpoint = '/api/items?action=by-ids'
 const userPromise = getUserGetter(humanName())()

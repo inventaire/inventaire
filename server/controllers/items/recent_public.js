@@ -1,5 +1,6 @@
-import items_ from 'controllers/items/lib/items'
-import bundleOwnersToItems from './lib/bundle_owners_to_items'
+import items_ from '#controllers/items/lib/items'
+import bundleOwnersToItems from './lib/bundle_owners_to_items.js'
+
 const itemsQueryLimit = 100
 const offset = 0
 

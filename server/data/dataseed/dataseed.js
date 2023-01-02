@@ -4,12 +4,11 @@
 // while entities created internally ramp up toward getting us autonomous
 // Its place should be progressively decreased until complete removal
 
-import _ from 'builders/utils'
-
-import requests_ from 'lib/requests'
-import isbn_ from 'lib/isbn/isbn'
-import { buildUrl } from 'lib/utils/url'
 import CONFIG from 'config'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import isbn_ from '#lib/isbn/isbn'
+import { buildUrl } from '#lib/utils/url'
 
 const { enabled, origin } = CONFIG.dataseed
 

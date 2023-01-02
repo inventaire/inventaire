@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import membershipValidations from './lib/membership_validations'
-import updateSettings from './lib/update_settings'
+import _ from '#builders/utils'
+import membershipValidations from './lib/membership_validations.js'
+import updateSettings from './lib/update_settings.js'
 
 const sanitization = {
   group: {},

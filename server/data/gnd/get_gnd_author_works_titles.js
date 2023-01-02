@@ -1,4 +1,4 @@
-import fetchExternalAuthorWorksTitles from 'data/lib/fetch_external_author_works_titles'
+import fetchExternalAuthorWorksTitles from '#data/lib/fetch_external_author_works_titles'
 
 // Unofficial endpoint
 const endpoint = 'https://zbw.eu/beta/sparql/gnd/query'

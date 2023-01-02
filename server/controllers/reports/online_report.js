@@ -1,6 +1,6 @@
-import onlineUsers from './lib/online_users'
-import responses_ from 'lib/responses'
-import headers_ from 'lib/headers'
+import responses_ from '#lib/responses'
+import headers_ from '#lib/headers'
+import onlineUsers from './lib/online_users.js'
 
 export default (req, res) => {
   const { headers } = req

@@ -1,9 +1,9 @@
-import error_ from 'lib/error/error'
-import { isCouchUuid } from 'lib/boolean_validations'
-import user_ from 'controllers/user/lib/user'
-import shelves_ from 'controllers/shelves/lib/shelves'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import { getEntityUriFromActorName, getEntityActorName } from './helpers'
+import error_ from '#lib/error/error'
+import { isCouchUuid } from '#lib/boolean_validations'
+import user_ from '#controllers/user/lib/user'
+import shelves_ from '#controllers/shelves/lib/shelves'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityUriFromActorName, getEntityActorName } from './helpers.js'
 
 export default {
   validateShelf: async name => {

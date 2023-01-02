@@ -1,5 +1,5 @@
-import couch_ from 'lib/couch'
-import assert_ from 'lib/utils/assert_types'
+import couch_ from '#lib/couch'
+import assert_ from '#lib/utils/assert_types'
 
 export default (db, _) => {
   const actionAndReturn = (verb, doc) => {

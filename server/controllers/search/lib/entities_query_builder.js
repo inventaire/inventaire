@@ -1,10 +1,12 @@
-import { getSingularTypes } from 'lib/wikidata/aliases'
-import properties from 'controllers/entities/lib/properties/properties_values_constraints'
-import error_ from 'lib/error/error'
-import { trim } from 'lodash'
-import { isPropertyUri, isWdEntityUri } from 'lib/boolean_validations'
-import { prefixifyWdProperty } from 'controllers/entities/lib/prefix'
+import { trim } from 'lodash-es'
+import { getSingularTypes } from '#lib/wikidata/aliases'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import error_ from '#lib/error/error'
+import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
+import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
+
 const allowlistedProperties = require('lib/wikidata/allowlisted_properties').map(prefixifyWdProperty)
+
 const allowedProperties = new Set(allowlistedProperties)
 
 export default params => {

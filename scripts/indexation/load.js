@@ -1,15 +1,16 @@
-#!/usr/bin/env nodeimport 'module-alias/register';
-import _ from 'builders/utils'
-import { indexes } from 'db/elasticsearch/indexes'
-import { logErrorAndExit } from '../scripts_utils'
+#!/usr/bin/env node
 import split from 'split'
-import { red } from 'chalk'
-import formatters from 'db/elasticsearch/formatters/formatters'
-import filters from 'db/elasticsearch/filters'
-import deindex from 'db/elasticsearch/deindex'
-import { addToBatch, postBatch } from 'db/elasticsearch/bulk'
-import createIndex from 'db/elasticsearch/create_index'
-import { wait } from 'lib/promises'
+import { red } from 'tiny-chalk'
+import { indexes } from '#db/elasticsearch/indexes'
+import _ from '#builders/utils'
+import formatters from '#db/elasticsearch/formatters/formatters'
+import filters from '#db/elasticsearch/filters'
+import deindex from '#db/elasticsearch/deindex'
+import { addToBatch, postBatch } from '#db/elasticsearch/bulk'
+import createIndex from '#db/elasticsearch/create_index'
+import { wait } from '#lib/promises'
+import { logErrorAndExit } from '../scripts_utils.js'
+
 const [ indexBaseName ] = process.argv.slice(2)
 const indexBaseNames = Object.keys(indexes)
 

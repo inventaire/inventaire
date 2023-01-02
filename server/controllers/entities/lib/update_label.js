@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import entities_ from './entities'
-import Entity from 'models/entity'
-import getEntityType from './get_entity_type'
-import typeWithoutLabels from './type_without_labels'
-import { emit } from 'lib/radio'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import Entity from '#models/entity'
+import { emit } from '#lib/radio'
+import entities_ from './entities.js'
+import getEntityType from './get_entity_type.js'
+import typeWithoutLabels from './type_without_labels.js'
 
 export default async (lang, value, userId, currentDoc) => {
   checkEntityTypeCanHaveLabel(currentDoc)

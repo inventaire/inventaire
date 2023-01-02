@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import intent from './lib/intent'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import intent from './lib/intent.js'
 
 const sanitization = {
   user: {}

@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
 
 const validations = {
   attribute: _.isString,

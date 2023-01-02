@@ -1,12 +1,13 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { findOneWaitingForSummary } from 'controllers/user/lib/summary'
-import sendActivitySummary from './send_activity_summary'
-import { oneHour } from 'lib/time'
+import _ from '#builders/utils'
+import { findOneWaitingForSummary } from '#controllers/user/lib/summary'
+import { oneHour } from '#lib/time'
+import sendActivitySummary from './send_activity_summary.js'
+
 const { maxEmailsPerHour } = CONFIG.activitySummary
 const emailsInterval = oneHour / maxEmailsPerHour
 
-export default () => {
+export default function () {
   _.info(CONFIG.activitySummary, 'activity summary')
   setInterval(sendOneUserSummary, emailsInterval)
 }

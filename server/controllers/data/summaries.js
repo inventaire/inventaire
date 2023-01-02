@@ -1,7 +1,7 @@
-import { compact } from 'lodash'
-import getEntityByUri from 'controllers/entities/lib/get_entity_by_uri'
-import { getSummariesFromClaims } from 'controllers/data/lib/summaries/getters'
-import { getWikipediaSitelinksData } from 'controllers/data/lib/summaries/sitelinks'
+import { compact } from 'lodash-es'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getSummariesFromClaims } from '#controllers/data/lib/summaries/getters'
+import { getWikipediaSitelinksData } from '#controllers/data/lib/summaries/sitelinks'
 
 const sanitization = {
   uri: {},

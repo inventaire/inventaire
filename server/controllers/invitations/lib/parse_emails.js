@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
 import { parseAddressList } from 'email-addresses'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
 
 // Takes a string (or an array) containing email addresses
 // (typically, the value of a text input filled with emails by a user)

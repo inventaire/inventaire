@@ -1,5 +1,5 @@
-import { areFriends, getSharedGroupsIds } from 'controllers/user/lib/relations_status'
-import { getGroupVisibilityKey } from 'lib/visibility/visibility'
+import { areFriends, getSharedGroupsIds } from '#controllers/user/lib/relations_status'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 
 const getAllowedVisibilityKeys = async (userId, reqUserId) => {
   // This special case should be handled by consumers

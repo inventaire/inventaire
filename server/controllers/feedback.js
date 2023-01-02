@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
-import radio from 'lib/radio'
 import { audit as auditIsbn } from 'isbn3'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
+import radio from '#lib/radio'
 
 export default {
   post: async (req, res) => {

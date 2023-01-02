@@ -1,15 +1,14 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-import _ from 'builders/utils'
-
-import error_ from 'lib/error/error'
-import responses_ from 'lib/responses'
-import parseEmails from './lib/parse_emails'
-import sendInvitationAndReturnData from './lib/send_invitation_and_return_data'
-import groups_ from 'controllers/groups/lib/groups'
-import Group from 'models/group'
-import { Track } from 'lib/track'
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import responses_ from '#lib/responses'
+import groups_ from '#controllers/groups/lib/groups'
+import Group from '#models/group'
+import { Track } from '#lib/track'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
+import parseEmails from './lib/parse_emails.js'
 
 const sanitization = validateSanitization({
   emails: {},

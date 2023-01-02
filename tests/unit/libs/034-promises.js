@@ -1,6 +1,6 @@
-import { props, tap, wait, map } from 'lib/promises'
-import { shouldNotBeCalled } from 'tests/unit/utils'
 import should from 'should'
+import { props, tap, wait, map } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 describe('promises utils', () => {
   describe('props', () => {

@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import properties from 'controllers/entities/lib/properties/properties_values_constraints'
-import { yellow } from 'chalk'
+import { yellow } from 'tiny-chalk'
+import _ from '#builders/utils'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 
 export default entity => {
   const { _id, version, created, updated, type, redirect } = entity

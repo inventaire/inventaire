@@ -1,5 +1,5 @@
-import { oneDay } from 'lib/time'
-import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create'
+import { oneDay } from '#lib/time'
+import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create.js'
 
 // Entry example:
 // {

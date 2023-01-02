@@ -1,15 +1,15 @@
 // This module implements a model object as expected by express-oauth-server and oauth2-server
 // See specification https://oauth2-server.readthedocs.io/en/latest/model/overview.html
 
-import user_ from 'controllers/user/lib/user'
-
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import clients_ from './clients'
-import authorizations_ from './authorizations'
-import tokens_ from './tokens'
-import { passwords } from 'lib/crypto'
 import InvalidClientError from 'oauth2-server/lib/errors/invalid-client-error'
+import user_ from '#controllers/user/lib/user'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { passwords } from '#lib/crypto'
+import clients_ from './clients.js'
+import authorizations_ from './authorizations.js'
+import tokens_ from './tokens.js'
+
 const { catchNotFound } = error_
 
 export default {

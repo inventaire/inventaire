@@ -1,7 +1,7 @@
-import error_ from 'lib/error/error'
-import groups_ from './groups'
-import lists_ from './users_lists'
-import leave_ from './leave_groups'
+import error_ from '#lib/error/error'
+import groups_ from './groups.js'
+import lists_ from './users_lists.js'
+import leave_ from './leave_groups.js'
 
 const validateRequestDecision = (reqUserId, groupId, requesterId) => {
   return Promise.all([

@@ -1,5 +1,5 @@
-import { pick, without } from 'lodash'
-import { public as publicAttributes } from 'models/attributes/user'
+import { pick, without } from 'lodash-es'
+import { public as publicAttributes } from '#models/attributes/user'
 // Omit snapshot as it contains private and semi priavte data
 const publicAttributesStrict = without(publicAttributes, 'snapshot')
 

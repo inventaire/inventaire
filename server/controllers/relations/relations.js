@@ -1,5 +1,5 @@
-import ActionsControllers from 'lib/actions_controllers'
-import relationsActions from './actions'
+import ActionsControllers from '#lib/actions_controllers'
+import relationsActions from './actions.js'
 
 export default {
   get: ActionsControllers({

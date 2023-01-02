@@ -1,6 +1,7 @@
-import _ from 'builders/utils'
-import dbFactory from 'db/couchdb/base'
-import Notification from 'models/notification'
+import _ from '#builders/utils'
+import dbFactory from '#db/couchdb/base'
+import Notification from '#models/notification'
+
 const db = dbFactory('notifications')
 
 const groupAttributeWithNotification = [

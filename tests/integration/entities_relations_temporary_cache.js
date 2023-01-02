@@ -1,11 +1,12 @@
 import CONFIG from 'config'
-import { wait } from 'lib/promises'
+import { wait } from '#lib/promises'
 import 'should'
-import { catchNotFound } from 'lib/error/error'
-import { someFakeUri } from 'tests/api/fixtures/entities'
-import { shouldNotBeCalled } from 'tests/api/utils/utils'
-import { get, set, del } from 'controllers/entities/lib/entities_relations_temporary_cache'
-import runQuery from 'data/wikidata/run_query'
+import { catchNotFound } from '#lib/error/error'
+import { someFakeUri } from '#tests/api/fixtures/entities'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { get, set, del } from '#controllers/entities/lib/entities_relations_temporary_cache'
+import runQuery from '#data/wikidata/run_query'
+
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
 const property = 'wdt:P50'

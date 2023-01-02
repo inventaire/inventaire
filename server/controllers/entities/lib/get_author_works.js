@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import entities_ from './entities'
-import runWdQuery from 'data/wikidata/run_query'
-import { prefixifyWd } from 'controllers/entities/lib/prefix'
-import { getSimpleDayDate, sortByScore } from './queries_utils'
-import { getPluralType, getPluralTypeByTypeUri } from 'lib/wikidata/aliases'
-import { getCachedRelations } from './temporarily_cache_relations'
+import _ from '#builders/utils'
+import runWdQuery from '#data/wikidata/run_query'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
+import { getSimpleDayDate, sortByScore } from './queries_utils.js'
+import entities_ from './entities.js'
+import { getCachedRelations } from './temporarily_cache_relations.js'
+
 const { firstClaim, uniqByUri } = entities_
 
 let getEntitiesPopularities

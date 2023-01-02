@@ -1,6 +1,6 @@
-import _ from 'builders/utils'
-import requests_ from 'lib/requests'
-import cache_ from 'lib/cache'
+import _ from '#builders/utils'
+import requests_ from '#lib/requests'
+import cache_ from '#lib/cache'
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`

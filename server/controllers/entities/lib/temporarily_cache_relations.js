@@ -1,7 +1,8 @@
-import entities_ from './entities'
-import { unprefixify } from './prefix'
-import getEntitiesByUris from './get_entities_by_uris'
-import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache'
+import entities_ from './entities.js'
+import { unprefixify } from './prefix.js'
+import getEntitiesByUris from './get_entities_by_uris.js'
+import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
+
 const cachedRelationProperties = [
   'wdt:P50',
   'wdt:P179'

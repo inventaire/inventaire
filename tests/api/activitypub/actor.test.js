@@ -1,16 +1,17 @@
-import _ from 'builders/utils'
 import 'should'
-import { createUser, createUsername } from '../fixtures/users'
-import { createHuman, createEdition } from '../fixtures/entities'
-import { makeUrl, getEntityActorName, propertyLabel } from 'controllers/activitypub/lib/helpers'
-import propertiesDisplay from 'controllers/activitypub/lib/properties_display'
-import { updateUser } from '../utils/users'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils'
-import { createShelf } from '../fixtures/shelves'
-import { getActorName } from '../utils/shelves'
-import { rawRequest } from '../utils/request'
-import { i18n } from 'lib/emails/i18n/i18n'
 import CONFIG from 'config'
+import _ from '#builders/utils'
+import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activitypub/lib/helpers'
+import propertiesDisplay from '#controllers/activitypub/lib/properties_display'
+import { i18n } from '#lib/emails/i18n/i18n'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { createHuman, createEdition } from '../fixtures/entities.js'
+import { updateUser } from '../utils/users.js'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { getActorName } from '../utils/shelves.js'
+import { rawRequest } from '../utils/request.js'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 

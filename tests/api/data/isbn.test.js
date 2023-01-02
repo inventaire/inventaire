@@ -1,7 +1,8 @@
 import 'should'
-import { publicReq, shouldNotBeCalled } from '../utils/utils'
-import randomString from 'lib/utils/random_string'
-import { generateIsbn13 } from '../fixtures/entities'
+import randomString from '#lib/utils/random_string'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { generateIsbn13 } from '../fixtures/entities.js'
+
 const endpoint = '/api/data?action=isbn'
 
 describe('data:isbn', () => {

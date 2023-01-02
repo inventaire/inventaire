@@ -1,9 +1,8 @@
 // Enrich ../by_uris results with entities related to the directly
 // requested entities, following those entities claims
 
-import _ from 'builders/utils'
-
-import getEntitiesByUris from './get_entities_by_uris'
+import _ from '#builders/utils'
+import getEntitiesByUris from './get_entities_by_uris.js'
 
 const addRelatives = (results, relatives, refresh) => {
   const { entities } = results

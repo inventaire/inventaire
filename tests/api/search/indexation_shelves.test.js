@@ -1,12 +1,13 @@
 import CONFIG from 'config'
-import { wait } from 'lib/promises'
-import { getIndexedDoc } from '../utils/search'
-import { createShelf } from 'tests/api/fixtures/shelves'
-import { randomWords } from 'tests/api/fixtures/text'
-import { updateShelf, deleteShelves } from 'tests/api/utils/shelves'
-import { createUser } from 'tests/api/fixtures/users'
-import { deleteUser } from 'tests/api/utils/users'
-import { indexes } from 'db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { createShelf } from '#tests/api/fixtures/shelves'
+import { randomWords } from '#tests/api/fixtures/text'
+import { updateShelf, deleteShelves } from '#tests/api/utils/shelves'
+import { createUser } from '#tests/api/fixtures/users'
+import { deleteUser } from '#tests/api/utils/users'
+import { indexes } from '#db/elasticsearch/indexes'
+import { getIndexedDoc } from '../utils/search.js'
+
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { index } = indexes.shelves
 

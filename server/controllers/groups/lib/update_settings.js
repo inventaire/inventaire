@@ -1,10 +1,11 @@
-import _ from 'builders/utils'
-import { attributes, validations, formatters } from 'models/group'
-import error_ from 'lib/error/error'
-import radio from 'lib/radio'
-import dbFactory from 'db/couchdb/base'
-import { add as addSlug } from './slug'
-import { acceptNullValue } from 'models/attributes/group'
+import _ from '#builders/utils'
+import { attributes, validations, formatters } from '#models/group'
+import error_ from '#lib/error/error'
+import radio from '#lib/radio'
+import dbFactory from '#db/couchdb/base'
+import { acceptNullValue } from '#models/attributes/group'
+import { add as addSlug } from './slug.js'
+
 const { updatable } = attributes
 const db = dbFactory('groups')
 

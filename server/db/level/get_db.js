@@ -1,8 +1,8 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-const __ = CONFIG.universalPath
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
 
-const dbFolder = __.path('root', 'db')
+const dbFolder = absolutePath('root', 'db')
 const { suffix } = CONFIG.db
 const { inMemoryLRUCacheSize, memoryBackend } = CONFIG.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`
@@ -29,7 +29,9 @@ const leveldownOptions = {
   maxOpenFiles: Infinity
 }
 
-let generalDb, cacheDb
+export let generalDb
+export let cacheDb
+
 if (memoryBackend) {
   _.warn('leveldb in memory')
   const level = require('level-test')()
@@ -42,5 +44,3 @@ if (memoryBackend) {
   generalDb = level(generalDbFolderPath, leveldownOptions)
   cacheDb = level(cacheDbFolderPath, leveldownOptions)
 }
-
-export default { generalDb, cacheDb }

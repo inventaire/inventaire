@@ -1,5 +1,6 @@
-import requests_ from 'lib/requests'
-import cache_ from 'lib/cache'
+import requests_ from '#lib/requests'
+import cache_ from '#lib/cache'
+
 const timeout = 10 * 1000
 
 export default async ({ id, refresh }) => {

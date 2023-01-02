@@ -1,9 +1,10 @@
-import _ from 'builders/utils'
+import _ from '#builders/utils'
 import 'should'
-import { authReq, authReqB, getUserGetter, shouldNotBeCalled } from '../utils/utils'
-import { getSomeGroup, addMember } from '../fixtures/groups'
-import { getGroup } from 'tests/api/utils/groups'
-import { humanName } from '../fixtures/entities'
+import { getGroup } from '#tests/api/utils/groups'
+import { authReq, authReqB, getUserGetter, shouldNotBeCalled } from '../utils/utils.js'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { humanName } from '../fixtures/entities.js'
+
 const endpoint = '/api/groups?action=make-admin'
 
 describe('groups:update:make-admin', () => {

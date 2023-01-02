@@ -1,10 +1,11 @@
-import clientsDbFactory from 'db/couchdb/base'
-import randomString from 'lib/utils/random_string'
-import { sha1, passwords, getRandomBytes } from 'lib/crypto'
-import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request'
-import { getUser } from './utils'
-import assert_ from 'lib/utils/assert_types'
-import { buildUrl, parseQuery } from 'lib/utils/url'
+import clientsDbFactory from '#db/couchdb/base'
+import randomString from '#lib/utils/random_string'
+import { sha1, passwords, getRandomBytes } from '#lib/crypto'
+import assert_ from '#lib/utils/assert_types'
+import { buildUrl, parseQuery } from '#lib/utils/url'
+import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request.js'
+import { getUser } from './utils.js'
+
 const clientsDb = clientsDbFactory('oauth_clients')
 
 const getClient = async (params = {}) => {

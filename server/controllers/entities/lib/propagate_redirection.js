@@ -1,5 +1,5 @@
-import redirectClaims from './redirect_claims'
-import updateItemEntity from 'controllers/items/lib/update_entity'
+import updateItemEntity from '#controllers/items/lib/update_entity'
+import redirectClaims from './redirect_claims.js'
 
 export default (userId, fromUri, toUri, previousToUri) => {
   const actions = [

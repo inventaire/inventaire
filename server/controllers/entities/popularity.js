@@ -1,4 +1,4 @@
-import { getEntitiesPopularities } from './lib/popularity'
+import { getEntitiesPopularities } from './lib/popularity.js'
 
 const sanitization = {
   uris: {},

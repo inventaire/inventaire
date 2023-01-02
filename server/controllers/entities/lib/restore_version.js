@@ -1,8 +1,8 @@
-import { emit } from 'lib/radio'
-import Patch from 'models/patch'
-import entities_ from './entities'
-import patches_ from './patches/patches'
-import validateEntity from './validate_entity'
+import { emit } from '#lib/radio'
+import Patch from '#models/patch'
+import entities_ from './entities.js'
+import patches_ from './patches/patches.js'
+import validateEntity from './validate_entity.js'
 
 export default async (patchId, userId) => {
   const entityId = patchId.split(':')[0]

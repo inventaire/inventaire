@@ -1,7 +1,7 @@
-import assert_ from 'lib/utils/assert_types'
-import { pass, entityUri, couchUuid } from './validations/common'
+import assert_ from '#lib/utils/assert_types'
+import error_ from '#lib/error/error'
+import { pass, entityUri, couchUuid } from './validations/common.js'
 
-import error_ from 'lib/error/error'
 const validations = {
   pass,
   uri: entityUri,

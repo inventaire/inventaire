@@ -1,8 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import isbn_, { isValidIsbn, normalizeIsbn } from 'lib/isbn/isbn'
-import wmLanguageCodeByWdId from 'wikidata-lang/mappings/wm_code_by_wd_id.json'
-import sanitizeSeed from './sanitize_seed'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import isbn_, { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
+import { requireJson } from '#lib/utils/json'
+import sanitizeSeed from './sanitize_seed.js'
+
+const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
 // Validate : requires only one edition to resolve from and a valid isbn
 // Format : if edition is a list, force pick the first edition

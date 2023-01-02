@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import { addWarning } from 'lib/responses'
-import parameters from './parameters'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import { addWarning } from '#lib/responses'
+import parameters from './parameters.js'
+
 const { generics } = parameters
 
 // The sanitize function doesn't need to be async

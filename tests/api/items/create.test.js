@@ -1,22 +1,21 @@
 import CONFIG from 'config'
 import 'should'
-import { wait } from 'lib/promises'
-import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils'
-
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { createGroup } from '#tests/api/fixtures/groups'
+import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils.js'
 import {
   createEditionWithIsbn,
   createEdition,
   createWorkWithAuthor,
   createHuman,
   createEditionWithWorkAndAuthor,
-} from '../fixtures/entities'
+} from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createUser, getRefreshedUser } from '../fixtures/users.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { getByUris as getEntitiesByUris } from '../utils/entities.js'
 
-import { createItem } from '../fixtures/items'
-import { createUser, getRefreshedUser } from '../fixtures/users'
-import { createShelf } from '../fixtures/shelves'
-import { getByUris as getEntitiesByUris } from '../utils/entities'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from 'tests/api/utils/utils'
-import { createGroup } from 'tests/api/fixtures/groups'
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
 const editionUriPromise = createEdition().then(({ uri }) => uri)

@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed'
-import removeEntitiesByInvId from './lib/remove_entities_by_inv_id'
-import entities_ from './lib/entities'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed.js'
+import removeEntitiesByInvId from './lib/remove_entities_by_inv_id.js'
+import entities_ from './lib/entities.js'
 
 const sanitization = {
   uris: {}

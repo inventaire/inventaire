@@ -1,6 +1,7 @@
-import dbFactory from 'db/couchdb/base'
-import assert_ from 'lib/utils/assert_types'
-import { omit } from 'lodash'
+import { omit } from 'lodash-es'
+import dbFactory from '#db/couchdb/base'
+import assert_ from '#lib/utils/assert_types'
+
 const db = dbFactory('oauth_authorizations')
 const idAttribute = 'authorizationCode'
 

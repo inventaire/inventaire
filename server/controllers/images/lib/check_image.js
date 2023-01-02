@@ -1,10 +1,11 @@
 import CONFIG from 'config'
-import _ from 'builders/utils'
-import { imageIsUsed as entityImageIsUsed } from 'controllers/entities/lib/entities'
-import { imageIsUsed as groupImageIsUsed } from 'controllers/groups/lib/groups'
-import { imageIsUsed as userImageIsUsed } from 'controllers/user/lib/user'
-import assert_ from 'lib/utils/assert_types'
-import { containers } from 'controllers/images/lib/containers'
+import _ from '#builders/utils'
+import { imageIsUsed as entityImageIsUsed } from '#controllers/entities/lib/entities'
+import { imageIsUsed as groupImageIsUsed } from '#controllers/groups/lib/groups'
+import { imageIsUsed as userImageIsUsed } from '#controllers/user/lib/user'
+import assert_ from '#lib/utils/assert_types'
+import { containers } from '#controllers/images/lib/containers'
+
 const { checkDelays } = CONFIG.mediaStorage.images
 
 export default async ({ container, hash, url, context }) => {

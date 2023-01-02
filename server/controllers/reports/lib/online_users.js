@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import crypto_ from 'lib/crypto'
+import _ from '#builders/utils'
+import crypto_ from '#lib/crypto'
 
 export default data => {
   const fingerPrint = getFingerPrint(data)

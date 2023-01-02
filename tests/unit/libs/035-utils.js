@@ -1,5 +1,5 @@
-import _ from 'builders/utils'
-import { uniqByKey } from 'lib/utils/base'
+import _ from '#builders/utils'
+import { uniqByKey } from '#lib/utils/base'
 import 'should'
 
 describe('utils', () => {

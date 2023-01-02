@@ -1,8 +1,9 @@
-import _ from 'builders/utils'
-import items_ from 'controllers/items/lib/items'
-import { getVisibilitySummaryKey } from 'lib/visibility/visibility'
-import User from 'models/user'
-import dbFactory from 'db/couchdb/base'
+import _ from '#builders/utils'
+import items_ from '#controllers/items/lib/items'
+import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
+import User from '#models/user'
+import dbFactory from '#db/couchdb/base'
+
 const db = dbFactory('users')
 
 export default userId => {

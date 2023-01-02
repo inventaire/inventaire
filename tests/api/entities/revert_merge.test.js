@@ -1,8 +1,8 @@
 import should from 'should'
-import { authReq, shouldNotBeCalled, dataadminReq } from '../utils/utils'
-import randomString from 'lib/utils/random_string'
-import { getByUris, merge, revertMerge, updateLabel, addClaim } from '../utils/entities'
-import { createWork, createHuman, createWorkWithAuthor } from '../fixtures/entities'
+import randomString from '#lib/utils/random_string'
+import { authReq, shouldNotBeCalled, dataadminReq } from '../utils/utils.js'
+import { getByUris, merge, revertMerge, updateLabel, addClaim } from '../utils/entities.js'
+import { createWork, createHuman, createWorkWithAuthor } from '../fixtures/entities.js'
 
 describe('entities:revert-merge', () => {
   it('should require data admin rights', async () => {

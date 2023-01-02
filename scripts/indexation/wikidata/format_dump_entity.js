@@ -1,6 +1,5 @@
-import 'module-alias/register'
 import { simplify } from 'wikidata-sdk'
-import formatClaims from 'server/lib/wikidata/format_claims'
+import formatClaims from '#lib/wikidata/format_claims'
 
 export default entity => {
   entity.uri = `wd:${entity.id}`

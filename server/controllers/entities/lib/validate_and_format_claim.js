@@ -1,5 +1,5 @@
-import validateAndFormatClaimValue from './validate_and_format_claim_value'
-import { validateProperty } from './properties/validations'
+import validateAndFormatClaimValue from './validate_and_format_claim_value.js'
+import { validateProperty } from './properties/validations.js'
 
 export default async params => {
   const { property } = params

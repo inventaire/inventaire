@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
-import entities_ from './entities'
-import Entity from 'models/entity'
-import turnIntoRedirection from './turn_into_redirection'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import Entity from '#models/entity'
+import entities_ from './entities.js'
+import turnIntoRedirection from './turn_into_redirection.js'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
 export default ({ userId, fromUri, toUri, context }) => {
   let [ fromPrefix, fromId ] = fromUri.split(':')

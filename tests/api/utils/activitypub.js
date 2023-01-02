@@ -1,11 +1,11 @@
-import { rawRequest } from '../utils/request'
-import { signRequest, verifySignature } from 'controllers/activitypub/lib/security'
-import { getSharedKeyPair } from 'controllers/activitypub/lib/shared_key_pair'
-import { getRandomBytes } from 'lib/crypto'
-import { createUsername } from '../fixtures/users'
-import { makeUrl } from 'controllers/activitypub/lib/helpers'
-import { jsonBodyParser } from 'server/middlewares/content'
-import { startGenericMockServer } from 'tests/integration/utils/mock_server'
+import { signRequest, verifySignature } from '#controllers/activitypub/lib/security'
+import { getSharedKeyPair } from '#controllers/activitypub/lib/shared_key_pair'
+import { getRandomBytes } from '#lib/crypto'
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
+import { jsonBodyParser } from '#server/middlewares/content'
+import { startGenericMockServer } from '#tests/integration/utils/mock_server'
+import { createUsername } from '../fixtures/users.js'
+import { rawRequest } from '../utils/request.js'
 
 // in a separate file since createUser has a circular dependency in api/utils/request.js
 const signedReq = async ({ method, object, url, body, emitterUser, type }) => {

@@ -1,14 +1,15 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import assert_ from 'lib/utils/assert_types'
 import { getReverseClaims, simplify } from 'wikidata-sdk'
-import requests_ from 'lib/requests'
-import entities_ from './entities'
-import { prefixifyWd, unprefixify } from 'controllers/entities/lib/prefix'
-import cache_ from 'lib/cache'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri'
-import runWdQuery from 'data/wikidata/run_query'
-import { getEntitiesPopularities } from './popularity'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import assert_ from '#lib/utils/assert_types'
+import requests_ from '#lib/requests'
+import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import cache_ from '#lib/cache'
+import runWdQuery from '#data/wikidata/run_query'
+import entities_ from './entities.js'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import { getEntitiesPopularities } from './popularity.js'
+
 const { sparqlResults: simplifySparqlResults } = simplify
 
 const caseInsensitiveProperties = [

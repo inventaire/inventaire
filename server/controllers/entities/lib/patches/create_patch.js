@@ -1,6 +1,7 @@
-import dbFactory from 'db/couchdb/base'
-import Patch from 'models/patch'
-import { getEntityLastPatches } from './patches'
+import dbFactory from '#db/couchdb/base'
+import Patch from '#models/patch'
+import { getEntityLastPatches } from './patches.js'
+
 const designDocName = 'patches'
 const db = dbFactory('patches', designDocName)
 

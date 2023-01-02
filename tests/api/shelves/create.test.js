@@ -3,12 +3,12 @@ import {
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
-} from 'tests/api/utils/utils'
+} from '#tests/api/utils/utils'
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
+import { authReq } from '../utils/utils.js'
+import { shelfName } from '../fixtures/shelves.js'
+import { createItem } from '../fixtures/items.js'
 
-import { authReq } from '../utils/utils'
-import { shelfName } from '../fixtures/shelves'
-import { createItem } from '../fixtures/items'
-import { createGroupWithAMember, getSomeGroup } from 'tests/api/fixtures/groups'
 const endpoint = '/api/shelves?action=create'
 
 describe('shelves:create', () => {

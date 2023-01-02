@@ -1,9 +1,9 @@
-import { wait } from 'lib/promises'
+import { wait } from '#lib/promises'
 import 'should'
-import automergeAuthorWorks from 'controllers/tasks/lib/automerge_author_works'
-import { checkEntities } from '../utils/tasks'
-import { getByUris, findOrIndexEntities } from '../utils/entities'
-import { createHuman, createWorkWithAuthor, addSerie } from '../fixtures/entities'
+import automergeAuthorWorks from '#controllers/tasks/lib/automerge_author_works'
+import { checkEntities } from '../utils/tasks.js'
+import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { createHuman, createWorkWithAuthor, addSerie } from '../fixtures/entities.js'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {

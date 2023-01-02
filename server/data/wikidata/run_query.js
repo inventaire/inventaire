@@ -1,16 +1,17 @@
-import _ from 'builders/utils'
-import radio from 'lib/radio'
-import cache_ from 'lib/cache'
-import error_ from 'lib/error/error'
 import wdk from 'wikidata-sdk'
-import makeSparqlRequest from './make_sparql_request'
-import { queries, queriesPerProperty } from './queries/queries'
-import { unprefixify } from 'controllers/entities/lib/prefix'
+import _ from '#builders/utils'
+import radio from '#lib/radio'
+import cache_ from '#lib/cache'
+import error_ from '#lib/error/error'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import makeSparqlRequest from './make_sparql_request.js'
+import { queries, queriesPerProperty } from './queries/queries.js'
+
 const possibleQueries = Object.keys(queries)
 const dashesPattern = /-/g
 
 // Params:
-// - query: the name of the query to use from './queries/queries'
+// - query: the name of the query to use from './queries/queries.js'
 // - refresh
 // - custom parameters: see the query file
 export default async params => {

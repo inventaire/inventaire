@@ -1,6 +1,7 @@
 import 'should'
-import { publicReq } from 'tests/api/utils/utils'
-import { populate } from '../fixtures/populate'
+import { publicReq } from '#tests/api/utils/utils'
+import { populate } from '../fixtures/populate.js'
+
 const lastPublicUrl = '/api/items?action=last-public'
 
 describe('items:last-public', () => {

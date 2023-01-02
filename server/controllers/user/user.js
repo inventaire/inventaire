@@ -7,7 +7,7 @@
 // - invitatitons: inviting people out of Inventaire
 // - users: finding users by their usernames, positions, etc
 
-import ActionsControllers from 'lib/actions_controllers'
+import ActionsControllers from '#lib/actions_controllers'
 
 export default {
   get: ActionsControllers({

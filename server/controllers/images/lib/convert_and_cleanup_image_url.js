@@ -1,10 +1,10 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import { cleanupImageUrl } from 'data/dataseed/dataseed'
 import CONFIG from 'config'
-import convertImageUrl from './convert_image_url'
-import assert_ from 'lib/utils/assert_types'
-import isPrivateUrl from 'lib/network/is_private_url'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import { cleanupImageUrl } from '#data/dataseed/dataseed'
+import assert_ from '#lib/utils/assert_types'
+import isPrivateUrl from '#lib/network/is_private_url'
+import convertImageUrl from './convert_image_url.js'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 

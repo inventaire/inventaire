@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash-es'
 
 const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ],

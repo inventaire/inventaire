@@ -4,21 +4,22 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-import _ from 'builders/utils'
-
 import { simplify } from 'wikidata-sdk'
-import getOriginalLang from 'lib/wikidata/get_original_lang'
-import formatClaims from 'lib/wikidata/format_claims'
-import getEntityType from './get_entity_type'
-import { prefixifyWd, unprefixify } from 'controllers/entities/lib/prefix'
-import cache_ from 'lib/cache'
-import getWdEntity from 'data/wikidata/get_entity'
-import addImageData from './add_image_data'
-import radio from 'lib/radio'
-import propagateRedirection from './propagate_redirection'
-import { partition, map } from 'lodash'
+import { partition, map } from 'lodash-es'
+import _ from '#builders/utils'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
+import formatClaims from '#lib/wikidata/format_claims'
+import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import cache_ from '#lib/cache'
+import getWdEntity from '#data/wikidata/get_entity'
+import radio from '#lib/radio'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import addImageData from './add_image_data.js'
+import propagateRedirection from './propagate_redirection.js'
+import getEntityType from './get_entity_type.js'
+
 const { propertyClaims: simplifyPropertyClaims } = simplify
-const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
+const { _id: hookUserId } = hardCodedUsers.hook
 
 let reindex
 const requireCircularDependencies = () => {

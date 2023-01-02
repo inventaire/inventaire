@@ -1,7 +1,7 @@
-import _ from 'builders/utils'
-import { intersection } from 'lodash'
-import groups_, { getUsersGroupsIds } from 'controllers/groups/lib/groups'
-import relations_ from 'controllers/relations/lib/queries'
+import { intersection } from 'lodash-es'
+import _ from '#builders/utils'
+import groups_, { getUsersGroupsIds } from '#controllers/groups/lib/groups'
+import relations_ from '#controllers/relations/lib/queries'
 
 export default {
   getUserRelations: userId => {

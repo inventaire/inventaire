@@ -1,7 +1,8 @@
-import _ from 'builders/utils'
-import Element from 'models/element'
-import dbFactory from 'db/couchdb/base'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import Element from '#models/element'
+import dbFactory from '#db/couchdb/base'
+import error_ from '#lib/error/error'
+
 const db = dbFactory('elements')
 
 const elements_ = {

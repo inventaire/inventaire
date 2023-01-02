@@ -1,11 +1,14 @@
-import _ from 'builders/utils'
-import tasks_ from './lib/tasks'
-import dbFactory from 'db/couchdb/base'
-import { prefixifyInv } from 'controllers/entities/lib/prefix'
-import jobs_ from 'db/level/jobs'
-import checkEntity from './lib/check_entity'
-import { nice } from 'config'
-import { waitForCPUsLoadToBeBelow } from 'lib/os'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import dbFactory from '#db/couchdb/base'
+import { prefixifyInv } from '#controllers/entities/lib/prefix'
+import jobs_ from '#db/level/jobs'
+import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import checkEntity from './lib/check_entity.js'
+import tasks_ from './lib/tasks.js'
+
+const { nice } = CONFIG
+
 const db = dbFactory('entities')
 const batchLength = 1000
 

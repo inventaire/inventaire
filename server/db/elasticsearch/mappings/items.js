@@ -1,4 +1,4 @@
-import { autocompleteText, keyword, keywordArray, date } from './mappings_datatypes'
+import { autocompleteText, keyword, keywordArray, date } from './mappings_datatypes.js'
 
 export default {
   properties: {

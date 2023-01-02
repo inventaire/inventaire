@@ -1,7 +1,9 @@
-import { db, elasticsearch, dataseed, mediaStorage } from 'config'
-import _ from 'lodash'
-import ipIsInPrivateIpRange from './is_in_private_ip_range'
-import { dnsLookup, getHostname, getHostnameIp } from './helpers'
+import CONFIG from 'config'
+import _ from 'lodash-es'
+import ipIsInPrivateIpRange from './is_in_private_ip_range.js'
+import { dnsLookup, getHostname, getHostnameIp } from './helpers.js'
+
+const { db, elasticsearch, dataseed, mediaStorage } = CONFIG
 
 const servicesHostnames = _.uniq(_.compact([
   db.hostname,

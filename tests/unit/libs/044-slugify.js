@@ -1,6 +1,6 @@
 
 import 'should'
-import slugify from 'controllers/groups/lib/slugify'
+import slugify from '#controllers/groups/lib/slugify'
 
 describe('slugify', () => {
   it('should be a function', () => {

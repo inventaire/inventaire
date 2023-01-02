@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import { byIds, byIdsWithElements } from 'controllers/listings/lib/listings'
-import { addWarning } from 'lib/responses'
-import filterVisibleDocs from 'lib/visibility/filter_visible_docs'
-import error_ from 'lib/error/error'
+import _ from '#builders/utils'
+import { byIds, byIdsWithElements } from '#controllers/listings/lib/listings'
+import { addWarning } from '#lib/responses'
+import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import error_ from '#lib/error/error'
 
 const sanitization = {
   ids: {},

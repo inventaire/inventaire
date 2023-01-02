@@ -1,7 +1,7 @@
-import comments_ from 'controllers/comments/lib/comments'
-import transactions_ from './lib/transactions'
-import { verifyRightToInteract } from './lib/rights_verification'
-import { emit } from 'lib/radio'
+import comments_ from '#controllers/comments/lib/comments'
+import { emit } from '#lib/radio'
+import transactions_ from './lib/transactions.js'
+import { verifyRightToInteract } from './lib/rights_verification.js'
 
 const sanitization = {
   transaction: {},

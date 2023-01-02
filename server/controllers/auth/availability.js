@@ -1,4 +1,4 @@
-import availability_ from 'controllers/user/lib/availability'
+import availability_ from '#controllers/user/lib/availability'
 
 export default {
   usernameAvailability: {

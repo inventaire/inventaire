@@ -1,8 +1,8 @@
-import _ from 'builders/utils'
-import user_ from 'controllers/user/lib/user'
-import { setItemsBusyFlag } from 'controllers/transactions/lib/transactions'
-import snapshot_ from './snapshot/snapshot'
-import { isVisibilityGroupKey } from 'lib/boolean_validations'
+import _ from '#builders/utils'
+import user_ from '#controllers/user/lib/user'
+import { setItemsBusyFlag } from '#controllers/transactions/lib/transactions'
+import { isVisibilityGroupKey } from '#lib/boolean_validations'
+import snapshot_ from './snapshot/snapshot.js'
 
 const addUsersData = async (page, reqParams) => {
   const { reqUserId, includeUsers } = reqParams

@@ -1,6 +1,5 @@
-import 'module-alias/register'
-import requests_ from 'lib/requests'
 import { getEntitiesFromSitelinks, isItemId } from 'wikidata-sdk'
+import requests_ from '#lib/requests'
 
 export default async ({ site, title }) => {
   const url = getEntitiesFromSitelinks({ sites: site, titles: title, props: 'info' })

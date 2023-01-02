@@ -1,4 +1,5 @@
-import { customAuthReq } from './request'
+import { customAuthReq } from './request.js'
+
 const endpoint = '/api/relations'
 
 let getUser, getReservedUser

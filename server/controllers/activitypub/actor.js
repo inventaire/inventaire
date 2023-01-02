@@ -1,5 +1,5 @@
-import getActor from 'controllers/activitypub/lib/get_actor'
-import getActorHtmlUrl from 'controllers/activitypub/lib/get_actor_html_url'
+import getActor from '#controllers/activitypub/lib/get_actor'
+import getActorHtmlUrl from '#controllers/activitypub/lib/get_actor_html_url'
 
 const sanitization = {
   name: {}

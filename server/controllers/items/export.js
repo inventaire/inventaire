@@ -1,10 +1,10 @@
-import { sanitize, validateSanitization } from 'lib/sanitize/sanitize'
-import items_ from './lib/items'
-import addEntitiesData from './lib/export/add_entities_data'
-import FormatItemRow from './lib/export/format_item_row'
-import csvHeaderRow from './lib/export/csv_header_row'
-import responses_ from 'lib/responses'
-import shelves_ from 'controllers/shelves/lib/shelves'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import responses_ from '#lib/responses'
+import shelves_ from '#controllers/shelves/lib/shelves'
+import items_ from './lib/items.js'
+import addEntitiesData from './lib/export/add_entities_data.js'
+import FormatItemRow from './lib/export/format_item_row.js'
+import csvHeaderRow from './lib/export/csv_header_row.js'
 
 const sanitization = validateSanitization({
   format: {

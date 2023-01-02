@@ -1,9 +1,12 @@
-import _ from 'builders/utils'
-import error_ from 'lib/error/error'
-import images_ from 'lib/images'
-import { userAgent } from 'lib/requests'
-import { mediaStorage } from 'config'
+import CONFIG from 'config'
 import fetch from 'node-fetch'
+import _ from '#builders/utils'
+import error_ from '#lib/error/error'
+import images_ from '#lib/images'
+import { userAgent } from '#lib/requests'
+
+const { mediaStorage } = CONFIG
+
 const { maxSize } = mediaStorage.images
 const oneMB = 1024 ** 2
 const reqOptions = {

@@ -1,11 +1,11 @@
 import should from 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } from 'tests/api/utils/utils'
-import { publicReq, authReq, getUserB, getReservedUser } from '../utils/utils'
-import { createListing, createElement } from '../fixtures/listings'
-import { map } from 'lodash'
-import { createGroupWithAMember, createGroup, addMember } from 'tests/api/fixtures/groups'
-import { getTwoFriends } from 'tests/api/fixtures/users'
-import { getGroupVisibilityKey } from 'lib/visibility/visibility'
+import { map } from 'lodash-es'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } from '#tests/api/utils/utils'
+import { createGroupWithAMember, createGroup, addMember } from '#tests/api/fixtures/groups'
+import { getTwoFriends } from '#tests/api/fixtures/users'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import { createListing, createElement } from '../fixtures/listings.js'
+import { publicReq, authReq, getUserB, getReservedUser } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-creators'
 
