@@ -1,9 +1,9 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { wait } from '#lib/promises'
-import { createShelf } from '#tests/api/fixtures/shelves'
 import { createGroup } from '#tests/api/fixtures/groups'
+import { createShelf } from '#tests/api/fixtures/shelves'
 import { getItem } from '#tests/api/utils/items'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { createItem } from '../fixtures/items.js'
 import { getUser, authReq, authReqB, getUserB } from '../utils/utils.js'
 import { newItemBase } from './helpers.js'
@@ -16,7 +16,7 @@ describe('items:bulk-update', () => {
     await authReq('put', '/api/items?action=bulk-update', {
       ids,
       attribute: 'transaction',
-      value: newTransaction
+      value: newTransaction,
     })
     const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
     updatedItems[0].transaction.should.equal(newTransaction)
@@ -27,7 +27,7 @@ describe('items:bulk-update', () => {
     await authReq('put', '/api/items?action=bulk-update', {
       ids: [ item._id ],
       attribute: 'transaction',
-      value: 'zalgo'
+      value: 'zalgo',
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -42,7 +42,7 @@ describe('items:bulk-update', () => {
     await authReq('put', '/api/items?action=bulk-update', {
       ids,
       attribute: 'visibility',
-      value: [ 'groups' ]
+      value: [ 'groups' ],
     })
     const { items: updatedItems } = await authReq('get', `/api/items?action=by-ids&ids=${ids.join('|')}`)
     updatedItems[0].visibility.should.deepEqual([ 'groups' ])
@@ -55,7 +55,7 @@ describe('items:bulk-update', () => {
       await authReqB('put', '/api/items?action=bulk-update', {
         ids,
         attribute: 'transaction',
-        value: 'lending'
+        value: 'lending',
       })
     } catch (err) {
       err.statusCode.should.equal(400)
@@ -85,7 +85,7 @@ describe('items:bulk-update', () => {
       await authReq('put', '/api/items?action=bulk-update', {
         ids,
         attribute: 'visibility',
-        value: [ `group:${group._id}` ]
+        value: [ `group:${group._id}` ],
       })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -103,7 +103,7 @@ describe('items:bulk-update', () => {
       await authReq('put', '/api/items?action=bulk-update', {
         ids: itemId,
         attribute: 'shelves',
-        value: [ shelf._id ]
+        value: [ shelf._id ],
       })
       const updatedItem = await getItem(item)
       updatedItem.shelves.should.deepEqual([ shelf._id ])
@@ -115,7 +115,7 @@ describe('items:bulk-update', () => {
       await authReq('put', '/api/items?action=bulk-update', {
         ids: item._id,
         attribute: 'shelves',
-        value: [ shelf._id ]
+        value: [ shelf._id ],
       })
       .then(shouldNotBeCalled)
       .catch(err => {

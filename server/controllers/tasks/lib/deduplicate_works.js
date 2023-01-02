@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
-import getEntitiesList from '#controllers/entities/lib/get_entities_list'
 import getEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
-import mergeEntities from '#controllers/entities/lib/merge_entities'
+import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
-import tasks_ from './tasks.js'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { error_ } from '#lib/error/error'
 
 export default async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })
@@ -27,7 +27,7 @@ export default async (workUri, isbn, userId) => {
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
   newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))
-  return tasks_.create(workUri, 'deduplicate', work.type, newSuggestions)
+  return createTask(workUri, 'deduplicate', work.type, newSuggestions)
 }
 
 const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
@@ -42,7 +42,7 @@ const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
   return editionWorks
 }
 
-const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
+const getExistingTasks = uri => getTasksBySuspectUris([ uri ])
 
 const filterNewTasks = (existingTasks, suggestions) => {
   const existingTasksUris = _.map(existingTasks, 'suggestionUri')

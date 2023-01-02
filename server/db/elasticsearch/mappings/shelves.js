@@ -7,5 +7,5 @@ export default {
     owner: keyword,
     visibility: keywordArray,
     created: date,
-  }
+  },
 }

@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
-import cache_ from '#lib/cache'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
 import { oneWeek } from '#lib/time'
 import { buildUrl } from '#lib/utils/url'
 
@@ -27,5 +27,5 @@ const makeRequest = async (endpoint, query, requestOptions = {}) => {
 
 const parseResult = result => ({
   title: result.title && result.title.value,
-  url: result.work && result.work.value
+  url: result.work && result.work.value,
 })

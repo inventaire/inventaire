@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import { byExternalId, deleteById } from '#controllers/activitypub/lib/activities'
+import { byExternalId, deleteActivityById } from '#controllers/activitypub/lib/activities'
 import { isNonEmptyString } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 
 export default async params => {
@@ -16,7 +16,7 @@ export default async params => {
     throw error_.new('request actor and activity actor do not match', 403, { actor, activity })
   }
 
-  await deleteById(activity._id, activity._rev)
+  await deleteActivityById(activity._id, activity._rev)
   trackActor(activity.actor.uri, [ 'activitypub', 'undo' ])
   return { ok: true }
 }

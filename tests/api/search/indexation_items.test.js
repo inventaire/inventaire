@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import should from 'should'
-import { wait } from '#lib/promises'
 import { indexes } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
 import { createItem } from '../fixtures/items.js'
 import { deleteItemsByIds, updateItems } from '../utils/items.js'
 import { getIndexedDoc } from '../utils/search.js'

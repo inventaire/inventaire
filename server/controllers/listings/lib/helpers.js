@@ -1,13 +1,11 @@
 import _ from '#builders/utils'
 
-export default {
-  filterFoundElementsUris: (elements, uris) => {
-    const foundElements = []
-    const notFoundUris = []
-    const elementsByUris = _.keyBy(elements, 'uri')
-    uris.forEach(assignElement(elementsByUris, foundElements, notFoundUris))
-    return { foundElements, notFoundUris }
-  }
+export const filterFoundElementsUris = (elements, uris) => {
+  const foundElements = []
+  const notFoundUris = []
+  const elementsByUris = _.keyBy(elements, 'uri')
+  uris.forEach(assignElement(elementsByUris, foundElements, notFoundUris))
+  return { foundElements, notFoundUris }
 }
 
 const assignElement = (elementsByUris, foundElements, notFoundUris) => uri => {

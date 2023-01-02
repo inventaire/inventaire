@@ -49,7 +49,7 @@ const reservedWords = new Set([
   'users',
   'wd',
   'welcome',
-  'wikidata'
+  'wikidata',
 ])
 
 export default username => reservedWords.has(username)

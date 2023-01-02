@@ -1,16 +1,18 @@
 import _ from '#builders/utils'
-import promises_ from '#lib/promises'
-import assert_ from '#lib/utils/assert_types'
-import entities_ from '#controllers/entities/lib/entities'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { urisByClaim } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { mappedArrayPromise } from '#lib/promises'
+import { assert_ } from '#lib/utils/assert_types'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
 import { getDocData } from './helpers.js'
 
-let snapshot_
-const requireCircularDependencies = () => { snapshot_ = require('./snapshot') }
-setImmediate(requireCircularDependencies)
+let saveSnapshotsInBatch
+const importCircularDependencies = async () => {
+  ({ saveSnapshotsInBatch } = await import('./snapshot.js'))
+}
+setImmediate(importCircularDependencies)
 
 const fromDoc = changedEntityDoc => {
   const [ uri, type ] = getDocData(changedEntityDoc)
@@ -20,7 +22,7 @@ const fromDoc = changedEntityDoc => {
 
   _.info(`${label}: starting`)
   return getSnapshotsByType[type](uri)
-  .then(snapshot_.batch)
+  .then(saveSnapshotsInBatch)
 }
 
 const fromUri = changedEntityUri => {
@@ -31,7 +33,7 @@ const fromUri = changedEntityUri => {
 export default { fromDoc, fromUri }
 
 const multiWorkRefresh = relationProperty => async uri => {
-  const uris = await entities_.urisByClaim(relationProperty, uri)
+  const uris = await urisByClaim(relationProperty, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
   return snapshots.flat()
 }
@@ -51,7 +53,7 @@ const getSnapshotsByType = {
       .then(([ authors, series ]) => {
         return Promise.all([
           getWorkSnapshot(uri, work, authors, series),
-          getEditionsSnapshots(uri, [ work ], authors, series)
+          getEditionsSnapshots(uri, [ work ], authors, series),
         ])
         .then(_.flatten)
       })
@@ -59,7 +61,7 @@ const getSnapshotsByType = {
   },
 
   human: multiWorkRefresh('wdt:P50'),
-  serie: multiWorkRefresh('wdt:P179')
+  serie: multiWorkRefresh('wdt:P179'),
 }
 
 const refreshTypes = Object.keys(getSnapshotsByType)
@@ -78,10 +80,10 @@ const getEditionsSnapshots = async (uri, works, authors, series) => {
   assert_.array(authors)
   assert_.array(series)
 
-  return entities_.urisByClaim('wdt:P629', uri)
+  return urisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
   .then(res => Object.values(res.entities))
-  .then(promises_.map(edition => getEditionSnapshot([ edition, works, authors, series ])))
+  .then(mappedArrayPromise(edition => getEditionSnapshot([ edition, works, authors, series ])))
 }
 
 const getEditionSnapshot = ([ edition, works, authors, series ]) => {

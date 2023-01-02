@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import entities_ from '#controllers/entities/lib/entities'
 import runWdQuery from '#data/wikidata/run_query'
 import { forceArray } from '#lib/utils/base'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
@@ -41,6 +41,6 @@ const invQuery = externalIds => {
 }
 
 const invByClaim = async ([ prop, value ]) => {
-  const entities = await entities_.byClaim(prop, value, true, true)
+  const entities = await getEntitiesByClaim(prop, value, true, true)
   return entities.map(getInvEntityCanonicalUri)
 }

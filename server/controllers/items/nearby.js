@@ -1,4 +1,4 @@
-import user_ from '#controllers/user/lib/user'
+import { getUsersNearby } from '#controllers/user/lib/user'
 import getItemsByUsers from './lib/get_items_by_users.js'
 
 const sanitization = {
@@ -7,17 +7,17 @@ const sanitization = {
   range: {},
   'include-users': {
     generic: 'boolean',
-    default: true
+    default: true,
   },
   'strict-range': {
     generic: 'boolean',
-    default: false
-  }
+    default: false,
+  },
 }
 
 const controller = async params => {
   const { range, strictRange, reqUserId } = params
-  const usersIds = await user_.nearby(reqUserId, range, strictRange)
+  const usersIds = await getUsersNearby(reqUserId, range, strictRange)
   return getItemsByUsers(params, usersIds)
 }
 

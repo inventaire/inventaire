@@ -5,26 +5,24 @@ import { createHuman, createWork } from './entities.js'
 
 const promises = {}
 
-export default {
-  createSomeTasks: humanLabel => {
-    if (promises[humanLabel] != null) return promises[humanLabel]
+export const createSomeTasks = humanLabel => {
+  if (promises[humanLabel] != null) return promises[humanLabel]
 
-    const human = { labels: { en: humanLabel } }
+  const human = { labels: { en: humanLabel } }
 
-    promises[humanLabel] = Promise.all([ createHuman(human), createHuman(human) ])
-      .then(humans => {
-        return checkEntities(_.map(humans, 'uri'))
-        .then(tasks => ({ tasks, humans }))
-      })
+  promises[humanLabel] = Promise.all([ createHuman(human), createHuman(human) ])
+    .then(humans => {
+      return checkEntities(_.map(humans, 'uri'))
+      .then(tasks => ({ tasks, humans }))
+    })
 
-    return promises[humanLabel]
-  },
+  return promises[humanLabel]
+}
 
-  createTask: async params => {
-    const taskDoc = await createTaskDoc(params)
-    return createTasks([ taskDoc ])
-    .then(tasks => tasks[0])
-  }
+export async function createTask (params) {
+  const taskDoc = await createTaskDoc(params)
+  return createTasks([ taskDoc ])
+  .then(tasks => tasks[0])
 }
 
 const createTaskDoc = async (params = {}) => {
@@ -46,7 +44,7 @@ const createTaskDoc = async (params = {}) => {
     suggestionUri: params.suggestionUri || suggestionUri,
     lexicalScore: 12.01775,
     relationScore: 0.1,
-    externalSourcesOccurrences: []
+    externalSourcesOccurrences: [],
   }
 }
 

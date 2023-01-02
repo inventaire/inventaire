@@ -27,7 +27,7 @@ export default error_ => {
       err.error_type = 'invalid_parameter'
       err.error_name = `invalid_${parameter}`
       return err
-    }
+    },
   }
 
   newFunctions.newMissingQuery = newFunctions.newMissing.bind(null, 'query')
@@ -62,7 +62,7 @@ export default error_ => {
         context.url = req.originalUrl
       }
       return error_.bundle(req, res, 'unknown action', 400, context)
-    }
+    },
   }
 
   return Object.assign(newFunctions, bundles)

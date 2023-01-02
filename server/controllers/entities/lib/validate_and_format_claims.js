@@ -1,8 +1,9 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import validateAndFormatClaim from './validate_and_format_claim.js'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
 import getEntityType from './get_entity_type.js'
+import validateAndFormatClaim from './validate_and_format_claim.js'
 import validateClaimProperty from './validate_claim_property.js'
 
 export default async ({ claims, type, _id }) => {
@@ -33,8 +34,8 @@ const validatePropertyClaims = (claims, type, _id) => async property => {
     throw error_.new('invalid property value array', 400, {
       property,
       values,
-      type: _.typeOf(values),
-      expectedType: 'array'
+      type: typeOf(values),
+      expectedType: 'array',
     })
   }
 

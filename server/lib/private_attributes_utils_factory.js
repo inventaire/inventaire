@@ -9,6 +9,6 @@ export default privateAttributes => {
     filterPrivateAttributes: reqUserId => doc => {
       if (doc.owner === reqUserId) return doc
       else return omitPrivateAttributes(doc)
-    }
+    },
   }
 }

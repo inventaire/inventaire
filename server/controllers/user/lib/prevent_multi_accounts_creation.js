@@ -2,7 +2,7 @@
 // the creation process is considerably slowed when bcrypt is used to hash passwords
 
 import CONFIG from 'config'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import { normalizeString } from '#lib/utils/base'
 
 const { useSlowPasswordHashFunction } = CONFIG

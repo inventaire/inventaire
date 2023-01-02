@@ -7,16 +7,11 @@ const keywordValues = [
   'public',
 ]
 
-const isVisibilityKey = value => {
+export const isVisibilityKey = value => {
   if (!_.isString(value)) return false
   if (keywordValues.includes(value)) return true
   if (isVisibilityGroupKey(value)) return true
   return false
 }
 
-const isVisibilityKeyArray = arr => _.isArray(arr) && arr.every(isVisibilityKey)
-
-export default {
-  isVisibilityKey,
-  isVisibilityKeyArray,
-}
+export const isVisibilityKeyArray = arr => _.isArray(arr) && arr.every(isVisibilityKey)

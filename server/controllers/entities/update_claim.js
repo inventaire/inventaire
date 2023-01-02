@@ -1,6 +1,5 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-
+import { error_ } from '#lib/error/error'
 // TODO: accept ISBN URIs
 import inv from './lib/update_inv_claim.js'
 import wd from './lib/update_wd_claim.js'
@@ -42,7 +41,7 @@ const parseEmptyValue = value => value === '' ? null : value
 
 const updaters = {
   inv,
-  wd
+  wd,
 }
 
 export default { sanitization, controller }

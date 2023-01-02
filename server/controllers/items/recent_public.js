@@ -1,4 +1,4 @@
-import items_ from '#controllers/items/lib/items'
+import { getPublicItemsByDate } from '#controllers/items/lib/items'
 import bundleOwnersToItems from './lib/bundle_owners_to_items.js'
 
 const itemsQueryLimit = 100
@@ -7,18 +7,18 @@ const offset = 0
 const sanitization = {
   'assert-image': {
     generic: 'boolean',
-    default: false
+    default: false,
   },
   lang: {
-    default: 'en'
+    default: 'en',
   },
   limit: {
-    default: 15
-  }
+    default: 15,
+  },
 }
 
 const controller = async ({ assertImage, lang, limit, reqUserId }) => {
-  let items = await items_.publicByDate(itemsQueryLimit, offset, assertImage, reqUserId)
+  let items = await getPublicItemsByDate(itemsQueryLimit, offset, assertImage, reqUserId)
   items = selectRecentItems(items, lang, limit)
   return bundleOwnersToItems(items, reqUserId)
 }

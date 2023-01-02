@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import { wait } from '#lib/promises'
 import 'should'
-import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { createItem } from '#tests/api/fixtures/items'
-import { authReq, getUser, getUserB } from '../utils/utils.js'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { createShelf } from '../fixtures/shelves.js'
+import { authReq, getUser, getUserB } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500

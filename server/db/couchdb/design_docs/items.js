@@ -2,12 +2,12 @@ export default {
   byDate: {
     map: doc => {
       emit(doc.created, [ doc._id, doc.title ])
-    }
+    },
   },
   byOwner: {
     map: doc => {
       emit(doc.owner, null)
-    }
+    },
   },
   byOwnerAndVisibilityKey: {
     map: doc => {
@@ -15,7 +15,7 @@ export default {
       for (const visibilityKey of doc.visibility) {
         emit([ doc.owner, visibilityKey ], null)
       }
-    }
+    },
   },
   byOwnerAndVisibilityKeyWithoutShelf: {
     map: doc => {
@@ -25,7 +25,7 @@ export default {
           emit([ doc.owner, visibilityKey ], null)
         }
       }
-    }
+    },
   },
   byShelfAndVisibilityKey: {
     map: doc => {
@@ -37,21 +37,21 @@ export default {
           }
         }
       }
-    }
+    },
   },
   publicByDate: {
     map: doc => {
       if (doc.visibility.includes('public')) {
         emit(doc.created, null)
       }
-    }
+    },
   },
   publicByOwnerAndDate: {
     map: doc => {
       if (doc.visibility.includes('public')) {
         emit([ doc.owner, doc.created ], null)
       }
-    }
+    },
   },
   publicByShelfAndDate: {
     map: doc => {
@@ -63,19 +63,19 @@ export default {
           }
         }
       }
-    }
+    },
   },
   byOwnerAndEntity: {
     map: doc => {
       emit([ doc.owner, doc.entity ], null)
-    }
+    },
   },
   byEntity: {
     map: doc => {
       if (doc.entity != null) {
         emit(doc.entity, null)
       }
-    }
+    },
   },
   missingPicture: {
     map: doc => {
@@ -84,7 +84,7 @@ export default {
           emit(doc.created, null)
         }
       }
-    }
+    },
   },
   byPreviousEntity: {
     map: doc => {
@@ -93,6 +93,6 @@ export default {
           emit(uri, null)
         }
       }
-    }
+    },
   },
 }

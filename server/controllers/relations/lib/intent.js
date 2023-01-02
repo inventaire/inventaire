@@ -1,32 +1,30 @@
-import queries from './queries.js'
+import { getRelationStatus } from '#controllers/relations/lib/queries'
 import actions from './actions.js'
 import solveFactory from './solve_intent.js'
 
 const solve = solveFactory(actions)
 
-export default {
-  requestFriend: (reqUserId, otherId) => {
-    return queries.getStatus(reqUserId, otherId)
-    .then(solve.requestFriend.bind(null, reqUserId, otherId))
-  },
+export const requestFriend = (reqUserId, otherId) => {
+  return getRelationStatus(reqUserId, otherId)
+  .then(solve.requestFriend.bind(null, reqUserId, otherId))
+}
 
-  cancelFriendRequest: (reqUserId, otherId) => {
-    return queries.getStatus(reqUserId, otherId)
-    .then(solve.cancelFriendRequest.bind(null, reqUserId, otherId))
-  },
+export const cancelFriendRequest = (reqUserId, otherId) => {
+  return getRelationStatus(reqUserId, otherId)
+  .then(solve.cancelFriendRequest.bind(null, reqUserId, otherId))
+}
 
-  removeFriendship: (reqUserId, otherId) => {
-    return queries.getStatus(reqUserId, otherId)
-    .then(solve.removeFriendship.bind(null, reqUserId, otherId))
-  },
+export const removeFriendship = (reqUserId, otherId) => {
+  return getRelationStatus(reqUserId, otherId)
+  .then(solve.removeFriendship.bind(null, reqUserId, otherId))
+}
 
-  acceptRequest: (reqUserId, otherId) => {
-    return queries.getStatus(reqUserId, otherId)
-    .then(solve.acceptRequest.bind(null, reqUserId, otherId))
-  },
+export const acceptRequest = (reqUserId, otherId) => {
+  return getRelationStatus(reqUserId, otherId)
+  .then(solve.acceptRequest.bind(null, reqUserId, otherId))
+}
 
-  discardRequest: (reqUserId, otherId) => {
-    return queries.getStatus(reqUserId, otherId)
-    .then(solve.discardRequest.bind(null, reqUserId, otherId))
-  }
+export const discardRequest = (reqUserId, otherId) => {
+  return getRelationStatus(reqUserId, otherId)
+  .then(solve.discardRequest.bind(null, reqUserId, otherId))
 }

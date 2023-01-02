@@ -1,13 +1,13 @@
-import error_ from '#lib/error/error'
-import user_ from '#controllers/user/lib/user'
 import { sendResetPasswordEmail } from '#controllers/user/lib/token'
+import { findUserByEmail } from '#controllers/user/lib/user'
+import { error_ } from '#lib/error/error'
 
 const sanitization = {
-  email: {}
+  email: {},
 }
 
 const controller = async ({ email }) => {
-  const user = await user_.findOneByEmail(email)
+  const user = await findUserByEmail(email)
     .catch(catchEmailNotFoundErr(email))
 
   await sendResetPasswordEmail(user)

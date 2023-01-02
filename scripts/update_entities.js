@@ -13,21 +13,21 @@
 //   - stats: Function: -> stats object
 
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
 import dbFactory from '#db/couchdb/base'
 import docDiff from '#db/couchdb/doc_diffs'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
-import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 
 const entitiesDb = dbFactory('entities')
 const patchesDb = dbFactory('patches')
 const userId = hardCodedUsers.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
-const { getNextBatch, updateFn, stats } = require(updateFnFilePath)
-let { preview, silent } = require(updateFnFilePath)
+const { getNextBatch, updateFn, stats } = await import(updateFnFilePath)
+let { preview, silent } = await import(updateFnFilePath)
 
 // Default to true
 preview = preview !== false

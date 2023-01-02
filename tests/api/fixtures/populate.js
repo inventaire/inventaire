@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import { createUser } from './users.js'
 import { createRandomizedItems } from './items.js'
+import { createUser } from './users.js'
 
 let populatePromise
 const usersCount = 8
@@ -18,6 +18,6 @@ const API = {
     itemsData = _.times(publicItemsPerUser, i => itemsData[i] || {})
     await createRandomizedItems(user, itemsData)
     return user
-  }
+  },
 }
 export default API

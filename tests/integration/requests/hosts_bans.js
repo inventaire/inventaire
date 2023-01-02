@@ -1,7 +1,7 @@
-import should from 'should'
 import CONFIG from 'config'
-import requests_ from '#lib/requests'
+import should from 'should'
 import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { startGenericMockServer } from '../utils/mock_server.js'
 
@@ -126,7 +126,7 @@ describe('requests:hosts-bans', function () {
     const { timeoutEndpoint } = await startMockServer()
     await Promise.all([
       requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
-      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
     ])
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => {
       const { banTime } = err.context.hostBanData

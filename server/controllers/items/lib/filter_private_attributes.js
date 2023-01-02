@@ -1,10 +1,5 @@
-import Item from '#models/item'
 import privateAttributesUtilsFactory from '#lib/private_attributes_utils_factory'
+import Item from '#models/item'
 
 const { private: privateAttributes } = Item.attributes
-const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)
-
-export default {
-  omitPrivateAttributes,
-  filterPrivateAttributes,
-}
+export const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)

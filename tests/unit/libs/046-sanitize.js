@@ -22,7 +22,7 @@ describe('sanitize', () => {
     input.should.deepEqual({})
     res.warnings.should.be.an.Object()
     res.warnings.should.deepEqual([
-      'unexpected parameter: limit'
+      'unexpected parameter: limit',
     ])
   })
 
@@ -104,8 +104,8 @@ describe('sanitize', () => {
       const configs = {
         'include-users': {
           generic: 'boolean',
-          default: false
-        }
+          default: false,
+        },
       }
       const { includeUsers } = sanitize(req, res, configs)
       includeUsers.should.be.true()
@@ -116,8 +116,8 @@ describe('sanitize', () => {
       const configs = {
         foo: {
           generic: 'allowlist',
-          allowlist: [ 'a', 'b', 'c' ]
-        }
+          allowlist: [ 'a', 'b', 'c' ],
+        },
       }
       const { foo } = sanitize({ query: { foo: 'a' } }, res, configs)
       foo.should.equal('a')
@@ -134,8 +134,8 @@ describe('sanitize', () => {
       const res = {}
       const configs = {
         attributes: {
-          allowlist: [ 'foo' ]
-        }
+          allowlist: [ 'foo' ],
+        },
       }
       try {
         sanitize(req, res, configs)
@@ -151,8 +151,8 @@ describe('sanitize', () => {
       const res = {}
       const configs = {
         attributes: {
-          allowlist: [ 'foo' ]
-        }
+          allowlist: [ 'foo' ],
+        },
       }
       try {
         sanitize(req, res, configs)
@@ -169,8 +169,8 @@ describe('sanitize', () => {
       const configs = {
         foo: {
           generic: 'object',
-          default: obj
-        }
+          default: obj,
+        },
       }
       const { foo } = sanitize(req, res, configs)
       foo.should.deepEqual({})
@@ -182,7 +182,7 @@ describe('sanitize', () => {
       const configs = {
         foo: {
           generic: 'ignore',
-        }
+        },
       }
       const { foo } = sanitize({ query: { foo: 'a' } }, res, configs)
       should(foo).not.be.ok()
@@ -213,7 +213,7 @@ describe('sanitize', () => {
       limit.should.equal(500)
       res.warnings.should.be.an.Object()
       res.warnings.should.deepEqual([
-        "limit can't be over 500"
+        "limit can't be over 500",
       ])
     })
 

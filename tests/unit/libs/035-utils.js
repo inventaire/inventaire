@@ -1,6 +1,7 @@
+import 'should'
 import _ from '#builders/utils'
 import { uniqByKey } from '#lib/utils/base'
-import 'should'
+import { typeOf } from '#lib/utils/types'
 
 describe('utils', () => {
   describe('env', () => {
@@ -19,15 +20,15 @@ describe('utils', () => {
 
   describe('typeOf', () => {
     it('should return the right type', () => {
-      _.typeOf('hello').should.equal('string')
-      _.typeOf([ 'hello' ]).should.equal('array')
-      _.typeOf({ hel: 'lo' }).should.equal('object')
-      _.typeOf(83110).should.equal('number')
-      _.typeOf(null).should.equal('null')
-      _.typeOf().should.equal('undefined')
-      _.typeOf(false).should.equal('boolean')
-      _.typeOf(Number('boudu')).should.equal('NaN')
-      _.typeOf(Promise.resolve()).should.equal('promise')
+      typeOf('hello').should.equal('string')
+      typeOf([ 'hello' ]).should.equal('array')
+      typeOf({ hel: 'lo' }).should.equal('object')
+      typeOf(83110).should.equal('number')
+      typeOf(null).should.equal('null')
+      typeOf().should.equal('undefined')
+      typeOf(false).should.equal('boolean')
+      typeOf(Number('boudu')).should.equal('NaN')
+      typeOf(Promise.resolve()).should.equal('promise')
     })
   })
 

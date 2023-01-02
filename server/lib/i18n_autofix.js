@@ -1,16 +1,16 @@
-import { isPropertyId } from 'wikidata-sdk'
+import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { absolutePath } from '#lib/absolute_path'
+import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { wait } from './promises.js'
 
-export default {
-  appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
-  appendToShortKeys: keys => appendToI18nKeys(short, keys, false),
-  appendToServerKeys: key => {
-    const fullValue = !/^\w+_\w+/.test(key)
-    return appendToI18nKeys(server, [ key ], fullValue)
-  }
+const { isPropertyId } = wdk
+
+export const appendToFullKeys = keys => appendToI18nKeys(full, keys, true)
+export const appendToShortKeys = keys => appendToI18nKeys(short, keys, false)
+export const appendToServerKeys = key => {
+  const fullValue = !/^\w+_\w+/.test(key)
+  return appendToI18nKeys(server, [ key ], fullValue)
 }
 
 // Don't use 'require' as it will be cached until next start

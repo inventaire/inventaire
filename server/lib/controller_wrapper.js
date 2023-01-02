@@ -1,11 +1,11 @@
-import { someMatch } from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
+import { someMatch } from '#lib/utils/base'
 import validateObject from '#lib/validate_object'
-import { rolesByAccess } from './user_access_levels.js'
 import { send } from './responses.js'
 import { sanitize, validateSanitization } from './sanitize/sanitize.js'
 import { track } from './track.js'
-import assert_ from './utils/assert_types.js'
+import { rolesByAccess } from './user_access_levels.js'
+import { assert_ } from './utils/assert_types.js'
 
 // A function to do the basic operations most controllers will need:
 // - check access rights
@@ -13,7 +13,7 @@ import assert_ from './utils/assert_types.js'
 // - send data for valid response
 // - handle errors
 // - track actions
-const controllerWrapper = async (controllerParams, req, res) => {
+export async function controllerWrapper (controllerParams, req, res) {
   const { access, controller, sanitization, track: trackActionArray } = controllerParams
   // user.roles doesn't contain 'public' and 'authentified', but those are needed to resolve access levels
   const roles = [ 'public' ]
@@ -42,7 +42,7 @@ const controllerWrapper = async (controllerParams, req, res) => {
   }
 }
 
-const ControllerWrapper = controllerParams => {
+export const ControllerWrapper = controllerParams => {
   validateControllerWrapperParams(controllerParams)
   return controllerWrapper.bind(null, controllerParams)
 }
@@ -50,7 +50,7 @@ const ControllerWrapper = controllerParams => {
 // Allow to validate parameters separately, so that
 // consumers of controllerWrapper can run this validate only once
 // when the server is starting (rather than for each request)
-const validateControllerWrapperParams = controllerParams => {
+export const validateControllerWrapperParams = controllerParams => {
   validateObject(controllerParams, controllerParamsKeys)
   const { access, controller, sanitization, track: trackActionArray } = controllerParams
   assert_.string(access)
@@ -69,9 +69,3 @@ const controllerParamsKeys = [
   'sanitization',
   'track',
 ]
-
-export default {
-  controllerWrapper,
-  ControllerWrapper,
-  validateControllerWrapperParams
-}

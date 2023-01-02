@@ -1,6 +1,6 @@
 import sub from 'subleveldown'
-import memoize from '#lib/utils/memoize'
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
+import { memoize } from '#lib/utils/memoize'
 import { generalDb } from './get_db.js'
 
 // Available encodings: https://github.com/Level/codec#builtin-encodings

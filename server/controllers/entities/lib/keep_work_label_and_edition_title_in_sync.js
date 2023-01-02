@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import getOriginalLang from '#lib/wikidata/get_original_lang'
+import { getEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
-import entities_ from './entities.js'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
 import updateLabel from './update_label.js'
 
 const { _id: hookUserId } = hardCodedUsers.hook
@@ -28,14 +28,14 @@ export default (edition, oldTitle) => {
   return fetchLangConsensusTitle(workUri, editionLang)
   .then(consensusEditionTitle => {
     if (!_.isNonEmptyString(consensusEditionTitle)) return
-    return entities_.byId(id)
+    return getEntityById(id)
     .then(updateWorkLabel(editionLang, oldTitle, consensusEditionTitle))
   })
   .catch(_.Error('hook update err'))
 }
 
 const fetchLangConsensusTitle = async (workUri, editionLang) => {
-  const editions = await entities_.byClaim('wdt:P629', workUri, true, true)
+  const editions = await getEntitiesByClaim('wdt:P629', workUri, true, true)
 
   const titles = editions
     .filter(edition => getOriginalLang(edition.claims) === editionLang)

@@ -1,17 +1,17 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
+import { assert_ } from '#lib/utils/assert_types'
+import isbn from './get_entities_by_isbns.js'
 import inv from './get_inv_entities.js'
 import wd from './get_wikidata_enriched_entities.js'
-import isbn from './get_entities_by_isbns.js'
 
 // Getters take ids, return an object on the model { entities, notFound }
 const getters = {
   inv,
   wd,
-  isbn
+  isbn,
 }
 
 const prefixes = Object.keys(getters)
@@ -67,7 +67,7 @@ const formatRichResults = results => {
     // collect redirections at the response root to let the possibility
     // to the client to alias entities
     redirects: {},
-    notFound: []
+    notFound: [],
   }
 
   for (const result of results) {
@@ -100,5 +100,5 @@ const formatRichResults = results => {
 const validators = {
   inv: _.isInvEntityId,
   wd: wdk.isItemId,
-  isbn: isValidIsbn
+  isbn: isValidIsbn,
 }

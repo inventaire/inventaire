@@ -1,11 +1,11 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
-import { getByIsbns as getSeedsByIsbns } from '#data/dataseed/dataseed'
+import { getSeedsByIsbns } from '#data/dataseed/dataseed'
 import { parseIsbn } from '#lib/isbn/parse'
 
 const sanitization = {
   isbn: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async ({ isbn, refresh }) => {

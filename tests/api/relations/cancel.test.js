@@ -1,6 +1,6 @@
 import 'should'
-import { assertRelation, action } from '../utils/relations.js'
 import { getUsersWithoutRelation } from '../fixtures/users.js'
+import { assertRelation, action } from '../utils/relations.js'
 
 describe('relations:cancel', () => {
   it('should cancel a friend request', async () => {

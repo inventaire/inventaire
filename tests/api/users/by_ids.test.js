@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } from '#tests/api/utils/utils'
-import { publicReq, authReq, customAuthReq, getUser, getUserB } from '../utils/utils.js'
 import { getTwoFriends } from '../fixtures/users.js'
 import { deleteUser } from '../utils/users.js'
+import { publicReq, authReq, customAuthReq, getUser, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/users?action=by-ids'
 

@@ -1,3 +1,5 @@
-import { pass, userId, itemId } from './common.js'
+import commonValidations from './common.js'
+
+const { pass, userId, itemId } = commonValidations
 
 export default { pass, userId, itemId }

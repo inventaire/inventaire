@@ -1,5 +1,5 @@
-import couch_ from '#lib/couch'
-import assert_ from '#lib/utils/assert_types'
+import { setDocsDeletedTrue } from '#lib/couch'
+import { assert_ } from '#lib/utils/assert_types'
 
 export default (db, _) => {
   const actionAndReturn = (verb, doc) => {
@@ -12,7 +12,7 @@ export default (db, _) => {
     assert_.objects(docs)
     if (docs.length === 0) return []
     _.warn(docs, `${db.dbName} bulkDelete`)
-    return db.bulk(couch_.setDocsDeletedTrue(docs))
+    return db.bulk(setDocsDeletedTrue(docs))
   }
 
   return {
@@ -23,7 +23,7 @@ export default (db, _) => {
     },
     postAndReturn: actionAndReturn.bind(null, 'post'),
     putAndReturn: actionAndReturn.bind(null, 'put'),
-    bulkDelete
+    bulkDelete,
   }
 }
 

@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import dbFactory from '#db/level/get_sub_db'
+import { error_ } from '#lib/error/error'
 
 const db = dbFactory('hosts-bans', 'json')
 const { serverMode } = CONFIG
@@ -31,19 +31,19 @@ const restoreNonExpiredBans = data => {
   if (Object.keys(banData).length > 0) _.success(banData, 'hosts bans data restored')
 }
 
-const throwIfTemporarilyBanned = host => {
+export const throwIfTemporarilyBanned = host => {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
     throw error_.new(`temporary ban: ${host}`, 500, { host, hostBanData })
   }
 }
 
-const resetBanData = host => {
+export const resetBanData = host => {
   delete banData[host]
   lazyBackup()
 }
 
-const declareHostError = host => {
+export const declareHostError = host => {
   // Never ban local services
   if (host.startsWith('localhost')) return
 
@@ -72,5 +72,3 @@ const backup = () => {
 const lazyBackup = serverMode ? _.debounce(backup, 60 * 1000) : _.noop
 
 if (serverMode) restoreBanData()
-
-export default { throwIfTemporarilyBanned, resetBanData, declareHostError }

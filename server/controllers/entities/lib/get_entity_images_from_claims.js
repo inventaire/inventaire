@@ -1,5 +1,5 @@
-import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 import { getUrlFromEntityImageHash } from './entities.js'
+import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
 export default ({ claims }) => {
   // Test claims existance to prevent crash when used on meta entities

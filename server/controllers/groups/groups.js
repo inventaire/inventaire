@@ -1,6 +1,9 @@
 import ActionsControllers from '#lib/actions_controllers'
-import publicActions from './public_actions.js'
+import create from './create.js'
+import getUserGroups from './get_user_groups.js'
 import membersActions from './members_actions.js'
+import publicActions from './public_actions.js'
+import updateSettings from './update_settings.js'
 
 export default {
   get: ActionsControllers({
@@ -8,17 +11,17 @@ export default {
       'by-id': publicActions.byId,
       'by-slug': publicActions.bySlug,
       'search-by-position': publicActions.searchByPositon,
-      slug: publicActions.slug
+      slug: publicActions.slug,
     },
     authentified: {
-      default: require('./get_user_groups')
-    }
+      default: getUserGroups,
+    },
   }),
 
   post: ActionsControllers({
     authentified: {
-      create: require('./create')
-    }
+      create,
+    },
   }),
 
   put: ActionsControllers({
@@ -33,7 +36,7 @@ export default {
       'make-admin': membersActions('makeAdmin'),
       kick: membersActions('kick'),
       leave: membersActions('leave'),
-      'update-settings': require('./update_settings')
-    }
-  })
+      'update-settings': updateSettings,
+    },
+  }),
 }

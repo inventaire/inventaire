@@ -1,8 +1,8 @@
 import 'should'
 import { wait } from '#lib/promises'
-import randomString from '#lib/utils/random_string'
-import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getRandomString } from '#lib/utils/random_string'
 import { createUser, createUsername } from '../fixtures/users.js'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=login'
 
@@ -27,7 +27,7 @@ describe('auth:login', () => {
 
   it('should reject wrong password', async () => {
     const username = createUsername()
-    const password = randomString(9)
+    const password = getRandomString(9)
     await createUser({ username, password })
     await wait(10)
     await publicReq('post', endpoint, { username, password: 'notthepassword' })

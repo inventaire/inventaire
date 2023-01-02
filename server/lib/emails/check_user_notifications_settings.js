@@ -1,4 +1,4 @@
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 export default (user, notificationLabel) => {
   const { _id, type, settings, undeliveredEmail } = user
@@ -21,7 +21,7 @@ const checkSetting = (userId, notifications, label) => {
   if (notifications[label] === false) {
     throw emailDisabled({
       user: userId,
-      notification: label
+      notification: label,
     })
   }
 }

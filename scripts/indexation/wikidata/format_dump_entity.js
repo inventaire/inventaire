@@ -1,5 +1,7 @@
-import { simplify } from 'wikidata-sdk'
+import wdk from 'wikidata-sdk'
 import formatClaims from '#lib/wikidata/format_claims'
+
+const { simplify } = wdk
 
 export default entity => {
   entity.uri = `wd:${entity.id}`

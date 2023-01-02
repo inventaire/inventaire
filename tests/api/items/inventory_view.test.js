@@ -1,11 +1,11 @@
 import 'should'
-import { publicReq } from '#tests/api/utils/utils'
-import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createItem } from '#tests/api/fixtures/items'
+import { customAuthReq } from '#tests/api/utils/request'
+import { publicReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroupWithAMember } from '../fixtures/groups.js'
-import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 import { createUserWithItems } from '../fixtures/populate.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 
 const endpoint = '/api/items?action=inventory-view'
 
@@ -41,7 +41,7 @@ describe('items:inventory-view', () => {
     const itemIdRemainingWithoutShelf = itemsByDate.at(-1)
     await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
       id: shelf._id,
-      items: allButOneItemsIds
+      items: allButOneItemsIds,
     })
     const { itemsByDate: updatedItemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
     updatedItemsByDate.length.should.be.equal(1)

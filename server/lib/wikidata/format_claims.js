@@ -1,7 +1,7 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import allowlistedProperties from './allowlisted_properties.js'
+import { assert_ } from '#lib/utils/assert_types'
+import { allowlistedProperties } from './allowlisted_properties.js'
 import { flattenQualifierProperties } from './data_model_adapter.js'
 
 const { simplifyClaims } = wdk
@@ -9,7 +9,7 @@ const { simplifyClaims } = wdk
 const options = {
   entityPrefix: 'wd',
   propertyPrefix: 'wdt',
-  timeConverter: 'simple-day'
+  timeConverter: 'simple-day',
 }
 
 export default claims => {

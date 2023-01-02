@@ -1,17 +1,17 @@
-import entities_ from './entities.js'
-import { unprefixify } from './prefix.js'
-import getEntitiesByUris from './get_entities_by_uris.js'
+import { getEntityById } from '#controllers/entities/lib/entities'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
+import getEntitiesByUris from './get_entities_by_uris.js'
+import { unprefixify } from './prefix.js'
 
 const cachedRelationProperties = [
   'wdt:P50',
-  'wdt:P179'
+  'wdt:P179',
 ]
 
-const cacheEntityRelations = async invEntityUri => {
+export async function cacheEntityRelations (invEntityUri) {
   const id = unprefixify(invEntityUri)
 
-  const { claims } = await entities_.byId(id)
+  const { claims } = await getEntityById(id)
   const promises = []
 
   for (const property of cachedRelationProperties) {
@@ -26,7 +26,7 @@ const cacheEntityRelations = async invEntityUri => {
   return Promise.all(promises)
 }
 
-const getCachedRelations = async (valueUri, property, formatEntity) => {
+export async function getCachedRelations (valueUri, property, formatEntity) {
   const subjectUris = await entitiesRelationsTemporaryCache.get(property, valueUri)
   // Always request refreshed data to be able to confirm or not the cached relation
   const entities = await getEntitiesByUris({ uris: subjectUris, list: true, refresh: true })
@@ -35,8 +35,6 @@ const getCachedRelations = async (valueUri, property, formatEntity) => {
   .map(formatEntity)
 }
 
-const relationIsConfirmedByPrimaryData = (property, valueUri) => entity => {
+export const relationIsConfirmedByPrimaryData = (property, valueUri) => entity => {
   return entity.claims[property] != null && entity.claims[property].includes(valueUri)
 }
-
-export default { cacheEntityRelations, getCachedRelations, cachedRelationProperties }

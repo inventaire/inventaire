@@ -1,6 +1,8 @@
 import _ from '#builders/utils'
 import attributes from '../attributes/task.js'
-import { pass, entityUri, userId, BoundedString } from './common.js'
+import commonValidations from './common.js'
+
+const { pass, entityUri, userId, BoundedString } = commonValidations
 
 export default {
   pass,
@@ -15,5 +17,5 @@ export default {
   relationScore: _.isNumber,
   externalSourcesOccurrences: _.isArray,
   reporter: userId,
-  clue: BoundedString(0, 500)
+  clue: BoundedString(0, 500),
 }

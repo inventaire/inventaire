@@ -1,4 +1,4 @@
-import { updateAttributes } from '#controllers/listings/lib/listings'
+import { updateListingAttributes } from '#controllers/listings/lib/listings'
 
 const sanitization = {
   id: {},
@@ -8,12 +8,12 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const listing = await updateAttributes(params)
+  const listing = await updateListingAttributes(params)
   return { list: listing }
 }
 
 export default {
   sanitization,
   controller,
-  track: [ 'lists', 'update' ]
+  track: [ 'lists', 'update' ],
 }

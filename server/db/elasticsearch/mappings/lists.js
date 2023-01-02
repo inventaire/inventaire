@@ -7,5 +7,5 @@ export default {
     creator: keyword,
     visibility: keywordArray,
     created: date,
-  }
+  },
 }

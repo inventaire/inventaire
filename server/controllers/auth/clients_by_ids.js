@@ -1,22 +1,22 @@
-import _ from '#builders/utils'
-import clients_ from './lib/oauth/clients.js'
+import { keyBy, omit } from 'lodash-es'
+import { getOauthClientsByIds } from '#controllers/auth/lib/oauth/clients'
 
 const sanitization = {
   ids: {},
 }
 
 const controller = async ({ ids }) => {
-  let clients = await clients_.byIds(ids)
+  let clients = await getOauthClientsByIds(ids)
   clients = clients.map(omitPrivateData)
   return {
-    clients: _.keyBy(clients, '_id')
+    clients: keyBy(clients, '_id'),
   }
 }
 
-const omitPrivateData = client => _.omit(client, privateAttributes)
+const omitPrivateData = client => omit(client, privateAttributes)
 
 const privateAttributes = [
-  'secret'
+  'secret',
 ]
 
 export default { sanitization, controller }

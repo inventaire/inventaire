@@ -1,9 +1,9 @@
-import should from 'should'
 import { map } from 'lodash-es'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } from '#tests/api/utils/utils'
+import should from 'should'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { createGroupWithAMember, createGroup, addMember } from '#tests/api/fixtures/groups'
 import { getTwoFriends } from '#tests/api/fixtures/users'
-import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq } from '#tests/api/utils/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { publicReq, authReq, getUserB, getReservedUser } from '../utils/utils.js'
 
@@ -123,7 +123,7 @@ describe('listings:by-creators', () => {
       const groupAVisibilityKey = getGroupVisibilityKey(groupA._id)
       const groupBVisibilityKey = getGroupVisibilityKey(groupB._id)
       const { listing: groupSpecificListing } = await createListing(userA, {
-        visibility: [ groupAVisibilityKey ]
+        visibility: [ groupAVisibilityKey ],
       })
       const { lists: listings } = await customAuthReq(userB, 'get', `${endpoint}&users=${userA._id}&context=${groupBVisibilityKey}&limit=1000`)
       const listingsIds = map(listings, '_id')

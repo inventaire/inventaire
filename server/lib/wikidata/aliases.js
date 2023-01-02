@@ -1,5 +1,7 @@
-const error_ = require('lib/error/error')
-const { 'wdt:P31': invP31Values } = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
+import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { error_ } from '#lib/error/error'
+
+const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 
 // TODO: replace this list by a SPARQL generated list
 // that can be refreshed from time to time
@@ -26,7 +28,7 @@ const wikidataOnlyP31Values = {
     'wd:Q53843792', // literary dylogy
     'wd:Q2005755', // novel sequence
     'wd:Q21190961', // fumetti series
-    'wd:Q213369' // webcomic
+    'wd:Q213369', // webcomic
   ],
   works: [
     'wd:Q571', // book
@@ -67,11 +69,11 @@ const wikidataOnlyP31Values = {
     'wd:Q35760', // essay
   ],
   editions: [
-    'wd:Q3972943' // publishing
+    'wd:Q3972943', // publishing
   ],
   articles: [
     'wd:Q191067', // article
-    'wd:Q13442814' // scientific article
+    'wd:Q13442814', // scientific article
   ],
   genres: [
     'wd:Q483394', // genre
@@ -82,7 +84,7 @@ const wikidataOnlyP31Values = {
     'wd:Q21114848', // magazine genre
     'wd:Q20087698', // comics genre
     'wd:Q28468127', // target audience for manga
-    'wd:Q13136' // reference work
+    'wd:Q13136', // reference work
   ],
   publishers: [
     'wd:Q1320047', // book publishing company
@@ -104,24 +106,23 @@ const wikidataOnlyP31Values = {
     'wd:Q23834194', // literary group
     'wd:Q5891', // philosophy
     'wd:Q49773', // social movement
-    'wd:Q2738074' // political movement
+    'wd:Q2738074', // political movement
   ],
   // Types to ignore (Category pages, homonymie, etc.)
   meta: [
     'wd:Q4167836', // Wikimedia category
-    'wd:Q4167410' // Wikimedia disambiguation page
-  ]
+    'wd:Q4167410', // Wikimedia disambiguation page
+  ],
 }
 
-const typesAliases = {}
+export const typesAliases = {}
 
-for (const type in wikidataOnlyP31Values) {
-  const wdTypeValues = wikidataOnlyP31Values[type]
+for (const [ type, wdTypeValues ] of Object.entries(wikidataOnlyP31Values)) {
   const invTypeValues = invP31Values[type] || []
   typesAliases[type] = wdTypeValues.concat(invTypeValues)
 }
 
-const types = {}
+export const types = {}
 
 for (let type in typesAliases) {
   // Drop the plural form, including when deriving from English uses,
@@ -133,26 +134,16 @@ for (let type in typesAliases) {
   }
 }
 
-const typesNames = Object.keys(typesAliases)
+export const typesNames = Object.keys(typesAliases)
 
-const getPluralType = singularType => {
+export const getPluralType = singularType => {
   const pluralizedType = singularType + 's'
   if (!typesAliases[pluralizedType]) throw error_.new('invalid type', { singularType })
   return pluralizedType
 }
 
-const getPluralTypeByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
+export const getPluralTypeByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
 
-const getSingularType = type => type.replace(/s$/, '')
+export const getSingularType = type => type.replace(/s$/, '')
 
-const getSingularTypes = types => types.map(getSingularType)
-
-export default {
-  types,
-  typesAliases,
-  typesNames,
-  getPluralType,
-  getPluralTypeByTypeUri,
-  getSingularType,
-  getSingularTypes,
-}
+export const getSingularTypes = types => types.map(getSingularType)

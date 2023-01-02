@@ -9,7 +9,7 @@ const someActitvityData = () => ({
   object: {
     content: 'some string note',
     items: { since: Date.now() - 5000, until: Date.now() },
-  }
+  },
 })
 
 describe('activity model', () => {
@@ -17,7 +17,7 @@ describe('activity model', () => {
     it('should reject activity without a type', () => {
       Activity.create.bind(null, {
         actor: {},
-        object: {}
+        object: {},
       })
       .should.throw(/expected string/)
     })
@@ -25,7 +25,7 @@ describe('activity model', () => {
     it('should reject activity without an actor', () => {
       Activity.create.bind(null, {
         type: 'Follow',
-        object: {}
+        object: {},
       })
       .should.throw(/expected object/)
     })

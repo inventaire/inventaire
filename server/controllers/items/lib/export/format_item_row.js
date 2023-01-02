@@ -91,7 +91,7 @@ const getIsbn = edition => {
   if (!edition) return {}
   return {
     isbn13h: getFirstValue(edition, 'wdt:P212'),
-    isbn10h: getFirstValue(edition, 'wdt:P957')
+    isbn10h: getFirstValue(edition, 'wdt:P957'),
   }
 }
 

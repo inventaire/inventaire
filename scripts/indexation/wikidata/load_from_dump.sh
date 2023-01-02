@@ -11,9 +11,9 @@
 
 indexed_types_ids=$(mktemp)
 
-node --print "JSON.stringify(require('./server/lib/wikidata/aliases'))" |
+./scripts/print_module_exports.js server/lib/wikidata/aliases.js default.typesAliases |
   # Get uris used as P31 from indexed types
-  jq '.typesAliases | [ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
+  jq '[ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
   # Get the id, wrapped between double quotes
   sed -E 's/wd:(Q.*)/"\1"/' > "$indexed_types_ids"
 

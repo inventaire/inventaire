@@ -1,25 +1,26 @@
-import { getReverseClaims, simplify } from 'wikidata-sdk'
+import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import requests_ from '#lib/requests'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
-import cache_ from '#lib/cache'
 import runWdQuery from '#data/wikidata/run_query'
-import entities_ from './entities.js'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
+const { getReverseClaims, simplify } = wdk
 const { sparqlResults: simplifySparqlResults } = simplify
 
 const caseInsensitiveProperties = [
-  'wdt:P2002'
+  'wdt:P2002',
 ]
 
 const denylistedProperties = [
   // Too many results, can't be sorted
   'wdt:P31',
-  'wdt:P407'
+  'wdt:P407',
 ]
 
 const localOnlyProperties = [
@@ -27,7 +28,7 @@ const localOnlyProperties = [
   // as those are quarantined https://github.com/inventaire/inventaire/issues/182
   'wdt:P629',
   'wdt:P123',
-  'wdt:P195'
+  'wdt:P195',
 ]
 
 export default async params => {
@@ -96,7 +97,7 @@ const _wikidataReverseClaims = async (property, value) => {
 
 const invReverseClaims = async (property, value) => {
   try {
-    const entities = await entities_.byClaim(property, value, true, true)
+    const entities = await getEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
   } catch (err) {
     // Allow to request reverse claims for properties that aren't yet
@@ -139,7 +140,7 @@ const typeTailoredQuery = {
   // main subject
   'wdt:P921': 'works',
   // inspired by
-  'wdt:P941': 'works'
+  'wdt:P941': 'works',
 }
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]

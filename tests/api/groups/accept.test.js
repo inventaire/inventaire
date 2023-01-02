@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
 import 'should'
-import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getGroup } from '#tests/api/utils/groups'
-import { authReq, authReqB, getUserC, getUserGetter, customAuthReq } from '../utils/utils.js'
-import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { humanName } from '../fixtures/entities.js'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { authReq, authReqB, getUserC, getUserGetter, customAuthReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=accept'
 

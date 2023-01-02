@@ -1,16 +1,16 @@
 import CONFIG from 'config'
 import 'should'
-import { wait } from '#lib/promises'
-import requests_ from '#lib/requests'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { randomWords } from '../fixtures/text.js'
 import { createUser } from '../fixtures/users.js'
 import { makeUrl, signedReq } from '../utils/activitypub.js'
-import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
 import { addItemsToShelf, getActorName } from '../utils/shelves.js'
-import { randomWords } from '../fixtures/text.js'
+import { rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
 
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
 
@@ -135,7 +135,7 @@ describe('followers activity delivery', () => {
       })
       const { remoteHost, remoteUserId, remoteUsername } = res
       const { _id: itemId } = await createItem(user, {
-        shelves: [ shelf._id ]
+        shelves: [ shelf._id ],
       })
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)

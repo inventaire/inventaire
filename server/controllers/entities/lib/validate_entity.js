@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import { Lang } from '#lib/regex'
 import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
+import { error_ } from '#lib/error/error'
+import { Lang } from '#lib/regex'
+import { assert_ } from '#lib/utils/assert_types'
 import getEntityType from './get_entity_type.js'
+import { typeWithoutLabels } from './type_without_labels.js'
 import validateAndFormatClaims from './validate_and_format_claims.js'
-import typeWithoutLabels from './type_without_labels.js'
 
 const allowlistedTypes = Object.keys(propertiesPerType)
 
@@ -45,7 +45,7 @@ const validateValueType = (type, wdtP31) => {
 }
 
 const validateLabels = (labels, type) => {
-  if (typeWithoutLabels[type]) {
+  if (typeWithoutLabels.has(type)) {
     if (_.isNonEmptyPlainObject(labels)) {
       throw error_.new(`${type}s can't have labels`, 400, { type, labels })
     }

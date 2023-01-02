@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
-import validations from './validations/shelf.js'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/shelf.js'
+import validations from './validations/shelf.js'
 
 export default {
   create: shelf => {
@@ -53,10 +53,10 @@ export default {
 
     updatedShelf.updated = Date.now()
     return updatedShelf
-  }
+  },
 }
 
 const defaultValues = {
   description: () => '',
-  visibility: () => []
+  visibility: () => [],
 }

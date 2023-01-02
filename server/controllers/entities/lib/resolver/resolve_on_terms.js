@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
 import typeSearch from '#controllers/search/lib/type_search'
 import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
-import { getEntityNormalizedTerms } from '../terms_normalization.js'
 import getAuthorsUris from '../get_authors_uris.js'
 import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources.js'
+import { getEntityNormalizedTerms } from '../terms_normalization.js'
 import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
 
 // resolve :

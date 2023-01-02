@@ -1,8 +1,8 @@
 import { compact } from 'lodash-es'
-import { normalizeIsbn } from '#lib/isbn/isbn'
-import requests_ from '#lib/requests'
-import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { normalizeIsbn } from '#lib/isbn/isbn'
+import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
@@ -76,8 +76,8 @@ const getEntitySeedFromOlId = async ({ key }) => {
   const seed = {
     labels: {},
     claims: {
-      'wdt:P648': id
-    }
+      'wdt:P648': id,
+    },
   }
   if (name || title) seed.labels.en = name || title
   if (remoteIds.wikidata) seed.uri = prefixifyWd(remoteIds.wikidata)
@@ -89,8 +89,8 @@ const getEntitySeedFromOlId = async ({ key }) => {
 const getPublisherSeed = label => {
   return {
     labels: {
-      en: label
-    }
+      en: label,
+    },
   }
 }
 

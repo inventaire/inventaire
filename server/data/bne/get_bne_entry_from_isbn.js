@@ -1,14 +1,14 @@
 import wdk from 'wikidata-sdk'
-import { fixedEncodeURIComponent } from '#lib/utils/url'
-import { parseIsbn } from '#lib/isbn/parse'
-import requests_ from '#lib/requests'
-import { parseSameasMatches } from '#data/lib/external_ids'
-import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
-import { isPositiveIntegerString } from '#lib/boolean_validations'
-import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { formatAuthorName } from '#data/commons/format_author_name'
+import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
+import { parseSameasMatches } from '#data/lib/external_ids'
+import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { isPositiveIntegerString } from '#lib/boolean_validations'
+import { parseIsbn } from '#lib/isbn/parse'
+import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
@@ -80,11 +80,11 @@ const formatRow = async (isbn, result) => {
   if (edition) {
     const { claims } = await parseSameasMatches({
       matches: [ edition.value ],
-      expectedEntityType: 'edition'
+      expectedEntityType: 'edition',
     })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
-      ...claims
+      ...claims,
     }
     const iso6392Lang = edition.lang?.replace('http://id.loc.gov/vocabulary/languages/', '')
     if (edition.lang && wdIdByIso6392Code[iso6392Lang]) {
@@ -102,7 +102,7 @@ const formatRow = async (isbn, result) => {
   if (author) {
     const { uri, claims } = await parseSameasMatches({
       matches: [ author.value, author.matches ],
-      expectedEntityType: 'human'
+      expectedEntityType: 'human',
     })
     entry.author = {
       uri,
@@ -114,7 +114,7 @@ const formatRow = async (isbn, result) => {
   }
   if (publisherLabel) {
     entry.publisher = {
-      labels: { es: publisherLabel }
+      labels: { es: publisherLabel },
     }
   }
   return entry

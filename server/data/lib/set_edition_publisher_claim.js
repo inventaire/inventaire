@@ -1,6 +1,6 @@
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
 
-const setEditionPublisherClaim = async entry => {
+export async function setEditionPublisherClaim (entry) {
   if (!entry?.publishers) return
   const { publishers } = entry
   if (Object.keys(publishers).length !== 1) return
@@ -11,5 +11,3 @@ const setEditionPublisherClaim = async entry => {
   if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
   delete entry.publishers
 }
-
-export default { setEditionPublisherClaim }

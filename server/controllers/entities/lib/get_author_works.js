@@ -1,18 +1,16 @@
 import _ from '#builders/utils'
-import runWdQuery from '#data/wikidata/run_query'
+import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import runWdQuery from '#data/wikidata/run_query'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
-import entities_ from './entities.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
-const { firstClaim, uniqByUri } = entities_
-
 let getEntitiesPopularities
-const requireCircularDependencies = () => {
-  ({ getEntitiesPopularities } = require('./popularity'))
+const importCircularDependencies = async () => {
+  ({ getEntitiesPopularities } = await import('./popularity.js'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 
@@ -68,7 +66,7 @@ const formatWdEntity = result => {
 
 // # INV
 const getInvAuthorWorks = async uri => {
-  const { rows } = await entities_.byClaim('wdt:P50', uri, true)
+  const { rows } = await getEntitiesByClaim('wdt:P50', uri, true)
   return rows.map(formatInvEntity).filter(_.identity)
 }
 
@@ -80,7 +78,7 @@ const formatInvEntity = row => {
     uri: `inv:${row.id}`,
     date: firstClaim(row.doc, 'wdt:P577'),
     serie: firstClaim(row.doc, 'wdt:P179'),
-    type: typeName
+    type: typeName,
   }
 }
 
@@ -115,5 +113,5 @@ const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
   serie: firstClaim(entity, 'wdt:P179'),
-  type: getPluralType(entity.type)
+  type: getPluralType(entity.type),
 })

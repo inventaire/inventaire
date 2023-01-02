@@ -1,9 +1,9 @@
-import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
-import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
-import { createUser, getTwoFriends } from '../fixtures/users.js'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
 import { createListing } from '../fixtures/listings.js'
+import { createUser, getTwoFriends } from '../fixtures/users.js'
 import { makeFriends } from '../utils/relations.js'
+import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-ids'
 
@@ -106,7 +106,7 @@ describe('listings:visibility', () => {
     it('should not return a group-allowed listing to a friend', async () => {
       const [ user, { group, member } ] = await Promise.all([
         createUser(),
-        getSomeGroupWithAMember()
+        getSomeGroupWithAMember(),
       ])
       await makeFriends(user, member)
       const { listing } = await createListing(member, { visibility: [ `group:${group._id}` ] })

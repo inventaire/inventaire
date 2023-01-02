@@ -1,8 +1,8 @@
 import fs from 'node:fs'
-import fetch from 'node-fetch'
 import AbortController from 'abort-controller'
-import _, { encodeURL } from '#builders/utils'
-import error_ from '#lib/error/error'
+import fetch from 'node-fetch'
+import { error_ } from '#lib/error/error'
+import _, { encodeURL } from '#lib/utils/base'
 import isValidImageContentType from './is_valid_image_content_type.js'
 
 const oneMB = Math.pow(1024, 2)
@@ -15,7 +15,7 @@ export default async (url, path) => {
       timeout: 30000,
       signal: controller.signal,
       headers: {
-        accept: 'image/*'
+        accept: 'image/*',
       },
     })
     validateResponse(response, controller, url, path)

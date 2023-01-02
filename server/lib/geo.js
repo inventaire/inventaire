@@ -1,8 +1,8 @@
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo
-const distanceBetween = (latLngA, latLngB) => {
+export const distanceBetween = (latLngA, latLngB) => {
   const [ latA, lngA ] = latLngA
   const [ latB, lngB ] = latLngB
 
@@ -25,23 +25,19 @@ const R = 6378137
 // DEG_TO_RAD
 const d2r = Math.PI / 180
 
-export default {
-  distanceBetween,
-
-  kmBetween: (latLngA, latLngB) => {
-    assert_.arrays([ latLngA, latLngB ])
-    const meters = distanceBetween(latLngA, latLngB)
-    // 1km precision above 10km
-    if (meters > 10000) {
-      return Math.trunc(meters / 1000)
-    // 100m precision under
-    } else {
-      return Math.trunc(meters / 100) / 10
-    }
-  },
-
-  truncateLatLng: latLng => latLng != null ? latLng.map(truncateDecimals) : null
+export const kmBetween = (latLngA, latLngB) => {
+  assert_.arrays([ latLngA, latLngB ])
+  const meters = distanceBetween(latLngA, latLngB)
+  // 1km precision above 10km
+  if (meters > 10000) {
+    return Math.trunc(meters / 1000)
+  // 100m precision under
+  } else {
+    return Math.trunc(meters / 100) / 10
+  }
 }
+
+export const truncateLatLng = latLng => latLng != null ? latLng.map(truncateDecimals) : null
 
 // Coordinates are in decimal degrees
 // There is no need to keep more than 5 decimals, cf https://xkcd.com/2170/

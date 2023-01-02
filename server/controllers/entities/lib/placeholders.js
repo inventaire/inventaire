@@ -6,10 +6,10 @@
 // thus the remove/recover mechanism hereafter
 
 import _ from '#builders/utils'
-import Entity from '#models/entity'
-import { emit } from '#lib/radio'
+import { putEntityUpdate } from '#controllers/entities/lib/entities'
 import dbFactory from '#db/couchdb/base'
-import entities_ from './entities.js'
+import { emit } from '#lib/radio'
+import Entity from '#models/entity'
 
 const db = dbFactory('entities')
 
@@ -38,13 +38,11 @@ const PlaceholderHandler = actionName => {
       }
     }
 
-    await entities_.putUpdate({ userId, currentDoc, updatedDoc })
+    await putEntityUpdate({ userId, currentDoc, updatedDoc })
     await emit(`entity:${actionName}`, `inv:${entityId}`)
     return currentDoc._id
   }
 }
 
-export default {
-  remove: PlaceholderHandler('remove'),
-  recover: PlaceholderHandler('recover')
-}
+export const removePlaceholder = PlaceholderHandler('remove')
+export const recoverPlaceholder = PlaceholderHandler('recover')

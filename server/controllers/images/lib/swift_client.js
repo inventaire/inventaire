@@ -1,8 +1,8 @@
 import { createReadStream } from 'node:fs'
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
 import { getContentLength } from '#lib/fs'
+import { requests_ } from '#lib/requests'
 import getToken from './get_swift_token.js'
 
 const { publicURL } = CONFIG.mediaStorage.swift
@@ -17,8 +17,8 @@ const getParams = async (container, filename) => {
     headers: {
       accept: 'application/json',
       'content-type': 'application/octet-stream',
-      'x-auth-token': token
-    }
+      'x-auth-token': token,
+    },
   }
 }
 
@@ -27,7 +27,7 @@ export default {
   putImage: async (container, path, filename) => {
     const [ params, contentLength ] = await Promise.all([
       getParams(container, filename),
-      getContentLength(path)
+      getContentLength(path),
     ])
     const { url, headers } = params
     headers['content-length'] = contentLength
@@ -42,5 +42,5 @@ export default {
     const { url, headers } = await getParams(container, filename)
     await requests_.delete(url, { headers, parseJson: false })
     _.log({ container, filename }, 'swift: deleted image')
-  }
+  },
 }

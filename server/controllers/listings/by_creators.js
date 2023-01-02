@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
-import { isNonEmptyArray } from '#lib/boolean_validations'
-import listings_ from '#controllers/listings/lib/listings'
-import elements_ from '#controllers/listings/lib/elements'
-import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
 import { paginate } from '#controllers/items/lib/queries_commons'
+import elements_ from '#controllers/listings/lib/elements'
+import { getListingsByCreators } from '#controllers/listings/lib/listings'
+import { isNonEmptyArray } from '#lib/boolean_validations'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
   users: {},
@@ -14,12 +14,12 @@ const sanitization = {
     generic: 'boolean',
   },
   context: {
-    optional: true
+    optional: true,
   },
 }
 
 const controller = async ({ users, offset, limit, context, withElements, reqUserId }) => {
-  const foundListings = await listings_.byCreators(users)
+  const foundListings = await getListingsByCreators(users)
   const allVisibleListings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(allVisibleListings, { offset, limit, context })
   if (withElements && isNonEmptyArray(authorizedListings)) {

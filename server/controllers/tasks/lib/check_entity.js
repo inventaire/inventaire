@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
-import tasks_ from './tasks.js'
+import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { error_ } from '#lib/error/error'
 import getNewTasks from './get_new_tasks.js'
 import updateRelationScore from './relation_score.js'
 
@@ -29,8 +29,8 @@ export default async uri => {
 
   const existingTasks = await getExistingTasks(uri)
   const newSuggestions = await getNewTasks(entity, existingTasks)
-  await tasks_.create(uri, 'deduplicate', entity.type, newSuggestions)
+  await createTask(uri, 'deduplicate', entity.type, newSuggestions)
   await updateRelationScore(uri)
 }
 
-const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
+const getExistingTasks = uri => getTasksBySuspectUris([ uri ])

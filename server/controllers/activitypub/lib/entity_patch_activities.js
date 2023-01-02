@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import { postActivityToActorFollowersInboxes } from './post_activity.js'
 import formatEntityPatchesActivities from './format_entity_patches_activities.js'
+import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
-const deliverEntityActivitiesFromPatch = async patch => {
+export async function deliverEntityActivitiesFromPatch (patch) {
   try {
     const activities = await getActivitiesFromPatch(patch)
     if (activities.length === 0) return
@@ -15,7 +15,7 @@ const deliverEntityActivitiesFromPatch = async patch => {
   }
 }
 
-const getActivitiesFromPatch = async patch => {
+export async function getActivitiesFromPatch (patch) {
   const rows = byClaimValueAndDate(patch)
   if (rows.length === 0) return []
   return formatEntityPatchesActivities(rows)
@@ -51,9 +51,4 @@ const addRow = (rows, id, property, claimValue, timestamp) => {
   if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
     rows.push({ id, key: [ claimValue, timestamp ], value: property })
   }
-}
-
-export default {
-  deliverEntityActivitiesFromPatch,
-  getActivitiesFromPatch,
 }

@@ -1,6 +1,6 @@
 
 import 'should'
-import isbn_ from '#lib/isbn/isbn'
+import { parseIsbn } from '#lib/isbn/parse'
 
 describe('isbn', () => {
   // Test only what was added on top of the isbn3 module

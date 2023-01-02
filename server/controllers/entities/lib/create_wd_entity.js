@@ -1,12 +1,12 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import wdEdit from '#lib/wikidata/edit'
+import { error_ } from '#lib/error/error'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
-import wdOauth from './wikidata_oauth.js'
-import validateEntity from './validate_entity.js'
+import wdEdit from '#lib/wikidata/edit'
 import getEntityType from './get_entity_type.js'
-import properties from './properties/properties_values_constraints.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
+import properties from './properties/properties_values_constraints.js'
+import validateEntity from './validate_entity.js'
+import wdOauth from './wikidata_oauth.js'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 

@@ -18,31 +18,29 @@ import pTimeout from 'p-timeout'
 import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import refreshSnapshot from './refresh_snapshot.js'
 
 const db = dbFactory('snapshot', 'json')
 
-export default {
-  addToItem: async item => {
-    if (item.snapshot) return item
+export async function addSnapshotToItem (item) {
+  if (item.snapshot) return item
 
-    try {
-      assert_.string(item.entity)
-      item.snapshot = await getSnapshot(item.entity)
-    } catch (err) {
-      err.context = err.context || {}
-      err.context.item = item
-      _.error(err, 'snapshot_.addToItem error')
-      item.snapshot = item.snapshot || {}
-    }
+  try {
+    assert_.string(item.entity)
+    item.snapshot = await getSnapshot(item.entity)
+  } catch (err) {
+    err.context = err.context || {}
+    err.context.item = item
+    _.error(err, 'addSnapshotToItem error')
+    item.snapshot = item.snapshot || {}
+  }
 
-    return item
-  },
-
-  batch: ops => db.batch(formatBatchOps(ops))
+  return item
 }
+
+export const saveSnapshotsInBatch = ops => db.batch(formatBatchOps(ops))
 
 const getSnapshot = (uri, preventLoop) => {
   // Setting a timeout as it happened in the past that leveldb would hang without responding.
@@ -58,7 +56,7 @@ const getSnapshot = (uri, preventLoop) => {
     if (snapshot != null) return snapshot
 
     if (preventLoop === true) {
-      // Known case: addToItem was called for an item which entity is a serie
+      // Known case: addSnapshotToItem was called for an item which entity is a serie
       // thus, the related works and editions were refreshed but as series aren't
       // supposed to be associated to items, no snapshot was created for the serie itself
       const err = error_.new("couldn't refresh item snapshot", 500, { uri })

@@ -1,14 +1,14 @@
 import CONFIG from 'config'
-import requests_ from '#lib/requests'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import {
   indexesNamesByBaseNames as indexes,
   indexedTypes,
   indexedEntitiesTypes,
   socialTypes,
 } from '#db/elasticsearch/indexes'
+import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
 import { someMatch } from '#lib/utils/base'
 import entitiesQueryBuilder from './entities_query_builder.js'
 import socialQueryBuilder from './social_query_builder.js'

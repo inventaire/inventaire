@@ -1,17 +1,17 @@
-import shelves_ from '#controllers/shelves/lib/shelves'
+import { addItemsToShelves, createShelf } from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   name: {},
   description: { optional: true },
   visibility: { optional: true },
   color: { optional: true },
-  items: { optional: true }
+  items: { optional: true },
 }
 
 const controller = async params => {
   const { items: itemsIds, reqUserId } = params
   const shelf = await formatNewShelf(params)
-  if (itemsIds) await shelves_.addItems([ shelf._id ], itemsIds, reqUserId)
+  if (itemsIds) await addItemsToShelves([ shelf._id ], itemsIds, reqUserId)
   return { shelf }
 }
 
@@ -24,11 +24,11 @@ const formatNewShelf = params => {
     owner,
   }
   if (color != null) shelfData.color = color
-  return shelves_.create(shelfData)
+  return createShelf(shelfData)
 }
 
 export default {
   sanitization,
   controller,
-  track: [ 'shelf', 'creation' ]
+  track: [ 'shelf', 'creation' ],
 }

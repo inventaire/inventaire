@@ -1,8 +1,10 @@
-import { getSitelinkUrl } from 'wikidata-sdk'
-import requests_ from '#lib/requests'
-import error_ from '#lib/error/error'
-import cache_ from '#lib/cache'
+import wdk from 'wikidata-sdk'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
 import { buildUrl } from '#lib/utils/url'
+
+const { getSitelinkUrl } = wdk
 
 export default params => {
   const { lang, title, introOnly } = params
@@ -39,7 +41,7 @@ const apiQuery = (host, title, introOnly) => {
     titles: title,
     prop: 'extracts',
     // Return the article as plain text instead of html
-    explaintext: true
+    explaintext: true,
   }
 
   // Set exintro only if introOnly is true as any value

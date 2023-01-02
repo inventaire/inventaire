@@ -9,7 +9,7 @@ describe('items:last-public', () => {
     const limit = 2
     await populate({
       usersCount: 1,
-      publicItemsPerUser: limit + 1
+      publicItemsPerUser: limit + 1,
     })
     const res = await publicReq('get', `${lastPublicUrl}&limit=${limit}`)
     res.items.length.should.equal(limit)
@@ -18,7 +18,7 @@ describe('items:last-public', () => {
   it('should fetch 15 last-public items', async () => {
     await populate({
       usersCount: 1,
-      publicItemsPerUser: 16
+      publicItemsPerUser: 16,
     })
     const res = await publicReq('get', lastPublicUrl)
     res.items.length.should.equal(15)

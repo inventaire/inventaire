@@ -13,5 +13,5 @@ export default {
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q47461344 }
 }
 LIMIT 1000`
-  }
+  },
 }

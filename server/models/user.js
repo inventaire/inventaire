@@ -1,18 +1,20 @@
 import _ from '#builders/utils'
 import { passwords as pw_ } from '#lib/crypto'
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
-import randomString from '#lib/utils/random_string'
+import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
+import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
+import { getRandomString } from '#lib/utils/random_string'
+import userAttributes from './attributes/user.js'
+import userValidations from './validations/user.js'
 
-const generateReadToken = randomString.bind(null, 32)
+const generateReadToken = getRandomString.bind(null, 32)
 
 const User = {}
 
 export default User
 
-const validations = User.validations = require('./validations/user')
+const validations = User.validations = userValidations
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = (username, email, creationStrategy, language, password) => {
@@ -50,8 +52,8 @@ User._create = (username, email, creationStrategy, language, password) => {
     snapshot: {
       private: { 'items:count': 0 },
       network: { 'items:count': 0 },
-      public: { 'items:count': 0 }
-    }
+      public: { 'items:count': 0 },
+    },
   }
 
   if (creationStrategy === 'local') {
@@ -90,7 +92,7 @@ const withHashedPassword = async user => {
   return user
 }
 
-User.attributes = require('./attributes/user')
+User.attributes = userAttributes
 
 User.softDelete = userDoc => {
   const userSouvenir = _.pick(userDoc, User.attributes.critical)

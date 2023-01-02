@@ -9,7 +9,7 @@ const validUri = 'inv:12345678900987654321123456789012'
 
 const validListing = {
   uri: validUri,
-  list: validDocId
+  list: validDocId,
 }
 
 describe('element model', () => {

@@ -1,14 +1,15 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { isNonEmptyArray, isLocalActivityPubActorUrl } from '#lib/boolean_validations'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { normalizeString } from '#lib/utils/base'
+import { typeOf } from '#lib/utils/types'
 import { isWikimediaLanguageCode } from '#lib/wikimedia'
-import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
 import common from '#models/validations/common'
 import user from '#models/validations/user'
+import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
 
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
@@ -36,12 +37,12 @@ const renameId = name => `${name}Id`
 
 const couchUuid = {
   validate: validations.common.couchUuid,
-  rename: renameId
+  rename: renameId,
 }
 
 const positiveInteger = {
   format: parseNumberString,
-  validate: num => Number.isInteger(num) && num >= 0
+  validate: num => Number.isInteger(num) && num >= 0,
 }
 
 const nonEmptyString = {
@@ -55,7 +56,7 @@ const nonEmptyString = {
     if (value == null && config.optional) return true
 
     if (!_.isString(value)) {
-      const details = `expected string, got ${_.typeOf(value)}`
+      const details = `expected string, got ${typeOf(value)}`
       throw error_.new(`invalid ${name}: ${details}`, 400, { value })
     }
 
@@ -71,12 +72,12 @@ const nonEmptyString = {
     }
 
     return true
-  }
+  },
 }
 
 const arrayOfAType = validation => (values, type, config) => {
   if (!_.isArray(values)) {
-    const details = `expected array, got ${_.typeOf(values)}`
+    const details = `expected array, got ${typeOf(values)}`
     throw error_.new(`invalid ${type}: ${details}`, 400, { values })
   }
 
@@ -88,7 +89,7 @@ const arrayOfAType = validation => (values, type, config) => {
     if (!validation(value, type, config)) {
       // approximative way to get singular of a word
       const singularType = type.replace(/s$/, '')
-      const details = `expected ${singularType}, got ${value} (${_.typeOf(value)})`
+      const details = `expected ${singularType}, got ${value} (${typeOf(value)})`
       throw error_.new(`invalid ${singularType}: ${details}`, 400, { values })
     }
   }
@@ -113,33 +114,33 @@ const arrayOrPipedString = arrayOrSeparatedString('|')
 const arrayOrCommaSeparatedString = arrayOrSeparatedString(',')
 
 const entityUri = {
-  validate: validations.common.entityUri
+  validate: validations.common.entityUri,
 }
 
 const isbn = { validate: isValidIsbn }
 
 const entityUris = {
   format: arrayOrPipedString,
-  validate: arrayOfAType(validations.common.entityUri)
+  validate: arrayOfAType(validations.common.entityUri),
 }
 
 const emails = {
   format: arrayOrCommaSeparatedString,
-  validate: arrayOfAType(validations.common.email)
+  validate: arrayOfAType(validations.common.email),
 }
 
 const usernames = {
   format: arrayOrPipedString,
-  validate: arrayOfAType(validations.common.username)
+  validate: arrayOfAType(validations.common.username),
 }
 
 const couchUuids = {
   format: arrayOrPipedString,
-  validate: arrayOfAType(validations.common.couchUuid)
+  validate: arrayOfAType(validations.common.couchUuid),
 }
 
 const arrayOfNumbers = {
-  validate: arrayOfAType(_.isNumber)
+  validate: arrayOfAType(_.isNumber),
 }
 
 const imgUrl = {
@@ -148,7 +149,7 @@ const imgUrl = {
     if (decodedUrl[0] === '/') decodedUrl = `${origin}${decodedUrl}`
     return decodedUrl
   },
-  validate: validations.common.imgUrl
+  validate: validations.common.imgUrl,
 }
 
 const allowlistedString = {
@@ -158,7 +159,7 @@ const allowlistedString = {
       throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value })
     }
     return true
-  }
+  },
 }
 
 const allowlistedStrings = {
@@ -169,7 +170,7 @@ const allowlistedStrings = {
       allowlistedString.validate(value, name, config)
     }
     return true
-  }
+  },
 }
 
 const lang = {
@@ -180,24 +181,24 @@ const lang = {
     } else {
       return _.isLang(value)
     }
-  }
+  },
 }
 
 const langs = {
   format: arrayOrPipedString,
-  validate: arrayOfAType(lang.validate)
+  validate: arrayOfAType(lang.validate),
 }
 
 const generics = {
   allowlist: {
-    validate: (value, name, config) => config.allowlist.includes(value)
+    validate: (value, name, config) => config.allowlist.includes(value),
   },
   boolean: {
     format: (value, name, config) => {
       if (_.isString(value)) return _.parseBooleanString(value, config.default)
       else return value
     },
-    validate: value => _.typeOf(value) === 'boolean'
+    validate: value => typeOf(value) === 'boolean',
   },
   collection: {
     validate: (values, name, config) => {
@@ -208,25 +209,25 @@ const generics = {
         throw error_.new('limit length exceeded', 400, { limit, length })
       }
       return true
-    }
+    },
   },
   ignore: {
     drop: true,
   },
   object: {
-    validate: _.isPlainObject
+    validate: _.isPlainObject,
   },
   positiveInteger: {
     format: value => {
       if (_.isPositiveIntegerString) return parseInt(value)
       else return value
     },
-    validate: _.isStrictlyPositiveInteger
+    validate: _.isStrictlyPositiveInteger,
   },
   string: nonEmptyString,
   stringOrObject: {
-    validate: value => _.isNonEmptyString(value) || _.isPlainObject(value)
-  }
+    validate: value => _.isNonEmptyString(value) || _.isPlainObject(value),
+  },
 }
 
 export default {
@@ -239,16 +240,16 @@ export default {
       return JSON.parse(value)
     },
     validate: bbox => {
-      if (_.typeOf(bbox) !== 'array') return false
+      if (typeOf(bbox) !== 'array') return false
       if (bbox.length !== 4) return false
       for (const coordinate of bbox) {
-        if (_.typeOf(coordinate) !== 'number') return false
+        if (typeOf(coordinate) !== 'number') return false
       }
       const [ minLng, minLat, maxLng, maxLat ] = bbox
       if (minLng >= maxLng || minLat >= maxLat) return false
       if (minLng < -180 || maxLng > 180 || minLat < -90 || maxLat > 90) return false
       return true
-    }
+    },
   },
   color: {
     format: hash => {
@@ -259,7 +260,7 @@ export default {
         return hash
       }
     },
-    validate: _.isColorHexCode
+    validate: _.isColorHexCode,
   },
   context: {
     validate: value => {
@@ -267,7 +268,7 @@ export default {
         throw error_.new(`invalid context: ${value}`, 400, { value })
       }
       return true
-    }
+    },
   },
   email: { validate: validations.common.email },
   emails,
@@ -286,7 +287,7 @@ export default {
   langs,
   limit: Object.assign({}, positiveInteger, {
     min: 1,
-    default: 100
+    default: 100,
   }),
   list: couchUuid,
   lists: couchUuids,
@@ -298,21 +299,21 @@ export default {
   owners: couchUuids,
   password: {
     secret: true,
-    validate: validations.user.password
+    validate: validations.user.password,
   },
   patch: {
     validate: _.isPatchId,
-    rename: renameId
+    rename: renameId,
   },
   position: {
     format: truncateLatLng,
-    validate: arrayOfNumbers.validate
+    validate: arrayOfNumbers.validate,
   },
   prefix: allowlistedString,
   property: { validate: _.isPropertyUri },
   range: Object.assign({}, positiveInteger, {
     default: 50,
-    max: 500
+    max: 500,
   }),
   refresh: generics.boolean,
   resource: {
@@ -337,7 +338,7 @@ export default {
       } else {
         return false
       }
-    }
+    },
   },
   search: nonEmptyString,
   shelf: couchUuid,
@@ -356,7 +357,7 @@ export default {
   users: couchUuids,
   username: {
     format: normalizeString,
-    validate: validations.common.username
+    validate: validations.common.username,
   },
   usernames,
   relatives: allowlistedStrings,
@@ -368,7 +369,7 @@ export default {
     validate: (value, name, config) => {
       const { type: expectedType } = config
       if (expectedType) {
-        const valueType = _.typeOf(value)
+        const valueType = typeOf(value)
         if (valueType !== expectedType) {
           throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
         }

@@ -1,19 +1,17 @@
 import { isPositiveIntegerString } from '#lib/boolean_validations'
 
-export default {
-  getSimpleDayDate: date => {
-    if (date) {
-      // Parse ISO date
-      date.split('T')[0]
-      // If the date is a January 1st, it's very probably because
-      // its a year-precision date
-      .replace('-01-01', '')
-    }
-  },
-
-  sortByOrdinalOrDate: (a, b) => getPartScore(a) - getPartScore(b),
-  sortByScore: (a, b) => b.score - a.score
+export const getSimpleDayDate = date => {
+  if (date) {
+    // Parse ISO date
+    date.split('T')[0]
+    // If the date is a January 1st, it's very probably because
+    // its a year-precision date
+    .replace('-01-01', '')
+  }
 }
+
+export const sortByOrdinalOrDate = (a, b) => getPartScore(a) - getPartScore(b)
+export const sortByScore = (a, b) => b.score - a.score
 
 const earliestDate = -10e10
 const getPartScore = obj => {

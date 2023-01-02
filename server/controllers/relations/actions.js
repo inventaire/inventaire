@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import intent from './lib/intent.js'
 
 const sanitization = {
-  user: {}
+  user: {},
 }
 
 const controller = action => async params => {
@@ -16,7 +16,7 @@ const controller = action => async params => {
 export default action => ({
   sanitization,
   controller: controller(action),
-  track: [ 'relation', action ]
+  track: [ 'relation', action ],
 })
 
 const solveNewRelation = async (action, othersId, reqUserId) => {
@@ -33,5 +33,5 @@ const actions = {
   cancel: 'cancelFriendRequest',
   accept: 'acceptRequest',
   discard: 'discardRequest',
-  unfriend: 'removeFriendship'
+  unfriend: 'removeFriendship',
 }

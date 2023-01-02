@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import couch_ from '#lib/couch'
-import User from '#models/user'
+import { getUserByUsername } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
-import user_ from './user.js'
+import { firstDoc } from '#lib/couch'
+import User from '#models/user'
 
 const db = dbFactory('users')
 
@@ -14,9 +14,9 @@ export default {
   // Only used by tests so far
   deleteByUsername: username => {
     _.info(username, 'deleteUserbyUsername')
-    return user_.byUsername(username)
-    .then(couch_.firstDoc)
+    return getUserByUsername(username)
+    .then(firstDoc)
     .then(deleteUser)
     .catch(_.Error('deleteUserbyUsername err'))
-  }
+  },
 }

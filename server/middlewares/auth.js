@@ -1,12 +1,12 @@
 import CONFIG from 'config'
-import passport from 'passport'
 import cookieParser from 'cookie-parser'
 import cookieSession from 'cookie-session'
 import Keygrip from 'keygrip'
-import passport_ from '#lib/passport/passport'
-import { expired } from '#builders/utils'
-import autoRotatedKeys from '#lib/auto_rotated_keys'
+import passport from 'passport'
 import oauthServer from '#controllers/auth/oauth_server'
+import autoRotatedKeys from '#lib/auto_rotated_keys'
+import passport_ from '#lib/passport/passport'
+import { expired } from '#lib/utils/base'
 
 const { name, cookieMaxAge, publicProtocol } = CONFIG
 
@@ -48,7 +48,7 @@ export default {
 
   passport: {
     initialize: passport.initialize(),
-    session: passport.session({ pauseStream: true })
+    session: passport.session({ pauseStream: true }),
   },
 
   authorizationHeader: async (req, res, next) => {
@@ -64,7 +64,7 @@ export default {
     } else {
       next()
     }
-  }
+  },
 }
 
 const afterBearerToken = (req, res, next) => err => {

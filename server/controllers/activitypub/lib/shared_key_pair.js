@@ -11,11 +11,9 @@ import { generateRsaKeyPair, sha1 } from '#lib/crypto'
 
 let sharedKeyPair
 
-const getSharedKeyPair = async () => {
+export const getSharedKeyPair = async () => {
   if (sharedKeyPair) return sharedKeyPair
   sharedKeyPair = await generateRsaKeyPair()
   sharedKeyPair.publicKeyHash = sha1(sharedKeyPair.publicKey).slice(0, 10)
   return sharedKeyPair
 }
-
-export default { getSharedKeyPair }

@@ -1,5 +1,7 @@
 import { isVisibilityKeyArray } from '#models/validations/visibility'
-import { pass, BoundedString, userId } from './common.js'
+import commonValidations from './common.js'
+
+const { pass, BoundedString, userId } = commonValidations
 
 export default {
   pass,

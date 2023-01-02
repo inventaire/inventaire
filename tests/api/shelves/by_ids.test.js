@@ -1,12 +1,12 @@
 import should from 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
-import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
 import { someCouchUuid } from '#tests/api/fixtures/general'
-import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
-import { createUser, getTwoFriends } from '../fixtures/users.js'
-import { createShelf } from '../fixtures/shelves.js'
+import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser, getTwoFriends } from '../fixtures/users.js'
 import { makeFriends } from '../utils/relations.js'
+import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=by-ids'
 
@@ -148,7 +148,7 @@ describe('shelves:by-ids', () => {
     it('should not return a group-allowed shelf to a friend', async () => {
       const [ user, { group, member } ] = await Promise.all([
         createUser(),
-        getSomeGroupWithAMember()
+        getSomeGroupWithAMember(),
       ])
       await makeFriends(user, member)
       const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
@@ -259,6 +259,6 @@ const addItem = async (shelfId, itemId, userPromise) => {
   if (!userPromise) userPromise = getUser()
   return customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
     id: shelfId,
-    items: [ itemId ]
+    items: [ itemId ],
   })
 }

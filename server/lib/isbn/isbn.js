@@ -26,19 +26,18 @@ export function looksLikeAnIsbn (text) {
 
 export const isValidIsbn = isbn => isbnParser(isbn) != null
 
-export function toIsbn13 (isbn, hyphenate) {
-  const data = parseIsbn(isbn)
-  if (data == null) return
-  if (hyphenate) return data.isbn13h
-  else return data.isbn13
-}
-
-export const toIsbn13h = isbn => parseIsbn(isbn).isbn13h
-export const toIsbn10h = isbn => parseIsbn(isbn).isbn10h
+export const toIsbn13 = isbn => parseIsbn(isbn)?.isbn13
+export const toIsbn13h = isbn => parseIsbn(isbn)?.isbn13h
+export const toIsbn10h = isbn => parseIsbn(isbn)?.isbn10h
 
 export function guessLangFromIsbn (isbn) {
   if (!isbn) return
   const isbnData = parseIsbn(isbn)
   if (isbnData == null) return
   return isbnData.groupLang
+}
+
+export function formatIsbn (isbn, formatCode) {
+  const isbnData = parseIsbn(isbn)
+  return isbnData[`isbn${formatCode}`]
 }

@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import { waitForIndexation } from '#tests/api/utils/search'
+import { assert_ } from '#lib/utils/assert_types'
 import { buildUrl } from '#lib/utils/url'
+import { waitForIndexation } from '#tests/api/utils/search'
 import { getIndexedDoc } from '../utils/search.js'
 import {
   publicReq,
@@ -23,7 +23,7 @@ const entitiesUtils = {
       action: 'by-uris',
       uris,
       relatives,
-      refresh
+      refresh,
     })
     return publicReq('get', url)
   },
@@ -123,7 +123,7 @@ const entitiesUtils = {
     assert_.string(patchId)
     user = user || getUser()
     return customAuthReq(user, 'put', '/api/entities?action=revert-edit', {
-      patch: patchId
+      patch: patchId,
     })
   },
 
@@ -131,7 +131,7 @@ const entitiesUtils = {
     assert_.string(patchId)
     user = user || getUser()
     return customAuthReq(user, 'put', '/api/entities?action=restore-version', {
-      patch: patchId
+      patch: patchId,
     })
   },
 }

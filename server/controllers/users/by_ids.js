@@ -1,11 +1,11 @@
-import user_ from '#controllers/user/lib/user'
+import { getUsersIndexedByIds } from '#controllers/user/lib/user'
 
 const sanitization = {
-  ids: {}
+  ids: {},
 }
 
 const controller = async ({ ids, reqUserId }) => {
-  const users = await user_.getUsersIndexByIds(ids, reqUserId)
+  const users = await getUsersIndexedByIds(ids, reqUserId)
   return { users }
 }
 

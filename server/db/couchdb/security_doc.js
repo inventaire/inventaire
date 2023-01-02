@@ -8,9 +8,9 @@ if (typeof username !== 'string') {
 
 export default {
   admins: {
-    names: [ username ]
+    names: [ username ],
   },
   members: {
-    names: [ username ]
-  }
+    names: [ username ],
+  },
 }

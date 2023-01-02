@@ -1,7 +1,7 @@
 import moveToWikidata from './lib/move_to_wikidata.js'
 
 const sanitization = {
-  uri: {}
+  uri: {},
 }
 
 const controller = async (params, req) => {
@@ -11,5 +11,5 @@ const controller = async (params, req) => {
 export default {
   sanitization,
   controller,
-  track: [ 'entity', 'moveToWikidata' ]
+  track: [ 'entity', 'moveToWikidata' ],
 }

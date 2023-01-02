@@ -12,7 +12,7 @@ export default {
       // _.log(req.body, 'body')
       res.json({ ok: true, method: req.method, body: req.body })
     }
-  }
+  },
 }
 
 const isPlainText = req => req.headers['content-type'] === 'text/plain'

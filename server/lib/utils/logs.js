@@ -1,12 +1,13 @@
+import util from 'node:util'
 import CONFIG from 'config'
-import chalk from 'tiny-chalk'
 import { isArguments } from 'lodash-es'
+import chalk from 'tiny-chalk'
 
 const { offline, verbose } = CONFIG
 
 const { red, grey } = chalk
 // Log full objects
-require('node:util').inspect.defaultOptions.depth = 20
+util.inspect.defaultOptions.depth = 20
 
 let errorCount = 0
 const countsByErrorStatusCode = {}

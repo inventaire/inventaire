@@ -1,9 +1,9 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
+import { assert_ } from '#lib/utils/assert_types'
 import convertImageUrl from './convert_image_url.js'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
@@ -27,5 +27,5 @@ export default async ({ container, url }) => {
 
 const bannedHashes = new Set([
   // BNF placeholder
-  '34ae223423391eeb6bcd31bf177e77c13aa013a4'
+  '34ae223423391eeb6bcd31bf177e77c13aa013a4',
 ])

@@ -1,10 +1,10 @@
-import { Strategy as LocalStrategy } from 'passport-local'
 import CONFIG from 'config'
+import { Strategy as LocalStrategy } from 'passport-local'
 import _ from '#builders/utils'
-import user_ from '#controllers/user/lib/user'
 import { openPasswordUpdateWindow } from '#controllers/user/lib/token'
+import { findUserByEmail } from '#controllers/user/lib/user'
 import { passwords as pw_ } from '#lib/crypto'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import loginAttempts from './login_attempts.js'
 
 const { tokenDaysToLive } = CONFIG
@@ -13,7 +13,7 @@ const { tokenDaysToLive } = CONFIG
 const options = {
   usernameField: 'email',
   passwordField: 'token',
-  passReqToCallback: true
+  passReqToCallback: true,
 }
 
 const verify = (req, email, token, done) => {
@@ -21,7 +21,7 @@ const verify = (req, email, token, done) => {
     done(null, false, { message: 'too_many_attempts' })
   }
 
-  return user_.findOneByEmail(email)
+  return findUserByEmail(email)
   .catch(invalidEmailOrToken.bind(null, done, email, 'findOneByEmail'))
   .then(returnIfValid.bind(null, done, token, email))
   .catch(finalError.bind(null, done))

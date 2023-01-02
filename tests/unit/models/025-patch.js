@@ -1,7 +1,7 @@
-import should from 'should'
 import jiff from 'jiff'
+import should from 'should'
 import _ from '#builders/utils'
-import randomString from '#lib/utils/random_string'
+import { getRandomString } from '#lib/utils/random_string'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
 import { shouldNotBeCalled } from '../utils.js'
@@ -13,29 +13,29 @@ const currentDoc = {
   _id: validDocId,
   _rev: someRev,
   labels: {
-    fr: 'yo'
+    fr: 'yo',
   },
   claims: {
     P31: [ 'Q47461344' ],
-    P50: [ 'Q535' ]
+    P50: [ 'Q535' ],
   },
   notTrackedAttr: 123,
-  version: 4
+  version: 4,
 }
 
 const updatedDoc = {
   _id: validDocId,
   _rev: someRev,
   labels: {
-    en: 'da'
+    en: 'da',
   },
   claims: {
     P31: [ 'Q47461344' ],
     P50: [ 'Q535', 'Q2001' ],
-    P135: [ 'Q53121' ]
+    P135: [ 'Q53121' ],
   },
   notTrackedAttr: 456,
-  version: 5
+  version: 5,
 }
 
 const authorDoc = {
@@ -43,7 +43,7 @@ const authorDoc = {
   _rev: '4-760b982ea416be33c6938774db2cfaeb',
   type: 'entity',
   labels: { en: 'GBKaRq' },
-  claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
+  claims: { 'wdt:P31': [ 'wd:Q47461344' ] },
 }
 
 describe('patch', () => {
@@ -145,7 +145,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
@@ -158,7 +158,7 @@ describe('patch', () => {
       const patchA = Patch.create({
         userId,
         currentDoc: authorDoc,
-        updatedDoc: authorDocUpdatedA
+        updatedDoc: authorDocUpdatedA,
       })
 
       const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
@@ -177,7 +177,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
@@ -196,7 +196,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
@@ -212,7 +212,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
@@ -232,7 +232,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
@@ -249,7 +249,7 @@ describe('patch', () => {
       const patchB = Patch.create({
         userId,
         currentDoc: authorDocUpdatedA,
-        updatedDoc: authorDocUpdatedB
+        updatedDoc: authorDocUpdatedB,
       })
 
       const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
@@ -257,7 +257,7 @@ describe('patch', () => {
       const patchC = Patch.create({
         userId,
         currentDoc: authorDocUpdatedB,
-        updatedDoc: authorDocUpdatedC
+        updatedDoc: authorDocUpdatedC,
       })
 
       let revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
@@ -271,10 +271,10 @@ describe('patch', () => {
 
     it('should reject mismatching entity and patch', () => {
       const currentDoc = {
-        _id: '10b3006aab5842379c06109b8f09530e'
+        _id: '10b3006aab5842379c06109b8f09530e',
       }
       const patch = {
-        _id: 'e03590f8b90160c9732485baa6003e18:2'
+        _id: 'e03590f8b90160c9732485baa6003e18:2',
       }
       try {
         const res = Patch.revert(currentDoc, patch)
@@ -307,7 +307,7 @@ const generateSomePatch = previousVersion => {
   newVersion._id = validDocId
   newVersion.version++
   if (newVersion.labels.en) delete newVersion.labels.en
-  else newVersion.labels = { en: randomString(6) }
+  else newVersion.labels = { en: getRandomString(6) }
   const patch = Patch.create({ userId, currentDoc: previousVersion, updatedDoc: newVersion })
   return { patch, newVersion }
 }

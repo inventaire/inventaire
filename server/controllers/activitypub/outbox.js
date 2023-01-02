@@ -1,22 +1,22 @@
-import error_ from '#lib/error/error'
 import { byActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
+import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import patches_ from '#controllers/entities/lib/patches/patches'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
-import formatUserItemsActivities from './lib/format_user_items_activities.js'
-import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
+import { error_ } from '#lib/error/error'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
+import formatUserItemsActivities from './lib/format_user_items_activities.js'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const sanitization = {
   name: {},
   offset: {
     optional: true,
-    default: null
+    default: null,
   },
   limit: {
     optional: true,
-    default: 10
+    default: 10,
   },
 }
 
@@ -54,10 +54,10 @@ const getEntityActivities = async ({ name, offset, limit }) => {
     id: fullOutboxUrl,
     type: 'OrderedCollection',
     first: `${fullOutboxUrl}&offset=0`,
-    next: `${fullOutboxUrl}&offset=0`
+    next: `${fullOutboxUrl}&offset=0`,
   }
   if (offset == null) {
-    baseOutbox.totalItems = await patches_.getCountByClaimValue(entity.uri)
+    baseOutbox.totalItems = await getPatchesCountByClaimValue(entity.uri)
     return baseOutbox
   } else {
     return buildPaginatedEntityOutbox(entity, offset, limit, baseOutbox)
@@ -70,7 +70,7 @@ const getBaseOutbox = url => {
     id: url,
     type: 'OrderedCollection',
     first: `${url}&offset=0`,
-    next: `${url}&offset=0`
+    next: `${url}&offset=0`,
   }
 }
 
@@ -82,7 +82,7 @@ const getUserActivities = async ({ name, offset, limit }) => {
     id: fullOutboxUrl,
     type: 'OrderedCollection',
     first: `${fullOutboxUrl}&offset=0`,
-    next: `${fullOutboxUrl}&offset=0`
+    next: `${fullOutboxUrl}&offset=0`,
   }
   if (offset == null) {
     // Mimick Mastodon, which only indicates the totalItems count when fetching
@@ -128,7 +128,7 @@ const buildPaginatedEntityOutbox = async (entity, offset, limit, outbox) => {
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const { uri } = entity
-  const rows = await patches_.byClaimValue(uri, offset, limit)
+  const rows = await getPatchesByClaimValue(uri, offset, limit)
   outbox.orderedItems = await formatEntityPatchesActivities(rows)
   return outbox
 }

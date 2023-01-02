@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
+import { imgUrlBuilder } from '#lib/emails/app_api'
 import i18n from './i18n/i18n.js'
-import appApi from './app_api.js'
 
 export default Object.assign({}, i18n, {
   // Prevent passing more than 2 arguments
@@ -20,10 +20,10 @@ export default Object.assign({}, i18n, {
 
     if (path == null) return ''
 
-    return appApi.img(path, width, height)
+    return imgUrlBuilder(path, width, height)
   },
 
-  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj
+  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj,
 })
 
 const onePictureOnly = arg => {

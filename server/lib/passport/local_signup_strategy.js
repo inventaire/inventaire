@@ -1,8 +1,8 @@
 import { Strategy as LocalStrategy } from 'passport-local'
+import createUser from '#controllers/user/lib/create'
+import headers_ from '#lib/headers'
 import { track } from '#lib/track'
 import User from '#models/user'
-import headers_ from '#lib/headers'
-import createUser from '#controllers/user/lib/create'
 
 const options = { passReqToCallback: true }
 
@@ -16,7 +16,7 @@ const verify = (req, username, password, done) => {
       req.user = user
       track(req, [ 'auth', 'signup', 'local' ])
     } else {
-      // case when user_.byId fails, rather unprobable
+      // case when getUserById fails, rather unprobable
       done(new Error("couldn't get user"))
     }
   })

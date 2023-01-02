@@ -1,4 +1,6 @@
 import should from 'should'
+import { createHuman } from '../fixtures/entities.js'
+import { deleteByUris } from '../utils/entities.js'
 import {
   adminReq,
   dataadminReq,
@@ -8,8 +10,6 @@ import {
   getReservedUser,
   getDeanonymizedUser, customAuthReq
 } from '../utils/utils.js'
-import { createHuman } from '../fixtures/entities.js'
-import { deleteByUris } from '../utils/entities.js'
 
 const endpoint = '/api/entities?action=history'
 
@@ -74,12 +74,12 @@ describe('entities:history', () => {
   it('should not anonymize patches from users that disabled anonymization', async () => {
     const [ user, human ] = await Promise.all([
       getDeanonymizedUser(),
-      createHuman()
+      createHuman(),
     ])
     await customAuthReq(user, 'put', '/api/entities?action=update-label', {
       uri: human.uri,
       lang: 'es',
-      value: 'foo'
+      value: 'foo',
     })
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()
@@ -89,12 +89,12 @@ describe('entities:history', () => {
   it('should not anonymize patches when the author is the requesting user', async () => {
     const [ user, human ] = await Promise.all([
       getReservedUser(),
-      createHuman()
+      createHuman(),
     ])
     await customAuthReq(user, 'put', '/api/entities?action=update-label', {
       uri: human.uri,
       lang: 'es',
-      value: 'foo'
+      value: 'foo',
     })
     const { patches } = await customAuthReq(user, 'get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()

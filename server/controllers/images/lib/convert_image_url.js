@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import dbFactory from '#db/couchdb/base'
+import { error_ } from '#lib/error/error'
 import importImage from './import_image.js'
 
 const db = dbFactory('images')

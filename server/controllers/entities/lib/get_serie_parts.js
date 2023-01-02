@@ -1,11 +1,9 @@
 import _ from '#builders/utils'
-import runWdQuery from '#data/wikidata/run_query'
+import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import entities_ from './entities.js'
+import runWdQuery from '#data/wikidata/run_query'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
-
-const { firstClaim, uniqByUri } = entities_
 
 export default params => {
   const { uri, refresh, dry } = params
@@ -24,7 +22,7 @@ export default params => {
   // There might be duplicates, mostly due to temporarily cached relations
   .then(uniqByUri)
   .then(results => ({
-    parts: results.sort(sortByOrdinalOrDate)
+    parts: results.sort(sortByOrdinalOrDate),
   }))
   .catch(_.ErrorRethrow('get serie parts err'))
 }
@@ -36,14 +34,14 @@ const getWdSerieParts = async (qid, refresh, dry) => {
     date: getSimpleDayDate(result.date),
     ordinal: result.ordinal,
     subparts: result.subparts,
-    superpart: prefixifyWd(result.superpart)
+    superpart: prefixifyWd(result.superpart),
   }))
 }
 
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
 const getInvSerieParts = async uri => {
-  const docs = await entities_.byClaim('wdt:P179', uri, true, true)
+  const docs = await getEntitiesByClaim('wdt:P179', uri, true, true)
   return docs.map(format)
 }
 
@@ -51,11 +49,11 @@ const format = ({ _id, claims }) => ({
   uri: `inv:${_id}`,
   date: claims['wdt:P577'] && claims['wdt:P577'][0],
   ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
-  subparts: 0
+  subparts: 0,
 })
 
 const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
-  ordinal: firstClaim(entity, 'wdt:P1545')
+  ordinal: firstClaim(entity, 'wdt:P1545'),
 })

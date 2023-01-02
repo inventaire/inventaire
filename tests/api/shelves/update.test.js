@@ -1,12 +1,12 @@
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
 import {
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
 } from '#tests/api/utils/utils'
-import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
-import { authReq, authReqB, getUser } from '../utils/utils.js'
 import { createShelf, shelfName, shelfDescription } from '../fixtures/shelves.js'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=update'
 
@@ -26,7 +26,7 @@ describe('shelves:update', () => {
     try {
       const params = {
         shelf: shelf._id,
-        foo: 'bar'
+        foo: 'bar',
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -41,7 +41,7 @@ describe('shelves:update', () => {
     try {
       const params = {
         shelf: shelf._id,
-        name: ''
+        name: '',
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -104,7 +104,7 @@ describe('shelves:update', () => {
       const { shelf } = await createShelf()
       const params = {
         shelf: shelf._id,
-        name: 'foo'
+        name: 'foo',
       }
       await authReqB('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -119,7 +119,7 @@ describe('shelves:update', () => {
       const { shelf } = await createShelf(getUser())
       const params = {
         shelf: shelf._id,
-        name: shelf.name
+        name: shelf.name,
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {

@@ -9,5 +9,5 @@ export default {
     const { redirect } = req.query
     const route = redirect ? `/${redirect}` : '/'
     res.redirect(route)
-  }
+  },
 }

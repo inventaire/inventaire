@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
-import validations from './validations/listing.js'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/listing.js'
+import validations from './validations/listing.js'
 
 export default {
   create: listing => {
@@ -48,10 +48,10 @@ export default {
     }
     updatedListing.updated = Date.now()
     return updatedListing
-  }
+  },
 }
 
 const defaultValues = {
   description: '',
-  visibility: []
+  visibility: [],
 }

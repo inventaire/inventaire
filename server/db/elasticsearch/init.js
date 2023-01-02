@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import { get } from '#lib/requests'
-import { wait } from '#lib/promises'
 import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { get } from '#lib/requests'
 import createIndex from './create_index.js'
 import reindexOnChange from './reindex_on_change.js'
 

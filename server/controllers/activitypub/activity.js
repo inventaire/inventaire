@@ -1,18 +1,18 @@
+import { activityById } from '#controllers/activitypub/lib/activities'
+import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { isCouchUuid } from '#lib/boolean_validations'
-import error_ from '#lib/error/error'
-import patches_ from '#controllers/entities/lib/patches/patches'
-import activities_ from './lib/activities.js'
-import formatUserItemsActivities from './lib/format_user_items_activities.js'
-import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
-import { isEntityActivityId } from './lib/helpers.js'
+import { error_ } from '#lib/error/error'
 import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
+import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
+import formatUserItemsActivities from './lib/format_user_items_activities.js'
+import { isEntityActivityId } from './lib/helpers.js'
 import { validateShelf, validateUser } from './lib/validations.js'
 
 const sanitization = {
   id: {
     // override couchUuid validation
-    generic: 'string'
-  }
+    generic: 'string',
+  },
 }
 
 const controller = async ({ id }) => {
@@ -26,7 +26,7 @@ const controller = async ({ id }) => {
 const getEntityActivity = async id => {
   let [ , entityId, versionNumber, activityNumber ] = id.split('-')
   const patchId = `${entityId}:${versionNumber}`
-  const patch = await patches_.byId(patchId)
+  const patch = await getPatchById(patchId)
   const activities = await getActivitiesFromPatch(patch)
   activityNumber = parseInt(activityNumber)
   const activity = activities[activityNumber]
@@ -36,7 +36,7 @@ const getEntityActivity = async id => {
 
 const getActivity = async id => {
   if (!isCouchUuid(id)) throw error_.new('invalid activity id', 400, { id })
-  const activityDoc = await activities_.byId(id)
+  const activityDoc = await activityById(id)
   const { name } = activityDoc.actor
   if (name.startsWith('shelf-')) {
     return getShelfActivity(activityDoc, name)

@@ -23,13 +23,15 @@
 // invp:P2: Image Hash
 
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import inferences from '#controllers/entities/lib/inferences'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { requireJson } from '#lib/utils/json'
 import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
 
-const wikimediaLanguageCodes = new Set(Object.keys(require('wikidata-lang/indexes/by_wm_code')))
+const wikimediaLanguageCodesByWdId = requireJson('wikidata-lang/indexes/by_wm_code.json')
+const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 
 const Entity = {
   create: () => {
@@ -224,7 +226,7 @@ const Entity = {
   preventRedirectionEdit: (doc, editLabel) => {
     if (doc.redirect == null) return
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
-  }
+  },
 }
 
 export default Entity

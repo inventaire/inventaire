@@ -3,28 +3,28 @@ export default {
     map: doc => {
       const [ entityId, patchNumber ] = doc._id.split(':')
       emit([ entityId, parseInt(patchNumber) ], null)
-    }
+    },
   },
   byUserIdAndDate: {
     map: doc => emit([ doc.user, doc.timestamp ], null),
-    reduce: '_count'
+    reduce: '_count',
   },
   byDate: {
-    map: doc => emit(doc.timestamp, null)
+    map: doc => emit(doc.timestamp, null),
   },
   byDay: {
     map: doc => {
       const day = new Date(doc.timestamp).toISOString().split('T')[0]
       emit([ day, doc.user ], null)
     },
-    reduce: '_count'
+    reduce: '_count',
   },
   byRedirectUri: {
     map: doc => {
       if (doc.context != null && doc.context.redirectClaims != null) {
         emit(doc.context.redirectClaims.fromUri, null)
       }
-    }
+    },
   },
   byClaimValueAndDate: {
     map: [
@@ -49,9 +49,9 @@ export default {
             }
           }
         }
-      }
+      },
     ],
-    reduce: '_count'
+    reduce: '_count',
   },
   byUserIdAndFilterAndDate: {
     map: doc => {
@@ -70,6 +70,6 @@ export default {
         }
       }
     },
-    reduce: '_count'
+    reduce: '_count',
   },
 }

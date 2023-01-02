@@ -1,13 +1,10 @@
 import CONFIG from 'config'
 import { red } from 'tiny-chalk'
 import _ from '#builders/utils'
-
-// Needs to be run before the first promise is fired
-// so that the configuration applies to all
-
+import { initEmailServices } from '#lib/emails/mailer'
 import { logErrorsCount } from '#lib/utils/logs'
 
-export default function () {
+export function beforeStartup () {
   initUncaughtExceptionCatcher()
 
   logErrorsCount()
@@ -21,4 +18,8 @@ const initUncaughtExceptionCatcher = () => {
   process.on('uncaughtException', err => {
     console.error(red('uncaughtException'), err)
   })
+}
+
+export function afterStartup () {
+  initEmailServices()
 }

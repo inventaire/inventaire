@@ -1,5 +1,5 @@
 import ASCIIFolder from 'fold-to-ascii'
-import entities_ from '#controllers/entities/lib/entities'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { normalizeString } from '#lib/utils/base'
 
@@ -13,7 +13,7 @@ export default async (editionSeed, worksSeeds) => {
   if (worksSeeds.length !== 1) return
   const { uri: workUri } = worksSeeds[0]
   if (workUri == null) return
-  const editions = await entities_.byClaim('wdt:P629', workUri, true, true)
+  const editions = await getEntitiesByClaim('wdt:P629', workUri, true, true)
   const matchingEditions = editions.filter(isMatchingEdition(editionSeed, editionSeedTitle))
   if (matchingEditions.length === 1) {
     const matchingEdition = matchingEditions[0]

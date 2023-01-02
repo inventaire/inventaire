@@ -1,6 +1,6 @@
 import 'should'
-import requests_ from '#lib/requests'
 import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
 import { startGenericMockServer } from '../utils/mock_server.js'
 
 const startHangingupServer = async () => {

@@ -1,5 +1,7 @@
 import should from 'should'
 import { wait } from '#lib/promises'
+import { createWork } from '../fixtures/entities.js'
+import { updateClaim, updateLabel } from '../utils/entities.js'
 import {
   adminReq,
   getUser,
@@ -9,8 +11,6 @@ import {
   getDeanonymizedUser,
   customAuthReq,
 } from '../utils/utils.js'
-import { createWork } from '../fixtures/entities.js'
-import { updateClaim, updateLabel } from '../utils/entities.js'
 
 const endpoint = '/api/entities?action=contributions'
 

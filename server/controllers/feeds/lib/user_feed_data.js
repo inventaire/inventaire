@@ -1,7 +1,7 @@
-import user_ from '#controllers/user/lib/user'
+import { getUserById } from '#controllers/user/lib/user'
 
 export default async (userId, reqUserId) => {
-  const user = await user_.byId(userId)
+  const user = await getUserById(userId)
   return {
     users: [ user ],
     reqUserId,
@@ -10,7 +10,7 @@ export default async (userId, reqUserId) => {
       description: user.bio,
       image: user.picture,
       queryString: `user=${user._id}`,
-      pathname: `inventory/${user._id}`
-    }
+      pathname: `inventory/${user._id}`,
+    },
   }
 }

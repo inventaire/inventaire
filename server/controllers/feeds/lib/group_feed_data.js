@@ -1,11 +1,11 @@
-import user_ from '#controllers/user/lib/user'
-import groups_ from '#controllers/groups/lib/groups'
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { getUsersByIds } from '#controllers/user/lib/user'
 import Group from '#models/group'
 
 export default async (groupId, reqUserId) => {
-  const group = await groups_.byId(groupId)
+  const group = await getGroupById(groupId)
   const membersIds = Group.getAllMembersIds(group)
-  const users = await user_.byIds(membersIds)
+  const users = await getUsersByIds(membersIds)
   return {
     users,
     reqUserId,
@@ -15,7 +15,7 @@ export default async (groupId, reqUserId) => {
       description: group.description,
       image: group.picture,
       queryString: `group=${group._id}`,
-      pathname: `groups/${group._id}`
-    }
+      pathname: `groups/${group._id}`,
+    },
   }
 }

@@ -1,15 +1,15 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import dbFactory from '#db/couchdb/base'
-import User from '#models/user'
 import { passwords as pw_ } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
+import User from '#models/user'
 
 const db = dbFactory('users')
 
 const sanitization = {
   'current-password': {
-    optional: true
+    optional: true,
   },
   'new-password': {},
 }

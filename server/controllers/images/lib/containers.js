@@ -1,14 +1,23 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
+import localClient from '#controllers/images/lib/local_client'
+import swiftClient from '#controllers/images/lib/swift_client'
+import images_ from '#lib/images'
+import { emit } from '#lib/radio'
 
 // 'swift' or 'local'
-import images_ from '#lib/images'
-import radio from '#lib/radio'
-
 const { mode } = CONFIG.mediaStorage
 
 _.info(`media storage: ${mode}`)
-const { putImage, deleteImage } = require(`./${mode}_client`)
+
+let client
+if (mode === 'swift') {
+  client = swiftClient
+} else {
+  client = localClient
+}
+
+const { putImage, deleteImage } = client
 
 const transformAndPutImage = (container, fnName) => async fileData => {
   const { id = 0, path } = fileData
@@ -16,11 +25,11 @@ const transformAndPutImage = (container, fnName) => async fileData => {
   const filename = await images_.getHashFilename(path)
   const url = await putImage(container, path, filename)
   _.log(url, 'new image')
-  await radio.emit('image:needs:check', { url, context: 'upload' })
+  await emit('image:needs:check', { url, context: 'upload' })
   return { id, url }
 }
 
-const containers = {
+export const containers = {
   users: {
     putImage: transformAndPutImage('users', 'shrinkAndFormat'),
     deleteImage,
@@ -40,10 +49,8 @@ const containers = {
   // used to fetch remote images
   remote: {},
   // Same but for emails and client assets
-  assets: {}
+  assets: {},
 }
 
-const uploadContainersNames = Object.keys(containers)
+export const uploadContainersNames = Object.keys(containers)
   .filter(containerName => containers[containerName].putImage != null)
-
-export default { containers, uploadContainersNames }

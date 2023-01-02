@@ -1,9 +1,9 @@
 import auth from './auth.js'
+import cache from './cache.js'
+import content from './content.js'
+import requestsLogger from './requests_logger.js'
 import security from './security.js'
 import statics from './statics.js'
-import cache from './cache.js'
-import requestsLogger from './requests_logger.js'
-import content from './content.js'
 
 export default [
   // Place the request logger first so that even requests that generate an error

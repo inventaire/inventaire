@@ -14,7 +14,7 @@ const createSomeGroup = () => {
     searchable: false,
     position: null,
     creatorId: someUserId,
-    open: false
+    open: false,
   })
 }
 
@@ -47,7 +47,7 @@ describe('group model', () => {
         description: '',
         searchable: false,
         position: null,
-        open: true
+        open: true,
       })
       doc.open.should.be.true()
     })

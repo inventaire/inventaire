@@ -7,10 +7,10 @@ import {
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
 } from '#tests/api/utils/utils'
+import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
 import { createTransaction } from '../fixtures/transactions.js'
 import { updateTransaction } from '../utils/transactions.js'
-import { createItem } from '../fixtures/items.js'
-import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
 
 const endpoint = '/api/transactions?action=request'
 
@@ -41,7 +41,7 @@ describe('transactions:request', () => {
       const item = await createItem(getUser(), { transaction: 'giving', visibility: [ 'public' ] })
       await authReq('post', endpoint, {
         item: item._id,
-        message: 'yo'
+        message: 'yo',
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -55,7 +55,7 @@ describe('transactions:request', () => {
       const item = await createItem()
       await authReqB('post', endpoint, {
         item: item._id,
-        message: 'yo'
+        message: 'yo',
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -68,7 +68,7 @@ describe('transactions:request', () => {
     const item = await createItem(getUser(), { visibility: [ 'public' ], transaction: 'giving' })
     const res = await authReqB('post', endpoint, {
       item: item._id,
-      message: 'yo'
+      message: 'yo',
     })
     res.transaction.state.should.equal('requested')
   })

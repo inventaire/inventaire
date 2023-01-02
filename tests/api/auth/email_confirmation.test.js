@@ -1,8 +1,8 @@
 import 'should'
-import { BasicUpdater } from '#lib/doc_updates'
 import dbFactory from '#db/couchdb/base'
-import { customAuthReq, getUserGetter, shouldNotBeCalled } from '../utils/utils.js'
+import { BasicUpdater } from '#lib/doc_updates'
 import { createUserEmail } from '../fixtures/users.js'
+import { customAuthReq, getUserGetter, shouldNotBeCalled } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=email-confirmation'
 const db = dbFactory('users')

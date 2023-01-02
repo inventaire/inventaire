@@ -1,6 +1,6 @@
 import { wait } from '#lib/promises'
-import { adminReq } from '../utils/utils.js'
 import { createHuman, humanName } from '../fixtures/entities.js'
+import { adminReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=duplicates'
 
@@ -9,7 +9,7 @@ describe('entities:duplicates', () => {
     const someName = humanName()
     await Promise.all([
       createHuman({ labels: { en: someName } }),
-      createHuman({ labels: { en: someName } })
+      createHuman({ labels: { en: someName } }),
     ])
     await wait(100)
     const { names } = await adminReq('get', endpoint)

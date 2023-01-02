@@ -1,4 +1,4 @@
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 export const getIpBinaryRepresentation = ip => {
   const isIpv6 = ip.includes(':')

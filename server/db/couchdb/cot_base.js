@@ -1,3 +1,4 @@
+import blueCot from 'blue-cot'
 import CONFIG from 'config'
 
-export default require('blue-cot')(CONFIG.db)
+export default blueCot(CONFIG.db)

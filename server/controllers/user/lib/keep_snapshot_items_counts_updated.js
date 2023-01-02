@@ -4,12 +4,12 @@
 
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import radio from '#lib/radio'
+import { radio } from '#lib/radio'
 import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
 const { itemsCountDebounceTime: delay } = CONFIG
 
-export default function () {
+export function keepSnapshotItemsCountsUpdated () {
   const debouncedUpdaters = {}
 
   const itemsCountsUpdater = userId => () => {

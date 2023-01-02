@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { error_ } from '#lib/error/error'
 
 export default async item => {
   const { entity: uri } = item
@@ -45,7 +45,7 @@ export default async item => {
     getEntitiesList(item.seriesUris),
     getEntitiesList(item.genresUris),
     getEntitiesList(item.subjectsUris),
-    getEntitiesList(item.originalLangsUris)
+    getEntitiesList(item.originalLangsUris),
   ])
 
   item.authors = authors
@@ -66,7 +66,7 @@ const authorProperties = [
   'wdt:P50',
   'wdt:P58',
   'wdt:P110',
-  'wdt:P6338'
+  'wdt:P6338',
 ]
 const getWorkSeriesUris = work => work.claims['wdt:P179']
 const getWorkGenresUris = work => work.claims['wdt:P136']

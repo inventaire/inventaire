@@ -1,9 +1,8 @@
 import CONFIG from 'config'
 import 'should'
 import { wait } from '#lib/promises'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createGroup } from '#tests/api/fixtures/groups'
-import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils.js'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import {
   createEditionWithIsbn,
   createEdition,
@@ -12,9 +11,10 @@ import {
   createEditionWithWorkAndAuthor,
 } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
-import { createUser, getRefreshedUser } from '../fixtures/users.js'
 import { createShelf } from '../fixtures/shelves.js'
+import { createUser, getRefreshedUser } from '../fixtures/users.js'
 import { getByUris as getEntitiesByUris } from '../utils/entities.js'
+import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils.js'
 
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 
@@ -24,7 +24,7 @@ describe('items:create', () => {
   it('should create an item', async () => {
     const [ user, editionUri ] = await Promise.all([
       getUser(),
-      editionUriPromise
+      editionUriPromise,
     ])
     const userId = user._id
     const item = await authReq('post', '/api/items', { entity: editionUri })
@@ -37,12 +37,12 @@ describe('items:create', () => {
   it('should create items in bulk', async () => {
     const [ user, editionUri ] = await Promise.all([
       getUser(),
-      editionUriPromise
+      editionUriPromise,
     ])
     const userId = user._id
     const items = await authReq('post', '/api/items', [
       { entity: editionUri, visibility: [ 'friends', 'groups' ], transaction: 'giving' },
-      { entity: editionUri, visibility: [ 'public' ], transaction: 'lending' }
+      { entity: editionUri, visibility: [ 'public' ], transaction: 'lending' },
     ])
     items[0].entity.should.equal(editionUri)
     items[0].visibility.should.deepEqual([ 'friends', 'groups' ])
@@ -73,7 +73,7 @@ describe('items:create', () => {
       await Promise.all([
         createItem(user, { visibility: [ 'public' ] }),
         createItem(user, { visibility: [ 'friends', 'groups' ] }),
-        createItem(user, { visibility: [] })
+        createItem(user, { visibility: [] }),
       ])
       await wait(debounceDelay)
       const refreshedUser = await getRefreshedUser(user)
@@ -156,7 +156,7 @@ describe('items:create', () => {
       const { shelf } = await createShelf(user)
       const item = await customAuthReq(user, 'post', '/api/items', {
         entity: editionUri,
-        shelves: [ shelf._id ]
+        shelves: [ shelf._id ],
       })
       item.shelves.should.deepEqual([ shelf._id ])
     })
@@ -166,7 +166,7 @@ describe('items:create', () => {
       try {
         const item = await authReq('post', '/api/items', {
           entity: editionUri,
-          shelves: [ 'not a shelf id' ]
+          shelves: [ 'not a shelf id' ],
         })
         shouldNotBeCalled(item)
       } catch (err) {
@@ -182,7 +182,7 @@ describe('items:create', () => {
       try {
         const item = await authReq('post', '/api/items', {
           entity: editionUri,
-          shelves: [ shelf._id ]
+          shelves: [ shelf._id ],
         })
         shouldNotBeCalled(item)
       } catch (err) {
@@ -197,7 +197,7 @@ describe('items:create', () => {
     it('should reject an invalid visibility value', async () => {
       const group = await createGroup({ user: getUserB() })
       await createItem(getUser(), {
-        visibility: [ `group:${group._id}` ]
+        visibility: [ `group:${group._id}` ],
       })
       .then(shouldNotBeCalled)
       .catch(err => {

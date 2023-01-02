@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wpBase = 'https://en.wikipedia.org/w/api.php'
@@ -20,8 +20,8 @@ export default async title => {
     url: parseThumbUrl(source),
     credits: {
       text: 'English Wikipedia',
-      url: `https://en.wikipedia.org/wiki/${title}`
-    }
+      url: `https://en.wikipedia.org/wiki/${title}`,
+    },
   }
 }
 

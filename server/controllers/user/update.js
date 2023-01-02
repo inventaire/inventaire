@@ -1,12 +1,12 @@
 import _ from '#builders/utils'
-import { attributes, validations, formatters } from '#models/user'
+import { availability_ } from '#controllers/user/lib/availability'
 import updateEmail from '#controllers/user/lib/update_email'
 import { setStableUsername } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
-import availability_ from '#controllers/user/lib/availability'
-import error_ from '#lib/error/error'
 import { basicUpdater } from '#lib/doc_updates'
-import radio from '#lib/radio'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { attributes, validations, formatters } from '#models/user'
 
 const { updatable, concurrencial, acceptNullValue } = attributes
 const db = dbFactory('users')
@@ -14,7 +14,7 @@ const db = dbFactory('users')
 const sanitization = {
   attribute: {},
   value: {
-    canBeNull: true
+    canBeNull: true,
   },
 }
 
@@ -58,7 +58,7 @@ const update = async (user, attribute, value) => {
 
     await updateAttribute(user, attribute, value)
     if (attribute === 'picture' && currentValue) {
-      await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
+      await emit('image:needs:check', { url: currentValue, context: 'update' })
     }
     return
   }
@@ -84,5 +84,5 @@ const updateAttribute = async (user, attribute, value) => {
 export default {
   sanitization,
   controller,
-  track: [ 'user', 'update' ]
+  track: [ 'user', 'update' ],
 }

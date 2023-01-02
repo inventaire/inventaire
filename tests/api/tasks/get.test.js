@@ -1,5 +1,6 @@
 import 'should'
 import { createHuman, someFakeUri } from '../fixtures/entities.js'
+import { createTask } from '../fixtures/tasks.js'
 import {
   getByScore,
   getBySuspectUris,
@@ -7,7 +8,6 @@ import {
   getByEntitiesType,
   update,
 } from '../utils/tasks.js'
-import { createTask } from '../fixtures/tasks.js'
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {

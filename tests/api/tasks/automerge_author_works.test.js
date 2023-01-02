@@ -1,9 +1,9 @@
-import { wait } from '#lib/promises'
 import 'should'
 import automergeAuthorWorks from '#controllers/tasks/lib/automerge_author_works'
-import { checkEntities } from '../utils/tasks.js'
-import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { wait } from '#lib/promises'
 import { createHuman, createWorkWithAuthor, addSerie } from '../fixtures/entities.js'
+import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { checkEntities } from '../utils/tasks.js'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {
@@ -19,7 +19,7 @@ describe('automerge_author_works: only from inv works to wd works', () => {
 
     const [ work1, work2 ] = await Promise.all([
       createWorkWithAuthor({ uri: authorUri }, workLabel),
-      createWorkWithAuthor({ uri: authorUri }, workLabel)
+      createWorkWithAuthor({ uri: authorUri }, workLabel),
     ])
     await automergeAuthorWorks(authorUri)
     await wait(300)

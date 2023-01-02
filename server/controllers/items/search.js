@@ -1,16 +1,16 @@
-import error_ from '#lib/error/error'
-import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getGroupMembersIds } from '#controllers/groups/lib/groups'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authorized_items'
-import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
-import shelves_ from '#controllers/shelves/lib/shelves'
+import { getShelfById } from '#controllers/shelves/lib/shelves'
+import { error_ } from '#lib/error/error'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import searchUsersItems from './lib/search_users_items.js'
 
 const sanitization = {
   user: { optional: true },
   group: { optional: true },
   shelf: { optional: true },
-  search: {}
+  search: {},
 }
 
 const controller = async ({ reqUserId, userId, groupId, shelfId, search }) => {
@@ -23,7 +23,7 @@ const controller = async ({ reqUserId, userId, groupId, shelfId, search }) => {
   const ownersIdsAndVisibilityKeys = await Promise.all(usersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
   const items = await searchUsersItems({ search, reqUserId, ownersIdsAndVisibilityKeys, shelfId })
   return {
-    items: items.map(filterPrivateAttributes(reqUserId))
+    items: items.map(filterPrivateAttributes(reqUserId)),
   }
 }
 
@@ -40,7 +40,7 @@ const getUsersIds = async ({ userId, groupId, shelfId, reqUserId }) => {
 }
 
 const getAuthorizedShelf = async (shelfId, reqUserId) => {
-  const shelf = await shelves_.byId(shelfId)
+  const shelf = await getShelfById(shelfId)
   const res = await filterVisibleDocs([ shelf ], reqUserId)
   return res[0]
 }

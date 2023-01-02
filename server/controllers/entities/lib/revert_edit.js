@@ -1,23 +1,21 @@
+import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { emit } from '#lib/radio'
 import Patch from '#models/patch'
-import entities_ from './entities.js'
-import patches_ from './patches/patches.js'
 import validateEntity from './validate_entity.js'
 
-const revertFromPatchDoc = async (patch, userId) => {
+export async function revertFromPatchDoc (patch, userId) {
   const entityId = patch._id.split(':')[0]
-  const currentDoc = await entities_.byId(entityId)
+  const currentDoc = await getEntityById(entityId)
   const updatedDoc = Patch.revert(currentDoc, patch)
   await validateEntity(updatedDoc)
   const context = { revertPatch: patch._id }
-  const docAfterUpdate = await entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  const docAfterUpdate = await putEntityUpdate({ userId, currentDoc, updatedDoc, context })
   await emit('entity:revert:edit', updatedDoc)
   return docAfterUpdate
 }
 
-const revertFromPatchId = async (patchId, userId) => {
-  const patch = await patches_.byId(patchId)
+export async function revertFromPatchId (patchId, userId) {
+  const patch = await getPatchById(patchId)
   return revertFromPatchDoc(patch, userId)
 }
-
-export default { revertFromPatchDoc, revertFromPatchId }

@@ -1,18 +1,21 @@
-import tasks_ from './lib/tasks.js'
+import { getTasksBySuspectUris, getTasksBySuggestionUris } from './lib/tasks.js'
 
 const sanitization = {
-  uris: {}
+  uris: {},
 }
 
-const byEntityUris = fnName => ({
+export const bySuspectUris = {
   sanitization,
   controller: async ({ uris }) => {
-    const tasks = await tasks_[fnName](uris, { index: true })
+    const tasks = await getTasksBySuspectUris(uris, { index: true })
     return { tasks }
-  }
-})
+  },
+}
 
-export default {
-  bySuspectUris: byEntityUris('bySuspectUris'),
-  bySuggestionUris: byEntityUris('bySuggestionUris')
+export const bySuggestionUris = {
+  sanitization,
+  controller: async ({ uris }) => {
+    const tasks = await getTasksBySuggestionUris(uris, { index: true })
+    return { tasks }
+  },
 }

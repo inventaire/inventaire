@@ -76,6 +76,7 @@
     "nodemailer": "^6.7.1",
     "nodemailer-express-handlebars": "^4.0.0",
     "oauth-1.0a": "^2.2.6",
+    "oauth2-server": "^3.0.0",
     "p-timeout": "^3.2.0",
     "passport": "^0.2.2",
     "passport-http": "^0.3.0",
@@ -88,6 +89,7 @@
     "tiny-chalk": "^3.0.1",
     "turtle-validator": "^1.0.2",
     "wikibase-edit": "^4.14.0",
+    "wikibase-sdk": "^8.1.1",
     "wikidata-lang": "^4.0.2",
     "wikidata-sdk": "^8.0.4"
   },

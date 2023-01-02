@@ -22,7 +22,7 @@ const inboxReq = async ({ emitterUser, username }) => {
   return signedReq({
     emitterUser,
     object: actorUrl,
-    url: inboxUrl
+    url: inboxUrl,
   })
 }
 
@@ -34,9 +34,9 @@ describe('activitypub:signed:request', () => {
       const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest('post', inboxUrl, {
         headers: {
-          'content-type': 'application/activity+json'
+          'content-type': 'application/activity+json',
         },
-        body
+        body,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -99,7 +99,7 @@ describe('activitypub:signed:request', () => {
       const { publicHostname } = CONFIG
       const reqHeaders = {
         host: publicHostname,
-        date: thirtySecondsAgo
+        date: thirtySecondsAgo,
       }
       const signedHeadersNames = Object.keys(reqHeaders).join(' ')
       const method = 'post'
@@ -115,7 +115,7 @@ describe('activitypub:signed:request', () => {
       const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest(method, inboxUrl, {
         headers: reqHeaders,
-        body
+        body,
       })
       .then(shouldNotBeCalled)
     } catch (err) {

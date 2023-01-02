@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import entities_ from './entities.js'
-import getSerieParts from './get_serie_parts.js'
 import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
+import getSerieParts from './get_serie_parts.js'
 
 export default {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use
@@ -25,13 +25,13 @@ export default {
 
   collection: async entity => {
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return entities_.byClaim('wdt:P195', entity.uri, true, true)
+    return getEntitiesByClaim('wdt:P195', entity.uri, true, true)
     .then(addEditionsImages(images))
-  }
+  },
 }
 
 const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
-  return entities_.byClaim('wdt:P629', workUri, true, true)
+  return getEntitiesByClaim('wdt:P629', workUri, true, true)
   .then(addEditionsImages(images, limitPerLang))
 }
 

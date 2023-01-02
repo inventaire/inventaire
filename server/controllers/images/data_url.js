@@ -1,14 +1,14 @@
-import fetch from 'node-fetch'
 import CONFIG from 'config'
+import fetch from 'node-fetch'
 import _ from '#builders/utils'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 
 const sanitization = {
-  url: {}
+  url: {},
 }
 
 // Get an image data-url from a URL
@@ -25,7 +25,7 @@ const controller = async ({ url }) => {
 }
 
 const headers = {
-  accept: 'image/*'
+  accept: 'image/*',
 }
 
 const getImageDataUrl = async url => {

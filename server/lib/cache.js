@@ -2,10 +2,10 @@ import { promisify } from 'util'
 import CONFIG from 'config'
 import levelTtl from 'level-ttl'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
 import { cacheDb } from '#db/level/get_db'
+import { catchNotFound, error_ } from '#lib/error/error'
 import { oneMonth } from '#lib/time'
+import { assert_ } from '#lib/utils/assert_types'
 
 const { ttlCheckFrequency } = CONFIG.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
@@ -15,7 +15,7 @@ const dbBatch = promisify(db.batch)
 // but in production, that means delaying API responses in case LevelDB writes get slow
 const alwaysWaitForSavedValue = CONFIG.env.startsWith('tests')
 
-export default {
+export const cache_ = {
   // - key: the cache key
   // - fn: a function with its context and arguments binded
   // - refresh: force a cache miss
@@ -59,12 +59,12 @@ export default {
   batchDelete: keys => {
     const batch = _.forceArray(keys).map(key => ({ type: 'del', key }))
     return dbBatch(batch)
-  }
+  },
 }
 
 const checkCache = async key => {
   return db.get(key)
-  .catch(error_.catchNotFound)
+  .catch(catchNotFound)
 }
 
 const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl) => {

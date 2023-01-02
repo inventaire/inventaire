@@ -1,22 +1,28 @@
-import radio from '#lib/radio'
+import acceptedRequest from '#controllers/notifications/lib/accepted_request'
+import deleteNotifications from '#controllers/notifications/lib/delete_notifications'
+import groupUpdate from '#controllers/notifications/lib/group_update'
+import userMadeAdmin from '#controllers/notifications/lib/user_made_admin'
 import ActionsControllers from '#lib/actions_controllers'
+import { radio } from '#lib/radio'
+import get from './get.js'
+import updateStatus from './update_status.js'
 
 export default {
   get: ActionsControllers({
     authentified: {
-      default: require('./get')
-    }
+      default: get,
+    },
   }),
   post: ActionsControllers({
     authentified: {
-      default: require('./update_status')
-    }
-  })
+      default: updateStatus,
+    },
+  }),
 }
 
-radio.on('notify:friend:request:accepted', require('./lib/accepted_request'))
-radio.on('group:makeAdmin', require('./lib/user_made_admin'))
-radio.on('group:update', require('./lib/group_update'))
+radio.on('notify:friend:request:accepted', acceptedRequest)
+radio.on('group:makeAdmin', userMadeAdmin)
+radio.on('group:update', groupUpdate)
 // Deleting notifications when their subject is deleted
 // to avoid having notification triggering requests for deleted resources
-radio.on('resource:destroyed', require('./lib/delete_notifications'))
+radio.on('resource:destroyed', deleteNotifications)

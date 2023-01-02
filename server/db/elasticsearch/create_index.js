@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
 import mappings from '#db/elasticsearch/mappings/mappings'
 import settings from '#db/elasticsearch/settings/settings'
+import { requests_ } from '#lib/requests'
 
 const { origin } = CONFIG.elasticsearch
 

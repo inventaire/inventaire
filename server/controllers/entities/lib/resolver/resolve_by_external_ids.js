@@ -49,7 +49,7 @@ const resolveSectionSeedsByExternalIds = async (section, entry, expectedEntityTy
   .then(() => entry)
 }
 
-const resolveEntrySeedsByExternalIds = async entry => {
+export async function resolveEntrySeedsByExternalIds (entry) {
   await Promise.all([
     resolveSectionSeedsByExternalIds('authors', entry, 'human'),
     resolveSectionSeedsByExternalIds('works', entry, 'work'),
@@ -57,8 +57,5 @@ const resolveEntrySeedsByExternalIds = async entry => {
   return entry
 }
 
-export default {
-  resolveEntrySeedsByExternalIds,
-  resolveAuthorsByExternalIds: entry => resolveSectionSeedsByExternalIds('authors', entry, 'human'),
-  resolveWorksByExternalIds: entry => resolveSectionSeedsByExternalIds('works', entry, 'work'),
-}
+export const resolveAuthorsByExternalIds = entry => resolveSectionSeedsByExternalIds('authors', entry, 'human')
+export const resolveWorksByExternalIds = entry => resolveSectionSeedsByExternalIds('works', entry, 'work')

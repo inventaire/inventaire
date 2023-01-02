@@ -3,7 +3,7 @@ import { wait } from '#lib/promises'
 import refreshSnapshot from './lib/snapshot/refresh_snapshot.js'
 
 const sanitization = {
-  uris: {}
+  uris: {},
 }
 
 const controller = async ({ uris }) => {

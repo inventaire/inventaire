@@ -21,7 +21,7 @@ export default {
         // Indexation can not be disabled here as it's not possible with type=keyword
         // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
         'entity:image': keyword,
-      }
-    }
-  }
+      },
+    },
+  },
 }

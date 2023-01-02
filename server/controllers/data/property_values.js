@@ -1,14 +1,14 @@
-import error_ from '#lib/error/error'
-import { typesNames } from '#lib/wikidata/aliases'
 import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { error_ } from '#lib/error/error'
+import { typesNames } from '#lib/wikidata/aliases'
 
 const sanitization = {
   property: {
-    allowlist: Object.keys(allowedValuesPerTypePerProperty)
+    allowlist: Object.keys(allowedValuesPerTypePerProperty),
   },
   type: {
-    allowlist: typesNames
-  }
+    allowlist: typesNames,
+  },
 }
 
 const getAllowedValues = ({ property, type }) => {

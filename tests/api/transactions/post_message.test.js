@@ -23,7 +23,7 @@ describe('transactions:post:message', () => {
     const { transaction } = await getSomeTransaction()
     await authReq('post', endpoint, {
       action: 'message',
-      transaction: transaction._id
+      transaction: transaction._id,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -36,7 +36,7 @@ describe('transactions:post:message', () => {
     await authReq('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: ''
+      message: '',
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -49,7 +49,7 @@ describe('transactions:post:message', () => {
     await authReq('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: 1
+      message: 1,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -62,7 +62,7 @@ describe('transactions:post:message', () => {
     await authReqC('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: 'yo'
+      message: 'yo',
     })
     .then(shouldNotBeCalled)
     .catch(err => {

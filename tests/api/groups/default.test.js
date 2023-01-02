@@ -1,8 +1,8 @@
 import should from 'should'
 import _ from '#builders/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { authReq, publicReq } from '../utils/utils.js'
 import { getSomeGroup } from '../fixtures/groups.js'
+import { authReq, publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups'
 

@@ -2,8 +2,8 @@ import _ from '#builders/utils'
 import 'should'
 import { getUserGetter, customAuthReq } from '#tests/api/utils/utils'
 import { createItem } from '../fixtures/items.js'
-import { waitForIndexation } from '../utils/search.js'
 import { getRandomPosition } from '../fixtures/users.js'
+import { waitForIndexation } from '../utils/search.js'
 
 const positionUser1 = getRandomPosition()
 const positionUser2 = [

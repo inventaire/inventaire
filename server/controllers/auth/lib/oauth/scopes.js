@@ -1,7 +1,7 @@
 const scopeByMethodAndRoute = {
   get: {
-    '/api/user': [ 'username', 'stable-username', 'email' ]
-  }
+    '/api/user': [ 'username', 'stable-username', 'email' ],
+  },
 }
 
 export default {
@@ -11,5 +11,5 @@ export default {
       return scopeByMethodAndRoute[method][url]
     }
   },
-  allScopes: Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)
+  allScopes: Object.values(scopeByMethodAndRoute).map(Object.values).flat(2),
 }

@@ -1,16 +1,18 @@
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
-import { states, statesList } from '#models/attributes/transaction'
+import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#controllers/transactions/lib/transactions'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { Track } from '#lib/track'
+import transactionAttributes from '#models/attributes/transaction'
 import { verifyIsRequester, verifyIsOwner, verifyRightToInteract } from './lib/rights_verification.js'
-import transactions_ from './lib/transactions.js'
+
+const { states, statesList } = transactionAttributes
 
 const sanitization = validateSanitization({
   transaction: {},
   state: {
-    allowlist: statesList
-  }
+    allowlist: statesList,
+  },
 })
 
 export default (req, res) => {
@@ -21,10 +23,10 @@ export default (req, res) => {
 }
 
 const updateState = async ({ transactionId, state, reqUserId }) => {
-  const transaction = await transactions_.byId(transactionId)
+  const transaction = await getTransactionById(transactionId)
   validateRights(transaction, state, reqUserId)
   await checkForConcurrentTransactions(transaction, state)
-  return transactions_.updateState(transaction, state, reqUserId)
+  return updateTransactionState(transaction, state, reqUserId)
 }
 
 const validateRights = (transaction, state, reqUserId) => {
@@ -43,7 +45,7 @@ const checkForConcurrentTransactions = async (transaction, requestedState) => {
     // No need to check that the transaction holding the item busy is not the updated transaction
     // as the requested state is 'accepted', which, to be valid, needs to be done on a transaction
     // in a 'requested' state
-    const itemIsBusy = await transactions_.itemIsBusy(transaction.item)
+    const itemIsBusy = await checkIfItemIsBusy(transaction.item)
     if (itemIsBusy) {
       throw error_.new('item already busy', 403, { transaction, requestedState })
     }

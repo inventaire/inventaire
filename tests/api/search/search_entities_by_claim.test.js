@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
 import 'should'
 import { createHuman, createWorkWithAuthor } from '../fixtures/entities.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
-import { search, waitForIndexation } from '../utils/search.js'
 import { getByUris } from '../utils/entities.js'
+import { search, waitForIndexation } from '../utils/search.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
 
 const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
 const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925' ]

@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import revertMerge from './lib/revert_merge.js'
 
 const sanitization = {
-  from: {}
+  from: {},
 }
 
 const controller = async params => {

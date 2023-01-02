@@ -1,9 +1,9 @@
 import should from 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createGroupWithAMember, getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
-import { publicReq, customAuthReq, authReq, getUser, getUserB } from '../utils/utils.js'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, getTwoFriends } from '../fixtures/users.js'
+import { publicReq, customAuthReq, authReq, getUser, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=by-owners'
 

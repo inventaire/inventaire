@@ -9,9 +9,9 @@ import {
   getUserGetter,
   customAuthReq,
 } from '#tests/api/utils/utils'
+import { humanName } from '../fixtures/entities.js'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
 import { createItem, createItems } from '../fixtures/items.js'
-import { humanName } from '../fixtures/entities.js'
 import { createShelfWithItem } from '../fixtures/shelves.js'
 
 const endpoint = '/api/items?action=by-ids'

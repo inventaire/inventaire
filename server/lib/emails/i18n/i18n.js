@@ -1,11 +1,16 @@
-import Polyglot from 'node-polyglot'
-import moment from 'moment'
 import CONFIG from 'config'
+import { isString } from 'lodash-es'
+import moment from 'moment'
+import Polyglot from 'node-polyglot'
 import _ from '#builders/utils'
-import { active as activeLangs } from '#i18nAssets/langs'
+import langs from '#i18nAssets/langs'
+import { absolutePath } from '#lib/absolute_path'
 import { appendToServerKeys } from '#lib/i18n_autofix'
+import { shortLang } from '#lib/utils/base'
+import { requireJson } from '#lib/utils/json'
 import translate from './translate.js'
 
+const { active: activeLangs } = langs
 const { autofixI18n } = CONFIG
 
 const polyglots = {}
@@ -25,14 +30,14 @@ const warnAndFix = warning => {
 
 activeLangs.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
-  const phrases = require(`i18nDist/${lang}.json`)
+  const phrases = requireJson(absolutePath('i18nDist', `${lang}.json`))
   polyglots[lang].extend(phrases)
   translators[lang] = translate(lang, polyglot)
 })
 
 const solveLang = lang => {
   // There is only support for 2 letters languages for now
-  lang = _.shortLang(lang)
+  lang = shortLang(lang)
   if (activeLangs.includes(lang)) return lang
   else return 'en'
 }
@@ -51,10 +56,10 @@ const helpers = {
 
   dateI18n: (lang, epochTime, format) => {
     // set default while neutralizeing handlebars object
-    if (!_.isString(format)) format = 'LLL'
+    if (!isString(format)) format = 'LLL'
     lang = solveLang(lang)
     moment.locale(lang)
     return moment(epochTime).format(format)
-  }
+  },
 }
 export default helpers

@@ -1,7 +1,7 @@
 import should from 'should'
 import _ from '#builders/utils'
-import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createGroup } from '../fixtures/groups.js'
 import { getRandomPosition } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'

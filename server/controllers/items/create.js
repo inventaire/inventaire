@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import items_ from '#controllers/items/lib/items'
-import error_ from '#lib/error/error'
+import { createItems } from '#controllers/items/lib/items'
+import { error_ } from '#lib/error/error'
 import { track } from '#lib/track'
-import snapshot_ from './lib/snapshot/snapshot.js'
+import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 export default async (req, res) => {
   let { body: items, user } = req
@@ -21,7 +21,7 @@ export default async (req, res) => {
     }
   }
 
-  const itemsDocs = await items_.create(user._id, items)
+  const itemsDocs = await createItems(user._id, items)
   const itemsWithSnaphots = await getItemsWithSnapshots(itemsDocs, singleItemMode)
   res.status(201).json(itemsWithSnaphots)
   track(req, [ 'item', 'creation', null, items.length ])
@@ -31,8 +31,8 @@ const getItemsWithSnapshots = async (itemsDocs, singleItemMode) => {
   // When only one item was sent, without being wrapped in an array
   // return the created item object, instead of an array
   if (singleItemMode) {
-    return snapshot_.addToItem(itemsDocs[0])
+    return addSnapshotToItem(itemsDocs[0])
   } else {
-    return Promise.all(itemsDocs.map(snapshot_.addToItem))
+    return Promise.all(itemsDocs.map(addSnapshotToItem))
   }
 }

@@ -1,59 +1,55 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import radio from '#lib/radio'
-import error_ from '#lib/error/error'
+import { findUserByEmail } from '#controllers/user/lib/user'
+import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
 import { WrappedUpdater } from '#lib/doc_updates'
-import randomString from '#lib/utils/random_string'
-import dbFactory from '#db/couchdb/base'
-import user_ from './user.js'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { getRandomString } from '#lib/utils/random_string'
 
 const { tokenDaysToLive } = CONFIG
 
 const testToken = pw_.verify
 const db = dbFactory('users')
 const wrappedUpdate = WrappedUpdater(db)
-const tokenLength = 32
+export const tokenLength = 32
 
-export default {
-  tokenLength,
-
-  sendValidationEmail: async user => {
-    if (user.validEmail) {
-      const log = _.pick(user, [ '_id', 'creationStrategy' ])
-      _.warn(log, 'email was already validated')
-      return user
-    }
-
-    const [ token, tokenHash ] = await getTokenData()
-    await radio.emit('validation:email', user, token)
-    await wrappedUpdate(user._id, 'emailValidation', tokenHash)
+export async function sendValidationEmail (user) {
+  if (user.validEmail) {
+    const log = _.pick(user, [ '_id', 'creationStrategy' ])
+    _.warn(log, 'email was already validated')
     return user
-  },
-
-  confirmEmailValidity: (email, token) => {
-    return user_.findOneByEmail(email)
-    .then(updateIfValidToken.bind(null, token))
-    .catch(err => {
-      if (err.notFound) throw noEmailValidationFound(token, email)
-      else throw err
-    })
-  },
-
-  sendResetPasswordEmail: async user => {
-    const [ token, tokenHash ] = await getTokenData()
-    await radio.emit('reset:password:email', user, token)
-    await wrappedUpdate(user._id, 'token', tokenHash)
-    return user
-  },
-
-  openPasswordUpdateWindow: user => {
-    return db.update(user._id, doc => {
-      doc.token = null
-      doc.resetPassword = Date.now()
-      return doc
-    })
   }
+
+  const [ token, tokenHash ] = await getTokenData()
+  await emit('validation:email', user, token)
+  await wrappedUpdate(user._id, 'emailValidation', tokenHash)
+  return user
+}
+
+export const confirmEmailTokenValidity = (email, token) => {
+  return findUserByEmail(email)
+  .then(updateIfValidToken.bind(null, token))
+  .catch(err => {
+    if (err.notFound) throw noEmailValidationFound(token, email)
+    else throw err
+  })
+}
+
+export async function sendResetPasswordEmail (user) {
+  const [ token, tokenHash ] = await getTokenData()
+  await emit('reset:password:email', user, token)
+  await wrappedUpdate(user._id, 'token', tokenHash)
+  return user
+}
+
+export const openPasswordUpdateWindow = user => {
+  return db.update(user._id, doc => {
+    doc.token = null
+    doc.resetPassword = Date.now()
+    return doc
+  })
 }
 
 const updateIfValidToken = (token, user) => {
@@ -84,7 +80,7 @@ const emailIsValid = user => {
 }
 
 const getTokenData = () => {
-  const token = randomString(tokenLength)
+  const token = getRandomString(tokenLength)
   return pw_.hash(token)
   .then(tokenHash => [ token, tokenHash ])
 }

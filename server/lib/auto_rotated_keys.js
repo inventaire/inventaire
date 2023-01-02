@@ -12,10 +12,10 @@ import { writeFile } from 'node:fs/promises'
 import CONFIG from 'config'
 import { invert } from 'lodash-es'
 import _ from '#builders/utils'
-import { getRandomBytes } from '#lib/crypto'
-import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
-import error_ from '#lib/error/error'
 import { absolutePath } from '#lib/absolute_path'
+import { getRandomBytes } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
+import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
 
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 // If a session is started at the end-of-life of a key
@@ -51,7 +51,7 @@ const getKeysStatus = () => {
     return {
       created: new Date(timestamp).toISOString(),
       age: msToHumanAge(timestamp),
-      expireIn: msToHumanTime(timestamp + (2 * keysHalfTtl) - Date.now())
+      expireIn: msToHumanTime(timestamp + (2 * keysHalfTtl) - Date.now()),
     }
   })
 }

@@ -6,5 +6,5 @@ export default {
     description: text,
     searchable: boolean,
     position: geoPoint,
-  }
+  },
 }

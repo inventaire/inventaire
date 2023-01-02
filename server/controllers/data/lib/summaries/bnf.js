@@ -1,6 +1,6 @@
 import wdk from 'wikidata-sdk'
-import requests_ from '#lib/requests'
-import cache_ from '#lib/cache'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const { simplifySparqlResults } = wdk
@@ -20,7 +20,7 @@ export default async ({ id, refresh }) => {
       const response = await requests_.get(url, { headers, timeout })
       const simplifiedResults = simplifySparqlResults(response)
       return simplifiedResults[0]?.summary
-    }
+    },
   })
   if (text) {
     return {

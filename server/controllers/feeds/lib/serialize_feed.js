@@ -27,7 +27,7 @@ export default (feedOptions, users, items, lang) => {
     image_url: image,
     // Not always respected, we probably need to cache generated feeds anyway
     // source: http://www.therssweblog.com/?guid=20070529130637
-    ttl: oneDayInMinutes
+    ttl: oneDayInMinutes,
   })
 
   const usersIndex = _.keyBy(users, '_id')
@@ -50,7 +50,7 @@ const serializeItem = (usersIndex, lang) => item => {
     author: user.username,
     guid: item._id,
     url: item.href,
-    date: item.created
+    date: item.created,
   }
 
   if (_.isArray(user.position)) {

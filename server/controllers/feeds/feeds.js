@@ -1,33 +1,33 @@
-import error_ from '#lib/error/error'
-import headers_ from '#lib/headers'
 import { ControllerWrapper } from '#lib/controller_wrapper'
+import { error_ } from '#lib/error/error'
+import headers_ from '#lib/headers'
+import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
 import getAuthentifiedUser from './lib/get_authentified_user.js'
-import userFeedData from './lib/user_feed_data.js'
 import groupFeedData from './lib/group_feed_data.js'
 import shelfFeedData from './lib/shelf_feed_data.js'
-import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
+import userFeedData from './lib/user_feed_data.js'
 
 const sanitization = {
   user: {
-    optional: true
+    optional: true,
   },
   group: {
-    optional: true
+    optional: true,
   },
   shelf: {
-    optional: true
+    optional: true,
   },
   requester: {
-    optional: true
+    optional: true,
   },
   token: {
-    optional: true
+    optional: true,
   },
   lang: {
     optional: true,
     // Set the defaults manually after having checked req.headers
-    default: null
-  }
+    default: null,
+  },
 }
 
 const controller = async (params, req, res) => {
@@ -75,5 +75,5 @@ export default {
     access: 'public',
     sanitization,
     controller,
-  })
+  }),
 }

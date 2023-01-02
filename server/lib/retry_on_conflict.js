@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
-import error_ from '#lib/error/error'
 
 export default params => {
   let { updateFn, maxAttempts } = params

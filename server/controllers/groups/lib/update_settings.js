@@ -1,12 +1,13 @@
 import _ from '#builders/utils'
-import { attributes, validations, formatters } from '#models/group'
-import error_ from '#lib/error/error'
-import radio from '#lib/radio'
 import dbFactory from '#db/couchdb/base'
-import { acceptNullValue } from '#models/attributes/group'
-import { add as addSlug } from './slug.js'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import groupAttributes from '#models/attributes/group'
+import Group from '#models/group'
+import { addSlug } from './slug.js'
 
-const { updatable } = attributes
+const { validations, formatters } = Group
+const { acceptNullValue, updatable } = groupAttributes
 const db = dbFactory('groups')
 
 export default async (data, userId) => {
@@ -33,10 +34,10 @@ export default async (data, userId) => {
 
   await db.put(updatedDoc)
 
-  await radio.emit('group:update', notifData)
+  await emit('group:update', notifData)
 
   if (attribute === 'picture' && currentValue) {
-    await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
+    await emit('image:needs:check', { url: currentValue, context: 'update' })
   }
 
   return { hooksUpdates }
@@ -54,7 +55,7 @@ const updateSlug = async groupDoc => {
   const updatedDoc = await addSlug(groupDoc)
   return {
     updatedDoc,
-    hooksUpdates: _.pick(updatedDoc, 'slug')
+    hooksUpdates: _.pick(updatedDoc, 'slug'),
   }
 }
 
@@ -64,7 +65,7 @@ const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   actorId: userId,
   attribute,
   newValue: value,
-  previousValue: groupDoc[attribute]
+  previousValue: groupDoc[attribute],
 })
 
 const getUsersToNotify = groupDoc => {

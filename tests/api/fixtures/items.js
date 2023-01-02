@@ -1,12 +1,12 @@
 import _ from '#builders/utils'
 import { customAuthReq } from '../utils/request.js'
 import { getUser } from '../utils/utils.js'
-import fakeText from './text.js'
 import {
   createEdition,
   createEditionWithWorkAndAuthor,
   createEditionWithWorkAuthorAndSerie,
 } from './entities.js'
+import fakeText from './text.js'
 
 const getEditionUri = async (lang = 'en') => {
   const { uri } = await createEdition({ lang })
@@ -41,7 +41,7 @@ const API = {
 
   createItemWithEditionAndWork: createItemWithEntities(createEdition),
   createItemWithAuthor: createItemWithEntities(createEditionWithWorkAndAuthor),
-  createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie)
+  createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie),
 }
 
 export default API

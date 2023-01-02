@@ -1,9 +1,6 @@
 import privateAttributesUtilsFactory from '#lib/private_attributes_utils_factory'
-import { private as privateAttributes } from '#models/attributes/shelf'
+import shelfAttributes from '#models/attributes/shelf'
 
-const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)
+const { private: privateAttributes } = shelfAttributes
 
-export default {
-  omitPrivateAttributes,
-  filterPrivateAttributes,
-}
+export const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)

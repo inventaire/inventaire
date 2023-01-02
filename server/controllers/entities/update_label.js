@@ -1,4 +1,4 @@
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import { unprefixify } from './lib/prefix.js'
 import inv from './lib/update_inv_label.js'
 import wd from './lib/update_wd_label.js'
@@ -7,7 +7,7 @@ const sanitization = {
   uri: { optional: true },
   id: { optional: true },
   lang: {},
-  value: { type: 'string' }
+  value: { type: 'string' },
 }
 
 const controller = async (params, req) => {
@@ -35,7 +35,7 @@ const getPrefix = (uri, id) => {
 
 const updaters = {
   inv,
-  wd
+  wd,
 }
 
 export default { sanitization, controller }

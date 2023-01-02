@@ -1,14 +1,14 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import getWdEntity from '#data/wikidata/get_entity'
-import wdEdit from '#lib/wikidata/edit'
+import { error_ } from '#lib/error/error'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
-import wdOauth from './wikidata_oauth.js'
-import properties from './properties/properties_values_constraints.js'
+import wdEdit from '#lib/wikidata/edit'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
-import { cachedRelationProperties } from './temporarily_cache_relations.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
+import properties from './properties/properties_values_constraints.js'
+import { cachedRelationProperties } from './temporarily_cache_relations.js'
+import wdOauth from './wikidata_oauth.js'
 
 export default async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)

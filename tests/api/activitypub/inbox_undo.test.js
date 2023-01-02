@@ -1,13 +1,13 @@
 import 'should'
 import { getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
-import { wait } from '#lib/promises'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
-import { createUser } from '../fixtures/users.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
-import { signedReq, makeUrl, createRemoteActivityPubServerUser } from '../utils/activitypub.js'
+import { wait } from '#lib/promises'
 import { createHuman } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
+import { createUser } from '../fixtures/users.js'
+import { signedReq, makeUrl, createRemoteActivityPubServerUser } from '../utils/activitypub.js'
 import { getActorName } from '../utils/shelves.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
 
 describe('activitypub:inbox:Undo', () => {
   describe('users', () => {
@@ -33,7 +33,7 @@ describe('activitypub:inbox:Undo', () => {
       await signedReq({
         emitterUser: emitterUserA,
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const activities = await getFollowActivitiesByObject(username)
       const activity = activities[0]
@@ -57,7 +57,7 @@ describe('activitypub:inbox:Undo', () => {
       await signedReq({
         emitterUser,
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const activities = await getFollowActivitiesByObject(username)
       const activity = activities[0]
@@ -83,7 +83,7 @@ describe('activitypub:inbox:Undo', () => {
       await signedReq({
         emitterUser,
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const activities = await getFollowActivitiesByObject(name)
       const activity = activities[0]
@@ -108,7 +108,7 @@ describe('activitypub:inbox:Undo', () => {
         emitterUser,
         type: 'Follow',
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const activities = await getFollowActivitiesByObject(name)
       const activity = activities[0]
@@ -120,8 +120,8 @@ describe('activitypub:inbox:Undo', () => {
           id: activity.externalId,
           type: 'Follow',
           actor: emitterUser.actor,
-          object: actorUrl
-        }
+          object: actorUrl,
+        },
       })
       await wait(500)
       const activities2 = await getFollowActivitiesByObject(name)
@@ -140,7 +140,7 @@ describe('activitypub:inbox:Undo', () => {
       await signedReq({
         emitterUser,
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const activities = await getFollowActivitiesByObject(name)
       const activity = activities[0]

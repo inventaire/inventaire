@@ -6,7 +6,7 @@ export default {
     'description',
     'searchable',
     'position',
-    'open'
+    'open',
   ],
 
   usersLists: [
@@ -14,11 +14,11 @@ export default {
     'members',
     'invited',
     'declined',
-    'requested'
+    'requested',
   ],
 
   acceptNullValue: [
     'position',
-    'picture'
+    'picture',
   ],
 }

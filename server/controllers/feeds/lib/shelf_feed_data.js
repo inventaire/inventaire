@@ -1,9 +1,9 @@
-import user_ from '#controllers/user/lib/user'
-import shelves_ from '#controllers/shelves/lib/shelves'
+import { getShelfById } from '#controllers/shelves/lib/shelves'
+import { getUserById } from '#controllers/user/lib/user'
 
 export default async (shelfId, reqUserId) => {
-  const shelf = await shelves_.byId(shelfId)
-  const user = await user_.byId(shelf.owner)
+  const shelf = await getShelfById(shelfId)
+  const user = await getUserById(shelf.owner)
 
   return {
     users: [ user ],
@@ -17,7 +17,7 @@ export default async (shelfId, reqUserId) => {
       description: shelf.description,
       image: null,
       queryString: `shelf=${shelfId}`,
-      pathname: `shelves/${shelfId}`
-    }
+      pathname: `shelves/${shelfId}`,
+    },
   }
 }

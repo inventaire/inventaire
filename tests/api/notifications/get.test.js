@@ -1,6 +1,6 @@
 import 'should'
-import { getUser, getReservedUser, authReq } from '#tests/api/utils/utils'
 import { makeFriends } from '#tests/api/utils/relations'
+import { getUser, getReservedUser, authReq } from '#tests/api/utils/utils'
 
 describe('notifications:get', () => {
   it('should get user notifications', async () => {

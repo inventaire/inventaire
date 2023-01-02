@@ -1,11 +1,11 @@
 import wdk from 'wikidata-sdk'
-import { parseIsbn } from '#lib/isbn/parse'
-import requests_ from '#lib/requests'
-import { parseSameasMatches } from '#data/lib/external_ids'
-import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
+import { parseSameasMatches } from '#data/lib/external_ids'
+import { parseIsbn } from '#lib/isbn/parse'
+import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6393Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 
@@ -73,7 +73,7 @@ const formatRow = async (isbn, result) => {
     })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
-      ...claims
+      ...claims,
     }
     const iso6393Lang = edition.lang?.replace('http://lexvo.org/id/iso639-3/', '')
     if (edition.lang && wdIdByIso6393Code[iso6393Lang]) {

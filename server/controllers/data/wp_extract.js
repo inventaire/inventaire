@@ -3,7 +3,7 @@ import getArticle from '#data/wikipedia/get_article'
 const sanitization = {
   title: {},
   lang: {
-    type: 'wikimedia'
+    type: 'wikimedia',
   },
 }
 

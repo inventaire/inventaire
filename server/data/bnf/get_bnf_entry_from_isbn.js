@@ -1,13 +1,13 @@
 import wdk from 'wikidata-sdk'
-import { fixedEncodeURIComponent } from '#lib/utils/url'
-import { parseIsbn } from '#lib/isbn/parse'
-import requests_ from '#lib/requests'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { parseSameasMatches } from '#data/lib/external_ids'
-import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
-import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { formatAuthorName } from '#data/commons/format_author_name'
+import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
+import { parseSameasMatches } from '#data/lib/external_ids'
+import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { parseIsbn } from '#lib/isbn/parse'
+import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -102,12 +102,12 @@ const formatRow = async (isbn, result, rawResult) => {
   if (edition) {
     const { claims } = await parseSameasMatches({
       matches: [ edition.value, edition.matches ],
-      expectedEntityType: 'edition'
+      expectedEntityType: 'edition',
     })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
       'wdt:P577': edition.publicationDate,
-      ...claims
+      ...claims,
     }
     if (expressionLang && wdIdByIso6392Code[expressionLang]) {
       entry.edition.claims['wdt:P407'] = prefixifyWd(wdIdByIso6392Code[expressionLang])
@@ -116,35 +116,35 @@ const formatRow = async (isbn, result, rawResult) => {
   if (work.value) {
     const { uri, claims } = await parseSameasMatches({
       matches: [ work.value, work.matches ],
-      expectedEntityType: 'work'
+      expectedEntityType: 'work',
     })
     entry.work = {
       uri,
       labels: {
-        [work.labelLang]: work.label
+        [work.labelLang]: work.label,
       },
-      claims
+      claims,
     }
     if (work.value.includes('temp-work')) entry.work.tempBnfId = work.value
   }
   if (author.value) {
     const { uri, claims } = await parseSameasMatches({
       matches: [ author.value, author.matches ],
-      expectedEntityType: 'human'
+      expectedEntityType: 'human',
     })
     entry.author = {
       uri,
-      claims
+      claims,
     }
     if (author.label) {
       entry.author.labels = {
-        fr: formatAuthorName(author.label)
+        fr: formatAuthorName(author.label),
       }
     }
   }
   if (publisherLabel) {
     entry.publisher = {
-      labels: { fr: publisherLabel }
+      labels: { fr: publisherLabel },
     }
   }
   return entry

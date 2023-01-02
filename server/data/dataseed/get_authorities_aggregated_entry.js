@@ -1,18 +1,18 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { resolveEntrySeedsByExternalIds } from '#controllers/entities/lib/resolver/resolve_by_external_ids'
-import { isNotEmpty, objLength } from '#lib/utils/base'
-
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
-// bnb: require('data/bnb/get_bnb_entry_from_isbn'),
+// import bnb from import('data/bnb/get_bnb_entry_from_isbn')
 import bne from '#data/bne/get_bne_entry_from_isbn'
 import bnf from '#data/bnf/get_bnf_entry_from_isbn'
 import wikidata from '#data/wikidata/get_wikidata_entry_from_isbn'
+import { isNotEmpty, objLength } from '#lib/utils/base'
 
 const { offline } = CONFIG
 
 const authorities = {
+  // bnb,
   bne,
   bnf,
   wikidata,

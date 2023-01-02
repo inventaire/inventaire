@@ -3,7 +3,7 @@
 
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import * as regex_ from '#lib/regex'
 
 const { local: localStorage } = CONFIG.mediaStorage
@@ -48,11 +48,11 @@ export default {
         res.status(err.statusCode).json(err)
       }
     })
-  }
+  },
 }
 
 const options = {
   headers: {
-    'content-type': 'image/jpeg'
-  }
+    'content-type': 'image/jpeg',
+  },
 }

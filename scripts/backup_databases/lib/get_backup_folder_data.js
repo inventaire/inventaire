@@ -3,9 +3,9 @@ import path from 'node:path'
 import CONFIG from 'config'
 import _ from '#builders/utils'
 
-const day = _.simpleDay()
-const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
-const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
+export const day = _.simpleDay()
+export const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
+export const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
 
 try {
   fs.mkdirSync(backupFolder, { recursive: true })
@@ -14,5 +14,3 @@ try {
 }
 
 _.info(backupFolder, 'backup folder')
-
-export default { backupFolder, backupGeneralFolder, day }

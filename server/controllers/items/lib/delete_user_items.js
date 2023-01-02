@@ -1,6 +1,6 @@
-import items_ from '#controllers/items/lib/items'
+import { getItemsByOwner, itemsBulkDelete } from '#controllers/items/lib/items'
 
 export default userId => {
-  return items_.byOwner(userId)
-  .then(items_.bulkDelete)
+  return getItemsByOwner(userId)
+  .then(itemsBulkDelete)
 }

@@ -1,14 +1,14 @@
 import clientsDbFactory from '#db/couchdb/base'
-import randomString from '#lib/utils/random_string'
 import { sha1, passwords, getRandomBytes } from '#lib/crypto'
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
+import { getRandomString } from '#lib/utils/random_string'
 import { buildUrl, parseQuery } from '#lib/utils/url'
 import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request.js'
 import { getUser } from './utils.js'
 
 const clientsDb = clientsDbFactory('oauth_clients')
 
-const getClient = async (params = {}) => {
+export async function getClient (params = {}) {
   await waitForTestServer
   params.scope = params.scope || [ 'username' ]
   const { scope } = params
@@ -41,15 +41,15 @@ const getClient = async (params = {}) => {
   })
 }
 
-const getClientWithAuthorization = async (params = {}) => {
+export async function getClientWithAuthorization (params = {}) {
   const {
     scope = [ 'username' ],
-    user = getUser()
+    user = getUser(),
   } = params
   const client = await getClient(params)
   const url = buildUrl('/api/oauth/authorize', {
     client_id: client._id,
-    state: randomString(20),
+    state: getRandomString(20),
     response_type: 'code',
     scope: scope.join('+'),
   })
@@ -58,7 +58,7 @@ const getClientWithAuthorization = async (params = {}) => {
   return Object.assign(authorizationData, client)
 }
 
-const getToken = async ({ user, scope }) => {
+export async function getToken ({ user, scope }) {
   const { _id: clientId, testsPseudoSecret, code, redirectUris } = await getClientWithAuthorization({ user, scope })
   const { body } = await postUrlencoded('/api/oauth/token', {
     client_id: clientId,
@@ -69,5 +69,3 @@ const getToken = async ({ user, scope }) => {
   })
   return body
 }
-
-export default { getClient, getClientWithAuthorization, getToken }

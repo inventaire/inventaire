@@ -1,5 +1,10 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
+import { transactionUpdate } from '#lib/emails/debounce_emails'
+import { initDebouncedEmailsCrawler } from '#lib/emails/debounced_emails_crawler'
+import sendEmail from '#lib/emails/send_email'
+import { radio } from '#lib/radio'
+import activitySummary from './activity_summary/activity_summary.js'
 
 const { initDelay, disabled } = CONFIG.mailer
 
@@ -20,11 +25,6 @@ const initMailer = () => {
 }
 
 const initMailerEventListeners = () => {
-  const radio = require('lib/radio')
-  const sendEmail = require('./send_email')
-  const debounceEmails = require('./debounce_emails')
-  const initDebouncedEmailsCrawler = require('./debounced_emails_crawler')
-
   radio.on('validation:email', sendEmail.validationEmail)
   radio.on('reset:password:email', sendEmail.resetPassword)
   radio.on('notify:friend:request:accepted', sendEmail.friendAcceptedRequest)
@@ -41,9 +41,9 @@ const initMailerEventListeners = () => {
 
   initDebouncedEmailsCrawler()
 
-  radio.on('transaction:request', debounceEmails.transactionUpdate)
-  radio.on('transaction:update', debounceEmails.transactionUpdate)
-  radio.on('transaction:message', debounceEmails.transactionUpdate)
+  radio.on('transaction:request', transactionUpdate)
+  radio.on('transaction:update', transactionUpdate)
+  radio.on('transaction:message', transactionUpdate)
   _.info('mailer events listeners ready!')
 }
 
@@ -52,7 +52,6 @@ const initActivitySummary = () => {
     _.warn('activity summary disabled')
   } else {
     _.info('activity summary enabled')
-    const activitySummary = require('./activity_summary/activity_summary')
     setTimeout(activitySummary, initDelay)
   }
 }

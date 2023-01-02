@@ -1,14 +1,14 @@
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { signRequest, verifySignature } from '#controllers/activitypub/lib/security'
 import { getSharedKeyPair } from '#controllers/activitypub/lib/shared_key_pair'
 import { getRandomBytes } from '#lib/crypto'
-import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { jsonBodyParser } from '#server/middlewares/content'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { createUsername } from '../fixtures/users.js'
 import { rawRequest } from '../utils/request.js'
 
-// in a separate file since createUser has a circular dependency in api/utils/request.js
-const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
+// In a separate file since createUser has a circular dependency in api/utils/request.js
+export async function signedReq ({ method, object, url, body, emitterUser, type }) {
   const { id, username, keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
   if (!body) {
     body = createActivity({
@@ -30,7 +30,7 @@ const signedReq = async ({ method, object, url, body, emitterUser, type }) => {
   })
 }
 
-const createActivity = (params = {}) => {
+export const createActivity = (params = {}) => {
   const { object, actor, origin, type = 'Follow' } = params
   let { externalId } = params
   externalId = externalId || `${origin}/${getRandomBytes(20, 'hex')}`
@@ -39,11 +39,11 @@ const createActivity = (params = {}) => {
     id: externalId,
     type,
     actor,
-    object
+    object,
   }
 }
 
-const createRemoteActivityPubServerUser = async () => {
+export const createRemoteActivityPubServerUser = async () => {
   const { publicKey, privateKey } = await getSharedKeyPair()
   const { host, origin } = await getActivityPubServer()
   const username = createUsername()
@@ -55,7 +55,7 @@ const createRemoteActivityPubServerUser = async () => {
     publicKey: {
       id: `${actorUrl}#main-key`,
       owner: actorUrl,
-      publicKeyPem: publicKey
+      publicKeyPem: publicKey,
     },
     privateKey,
     inbox: `${origin}${inboxEndpoint}?username=${username}`,
@@ -66,7 +66,7 @@ const createRemoteActivityPubServerUser = async () => {
 
 const actorEndpoint = '/some_actor_endpoint'
 
-const getSomeRemoteServerUser = async emitterUser => {
+export async function getSomeRemoteServerUser (emitterUser) {
   const { origin } = await getActivityPubServer()
   emitterUser = emitterUser || (await createRemoteActivityPubServerUser())
   const { id, username, privateKey } = emitterUser
@@ -119,12 +119,4 @@ const startActivityPubServer = async () => {
   })
 
   return { port, host, origin }
-}
-
-export default {
-  getSomeRemoteServerUser,
-  makeUrl,
-  createActivity,
-  createRemoteActivityPubServerUser,
-  signedReq
 }

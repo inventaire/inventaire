@@ -1,27 +1,26 @@
-import _ from '#builders/utils'
-import shelves_ from '#controllers/shelves/lib/shelves'
+import { keyBy } from 'lodash-es'
+import { addItemsToShelves, removeItemsFromShelves } from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   id: {},
-  items: {}
+  items: {},
 }
 
-const itemsActions = action => async ({ id, items, reqUserId }) => {
-  const shelves = await shelves_[action]([ id ], items, reqUserId)
+const itemsActions = actionFn => async ({ id, items, reqUserId }) => {
+  const shelves = await actionFn([ id ], items, reqUserId)
   return {
-    shelves: _.keyBy(shelves, '_id')
+    shelves: keyBy(shelves, '_id'),
   }
 }
 
-export default {
-  addItems: {
-    sanitization,
-    controller: itemsActions('addItems'),
-    track: [ 'shelf', 'addItems' ]
-  },
-  removeItems: {
-    sanitization,
-    controller: itemsActions('removeItems'),
-    track: [ 'shelf', 'removeItems' ]
-  },
+export const addItems = {
+  sanitization,
+  controller: itemsActions(addItemsToShelves),
+  track: [ 'shelf', 'addItems' ],
+}
+
+export const removeItems = {
+  sanitization,
+  controller: itemsActions(removeItemsFromShelves),
+  track: [ 'shelf', 'removeItems' ],
 }

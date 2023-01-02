@@ -13,7 +13,7 @@ describe('items:get-by-entities', () => {
   it('should get items by entities uris', async () => {
     const items = await Promise.all([
       createItemWithEditionAndWork(),
-      createItemWithEditionAndWork()
+      createItemWithEditionAndWork(),
     ])
     const uris = _.uniq(_.map(items, 'entity'))
     const res = await publicReq('get', `/api/items?action=by-entities&uris=${uris.join('|')}`)

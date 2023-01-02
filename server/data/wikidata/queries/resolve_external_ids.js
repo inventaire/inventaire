@@ -1,6 +1,6 @@
 export default {
   parameters: [ 'externalIds' ],
-  query: params => buildQuery(params.externalIds)
+  query: params => buildQuery(params.externalIds),
 }
 
 const buildQuery = externalIds => {

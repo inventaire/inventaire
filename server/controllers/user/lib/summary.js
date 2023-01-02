@@ -1,7 +1,7 @@
 import CONFIG from 'config'
-import { BasicUpdater } from '#lib/doc_updates'
-import couch_ from '#lib/couch'
 import dbFactory from '#db/couchdb/base'
+import { firstDoc } from '#lib/couch'
+import { BasicUpdater } from '#lib/doc_updates'
 
 const { newsKey } = CONFIG.activitySummary
 const db = dbFactory('users')
@@ -12,22 +12,20 @@ const waitingForSummary = limit => {
     include_docs: true,
     limit,
     startkey: 0,
-    endkey: Date.now()
+    endkey: Date.now(),
   })
 }
 
-export default {
-  findOneWaitingForSummary: () => {
-    return waitingForSummary(1)
-    .then(couch_.firstDoc)
-  },
+export const findOneWaitingForSummary = () => {
+  return waitingForSummary(1)
+  .then(firstDoc)
+}
 
-  justReceivedActivitySummary: id => {
-    const updater = BasicUpdater({
-      lastSummary: Date.now(),
-      lastNews: newsKey
-    })
+export const justReceivedActivitySummary = id => {
+  const updater = BasicUpdater({
+    lastSummary: Date.now(),
+    lastNews: newsKey,
+  })
 
-    return db.update(id, updater)
-  }
+  return db.update(id, updater)
 }

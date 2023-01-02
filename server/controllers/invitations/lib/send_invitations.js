@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
+import { emit } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
 import Invited from '#models/invited'
-import radio from '#lib/radio'
 import invitations_ from './invitations.js'
 
 export default (user, group, emails, message) => {
@@ -28,7 +28,7 @@ export default (user, group, emails, message) => {
       // Create an invitation doc for unknown emails
       invitations_.createUnknownInvited(userId, groupId, unknownEmails),
       // Add the invitation to the existing doc for known emails
-      invitations_.addInviter(userId, groupId, canBeInvited)
+      invitations_.addInviter(userId, groupId, canBeInvited),
     ])
     .then(() => {
       const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)
@@ -42,9 +42,9 @@ export default (user, group, emails, message) => {
 
 const triggerInvitation = async (user, group, emails, message) => {
   if (group) {
-    await radio.emit('send:group:email:invitations', user, group, emails, message)
+    await emit('send:group:email:invitations', user, group, emails, message)
   } else {
-    await radio.emit('send:email:invitations', user, emails, message)
+    await emit('send:email:invitations', user, emails, message)
   }
 }
 

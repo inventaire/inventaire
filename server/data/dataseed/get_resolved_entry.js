@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import { parseIsbn } from '#lib/isbn/parse'
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
-import temporarilyMemoize from '#lib/temporarily_memoize'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
-import { getByIsbns as getSeedsByIsbns } from './dataseed.js'
+import { parseIsbn } from '#lib/isbn/parse'
+import temporarilyMemoize from '#lib/temporarily_memoize'
+import { getSeedsByIsbns } from './dataseed.js'
 
 const { _id: seedUserId } = hardCodedUsers.seed
 
@@ -15,16 +15,16 @@ const resolverParams = {
   update: true,
   strict: true,
   enrich: true,
-  reqUserId: seedUserId
+  reqUserId: seedUserId,
 }
 
 let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedEntry
-const requireCircularDependencies = () => {
-  ({ resolveUpdateAndCreate } = require('controllers/entities/lib/resolver/resolve_update_and_create'))
-  getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-  getAuthoritiesAggregatedEntry = require('./get_authorities_aggregated_entry')
+const importCircularDependencies = async () => {
+  ({ resolveUpdateAndCreate } = await import('#controllers/entities/lib/resolver/resolve_update_and_create'))
+  getEntityByUri = await import('#controllers/entities/lib/get_entity_by_uri')
+  getAuthoritiesAggregatedEntry = await import('./get_authorities_aggregated_entry.js')
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 const getResolvedEntry = async isbn => {
   try {
@@ -70,18 +70,18 @@ const buildEntry = async seed => {
     edition: {
       isbn,
       claims: {
-        'wdt:P1476': title
+        'wdt:P1476': title,
       },
       image,
     },
     works: [
       {
-        labels: { [lang]: title }
+        labels: { [lang]: title },
       },
     ],
     authors: authors.map(authorName => ({
-      labels: { [lang]: authorName }
-    }))
+      labels: { [lang]: authorName },
+    })),
   }
   if (publicationDate) entry.edition.claims['wdt:P577'] = publicationDate
   if (publisher) {

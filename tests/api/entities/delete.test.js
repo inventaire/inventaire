@@ -1,8 +1,5 @@
 import should from 'should'
 import { wait } from '#lib/promises'
-import { authReq, shouldNotBeCalled } from '../utils/utils.js'
-import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
-import { getItemById } from '../utils/items.js'
 import {
   createHuman,
   createWork,
@@ -10,6 +7,9 @@ import {
   createEdition,
   createEditionWithIsbn,
 } from '../fixtures/entities.js'
+import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
+import { getItemById } from '../utils/items.js'
+import { authReq, shouldNotBeCalled } from '../utils/utils.js'
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {
@@ -49,7 +49,7 @@ describe('entities:delete', () => {
   it('should remove several entities', async () => {
     const [ entityA, entityB ] = await Promise.all([
       createHuman(),
-      createWork()
+      createWork(),
     ])
     const uris = [ entityA.uri, entityB.uri ]
     await deleteByUris(uris)
@@ -71,7 +71,7 @@ describe('entities:delete', () => {
     const author = await createHuman()
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(author),
-      createWorkWithAuthor(author)
+      createWorkWithAuthor(author),
     ])
     const property = 'wdt:P50'
     const authorUri = workA.claims[property][0]

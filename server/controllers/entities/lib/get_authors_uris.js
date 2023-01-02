@@ -8,7 +8,7 @@ const authorProperties = [
   // illustrator
   'wdt:P110',
   // colorist
-  'wdt:P6338'
+  'wdt:P6338',
 ]
 
 export default work => {

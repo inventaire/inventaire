@@ -1,7 +1,7 @@
 import { revertFromPatchId } from './lib/revert_edit.js'
 
 const sanitization = {
-  patch: {}
+  patch: {},
 }
 
 const controller = async ({ patchId, reqUserId }) => {

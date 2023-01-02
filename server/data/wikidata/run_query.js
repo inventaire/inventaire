@@ -1,9 +1,9 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import radio from '#lib/radio'
-import cache_ from '#lib/cache'
-import error_ from '#lib/error/error'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { radio } from '#lib/radio'
 import makeSparqlRequest from './make_sparql_request.js'
 import { queries, queriesPerProperty } from './queries/queries.js'
 
@@ -57,7 +57,7 @@ const buildKey = (queryName, params) => {
 
 const parametersTests = {
   qid: wdk.isItemId,
-  pid: wdk.isPropertyId
+  pid: wdk.isPropertyId,
 }
 
 const runQuery = (params, key) => {

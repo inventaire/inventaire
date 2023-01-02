@@ -1,13 +1,14 @@
-import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
-import couch_ from '#lib/couch'
-import User from '#models/user'
-import dbFactory from '#db/couchdb/base'
+import { keyBy, without } from 'lodash-es'
 import { getNetworkIds } from '#controllers/user/lib/relations_status'
+import dbFactory from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
-import searchUsersByPositionFactory from '#lib/search_by_position'
+import { firstDoc } from '#lib/couch'
+import { error_ } from '#lib/error/error'
 import searchUsersByDistanceFactory from '#lib/search_by_distance'
+import searchUsersByPositionFactory from '#lib/search_by_position'
+import { assert_ } from '#lib/utils/assert_types'
+import { toLowerCase } from '#lib/utils/base'
+import User from '#models/user'
 import { omitPrivateData } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
@@ -15,151 +16,125 @@ const db = dbFactory('users')
 const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
 const searchUsersByDistance = searchUsersByDistanceFactory('users')
 
-const user_ = {
-  byId: db.get,
-  byIds: db.byIds,
-  byEmail: byEmail.bind(null, db),
-  byEmails: byEmails.bind(null, db),
-  findOneByEmail: findOneByEmail.bind(null, db),
+export const getUserById = db.get
+export const getUsersByIds = db.byIds
+export const getUserByEmail = byEmail.bind(null, db)
+export const getUsersByEmails = byEmails.bind(null, db)
+export const findUserByEmail = findOneByEmail.bind(null, db)
 
-  getUsersByEmails: (emails, reqUserId) => {
-    assert_.array(emails)
-    // Keeping the email is required to map the users returned
-    // with the initial input
-    return user_.getUsersAuthorizedData(user_.byEmails(emails), reqUserId, 'email')
-  },
+export const getUsersAuthorizedDataByEmails = (emails, reqUserId) => {
+  assert_.array(emails)
+  // Keeping the email is required to map the users returned
+  // with the initial input
+  return getUsersAuthorizedData(getUsersByEmails(emails), reqUserId, 'email')
+}
 
-  byUsername: username => db.viewByKey('byUsername', username.toLowerCase()),
-  byUsernames: usernames => {
-    return db.viewByKeys('byUsername', usernames.map(_.toLowerCase))
-  },
+export const getUserByUsername = username => db.viewByKey('byUsername', username.toLowerCase())
+export const getUsersByUsernames = usernames => {
+  return db.viewByKeys('byUsername', usernames.map(toLowerCase))
+}
 
-  findOneByUsername: username => {
-    return user_.byUsername(username)
-    .then(couch_.firstDoc)
-    .then(user => {
-      if (user) return user
-      else throw error_.notFound({ username })
-    })
-  },
+export const findUserByUsername = username => {
+  return getUserByUsername(username)
+  .then(firstDoc)
+  .then(user => {
+    if (user) return user
+    else throw error_.notFound({ username })
+  })
+}
 
-  findOneByUsernameOrEmail: str => {
-    if (User.validations.email(str)) {
-      return user_.findOneByEmail(str)
-    } else {
-      return user_.findOneByUsername(str)
-    }
-  },
-
-  getUserFromUsername: (username, reqUserId) => {
-    assert_.string(username)
-    return user_.getUsersAuthorizedData(user_.byUsername(username), reqUserId)
-    .then(usersDocs => {
-      const userDoc = usersDocs[0]
-      if (userDoc) return userDoc
-      else throw error_.notFound({ username })
-    })
-  },
-
-  getUserById: (id, reqUserId) => {
-    assert_.string(id)
-    return user_.getUsersAuthorizedData(user_.byIds([ id ]), reqUserId)
-    .then(users => {
-      const user = users[0]
-      if (user) return user
-      else throw error_.notFound({ userId: id })
-    })
-  },
-
-  getUsersByIds: async (ids, reqUserId) => {
-    assert_.array(ids)
-    if (ids.length === 0) return []
-    return user_.getUsersAuthorizedData(user_.byIds(ids), reqUserId)
-  },
-
-  getUsersAuthorizedData: async (usersDocsPromise, reqUserId, extraAttribute) => {
-    const [ usersDocs, networkIds ] = await Promise.all([
-      usersDocsPromise,
-      getNetworkIds(reqUserId)
-    ])
-
-    return usersDocs
-    .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
-  },
-
-  getUsersIndexByIds: (ids, reqUserId) => {
-    return user_.getUsersByIds(ids, reqUserId)
-    .then(_.KeyBy('_id'))
-  },
-
-  getUsersIndexByUsernames: async (reqUserId, usernames) => {
-    const users = await user_.getUsersAuthorizedData(user_.byUsernames(usernames), reqUserId)
-    const usersByLowercasedUsername = {}
-    const lowercasedUsernames = usernames.map(username => username.toLowerCase())
-    for (const user of users) {
-      if (lowercasedUsernames.includes(user.username.toLowerCase())) {
-        usersByLowercasedUsername[user.username.toLowerCase()] = user
-      } else if (lowercasedUsernames.includes(user.stableUsername.toLowerCase())) {
-        usersByLowercasedUsername[user.stableUsername.toLowerCase()] = user
-      }
-    }
-    return usersByLowercasedUsername
-  },
-
-  incrementUndeliveredMailCounter: email => {
-    return user_.findOneByEmail(email)
-    .then(doc => {
-      const { _id } = doc
-      return db.update(_id, doc => {
-        if (doc.undeliveredEmail == null) doc.undeliveredEmail = 0
-        doc.undeliveredEmail += 1
-        return doc
-      })
-    })
-  },
-
-  addRole: (userId, role) => db.update(userId, User.addRole(role)),
-
-  removeRole: (userId, role) => db.update(userId, User.removeRole(role)),
-
-  setOauthTokens: (userId, provider, data) => {
-    return db.update(userId, User.setOauthTokens(provider, data))
-  },
-
-  setStableUsername: async userData => {
-    const { _id: userId, username, stableUsername } = userData
-    if (stableUsername == null) {
-      await db.update(userId, User.setStableUsername)
-      userData.stableUsername = username
-    }
-    return userData
-  },
-
-  nearby: async (userId, meterRange, strict) => {
-    const { position } = await user_.byId(userId)
-    if (position == null) {
-      throw error_.new('user has no position set', 400, userId)
-    }
-    const usersIds = await findNearby(position, meterRange, null, strict)
-    return _.without(usersIds, userId)
-  },
-
-  byPosition: searchUsersByPosition,
-
-  imageIsUsed: async imageHash => {
-    assert_.string(imageHash)
-    const { rows } = await db.view('users', 'byPicture', { key: imageHash })
-    return rows.length > 0
-  },
-
-  // View model serialization for emails and rss feeds templates
-  serializeData: user => {
-    user.picture = user.picture || defaultAvatar
-    return user
+export const findUserByUsernameOrEmail = str => {
+  if (User.validations.email(str)) {
+    return findUserByEmail(str)
+  } else {
+    return findUserByUsername(str)
   }
 }
 
-export default user_
+export const getUsersAuthorizedDataByIds = async (ids, reqUserId) => {
+  assert_.array(ids)
+  if (ids.length === 0) return []
+  return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
+}
+
+export const getUsersAuthorizedData = async (usersDocsPromise, reqUserId, extraAttribute) => {
+  const [ usersDocs, networkIds ] = await Promise.all([
+    usersDocsPromise,
+    getNetworkIds(reqUserId),
+  ])
+
+  return usersDocs
+  .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
+}
+
+export const getUsersIndexedByIds = async (ids, reqUserId) => {
+  const users = await getUsersAuthorizedDataByIds(ids, reqUserId)
+  return keyBy(users, '_id')
+}
+
+export const getUsersIndexByUsernames = async (reqUserId, usernames) => {
+  const users = await getUsersAuthorizedData(getUsersByUsernames(usernames), reqUserId)
+  const usersByLowercasedUsername = {}
+  const lowercasedUsernames = usernames.map(username => username.toLowerCase())
+  for (const user of users) {
+    if (lowercasedUsernames.includes(user.username.toLowerCase())) {
+      usersByLowercasedUsername[user.username.toLowerCase()] = user
+    } else if (lowercasedUsernames.includes(user.stableUsername.toLowerCase())) {
+      usersByLowercasedUsername[user.stableUsername.toLowerCase()] = user
+    }
+  }
+  return usersByLowercasedUsername
+}
+
+export const incrementUndeliveredMailCounter = async email => {
+  const doc = await findUserByEmail(email)
+  const { _id } = doc
+  return db.update(_id, doc => {
+    if (doc.undeliveredEmail == null) doc.undeliveredEmail = 0
+    doc.undeliveredEmail += 1
+    return doc
+  })
+}
+
+export const addUserRole = (userId, role) => db.update(userId, User.addRole(role))
+
+export const removeUserRole = (userId, role) => db.update(userId, User.removeRole(role))
+
+export const setUserOauthTokens = (userId, provider, data) => {
+  return db.update(userId, User.setOauthTokens(provider, data))
+}
+
+export const setUserStableUsername = async userData => {
+  const { _id: userId, username, stableUsername } = userData
+  if (stableUsername == null) {
+    await db.update(userId, User.setStableUsername)
+    userData.stableUsername = username
+  }
+  return userData
+}
+
+export const getUsersNearby = async (userId, meterRange, strict) => {
+  const { position } = await getUserById(userId)
+  if (position == null) {
+    throw error_.new('user has no position set', 400, userId)
+  }
+  const usersIds = await findNearby(position, meterRange, null, strict)
+  return without(usersIds, userId)
+}
+
+export const getUserByPosition = searchUsersByPosition
+
+export const imageIsUsed = async imageHash => {
+  assert_.string(imageHash)
+  const { rows } = await db.view('users', 'byPicture', { key: imageHash })
+  return rows.length > 0
+}
+
+// View model serialization for emails and rss feeds templates
+export const serializeUserData = user => {
+  user.picture = user.picture || defaultAvatar
+  return user
+}
 
 const findNearby = async (latLng, meterRange, iterations = 0, strict = false) => {
   const usersIds = await searchUsersByDistance(latLng, meterRange)

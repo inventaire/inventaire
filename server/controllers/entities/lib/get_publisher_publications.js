@@ -1,22 +1,22 @@
-import runWdQuery from '#data/wikidata/run_query'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import entities_ from './entities.js'
+import runWdQuery from '#data/wikidata/run_query'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
 export default async ({ uri, refresh, dry }) => {
   const [ wdCollections, invPublications ] = await Promise.all([
     getWdPublisherCollections(uri, refresh, dry),
-    getInvPublisherCollections(uri)
+    getInvPublisherCollections(uri),
   ])
 
   return {
     collections: wdCollections.concat(invPublications.collections),
-    editions: invPublications.editions
+    editions: invPublications.editions,
   }
 }
 
 const getInvPublisherCollections = async uri => {
-  const docs = await entities_.byClaim('wdt:P123', uri, true, true)
+  const docs = await getEntitiesByClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []
 
@@ -27,7 +27,7 @@ const getInvPublisherCollections = async uri => {
 
   return {
     collections: collections.sort(byPublicationDate).map(format),
-    editions: editions.sort(byPublicationDate).map(format)
+    editions: editions.sort(byPublicationDate).map(format),
   }
 }
 
@@ -35,7 +35,7 @@ const byPublicationDate = (a, b) => getPublicationDate(a) - getPublicationDate(b
 
 const format = doc => ({
   uri: getInvEntityCanonicalUri(doc),
-  collection: doc.claims['wdt:P195'] && doc.claims['wdt:P195'][0]
+  collection: doc.claims['wdt:P195'] && doc.claims['wdt:P195'][0],
 })
 
 const isEdition = publication => publication.claims['wdt:P31'][0] === 'wd:Q3331189'

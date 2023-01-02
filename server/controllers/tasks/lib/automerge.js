@@ -1,14 +1,14 @@
 import _ from '#builders/utils'
-import { Wait } from '#lib/promises'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { Wait } from '#lib/promises'
 import automergeAuthorWorks from './automerge_author_works.js'
 
 const { _id: reconcilerUserId } = hardCodedUsers.reconciler
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough
-const automerge = (suspectUri, suggestion) => {
+export const automerge = (suspectUri, suggestion) => {
   const { uri: suggestionUri } = suggestion
   if (!hasConvincingOccurrences(suggestion.occurrences)) {
     return [ suggestion ]
@@ -24,7 +24,7 @@ const automerge = (suspectUri, suggestion) => {
   .then(() => []) // merged suspect
 }
 
-const hasConvincingOccurrences = suggestionOccurrences => {
+export const hasConvincingOccurrences = suggestionOccurrences => {
   const hasOccurencesInStructuredDataSources = _.some(_.map(suggestionOccurrences, 'structuredDataSource'))
   if (hasOccurencesInStructuredDataSources) return true
 
@@ -34,5 +34,3 @@ const hasConvincingOccurrences = suggestionOccurrences => {
 }
 
 const isLongTitle = title => title.length > longTitleLimit
-
-export default { automerge, hasConvincingOccurrences }

@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import validations from '#models/validations/common'
 import { BasicUpdater } from '#lib/doc_updates'
+import validations from '#models/validations/common'
 
 const create = (inviterId, groupId) => email => {
   validations.pass('email', email)
@@ -10,7 +10,7 @@ const create = (inviterId, groupId) => email => {
 const baseDoc = email => ({
   type: 'invited',
   email,
-  inviters: {}
+  inviters: {},
 })
 
 const addInviter = (inviterId, groupId, doc) => {

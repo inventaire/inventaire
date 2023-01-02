@@ -9,5 +9,5 @@ attributes.updatable = [
 ]
 
 attributes.validAtCreation = attributes.updatable.concat([
-  'creator'
+  'creator',
 ])

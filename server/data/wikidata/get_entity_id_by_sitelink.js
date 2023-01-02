@@ -1,5 +1,7 @@
-import { getEntitiesFromSitelinks, isItemId } from 'wikidata-sdk'
-import requests_ from '#lib/requests'
+import wdk from 'wikidata-sdk'
+import { requests_ } from '#lib/requests'
+
+const { getEntitiesFromSitelinks, isItemId } = wdk
 
 export default async ({ site, title }) => {
   const url = getEntitiesFromSitelinks({ sites: site, titles: title, props: 'info' })

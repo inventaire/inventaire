@@ -8,5 +8,5 @@ const getQuery = bneId => `SELECT ?work ?title WHERE {
 }`
 
 export default fetchExternalAuthorWorksTitles('bne', endpoint, getQuery, {
-  ignoreCertificateErrors: true
+  ignoreCertificateErrors: true,
 })

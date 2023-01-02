@@ -1,7 +1,7 @@
 import 'should'
-import randomString from '#lib/utils/random_string'
-import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getRandomString } from '#lib/utils/random_string'
 import { generateIsbn13 } from '../fixtures/entities.js'
+import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=isbn'
 
@@ -15,7 +15,7 @@ describe('data:isbn', () => {
   })
 
   it('should reject requests with invalid isbn', async () => {
-    await publicReq('get', `${endpoint}&isbn=${randomString(10)}`)
+    await publicReq('get', `${endpoint}&isbn=${getRandomString(10)}`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid isbn')

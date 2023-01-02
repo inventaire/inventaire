@@ -1,9 +1,9 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit'
 import _ from '#builders/utils'
-import isbn_ from '#lib/isbn/isbn'
+import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { requireJson } from '#lib/utils/json'
-import { customAuthReq, authReq, getUser } from '../utils/utils.js'
 import { getByUri, addClaim } from '../utils/entities.js'
+import { customAuthReq, authReq, getUser } from '../utils/utils.js'
 import fakeText, { humanName, randomWords } from './text.js'
 
 const wdIdByWmLanguageCode = requireJson('wikidata-lang/mappings/wd_id_by_wm_code.json')
@@ -34,8 +34,8 @@ const API = {
     canHaveLabels: false,
     defaultClaims: {
       'wdt:P123': [ 'wd:Q1799264' ],
-      'wdt:P1476': [ randomWords(4) ]
-    }
+      'wdt:P1476': [ randomWords(4) ],
+    },
   }),
 
   randomLabel: randomWords,
@@ -74,7 +74,7 @@ const API = {
       'wdt:P31': [ 'wd:Q3331189' ],
       'wdt:P629': [ work.uri ],
       'wdt:P212': [ isbn13h ],
-      'wdt:P1476': [ API.randomLabel() ]
+      'wdt:P1476': [ API.randomLabel() ],
     }
     if (publisher) claims['wdt:P123'] = [ publisher ]
     if (publicationDate !== null) claims['wdt:P577'] = [ publicationDate || '2020' ]
@@ -97,8 +97,8 @@ const API = {
       labels: { en: label },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': [ human.uri ]
-      }
+        'wdt:P50': [ human.uri ],
+      },
     })
   },
 
@@ -165,18 +165,18 @@ const API = {
     const isbnWithoutChecksum = `978${_.sampleSize('0123456789'.split(''), 9).join('')}`
     const checksum = calculateCheckDigit(isbnWithoutChecksum)
     const isbn = `${isbnWithoutChecksum}${checksum}`
-    if (isbn_.isValidIsbn(isbn)) return isbn
+    if (isValidIsbn(isbn)) return isbn
     return API.generateIsbn13()
   },
 
-  generateIsbn13h: () => isbn_.toIsbn13h(API.generateIsbn13()),
+  generateIsbn13h: () => toIsbn13h(API.generateIsbn13()),
 
   sameFirstNameLabel: label => {
     const newLastName = fakeText.firstName()
     const labelNames = label.split(' ')
     labelNames[1] = newLastName
     return labelNames.join(' ')
-  }
+  },
 }
 
 export default API
@@ -203,5 +203,5 @@ API.addTranslator = addEntityClaim('createHuman', 'wdt:P655')
 const openLibraryTypeLetters = {
   edition: 'M',
   work: 'W',
-  human: 'A'
+  human: 'A',
 }

@@ -1,4 +1,4 @@
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
 
 export default ({ fn, ttlAfterFunctionCallReturned }) => {
   assert_.function(fn)

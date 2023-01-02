@@ -1,11 +1,11 @@
 import crypto from 'node:crypto'
 import { promisify } from 'node:util'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import pw from './password_hashing.js'
 
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
-const passwords = {
+export const passwords = {
   hash: async password => {
     if (password == null) throw error_.new('missing password', 400)
     return pw.hash(password)
@@ -21,16 +21,16 @@ const passwords = {
     if (password == null) throw error_.new('missing password', 400)
 
     return pw.verify(hash, password)
-  }
+  },
 }
 
-const createHexHash = algo => input => {
+export const createHexHash = algo => input => {
   return crypto.createHash(algo)
   .update(input)
   .digest('hex')
 }
 
-const createHexHashFromStream = algo => stream => new Promise((resolve, reject) => {
+export const createHexHashFromStream = algo => stream => new Promise((resolve, reject) => {
   const sum = crypto.createHash(algo)
   return stream
   .on('data', sum.update.bind(sum))
@@ -38,39 +38,29 @@ const createHexHashFromStream = algo => stream => new Promise((resolve, reject) 
   .on('error', reject)
 })
 
-const sha1 = createHexHash('sha1')
-const md5 = createHexHash('md5')
-const sha1FromStream = createHexHashFromStream('sha1')
+export const sha1 = createHexHash('sha1')
+export const md5 = createHexHash('md5')
+export const sha1FromStream = createHexHashFromStream('sha1')
 
-const getSha256Base64Digest = input => {
+export const getSha256Base64Digest = input => {
   return crypto.createHash('sha256')
   .update(input)
   .digest('base64')
 }
 
-const getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
+export const getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
 
-const generateRsaKeyPair = async () => {
+export const generateRsaKeyPair = async () => {
   // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
   return generateKeyPair('rsa', {
     modulusLength: 4096,
     publicKeyEncoding: {
       type: 'spki',
-      format: 'pem'
+      format: 'pem',
     },
     privateKeyEncoding: {
       type: 'pkcs8',
-      format: 'pem'
-    }
+      format: 'pem',
+    },
   })
-}
-
-export default {
-  passwords,
-  sha1,
-  md5,
-  sha1FromStream,
-  getSha256Base64Digest,
-  getRandomBytes,
-  generateRsaKeyPair,
 }

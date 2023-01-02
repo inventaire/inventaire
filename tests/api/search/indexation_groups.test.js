@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import should from 'should'
-import { wait } from '#lib/promises'
 import { indexes } from '#db/elasticsearch/indexes'
-import { getUser } from '../utils/utils.js'
+import { wait } from '#lib/promises'
 import { createGroup, membershipAction } from '../fixtures/groups.js'
 import { getIndexedDoc } from '../utils/search.js'
+import { getUser } from '../utils/utils.js'
 
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 const { index } = indexes.groups

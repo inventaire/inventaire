@@ -1,13 +1,15 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import itemAttributes from './attributes/item.js'
+import itemValidations from './validations/item.js'
 
 const Item = {}
 
 export default Item
 
-const validations = Item.validations = require('./validations/item')
-const attributes = Item.attributes = require('./attributes/item')
+const validations = Item.validations = itemValidations
+const attributes = Item.attributes = itemAttributes
 
 const { defaultValue: defaultTransaction } = attributes.constrained.transaction
 
@@ -83,7 +85,7 @@ Item.changeOwner = (transacDoc, item) => {
   item.history.push({
     transaction: transacId,
     previousOwner: owner,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   })
 
   _.log(item.history, 'updated history')
@@ -93,7 +95,7 @@ Item.changeOwner = (transacDoc, item) => {
     // default values
     transaction: 'inventorying',
     visibility: [],
-    updated: Date.now()
+    updated: Date.now(),
   })
 }
 

@@ -1,5 +1,5 @@
-import requests_ from '#lib/requests'
-import cache_ from '#lib/cache'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
 
 const timeout = 10 * 1000
 
@@ -18,7 +18,7 @@ export default async ({ id, refresh }) => {
       if (!text) return
       if (text.value) return text.value
       else if (typeof text === 'string') return text
-    }
+    },
   })
   if (text) {
     return {

@@ -1,8 +1,8 @@
 import crypto from 'node:crypto'
 import CONFIG from 'config'
 import OAuth from 'oauth-1.0a'
-import requests_ from '#lib/requests'
-import user_ from '#controllers/user/lib/user'
+import { setUserOauthTokens } from '#controllers/user/lib/user'
+import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
 
 const root = CONFIG.getPublicOrigin()
@@ -17,10 +17,10 @@ const { consumer_key: consumerKey, consumer_secret: consumerSecret } = CONFIG.wi
 const oauth = OAuth({
   consumer: {
     key: consumerKey,
-    secret: consumerSecret
+    secret: consumerSecret,
   },
   signature_method: 'HMAC-SHA1',
-  hash_function: createHmacSha1Hash
+  hash_function: createHmacSha1Hash,
 })
 
 // Alternatively using the nice or the non-nice URL
@@ -57,8 +57,8 @@ const getStep1Token = redirect => {
   const reqData = {
     url: step1Url,
     data: {
-      oauth_callback: callback
-    }
+      oauth_callback: callback,
+    },
   }
   const headers = getOauthHeaders(reqData)
   return requests_.post(step1Url, { headers, parseJson: false })
@@ -69,8 +69,8 @@ const getStep3 = (reqUserId, verifier, reqToken) => {
   const reqData = {
     url: step3Url,
     data: {
-      oauth_verifier: verifier
-    }
+      oauth_verifier: verifier,
+    },
   }
   const headers = getOauthHeaders(reqData, { key: reqToken, secret: reqTokenSecret })
   return requests_.post(step3Url, { headers, parseJson: false })
@@ -88,5 +88,5 @@ const getOauthHeaders = (reqData, tokenData) => {
 const saveUserTokens = (step3Res, reqUserId) => {
   const { oauth_token_secret: userTokenSecret, oauth_token: userToken } = parseQuery(step3Res)
   const data = { token: userToken, token_secret: userTokenSecret }
-  return user_.setOauthTokens(reqUserId, 'wikidata', data)
+  return setUserOauthTokens(reqUserId, 'wikidata', data)
 }

@@ -10,6 +10,6 @@ export default {
     'wdt:P407': isbn13 => {
       const isbnData = parseIsbn(isbn13)
       return isbnData ? isbnData.groupLangUri : null
-    }
-  }
+    },
+  },
 }

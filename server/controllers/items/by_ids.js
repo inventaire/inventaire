@@ -1,7 +1,7 @@
-import items_ from '#controllers/items/lib/items'
-import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
-import { addAssociatedData, paginate } from './lib/queries_commons.js'
+import { getItemsByIds } from '#controllers/items/lib/items'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import { filterPrivateAttributes } from './lib/filter_private_attributes.js'
+import { addAssociatedData, paginate } from './lib/queries_commons.js'
 
 const sanitization = {
   ids: {},
@@ -9,13 +9,13 @@ const sanitization = {
   offset: { optional: true },
   'include-users': {
     generic: 'boolean',
-    default: false
-  }
+    default: false,
+  },
 }
 
 const controller = async params => {
   const { ids, reqUserId } = params
-  const foundItems = await items_.byIds(ids)
+  const foundItems = await getItemsByIds(ids)
   const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)
   const page = paginate(authorizedItems, params)
   page.items = page.items.map(filterPrivateAttributes(reqUserId))

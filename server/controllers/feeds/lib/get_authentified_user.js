@@ -1,10 +1,10 @@
-import error_ from '#lib/error/error'
-import user_ from '#controllers/user/lib/user'
+import { getUserById } from '#controllers/user/lib/user'
+import { error_ } from '#lib/error/error'
 
 export default async (requester, readToken) => {
   if (requester == null) return null
 
-  return user_.byId(requester)
+  return getUserById(requester)
   .catch(formatNotFound(requester))
   .then(validateUserReadToken(readToken))
 }

@@ -1,39 +1,37 @@
 import _ from '#builders/utils'
 
-export default {
-  activeI18nLangs: 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' '),
+export const activeI18nLangs = 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
 
-  logBulkRes: (res, label) => {
-    const { items } = res
-    const globalStatus = {}
+export const logBulkRes = (res, label) => {
+  const { items } = res
+  const globalStatus = {}
 
-    items.forEach(item => {
-      for (const operation in item) {
-        const opRes = item[operation]
-        if (globalStatus[operation] == null) {
-          globalStatus[operation] = { success: 0, error: 0 }
-        }
-        if (opRes.status >= 400) {
-          if (opRes.status === 404) {
-            if (operation === 'delete') {
-              // Known case: happens when an deindexation is requested before the indexation was done
-              _.warn(opRes._id, "can't deindex: doc not found")
-            } else {
-              _.warn(opRes._id, `${label} not found`)
-            }
-          } else {
-            _.warn(item, `${label} failed`)
-          }
-          globalStatus[operation].error++
-        } else {
-          globalStatus[operation].success++
-        }
+  items.forEach(item => {
+    for (const operation in item) {
+      const opRes = item[operation]
+      if (globalStatus[operation] == null) {
+        globalStatus[operation] = { success: 0, error: 0 }
       }
-    })
+      if (opRes.status >= 400) {
+        if (opRes.status === 404) {
+          if (operation === 'delete') {
+            // Known case: happens when an deindexation is requested before the indexation was done
+            _.warn(opRes._id, "can't deindex: doc not found")
+          } else {
+            _.warn(opRes._id, `${label} not found`)
+          }
+        } else {
+          _.warn(item, `${label} failed`)
+        }
+        globalStatus[operation].error++
+      } else {
+        globalStatus[operation].success++
+      }
+    }
+  })
 
-    const color = getLoggerColor(globalStatus)
-    _.log(globalStatus, label, color)
-  }
+  const color = getLoggerColor(globalStatus)
+  _.log(globalStatus, label, color)
 }
 
 const getLoggerColor = globalStatus => {

@@ -1,6 +1,6 @@
 import 'should'
-import getResolvedEntry from '#data/dataseed/get_resolved_entry'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import getResolvedEntry from '#data/dataseed/get_resolved_entry'
 
 describe('get resolved seed', () => {
   it('should get an edition entity when only one authority returns a seed', async () => {

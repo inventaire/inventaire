@@ -42,5 +42,5 @@ export default {
 
 }
 GROUP BY ?part ?date ?ordinal ?superpart`
-  }
+  },
 }

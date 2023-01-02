@@ -1,9 +1,16 @@
+import entities from './entity.js'
+import groups from './group.js'
+import items from './item.js'
+import lists from './list.js'
+import shelves from './shelf.js'
+import users from './user.js'
+
 export default {
-  entities: require('./entity'),
-  groups: require('./group'),
-  items: require('./item'),
-  shelves: require('./shelf'),
-  lists: require('./list'),
-  users: require('./user'),
-  wikidata: require('./entity'),
+  entities,
+  groups,
+  items,
+  shelves,
+  lists,
+  users,
+  wikidata: entities,
 }

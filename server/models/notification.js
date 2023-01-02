@@ -11,7 +11,7 @@ export default {
       type,
       data,
       status: 'unread',
-      time: Date.now()
+      time: Date.now(),
     }
 
     return doc
@@ -30,5 +30,5 @@ export default {
   markAsRead: doc => {
     doc.status = 'read'
     return doc
-  }
+  },
 }

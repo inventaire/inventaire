@@ -30,5 +30,5 @@ const modifiers = {
     }
 
     return val
-  }
+  },
 }

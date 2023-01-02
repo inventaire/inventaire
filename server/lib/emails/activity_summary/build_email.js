@@ -1,13 +1,13 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import promises_ from '#lib/promises'
-import relations_ from '#controllers/relations/lib/queries'
 import groupsCounts from '#controllers/groups/lib/counts'
 import notifications_ from '#controllers/notifications/lib/notifications'
-import transactions_ from '#controllers/transactions/lib/transactions'
+import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
+import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
+import { objectPromise } from '#lib/promises'
 import { i18n } from '../i18n/i18n.js'
-import getLastNetworkBooks from './last_network_books.js'
 import getLastNearbyPublicBooks from './last_nearby_books.js'
+import getLastNetworkBooks from './last_network_books.js'
 
 const host = CONFIG.getPublicOrigin()
 const { contactAddress } = CONFIG
@@ -26,20 +26,20 @@ export default user => {
 
 const getEmailData = user => {
   const { _id: userId, lang, lastSummary } = user
-  return promises_.props({
+  return objectPromise({
     // pending friends requests
-    friendsRequests: relations_.pendingFriendsRequestsCount(userId),
+    friendsRequests: getPendingFriendsRequestsCount(userId),
     // pending group invitation
     groupInvitations: groupsCounts.pendingGroupInvitationsCount(userId),
     groupRequests: groupsCounts.pendingGroupRequestsCount(userId),
     // unread notifications
     unreadNotifications: notifications_.unreadCount(userId),
     // waiting transaction
-    activeTransactions: transactions_.activeTransactionsCount(userId),
+    activeTransactions: getUserActiveTransactionsCount(userId),
     // new books in your network: preview + count for others 'X more...'
     lastFriendsBooks: getLastNetworkBooks(userId, lang, lastSummary),
     // new books nearby
-    lastNearbyPublicBooks: getLastNearbyPublicBooks(user, lastSummary)
+    lastNearbyPublicBooks: getLastNearbyPublicBooks(user, lastSummary),
   })
 }
 
@@ -66,7 +66,7 @@ const spreadEmailData = user => results => {
     unreadNotifications,
     activeTransactions,
     lastFriendsBooks,
-    lastNearbyPublicBooks
+    lastNearbyPublicBooks,
   } = results
 
   const { email, lang } = user
@@ -101,7 +101,7 @@ const spreadEmailData = user => results => {
         host,
         periodicity,
         settingsHref: `${host}/settings/notifications`,
-        contactAddress
+        contactAddress,
       },
       friendsRequests: counter(friendsRequests, '/network/friends'),
       groupInvitations: counter(groupInvitations, '/network/groups'),
@@ -112,15 +112,15 @@ const spreadEmailData = user => results => {
       lastNearbyPublicBooks,
       news,
       didYouKnowKey: getDidYouKnowKey(),
-      hasActivities: countTotal > 0
-    }
+      hasActivities: countTotal > 0,
+    },
   }
 }
 
 const counter = (count, path) => ({
   display: count > 0,
   smart_count: count,
-  href: host + path
+  href: host + path,
 })
 
 const newsData = user => {

@@ -1,44 +1,40 @@
 import _ from '#builders/utils'
-import couch_ from '#lib/couch'
-import groups_ from '#controllers/groups/lib/groups'
+import { getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
 import dbFactory from '#db/couchdb/base'
+import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
 import parseRelations from './parse_relations.js'
 
-const { minKey, maxKey } = couch_
 const db = dbFactory('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
   return db.view('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
-    include_docs: includeDocs
+    include_docs: includeDocs,
   })
 }
 
-const lists = {
-  getUserRelations: userId => {
-    return getAllUserRelations(userId)
-    .then(parseRelations)
-  },
-
-  getUserFriends: userId => {
-    const query = { key: [ userId, 'friends' ] }
-    return db.view('relations', 'byStatus', query)
-    .then(couch_.mapValue)
-  },
-
-  deleteUserRelations: userId => {
-    return getAllUserRelations(userId, true)
-    .then(couch_.mapDoc)
-    .then(db.bulkDelete)
-  },
-
-  getUserFriendsAndCoGroupsMembers: userId => {
-    return Promise.all([
-      lists.getUserFriends(userId),
-      groups_.getUserGroupsCoMembers(userId)
-    ])
-    .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
-  }
+export const getUserRelations = userId => {
+  return getAllUserRelations(userId)
+  .then(parseRelations)
 }
-export default lists
+
+export const getUserFriends = userId => {
+  const query = { key: [ userId, 'friends' ] }
+  return db.view('relations', 'byStatus', query)
+  .then(mapValue)
+}
+
+export const deleteUserRelations = userId => {
+  return getAllUserRelations(userId, true)
+  .then(mapDoc)
+  .then(db.bulkDelete)
+}
+
+export const getUserFriendsAndGroupsCoMembers = async userId => {
+  const [ friends, coMembers ] = await Promise.all([
+    getUserFriends(userId),
+    getUserGroupsCoMembers(userId),
+  ])
+  return _.uniq(friends.concat(coMembers))
+}

@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
-import modelAction from './lib/model_action.js'
 import membershipValidations from './lib/membership_validations.js'
+import modelAction from './lib/model_action.js'
 
 const sanitization = {
   group: {},
-  user: { optional: true }
+  user: { optional: true },
 }
 
 const controller = action => async params => {
@@ -18,5 +18,5 @@ const controller = action => async params => {
 export default action => ({
   sanitization,
   controller: controller(action),
-  track: [ 'groups', action ]
+  track: [ 'groups', action ],
 })

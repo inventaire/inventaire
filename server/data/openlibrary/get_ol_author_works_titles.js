@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
-import cache_ from '#lib/cache'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`
@@ -23,5 +23,5 @@ const getAuthorWorksTitles = async olId => {
 
 const parseResult = result => ({
   title: result.title_suggest,
-  url: endpoint + result.key
+  url: endpoint + result.key,
 })

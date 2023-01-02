@@ -5,5 +5,5 @@ export default {
     username: text,
     bio: text,
     position: geoPoint,
-  }
+  },
 }

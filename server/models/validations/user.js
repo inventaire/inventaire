@@ -1,7 +1,11 @@
 import _ from '#builders/utils'
 import { isPropertyUri } from '#lib/boolean_validations'
-import { creationStrategies, settings } from '../attributes/user.js'
-import { pass, userId, username, email, userImg, boolean, position, BoundedString } from './common.js'
+import userAttributes from '../attributes/user.js'
+import commonValidations from './common.js'
+
+const { creationStrategies, settings } = userAttributes
+
+const { pass, userId, username, email, userImg, boolean, position, BoundedString } = commonValidations
 
 const validations = {
   pass,
@@ -18,13 +22,13 @@ const validations = {
   position,
   fediversable: boolean,
   customProperties: props => _.isArray(props) && props.every(isPropertyUri),
-  summaryPeriodicity: days => Number.isInteger(days) && days >= 1
+  summaryPeriodicity: days => Number.isInteger(days) && days >= 1,
 }
 
 export default validations
 
 const deepAttributes = {
-  settings: {}
+  settings: {},
 }
 
 for (const settingCategory in settings) {

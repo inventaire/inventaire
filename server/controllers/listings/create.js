@@ -1,11 +1,11 @@
-import listings_ from '#controllers/listings/lib/listings'
+import { createListing } from '#controllers/listings/lib/listings'
 
 const sanitization = {
   name: {},
   description: { optional: true },
   visibility: {
     optional: true,
-    default: []
+    default: [],
   },
 }
 
@@ -22,11 +22,11 @@ const formatNewListing = params => {
     visibility,
     creator,
   }
-  return listings_.create(listingData)
+  return createListing(listingData)
 }
 
 export default {
   sanitization,
   controller,
-  track: [ 'lists', 'creation' ]
+  track: [ 'lists', 'creation' ],
 }

@@ -1,9 +1,10 @@
+import 'should'
+import os from 'node:os'
 import CONFIG from 'config'
 import { getIpBinaryRepresentation } from '#lib/network/ip_binary_representation'
 import isPrivateUrl from '#lib/network/is_private_url'
-import 'should'
 
-const hostname = require('node:os').hostname()
+const hostname = os.hostname()
 
 describe('getIpBinaryRepresentation', () => {
   it('should get an IPv4 binary representation', async () => {

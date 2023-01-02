@@ -1,8 +1,8 @@
-import { buildSearcher } from '#lib/elasticsearch'
 import queryBuilder from '#controllers/search/lib/social_query_builder'
+import { buildSearcher } from '#lib/elasticsearch'
 
 const sanitization = {
-  search: {}
+  search: {},
 }
 
 const controller = async ({ search }) => {
@@ -12,7 +12,7 @@ const controller = async ({ search }) => {
 
 const searchByText = buildSearcher({
   dbBaseName: 'users',
-  queryBuilder
+  queryBuilder,
 })
 
 export default { sanitization, controller }

@@ -1,11 +1,11 @@
 import { buildSearcher } from '#lib/elasticsearch'
 import { distanceBetween } from '#lib/geo'
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
 
 export default dbBaseName => {
   const searchByDistance = buildSearcher({
     dbBaseName,
-    queryBuilder
+    queryBuilder,
   })
 
   return async (latLng, meterRange) => {
@@ -25,12 +25,12 @@ const queryBuilder = ({ latLng, meterRange }) => {
         filter: {
           geo_distance: {
             distance: `${meterRange}m`,
-            position: { lat, lon }
-          }
-        }
-      }
+            position: { lat, lon },
+          },
+        },
+      },
     },
-    size: 500
+    size: 500,
   }
 }
 

@@ -2,7 +2,7 @@ import { getEntitiesPopularities } from './lib/popularity.js'
 
 const sanitization = {
   uris: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async params => {

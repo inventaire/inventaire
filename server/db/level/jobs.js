@@ -1,5 +1,7 @@
 import { promisify } from 'node:util'
 import CONFIG from 'config'
+import JobQueueServerAndClient from 'level-jobs'
+import JobsQueueClient from 'level-jobs/client.js'
 import _ from '#builders/utils'
 import getSubDb from './get_sub_db.js'
 
@@ -16,7 +18,6 @@ export default {
 
     // Push & run jobs to queue if this job is enabled in config
     if (CONFIG.serverMode && run) {
-      const JobQueueServerAndClient = require('level-jobs')
       _.info(`${jobName} job in server & client mode`)
       const depromisifiedWorker = workerDepromisifier(worker)
       return promisifyApi(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))
@@ -26,11 +27,10 @@ export default {
     // Typically used in prod to let the alt-instance run the jobs
     // and let the main instance focus on answering user requests
     } else {
-      const JobsQueueClient = require('level-jobs/client')
       _.warn(`${jobName} job in client mode only`)
       return promisifyApi(JobsQueueClient(db))
     }
-  }
+  },
 }
 
 const promisifyApi = API => {

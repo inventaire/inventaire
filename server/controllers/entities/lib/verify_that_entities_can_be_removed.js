@@ -1,25 +1,25 @@
-import error_ from '#lib/error/error'
-import items_ from '#controllers/items/lib/items'
-import entities_ from './entities.js'
+import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import { getItemsByEntity } from '#controllers/items/lib/items'
+import { error_ } from '#lib/error/error'
 import getEntitiesByUris from './get_entities_by_uris.js'
 import { prefixifyInv } from './prefix.js'
 
 const criticalClaimProperties = [
   // No edition should end up without an associated work because of a removed work
-  'wdt:P629'
+  'wdt:P629',
 ]
 
 export default uris => {
   return Promise.all([
     entitiesRelationsChecks(uris),
-    entitiesItemsChecks(uris)
+    entitiesItemsChecks(uris),
   ])
 }
 
 const entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
 
 const entityIsntUsedMuch = async uri => {
-  const claims = await entities_.byClaimsValue(uri)
+  const claims = await getEntitiesByClaimsValue(uri)
 
   claims.forEach(claim => { claim.entity = prefixifyInv(claim.entity) })
 
@@ -49,7 +49,7 @@ const getAllUris = async uris => {
 }
 
 const entityIsntUsedByAnyItem = async uri => {
-  const items = await items_.byEntity(uri)
+  const items = await getItemsByEntity(uri)
   if (items.length > 0) {
     throw error_.new("entities that are used by an item can't be removed", 403, { uri })
   }

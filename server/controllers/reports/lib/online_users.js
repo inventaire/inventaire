@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import crypto_ from '#lib/crypto'
+import { md5 } from '#lib/crypto'
 
 export default data => {
   const fingerPrint = getFingerPrint(data)
@@ -24,7 +24,7 @@ const updateOnlineUsers = () => {
 
 const getFingerPrint = (...args) => {
   const str = JSON.stringify(args)
-  return crypto_.md5(str)
+  return md5(str)
 }
 
 setInterval(updateOnlineUsers, 30 * 1000)

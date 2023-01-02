@@ -1,8 +1,8 @@
 import 'should'
 import { createWork } from '#tests/api/fixtures/entities'
-import { getUser as getUserA, getUserB } from '../../utils/utils.js'
 import { createEdition } from '../../fixtures/entities.js'
 import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '../../utils/entities.js'
+import { getUser as getUserA, getUserB } from '../../utils/utils.js'
 
 describe('patch correction', () => {
   describe('rewrite', () => {
@@ -27,7 +27,7 @@ describe('patch correction', () => {
       patches[2].patch.should.deepEqual([
         { op: 'add', path: '/claims/wdt:P1104/0', value: 2 },
         { op: 'test', path: '/claims/wdt:P1104/1', value: 1 },
-        { op: 'remove', path: '/claims/wdt:P1104/1' }
+        { op: 'remove', path: '/claims/wdt:P1104/1' },
       ])
     })
 

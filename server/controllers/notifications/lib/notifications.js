@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import { minKey, maxKey } from '#lib/couch'
-import assert_ from '#lib/utils/assert_types'
-import Notification from '#models/notification'
 import dbFactory from '#db/couchdb/base'
+import { minKey, maxKey } from '#lib/couch'
+import { assert_ } from '#lib/utils/assert_types'
+import Notification from '#models/notification'
 
 const db = dbFactory('notifications')
 
@@ -50,7 +50,7 @@ const notifications_ = {
   unreadCount: userId => {
     return notifications_.byUserId(userId)
     .then(getUnreadCount)
-  }
+  },
 }
 
 export default notifications_

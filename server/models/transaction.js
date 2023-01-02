@@ -1,14 +1,20 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import { snapshot as snapshotItemAttributes } from './attributes/item.js'
-import { snapshot as snapshotUserAttributes } from './attributes/user.js'
-import { states, basicNextActions, nextActionsWithReturn } from './attributes/transaction.js'
+import { error_ } from '#lib/error/error'
+import itemAttributes from './attributes/item.js'
+import transactionAttributes from './attributes/transaction.js'
+import userAttributes from './attributes/user.js'
+import transactionValidations from './validations/transaction.js'
+
+const { states, basicNextActions, nextActionsWithReturn } = transactionAttributes
+const { snapshot: snapshotUserAttributes } = userAttributes
+
+const { snapshot: snapshotItemAttributes } = itemAttributes
 
 const Transaction = {}
 
 export default Transaction
 
-const validations = Transaction.validations = require('./validations/transaction')
+const validations = Transaction.validations = transactionValidations
 
 Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
   const itemId = itemDoc._id
@@ -35,19 +41,19 @@ Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
     actions: [ { action: 'requested', timestamp: now } ],
     read: {
       requester: true,
-      owner: false
+      owner: false,
     },
     // keeping a copy of basic data to provide for when those
     // will not be accessible anymore
     // ex: item visibility change, deleted user, etc.
-    snapshot: snapshotData(itemDoc, ownerDoc, requesterDoc)
+    snapshot: snapshotData(itemDoc, ownerDoc, requesterDoc),
   }
 }
 
 const requestable = [
   'giving',
   'lending',
-  'selling'
+  'selling',
 ]
 
 Transaction.validatePossibleState = (transaction, newState) => {
@@ -71,7 +77,7 @@ Transaction.isOneWay = transacDoc => {
 const oneWay = {
   giving: true,
   lending: false,
-  selling: true
+  selling: true,
 }
 
 Transaction.isActive = transacDoc => {
@@ -80,7 +86,7 @@ Transaction.isActive = transacDoc => {
     state: transacDoc.state,
     // owner doesnt matter to find if the transaction is active
     // thus we just pass an arbitrary boolean
-    mainUserIsOwner: true
+    mainUserIsOwner: true,
   }
   // if there are next actions, the transaction is active
   return (findNextActions(transacData) != null)
@@ -90,7 +96,7 @@ const snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
   item: _.pick(itemDoc, snapshotItemAttributes),
   entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
   owner: _.pick(ownerDoc, snapshotUserAttributes),
-  requester: _.pick(requesterDoc, snapshotUserAttributes)
+  requester: _.pick(requesterDoc, snapshotUserAttributes),
 })
 
 const getEntitySnapshotFromItemSnapshot = itemSnapshot => {

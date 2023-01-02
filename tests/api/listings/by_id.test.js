@@ -1,7 +1,7 @@
 import should from 'should'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
-import { publicReq, authReqB } from '../utils/utils.js'
 import { createListing, createElement } from '../fixtures/listings.js'
+import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
 

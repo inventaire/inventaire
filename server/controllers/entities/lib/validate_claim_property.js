@@ -1,6 +1,6 @@
-import error_ from '#lib/error/error'
 import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import { validateProperty } from './properties/validations.js'
 
 export default (type, property) => {

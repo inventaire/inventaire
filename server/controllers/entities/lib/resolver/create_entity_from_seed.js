@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
-import isbn_ from '#lib/isbn/isbn'
-import { getImageByIsbn } from '#data/dataseed/dataseed'
 import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { getImageByIsbn } from '#data/dataseed/dataseed'
+import { toIsbn13h } from '#lib/isbn/isbn'
 import createInvEntity from '../create_inv_entity.js'
 import properties from '../properties/properties_values_constraints.js'
 
-const createAuthor = (userId, batchId) => author => {
+export const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author
   const claims = {}
 
@@ -13,7 +13,7 @@ const createAuthor = (userId, batchId) => author => {
   return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId })
 }
 
-const createWork = (userId, batchId, authors) => work => {
+export const createWork = (userId, batchId, authors) => work => {
   if (work.uri != null) return work
   const authorsUris = _.compact(_.map(authors, 'uri'))
   const claims = {}
@@ -22,7 +22,7 @@ const createWork = (userId, batchId, authors) => work => {
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }
 
-const createEdition = async (edition, works, userId, batchId, enrich) => {
+export async function createEdition (edition, works, userId, batchId, enrich) {
   if (edition.uri != null) return
 
   const { isbn } = edition
@@ -34,7 +34,7 @@ const createEdition = async (edition, works, userId, batchId, enrich) => {
   addClaimIfValid(claims, 'wdt:P629', worksUris)
 
   if (isbn != null) {
-    const hyphenatedIsbn = isbn_.toIsbn13h(isbn)
+    const hyphenatedIsbn = toIsbn13h(isbn)
     addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ])
   }
 
@@ -82,7 +82,7 @@ const createEntityFromSeed = async ({ type, seed, claims, userId, batchId }) => 
     labels: seed.labels,
     claims: addSeedClaims(claims, seed.claims, type),
     userId,
-    batchId
+    batchId,
   })
 
   seed.uri = entity.uri
@@ -115,5 +115,3 @@ const guessEditionTitleFromWorksLabels = works => {
   .uniq()
   .join(' - ')
 }
-
-export default { createAuthor, createWork, createEdition }

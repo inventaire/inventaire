@@ -50,4 +50,4 @@ const nonEditedProperties = [
   'P6802', // related image
 ]
 
-export default editedProperties.concat(nonEditedProperties)
+export const allowlistedProperties = editedProperties.concat(nonEditedProperties)

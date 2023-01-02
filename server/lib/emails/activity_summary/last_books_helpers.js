@@ -1,54 +1,52 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import { allowTransaction } from '#models/item'
+import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
-import user_ from '#controllers/user/lib/user'
+import { allowTransaction } from '#models/item'
 import transactionsColors from './transactions_colors.js'
 
 const host = CONFIG.getPublicOrigin()
 
-export default {
-  getLastItems: (limitDate, items) => {
-    return items.filter(item => item.created > limitDate)
-  },
+export const getLastItems = (limitDate, items) => {
+  return items.filter(item => item.created > limitDate)
+}
 
-  formatData: (lastItems, label, lang, highlighted) => {
-    const more = lastItems.length - highlighted.length
-    return {
-      display: highlighted.length > 0,
-      highlighted: highlighted.map(addUserLang(lang)),
-      title: `last_${label}_books`,
-      more: {
-        display: more > 0,
-        smart_count: more,
-        title: `last_${label}_books_more`
-      }
-    }
-  },
-
-  embedUsersData: (items, users, position) => {
-    users = users.map(user_.serializeData)
-    users = _.keyBy(users, '_id')
-    return items.map(item => {
-      const user = users[item.owner]
-      if (user) {
-        item.href = `${host}/items/${item._id}`
-        item.user = _.pick(user, requiredUserData)
-        if ((user.position != null) && (position != null)) {
-          item.user.distance = kmBetween(user.position, position)
-        }
-        item.user.href = `${host}/inventory/${user.username}`
-        item.transactionLabel = `${item.transaction}_personalized_strong`
-        item.transactionColor = transactionsColors[item.transaction]
-      }
-      return item
-    })
-  },
-
-  getHighlightedItems: (lastItems, highlightedLength) => {
-    if (lastItems.length <= highlightedLength) return lastItems
-    return getItemsWithTransactionFirst(lastItems, highlightedLength)
+export const formatData = (lastItems, label, lang, highlighted) => {
+  const more = lastItems.length - highlighted.length
+  return {
+    display: highlighted.length > 0,
+    highlighted: highlighted.map(addUserLang(lang)),
+    title: `last_${label}_books`,
+    more: {
+      display: more > 0,
+      smart_count: more,
+      title: `last_${label}_books_more`,
+    },
   }
+}
+
+export const embedUsersData = (items, users, position) => {
+  users = users.map(serializeUserData)
+  users = _.keyBy(users, '_id')
+  return items.map(item => {
+    const user = users[item.owner]
+    if (user) {
+      item.href = `${host}/items/${item._id}`
+      item.user = _.pick(user, requiredUserData)
+      if ((user.position != null) && (position != null)) {
+        item.user.distance = kmBetween(user.position, position)
+      }
+      item.user.href = `${host}/inventory/${user.username}`
+      item.transactionLabel = `${item.transaction}_personalized_strong`
+      item.transactionColor = transactionsColors[item.transaction]
+    }
+    return item
+  })
+}
+
+export const getHighlightedItems = (lastItems, highlightedLength) => {
+  if (lastItems.length <= highlightedLength) return lastItems
+  return getItemsWithTransactionFirst(lastItems, highlightedLength)
 }
 
 const requiredUserData = [ 'username', 'picture' ]

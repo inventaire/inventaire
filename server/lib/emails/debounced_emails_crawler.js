@@ -1,13 +1,13 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import { expired } from '#lib/time'
 import dbFactory from '#db/level/get_sub_db'
-import sendDebouncedEmail from './send_debounced_email.js'
+import { expired } from '#lib/time'
+import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
 const db = dbFactory('waiting', 'utf8')
 const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
-export default function () {
+export function initDebouncedEmailsCrawler () {
   if (!disabled) setInterval(crawl, crawlPeriod)
 }
 
@@ -21,12 +21,12 @@ const crawl = () => {
 
 const onData = data => {
   const { key } = data
-  const [ domain, id, time ] = key.split(':')
+  const [ emailName, id, time ] = key.split(':')
 
   // if the last event happened more than debounceDelay ago
   if (expired(time, debounceDelay)) {
-    return sendDebouncedEmail[domain](id)
+    return debouncedEmailSenderByName[emailName](id)
     .then(db.del.bind(db, key))
-    .catch(_.Error(`sendDebouncedEmail (${domain}) and cleanup err`))
+    .catch(_.Error(`debouncedEmailSenderByName (${emailName}) and cleanup err`))
   }
 }

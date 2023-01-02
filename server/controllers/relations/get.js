@@ -5,7 +5,7 @@ const sanitization = {}
 const controller = async ({ reqUserId }) => {
   const [ relations, networkIds ] = await Promise.all([
     getUserRelations(reqUserId),
-    getNetworkIds(reqUserId)
+    getNetworkIds(reqUserId),
   ])
   delete relations.none
   relations.network = networkIds

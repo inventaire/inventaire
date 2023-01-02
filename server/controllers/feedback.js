@@ -1,8 +1,8 @@
 import { audit as auditIsbn } from 'isbn3'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
-import radio from '#lib/radio'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { responses_ } from '#lib/responses'
 
 export default {
   post: async (req, res) => {
@@ -30,13 +30,13 @@ export default {
 
     if (!automaticReport || isNewAutomaticReport(subject)) {
       _.log({ subject, message, uris, unknownUser, context }, 'sending feedback')
-      await radio.emit('received:feedback', subject, message, user, unknownUser, uris, context)
+      await emit('received:feedback', subject, message, user, unknownUser, uris, context)
     } else {
       _.info(subject, 'not re-sending automatic report')
     }
 
     responses_.ok(res, 201)
-  }
+  },
 }
 
 const cache = {}

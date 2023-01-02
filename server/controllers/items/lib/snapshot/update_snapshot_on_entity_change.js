@@ -1,4 +1,4 @@
-import radio from '#lib/radio'
+import { radio } from '#lib/radio'
 import refreshSnapshot from './refresh_snapshot.js'
 
 // Items keep some data about their related entities, and those entities graphs
@@ -18,7 +18,7 @@ import refreshSnapshot from './refresh_snapshot.js'
 // TODO: use the Wikidata recentchanges API to follow remote entities updates
 // https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
-export default function () {
+export function updateSnapshotOnEntityChange () {
   radio.on('entity:update:label', refreshSnapshot.fromDoc)
   radio.on('entity:update:claim', refreshSnapshot.fromDoc)
   radio.on('entity:revert:edit', refreshSnapshot.fromDoc)

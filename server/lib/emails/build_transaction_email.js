@@ -1,14 +1,16 @@
 import _ from '#builders/utils'
-import user_ from '#controllers/user/lib/user'
-import transactions_ from '#controllers/transactions/lib/transactions'
-import items_ from '#controllers/items/lib/items'
-import snapshot_ from '#controllers/items/lib/snapshot/snapshot'
 import comments_ from '#controllers/comments/lib/comments'
-import { states } from '#models/attributes/transaction'
+import { getItemById } from '#controllers/items/lib/items'
+import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { getTransactionById } from '#controllers/transactions/lib/transactions'
+import { getUserById, serializeUserData } from '#controllers/user/lib/user'
+import transactionAttributes from '#models/attributes/transaction'
 import email_ from './email.js'
 
+const { states } = transactionAttributes
+
 export default async transactionId => {
-  const transaction = await transactions_.byId(transactionId)
+  const transaction = await getTransactionById(transactionId)
   const role = findUserToNotify(transaction)
   // If no role needs to be notified, no email needs to be sent
   if (!role) return
@@ -20,14 +22,14 @@ export default async transactionId => {
 
 const addAssociatedData = transaction => {
   return Promise.all([
-    user_.byId(transaction.owner),
-    user_.byId(transaction.requester),
-    items_.byId(transaction.item).then(snapshot_.addToItem).catch(catchDeleteItems),
-    comments_.byTransactionId(transaction._id)
+    getUserById(transaction.owner),
+    getUserById(transaction.requester),
+    getItemById(transaction.item).then(addSnapshotToItem).catch(catchDeleteItems),
+    comments_.byTransactionId(transaction._id),
   ])
   .then(([ owner, requester, item, messages ]) => {
-    owner = user_.serializeData(owner)
-    requester = user_.serializeData(requester)
+    owner = serializeUserData(owner)
+    requester = serializeUserData(requester)
     let image
     if (item.snapshot) {
       item.title = item.snapshot['entity:title']

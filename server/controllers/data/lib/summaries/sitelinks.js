@@ -1,4 +1,6 @@
-import { getSitelinkData, getSitelinkUrl } from 'wikidata-sdk'
+import wdk from 'wikidata-sdk'
+
+const { getSitelinkData, getSitelinkUrl } = wdk
 
 const getWikipediaSitelinksData = sitelinks => {
   if (!sitelinks) return []

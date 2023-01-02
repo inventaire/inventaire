@@ -1,4 +1,6 @@
 import CONFIG from 'config'
+import levelParty from 'level-party'
+import levelTest from 'level-test'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 
@@ -26,7 +28,7 @@ const leveldownOptions = {
   // Additionnaly, the process itself should be given a higher limit
   // See https://github.com/inventaire/inventaire-deploy/commit/0ad6e2a
   // This limit can be checked by inspecting `cat /proc/${pid}/limits | grep 'Max open files'`
-  maxOpenFiles: Infinity
+  maxOpenFiles: Infinity,
 }
 
 export let generalDb
@@ -34,11 +36,11 @@ export let cacheDb
 
 if (memoryBackend) {
   _.warn('leveldb in memory')
-  const level = require('level-test')()
+  const level = levelTest()
   generalDb = level()
   cacheDb = level()
 } else {
-  const level = require('level-party')
+  const level = levelParty
   _.info(generalDbFolderPath, 'general leveldb path')
   _.info(cacheDbFolderPath, 'cache leveldb path')
   generalDb = level(generalDbFolderPath, leveldownOptions)

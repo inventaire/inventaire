@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import dbFactory from '#db/couchdb/base'
-import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
-import Invited from '#models/invited'
-import { makeRequest } from '#controllers/relations/lib/actions'
 import groupAction from '#controllers/groups/lib/model_action'
+import { makeRequest } from '#controllers/relations/lib/actions'
+import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
+import dbFactory from '#db/couchdb/base'
+import { assert_ } from '#lib/utils/assert_types'
+import Invited from '#models/invited'
 
 const db = dbFactory('users', 'invited')
 
@@ -54,7 +54,7 @@ const invitations_ = {
     return invitations_.findOneByEmail(email)
     .then(doc => db.update(doc._id, Invited.stopEmails))
     .catch(_.ErrorRethrow('stopEmails'))
-  }
+  },
 }
 
 export default invitations_

@@ -1,12 +1,12 @@
 import { uniq, flatten } from 'lodash-es'
 import _ from '#builders/utils'
-import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
-import assert_ from '#lib/utils/assert_types'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
+import { assert_ } from '#lib/utils/assert_types'
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
-const parseSameasMatches = async ({ matches, expectedEntityType }) => {
+export async function parseSameasMatches ({ matches, expectedEntityType }) {
   assert_.array(matches)
   assert_.string(expectedEntityType)
 
@@ -71,7 +71,7 @@ const getPropertyAndIdPerHost = {
     property: 'wdt:P268',
     // Known case where the replace won't be possible: temp works
     // Ex: https://data.bnf.fr/temp-work/ef36a038d0abd4038d662bb01ddcbb76/#about
-    value: pathname.split('/cb')[1]?.replace('#about', '')
+    value: pathname.split('/cb')[1]?.replace('#about', ''),
   }),
   'd-nb.info': pathname => ({ property: 'wdt:P227', value: pathname.split('/')[2] }),
   'id.loc.gov': pathname => ({ property: 'wdt:P244', value: pathname.split('/')[3] }),
@@ -90,5 +90,3 @@ const getPropertyAndIdFromWikipediaOrDbpedia = async (host, pathname) => {
   const id = await getEntityIdBySitelink({ site: `${lang}wiki`, title })
   if (id) return { property: 'uri', value: `wd:${id}` }
 }
-
-export default { parseSameasMatches }

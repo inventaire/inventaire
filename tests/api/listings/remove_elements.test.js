@@ -1,8 +1,8 @@
-import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import elements_ from '#controllers/listings/lib/elements'
-import listings_ from '#controllers/listings/lib/listings'
-import { authReq } from '../utils/utils.js'
+import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
+import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action='
 const removeElements = `${endpoint}remove-elements`
@@ -22,7 +22,7 @@ describe('listings:remove-elements', () => {
     const { listing } = await createListing()
     try {
       await authReq('post', removeElements, {
-        id: listing._id
+        id: listing._id,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -37,7 +37,7 @@ describe('listings:remove-elements', () => {
     const { uri } = await createElement({})
     await authReq('post', removeElements, {
       id: listing._id,
-      uris: [ uri ]
+      uris: [ uri ],
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -52,7 +52,7 @@ describe('listings:remove-elements', () => {
     const randomUnkownUri = 'inv:a78c6d212de6be6f4aa29741933d276f'
     const res = await authReq('post', removeElements, {
       id: listing._id,
-      uris: [ uri, uri2, randomUnkownUri ]
+      uris: [ uri, uri2, randomUnkownUri ],
     })
     const warning = res.warnings[0]
     warning.should.startWith('entities uris not found')
@@ -65,7 +65,7 @@ describe('listings:remove-elements', () => {
       const { listing, uri } = await createElement({}, getUserB())
       await authReq('post', removeElements, {
         id: listing._id,
-        uris: [ uri ]
+        uris: [ uri ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -77,11 +77,11 @@ describe('listings:remove-elements', () => {
 
   it('should remove from listing an element by its entity uris and delete the element', async () => {
     const { listing, uri, element } = await createElement({})
-    const resListing = await listings_.byIdsWithElements(listing._id, listing.user)
+    const resListing = await getListingsByIdsWithElements(listing._id, listing.user)
     resListing[0].elements.length.should.equal(1)
     await authReq('post', removeElements, {
       id: listing._id,
-      uris: [ uri ]
+      uris: [ uri ],
     })
 
     await elements_.byId(element._id)
@@ -91,7 +91,7 @@ describe('listings:remove-elements', () => {
       err.body.reason.should.equal('deleted')
     })
 
-    await listings_.byIdsWithElements(listing._id, listing.user)
+    await getListingsByIdsWithElements(listing._id, listing.user)
     .then(lists => lists[0].elements.length.should.equal(0))
   })
 })

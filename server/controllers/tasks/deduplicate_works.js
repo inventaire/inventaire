@@ -2,13 +2,13 @@ import deduplicateWork from './lib/deduplicate_works.js'
 
 const sanitization = {
   uri: {},
-  isbn: {}
+  isbn: {},
 }
 
 const controller = async ({ uri, isbn, reqUserId }) => {
   const tasks = await deduplicateWork(uri, isbn, reqUserId)
   return {
-    tasks: (tasks || []).flat()
+    tasks: (tasks || []).flat(),
   }
 }
 

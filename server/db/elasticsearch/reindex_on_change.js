@@ -6,7 +6,7 @@ export default indexBaseName => {
   follow({
     dbBaseName: indexBaseName,
     filter: filters[indexBaseName],
-    onChange: reindex(indexBaseName)
+    onChange: reindex(indexBaseName),
   })
 }
 

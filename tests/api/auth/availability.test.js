@@ -1,8 +1,8 @@
 import 'should'
 import { wait } from '#lib/promises'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { publicReq } from '../utils/utils.js'
 import { createUser, createUsername } from '../fixtures/users.js'
+import { publicReq } from '../utils/utils.js'
 
 const usernameEndpoint = '/api/auth?action=username-availability'
 const emailEndpoint = '/api/auth?action=email-availability'

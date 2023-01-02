@@ -20,5 +20,5 @@ const langProperties = [
   'wdt:P103', // native language
   'wdt:P407', // language of work
   'wdt:P1412', // languages spoken, written or signed
-  'wdt:P2439' // language (general)
+  'wdt:P2439', // language (general)
 ]

@@ -1,7 +1,7 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/api/utils/utils'
-import { updateLabel } from '#tests/api/utils/entities'
 import { createEdition, randomLabel } from '#tests/api/fixtures/entities'
+import { updateLabel } from '#tests/api/utils/entities'
+import { shouldNotBeCalled } from '#tests/api/utils/utils'
 
 describe('entities:editions:update-labels', () => {
   it('should reject labels update', async () => {

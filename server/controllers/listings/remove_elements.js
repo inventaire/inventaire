@@ -1,20 +1,20 @@
 import _ from '#builders/utils'
-import listings_ from '#controllers/listings/lib/listings'
-import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
-import error_ from '#lib/error/error'
 import elements_ from '#controllers/listings/lib/elements'
+import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
+import { getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { error_ } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
 
 const sanitization = {
   id: {},
-  uris: {}
+  uris: {},
 }
 
 const controller = async ({ id, uris, reqUserId }, req, res) => {
-  const listing = await listings_.getListingWithElements(id, reqUserId)
+  const listing = await getListingWithElements(id, reqUserId)
   if (!listing) throw error_.notFound({ id })
 
-  listings_.validateOwnership(reqUserId, listing)
+  validateListingOwnership(reqUserId, listing)
 
   const { foundElements: elementsToDelete, notFoundUris } = filterFoundElementsUris(listing.elements, uris)
   if (elementsToDelete.length === 0) {
@@ -30,5 +30,5 @@ const controller = async ({ id, uris, reqUserId }, req, res) => {
 export default {
   sanitization,
   controller,
-  track: [ 'lists', 'deleteElement' ]
+  track: [ 'lists', 'deleteElement' ],
 }

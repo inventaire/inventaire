@@ -14,7 +14,7 @@ const validShelf = {
   owner: someUserId,
   description: fakeDesc,
   visibility: [],
-  name: fakeName
+  name: fakeName,
 }
 
 const extendShelf = data => Object.assign({}, validShelf, data)

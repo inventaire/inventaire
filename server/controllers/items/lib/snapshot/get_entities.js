@@ -1,6 +1,6 @@
-import assert_ from '#lib/utils/assert_types'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { assert_ } from '#lib/utils/assert_types'
 import { aggregateClaims } from './helpers.js'
 
 const getRelativeEntities = relationProperty => async entity => {
@@ -14,14 +14,14 @@ const getEditionWorks = getRelativeEntities('wdt:P629')
 const getWorkAuthors = getRelativeEntities('wdt:P50')
 const getWorkSeries = getRelativeEntities('wdt:P179')
 
-const getWorkAuthorsAndSeries = work => {
+export const getWorkAuthorsAndSeries = work => {
   return Promise.all([
     getWorkAuthors(work),
-    getWorkSeries(work)
+    getWorkSeries(work),
   ])
 }
 
-const getEditionGraphFromEdition = edition => {
+export const getEditionGraphFromEdition = edition => {
   return getEditionWorks(edition)
   .then(works => {
     assert_.array(works)
@@ -40,22 +40,15 @@ const getWorksAuthorsAndSeries = works => {
 // dependent functions' needs
 const mergeWorksClaims = works => ({
   'wdt:P50': aggregateClaims(works, 'wdt:P50'),
-  'wdt:P179': aggregateClaims(works, 'wdt:P179')
+  'wdt:P179': aggregateClaims(works, 'wdt:P179'),
 })
 
-const getEditionGraphEntities = uri => {
+export const getEditionGraphEntities = uri => {
   return getEntityByUri({ uri })
   .then(getEditionGraphFromEdition)
 }
 
-const getWorkGraphFromWork = (lang, work) => {
+export const getWorkGraphFromWork = (lang, work) => {
   return getWorkAuthorsAndSeries(work)
   .then(([ authors, series ]) => [ lang, work, authors, series ])
-}
-
-export default {
-  getWorkAuthorsAndSeries,
-  getEditionGraphFromEdition,
-  getEditionGraphEntities,
-  getWorkGraphFromWork
 }

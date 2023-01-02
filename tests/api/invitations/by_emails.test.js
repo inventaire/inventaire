@@ -1,11 +1,11 @@
 import 'should'
+import { getRandomString } from '#lib/utils/random_string'
 import { getGroup } from '#tests/api/utils/groups'
-import randomString from '#lib/utils/random_string'
-import { authReq, authReqB, authReqC, shouldNotBeCalled } from '../utils/utils.js'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { signup } from '../fixtures/users.js'
+import { authReq, authReqB, authReqC, shouldNotBeCalled } from '../utils/utils.js'
 
-const randomEmail = () => `a${randomString(4).toLowerCase()}@foo.org`
+const randomEmail = () => `a${getRandomString(4).toLowerCase()}@foo.org`
 const endpoint = '/api/invitations?action=by-emails'
 
 // Do not re-test what test/libs/045-parse_emails unit tests already test
@@ -45,7 +45,7 @@ describe('invitations:by-emails', () => {
     it('should reject invalid message', async () => {
       await authReq('post', endpoint, {
         emails: 'a@foo.org',
-        message: []
+        message: [],
       })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -72,7 +72,7 @@ describe('invitations:by-emails', () => {
     it('should reject invalid group ids', async () => {
       await authReq('post', endpoint, {
         emails: 'a@foo.org',
-        group: 'abc'
+        group: 'abc',
       })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -85,7 +85,7 @@ describe('invitations:by-emails', () => {
       const group = await getSomeGroup()
       const { emails } = await authReq('post', endpoint, {
         emails: 'a@foo.org',
-        group: group._id
+        group: group._id,
       })
       emails[0].should.equal('a@foo.org')
     })
@@ -95,7 +95,7 @@ describe('invitations:by-emails', () => {
       // User B is a member (see ../fixtures/groups.js)
       const { emails } = await authReqB('post', endpoint, {
         emails: 'a@foo.org',
-        group: group._id
+        group: group._id,
       })
       emails[0].should.equal('a@foo.org')
     })
@@ -105,7 +105,7 @@ describe('invitations:by-emails', () => {
       // User C isnt a member
       await authReqC('post', endpoint, {
         emails: 'a@foo.org',
-        group: group._id
+        group: group._id,
       })
       .then(shouldNotBeCalled)
       .catch(err => {

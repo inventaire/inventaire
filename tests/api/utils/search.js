@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import { wait } from '#lib/promises'
-import assert_ from '#lib/utils/assert_types'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { assert_ } from '#lib/utils/assert_types'
 import { buildUrl } from '#lib/utils/url'
 import { publicReq, customAuthReq } from '../utils/utils.js'
 import { rawRequest } from './request.js'
@@ -11,7 +11,7 @@ const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.
 
 const endpoint = '/api/search'
 
-const getIndexedDoc = async (index, id, options = {}) => {
+export async function getIndexedDoc (index, id, options = {}) {
   assert_.string(index)
   assert_.string(id)
   if (options) assert_.object(options)
@@ -34,24 +34,24 @@ const getIndexedDoc = async (index, id, options = {}) => {
   }
 }
 
-const getAnalyze = async ({ indexBaseName, text, analyzer }) => {
+export async function getAnalyze ({ indexBaseName, text, analyzer }) {
   assert_.string(indexBaseName)
   assert_.string(text)
   assert_.string(analyzer)
   const index = indexesNamesByBaseNames[indexBaseName]
   const url = `${elasticOrigin}/${index}/_analyze`
   const { body } = await rawRequest('post', url, {
-    body: { text, analyzer }
+    body: { text, analyzer },
   })
   return JSON.parse(body)
 }
 
-const getAnalyzedTokens = async ({ indexBaseName, text, analyzer }) => {
+export async function getAnalyzedTokens ({ indexBaseName, text, analyzer }) {
   const analyze = await getAnalyze({ indexBaseName, text, analyzer })
   return _.map(analyze.tokens, 'token')
 }
 
-const waitForIndexation = async (indexBaseName, id) => {
+export async function waitForIndexation (indexBaseName, id) {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   assert_.string(index)
@@ -67,7 +67,7 @@ const waitForIndexation = async (indexBaseName, id) => {
   }
 }
 
-const waitForDeindexation = async (indexBaseName, id) => {
+export async function waitForDeindexation (indexBaseName, id) {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   assert_.string(index)
@@ -83,63 +83,53 @@ const waitForDeindexation = async (indexBaseName, id) => {
   }
 }
 
-export default {
-  search: async (...args) => {
-    let types, search, lang, filter, limit, offset, exact, minScore, claim
-    if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])
-    else [ types, search, lang, filter ] = args
-    if (_.isArray(types)) types = types.join('|')
-    const url = buildUrl(endpoint, {
-      types,
-      search,
-      lang: lang || 'en',
-      limit: limit || 10,
-      offset: offset || 0,
-      exact,
-      filter,
-      'min-score': minScore,
-      claim,
-    })
-    const { results } = await publicReq('get', url)
-    return results
-  },
-
-  customAuthSearch: async (user, types, search) => {
-    const { results } = await customAuthReq(user, 'get', buildUrl(endpoint, { search, types, lang: 'en' }))
-    return results
-  },
-
-  getIndexedDoc,
-
-  getAnalyze,
-  getAnalyzedTokens,
-
-  waitForIndexation,
-  waitForDeindexation,
-
-  deindex: async (index, id) => {
-    assert_.string(index)
-    assert_.string(id)
-    const url = `${elasticOrigin}/${index}/_doc/${id}`
-    try {
-      await rawRequest('delete', url)
-      _.success(url, 'deindexed')
-    } catch (err) {
-      if (err.statusCode === 404) {
-        _.warn(url, 'doc not found: no deindexation required')
-      } else {
-        throw err
-      }
-    }
-  },
-
-  indexPlaceholder: async (index, id) => {
-    assert_.string(index)
-    assert_.string(id)
-    const url = `${elasticOrigin}/${index}/_doc/${id}`
-    await rawRequest('put', url, { body: { testPlaceholder: true } })
-    _.success(url, 'placeholder added')
-  },
-
-  firstNWords: (str, num) => str.split(' ').slice(0, num).join(' '),
+export async function search (...args) {
+  let types, search, lang, filter, limit, offset, exact, minScore, claim
+  if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])
+  else [ types, search, lang, filter ] = args
+  if (_.isArray(types)) types = types.join('|')
+  const url = buildUrl(endpoint, {
+    types,
+    search,
+    lang: lang || 'en',
+    limit: limit || 10,
+    offset: offset || 0,
+    exact,
+    filter,
+    'min-score': minScore,
+    claim,
+  })
+  const { results } = await publicReq('get', url)
+  return results
 }
+
+export async function customAuthSearch (user, types, search) {
+  const { results } = await customAuthReq(user, 'get', buildUrl(endpoint, { search, types, lang: 'en' }))
+  return results
+}
+
+export async function deindex (index, id) {
+  assert_.string(index)
+  assert_.string(id)
+  const url = `${elasticOrigin}/${index}/_doc/${id}`
+  try {
+    await rawRequest('delete', url)
+    _.success(url, 'deindexed')
+  } catch (err) {
+    if (err.statusCode === 404) {
+      _.warn(url, 'doc not found: no deindexation required')
+    } else {
+      throw err
+    }
+  }
+}
+
+export async function indexPlaceholder (index, id) {
+  assert_.string(index)
+  assert_.string(id)
+  const url = `${elasticOrigin}/${index}/_doc/${id}`
+  await rawRequest('put', url, { body: { testPlaceholder: true } })
+  _.success(url, 'placeholder added')
+}
+
+export const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')

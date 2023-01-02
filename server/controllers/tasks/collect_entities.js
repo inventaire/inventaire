@@ -1,11 +1,11 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import dbFactory from '#db/couchdb/base'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
+import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import dbFactory from '#db/couchdb/base'
 import jobs_ from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import checkEntity from './lib/check_entity.js'
-import tasks_ from './lib/tasks.js'
 
 const { nice } = CONFIG
 
@@ -13,7 +13,7 @@ const db = dbFactory('entities')
 const batchLength = 1000
 
 const sanitization = {
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async ({ refresh }) => {
@@ -49,7 +49,7 @@ const getNextInvHumanUrisBatch = async pagination => {
   const { rows } = await db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
     limit: batchLength,
-    skip: offset
+    skip: offset,
   })
   pagination.offset += batchLength
   return getUris(rows)
@@ -79,7 +79,7 @@ const deduplicateWorker = async (jobId, uri) => {
 }
 
 const filterNotAlreadySuspectEntities = async uris => {
-  const { rows } = await tasks_.bySuspectUris(uris, { includeArchived: true })
+  const { rows } = await getTasksBySuspectUris(uris, { includeArchived: true })
   const alreadyCheckedUris = _.map(rows, 'suspectUri')
   return _.difference(uris, alreadyCheckedUris)
 }

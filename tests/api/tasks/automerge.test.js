@@ -1,8 +1,8 @@
 import 'should'
 import ASCIIFolder from 'fold-to-ascii'
-import { checkEntities } from '../utils/tasks.js'
-import { getByUris, findOrIndexEntities } from '../utils/entities.js'
 import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities.js'
+import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { checkEntities } from '../utils/tasks.js'
 
 describe('tasks:automerge', () => {
   before(async () => {
@@ -31,7 +31,7 @@ describe('tasks:automerge', () => {
     const human = await createHuman({ labels: { en: humanLabel } })
     await Promise.all([
       createWorkWithAuthor({ uri: wikidataUri }, workLabel),
-      createWorkWithAuthor(human, workLabel)
+      createWorkWithAuthor(human, workLabel),
     ])
     await checkEntities(human.uri)
     const { entities } = await getByUris(human.uri)

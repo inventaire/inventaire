@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import properties from '../properties/properties_values_constraints.js'
-import validateClaimValueSync from '../validate_claim_value_sync.js'
 import { validateProperty } from '../properties/validations.js'
+import validateClaimValueSync from '../validate_claim_value_sync.js'
 
 export default (seed, type) => {
   seed.labels = seed.labels || {}

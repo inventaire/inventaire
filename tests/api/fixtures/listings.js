@@ -1,8 +1,8 @@
 import { addElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '../utils/request.js'
 import { getUser } from '../utils/utils.js'
-import fakeText from './text.js'
 import { createEdition } from './entities.js'
+import fakeText from './text.js'
 
 const endpoint = '/api/lists?action='
 
@@ -34,14 +34,14 @@ const fixtures = {
     }
     const res = await addElements(userPromise, {
       id: listing._id,
-      uris: [ uri ]
+      uris: [ uri ],
     })
     const { createdElements } = res
     return {
       element: createdElements[0],
       listing,
-      uri
+      uri,
     }
-  }
+  },
 }
 export default fixtures

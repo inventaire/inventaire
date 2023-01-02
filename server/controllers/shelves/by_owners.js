@@ -1,20 +1,20 @@
-import _ from '#builders/utils'
+import { keyBy } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/shelves/lib/filter_private_attributes'
-import shelves_ from '#controllers/shelves/lib/shelves'
-import filterVisibleDocs from '#lib/visibility/filter_visible_docs'
+import { getShelvesByOwners } from '#controllers/shelves/lib/shelves'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
   owners: {},
   limit: { optional: true },
-  offset: { optional: true }
+  offset: { optional: true },
 }
 
 const controller = async params => {
   const { reqUserId, owners } = params
-  const foundShelves = await shelves_.byOwners(owners)
+  const foundShelves = await getShelvesByOwners(owners)
   let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
   authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
-  const shelves = _.keyBy(authorizedShelves, '_id')
+  const shelves = keyBy(authorizedShelves, '_id')
   return { shelves }
 }
 

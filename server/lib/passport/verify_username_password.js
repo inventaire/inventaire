@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import user_ from '#controllers/user/lib/user'
+import { findUserByUsernameOrEmail } from '#controllers/user/lib/user'
 import { passwords as pw_ } from '#lib/crypto'
 import loginAttempts from './login_attempts.js'
 
@@ -9,7 +9,7 @@ export default (username, password, done) => {
   }
 
   // addressing the case an email is provided instead of a username
-  return user_.findOneByUsernameOrEmail(username)
+  return findUserByUsernameOrEmail(username)
   .catch(invalidUsernameOrPassword.bind(null, done, username, 'findOneByUsername'))
   .then(returnIfValid.bind(null, done, password, username))
   .catch(finalError.bind(null, done))

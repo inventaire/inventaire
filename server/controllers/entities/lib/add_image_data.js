@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import promises_ from '#lib/promises'
 import getThumbData from '#data/commons/thumb'
-import getEnwikiImage from '#data/wikipedia/image'
 import getOpenLibraryCover from '#data/openlibrary/cover'
+import getEnwikiImage from '#data/wikipedia/image'
+import { objectPromise } from '#lib/promises'
 import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
 export default async entity => {
@@ -20,10 +20,10 @@ const findAnImage = entity => {
 }
 
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
-  return promises_.props({
+  return objectPromise({
     wm: getThumbData(commonsFilename),
     wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
-    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type)
+    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type),
   })
   .then(results => {
     const order = getPicSourceOrder(entity)

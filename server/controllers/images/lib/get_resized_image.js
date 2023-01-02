@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import images_ from '#lib/images'
 import { userAgent } from '#lib/requests'
 
@@ -11,8 +11,8 @@ const { maxSize } = mediaStorage.images
 const oneMB = 1024 ** 2
 const reqOptions = {
   headers: {
-    'user-agent': userAgent
-  }
+    'user-agent': userAgent,
+  },
 }
 
 export default async (req, res, url, dimensions) => {

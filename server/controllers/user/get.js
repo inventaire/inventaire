@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import user_ from '#controllers/user/lib/user'
+import { setUserStableUsername } from '#controllers/user/lib/user'
 import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
 const controller = async (params, req, res) => {
@@ -13,7 +13,7 @@ const controller = async (params, req, res) => {
     // on the hypothesis that we will always return the same username for a given user
     // This behavior is tailored
     if (attributesShortlist.includes('stableUsername')) {
-      await user_.setStableUsername(userData)
+      await setUserStableUsername(userData)
     }
     return _.pick(userData, attributesShortlist)
   } else {

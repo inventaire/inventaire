@@ -8,7 +8,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   byClaimValue: {
     map: doc => {
@@ -19,6 +19,6 @@ export default {
           }
         }
       }
-    }
-  }
+    },
+  },
 }

@@ -1,6 +1,8 @@
 import _ from '#builders/utils'
 import slugify from '#controllers/groups/lib/slugify'
-import { pass, boundedString, BoundedString, localImg, boolean, position, userId } from './common.js'
+import commonValidations from './common.js'
+
+const { pass, boundedString, BoundedString, localImg, boolean, position, userId } = commonValidations
 
 export default {
   pass,
@@ -16,5 +18,5 @@ export default {
   searchable: boolean,
   position,
   open: boolean,
-  creatorId: userId
+  creatorId: userId,
 }

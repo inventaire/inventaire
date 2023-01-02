@@ -14,7 +14,7 @@ const validListing = {
   creator: someUserId,
   description: fakeDesc,
   visibility: [],
-  name: fakeName
+  name: fakeName,
 }
 
 const extendListing = data => Object.assign({}, validListing, data)

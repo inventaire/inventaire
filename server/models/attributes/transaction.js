@@ -7,28 +7,28 @@ const states = {
     // Current action actor
     actor: 'requester',
     // Next actions (the actor(s) may differ from the current one)
-    next: [ 'accepted', 'declined', 'cancelled' ]
+    next: [ 'accepted', 'declined', 'cancelled' ],
   },
   accepted: {
     actor: 'owner',
-    next: [ 'confirmed', 'cancelled' ]
+    next: [ 'confirmed', 'cancelled' ],
   },
   declined: {
     actor: 'owner',
-    next: []
+    next: [],
   },
   confirmed: {
     actor: 'requester',
-    next: [ 'returned', 'cancelled' ]
+    next: [ 'returned', 'cancelled' ],
   },
   returned: {
     actor: 'owner',
-    next: []
+    next: [],
   },
   cancelled: {
     actor: 'both',
-    next: []
-  }
+    next: [],
+  },
 }
 
 const statesList = Object.keys(states)
@@ -39,24 +39,24 @@ const basicNextActions = {
     // key: main user role in this transaction
     // value: possible actions
     owner: 'accept/decline',
-    requester: 'waiting:accepted'
+    requester: 'waiting:accepted',
   },
   accepted: {
     owner: 'waiting:confirmed',
-    requester: 'confirm'
+    requester: 'confirm',
   },
   declined: {
     owner: null,
-    requester: null
+    requester: null,
   },
   confirmed: {
     owner: null,
-    requester: null
+    requester: null,
   },
   cancelled: {
     owner: null,
-    requester: null
-  }
+    requester: null,
+  },
 }
 
 // customizing actions for transactions where the item should be returned
@@ -64,12 +64,12 @@ const basicNextActions = {
 const nextActionsWithReturn = Object.assign({}, basicNextActions, {
   confirmed: {
     owner: 'returned',
-    requester: 'waiting:returned'
+    requester: 'waiting:returned',
   },
   returned: {
     owner: null,
-    requester: null
-  }
+    requester: null,
+  },
 }
 )
 

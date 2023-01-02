@@ -1,49 +1,67 @@
 import ActionsControllers from '#lib/actions_controllers'
+import byUrisGet from './by_uris_get.js'
+import contributions from './contributions.js'
+import contributionsCount from './contributions_count.js'
+import create from './create.js'
+import delet from './delete.js'
+import duplicates from './duplicates.js'
 import { authorWorks, serieParts, publisherPublications } from './get_entity_relatives.js'
+import history from './history.js'
+import images from './images.js'
+import merge from './merge.js'
+import moveToWikidata from './move_to_wikidata.js'
+import popularity from './popularity.js'
+import resolve from './resolve.js'
+import restoreVersion from './restore_version.js'
+import reverseClaims from './reverse_claims.js'
+import revertEdit from './revert_edit.js'
+import revertMerge from './revert_merge.js'
+import updateClaim from './update_claim.js'
+import updateLabel from './update_label.js'
 
 export default {
   get: ActionsControllers({
     public: {
-      'by-uris': require('./by_uris_get'),
-      'reverse-claims': require('./reverse_claims'),
+      'by-uris': byUrisGet,
+      'reverse-claims': reverseClaims,
       'author-works': authorWorks,
       'serie-parts': serieParts,
       'publisher-publications': publisherPublications,
-      images: require('./images'),
-      popularity: require('./popularity'),
-      history: require('./history'),
-      contributions: require('./contributions')
+      images,
+      popularity,
+      history,
+      contributions,
     },
     dataadmin: {
-      duplicates: require('./duplicates')
+      duplicates,
     },
     admin: {
-      'contributions-count': require('./contributions_count'),
-    }
+      'contributions-count': contributionsCount,
+    },
   }),
 
   post: ActionsControllers({
     public: {
-      'by-uris': require('./by_uris_get')
+      'by-uris': byUrisGet,
     },
     authentified: {
-      create: require('./create'),
-      resolve: require('./resolve'),
-      delete: require('./delete')
-    }
+      create,
+      resolve,
+      delete: delet,
+    },
   }),
 
   put: ActionsControllers({
     authentified: {
-      'update-claim': require('./update_claim'),
-      'update-label': require('./update_label'),
-      'revert-edit': require('./revert_edit'),
-      'restore-version': require('./restore_version'),
-      'move-to-wikidata': require('./move_to_wikidata')
+      'update-claim': updateClaim,
+      'update-label': updateLabel,
+      'revert-edit': revertEdit,
+      'restore-version': restoreVersion,
+      'move-to-wikidata': moveToWikidata,
     },
     dataadmin: {
-      merge: require('./merge'),
-      'revert-merge': require('./revert_merge')
-    }
-  })
+      merge,
+      'revert-merge': revertMerge,
+    },
+  }),
 }

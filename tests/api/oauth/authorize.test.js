@@ -1,7 +1,7 @@
-import randomString from '#lib/utils/random_string'
+import { getRandomString } from '#lib/utils/random_string'
 import { parseQuery } from '#lib/utils/url'
-import { publicReq, authReq, rawAuthReq, shouldNotBeCalled } from '../utils/utils.js'
 import { getClient } from '../utils/oauth.js'
+import { publicReq, authReq, rawAuthReq, shouldNotBeCalled } from '../utils/utils.js'
 
 const endpoint = '/api/oauth/authorize'
 
@@ -35,7 +35,7 @@ describe('oauth:authorize', () => {
 
   it('should reject without a response_type', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&scope=username`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&state=${getRandomString(20)}&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -47,7 +47,7 @@ describe('oauth:authorize', () => {
   // so we have to validate it ourselves, thus this the error is in the Inventaire error format
   it('should reject without a scope', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&response_type=code`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&state=${getRandomString(20)}&response_type=code`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -56,7 +56,7 @@ describe('oauth:authorize', () => {
   })
 
   it('should reject when passed an invalid client id', async () => {
-    await authReq('get', `${endpoint}?client_id=foo&state=${randomString(20)}&response_type=code&scope=username`)
+    await authReq('get', `${endpoint}?client_id=foo&state=${getRandomString(20)}&response_type=code&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -66,7 +66,7 @@ describe('oauth:authorize', () => {
 
   it('should reject when passed an invalid response_type', async () => {
     const { _id: clientId } = await getClient()
-    await authReq('get', `${endpoint}?client_id=${clientId}&state=${randomString(20)}&response_type=foo&scope=username`)
+    await authReq('get', `${endpoint}?client_id=${clientId}&state=${getRandomString(20)}&response_type=foo&scope=username`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -76,7 +76,7 @@ describe('oauth:authorize', () => {
 
   it('should reject an invalid scope (single scope)', async () => {
     const { _id: clientId } = await getClient()
-    const state = randomString(20)
+    const state = getRandomString(20)
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=foo`
     await authReq('get', url)
     .then(shouldNotBeCalled)
@@ -88,7 +88,7 @@ describe('oauth:authorize', () => {
 
   it('should reject an invalid scope (multiple scopes)', async () => {
     const { _id: clientId } = await getClient()
-    const state = randomString(20)
+    const state = getRandomString(20)
     // username is a valid scope, but foo isn't
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username%20foo`
     await authReq('get', url)
@@ -101,7 +101,7 @@ describe('oauth:authorize', () => {
 
   it('should redirect to the client redirect uri', async () => {
     const { _id: clientId, redirectUris } = await getClient()
-    const state = randomString(20)
+    const state = getRandomString(20)
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username`
     const { statusCode, headers } = await rawAuthReq({ method: 'get', url })
     statusCode.should.equal(302)
@@ -115,7 +115,7 @@ describe('oauth:authorize', () => {
 
   it('should accept multiple scopes', async () => {
     const { _id: clientId } = await getClient()
-    const state = randomString(20)
+    const state = getRandomString(20)
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username%20email`
     const { statusCode } = await rawAuthReq({ method: 'get', url })
     statusCode.should.equal(302)

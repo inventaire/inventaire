@@ -1,7 +1,8 @@
-import _ from '#builders/utils'
 import 'should'
-import randomString from '#lib/utils/random_string'
-import assert_ from '#lib/utils/assert_types'
+import _ from '#builders/utils'
+import elasticsearchSettings from '#db/elasticsearch/settings/settings'
+import { assert_ } from '#lib/utils/assert_types'
+import { getRandomString } from '#lib/utils/random_string'
 import {
   createWork,
   createHuman,
@@ -16,11 +17,11 @@ import {
 } from '../fixtures/entities.js'
 import { randomLongWord, randomWords } from '../fixtures/text.js'
 import { getByUris } from '../utils/entities.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
 import { search, waitForIndexation, getIndexedDoc } from '../utils/search.js'
+import { shouldNotBeCalled } from '../utils/utils.js'
 
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
+const { max_gram: maxGram } = elasticsearchSettings.analysis.filter.edge_ngram
 
 assert_.number(maxGram)
 
@@ -45,7 +46,7 @@ describe('search:entities', () => {
       waitForIndexation('entities', serie._id),
       waitForIndexation('entities', publisher._id),
       waitForIndexation('entities', collection._id),
-      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1]))
+      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1])),
     ])
   })
 
@@ -125,7 +126,7 @@ describe('search:entities', () => {
       })
 
       it('should find a label with single letter words', async () => {
-        const label = randomString(1)
+        const label = getRandomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', exact: true, filter: 'inv' })
@@ -181,7 +182,7 @@ describe('search:entities', () => {
       })
 
       it('should find a label with single letter words', async () => {
-        const label = randomString(1)
+        const label = getRandomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
@@ -364,8 +365,8 @@ describe('search:entities', () => {
       const publisher = await createPublisher({ labels: { en: label } })
       const collection = await createCollection({
         claims: {
-          'wdt:P123': [ publisher.uri ]
-        }
+          'wdt:P123': [ publisher.uri ],
+        },
       })
       await waitForIndexation('entities', collection._id)
       const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })

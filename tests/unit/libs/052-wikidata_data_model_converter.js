@@ -12,8 +12,8 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            P1545: [ '1' ]
-          }
+            P1545: [ '1' ],
+          },
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -25,7 +25,7 @@ describe('wikidata data model converter', () => {
       relocateQualifierProperties({
         claims: {
           P179: [ 'Q1', 'Q2' ],
-        }
+        },
       })
     })
 
@@ -35,7 +35,7 @@ describe('wikidata data model converter', () => {
           claims: {
             P179: [ 'Q1', 'Q2' ],
             P1545: [ '1' ],
-          }
+          },
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -49,7 +49,7 @@ describe('wikidata data model converter', () => {
           claims: {
             P179: [ 'Q1' ],
             P1545: [ '1', '2' ],
-          }
+          },
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -68,8 +68,8 @@ describe('wikidata data model converter', () => {
           value: 'Q1',
           qualifiers: {
             P1545: '1',
-          }
-        }
+          },
+        },
       })
     })
   })

@@ -1,12 +1,12 @@
-import error_ from '#lib/error/error'
+import { userIsInAdmins, userIsInGroup, userIsInRequested } from '#controllers/groups/lib/users_lists'
+import { error_ } from '#lib/error/error'
 import groups_ from './groups.js'
-import lists_ from './users_lists.js'
 import leave_ from './lib/leave_groups.js'
 
 const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
   return Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInRequested(requesterId, groupId)
+    userIsInAdmins(reqUserId, groupId),
+    userIsInRequested(requesterId, groupId),
   ])
   .then(([ userInAdmins, requesterInRequested ]) => {
     if (!userInAdmins) {
@@ -19,7 +19,7 @@ const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
 }
 
 const validateAdminRights = (reqUserId, groupId) => {
-  return lists_.userInAdmins(reqUserId, groupId)
+  return userIsInAdmins(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('user isnt a group admin', 403, reqUserId, groupId)
@@ -29,8 +29,8 @@ const validateAdminRights = (reqUserId, groupId) => {
 
 const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
   Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInAdmins(targetId, groupId)
+    userIsInAdmins(reqUserId, groupId),
+    userIsInAdmins(targetId, groupId),
   ])
   .then(([ userIsAdmin, targetIsAdmin ]) => {
     if (!userIsAdmin) {
@@ -44,8 +44,8 @@ const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) 
 
 const validateUserRightToLeave = (reqUserId, groupId) => {
   return Promise.all([
-    lists_.userInGroup(reqUserId, groupId),
-    leave_.userCanLeave(reqUserId, groupId)
+    userIsInGroup(reqUserId, groupId),
+    leave_.userCanLeave(reqUserId, groupId),
   ])
   .then(([ userInGroup, userCanLeave ]) => {
     if (!userInGroup) {
@@ -59,7 +59,7 @@ const validateUserRightToLeave = (reqUserId, groupId) => {
 }
 
 const validateRequest = (reqUserId, groupId) => {
-  return lists_.userInGroupOrOut(reqUserId, groupId)
+  return userIsInGroup(reqUserId, groupId)
   .then(bool => {
     if (bool) {
       throw error_.new('user is already in group', 403, reqUserId, groupId)
@@ -68,7 +68,7 @@ const validateRequest = (reqUserId, groupId) => {
 }
 
 const validateCancelRequest = (reqUserId, groupId) => {
-  return lists_.userInRequested(reqUserId, groupId)
+  return userIsInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('request not found', 403, reqUserId, groupId)
@@ -87,5 +87,5 @@ export default {
   updateSettings: validateAdminRights,
   makeAdmin: validateAdminRights,
   kick: validateAdminRightsWithoutAdminsConflict,
-  leave: validateUserRightToLeave
+  leave: validateUserRightToLeave,
 }

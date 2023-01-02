@@ -6,7 +6,7 @@ export default {
     return createComment(userId, message, 'transaction', transactionId)
   },
 
-  validations
+  validations,
 }
 
 const createComment = (userId, message, key, value) => {
@@ -16,7 +16,7 @@ const createComment = (userId, message, key, value) => {
   const comment = {
     user: userId,
     message,
-    created: Date.now()
+    created: Date.now(),
   }
 
   // the key identifies the object to which the comment is attached

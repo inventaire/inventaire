@@ -6,11 +6,11 @@ const userDoc = (username, idLastCharacters) => ({
   snapshot: {},
   settings: {
     notifications: {
-      global: false
+      global: false,
     },
     contributions: {
-      anonymize: false
-    }
+      anonymize: false,
+    },
   },
 })
 

@@ -1,14 +1,14 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
-import resolve from './resolve.js'
-import UpdateResolvedEntry from './update_resolved_entry.js'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
+import resolve from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
+import UpdateResolvedEntry from './update_resolved_entry.js'
 
 const { nice } = CONFIG
 
-const resolveUpdateAndCreate = async params => {
+export async function resolveUpdateAndCreate (params) {
   params.batchId = Date.now()
   const { create, update, strict } = params
   const { entries, errors } = sanitizeEntries(params.entries, strict)
@@ -54,7 +54,7 @@ const handleError = (strict, errors, err, entry) => {
   }
 }
 
-const sanitizeEntries = (entries, strict) => {
+export const sanitizeEntries = (entries, strict) => {
   const errors = []
   const sanitizedEntries = []
   entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))
@@ -68,5 +68,3 @@ const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => 
     handleError(strict, errors, err, entry)
   }
 }
-
-export default { resolveUpdateAndCreate, sanitizeEntries }

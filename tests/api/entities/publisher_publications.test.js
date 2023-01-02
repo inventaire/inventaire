@@ -1,8 +1,8 @@
 import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { publicReq } from '../utils/utils.js'
 import { createEdition, createEditionWithIsbn, createCollection, createPublisher } from '../fixtures/entities.js'
 import { addClaim } from '../utils/entities.js'
+import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=publisher-publications'
 
@@ -19,8 +19,8 @@ describe('entities:publisher-publications', () => {
     const { uri: publisherUri } = await createPublisher()
     const collection = await createCollection({
       claims: {
-        'wdt:P123': [ publisherUri ]
-      }
+        'wdt:P123': [ publisherUri ],
+      },
     })
     const { collections } = await publicReq('get', `${endpoint}&uri=${publisherUri}`)
     collections.should.deepEqual([ { uri: collection.uri } ])
@@ -31,11 +31,11 @@ describe('entities:publisher-publications', () => {
     const [ editionA, editionB, collection ] = await Promise.all([
       createEdition({ publisher: publisherUri }),
       createEdition({ publisher: publisherUri }),
-      createCollection()
+      createCollection(),
     ])
     await Promise.all([
       addClaim({ uri: collection.uri, property: 'wdt:P123', value: publisherUri }),
-      addClaim({ uri: editionA.uri, property: 'wdt:P195', value: collection.uri })
+      addClaim({ uri: editionA.uri, property: 'wdt:P195', value: collection.uri }),
     ])
     const { collections, editions } = await publicReq('get', `${endpoint}&uri=${publisherUri}`)
     collections.should.deepEqual([ { uri: collection.uri } ])
@@ -51,7 +51,7 @@ describe('entities:publisher-publications', () => {
       createEdition({ publisher, publicationDate: '2019' }),
       createEdition({ publisher, publicationDate: '2018-11-12' }),
       // Create an edition with an ISBN to be able to set the publication date
-      createEditionWithIsbn({ publisher, publicationDate: null })
+      createEditionWithIsbn({ publisher, publicationDate: null }),
     ])
     // Creating at least some milliseconds later
     const editionD = await createEditionWithIsbn({ publisher, publicationDate: null })
@@ -62,7 +62,7 @@ describe('entities:publisher-publications', () => {
       { uri: editionB.uri },
       { uri: editionA.uri },
       { uri: editionC.uri },
-      { uri: editionD.uri }
+      { uri: editionD.uri },
     ])
   })
 

@@ -1,13 +1,13 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
-import error_ from '#lib/error/error'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
-import assert_ from './utils/assert_types.js'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from './utils/assert_types.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
-const buildSearcher = params => {
+export const buildSearcher = params => {
   const { dbBaseName, queryBuilder } = params
   const index = indexesNamesByBaseNames[dbBaseName]
   assert_.string(index)
@@ -24,32 +24,32 @@ const buildSearcher = params => {
   }
 }
 
-const getHits = res => {
+export const getHits = res => {
   checkShardError(res)
   const { hits } = res
   return hits.hits
 }
 
-const getHitsAndTotal = res => {
+export const getHitsAndTotal = res => {
   checkShardError(res)
   const { hits } = res
   return {
     hits: hits.hits,
-    total: hits.total.value
+    total: hits.total.value,
   }
 }
 
-const checkShardError = ({ _shards }) => {
+export const checkShardError = ({ _shards }) => {
   if (_shards.failures) {
     const failure = _shards.failures[0]
     throw error_.new(failure.reason.reason, 500, failure)
   }
 }
 
-const parseResponse = res => getHits(res).map(parseHit)
+export const parseResponse = res => getHits(res).map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by _.warn
-const formatError = err => {
+export const formatError = err => {
   // Directly rethrow errors that aren't from Elasticsearch
   // like ECONNREFUSED errors
   if (err.body == null) throw err
@@ -76,5 +76,3 @@ const parseHit = hit => {
   data._score = _score
   return data
 }
-
-export default { buildSearcher, getHits, getHitsAndTotal, parseResponse, formatError }

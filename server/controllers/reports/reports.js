@@ -1,7 +1,8 @@
 import _ from '#builders/utils'
+import onlineReport from '#controllers/reports/online_report'
 import ActionsControllers from '#lib/actions_controllers'
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
 
 const cspReport = (req, res) => {
   const report = req.body['csp-report'] || req.body
@@ -55,7 +56,7 @@ export default {
     public: {
       'csp-report': cspReport,
       'error-report': errorReport,
-      online: require('./online_report')
-    }
-  })
+      online: onlineReport,
+    },
+  }),
 }

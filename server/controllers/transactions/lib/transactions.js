@@ -1,98 +1,96 @@
+import { map } from 'lodash-es'
 import _ from '#builders/utils'
-import Transaction from '#models/transaction'
-import error_ from '#lib/error/error'
 import comments_ from '#controllers/comments/lib/comments'
-import { BasicUpdater } from '#lib/doc_updates'
-import { minKey, maxKey } from '#lib/couch'
-import assert_ from '#lib/utils/assert_types'
-import radio from '#lib/radio'
 import dbFactory from '#db/couchdb/base'
+import { minKey, maxKey } from '#lib/couch'
+import { BasicUpdater } from '#lib/doc_updates'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
+import { sameObjects } from '#lib/utils/base'
+import Transaction from '#models/transaction'
 
 const db = dbFactory('transactions')
 
-const transactions_ = {
-  byId: db.get,
-  byUser: userId => {
-    return db.viewCustom('byUserAndItem', {
-      // get all the docs with this userId
-      startkey: [ userId, minKey ],
-      endkey: [ userId, maxKey ],
-      include_docs: true
-    })
-  },
+export const getTransactionById = db.get
+export const getTransactionsByUser = userId => {
+  return db.viewCustom('byUserAndItem', {
+    // get all the docs with this userId
+    startkey: [ userId, minKey ],
+    endkey: [ userId, maxKey ],
+    include_docs: true,
+  })
+}
 
-  byUserAndItem: (userId, itemId) => {
-    assert_.strings([ userId, itemId ])
-    return db.viewByKey('byUserAndItem', [ userId, itemId ])
-  },
+export const getTransactionsByUserAndItem = (userId, itemId) => {
+  assert_.strings([ userId, itemId ])
+  return db.viewByKey('byUserAndItem', [ userId, itemId ])
+}
 
-  create: async (itemDoc, ownerDoc, requesterDoc) => {
-    const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
-    _.log(transaction, 'transaction')
-    const couchRes = await db.post(transaction)
-    await radio.emit('transaction:request', couchRes.id)
-    return couchRes
-  },
+export const createTransaction = async (itemDoc, ownerDoc, requesterDoc) => {
+  const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
+  log(transaction, 'transaction')
+  const couchRes = await db.post(transaction)
+  await emit('transaction:request', couchRes.id)
+  return couchRes
+}
 
-  addMessage: (userId, message, transactionId) => {
-    assert_.strings([ userId, message, transactionId ])
-    if (message) {
-      return comments_.addTransactionComment(userId, message, transactionId)
-    }
-  },
-
-  updateState: async (transaction, newState, userId) => {
-    Transaction.validatePossibleState(transaction, newState)
-    await db.update(transaction._id, stateUpdater(newState, userId, transaction))
-    await radio.emit('transaction:update', transaction, newState)
-  },
-
-  markAsRead: (userId, transaction) => {
-    const role = userRole(userId, transaction)
-    // Not handling cases when both user are connected:
-    // should be clarified once sockets/server events will be implemented
-    return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
-  },
-
-  updateReadForNewMessage: async (userId, transaction) => {
-    const updatedReadStates = updateReadStates(userId, transaction)
-    // Spares a db write if updatedReadStates is already the current read state object
-    if (_.sameObjects(updatedReadStates, transaction.read)) return
-    return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
-  },
-
-  activeTransactionsCount: userId => {
-    return transactions_.byUser(userId)
-    .then(activeCount)
-  },
-
-  cancelAllActiveTransactions: async userId => {
-    const transactions = await transactions_.byUser(userId)
-    const activeTransactions = transactions.filter(Transaction.isActive)
-    await Promise.all(activeTransactions.map(transaction => {
-      return transactions_.updateState(transaction, 'cancelled', userId)
-    }))
-  },
-
-  itemIsBusy: async itemId => {
-    assert_.string(itemId)
-    const rows = await getBusyItems([ itemId ])
-    return rows.length > 0
-  },
-
-  setItemsBusyFlag: async items => {
-    assert_.objects(items)
-    const itemsIdsToCheck = _.map(items.filter(mayBeBusy), '_id')
-    const rows = await getBusyItems(itemsIdsToCheck)
-    const busyItemsIds = new Set(_.map(rows, 'key'))
-    return items.map(item => {
-      item.busy = busyItemsIds.has(item._id)
-      return item
-    })
+export const addTransactionMessage = (userId, message, transactionId) => {
+  assert_.strings([ userId, message, transactionId ])
+  if (message) {
+    return comments_.addTransactionComment(userId, message, transactionId)
   }
 }
 
-export default transactions_
+export const updateTransactionState = async (transaction, newState, userId) => {
+  Transaction.validatePossibleState(transaction, newState)
+  await db.update(transaction._id, stateUpdater(newState, userId, transaction))
+  await emit('transaction:update', transaction, newState)
+}
+
+export const markTransactionAsRead = (userId, transaction) => {
+  const role = userRole(userId, transaction)
+  // Not handling cases when both user are connected:
+  // should be clarified once sockets/server events will be implemented
+  return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
+}
+
+export const updateReadForNewMessage = async (userId, transaction) => {
+  const updatedReadStates = updateReadStates(userId, transaction)
+  // Spares a db write if updatedReadStates is already the current read state object
+  if (sameObjects(updatedReadStates, transaction.read)) return
+  return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
+}
+
+export const getUserActiveTransactionsCount = userId => {
+  return getTransactionsByUser(userId)
+  .then(activeCount)
+}
+
+export const cancelAllActiveTransactions = async userId => {
+  const transactions = await getTransactionsByUser(userId)
+  const activeTransactions = transactions.filter(Transaction.isActive)
+  await Promise.all(activeTransactions.map(transaction => {
+    return updateTransactionState(transaction, 'cancelled', userId)
+  }))
+}
+
+export const checkIfItemIsBusy = async itemId => {
+  assert_.string(itemId)
+  const rows = await getBusyItems([ itemId ])
+  return rows.length > 0
+}
+
+export const setItemsBusyFlag = async items => {
+  assert_.objects(items)
+  const itemsIdsToCheck = map(items.filter(mayBeBusy), '_id')
+  const rows = await getBusyItems(itemsIdsToCheck)
+  const busyItemsIds = new Set(map(rows, 'key'))
+  return items.map(item => {
+    item.busy = busyItemsIds.has(item._id)
+    return item
+  })
+}
 
 const mayBeBusy = item => item.transaction !== 'inventorying'
 

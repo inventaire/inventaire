@@ -1,21 +1,25 @@
 import ActionsControllers from '#lib/actions_controllers'
-import radio from '#lib/radio'
+import { radio } from '#lib/radio'
+import convertUrl from './convert_url.js'
+import dataUrl from './data_url.js'
+import gravatar from './gravatar.js'
 import checkImage from './lib/check_image.js'
+import upload from './upload.js'
 
 export default {
   get: ActionsControllers({
     authentified: {
-      'data-url': require('./data_url'),
-      gravatar: require('./gravatar')
-    }
+      'data-url': dataUrl,
+      gravatar,
+    },
   }),
 
   post: ActionsControllers({
     authentified: {
-      upload: require('./upload'),
-      'convert-url': require('./convert_url')
-    }
-  })
+      upload,
+      'convert-url': convertUrl,
+    },
+  }),
 }
 
 radio.on('image:needs:check', checkImage)

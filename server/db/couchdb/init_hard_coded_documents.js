@@ -1,7 +1,8 @@
 import _ from '#builders/utils'
 import usersDbFactory from '#db/couchdb/base'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 
-const users = Object.values(require('./hard_coded_documents').users)
+const users = Object.values(hardCodedUsers)
 
 const usersDb = usersDbFactory('users')
 

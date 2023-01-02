@@ -2,8 +2,8 @@ import CONFIG from 'config'
 import couchInit from 'couch-init2'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
-import initHardCodedDocuments from './init_hard_coded_documents.js'
 import databases from './databases.js'
+import initHardCodedDocuments from './init_hard_coded_documents.js'
 
 const dbBaseUrl = CONFIG.db.getOrigin()
 const formattedList = []
@@ -16,7 +16,7 @@ for (const dbName in databases) {
   formattedList.push({
     // Adding a suffix if needed
     name: CONFIG.db.name(dbName),
-    designDocs: designDocsNames.map(setJsExtension)
+    designDocs: designDocsNames.map(setJsExtension),
   })
 }
 

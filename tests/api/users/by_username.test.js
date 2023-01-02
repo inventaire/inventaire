@@ -1,5 +1,8 @@
 import should from 'should'
 import _ from '#builders/utils'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
 import {
   publicReq,
   authReq,
@@ -10,11 +13,8 @@ import {
   rethrowShouldNotBeCalledErrors,
   getReservedUser,
 } from '#tests/api/utils/utils'
-import randomString from '#lib/utils/random_string'
-import { wait } from '#lib/promises'
-import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
-import { deleteUser, updateUser } from '../utils/users.js'
 import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
+import { deleteUser, updateUser } from '../utils/users.js'
 
 const specialUsersNames = Object.keys(hardCodedUsers)
 
@@ -32,7 +32,7 @@ describe('users:by-usernames', () => {
   })
 
   it('should get a user with a non lowercase username', async () => {
-    let username = `notAllLowerCase${randomString(4)}`
+    let username = `notAllLowerCase${getRandomString(4)}`
     const lowerCasedUsername = username.toLowerCase()
     const user = await createUser({ username })
     await wait(10)

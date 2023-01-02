@@ -1,32 +1,30 @@
 import _ from '#builders/utils'
-import Group from '#models/group'
 import dbFactory from '#db/couchdb/base'
-import promises_ from '#lib/promises'
+import { mappedArrayPromise } from '#lib/promises'
+import Group from '#models/group'
 
 const db = dbFactory('groups')
 
-let groups_
-const requireCircularDependencies = () => { groups_ = require('./groups') }
-setImmediate(requireCircularDependencies)
+let getGroupById, getGroupsByUser
+const importCircularDependencies = async () => {
+  ({ getGroupById, getGroupsByUser } = await import('./groups.js'))
+}
+setImmediate(importCircularDependencies)
 
-export default {
-  userCanLeave: (userId, groupId) => {
-    return groups_.byId(groupId)
-    .then(group => {
-      const { admins, members } = group
-      const adminsIds = admins.map(_.property('user'))
-      if (!adminsIds.includes(userId)) return true
-      const mainUserIsTheOnlyAdmin = admins.length === 1
-      const thereAreOtherMembers = members.length > 0
-      if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) return false
-      else return true
-    })
-  },
+export const userCanLeave = async (userId, groupId) => {
+  const group = await getGroupById(groupId)
+  const { admins, members } = group
+  const adminsIds = admins.map(_.property('user'))
+  if (!adminsIds.includes(userId)) return true
+  const mainUserIsTheOnlyAdmin = admins.length === 1
+  const thereAreOtherMembers = members.length > 0
+  if (mainUserIsTheOnlyAdmin && thereAreOtherMembers) return false
+  else return true
+}
 
-  leaveAllGroups: userId => {
-    return groups_.byUser(userId)
-    .then(promises_.map(group => removeUser(group, userId)))
-  }
+export const leaveAllGroups = async userId => {
+  return getGroupsByUser(userId)
+  .then(mappedArrayPromise(group => removeUser(group, userId)))
 }
 
 const removeUser = (group, userId) => {

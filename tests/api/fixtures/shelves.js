@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
-import { customAuthReq } from '../utils/request.js'
-import { getUser } from '../utils/utils.js'
 import { createItem } from '../fixtures/items.js'
+import { customAuthReq } from '../utils/request.js'
 import { addItemsToShelf } from '../utils/shelves.js'
+import { getUser } from '../utils/utils.js'
 import fakeText from './text.js'
 
 const fixtures = {
@@ -43,6 +43,6 @@ const fixtures = {
     const { shelf } = await fixtures.createShelf(null, shelfData)
     await addItemsToShelf(null, shelf, itemsIds)
     return { shelf, items }
-  }
+  },
 }
 export default fixtures

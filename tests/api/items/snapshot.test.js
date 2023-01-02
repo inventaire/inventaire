@@ -1,16 +1,5 @@
 import 'should'
 import { wait } from '#lib/promises'
-import { authReq, getUserB } from '../utils/utils.js'
-import { getItem } from '../utils/items.js'
-import {
-  getByUris,
-  merge,
-  revertMerge,
-  updateLabel,
-  updateClaim,
-  restoreVersion,
-  revertEdit,
-} from '../utils/entities.js'
 import {
   createWork,
   createHuman,
@@ -23,6 +12,17 @@ import {
   someImageHash,
   createEditionWithWorkAndAuthor,
 } from '../fixtures/entities.js'
+import {
+  getByUris,
+  merge,
+  revertMerge,
+  updateLabel,
+  updateClaim,
+  restoreVersion,
+  revertEdit,
+} from '../utils/entities.js'
+import { getItem } from '../utils/items.js'
+import { authReq, getUserB } from '../utils/utils.js'
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {
@@ -38,7 +38,7 @@ describe('items:snapshot', () => {
     const workEntity = await createWork()
     const [ item ] = await Promise.all([
       authReq('post', '/api/items', { entity: workEntity.uri }),
-      addSerie(workEntity)
+      addSerie(workEntity),
     ])
     await wait(100)
     await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', newValue: '5' })
@@ -54,15 +54,15 @@ describe('items:snapshot', () => {
   it('should snapshot data from all the works of a composite edition', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     const authors = await Promise.all([
       addAuthor(workA),
-      addAuthor(workB)
+      addAuthor(workB),
     ])
     const series = await Promise.all([
       addSerie(workA),
-      addSerie(workB)
+      addSerie(workB),
     ])
     const edition = await createEditionFromWorks(workA, workB)
     const item = await authReq('post', '/api/items', { entity: edition.uri })
@@ -166,7 +166,7 @@ describe('items:snapshot', () => {
     it('should be updated when its local work entity is merged (work entity)', async () => {
       const [ workEntityA, workEntityB ] = await Promise.all([
         createWork(),
-        createWork()
+        createWork(),
       ])
       const item = await authReq('post', '/api/items', { entity: workEntityA.uri })
       await merge(workEntityA.uri, workEntityB.uri)
@@ -178,12 +178,12 @@ describe('items:snapshot', () => {
     it('should be updated when its local work entity is merged (edition entity)', async () => {
       const [ workEntityA, workEntityB ] = await Promise.all([
         createWork(),
-        createWork()
+        createWork(),
       ])
       const editionEntity = await createEditionFromWorks(workEntityA)
       const [ item, addedAuthor ] = await Promise.all([
         authReq('post', '/api/items', { entity: editionEntity.uri }),
-        addAuthor(workEntityB)
+        addAuthor(workEntityB),
       ])
       await wait(200)
       await merge(workEntityA.uri, workEntityB.uri)
@@ -196,7 +196,7 @@ describe('items:snapshot', () => {
     it('should be updated when its local author entity is merged', async () => {
       const [ authorEntityA, authorEntityB ] = await Promise.all([
         createHuman(),
-        createHuman()
+        createHuman(),
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
@@ -211,7 +211,7 @@ describe('items:snapshot', () => {
     it('should be updated when its local author merge is reverted', async () => {
       const [ authorEntityA, authorEntityB ] = await Promise.all([
         createHuman(),
-        createHuman()
+        createHuman(),
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
@@ -262,7 +262,7 @@ describe('items:snapshot', () => {
       const workEntityA = await createWork()
       const [ editionEntity, item ] = await Promise.all([
         createEditionFromWorks(workEntityA),
-        authReq('post', '/api/items', { entity: workEntityA.uri })
+        authReq('post', '/api/items', { entity: workEntityA.uri }),
       ])
       await wait(100)
       item.entity = editionEntity.uri
@@ -287,7 +287,7 @@ describe('items:snapshot', () => {
       const work = await createWork()
       const [ edition, author ] = await Promise.all([
         createEdition({ work }),
-        addAuthor(work)
+        addAuthor(work),
       ])
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       await wait(200)

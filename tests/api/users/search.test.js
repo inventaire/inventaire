@@ -1,9 +1,9 @@
 import should from 'should'
 import _ from '#builders/utils'
 import fakeText from '../fixtures/text.js'
-import { publicReq, customAuthReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 import { createUser } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'
+import { publicReq, customAuthReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
 describe('users:search', () => {
   it('should find a user', async () => {

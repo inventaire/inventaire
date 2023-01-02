@@ -53,7 +53,7 @@ const utils = {
     uris = _.forceArray(uris)
     return adminReq('post', `${endpoint}check-entities`, { uris })
     .then(() => utils.getBySuspectUris(uris))
-    .then(tasksBySuspectUris => Object.values(tasksBySuspectUris).flat())
-  }
+    .then(getTasksBySuspectUris => Object.values(getTasksBySuspectUris).flat())
+  },
 }
 export default utils

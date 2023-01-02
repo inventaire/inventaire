@@ -3,8 +3,8 @@
 //   npm run backup-databases http://username:password@localhost:5984 prod
 
 import _ from '#builders/utils'
-import getDatabasesNames from './lib/get_databases_names.js'
 import backupDatabase from './lib/backup_database.js'
+import getDatabasesNames from './lib/get_databases_names.js'
 import zipBackupFolder from './lib/zip_backup_folder.js'
 
 const [ couchdbUrl, suffix ] = process.argv.slice(2)

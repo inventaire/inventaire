@@ -1,8 +1,8 @@
-import transporter_ from './transporter.js'
+import { sendMail } from '#lib/emails/transporter'
 import buildTransactionEmail from './build_transaction_email.js'
 import { catchDisabledEmails } from './helpers.js'
 
-export default {
+export const debouncedEmailSenderByName = {
   transactionUpdate: async transactionId => {
     let email
     try {
@@ -13,6 +13,6 @@ export default {
 
     if (!email) return
 
-    return transporter_.sendMail(email)
-  }
+    return sendMail(email)
+  },
 }

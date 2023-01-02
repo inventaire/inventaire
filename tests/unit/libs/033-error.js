@@ -1,6 +1,6 @@
 
 import should from 'should'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 describe('error_', () => {
   describe('new', () => {

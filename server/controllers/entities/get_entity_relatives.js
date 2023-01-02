@@ -1,10 +1,10 @@
 import getAuthorWorks from './lib/get_author_works.js'
-import getSerieParts from './lib/get_serie_parts.js'
 import getPublisherPublications from './lib/get_publisher_publications.js'
+import getSerieParts from './lib/get_serie_parts.js'
 
 const sanitization = {
   uri: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 export default {

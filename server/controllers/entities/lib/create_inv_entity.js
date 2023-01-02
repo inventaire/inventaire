@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
+import { editEntity } from '#controllers/entities/lib/entities'
 import Entity from '#models/entity'
-import entities_ from './entities.js'
-import validateEntity from './validate_entity.js'
 import { prefixifyInv } from './prefix.js'
+import validateEntity from './validate_entity.js'
 
 export default async params => {
   const { labels, claims, userId, batchId } = params
@@ -12,13 +12,13 @@ export default async params => {
 
   const blankEntityDoc = Entity.create()
 
-  const entity = await entities_.edit({
+  const entity = await editEntity({
     create: true,
     userId,
     currentDoc: blankEntityDoc,
     updatedLabels: labels,
     updatedClaims: claims,
-    batchId
+    batchId,
   })
   entity.uri = prefixifyInv(entity._id)
   return entity

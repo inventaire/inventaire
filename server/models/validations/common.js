@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 const validations = {
   attribute: _.isString,
@@ -31,13 +31,16 @@ const validations = {
 
 export default validations
 
-validations.boundedString = (str, minLength, maxLength) => {
+export const boundedString = (str, minLength, maxLength) => {
   return _.isString(str) && (minLength <= str.length && str.length <= maxLength)
 }
 
-validations.BoundedString = (minLength, maxLength) => str => {
+export const BoundedString = (minLength, maxLength) => str => {
   return validations.boundedString(str, minLength, maxLength)
 }
+
+validations.boundedString = boundedString
+validations.BoundedString = BoundedString
 
 validations.imgUrl = url => validations.localImg(url) || _.isUrl(url) || _.isImageHash(url)
 

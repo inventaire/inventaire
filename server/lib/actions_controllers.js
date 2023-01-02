@@ -1,7 +1,7 @@
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import validateObject from '#lib/validate_object'
-import { rolesByAccess } from './user_access_levels.js'
 import { controllerWrapper, validateControllerWrapperParams } from './controller_wrapper.js'
+import { rolesByAccess } from './user_access_levels.js'
 
 // A function to route requests to an endpoint to sub-endpoints
 // identified by their 'action' names:

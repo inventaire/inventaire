@@ -1,5 +1,5 @@
 export default {
   byCreator: {
-    map: doc => emit(doc.creator, null)
-  }
+    map: doc => emit(doc.creator, null),
+  },
 }

@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
+import { error_ } from '#lib/error/error'
 import { appendToFullKeys, appendToShortKeys } from '#lib/i18n_autofix'
+import { responses_ } from '#lib/responses'
 
 const errorMessagePattern = /^(4|5)00/
 // Using _ as the convention to identify short keys: ex: awesome_title

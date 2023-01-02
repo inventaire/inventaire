@@ -23,5 +23,5 @@ const relationsTypes = [
   'friends',
   'userRequested',
   'otherRequested',
-  'none'
+  'none',
 ]

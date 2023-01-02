@@ -7,21 +7,19 @@ import { emptyValue } from '#db/level/utils'
 
 const db = dbFactory('waiting', 'utf8')
 
-export default {
-  transactionUpdate: transaction => {
-    // Polymorphism: accepts transaction doc or directly the transaction _id
-    let transactionId
-    if (_.isObject(transaction)) {
-      transactionId = transaction._id
-    } else if (_.isString(transaction)) {
-      transactionId = transaction
-    } else {
-      _.warn({ transaction }, 'bad type at transactionUpdate')
-      return
-    }
-
-    return addToWaitingList('transactionUpdate', transactionId)
+export const transactionUpdate = transaction => {
+  // Polymorphism: accepts transaction doc or directly the transaction _id
+  let transactionId
+  if (_.isObject(transaction)) {
+    transactionId = transaction._id
+  } else if (_.isString(transaction)) {
+    transactionId = transaction
+  } else {
+    _.warn({ transaction }, 'bad type at transactionUpdate')
+    return
   }
+
+  return addToWaitingList('transactionUpdate', transactionId)
 }
 
 // Delete and repost with new time to wait
@@ -29,7 +27,7 @@ export default {
 const addToWaitingList = (domain, id) => {
   return db.createKeyStream({
     gt: `${domain}:${id}:0`,
-    lt: `${domain}:${id}::`
+    lt: `${domain}:${id}::`,
   })
   // TODO: refactor to delete in batch
   .on('data', db.del.bind(db))

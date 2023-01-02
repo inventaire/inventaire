@@ -1,24 +1,22 @@
 import getNextSlugCandidate from './get_next_slug_candidate.js'
 import slugify from './slugify.js'
 
-let groups_
-const requireCircularDependencies = () => { groups_ = require('./groups') }
-setImmediate(requireCircularDependencies)
+let getGroupBySlug
+const importCircularDependencies = async () => {
+  ({ getGroupBySlug } = await import('./groups.js'))
+}
+setImmediate(importCircularDependencies)
 
-const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
+export const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
 
-export default {
-  get: getSlug,
-
-  add: async group => {
-    const slug = await getSlug(group.name, group._id)
-    group.slug = slug
-    return group
-  }
+export async function addSlug (group) {
+  const slug = await getSlug(group.name, group._id)
+  group.slug = slug
+  return group
 }
 
 const trySlugCandidate = (slug, groupId) => {
-  return groups_.bySlug(slug)
+  return getGroupBySlug(slug)
   .then(group => {
     // A group was found with that slug
     // If the group matches the passed group id,

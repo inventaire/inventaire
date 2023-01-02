@@ -1,13 +1,13 @@
+import { someCouchUuid } from '#tests/api/fixtures/general'
+import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
 import {
   shouldNotBeCalled,
   rethrowShouldNotBeCalledErrors,
   customAuthReq,
   getReservedUser,
 } from '#tests/api/utils/utils'
-import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
-import { someCouchUuid } from '#tests/api/fixtures/general'
-import { authReq, authReqB, getUser } from '../utils/utils.js'
 import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/lists'
 
@@ -27,7 +27,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: listing._id,
-        foo: 'bar'
+        foo: 'bar',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -42,7 +42,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: listing._id,
-        name: ''
+        name: '',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -56,7 +56,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: someCouchUuid,
-        name: ''
+        name: '',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -116,7 +116,7 @@ describe('listings:update', () => {
       const { listing } = await createListing()
       const params = {
         id: listing._id,
-        name: 'foo'
+        name: 'foo',
       }
       await authReqB('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -131,7 +131,7 @@ describe('listings:update', () => {
       const { listing } = await createListing(getUser())
       const params = {
         id: listing._id,
-        name: listing.name
+        name: listing.name,
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {

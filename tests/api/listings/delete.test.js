@@ -1,6 +1,6 @@
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
-import { authReq, authReqB } from '../utils/utils.js'
 import { createListing, createElement } from '../fixtures/listings.js'
+import { authReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=delete'
 

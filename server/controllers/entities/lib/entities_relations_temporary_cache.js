@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import dbFactory from '#db/level/get_sub_db'
-import radio from '#lib/radio'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
 
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
@@ -34,14 +34,14 @@ export default {
       { type: 'del', key: expireTimeKey },
     ])
     .catch(ignoreKeyNotFound)
-  }
+  },
 }
 
 const getKeyRange = (property, object) => {
   const keyBase = `${property}-${object}-`
   return getKeys({
     gte: keyBase,
-    lt: keyBase + 'z'
+    lt: keyBase + 'z',
   })
 }
 
@@ -72,7 +72,7 @@ const buildExpireTimeKey = key => {
 const checkExpiredCache = async () => {
   const expiredTimeKeys = await getKeys({
     gt: 'expire!',
-    lt: `expire!${Date.now()}`
+    lt: `expire!${Date.now()}`,
   })
 
   if (expiredTimeKeys.length === 0) return
@@ -86,7 +86,7 @@ const checkExpiredCache = async () => {
     batch.push({ type: 'del', key })
     batch.push({ type: 'del', key: expiredTimeKey })
   }
-  await radio.emit('invalidate:wikidata:entities:relations', invalidatedQueriesBatch)
+  await emit('invalidate:wikidata:entities:relations', invalidatedQueriesBatch)
   _.info(expiredTimeKeys, 'expired entities relations cache')
   await db.batch(batch)
 }

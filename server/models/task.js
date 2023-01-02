@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
+import { assert_ } from '#lib/utils/assert_types'
 import validations from './validations/task.js'
 
 export default {
@@ -15,7 +15,7 @@ export default {
       type,
       suspectUri,
       suggestionUri,
-      created: Date.now()
+      created: Date.now(),
     }
 
     if (lexicalScore) lexicalScore = _.round(lexicalScore, 2)
@@ -42,7 +42,7 @@ export default {
     task[attribute] = value
     task.updated = now
     return task
-  }
+  },
 }
 
 const validateAndAssign = (task, name, attribute) => {

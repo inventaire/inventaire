@@ -1,18 +1,18 @@
 import { partition } from 'lodash-es'
-import items_ from '#controllers/items/lib/items'
-import Item from '#models/item'
-import { emit } from '#lib/radio'
 import _ from '#builders/utils'
-import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import { getItemsByIds, itemsBulkUpdate } from '#controllers/items/lib/items'
 import { validateShelves } from '#controllers/items/lib/validate_item_async'
+import { emit } from '#lib/radio'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import Item from '#models/item'
 
 const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }
-  const currentItems = await items_.byIds(ids)
+  const currentItems = await getItemsByIds(ids)
   const formattedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
   await validateValue({ attribute, value, reqUserId })
   try {
-    const successfulUpdates = await items_.db.bulk(formattedItems)
+    const successfulUpdates = await itemsBulkUpdate(formattedItems)
     await emit('user:inventory:update', reqUserId)
     return previousUpdates.concat(successfulUpdates)
   } catch (err) {

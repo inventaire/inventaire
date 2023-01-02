@@ -1,6 +1,6 @@
 import 'should'
-import Task from '#models/task'
 import { expired } from '#lib/time'
+import Task from '#models/task'
 
 const validDoc = () => ({
   type: 'deduplicate',
@@ -9,7 +9,7 @@ const validDoc = () => ({
   state: 'requested',
   lexicalScore: 4.2,
   relationScore: 1,
-  externalSourcesOccurrences: []
+  externalSourcesOccurrences: [],
 })
 
 describe('task model', () => {
@@ -30,7 +30,7 @@ describe('task model', () => {
     it('should throw if no suspect', () => {
       const invalidDoc = {
         type: 'deduplicate',
-        suggestionUri: 'wd:Q42'
+        suggestionUri: 'wd:Q42',
       }
       const taskDoc = () => Task.create(invalidDoc)
       taskDoc.should.throw()
@@ -40,7 +40,7 @@ describe('task model', () => {
       const invalidDoc = {
         type: 'deduplicate',
         suspectId: '',
-        suggestionUri: 'wd:Q42'
+        suggestionUri: 'wd:Q42',
       }
       const taskDoc = () => Task.create(invalidDoc)
       try {

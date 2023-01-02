@@ -1,11 +1,11 @@
-import tasks_ from './lib/tasks.js'
+import { getTasksByIds } from '#controllers/tasks/lib/tasks'
 
 const sanitization = {
-  ids: {}
+  ids: {},
 }
 
 const controller = async ({ ids }) => {
-  const tasks = await tasks_.byIds(ids)
+  const tasks = await getTasksByIds(ids)
   return { tasks }
 }
 

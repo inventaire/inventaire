@@ -6,8 +6,8 @@ const sanitization = {
   group: {},
   attribute: {},
   value: {
-    canBeNull: true
-  }
+    canBeNull: true,
+  },
 }
 
 const controller = async params => {
@@ -25,5 +25,5 @@ const controller = async params => {
 export default {
   sanitization,
   controller,
-  track: [ 'groups', 'updateSettings' ]
+  track: [ 'groups', 'updateSettings' ],
 }

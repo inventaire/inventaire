@@ -1,38 +1,38 @@
 import _ from '#builders/utils'
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
+import { sendMail } from '#lib/emails/transporter'
 import { Wait } from '#lib/promises'
-import user_ from '#controllers/user/lib/user'
-import groups_ from '#controllers/groups/lib/groups'
-import helpers_ from './helpers.js'
-import transporter_ from './transporter.js'
 import email_ from './email.js'
+import helpers_ from './helpers.js'
 
 export default {
   validationEmail: (userData, token) => {
-    userData = user_.serializeData(userData)
+    userData = serializeUserData(userData)
     const email = email_.validationEmail(userData, token)
-    return transporter_.sendMail(email)
+    return sendMail(email)
     .catch(_.Error('validationEmail'))
   },
 
   resetPassword: (userData, token) => {
-    userData = user_.serializeData(userData)
+    userData = serializeUserData(userData)
     const email = email_.resetPassword(userData, token)
-    return transporter_.sendMail(email)
+    return sendMail(email)
     .catch(_.Error('resetPassword'))
   },
 
   friendAcceptedRequest: (userToNotify, newFriend) => {
-    return helpers_.getUsersByIds(userToNotify, newFriend)
+    return helpers_.getParsedUsersIndexedByIds(userToNotify, newFriend)
     .then(email_.friendAcceptedRequest)
-    .then(transporter_.sendMail)
+    .then(sendMail)
     .catch(helpers_.catchDisabledEmails)
     .catch(Err('friendAcceptedRequest', userToNotify, newFriend))
   },
 
   friendshipRequest: (userToNotify, requestingUser) => {
-    return helpers_.getUsersByIds(userToNotify, requestingUser)
+    return helpers_.getParsedUsersIndexedByIds(userToNotify, requestingUser)
     .then(email_.friendshipRequest)
-    .then(transporter_.sendMail)
+    .then(sendMail)
     .catch(helpers_.catchDisabledEmails)
     .catch(Err('friendshipRequest', userToNotify, requestingUser))
   },
@@ -40,17 +40,17 @@ export default {
   group: (action, groupId, actingUserId, userToNotifyId) => {
     return helpers_.getGroupAndUsersData(groupId, actingUserId, userToNotifyId)
     .then(email_.group.bind(null, action))
-    .then(transporter_.sendMail)
+    .then(sendMail)
     .catch(helpers_.catchDisabledEmails)
     .catch(Err(`group ${action}`, actingUserId, userToNotifyId))
   },
 
   groupJoinRequest: async (groupId, requestingUserId) => {
-    const group = await groups_.byId(groupId)
+    const group = await getGroupById(groupId)
     if (group.open) return
     const adminsIds = _.map(group.admins, 'user')
-    const admins = await user_.byIds(adminsIds)
-    const userData = await user_.byId(requestingUserId)
+    const admins = await getUsersByIds(adminsIds)
+    const userData = await getUserById(requestingUserId)
     let emails = admins.map(email_.GroupJoinRequest(userData, group))
     // Remove emails aborted due to user settings
     emails = _.compact(emails)
@@ -59,21 +59,21 @@ export default {
 
   feedback: (subject, message, user, unknownUser, uris, context) => {
     const email = email_.feedback(subject, message, user, unknownUser, uris, context)
-    return transporter_.sendMail(email)
+    return sendMail(email)
     .catch(_.Error('feedback'))
   },
 
   friendInvitations: (userData, emailAddresses, message) => {
-    userData = user_.serializeData(userData)
+    userData = serializeUserData(userData)
     const emails = emailAddresses.map(email_.FriendInvitation(userData, message))
     return sendSequentially(emails, 'friendInvitations')
   },
 
   groupInvitations: (userData, group, emailAddresses, message) => {
-    userData = user_.serializeData(userData)
+    userData = serializeUserData(userData)
     const emails = emailAddresses.map(email_.GroupInvitation(userData, group, message))
     return sendSequentially(emails, 'groupInvitations')
-  }
+  },
 }
 
 const sendSequentially = (emails, label) => {
@@ -85,7 +85,7 @@ const sendSequentially = (emails, label) => {
     _.info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
 
     // const email = emailFactory(nextEmail)
-    return transporter_.sendMail(nextEmail)
+    return sendMail(nextEmail)
     .catch(_.Error(`${label} (address: ${nextEmail.to} err)`))
     // Wait to lower risk to trigger any API quota issue from the email service
     .then(Wait(500))

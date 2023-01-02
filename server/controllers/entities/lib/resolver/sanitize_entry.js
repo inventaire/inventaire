@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import isbn_, { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
+import { error_ } from '#lib/error/error'
+import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { requireJson } from '#lib/utils/json'
 import sanitizeSeed from './sanitize_seed.js'
 
@@ -69,10 +69,10 @@ const createWorkSeedFromEdition = edition => {
   if (title == null) return
   const langClaim = claims['wdt:P407'] && _.forceArray(claims['wdt:P407'])[0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null
-  const lang = wmLanguageCodeByWdId[langWdId] || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
+  const lang = wmLanguageCodeByWdId[langWdId] || guessLangFromIsbn(edition.isbn) || 'en'
   return {
     labels: {
-      [lang]: title
-    }
+      [lang]: title,
+    },
   }
 }

@@ -1,18 +1,18 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import radio from '#lib/radio'
-import user_ from '#controllers/user/lib/user'
-import shelves_ from '#controllers/shelves/lib/shelves'
-import { postActivityToActorFollowersInboxes } from './post_activity.js'
+import { getShelfById } from '#controllers/shelves/lib/shelves'
+import { getUserById } from '#controllers/user/lib/user'
+import { radio } from '#lib/radio'
 import { byActorName, createActivity } from './activities.js'
-import formatUserItemsActivities from './format_user_items_activities.js'
-import formatShelfItemsActivities from './format_shelf_items_activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
+import formatShelfItemsActivities from './format_shelf_items_activities.js'
+import formatUserItemsActivities from './format_user_items_activities.js'
+import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
 const { activitiesDebounceTime } = CONFIG
 const debouncedActivities = {}
 
-export default function () {
+export function initRadioHooks () {
   radio.on('user:inventory:update', userId => {
     if (!debouncedActivities[userId]) {
       debouncedActivities[userId] = _.debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)
@@ -34,19 +34,19 @@ const _createDebouncedActivity = async ({ userId, shelfId }) => {
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
-    user = await user_.byId(userId)
+    user = await getUserById(userId)
     if (!user.fediversable) return
     name = user.stableUsername
   } else if (shelfId) {
     delete debouncedActivities[shelfId]
     // TODO: if this throws an error because the shelf was deleted
     // create a type=Delete activity instead, to notify the followers
-    const shelf = await shelves_.byId(shelfId)
+    const shelf = await getShelfById(shelfId)
     if (!shelf.visibility.includes('public')) return
-    const owner = await user_.byId(shelf.owner)
+    const owner = await getUserById(shelf.owner)
     if (!owner.fediversable) return
     // todo: use group slugify to create shelf name
-    // shelf = await shelves_.byId(shelfId)
+    // shelf = await getShelfById(shelfId)
     name = `shelf-${shelfId}`
   }
   const [ lastActivity ] = await byActorName({ name, limit: 1 })

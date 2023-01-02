@@ -1,6 +1,6 @@
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { publicReq } from '../utils/utils.js'
 import { createGroup } from '../fixtures/groups.js'
+import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=by-id'
 

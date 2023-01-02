@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { justReceivedActivitySummary } from '#controllers/user/lib/summary'
-import transporter_ from '../transporter.js'
+import { sendMail } from '#lib/emails/transporter'
 import buildEmail from './build_email.js'
 
 const { disableUserUpdate } = CONFIG.activitySummary
@@ -26,7 +26,10 @@ export default async user => {
   // to prevent re-attempting to send a summary to that same user
   if (!email) return updateUser(userId)
 
-  return transporter_.sendMail(email)
-  .then(() => updateUser(userId))
-  .catch(_.Error('activity summary'))
+  try {
+    await sendMail(email)
+    await updateUser(userId)
+  } catch (err) {
+    _.error(err, 'activity summary')
+  }
 }

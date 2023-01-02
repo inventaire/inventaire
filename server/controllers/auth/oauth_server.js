@@ -1,13 +1,14 @@
 import CONFIG from 'config'
 import OAuthServer from 'express-oauth-server'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
+import oauthServerModel from './lib/oauth/model.js'
 import { getAcceptedScopes, allScopes } from './lib/oauth/scopes.js'
 
 const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 
 const oauthServer = new OAuthServer({
   useErrorHandler: true,
-  model: require('./lib/oauth/model')
+  model: oauthServerModel,
 })
 
 const authorize = oauthServer.authorize({
@@ -15,8 +16,8 @@ const authorize = oauthServer.authorize({
   authenticateHandler: {
     handle: (req, res) => {
       return req.user
-    }
-  }
+    },
+  },
 })
 
 // See https://oauth2-server.readthedocs.io/en/latest/api/oauth2-server.html
@@ -39,14 +40,14 @@ export default {
       }
 
       authorize(req, res, next)
-    }
+    },
   },
 
   // Step 2: the client requests a token
   // by doing a POST on the token endpoint
   // Implements https://aaronparecki.com/oauth-2-simplified/#web-server-apps "Getting an Access Token"
   token: {
-    post: oauthServer.token()
+    post: oauthServer.token(),
   },
 
   // Step 3: the client uses a token to access resources within the token authorized scopes
@@ -56,5 +57,5 @@ export default {
     const scope = getAcceptedScopes(req)
     if (scope != null) oauthServer.authenticate({ scope })(req, res, next)
     else return error_.bundle(req, res, 'this resource can not be accessed with an OAuth bearer token', 403)
-  }
+  },
 }

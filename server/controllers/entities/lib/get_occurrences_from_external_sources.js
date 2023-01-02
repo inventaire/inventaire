@@ -1,20 +1,19 @@
 // A module to look for works labels occurrences in an author's external databases reference.
 import ASCIIFolder from 'fold-to-ascii'
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import getWikipediaArticle from '#data/wikipedia/get_article'
-import getBnfAuthorWorksTitles from '#data/bnf/get_bnf_author_works_titles'
-
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
-// const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
+// import getBnbAuthorWorksTitles from '#data/bne/get_bnb_author_works_titles'
 import getBneAuthorWorksTitles from '#data/bne/get_bne_author_works_titles'
+import getBnfAuthorWorksTitles from '#data/bnf/get_bnf_author_works_titles'
 import getGndAuthorWorksTitles from '#data/gnd/get_gnd_author_works_titles'
-import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
 import getKjkAuthorWorksTitle from '#data/kjk/get_kjk_author_works_titles'
 import getNdlAuthorWorksTitle from '#data/ndl/get_ndl_author_works_titles'
 import getOlAuthorWorksTitles from '#data/openlibrary/get_ol_author_works_titles'
+import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
+import getWikipediaArticle from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
+import { assert_ } from '#lib/utils/assert_types'
 import getEntityByUri from './get_entity_by_uri.js'
 import { normalizeTerm } from './terms_normalization.js'
 
@@ -44,7 +43,7 @@ export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getGndOccurrences(authorEntity, worksLabels),
       getSelibrOccurrences(authorEntity, worksLabels),
       getKjkOccurrences(authorEntity, worksLabels),
-      getNdlOccurrences(authorEntity, worksLabels)
+      getNdlOccurrences(authorEntity, worksLabels),
     ])
     return _.compact(occurrences.flat())
   } catch (err) {
@@ -106,7 +105,7 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
     return {
       url: result.url,
       matchedTitles: [ title ],
-      structuredDataSource: true
+      structuredDataSource: true,
     }
   }
 }

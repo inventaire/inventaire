@@ -82,18 +82,18 @@ if (CONFIG.mediaStorage.mode === 'local') {
 // so that they wont be overpassed by it
 Object.assign(routes, {
   api: {
-    get: glob.redirectToApiDoc
+    get: glob.redirectToApiDoc,
   },
   'api/*': {
-    all: glob.api
+    all: glob.api,
   },
   '*.json': {
-    get: extensionsRedirections.json
+    get: extensionsRedirections.json,
   },
   '*.rss': {
-    get: extensionsRedirections.rss
+    get: extensionsRedirections.rss,
   },
   '*': {
-    get: glob.get
-  }
+    get: glob.get,
+  },
 })

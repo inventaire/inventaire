@@ -1,11 +1,11 @@
-import transactions_ from '#controllers/transactions/lib/transactions'
+import { getTransactionsByUserAndItem } from '#controllers/transactions/lib/transactions'
 
 const sanitization = {
   item: {},
 }
 
 const controller = async ({ itemId, reqUserId }) => {
-  const transactions = await transactions_.byUserAndItem(reqUserId, itemId)
+  const transactions = await getTransactionsByUserAndItem(reqUserId, itemId)
   return { transactions }
 }
 

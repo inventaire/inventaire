@@ -1,5 +1,5 @@
-import error_ from '#lib/error/error'
 import { absolutePath } from '#lib/absolute_path'
+import { error_ } from '#lib/error/error'
 
 const publicFolder = absolutePath('client', 'public')
 
@@ -9,7 +9,7 @@ const indexOptions = {
     'cache-control': 'no-cache, no-store, must-revalidate',
     // Opt-out from Google FLoC, see https://plausible.io/blog/google-floc
     'permissions-policy': 'interest-cohort=()',
-  }
+  },
 }
 
 export default {
@@ -34,9 +34,9 @@ export default {
   api: (req, res) => {
     error_.bundle(req, res, 'wrong API route or http verb', 404, {
       verb: req.method,
-      url: req._parsedUrl.href
+      url: req._parsedUrl.href,
     })
-  }
+  },
 }
 
 const imageHeader = req => req.headers.accept?.startsWith('image')

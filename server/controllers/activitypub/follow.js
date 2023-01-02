@@ -1,12 +1,12 @@
 import CONFIG from 'config'
-import error_ from '#lib/error/error'
-import { parseQuery } from '#lib/utils/url'
 import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
 import { trackActor } from '#lib/track'
+import { parseQuery } from '#lib/utils/url'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 
 const host = CONFIG.getPublicOrigin()
 
@@ -51,7 +51,7 @@ const sendAcceptActivity = async (followActivity, actor, object) => {
     '@context': context,
     type: 'Accept',
     actor: followedActorUri,
-    object: followActivity.externalId
+    object: followActivity.externalId,
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."

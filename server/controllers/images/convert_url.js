@@ -5,7 +5,7 @@ const sanitization = {
   url: {},
   container: {
     generic: 'allowlist',
-    allowlist: uploadContainersNames
+    allowlist: uploadContainersNames,
   },
 }
 

@@ -4,7 +4,7 @@ import { info } from '#lib/utils/logs'
 const sanitization = {
   ids: {},
   attribute: {},
-  value: {}
+  value: {},
 }
 
 const controller = async params => {

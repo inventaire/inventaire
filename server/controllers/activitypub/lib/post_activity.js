@@ -1,18 +1,18 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import requests_ from '#lib/requests'
 import { signRequest } from '#controllers/activitypub/lib/security'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
 import { isUrl } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
 import { getFollowActivitiesByObject } from './activities.js'
-import { getSharedKeyPair } from './shared_key_pair.js'
 import { makeUrl } from './helpers.js'
+import { getSharedKeyPair } from './shared_key_pair.js'
 // Arbitrary timeout
 const timeout = 30 * 1000
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
-const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) => {
+export async function signAndPostActivity ({ actorName, recipientActorUri, activity }) {
   assert_.string(actorName)
   assert_.string(recipientActorUri)
   assert_.object(activity)
@@ -44,7 +44,7 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
     method: 'post',
     keyId: `${keyActorUrl}#${publicKeyHash}`,
     privateKey,
-    body
+    body,
   })
   postHeaders['content-type'] = 'application/activity+json'
   try {
@@ -63,7 +63,7 @@ const signAndPostActivity = async ({ actorName, recipientActorUri, activity }) =
 }
 
 // TODO: use sharedInbox
-const postActivityToActorFollowersInboxes = async ({ activity, actorName }) => {
+export async function postActivityToActorFollowersInboxes ({ activity, actorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
   if (followActivities.length === 0) return
   const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
@@ -71,5 +71,3 @@ const postActivityToActorFollowersInboxes = async ({ activity, actorName }) => {
     return signAndPostActivity({ actorName, recipientActorUri: uri, activity })
   }))
 }
-
-export default { signAndPostActivity, postActivityToActorFollowersInboxes }

@@ -31,7 +31,7 @@ describe('activitypub:inbox:unknown_types', () => {
         type: 'Delete',
         actor: 'buzz',
         object: 'bar',
-      }
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {

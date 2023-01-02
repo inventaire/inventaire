@@ -11,7 +11,7 @@ describe('promises utils', () => {
     it('should return the resolved promise in an object', async () => {
       const { a, b } = await props({
         a: 123,
-        b: Promise.resolve(456)
+        b: Promise.resolve(456),
       })
       a.should.equal(123)
       b.should.equal(456)
@@ -20,7 +20,7 @@ describe('promises utils', () => {
     it('should return a rejected promise if one of the promises fail', async () => {
       await props({
         a: 123,
-        b: Promise.reject(new Error('foo'))
+        b: Promise.reject(new Error('foo')),
       })
       .then(shouldNotBeCalled)
       .catch(err => {

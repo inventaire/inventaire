@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 const { wikidataOAuth } = CONFIG
 
@@ -12,6 +12,6 @@ export default {
   },
 
   getOauthCredentials: user => ({
-    oauth: Object.assign({}, wikidataOAuth, user.oauth.wikidata)
-  })
+    oauth: Object.assign({}, wikidataOAuth, user.oauth.wikidata),
+  }),
 }

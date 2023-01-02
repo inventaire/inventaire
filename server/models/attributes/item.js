@@ -10,7 +10,7 @@ attributes.updatable = [
   'notes',
   'shelves',
   // Use case: change from a work entity to an edition entity
-  'entity'
+  'entity',
 ]
 
 attributes.validAtCreation = [
@@ -37,7 +37,7 @@ attributes.notUpdatable = [
   'history',
 
   // Updated as side effects of entity redirections
-  'previousEntity'
+  'previousEntity',
 
 ]
 
@@ -45,7 +45,7 @@ attributes.known = attributes.notUpdatable.concat(attributes.updatable)
 
 attributes.private = [
   'notes',
-  'visibility'
+  'visibility',
 ]
 
 // Attribute to reset on owner change
@@ -62,8 +62,8 @@ attributes.doesntAllowTransaction = doesntAllowTransaction
 attributes.constrained = {
   transaction: {
     possibilities: allowTransaction.concat(doesntAllowTransaction),
-    defaultValue: 'inventorying'
-  }
+    defaultValue: 'inventorying',
+  },
 }
 
 // Attributes to keep in documents where a stakeholder might loose
@@ -73,7 +73,7 @@ attributes.constrained = {
 // thus their absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
   'entity',
-  'details'
+  'details',
 ]
 
 attributes.notIndexed = [

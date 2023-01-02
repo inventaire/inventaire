@@ -1,4 +1,4 @@
-const dbsBaseNames = Object.keys(require('db/couchdb/databases'))
+const dbsBaseNames = Object.keys(await import('#db/couchdb/databases'))
 
 export default suffix => {
   if (suffix) return dbsBaseNames.map(dbBaseName => `${dbBaseName}-${suffix}`)

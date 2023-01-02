@@ -3,5 +3,5 @@ export default {
   giving: '#FEB1BA',
   lending: '#9FD5B3',
   selling: '#FFE567',
-  inventorying: '#BFBFBF'
+  inventorying: '#BFBFBF',
 }

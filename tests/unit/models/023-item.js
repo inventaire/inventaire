@@ -10,7 +10,7 @@ const update = Item.update.bind(null, someUserId)
 const validItem = {
   entity: 'wd:Q35160',
   visibility: [ 'public' ],
-  transaction: 'giving'
+  transaction: 'giving',
 }
 
 const extendItem = data => Object.assign({}, validItem, data)

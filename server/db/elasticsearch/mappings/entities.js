@@ -26,5 +26,5 @@ export default {
     updated: date,
     popularity: integer,
     claim: keyword,
-  }
+  },
 }

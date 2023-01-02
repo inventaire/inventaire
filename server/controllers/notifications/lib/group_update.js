@@ -41,8 +41,8 @@ const getNewNotification = (userToNotify, data) => {
       user: actorId,
       attribute,
       previousValue,
-      newValue
-    }
+      newValue,
+    },
   })
 }
 

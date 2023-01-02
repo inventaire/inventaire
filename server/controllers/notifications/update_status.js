@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import responses_ from '#lib/responses'
+import { responses_ } from '#lib/responses'
 import { updateReadStatus } from './lib/notifications.js'
 
 export default (req, res) => {

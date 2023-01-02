@@ -3,7 +3,7 @@ export default {
     map: doc => {
       emit([ doc.owner, doc.item ], null)
       emit([ doc.requester, doc.item ], null)
-    }
+    },
   },
   byBusyItem: {
     map: doc => {
@@ -12,6 +12,6 @@ export default {
       if (lastAction === 'accepted' || (doc.transaction === 'lending' && lastAction === 'confirmed')) {
         emit(doc.item, null)
       }
-    }
-  }
+    },
+  },
 }

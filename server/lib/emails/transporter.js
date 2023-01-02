@@ -14,10 +14,10 @@ const options = {
     layoutsDir: `${viewsPath}/layouts/`,
     defaultLayout: 'template',
     partialsDir: `${viewsPath}/partials/`,
-    helpers: handlebarsHelpers
+    helpers: handlebarsHelpers,
   },
   viewPath: viewsPath,
-  extName: '.hbs'
+  extName: '.hbs',
 }
 
 const { defaultFrom, nodemailer: nodemailerOptions } = CONFIG.mailer
@@ -27,16 +27,14 @@ const transporter = createTransport(nodemailerOptions, defaults)
 
 transporter.use('compile', hbs(options))
 
-export default {
-  sendMail: async email => {
-    const { template, subject } = email
-    try {
-      const info = await transporter.sendMail(email)
-      const inspectUrl = debugMode ? ` inspect="${getTestMessageUrl(info)}"` : ''
-      _.success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
-    } catch (err) {
-      _.error(err, `email error (template="${template}" subject="${subject}")`)
-      return _.warn(email, 'associated email')
-    }
+export async function sendMail (email) {
+  const { template, subject } = email
+  try {
+    const info = await transporter.sendMail(email)
+    const inspectUrl = debugMode ? ` inspect="${getTestMessageUrl(info)}"` : ''
+    _.success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
+  } catch (err) {
+    _.error(err, `email error (template="${template}" subject="${subject}")`)
+    return _.warn(email, 'associated email')
   }
 }

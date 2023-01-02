@@ -10,7 +10,7 @@ attributes.updatable = [
 ]
 
 attributes.validAtCreation = attributes.updatable.concat([
-  'owner'
+  'owner',
 ])
 
 attributes.private = [

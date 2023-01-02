@@ -25,6 +25,6 @@ const buildArgsArray = ({ username, password, hostname, port, dbName }) => {
     '-p', password,
     // Database-specific
     '-d', dbName,
-    '-f', outputFile
+    '-f', outputFile,
   ]
 }

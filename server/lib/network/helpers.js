@@ -5,7 +5,7 @@ export const dnsLookup = promisify(dns.lookup)
 
 export const getHostname = origin => origin ? new URL(origin).hostname : null
 
-export const getHostnameIp = async hostname => {
+export async function getHostnameIp (hostname) {
   const { address } = await dnsLookup(hostname)
   return address
 }

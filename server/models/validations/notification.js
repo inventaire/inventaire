@@ -1,7 +1,10 @@
-import assert_ from '#lib/utils/assert_types'
-import { types } from '../attributes/notification.js'
+import { assert_ } from '#lib/utils/assert_types'
+import notificationAttributes from '../attributes/notification.js'
 import Group from '../group.js'
-import { pass } from './common.js'
+import commonValidations from './common.js'
+
+const { types } = notificationAttributes
+const { pass } = commonValidations
 
 const validations = {
   pass,
@@ -10,7 +13,7 @@ const validations = {
     assert_.object(data)
     dataValidationPerType[type](data)
     return true
-  }
+  },
 }
 
 export default validations

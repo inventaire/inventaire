@@ -1,4 +1,5 @@
 import 'should'
+import { createWork } from '../fixtures/entities.js'
 import {
   publicReq,
   authReq,
@@ -12,7 +13,6 @@ import {
   shouldNotBeCalled,
   customAuthReq,
 } from '../utils/utils.js'
-import { createWork } from '../fixtures/entities.js'
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {

@@ -1,22 +1,20 @@
 import { URL } from 'node:url'
-import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
-import fetch from 'node-fetch'
 import CONFIG from 'config'
-import error_ from '#lib/error/error'
-import { wait } from '#lib/promises'
-import assert_ from '#lib/utils/assert_types'
+import fetch from 'node-fetch'
+import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
 import { absolutePath } from '#lib/absolute_path'
+import { addContextToStack, error_ } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
+import { isUrl } from './boolean_validations.js'
+import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
 import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
-import { isUrl } from './boolean_validations.js'
-import isPrivateUrl from './network/is_private_url.js'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
-
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const { addContextToStack } = error_
 const userAgent = `${CONFIG.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
 
@@ -118,7 +116,7 @@ const head = async (url, options = {}) => {
   endReqTimer(timer, statusCode)
   return {
     statusCode,
-    headers: formatHeaders(headers.raw())
+    headers: formatHeaders(headers.raw()),
   }
 }
 
@@ -187,12 +185,14 @@ const getStatusColor = statusCode => {
   return red
 }
 
-export default {
+export const requests_ = {
   get: req('get'),
   post: req('post'),
   put: req('put'),
   delete: req('delete'),
   head,
   options: req('options'),
-  userAgent
+  userAgent,
 }
+
+export const get = requests_.get

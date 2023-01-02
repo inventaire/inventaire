@@ -1,18 +1,18 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { error_ } from '#lib/error/error'
 import { flatMapUniq, mapUniq } from '#lib/utils/base'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
 
 const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
 
-let shelves_
-const requireCircularDependencies = () => {
-  shelves_ = require('controllers/shelves/lib/shelves')
+let getShelvesByIds
+const importCircularDependencies = async () => {
+  ({ getShelvesByIds } = await import('#controllers/shelves/lib/shelves'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
-const validateItemsAsync = async items => {
+export async function validateItemsAsync (items) {
   const owners = mapUniq(items, 'owner')
   if (owners.length !== 1) {
     throw error_.new('items should belong to a unique owner', 500, { items })
@@ -51,8 +51,8 @@ const validateEntityType = entity => {
   }
 }
 
-const validateShelves = async (userId, shelvesIds) => {
-  const shelves = await shelves_.byIds(shelvesIds)
+export async function validateShelves (userId, shelvesIds) {
+  const shelves = await getShelvesByIds(shelvesIds)
   validateShelvesOwnership(userId, shelves)
 }
 
@@ -65,9 +65,4 @@ const validateShelvesOwnership = (userId, shelves) => {
       throw error_.new('invalid owner', 400, { userId })
     }
   }
-}
-
-export default {
-  validateItemsAsync,
-  validateShelves,
 }

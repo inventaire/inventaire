@@ -15,8 +15,8 @@
     "array-bracket-spacing": [ "error", "always" ],
     "arrow-parens": [ "error", "as-needed" ],
     "comma-dangle": [ "error", {
-      "arrays": "only-multiline",
-      "objects": "only-multiline",
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
       "imports": "only-multiline",
       "exports": "only-multiline",
       "functions": "never"

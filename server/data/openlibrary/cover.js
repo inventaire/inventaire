@@ -1,12 +1,12 @@
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
-import requests_ from '#lib/requests'
+import { requests_ } from '#lib/requests'
 import { coverByOlId } from './api.js'
 
 const keyByType = {
   human: 'a',
   work: 'b',
-  edition: 'b'
+  edition: 'b',
 }
 
 export default async (openLibraryId, entityType) => {

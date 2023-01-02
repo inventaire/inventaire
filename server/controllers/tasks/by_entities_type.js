@@ -1,19 +1,19 @@
-import tasks_ from './lib/tasks.js'
+import { getTasksByEntitiesType } from '#controllers/tasks/lib/tasks'
 
 const sanitization = {
   type: {
-    allowlist: [ 'work' ]
+    allowlist: [ 'work' ],
   },
   limit: {
-    default: 10
+    default: 10,
   },
   offset: {
-    default: 0
-  }
+    default: 0,
+  },
 }
 
 const controller = async params => {
-  const tasks = await tasks_.byEntitiesType(params)
+  const tasks = await getTasksByEntitiesType(params)
   return { tasks }
 }
 

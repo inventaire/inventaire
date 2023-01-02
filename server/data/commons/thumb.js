@@ -13,7 +13,7 @@ export default file => {
     file,
     credits: {
       text: 'Wikimedia Commons',
-      url: `https://commons.wikimedia.org/wiki/File:${file}`
-    }
+      url: `https://commons.wikimedia.org/wiki/File:${file}`,
+    },
   }
 }

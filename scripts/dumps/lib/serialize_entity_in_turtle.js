@@ -59,7 +59,7 @@ const datatypePropClaimsFormatter = {
   string: propClaims => propClaims.map(formatStringValue),
   'positive-integer': propClaims => propClaims.map(formatPositiveInteger),
   'simple-day': propClaims => propClaims.filter(validSimpleDay).map(formatDate),
-  'image-hash': propClaims => propClaims.map(formatImageHash)
+  'image-hash': propClaims => propClaims.map(formatImageHash),
 }
 
 const formatStringValue = str => {

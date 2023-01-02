@@ -1,19 +1,21 @@
 import _ from '#builders/utils'
+import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
-import entities_ from './entities.js'
+import addRedirection from './add_redirection.js'
+import formatEntityCommon from './format_entity_common.js'
 import getEntityType from './get_entity_type.js'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
-import formatEntityCommon from './format_entity_common.js'
-import addRedirection from './add_redirection.js'
 
 let getEntityByUri
-const requireCircularDependencies = () => { getEntityByUri = require('./get_entity_by_uri') }
-setImmediate(requireCircularDependencies)
+const importCircularDependencies = async () => {
+  getEntityByUri = await import('./get_entity_by_uri.js')
+}
+setImmediate(importCircularDependencies)
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
 export default async (ids, params) => {
-  let entities = await entities_.byIds(ids)
+  let entities = await getEntitiesByIds(ids)
   entities = await Promise.all(entities.map(Format(params)))
   const found = entities.reduce(aggregateFoundIds, [])
   const notFound = _.difference(ids, found).map(prefixifyInv)

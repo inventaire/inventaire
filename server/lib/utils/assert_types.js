@@ -1,5 +1,5 @@
-import _ from 'lodash-es'
-import error_ from '../error/error.js'
+import { isArguments, isArray, times } from 'lodash-es'
+import { error_ } from '../error/error.js'
 import { typeOf } from './types.js'
 
 const assertType = (type, obj) => {
@@ -9,9 +9,9 @@ const assertType = (type, obj) => {
 }
 
 const assertTypes = (types, args) => {
-  if (_.isArguments(args)) {
+  if (isArguments(args)) {
     args = Array.from(args)
-    if (!_.isArray(types)) {
+    if (!isArray(types)) {
       // Do not accept doted syntax types as we wouldn't know how many arguments are expected
       const errMessage = "types should be an array when used with 'arguments'"
       throw error_.new(errMessage, 500, { args, types })
@@ -44,10 +44,10 @@ const stringify = value => {
 const parseTypes = (types, args) => {
   if (typeof types !== 'string' || types.match('s...') == null) return types
   const multiTypes = types.split('s...').join('')
-  return _.times(args.length, () => multiTypes)
+  return times(args.length, () => multiTypes)
 }
 
-export default {
+export const assert_ = {
   type: assertType,
   types: assertTypes,
 
@@ -62,5 +62,5 @@ export default {
   strings: assertTypes.bind(null, 'strings...'),
   numbers: assertTypes.bind(null, 'numbers...'),
   arrays: assertTypes.bind(null, 'arrays...'),
-  objects: assertTypes.bind(null, 'objects...')
+  objects: assertTypes.bind(null, 'objects...'),
 }

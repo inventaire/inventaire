@@ -1,13 +1,13 @@
 import should from 'should'
-import randomString from '#lib/utils/random_string'
+import { getRandomString } from '#lib/utils/random_string'
+import { createWork, createEditionWithIsbn } from '../fixtures/entities.js'
 import { getByUri, updateLabel, revertEdit, getHistory, addClaim } from '../utils/entities.js'
 import { shouldNotBeCalled } from '../utils/utils.js'
-import { createWork, createEditionWithIsbn } from '../fixtures/entities.js'
 
 describe('entities:revert-edit', () => {
   it('should revert a label update', async () => {
     const { uri } = await createWork()
-    const label = randomString(6)
+    const label = getRandomString(6)
     await updateLabel({ uri, lang: 'es', value: label })
     const lastPatchId = await getLastPatchId(uri)
     const res = await revertEdit({ patchId: lastPatchId })

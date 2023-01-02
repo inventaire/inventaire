@@ -1,4 +1,4 @@
-import { updateAttributes } from '#controllers/shelves/lib/shelves'
+import { updateShelfAttributes } from '#controllers/shelves/lib/shelves'
 
 const sanitization = {
   shelf: {},
@@ -9,12 +9,12 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const shelf = await updateAttributes(params)
+  const shelf = await updateShelfAttributes(params)
   return { shelf }
 }
 
 export default {
   sanitization,
   controller,
-  track: [ 'shelf', 'update' ]
+  track: [ 'shelf', 'update' ],
 }

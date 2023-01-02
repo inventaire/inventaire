@@ -1,13 +1,13 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
-import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
-import getEntityType from '#controllers/entities/lib/get_entity_type'
-import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
-import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
-import { getSingularTypes } from '#lib/wikidata/aliases'
-import { getEntityPopularity } from '#controllers/entities/lib/popularity'
 import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityPopularity } from '#controllers/entities/lib/popularity'
+import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
+import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
+import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
@@ -62,7 +62,7 @@ export default async (entity, options = {}) => {
       }
     } else {
       entity.images = {
-        claims: getEntityImagesFromClaims(entity, needsSimplification)
+        claims: getEntityImagesFromClaims(entity, needsSimplification),
       }
     }
   }
@@ -123,7 +123,7 @@ export default async (entity, options = {}) => {
     // as we aren't even waiting for the dryAndCache response to continue.
     // But, do not set dry=true when reindexing the rest of the time, as that would
     // in most cases mean never populating the popularity
-    dry: options.quick
+    dry: options.quick,
   })
 
   return entity

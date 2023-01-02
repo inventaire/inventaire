@@ -1,8 +1,10 @@
-import { isItemId } from 'wikidata-sdk'
+import wdk from 'wikidata-sdk'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { parseIsbn } from '#lib/isbn/parse'
 import makeSparqlRequest from './make_sparql_request.js'
+
+const { isItemId } = wdk
 
 export default async isbn => {
   const sparql = getQuery(isbn)
@@ -60,10 +62,10 @@ const buildEntryFromFormattedRows = (rows, isbn) => {
         // See https://github.com/inventaire/inventaire/issues/182
         uri: itemUri,
         claims: {
-          'wdt:P1476': title || item.label || work.label
-        }
+          'wdt:P1476': title || item.label || work.label,
+        },
       },
-      works: [ { uri: prefixifyWd(work.value) } ]
+      works: [ { uri: prefixifyWd(work.value) } ],
     }
   } else if (itemType === 'work') {
     entry = {
@@ -72,18 +74,18 @@ const buildEntryFromFormattedRows = (rows, isbn) => {
         claims: {
           // On a work item, prefer the item label to the title
           // as it might be a better fit to the edition language
-          'wdt:P1476': item.label || title
-        }
+          'wdt:P1476': item.label || title,
+        },
       },
-      works: [ { uri: itemUri } ]
+      works: [ { uri: itemUri } ],
     }
   }
   if (entry) {
     entry.edition = {
       isbn,
       claims: {
-        'wdt:P1476': title || item.label
-      }
+        'wdt:P1476': title || item.label,
+      },
     }
   }
   return entry

@@ -3,8 +3,6 @@ import 'should'
 import { parse } from 'papaparse'
 import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 import { getReservedUser } from '#tests/api/utils/utils'
-import { createItem } from '../fixtures/items.js'
-import { createShelf } from '../fixtures/shelves.js'
 import {
   createEdition,
   createWork,
@@ -13,6 +11,8 @@ import {
   addTranslator,
   someImageHash,
 } from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
 import { createUser } from '../fixtures/users.js'
 import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
 
@@ -51,7 +51,7 @@ describe('items:export', () => {
       const { shelf } = await createShelf(userPromise, { name })
       await customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
         id: shelf._id,
-        items: [ item._id ]
+        items: [ item._id ],
       })
 
       const itemRow = await reqAndParse(item._id)
@@ -124,7 +124,7 @@ describe('items:export', () => {
       await Promise.all([
         addClaim({ uri: work.uri, property: 'wdt:P921', value: subjectUri }),
         addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[0] }),
-        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[1] })
+        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[1] }),
       ])
       const item = await createItem(userPromise, { entity: edition.uri })
 

@@ -1,11 +1,13 @@
+import { typeOf } from '#lib/utils/types'
+
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
 let _, responses_
-const requireCircularDependencies = () => {
-  _ = require('builders/utils')
-  responses_ = require('lib/responses')
+const importCircularDependencies = async () => {
+  _ = await import('#builders/utils')
+  responses_ = await import('#lib/responses')
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 export default (req, res, err, status) => {
   // only accepts Error instances
@@ -46,13 +48,13 @@ export default (req, res, err, status) => {
     status_verbose: err.message,
     error_type: err.error_type,
     error_name: err.error_name,
-    context: err.context
+    context: err.context,
   })
 }
 
 const emptyContext = context => {
   if (context == null) return true
-  const type = _.typeOf(context)
+  const type = typeOf(context)
   if (type === 'array' || type === 'string') return context.length === 0
   else if (type === 'object') return _.objLength(context) === 0
   else return true

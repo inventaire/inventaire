@@ -1,11 +1,11 @@
 import crypto from 'node:crypto'
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import requests_ from '#lib/requests'
-import assert_ from '#lib/utils/assert_types'
-import { expired } from '#lib/time'
 import { getSha256Base64Digest } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { expired } from '#lib/time'
+import { assert_ } from '#lib/utils/assert_types'
 
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
@@ -18,7 +18,7 @@ const security_ = {
       reqHeaders,
       signedHeadersNames,
       method,
-      pathname
+      pathname,
     })
     signer.update(stringToSign)
     signer.end()
@@ -50,7 +50,7 @@ const security_ = {
       reqHeaders,
       signedHeadersNames,
       method,
-      pathname
+      pathname,
     })
     verifier.update(signedString)
     if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
@@ -78,10 +78,10 @@ const security_ = {
       signedHeadersNames,
       reqHeaders,
       method,
-      pathname
+      pathname,
     })
     return reqHeaders
-  }
+  },
 }
 
 export default security_

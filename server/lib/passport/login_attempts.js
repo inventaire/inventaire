@@ -19,5 +19,5 @@ export default {
   tooMany: username => {
     const userFails = fails[username]
     return userFails != null && userFails >= attemptsLimit
-  }
+  },
 }

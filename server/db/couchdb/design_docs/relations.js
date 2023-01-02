@@ -16,6 +16,6 @@ export default {
           emit([ a, 'otherRequested' ], b)
         }
       }
-    }
-  }
+    },
+  },
 }

@@ -25,25 +25,25 @@ import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create
 
 const sanitization = {
   entries: {
-    generic: 'collection'
+    generic: 'collection',
   },
   create: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   update: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   enrich: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   strict: {
     generic: 'boolean',
     optional: true,
-    default: true
-  }
+    default: true,
+  },
 }
 
 const controller = async (params, req) => {

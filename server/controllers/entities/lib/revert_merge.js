@@ -1,25 +1,25 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
-import entities_ from './entities.js'
-import patches_ from './patches/patches.js'
-import placeholders_ from './placeholders.js'
+import { error_ } from '#lib/error/error'
+import { recoverPlaceholder } from './placeholders.js'
 import { revertFromPatchDoc } from './revert_edit.js'
 
 export default async (userId, fromId) => {
-  const patches = await patches_.getWithSnapshots(fromId)
+  const patches = await getPatchesWithSnapshots(fromId)
   const targetVersion = await findVersionBeforeRedirect(patches)
-  const currentVersion = await entities_.byId(fromId)
+  const currentVersion = await getEntityById(fromId)
   const toUri = currentVersion.redirect
   const fromUri = `inv:${fromId}`
   targetVersion._id = currentVersion._id
   targetVersion._rev = currentVersion._rev
   targetVersion.version = currentVersion.version
 
-  const updateRes = await entities_.putUpdate({
+  const updateRes = await putEntityUpdate({
     userId,
     currentDoc: currentVersion,
-    updatedDoc: targetVersion
+    updatedDoc: targetVersion,
   })
 
   await updateItemEntity.afterRevert(fromUri, toUri)
@@ -48,7 +48,7 @@ const isntRedirection = version => version.redirect == null
 const recoverPlaceholders = async (userId, removedPlaceholdersIds) => {
   if (removedPlaceholdersIds == null || removedPlaceholdersIds.length === 0) return
 
-  const recoverFn = placeholders_.recover.bind(null, userId)
+  const recoverFn = recoverPlaceholder.bind(null, userId)
   return Promise.all(removedPlaceholdersIds.map(recoverFn))
 }
 
@@ -56,7 +56,7 @@ const revertMergePatch = async (userId, fromUri, toUri) => {
   const [ prefix, toId ] = toUri.split(':')
   if (prefix !== 'inv') return
 
-  const patches = await patches_.byEntityId(toId)
+  const patches = await getPatchesByEntityId(toId)
 
   const mergePatch = patches.find(patch => {
     return patch.context && patch.context.mergeFrom === fromUri
@@ -73,6 +73,6 @@ const revertMergePatch = async (userId, fromUri, toUri) => {
 }
 
 const revertClaimsRedirections = async (userId, fromUri) => {
-  const patches = await patches_.byRedirectUri(fromUri)
+  const patches = await getPatchesByRedirectUri(fromUri)
   return Promise.all(patches.map(patch => revertFromPatchDoc(patch, userId)))
 }

@@ -4,12 +4,12 @@ const sanitization = {
   property: {},
   value: { type: 'string' },
   refresh: {
-    optional: true
+    optional: true,
   },
   sort: {
     generic: 'boolean',
-    default: false
-  }
+    default: false,
+  },
 }
 
 const controller = async params => {

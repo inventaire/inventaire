@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
-import items_ from '#controllers/items/lib/items'
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
+import { updateItems } from '#controllers/items/lib/items'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
 import { track } from '#lib/track'
-import snapshot_ from './lib/snapshot/snapshot.js'
+import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 // This controller doesn't use sanitization
 // as the item doc is passed unwrapped in the body
@@ -29,8 +29,8 @@ export default async (req, res) => {
 
   const reqUserId = req.user._id
 
-  await items_.update(reqUserId, item)
-    .then(snapshot_.addToItem)
+  await updateItems(reqUserId, item)
+    .then(addSnapshotToItem)
     .then(responses_.Send(res))
 
   track(req, [ 'item', 'update' ])

@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import assert_ from '#lib/utils/assert_types'
-import formatters from './formatters/formatters.js'
-import filters from './filters.js'
-import deindex from './deindex.js'
+import { assert_ } from '#lib/utils/assert_types'
 import { addToBatch, postBatch } from './bulk.js'
+import deindex from './deindex.js'
+import filters from './filters.js'
+import formatters from './formatters/formatters.js'
 import { indexesNamesByBaseNames } from './indexes.js'
 
 const { updateDelay } = CONFIG.elasticsearch

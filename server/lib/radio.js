@@ -4,14 +4,14 @@ import { EventEmitter } from 'node:events'
 import CONFIG from 'config'
 import _ from '#builders/utils'
 
-const radio = new EventEmitter()
+export const radio = new EventEmitter()
 
 // It's convenient in tests to have the guaranty that event listeners were called,
 // but in production, that would mean delaying API responses for secondary actions
 // (setting notifications, sending emails, analytics, etc)
 const waitForListeners = CONFIG.env.startsWith('tests')
 
-let emit
+export let emit
 
 // In one case, emit is an async function, and in the other a sync function,
 // For developers comfort, it should be fine to always `await` emit calls
@@ -28,20 +28,6 @@ if (waitForListeners) {
   }
 } else {
   emit = radio.emit.bind(radio)
-}
-
-export default {
-  emit,
-  Emit: label => emit.bind(null, label),
-  tapEmit: (...args) => res => {
-    if (waitForListeners) {
-      return emit(...args).then(() => res)
-    } else {
-      emit(...args)
-      return res
-    }
-  },
-  on: radio.on.bind(radio)
 }
 
 const triggerAndWait = (eventName, args) => async listener => {

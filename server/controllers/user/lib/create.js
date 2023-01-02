@@ -1,17 +1,17 @@
 import _ from '#builders/utils'
 import invitations_ from '#controllers/invitations/lib/invitations'
-import User from '#models/user'
+import { checkUsernameAvailability } from '#controllers/user/lib/availability'
+import { sendValidationEmail } from '#controllers/user/lib/token'
 import dbFactory from '#db/couchdb/base'
+import User from '#models/user'
 import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
-import token_ from './token.js'
-import availability_ from './availability.js'
 
 const db = dbFactory('users')
 
 export default async (username, email, creationStrategy, language, password) => {
   preventMultiAccountsCreation(username)
 
-  return availability_.username(username)
+  return checkUsernameAvailability(username)
   .then(invitations_.findOneByEmail.bind(null, email))
   .then(_.Log('invitedDoc'))
   .then(invitedDoc => {
@@ -36,7 +36,7 @@ const postCreation = user => {
     // but we do need both to be over to be sure that the user will
     // see the friends requests (converted from invitations)
     invitations_.convertInvitations(user),
-    token_.sendValidationEmail(user)
+    sendValidationEmail(user),
   ])
   // return the user updated with the validation token
   .then(([ invitationRes, updatedUser ]) => {

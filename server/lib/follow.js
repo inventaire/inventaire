@@ -1,21 +1,23 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
-import CONFIG from 'config'
 import follow from 'cloudant-follow'
+import CONFIG from 'config'
 import _ from '#builders/utils'
-import { wait } from '#lib/promises'
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
 import metaDbFactory from '#db/level/get_sub_db'
-import requests_ from '#lib/requests'
+import { catchNotFound } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
 
 const metaDb = metaDbFactory('meta', 'utf8')
 const dbHost = CONFIG.db.getOrigin()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 let waitForCouchInit
-const requireCircularDependencies = () => { waitForCouchInit = require('db/couchdb/init') }
-setImmediate(requireCircularDependencies)
+const importCircularDependencies = async () => {
+  waitForCouchInit = await import('#db/couchdb/init')
+}
+setImmediate(importCircularDependencies)
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server
@@ -62,7 +64,7 @@ export default async params => {
 const getLastSeq = async dbName => {
   if (resetFollow) return
   const key = buildKey(dbName)
-  return metaDb.get(key).catch(error_.catchNotFound)
+  return metaDb.get(key).catch(catchNotFound)
 }
 
 const initFollow = async (dbName, reset, lastSeq) => {
@@ -114,7 +116,7 @@ const startFollowingDb = params => {
     db: dbUrl,
     include_docs: true,
     feed: 'continuous',
-    since: lastSeq || 0
+    since: lastSeq || 0,
   }
 
   return follow(config, (err, change) => {

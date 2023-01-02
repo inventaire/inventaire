@@ -5,8 +5,8 @@
 // while not duplicating module aliases
 
 import { fileURLToPath } from 'url'
-import { requireJson } from '#lib/utils/json'
 import { absolutePath } from '#lib/absolute_path'
+import { requireJson } from '#lib/utils/json'
 
 const pkg = requireJson(absolutePath('root', 'package.json'))
 
@@ -19,7 +19,7 @@ const jsconfig = {
     module: 'esnext',
     moduleResolution: 'node',
     baseUrl: '.',
-    paths: {}
+    paths: {},
   },
   include: [
     'config/**/*',

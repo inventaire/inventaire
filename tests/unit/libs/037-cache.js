@@ -1,17 +1,17 @@
 import CONFIG from 'config'
 import should from 'should'
 import sinon from 'sinon'
-import { wait } from '#lib/promises'
 import _ from '#builders/utils'
-import cache_ from '#lib/cache'
-import randomString from '#lib/utils/random_string'
+import { cache_ } from '#lib/cache'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
 import { shouldNotBeCalled } from '../utils.js'
 
 const { ttlCheckFrequency } = CONFIG.leveldb
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 
 const hashKey = async key => _.hashCode(key)
-const getSomeRandomValue = async () => randomString(8)
+const getSomeRandomValue = async () => getRandomString(8)
 const failingFn = async () => {
   const err = new Error('Jag är Döden')
   err.code = 'that_failing_fn_error'
@@ -33,8 +33,8 @@ describe('cache', () => {
 
     it('should compute ones and cache for the nexts', async () => {
       const spy = sinon.spy()
-      const keyA = randomString(8)
-      const keyB = randomString(8)
+      const keyA = getRandomString(8)
+      const keyB = getRandomString(8)
       const someFn = key => key + key
       const spiedFn = async key => {
         spy()
@@ -57,7 +57,7 @@ describe('cache', () => {
     })
 
     it('should pass the error when a cache miss is followed by a function throwing an error', async () => {
-      const key = randomString(8)
+      const key = getRandomString(8)
       await cache_.get({ key, fn: failingFn })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -69,7 +69,7 @@ describe('cache', () => {
       const spy = sinon.spy()
       const empty = async () => { spy() }
 
-      const key = randomString(8)
+      const key = getRandomString(8)
       const res1 = await cache_.get({ key, fn: empty })
       should(res1).not.be.ok()
       const res2 = await cache_.get({ key, fn: empty })
@@ -79,7 +79,7 @@ describe('cache', () => {
 
     describe('ttl', () => {
       it('should remove a key/value from cache after the ttl expired', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const res1 = await cache_.get({ key, fn: getSomeRandomValue, ttl: 1 })
         should(res1).be.ok()
         await wait(ttlCheckFrequency + 100)
@@ -90,7 +90,7 @@ describe('cache', () => {
 
     describe('refresh', () => {
       it('should force a refresh', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const res1 = await cache_.get({ key, fn: getSomeRandomValue })
         const res2 = await cache_.get({ key, fn: getSomeRandomValue })
         const res3 = await cache_.get({ key, fn: getSomeRandomValue, refresh: true })
@@ -101,27 +101,27 @@ describe('cache', () => {
 
     describe('dry', () => {
       it('should get a cached value with a dry parameter', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const res1 = await cache_.get({ key, fn: getSomeRandomValue })
         const res2 = await cache_.get({ key, dry: true })
         res1.should.equal(res2)
       })
 
       it('should return empty when no value was cached', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const res = await cache_.get({ key, dry: true })
         should(res).not.be.ok()
       })
 
       it('should return the fallback value when specified', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const dryFallbackValue = 123
         const res = await cache_.get({ key, dry: true, dryFallbackValue })
         res.should.equal(dryFallbackValue)
       })
 
       it('should populate the cache when requested', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const fn = getSomeRandomValue.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, dryAndCache: true })
         should(res1).not.be.ok()
@@ -130,7 +130,7 @@ describe('cache', () => {
       })
 
       it('should be overriden by refresh', async () => {
-        const key = randomString(8)
+        const key = getRandomString(8)
         const fn = getSomeRandomValue.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, refresh: true, dryAndCache: true })
         should(res1).be.ok()
@@ -162,8 +162,8 @@ describe('cache', () => {
     })
 
     it('should put a value in the cache', async () => {
-      const key = randomString(8)
-      const value = randomString(8)
+      const key = getRandomString(8)
+      const value = getRandomString(8)
       const cached = await cache_.get({ key, dry: true })
       should(cached).not.be.ok()
       await cache_.put(key, value)

@@ -1,41 +1,37 @@
-import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import error_ from '#lib/error/error'
-import passport_ from '#lib/passport/passport'
 import { ownerSafeData } from '#controllers/user/lib/authorized_user_data_pickers'
+import { error_ } from '#lib/error/error'
+import passport_ from '#lib/passport/passport'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import setLoggedInCookie from './lib/set_logged_in_cookie.js'
 
 const signupSanitization = validateSanitization({
   username: {},
   email: {},
-  password: {}
+  password: {},
 })
 
-const logoutRedirect = (redirect, req, res) => {
+export const logoutRedirect = (redirect, req, res) => {
   res.clearCookie('loggedIn')
   req.logout()
   res.redirect(redirect)
 }
 
-export default {
-  // TODO: rate limit to 10 signup per IP per 10 minutes
-  signup: (req, res) => {
-    // Use sanitize to format and validate body parameters
-    req.body = sanitize(req, res, signupSanitization)
-    const next = loggedIn(req, res)
-    passport_.authenticate.localSignup(req, res, next)
-  },
-
-  login: (req, res) => {
-    // Not using sanitize as an email can be passed in place of a username,
-    // but still by using the key 'username', and would thus be rejected at sanitization
-    const next = loggedIn(req, res)
-    passport_.authenticate.localLogin(req, res, next)
-  },
-
-  logoutRedirect,
-
-  logout: logoutRedirect.bind(null, '/')
+// TODO: rate limit to 10 signup per IP per 10 minutes
+export const signup = (req, res) => {
+  // Use sanitize to format and validate body parameters
+  req.body = sanitize(req, res, signupSanitization)
+  const next = loggedIn(req, res)
+  passport_.authenticate.localSignup(req, res, next)
 }
+
+export const login = (req, res) => {
+  // Not using sanitize as an email can be passed in place of a username,
+  // but still by using the key 'username', and would thus be rejected at sanitization
+  const next = loggedIn(req, res)
+  passport_.authenticate.localLogin(req, res, next)
+}
+
+export const logout = logoutRedirect.bind(null, '/')
 
 const loggedIn = (req, res) => result => {
   if (result instanceof Error) return error_.handler(req, res, result)

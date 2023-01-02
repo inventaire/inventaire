@@ -1,11 +1,10 @@
 import CONFIG from 'config'
-
 // Identity: v3
 // Swift: v2
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
 import { tenMinutes } from '#lib/time'
-import requests_ from '#lib/requests'
 
 let lastToken
 let lastTokenExpirationTime = 0
@@ -25,17 +24,17 @@ const body = {
         user: {
           domain: { id: 'default' },
           name: username,
-          password
-        }
-      }
+          password,
+        },
+      },
     },
     scope: {
       project: {
         domain: { id: 'default' },
-        name: tenantName
-      }
-    }
-  }
+        name: tenantName,
+      },
+    },
+  },
 }
 
 export default async () => {

@@ -1,7 +1,7 @@
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
-import { baseActivityValidations } from './validations/activity.js'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/activity.js'
+import { baseActivityValidations } from './validations/activity.js'
 
 export default {
   create: activity => {
@@ -32,5 +32,5 @@ export default {
 
     activity.updated = Date.now()
     return activity
-  }
+  },
 }

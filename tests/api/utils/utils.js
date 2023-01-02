@@ -1,7 +1,8 @@
-import { createUser, getRefreshedUser } from '../fixtures/users.js'
-import { humanName } from '../fixtures/text.js'
-import { request, customAuthReq, rawCustomAuthReq } from './request.js'
+import utils from '#tests/unit/utils'
 import 'should'
+import { humanName } from '../fixtures/text.js'
+import { createUser, getRefreshedUser } from '../fixtures/users.js'
+import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 
 const userPromises = {}
 const getUserGetter = (key, role, customData) => () => {
@@ -12,6 +13,7 @@ const getUserGetter = (key, role, customData) => () => {
 }
 
 const API = {
+  ...utils,
   publicReq: request,
   customAuthReq,
   authReq: (...args) => customAuthReq(API.getUser(), ...args),
@@ -35,10 +37,8 @@ const API = {
   // To be used when you need a user not used by any other tests
   getReservedUser: customData => getUserGetter(humanName(), null, customData)(),
   getDeanonymizedUser: getUserGetter('deanonymized', null, {
-    'settings.contributions.anonymize': false
-  })
+    'settings.contributions.anonymize': false,
+  }),
 }
 
 export default API
-
-Object.assign(API, require('../../unit/utils'))

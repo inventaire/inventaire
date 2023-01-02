@@ -1,7 +1,8 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
+import { assert_ } from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
 import parameters from './parameters.js'
 
 const { generics } = parameters
@@ -20,7 +21,7 @@ const sanitize = (req, res, configs) => {
   delete input.action
 
   if (!_.isPlainObject(input)) {
-    const type = _.typeOf(input)
+    const type = typeOf(input)
     throw error_.new(`${place} should be an object, got ${type}`, 400)
   }
 

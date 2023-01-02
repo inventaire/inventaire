@@ -5,5 +5,5 @@ export default {
   controller: async ({ reqUserId }) => {
     const groups = await allUserGroups(reqUserId)
     return { groups }
-  }
+  },
 }

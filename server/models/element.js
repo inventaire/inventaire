@@ -1,6 +1,8 @@
-import assert_ from '#lib/utils/assert_types'
-import error_ from '#lib/error/error'
-import { pass, entityUri, couchUuid } from './validations/common.js'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import commonValidations from './validations/common.js'
+
+const { pass, entityUri, couchUuid } = commonValidations
 
 const validations = {
   pass,
@@ -12,7 +14,7 @@ const attributes = {
   validAtCreation: [
     'list',
     'uri',
-  ]
+  ],
 }
 
 export default {

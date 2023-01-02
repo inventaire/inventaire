@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
 import 'should'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { getGroupVisibilityKey } from '#lib/visibility/visibility'
-import { createItem } from '../fixtures/items.js'
-import { getSomeGroup, addMember, createGroup } from '../fixtures/groups.js'
 import { humanName } from '../fixtures/entities.js'
+import { getSomeGroup, addMember, createGroup } from '../fixtures/groups.js'
+import { createItem } from '../fixtures/items.js'
 
 const userPromise = getUserGetter(humanName())()
 

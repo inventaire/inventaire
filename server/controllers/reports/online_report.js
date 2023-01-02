@@ -1,5 +1,5 @@
-import responses_ from '#lib/responses'
 import headers_ from '#lib/headers'
+import { responses_ } from '#lib/responses'
 import onlineUsers from './lib/online_users.js'
 
 export default (req, res) => {
@@ -14,7 +14,7 @@ export default (req, res) => {
     // For production, when behind a Nginx proxy
     ip: headers['x-forwarded-for'],
     userAgent: headers['user-agent'],
-    lang: headers_.getLang(headers)
+    lang: headers_.getLang(headers),
   })
 
   responses_.ok(res)

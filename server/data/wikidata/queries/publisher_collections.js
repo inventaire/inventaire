@@ -13,5 +13,5 @@ export default {
   OPTIONAL { ?collection wdt:P577|wdt:P580 ?starting_date }
 }
 ORDER BY DESC(?starting_date)`
-  }
+  },
 }

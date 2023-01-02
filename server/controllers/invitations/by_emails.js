@@ -1,14 +1,14 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import responses_ from '#lib/responses'
-import groups_ from '#controllers/groups/lib/groups'
-import Group from '#models/group'
-import { Track } from '#lib/track'
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
+import { Track } from '#lib/track'
+import Group from '#models/group'
 import parseEmails from './lib/parse_emails.js'
+import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
 
 const sanitization = validateSanitization({
   emails: {},
@@ -27,7 +27,7 @@ export default async (req, res) => {
 
   const [ parsedEmails, group ] = await Promise.all([
     parseAndValidateEmails(emails, user.email),
-    validateGroup(groupId, reqUserId)
+    validateGroup(groupId, reqUserId),
   ])
 
   return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
@@ -51,7 +51,7 @@ const validateGroup = async (groupId, reqUserId) => {
     throw error_.newInvalid('group id', groupId)
   }
 
-  return groups_.byId(groupId)
+  return getGroupById(groupId)
   .then(group => {
     const userIsMember = Group.userIsMember(reqUserId, group)
     if (!userIsMember) {

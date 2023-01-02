@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
 import 'should'
-import { publicReq } from '#tests/api/utils/utils'
 import { expired } from '#lib/time'
+import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { populate } from '../fixtures/populate.js'
 

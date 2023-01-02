@@ -15,7 +15,7 @@ const someNotificationDoc = () => {
   const notificationDoc = Notification.create({
     user: someUserId,
     type: 'groupUpdate',
-    data: someGroupUpdateData()
+    data: someGroupUpdateData(),
   })
   notificationDoc._id = someCouchUuid
   notificationDoc._rev = `1-${someCouchUuid}`
@@ -27,7 +27,7 @@ describe('notification model', () => {
     it('should reject notification without a user id', () => {
       Notification.create.bind(null, {
         type: 'groupUpdate',
-        data: someGroupUpdateData()
+        data: someGroupUpdateData(),
       })
       .should.throw(/invalid user/)
     })
@@ -36,7 +36,7 @@ describe('notification model', () => {
       Notification.create.bind(null, {
         user: 'foo',
         type: 'groupUpdate',
-        data: someGroupUpdateData()
+        data: someGroupUpdateData(),
       })
       .should.throw(/invalid user/)
     })
@@ -44,7 +44,7 @@ describe('notification model', () => {
     it('should reject notification without a type', () => {
       Notification.create.bind(null, {
         user: someUserId,
-        data: someGroupUpdateData()
+        data: someGroupUpdateData(),
       })
       .should.throw(/invalid type/)
     })
@@ -53,7 +53,7 @@ describe('notification model', () => {
       Notification.create.bind(null, {
         user: someUserId,
         type: 'foo',
-        data: someGroupUpdateData()
+        data: someGroupUpdateData(),
       })
       .should.throw(/invalid type/)
     })
@@ -70,7 +70,7 @@ describe('notification model', () => {
       const notificationDoc = Notification.create({
         user: someUserId,
         type: 'groupUpdate',
-        data: someGroupUpdateData()
+        data: someGroupUpdateData(),
       })
       notificationDoc.should.be.an.Object()
       notificationDoc.user.should.equal(someUserId)
@@ -87,7 +87,7 @@ describe('notification model', () => {
         Notification.create.bind(null, {
           user: someUserId,
           type: 'groupUpdate',
-          data
+          data,
         })
         .should.throw(/invalid attribute/)
       })

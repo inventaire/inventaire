@@ -1,7 +1,7 @@
 // Get the amount of entities linking to a given entity
 import _ from '#builders/utils'
+import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
 import runWdQuery from '#data/wikidata/run_query'
-import entities_ from './entities.js'
 
 export default (uri, refresh) => {
   const [ prefix, id ] = uri.split(':')
@@ -21,4 +21,4 @@ const getWdLinksScore = (qid, refresh) => {
   .then(_.first)
 }
 
-const getLocalLinksCount = uri => entities_.byClaimsValue(uri, true)
+const getLocalLinksCount = uri => getEntitiesByClaimsValue(uri, true)

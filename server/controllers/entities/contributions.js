@@ -1,10 +1,10 @@
 // An endpoint to list entities edits made by a user
 
-import error_ from '#lib/error/error'
+import { getUserById } from '#controllers/user/lib/user'
 import { isPropertyUri, isLang } from '#lib/boolean_validations'
-import user_ from '#controllers/user/lib/user'
-import { shouldBeAnonymized } from '#models/user'
+import { error_ } from '#lib/error/error'
 import { hasAdminAccess } from '#lib/user_access_levels'
+import { shouldBeAnonymized } from '#models/user'
 import anonymizePatches from './lib/anonymize_patches.js'
 import { byUserId, byDate, byUserIdAndFilter } from './lib/patches/patches.js'
 
@@ -15,7 +15,7 @@ const sanitization = {
   filter: {
     generic: 'string',
     optional: true,
-  }
+  },
 }
 
 const controller = async (params, req) => {
@@ -48,7 +48,7 @@ const getPatchesPage = async ({ userId, limit, offset, filter }) => {
 }
 
 const checkPublicContributionsStatus = async userId => {
-  const user = await user_.byId(userId)
+  const user = await getUserById(userId)
   if (shouldBeAnonymized(user)) {
     throw error_.new('non-public contributions', 403, { userId })
   }

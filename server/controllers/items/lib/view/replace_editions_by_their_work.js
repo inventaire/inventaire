@@ -13,7 +13,7 @@ export default entities => {
   .then(editionsWorksEntities => {
     return {
       works: works.concat(Object.values(editionsWorksEntities)),
-      editionWorkMap
+      editionWorkMap,
     }
   })
 }

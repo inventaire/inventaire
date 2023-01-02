@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 import _ from '#builders/utils'
-import user_, { addRole } from '#controllers/user/lib/user'
+import { addUserRole, findUserByUsername } from '#controllers/user/lib/user'
+import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups.js'
 import { createUserWithItems } from '../tests/api/fixtures/populate.js'
 import { makeFriends } from '../tests/api/utils/relations.js'
-import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups.js'
 
 const [ username ] = process.argv.slice(2)
 
 const run = async () => {
   try {
-    const { _id } = await user_.findOneByUsername(username)
+    const { _id } = await findUserByUsername(username)
     console.log(`Username ${username} already exists at ${_id}`)
     return process.exit(0)
   } catch (err) {
@@ -20,12 +20,12 @@ const run = async () => {
 const createUserAndGroupAndGFriends = async username => {
   const user = await createUserWithItems({ username })
   _.info(`${user.username} is a new user`)
-  await addRole(user._id, 'admin')
+  await addUserRole(user._id, 'admin')
   _.info(`${user.username} has now an 'admin' role`)
 
   const [ friend1, friend2 ] = await Promise.all([
     addFriendsToUser(user),
-    addFriendsToUser(user)
+    addFriendsToUser(user),
   ])
   _.info(`${user.username} is now friend with ${friend1.username} and ${friend2.username}`)
 

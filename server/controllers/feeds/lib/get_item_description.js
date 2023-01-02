@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import templateHelpers from '#lib/emails/handlebars_helpers'
 import transactionsColors from '#lib/emails/activity_summary/transactions_colors'
+import templateHelpers from '#lib/emails/handlebars_helpers'
 
 export default (item, user, lang) => {
   const { transaction, snapshot, details } = item

@@ -1,13 +1,13 @@
 import _ from '#builders/utils'
-import items_ from '#controllers/items/lib/items'
+import { getItemsByOwner } from '#controllers/items/lib/items'
+import dbFactory from '#db/couchdb/base'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import User from '#models/user'
-import dbFactory from '#db/couchdb/base'
 
 const db = dbFactory('users')
 
 export default userId => {
-  return items_.byOwner(userId)
+  return getItemsByOwner(userId)
   .then(getItemsCounts)
   .then(itemsCounts => db.update(userId, User.updateItemsCounts(itemsCounts)))
   .then(() => _.info(`${userId} items counts updated`))
@@ -18,7 +18,7 @@ const getItemsCounts = items => {
   const counts = {
     private: { 'items:count': 0 },
     network: { 'items:count': 0 },
-    public: { 'items:count': 0 }
+    public: { 'items:count': 0 },
   }
 
   items.forEach(item => {

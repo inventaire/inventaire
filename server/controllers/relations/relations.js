@@ -1,11 +1,12 @@
 import ActionsControllers from '#lib/actions_controllers'
 import relationsActions from './actions.js'
+import get from './get.js'
 
 export default {
   get: ActionsControllers({
     authentified: {
-      default: require('./get')
-    }
+      default: get,
+    },
   }),
 
   post: ActionsControllers({
@@ -14,7 +15,7 @@ export default {
       cancel: relationsActions('cancel'),
       accept: relationsActions('accept'),
       discard: relationsActions('discard'),
-      unfriend: relationsActions('unfriend')
-    }
-  })
+      unfriend: relationsActions('unfriend'),
+    },
+  }),
 }

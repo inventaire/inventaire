@@ -1,16 +1,16 @@
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
-import shelves_ from '#controllers/shelves/lib/shelves'
-import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work.js'
+import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
+import { getShelfById } from '#controllers/shelves/lib/shelves'
+import { error_ } from '#lib/error/error'
 import bundleViewData from './lib/view/bundle_view_data.js'
-import getAuthorizedItems from './lib/get_authorized_items.js'
+import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work.js'
 
 const sanitization = {
   user: { optional: true },
   group: { optional: true },
   shelf: { optional: true },
-  'without-shelf': { optional: true, generic: 'boolean' }
+  'without-shelf': { optional: true, generic: 'boolean' },
 }
 
 const controller = async params => {
@@ -29,12 +29,12 @@ const validateUserOrGroup = params => {
 const getItems = async params => {
   const { user: userId, group: groupId, shelf: shelfId, reqUserId, 'without-shelf': withoutShelf } = params
   if (userId) {
-    return getAuthorizedItems.byUsers([ userId ], reqUserId, { withoutShelf })
+    return getAuthorizedItemsByUsers([ userId ], reqUserId, { withoutShelf })
   } else if (shelfId) {
-    const shelfDoc = await shelves_.byId(shelfId)
-    return getAuthorizedItems.byShelves([ shelfDoc ], reqUserId)
+    const shelfDoc = await getShelfById(shelfId)
+    return getAuthorizedItemsByShelves([ shelfDoc ], reqUserId)
   } else {
-    return getAuthorizedItems.byGroup(groupId, reqUserId)
+    return getAuthorizedItemsByGroup(groupId, reqUserId)
   }
 }
 

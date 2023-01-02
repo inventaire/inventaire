@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
-import { isVisibilityGroupKey } from '#lib/boolean_validations'
-import { byIds as getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
+import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
 import { getUserFriends } from '#controllers/relations/lib/lists'
+import { isVisibilityGroupKey } from '#lib/boolean_validations'
 import { allGroupMembers as parseAllGroupMembersIds } from '#server/controllers/groups/lib/users_lists'
 
-export default async (docs, reqUserId) => {
+export async function filterVisibleDocs (docs, reqUserId) {
   if (!reqUserId) return docs.filter(isPublic)
 
   // Optimizing for the case where all requested docs belong to the requester

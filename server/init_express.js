@@ -1,8 +1,9 @@
 import CONFIG from 'config'
 import express from 'express'
 import _ from '#builders/utils'
-import middlewares from './middlewares/middlewares.js'
+import { errorHandler } from '#server/middlewares/error_handler'
 import { routes } from './controllers/routes.js'
+import middlewares from './middlewares/middlewares.js'
 
 const { port, host, name, publicProtocol } = CONFIG
 
@@ -27,7 +28,7 @@ export function initExpress () {
 
   // Should be used after all middlewares and routes
   // cf http://expressjs.com/fr/guide/error-handling.html
-  app.use(require('./middlewares/error_handler'))
+  app.use(errorHandler)
 
   if (publicProtocol === 'https') {
     // Allows Nginx to pass a "X-Forwarded-Proto=https" header

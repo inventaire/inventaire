@@ -1,11 +1,12 @@
 import CONFIG from 'config'
+import express from 'express'
+import serveFavicon from 'serve-favicon'
 import { absolutePath } from '#lib/absolute_path'
 import pass from './pass.js'
 
 let statics = {}
 
 if (CONFIG.serveStaticFiles) {
-  const express = require('express')
   const publicPath = absolutePath('client', 'public')
   const options = {
     maxAge: 0,
@@ -20,7 +21,7 @@ if (CONFIG.serveStaticFiles) {
   const mountStaticFiles = [ '/public', staticMiddleware ]
 
   const faviconPath = absolutePath('client', 'public/favicon.ico')
-  const favicon = require('serve-favicon')(faviconPath)
+  const favicon = serveFavicon(faviconPath)
   statics = { mountStaticFiles, favicon }
 } else {
   statics = { mountStaticFiles: pass, favicon: pass }

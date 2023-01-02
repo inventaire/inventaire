@@ -1,5 +1,5 @@
 import wdk from 'wikidata-sdk'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 import wdEdit from '#lib/wikidata/edit'
 import wdOauth from './wikidata_oauth.js'
 

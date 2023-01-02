@@ -6,10 +6,10 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import error_ from '#lib/error/error'
-import { img as imgUrlBuilder } from '#lib/emails/app_api'
 import getThumbData from '#data/commons/thumb'
+import { imgUrlBuilder } from '#lib/emails/app_api'
+import { error_ } from '#lib/error/error'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import getEntitiesImages from './lib/get_entities_images.js'
 
 const sanitization = validateSanitization({
@@ -17,16 +17,16 @@ const sanitization = validateSanitization({
   refresh: { optional: true },
   redirect: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   width: {
     generic: 'positiveInteger',
-    optional: true
+    optional: true,
   },
   height: {
     generic: 'positiveInteger',
-    optional: true
-  }
+    optional: true,
+  },
 })
 
 export default async (req, res) => {

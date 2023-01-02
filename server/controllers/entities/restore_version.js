@@ -1,7 +1,7 @@
 import restoreVersion from './lib/restore_version.js'
 
 const sanitization = {
-  patch: {}
+  patch: {},
 }
 
 const controller = async ({ patchId, reqUserId }) => {

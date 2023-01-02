@@ -1,6 +1,6 @@
 import _ from 'lodash-es'
 
-const normalizeTerm = term => {
+export const normalizeTerm = term => {
   if (!term) return
 
   return term
@@ -20,11 +20,9 @@ const normalizeTerm = term => {
   .trim()
 }
 
-const getEntityNormalizedTerms = entity => {
+export const getEntityNormalizedTerms = entity => {
   const labels = Object.values(entity.labels)
   const aliases = Object.values(entity.aliases || {}).flat()
   const terms = labels.concat(aliases).map(normalizeTerm)
   return _.uniq(terms)
 }
-
-export default { normalizeTerm, getEntityNormalizedTerms }

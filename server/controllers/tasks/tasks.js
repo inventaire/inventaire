@@ -1,32 +1,40 @@
+import { initTasksHooks } from '#controllers/tasks/hooks'
 import ActionsControllers from '#lib/actions_controllers'
+import byEntitiesType from './by_entities_type.js'
 import { bySuspectUris, bySuggestionUris } from './by_entity_uris.js'
+import byIds from './by_ids.js'
+import byScore from './by_score.js'
+import checkEntities from './check_entities.js'
+import collectEntities from './collect_entities.js'
+import deduplicateWorks from './deduplicate_works.js'
+import update from './update.js'
 
 export default {
   get: ActionsControllers({
     public: {
-      'by-ids': require('./by_ids'),
-      'by-score': require('./by_score'),
-      'by-entities-type': require('./by_entities_type'),
+      'by-ids': byIds,
+      'by-score': byScore,
+      'by-entities-type': byEntitiesType,
       'by-suspect-uris': bySuspectUris,
-      'by-suggestion-uris': bySuggestionUris
-    }
+      'by-suggestion-uris': bySuggestionUris,
+    },
   }),
 
   post: ActionsControllers({
     authentified: {
-      'deduplicate-works': require('./deduplicate_works')
+      'deduplicate-works': deduplicateWorks,
     },
     admin: {
-      'collect-entities': require('./collect_entities'),
-      'check-entities': require('./check_entities')
-    }
+      'collect-entities': collectEntities,
+      'check-entities': checkEntities,
+    },
   }),
 
   put: ActionsControllers({
     admin: {
-      update: require('./update')
-    }
-  })
+      update,
+    },
+  }),
 }
 
-require('./hooks')()
+initTasksHooks()

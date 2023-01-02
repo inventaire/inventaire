@@ -1,24 +1,22 @@
 import _ from '#builders/utils'
-import typeSearch from '#controllers/search/lib/type_search'
-import entities_ from '#controllers/entities/lib/entities'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
 import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
-import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
+import typeSearch from '#controllers/search/lib/type_search'
 import { automerge } from './automerge.js'
 
-export default (entity, existingTasks) => {
-  return Promise.all([
+export default async function (entity, existingTasks) {
+  const [ newSuggestions, suspectWorksData ] = await Promise.all([
     searchEntityDuplicatesSuggestions(entity, existingTasks),
-    getAuthorWorksData(entity._id)
+    getAuthorWorksData(entity._id),
   ])
-  .then(([ newSuggestions, suspectWorksData ]) => {
-    if (newSuggestions.length <= 0) return []
-    const { labels: worksLabels } = suspectWorksData
-    return Promise.all(newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
-    .then(filterOrMergeSuggestions(entity, worksLabels))
-    .then(filterNewTasks(existingTasks))
-  })
+  if (newSuggestions.length <= 0) return []
+  const { labels: worksLabels } = suspectWorksData
+  return Promise.all(newSuggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
+  .then(filterOrMergeSuggestions(entity, worksLabels))
+  .then(filterNewTasks(existingTasks))
 }
 
 const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
@@ -51,7 +49,7 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
 
   return Promise.all([
     getOccurrencesFromExternalSources(uri, labels, langs),
-    getOccurrencesFromEntities(uri, labels)
+    getOccurrencesFromEntities(uri, labels),
   ])
   .then(([ externalOccurrences, entitiesOccurrences ]) => {
     suggestion.occurrences = externalOccurrences.concat(entitiesOccurrences)
@@ -59,17 +57,15 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
   })
 }
 
-const getAuthorWorksData = authorId => {
-  return entities_.byClaim('wdt:P50', `inv:${authorId}`, true, true)
-  .then(works => {
-    // works = [
-    //   { labels: { fr: 'Matiere et Memoire'} },
-    //   { labels: { en: 'foo' } }
-    // ]
-    const labels = _.uniq(works.flatMap(getEntityNormalizedTerms))
-    const langs = _.uniq(works.flatMap(getLangs))
-    return { authorId, labels, langs }
-  })
+const getAuthorWorksData = async authorId => {
+  const works = await getEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
+  // works = [
+  //   { labels: { fr: 'Matiere et Memoire'} },
+  //   { labels: { en: 'foo' } }
+  // ]
+  const labels = _.uniq(works.flatMap(getEntityNormalizedTerms))
+  const langs = _.uniq(works.flatMap(getLangs))
+  return { authorId, labels, langs }
 }
 
 const getLangs = work => Object.keys(work.labels)

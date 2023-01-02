@@ -3,13 +3,13 @@ import _ from '#builders/utils'
 const base = () => ({
   author: {},
   genre: {},
-  subject: {}
+  subject: {},
 })
 
 const viewProperties = {
   'wdt:P50': 'author',
   'wdt:P136': 'genre',
-  'wdt:P921': 'subject'
+  'wdt:P921': 'subject',
 }
 
 const addToTree = (tree, entity) => {

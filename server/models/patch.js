@@ -1,10 +1,10 @@
 import jiff from 'jiff'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
-import assert_ from '#lib/utils/assert_types'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import Entity from '#models/entity'
-import validations from './validations/common.js'
 import { versioned } from './attributes/entity.js'
+import validations from './validations/common.js'
 
 const Patch = {
   create: params => {
@@ -36,7 +36,7 @@ const Patch = {
       type: 'patch',
       user: userId,
       timestamp: now,
-      patch: Patch.getDiff(currentDoc, updatedDoc)
+      patch: Patch.getDiff(currentDoc, updatedDoc),
     }
 
     if (patch.patch.length === 0) {
@@ -149,7 +149,7 @@ const operationFix = {
       // to avoid removing the wrong value if changes messed with the value index
       op.path = nextOp.path = op.path.replace(/\/\d+$/, `/${currentValueIndex}`)
     }
-  }
+  },
 }
 
 const getFromPatchPath = (obj, path) => {

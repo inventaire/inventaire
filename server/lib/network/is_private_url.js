@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import _ from 'lodash-es'
-import ipIsInPrivateIpRange from './is_in_private_ip_range.js'
 import { dnsLookup, getHostname, getHostnameIp } from './helpers.js'
+import ipIsInPrivateIpRange from './is_in_private_ip_range.js'
 
 const { db, elasticsearch, dataseed, mediaStorage } = CONFIG
 

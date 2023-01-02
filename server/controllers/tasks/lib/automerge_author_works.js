@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
-import mergeEntities from '#controllers/entities/lib/merge_entities'
 import getAuthorWorks from '#controllers/entities/lib/get_author_works'
 import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 

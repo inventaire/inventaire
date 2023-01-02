@@ -25,5 +25,5 @@ export default {
   UNION { ?work wdt:P31 wd:Q8274 . }
 }
 LIMIT 1000`
-  }
+  },
 }

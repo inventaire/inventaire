@@ -23,6 +23,6 @@ const utils = {
     ids = _.forceArray(ids)
     user = user || getUser()
     return customAuthReq(user, 'put', '/api/items?action=bulk-update', { ids, attribute, value })
-  }
+  },
 }
 export default utils

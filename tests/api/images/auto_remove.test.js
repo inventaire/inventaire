@@ -1,13 +1,13 @@
 import 'should'
 import CONFIG from 'config'
 import { wait } from '#lib/promises'
-import { getUserB } from '../utils/utils.js'
+import { createEdition } from '../fixtures/entities.js'
+import { createGroup } from '../fixtures/groups.js'
+import { updateClaim } from '../utils/entities.js'
+import { updateGroup } from '../utils/groups.js'
 import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images.js'
 import { updateUser } from '../utils/users.js'
-import { createGroup } from '../fixtures/groups.js'
-import { updateGroup } from '../utils/groups.js'
-import { createEdition } from '../fixtures/entities.js'
-import { updateClaim } from '../utils/entities.js'
+import { getUserB } from '../utils/utils.js'
 
 const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
 
@@ -56,7 +56,7 @@ describe('images:auto-remove', () => {
       const [
         group,
         { url, hash },
-        { url: url2 }
+        { url: url2 },
       ] = await Promise.all([
         createGroup(),
         importSomeImage({ container: 'groups' }),
@@ -73,7 +73,7 @@ describe('images:auto-remove', () => {
         group,
         group2,
         { url, hash },
-        { url: url2 }
+        { url: url2 },
       ] = await Promise.all([
         createGroup(),
         createGroup(),

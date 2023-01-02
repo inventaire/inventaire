@@ -1,5 +1,5 @@
-import token_ from '#controllers/user/lib/token'
-import error_ from '#lib/error/error'
+import { sendValidationEmail } from '#controllers/user/lib/token'
+import { error_ } from '#lib/error/error'
 
 const sanitization = {}
 
@@ -18,7 +18,7 @@ const sendEmailValidation = async user => {
     throw error_.new('email was already validated', 400)
   }
 
-  return token_.sendValidationEmail(user)
+  return sendValidationEmail(user)
 }
 
 export default { sanitization, controller }

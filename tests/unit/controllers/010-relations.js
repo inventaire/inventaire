@@ -9,14 +9,14 @@ const resetSpies = () => ({
   acceptRequest: sinon.spy(),
   simultaneousRequest: sinon.spy(),
   makeRequest: sinon.spy(),
-  removeRelation: sinon.spy()
+  removeRelation: sinon.spy(),
 })
 
 const actions = {
   acceptRequest: () => spies.acceptRequest(),
   simultaneousRequest: () => spies.simultaneousRequest(),
   makeRequest: () => spies.makeRequest(),
-  removeRelation: () => spies.removeRelation()
+  removeRelation: () => spies.removeRelation(),
 }
 
 const totalSpiesCount = () => {

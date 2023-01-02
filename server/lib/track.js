@@ -1,15 +1,14 @@
 import CONFIG from 'config'
-
 // Doc: http://developer.piwik.org/api-reference/tracking-api
 import _ from '#builders/utils'
 import { buildUrl } from '#lib/utils/url'
-import requests_ from './requests.js'
+import { requests_ } from './requests.js'
 
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'
 
-const track = (req = {}, actionArray) => {
+export const track = (req = {}, actionArray) => {
   if (!enabled) return
 
   const { user = {}, headers = {} } = req
@@ -46,19 +45,15 @@ const track = (req = {}, actionArray) => {
   // should not make the rest of operations fail
 }
 
-const trackActor = (actorUri, actionArray) => {
+export const trackActor = (actorUri, actionArray) => {
   const pseudoReq = {
-    user: { _id: actorUri }
+    user: { _id: actorUri },
   }
   track(pseudoReq, actionArray)
 }
 
-export default {
-  track,
-  Track: (...args) => res => {
-    // Do not wait for the track action
-    track(...args)
-    return res
-  },
-  trackActor,
+export const Track = (...args) => res => {
+  // Do not wait for the track action
+  track(...args)
+  return res
 }

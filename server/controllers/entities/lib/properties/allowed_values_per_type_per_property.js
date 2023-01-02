@@ -43,5 +43,5 @@ export default {
       'wd:Q128093', // ebook
       'wd:Q106833', // audiobook
     ],
-  }
+  },
 }

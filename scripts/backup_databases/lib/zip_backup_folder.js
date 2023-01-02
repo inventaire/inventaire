@@ -10,7 +10,7 @@ export default async () => {
     // Change directory (cf http://stackoverflow.com/a/18681628/3324977 )
     '-C', backupGeneralFolder,
     // Input path from the changed directory
-    day
+    day,
   ])
   await deleteFolder()
   _.log(`backup archived in ${backupGeneralFolder}`)

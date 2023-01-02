@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import bodyParser from 'body-parser'
+import CONFIG from 'config'
 import _ from '#builders/utils'
-import error_ from '#lib/error/error'
+import { error_ } from '#lib/error/error'
 
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
@@ -58,7 +58,7 @@ export default {
     }
 
     next()
-  }
+  },
 }
 
 const headersHash = req => _.hashCode(JSON.stringify(req.headers))
@@ -75,5 +75,5 @@ const requestsCache = {}
 
 const methodsWithBody = [ 'POST', 'PUT' ]
 const ignorePathname = [
-  '/api/reports'
+  '/api/reports',
 ]

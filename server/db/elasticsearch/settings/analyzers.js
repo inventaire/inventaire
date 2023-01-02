@@ -13,7 +13,7 @@ export default {
       'asciifolding',
       'custom_word_delimiter',
       'autocomplete_filter',
-    ]
+    ],
   },
   standard_truncated: {
     type: 'custom',
@@ -25,7 +25,7 @@ export default {
       'asciifolding',
       'custom_word_delimiter',
       'truncate_to_max_gram',
-    ]
+    ],
   },
   standard_full: {
     type: 'custom',
@@ -34,6 +34,6 @@ export default {
       'lowercase',
       'asciifolding',
       'custom_word_delimiter',
-    ]
+    ],
   },
 }

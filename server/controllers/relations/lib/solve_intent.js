@@ -34,7 +34,7 @@ export default actions => {
     discardRequest: (userId, otherId, status) => {
       if (status === 'otherRequested') return actions.removeRelation(userId, otherId)
       else doNothing(status, 'discardRequest', userId, otherId)
-    }
+    },
   }
 
   return API
