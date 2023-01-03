@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
-import getEntityByUri from '../get_entity_by_uri.js'
+import { getEntityByUri } from '../get_entity_by_uri.js'
 import resolveExternalIds from './resolve_external_ids.js'
 
 const resolveSeedsByExternalIds = (seeds, expectedEntityType) => {

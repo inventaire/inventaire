@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import getEntitiesList from '#controllers/entities/lib/get_entities_list'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { error_ } from '#lib/error/error'
 
 export default async item => {

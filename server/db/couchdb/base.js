@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import bundlesFactory from '#db/couchdb/bundles'
-import databases from '#db/couchdb/databases'
+import { databases } from '#db/couchdb/databases'
 import { memoize } from '#lib/utils/memoize'
 import getDbApi from './cot_base.js'
 

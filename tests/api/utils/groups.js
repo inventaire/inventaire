@@ -1,4 +1,5 @@
-import { authReq, getUser, customAuthReq } from './utils.js'
+import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, getUser } from './utils.js'
 
 export async function getGroup (group) {
   group = await group

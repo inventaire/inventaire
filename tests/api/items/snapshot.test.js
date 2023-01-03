@@ -1,5 +1,6 @@
 import 'should'
 import { wait } from '#lib/promises'
+import { humanName } from '#tests/api/fixtures/text'
 import {
   createWork,
   createHuman,
@@ -8,7 +9,6 @@ import {
   createEdition,
   createEditionFromWorks,
   createWorkWithAuthor,
-  humanName,
   someImageHash,
   createEditionWithWorkAndAuthor,
 } from '../fixtures/entities.js'

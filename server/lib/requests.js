@@ -15,7 +15,7 @@ import { coloredElapsedTime } from './time.js'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const userAgent = `${CONFIG.name} (${repository.url})`
+export const userAgent = `${CONFIG.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {

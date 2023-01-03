@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import localClient from '#controllers/images/lib/local_client'
 import swiftClient from '#controllers/images/lib/swift_client'
-import images_ from '#lib/images'
+import { getHashFilename, removeExif, shrinkAndFormat } from '#lib/images'
 import { emit } from '#lib/radio'
 import { log, info } from '#lib/utils/logs'
 
@@ -19,10 +19,10 @@ if (mode === 'swift') {
 
 const { putImage, deleteImage } = client
 
-const transformAndPutImage = (container, fnName) => async fileData => {
+const transformAndPutImage = (container, fn) => async fileData => {
   const { id = 0, path } = fileData
-  await images_[fnName](path)
-  const filename = await images_.getHashFilename(path)
+  await fn(path)
+  const filename = await getHashFilename(path)
   const url = await putImage(container, path, filename)
   log(url, 'new image')
   await emit('image:needs:check', { url, context: 'upload' })
@@ -31,17 +31,17 @@ const transformAndPutImage = (container, fnName) => async fileData => {
 
 export const containers = {
   users: {
-    putImage: transformAndPutImage('users', 'shrinkAndFormat'),
+    putImage: transformAndPutImage('users', shrinkAndFormat),
     deleteImage,
   },
 
   groups: {
-    putImage: transformAndPutImage('groups', 'shrinkAndFormat'),
+    putImage: transformAndPutImage('groups', shrinkAndFormat),
     deleteImage,
   },
 
   entities: {
-    putImage: transformAndPutImage('entities', 'removeExif'),
+    putImage: transformAndPutImage('entities', removeExif),
     deleteImage,
   },
 

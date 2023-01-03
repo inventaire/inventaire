@@ -1,8 +1,9 @@
 import 'should'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
-import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=login'
 

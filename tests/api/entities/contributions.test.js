@@ -1,5 +1,7 @@
 import should from 'should'
 import { wait } from '#lib/promises'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createWork } from '../fixtures/entities.js'
 import { updateClaim, updateLabel } from '../utils/entities.js'
 import {
@@ -7,9 +9,7 @@ import {
   getUser,
   getReservedUser,
   authReq,
-  shouldNotBeCalled,
   getDeanonymizedUser,
-  customAuthReq,
 } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=contributions'

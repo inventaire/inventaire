@@ -1,6 +1,7 @@
 import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createWork } from '../fixtures/entities.js'
-import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=move-to-wikidata'
 

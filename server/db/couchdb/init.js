@@ -3,7 +3,7 @@ import couchInit from 'couch-init2'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 import { log } from '#lib/utils/logs'
-import databases from './databases.js'
+import { databases } from './databases.js'
 import initHardCodedDocuments from './init_hard_coded_documents.js'
 
 const dbBaseUrl = CONFIG.db.getOrigin()
@@ -39,10 +39,10 @@ const init = async () => {
   }
 }
 
-let waitForCouchInit
+let _waitForCouchInit
 
-export default function () {
+export async function waitForCouchInit () {
   // Return the same promises to all consumers
-  waitForCouchInit = waitForCouchInit || init()
-  return waitForCouchInit
+  _waitForCouchInit = _waitForCouchInit || init()
+  return _waitForCouchInit
 }

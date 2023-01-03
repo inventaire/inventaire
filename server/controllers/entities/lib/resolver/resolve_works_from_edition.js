@@ -1,5 +1,5 @@
-import getEntitiesList from '../get_entities_list.js'
-import getEntityByUri from '../get_entity_by_uri.js'
+import { getEntitiesList } from '../get_entities_list.js'
+import { getEntityByUri } from '../get_entity_by_uri.js'
 import { someTermsMatch, resolveSeed } from './helpers.js'
 
 export default async (worksSeeds, editionSeed) => {

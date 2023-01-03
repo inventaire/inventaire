@@ -1,6 +1,7 @@
 import _ from '#builders/utils'
 import 'should'
-import { getUserGetter, customAuthReq } from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUserGetter } from '#tests/api/utils/utils'
 import { createItem } from '../fixtures/items.js'
 import { getRandomPosition } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'

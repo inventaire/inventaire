@@ -15,7 +15,8 @@ import {
 } from '#tests/api/fixtures/entities'
 import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { waitForIndexation } from '#tests/api/utils/search'
-import { authReq, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolve = entries => {
   entries = _.forceArray(entries)

@@ -1,4 +1,6 @@
 import 'should'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createWork } from '../fixtures/entities.js'
 import {
   publicReq,
@@ -9,9 +11,6 @@ import {
   getUserB,
   getAdminUser,
   getDataadminUser,
-  rethrowShouldNotBeCalledErrors,
-  shouldNotBeCalled,
-  customAuthReq,
 } from '../utils/utils.js'
 
 describe('roles:public', () => {

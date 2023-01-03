@@ -4,7 +4,7 @@ import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { getUserById } from '#controllers/user/lib/user'
 import { radio } from '#lib/radio'
 import { LogError } from '#lib/utils/logs'
-import { byActorName, createActivity } from './activities.js'
+import { getActivitiesByActorName, createActivity } from './activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
 import formatShelfItemsActivities from './format_shelf_items_activities.js'
 import formatUserItemsActivities from './format_user_items_activities.js'
@@ -50,7 +50,7 @@ const _createDebouncedActivity = async ({ userId, shelfId }) => {
     // shelf = await getShelfById(shelfId)
     name = `shelf-${shelfId}`
   }
-  const [ lastActivity ] = await byActorName({ name, limit: 1 })
+  const [ lastActivity ] = await getActivitiesByActorName({ name, limit: 1 })
   const since = lastActivity?.updated || 0
 
   const activityDoc = await createActivity({

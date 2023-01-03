@@ -1,12 +1,12 @@
 import _ from '#builders/utils'
-import { customAuthReq } from '../utils/request.js'
+import { sentence } from '#tests/api/fixtures/text'
+import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
 import {
   createEdition,
   createEditionWithWorkAndAuthor,
   createEditionWithWorkAuthorAndSerie,
 } from './entities.js'
-import fakeText from './text.js'
 
 const getEditionUri = async (lang = 'en') => {
   const { uri } = await createEdition({ lang })
@@ -16,35 +16,31 @@ const getEditionUri = async (lang = 'en') => {
 const createItemWithEntities = createEntityFn => async (user, itemData = {}) => {
   const { uri } = await createEntityFn()
   itemData.entity = uri
-  return API.createItem(user, itemData)
+  return createItem(user, itemData)
 }
 
-const API = {
-  createItems: async (user, itemsData = []) => {
-    user = user || getUser()
-    const items = await Promise.all(itemsData.map(addDefaultEntity))
-    return customAuthReq(user, 'post', '/api/items', items)
-  },
-
-  createItem: async (user, itemData) => {
-    user = user || getUser()
-    itemData = itemData || {}
-    itemData.visibility = itemData.visibility || [ 'public' ]
-    await addDefaultEntity(itemData)
-    const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
-    return item
-  },
-
-  createRandomizedItems: (user, itemsData) => {
-    return API.createItems(user, itemsData.map(fillItemWithRandomData))
-  },
-
-  createItemWithEditionAndWork: createItemWithEntities(createEdition),
-  createItemWithAuthor: createItemWithEntities(createEditionWithWorkAndAuthor),
-  createItemWithAuthorAndSerie: createItemWithEntities(createEditionWithWorkAuthorAndSerie),
+export const createItems = async (user, itemsData = []) => {
+  user = user || getUser()
+  const items = await Promise.all(itemsData.map(addDefaultEntity))
+  return customAuthReq(user, 'post', '/api/items', items)
 }
 
-export default API
+export const createItem = async (user, itemData) => {
+  user = user || getUser()
+  itemData = itemData || {}
+  itemData.visibility = itemData.visibility || [ 'public' ]
+  await addDefaultEntity(itemData)
+  const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])
+  return item
+}
+
+export const createRandomizedItems = (user, itemsData) => {
+  return createItems(user, itemsData.map(fillItemWithRandomData))
+}
+
+export const createItemWithEditionAndWork = createItemWithEntities(createEdition)
+export const createItemWithAuthor = createItemWithEntities(createEditionWithWorkAndAuthor)
+export const createItemWithAuthorAndSerie = createItemWithEntities(createEditionWithWorkAuthorAndSerie)
 
 const transactions = [ 'giving', 'lending', 'selling', 'inventorying' ]
 const someVisibilityValues = [
@@ -58,8 +54,8 @@ const someVisibilityValues = [
 const fillItemWithRandomData = (itemData = {}) => {
   itemData.visibility = itemData.visibility || _.sample(someVisibilityValues)
   itemData.transaction = itemData.transaction || _.sample(transactions)
-  itemData.details = fakeText.sentence()
-  itemData.notes = fakeText.sentence()
+  itemData.details = sentence()
+  itemData.notes = sentence()
   return itemData
 }
 

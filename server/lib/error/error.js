@@ -4,7 +4,7 @@ import formatError from './format_error.js'
 
 let assert_
 const importCircularDependencies = async () => {
-  assert_ = await import('#lib/utils/assert_types')
+  ;({ assert_ } = await import('#lib/utils/assert_types'))
 }
 setImmediate(importCircularDependencies)
 

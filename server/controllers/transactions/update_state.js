@@ -4,7 +4,7 @@ import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { Track } from '#lib/track'
 import transactionAttributes from '#models/attributes/transaction'
-import { verifyIsRequester, verifyIsOwner, verifyRightToInteract } from './lib/rights_verification.js'
+import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
 
 const { states, statesList } = transactionAttributes
 
@@ -37,7 +37,7 @@ const validateRights = (transaction, state, reqUserId) => {
 const validateRightsFunctionByAllowedActor = {
   requester: verifyIsRequester,
   owner: verifyIsOwner,
-  both: verifyRightToInteract,
+  both: verifyRightToInteractWithTransaction,
 }
 
 const checkForConcurrentTransactions = async (transaction, requestedState) => {

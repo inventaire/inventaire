@@ -8,7 +8,7 @@ import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
 let getEntityByUri
 const importCircularDependencies = async () => {
-  getEntityByUri = await import('./get_entity_by_uri.js')
+  ({ getEntityByUri } = await import('./get_entity_by_uri.js'))
 }
 setImmediate(importCircularDependencies)
 

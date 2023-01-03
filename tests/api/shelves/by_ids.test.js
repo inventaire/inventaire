@@ -1,12 +1,13 @@
 import should from 'should'
 import { someCouchUuid } from '#tests/api/fixtures/general'
 import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, getTwoFriends } from '../fixtures/users.js'
 import { makeFriends } from '../utils/relations.js'
-import { publicReq, authReq, authReqB, getUser, customAuthReq } from '../utils/utils.js'
+import { publicReq, authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=by-ids'
 

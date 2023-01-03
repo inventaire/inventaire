@@ -1,4 +1,4 @@
-import notifications_ from './lib/notifications.js'
+import { getNotificationsByUserId } from '#controllers/notifications/lib/notifications'
 
 const sanitization = {
   limit: { optional: true, default: 10 },
@@ -6,7 +6,7 @@ const sanitization = {
 }
 
 const controller = params => {
-  return notifications_.byUserId(params.reqUserId)
+  return getNotificationsByUserId(params.reqUserId)
   .then(paginate(params))
 }
 

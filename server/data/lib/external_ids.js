@@ -1,5 +1,5 @@
 import { uniq, flatten } from 'lodash-es'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
 import { assert_ } from '#lib/utils/assert_types'

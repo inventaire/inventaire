@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import 'should'
-import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { authReq } from '../utils/utils.js'
 
 const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
 const dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'

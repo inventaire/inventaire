@@ -1,11 +1,8 @@
 import { someCouchUuid } from '#tests/api/fixtures/general'
 import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
-import {
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
-  customAuthReq,
-  getReservedUser,
-} from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
 import { authReq, authReqB, getUser } from '../utils/utils.js'
 

@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { error_ } from '#lib/error/error'
-import images_ from '#lib/images'
+import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
 import { userAgent } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
 
@@ -17,7 +17,7 @@ const reqOptions = {
 
 export default async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
-  [ width, height ] = images_.applyLimits(width, height)
+  [ width, height ] = applyImageLimits(width, height)
 
   let response
   try {
@@ -73,7 +73,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
     }
   }
 
-  return images_.shrinkAndFormatStream(imageStream, width, height)
+  return shrinkAndFormatStream(imageStream, width, height)
   .stream((err, stdout, stderr) => {
     if (err != null) return error_.handler(req, res, err)
     stdout.on('error', handleBufferError)

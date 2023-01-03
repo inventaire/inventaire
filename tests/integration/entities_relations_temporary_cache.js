@@ -1,12 +1,13 @@
 import 'should'
 import CONFIG from 'config'
-import { get, set, del } from '#controllers/entities/lib/entities_relations_temporary_cache'
+import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import runQuery from '#data/wikidata/run_query'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { someFakeUri } from '#tests/api/fixtures/entities'
-import { shouldNotBeCalled } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
+const { get, set, del } = entitiesRelationsTemporaryCache
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
 const property = 'wdt:P50'

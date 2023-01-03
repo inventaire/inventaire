@@ -1,4 +1,5 @@
 import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createEdition,
   createWork,
@@ -7,7 +8,6 @@ import {
   createHuman,
 } from '../fixtures/entities.js'
 import { addClaim, getRefreshedPopularityByUri } from '../utils/entities.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
 
 describe('entities:popularity', () => {
   describe('edition', () => {

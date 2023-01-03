@@ -1,8 +1,9 @@
 import 'should'
 import { getGroup } from '#tests/api/utils/groups'
+import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createGroupAndMember } from '../fixtures/groups.js'
-import { authReq, authReqC, customAuthReq } from '../utils/utils.js'
+import { authReq, authReqC } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=leave'
 

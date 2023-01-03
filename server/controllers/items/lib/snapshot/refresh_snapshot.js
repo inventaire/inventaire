@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
 import { urisByClaim } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { mappedArrayPromise } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'

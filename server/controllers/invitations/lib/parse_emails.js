@@ -1,6 +1,8 @@
-import { parseAddressList } from 'email-addresses'
+import emailAddresses from 'email-addresses'
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+
+const { parseAddressList } = emailAddresses
 
 // Takes a string (or an array) containing email addresses
 // (typically, the value of a text input filled with emails by a user)

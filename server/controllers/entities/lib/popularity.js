@@ -2,7 +2,7 @@ import _ from '#builders/utils'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { objectPromise } from '#lib/promises'
-import buildPopularityByUri from './build_popularity_by_uri.js'
+import { buildPopularityByUri } from './build_popularity_by_uri.js'
 
 export async function getEntitiesPopularities ({ uris, refresh, dry }) {
   if (uris.length === 0) return {}

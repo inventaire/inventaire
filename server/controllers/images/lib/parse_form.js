@@ -1,4 +1,6 @@
-import { IncomingForm } from 'formidable'
+import formidable from 'formidable'
+
+const { IncomingForm } = formidable
 
 export default req => new Promise((resolve, reject) => {
   const form = new IncomingForm()

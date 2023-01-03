@@ -1,6 +1,8 @@
 import { map, uniq } from 'lodash-es'
 import { getUsersByIds } from '#controllers/user/lib/user'
-import { shouldBeAnonymized } from '#models/user'
+import User from '#models/user'
+
+const { shouldBeAnonymized } = User
 
 export default async ({ patches, reqUserId }) => {
   const usersIds = uniq(map(patches, 'user'))

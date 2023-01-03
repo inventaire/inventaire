@@ -1,4 +1,6 @@
 import should from 'should'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { deleteByUris } from '../utils/entities.js'
 import {
@@ -6,9 +8,8 @@ import {
   dataadminReq,
   publicReq,
   authReq,
-  shouldNotBeCalled,
   getReservedUser,
-  getDeanonymizedUser, customAuthReq
+  getDeanonymizedUser
 } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=history'

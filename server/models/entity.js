@@ -22,16 +22,15 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
+import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import _ from '#builders/utils'
 import inferences from '#controllers/entities/lib/inferences'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { requireJson } from '#lib/utils/json'
 import { log, warn, info } from '#lib/utils/logs'
 import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
 
-const wikimediaLanguageCodesByWdId = requireJson('wikidata-lang/indexes/by_wm_code.json')
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 
 const Entity = {

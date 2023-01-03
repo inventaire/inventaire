@@ -1,8 +1,8 @@
 import 'should'
 import { wait } from '#lib/promises'
+import { humanName } from '#tests/api/fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { humanName } from '../fixtures/entities.js'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
 import { authReq, getUserGetter } from '../utils/utils.js'
 

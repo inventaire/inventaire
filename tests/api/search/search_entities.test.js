@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import elasticsearchSettings from '#db/elasticsearch/settings/settings'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createWork,
   createHuman,
@@ -13,12 +14,10 @@ import {
   createWorkWithAuthor,
   createSerieWithAuthor,
   createWorkWithSerie,
-  humanName,
 } from '../fixtures/entities.js'
-import { randomLongWord, randomWords } from '../fixtures/text.js'
+import { humanName, randomLongWord, randomWords } from '../fixtures/text.js'
 import { getByUris } from '../utils/entities.js'
 import { search, waitForIndexation, getIndexedDoc } from '../utils/search.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
 
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const { max_gram: maxGram } = elasticsearchSettings.analysis.filter.edge_ngram

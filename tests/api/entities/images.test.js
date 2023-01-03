@@ -1,8 +1,9 @@
 import CONFIG from 'config'
 import 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { rawRequest } from '../utils/request.js'
-import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const host = CONFIG.getPublicOrigin()
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')

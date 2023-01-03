@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
 import { platforms } from './platforms.js'
 import { propertiesDisplay } from './properties_display.js'

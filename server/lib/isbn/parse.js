@@ -1,7 +1,7 @@
 import isbn3 from 'isbn3'
 import groups from './groups.js'
 
-const { isbnParser } = isbn3
+const { parse: isbnParser } = isbn3
 
 export function parseIsbn (isbn) {
   const isbnData = isbnParser(isbn)

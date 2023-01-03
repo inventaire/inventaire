@@ -1,4 +1,4 @@
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 import { authReq, authReqB } from '../utils/utils.js'
 

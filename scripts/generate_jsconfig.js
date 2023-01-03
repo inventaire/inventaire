@@ -4,7 +4,7 @@
 // (see https://code.visualstudio.com/docs/languages/jsconfig)
 // while not duplicating module aliases
 
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 import { absolutePath } from '#lib/absolute_path'
 import { requireJson } from '#lib/utils/json'
 

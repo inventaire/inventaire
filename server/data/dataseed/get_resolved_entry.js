@@ -20,9 +20,9 @@ const resolverParams = {
 
 let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedEntry
 const importCircularDependencies = async () => {
-  ({ resolveUpdateAndCreate } = await import('#controllers/entities/lib/resolver/resolve_update_and_create'))
-  getEntityByUri = await import('#controllers/entities/lib/get_entity_by_uri')
-  getAuthoritiesAggregatedEntry = await import('./get_authorities_aggregated_entry.js')
+  ;({ resolveUpdateAndCreate } = await import('#controllers/entities/lib/resolver/resolve_update_and_create'))
+  ;({ getEntityByUri } = await import('#controllers/entities/lib/get_entity_by_uri'))
+  ;({ getAuthoritiesAggregatedEntry } = await import('./get_authorities_aggregated_entry.js'))
 }
 setImmediate(importCircularDependencies)
 

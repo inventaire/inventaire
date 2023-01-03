@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import CONFIG from 'config'
+import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { Log } from '#lib/utils/logs'
@@ -7,7 +8,7 @@ import { Log } from '#lib/utils/logs'
 const dbHost = CONFIG.db.getOrigin()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
-const dbsBaseNames = Object.keys(await import('#db/couchdb/databases'))
+const dbsBaseNames = Object.keys(databases)
 
 const replicate = async dbName => {
   const dbTestName = `${dbName}-tests`

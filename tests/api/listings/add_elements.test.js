@@ -1,4 +1,5 @@
-import { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createEdition, someFakeUri } from '../fixtures/entities.js'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'

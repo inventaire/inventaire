@@ -1,4 +1,4 @@
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { error_ } from '#lib/error/error'
 import { info } from '#lib/utils/logs'

@@ -9,7 +9,7 @@ import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6393Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 
-const { simplifySparqlResults } = wdk
+const { sparqlResults: simplifySparqlResults } = wdk.simplify
 // Using a shorter timeout as the query is never critically needed but can make a user wait
 const timeout = 10000
 

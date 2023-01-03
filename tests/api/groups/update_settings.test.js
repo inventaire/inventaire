@@ -1,9 +1,10 @@
 import should from 'should'
 import slugify from '#controllers/groups/lib/slugify'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup, createGroup, createGroupWithAMember } from '../fixtures/groups.js'
 import { importSomeImage } from '../utils/images.js'
 import { getNotifications } from '../utils/notifications.js'
-import { publicReq, authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { publicReq, authReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=update-settings'
 

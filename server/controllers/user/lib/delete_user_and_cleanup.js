@@ -1,7 +1,7 @@
 import { leaveAllGroups } from '#controllers/groups/lib/leave_groups'
 import deleteUserItems from '#controllers/items/lib/delete_user_items'
 import { deleteUserListingsAndElements } from '#controllers/listings/lib/listings'
-import notifications_ from '#controllers/notifications/lib/notifications'
+import { deleteAllNotificationsByUserId } from '#controllers/notifications/lib/notifications'
 import { deleteUserRelations } from '#controllers/relations/lib/lists'
 import { deleteUserShelves } from '#controllers/shelves/lib/shelves'
 import { cancelAllActiveTransactions } from '#controllers/transactions/lib/transactions'
@@ -13,7 +13,7 @@ export default async userId => {
     deleteUserRelations(userId),
     leaveAllGroups(userId),
     cancelAllActiveTransactions(userId),
-    notifications_.deleteAllByUserId(userId),
+    deleteAllNotificationsByUserId(userId),
     deleteUserShelves(userId),
     deleteUserListingsAndElements(userId),
   ])

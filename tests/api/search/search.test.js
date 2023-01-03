@@ -5,9 +5,10 @@ import { getSomeGroupWithAMember, createGroupAndMember } from '#tests/api/fixtur
 import { createListing } from '#tests/api/fixtures/listings'
 import { createShelf } from '#tests/api/fixtures/shelves'
 import { makeFriends } from '#tests/api/utils/relations'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createGroup, createGroupWithAMember } from '../fixtures/groups.js'
 import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search.js'
-import { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } from '../utils/utils.js'
+import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
 describe('search:global', () => {
   describe('parameters', () => {

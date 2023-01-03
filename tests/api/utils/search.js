@@ -5,8 +5,8 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import { publicReq, customAuthReq } from '../utils/utils.js'
-import { rawRequest } from './request.js'
+import { publicReq } from '../utils/utils.js'
+import { customAuthReq, rawRequest } from './request.js'
 
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 

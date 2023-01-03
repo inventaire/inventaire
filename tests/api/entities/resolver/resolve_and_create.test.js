@@ -2,15 +2,16 @@ import should from 'should'
 import _ from '#builders/utils'
 import {
   randomLabel,
-  humanName,
   generateIsbn13,
   someGoodReadsId,
   someLibraryThingsWorkId,
   createEditionWithIsbn,
   createWork,
 } from '#tests/api/fixtures/entities'
+import { humanName } from '#tests/api/fixtures/text'
 import { getByUris, getHistory } from '#tests/api/utils/entities'
-import { authReq, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

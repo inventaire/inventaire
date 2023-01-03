@@ -1,5 +1,6 @@
 import 'should'
-import { authReq, authReqB, authReqC, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { authReq, authReqB, authReqC } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createTransaction } from '../fixtures/transactions.js'
 
 const endpoint = '/api/transactions?action=mark-as-read'

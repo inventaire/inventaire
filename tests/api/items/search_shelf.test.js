@@ -1,9 +1,10 @@
 import _ from '#builders/utils'
 import { buildUrl } from '#lib/utils/url'
 import { createShelf, createShelfWithItem } from '#tests/api/fixtures/shelves'
+import { customAuthReq } from '#tests/api/utils/request'
 import { createItem } from '../fixtures/items.js'
 import { waitForIndexation } from '../utils/search.js'
-import { getUser, customAuthReq, publicReq } from '../utils/utils.js'
+import { getUser, publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { shelf, search }) => {
   const url = buildUrl('/api/items', {

@@ -1,4 +1,4 @@
-import { byActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
+import { getActivitiesByActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
@@ -107,7 +107,7 @@ const buildPaginatedUserOutbox = async (user, offset, limit, outbox) => {
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
   const { stableUsername } = user
-  const activitiesDocs = await byActorName({ name: stableUsername, offset, limit })
+  const activitiesDocs = await getActivitiesByActorName({ name: stableUsername, offset, limit })
   outbox.orderedItems = await formatUserItemsActivities(activitiesDocs, user)
   return outbox
 }
@@ -117,7 +117,7 @@ const buildPaginatedShelfOutbox = async (shelf, name, offset, limit, outbox) => 
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
   outbox.next = `${fullOutboxUrl}&offset=${offset + limit}`
-  const activitiesDocs = await byActorName({ name, offset, limit })
+  const activitiesDocs = await getActivitiesByActorName({ name, offset, limit })
   outbox.orderedItems = await formatShelfItemsActivities(activitiesDocs, shelf._id, name)
   return outbox
 }

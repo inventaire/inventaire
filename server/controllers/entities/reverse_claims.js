@@ -1,4 +1,4 @@
-import reverseClaims from './lib/reverse_claims.js'
+import { reverseClaims } from './lib/reverse_claims.js'
 
 const sanitization = {
   property: {},

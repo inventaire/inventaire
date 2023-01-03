@@ -1,7 +1,7 @@
+import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
 import { userIsInAdmins, userIsInGroup, userIsInRequested } from '#controllers/groups/lib/users_lists'
 import { error_ } from '#lib/error/error'
-import groups_ from './groups.js'
-import leave_ from './lib/leave_groups.js'
+import { getInvitedUser } from './groups.js'
 
 const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
   return Promise.all([
@@ -45,7 +45,7 @@ const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) 
 const validateUserRightToLeave = (reqUserId, groupId) => {
   return Promise.all([
     userIsInGroup(reqUserId, groupId),
-    leave_.userCanLeave(reqUserId, groupId),
+    userCanLeaveGroup(reqUserId, groupId),
   ])
   .then(([ userInGroup, userCanLeave ]) => {
     if (!userInGroup) {
@@ -77,9 +77,9 @@ const validateCancelRequest = (reqUserId, groupId) => {
 }
 
 export default {
-  // /!\ groups_.userInvited returns a group doc, not a boolean
-  accept: groups_.userInvited,
-  decline: groups_.userInvited,
+  // /!\ getInvitedUser returns a group doc, not a boolean
+  accept: getInvitedUser,
+  decline: getInvitedUser,
   request: validateRequest,
   cancelRequest: validateCancelRequest,
   acceptRequest: validateJoinRequestHandlingRights,

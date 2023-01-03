@@ -4,7 +4,7 @@ import validateObject from '#lib/validate_object'
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
 
 // Basic validation of controllers objects to ease debugging
-export function addRoute (routes, route, controllerObj) {
+export const AddRoute = routes => (route, controllerObj) => {
   try {
     validateObject(controllerObj, validEndpointKeys, 'function')
   } catch (err) {

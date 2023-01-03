@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
 import { someCouchUuid } from '#tests/api/fixtures/general'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { publicReq, authReq, authReqB } from '../utils/utils.js'
 

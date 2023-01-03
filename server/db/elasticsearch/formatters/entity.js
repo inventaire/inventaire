@@ -1,7 +1,7 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
-import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'

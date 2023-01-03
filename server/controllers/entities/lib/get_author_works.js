@@ -15,7 +15,7 @@ setImmediate(importCircularDependencies)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 
-export default params => {
+export function getAuthorWorks (params) {
   const { uri } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []

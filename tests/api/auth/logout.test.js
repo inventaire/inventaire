@@ -1,8 +1,9 @@
 import CONFIG from 'config'
 import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'
 import { rawRequest } from '../utils/request.js'
-import { getUser, shouldNotBeCalled } from '../utils/utils.js'
+import { getUser } from '../utils/utils.js'
 
 const origin = CONFIG.getLocalOrigin()
 const endpoint = `${origin}/api/auth?action=logout`

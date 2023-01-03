@@ -3,7 +3,7 @@ import entitiesRelationsTemporaryCache from './entities_relations_temporary_cach
 import getEntitiesByUris from './get_entities_by_uris.js'
 import { unprefixify } from './prefix.js'
 
-const cachedRelationProperties = [
+export const cachedRelationProperties = [
   'wdt:P50',
   'wdt:P179',
 ]

@@ -26,10 +26,6 @@ const getSummaryFromPropertyClaims = ({ claims, refresh }) => async property => 
   return summaryData
 }
 
-const getSummariesFromClaims = async ({ claims, refresh }) => {
+export const getSummariesFromClaims = async ({ claims, refresh }) => {
   return Promise.all(propertiesWithGetters.map(getSummaryFromPropertyClaims({ claims, refresh })))
-}
-
-module.exports = {
-  getSummariesFromClaims,
 }

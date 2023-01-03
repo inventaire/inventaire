@@ -4,12 +4,10 @@ const scopeByMethodAndRoute = {
   },
 }
 
-export default {
-  getAcceptedScopes: ({ method, url }) => {
-    method = method.toLowerCase()
-    if (scopeByMethodAndRoute[method] != null) {
-      return scopeByMethodAndRoute[method][url]
-    }
-  },
-  allScopes: Object.values(scopeByMethodAndRoute).map(Object.values).flat(2),
+export const getAcceptedScopes = ({ method, url }) => {
+  method = method.toLowerCase()
+  if (scopeByMethodAndRoute[method] != null) {
+    return scopeByMethodAndRoute[method][url]
+  }
 }
+export const allScopes = Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)

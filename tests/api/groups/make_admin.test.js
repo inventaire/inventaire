@@ -1,9 +1,10 @@
 import _ from '#builders/utils'
 import 'should'
+import { humanName } from '#tests/api/fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
-import { humanName } from '../fixtures/entities.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
-import { authReq, authReqB, getUserGetter, shouldNotBeCalled } from '../utils/utils.js'
+import { authReq, authReqB, getUserGetter } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=make-admin'
 

@@ -1,12 +1,11 @@
 import CONFIG from 'config'
 import 'should'
-import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
 import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
 import { createShelfWithItem } from '../fixtures/shelves.js'
 import { createUser } from '../fixtures/users.js'
-import { makeUrl } from '../utils/activitypub.js'
 import { getActorName } from '../utils/shelves.js'
 import { publicReq, getFediversableUser } from '../utils/utils.js'
 

@@ -4,28 +4,26 @@ import getSerieParts from './get_serie_parts.js'
 let getItemsByEntity, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
 const importCircularDependencies = async () => {
   ;({ getItemsByEntity } = await import('#controllers/items/lib/items'))
-  getEntityByUri = await import('./get_entity_by_uri.js')
-  reverseClaims = await import('./reverse_claims.js')
+  ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
+  ;({ reverseClaims } = await import('./reverse_claims.js'))
   ;({ getEntitiesPopularities } = await import('./popularity.js'))
-  getAuthorWorks = await import('./get_author_works.js')
+  ;({ getAuthorWorks } = await import('./get_author_works.js'))
 }
 setImmediate(importCircularDependencies)
 
-export default uri => {
-  return getEntityByUri({ uri, dry: true })
-  .then(entity => {
-    // Case where the entity wasn't available in cache
-    if (entity == null) return 0
+export async function buildPopularityByUri (uri) {
+  const entity = await getEntityByUri({ uri, dry: true })
+  // Case where the entity wasn't available in cache
+  if (entity == null) return 0
 
-    const { type } = entity
-    if (type == null) return 0
+  const { type } = entity
+  if (type == null) return 0
 
-    const getter = popularityGettersByType[type]
-    if (getter == null) return 0
+  const getter = popularityGettersByType[type]
+  if (getter == null) return 0
 
-    return getter(uri)
-  })
-  .then(addBonusPoints(uri))
+  const score = await getter(uri)
+  return addBonusPoints(uri, score)
 }
 
 const getItemsCount = async uri => {
@@ -87,7 +85,7 @@ const popularityGettersByType = {
 
 // Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 // level of popularity
-const addBonusPoints = uri => score => {
+const addBonusPoints = (uri, score) => {
   if (_.isWdEntityUri(uri)) return score + 2
   else return score
 }

@@ -1,6 +1,7 @@
 import should from 'should'
 import getWdEntity from '#data/wikidata/get_entity'
 import { buildUrl } from '#lib/utils/url'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import {
   createEditionWithIsbn,
   createWorkWithAuthor,
@@ -11,7 +12,7 @@ import {
   createEdition,
 } from '../fixtures/entities.js'
 import { getByUris, merge, deleteByUris } from '../utils/entities.js'
-import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils.js'
+import { authReq, publicReq } from '../utils/utils.js'
 
 const workWithAuthorPromise = createWorkWithAuthor()
 

@@ -1,15 +1,14 @@
 import should from 'should'
 import _ from '#builders/utils'
+import { humanName } from '#tests/api/fixtures/text'
+import { customAuthReq } from '#tests/api/utils/request'
 import {
   getUser,
   authReq,
   publicReq,
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
   getUserGetter,
-  customAuthReq,
 } from '#tests/api/utils/utils'
-import { humanName } from '../fixtures/entities.js'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
 import { createItem, createItems } from '../fixtures/items.js'
 import { createShelfWithItem } from '../fixtures/shelves.js'

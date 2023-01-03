@@ -1,6 +1,7 @@
 import 'should'
 import { wait } from '#lib/promises'
-import { getUser, getUserB, authReq, customAuthReq } from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, getUserB, authReq } from '#tests/api/utils/utils'
 import { getItem } from '../utils/items.js'
 import { createItem } from './items.js'
 

@@ -1,6 +1,7 @@
 import { URL } from 'node:url'
 import CONFIG from 'config'
 import _ from '#builders/utils'
+import { containers } from '#controllers/images/lib/containers'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import getResizedImage from './lib/get_resized_image.js'
@@ -8,7 +9,7 @@ import getResizedImage from './lib/get_resized_image.js'
 const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
 const { offline } = CONFIG
-const containersList = Object.keys(await import('#controllers/images/lib/containers').containers)
+const containersList = Object.keys(containers)
 
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"

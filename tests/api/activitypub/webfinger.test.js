@@ -3,12 +3,13 @@ import _ from '#builders/utils'
 import 'should'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, createUsername } from '../fixtures/users.js'
 import { getActorName } from '../utils/shelves.js'
 import { updateUser } from '../utils/users.js'
-import { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const publicOrigin = CONFIG.getPublicOrigin()
 const publicHost = publicOrigin.split('://')[1]

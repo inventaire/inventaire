@@ -8,7 +8,7 @@ import oauthServer from './auth/oauth_server.js'
 import authToken from './auth/token.js'
 import config from './config.js'
 import data from './data/data.js'
-import { addRoute } from './endpoint.js'
+import { AddRoute } from './endpoint.js'
 import entities from './entities/entities.js'
 import extensionsRedirections from './extensions_redirections.js'
 import feedback from './feedback.js'
@@ -38,6 +38,8 @@ import users from './users/users.js'
 // 2 - the controller / module name
 
 export const routes = {}
+
+const addRoute = AddRoute(routes)
 
 addRoute('api/auth', auth)
 addRoute('api/config', config)

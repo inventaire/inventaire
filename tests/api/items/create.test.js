@@ -2,7 +2,8 @@ import CONFIG from 'config'
 import 'should'
 import { wait } from '#lib/promises'
 import { createGroup } from '#tests/api/fixtures/groups'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import {
   createEditionWithIsbn,
   createEdition,
@@ -14,7 +15,7 @@ import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, getRefreshedUser } from '../fixtures/users.js'
 import { getByUris as getEntitiesByUris } from '../utils/entities.js'
-import { authReq, getUser, getUserB, customAuthReq } from '../utils/utils.js'
+import { authReq, getUser, getUserB } from '../utils/utils.js'
 
 const debounceDelay = CONFIG.itemsCountDebounceTime + 100
 

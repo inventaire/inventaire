@@ -2,8 +2,10 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
-import { allowTransaction } from '#models/item'
+import Item from '#models/item'
 import transactionsColors from './transactions_colors.js'
+
+const { allowTransaction } = Item
 
 const host = CONFIG.getPublicOrigin()
 

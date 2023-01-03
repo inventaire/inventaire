@@ -1,6 +1,6 @@
 import { error_ } from '#lib/error/error'
 import { success } from '#lib/utils/logs'
-import intent from './lib/intent.js'
+import * as intent from './lib/intent.js'
 
 const sanitization = {
   user: {},

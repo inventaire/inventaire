@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { createInBulk } from '#controllers/tasks/lib/tasks'
+import { createTasksInBulk } from '#controllers/tasks/lib/tasks'
 import { checkEntities } from '../utils/tasks.js'
 import { createHuman, createWork } from './entities.js'
 
@@ -49,5 +49,5 @@ const createTaskDoc = async (params = {}) => {
 }
 
 const createTasks = taskDocs => {
-  return createInBulk(taskDocs)
+  return createTasksInBulk(taskDocs)
 }

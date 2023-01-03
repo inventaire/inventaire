@@ -1,6 +1,7 @@
 import should from 'should'
 import _ from '#builders/utils'
 import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createGroup, addMember, addAdmin } from '../fixtures/groups.js'
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
@@ -14,8 +15,6 @@ import { getUsersNearPosition, deleteUser } from '../utils/users.js'
 import {
   getReservedUser,
   getUser,
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
 } from '../utils/utils.js'
 
 describe('user:delete', () => {

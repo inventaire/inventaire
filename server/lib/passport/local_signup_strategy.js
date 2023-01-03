@@ -1,6 +1,6 @@
 import { Strategy as LocalStrategy } from 'passport-local'
 import createUser from '#controllers/user/lib/create'
-import headers_ from '#lib/headers'
+import { getLangFromHeaders } from '#lib/headers'
 import { track } from '#lib/track'
 import User from '#models/user'
 
@@ -24,7 +24,7 @@ const verify = (req, username, password, done) => {
 }
 
 const findLanguage = req => {
-  const lang = headers_.getLang(req.headers)
+  const lang = getLangFromHeaders(req.headers)
   if (User.validations.language(lang)) return lang
 }
 

@@ -15,7 +15,7 @@ import getWikipediaArticle from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
-import getEntityByUri from './get_entity_by_uri.js'
+import { getEntityByUri } from './get_entity_by_uri.js'
 import { normalizeTerm } from './terms_normalization.js'
 
 // - worksLabels: labels from works of an author suspected

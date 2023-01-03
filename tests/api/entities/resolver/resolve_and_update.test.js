@@ -13,7 +13,8 @@ import {
   generateIsbn13h,
 } from '#tests/api/fixtures/entities'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
-import { authReq, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)

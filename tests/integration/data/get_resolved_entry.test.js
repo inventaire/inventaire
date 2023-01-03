@@ -1,5 +1,5 @@
 import 'should'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import getResolvedEntry from '#data/dataseed/get_resolved_entry'
 
 describe('get resolved seed', () => {

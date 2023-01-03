@@ -3,7 +3,7 @@ import { someMatch } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 
 // MUST return the item or throw an error
-export async function verifyRightToInteract ({ reqUserId, item, ownerAllowed }) {
+export async function verifyRightToInteractWithItem ({ reqUserId, item, ownerAllowed }) {
   const { owner: ownerId, visibility } = item
 
   // item owner right to interact depends on the interaction

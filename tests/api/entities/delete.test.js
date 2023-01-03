@@ -1,5 +1,6 @@
 import should from 'should'
 import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createHuman,
   createWork,
@@ -9,7 +10,7 @@ import {
 } from '../fixtures/entities.js'
 import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
 import { getItemById } from '../utils/items.js'
-import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { authReq } from '../utils/utils.js'
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {

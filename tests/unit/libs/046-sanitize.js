@@ -1,6 +1,6 @@
 import should from 'should'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import { shouldNotBeCalled } from '../utils.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 describe('sanitize', () => {
   it('should reject invalid req objects based on req.query existance', async () => {

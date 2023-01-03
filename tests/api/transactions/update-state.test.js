@@ -1,6 +1,7 @@
 import 'should'
 import _ from '#builders/utils'
-import { authReqB, authReqC, shouldNotBeCalled } from '#tests/api/utils/utils'
+import { authReqB, authReqC } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
 import { getItem } from '../utils/items.js'
 import { updateTransaction } from '../utils/transactions.js'

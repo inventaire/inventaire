@@ -1,5 +1,5 @@
 import { getRelationStatus } from '#controllers/relations/lib/queries'
-import actions from './actions.js'
+import * as actions from './actions.js'
 import solveFactory from './solve_intent.js'
 
 const solve = solveFactory(actions)

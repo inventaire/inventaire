@@ -1,4 +1,4 @@
-import { activityById } from '#controllers/activitypub/lib/activities'
+import { getActivityById } from '#controllers/activitypub/lib/activities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { isCouchUuid } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
@@ -36,7 +36,7 @@ const getEntityActivity = async id => {
 
 const getActivity = async id => {
   if (!isCouchUuid(id)) throw error_.new('invalid activity id', 400, { id })
-  const activityDoc = await activityById(id)
+  const activityDoc = await getActivityById(id)
   const { name } = activityDoc.actor
   if (name.startsWith('shelf-')) {
     return getShelfActivity(activityDoc, name)

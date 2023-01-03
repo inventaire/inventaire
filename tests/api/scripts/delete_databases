@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-databases=$(./scripts/print_module_exports.js server/db/couchdb/databases.js default | jq 'keys | join(" ")' -r)
-dbHost=$(node -e "console.log(CONFIG.db.getOrigin())")
-elasticOrigin=$(node -e "console.log(CONFIG.elasticsearch.origin)")
+databases=$(./scripts/print_module_exports.js server/db/couchdb/databases.js databases | jq 'keys | join(" ")' -r)
+dbHost=$(node -p "require('config').db.getOrigin()")
+elasticOrigin=$(node -p "require('config').elasticsearch.origin")
 leveldbPathBase=$(node ./server/lib/absolute_path.js root db/leveldb)
 leveldbPath="${leveldbPathBase}-tests"
 

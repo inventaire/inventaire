@@ -1,5 +1,6 @@
 import { wait } from '#lib/promises'
-import { createHuman, humanName } from '../fixtures/entities.js'
+import { humanName } from '#tests/api/fixtures/text'
+import { createHuman } from '../fixtures/entities.js'
 import { adminReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=duplicates'

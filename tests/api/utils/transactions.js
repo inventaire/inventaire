@@ -1,4 +1,4 @@
-import { customAuthReq } from '../utils/utils.js'
+import { customAuthReq } from '#tests/api/utils/request'
 
 const endpoint = '/api/transactions'
 

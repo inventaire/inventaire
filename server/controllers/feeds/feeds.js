@@ -1,6 +1,6 @@
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { error_ } from '#lib/error/error'
-import headers_ from '#lib/headers'
+import { getLangFromHeaders } from '#lib/headers'
 import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
 import getAuthentifiedUser from './lib/get_authentified_user.js'
 import groupFeedData from './lib/group_feed_data.js'
@@ -31,7 +31,7 @@ const sanitization = {
 }
 
 const controller = async (params, req, res) => {
-  const headersLang = headers_.getLang(req.headers)
+  const headersLang = getLangFromHeaders(req.headers)
   const xml = await getFeed(headersLang, params)
   res.header('content-type', 'application/rss+xml')
   res.send(xml)

@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import getAuthorWorks from '#controllers/entities/lib/get_author_works'
-import getEntitiesList from '#controllers/entities/lib/get_entities_list'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityNormalizedTerms } from './terms_normalization.js'
 
 export default (uri, suspectWorksLabels) => {

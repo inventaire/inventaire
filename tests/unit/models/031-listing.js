@@ -2,13 +2,13 @@ import 'should'
 import _ from '#builders/utils'
 import { expired } from '#lib/time'
 import Listing from '#models/listing'
-import fakeText from '#tests/api/fixtures/text'
-import { shouldNotBeCalled } from '../utils.js'
+import { randomWords } from '#tests/api/fixtures/text'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const someUserId = '1234567890a1234567890b1234567890'
 const { create, updateAttributes: update } = Listing
-const fakeName = fakeText.randomWords(4)
-const fakeDesc = fakeText.randomWords(15)
+const fakeName = randomWords(4)
+const fakeDesc = randomWords(15)
 
 const validListing = {
   creator: someUserId,

@@ -9,8 +9,8 @@ const db = dbFactory('activities')
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
-export const activityById = db.get
-export const activitiesByIds = db.byIds
+export const getActivityById = db.get
+export const getActivitiesByIds = db.byIds
 export const deleteActivityById = db.delete
 
 export async function getFollowActivitiesByObject (name) {
@@ -22,7 +22,7 @@ export async function createActivity (newActivity) {
   return db.postAndReturn(activity)
 }
 
-export async function activitiesByActorName ({ name, limit = 10, offset = 0 }) {
+export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }) {
   assert_.string(name)
   return db.viewCustom('byActorNameAndDate', {
     limit,
@@ -45,7 +45,7 @@ export async function getActivitiesCountByName (name) {
   return res.rows[0]?.value || 0
 }
 
-export function activitiesByExternalId (externalId) {
+export function getActivityByExternalId (externalId) {
   return db.viewByKey('byExternalId', externalId)
   .then(firstDoc)
 }

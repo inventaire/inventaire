@@ -1,7 +1,8 @@
 import 'should'
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createUser } from '../fixtures/users.js'
-import { makeUrl, createRemoteActivityPubServerUser, signedReq } from '../utils/activitypub.js'
+import { createRemoteActivityPubServerUser, signedReq } from '../utils/activitypub.js'
 import { rawRequest } from '../utils/request.js'
 
 describe('activitypub:inbox:unknown_types', () => {

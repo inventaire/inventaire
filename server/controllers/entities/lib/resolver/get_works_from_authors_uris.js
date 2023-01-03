@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
-import getAuthorWorks from '#controllers/entities/lib/get_author_works'
-import getEntitiesList from '../get_entities_list.js'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntitiesList } from '../get_entities_list.js'
 
 export default authorUris => {
   return Promise.all(authorUris.map(getWorksFromAuthorsUri))

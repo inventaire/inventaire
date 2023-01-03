@@ -4,6 +4,8 @@ import { buildUrl } from '#lib/utils/url'
 import { createEdition } from '#tests/api/fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#tests/api/fixtures/groups'
 import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createItem,
   createItemWithEditionAndWork,
@@ -12,7 +14,7 @@ import {
 } from '../fixtures/items.js'
 import { getTwoFriends } from '../fixtures/users.js'
 import { waitForIndexation, firstNWords } from '../utils/search.js'
-import { getUser, getReservedUser, customAuthReq, publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { getUser, getReservedUser, publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { user, search }) => {
   const url = buildUrl('/api/items', {

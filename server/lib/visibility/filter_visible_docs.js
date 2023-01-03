@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
 import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
+import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
 import { getUserFriends } from '#controllers/relations/lib/lists'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
-import { allGroupMembers as parseAllGroupMembersIds } from '#server/controllers/groups/lib/users_lists'
 
 export async function filterVisibleDocs (docs, reqUserId) {
   if (!reqUserId) return docs.filter(isPublic)
@@ -55,7 +55,7 @@ const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
 const getGroupsMembersIdsSets = groups => {
   const groupsMembersIdsSets = {}
   for (const group of groups) {
-    groupsMembersIdsSets[group._id] = new Set(parseAllGroupMembersIds(group))
+    groupsMembersIdsSets[group._id] = new Set(getAllGroupMembersIds(group))
   }
   return groupsMembersIdsSets
 }

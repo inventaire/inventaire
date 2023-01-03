@@ -1,15 +1,16 @@
 import CONFIG from 'config'
 import 'should'
-import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
 import { createItem, createItems } from '../fixtures/items.js'
 import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 import { createUser } from '../fixtures/users.js'
-import { makeUrl } from '../utils/activitypub.js'
 import { updateItems } from '../utils/items.js'
 import { getActorName } from '../utils/shelves.js'
-import { publicReq, customAuthReq, getFediversableUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { publicReq, getFediversableUser } from '../utils/utils.js'
 
 const origin = CONFIG.getPublicOrigin()
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50

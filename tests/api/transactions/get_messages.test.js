@@ -1,5 +1,6 @@
 import should from 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, authReq } from '#tests/api/utils/utils'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createTransaction, addMessage } from '../fixtures/transactions.js'
 
 const endpoint = '/api/transactions?action=get-messages'

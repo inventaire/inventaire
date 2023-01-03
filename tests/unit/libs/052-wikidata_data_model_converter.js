@@ -1,6 +1,6 @@
 import 'should'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
-import { shouldNotBeCalled } from '../utils.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 describe('wikidata data model converter', () => {
   describe('relocateQualifierProperties', () => {

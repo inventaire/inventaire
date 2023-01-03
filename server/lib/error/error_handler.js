@@ -1,12 +1,13 @@
+import { pick } from 'lodash-es'
+import { objLength } from '#lib/utils/base'
 import { warn, logError } from '#lib/utils/logs'
 import { typeOf } from '#lib/utils/types'
 
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
 
-let _, responses_
+let responses_
 const importCircularDependencies = async () => {
-  _ = await import('#builders/utils')
-  responses_ = await import('#lib/responses')
+  ;({ responses_ } = await import('#lib/responses'))
 }
 setImmediate(importCircularDependencies)
 
@@ -21,12 +22,12 @@ export default (req, res, err, status) => {
   // if a status code was attached to the error, use it
   const statusCode = err.statusCode || 500
 
-  err.user = _.pick(req.user, '_id', 'username')
-  err.headers = _.pick(req.headers, headersToKeep)
+  err.user = pick(req.user, '_id', 'username')
+  err.headers = pick(req.headers, headersToKeep)
 
   // Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
   if (err.attachReqContext && emptyContext(err.context)) {
-    err.context = _.pick(req, err.attachReqContext)
+    err.context = pick(req, err.attachReqContext)
   }
 
   if (err.mute !== true) {
@@ -57,6 +58,6 @@ const emptyContext = context => {
   if (context == null) return true
   const type = typeOf(context)
   if (type === 'array' || type === 'string') return context.length === 0
-  else if (type === 'object') return _.objLength(context) === 0
+  else if (type === 'object') return objLength(context) === 0
   else return true
 }

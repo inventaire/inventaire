@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import groupsCounts from '#controllers/groups/lib/counts'
-import notifications_ from '#controllers/notifications/lib/notifications'
+import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#controllers/groups/lib/counts'
+import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
 import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
 import { objectPromise } from '#lib/promises'
@@ -30,10 +30,10 @@ const getEmailData = user => {
     // pending friends requests
     friendsRequests: getPendingFriendsRequestsCount(userId),
     // pending group invitation
-    groupInvitations: groupsCounts.pendingGroupInvitationsCount(userId),
-    groupRequests: groupsCounts.pendingGroupRequestsCount(userId),
+    groupInvitations: getPendingGroupInvitationsCount(userId),
+    groupRequests: getPendingGroupRequestsCount(userId),
     // unread notifications
-    unreadNotifications: notifications_.unreadCount(userId),
+    unreadNotifications: getUnreadNotificationsCount(userId),
     // waiting transaction
     activeTransactions: getUserActiveTransactionsCount(userId),
     // new books in your network: preview + count for others 'X more...'

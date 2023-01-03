@@ -1,10 +1,7 @@
 import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
-import {
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
-  customAuthReq,
-  getReservedUser,
-} from '#tests/api/utils/utils'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'
 import { shelfName } from '../fixtures/shelves.js'
 import { authReq } from '../utils/utils.js'

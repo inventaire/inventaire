@@ -9,7 +9,7 @@
 
 # Env variables required to get the right port
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
-server_port=$(node -p "CONFIG.port")
+server_port=$(node -p "require('config').port")
 
 # A supervisor process id is known for that port && that process is still running
 if [ -f "./run/${server_port}-supervisor" ] && [ -n "$(ps -o pid= --pid $(< ./run/${server_port}-supervisor))" ];

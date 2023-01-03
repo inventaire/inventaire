@@ -1,9 +1,10 @@
 import 'should'
 import { getRandomString } from '#lib/utils/random_string'
 import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { signup } from '../fixtures/users.js'
-import { authReq, authReqB, authReqC, shouldNotBeCalled } from '../utils/utils.js'
+import { authReq, authReqB, authReqC } from '../utils/utils.js'
 
 const randomEmail = () => `a${getRandomString(4).toLowerCase()}@foo.org`
 const endpoint = '/api/invitations?action=by-emails'

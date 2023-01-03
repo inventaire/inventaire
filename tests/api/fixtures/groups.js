@@ -1,6 +1,7 @@
+import { randomWords } from '#tests/api/fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
-import { getUser, getUserB, customAuthReq, getReservedUser } from '../utils/utils.js'
-import fakeText from './text.js'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
 export const endpointBase = '/api/groups'
 
@@ -57,8 +58,8 @@ export const createGroupAndMember = async () => {
   return { group, member }
 }
 
-export const groupName = () => fakeText.randomWords(3, ' group')
-const groupDescription = () => fakeText.randomWords(10)
+export const groupName = () => randomWords(3, ' group')
+const groupDescription = () => randomWords(10)
 
 export async function createGroupWithAMember (params) {
   const group = await createGroup(params)

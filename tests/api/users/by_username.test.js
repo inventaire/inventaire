@@ -3,16 +3,15 @@ import _ from '#builders/utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import { customAuthReq } from '#tests/api/utils/request'
 import {
   publicReq,
   authReq,
-  customAuthReq,
   getUser,
   getUserB,
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
   getReservedUser,
 } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
 import { deleteUser, updateUser } from '../utils/users.js'
 

@@ -1,7 +1,7 @@
 import { warn } from '#lib/utils/logs'
 
 export default actions => {
-  const API = {
+  return {
     requestFriend: (userId, otherId, status) => {
       if (status === 'none') return actions.makeRequest(userId, otherId)
       else if (status === 'otherRequested') return actions.simultaneousRequest(userId, otherId)
@@ -36,8 +36,6 @@ export default actions => {
       else doNothing(status, 'discardRequest', userId, otherId)
     },
   }
-
-  return API
 }
 
 const doNothing = (status, method, userId, otherId) => {

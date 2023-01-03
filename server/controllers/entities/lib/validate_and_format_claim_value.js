@@ -4,7 +4,7 @@ import validateClaimValueSync from './validate_claim_value_sync.js'
 
 let getEntityByUri, getEntitiesByClaim
 const importCircularDependencies = async () => {
-  getEntityByUri = await import('./get_entity_by_uri.js')
+  ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
   ;({ getEntitiesByClaim } = await import('./entities.js'))
 }
 setImmediate(importCircularDependencies)

@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getClient, getClientWithAuthorization } from '../utils/oauth.js'
 import { postUrlencoded } from '../utils/request.js'
-import { shouldNotBeCalled } from '../utils/utils.js'
 
 const { authorizationCodeLifetimeMs } = CONFIG.oauthServer
 const post = body => postUrlencoded('/api/oauth/token', body)

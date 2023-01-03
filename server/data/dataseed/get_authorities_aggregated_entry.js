@@ -21,7 +21,7 @@ const authorities = {
 
 const authoritiesNames = Object.keys(authorities)
 
-export default async isbn => {
+export async function getAuthoritiesAggregatedEntry (isbn) {
   if (offline) return
   const entries = await Promise.all(authoritiesNames.map(wrap(isbn)))
   return sortAndAggregateEntries(isbn, entries)

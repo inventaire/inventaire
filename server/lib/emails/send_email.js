@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
+import { catchDisabledEmails, getGroupAndUsersData, getParsedUsersIndexedByIds } from '#lib/emails/helpers'
 import { sendMail } from '#lib/emails/transporter'
 import { Wait } from '#lib/promises'
 import { info, LogError } from '#lib/utils/logs'
 import email_ from './email.js'
-import helpers_ from './helpers.js'
 
 export default {
   validationEmail: (userData, token) => {
@@ -23,26 +23,26 @@ export default {
   },
 
   friendAcceptedRequest: (userToNotify, newFriend) => {
-    return helpers_.getParsedUsersIndexedByIds(userToNotify, newFriend)
+    return getParsedUsersIndexedByIds(userToNotify, newFriend)
     .then(email_.friendAcceptedRequest)
     .then(sendMail)
-    .catch(helpers_.catchDisabledEmails)
+    .catch(catchDisabledEmails)
     .catch(Err('friendAcceptedRequest', userToNotify, newFriend))
   },
 
   friendshipRequest: (userToNotify, requestingUser) => {
-    return helpers_.getParsedUsersIndexedByIds(userToNotify, requestingUser)
+    return getParsedUsersIndexedByIds(userToNotify, requestingUser)
     .then(email_.friendshipRequest)
     .then(sendMail)
-    .catch(helpers_.catchDisabledEmails)
+    .catch(catchDisabledEmails)
     .catch(Err('friendshipRequest', userToNotify, requestingUser))
   },
 
   group: (action, groupId, actingUserId, userToNotifyId) => {
-    return helpers_.getGroupAndUsersData(groupId, actingUserId, userToNotifyId)
+    return getGroupAndUsersData(groupId, actingUserId, userToNotifyId)
     .then(email_.group.bind(null, action))
     .then(sendMail)
-    .catch(helpers_.catchDisabledEmails)
+    .catch(catchDisabledEmails)
     .catch(Err(`group ${action}`, actingUserId, userToNotifyId))
   },
 

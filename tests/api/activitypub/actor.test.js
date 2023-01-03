@@ -4,13 +4,14 @@ import _ from '#builders/utils'
 import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activitypub/lib/helpers'
 import { propertiesDisplay } from '#controllers/activitypub/lib/properties_display'
 import { i18n } from '#lib/emails/i18n/i18n'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createHuman, createEdition } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, createUsername } from '../fixtures/users.js'
 import { rawRequest } from '../utils/request.js'
 import { getActorName } from '../utils/shelves.js'
 import { updateUser } from '../utils/users.js'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]

@@ -1,7 +1,7 @@
 import isbn3 from 'isbn3'
 import { parseIsbn } from '#lib/isbn/parse'
 
-const { isbnParser } = isbn3
+const { parse: isbnParser } = isbn3
 
 // Removing any non-alpha numeric characters, especially '-' and spaces
 export const normalizeIsbn = text => {

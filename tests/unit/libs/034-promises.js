@@ -1,15 +1,15 @@
 import should from 'should'
-import { props, tap, wait, map } from '#lib/promises'
+import { objectPromise, tap, wait, mappedArrayPromise } from '#lib/promises'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 describe('promises utils', () => {
-  describe('props', () => {
+  describe('objectPromise', () => {
     it('should be a function', () => {
-      props.should.be.a.Function()
+      objectPromise.should.be.a.Function()
     })
 
     it('should return the resolved promise in an object', async () => {
-      const { a, b } = await props({
+      const { a, b } = await objectPromise({
         a: 123,
         b: Promise.resolve(456),
       })
@@ -18,7 +18,7 @@ describe('promises utils', () => {
     })
 
     it('should return a rejected promise if one of the promises fail', async () => {
-      await props({
+      await objectPromise({
         a: 123,
         b: Promise.reject(new Error('foo')),
       })
@@ -29,7 +29,7 @@ describe('promises utils', () => {
     })
 
     it('should return direct values in an object', async () => {
-      const { a, b } = await props({ a: 1, b: 2 })
+      const { a, b } = await objectPromise({ a: 1, b: 2 })
       a.should.equal(1)
       b.should.equal(2)
     })
@@ -64,10 +64,10 @@ describe('promises utils', () => {
     })
   })
 
-  describe('map', () => {
+  describe('mappedArrayPromise', () => {
     it('should map over the passed result', async () => {
       await Promise.all([ 123, 456 ])
-      .then(map(num => num * 2))
+      .then(mappedArrayPromise(num => num * 2))
       .then(res => {
         res.should.deepEqual([ 246, 912 ])
       })
@@ -75,7 +75,7 @@ describe('promises utils', () => {
 
     it('should wait for async values', async () => {
       await Promise.all([ 123, 456 ])
-      .then(map(async num => num * 2))
+      .then(mappedArrayPromise(async num => num * 2))
       .then(res => {
         res.should.deepEqual([ 246, 912 ])
       })

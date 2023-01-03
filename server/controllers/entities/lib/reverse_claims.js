@@ -32,7 +32,7 @@ const localOnlyProperties = [
   'wdt:P195',
 ]
 
-export default async params => {
+export async function reverseClaims (params) {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 

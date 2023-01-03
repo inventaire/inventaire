@@ -1,6 +1,6 @@
 import CONFIG from 'config'
 import 'should'
-import { parse } from 'papaparse'
+import papaparse from 'papaparse'
 import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 import { getReservedUser } from '#tests/api/utils/utils'
 import {
@@ -15,6 +15,8 @@ import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser } from '../fixtures/users.js'
 import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
+
+const { parse } = papaparse
 
 const host = CONFIG.getPublicOrigin()
 

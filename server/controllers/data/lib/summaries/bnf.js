@@ -3,7 +3,7 @@ import { cache_ } from '#lib/cache'
 import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 
-const { simplifySparqlResults } = wdk
+const { sparqlResults: simplifySparqlResults } = wdk.simplify
 const timeout = 10 * 1000
 
 export default async ({ id, refresh }) => {

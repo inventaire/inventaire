@@ -1,12 +1,14 @@
 import _ from '#builders/utils'
 import { availability_ } from '#controllers/user/lib/availability'
 import updateEmail from '#controllers/user/lib/update_email'
-import { setStableUsername } from '#controllers/user/lib/user'
+import { setUserStableUsername } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
 import { basicUpdater } from '#lib/doc_updates'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import { attributes, validations, formatters } from '#models/user'
+import User from '#models/user'
+
+const { attributes, validations, formatters } = User
 
 const { updatable, concurrencial, acceptNullValue } = attributes
 const db = dbFactory('users')
@@ -76,7 +78,7 @@ const updateAttribute = async (user, attribute, value) => {
   if (attribute === 'email') {
     return updateEmail(user, value)
   } else {
-    if (attribute === 'fediversable') await setStableUsername(user)
+    if (attribute === 'fediversable') await setUserStableUsername(user)
     return db.update(user._id, basicUpdater.bind(null, attribute, value))
   }
 }

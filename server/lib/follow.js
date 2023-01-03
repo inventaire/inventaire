@@ -16,7 +16,7 @@ const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 let waitForCouchInit
 const importCircularDependencies = async () => {
-  waitForCouchInit = await import('#db/couchdb/init')
+  ({ waitForCouchInit } = await import('#db/couchdb/init'))
 }
 setImmediate(importCircularDependencies)
 

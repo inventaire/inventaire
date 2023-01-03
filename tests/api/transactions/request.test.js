@@ -4,9 +4,8 @@ import {
   authReqB,
   authReqC,
   getUser,
-  shouldNotBeCalled,
-  rethrowShouldNotBeCalledErrors,
 } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
 import { createTransaction } from '../fixtures/transactions.js'

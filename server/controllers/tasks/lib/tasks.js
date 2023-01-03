@@ -19,10 +19,10 @@ export async function createTask (suspectUri, type, entitiesType, suggestions) {
     assignKeyIfExists(newTask, 'clue', clue)
     return newTask
   })
-  return createTaskInBulk(newTasksObjects)
+  return createTasksInBulk(newTasksObjects)
 }
 
-export async function createTaskInBulk (tasksDocs) {
+export async function createTasksInBulk (tasksDocs) {
   const tasks = tasksDocs.map(Task.create)
   return db.bulk(tasks)
 }

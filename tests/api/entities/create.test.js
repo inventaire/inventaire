@@ -1,6 +1,8 @@
 import 'should'
-import { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
-import { authReq, shouldNotBeCalled } from '../utils/utils.js'
+import { humanName } from '#tests/api/fixtures/text'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=create'
 

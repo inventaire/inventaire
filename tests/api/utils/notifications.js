@@ -1,5 +1,6 @@
 import { assert_ } from '#lib/utils/assert_types'
-import { customAuthReq } from './utils.js'
+import { } from './utils.js'
+import { customAuthReq } from '#tests/api/utils/request'
 
 export async function getNotifications ({ user, type, subject }) {
   assert_.object(user)

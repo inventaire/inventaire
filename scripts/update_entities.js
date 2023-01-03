@@ -27,8 +27,8 @@ const patchesDb = dbFactory('patches')
 const userId = hardCodedUsers.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
-const { getNextBatch, updateFn, stats } = await import(updateFnFilePath)
-let { preview, silent } = await import(updateFnFilePath)
+const { getNextBatch, updateFn, stats } = (await import(updateFnFilePath)).default
+let { preview, silent } = (await import(updateFnFilePath)).default
 
 // Default to true
 preview = preview !== false

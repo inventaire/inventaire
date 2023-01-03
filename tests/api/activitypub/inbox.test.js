@@ -1,7 +1,8 @@
 import 'should'
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
-import { signedReq, makeUrl, createActivity } from '../utils/activitypub.js'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { signedReq, createActivity } from '../utils/activitypub.js'
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {

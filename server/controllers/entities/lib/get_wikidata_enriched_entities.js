@@ -24,7 +24,8 @@ const { _id: hookUserId } = hardCodedUsers.hook
 
 let reindex
 const importCircularDependencies = async () => {
-  reindex = (await import('#db/elasticsearch/indexation'))('wikidata')
+  const { default: indexation } = await import('#db/elasticsearch/indexation')
+  reindex = indexation('wikidata')
 }
 setImmediate(importCircularDependencies)
 

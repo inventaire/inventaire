@@ -6,8 +6,8 @@ const maximumNameDistance = 3
 
 let getEntitiesList, reverseClaims
 const importCircularDependencies = async () => {
-  getEntitiesList = await import('#controllers/entities/lib/get_entities_list')
-  reverseClaims = await import('#controllers/entities/lib/reverse_claims')
+  ;({ getEntitiesList } = await import('#controllers/entities/lib/get_entities_list'))
+  ;({ reverseClaims } = await import('#controllers/entities/lib/reverse_claims'))
 }
 setImmediate(importCircularDependencies)
 

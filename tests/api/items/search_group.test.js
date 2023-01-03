@@ -4,9 +4,10 @@ import { buildUrl } from '#lib/utils/url'
 import { createEdition } from '#tests/api/fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#tests/api/fixtures/groups'
 import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
 import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
 import { waitForIndexation } from '../utils/search.js'
-import { customAuthReq, publicReq } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { group, search }) => {
   const url = buildUrl('/api/items', {

@@ -4,7 +4,7 @@ import _ from '#builders/utils'
 import { getRandomString } from '#lib/utils/random_string'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
-import { shouldNotBeCalled } from '../utils.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId

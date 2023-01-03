@@ -1,7 +1,7 @@
 import 'should'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createEdition, createCollection } from '../../fixtures/entities.js'
 import { addClaim, removeClaim } from '../../utils/entities.js'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../../utils/utils.js'
 
 describe('entities:create:collections', () => {
   it('should create a collection', async () => {

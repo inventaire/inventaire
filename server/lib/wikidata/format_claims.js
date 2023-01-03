@@ -4,7 +4,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { allowlistedProperties } from './allowlisted_properties.js'
 import { flattenQualifierProperties } from './data_model_adapter.js'
 
-const { simplifyClaims } = wdk
+const { claims: simplifyClaims } = wdk.simplify
 
 const options = {
   entityPrefix: 'wd',

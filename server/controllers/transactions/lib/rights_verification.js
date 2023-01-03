@@ -1,5 +1,5 @@
 import { error_ } from '#lib/error/error'
-import interactions_ from '#lib/interactions'
+import { verifyRightToInteractWithItem } from '#lib/interactions'
 import Transaction from '#models/transaction'
 
 let getTransactionsByUserAndItem, checkIfItemIsBusy
@@ -24,11 +24,11 @@ export async function verifyRightToRequest (reqUserId, item) {
   if (itemIsBusy) {
     throw error_.new('item already busy', 403, item)
   }
-  await interactions_.verifyRightToInteract({ reqUserId, item, ownerAllowed: false })
+  await verifyRightToInteractWithItem({ reqUserId, item, ownerAllowed: false })
   await verifyNoExistingTransaction(reqUserId, item)
 }
 
-export const verifyRightToInteract = (userId, transaction) => {
+export const verifyRightToInteractWithTransaction = (userId, transaction) => {
   const { owner, requester } = transaction
   if (!(userId === owner || userId === requester)) {
     throw error_.new('wrong user', 403, userId, transaction)

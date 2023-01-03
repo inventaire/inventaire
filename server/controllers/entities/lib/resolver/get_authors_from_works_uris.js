@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import getEntitiesList from '../get_entities_list.js'
+import { getEntitiesList } from '../get_entities_list.js'
 
 export default workUris => {
   return getEntitiesList(workUris)

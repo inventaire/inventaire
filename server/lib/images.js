@@ -37,7 +37,7 @@ export const removeExif = path => {
   })
 }
 
-export const applyLimits = (width, height) => [ applyLimit(width), applyLimit(height) ]
+export const applyImageLimits = (width, height) => [ applyLimit(width), applyLimit(height) ]
 
 export const getUrlFromImageHash = (container, filename) => {
   if (filename) return `/img/${container}/${filename}`

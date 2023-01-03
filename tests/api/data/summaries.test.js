@@ -2,7 +2,8 @@ import should from 'should'
 import { requests_ } from '#lib/requests'
 import { createWork, createEdition, createHuman } from '#tests/api/fixtures/entities'
 import { getByUri } from '#tests/api/utils/entities'
-import { publicReq, shouldNotBeCalled } from '../utils/utils.js'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=summaries'
 

@@ -67,7 +67,7 @@ export async function getUserGroupsCoMembers (userId) {
   return getCoMembersIds(groups, userId)
 }
 
-export async function userInvited (userId, groupId) {
+export async function getInvitedUser (userId, groupId) {
   const group = await getGroupById(groupId)
   return Group.findInvitation(userId, group, true)
 }

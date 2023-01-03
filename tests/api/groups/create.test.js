@@ -1,7 +1,8 @@
 import 'should'
 import slugify from '#controllers/groups/lib/slugify'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { groupName } from '../fixtures/groups.js'
-import { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '../utils/utils.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=create'
 

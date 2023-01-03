@@ -1,5 +1,5 @@
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
-import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { assert_ } from '#lib/utils/assert_types'
 import { aggregateClaims } from './helpers.js'
 
