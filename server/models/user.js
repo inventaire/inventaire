@@ -4,6 +4,7 @@ import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
+import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
@@ -18,7 +19,7 @@ const validations = User.validations = userValidations
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = (username, email, creationStrategy, language, password) => {
-  _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
+  log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
 

@@ -18,6 +18,7 @@ import docDiff from '#db/couchdb/doc_diffs'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { log, LogError } from '#lib/utils/logs'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
 
@@ -76,6 +77,6 @@ const buildPatches = entityResById => updateData => {
 
 updateSequentially()
 .then(() => {
-  if (stats) _.log(stats(), 'stats')
+  if (stats) log(stats(), 'stats')
 })
-.catch(_.Error('global error'))
+.catch(LogError('global error'))

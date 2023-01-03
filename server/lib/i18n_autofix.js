@@ -2,6 +2,7 @@ import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
+import { success, info } from '#lib/utils/logs'
 import { wait } from './promises.js'
 
 const { isPropertyId } = wdk
@@ -24,17 +25,17 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
   for (const key of newKeys) {
     if (!keys[key]) {
       keys[key] = fullValue ? key : null
-      _.success(`+i18n: '${key}'`)
+      success(`+i18n: '${key}'`)
     } else {
-      _.info(`i18n: already there '${key}'`)
+      info(`i18n: already there '${key}'`)
     }
   }
 
   if (_.objLength(keys) > lengthBefore) {
     return writeJsonFile(path, reorder(keys))
-    .then(() => _.success(`i18n:updated ${path}`))
+    .then(() => success(`i18n:updated ${path}`))
   } else {
-    _.info(`i18n:not:updating ${path}: no new key`)
+    info(`i18n:not:updating ${path}: no new key`)
   }
 }
 

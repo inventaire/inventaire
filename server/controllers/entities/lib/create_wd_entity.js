@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import getEntityType from './get_entity_type.js'
@@ -17,7 +17,7 @@ export default async params => {
 
   const entity = { labels, claims }
 
-  _.log(entity, 'wd entity creation')
+  log(entity, 'wd entity creation')
 
   return validate(entity, isAlreadyValidated)
   .then(() => {

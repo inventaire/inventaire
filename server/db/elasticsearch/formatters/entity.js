@@ -7,6 +7,7 @@ import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
+import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
 import { activeI18nLangs } from '../helpers.js'
@@ -57,7 +58,7 @@ export default async (entity, options = {}) => {
         entity.images = await specialEntityImagesGetter[entity.type](entity)
       } catch (err) {
         // Known case: when Wikidata Query Service times out
-        _.warn(err, `failed to get image for ${entity.uri}: fallback to no image`)
+        warn(err, `failed to get image for ${entity.uri}: fallback to no image`)
         entity.images = {}
       }
     } else {
@@ -198,7 +199,7 @@ const getEntityTerms = entity => {
   const { labels, aliases } = entity
   // Known case: deleted Wikidata entity
   if (!labels) {
-    _.warn(entity, 'can not getEntityTerms: entity has no labels')
+    warn(entity, 'can not getEntityTerms: entity has no labels')
     return []
   }
   return getMainFieldsWords({ labels, aliases })

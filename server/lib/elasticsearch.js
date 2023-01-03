@@ -1,8 +1,8 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { assert_ } from './utils/assert_types.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
@@ -20,7 +20,7 @@ export const buildSearcher = params => {
     return requests_.post(url, { body })
     .then(parseResponse)
     .catch(formatError)
-    .catch(_.ErrorRethrow(`${index} search err`))
+    .catch(LogErrorAndRethrow(`${index} search err`))
   }
 }
 
@@ -48,7 +48,7 @@ export const checkShardError = ({ _shards }) => {
 
 export const parseResponse = res => getHits(res).map(parseHit)
 
-// Reshape the error object to be fully displayed when logged by _.warn
+// Reshape the error object to be fully displayed when logged by warn
 export const formatError = err => {
   // Directly rethrow errors that aren't from Elasticsearch
   // like ECONNREFUSED errors

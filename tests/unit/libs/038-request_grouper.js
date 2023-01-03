@@ -2,6 +2,7 @@ import 'should'
 import sinon from 'sinon'
 import _ from '#builders/utils'
 import requestGrouper from '#lib/request_grouper'
+import { log } from '#lib/utils/logs'
 
 const MockRequester = (spy = _.noop) => async ids => {
   spy()
@@ -14,7 +15,7 @@ const mockRequesterSync = ids => {
     results[id] = mockRequesterSingleSync(id)
   }
 
-  _.log(results, 'results')
+  log(results, 'results')
   return results
 }
 

@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import express from 'express'
 import _ from '#builders/utils'
+import { info } from '#lib/utils/logs'
 import { errorHandler } from '#server/middlewares/error_handler'
 import { routes } from './controllers/routes.js'
 import middlewares from './middlewares/middlewares.js'
@@ -44,7 +45,7 @@ export function initExpress () {
       if (err) {
         reject(err)
       } else {
-        _.info(`${name} server is listening on port ${port}...`)
+        info(`${name} server is listening on port ${port}...`)
         resolve(app)
       }
     })

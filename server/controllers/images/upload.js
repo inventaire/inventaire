@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { Log } from '#lib/utils/logs'
 import { containers, uploadContainersNames } from './lib/containers.js'
 import parseForm from './lib/parse_form.js'
 
@@ -21,7 +22,7 @@ const controller = async (params, req) => {
 
   return Promise.all(files.map(putImage))
   .then(indexUrlById)
-  .then(_.Log('uploaded images'))
+  .then(Log('uploaded images'))
 }
 
 const getFilesFromFormData = formData => {

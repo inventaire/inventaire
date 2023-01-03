@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { success } from '#lib/utils/logs'
 import intent from './lib/intent.js'
 
 const sanitization = {
@@ -9,7 +9,7 @@ const sanitization = {
 const controller = action => async params => {
   const { reqUserId, user: userId } = params
   await solveNewRelation(action, userId, reqUserId)
-  _.success(userId, `${action}: OK!`)
+  success(userId, `${action}: OK!`)
   return { ok: true }
 }
 

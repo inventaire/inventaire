@@ -5,6 +5,7 @@
 import _ from '#builders/utils'
 import { changeItemOwner } from '#controllers/items/lib/items'
 import { radio } from '#lib/radio'
+import { log, LogErrorAndRethrow } from '#lib/utils/logs'
 import Transaction from '#models/transaction'
 
 export function initSideEffects () {
@@ -12,15 +13,15 @@ export function initSideEffects () {
 }
 
 const applySideEffects = (transacDoc, newState) => {
-  _.log({ transacDoc, newState }, 'applySideEffects')
+  log({ transacDoc, newState }, 'applySideEffects')
   return sideEffects[newState](transacDoc, newState)
 }
 
 const changeOwnerIfOneWay = transacDoc => {
   if (Transaction.isOneWay(transacDoc)) {
-    _.log({ transacDoc }, 'changeOwner')
+    log({ transacDoc }, 'changeOwner')
     return changeItemOwner(transacDoc)
-    .catch(_.ErrorRethrow('changeOwner'))
+    .catch(LogErrorAndRethrow('changeOwner'))
   }
 }
 

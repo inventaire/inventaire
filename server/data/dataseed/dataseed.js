@@ -8,6 +8,7 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
+import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 
 const { enabled, origin } = CONFIG.dataseed
@@ -23,7 +24,7 @@ export async function getSeedsByIsbns (isbns, refresh) {
   try {
     return await requests_.get(url, reqOptions)
   } catch (err) {
-    _.error(err, 'dataseed getSeedsByIsbns err')
+    logError(err, 'dataseed getSeedsByIsbns err')
     return []
   }
 }

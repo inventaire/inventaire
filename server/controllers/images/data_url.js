@@ -1,9 +1,9 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
-import _ from '#builders/utils'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { error_ } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
+import { logError } from '#lib/utils/logs'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 
@@ -19,7 +19,7 @@ const controller = async ({ url }) => {
   } catch (err) {
     // In case of server-side request forgery, do not let internal services
     // error responses get out
-    _.error(err, 'data_url private error')
+    logError(err, 'data_url private error')
     throw error_.new('image could not be converted', 400, { url })
   }
 }

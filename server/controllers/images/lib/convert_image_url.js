@@ -1,6 +1,7 @@
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
 import importImage from './import_image.js'
 
 const db = dbFactory('images')
@@ -28,5 +29,5 @@ const saveImageSource = async (sourceImageUrl, imageHash) => {
     doc.updated = Date.now()
     return doc
   }, { createIfMissing: true })
-  _.log(sourceImageUrl, `adding source for ${imageHash}`)
+  log(sourceImageUrl, `adding source for ${imageHash}`)
 }

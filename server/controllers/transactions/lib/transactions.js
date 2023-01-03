@@ -1,5 +1,4 @@
 import { map } from 'lodash-es'
-import _ from '#builders/utils'
 import comments_ from '#controllers/comments/lib/comments'
 import dbFactory from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
@@ -8,6 +7,7 @@ import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
+import { log } from '#lib/utils/logs'
 import Transaction from '#models/transaction'
 
 const db = dbFactory('transactions')

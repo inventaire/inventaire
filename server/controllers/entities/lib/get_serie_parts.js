@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
@@ -24,7 +25,7 @@ export default params => {
   .then(results => ({
     parts: results.sort(sortByOrdinalOrDate),
   }))
-  .catch(_.ErrorRethrow('get serie parts err'))
+  .catch(LogErrorAndRethrow('get serie parts err'))
 }
 
 const getWdSerieParts = async (qid, refresh, dry) => {

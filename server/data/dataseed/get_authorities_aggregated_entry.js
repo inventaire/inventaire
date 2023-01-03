@@ -8,6 +8,7 @@ import bne from '#data/bne/get_bne_entry_from_isbn'
 import bnf from '#data/bnf/get_bnf_entry_from_isbn'
 import wikidata from '#data/wikidata/get_wikidata_entry_from_isbn'
 import { isNotEmpty, objLength } from '#lib/utils/base'
+import { logError } from '#lib/utils/logs'
 
 const { offline } = CONFIG
 
@@ -30,7 +31,7 @@ const wrap = isbn => async name => {
   try {
     return await authorities[name](isbn)
   } catch (err) {
-    _.error(err, `${name} entry error`)
+    logError(err, `${name} entry error`)
   }
 }
 

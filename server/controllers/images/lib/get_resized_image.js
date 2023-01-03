@@ -1,9 +1,9 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import images_ from '#lib/images'
 import { userAgent } from '#lib/requests'
+import { logError } from '#lib/utils/logs'
 
 const { mediaStorage } = CONFIG
 
@@ -66,7 +66,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
   const handleBufferError = buf => {
     const err = new Error(buf.toString())
     if (transmittedData || alreadySent) {
-      _.error(err, 'image error after some data was already sent')
+      logError(err, 'image error after some data was already sent')
     } else {
       error_.handler(req, res, err)
       alreadySent = true

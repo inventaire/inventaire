@@ -6,6 +6,7 @@ import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
@@ -42,7 +43,7 @@ const security_ = {
     try {
       publicKey = await fetchActorPublicKey(actorUrl)
     } catch (err) {
-      _.warn({ method, pathname, body: req.body }, 'could not fetch public key')
+      warn({ method, pathname, body: req.body }, 'could not fetch public key')
       throw err
     }
     const verifier = crypto.createVerify('rsa-sha256')

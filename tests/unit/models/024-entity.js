@@ -1,5 +1,4 @@
 import should from 'should'
-import _ from '#builders/utils'
 import Entity from '#models/entity'
 
 const workDoc = () => {
@@ -109,7 +108,6 @@ describe('entity model', () => {
 
       it('should add inferred properties value', () => {
         const entityDoc = Entity.updateClaim(workDoc(), 'wdt:P212', null, '978-2-7073-0152-9')
-        _.warn(entityDoc.claims, 'entityDoc.claims')
         entityDoc.claims['wdt:P957'][0].should.equal('2-7073-0152-3')
         entityDoc.claims['wdt:P407'][0].should.equal('wd:Q150')
       })

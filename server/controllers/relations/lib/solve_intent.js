@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { warn } from '#lib/utils/logs'
 
 export default actions => {
   const API = {
@@ -25,7 +25,7 @@ export default actions => {
       if (status === 'otherRequested') {
         return actions.acceptRequest(userId, otherId)
       } else if (status === 'none') {
-        return _.warn(`${userId} request to ${otherId} accepted after being cancelled`)
+        return warn(`${userId} request to ${otherId} accepted after being cancelled`)
       } else {
         doNothing(status, 'acceptRequest', userId, otherId)
       }
@@ -41,7 +41,7 @@ export default actions => {
 }
 
 const doNothing = (status, method, userId, otherId) => {
-  _.warn(`Status mismatch: got status '${status}' \
+  warn(`Status mismatch: got status '${status}' \
   at ${method} for relation ${userId}, ${otherId}. \
   (it happens but it shouldn't be to often). \
   Here, doing nothing is the best.`)

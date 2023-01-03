@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import couchInit from 'couch-init2'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
+import { log } from '#lib/utils/logs'
 import databases from './databases.js'
 import initHardCodedDocuments from './init_hard_coded_documents.js'
 
@@ -25,7 +26,7 @@ const designDocFolder = absolutePath('db', 'couchdb/design_docs')
 const init = async () => {
   try {
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
-    if (_.objLength(res.operations) !== 0) _.log(res, 'couch init')
+    if (_.objLength(res.operations) !== 0) log(res, 'couch init')
     await initHardCodedDocuments()
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err

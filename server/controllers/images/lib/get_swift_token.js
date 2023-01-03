@@ -1,10 +1,10 @@
-import CONFIG from 'config'
 // Identity: v3
 // Swift: v2
-import _ from '#builders/utils'
+import CONFIG from 'config'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { tenMinutes } from '#lib/time'
+import { logError } from '#lib/utils/logs'
 
 let lastToken
 let lastTokenExpirationTime = 0
@@ -46,7 +46,7 @@ export default async () => {
     err.serviceStatusCode = err.statusCode
     // Override status code to fit the status that should be return to users
     err.statusCode = 500
-    _.error(err, 'getToken')
+    logError(err, 'getToken')
     throw err
   })
 }

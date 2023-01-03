@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import { md5 } from '#lib/crypto'
+import { info } from '#lib/utils/logs'
 
 export default data => {
   const fingerPrint = getFingerPrint(data)
@@ -17,7 +18,7 @@ const updateOnlineUsers = () => {
   const report = `logged in ${loggedUsers} / total ${length}`
 
   // Only log the amount of users online when there is a change
-  if (report !== last) { _.info(report) }
+  if (report !== last) { info(report) }
   last = report
   onlineUsers = {}
 }

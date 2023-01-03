@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { warn } from '#lib/utils/logs'
 
 let assert_
 const importCircularDependencies = async () => {
@@ -51,7 +51,7 @@ export const responses_ = {
   addWarning: (res, message) => {
     assert_.object(res)
     assert_.string(message)
-    _.warn(message)
+    warn(message)
     res.warnings = res.warnings || []
     res.warnings.push(message)
   },

@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { responses_ } from '#lib/responses'
+import { log, info } from '#lib/utils/logs'
 
 export default {
   post: async (req, res) => {
@@ -29,10 +30,10 @@ export default {
     const automaticReport = uris != null
 
     if (!automaticReport || isNewAutomaticReport(subject)) {
-      _.log({ subject, message, uris, unknownUser, context }, 'sending feedback')
+      log({ subject, message, uris, unknownUser, context }, 'sending feedback')
       await emit('received:feedback', subject, message, user, unknownUser, uris, context)
     } else {
-      _.info(subject, 'not re-sending automatic report')
+      info(subject, 'not re-sending automatic report')
     }
 
     responses_.ok(res, 201)

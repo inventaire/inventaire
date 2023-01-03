@@ -3,6 +3,7 @@ import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entiti
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
 import { error_ } from '#lib/error/error'
+import { warn } from '#lib/utils/logs'
 import { recoverPlaceholder } from './placeholders.js'
 import { revertFromPatchDoc } from './revert_edit.js'
 
@@ -65,7 +66,7 @@ const revertMergePatch = async (userId, fromUri, toUri) => {
   if (mergePatch == null) {
     // This happens when the merged entity didn't bring any label or claim
     // value that the merge target hadn't already
-    _.warn({ fromUri, toUri }, 'no merge patch found')
+    warn({ fromUri, toUri }, 'no merge patch found')
     return
   }
 

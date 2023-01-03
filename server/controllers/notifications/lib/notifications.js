@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 import Notification from '#models/notification'
 
 const db = dbFactory('notifications')
@@ -15,14 +15,14 @@ const notifications_ = {
       include_docs: true,
       descending: true,
     })
-    .catch(_.ErrorRethrow('byUserId'))
+    .catch(LogErrorAndRethrow('byUserId'))
   },
 
   // Make notifications accessible by the subjects they involve:
   // user, group, item etc
   bySubject: subjectId => {
     return db.viewByKey('bySubject', subjectId)
-    .catch(_.ErrorRethrow('bySubject'))
+    .catch(LogErrorAndRethrow('bySubject'))
   },
 
   add: (user, type, data) => {

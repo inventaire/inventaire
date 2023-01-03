@@ -1,8 +1,7 @@
 // A server-wide event bus
-
 import { EventEmitter } from 'node:events'
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { warn, logError } from '#lib/utils/logs'
 
 export const radio = new EventEmitter()
 
@@ -21,7 +20,7 @@ if (waitForListeners) {
   emit = async (eventName, ...args) => {
     const listeners = radio.listeners(eventName)
     if (listeners.length === 0) {
-      _.warn('no event listner found: ' + JSON.stringify({ eventName, args }))
+      warn('no event listner found: ' + JSON.stringify({ eventName, args }))
     } else {
       await Promise.all(listeners.map(triggerAndWait(eventName, args)))
     }
@@ -34,6 +33,6 @@ const triggerAndWait = (eventName, args) => async listener => {
   try {
     await listener(...args)
   } catch (err) {
-    _.error(err, `${eventName} event listener error`)
+    logError(err, `${eventName} event listener error`)
   }
 }

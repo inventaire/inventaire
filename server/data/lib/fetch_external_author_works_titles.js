@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
 import { cache_ } from '#lib/cache'
 import { requests_ } from '#lib/requests'
 import { oneWeek } from '#lib/time'
+import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 
 export default (name, endpoint, getQuery, requestOptions) => async id => {
@@ -12,7 +12,7 @@ export default (name, endpoint, getQuery, requestOptions) => async id => {
       ttl: oneWeek,
     })
   } catch (err) {
-    _.error(err, `${name} error fetching ${id}`)
+    logError(err, `${name} error fetching ${id}`)
     return []
   }
 }

@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 // Doc: http://developer.piwik.org/api-reference/tracking-api
-import _ from '#builders/utils'
+import CONFIG from 'config'
+import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import { requests_ } from './requests.js'
 
@@ -39,7 +39,7 @@ export const track = (req = {}, actionArray) => {
   }
 
   requests_.get(buildUrl(endpoint, data), { parseJson: false })
-  .catch(_.Error('track error'))
+  .catch(LogError('track error'))
 
   // Do not return the promise as a failing track request
   // should not make the rest of operations fail

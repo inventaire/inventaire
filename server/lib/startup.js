@@ -1,17 +1,16 @@
 import CONFIG from 'config'
 import { red } from 'tiny-chalk'
-import _ from '#builders/utils'
 import { initEmailServices } from '#lib/emails/mailer'
-import { logErrorsCount } from '#lib/utils/logs'
+import { log, logErrorsCount } from '#lib/utils/logs'
 
 export function beforeStartup () {
   initUncaughtExceptionCatcher()
 
   logErrorsCount()
-  _.log(`pid: ${process.pid}`)
-  _.log(`env: ${CONFIG.env}`)
-  _.log(`local origin: ${CONFIG.getLocalOrigin()}`)
-  _.log(`public origin: ${CONFIG.getPublicOrigin()}`)
+  log(`pid: ${process.pid}`)
+  log(`env: ${CONFIG.env}`)
+  log(`local origin: ${CONFIG.getLocalOrigin()}`)
+  log(`public origin: ${CONFIG.getPublicOrigin()}`)
 }
 
 const initUncaughtExceptionCatcher = () => {

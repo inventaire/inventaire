@@ -1,9 +1,9 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { transactionUpdate } from '#lib/emails/debounce_emails'
 import { initDebouncedEmailsCrawler } from '#lib/emails/debounced_emails_crawler'
 import sendEmail from '#lib/emails/send_email'
 import { radio } from '#lib/radio'
+import { warn, info } from '#lib/utils/logs'
 import activitySummary from './activity_summary/activity_summary.js'
 
 const { initDelay, disabled } = CONFIG.mailer
@@ -15,9 +15,9 @@ export function initEmailServices () {
 
 const initMailer = () => {
   if (disabled) {
-    _.warn('mailer disabled')
+    warn('mailer disabled')
   } else {
-    _.info('mailer enabled')
+    info('mailer enabled')
     // Loading mailer dependencies slightly later
     // due to its lower priority at startup
     setTimeout(initMailerEventListeners, initDelay)
@@ -44,14 +44,14 @@ const initMailerEventListeners = () => {
   radio.on('transaction:request', transactionUpdate)
   radio.on('transaction:update', transactionUpdate)
   radio.on('transaction:message', transactionUpdate)
-  _.info('mailer events listeners ready!')
+  info('mailer events listeners ready!')
 }
 
 const initActivitySummary = () => {
   if (CONFIG.activitySummary.disabled) {
-    _.warn('activity summary disabled')
+    warn('activity summary disabled')
   } else {
-    _.info('activity summary enabled')
+    info('activity summary enabled')
     setTimeout(activitySummary, initDelay)
   }
 }

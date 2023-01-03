@@ -3,11 +3,12 @@ import onlineReport from '#controllers/reports/online_report'
 import ActionsControllers from '#lib/actions_controllers'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
+import { logError } from '#lib/utils/logs'
 
 const cspReport = (req, res) => {
   const report = req.body['csp-report'] || req.body
   const err = buildError('csp report', 'csp', report, req)
-  _.error(err, 'csp report')
+  logError(err, 'csp report')
   responses_.ok(res)
 }
 
@@ -21,7 +22,7 @@ const errorReport = (req, res) => {
   const message = errData.message || 'client error'
 
   const err = buildError(message, 'client error report', errData, req)
-  _.error(err, 'client error report')
+  logError(err, 'client error report')
   responses_.ok(res)
 }
 
@@ -43,7 +44,7 @@ const getErrStack = err => {
   let { message, stack } = err
   stack = err.stack || JSON.stringify(err, null, 2)
   // Adding the message at the top of the stack trace
-  // as expected by _.error that will log only the stack trace, assuming it
+  // as expected by logError that will log only the stack trace, assuming it
   // contains the error message too
   if (_.isNonEmptyString(message) && (stack.search(message) === -1)) {
     stack = `${message}\n${stack}`

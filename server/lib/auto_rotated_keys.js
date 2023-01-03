@@ -11,11 +11,11 @@ import { readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import CONFIG from 'config'
 import { invert } from 'lodash-es'
-import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomBytes } from '#lib/crypto'
 import { error_ } from '#lib/error/error'
 import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
+import { warn, info, LogError } from '#lib/utils/logs'
 
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 // If a session is started at the end-of-life of a key
@@ -57,7 +57,7 @@ const getKeysStatus = () => {
 }
 
 const updateKeysFromFile = () => {
-  _.info('update keys from file')
+  info('update keys from file')
   try {
     getKeysFromFileSync().forEach(updateKey)
     cleanupKeysInMemory()
@@ -80,7 +80,7 @@ const updateKey = ({ timestamp, key }) => {
 }
 
 const generateNewKey = () => {
-  _.info('generating new key')
+  info('generating new key')
   const newKey = getRandomBytes(64, 'base64')
   keys.unshift(newKey)
   data[Date.now()] = newKey
@@ -99,7 +99,7 @@ const cleanupKeysInMemory = () => {
 }
 
 const saveKeysToDisk = () => {
-  _.info('saving keys')
+  info('saving keys')
   const file = Object.keys(data)
     .sort(newestFirst)
     .slice(0, 2)
@@ -107,8 +107,8 @@ const saveKeysToDisk = () => {
     .join('\n')
 
   writeFile(keysFilePath, file, { mode: 0o600 })
-  .then(() => _.info('updated keys saved'))
-  .catch(_.Error('failed to save keys'))
+  .then(() => info('updated keys saved'))
+  .catch(LogError('failed to save keys'))
 }
 
 const newestFirst = (a, b) => b - a
@@ -120,13 +120,13 @@ const newestFirstFromKeys = (keyA, keyB) => {
 const checkState = () => {
   const role = leadingServer ? 'leading' : 'following'
   if (leadingServer) {
-    _.info(`Checking keys state as ${role} instance`)
+    info(`Checking keys state as ${role} instance`)
     const timeUntilEndOfNewestKeyHalfLife = getTimeUntilEndOfNewestKeyHalfLife()
     if (timeUntilEndOfNewestKeyHalfLife != null) {
       if (timeUntilEndOfNewestKeyHalfLife < 0) {
         generateNewKey()
       } else {
-        _.info(`${keys.length} keys alive - next key update in ${msToHumanTime(timeUntilEndOfNewestKeyHalfLife)}`)
+        info(`${keys.length} keys alive - next key update in ${msToHumanTime(timeUntilEndOfNewestKeyHalfLife)}`)
         // The timeout needs to fit in a 32-bit signed integer to not trigger a TimeoutOverflowWarning
         // thus the 10 days cap
         const nextCheck = Math.min(oneDay * 10, timeUntilEndOfNewestKeyHalfLife + 100)
@@ -136,7 +136,7 @@ const checkState = () => {
       generateNewKey()
     }
   } else {
-    _.warn(`Checking keys state as ${role} instance:\nexpects another instance to do the key auto-rotation`)
+    warn(`Checking keys state as ${role} instance:\nexpects another instance to do the key auto-rotation`)
     updateKeysFromFile()
     // When not the leading server, check at least every day
     // as keys might have been invalidated

@@ -1,15 +1,15 @@
-import _ from '#builders/utils'
+import { log } from '#lib/utils/logs'
 
 export default {
   all: (req, res, next) => {
-    // _.log(req.headers, 'headers')
+    // log(req.headers, 'headers')
 
     // useful to see text/plain bodys
     if (isPlainText(req)) {
       rawBody(req, res, next)
     } else {
-      // _.log(req.query, 'query')
-      // _.log(req.body, 'body')
+      // log(req.query, 'query')
+      // log(req.body, 'body')
       res.json({ ok: true, method: req.method, body: req.body })
     }
   },
@@ -24,7 +24,7 @@ const rawBody = (req, res, next) => {
   let body = ''
   req.on('data', chunk => { body += chunk })
   req.on('end', () => {
-    _.log(body, 'body')
+    log(body, 'body')
     res.send(body)
   })
 }

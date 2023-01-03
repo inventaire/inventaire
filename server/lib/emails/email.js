@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import { kmBetween } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
@@ -110,7 +111,7 @@ export default {
         checkUserNotificationsSettings(userToNotify, emailKey)
       } catch (err) {
         if (err.type === 'email_disabled') {
-          _.warn(`user ${userId} disabled ${emailKey} notifications: skip`)
+          warn(`user ${userId} disabled ${emailKey} notifications: skip`)
           return
         } else {
           throw err

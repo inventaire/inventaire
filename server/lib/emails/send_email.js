@@ -3,6 +3,7 @@ import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
 import { sendMail } from '#lib/emails/transporter'
 import { Wait } from '#lib/promises'
+import { info, LogError } from '#lib/utils/logs'
 import email_ from './email.js'
 import helpers_ from './helpers.js'
 
@@ -11,14 +12,14 @@ export default {
     userData = serializeUserData(userData)
     const email = email_.validationEmail(userData, token)
     return sendMail(email)
-    .catch(_.Error('validationEmail'))
+    .catch(LogError('validationEmail'))
   },
 
   resetPassword: (userData, token) => {
     userData = serializeUserData(userData)
     const email = email_.resetPassword(userData, token)
     return sendMail(email)
-    .catch(_.Error('resetPassword'))
+    .catch(LogError('resetPassword'))
   },
 
   friendAcceptedRequest: (userToNotify, newFriend) => {
@@ -60,7 +61,7 @@ export default {
   feedback: (subject, message, user, unknownUser, uris, context) => {
     const email = email_.feedback(subject, message, user, unknownUser, uris, context)
     return sendMail(email)
-    .catch(_.Error('feedback'))
+    .catch(LogError('feedback'))
   },
 
   friendInvitations: (userData, emailAddresses, message) => {
@@ -82,11 +83,11 @@ const sendSequentially = (emails, label) => {
     const nextEmail = emails.pop()
     if (!nextEmail) return
 
-    _.info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
+    info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
 
     // const email = emailFactory(nextEmail)
     return sendMail(nextEmail)
-    .catch(_.Error(`${label} (address: ${nextEmail.to} err)`))
+    .catch(LogError(`${label} (address: ${nextEmail.to} err)`))
     // Wait to lower risk to trigger any API quota issue from the email service
     .then(Wait(500))
     // In any case, send the next
@@ -96,4 +97,4 @@ const sendSequentially = (emails, label) => {
   return sendNext()
 }
 
-const Err = (label, user1, user2) => _.Error(`${label} email fail for ${user1} / ${user2}`)
+const Err = (label, user1, user2) => LogError(`${label} email fail for ${user1} / ${user2}`)

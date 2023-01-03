@@ -1,5 +1,6 @@
 import { setDocsDeletedTrue } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 
 export default (db, _) => {
   const actionAndReturn = (verb, doc) => {
@@ -11,7 +12,7 @@ export default (db, _) => {
   const bulkDelete = async docs => {
     assert_.objects(docs)
     if (docs.length === 0) return []
-    _.warn(docs, `${db.dbName} bulkDelete`)
+    warn(docs, `${db.dbName} bulkDelete`)
     return db.bulk(setDocsDeletedTrue(docs))
   }
 

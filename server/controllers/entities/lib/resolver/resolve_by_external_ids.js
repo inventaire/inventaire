@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import { isWdEntityUri } from '#lib/boolean_validations'
+import { warn } from '#lib/utils/logs'
 import getEntityByUri from '../get_entity_by_uri.js'
 import resolveExternalIds from './resolve_external_ids.js'
 
@@ -18,7 +19,7 @@ const resolveSeed = async (seed, expectedEntityType) => {
     // There is no test for this, as this condition should not be possible to create,
     // other than by setting an external id already set on existing local entity on a Wikidata entity,
     // or alternatively, by bypassing local checks and writting directly in the database
-    _.warn({ uris, claims: seed.claims }, 'resolveExternalIds found too many uris, those are likely duplicates')
+    warn({ uris, claims: seed.claims }, 'resolveExternalIds found too many uris, those are likely duplicates')
     const wdUris = uris.filter(isWdEntityUri)
     // Use a Wikidata uri in priority, but if there are none,
     // use any of the remaining uris, rather than not resolving on any entity,

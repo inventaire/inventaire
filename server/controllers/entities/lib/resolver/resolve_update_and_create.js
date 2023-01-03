@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import { log } from '#lib/utils/logs'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
 import resolve from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
@@ -25,7 +26,7 @@ export async function resolveUpdateAndCreate (params) {
     const nextEntry = entries.shift()
     if (nextEntry == null) return { resolvedEntries, errors }
 
-    _.log(nextEntry, 'next entry')
+    log(nextEntry, 'next entry')
 
     return resolve(nextEntry)
     .then(updateResolvedEntry)

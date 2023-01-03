@@ -6,6 +6,7 @@ import { cacheDb } from '#db/level/get_db'
 import { catchNotFound, error_ } from '#lib/error/error'
 import { oneMonth } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn, logError, LogError } from '#lib/utils/logs'
 
 const { ttlCheckFrequency } = CONFIG.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
@@ -44,8 +45,8 @@ export const cache_ = {
     } catch (err) {
       const label = `final cache_ err: ${key}`
       // not logging the stack trace in case of 404 and alikes
-      if (err.statusCode?.toString().startsWith('4')) _.warn(err, label)
-      else _.error(err, label)
+      if (err.statusCode?.toString().startsWith('4')) warn(err, label)
+      else logError(err, label)
       throw err
     }
   },
@@ -69,18 +70,18 @@ const checkCache = async key => {
 
 const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl) => {
   if (cachedValue != null) {
-    // _.info(`from cache: ${key}`)
+    // info(`from cache: ${key}`)
     return JSON.parse(cachedValue)
   }
 
   if (dry) {
-    // _.info(`empty cache on dry get: ${key}`)
+    // info(`empty cache on dry get: ${key}`)
     return dryFallbackValue
   }
 
   if (dryAndCache) {
-    // _.info(`returning and populating cache: ${key}`)
-    populate(key, fn, ttl).catch(_.Error(`dryAndCache err: ${key}`))
+    // info(`returning and populating cache: ${key}`)
+    populate(key, fn, ttl).catch(LogError(`dryAndCache err: ${key}`))
     return dryFallbackValue
   }
 
@@ -89,7 +90,7 @@ const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallback
 
 const populate = async (key, fn, ttl) => {
   const res = await fn()
-  // _.info(`from remote data source: ${key}`)
+  // info(`from remote data source: ${key}`)
   await putValue(key, res, { ttl, waitWrite: false })
   return res
 }
@@ -111,6 +112,6 @@ const putValue = async (key, value, { ttl, waitWrite = true }) => {
     // Solutions:
     //   - restart process
     //   - increase leveldown `maxOpenFiles` option (see https://github.com/Level/leveldown#options)
-    .catch(_.Error(`cache populate err: ${key}`))
+    .catch(LogError(`cache populate err: ${key}`))
   }
 }

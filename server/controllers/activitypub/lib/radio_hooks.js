@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { getUserById } from '#controllers/user/lib/user'
 import { radio } from '#lib/radio'
+import { LogError } from '#lib/utils/logs'
 import { byActorName, createActivity } from './activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
 import formatShelfItemsActivities from './format_shelf_items_activities.js'
@@ -27,7 +28,7 @@ export function initRadioHooks () {
 
 const createDebouncedActivity = ({ userId, shelfId }) => async () => {
   _createDebouncedActivity({ userId, shelfId })
-  .catch(_.Error('createDebouncedActivity error'))
+  .catch(LogError('createDebouncedActivity error'))
 }
 
 const _createDebouncedActivity = async ({ userId, shelfId }) => {

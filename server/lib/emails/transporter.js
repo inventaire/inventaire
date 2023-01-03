@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import { createTransport, getTestMessageUrl } from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
-import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
+import { warn, success, logError } from '#lib/utils/logs'
 import handlebarsHelpers from './handlebars_helpers.js'
 
 const viewsPath = absolutePath('lib', 'emails/views')
@@ -32,9 +32,9 @@ export async function sendMail (email) {
   try {
     const info = await transporter.sendMail(email)
     const inspectUrl = debugMode ? ` inspect="${getTestMessageUrl(info)}"` : ''
-    _.success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
+    success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
   } catch (err) {
-    _.error(err, `email error (template="${template}" subject="${subject}")`)
-    return _.warn(email, 'associated email')
+    logError(err, `email error (template="${template}" subject="${subject}")`)
+    return warn(email, 'associated email')
   }
 }

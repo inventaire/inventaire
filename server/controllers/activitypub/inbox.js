@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { warn } from '#lib/utils/logs'
 import Follow from './follow.js'
 import { verifySignature } from './lib/security.js'
 import Undo from './undo.js'
@@ -55,7 +55,7 @@ const controller = async (params, req) => {
     const message = 'unsupported activity type'
     const err = error_.new(message, 400, params)
     err.mute = true
-    _.warn(`${message}: ${type}`)
+    warn(`${message}: ${type}`)
     throw err
   }
 }

@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import { getUserByEmail, getUserByUsername } from '#controllers/user/lib/user'
 import { error_ } from '#lib/error/error'
+import { success } from '#lib/utils/logs'
 import User from '#models/user'
 import isReservedWord from './is_reserved_word.js'
 
@@ -43,6 +43,6 @@ const checkAvailability = (value, label, docs) => {
     throw error_.new(`this ${label} is already used`, 400, value)
   }
 
-  _.success(value, 'available')
+  success(value, 'available')
   return value
 }

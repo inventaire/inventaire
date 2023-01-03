@@ -1,3 +1,4 @@
+import { warn, logError } from '#lib/utils/logs'
 import { typeOf } from '#lib/utils/types'
 
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
@@ -12,7 +13,7 @@ setImmediate(importCircularDependencies)
 export default (req, res, err, status) => {
   // only accepts Error instances
   if (!(err instanceof Error)) {
-    _.error(err, 'bad error object')
+    logError(err, 'bad error object')
     res.status(500).send(err)
     return
   }
@@ -30,9 +31,9 @@ export default (req, res, err, status) => {
 
   if (err.mute !== true) {
     if (statusCode.toString().startsWith('4')) {
-      _.warn(err, statusCode)
+      warn(err, statusCode)
     } else {
-      _.error(err, err.message)
+      logError(err, err.message)
     }
   }
 

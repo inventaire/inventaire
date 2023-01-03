@@ -3,6 +3,7 @@ import getThumbData from '#data/commons/thumb'
 import getOpenLibraryCover from '#data/openlibrary/cover'
 import getEnwikiImage from '#data/wikipedia/image'
 import { objectPromise } from '#lib/promises'
+import { logError } from '#lib/utils/logs'
 import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
 export default async entity => {
@@ -41,7 +42,7 @@ const getSourcePromise = (sourceName, fn, ...args) => {
     err.context = err.context || {}
     err.context.args = args
     // Do not rethrow the error to let a chance to other sources
-    _.error(err, `${sourceName} image not found`)
+    logError(err, `${sourceName} image not found`)
   })
 }
 

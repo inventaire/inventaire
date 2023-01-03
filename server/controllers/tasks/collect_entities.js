@@ -5,6 +5,7 @@ import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import dbFactory from '#db/couchdb/base'
 import jobs_ from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import { success, info, logError, LogError } from '#lib/utils/logs'
 import checkEntity from './lib/check_entity.js'
 
 const { nice } = CONFIG
@@ -18,7 +19,7 @@ const sanitization = {
 
 const controller = async ({ refresh }) => {
   addEntitiesToQueueSequentially(refresh)
-  .catch(_.Error('addEntitiesToQueueSequentially err'))
+  .catch(LogError('addEntitiesToQueueSequentially err'))
 
   // Not waiting for the queue to be loaded as that will take a while
   // and no useful data has to be returned
@@ -29,11 +30,11 @@ const addEntitiesToQueueSequentially = refresh => {
   const pagination = { offset: 0, total: 0 }
 
   const addNextBatch = async () => {
-    _.info(pagination, 'get entities next batch')
+    info(pagination, 'get entities next batch')
     const uris = await getNextInvHumanUrisBatch(pagination)
     pagination.total += uris.length
     if (uris.length === 0) {
-      _.success(pagination.total, 'done. total entities queued:')
+      success(pagination.total, 'done. total entities queued:')
     } else {
       const filteredUris = await getFilteredUris(uris, refresh)
       await invTasksEntitiesQueue.pushBatch(filteredUris)
@@ -73,7 +74,7 @@ const deduplicateWorker = async (jobId, uri) => {
     // Prevent crashing the queue for non-critical errors
     // Example of 400 error: the entity has already been redirected
     if (err.statusCode === 400) return
-    _.error(err, 'deduplicateWorker err')
+    logError(err, 'deduplicateWorker err')
     throw err
   }
 }

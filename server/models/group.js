@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
 import groupAttributes from './attributes/group.js'
 import groupValidations from './validations/group.js'
 
@@ -13,7 +14,7 @@ const validations = Group.validations = groupValidations
 const attributes = Group.attributes = groupAttributes
 
 Group.create = options => {
-  _.log(options, 'group create')
+  log(options, 'group create')
   const { name, description, searchable, position, creatorId, open } = options
   validations.pass('name', name)
   validations.pass('description', description)

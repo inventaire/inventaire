@@ -14,6 +14,7 @@ import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titl
 import getWikipediaArticle from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
+import { logError } from '#lib/utils/logs'
 import getEntityByUri from './get_entity_by_uri.js'
 import { normalizeTerm } from './terms_normalization.js'
 
@@ -47,7 +48,7 @@ export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
     ])
     return _.compact(occurrences.flat())
   } catch (err) {
-    _.error(err, 'has works labels occurrence err')
+    logError(err, 'has works labels occurrence err')
     return []
   }
 }

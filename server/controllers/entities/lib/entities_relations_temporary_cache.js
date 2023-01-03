@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import { info } from '#lib/utils/logs'
 
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
@@ -87,7 +88,7 @@ const checkExpiredCache = async () => {
     batch.push({ type: 'del', key: expiredTimeKey })
   }
   await emit('invalidate:wikidata:entities:relations', invalidatedQueriesBatch)
-  _.info(expiredTimeKeys, 'expired entities relations cache')
+  info(expiredTimeKeys, 'expired entities relations cache')
   await db.batch(batch)
 }
 

@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
 import { getUserByUsername } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
+import { info, LogError } from '#lib/utils/logs'
 import User from '#models/user'
 
 const db = dbFactory('users')
@@ -13,10 +13,10 @@ export default {
 
   // Only used by tests so far
   deleteByUsername: username => {
-    _.info(username, 'deleteUserbyUsername')
+    info(username, 'deleteUserbyUsername')
     return getUserByUsername(username)
     .then(firstDoc)
     .then(deleteUser)
-    .catch(_.Error('deleteUserbyUsername err'))
+    .catch(LogError('deleteUserbyUsername err'))
   },
 }

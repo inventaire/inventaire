@@ -2,6 +2,7 @@ import bodyParser from 'body-parser'
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
 
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
@@ -54,7 +55,7 @@ export default {
 
     if (logIncomingRequestsBody) {
       const userAgent = req.headers['user-agent']
-      _.log(req.body, `${method}:${url} body [${userAgent}]`)
+      log(req.body, `${method}:${url} body [${userAgent}]`)
     }
 
     next()

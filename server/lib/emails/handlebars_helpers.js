@@ -1,11 +1,12 @@
 import _ from '#builders/utils'
 import { imgUrlBuilder } from '#lib/emails/app_api'
+import { log } from '#lib/utils/logs'
 import i18n from './i18n/i18n.js'
 
 export default Object.assign({}, i18n, {
   // Prevent passing more than 2 arguments
   debug: (obj, label) => {
-    _.log(obj, label)
+    log(obj, label)
     return JSON.stringify(obj, null, 2)
   },
 

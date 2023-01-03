@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { warn } from '#lib/utils/logs'
 
 const base = () => ({
   author: {},
@@ -16,7 +16,7 @@ const addToTree = (tree, entity) => {
   const { uri, claims } = entity
 
   if (claims == null) {
-    _.warn(entity, 'entity can not be added to tree')
+    warn(entity, 'entity can not be added to tree')
     return tree
   }
 

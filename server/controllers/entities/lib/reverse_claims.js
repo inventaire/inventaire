@@ -7,6 +7,7 @@ import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
@@ -88,7 +89,7 @@ const generalWikidataReverseClaims = (property, value, refresh, dry) => {
 const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
-  _.log([ property, value ], 'reverse claim')
+  log([ property, value ], 'reverse claim')
   const url = getReverseClaims(wdProp, value, { caseInsensitive })
   const results = await requests_.get(url)
   return simplifySparqlResults(results)

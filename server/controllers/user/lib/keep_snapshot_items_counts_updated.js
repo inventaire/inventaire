@@ -5,6 +5,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { radio } from '#lib/radio'
+import { LogError } from '#lib/utils/logs'
 import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
 const { itemsCountDebounceTime: delay } = CONFIG
@@ -17,7 +18,7 @@ export function keepSnapshotItemsCountsUpdated () {
     // to prevent blocking memory undefinitely
     delete debouncedUpdaters[userId]
     return updateSnapshotItemsCounts(userId)
-    .catch(_.Error('user itemsCountsUpdater err'))
+    .catch(LogError('user itemsCountsUpdater err'))
   }
 
   radio.on('user:inventory:update', userId => {

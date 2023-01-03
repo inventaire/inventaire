@@ -1,8 +1,8 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import mappings from '#db/elasticsearch/mappings/mappings'
 import settings from '#db/elasticsearch/settings/settings'
 import { requests_ } from '#lib/requests'
+import { warn, success } from '#lib/utils/logs'
 
 const { origin } = CONFIG.elasticsearch
 
@@ -14,7 +14,7 @@ export default async index => {
   if (indexMappings) body.mappings = indexMappings
   try {
     const res = await requests_.put(url, { body })
-    _.success(res, `elasticsearch index created: ${url}`)
+    success(res, `elasticsearch index created: ${url}`)
   } catch (err) {
     ignoreAlreadyExisting(url, err)
   }
@@ -22,7 +22,7 @@ export default async index => {
 
 const ignoreAlreadyExisting = (url, err) => {
   if (err.body && err.body.error.type === 'resource_already_exists_exception') {
-    return _.warn(url, 'database already exist')
+    return warn(url, 'database already exist')
   } else {
     throw err
   }

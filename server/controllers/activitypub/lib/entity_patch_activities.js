@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { logError } from '#lib/utils/logs'
 import formatEntityPatchesActivities from './format_entity_patches_activities.js'
 import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
@@ -11,7 +11,7 @@ export async function deliverEntityActivitiesFromPatch (patch) {
       return postActivityToActorFollowersInboxes({ activity, actorName })
     }))
   } catch (err) {
-    _.error(err, 'create_activities_on_entities_updates err')
+    logError(err, 'create_activities_on_entities_updates err')
   }
 }
 

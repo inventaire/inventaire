@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
 // TODO: accept ISBN URIs
 import inv from './lib/update_inv_claim.js'
 import wd from './lib/update_wd_claim.js'
@@ -15,7 +16,7 @@ const sanitization = {
 const controller = async (params, req) => {
   let { id, uri, property, oldValue, newValue } = params
   let prefix
-  _.log(params, 'update claim input')
+  log(params, 'update claim input')
   if (_.isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
   if (uri == null) throw error_.newMissingBody('uri')

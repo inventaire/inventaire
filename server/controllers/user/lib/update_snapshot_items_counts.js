@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import { getItemsByOwner } from '#controllers/items/lib/items'
 import dbFactory from '#db/couchdb/base'
+import { info, LogError } from '#lib/utils/logs'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import User from '#models/user'
 
@@ -10,8 +10,8 @@ export default userId => {
   return getItemsByOwner(userId)
   .then(getItemsCounts)
   .then(itemsCounts => db.update(userId, User.updateItemsCounts(itemsCounts)))
-  .then(() => _.info(`${userId} items counts updated`))
-  .catch(_.Error('user updateSnapshotItemsCounts err'))
+  .then(() => info(`${userId} items counts updated`))
+  .catch(LogError('user updateSnapshotItemsCounts err'))
 }
 
 const getItemsCounts = items => {

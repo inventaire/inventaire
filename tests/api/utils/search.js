@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import { publicReq, customAuthReq } from '../utils/utils.js'
 import { rawRequest } from './request.js'
@@ -61,7 +62,7 @@ export async function waitForIndexation (indexBaseName, id) {
     // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
     await wait(elasticsearchUpdateDelay)
   } else {
-    _.warn(`waiting for ${index}/${id} indexation`)
+    warn(`waiting for ${index}/${id} indexation`)
     await wait(200)
     return waitForIndexation(indexBaseName, id)
   }
@@ -74,7 +75,7 @@ export async function waitForDeindexation (indexBaseName, id) {
   assert_.string(id)
   const { found } = await getIndexedDoc(index, id, { retry: false })
   if (found) {
-    _.warn(`waiting for ${index}/${id} deindexation`)
+    warn(`waiting for ${index}/${id} deindexation`)
     await wait(500)
     return waitForDeindexation(indexBaseName, id)
   } else {
@@ -114,10 +115,10 @@ export async function deindex (index, id) {
   const url = `${elasticOrigin}/${index}/_doc/${id}`
   try {
     await rawRequest('delete', url)
-    _.success(url, 'deindexed')
+    success(url, 'deindexed')
   } catch (err) {
     if (err.statusCode === 404) {
-      _.warn(url, 'doc not found: no deindexation required')
+      warn(url, 'doc not found: no deindexation required')
     } else {
       throw err
     }
@@ -129,7 +130,7 @@ export async function indexPlaceholder (index, id) {
   assert_.string(id)
   const url = `${elasticOrigin}/${index}/_doc/${id}`
   await rawRequest('put', url, { body: { testPlaceholder: true } })
-  _.success(url, 'placeholder added')
+  success(url, 'placeholder added')
 }
 
 export const firstNWords = (str, num) => str.split(' ').slice(0, num).join(' ')

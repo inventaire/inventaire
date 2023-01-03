@@ -1,14 +1,14 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import localClient from '#controllers/images/lib/local_client'
 import swiftClient from '#controllers/images/lib/swift_client'
 import images_ from '#lib/images'
 import { emit } from '#lib/radio'
+import { log, info } from '#lib/utils/logs'
 
 // 'swift' or 'local'
 const { mode } = CONFIG.mediaStorage
 
-_.info(`media storage: ${mode}`)
+info(`media storage: ${mode}`)
 
 let client
 if (mode === 'swift') {
@@ -24,7 +24,7 @@ const transformAndPutImage = (container, fnName) => async fileData => {
   await images_[fnName](path)
   const filename = await images_.getHashFilename(path)
   const url = await putImage(container, path, filename)
-  _.log(url, 'new image')
+  log(url, 'new image')
   await emit('image:needs:check', { url, context: 'upload' })
   return { id, url }
 }

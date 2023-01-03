@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { log, warn } from '#lib/utils/logs'
 
 export const activeI18nLangs = 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
 
@@ -16,12 +16,12 @@ export const logBulkRes = (res, label) => {
         if (opRes.status === 404) {
           if (operation === 'delete') {
             // Known case: happens when an deindexation is requested before the indexation was done
-            _.warn(opRes._id, "can't deindex: doc not found")
+            warn(opRes._id, "can't deindex: doc not found")
           } else {
-            _.warn(opRes._id, `${label} not found`)
+            warn(opRes._id, `${label} not found`)
           }
         } else {
-          _.warn(item, `${label} failed`)
+          warn(item, `${label} failed`)
         }
         globalStatus[operation].error++
       } else {
@@ -31,7 +31,7 @@ export const logBulkRes = (res, label) => {
   })
 
   const color = getLoggerColor(globalStatus)
-  _.log(globalStatus, label, color)
+  log(globalStatus, label, color)
 }
 
 const getLoggerColor = globalStatus => {

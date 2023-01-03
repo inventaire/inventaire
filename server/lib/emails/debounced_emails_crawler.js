@@ -1,7 +1,7 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { expired } from '#lib/time'
+import { LogError } from '#lib/utils/logs'
 import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
 const db = dbFactory('waiting', 'utf8')
@@ -16,7 +16,7 @@ export function initDebouncedEmailsCrawler () {
 const crawl = () => {
   return db.createReadStream()
   .on('data', onData)
-  .on('error', _.Error('crawl err'))
+  .on('error', LogError('crawl err'))
 }
 
 const onData = data => {
@@ -27,6 +27,6 @@ const onData = data => {
   if (expired(time, debounceDelay)) {
     return debouncedEmailSenderByName[emailName](id)
     .then(db.del.bind(db, key))
-    .catch(_.Error(`debouncedEmailSenderByName (${emailName}) and cleanup err`))
+    .catch(LogError(`debouncedEmailSenderByName (${emailName}) and cleanup err`))
   }
 }

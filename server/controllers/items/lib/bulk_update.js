@@ -1,8 +1,8 @@
 import { partition } from 'lodash-es'
-import _ from '#builders/utils'
 import { getItemsByIds, itemsBulkUpdate } from '#controllers/items/lib/items'
 import { validateShelves } from '#controllers/items/lib/validate_item_async'
 import { emit } from '#lib/radio'
+import { warn } from '#lib/utils/logs'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import Item from '#models/item'
 
@@ -19,7 +19,7 @@ const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, 
     if (attempt > 10) throw err
     const { body } = err.context
     const [ failedUpdates, successfulUpdates ] = partition(body, hasError)
-    _.warn({ failedUpdates, successfulUpdates, attempt }, 'retrying bulk items update')
+    warn({ failedUpdates, successfulUpdates, attempt }, 'retrying bulk items update')
     return bulkItemsUpdate({
       reqUserId,
       ids: failedUpdates.map(getId),

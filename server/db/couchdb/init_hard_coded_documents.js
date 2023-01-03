@@ -1,6 +1,7 @@
 import _ from '#builders/utils'
 import usersDbFactory from '#db/couchdb/base'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { success } from '#lib/utils/logs'
 
 const users = Object.values(hardCodedUsers)
 
@@ -32,7 +33,7 @@ const updateDoc = async (db, doc) => {
     doc._rev = currentDoc._rev
     if (!_.isEqual(currentDoc, doc)) {
       const res = await db.put(doc)
-      _.success(res, `${docPath} updated`)
+      success(res, `${docPath} updated`)
     }
   } catch (err) {
     // If the doc is missing, create it

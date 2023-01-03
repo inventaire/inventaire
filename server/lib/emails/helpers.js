@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
 import { assert_ } from '#lib/utils/assert_types'
+import { LogError, warn } from '#lib/utils/logs'
 
 export const getParsedUsersIndexedByIds = (user1Id, user2Id) => {
   return getUsersByIds([ user1Id, user2Id ])
@@ -9,7 +10,7 @@ export const getParsedUsersIndexedByIds = (user1Id, user2Id) => {
     const [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
     return { user1, user2 }
   })
-  .catch(_.Error('getParsedUsersIndexedByIds err'))
+  .catch(LogError('getParsedUsersIndexedByIds err'))
 }
 
 const parseUsersData = (user1Id, user2Id, usersData) => {
@@ -36,6 +37,6 @@ export const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
 }
 
 export const catchDisabledEmails = err => {
-  if (err.type === 'email_disabled') _.warn(err.context, err.message)
+  if (err.type === 'email_disabled') warn(err.context, err.message)
   else throw err
 }

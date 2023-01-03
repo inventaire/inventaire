@@ -2,7 +2,8 @@ import fs from 'node:fs'
 import AbortController from 'abort-controller'
 import fetch from 'node-fetch'
 import { error_ } from '#lib/error/error'
-import _, { encodeURL } from '#lib/utils/base'
+import { encodeURL } from '#lib/utils/base'
+import { logError } from '#lib/utils/logs'
 import isValidImageContentType from './is_valid_image_content_type.js'
 
 const oneMB = Math.pow(1024, 2)
@@ -21,7 +22,7 @@ export default async (url, path) => {
     validateResponse(response, controller, url, path)
     return saveFile(response.body, path)
   } catch (err) {
-    _.error(err, 'download image private error')
+    logError(err, 'download image private error')
     throw error_.new('could not download image', 400, { url })
   }
 }

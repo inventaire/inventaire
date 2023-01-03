@@ -3,6 +3,7 @@ import { updateItems } from '#controllers/items/lib/items'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { track } from '#lib/track'
+import { log } from '#lib/utils/logs'
 import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 // This controller doesn't use sanitization
@@ -14,7 +15,7 @@ export default async (req, res) => {
   // Remove if passed accidentally as it is included in the server responses
   delete item.snapshot
 
-  _.log(item, 'item update')
+  log(item, 'item update')
 
   if (_id == null) throw error_.newMissingBody('_id')
   if (entity == null) throw error_.newMissingBody('entity')

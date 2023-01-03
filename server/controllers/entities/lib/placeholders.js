@@ -5,10 +5,10 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-import _ from '#builders/utils'
 import { putEntityUpdate } from '#controllers/entities/lib/entities'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
+import { warn } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
 const db = dbFactory('entities')
@@ -16,12 +16,12 @@ const db = dbFactory('entities')
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`
   return async (userId, entityId) => {
-    _.warn(entityId, `${modelFnName} entity`)
+    warn(entityId, `${modelFnName} entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
     const currentDoc = await db.get(entityId)
     if (actionName === 'remove' && currentDoc.type === 'removed:placeholder') {
-      _.warn(entityId, 'this entity is already a removed:placeholder: ignored')
+      warn(entityId, 'this entity is already a removed:placeholder: ignored')
       return
     }
     let updatedDoc
@@ -31,7 +31,7 @@ const PlaceholderHandler = actionName => {
       if (err.message === "can't turn a redirection into a removed placeholder") {
         // Ignore this error as the effects of those two states are close
         // (so much so that it might be worth just having redirections)
-        _.warn(currentDoc, err.message)
+        warn(currentDoc, err.message)
         return
       } else {
         throw err

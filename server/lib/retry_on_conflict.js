@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
+import { warn } from '#lib/utils/logs'
 
 export default params => {
   let { updateFn, maxAttempts } = params
@@ -14,7 +14,7 @@ export default params => {
       if (attemptsCount > 1) {
         // Avoid logging user document
         const contextArgs = args.filter(arg => arg != null && arg.type !== 'user')
-        _.warn({ updateFn, contextArgs }, 'retrying after conflict')
+        warn({ updateFn, contextArgs }, 'retrying after conflict')
       }
 
       attemptsCount += 1

@@ -1,14 +1,14 @@
-import _ from '#builders/utils'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { error_ } from '#lib/error/error'
+import { info } from '#lib/utils/logs'
 import getNewTasks from './get_new_tasks.js'
 import updateRelationScore from './relation_score.js'
 
 const supportedTypes = [ 'human' ]
 
 export default async uri => {
-  _.info(`check entity: ${uri}`)
+  info(`check entity: ${uri}`)
 
   if (uri.split(':')[0] !== 'inv') {
     throw error_.new('invalid uri domain', 400, { uri })

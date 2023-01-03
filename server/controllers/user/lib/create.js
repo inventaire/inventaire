@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
 import invitations_ from '#controllers/invitations/lib/invitations'
 import { checkUsernameAvailability } from '#controllers/user/lib/availability'
 import { sendValidationEmail } from '#controllers/user/lib/token'
 import dbFactory from '#db/couchdb/base'
+import { success, Log } from '#lib/utils/logs'
 import User from '#models/user'
 import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
 
@@ -13,7 +13,7 @@ export default async (username, email, creationStrategy, language, password) => 
 
   return checkUsernameAvailability(username)
   .then(invitations_.findOneByEmail.bind(null, email))
-  .then(_.Log('invitedDoc'))
+  .then(Log('invitedDoc'))
   .then(invitedDoc => {
     return User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
     .then(db.putAndReturn)
@@ -42,7 +42,7 @@ const postCreation = user => {
   .then(([ invitationRes, updatedUser ]) => {
     // don't log the user doc to avoid having password hash in logs
     // but still return the doc
-    _.success(updatedUser.username, 'user successfully created')
+    success(updatedUser.username, 'user successfully created')
     return updatedUser
   })
 }

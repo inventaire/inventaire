@@ -1,9 +1,9 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
+import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
 
 const host = CONFIG.getPublicOrigin()
@@ -13,10 +13,10 @@ const testServerAvailability = async () => {
 
   try {
     await requests_.get(`${host}/api/tests`, { timeout: 1000 })
-    _.success('tests server is ready')
+    success('tests server is ready')
   } catch (err) {
     if (err.code !== 'ECONNREFUSED' && err.name !== 'TimeoutError') throw err
-    _.log('waiting for tests server', null, 'grey')
+    log('waiting for tests server', null, 'grey')
     await wait(500)
     return testServerAvailability()
   }

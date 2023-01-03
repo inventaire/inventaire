@@ -1,10 +1,9 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 // to be used in development only
-
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import * as regex_ from '#lib/regex'
+import { logError } from '#lib/utils/logs'
 
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
@@ -44,7 +43,7 @@ export default {
 
     res.sendFile(filepath, options, err => {
       if (err != null) {
-        _.error(err, `failed to send ${filepath}`)
+        logError(err, `failed to send ${filepath}`)
         res.status(err.statusCode).json(err)
       }
     })

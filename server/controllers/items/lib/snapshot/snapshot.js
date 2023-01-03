@@ -15,11 +15,11 @@
 // without having to query from 3 to 10+ entities per item
 
 import pTimeout from 'p-timeout'
-import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { logError } from '#lib/utils/logs'
 import refreshSnapshot from './refresh_snapshot.js'
 
 const db = dbFactory('snapshot', 'json')
@@ -33,7 +33,7 @@ export async function addSnapshotToItem (item) {
   } catch (err) {
     err.context = err.context || {}
     err.context.item = item
-    _.error(err, 'addSnapshotToItem error')
+    logError(err, 'addSnapshotToItem error')
     item.snapshot = item.snapshot || {}
   }
 
@@ -49,7 +49,7 @@ const getSnapshot = (uri, preventLoop) => {
   // To be removed once this bug is long gone
   return pTimeout(db.get(uri), 50000)
   .catch(err => {
-    if (err.name === 'TimeoutError') _.error(err, `getSnapshot db.get(${uri}) TimeoutError`)
+    if (err.name === 'TimeoutError') logError(err, `getSnapshot db.get(${uri}) TimeoutError`)
     if (!(err.notFound || err.name === 'TimeoutError')) throw err
   })
   .then(snapshot => {
@@ -60,7 +60,7 @@ const getSnapshot = (uri, preventLoop) => {
       // thus, the related works and editions were refreshed but as series aren't
       // supposed to be associated to items, no snapshot was created for the serie itself
       const err = error_.new("couldn't refresh item snapshot", 500, { uri })
-      _.error(err, 'getSnapshot err')
+      logError(err, 'getSnapshot err')
       return {}
     }
 

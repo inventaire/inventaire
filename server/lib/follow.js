@@ -8,6 +8,7 @@ import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
+import { log, warn, logError } from '#lib/utils/logs'
 
 const metaDb = metaDbFactory('meta', 'utf8')
 const dbHost = CONFIG.db.getOrigin()
@@ -38,7 +39,7 @@ export default async params => {
   const dbName = CONFIG.db.name(dbBaseName)
 
   if (freezeFollow) {
-    _.warn(dbName, 'freezed follow')
+    warn(dbName, 'freezed follow')
     return
   }
 
@@ -81,7 +82,7 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // Typical case: when starting the server with a large entities database and an empty Elasticsearch,
   // the recommended process is to load entities in Elasticsearch by using scripts/indexation/load.js
   if (getSeqPrefixNumber(dbLastSeq) > getSeqPrefixNumber(lastSeq) + 10000) {
-    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
+    log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
     lastSeq = dbLastSeq
   }
 
@@ -89,7 +90,7 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // as this probably means the database was deleted and re-created
   // and the leveldb-backed meta db kept the last_seq value of the previous db
   if (getSeqPrefixNumber(lastSeq) > getSeqPrefixNumber(dbLastSeq)) {
-    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
+    log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
     lastSeq = null
   }
 
@@ -120,7 +121,7 @@ const startFollowingDb = params => {
   }
 
   return follow(config, (err, change) => {
-    if (err != null) return _.error(err, `${dbName} follow err`)
+    if (err != null) return logError(err, `${dbName} follow err`)
     setLastSeq(change.seq)
     for (const follower of dbFollowers) {
       if (follower.filter(change.doc)) {
@@ -140,7 +141,7 @@ const SetLastSeq = dbName => {
       if (seq != null) await metaDb.put(key, seq)
       else await metaDb.del(key)
     } catch (err) {
-      _.error(err, `${dbName} setLastSeq err (seq: ${seq})`)
+      logError(err, `${dbName} setLastSeq err (seq: ${seq})`)
     }
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once

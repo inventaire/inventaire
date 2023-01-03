@@ -1,10 +1,10 @@
 import { map, union, uniq, without } from 'lodash-es'
-import _ from '#builders/utils'
 import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
 import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
+import { Log } from '#lib/utils/logs'
 import Group from '#models/group'
 import { addSlug } from './slug.js'
 
@@ -59,7 +59,7 @@ export async function getUsersGroupsIds (usersIds) {
 export async function createGroup (options) {
   const group = Group.create(options)
   await addSlug(group)
-  return db.postAndReturn(group).then(_.Log('group created'))
+  return db.postAndReturn(group).then(Log('group created'))
 }
 
 export async function getUserGroupsCoMembers (userId) {

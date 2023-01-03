@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { getEntitiesByIds, putEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { info } from '#lib/utils/logs'
 import Entity from '#models/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import turnIntoRedirection from './turn_into_redirection.js'
@@ -12,7 +13,7 @@ export default ({ userId, fromUri, toUri, context }) => {
 
   if (fromPrefix === 'wd') {
     if (toPrefix === 'inv') {
-      _.info({ fromUri, toUri }, 'merge: switching fromUri and toUri');
+      info({ fromUri, toUri }, 'merge: switching fromUri and toUri');
       [ fromPrefix, fromId, toPrefix, toId ] = [ toPrefix, toId, fromPrefix, fromId ]
     } else {
       throw error_.new('cannot merge wd entites', 500, { fromUri, toUri })

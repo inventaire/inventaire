@@ -1,9 +1,9 @@
 import { uniq, flatten } from 'lodash-es'
-import _ from '#builders/utils'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
 export async function parseSameasMatches ({ matches, expectedEntityType }) {
@@ -39,7 +39,7 @@ const setFoundValue = async (entryData, property, value, expectedEntityType) => 
   const uri = value
   const { type } = await getEntityByUri({ uri })
   if (type !== expectedEntityType) {
-    return _.warn({ entryData, property, value, type, expectedEntityType }, 'type mismatch')
+    return warn({ entryData, property, value, type, expectedEntityType }, 'type mismatch')
   }
   entryData.uri = uri
 }

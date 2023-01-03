@@ -1,8 +1,8 @@
 import wdk from 'wikidata-sdk'
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import { warn, info } from '#lib/utils/logs'
 
 const { simplifySparqlResults } = wdk
 
@@ -22,7 +22,7 @@ export default async sparql => {
   const persistentRequest = () => makeRequest(url)
   .catch(err => {
     if (err.statusCode === 429) {
-      _.warn(url, `${err.message}: retrying in 2s`)
+      warn(url, `${err.message}: retrying in 2s`)
       return wait(2000).then(persistentRequest)
     } else {
       throw err
@@ -57,6 +57,6 @@ const makeRequest = url => {
 
 const logStats = () => {
   if (waiting > 0) {
-    _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
+    info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
   }
 }

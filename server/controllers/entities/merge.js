@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import { log } from '#lib/utils/logs'
 import getEntitiesByUris from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
@@ -30,7 +30,7 @@ const controller = async params => {
     throw error_.new(message, 400, params)
   }
 
-  _.log({ merge: params, user: reqUserId }, 'entity merge request')
+  log({ merge: params, user: reqUserId }, 'entity merge request')
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })

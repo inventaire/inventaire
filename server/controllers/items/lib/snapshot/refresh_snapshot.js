@@ -4,6 +4,7 @@ import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import getEntityByUri from '#controllers/entities/lib/get_entity_by_uri'
 import { mappedArrayPromise } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
+import { info } from '#lib/utils/logs'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
 import { getDocData } from './helpers.js'
@@ -20,7 +21,7 @@ const fromDoc = changedEntityDoc => {
 
   const label = `${uri} items snapshot refresh`
 
-  _.info(`${label}: starting`)
+  info(`${label}: starting`)
   return getSnapshotsByType[type](uri)
   .then(saveSnapshotsInBatch)
 }

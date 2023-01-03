@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
+import { logError } from '#lib/utils/logs'
 import Notification from '#models/notification'
 
 const db = dbFactory('notifications')
@@ -21,7 +22,7 @@ export default async data => {
     const docs = usersToNotify.map(getNotificationUpdateOrCreation(data, existingNotificationsByUsers))
     await db.bulk(docs)
   } catch (err) {
-    _.error(err, 'group update notification error')
+    logError(err, 'group update notification error')
   }
 }
 

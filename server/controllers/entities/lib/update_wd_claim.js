@@ -2,6 +2,7 @@ import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import getWdEntity from '#data/wikidata/get_entity'
 import { error_ } from '#lib/error/error'
+import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
@@ -42,11 +43,11 @@ export default async (user, id, property, oldValue, newValue) => {
     const uri = prefixifyWd(id)
     if (newValue != null) {
       entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
-      .catch(_.Error('entitiesRelationsTemporaryCache.set err'))
+      .catch(LogError('entitiesRelationsTemporaryCache.set err'))
     }
     if (oldValue != null) {
       entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
-      .catch(_.Error('entitiesRelationsTemporaryCache.del err'))
+      .catch(LogError('entitiesRelationsTemporaryCache.del err'))
     }
   }
 

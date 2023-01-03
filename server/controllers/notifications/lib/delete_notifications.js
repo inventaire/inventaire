@@ -1,9 +1,9 @@
-import _ from '#builders/utils'
 import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
 import notifications_ from './notifications.js'
 
 export default (label, subjectId) => {
   assert_.strings([ label, subjectId ])
-  _.log(`deleting ${label} notifications`)
+  log(`deleting ${label} notifications`)
   return notifications_.deleteAllBySubjectId(subjectId)
 }

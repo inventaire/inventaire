@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { logError } from '#lib/utils/logs'
 import bnf from './bnf.js'
 import openlibrary from './openlibrary.js'
 
@@ -17,7 +17,7 @@ const getSummaryFromPropertyClaims = ({ claims, refresh }) => async property => 
     summaryData = await summaryGettersByClaimProperty[property]({ id, refresh })
   } catch (err) {
     err.context = { id, property }
-    _.error(err, 'getSummaryFromPropertyClaims')
+    logError(err, 'getSummaryFromPropertyClaims')
     return
   }
   if (!summaryData) return

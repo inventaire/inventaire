@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
 import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { wait } from '#lib/promises'
+import { warn } from '#lib/utils/logs'
 import updateInvClaim from './update_inv_claim.js'
 
 export default (user, uris) => {
@@ -17,7 +17,7 @@ export default (user, uris) => {
 
     const id = unprefixify(uri)
 
-    _.warn(uri, 'removing entity')
+    warn(uri, 'removing entity')
 
     await removePlaceholder(reqUserId, id)
     await deleteUriValueClaims(user, uri)
@@ -37,7 +37,7 @@ const removeClaimsSequentially = (user, uri, claimsData) => {
   const removeNextClaim = async () => {
     const claimData = claimsData.pop()
     if (claimData == null) return
-    _.warn(claimData, `removing claims with value: ${uri}`)
+    warn(claimData, `removing claims with value: ${uri}`)
     await removeClaim(user, uri, claimData)
     await wait(100)
     return removeNextClaim()

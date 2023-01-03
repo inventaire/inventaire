@@ -4,6 +4,7 @@ import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import requestGrouper from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
+import { log } from '#lib/utils/logs'
 
 const { getEntities, getManyEntities } = wdk
 
@@ -14,7 +15,7 @@ const requester = ids => {
     // exceptionnal requests (like when someone wants refreshed data
     // of the whole Victor Hugo bibliographie)
     const urls = getManyEntities(ids)
-    _.log(urls, 'get many wikidata entities')
+    log(urls, 'get many wikidata entities')
     return Promise.all(urls.map(getReq))
     .then(mergeResults)
   } else {

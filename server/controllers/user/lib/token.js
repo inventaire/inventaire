@@ -6,6 +6,7 @@ import { passwords as pw_ } from '#lib/crypto'
 import { WrappedUpdater } from '#lib/doc_updates'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import { warn } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 
 const { tokenDaysToLive } = CONFIG
@@ -18,7 +19,7 @@ export const tokenLength = 32
 export async function sendValidationEmail (user) {
   if (user.validEmail) {
     const log = _.pick(user, [ '_id', 'creationStrategy' ])
-    _.warn(log, 'email was already validated')
+    warn(log, 'email was already validated')
     return user
   }
 

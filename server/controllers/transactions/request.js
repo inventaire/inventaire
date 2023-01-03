@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
 import { getItemById } from '#controllers/items/lib/items'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { addTransactionMessage, createTransaction, getTransactionById } from '#controllers/transactions/lib/transactions'
 import { getUsersByIds } from '#controllers/user/lib/user'
+import { log } from '#lib/utils/logs'
 import { verifyRightToRequest } from './lib/rights_verification.js'
 
 const sanitization = {
@@ -11,7 +11,7 @@ const sanitization = {
 }
 
 const controller = async ({ item, message, reqUserId }) => {
-  _.log([ item, message ], 'item request')
+  log([ item, message ], 'item request')
   const itemDoc = await getItemById(item)
   await verifyRightToRequest(reqUserId, itemDoc)
   await addSnapshotToItem(itemDoc)

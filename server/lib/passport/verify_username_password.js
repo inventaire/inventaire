@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import { findUserByUsernameOrEmail } from '#controllers/user/lib/user'
 import { passwords as pw_ } from '#lib/crypto'
+import { logError } from '#lib/utils/logs'
 import loginAttempts from './login_attempts.js'
 
 export default (username, password, done) => {
@@ -37,6 +37,6 @@ const invalidUsernameOrPassword = (done, username, label) => {
 const verifyUserPassword = (user, password) => pw_.verify(user.password, password)
 
 const finalError = (done, err) => {
-  _.error(err, 'username/password verify err')
+  logError(err, 'username/password verify err')
   done(err)
 }

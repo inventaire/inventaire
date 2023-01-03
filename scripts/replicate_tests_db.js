@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
+import { Log } from '#lib/utils/logs'
 
 const dbHost = CONFIG.db.getOrigin()
 
@@ -16,7 +16,7 @@ const replicate = async dbName => {
     target: dbUrl(dbName),
   }
   return requests_.post(`${dbHost}/_replicate`, { body: repDoc })
-  .then(_.Log(`${dbTestName} replication response`))
+  .then(Log(`${dbTestName} replication response`))
 }
 
 Promise.all(dbsBaseNames.map(replicate))

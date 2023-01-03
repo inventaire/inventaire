@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { log } from '#lib/utils/logs'
 import validateObject from '#lib/validate_object'
 
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
@@ -8,7 +8,7 @@ export function addRoute (routes, route, controllerObj) {
   try {
     validateObject(controllerObj, validEndpointKeys, 'function')
   } catch (err) {
-    _.log(route, 'endpoint validation failed', 'red')
+    log(route, 'endpoint validation failed', 'red')
     // Let the error crash Express to prevent the server from starting
     // and make clear something needs to be fixed
     throw err

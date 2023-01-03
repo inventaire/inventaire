@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { error_ } from '#lib/error/error'
+import { warn, success, logError, LogError } from '#lib/utils/logs'
 
 const db = dbFactory('hosts-bans', 'json')
 const { serverMode } = CONFIG
@@ -17,8 +18,8 @@ const restoreBanData = () => {
   db.get(dbKey)
   .then(restoreNonExpiredBans)
   .catch(err => {
-    if (err.name === 'NotFoundError') return _.warn('no hosts bans data found')
-    else _.error(err, 'hosts bans init err')
+    if (err.name === 'NotFoundError') return warn('no hosts bans data found')
+    else logError(err, 'hosts bans init err')
   })
 }
 
@@ -28,7 +29,7 @@ const restoreNonExpiredBans = data => {
     const hostData = data[host]
     if (hostData.expire > now) banData[host] = data[host]
   })
-  if (Object.keys(banData).length > 0) _.success(banData, 'hosts bans data restored')
+  if (Object.keys(banData).length > 0) success(banData, 'hosts bans data restored')
 }
 
 export const throwIfTemporarilyBanned = host => {
@@ -65,8 +66,8 @@ export const declareHostError = host => {
 
 const backup = () => {
   db.put(dbKey, banData)
-  // .then(() => _.success('hosts bans data backup'))
-  .catch(_.Error('hosts bans data backup err'))
+  // .then(() => success('hosts bans data backup'))
+  .catch(LogError('hosts bans data backup err'))
 }
 
 const lazyBackup = serverMode ? _.debounce(backup, 60 * 1000) : _.noop

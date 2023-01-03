@@ -1,9 +1,9 @@
 // Add emails to the waiting list to let ./debounced_emails_crawler
 // find and send them
-
 import _ from '#builders/utils'
 import dbFactory from '#db/level/get_sub_db'
 import { emptyValue } from '#db/level/utils'
+import { warn } from '#lib/utils/logs'
 
 const db = dbFactory('waiting', 'utf8')
 
@@ -15,7 +15,7 @@ export const transactionUpdate = transaction => {
   } else if (_.isString(transaction)) {
     transactionId = transaction
   } else {
-    _.warn({ transaction }, 'bad type at transactionUpdate')
+    warn({ transaction }, 'bad type at transactionUpdate')
     return
   }
 

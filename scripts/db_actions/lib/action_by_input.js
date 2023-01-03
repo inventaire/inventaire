@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
+import { LogError, Log } from '#lib/utils/logs'
 
 export default input => action => {
   action(input)
-  .then(_.Log('ok'))
-  .catch(_.Error('err'))
+  .then(Log('ok'))
+  .catch(LogError('err'))
   .then(() => process.exit(0))
 }

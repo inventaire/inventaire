@@ -1,9 +1,9 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { parseIsbn } from '#lib/isbn/parse'
 import temporarilyMemoize from '#lib/temporarily_memoize'
+import { logError } from '#lib/utils/logs'
 import { getSeedsByIsbns } from './dataseed.js'
 
 const { _id: seedUserId } = hardCodedUsers.seed
@@ -43,7 +43,7 @@ const getResolvedEntry = async isbn => {
       }
     }
   } catch (err) {
-    _.error(err, 'get_resolved_entry error')
+    logError(err, 'get_resolved_entry error')
   }
   return { isbn, notFound: true }
 }

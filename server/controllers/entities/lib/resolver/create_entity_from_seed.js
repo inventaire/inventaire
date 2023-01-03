@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { toIsbn13h } from '#lib/isbn/isbn'
+import { logError } from '#lib/utils/logs'
 import createInvEntity from '../create_inv_entity.js'
 import properties from '../properties/properties_values_constraints.js'
 
@@ -53,7 +54,7 @@ export async function createEdition (edition, works, userId, batchId, enrich) {
       imageUrl = url
     } catch (err) {
       if (err.statusCode !== 404) {
-        _.error(err, 'failed to find an image by ISBN')
+        logError(err, 'failed to find an image by ISBN')
       }
     }
   }

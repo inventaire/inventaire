@@ -3,6 +3,7 @@ import getEntityType from '#controllers/entities/lib/get_entity_type'
 import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 
 export const getDocData = updatedDoc => {
   let { uri, type } = updatedDoc
@@ -33,7 +34,7 @@ export const aggregateClaims = (entities, property) => {
     const hasClaims = (entity.claims != null)
     if (hasClaims) return true
     // Trying to identify how entities with no claims arrive here
-    _.warn(entity, 'entity with no claim at aggregateClaims')
+    warn(entity, 'entity with no claim at aggregateClaims')
     return false
   })
   .map(entity => entity.claims[property])

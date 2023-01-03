@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { appendToFullKeys, appendToShortKeys } from '#lib/i18n_autofix'
 import { responses_ } from '#lib/responses'
+import { info } from '#lib/utils/logs'
 
 const errorMessagePattern = /^(4|5)00/
 // Using _ as the convention to identify short keys: ex: awesome_title
@@ -22,7 +23,7 @@ const i18nMissingKeys = (req, res) => {
     return error_.bundleInvalid(req, res, 'missingKeys', missingKeys)
   }
 
-  _.info(missingKeys, 'i18n missing keys')
+  info(missingKeys, 'i18n missing keys')
 
   missingKeys = missingKeys.filter(looksLikeAKey)
 

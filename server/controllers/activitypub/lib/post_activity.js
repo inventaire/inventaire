@@ -5,6 +5,7 @@ import { isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
+import { warn, logError } from '#lib/utils/logs'
 import { getFollowActivitiesByObject } from './activities.js'
 import { makeUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
@@ -20,16 +21,16 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
   try {
     actorRes = await requests_.get(recipientActorUri, { timeout, sanitize })
   } catch (err) {
-    _.error(err, 'signAndPostActivity private error')
+    logError(err, 'signAndPostActivity private error')
     throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity })
   }
   const inboxUri = actorRes.inbox
   if (!inboxUri) {
-    return _.warn({ actorName, recipientActorUri, activity }, 'No inbox found, cannot post activity')
+    return warn({ actorName, recipientActorUri, activity }, 'No inbox found, cannot post activity')
   }
 
   if (!isUrl(inboxUri)) {
-    return _.warn({ actorName, recipientActorUri, activity, inboxUri }, 'Invalid inbox URL, cannot post activity')
+    return warn({ actorName, recipientActorUri, activity, inboxUri }, 'Invalid inbox URL, cannot post activity')
   }
 
   const { privateKey, publicKeyHash } = await getSharedKeyPair()
@@ -58,7 +59,7 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
   } catch (err) {
     err.context = err.context || {}
     Object.assign(err.context, { inboxUri, activity })
-    _.error(err, 'Posting activity to inbox failed')
+    logError(err, 'Posting activity to inbox failed')
   }
 }
 

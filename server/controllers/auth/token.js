@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
 import { tokenLength, confirmEmailTokenValidity } from '#controllers/user/lib/token'
 import ActionsControllers from '#lib/actions_controllers'
 import passport_ from '#lib/passport/passport'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import { logError } from '#lib/utils/logs'
 import setLoggedInCookie from './lib/set_logged_in_cookie.js'
 
 const sanitization = validateSanitization({
@@ -18,7 +18,7 @@ const confirmEmailValidity = async (req, res) => {
     await confirmEmailTokenValidity(email, token)
     res.redirect('/?validEmail=true')
   } catch (err) {
-    _.error(err, 'email validation failed')
+    logError(err, 'email validation failed')
     res.redirect('/?validEmail=false')
   }
 }

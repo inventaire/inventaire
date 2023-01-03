@@ -4,6 +4,7 @@ import path from 'node:path'
 import split from 'split'
 import through from 'through'
 import _ from '#builders/utils'
+import { LogError } from '#lib/utils/logs'
 import serializeEntityInTurtle from './lib/serialize_entity_in_turtle.js'
 
 const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
@@ -26,4 +27,4 @@ const parse = line => {
 process.stdin
 .pipe(split())
 .pipe(through(parse))
-.on('error', _.Error('conversion error'))
+.on('error', LogError('conversion error'))

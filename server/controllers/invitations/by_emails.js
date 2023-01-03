@@ -6,6 +6,7 @@ import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { Track } from '#lib/track'
+import { Log } from '#lib/utils/logs'
 import Group from '#models/group'
 import parseEmails from './lib/parse_emails.js'
 import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
@@ -31,7 +32,7 @@ export default async (req, res) => {
   ])
 
   return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
-  .then(_.Log('invitationByEmails data'))
+  .then(Log('invitationByEmails data'))
   .then(responses_.Send(res))
   .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
 }

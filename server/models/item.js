@@ -1,6 +1,7 @@
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
 import itemAttributes from './attributes/item.js'
 import itemValidations from './validations/item.js'
 
@@ -70,10 +71,10 @@ Item.update = (userId, newAttributes, oldItem) => {
 
 Item.changeOwner = (transacDoc, item) => {
   assert_.objects([ transacDoc, item ])
-  _.log({ transacDoc, item }, 'changeOwner')
+  log({ transacDoc, item }, 'changeOwner')
 
   item = _.omit(item, attributes.reset)
-  _.log(item, 'item without reset attributes')
+  log(item, 'item without reset attributes')
 
   const { _id: transacId, owner, requester } = transacDoc
 
@@ -88,7 +89,7 @@ Item.changeOwner = (transacDoc, item) => {
     timestamp: Date.now(),
   })
 
-  _.log(item.history, 'updated history')
+  log(item.history, 'updated history')
 
   return Object.assign(item, {
     owner: requester,

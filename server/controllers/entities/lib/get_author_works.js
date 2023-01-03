@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
@@ -36,7 +37,7 @@ export default params => {
   .then(uniqByUri)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))
-  .catch(_.ErrorRethrow('get author works err'))
+  .catch(LogErrorAndRethrow('get author works err'))
 }
 
 // # WD

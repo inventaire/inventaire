@@ -2,6 +2,7 @@
 import _ from '#builders/utils'
 import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
 import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 
 export default (uri, refresh) => {
   const [ prefix, id ] = uri.split(':')
@@ -13,7 +14,7 @@ export default (uri, refresh) => {
 
   return Promise.all(promises)
   .then(_.sum)
-  .catch(_.ErrorRethrow('get links count err'))
+  .catch(LogErrorAndRethrow('get links count err'))
 }
 
 const getWdLinksScore = (qid, refresh) => {

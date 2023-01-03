@@ -1,11 +1,12 @@
 import _ from '#builders/utils'
 import { getEntitiesByClaimsValue, getEntitiesByIds, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
 export default async function (userId, fromUri, toUri) {
   const results = await getEntitiesByClaimsValue(fromUri)
   const entitiesToEditIds = _.map(results, 'entity')
-  _.log(entitiesToEditIds, 'entitiesToEditIds')
+  log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
   // Doing all the redirects at once to avoid conflicts
   // within a same entity pointing several times to the redirected entity.

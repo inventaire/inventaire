@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { log } from '#lib/utils/logs'
 import membershipValidations from './lib/membership_validations.js'
 import modelAction from './lib/model_action.js'
 
@@ -9,7 +9,7 @@ const sanitization = {
 
 const controller = action => async params => {
   const { group: groupId, user: userId, reqUserId } = params
-  _.log(params, `${action} group`)
+  log(params, `${action} group`)
   await membershipValidations[action](reqUserId, groupId, userId)
   await modelAction(action, params)
   return { ok: true }

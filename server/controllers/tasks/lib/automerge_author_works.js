@@ -4,6 +4,7 @@ import getEntitiesList from '#controllers/entities/lib/get_entities_list'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { log } from '#lib/utils/logs'
 
 const { _id: reconcilerUserId } = hardCodedUsers.reconciler
 
@@ -58,7 +59,7 @@ const haveSomeMatchingTerms = invWork => wdWork => _.someMatch(invWork.terms, wd
 const automergeWorks = authorUri => mergeableCouples => {
   if (mergeableCouples.length === 0) return
 
-  _.log(mergeableCouples, `automerging works from author ${authorUri}`)
+  log(mergeableCouples, `automerging works from author ${authorUri}`)
 
   const mergeNext = () => {
     const nextCouple = mergeableCouples.pop()

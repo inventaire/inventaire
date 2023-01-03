@@ -1,5 +1,4 @@
 import passport from 'passport'
-import _ from '#builders/utils'
 import { getUserById } from '#controllers/user/lib/user'
 import { error_ } from '#lib/error/error'
 import basicStrategy from '#lib/passport/basic_strategy'
@@ -7,12 +6,13 @@ import localLoginStrategy from '#lib/passport/local_login_strategy'
 import localSignupStrategy from '#lib/passport/local_signup_strategy'
 import tokenStrategy from '#lib/passport/token_strategy'
 import { assert_ } from '#lib/utils/assert_types'
+import { success, logError } from '#lib/utils/logs'
 
 passport.serializeUser((user, done) => {
   assert_.object(user)
   assert_.function(done)
   const { _id: id } = user
-  _.success(id, 'serializeUser')
+  success(id, 'serializeUser')
   done(null, id)
 })
 
@@ -26,7 +26,7 @@ passport.deserializeUser((id, done) => {
       err = error_.new("Couldn't deserialize cookies: user not found", 400, id)
       err.name = 'SessionError'
     }
-    _.error(err, 'deserializeUser err')
+    logError(err, 'deserializeUser err')
     done(err)
   })
 })

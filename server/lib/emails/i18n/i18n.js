@@ -2,12 +2,12 @@ import CONFIG from 'config'
 import { isString } from 'lodash-es'
 import moment from 'moment'
 import Polyglot from 'node-polyglot'
-import _ from '#builders/utils'
 import langs from '#i18nAssets/langs'
 import { absolutePath } from '#lib/absolute_path'
 import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
+import { warn } from '#lib/utils/logs'
 import translate from './translate.js'
 
 const { active: activeLangs } = langs
@@ -18,7 +18,7 @@ const translators = {}
 
 const warnAndFix = warning => {
   if (!/Missing\stranslation/.test(warning)) {
-    return _.warn(warning)
+    return warn(warning)
   }
 
   if (!autofixI18n) return

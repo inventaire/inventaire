@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import { Strategy as LocalStrategy } from 'passport-local'
-import _ from '#builders/utils'
 import { openPasswordUpdateWindow } from '#controllers/user/lib/token'
 import { findUserByEmail } from '#controllers/user/lib/user'
 import { passwords as pw_ } from '#lib/crypto'
 import { error_ } from '#lib/error/error'
+import { logError, Log } from '#lib/utils/logs'
 import loginAttempts from './login_attempts.js'
 
 const { tokenDaysToLive } = CONFIG
@@ -37,7 +37,7 @@ const returnIfValid = (done, token, email, user) => {
   .then(valid => {
     if (valid) {
       return openPasswordUpdateWindow(user)
-      .then(_.Log('clearToken res'))
+      .then(Log('clearToken res'))
       .then(() => done(null, user))
     } else {
       return invalidEmailOrToken(done, email, 'validity test')
@@ -57,7 +57,7 @@ const verifyToken = async (user, token) => {
 }
 
 const finalError = (done, err) => {
-  _.error(err, 'TokenStrategy verify err')
+  logError(err, 'TokenStrategy verify err')
   done(err)
 }
 

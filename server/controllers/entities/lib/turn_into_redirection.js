@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import { getEntitiesByClaimsValue, getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 import propagateRedirection from './propagate_redirection.js'
 
@@ -31,7 +32,7 @@ export default async ({ userId, fromId, toUri, previousToUri, context }) => {
 // destination entity.
 const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirection) => {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
-  _.log(entityUrisToCheck, 'entityUrisToCheck')
+  log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
   const removedIds = await Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
   return _.compact(removedIds)

@@ -4,6 +4,7 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { radio } from '#lib/radio'
+import { info, LogErrorAndRethrow } from '#lib/utils/logs'
 import makeSparqlRequest from './make_sparql_request.js'
 import { queries, queriesPerProperty } from './queries/queries.js'
 
@@ -65,12 +66,12 @@ const runQuery = (params, key) => {
   const sparql = queries[queryName].query(params)
 
   return makeSparqlRequest(sparql)
-  .catch(_.ErrorRethrow(key))
+  .catch(LogErrorAndRethrow(key))
 }
 
 radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch => {
   const keys = invalidatedQueriesBatch.flatMap(getQueriesKeys)
-  _.info(keys, 'invalidating queries cache')
+  info(keys, 'invalidating queries cache')
   await cache_.batchDelete(keys)
 })
 

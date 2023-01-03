@@ -3,6 +3,7 @@ import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 import isbn from './get_entities_by_isbns.js'
 import inv from './get_inv_entities.js'
 import wd from './get_wikidata_enriched_entities.js'
@@ -44,7 +45,7 @@ export default async params => {
 
   return getDomainsPromises(domains, params)
   .then(mergeResponses)
-  .catch(_.ErrorRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
+  .catch(LogErrorAndRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
 }
 
 const getDomainsPromises = (domains, params) => {

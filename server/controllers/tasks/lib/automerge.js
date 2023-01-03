@@ -2,6 +2,7 @@ import _ from '#builders/utils'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { Wait } from '#lib/promises'
+import { log } from '#lib/utils/logs'
 import automergeAuthorWorks from './automerge_author_works.js'
 
 const { _id: reconcilerUserId } = hardCodedUsers.reconciler
@@ -14,7 +15,7 @@ export const automerge = (suspectUri, suggestion) => {
     return [ suggestion ]
   }
 
-  _.log({ suspectUri, suggestionUri }, 'automerging')
+  log({ suspectUri, suggestionUri }, 'automerging')
 
   return mergeEntities({ userId: reconcilerUserId, fromUri: suspectUri, toUri: suggestionUri })
   // Give the time to CouchDB to update its views so that the works

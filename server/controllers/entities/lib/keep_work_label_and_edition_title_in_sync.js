@@ -1,6 +1,7 @@
 import _ from '#builders/utils'
 import { getEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { warn, info, LogError } from '#lib/utils/logs'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import updateLabel from './update_label.js'
 
@@ -16,7 +17,7 @@ export default (edition, oldTitle) => {
   const editionLang = getOriginalLang(edition.claims)
 
   if (editionLang == null) {
-    _.warn(edition._id, "couldn't apply hook: edition miss a lang")
+    warn(edition._id, "couldn't apply hook: edition miss a lang")
     return
   }
 
@@ -31,7 +32,7 @@ export default (edition, oldTitle) => {
     return getEntityById(id)
     .then(updateWorkLabel(editionLang, oldTitle, consensusEditionTitle))
   })
-  .catch(_.Error('hook update err'))
+  .catch(LogError('hook update err'))
 }
 
 const fetchLangConsensusTitle = async (workUri, editionLang) => {
@@ -54,7 +55,7 @@ const updateWorkLabel = (editionLang, oldTitle, consensusEditionTitle) => workDo
   const workLabelAndEditionTitleSynced = oldTitle === currentEditionLangLabel
   const noWorkLabel = (currentEditionLangLabel == null)
   if (noWorkLabel || workLabelAndEditionTitleSynced) {
-    _.info([ workDoc._id, editionLang, consensusEditionTitle ], 'hook update')
+    info([ workDoc._id, editionLang, consensusEditionTitle ], 'hook update')
     return updateLabel(editionLang, consensusEditionTitle, hookUserId, workDoc)
   }
 }
