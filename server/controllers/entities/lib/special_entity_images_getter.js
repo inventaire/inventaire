@@ -24,9 +24,9 @@ module.exports = {
   },
 
   collection: async entity => {
-    entity.images = {}
+    const images = { claims: getEntityImagesFromClaims(entity) }
     return entities_.byClaim('wdt:P195', entity.uri, true, true)
-    .then(addEditionsImages(entity.images))
+    .then(addEditionsImages(images))
   }
 }
 
