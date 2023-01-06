@@ -5,7 +5,7 @@ import { assert_ } from '#lib/utils/assert_types'
 const db = dbFactory('oauth_authorizations')
 const idAttribute = 'authorizationCode'
 
-export async function authorizationById (id) {
+export async function getAuthorizationById (id) {
   const doc = await db.get(id)
   doc[idAttribute] = doc._id
   doc.expiresAt = new Date(doc.expiresAt)

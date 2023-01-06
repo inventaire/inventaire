@@ -2,15 +2,13 @@
 // See specification https://oauth2-server.readthedocs.io/en/latest/model/overview.html
 
 import InvalidClientError from 'oauth2-server/lib/errors/invalid-client-error.js'
-import { authorizationById, deleteAuthorization, saveAuthorization } from '#controllers/auth/lib/oauth/authorizations'
+import { getAuthorizationById, deleteAuthorization, saveAuthorization } from '#controllers/auth/lib/oauth/authorizations'
 import { getOauthClientById } from '#controllers/auth/lib/oauth/clients'
 import { getOauthTokenbyId, saveOauthToken } from '#controllers/auth/lib/oauth/tokens'
 import { getUserById } from '#controllers/user/lib/user'
 import { passwords } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { error_, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-
-const { catchNotFound } = error_
 
 export default {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getaccesstoken-accesstoken-callback
@@ -53,7 +51,7 @@ export default {
 
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#getauthorizationcode-authorizationcode-callback
   getAuthorizationCode: async authorizationCode => {
-    const foundAuthorizationCode = await authorizationById(authorizationCode).catch(catchNotFound)
+    const foundAuthorizationCode = await getAuthorizationById(authorizationCode).catch(catchNotFound)
     if (!foundAuthorizationCode) return
     const client = await getOauthClientById(foundAuthorizationCode.clientId)
     const user = await getUserById(foundAuthorizationCode.userId)
@@ -69,7 +67,7 @@ export default {
   // Spec https://oauth2-server.readthedocs.io/en/latest/model/spec.html#revokeauthorizationcode-code-callback
   revokeAuthorizationCode: async code => {
     const { authorizationCode } = code
-    const foundAuthorizationCode = await authorizationById(authorizationCode).catch(catchNotFound)
+    const foundAuthorizationCode = await getAuthorizationById(authorizationCode).catch(catchNotFound)
     if (foundAuthorizationCode != null) {
       await deleteAuthorization(foundAuthorizationCode)
       return true
