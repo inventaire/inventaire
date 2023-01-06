@@ -9,7 +9,7 @@ import serializeFeed from './serialize_feed.js'
 
 const { feed: feedConfig } = CONFIG
 
-export default lang => async ({ reqUserId, feedOptions, users, shelves, filter }) => {
+export default lang => async ({ reqUserId, feedOptions, users, shelves, context }) => {
   users = users.map(serializeUserData)
   const usersIds = map(users, '_id')
   let items
@@ -19,7 +19,7 @@ export default lang => async ({ reqUserId, feedOptions, users, shelves, filter }
     items = await getAuthorizedItemsByUsers(usersIds, reqUserId)
   }
   const page = paginate(items, {
-    filter,
+    context,
     limit: feedConfig.limitLength,
   })
   items = await Promise.all(page.items.map(addSnapshotToItem))

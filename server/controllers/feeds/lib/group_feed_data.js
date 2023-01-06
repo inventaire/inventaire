@@ -1,5 +1,6 @@
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUsersByIds } from '#controllers/user/lib/user'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import Group from '#models/group'
 
 export default async (groupId, reqUserId) => {
@@ -9,7 +10,7 @@ export default async (groupId, reqUserId) => {
   return {
     users,
     reqUserId,
-    filter: 'group',
+    context: getGroupVisibilityKey(group._id),
     feedOptions: {
       title: group.name,
       description: group.description,
