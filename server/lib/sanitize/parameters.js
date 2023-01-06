@@ -175,7 +175,7 @@ const allowlistedStrings = {
 
 const lang = {
   default: 'en',
-  validate: (value, config) => {
+  validate: (value, name, config) => {
     if (config.type === 'wikimedia') {
       return isWikimediaLanguageCode(value)
     } else {
