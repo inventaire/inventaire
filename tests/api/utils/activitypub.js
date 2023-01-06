@@ -5,7 +5,7 @@ import { getRandomBytes } from '#lib/crypto'
 import contentMiddlewares from '#server/middlewares/content'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { createUsername } from '../fixtures/users.js'
-import { rawRequest } from '../utils/request.js'
+import { rawRequest } from './request.js'
 
 const { jsonBodyParser } = contentMiddlewares
 

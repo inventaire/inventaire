@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
 import { randomWords } from '#tests/api/fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
-import { createItem } from '../fixtures/items.js'
 import { addItemsToShelf } from '../utils/shelves.js'
 import { getUser } from '../utils/utils.js'
+import { createItem } from './items.js'
 
 export const shelfName = () => randomWords(3, ' shelf')
 export const shelfDescription = () => {

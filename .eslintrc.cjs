@@ -29,6 +29,7 @@ module.exports = {
     eqeqeq: [ 'error', 'smart' ],
     'implicit-arrow-linebreak': [ 'error', 'beside' ],
     'import/newline-after-import': 'error',
+    'import/no-useless-path-segments': [ 'error' ],
     'import/order': [
       'error',
       {

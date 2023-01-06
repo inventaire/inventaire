@@ -1,11 +1,9 @@
 import util from 'node:util'
 import CONFIG from 'config'
 import { isArguments } from 'lodash-es'
-import chalk from 'tiny-chalk'
+import chalk, { red, grey } from 'tiny-chalk'
 
 const { offline, verbose } = CONFIG
-
-const { red, grey } = chalk
 // Log full objects
 util.inspect.defaultOptions.depth = 20
 

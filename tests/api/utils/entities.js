@@ -4,7 +4,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { buildUrl } from '#lib/utils/url'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
-import { getIndexedDoc } from '../utils/search.js'
+import { getIndexedDoc } from './search.js'
 import { publicReq, authReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
 
 export const getByUris = (uris, relatives, refresh) => {

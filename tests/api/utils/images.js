@@ -8,10 +8,10 @@ import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
-import { updateGroup } from '../utils/groups.js'
-import { authReq, getUser } from '../utils/utils.js'
 import { updateClaim } from './entities.js'
+import { updateGroup } from './groups.js'
 import { updateUser } from './users.js'
+import { authReq, getUser } from './utils.js'
 
 const { mediaStorage } = CONFIG
 const host = CONFIG.getPublicOrigin()
