@@ -54,14 +54,14 @@ describe('items:get-by-users', () => {
     resItemsIds.should.not.containEql(privateItem._id)
   })
 
-  it("should reject invalid filters'", async () => {
+  it("should reject invalid context'", async () => {
     const user = await getUser()
     const { _id: userId } = user
-    await authReq('get', `${endpoint}&users=${userId}&filter=bla`)
+    await authReq('get', `${endpoint}&users=${userId}&context=bla`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('invalid filter')
+      err.body.status_verbose.should.startWith('invalid context')
     })
   })
 
