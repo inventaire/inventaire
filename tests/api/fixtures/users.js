@@ -3,10 +3,9 @@ import { randomBytes } from 'node:crypto'
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { addUserRole } from '#controllers/user/lib/user'
-import email from '#lib/emails/email'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import { username } from '#tests/api/fixtures/text'
+import { getSomeEmail, getSomeUsername } from '#tests/api/fixtures/text'
 import { makeFriends } from '../utils/relations.js'
 import { request, rawRequest } from '../utils/request.js'
 
@@ -72,9 +71,9 @@ export const getRefreshedUser = async user => {
   return getUserWithCookie(user.cookie)
 }
 
-export const createUsername = () => username()
+export const createUsername = () => getSomeUsername()
 
-export const createUserEmail = () => email()
+export const createUserEmail = () => getSomeEmail()
 
 export const getUsersWithoutRelation = async () => {
   const [ userA, userB ] = await Promise.all([

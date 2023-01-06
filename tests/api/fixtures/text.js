@@ -20,11 +20,11 @@ export const firstName = () => _.sampleSize(firstNames, 1)[0]
 
 // Add a random string to prevent creating several users with the same username
 // and be rejected because of it
-export const username = () => firstName() + getRandomString(4)
+export const getSomeUsername = () => firstName() + getRandomString(4)
 export const sentence = () => capitalize(randomWords(20)) + '.'
 export const randomLongWord = wordLength => {
   const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
   return capitalize(longWord)
 }
 export const humanName = () => `${firstName()} ${firstName()}`
-export const email = () => `${firstName()}@${firstName()}.org`
+export const getSomeEmail = () => `${firstName()}@${firstName()}.org`
