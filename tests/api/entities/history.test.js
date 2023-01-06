@@ -7,9 +7,9 @@ import {
   adminReq,
   dataadminReq,
   publicReq,
-  authReq,
   getReservedUser,
-  getDeanonymizedUser
+  getDeanonymizedUser,
+  authReqB
 } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=history'
@@ -60,7 +60,7 @@ describe('entities:history', () => {
 
   it('should anonymize patches for authentified users', async () => {
     const human = await createHuman()
-    const { patches } = await authReq('get', `${endpoint}&id=${human._id}`)
+    const { patches } = await authReqB('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
     should(patch.user).not.be.ok()
   })
