@@ -2,6 +2,7 @@ import { promisify } from 'node:util'
 import CONFIG from 'config'
 import JobQueueServerAndClient from 'level-jobs'
 import JobsQueueClient from 'level-jobs/client.js'
+import { serverMode } from '#lib/server_mode'
 import { warn, info } from '#lib/utils/logs'
 import getSubDb from './get_sub_db.js'
 
@@ -17,7 +18,7 @@ export default {
     }
 
     // Push & run jobs to queue if this job is enabled in config
-    if (CONFIG.serverMode && run) {
+    if (serverMode && run) {
       info(`${jobName} job in server & client mode`)
       const depromisifiedWorker = workerDepromisifier(worker)
       return promisifyApi(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))

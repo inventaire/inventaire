@@ -7,6 +7,7 @@ import metaDbFactory from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import { serverMode } from '#lib/server_mode'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
 
@@ -24,7 +25,7 @@ setImmediate(importCircularDependencies)
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-const freezeFollow = CONFIG.db.follow.freeze || !CONFIG.serverMode
+const freezeFollow = CONFIG.db.follow.freeze || !serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}

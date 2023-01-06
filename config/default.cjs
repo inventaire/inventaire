@@ -66,7 +66,7 @@ module.exports = {
       // Make external indexes restart from the first seq
       reset: false,
       // Allow to activate database events hooks only on certain instances
-      // Will always be false when CONFIG.serverMode is false
+      // Will always be false when server/lib/server_mode.js#serverMode is false
       freeze: false,
       delay: 5000
     },

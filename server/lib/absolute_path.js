@@ -1,10 +1,11 @@
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 
 export const projectRoot = fileURLToPath(new URL('../..', import.meta.url))
 
 const folders = {
   root: projectRoot.replace(/\/$/, ''),
   client: `${projectRoot}client`,
+  server: `${projectRoot}server`,
   tests: `${projectRoot}tests`,
   lib: `${projectRoot}server/lib`,
   db: `${projectRoot}server/db`,
