@@ -20,6 +20,12 @@ export const userIsInRequested = (userId, groupId) => {
   .then(usersIncludeUserId(userId))
 }
 
+export const userIsInGroupOrRequested = (userId, groupId) => {
+  return getGroupById(groupId)
+  .then(getGroupMembersAndRequestedUsersIds)
+  .then(usersIncludeUserId(userId))
+}
+
 export const userIsInAdmins = (userId, groupId) => {
   return getGroupById(groupId)
   .then(getGroupAdminsIds)
@@ -39,6 +45,10 @@ export const getGroupAdminsIds = group => {
 
 export const getAllGroupMembersIds = group => {
   return getUsersIdsByAgregatedCategories(group, Group.categories.members)
+}
+
+export const getGroupMembersAndRequestedUsersIds = group => {
+  return getUsersIdsByAgregatedCategories(group, Group.categories.members.concat([ 'requested' ]))
 }
 
 export const getGroupRequestedUsersIds = group => {

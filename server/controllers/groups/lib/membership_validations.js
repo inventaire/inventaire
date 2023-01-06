@@ -1,6 +1,6 @@
 import { getInvitedUser } from '#controllers/groups/lib/groups'
 import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
-import { userIsInAdmins, userIsInGroup, userIsInRequested } from '#controllers/groups/lib/users_lists'
+import { userIsInAdmins, userIsInGroup, userIsInGroupOrRequested, userIsInRequested } from '#controllers/groups/lib/users_lists'
 import { error_ } from '#lib/error/error'
 
 const validateRequestDecision = (reqUserId, groupId, requesterId) => {
@@ -69,7 +69,7 @@ const validateLeaving = (reqUserId, groupId) => {
 }
 
 const validateRequest = (reqUserId, groupId) => {
-  return userIsInGroup(reqUserId, groupId)
+  return userIsInGroupOrRequested(reqUserId, groupId)
   .then(bool => {
     if (bool) {
       throw error_.new('user is already in group', 403, reqUserId, groupId)
