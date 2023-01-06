@@ -1,8 +1,9 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { debounce } from 'lodash-es'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { getUserById } from '#controllers/user/lib/user'
 import { radio } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
 import { LogError } from '#lib/utils/logs'
 import { getActivitiesByActorName, createActivity } from './activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
@@ -10,13 +11,14 @@ import formatShelfItemsActivities from './format_shelf_items_activities.js'
 import formatUserItemsActivities from './format_user_items_activities.js'
 import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
-const { activitiesDebounceTime } = CONFIG
+const { activitiesDebounceTime } = CONFIG.activitypub
+assert_.number(activitiesDebounceTime)
 const debouncedActivities = {}
 
 export function initRadioHooks () {
   radio.on('user:inventory:update', userId => {
     if (!debouncedActivities[userId]) {
-      debouncedActivities[userId] = _.debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)
+      debouncedActivities[userId] = debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)
     }
     return debouncedActivities[userId]()
   })
@@ -72,7 +74,7 @@ const _createDebouncedActivity = async ({ userId, shelfId }) => {
 
 const debounceActivities = async shelfId => {
   if (!debouncedActivities[shelfId]) {
-    debouncedActivities[shelfId] = _.debounce(createDebouncedActivity({ shelfId }), activitiesDebounceTime)
+    debouncedActivities[shelfId] = debounce(createDebouncedActivity({ shelfId }), activitiesDebounceTime)
   }
   return debouncedActivities[shelfId]()
 }
