@@ -2,16 +2,16 @@ module.exports = {
   env: 'tests-integration',
 
   db: {
-    suffix: 'tests'
+    suffix: 'tests',
   },
 
   outgoingRequests: {
-    baseBanTime: 500
+    baseBanTime: 500,
   },
 
   entitiesRelationsTemporaryCache: {
     checkFrequency: 1000,
-    ttl: 3 * 1000
+    ttl: 3 * 1000,
   },
 
   mocha: {

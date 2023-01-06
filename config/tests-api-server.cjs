@@ -5,15 +5,15 @@
 module.exports = {
   autoRotateKeys: false,
   dataseed: {
-    enabled: false
+    enabled: false,
   },
   mailer: {
-    enabled: false
+    enabled: false,
   },
   jobs: {
     'inv:deduplicate': {
       run: true,
-    }
+    },
   },
   nice: false,
 }

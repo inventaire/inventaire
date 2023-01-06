@@ -35,14 +35,14 @@ module.exports = {
   // Force to renew cookies at least every 6 months
   cookieMaxAge: 180 * 24 * 3600 * 1000,
   incomingRequests: {
-    logBody: false
+    logBody: false,
   },
 
   outgoingRequests: {
     log: true,
     bodyLogLimit: 500,
     baseBanTime: 5000,
-    banTimeIncreaseFactor: 4
+    banTimeIncreaseFactor: 4,
   },
   // CouchDB settings
   db: {
@@ -68,11 +68,11 @@ module.exports = {
       // Allow to activate database events hooks only on certain instances
       // Will always be false when server/lib/server_mode.js#serverMode is false
       freeze: false,
-      delay: 5000
+      delay: 5000,
     },
     // logs Couchdb requests parameters
     debug: false,
-    backupFolder: 'backups/couchdb'
+    backupFolder: 'backups/couchdb',
   },
 
   leveldb: {
@@ -83,13 +83,13 @@ module.exports = {
 
   elasticsearch: {
     origin: 'http://localhost:9200',
-    updateDelay: 1000
+    updateDelay: 1000,
   },
 
   // See server/data/dataseed/dataseed.js
   dataseed: {
     enabled: false,
-    origin: 'http://localhost:9898'
+    origin: 'http://localhost:9898',
   },
 
   serveStaticFiles: true,
@@ -100,8 +100,8 @@ module.exports = {
     // Possible values: js, css, img, api
     mutedDomains: [],
     mutedPath: [
-      '/api/reports?action=online'
-    ]
+      '/api/reports?action=online',
+    ],
   },
   // enable the api/i18n endpoint and its i18nMissingKeys controller
   autofixI18n: false,
@@ -118,11 +118,11 @@ module.exports = {
       // Get some username and password at https://ethereal.email/create
       auth: {
         user: 'someusername@ethereal.email',
-        pass: 'somepassword'
+        pass: 'somepassword',
       },
     },
     defaultFrom: `inventaire.io <${contactAddress}>`,
-    initDelay: 10000
+    initDelay: 10000,
   },
   contactAddress,
   activitySummary: {
@@ -131,14 +131,14 @@ module.exports = {
     maxEmailsPerHour: 5,
     // the key to find the current news string
     newsKey: 'news_1',
-    didYouKnowKeys: [ 1, 2, 4, 5 ]
+    didYouKnowKeys: [ 1, 2, 4, 5 ],
   },
   // time of validity for email validation tokens
   tokenDaysToLive: 3,
   debouncedEmail: {
     crawlPeriod: 10 * 60 * 1000,
     debounceDelay: 30 * 60 * 1000,
-    disabled: false
+    disabled: false,
   },
 
   mediaStorage: {
@@ -150,14 +150,14 @@ module.exports = {
       checkDelays: {
         update: 2000,
         upload: 5 * 60 * 1000,
-      }
+      },
     },
     // By default, media are saved locally instead of using a remote
     // object storage service such as Swift
     mode: 'local',
     local: {
       folder: () => `${root}/storage`,
-      internalEndpoint: () => `http://localhost:${port}/local/`
+      internalEndpoint: () => `http://localhost:${port}/local/`,
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
@@ -171,8 +171,8 @@ module.exports = {
       region: 'SBG-1',
       internalEndpoint: function () {
         return `${this.publicURL}/`
-      }
-    }
+      },
+    },
   },
 
   // Analytics service
@@ -180,14 +180,14 @@ module.exports = {
     enabled: false,
     endpoint: 'https://yourpiwikendpoint/piwik.php',
     idsite: 1,
-    rec: 1
+    rec: 1,
   },
 
   searchTimeout: 10000,
 
   feed: {
     limitLength: 50,
-    image: 'https://inventaire.io/public/icon/120.png'
+    image: 'https://inventaire.io/public/icon/120.png',
   },
 
   deduplicateRequests: true,
@@ -197,7 +197,7 @@ module.exports = {
   // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
   wikidataOAuth: {
     consumer_key: 'your-consumer-key',
-    consumer_secret: 'your-consumer-secret'
+    consumer_secret: 'your-consumer-secret',
   },
 
   itemsCountDebounceTime: 5000,
@@ -205,7 +205,7 @@ module.exports = {
   jobs: {
     'inv:deduplicate': {
       run: true,
-    }
+    },
   },
 
   // give priority to more urgent matters
@@ -213,11 +213,11 @@ module.exports = {
 
   entitiesRelationsTemporaryCache: {
     checkFrequency: 10 * 60 * 1000,
-    ttl: 4 * 60 * 60 * 1000
+    ttl: 4 * 60 * 60 * 1000,
   },
 
   oauthServer: {
-    authorizationCodeLifetimeMs: 5 * 60 * 1000
+    authorizationCodeLifetimeMs: 5 * 60 * 1000,
   },
 
   activitypub: {

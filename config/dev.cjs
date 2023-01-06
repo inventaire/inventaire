@@ -5,10 +5,10 @@
 module.exports = {
   env: 'dev',
   dataseed: {
-    enabled: true
+    enabled: true,
   },
   piwik: {
-    enabled: false
+    enabled: false,
   },
   autofixI18n: true,
 }

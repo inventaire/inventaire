@@ -20,13 +20,13 @@ module.exports = {
       reset: true,
       freeze: false,
       // Give 1000 delay so that tests relying on follow don't have to wait
-      delay: 1000
-    }
+      delay: 1000,
+    },
   },
 
   outgoingRequests: {
     log: true,
-    bodyLogLimit: 2000
+    bodyLogLimit: 2000,
   },
 
   mediaStorage: {
@@ -34,30 +34,30 @@ module.exports = {
       checkDelays: {
         update: 200,
         upload: 1000,
-      }
+      },
     },
     local: {
-      internalEndpoint: () => `http://localhost:${port}/local/`
-    }
+      internalEndpoint: () => `http://localhost:${port}/local/`,
+    },
   },
 
   // Makes tests run faster
   useSlowPasswordHashFunction: false,
   piwik: {
-    enabled: false
+    enabled: false,
   },
   dataseed: {
-    enabled: false
+    enabled: false,
   },
   deduplicateRequests: false,
   mailer: {
-    disabled: true
+    disabled: true,
   },
 
   itemsCountDebounceTime: 500,
 
   oauthServer: {
-    authorizationCodeLifetimeMs: 1000
+    authorizationCodeLifetimeMs: 1000,
   },
 
   activitypub: {
