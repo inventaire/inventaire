@@ -3,14 +3,19 @@
 // Rules documentation: https://eslint.org/docs/rules/
 module.exports = {
   root: true,
+  extends: [
+    // See https://github.com/standard/eslint-config-standard/blob/master/.eslintrc.json
+    'standard',
+  ],
   env: {
     node: true,
     es2022: true,
   },
-  extends: [
-    // See https://github.com/standard/eslint-config-standard/blob/master/eslintrc.json
-    'standard',
-  ],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: false,
+    },
+  },
   rules: {
     'array-bracket-spacing': [ 'error', 'always' ],
     'arrow-parens': [ 'error', 'as-needed' ],
