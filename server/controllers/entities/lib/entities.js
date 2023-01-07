@@ -104,7 +104,7 @@ export async function imageIsUsed (imageHash) {
 const getUri = entity => entity.uri
 
 export const firstClaim = (entity, property) => {
-  if (entity.claims[property] != null) return entity.claims[property][0]
+  if (entity.claims?.[property] != null) return entity.claims[property][0]
 }
 
 export const setTermsFromClaims = entity => {
