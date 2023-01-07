@@ -199,7 +199,7 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
-      await wait(500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const url = `${origin}${outboxUrl}`
@@ -229,7 +229,7 @@ describe('outbox', () => {
         addAuthor(workUri, authorUri),
         addAuthor(workUri2, authorUri),
       ])
-      await wait(500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
       res1.orderedItems.length.should.equal(1)

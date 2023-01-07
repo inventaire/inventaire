@@ -6,7 +6,7 @@ import { createHuman, createEdition, addSerie } from '../fixtures/entities.js'
 import { deleteByUris, merge, updateLabel } from '../utils/entities.js'
 import { getIndexedDoc } from '../utils/search.js'
 
-const { entitiesIndex } = indexesNamesByBaseNames
+const { entities: entitiesIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 
 describe('indexation:entities', () => {

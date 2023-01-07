@@ -12,7 +12,7 @@ import { createUser } from '../fixtures/users.js'
 import { signedReq } from '../utils/activitypub.js'
 import { addItemsToShelf, getActorName } from '../utils/shelves.js'
 
-const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
+const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 200
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
