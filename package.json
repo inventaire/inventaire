@@ -13,6 +13,7 @@
     "db-actions:delete-user": "./scripts/db_actions/delete_user.js",
     "debug": "DEBUG=express:* node server/server.js",
     "delete-api-test-databases": "./tests/api/scripts/delete_databases",
+    "git-pre-commit": "./scripts/githooks/pre-commit",
     "indexation:load": "./scripts/indexation/load.js",
     "indexation:load-from-couchdb": "./scripts/indexation/load_from_couchdb.sh",
     "indexation:wikidata:load-from-dump": "./scripts/indexation/wikidata/load_from_dump.sh",
@@ -44,6 +45,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
+    "@vercel/git-hooks": "^1.0.0",
     "abort-controller": "^3.0.0",
     "blue-cot": "^7.0.3",
     "body-parser": "^1.18.2",
