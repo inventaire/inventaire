@@ -151,6 +151,7 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      // This test is known to occasionally fail
       it('should favor matches in the requested language', async () => {
         const label = randomWords(2)
         const [ workEs, workFr ] = await Promise.all([
