@@ -35,4 +35,5 @@ const elements_ = {
     return db.fetch(elementsIds)
   },
 }
+
 export default elements_

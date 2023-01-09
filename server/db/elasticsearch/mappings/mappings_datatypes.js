@@ -31,15 +31,23 @@ const getTermsProperties = datatype => {
 }
 
 export const boolean = { type: 'boolean' }
+
 export const date = { type: 'date' }
+
 export const flattened = { type: 'flattened' }
+
 export const geoPoint = { type: 'geo_point' }
+
 export const integer = { type: 'integer' }
+
 export const keyword = { type: 'keyword' }
 // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
 export const objectNotIndexed = { type: 'object', enabled: false }
+
 export const autocompleteTerms = { properties: getTermsProperties(autocompleteText) }
+
 export const fullTerms = { properties: getTermsProperties(fullText) }
+
 export const flattenedTerms = autocompleteText
 export const text = { type: 'text' }
 // Array types are equivalent to there values type,

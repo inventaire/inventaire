@@ -26,5 +26,6 @@ export const randomLongWord = wordLength => {
   const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
   return capitalize(longWord)
 }
+
 export const humanName = () => `${firstName()} ${firstName()}`
 export const getSomeEmail = () => `${firstName()}@${firstName()}.org`

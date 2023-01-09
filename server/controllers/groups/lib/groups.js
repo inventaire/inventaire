@@ -17,6 +17,7 @@ export const getGroupsByIds = db.byIds
 export const getGroupBySlug = db.viewFindOneByKey.bind(db, 'bySlug')
 export const getGroupsByUser = db.viewByKey.bind(db, 'byUser')
 export const getGroupsByInvitedUser = db.viewByKey.bind(db, 'byInvitedUser')
+
 export async function getGroupsByAdmin (userId) {
   // could be simplified by making the byUser view
   // emit an arrey key with the role as second parameter

@@ -23,6 +23,7 @@ export async function addItemsToShelf (user, shelfId, itemsIds) {
   })
   return shelves
 }
+
 export const getActorName = shelf => `shelf-${shelf._id}`
 
 export async function updateShelf ({ id, attribute, value, user }) {

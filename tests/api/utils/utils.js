@@ -4,6 +4,7 @@ import { createUser, getRefreshedUser } from '../fixtures/users.js'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 
 const userPromises = {}
+
 export const getUserGetter = (key, role, customData) => () => {
   if (userPromises[key] == null) {
     userPromises[key] = createUser(customData, role)

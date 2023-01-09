@@ -15,12 +15,14 @@ export async function validateShelf (name) {
   if (!owner.fediversable) throw error_.new("shelf's owner is not on the fediverse", 404, { name })
   return { shelf, owner }
 }
+
 export async function validateUser (username) {
   const user = await findUserByUsername(username)
   if (!user) throw error_.notFound({ username })
   if (!user.fediversable) throw error_.new('user is not on the fediverse', 404, { username })
   return { user }
 }
+
 export async function validateEntity (name) {
   const uri = getEntityUriFromActorName(name)
   const entity = await getEntityByUri({ uri })

@@ -16,6 +16,7 @@ const db = dbFactory('lists')
 export const getListingById = db.get
 export const getListingsByIds = db.byIds
 export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
+
 export const getListingsByIdsWithElements = async (ids, userId) => {
   const listings = await getListingsByIds(ids)
   if (!_.isNonEmptyArray(listings)) return []
@@ -26,6 +27,7 @@ export const getListingsByIdsWithElements = async (ids, userId) => {
   listings.forEach(assignElementsToListing(elementsByListing))
   return listings
 }
+
 export const createListing = async params => {
   const listing = Listing.create(params)
   const invalidGroupId = await validateVisibilityKeys(listing.visibility, listing.creator)
@@ -37,6 +39,7 @@ export const createListing = async params => {
   }
   return db.postAndReturn(listing)
 }
+
 export const updateListingAttributes = async params => {
   const { id, reqUserId } = params
   const newAttributes = _.pick(params, updateAttributes)
@@ -47,7 +50,9 @@ export const updateListingAttributes = async params => {
   const updatedList = Listing.updateAttributes(listing, newAttributes, reqUserId)
   return db.putAndReturn(updatedList)
 }
+
 export const bulkDeleteListings = db.bulkDelete
+
 export const addListingElements = async ({ listing, uris, userId }) => {
   const currentElements = listing.elements
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
@@ -58,6 +63,7 @@ export const addListingElements = async ({ listing, uris, userId }) => {
   }
   return { ok: true, createdElements }
 }
+
 export const validateListingOwnership = (userId, listings) => {
   listings = _.forceArray(listings)
   for (const listing of listings) {
@@ -66,10 +72,12 @@ export const validateListingOwnership = (userId, listings) => {
     }
   }
 }
+
 export const getListingWithElements = async (listingId, userId) => {
   const listings = await getListingsByIdsWithElements(listingId, userId)
   return listings[0]
 }
+
 export const deleteUserListingsAndElements = userId => {
   return getListingsByCreators([ userId ])
   .then(tap(elements_.deleteListingsElements))

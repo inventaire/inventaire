@@ -24,6 +24,7 @@ export const isUrl = url => {
   }
   return true
 }
+
 export const isColorHexCode = bindedTest('ColorHexCode')
 export const isImageHash = bindedTest('ImageHash')
 export const isAssetImg = bindedTest('AssetImg')
@@ -38,16 +39,19 @@ export const isInvEntityUri = uri => {
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'inv') && isCouchUuid(id)
 }
+
 export const isIsbnEntityUri = uri => {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'isbn') && isNormalizedIsbn(id)
 }
+
 export const isWdEntityUri = uri => {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'wd') && wdk.isItemId(id)
 }
+
 export const isEntityId = id => wdk.isItemId(id) || isInvEntityId(id)
 export const isEmail = bindedTest('Email')
 export const isUserId = isCouchUuid
@@ -64,6 +68,7 @@ export const isExtendedEntityUri = uri => {
   // Ex: twitter:Bouletcorp -> wd:Q1524522
   return isNonEmptyString(prefix) && isNonEmptyString(id)
 }
+
 export const isSimpleDay = str => {
   let isValidDate = false
   try {
@@ -79,6 +84,7 @@ export const isSimpleDay = str => {
 
   return isValidDate && regex_.SimpleDay.test(str)
 }
+
 export const isNonEmptyArray = array => isArray(array) && (array.length > 0)
 export const isNonEmptyPlainObject = obj => isPlainObject(obj) && (Object.keys(obj).length > 0)
 export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)

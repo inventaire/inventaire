@@ -15,7 +15,6 @@ export const getItemById = db.get
 export const getItemsByIds = db.byIds
 export const getItemsByOwner = ownerId => db.viewByKeys('byOwner', [ ownerId ])
 export const getItemsByOwners = ownersIds => db.viewByKeys('byOwner', ownersIds)
-
 export const getItemsByEntity = entityUri => db.viewByKeys('byEntity', [ entityUri ])
 export const getItemsByEntities = entitiesUris => db.viewByKeys('byEntity', entitiesUris)
 

@@ -97,6 +97,7 @@ export const updateClaim = ({ uri, property, oldValue, newValue, user }) => {
 export const addClaim = ({ user, uri, property, value }) => {
   return updateClaim({ user, uri, property, newValue: value })
 }
+
 export const removeClaim = ({ user, uri, property, value }) => {
   return updateClaim({ user, uri, property, oldValue: value })
 }

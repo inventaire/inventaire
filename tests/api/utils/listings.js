@@ -10,6 +10,7 @@ export async function getListingById (user, id) {
   const { lists } = await getByIds(user, id, 'lists')
   return lists[id]
 }
+
 export async function addElements (user, { id, uris }) {
   return customAuthReq(user, 'post', '/api/lists?action=add-elements', { id, uris })
 }

@@ -10,4 +10,5 @@ export const getAcceptedScopes = ({ method, url }) => {
     return scopeByMethodAndRoute[method][url]
   }
 }
+
 export const allScopes = Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)
