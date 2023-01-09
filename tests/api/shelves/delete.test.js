@@ -1,3 +1,4 @@
+import should from 'should'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 import { authReq, authReqB } from '../utils/utils.js'
@@ -35,8 +36,10 @@ describe('shelves:delete', () => {
     .catch(err => {
       err.statusCode.should.equal(404)
     })
-    const getItemsRes = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
-    Object.values(getItemsRes.items).length.should.not.equal(0)
+    const { items } = await authReq('get', `/api/items?action=by-ids&ids=${item._id}`)
+    const updatedItem = items[0]
+    should(updatedItem).be.ok()
+    updatedItem.shelves.should.deepEqual([])
   })
 
   describe('with-items', () => {
