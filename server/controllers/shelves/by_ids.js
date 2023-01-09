@@ -19,7 +19,7 @@ const controller = async ({ ids, withItems, reqUserId }, req, res) => {
   const foundShelvesIds = map(foundShelves, '_id')
   checkNotFoundShelves(ids, foundShelves, foundShelvesIds, res)
   let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
-  checkUnauthorizedShelves(ids, authorizedShelves, foundShelvesIds, req, res)
+  checkUnauthorizedShelves(authorizedShelves, foundShelvesIds, req, res)
   authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
   const shelves = keyBy(authorizedShelves, '_id')
   return { shelves }
@@ -33,11 +33,11 @@ const checkNotFoundShelves = (ids, foundShelves, foundShelvesIds, res) => {
   }
 }
 
-const checkUnauthorizedShelves = (ids, authorizedShelves, foundShelvesIds, req, res) => {
+const checkUnauthorizedShelves = (authorizedShelves, foundShelvesIds, req, res) => {
   if (authorizedShelves.length === 0) {
     throw error_.unauthorized(req, 'unauthorized shelves access', { ids: foundShelvesIds })
   }
-  if (authorizedShelves.length !== ids.length) {
+  if (authorizedShelves.length !== foundShelvesIds.length) {
     const authorizedShelvesIds = map(authorizedShelves, '_id')
     const unauthorizedShelvesIds = difference(foundShelvesIds, authorizedShelvesIds)
     addWarning(res, `unauthorized shelves access: ${unauthorizedShelvesIds.join(', ')}`)
