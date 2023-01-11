@@ -21,6 +21,12 @@ module.exports = {
     const worksUris = _.map(parts, 'uri')
     const worksImages = await Promise.all(worksUris.map(getOneWorkImagePerLang))
     return worksImages.reduce(aggregateWorkImages, images)
+  },
+
+  collection: async entity => {
+    const images = { claims: getEntityImagesFromClaims(entity) }
+    return entities_.byClaim('wdt:P195', entity.uri, true, true)
+    .then(addEditionsImages(images))
   }
 }
 

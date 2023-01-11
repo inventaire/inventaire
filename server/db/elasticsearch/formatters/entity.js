@@ -48,7 +48,7 @@ module.exports = async (entity, options = {}) => {
     entity.uri = 'inv:' + entity._id
   }
 
-  // Take images from claims if no images object was set by add_entities_images,
+  // Take images from claims if no images object was set by addEntitiesImages,
   // that is, for every entity types but works and series
   if (!entity.images) {
     if (specialEntityImagesGetter[entity.type]) {
