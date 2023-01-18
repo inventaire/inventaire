@@ -1,4 +1,4 @@
-import { randomWords } from '#tests/api/fixtures/text'
+import { randomWords } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser, getUserB, getReservedUser } from '../utils/utils.js'

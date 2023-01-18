@@ -7,8 +7,8 @@ import {
   someLibraryThingsWorkId,
   createEditionWithIsbn,
   createWork,
-} from '#tests/api/fixtures/entities'
-import { humanName } from '#tests/api/fixtures/text'
+} from '#fixtures/entities'
+import { humanName } from '#fixtures/text'
 import { getByUris, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'

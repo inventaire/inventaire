@@ -1,7 +1,7 @@
-import { wait } from '#lib/promises'
 import 'should'
+import { someCouchUuid } from '#fixtures/general'
+import { wait } from '#lib/promises'
 import Notification from '#models/notification'
-import { someCouchUuid } from '#tests/api/fixtures/general'
 
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({

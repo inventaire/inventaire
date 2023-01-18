@@ -1,5 +1,5 @@
 import 'should'
-import { createEdition, randomLabel } from '#tests/api/fixtures/entities'
+import { createEdition, randomLabel } from '#fixtures/entities'
 import { updateLabel } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 

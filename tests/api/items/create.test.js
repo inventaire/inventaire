@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import 'should'
+import { createGroup } from '#fixtures/groups'
 import { wait } from '#lib/promises'
-import { createGroup } from '#tests/api/fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import {

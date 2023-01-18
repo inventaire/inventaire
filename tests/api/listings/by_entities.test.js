@@ -1,6 +1,6 @@
 import should from 'should'
 import _ from '#builders/utils'
-import { someFakeUri } from '#tests/api/fixtures/entities'
+import { someFakeUri } from '#fixtures/entities'
 import { createElement } from '../fixtures/listings.js'
 import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
 

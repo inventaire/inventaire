@@ -1,4 +1,4 @@
-import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
+import { getSomeGroupWithAMember } from '#fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createListing } from '../fixtures/listings.js'

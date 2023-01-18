@@ -1,6 +1,6 @@
 import should from 'should'
 import _ from '#builders/utils'
-import { humanName } from '#tests/api/fixtures/text'
+import { humanName } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import {
   getUser,

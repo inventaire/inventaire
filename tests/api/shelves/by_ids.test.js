@@ -1,6 +1,6 @@
 import should from 'should'
-import { someCouchUuid } from '#tests/api/fixtures/general'
-import { getSomeGroupWithAMember } from '#tests/api/fixtures/groups'
+import { someCouchUuid } from '#fixtures/general'
+import { getSomeGroupWithAMember } from '#fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'

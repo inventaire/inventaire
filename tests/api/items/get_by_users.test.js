@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
 import 'should'
+import { humanName } from '#fixtures/text'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
-import { humanName } from '#tests/api/fixtures/text'
 import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup, addMember, createGroup } from '../fixtures/groups.js'

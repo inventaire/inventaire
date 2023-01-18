@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { sentence } from '#tests/api/fixtures/text'
+import { sentence } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
 import {

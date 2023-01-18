@@ -1,6 +1,6 @@
 import should from 'should'
 import _ from '#builders/utils'
-import { randomWords } from '#tests/api/fixtures/text'
+import { randomWords } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { createUser } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'

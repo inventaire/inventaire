@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
 import 'should'
-import { humanName } from '#tests/api/fixtures/text'
+import { humanName } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'

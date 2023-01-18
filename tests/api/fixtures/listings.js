@@ -1,4 +1,4 @@
-import { randomWords } from '#tests/api/fixtures/text'
+import { randomWords } from '#fixtures/text'
 import { addElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'

@@ -1,5 +1,5 @@
+import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
-import { humanName } from '#tests/api/fixtures/text'
 import { createHuman } from '../fixtures/entities.js'
 import { adminReq } from '../utils/utils.js'
 

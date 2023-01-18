@@ -1,5 +1,5 @@
 import 'should'
-import { humanName } from '#tests/api/fixtures/text'
+import { humanName } from '#fixtures/text'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'

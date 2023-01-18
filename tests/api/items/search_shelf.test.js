@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
+import { createShelf, createShelfWithItem } from '#fixtures/shelves'
 import { buildUrl } from '#lib/utils/url'
-import { createShelf, createShelfWithItem } from '#tests/api/fixtures/shelves'
 import { customAuthReq } from '#tests/api/utils/request'
 import { createItem } from '../fixtures/items.js'
 import { waitForIndexation } from '../utils/search.js'

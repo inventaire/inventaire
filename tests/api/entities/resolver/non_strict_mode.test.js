@@ -1,5 +1,5 @@
 import 'should'
-import { randomLabel, generateIsbn13 } from '#tests/api/fixtures/entities'
+import { randomLabel, generateIsbn13 } from '#fixtures/entities'
 import { authReq } from '#tests/api/utils/utils'
 
 describe('entities:resolve:non-strict mode', () => {

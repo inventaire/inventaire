@@ -1,7 +1,6 @@
 import should from 'should'
 import _ from '#builders/utils'
 import getWorksFromAuthorsUris from '#controllers/entities/lib/resolver/get_works_from_authors_uris'
-import { wait } from '#lib/promises'
 import {
   createWork,
   createHuman,
@@ -12,7 +11,8 @@ import {
   generateIsbn13,
   createPublisher,
   createEditionWithIsbn, randomLabel
-} from '#tests/api/fixtures/entities'
+} from '#fixtures/entities'
+import { wait } from '#lib/promises'
 import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { waitForIndexation } from '#tests/api/utils/search'
 import { authReq } from '#tests/api/utils/utils'

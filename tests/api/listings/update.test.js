@@ -1,5 +1,5 @@
-import { someCouchUuid } from '#tests/api/fixtures/general'
-import { createGroupWithAMember, getSomeGroup } from '#tests/api/fixtures/groups'
+import { someCouchUuid } from '#fixtures/general'
+import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getReservedUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'

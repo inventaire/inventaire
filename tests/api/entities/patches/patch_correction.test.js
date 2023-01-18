@@ -1,5 +1,5 @@
 import 'should'
-import { createWork } from '#tests/api/fixtures/entities'
+import { createWork } from '#fixtures/entities'
 import { createEdition } from '../../fixtures/entities.js'
 import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '../../utils/entities.js'
 import { getUser as getUserA, getUserB } from '../../utils/utils.js'

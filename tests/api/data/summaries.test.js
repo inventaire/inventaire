@@ -1,6 +1,6 @@
 import should from 'should'
+import { createWork, createEdition, createHuman } from '#fixtures/entities'
 import { requests_ } from '#lib/requests'
-import { createWork, createEdition, createHuman } from '#tests/api/fixtures/entities'
 import { getByUri } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { publicReq } from '../utils/utils.js'
