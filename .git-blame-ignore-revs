@@ -1,0 +1,24 @@
+# The commits listed below will be ignored by git blame
+# See https://git-scm.com/docs/git-config#Documentation/git-config.txt-blameignoreRevsFile
+# and https://moxio.com/blog/ignoring-bulk-change-commits-with-git-blame/
+
+# To start using this list, the following command should be run (done by ./scripts/postinstall)
+#    git config blame.ignoreRevsFile .git-blame-ignore-revs`
+
+# Find commits with the most line changes over the most files (potentially good candidates for this list):
+# git log --abbrev-commit --no-merges --oneline --pretty="@%H"  --stat | grep -v \| |  tr "\n" " "  |  tr "@" "\n" |  awk '{print ($5*$2)" "$1}' | sort -rn | head
+
+8d944e08c04c77cbae22b7dbaf827c37593b54f1
+6320da200d6fde7f320615a9d08d7d81030a7608
+1d6a77033ece2922cafb14e6ef430b0f00b407a4
+7b2c699c2e7debbc5b205508387b13223f4a1195
+09526f7af0960f6d7f06ce463b9a808acaf1e4b8
+e94f9aaae8a2563d41e4b34be9490c0926f752cc
+bf2b0405585b30e72b6020ffb0d585769742655d
+290415de98acf645091e501a9fc66068028f653f
+13190a637bf43fa9068018f0c41a3eebe83d856d
+a330dbf0a641f451e118bc6a54741423203791b0
+4097a5f7ae16bffcbbdfb433dd48b35916ec11a9
+6a54b41fc62cb23ed8ebd58d1cb4539f328dee6d
+cb48f3d191850e71ca9718a5e80b508a3829faa2
+b69bcbb939eae5be528a09d42dc5852a1f4eef57
