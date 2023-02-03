@@ -3,11 +3,11 @@ import onlineReport from '#controllers/reports/online_report'
 import ActionsControllers from '#lib/actions_controllers'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
-import { logError } from '#lib/utils/logs'
+import { logError, warn } from '#lib/utils/logs'
 
 const cspReport = (req, res) => {
   const report = req.body['csp-report'] || req.body
-  const err = buildError('csp report', 'csp', report, req)
+  const err = buildError('csp report', report, req)
   logError(err, 'csp report')
   responses_.ok(res)
 }
@@ -21,18 +21,28 @@ const errorReport = (req, res) => {
 
   const message = errData.message || 'client error'
 
-  const err = buildError(message, 'client error report', errData, req)
-  logError(err, 'client error report')
+  const err = buildError(message, errData, req)
+
+  // Non-standard status codes used in reported errors
+  // 599 = client implementation error
+  // 598 = user abuse
+  if (err.statusCode === 598) {
+    warn(err, 'client abuse report')
+  } else {
+    logError(err, 'client error report')
+  }
   responses_.ok(res)
 }
 
-const buildError = (message, labels, errData, req) => {
+const buildError = (message, errData, req) => {
   const statusCode = errData.statusCode || 500
   const err = error_.new(message, statusCode, errData)
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
   delete err.emitter
   err.stack = getErrStack(errData)
+  // Prevent logging the stack trace twice
+  if (err.context) delete err.context.stack
   err.referer = req.headers.referer
   err['user-agent'] = req.headers['user-agent']
   return err

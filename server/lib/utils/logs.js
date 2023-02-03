@@ -43,7 +43,7 @@ export const warn = (err, label) => {
   if (err.statusCode === 404 && url && url[0] === '/') return
   if (err instanceof Error) {
     // shorten the stack trace
-    err.stack = err.stack.split('\n').slice(0, 3).join('\n')
+    err.stack = err.stack.split('\n').slice(0, 5).join('\n')
   }
 
   log(err, label, 'yellow')
