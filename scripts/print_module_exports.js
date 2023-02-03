@@ -16,5 +16,6 @@ const json = JSON.stringify(data)
 if (json) {
   process.stdout.write(json)
 } else {
-  throw error_.new('can not print module export', 500, { data })
+  const context = { data, filePath, exportPath, availableExports: Object.keys(exports) }
+  throw error_.new('can not print module export', 500, context)
 }

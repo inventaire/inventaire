@@ -1,4 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # Dependencies:
 # - an access to the Elasticsearch wikidata index to load
@@ -11,7 +13,7 @@
 
 indexed_types_ids=$(mktemp)
 
-./scripts/print_module_exports.js server/lib/wikidata/aliases.js default.typesAliases |
+./scripts/print_module_exports.js server/lib/wikidata/aliases.js typesAliases |
   # Get uris used as P31 from indexed types
   jq '[ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
   # Get the id, wrapped between double quotes
