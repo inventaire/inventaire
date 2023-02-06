@@ -1,14 +1,15 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const dbBaseUrl = CONFIG.db.fullHost()
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
+import CONFIG from 'config'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { info } from '#lib/utils/logs'
+
+const dbBaseUrl = CONFIG.db.getOrigin()
 
 let count = 0
-const waitForActiveTasksToBeDone = async () => {
+export const waitForActiveTasksToBeDone = async () => {
   const activeTasks = await requests_.get(`${dbBaseUrl}/_active_tasks`)
   if (activeTasks.length > 0) {
-    _.info(formatTasks(activeTasks), `waiting for active tasks (${++count})`)
+    info(formatTasks(activeTasks), `waiting for active tasks (${++count})`)
     await wait(2000)
     return waitForActiveTasksToBeDone()
   }
@@ -24,7 +25,3 @@ const formatTask = task => {
 }
 
 const toTime = secondEpoch => new Date(secondEpoch * 1000).toISOString().split(/[T.]/)[1]
-
-module.exports = {
-  waitForActiveTasksToBeDone,
-}

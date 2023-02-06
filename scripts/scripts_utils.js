@@ -12,7 +12,7 @@ export const logErrorAndExit = (label, err) => {
   process.exit(1)
 }
 
-export async function shellExec (cmd, args) {
+export async function shellExec (cmd, args = []) {
   if (args.length > 0) cmd = `${cmd} ${args.join(' ')}`
   const { stdout, stderr } = await execAsync(cmd)
   return {

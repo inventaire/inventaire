@@ -11,27 +11,28 @@
 //
 //    export NODE_ENV=production; npm run couchdb:cleanup-after-design-docs-changes
 
-require('module-alias/register')
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const designDocFolder = __.path('db', 'couchdb/design_docs')
-const { shellExec } = require('scripts/scripts_utils')
-const requests_ = require('lib/requests')
-const getDatabasesNames = require('./lib/get_databases_names')
-const { waitForActiveTasksToBeDone } = require('./lib/active_tasks')
-const dbsList = require('db/couchdb/list')
+import CONFIG from 'config'
+import { databases } from '#db/couchdb/databases'
+import { absolutePath } from '#lib/absolute_path'
+import { requests_ } from '#lib/requests'
+import { success } from '#lib/utils/logs'
+import { shellExec } from '#scripts/scripts_utils'
+import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
+import getDatabasesNames from './lib/get_databases_names.js'
+
+const designDocFolder = absolutePath('db', 'couchdb/design_docs')
+
 const { suffix } = CONFIG.db
 const dbsNames = getDatabasesNames(suffix)
-const dbBaseUrl = CONFIG.db.fullHost()
+const dbBaseUrl = CONFIG.db.getOrigin()
 
 const deleteDesignDocsSymbolicLinks = async () => {
   await shellExec(`rm -f ${designDocFolder}/*_preload.js`)
 }
 
 const deleteDesignDocs = async () => {
-  const entries = Object.keys(dbsList)
-    .map(dbBaseName => dbsList[dbBaseName].map(designDocBaseName => [ dbBaseName, designDocBaseName ]))
+  const entries = Object.keys(databases)
+    .map(dbBaseName => databases[dbBaseName].map(designDocBaseName => [ dbBaseName, designDocBaseName ]))
     .flat()
   return Promise.all(entries.map(deleteDesignDoc))
 }
@@ -51,13 +52,10 @@ const removeDatabaseOutdatedViewIndexes = async dbName => {
   return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup`)
 }
 
-Promise.all([
+await Promise.all([
   deleteDesignDocs(),
   deleteDesignDocsSymbolicLinks(),
 ])
-.then(async () => {
-  await Promise.all(dbsNames.map(removeDatabaseOutdatedViewIndexes))
-  await waitForActiveTasksToBeDone()
-  _.success('done')
-})
-.catch(console.error)
+await Promise.all(dbsNames.map(removeDatabaseOutdatedViewIndexes))
+await waitForActiveTasksToBeDone()
+success('done')

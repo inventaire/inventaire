@@ -8,17 +8,16 @@
 //
 //   export NODE_ENV=production; npm run couchdb:preload-design-docs-changes
 
-require('module-alias/register')
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const designDocFolder = __.path('db', 'couchdb/design_docs')
-const dbsList = require('db/couchdb/list')
-const initCouchdb = require('db/couchdb/init')
-const { symlink } = require('fs').promises
-const { waitForActiveTasksToBeDone } = require('./lib/active_tasks')
+import { symlink } from 'node:fs/promises'
+import { databases } from '#db/couchdb/databases'
+import { waitForCouchInit } from '#db/couchdb/init'
+import { absolutePath } from '#lib/absolute_path'
+import { success } from '#lib/utils/logs'
+import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 
-const designDocsNames = Object.values(dbsList).flat()
+const designDocFolder = absolutePath('db', 'couchdb/design_docs')
+
+const designDocsNames = Object.values(databases).flat()
 
 const createDesignDocSymbolicLink = async designDocName => {
   try {
@@ -32,11 +31,7 @@ const createDesignDocsSymbolicLinks = async () => {
   await Promise.all(designDocsNames.map(createDesignDocSymbolicLink))
 }
 
-createDesignDocsSymbolicLinks()
-.then(async () => {
-  await initCouchdb({ preload: true })
-  await waitForActiveTasksToBeDone()
-  _.success('done')
-})
-
-.catch(console.error)
+await createDesignDocsSymbolicLinks()
+await waitForCouchInit({ preload: true })
+await waitForActiveTasksToBeDone()
+success('done')
