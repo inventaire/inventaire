@@ -1,7 +1,7 @@
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
 import { red } from 'tiny-chalk'
-import { success, logError } from '#lib/utils/logs'
+import { logError } from '#lib/utils/logs'
 
 const execAsync = promisify(exec)
 
@@ -12,13 +12,7 @@ export const logErrorAndExit = (label, err) => {
   process.exit(1)
 }
 
-export const logSuccessAndExit = (label, res) => {
-  makeSureLogsAreWrittenBeforeExit()
-  success(res, label)
-  process.exit(0)
-}
-
-export async function shellExec (cmd, args) {
+export async function shellExec (cmd, args = []) {
   if (args.length > 0) cmd = `${cmd} ${args.join(' ')}`
   const { stdout, stderr } = await execAsync(cmd)
   return {

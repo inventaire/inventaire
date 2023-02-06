@@ -2,7 +2,7 @@ import { log } from '#lib/utils/logs'
 import { shellExec } from '#scripts/scripts_utils'
 import { backupGeneralFolder, backupFolder, day } from './get_backup_folder_data.js'
 
-export default async () => {
+export async function zipBackupFolder () {
   await shellExec('tar', [
     '-zcf',
     // Output
