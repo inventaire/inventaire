@@ -1,9 +1,9 @@
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const getEntityType = require('controllers/entities/lib/get_entity_type')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 
-module.exports = (claims, checkedProperties) => {
+export default (claims, checkedProperties) => {
   assert_.string(claims['wdt:P31'][0])
 
   const type = getEntityType(claims['wdt:P31'])
@@ -29,7 +29,7 @@ const validateControlledPropertiesClaimsPerType = {
     const entityLabel = 'a collection'
     assertPropertyHasValue(claims, 'wdt:P123', entityLabel, 'a publisher')
     assertPropertyHasValue(claims, 'wdt:P1476', entityLabel, 'a title')
-  }
+  },
 }
 
 const assertPropertyHasValue = (claims, property, entityLabel, propertyLabel) => {

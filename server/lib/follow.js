@@ -1,30 +1,36 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const follow = require('cloudant-follow')
-const metaDb = require('db/level/get_sub_db')('meta', 'utf8')
-const requests_ = require('lib/requests')
+import follow from 'cloudant-follow'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import metaDbFactory from '#db/level/get_sub_db'
+import { catchNotFound } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { serverMode } from '#lib/server_mode'
+import { assert_ } from '#lib/utils/assert_types'
+import { log, warn, logError } from '#lib/utils/logs'
+
+const metaDb = metaDbFactory('meta', 'utf8')
 const dbHost = CONFIG.db.getOrigin()
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
 
 let waitForCouchInit
-const requireCircularDependencies = () => { waitForCouchInit = require('db/couchdb/init') }
-setImmediate(requireCircularDependencies)
+const importCircularDependencies = async () => {
+  ({ waitForCouchInit } = await import('#db/couchdb/init'))
+}
+setImmediate(importCircularDependencies)
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-const freezeFollow = CONFIG.db.follow.freeze || !CONFIG.serverMode
+const freezeFollow = CONFIG.db.follow.freeze || !serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
 
-module.exports = async params => {
+export default async params => {
   const { dbBaseName, filter, onChange, reset } = params
   assert_.string(dbBaseName)
   assert_.function(filter)
@@ -34,7 +40,7 @@ module.exports = async params => {
   const dbName = CONFIG.db.name(dbBaseName)
 
   if (freezeFollow) {
-    _.warn(dbName, 'freezed follow')
+    warn(dbName, 'freezed follow')
     return
   }
 
@@ -60,7 +66,7 @@ module.exports = async params => {
 const getLastSeq = async dbName => {
   if (resetFollow) return
   const key = buildKey(dbName)
-  return metaDb.get(key).catch(error_.catchNotFound)
+  return metaDb.get(key).catch(catchNotFound)
 }
 
 const initFollow = async (dbName, reset, lastSeq) => {
@@ -77,7 +83,7 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // Typical case: when starting the server with a large entities database and an empty Elasticsearch,
   // the recommended process is to load entities in Elasticsearch by using scripts/indexation/load.js
   if (getSeqPrefixNumber(dbLastSeq) > getSeqPrefixNumber(lastSeq) + 10000) {
-    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
+    log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq is too far beyond: ignoring`, 'yellow')
     lastSeq = dbLastSeq
   }
 
@@ -85,7 +91,7 @@ const initFollow = async (dbName, reset, lastSeq) => {
   // as this probably means the database was deleted and re-created
   // and the leveldb-backed meta db kept the last_seq value of the previous db
   if (getSeqPrefixNumber(lastSeq) > getSeqPrefixNumber(dbLastSeq)) {
-    _.log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
+    log({ lastSeq, dbLastSeq }, `${dbName} saved last_seq ahead of db: reseting`, 'yellow')
     lastSeq = null
   }
 
@@ -112,11 +118,11 @@ const startFollowingDb = params => {
     db: dbUrl,
     include_docs: true,
     feed: 'continuous',
-    since: lastSeq || 0
+    since: lastSeq || 0,
   }
 
   return follow(config, (err, change) => {
-    if (err != null) return _.error(err, `${dbName} follow err`)
+    if (err != null) return logError(err, `${dbName} follow err`)
     setLastSeq(change.seq)
     for (const follower of dbFollowers) {
       if (follower.filter(change.doc)) {
@@ -136,7 +142,7 @@ const SetLastSeq = dbName => {
       if (seq != null) await metaDb.put(key, seq)
       else await metaDb.del(key)
     } catch (err) {
-      _.error(err, `${dbName} setLastSeq err (seq: ${seq})`)
+      logError(err, `${dbName} setLastSeq err (seq: ${seq})`)
     }
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once

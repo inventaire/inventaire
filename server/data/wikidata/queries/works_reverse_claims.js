@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   parameters: [ 'pid', 'qid' ],
 
   relationProperties: [ '*' ],
@@ -31,5 +31,5 @@ module.exports = {
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189 }
 }
 LIMIT 1000`
-  }
+  },
 }

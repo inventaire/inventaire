@@ -1,8 +1,10 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { generateIsbn13 } from '../fixtures/entities.js'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=isbn'
-const randomString = require('lib/utils/random_string')
-const { generateIsbn13 } = require('../fixtures/entities')
 
 describe('data:isbn', () => {
   it('should reject requests without isbn', async () => {
@@ -14,7 +16,7 @@ describe('data:isbn', () => {
   })
 
   it('should reject requests with invalid isbn', async () => {
-    await publicReq('get', `${endpoint}&isbn=${randomString(10)}`)
+    await publicReq('get', `${endpoint}&isbn=${getRandomString(10)}`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid isbn')

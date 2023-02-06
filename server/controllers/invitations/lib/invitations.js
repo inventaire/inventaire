@@ -1,12 +1,15 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const db = require('db/couchdb/base')('users', 'invited')
-const { findOneByEmail, byEmails } = require('controllers/user/lib/shared_user_handlers')
-const Invited = require('models/invited')
-const { makeRequest } = require('controllers/relations/lib/actions')
-const groupAction = require('controllers/groups/lib/model_action')
+import _ from '#builders/utils'
+import groupAction from '#controllers/groups/lib/model_action'
+import { makeRequest } from '#controllers/relations/lib/actions'
+import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
+import dbFactory from '#db/couchdb/base'
+import { assert_ } from '#lib/utils/assert_types'
+import { log, LogError, LogErrorAndRethrow } from '#lib/utils/logs'
+import Invited from '#models/invited'
 
-const invitations_ = module.exports = {
+const db = dbFactory('users', 'invited')
+
+const invitations_ = {
   findOneByEmail: findOneByEmail.bind(null, db),
 
   byEmails: byEmails.bind(null, db),
@@ -17,7 +20,7 @@ const invitations_ = module.exports = {
     if (groupId) assert_.string(groupId)
     const invitedDocs = unknownEmails.map(Invited.create(inviterId, groupId))
     return db.bulk(invitedDocs)
-    .catch(_.ErrorRethrow('createUnknownInvited'))
+    .catch(LogErrorAndRethrow('createUnknownInvited'))
   },
 
   addInviter: (inviterId, groupId, invitedDocs) => {
@@ -26,7 +29,7 @@ const invitations_ = module.exports = {
     const addInviterFn = Invited.addInviter.bind(null, inviterId, groupId)
     invitedDocs = invitedDocs.map(addInviterFn)
     return db.bulk(invitedDocs)
-    .catch(_.ErrorRethrow('addInviter'))
+    .catch(LogErrorAndRethrow('addInviter'))
   },
 
   convertInvitations: async userDoc => {
@@ -37,10 +40,10 @@ const invitations_ = module.exports = {
 
     invitersGroups = invitersGroups || {}
     const groupInvitersIds = Object.values(invitersGroups)
-    _.log(groupInvitersIds, 'groupInvitersIds')
+    log(groupInvitersIds, 'groupInvitersIds')
 
     const invitersIds = _.difference(Object.keys(inviters), groupInvitersIds)
-    _.log(invitersIds, 'invitersIds')
+    log(invitersIds, 'invitersIds')
 
     const friendsPromises = convertFriendInvitations(invitersIds, userId)
     const groupsPromises = convertGroupsInvitations(invitersGroups, userId)
@@ -51,9 +54,11 @@ const invitations_ = module.exports = {
   stopEmails: email => {
     return invitations_.findOneByEmail(email)
     .then(doc => db.update(doc._id, Invited.stopEmails))
-    .catch(_.ErrorRethrow('stopEmails'))
-  }
+    .catch(LogErrorAndRethrow('stopEmails'))
+  },
 }
+
+export default invitations_
 
 const emailNotification = false
 const convertFriendInvitations = (invitersIds, newUserId) => {
@@ -61,7 +66,7 @@ const convertFriendInvitations = (invitersIds, newUserId) => {
   .map(inviterId => {
     return makeRequest(inviterId, newUserId, emailNotification)
     // Prevent crashing the signup request for one failed request
-    .catch(_.Error(`friend invitation convertion err: ${inviterId}/${newUserId}`))
+    .catch(LogError(`friend invitation convertion err: ${inviterId}/${newUserId}`))
   })
 }
 
@@ -70,6 +75,6 @@ const convertGroupsInvitations = (invitersGroups, newUserId) => {
   .map(groupId => {
     const inviterId = invitersGroups[groupId]
     return groupAction('invite', { reqUserId: inviterId, group: groupId, user: newUserId })
-    .catch(_.Error(`group invitation convertion err: ${inviterId}/${newUserId}`))
+    .catch(LogError(`group invitation convertion err: ${inviterId}/${newUserId}`))
   })
 }

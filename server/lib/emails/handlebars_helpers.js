@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const i18n = require('./i18n/i18n')
+import _ from '#builders/utils'
+import { imgUrlBuilder } from '#lib/emails/app_api'
+import { log } from '#lib/utils/logs'
+import * as i18nHelpers from './i18n/i18n.js'
 
-const appApi = require('./app_api')
-
-module.exports = Object.assign({}, i18n, {
+export default Object.assign({}, i18nHelpers, {
   // Prevent passing more than 2 arguments
   debug: (obj, label) => {
-    _.log(obj, label)
+    log(obj, label)
     return JSON.stringify(obj, null, 2)
   },
 
@@ -21,10 +21,10 @@ module.exports = Object.assign({}, i18n, {
 
     if (path == null) return ''
 
-    return appApi.img(path, width, height)
+    return imgUrlBuilder(path, width, height)
   },
 
-  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj
+  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj,
 })
 
 const onePictureOnly = arg => {

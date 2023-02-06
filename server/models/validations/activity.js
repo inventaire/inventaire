@@ -1,10 +1,13 @@
-const assert_ = require('lib/utils/assert_types')
-const { pass, BoundedString } = require('./common')
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import commonValidations from './common.js'
+
+const { pass, BoundedString } = commonValidations
+
 const activityTypes = [ 'Follow', 'Create' ]
 const objectTypes = [ 'Note' ]
 const actorTypes = [ 'Person' ]
 const contentLimit = 256
-const error_ = require('lib/error/error')
 
 const validateAnObject = validations => obj => {
   Object.keys(obj).forEach(key => {
@@ -16,7 +19,7 @@ const validateAnObject = validations => obj => {
   return true
 }
 
-const objectValidations = {
+export const objectValidations = {
   pass,
   type: type => objectTypes.includes(type),
   content: BoundedString(1, contentLimit),
@@ -25,7 +28,7 @@ const objectValidations = {
     assert_.number(itemsMetadata.since)
     assert_.number(itemsMetadata.until)
     return true
-  }
+  },
 }
 
 const actorValidations = {
@@ -35,12 +38,10 @@ const actorValidations = {
   uri: BoundedString(1, 256),
 }
 
-const baseActivityValidations = {
+export const baseActivityValidations = {
   pass,
   type: type => activityTypes.includes(type),
   object: validateAnObject(objectValidations),
   externalId: BoundedString(1, 256),
   actor: validateAnObject(actorValidations),
 }
-
-module.exports = { baseActivityValidations, objectValidations }

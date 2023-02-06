@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   parameters: [ 'qid' ],
 
   relationProperties: [
@@ -42,5 +42,5 @@ module.exports = {
 
 }
 GROUP BY ?part ?date ?ordinal ?superpart`
-  }
+  },
 }

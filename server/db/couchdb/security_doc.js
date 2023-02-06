@@ -1,13 +1,16 @@
-const { username } = require('config').db
+import CONFIG from 'config'
+
+const { username } = CONFIG.db
+
 if (typeof username !== 'string') {
   throw new Error(`bad CONFIG.db.username: ${username}`)
 }
 
-module.exports = {
+export default {
   admins: {
-    names: [ username ]
+    names: [ username ],
   },
   members: {
-    names: [ username ]
-  }
+    names: [ username ],
+  },
 }

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const validations = require('./validations/task')
+import _ from '#builders/utils'
+import { assert_ } from '#lib/utils/assert_types'
+import validations from './validations/task.js'
 
-module.exports = {
+export default {
   create: newTask => {
     assert_.object(newTask)
     const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
@@ -15,7 +15,7 @@ module.exports = {
       type,
       suspectUri,
       suggestionUri,
-      created: Date.now()
+      created: Date.now(),
     }
 
     if (lexicalScore) lexicalScore = _.round(lexicalScore, 2)
@@ -42,7 +42,7 @@ module.exports = {
     task[attribute] = value
     task.updated = now
     return task
-  }
+  },
 }
 
 const validateAndAssign = (task, name, attribute) => {

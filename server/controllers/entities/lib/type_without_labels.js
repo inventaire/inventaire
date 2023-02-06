@@ -1,5 +1,6 @@
 // Types that have a monolingual title but no label
-module.exports = {
-  edition: true,
-  collection: true
-}
+
+export const typeWithoutLabels = new Set([
+  'edition',
+  'collection',
+])

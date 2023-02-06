@@ -1,11 +1,14 @@
-const { port, host, name, publicProtocol } = require('config')
-const _ = require('builders/utils')
-const express = require('express')
+import CONFIG from 'config'
+import express from 'express'
+import _ from '#builders/utils'
+import { info } from '#lib/utils/logs'
+import { errorHandler } from '#server/middlewares/error_handler'
+import { routes } from './controllers/routes.js'
+import middlewares from './middlewares/middlewares.js'
 
-const middlewares = require('./middlewares/middlewares')
-const routes = require('./controllers/routes')
+const { port, host, name, publicProtocol } = CONFIG
 
-module.exports = () => {
+export function initExpress () {
   const app = express()
 
   for (const middleware of middlewares) {
@@ -26,7 +29,7 @@ module.exports = () => {
 
   // Should be used after all middlewares and routes
   // cf http://expressjs.com/fr/guide/error-handling.html
-  app.use(require('./middlewares/error_handler'))
+  app.use(errorHandler)
 
   if (publicProtocol === 'https') {
     // Allows Nginx to pass a "X-Forwarded-Proto=https" header
@@ -42,7 +45,7 @@ module.exports = () => {
       if (err) {
         reject(err)
       } else {
-        _.info(`${name} server is listening on port ${port}...`)
+        info(`${name} server is listening on port ${port}...`)
         resolve(app)
       }
     })

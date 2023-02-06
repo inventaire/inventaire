@@ -1,14 +1,14 @@
-require('should')
-const { createUser } = require('../fixtures/users')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { signedReq, makeUrl, createRemoteActivityPubServerUser } = require('../utils/activitypub')
-const { getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
-const { wait } = require('lib/promises')
-const requests_ = require('lib/requests')
-const { createHuman } = require('../fixtures/entities')
-const { createShelf } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
+import 'should'
+import { getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createHuman } from '../fixtures/entities.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser } from '../fixtures/users.js'
+import { signedReq, createRemoteActivityPubServerUser } from '../utils/activitypub.js'
+import { getActorName } from '../utils/shelves.js'
 
 describe('activitypub:inbox:Follow', () => {
   describe('users', () => {
@@ -19,7 +19,7 @@ describe('activitypub:inbox:Follow', () => {
         const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
         await signedReq({
           object: actorUrl,
-          url: inboxUrl
+          url: inboxUrl,
         })
         .then(shouldNotBeCalled)
       } catch (err) {
@@ -36,7 +36,7 @@ describe('activitypub:inbox:Follow', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const res = await signedReq({
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       res.statusCode.should.equal(200)
       const activities = await getFollowActivitiesByObject(username)
@@ -51,7 +51,7 @@ describe('activitypub:inbox:Follow', () => {
       const requestPromise = signedReq({
         emitterUser,
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       await requestPromise
       await wait(500)
@@ -66,7 +66,7 @@ describe('activitypub:inbox:Follow', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const { remoteHost, remoteUsername } = await signedReq({
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       inbox.length.should.equal(1)
@@ -86,7 +86,7 @@ describe('activitypub:inbox:Follow', () => {
         const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
         await signedReq({
           object: actorUrl,
-          url: inboxUrl
+          url: inboxUrl,
         })
         .then(shouldNotBeCalled)
       } catch (err) {
@@ -103,7 +103,7 @@ describe('activitypub:inbox:Follow', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const res = await signedReq({
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       res.statusCode.should.equal(200)
       const activities = await getFollowActivitiesByObject(name)
@@ -120,7 +120,7 @@ describe('activitypub:inbox:Follow', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
       const res = await signedReq({
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       res.statusCode.should.equal(200)
       const activities = await getFollowActivitiesByObject(name)

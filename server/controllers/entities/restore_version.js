@@ -1,7 +1,7 @@
-const restoreVersion = require('./lib/restore_version')
+import restoreVersion from './lib/restore_version.js'
 
 const sanitization = {
-  patch: {}
+  patch: {},
 }
 
 const controller = async ({ patchId, reqUserId }) => {
@@ -9,4 +9,4 @@ const controller = async ({ patchId, reqUserId }) => {
   return { ok: true }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

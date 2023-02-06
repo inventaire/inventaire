@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const getEntitiesList = require('../get_entities_list')
+import _ from '#builders/utils'
+import { getEntitiesList } from '../get_entities_list.js'
 
-module.exports = workUris => {
+export default workUris => {
   return getEntitiesList(workUris)
   .then(getAuthorUris)
   .then(_.flatten)

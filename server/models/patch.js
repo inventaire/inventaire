@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const jiff = require('jiff')
-const validations = require('./validations/common')
-const { versioned } = require('./attributes/entity')
-const Entity = require('models/entity')
+import jiff from 'jiff'
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import Entity from '#models/entity'
+import { versioned } from './attributes/entity.js'
+import validations from './validations/common.js'
 
-const Patch = module.exports = {
+const Patch = {
   create: params => {
     const { userId, currentDoc, updatedDoc, context, batchId } = params
     validations.pass('userId', userId)
@@ -36,7 +36,7 @@ const Patch = module.exports = {
       type: 'patch',
       user: userId,
       timestamp: now,
-      patch: Patch.getDiff(currentDoc, updatedDoc)
+      patch: Patch.getDiff(currentDoc, updatedDoc),
     }
 
     if (patch.patch.length === 0) {
@@ -88,6 +88,8 @@ const Patch = module.exports = {
     return patchesDocs
   },
 }
+
+export default Patch
 
 const applyInversePatch = (currentDoc, inversePatch) => {
   currentDoc = _.cloneDeep(currentDoc)
@@ -147,7 +149,7 @@ const operationFix = {
       // to avoid removing the wrong value if changes messed with the value index
       op.path = nextOp.path = op.path.replace(/\/\d+$/, `/${currentValueIndex}`)
     }
-  }
+  },
 }
 
 const getFromPatchPath = (obj, path) => {

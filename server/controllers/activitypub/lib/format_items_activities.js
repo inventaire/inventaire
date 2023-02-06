@@ -1,50 +1,49 @@
-const _ = require('builders/utils')
-const CONFIG = require('config')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { context } from '#controllers/activitypub/lib/helpers'
+import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { i18n } from '#lib/emails/i18n/i18n'
+
 const host = CONFIG.getPublicOrigin()
-const { i18n } = require('lib/emails/i18n/i18n')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const { context } = require('controllers/activitypub/lib/helpers')
 const maxLinksToDisplay = 3
 
-module.exports = {
-  createItemsNote: ({ allActivitiesItems, lang, name, actor, parentLink }) => async activityDoc => {
-    const { since, until } = activityDoc.object.items
-    // todo: pre-sorting the items per range
-    const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
+export const createItemsNote = ({ allActivitiesItems, lang, name, actor, parentLink }) => async activityDoc => {
+  const { since, until } = activityDoc.object.items
+  // todo: pre-sorting the items per range
+  const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
 
-    if (publicRangeItems.length === 0) return
+  if (publicRangeItems.length === 0) return
 
-    const firstItems = publicRangeItems.slice(0, 3)
-    await Promise.all(firstItems.map(snapshot_.addToItem))
-    const links = firstItems.map(buildLinkContentFromItem)
-    // itemsLength as in OrderedItems (not user's item)
-    const itemsLength = publicRangeItems.length
+  const firstItems = publicRangeItems.slice(0, 3)
+  await Promise.all(firstItems.map(addSnapshotToItem))
+  const links = firstItems.map(buildLinkContentFromItem)
+  // itemsLength as in OrderedItems (not user's item)
+  const itemsLength = publicRangeItems.length
 
-    const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
+  const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
 
-    const object = {
-      id,
-      type: 'Note',
-      content: buildContent({ links, name, lang, itemsLength, parentLink }),
-      published: new Date(until).toISOString(),
-      attachment: _.compact(firstItems.map(buildAttachement)),
-    }
-    return {
-      id: `${id}#create`,
-      '@context': context,
-      type: 'Create',
-      object,
-      actor,
-      to: 'Public',
-    }
-  },
-  findFullRangeFromActivities: activitiesDocs => {
-    return {
-      since: _.min(_.map(activitiesDocs, 'object.items.since')),
-      until: _.max(_.map(activitiesDocs, 'object.items.until'))
-    }
+  const object = {
+    id,
+    type: 'Note',
+    content: buildContent({ links, name, lang, itemsLength, parentLink }),
+    published: new Date(until).toISOString(),
+    attachment: _.compact(firstItems.map(buildAttachement)),
   }
+  return {
+    id: `${id}#create`,
+    '@context': context,
+    type: 'Create',
+    object,
+    actor,
+    to: 'Public',
+  }
+}
 
+export const findFullRangeFromActivities = activitiesDocs => {
+  return {
+    since: _.min(_.map(activitiesDocs, 'object.items.since')),
+    until: _.max(_.map(activitiesDocs, 'object.items.until')),
+  }
 }
 
 const itemsWithinActivityRange = (since, until) => item => item.created > since && item.created < until
@@ -53,7 +52,7 @@ const buildLinkContentFromItem = item => {
   return {
     text: item.snapshot['entity:title'],
     url: `${host}/items/${item._id}`,
-    details: `\n${item.details}`
+    details: `\n${item.details}`,
   }
 }
 

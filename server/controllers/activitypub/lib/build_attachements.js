@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const { buildLink, entityUrl, defaultLabel, propertyLabel } = require('./helpers')
-const platforms = require('./platforms')
-const propertiesDisplay = require('./properties_display.js')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
+import _ from '#builders/utils'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
+import { platforms } from './platforms.js'
+import { propertiesDisplay } from './properties_display.js'
+
 const typesWithAttachements = Object.keys(propertiesDisplay)
 
-module.exports = async entity => {
+export default async entity => {
   const { claims, type } = entity
   if (!typesWithAttachements.includes(type)) return
 
@@ -20,7 +21,7 @@ const buildAttachement = (claims, attachementsList) => async prop => {
   if (!claimValues) return
   const attachement = {
     type: 'PropertyValue',
-    name: propertyLabel(prop)
+    name: propertyLabel(prop),
   }
   const attachementValue = await buildAttachementValues(claimValues, prop, attachementsList)
   if (attachementValue && _.isNonEmptyString(attachementValue)) {
@@ -60,7 +61,7 @@ const buildPlatform = ({ claimValue, prop }) => {
   const { url, text } = plateformProp
   const attachementValue = buildLinkWrapper({
     claimValue: url(claimValue),
-    text: text(claimValue)
+    text: text(claimValue),
   })
   if (attachementValue) return attachementValue
 }
@@ -71,7 +72,7 @@ const claimTypesActions = {
   string: _.identity,
   time: buildTime,
   platform: buildPlatform,
-  url: buildLinkWrapper
+  url: buildLinkWrapper,
 }
 
 const buildAttachementValue = (claimType, prop) => async claimValue => {

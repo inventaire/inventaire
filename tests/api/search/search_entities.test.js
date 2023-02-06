@@ -1,14 +1,27 @@
-const _ = require('builders/utils')
-require('should')
-const { createWork, createHuman, createSerie, createCollection, createPublisher, sameFirstNameLabel, createWorkWithAuthor, createSerieWithAuthor, createWorkWithSerie, humanName } = require('../fixtures/entities')
-const { randomLongWord, randomWords } = require('../fixtures/text')
-const { getByUris } = require('../utils/entities')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation, getIndexedDoc } = require('../utils/search')
-const randomString = require('lib/utils/random_string')
+import 'should'
+import _ from '#builders/utils'
+import elasticsearchSettings from '#db/elasticsearch/settings/settings'
+import { assert_ } from '#lib/utils/assert_types'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createWork,
+  createHuman,
+  createSerie,
+  createCollection,
+  createPublisher,
+  sameFirstNameLabel,
+  createWorkWithAuthor,
+  createSerieWithAuthor,
+  createWorkWithSerie,
+} from '../fixtures/entities.js'
+import { humanName, randomLongWord, randomWords } from '../fixtures/text.js'
+import { getByUris } from '../utils/entities.js'
+import { search, waitForIndexation, getIndexedDoc } from '../utils/search.js'
+
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
-const assert_ = require('lib/utils/assert_types')
-const { max_gram: maxGram } = require('db/elasticsearch/settings/settings').analysis.filter.edge_ngram
+const { max_gram: maxGram } = elasticsearchSettings.analysis.filter.edge_ngram
+
 assert_.number(maxGram)
 
 describe('search:entities', () => {
@@ -32,7 +45,7 @@ describe('search:entities', () => {
       waitForIndexation('entities', serie._id),
       waitForIndexation('entities', publisher._id),
       waitForIndexation('entities', collection._id),
-      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1]))
+      ...wikidataUris.map(uri => waitForIndexation('wikidata', uri.split(':')[1])),
     ])
   })
 
@@ -112,7 +125,7 @@ describe('search:entities', () => {
       })
 
       it('should find a label with single letter words', async () => {
-        const label = randomString(1)
+        const label = getRandomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', exact: true, filter: 'inv' })
@@ -138,6 +151,7 @@ describe('search:entities', () => {
         _.map(results, 'uri').should.containEql(work.uri)
       })
 
+      // This test is known to occasionally fail
       it('should favor matches in the requested language', async () => {
         const label = randomWords(2)
         const [ workEs, workFr ] = await Promise.all([
@@ -168,7 +182,7 @@ describe('search:entities', () => {
       })
 
       it('should find a label with single letter words', async () => {
-        const label = randomString(1)
+        const label = getRandomString(1)
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
@@ -351,8 +365,8 @@ describe('search:entities', () => {
       const publisher = await createPublisher({ labels: { en: label } })
       const collection = await createCollection({
         claims: {
-          'wdt:P123': [ publisher.uri ]
-        }
+          'wdt:P123': [ publisher.uri ],
+        },
       })
       await waitForIndexation('entities', collection._id)
       const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })

@@ -1,8 +1,9 @@
-const should = require('should')
-const { authReq, shouldNotBeCalled, dataadminReq } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { getByUris, merge, revertMerge, updateLabel, addClaim } = require('../utils/entities')
-const { createWork, createHuman, createWorkWithAuthor } = require('../fixtures/entities')
+import should from 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createWork, createHuman, createWorkWithAuthor } from '../fixtures/entities.js'
+import { getByUris, merge, revertMerge, updateLabel, addClaim } from '../utils/entities.js'
+import { authReq, dataadminReq } from '../utils/utils.js'
 
 describe('entities:revert-merge', () => {
   it('should require data admin rights', async () => {
@@ -35,7 +36,7 @@ describe('entities:revert-merge', () => {
   it('should revert merge two entities with an inv URI', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     const res = await getByUris(workA.uri)
@@ -51,7 +52,7 @@ describe('entities:revert-merge', () => {
     const [ workA, workB, author ] = await Promise.all([
       createWork(),
       createWork(),
-      createHuman()
+      createHuman(),
     ])
     await addClaim({ uri: workA.uri, property: 'wdt:P50', value: author.uri })
     await merge(workA.uri, workB.uri)
@@ -65,10 +66,10 @@ describe('entities:revert-merge', () => {
   })
 
   it('should revert labels transfer', async () => {
-    const label = randomString(6)
+    const label = getRandomString(6)
     const [ workA, workB ] = await Promise.all([
       createWork({ labels: { zh: label } }),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     const res = await getByUris(workB.uri)
@@ -83,7 +84,7 @@ describe('entities:revert-merge', () => {
       createWork(),
       createWork(),
       createHuman(),
-      createHuman()
+      createHuman(),
     ])
     await addClaim({ uri: workA.uri, property: 'wdt:P50', value: authorA.uri })
     await merge(workA.uri, workB.uri)
@@ -99,11 +100,11 @@ describe('entities:revert-merge', () => {
   })
 
   it('should revert labels transfer', async () => {
-    const labelA = randomString(6)
-    const labelB = randomString(6)
+    const labelA = getRandomString(6)
+    const labelB = getRandomString(6)
     const [ workA, workB ] = await Promise.all([
       createWork({ labels: { zh: labelA } }),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     const res = await getByUris(workB.uri)
@@ -119,7 +120,7 @@ describe('entities:revert-merge', () => {
     const [ humanA, humanB, work ] = await Promise.all([
       createHuman(),
       createHuman(),
-      createWork()
+      createWork(),
     ])
     await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanA.uri })
     await merge(humanA.uri, humanB.uri)
@@ -132,7 +133,7 @@ describe('entities:revert-merge', () => {
   it('should restore removed human placeholders', async () => {
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(),
-      createWorkWithAuthor()
+      createWorkWithAuthor(),
     ])
     const humanAUri = workA.claims['wdt:P50'][0]
     await merge(workA.uri, workB.uri)

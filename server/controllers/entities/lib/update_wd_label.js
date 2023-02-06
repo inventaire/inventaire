@@ -1,9 +1,9 @@
-const error_ = require('lib/error/error')
-const wdk = require('wikidata-sdk')
-const wdEdit = require('lib/wikidata/edit')
-const wdOauth = require('./wikidata_oauth')
+import wdk from 'wikidata-sdk'
+import { error_ } from '#lib/error/error'
+import wdEdit from '#lib/wikidata/edit'
+import wdOauth from './wikidata_oauth.js'
 
-module.exports = async (user, id, language, value) => {
+export default async (user, id, language, value) => {
   if (!wdk.isItemId(id)) throw error_.newInvalid('id', id)
 
   wdOauth.validate(user)

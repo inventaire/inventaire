@@ -1,10 +1,11 @@
-require('should')
-const { publicReq } = require('../utils/utils')
-const { wait } = require('lib/promises')
+import 'should'
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { publicReq } from '../utils/utils.js'
+
 const usernameEndpoint = '/api/auth?action=username-availability'
 const emailEndpoint = '/api/auth?action=email-availability'
-const { createUser, createUsername } = require('../fixtures/users')
-const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('auth:username-availability', () => {
   it('should reject requests without username', async () => {

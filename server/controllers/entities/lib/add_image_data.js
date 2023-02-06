@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const getThumbData = require('data/commons/thumb')
-const getEnwikiImage = require('data/wikipedia/image')
-const getOpenLibraryCover = require('data/openlibrary/cover')
-const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
+import _ from '#builders/utils'
+import getThumbData from '#data/commons/thumb'
+import getOpenLibraryCover from '#data/openlibrary/cover'
+import getEnwikiImage from '#data/wikipedia/image'
+import { objectPromise } from '#lib/promises'
+import { logError } from '#lib/utils/logs'
+import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
-module.exports = async entity => {
+export default async entity => {
   const data = await findAnImage(entity)
   entity.image = data
   return entity
@@ -20,10 +21,10 @@ const findAnImage = entity => {
 }
 
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
-  return promises_.props({
+  return objectPromise({
     wm: getThumbData(commonsFilename),
     wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
-    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type)
+    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type),
   })
   .then(results => {
     const order = getPicSourceOrder(entity)
@@ -41,7 +42,7 @@ const getSourcePromise = (sourceName, fn, ...args) => {
     err.context = err.context || {}
     err.context.args = args
     // Do not rethrow the error to let a chance to other sources
-    _.error(err, `${sourceName} image not found`)
+    logError(err, `${sourceName} image not found`)
   })
 }
 

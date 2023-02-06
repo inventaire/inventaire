@@ -1,9 +1,10 @@
 // Get the amount of entities linking to a given entity
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const runWdQuery = require('data/wikidata/run_query')
+import _ from '#builders/utils'
+import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
 
-module.exports = (uri, refresh) => {
+export default (uri, refresh) => {
   const [ prefix, id ] = uri.split(':')
   const promises = []
 
@@ -13,7 +14,7 @@ module.exports = (uri, refresh) => {
 
   return Promise.all(promises)
   .then(_.sum)
-  .catch(_.ErrorRethrow('get links count err'))
+  .catch(LogErrorAndRethrow('get links count err'))
 }
 
 const getWdLinksScore = (qid, refresh) => {
@@ -21,4 +22,4 @@ const getWdLinksScore = (qid, refresh) => {
   .then(_.first)
 }
 
-const getLocalLinksCount = uri => entities_.byClaimsValue(uri, true)
+const getLocalLinksCount = uri => getEntitiesByClaimsValue(uri, true)

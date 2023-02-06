@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const error_ = require('lib/error/error')
+import { error_ } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { warn } from '#lib/utils/logs'
 
-module.exports = params => {
+export default params => {
   let { updateFn, maxAttempts } = params
   if (!maxAttempts) maxAttempts = 10
   return (...args) => {
@@ -14,7 +14,7 @@ module.exports = params => {
       if (attemptsCount > 1) {
         // Avoid logging user document
         const contextArgs = args.filter(arg => arg != null && arg.type !== 'user')
-        _.warn({ updateFn, contextArgs }, 'retrying after conflict')
+        warn({ updateFn, contextArgs }, 'retrying after conflict')
       }
 
       attemptsCount += 1

@@ -1,7 +1,10 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
-const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
-const { authReq } = require('../utils/utils')
-const { listingName } = require('../fixtures/listings')
+import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { listingName } from '../fixtures/listings.js'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/lists?action=create'
 
 describe('listings:create', () => {

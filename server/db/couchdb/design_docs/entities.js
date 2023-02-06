@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byClaim: {
     map: doc => {
       if (doc.type === 'entity') {
@@ -8,7 +8,7 @@ module.exports = {
           }
         }
       }
-    }
+    },
   },
   byClaimValue: {
     map: doc => {
@@ -19,6 +19,6 @@ module.exports = {
           }
         }
       }
-    }
-  }
+    },
+  },
 }

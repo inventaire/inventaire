@@ -1,6 +1,17 @@
-require('should')
-const { publicReq, authReq, adminReq, dataadminReq, getUserA, getUserB, getAdminUser, getDataadminUser, rethrowShouldNotBeCalledErrors, shouldNotBeCalled, customAuthReq } = require('../utils/utils')
-const { createWork } = require('../fixtures/entities')
+import 'should'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createWork } from '../fixtures/entities.js'
+import {
+  publicReq,
+  authReq,
+  adminReq,
+  dataadminReq,
+  getUserA,
+  getUserB,
+  getAdminUser,
+  getDataadminUser,
+} from '../utils/utils.js'
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {

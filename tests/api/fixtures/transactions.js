@@ -1,10 +1,11 @@
-require('should')
-const { getUser, getUserB, authReq, customAuthReq } = require('tests/api/utils/utils')
-const { wait } = require('lib/promises')
-const { createItem } = require('./items')
-const { getItem } = require('../utils/items')
+import 'should'
+import { wait } from '#lib/promises'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, getUserB, authReq } from '#tests/api/utils/utils'
+import { getItem } from '../utils/items.js'
+import { createItem } from './items.js'
 
-const createTransaction = async (params = {}) => {
+export async function createTransaction (params = {}) {
   const userA = await (params.userA || getUser())
   const userB = await (params.userB || getUserB())
   let { item, itemData } = params
@@ -16,28 +17,22 @@ const createTransaction = async (params = {}) => {
   const refreshedItem = await getItem(item)
   const res = await customAuthReq(userA, 'post', '/api/transactions?action=request', {
     item: item._id,
-    message: 'yo'
+    message: 'yo',
   })
   Object.assign(res, { userA, userB, userBItem: refreshedItem })
   return res
 }
 
 let someTransactionData
-const getSomeTransaction = async () => {
-  someTransactionData = someTransactionData || await createTransaction()
+export const getSomeTransaction = async () => {
+  someTransactionData = someTransactionData || (await createTransaction())
   return someTransactionData
 }
 
-module.exports = {
-  createTransaction,
-
-  getSomeTransaction,
-
-  addMessage: transaction => {
-    return authReq('post', '/api/transactions?action=message', {
-      action: 'message',
-      transaction: transaction._id,
-      message: 'yo'
-    })
-  }
+export const addMessage = transaction => {
+  return authReq('post', '/api/transactions?action=message', {
+    action: 'message',
+    transaction: transaction._id,
+    message: 'yo',
+  })
 }

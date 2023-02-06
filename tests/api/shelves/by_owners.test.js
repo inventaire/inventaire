@@ -1,9 +1,10 @@
-const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, customAuthReq, authReq, getUser, getUserB } = require('../utils/utils')
-const { createShelf } = require('../fixtures/shelves')
-const { createUser, getTwoFriends } = require('../fixtures/users')
-const { createGroupWithAMember, getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
+import should from 'should'
+import { createGroupWithAMember, getSomeGroupWithAMember } from '#fixtures/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser, getTwoFriends } from '../fixtures/users.js'
+import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=by-owners'
 

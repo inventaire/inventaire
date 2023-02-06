@@ -1,4 +1,4 @@
-const fetchExternalAuthorWorksTitles = require('data/lib/fetch_external_author_works_titles')
+import fetchExternalAuthorWorksTitles from '#data/lib/fetch_external_author_works_titles'
 
 const endpoint = 'http://libris.kb.se/sparql'
 
@@ -7,4 +7,4 @@ const getQuery = selibrId => `SELECT ?work ?title {
 ?work <http://purl.org/dc/elements/1.1/title> ?title .
 }`
 
-module.exports = fetchExternalAuthorWorksTitles('selibr', endpoint, getQuery)
+export default fetchExternalAuthorWorksTitles('selibr', endpoint, getQuery)

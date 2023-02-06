@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const cache_ = require('lib/cache')
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
+import { info } from '#lib/utils/logs'
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`
 const headers = { accept: '*/*' }
 
-module.exports = olId => {
+export default olId => {
   const key = `ol:author-works-titles:${olId}`
   return cache_.get({
     key,
@@ -15,7 +15,7 @@ module.exports = olId => {
 }
 
 const getAuthorWorksTitles = async olId => {
-  _.info(olId, 'olId')
+  info(olId, 'olId')
   const url = `${base}?author=${olId}`
   const { docs } = await requests_.get(url, { headers })
   return docs.map(parseResult)
@@ -23,5 +23,5 @@ const getAuthorWorksTitles = async olId => {
 
 const parseResult = result => ({
   title: result.title_suggest,
-  url: endpoint + result.key
+  url: endpoint + result.key,
 })

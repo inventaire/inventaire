@@ -1,16 +1,16 @@
-const should = require('should')
-const randomString = require('lib/utils/random_string')
-const { getByUri, updateLabel, restoreVersion, getHistory, addClaim } = require('../utils/entities')
-const { createWork } = require('../fixtures/entities')
-const { getUserA, getUserB } = require('../utils/utils')
+import should from 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { createWork } from '../fixtures/entities.js'
+import { getByUri, updateLabel, restoreVersion, getHistory, addClaim } from '../utils/entities.js'
+import { getUserA, getUserB } from '../utils/utils.js'
 
 describe('entities:restore', () => {
   it('should restore after label updates', async () => {
-    const originalLabel = randomString(6)
+    const originalLabel = getRandomString(6)
     const [ userA, userB ] = await Promise.all([ getUserA(), getUserB() ])
     const { uri } = await createWork({ user: userA, labels: { en: originalLabel } })
-    await updateLabel({ user: userB, uri, lang: 'en', value: randomString(6) })
-    await updateLabel({ user: userA, uri, lang: 'en', value: randomString(6) })
+    await updateLabel({ user: userB, uri, lang: 'en', value: getRandomString(6) })
+    await updateLabel({ user: userA, uri, lang: 'en', value: getRandomString(6) })
     const firstVersionPatchId = `${uri.split(':')[1]}:2`
     const res = await restoreVersion({ user: userB, patchId: firstVersionPatchId })
     res.should.be.ok()

@@ -1,13 +1,15 @@
-const CONFIG = require('config')
+import bodyParser from 'body-parser'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
+
 const { deduplicateRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const bodyParser = require('body-parser')
 
 const urlencodedBodyParser = bodyParser.urlencoded({ extended: false })
 
-module.exports = {
+export default {
   // Assume JSON content-type for, among others:
   // - application/json
   // - application/x-www-form-urlencoded (used by /bin/curl and jquery default)
@@ -53,11 +55,11 @@ module.exports = {
 
     if (logIncomingRequestsBody) {
       const userAgent = req.headers['user-agent']
-      _.log(req.body, `${method}:${url} body [${userAgent}]`)
+      log(req.body, `${method}:${url} body [${userAgent}]`)
     }
 
     next()
-  }
+  },
 }
 
 const headersHash = req => _.hashCode(JSON.stringify(req.headers))
@@ -74,5 +76,5 @@ const requestsCache = {}
 
 const methodsWithBody = [ 'POST', 'PUT' ]
 const ignorePathname = [
-  '/api/reports'
+  '/api/reports',
 ]

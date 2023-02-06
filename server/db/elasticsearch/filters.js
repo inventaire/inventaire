@@ -1,7 +1,8 @@
-const isntDesignDoc = doc => !doc._id.startsWith('_design/')
-const { identity } = require('lodash')
+import { identity } from 'lodash-es'
 
-module.exports = {
+const isntDesignDoc = doc => !doc._id.startsWith('_design/')
+
+export default {
   entities: isntDesignDoc,
   groups: doc => doc.type === 'group',
   items: isntDesignDoc,

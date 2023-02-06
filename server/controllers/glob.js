@@ -1,16 +1,18 @@
-const __ = require('config').universalPath
-const error_ = require('lib/error/error')
-const publicFolder = __.path('client', 'public')
+import { absolutePath } from '#lib/absolute_path'
+import { error_ } from '#lib/error/error'
+
+const publicFolder = absolutePath('client', 'public')
+
 const indexOptions = {
   root: publicFolder,
   headers: {
     'cache-control': 'no-cache, no-store, must-revalidate',
     // Opt-out from Google FLoC, see https://plausible.io/blog/google-floc
     'permissions-policy': 'interest-cohort=()',
-  }
+  },
 }
 
-module.exports = {
+export default {
   get: (req, res) => {
     const { pathname } = req._parsedUrl
     const domain = pathname.split('/')[1]
@@ -32,9 +34,9 @@ module.exports = {
   api: (req, res) => {
     error_.bundle(req, res, 'wrong API route or http verb', 404, {
       verb: req.method,
-      url: req._parsedUrl.href
+      url: req._parsedUrl.href,
     })
-  }
+  },
 }
 
 const imageHeader = req => req.headers.accept?.startsWith('image')

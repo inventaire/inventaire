@@ -1,24 +1,24 @@
-const comments_ = require('controllers/comments/lib/comments')
-const transactions_ = require('./lib/transactions')
-const { verifyRightToInteract } = require('./lib/rights_verification')
-const { emit } = require('lib/radio')
+import comments_ from '#controllers/comments/lib/comments'
+import { getTransactionById, updateReadForNewMessage } from '#controllers/transactions/lib/transactions'
+import { emit } from '#lib/radio'
+import { verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
 
 const sanitization = {
   transaction: {},
-  message: {}
+  message: {},
 }
 
 const controller = async ({ transactionId, message, reqUserId }) => {
-  const transaction = await transactions_.byId(transactionId)
-  verifyRightToInteract(reqUserId, transaction)
+  const transaction = await getTransactionById(transactionId)
+  verifyRightToInteractWithTransaction(reqUserId, transaction)
   await comments_.addTransactionComment(reqUserId, message, transactionId)
-  await transactions_.updateReadForNewMessage(reqUserId, transaction)
+  await updateReadForNewMessage(reqUserId, transaction)
   await emit('transaction:message', transaction)
   return { ok: true }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'transaction', 'message' ]
+  track: [ 'transaction', 'message' ],
 }

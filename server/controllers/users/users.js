@@ -1,16 +1,21 @@
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from '#lib/actions_controllers'
+import byIds from './by_ids.js'
+import byUsernames from './by_usernames.js'
+import nearby from './nearby.js'
+import searchByPosition from './search_by_position.js'
+import searchByText from './search_by_text.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
-      'by-ids': require('./by_ids'),
-      'by-usernames': require('./by_usernames'),
-      search: require('./search_by_text'),
-      'search-by-position': require('./search_by_position')
+      'by-ids': byIds,
+      'by-usernames': byUsernames,
+      search: searchByText,
+      'search-by-position': searchByPosition,
     },
     authentified: {
       // TODO: maybe, merge this endpoint with search-by-position
-      nearby: require('./nearby')
-    }
-  })
+      nearby,
+    },
+  }),
 }

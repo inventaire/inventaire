@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
-const error_ = require('lib/error/error')
-const wdk = require('wikidata-sdk')
-const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
+import wdk from 'wikidata-sdk'
+import { error_ } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { warn, info } from '#lib/utils/logs'
+
+const { sparqlResults: simplifySparqlResults } = wdk.simplify
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -11,7 +12,7 @@ const maxConcurrency = 4
 let waiting = 0
 let ongoing = 0
 
-module.exports = async sparql => {
+export default async sparql => {
   const url = wdk.sparqlQuery(sparql)
 
   if (waiting > 500) {
@@ -21,7 +22,7 @@ module.exports = async sparql => {
   const persistentRequest = () => makeRequest(url)
   .catch(err => {
     if (err.statusCode === 429) {
-      _.warn(url, `${err.message}: retrying in 2s`)
+      warn(url, `${err.message}: retrying in 2s`)
       return wait(2000).then(persistentRequest)
     } else {
       throw err
@@ -56,6 +57,6 @@ const makeRequest = url => {
 
 const logStats = () => {
   if (waiting > 0) {
-    _.info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
+    info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
   }
 }

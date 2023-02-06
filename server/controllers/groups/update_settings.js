@@ -1,18 +1,18 @@
-const _ = require('builders/utils')
-const membershipValidations = require('./lib/membership_validations')
-const updateSettings = require('./lib/update_settings')
+import { log } from '#lib/utils/logs'
+import membershipValidations from './lib/membership_validations.js'
+import updateSettings from './lib/update_settings.js'
 
 const sanitization = {
   group: {},
   attribute: {},
   value: {
-    canBeNull: true
-  }
+    canBeNull: true,
+  },
 }
 
 const controller = async params => {
   const { group: groupId, reqUserId } = params
-  _.log(params, 'update group settings')
+  log(params, 'update group settings')
 
   await membershipValidations.updateSettings(reqUserId, groupId)
   const { hooksUpdates } = await updateSettings(params, reqUserId)
@@ -22,8 +22,8 @@ const controller = async params => {
   return { ok: true, update: hooksUpdates }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'groups', 'updateSettings' ]
+  track: [ 'groups', 'updateSettings' ],
 }

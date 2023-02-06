@@ -1,10 +1,12 @@
-const { mv, rm } = require('lib/fs')
-const { local: localStorage } = require('config').mediaStorage
+import CONFIG from 'config'
+import { mv, rm } from '#lib/fs'
+
+const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
 
 const filePath = (container, filename) => `${storageFolder}/${container}/${filename}`
 
-module.exports = {
+export default {
   putImage: async (container, path, filename) => {
     await mv(path, filePath(container, filename))
     return `/img/${container}/${filename}`

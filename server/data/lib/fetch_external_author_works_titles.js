@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const cache_ = require('lib/cache')
-const { oneWeek } = require('lib/time')
-const { buildUrl } = require('lib/utils/url')
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
+import { oneWeek } from '#lib/time'
+import { logError } from '#lib/utils/logs'
+import { buildUrl } from '#lib/utils/url'
 
-module.exports = (name, endpoint, getQuery, requestOptions) => async id => {
+export default (name, endpoint, getQuery, requestOptions) => async id => {
   try {
     return await cache_.get({
       key: `${name}:author-works-titles:${id}`,
@@ -12,7 +12,7 @@ module.exports = (name, endpoint, getQuery, requestOptions) => async id => {
       ttl: oneWeek,
     })
   } catch (err) {
-    _.error(err, `${name} error fetching ${id}`)
+    logError(err, `${name} error fetching ${id}`)
     return []
   }
 }
@@ -27,5 +27,5 @@ const makeRequest = async (endpoint, query, requestOptions = {}) => {
 
 const parseResult = result => ({
   title: result.title && result.title.value,
-  url: result.work && result.work.value
+  url: result.work && result.work.value,
 })

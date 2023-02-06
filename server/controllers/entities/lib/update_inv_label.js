@@ -1,16 +1,16 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const retryOnConflict = require('lib/retry_on_conflict')
-const updateLabel = require('./update_label')
+import _ from '#builders/utils'
+import { getEntityById } from '#controllers/entities/lib/entities'
+import { error_ } from '#lib/error/error'
+import retryOnConflict from '#lib/retry_on_conflict'
+import updateLabel from './update_label.js'
 
 const updateInvLabel = async (user, id, lang, value) => {
   const { _id: reqUserId } = user
 
   if (!_.isInvEntityId(id)) throw error_.newInvalid('id', id)
 
-  const entity = await entities_.byId(id)
+  const entity = await getEntityById(id)
   return updateLabel(lang, value, reqUserId, entity)
 }
 
-module.exports = retryOnConflict({ updateFn: updateInvLabel })
+export default retryOnConflict({ updateFn: updateInvLabel })

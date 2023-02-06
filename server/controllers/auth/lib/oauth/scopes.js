@@ -1,15 +1,14 @@
 const scopeByMethodAndRoute = {
   get: {
-    '/api/user': [ 'username', 'stable-username', 'email' ]
+    '/api/user': [ 'username', 'stable-username', 'email' ],
+  },
+}
+
+export const getAcceptedScopes = ({ method, url }) => {
+  method = method.toLowerCase()
+  if (scopeByMethodAndRoute[method] != null) {
+    return scopeByMethodAndRoute[method][url]
   }
 }
 
-module.exports = {
-  getAcceptedScopes: ({ method, url }) => {
-    method = method.toLowerCase()
-    if (scopeByMethodAndRoute[method] != null) {
-      return scopeByMethodAndRoute[method][url]
-    }
-  },
-  allScopes: Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)
-}
+export const allScopes = Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)

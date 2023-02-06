@@ -1,15 +1,15 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { wait } from '#lib/promises'
+import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createShelfWithItem } from '../fixtures/shelves.js'
+import { createUser } from '../fixtures/users.js'
+import { getActorName } from '../utils/shelves.js'
+import { publicReq, getFediversableUser } from '../utils/utils.js'
+
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
-require('should')
-const { createItem } = require('../fixtures/items')
-const { createUser } = require('../fixtures/users')
-const { createShelfWithItem } = require('../fixtures/shelves')
-const { publicReq, getFediversableUser } = require('../utils/utils')
-const { wait } = require('lib/promises')
-const { makeUrl } = require('../utils/activitypub')
-const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
-const { getActorName } = require('../utils/shelves')
 
 describe('activity', () => {
   describe('users', () => {

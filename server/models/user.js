@@ -1,19 +1,25 @@
-const _ = require('builders/utils')
-const pw_ = require('lib/crypto').passwords
-const assert_ = require('lib/utils/assert_types')
-const error_ = require('lib/error/error')
-const randomString = require('lib/utils/random_string')
-const generateReadToken = randomString.bind(null, 32)
-const { truncateLatLng } = require('lib/geo')
-const { normalizeString } = require('lib/utils/base')
+import _ from '#builders/utils'
+import { passwords as pw_ } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
+import { truncateLatLng } from '#lib/geo'
+import { assert_ } from '#lib/utils/assert_types'
+import { normalizeString } from '#lib/utils/base'
+import { log } from '#lib/utils/logs'
+import { getRandomString } from '#lib/utils/random_string'
+import userAttributes from './attributes/user.js'
+import userValidations from './validations/user.js'
 
-const User = module.exports = {}
+const generateReadToken = getRandomString.bind(null, 32)
 
-const validations = User.validations = require('./validations/user')
+const User = {}
+
+export default User
+
+const validations = User.validations = userValidations
 
 // TODO: remove the last traces of creationStrategy=browserid: optional password
 User._create = (username, email, creationStrategy, language, password) => {
-  _.log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
+  log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
 
@@ -47,8 +53,8 @@ User._create = (username, email, creationStrategy, language, password) => {
     snapshot: {
       private: { 'items:count': 0 },
       network: { 'items:count': 0 },
-      public: { 'items:count': 0 }
-    }
+      public: { 'items:count': 0 },
+    },
   }
 
   if (creationStrategy === 'local') {
@@ -87,7 +93,7 @@ const withHashedPassword = async user => {
   return user
 }
 
-User.attributes = require('./attributes/user')
+User.attributes = userAttributes
 
 User.softDelete = userDoc => {
   const userSouvenir = _.pick(userDoc, User.attributes.critical)

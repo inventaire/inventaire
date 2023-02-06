@@ -1,23 +1,23 @@
-const getAuthorWorks = require('./lib/get_author_works')
-const getSerieParts = require('./lib/get_serie_parts')
-const getPublisherPublications = require('./lib/get_publisher_publications')
+import { getAuthorWorks } from './lib/get_author_works.js'
+import getPublisherPublications from './lib/get_publisher_publications.js'
+import getSerieParts from './lib/get_serie_parts.js'
 
 const sanitization = {
   uri: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
-module.exports = {
-  authorWorks: {
-    sanitization,
-    controller: getAuthorWorks,
-  },
-  serieParts: {
-    sanitization,
-    controller: getSerieParts,
-  },
-  publisherPublications: {
-    sanitization,
-    controller: getPublisherPublications,
-  },
+export const authorWorks = {
+  sanitization,
+  controller: getAuthorWorks,
+}
+
+export const serieParts = {
+  sanitization,
+  controller: getSerieParts,
+}
+
+export const publisherPublications = {
+  sanitization,
+  controller: getPublisherPublications,
 }

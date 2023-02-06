@@ -1,12 +1,13 @@
-require('should')
-const { publicReq } = require('tests/api/utils/utils')
-const { customAuthReq } = require('tests/api/utils/request')
+import 'should'
+import { createItem } from '#fixtures/items'
+import { customAuthReq } from '#tests/api/utils/request'
+import { publicReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroupWithAMember } from '../fixtures/groups.js'
+import { createUserWithItems } from '../fixtures/populate.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
+
 const endpoint = '/api/items?action=inventory-view'
-const { getSomeGroupWithAMember } = require('../fixtures/groups')
-const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { createUserWithItems } = require('../fixtures/populate')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { createItem } = require('tests/api/fixtures/items')
 
 describe('items:inventory-view', () => {
   it('should reject requests without a user or a group', async () => {
@@ -40,7 +41,7 @@ describe('items:inventory-view', () => {
     const itemIdRemainingWithoutShelf = itemsByDate.at(-1)
     await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
       id: shelf._id,
-      items: allButOneItemsIds
+      items: allButOneItemsIds,
     })
     const { itemsByDate: updatedItemsByDate } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}&without-shelf=true`)
     updatedItemsByDate.length.should.be.equal(1)

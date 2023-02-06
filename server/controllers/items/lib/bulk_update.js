@@ -1,25 +1,25 @@
-const items_ = require('controllers/items/lib/items')
-const Item = require('models/item')
-const { emit } = require('lib/radio')
-const { partition } = require('lodash')
-const _ = require('builders/utils')
-const { validateVisibilityKeys } = require('lib/visibility/visibility')
-const { validateShelves } = require('controllers/items/lib/validate_item_async')
+import { partition } from 'lodash-es'
+import { getItemsByIds, itemsBulkUpdate } from '#controllers/items/lib/items'
+import { validateShelves } from '#controllers/items/lib/validate_item_async'
+import { emit } from '#lib/radio'
+import { warn } from '#lib/utils/logs'
+import { validateVisibilityKeys } from '#lib/visibility/visibility'
+import Item from '#models/item'
 
-const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
+export const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }
-  const currentItems = await items_.byIds(ids)
+  const currentItems = await getItemsByIds(ids)
   const formattedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
   await validateValue({ attribute, value, reqUserId })
   try {
-    const successfulUpdates = await items_.db.bulk(formattedItems)
+    const successfulUpdates = await itemsBulkUpdate(formattedItems)
     await emit('user:inventory:update', reqUserId)
     return previousUpdates.concat(successfulUpdates)
   } catch (err) {
     if (attempt > 10) throw err
     const { body } = err.context
     const [ failedUpdates, successfulUpdates ] = partition(body, hasError)
-    _.warn({ failedUpdates, successfulUpdates, attempt }, 'retrying bulk items update')
+    warn({ failedUpdates, successfulUpdates, attempt }, 'retrying bulk items update')
     return bulkItemsUpdate({
       reqUserId,
       ids: failedUpdates.map(getId),
@@ -41,5 +41,3 @@ const validateValue = async ({ attribute, value, reqUserId }) => {
     await validateShelves(reqUserId, value)
   }
 }
-
-module.exports = { bulkItemsUpdate }

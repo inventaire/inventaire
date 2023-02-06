@@ -1,4 +1,4 @@
-module.exports = (lang, polyglot) => {
+export default (lang, polyglot) => {
   const modifier = (modifiers[lang] != null) ? modifiers[lang] : undefined
 
   return (key, ctx) => {
@@ -30,5 +30,5 @@ const modifiers = {
     }
 
     return val
-  }
+  },
 }

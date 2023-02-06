@@ -1,9 +1,7 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
-const { isUsername, isCouchUuid } = require('lib/boolean_validations')
-const { getGroupMembersIds } = require('controllers/groups/lib/groups')
+import { getGroupBySlug, getGroupMembersIds } from '#controllers/groups/lib/groups'
+import { findUserByUsername } from '#controllers/user/lib/user'
+import { isUsername, isCouchUuid, isGroupId } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
 
 const extensionRedirect = extension => async (req, res) => {
   try {
@@ -21,14 +19,14 @@ const extensionRedirect = extension => async (req, res) => {
   }
 }
 
-module.exports = {
+export default {
   json: extensionRedirect('json'),
-  rss: extensionRedirect('rss')
+  rss: extensionRedirect('rss'),
 }
 
 const extensionPatterns = {
   json: /\.json$/,
-  rss: /\.rss$/
+  rss: /\.rss$/,
 }
 
 const parseUrl = (req, extension) => {
@@ -85,7 +83,7 @@ const redirections = {
           throw error_.notFound({ id, section })
         }
       } else {
-        if (_.isGroupId(id)) {
+        if (isGroupId(id)) {
           return `/api/groups?action=by-id&id=${id}`
         } else {
           return `/api/groups?action=by-slug&slug=${id}`
@@ -105,23 +103,23 @@ const redirections = {
       return `/api/feeds?user=${userId}`
     },
     groups: id => {
-      if (_.isGroupId(id)) {
+      if (isGroupId(id)) {
         return `/api/feeds?group=${id}`
       } else {
         const slug = id
-        return groups_.bySlug(slug)
+        return getGroupBySlug(slug)
         .then(({ _id }) => `/api/feeds?group=${_id}`)
       }
     },
     shelves: id => `/api/feeds?shelf=${id}`,
-  }
+  },
 }
 
 const getUserId = async id => {
   if (isCouchUuid(id)) {
     return id
   } else {
-    const { _id } = await user_.findOneByUsername(id)
+    const { _id } = await findUserByUsername(id)
     return _id
   }
 }
@@ -130,7 +128,7 @@ const getGroupId = async id => {
   if (isCouchUuid(id)) {
     return id
   } else {
-    const { _id } = await groups_.bySlug(id)
+    const { _id } = await getGroupBySlug(id)
     return _id
   }
 }

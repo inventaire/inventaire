@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
+import { logError } from '#lib/utils/logs'
+import bnf from './bnf.js'
+import openlibrary from './openlibrary.js'
 
 const summaryGettersByClaimProperty = {
-  'wdt:P268': require('./bnf'),
-  'wdt:P648': require('./openlibrary'),
+  'wdt:P268': bnf,
+  'wdt:P648': openlibrary,
 }
 
 const propertiesWithGetters = Object.keys(summaryGettersByClaimProperty)
@@ -15,7 +17,7 @@ const getSummaryFromPropertyClaims = ({ claims, refresh }) => async property => 
     summaryData = await summaryGettersByClaimProperty[property]({ id, refresh })
   } catch (err) {
     err.context = { id, property }
-    _.error(err, 'getSummaryFromPropertyClaims')
+    logError(err, 'getSummaryFromPropertyClaims')
     return
   }
   if (!summaryData) return
@@ -24,10 +26,6 @@ const getSummaryFromPropertyClaims = ({ claims, refresh }) => async property => 
   return summaryData
 }
 
-const getSummariesFromClaims = async ({ claims, refresh }) => {
+export const getSummariesFromClaims = async ({ claims, refresh }) => {
   return Promise.all(propertiesWithGetters.map(getSummaryFromPropertyClaims({ claims, refresh })))
-}
-
-module.exports = {
-  getSummariesFromClaims,
 }

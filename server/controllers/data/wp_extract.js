@@ -1,9 +1,9 @@
-const getArticle = require('data/wikipedia/get_article')
+import getArticle from '#data/wikipedia/get_article'
 
 const sanitization = {
   title: {},
   lang: {
-    type: 'wikimedia'
+    type: 'wikimedia',
   },
 }
 
@@ -11,4 +11,4 @@ const controller = async ({ lang, title }) => {
   return getArticle({ lang, title, introOnly: true })
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,7 +1,13 @@
-require('should')
-const { getUser, getUserB, shouldNotBeCalled } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { buildSessionCookies, parseSessionCookies, buildBase64EncodedJson, parseBase64EncodedJson } = require('../utils/auth')
+import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  buildSessionCookies,
+  parseSessionCookies,
+  buildBase64EncodedJson,
+  parseBase64EncodedJson,
+} from '../utils/auth.js'
+import { rawRequest } from '../utils/request.js'
+import { getUser, getUserB } from '../utils/utils.js'
 
 describe('auth:session', () => {
   it('should give access to restricted resources', async () => {

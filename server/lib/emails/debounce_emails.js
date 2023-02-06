@@ -1,25 +1,25 @@
 // Add emails to the waiting list to let ./debounced_emails_crawler
 // find and send them
+import _ from '#builders/utils'
+import dbFactory from '#db/level/get_sub_db'
+import { emptyValue } from '#db/level/utils'
+import { warn } from '#lib/utils/logs'
 
-const _ = require('builders/utils')
-const db = require('db/level/get_sub_db')('waiting', 'utf8')
-const { emptyValue } = require('db/level/utils')
+const db = dbFactory('waiting', 'utf8')
 
-module.exports = {
-  transactionUpdate: transaction => {
-    // Polymorphism: accepts transaction doc or directly the transaction _id
-    let transactionId
-    if (_.isObject(transaction)) {
-      transactionId = transaction._id
-    } else if (_.isString(transaction)) {
-      transactionId = transaction
-    } else {
-      _.warn({ transaction }, 'bad type at transactionUpdate')
-      return
-    }
-
-    return addToWaitingList('transactionUpdate', transactionId)
+export const transactionUpdate = transaction => {
+  // Polymorphism: accepts transaction doc or directly the transaction _id
+  let transactionId
+  if (_.isObject(transaction)) {
+    transactionId = transaction._id
+  } else if (_.isString(transaction)) {
+    transactionId = transaction
+  } else {
+    warn({ transaction }, 'bad type at transactionUpdate')
+    return
   }
+
+  return addToWaitingList('transactionUpdate', transactionId)
 }
 
 // Delete and repost with new time to wait
@@ -27,7 +27,7 @@ module.exports = {
 const addToWaitingList = (domain, id) => {
   return db.createKeyStream({
     gt: `${domain}:${id}:0`,
-    lt: `${domain}:${id}::`
+    lt: `${domain}:${id}::`,
   })
   // TODO: refactor to delete in batch
   .on('data', db.del.bind(db))

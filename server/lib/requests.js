@@ -1,19 +1,21 @@
-const CONFIG = require('config')
+import { URL } from 'node:url'
+import CONFIG from 'config'
+import fetch from 'node-fetch'
+import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
+import { absolutePath } from '#lib/absolute_path'
+import { addContextToStack, error_ } from '#lib/error/error'
+import { wait } from '#lib/promises'
+import { assert_ } from '#lib/utils/assert_types'
+import { requireJson } from '#lib/utils/json'
+import { isUrl } from './boolean_validations.js'
+import isPrivateUrl from './network/is_private_url.js'
+import { getAgent, insecureHttpsAgent } from './requests_agent.js'
+import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
+import { coloredElapsedTime } from './time.js'
+
+const { repository } = requireJson(absolutePath('root', 'package.json'))
 const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
-const assert_ = require('lib/utils/assert_types')
-const { wait } = require('lib/promises')
-const fetch = require('node-fetch')
-const error_ = require('lib/error/error')
-const { addContextToStack } = error_
-const { magenta, green, cyan, yellow, red } = require('chalk')
-const { repository } = require('root/package.json')
-const userAgent = `${CONFIG.name} (${repository.url})`
-const { getAgent, insecureHttpsAgent } = require('./requests_agent')
-const { throwIfTemporarilyBanned, resetBanData, declareHostError } = require('./requests_temporary_host_ban')
-const { URL } = require('node:url')
-const { coloredElapsedTime } = require('./time')
-const { isUrl } = require('./boolean_validations')
-const isPrivateUrl = require('./network/is_private_url')
+export const userAgent = `${CONFIG.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
 
 const req = method => async (url, options = {}) => {
@@ -21,7 +23,7 @@ const req = method => async (url, options = {}) => {
   assert_.object(options)
 
   if (options.sanitize) {
-    if (!isUrl(url) || await isPrivateUrl(url)) {
+    if (!isUrl(url) || (await isPrivateUrl(url))) {
       throw error_.newInvalid('url', url)
     }
   }
@@ -114,7 +116,7 @@ const head = async (url, options = {}) => {
   endReqTimer(timer, statusCode)
   return {
     statusCode,
-    headers: formatHeaders(headers.raw())
+    headers: formatHeaders(headers.raw()),
   }
 }
 
@@ -183,12 +185,14 @@ const getStatusColor = statusCode => {
   return red
 }
 
-module.exports = {
+export const requests_ = {
   get: req('get'),
   post: req('post'),
   put: req('put'),
   delete: req('delete'),
   head,
   options: req('options'),
-  userAgent
+  userAgent,
 }
+
+export const get = requests_.get

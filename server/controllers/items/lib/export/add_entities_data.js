@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
+import _ from '#builders/utils'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { error_ } from '#lib/error/error'
 
-module.exports = async item => {
+export default async item => {
   const { entity: uri } = item
   const entity = await getEntityByUri({ uri })
   if (!entity) throw error_.new('entity not found', 500, { item: item._id, uri })
@@ -45,7 +45,7 @@ module.exports = async item => {
     getEntitiesList(item.seriesUris),
     getEntitiesList(item.genresUris),
     getEntitiesList(item.subjectsUris),
-    getEntitiesList(item.originalLangsUris)
+    getEntitiesList(item.originalLangsUris),
   ])
 
   item.authors = authors
@@ -66,7 +66,7 @@ const authorProperties = [
   'wdt:P50',
   'wdt:P58',
   'wdt:P110',
-  'wdt:P6338'
+  'wdt:P6338',
 ]
 const getWorkSeriesUris = work => work.claims['wdt:P179']
 const getWorkGenresUris = work => work.claims['wdt:P136']

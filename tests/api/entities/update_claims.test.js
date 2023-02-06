@@ -1,7 +1,7 @@
-const should = require('should')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } = require('../fixtures/entities')
-const { getByUri, addClaim, updateClaim, removeClaim, merge } = require('../utils/entities')
+import should from 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities.js'
+import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
 describe('entities:update-claims', () => {
   it('should reject without uri', async () => {
@@ -144,7 +144,7 @@ describe('entities:update-claims', () => {
   it('should reject an update on an obsolete entity', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
@@ -162,7 +162,7 @@ describe('entities:update-claims', () => {
       return addClaim({
         uri: work.uri,
         property: 'wdt:P50',
-        value: uri
+        value: uri,
       })
     }))
     responses.forEach(res => res.ok.should.be.true())

@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { addWarning } = require('lib/responses')
-const parameters = require('./parameters')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { addWarning } from '#lib/responses'
+import { assert_ } from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
+import parameters from './parameters.js'
+
 const { generics } = parameters
 
 // The sanitize function doesn't need to be async
@@ -11,7 +13,7 @@ const { generics } = parameters
 // when something needs to be done during the current tick.
 // Example: consumers of the request (aka req) stream need to run on the same tick.
 // If they have to wait for the next tick, 'data' events might be over
-const sanitize = (req, res, configs) => {
+export const sanitize = (req, res, configs) => {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
@@ -19,7 +21,7 @@ const sanitize = (req, res, configs) => {
   delete input.action
 
   if (!_.isPlainObject(input)) {
-    const type = _.typeOf(input)
+    const type = typeOf(input)
     throw error_.new(`${place} should be an object, got ${type}`, 400)
   }
 
@@ -87,7 +89,7 @@ const getParameterFunctions = (name, generic) => {
   return parameter
 }
 
-const validateSanitization = configs => {
+export const validateSanitization = configs => {
   for (const name in configs) {
     if (!optionsNames.has(name)) {
       const config = configs[name]
@@ -172,5 +174,3 @@ const renameParameter = (input, name, renameFn) => {
   const aliasedName = renameFn(name)
   input[aliasedName] = input[name]
 }
-
-module.exports = { sanitize, validateSanitization }

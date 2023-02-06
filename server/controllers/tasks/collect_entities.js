@@ -1,20 +1,25 @@
-const _ = require('builders/utils')
-const tasks_ = require('./lib/tasks')
-const db = require('db/couchdb/base')('entities')
-const { prefixifyInv } = require('controllers/entities/lib/prefix')
-const jobs_ = require('db/level/jobs')
-const checkEntity = require('./lib/check_entity')
-const { nice } = require('config')
-const { waitForCPUsLoadToBeBelow } = require('lib/os')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { prefixifyInv } from '#controllers/entities/lib/prefix'
+import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import dbFactory from '#db/couchdb/base'
+import jobs_ from '#db/level/jobs'
+import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import { success, info, logError, LogError } from '#lib/utils/logs'
+import checkEntity from './lib/check_entity.js'
+
+const { nice } = CONFIG
+
+const db = dbFactory('entities')
 const batchLength = 1000
 
 const sanitization = {
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async ({ refresh }) => {
   addEntitiesToQueueSequentially(refresh)
-  .catch(_.Error('addEntitiesToQueueSequentially err'))
+  .catch(LogError('addEntitiesToQueueSequentially err'))
 
   // Not waiting for the queue to be loaded as that will take a while
   // and no useful data has to be returned
@@ -25,11 +30,11 @@ const addEntitiesToQueueSequentially = refresh => {
   const pagination = { offset: 0, total: 0 }
 
   const addNextBatch = async () => {
-    _.info(pagination, 'get entities next batch')
+    info(pagination, 'get entities next batch')
     const uris = await getNextInvHumanUrisBatch(pagination)
     pagination.total += uris.length
     if (uris.length === 0) {
-      _.success(pagination.total, 'done. total entities queued:')
+      success(pagination.total, 'done. total entities queued:')
     } else {
       const filteredUris = await getFilteredUris(uris, refresh)
       await invTasksEntitiesQueue.pushBatch(filteredUris)
@@ -45,7 +50,7 @@ const getNextInvHumanUrisBatch = async pagination => {
   const { rows } = await db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
     limit: batchLength,
-    skip: offset
+    skip: offset,
   })
   pagination.offset += batchLength
   return getUris(rows)
@@ -69,17 +74,17 @@ const deduplicateWorker = async (jobId, uri) => {
     // Prevent crashing the queue for non-critical errors
     // Example of 400 error: the entity has already been redirected
     if (err.statusCode === 400) return
-    _.error(err, 'deduplicateWorker err')
+    logError(err, 'deduplicateWorker err')
     throw err
   }
 }
 
 const filterNotAlreadySuspectEntities = async uris => {
-  const { rows } = await tasks_.bySuspectUris(uris, { includeArchived: true })
+  const { rows } = await getTasksBySuspectUris(uris, { includeArchived: true })
   const alreadyCheckedUris = _.map(rows, 'suspectUri')
   return _.difference(uris, alreadyCheckedUris)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }
 
 const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)

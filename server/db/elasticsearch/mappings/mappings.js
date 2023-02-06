@@ -1,9 +1,16 @@
-module.exports = {
-  entities: require('./entities'),
-  groups: require('./groups'),
-  items: require('./items'),
-  shelves: require('./shelves'),
-  lists: require('./lists'),
-  users: require('./users'),
-  wikidata: require('./entities'),
+import entities from './entities.js'
+import groups from './groups.js'
+import items from './items.js'
+import lists from './lists.js'
+import shelves from './shelves.js'
+import users from './users.js'
+
+export default {
+  entities,
+  groups,
+  items,
+  shelves,
+  lists,
+  users,
+  wikidata: entities,
 }

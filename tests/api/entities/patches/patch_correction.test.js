@@ -1,8 +1,8 @@
-require('should')
-const { getUser: getUserA, getUserB } = require('../../utils/utils')
-const { createEdition } = require('../../fixtures/entities')
-const { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } = require('../../utils/entities')
-const { createWork } = require('tests/api/fixtures/entities')
+import 'should'
+import { createWork } from '#fixtures/entities'
+import { createEdition } from '../../fixtures/entities.js'
+import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '../../utils/entities.js'
+import { getUser as getUserA, getUserB } from '../../utils/utils.js'
 
 describe('patch correction', () => {
   describe('rewrite', () => {
@@ -27,7 +27,7 @@ describe('patch correction', () => {
       patches[2].patch.should.deepEqual([
         { op: 'add', path: '/claims/wdt:P1104/0', value: 2 },
         { op: 'test', path: '/claims/wdt:P1104/1', value: 1 },
-        { op: 'remove', path: '/claims/wdt:P1104/1' }
+        { op: 'remove', path: '/claims/wdt:P1104/1' },
       ])
     })
 

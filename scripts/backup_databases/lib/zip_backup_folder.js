@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { shellExec } = require('scripts/scripts_utils')
-const { backupGeneralFolder, backupFolder, day } = require('./get_backup_folder_data')
+import { log } from '#lib/utils/logs'
+import { shellExec } from '#scripts/scripts_utils'
+import { backupGeneralFolder, backupFolder, day } from './get_backup_folder_data.js'
 
-module.exports = async () => {
+export default async () => {
   await shellExec('tar', [
     '-zcf',
     // Output
@@ -10,10 +10,10 @@ module.exports = async () => {
     // Change directory (cf http://stackoverflow.com/a/18681628/3324977 )
     '-C', backupGeneralFolder,
     // Input path from the changed directory
-    day
+    day,
   ])
   await deleteFolder()
-  _.log(`backup archived in ${backupGeneralFolder}`)
+  log(`backup archived in ${backupGeneralFolder}`)
 }
 
 const deleteFolder = () => shellExec('rm', [ '-rf', backupFolder ])

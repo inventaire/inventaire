@@ -1,12 +1,13 @@
-const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, authReq, authReqB, getUser, customAuthReq } = require('../utils/utils')
-const { createUser, getTwoFriends } = require('../fixtures/users')
-const { createShelf } = require('../fixtures/shelves')
-const { createItem } = require('../fixtures/items')
-const { makeFriends } = require('../utils/relations')
-const { getSomeGroupWithAMember } = require('tests/api/fixtures/groups')
-const { someCouchUuid } = require('tests/api/fixtures/general')
+import should from 'should'
+import { someCouchUuid } from '#fixtures/general'
+import { getSomeGroupWithAMember } from '#fixtures/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser, getTwoFriends } from '../fixtures/users.js'
+import { makeFriends } from '../utils/relations.js'
+import { publicReq, authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=by-ids'
 
@@ -148,7 +149,7 @@ describe('shelves:by-ids', () => {
     it('should not return a group-allowed shelf to a friend', async () => {
       const [ user, { group, member } ] = await Promise.all([
         createUser(),
-        getSomeGroupWithAMember()
+        getSomeGroupWithAMember(),
       ])
       await makeFriends(user, member)
       const { shelf } = await createShelf(member, { visibility: [ `group:${group._id}` ] })
@@ -259,6 +260,6 @@ const addItem = async (shelfId, itemId, userPromise) => {
   if (!userPromise) userPromise = getUser()
   return customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
     id: shelfId,
-    items: [ itemId ]
+    items: [ itemId ],
   })
 }

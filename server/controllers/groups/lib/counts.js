@@ -1,14 +1,12 @@
-const _ = require('builders/utils')
-const groups_ = require('./groups')
+import { property, sum } from 'lodash-es'
+import { getGroupsByAdmin, getGroupsByInvitedUser } from '#controllers/groups/lib/groups'
 
-module.exports = {
-  pendingGroupInvitationsCount: userId => {
-    return groups_.byInvitedUser(userId)
-    .then(({ length }) => length)
-  },
+export const getPendingGroupInvitationsCount = async userId => {
+  const { length } = await getGroupsByInvitedUser(userId)
+  return length
+}
 
-  pendingGroupRequestsCount: userId => {
-    return groups_.byAdmin(userId)
-    .then(groups => _.sum(groups.map(_.property('requested.length'))))
-  }
+export const getPendingGroupRequestsCount = async userId => {
+  const groups = await getGroupsByAdmin(userId)
+  return sum(groups.map(property('requested.length')))
 }

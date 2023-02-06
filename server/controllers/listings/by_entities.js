@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const elements_ = require('controllers/listings/lib/elements')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const listings_ = require('controllers/listings/lib/listings')
-const { paginate } = require('controllers/items/lib/queries_commons')
-const { isNonEmptyArray } = require('lib/boolean_validations')
+import _ from '#builders/utils'
+import { paginate } from '#controllers/items/lib/queries_commons'
+import elements_ from '#controllers/listings/lib/elements'
+import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
+import { isNonEmptyArray } from '#lib/boolean_validations'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
   uris: {},
   lists: { optional: true },
   limit: { optional: true },
-  offset: { optional: true }
+  offset: { optional: true },
 }
 
 const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
@@ -21,18 +21,18 @@ const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
   }
   // uniq here implies that a listing cannot refer several times to the same entity
   const listingsIds = _.uniq(_.map(foundElements, 'list'))
-  const foundListings = await listings_.byIdsWithElements(listingsIds, reqUserId)
+  const foundListings = await getListingsByIdsWithElements(listingsIds, reqUserId)
   const listings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(listings, { offset, limit })
   const listingsByUris = {}
   const elementsByUris = _.groupBy(foundElements, 'uri')
   uris.forEach(assignListingsByUris(authorizedListings, elementsByUris, listingsByUris))
   return {
-    lists: listingsByUris
+    lists: listingsByUris,
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }
 
 const assignListingsByUris = (listings, elementsByUris, listingsByUris) => uri => {
   const listingsElements = elementsByUris[uri]

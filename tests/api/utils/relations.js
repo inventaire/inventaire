@@ -1,11 +1,12 @@
-const { customAuthReq } = require('./request')
+import { customAuthReq } from './request.js'
+
 const endpoint = '/api/relations'
 
 let getUser, getReservedUser
-const requireCircularDependencies = () => {
-  ({ getUser, getReservedUser } = require('./utils'))
+const importCircularDependencies = async () => {
+  ({ getUser, getReservedUser } = await import('./utils.js'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
 
@@ -14,7 +15,7 @@ const getRelationStatus = async (reqUser, otherUser) => {
   const { _id: otherUserId } = otherUser
   const [ reqUserRelations, otherUserRelations ] = await Promise.all([
     getRelations(reqUser),
-    getRelations(otherUser)
+    getRelations(otherUser),
   ])
   if (reqUserRelations.friends.includes(otherUserId)) return 'friends'
   if (reqUserRelations.otherRequested.includes(otherUserId)) return 'otherRequested'
@@ -24,31 +25,28 @@ const getRelationStatus = async (reqUser, otherUser) => {
   return 'none'
 }
 
-const action = (action, reqUser, otherUser) => {
+export const action = (action, reqUser, otherUser) => {
   return customAuthReq(reqUser, 'post', endpoint, {
     action,
-    user: otherUser._id
+    user: otherUser._id,
   })
 }
 
-module.exports = {
-  action,
-  getUsersWithoutRelation: () => {
-    return Promise.all([
-      getUser(),
-      getReservedUser()
-    ])
-    .then(([ userA, userB ]) => ({ userA, userB }))
-  },
+export const getUsersWithoutRelation = () => {
+  return Promise.all([
+    getUser(),
+    getReservedUser(),
+  ])
+  .then(([ userA, userB ]) => ({ userA, userB }))
+}
 
-  makeFriends: (userA, userB) => {
-    return action('request', userA, userB)
-    .then(() => action('accept', userB, userA))
-    .then(() => [ userA, userB ])
-  },
+export const makeFriends = (userA, userB) => {
+  return action('request', userA, userB)
+  .then(() => action('accept', userB, userA))
+  .then(() => [ userA, userB ])
+}
 
-  assertRelation: async (userA, userB, relationStatus) => {
-    const relationAfterRequest = await getRelationStatus(userA, userB)
-    relationAfterRequest.should.equal(relationStatus)
-  }
+export async function assertRelation (userA, userB, relationStatus) {
+  const relationAfterRequest = await getRelationStatus(userA, userB)
+  relationAfterRequest.should.equal(relationStatus)
 }

@@ -1,10 +1,11 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { getSomeGroup } from '../fixtures/groups.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { rawRequest } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { rawRequest } = require('../utils/request')
-const { getUser } = require('../utils/utils')
-const { getSomeGroup } = require('../fixtures/groups')
-const { createShelf } = require('../fixtures/shelves')
 
 describe('rss redirections', () => {
   it('should redirect to a user feed by id', async () => {

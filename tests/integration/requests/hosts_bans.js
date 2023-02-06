@@ -1,9 +1,11 @@
-const should = require('should')
-const requests_ = require('lib/requests')
-const { wait } = require('lib/promises')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { startGenericMockServer } = require('../utils/mock_server')
-const { baseBanTime, banTimeIncreaseFactor } = require('config').outgoingRequests
+import CONFIG from 'config'
+import should from 'should'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { startGenericMockServer } from '../utils/mock_server.js'
+
+const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const startMockServer = async () => {
   const { port, host, origin } = await startGenericMockServer(app => {
@@ -124,7 +126,7 @@ describe('requests:hosts-bans', function () {
     const { timeoutEndpoint } = await startMockServer()
     await Promise.all([
       requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
-      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
     ])
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => {
       const { banTime } = err.context.hostBanData

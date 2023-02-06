@@ -1,6 +1,7 @@
 
-require('should')
-const sinon = require('sinon')
+import 'should'
+import sinon from 'sinon'
+import solveIntentFactory from '#controllers/relations/lib/solve_intent'
 
 let spies = {}
 
@@ -8,14 +9,14 @@ const resetSpies = () => ({
   acceptRequest: sinon.spy(),
   simultaneousRequest: sinon.spy(),
   makeRequest: sinon.spy(),
-  removeRelation: sinon.spy()
+  removeRelation: sinon.spy(),
 })
 
 const actions = {
   acceptRequest: () => spies.acceptRequest(),
   simultaneousRequest: () => spies.simultaneousRequest(),
   makeRequest: () => spies.makeRequest(),
-  removeRelation: () => spies.removeRelation()
+  removeRelation: () => spies.removeRelation(),
 }
 
 const totalSpiesCount = () => {
@@ -26,8 +27,7 @@ const totalSpiesCount = () => {
   }
   return count
 }
-
-const solveIntent = require('controllers/relations/lib/solve_intent')(actions)
+const solveIntent = solveIntentFactory(actions)
 
 describe('relations', () => {
   describe('solveIntent', () => {

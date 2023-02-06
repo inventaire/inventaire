@@ -1,7 +1,10 @@
-const { newsKey } = require('config').activitySummary
-const { BasicUpdater } = require('lib/doc_updates')
-const couch_ = require('lib/couch')
-const db = require('db/couchdb/base')('users')
+import CONFIG from 'config'
+import dbFactory from '#db/couchdb/base'
+import { firstDoc } from '#lib/couch'
+import { BasicUpdater } from '#lib/doc_updates'
+
+const { newsKey } = CONFIG.activitySummary
+const db = dbFactory('users')
 
 const waitingForSummary = limit => {
   // Pick users with next summary between epoch 0 and now
@@ -9,22 +12,20 @@ const waitingForSummary = limit => {
     include_docs: true,
     limit,
     startkey: 0,
-    endkey: Date.now()
+    endkey: Date.now(),
   })
 }
 
-module.exports = {
-  findOneWaitingForSummary: () => {
-    return waitingForSummary(1)
-    .then(couch_.firstDoc)
-  },
+export const findOneWaitingForSummary = () => {
+  return waitingForSummary(1)
+  .then(firstDoc)
+}
 
-  justReceivedActivitySummary: id => {
-    const updater = BasicUpdater({
-      lastSummary: Date.now(),
-      lastNews: newsKey
-    })
+export const justReceivedActivitySummary = id => {
+  const updater = BasicUpdater({
+    lastSummary: Date.now(),
+    lastNews: newsKey,
+  })
 
-    return db.update(id, updater)
-  }
+  return db.update(id, updater)
 }

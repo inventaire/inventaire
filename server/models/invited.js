@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const validations = require('models/validations/common')
-const { BasicUpdater } = require('lib/doc_updates')
+import { BasicUpdater } from '#lib/doc_updates'
+import { warn } from '#lib/utils/logs'
+import validations from '#models/validations/common'
 
 const create = (inviterId, groupId) => email => {
   validations.pass('email', email)
@@ -10,7 +10,7 @@ const create = (inviterId, groupId) => email => {
 const baseDoc = email => ({
   type: 'invited',
   email,
-  inviters: {}
+  inviters: {},
 })
 
 const addInviter = (inviterId, groupId, doc) => {
@@ -35,14 +35,14 @@ const stopEmails = BasicUpdater('stopEmails', true)
 
 const canBeInvited = (inviterId, groupId) => doc => {
   if (doc.stopEmails) {
-    _.warn([ inviterId, doc ], 'stopEmails: invitation aborted')
+    warn([ inviterId, doc ], 'stopEmails: invitation aborted')
     return false
   }
 
   // A user can only send one invitation to a given email
   const alreadyInvitedByUser = (doc.inviters[inviterId] != null)
   if (alreadyInvitedByUser) {
-    _.warn([ inviterId, doc ], 'alreadyInvitedByUser: invitation aborted')
+    warn([ inviterId, doc ], 'alreadyInvitedByUser: invitation aborted')
     return false
   }
 
@@ -51,7 +51,7 @@ const canBeInvited = (inviterId, groupId) => doc => {
     const alreadyInvitedInGroup = doc.groups && doc.groups[groupId] != null
     if (alreadyInvitedInGroup) {
       const context = [ inviterId, groupId, doc ]
-      _.warn(context, 'alreadyInvitedInGroup: invitation aborted')
+      warn(context, 'alreadyInvitedInGroup: invitation aborted')
       return false
     }
   }
@@ -59,4 +59,4 @@ const canBeInvited = (inviterId, groupId) => doc => {
   return true
 }
 
-module.exports = { create, addInviter, canBeInvited, stopEmails }
+export default { create, addInviter, canBeInvited, stopEmails }

@@ -1,16 +1,19 @@
-require('should')
-const { authReq, customAuthReq, getReservedUser } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { wait } = require('lib/promises')
+import 'should'
+import dbFactory from '#db/couchdb/base'
+import { BasicUpdater } from '#lib/doc_updates'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { authReq, getReservedUser } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=update-password'
-const { BasicUpdater } = require('lib/doc_updates')
-const { shouldNotBeCalled } = require('root/tests/unit/utils')
-const db = require('db/couchdb/base')('users')
+const db = dbFactory('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', async () => {
     await authReq('post', endpoint, {
-      'new-password': randomString(7)
+      'new-password': getRandomString(7),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -20,8 +23,8 @@ describe('auth:update-password', () => {
 
   it('should reject short old password', async () => {
     await authReq('post', endpoint, {
-      'current-password': randomString(7),
-      'new-password': randomString(20),
+      'current-password': getRandomString(7),
+      'new-password': getRandomString(20),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -31,8 +34,8 @@ describe('auth:update-password', () => {
 
   it('should reject if current password is incorrect', async () => {
     await authReq('post', endpoint, {
-      'current-password': randomString(20),
-      'new-password': randomString(20),
+      'current-password': getRandomString(20),
+      'new-password': getRandomString(20),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -44,7 +47,7 @@ describe('auth:update-password', () => {
     const user = await getReservedUser()
     await updateCustomUser(user, 'resetPassword', 'invalid')
     await customAuthReq(user, 'post', endpoint, {
-      'new-password': randomString(20)
+      'new-password': getRandomString(20),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -56,7 +59,7 @@ describe('auth:update-password', () => {
     const user = await getReservedUser()
     await updateCustomUser(user, 'resetPassword', 1000)
     await customAuthReq(user, 'post', endpoint, {
-      'new-password': randomString(20)
+      'new-password': getRandomString(20),
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -69,14 +72,14 @@ describe('auth:update-password', () => {
     const recentTime = Date.now() - 1000
     await updateCustomUser(user, 'resetPassword', recentTime)
     await customAuthReq(user, 'post', endpoint, {
-      'new-password': randomString(20)
+      'new-password': getRandomString(20),
     })
   })
 
   it('should update the password', async () => {
-    const password = randomString(20)
-    const newPassword = randomString(20)
-    const newPassword2 = randomString(20)
+    const password = getRandomString(20)
+    const newPassword = getRandomString(20)
+    const newPassword2 = getRandomString(20)
     const user = await getReservedUser({ password })
     await customAuthReq(user, 'post', endpoint, {
       'current-password': password,

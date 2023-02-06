@@ -1,10 +1,12 @@
-const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
-const cache_ = require('lib/cache')
-const { buildUrl } = require('lib/utils/url')
-const { getSitelinkUrl } = require('wikidata-sdk')
+import wdk from 'wikidata-sdk'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { buildUrl } from '#lib/utils/url'
 
-module.exports = params => {
+const { getSitelinkUrl } = wdk
+
+export default params => {
   const { lang, title, introOnly } = params
   const keyBase = introOnly ? 'wpextract' : 'wparticle'
   const key = `${keyBase}:${lang}:${title}`
@@ -39,7 +41,7 @@ const apiQuery = (host, title, introOnly) => {
     titles: title,
     prop: 'extracts',
     // Return the article as plain text instead of html
-    explaintext: true
+    explaintext: true,
   }
 
   // Set exintro only if introOnly is true as any value

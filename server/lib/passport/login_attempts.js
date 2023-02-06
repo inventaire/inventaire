@@ -1,4 +1,4 @@
-const { oneMinute } = require('lib/time')
+import { oneMinute } from '#lib/time'
 
 const attemptsLimit = 10
 const periodMinutes = 5
@@ -8,7 +8,7 @@ const flushFails = () => { fails = {} }
 
 setInterval(flushFails, periodMinutes * oneMinute)
 
-module.exports = {
+export default {
   _fails: () => fails,
   _flushFails: flushFails,
   recordFail: (username, label) => {
@@ -19,5 +19,5 @@ module.exports = {
   tooMany: username => {
     const userFails = fails[username]
     return userFails != null && userFails >= attemptsLimit
-  }
+  },
 }

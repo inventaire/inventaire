@@ -1,10 +1,13 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const pass = require('./pass')
+import CONFIG from 'config'
+import express from 'express'
+import serveFavicon from 'serve-favicon'
+import { absolutePath } from '#lib/absolute_path'
+import pass from './pass.js'
+
+let statics = {}
 
 if (CONFIG.serveStaticFiles) {
-  const express = require('express')
-  const publicPath = __.path('client', 'public')
+  const publicPath = absolutePath('client', 'public')
   const options = {
     maxAge: 0,
     setHeaders: res => {
@@ -17,10 +20,11 @@ if (CONFIG.serveStaticFiles) {
   // the 2 arguments array will be apply'ied to app.use by server/init_express
   const mountStaticFiles = [ '/public', staticMiddleware ]
 
-  const faviconPath = __.path('client', 'public/favicon.ico')
-  const favicon = require('serve-favicon')(faviconPath)
-
-  module.exports = { mountStaticFiles, favicon }
+  const faviconPath = absolutePath('client', 'public/favicon.ico')
+  const favicon = serveFavicon(faviconPath)
+  statics = { mountStaticFiles, favicon }
 } else {
-  module.exports = { mountStaticFiles: pass, favicon: pass }
+  statics = { mountStaticFiles: pass, favicon: pass }
 }
+
+export default statics

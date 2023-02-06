@@ -1,12 +1,13 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUserEmail } from '../fixtures/users.js'
+import { rawRequest } from '../utils/request.js'
+import { publicReq } from '../utils/utils.js'
+
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { publicReq } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { createUserEmail } = require('../fixtures/users')
 const endpoint = '/api/token?action=reset-password'
-const randomString = require('lib/utils/random_string')
-const { shouldNotBeCalled } = require('tests/unit/utils')
 
 describe('token:reset-password', () => {
   it('should reject requests without email', async () => {
@@ -28,7 +29,7 @@ describe('token:reset-password', () => {
 
   it('should reject requests with too short token', async () => {
     const email = createUserEmail()
-    const token = randomString(31)
+    const token = getRandomString(31)
 
     await publicReq('get', `${endpoint}&email=${email}&token=${token}`)
     .then(shouldNotBeCalled)
@@ -39,7 +40,7 @@ describe('token:reset-password', () => {
 
   it('should reject random token', async () => {
     const email = createUserEmail()
-    const token = randomString(32)
+    const token = getRandomString(32)
     const { headers } = await rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
     headers.location.should.equal(`${host}/login/forgot-password?resetPasswordFail=true`)
   })

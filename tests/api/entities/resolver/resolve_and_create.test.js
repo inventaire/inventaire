@@ -1,12 +1,21 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { getByUris, getHistory } = require('tests/api/utils/entities')
-const { randomLabel, humanName, generateIsbn13, someGoodReadsId, someLibraryThingsWorkId, createEditionWithIsbn, createWork } = require('tests/api/fixtures/entities')
+import should from 'should'
+import _ from '#builders/utils'
+import {
+  randomLabel,
+  generateIsbn13,
+  someGoodReadsId,
+  someLibraryThingsWorkId,
+  createEditionWithIsbn,
+  createWork,
+} from '#fixtures/entities'
+import { humanName } from '#fixtures/text'
+import { getByUris, getHistory } from '#tests/api/utils/entities'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],
-  create: true
+  create: true,
 })
 
 describe('entities:resolve:create-unresolved', () => {
@@ -14,7 +23,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: randomLabel() } } ],
-      authors: [ { labels: { en: humanName() } } ]
+      authors: [ { labels: { en: humanName() } } ],
     })
     const result = entries[0]
     result.edition.created.should.be.true()
@@ -36,7 +45,7 @@ describe('entities:resolve:create-unresolved', () => {
     const editionLabel = randomLabel()
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const result = entries[0]
     should(result.edition.uri).be.ok()
@@ -54,7 +63,7 @@ describe('entities:resolve:create-unresolved', () => {
     const editionLabel = randomLabel()
     const { entries } = await resolveAndCreate({
       edition: { claims: { 'wdt:P1476': editionLabel } },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const result = entries[0]
     result.edition.uri.should.startWith('inv:')
@@ -69,7 +78,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { isbn } = await createEditionWithIsbn()
     const { entries } = await resolveAndCreate({
       edition: { isbn },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const entry = entries[0]
     entry.works[0].resolved.should.be.false()
@@ -80,7 +89,7 @@ describe('entities:resolve:create-unresolved', () => {
     const frenchLang = 'wd:Q150'
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const result = entries[0]
     should(result.edition.uri).be.ok()
@@ -95,9 +104,9 @@ describe('entities:resolve:create-unresolved', () => {
     const { entries } = await resolveAndCreate({
       edition: {
         isbn: generateIsbn13(),
-        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg',
       },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const result = entries[0]
     result.edition.created.should.be.true()
@@ -108,7 +117,7 @@ describe('entities:resolve:create-unresolved', () => {
     const libraryThingsWorkId = someLibraryThingsWorkId()
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] }, labels: { en: randomLabel() } } ]
+      works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] }, labels: { en: randomLabel() } } ],
     })
     const result = entries[0]
     should(result.edition.uri).be.ok()
@@ -123,7 +132,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: randomLabel() } } ],
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ]
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ],
     })
     const result = entries[0]
     should(result.edition.uri).be.ok()
@@ -137,7 +146,7 @@ describe('entities:resolve:create-unresolved', () => {
     const startTime = Date.now()
     const entry = {
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P1085': [ someLibraryThingsWorkId() ] }, labels: { en: humanName() } } ]
+      works: [ { claims: { 'wdt:P1085': [ someLibraryThingsWorkId() ] }, labels: { en: humanName() } } ],
     }
     const { entries } = await resolveAndCreate(entry)
     const result = entries[0]
@@ -153,7 +162,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { entries } = await resolveAndCreate({
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: randomLabel() } } ],
-      authors: [ { labels: { en: humanName() } } ]
+      authors: [ { labels: { en: humanName() } } ],
     })
     const result = entries[0]
     const workUri = result.works[0].uri
@@ -170,8 +179,8 @@ describe('entities:resolve:create-unresolved', () => {
     const { entries } = await resolveAndCreate({
       edition: {
         isbn: generateIsbn13(),
-        claims: { 'wdt:P1476': [ title ], 'wdt:P407': [ dutchLangUri ] }
-      }
+        claims: { 'wdt:P1476': [ title ], 'wdt:P407': [ dutchLangUri ] },
+      },
     })
     const work = entries[0].works[0]
     work.labels[dutchLangCode].should.equal(title)
@@ -183,9 +192,9 @@ describe('entities:resolve:create-unresolved', () => {
       await resolveAndCreate({
         edition: {
           isbn: generateIsbn13(),
-          claims: { 'wdt:P1476': [ title ] }
+          claims: { 'wdt:P1476': [ title ] },
         },
-        works: [ {} ]
+        works: [ {} ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -197,7 +206,7 @@ describe('entities:resolve:create-unresolved', () => {
     const { uri: workUri } = await createWork()
     await resolveAndCreate({
       edition: { claims: {} },
-      works: [ { uri: workUri } ]
+      works: [ { uri: workUri } ],
     })
     .then(shouldNotBeCalled)
     .catch(err => {

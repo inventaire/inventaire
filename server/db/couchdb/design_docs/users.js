@@ -1,10 +1,10 @@
-module.exports = {
+export default {
   byEmail: {
     map: doc => {
       if (doc.type === 'user') {
         emit(doc.email.toLowerCase(), null)
       }
-    }
+    },
   },
   byUsername: {
     map: doc => {
@@ -16,14 +16,14 @@ module.exports = {
           if (stableUsername !== username) emit(stableUsername, null)
         }
       }
-    }
+    },
   },
   byCreation: {
     map: doc => {
       if (doc.type === 'user') {
         emit(doc.created, doc.username)
       }
-    }
+    },
   },
   byPicture: {
     map: doc => {
@@ -32,7 +32,7 @@ module.exports = {
           emit(doc.picture.split('/')[3], null)
         }
       }
-    }
+    },
   },
   nextSummary: {
     map: doc => {
@@ -45,6 +45,6 @@ module.exports = {
       const summaryPeriodicity = doc.summaryPeriodicity || 20
       const nextSummary = lastSummary + summaryPeriodicity * 24 * 3600 * 1000
       emit(nextSummary, null)
-    }
-  }
+    },
+  },
 }

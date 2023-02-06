@@ -1,17 +1,23 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
+import CONFIG from 'config'
+import { transactionUpdate } from '#lib/emails/debounce_emails'
+import { initDebouncedEmailsCrawler } from '#lib/emails/debounced_emails_crawler'
+import sendEmail from '#lib/emails/send_email'
+import { radio } from '#lib/radio'
+import { warn, info } from '#lib/utils/logs'
+import activitySummary from './activity_summary/activity_summary.js'
+
 const { initDelay, disabled } = CONFIG.mailer
 
-module.exports = () => {
+export function initEmailServices () {
   initMailer()
   initActivitySummary()
 }
 
 const initMailer = () => {
   if (disabled) {
-    _.warn('mailer disabled')
+    warn('mailer disabled')
   } else {
-    _.info('mailer enabled')
+    info('mailer enabled')
     // Loading mailer dependencies slightly later
     // due to its lower priority at startup
     setTimeout(initMailerEventListeners, initDelay)
@@ -19,11 +25,6 @@ const initMailer = () => {
 }
 
 const initMailerEventListeners = () => {
-  const radio = require('lib/radio')
-  const sendEmail = require('./send_email')
-  const debounceEmails = require('./debounce_emails')
-  const initDebouncedEmailsCrawler = require('./debounced_emails_crawler')
-
   radio.on('validation:email', sendEmail.validationEmail)
   radio.on('reset:password:email', sendEmail.resetPassword)
   radio.on('notify:friend:request:accepted', sendEmail.friendAcceptedRequest)
@@ -40,18 +41,17 @@ const initMailerEventListeners = () => {
 
   initDebouncedEmailsCrawler()
 
-  radio.on('transaction:request', debounceEmails.transactionUpdate)
-  radio.on('transaction:update', debounceEmails.transactionUpdate)
-  radio.on('transaction:message', debounceEmails.transactionUpdate)
-  _.info('mailer events listeners ready!')
+  radio.on('transaction:request', transactionUpdate)
+  radio.on('transaction:update', transactionUpdate)
+  radio.on('transaction:message', transactionUpdate)
+  info('mailer events listeners ready!')
 }
 
 const initActivitySummary = () => {
   if (CONFIG.activitySummary.disabled) {
-    _.warn('activity summary disabled')
+    warn('activity summary disabled')
   } else {
-    _.info('activity summary enabled')
-    const activitySummary = require('./activity_summary/activity_summary')
+    info('activity summary enabled')
     setTimeout(activitySummary, initDelay)
   }
 }

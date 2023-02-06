@@ -1,10 +1,11 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const radio = require('lib/radio')
-const { audit: auditIsbn } = require('isbn3')
+import { audit as auditIsbn } from 'isbn3'
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { responses_ } from '#lib/responses'
+import { log, info } from '#lib/utils/logs'
 
-module.exports = {
+export default {
   post: async (req, res) => {
     const { user, body } = req
     const { subject, message, uris, unknownUser } = body
@@ -29,14 +30,14 @@ module.exports = {
     const automaticReport = uris != null
 
     if (!automaticReport || isNewAutomaticReport(subject)) {
-      _.log({ subject, message, uris, unknownUser, context }, 'sending feedback')
-      await radio.emit('received:feedback', subject, message, user, unknownUser, uris, context)
+      log({ subject, message, uris, unknownUser, context }, 'sending feedback')
+      await emit('received:feedback', subject, message, user, unknownUser, uris, context)
     } else {
-      _.info(subject, 'not re-sending automatic report')
+      info(subject, 'not re-sending automatic report')
     }
 
     responses_.ok(res, 201)
-  }
+  },
 }
 
 const cache = {}

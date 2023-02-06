@@ -1,11 +1,15 @@
-const parseIsbn = require('lib/isbn/parse')
-const requests_ = require('lib/requests')
-const { sparqlResults: simplifySparqlResults } = require('wikidata-sdk').simplify
-const { parseSameasMatches } = require('data/lib/external_ids')
-const wdIdByIso6393Code = require('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
-const { buildEntryFromFormattedRows } = require('data/lib/build_entry_from_formatted_rows')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { fixedEncodeURIComponent } = require('lib/utils/url')
+import wdk from 'wikidata-sdk'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
+import { parseSameasMatches } from '#data/lib/external_ids'
+import { parseIsbn } from '#lib/isbn/parse'
+import { requests_ } from '#lib/requests'
+import { requireJson } from '#lib/utils/json'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+
+const wdIdByIso6393Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
+
+const { sparqlResults: simplifySparqlResults } = wdk.simplify
 // Using a shorter timeout as the query is never critically needed but can make a user wait
 const timeout = 10000
 
@@ -14,7 +18,7 @@ const headers = {
   accept: 'application/sparql-results+json',
 }
 
-module.exports = async isbn => {
+export default async isbn => {
   const url = `https://bnb.data.bl.uk/sparql?format=json&query=${getQuery(isbn)}`
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
@@ -69,7 +73,7 @@ const formatRow = async (isbn, result) => {
     })
     entry.edition.claims = {
       'wdt:P1476': edition.title,
-      ...claims
+      ...claims,
     }
     const iso6393Lang = edition.lang?.replace('http://lexvo.org/id/iso639-3/', '')
     if (edition.lang && wdIdByIso6393Code[iso6393Lang]) {

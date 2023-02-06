@@ -6,8 +6,8 @@
 // - saving space in server and client cache
 // - saving everyone's bandwidth
 
-const { unprefixify } = require('controllers/entities/lib/prefix')
-const propertiesValuesConstraints = require('controllers/entities/lib/properties/properties_values_constraints')
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import propertiesValuesConstraints from '#controllers/entities/lib/properties/properties_values_constraints'
 
 const editedProperties = Object.keys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))
@@ -50,4 +50,4 @@ const nonEditedProperties = [
   'P6802', // related image
 ]
 
-module.exports = editedProperties.concat(nonEditedProperties)
+export const allowlistedProperties = editedProperties.concat(nonEditedProperties)

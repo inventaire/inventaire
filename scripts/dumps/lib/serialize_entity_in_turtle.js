@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const { yellow } = require('chalk')
+import { yellow } from 'tiny-chalk'
+import _ from '#builders/utils'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 
-module.exports = entity => {
+export default entity => {
   const { _id, version, created, updated, type, redirect } = entity
 
   if (type !== 'entity' || redirect != null) return ''
@@ -59,7 +59,7 @@ const datatypePropClaimsFormatter = {
   string: propClaims => propClaims.map(formatStringValue),
   'positive-integer': propClaims => propClaims.map(formatPositiveInteger),
   'simple-day': propClaims => propClaims.filter(validSimpleDay).map(formatDate),
-  'image-hash': propClaims => propClaims.map(formatImageHash)
+  'image-hash': propClaims => propClaims.map(formatImageHash),
 }
 
 const formatStringValue = str => {

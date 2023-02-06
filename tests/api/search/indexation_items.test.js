@@ -1,11 +1,13 @@
-const CONFIG = require('config')
-const should = require('should')
-const { wait } = require('lib/promises')
-const { createItem } = require('../fixtures/items')
-const { deleteItemsByIds, updateItems } = require('../utils/items')
+import CONFIG from 'config'
+import should from 'should'
+import { indexes } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { createItem } from '../fixtures/items.js'
+import { deleteItemsByIds, updateItems } from '../utils/items.js'
+import { getIndexedDoc } from '../utils/search.js'
+
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc } = require('../utils/search')
-const { index } = require('db/elasticsearch/indexes').indexes.items
+const { index } = indexes.items
 
 describe('indexation:items', () => {
   it('should index a new item', async () => {

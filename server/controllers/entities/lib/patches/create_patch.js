@@ -1,9 +1,11 @@
-const designDocName = 'patches'
-const db = require('db/couchdb/base')('patches', designDocName)
-const Patch = require('models/patch')
-const { getEntityLastPatches } = require('./patches')
+import dbFactory from '#db/couchdb/base'
+import Patch from '#models/patch'
+import { getEntityLastPatches } from './patches.js'
 
-module.exports = async params => {
+const designDocName = 'patches'
+const db = dbFactory('patches', designDocName)
+
+export default async params => {
   const { currentDoc, updatedDoc, userId } = params
   const newPatchDoc = Patch.create(params)
 

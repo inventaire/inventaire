@@ -1,17 +1,17 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const error_ = require('lib/error/error')
-const { emit } = require('lib/radio')
+import _ from '#builders/utils'
+import { getItemsByIds, itemsBulkDelete } from '#controllers/items/lib/items'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
 
 const sanitization = {
-  ids: {}
+  ids: {},
 }
 
 const controller = async ({ ids, reqUserId }) => {
-  await items_.byIds(ids)
+  await getItemsByIds(ids)
   .then(_.compact)
   .then(verifyOwnership(reqUserId))
-  .then(items_.bulkDelete)
+  .then(itemsBulkDelete)
 
   await emit('user:inventory:update', reqUserId)
 
@@ -27,4 +27,4 @@ const verifyOwnership = reqUserId => items => {
   return items
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

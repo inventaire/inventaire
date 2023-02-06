@@ -1,19 +1,19 @@
-const relations_ = require('controllers/relations/lib/queries')
-const deleteUserItems = require('controllers/items/lib/delete_user_items')
-const { deleteUserShelves } = require('controllers/shelves/lib/shelves')
-const { deleteUserListingsAndElements } = require('controllers/listings/lib/listings')
-const { leaveAllGroups } = require('controllers/groups/lib/leave_groups')
-const { cancelAllActiveTransactions } = require('controllers/transactions/lib/transactions')
-const notifications_ = require('controllers/notifications/lib/notifications')
-const { softDeleteById } = require('controllers/user/lib/delete')
+import { leaveAllGroups } from '#controllers/groups/lib/leave_groups'
+import deleteUserItems from '#controllers/items/lib/delete_user_items'
+import { deleteUserListingsAndElements } from '#controllers/listings/lib/listings'
+import { deleteAllNotificationsByUserId } from '#controllers/notifications/lib/notifications'
+import { deleteUserRelations } from '#controllers/relations/lib/lists'
+import { deleteUserShelves } from '#controllers/shelves/lib/shelves'
+import { cancelAllActiveTransactions } from '#controllers/transactions/lib/transactions'
+import { softDeleteById } from '#controllers/user/lib/delete'
 
-module.exports = async userId => {
+export default async userId => {
   const res = await softDeleteById(userId)
   await Promise.all([
-    relations_.deleteUserRelations(userId),
+    deleteUserRelations(userId),
     leaveAllGroups(userId),
     cancelAllActiveTransactions(userId),
-    notifications_.deleteAllByUserId(userId),
+    deleteAllNotificationsByUserId(userId),
     deleteUserShelves(userId),
     deleteUserListingsAndElements(userId),
   ])

@@ -12,20 +12,23 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-require('module-alias/register')
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const entitiesDb = require('db/couchdb/base')('entities')
-const patchesDb = require('db/couchdb/base')('patches')
-const docDiff = require('db/couchdb/doc_diffs')
-const Entity = require('models/entity')
-const Patch = require('models/patch')
-const userId = require('db/couchdb/hard_coded_documents').users.updater._id
+import _ from '#builders/utils'
+import dbFactory from '#db/couchdb/base'
+import docDiff from '#db/couchdb/doc_diffs'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { log, LogError } from '#lib/utils/logs'
+import Entity from '#models/entity'
+import Patch from '#models/patch'
+
+const entitiesDb = dbFactory('entities')
+const patchesDb = dbFactory('patches')
+const userId = hardCodedUsers.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)
-const { getNextBatch, updateFn, stats } = require(updateFnFilePath)
-let { preview, silent } = require(updateFnFilePath)
+const { getNextBatch, updateFn, stats } = (await import(updateFnFilePath)).default
+let { preview, silent } = (await import(updateFnFilePath)).default
 
 // Default to true
 preview = preview !== false
@@ -74,6 +77,6 @@ const buildPatches = entityResById => updateData => {
 
 updateSequentially()
 .then(() => {
-  if (stats) _.log(stats(), 'stats')
+  if (stats) log(stats(), 'stats')
 })
-.catch(_.Error('global error'))
+.catch(LogError('global error'))

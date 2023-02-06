@@ -1,13 +1,21 @@
-const requests_ = require('lib/requests')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { origin: elasticOrigin } = require('config').elasticsearch
-const { formatError, getHitsAndTotal } = require('lib/elasticsearch')
-const { indexesNamesByBaseNames: indexes, indexedTypes, indexedEntitiesTypes, socialTypes } = require('db/elasticsearch/indexes')
+import CONFIG from 'config'
+import {
+  indexesNamesByBaseNames as indexes,
+  indexedTypes,
+  indexedEntitiesTypes,
+  socialTypes,
+} from '#db/elasticsearch/indexes'
+import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
+import { someMatch } from '#lib/utils/base'
+import entitiesQueryBuilder from './entities_query_builder.js'
+import socialQueryBuilder from './social_query_builder.js'
+
+const { origin: elasticOrigin } = CONFIG.elasticsearch
+
 const indexedTypesSet = new Set(indexedTypes)
-const entitiesQueryBuilder = require('./entities_query_builder')
-const socialQueryBuilder = require('./social_query_builder')
-const { someMatch } = require('lib/utils/base')
 
 const typeSearch = async params => {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
@@ -56,7 +64,7 @@ const typeSearch = async params => {
   })
 }
 
-module.exports = typeSearch
+export default typeSearch
 
 const entitiesIndexesPerFilter = {
   wd: [ indexes.wikidata ],

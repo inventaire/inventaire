@@ -1,20 +1,20 @@
-const getItemsByUsers = require('./lib/get_items_by_users')
+import getItemsByUsers from './lib/get_items_by_users.js'
 
 const sanitization = {
   users: {},
   limit: { optional: true },
   offset: { optional: true },
   context: {
-    optional: true
+    optional: true,
   },
   'include-users': {
     generic: 'boolean',
     // Not including the associated users by default as this endpoint assumes
     // the requester already knows the users
-    default: false
-  }
+    default: false,
+  },
 }
 
 const controller = params => getItemsByUsers(params)
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

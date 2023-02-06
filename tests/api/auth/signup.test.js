@@ -1,9 +1,11 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const { wait } = require('lib/promises')
+import 'should'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=signup'
-const randomString = require('lib/utils/random_string')
-const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:signup', () => {
   it('should reject requests without username', async () => {
@@ -15,7 +17,7 @@ describe('auth:signup', () => {
   })
 
   it('should reject requests without email', async () => {
-    await publicReq('post', endpoint, { username: randomString(4) })
+    await publicReq('post', endpoint, { username: getRandomString(4) })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('missing parameter in body: email')
@@ -24,8 +26,8 @@ describe('auth:signup', () => {
 
   it('should reject requests without password', async () => {
     await publicReq('post', endpoint, {
-      username: randomString(4),
-      email: `bla${randomString(4)}@foo.bar`
+      username: getRandomString(4),
+      email: `bla${getRandomString(4)}@foo.bar`,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -35,14 +37,14 @@ describe('auth:signup', () => {
 
   it('should create a user', async () => {
     const res = await signup({
-      email: `bla${randomString(4)}@foo.bar`,
+      email: `bla${getRandomString(4)}@foo.bar`,
     })
     res.ok.should.be.true()
   })
 
   it('should reject an invalid email', async () => {
     await signup({
-      email: `bla${randomString(4)}@foo..bar`
+      email: `bla${getRandomString(4)}@foo..bar`,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -102,8 +104,8 @@ describe('auth:username-availability', () => {
 
 const signup = ({ username, email, password }) => {
   return publicReq('post', endpoint, {
-    username: username || randomString(8),
-    email: email || `bla${randomString(8)}@foo.bar`,
-    password: password || randomString(8)
+    username: username || getRandomString(8),
+    email: email || `bla${getRandomString(8)}@foo.bar`,
+    password: password || getRandomString(8),
   })
 }

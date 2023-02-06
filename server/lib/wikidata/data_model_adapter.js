@@ -1,7 +1,9 @@
-const error_ = require('lib/error/error')
-const { qualifier: simplifyQualifier } = require('wikidata-sdk').simplify
+import wdk from 'wikidata-sdk'
+import { error_ } from '#lib/error/error'
 
-const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
+const { qualifier: simplifyQualifier } = wdk.simplify
+
+export const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   if (simplifiedClaims['wdt:P179']?.length === 1) {
     const { qualifiers: serieQualifiers } = rawClaims.P179[0]
     if (serieQualifiers?.P1545?.length === 1) {
@@ -11,7 +13,7 @@ const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   }
 }
 
-const relocateQualifierProperties = invEntity => {
+export const relocateQualifierProperties = invEntity => {
   const { claims } = invEntity
   const series = claims.P179
   const seriesOrdinals = claims.P1545
@@ -35,18 +37,16 @@ const relocateQualifierProperties = invEntity => {
     value: series[0],
     qualifiers: {
       P1545: seriesOrdinals[0],
-    }
+    },
   }
 
   delete claims.P1545
 }
 
-const qualifierProperties = {
+export const qualifierProperties = {
   P1545: {
     claimProperty: 'P179',
     noClaimErrorMessage: 'a serie needs to be set before setting an ordinal',
     tooManyClaimsErrorMessage: 'there needs to be exactly one serie to be allowed to set an ordinal',
-  }
+  },
 }
-
-module.exports = { flattenQualifierProperties, relocateQualifierProperties, qualifierProperties }

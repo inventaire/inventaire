@@ -1,12 +1,14 @@
-const _ = require('builders/utils')
-const { get } = require('lib/requests')
-const { wait } = require('lib/promises')
-const { origin: elasticOrigin } = require('config').elasticsearch
-const { indexesList, syncIndexesList } = require('db/elasticsearch/indexes')
-const createIndex = require('./create_index')
-const reindexOnChange = require('./reindex_on_change')
+import CONFIG from 'config'
+import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { get } from '#lib/requests'
+import { warn } from '#lib/utils/logs'
+import createIndex from './create_index.js'
+import reindexOnChange from './reindex_on_change.js'
 
-module.exports = async () => {
+const { origin: elasticOrigin } = CONFIG.elasticsearch
+
+export default async () => {
   await waitForElastic()
   await ensureIndexesExist()
   startCouchElasticSync()
@@ -30,7 +32,7 @@ const waitForElastic = async () => {
     await get(elasticOrigin)
   } catch (err) {
     if (err.statusCode === 503 || err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
-      _.warn(`waiting for Elasticsearch on ${elasticOrigin}`)
+      warn(`waiting for Elasticsearch on ${elasticOrigin}`)
       await wait(500)
       return waitForElastic()
     } else {

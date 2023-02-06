@@ -1,14 +1,15 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const parseEmails = require('./lib/parse_emails')
-const sendInvitationAndReturnData = require('./lib/send_invitation_and_return_data')
-const groups_ = require('controllers/groups/lib/groups')
-const Group = require('models/group')
-const { Track } = require('lib/track')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
+import _ from '#builders/utils'
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import { Track } from '#lib/track'
+import { Log } from '#lib/utils/logs'
+import Group from '#models/group'
+import parseEmails from './lib/parse_emails.js'
+import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
 
 const sanitization = validateSanitization({
   emails: {},
@@ -16,7 +17,7 @@ const sanitization = validateSanitization({
   group: { optional: true },
 })
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const params = sanitize(req, res, sanitization)
   const { emails, groupId, reqUserId } = params
   const { user } = req
@@ -27,11 +28,11 @@ module.exports = async (req, res) => {
 
   const [ parsedEmails, group ] = await Promise.all([
     parseAndValidateEmails(emails, user.email),
-    validateGroup(groupId, reqUserId)
+    validateGroup(groupId, reqUserId),
   ])
 
   return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
-  .then(_.Log('invitationByEmails data'))
+  .then(Log('invitationByEmails data'))
   .then(responses_.Send(res))
   .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
 }
@@ -51,7 +52,7 @@ const validateGroup = async (groupId, reqUserId) => {
     throw error_.newInvalid('group id', groupId)
   }
 
-  return groups_.byId(groupId)
+  return getGroupById(groupId)
   .then(group => {
     const userIsMember = Group.userIsMember(reqUserId, group)
     if (!userIsMember) {

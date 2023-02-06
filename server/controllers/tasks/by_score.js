@@ -1,17 +1,17 @@
-const tasks_ = require('./lib/tasks')
+import { getTasksByScore } from '#controllers/tasks/lib/tasks'
 
 const sanitization = {
   limit: {
-    default: 10
+    default: 10,
   },
   offset: {
-    default: 0
-  }
+    default: 0,
+  },
 }
 
 const controller = async params => {
-  const tasks = await tasks_.byScore(params)
+  const tasks = await getTasksByScore(params)
   return { tasks }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

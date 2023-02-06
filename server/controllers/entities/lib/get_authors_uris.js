@@ -1,4 +1,5 @@
-const _ = require('lodash')
+import _ from 'lodash-es'
+
 const authorProperties = [
   // author
   'wdt:P50',
@@ -7,10 +8,10 @@ const authorProperties = [
   // illustrator
   'wdt:P110',
   // colorist
-  'wdt:P6338'
+  'wdt:P6338',
 ]
 
-module.exports = work => {
+export default work => {
   return _(work.claims)
   .pick(authorProperties)
   .values()

@@ -1,8 +1,8 @@
-const { shouldNotBeCalled } = require('../utils/utils')
-const { bearerTokenReq } = require('../utils/request')
-const { getToken } = require('../utils/oauth')
-const randomString = require('lib/utils/random_string')
-const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'
+import { getToken } from '../utils/oauth.js'
+import { bearerTokenReq } from '../utils/request.js'
 
 describe('oauth:authenticate', () => {
   it('should accept a request authentified by a bearer token', async () => {
@@ -15,7 +15,7 @@ describe('oauth:authenticate', () => {
     const token = await getToken({ scope: [ 'username' ] })
     await bearerTokenReq(token, 'put', '/api/user', {
       attribute: 'bio',
-      value: randomString(10)
+      value: getRandomString(10),
     })
     .then(shouldNotBeCalled)
     .catch(err => {

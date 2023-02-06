@@ -1,13 +1,16 @@
-const { getSingularTypes } = require('lib/wikidata/aliases')
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const error_ = require('lib/error/error')
-const { trim } = require('lodash')
-const { isPropertyUri, isWdEntityUri } = require('lib/boolean_validations')
-const { prefixifyWdProperty } = require('controllers/entities/lib/prefix')
-const allowlistedProperties = require('lib/wikidata/allowlisted_properties').map(prefixifyWdProperty)
-const allowedProperties = new Set(allowlistedProperties)
+import { trim } from 'lodash-es'
+import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
+import { getSingularTypes } from '#lib/wikidata/aliases'
+import { allowlistedProperties } from '#lib/wikidata/allowlisted_properties'
 
-module.exports = params => {
+const prefixedAllowlistedProperties = allowlistedProperties.map(prefixifyWdProperty)
+
+const allowedProperties = new Set(prefixedAllowlistedProperties)
+
+export default params => {
   const { lang: userLang, search, limit: size, offset: from, exact, claim, safe = false } = params
   let { types, minScore = 0.5 } = params
   types = getSingularTypes(types)
@@ -15,7 +18,7 @@ module.exports = params => {
   const filters = [
     // At least one type should match
     // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
-    { terms: { type: types } }
+    { terms: { type: types } },
   ]
 
   if (claim) filters.push(...getClaimFilters(claim))
@@ -33,21 +36,21 @@ module.exports = params => {
             should: shoulds,
             // The default value would be 0 due to the presence of filters
             // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#bool-min-should-match
-            minimum_should_match: shoulds.length > 0 ? 1 : 0
-          }
+            minimum_should_match: shoulds.length > 0 ? 1 : 0,
+          },
         },
         // See: https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-function-score-query.html#function-field-value-factor
         field_value_factor: {
           field: 'popularity',
           // Inspired by https://www.elastic.co/guide/en/elasticsearch/guide/current/boosting-by-popularity.html
           modifier: 'ln2p',
-          missing: 1
+          missing: 1,
         },
       },
     },
     from,
     size,
-    min_score: minScore
+    min_score: minScore,
   }
 }
 
@@ -63,7 +66,7 @@ const matchEntities = (search, userLang, exact, safe) => {
       analyzer: 'standard_full',
       type: 'best_fields',
       boost: 10,
-    }
+    },
   })
 
   if (!exact) {
@@ -78,7 +81,7 @@ const matchEntities = (search, userLang, exact, safe) => {
         // So, until there is a fix for that, requests that generate those errors will be retried in "safe" mode,
         // that is, with best_fields instead of cross_fields
         type: safe ? 'best_fields' : 'cross_fields',
-      }
+      },
     })
   }
 
@@ -126,8 +129,8 @@ const getClaimFilters = claimParameter => {
     orConditions.forEach(validatePropertyAndValue)
     return {
       terms: {
-        claim: orConditions
-      }
+        claim: orConditions,
+      },
     }
   })
 }

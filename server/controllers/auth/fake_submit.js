@@ -4,10 +4,10 @@
 // Using a different endpoint (/api/submit) than /api/auth so that
 // server/middlewares/content.js fakeSubmitException can be applied
 // to the strict minimum
-module.exports = {
+export default {
   post: (req, res) => {
     const { redirect } = req.query
     const route = redirect ? `/${redirect}` : '/'
     res.redirect(route)
-  }
+  },
 }

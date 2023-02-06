@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
+import { LogError, Log } from '#lib/utils/logs'
 
-module.exports = input => action => {
+export default input => action => {
   action(input)
-  .then(_.Log('ok'))
-  .catch(_.Error('err'))
+  .then(Log('ok'))
+  .catch(LogError('err'))
   .then(() => process.exit(0))
 }

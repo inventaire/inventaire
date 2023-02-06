@@ -1,6 +1,6 @@
-const getBestLangValue = require('lib/get_best_lang_value')
+import getBestLangValue from '#lib/get_best_lang_value'
 
-module.exports = lang => result => {
+export default lang => result => {
   if (!lang) return result
   const { _source } = result
   _source.type = pluralizeType(_source.type)

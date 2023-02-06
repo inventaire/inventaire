@@ -37,4 +37,7 @@ touch run/3006 run/3009
   chmod 600 ./config/local.js
 } || echo './config/local.js file already exist: skipping creation'
 
+# See https://git-scm.com/docs/git-config#Documentation/git-config.txt-blameignoreRevsFile
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+
 npm run update-jsconfig

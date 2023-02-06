@@ -1,7 +1,9 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
-const { authReq, authReqB, getUser } = require('../utils/utils')
-const { createShelf, shelfName, shelfDescription } = require('../fixtures/shelves')
-const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
+import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createShelf, shelfName, shelfDescription } from '../fixtures/shelves.js'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=update'
 
@@ -21,7 +23,7 @@ describe('shelves:update', () => {
     try {
       const params = {
         shelf: shelf._id,
-        foo: 'bar'
+        foo: 'bar',
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -36,7 +38,7 @@ describe('shelves:update', () => {
     try {
       const params = {
         shelf: shelf._id,
-        name: ''
+        name: '',
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -99,7 +101,7 @@ describe('shelves:update', () => {
       const { shelf } = await createShelf()
       const params = {
         shelf: shelf._id,
-        name: 'foo'
+        name: 'foo',
       }
       await authReqB('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -114,7 +116,7 @@ describe('shelves:update', () => {
       const { shelf } = await createShelf(getUser())
       const params = {
         shelf: shelf._id,
-        name: shelf.name
+        name: shelf.name,
       }
       await authReq('post', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {

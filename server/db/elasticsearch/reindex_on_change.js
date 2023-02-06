@@ -1,12 +1,12 @@
-const follow = require('lib/follow')
-const filters = require('./filters')
-const indexation = require('./indexation')
+import follow from '#lib/follow'
+import filters from './filters.js'
+import indexation from './indexation.js'
 
-module.exports = indexBaseName => {
+export default indexBaseName => {
   follow({
     dbBaseName: indexBaseName,
     filter: filters[indexBaseName],
-    onChange: reindex(indexBaseName)
+    onChange: reindex(indexBaseName),
   })
 }
 

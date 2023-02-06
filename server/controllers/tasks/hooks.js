@@ -1,11 +1,10 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const { tap } = promises_
-const tasks_ = require('controllers/tasks/lib/tasks')
-const radio = require('lib/radio')
-const checkEntity = require('./lib/check_entity')
+import _ from '#builders/utils'
+import { bulkDeleteTasks, getTasksBySuggestionUri, getTasksBySuspectUri, getTasksBySuspectUriAndState, updateTask } from '#controllers/tasks/lib/tasks'
+import { tap, mappedArrayPromise } from '#lib/promises'
+import { radio } from '#lib/radio'
+import checkEntity from './lib/check_entity.js'
 
-module.exports = () => {
+export function initTasksHooks () {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
   radio.on('entity:remove', archiveObsoleteEntityUriTasks)
   radio.on('entity:revert:merge', revertArchive)
@@ -14,30 +13,28 @@ module.exports = () => {
 }
 
 const archiveObsoleteEntityUriTasks = uri => {
-  return tasks_.bySuspectUri(uri)
+  return getTasksBySuspectUri(uri)
   .then(archiveTasks)
 }
 
 const deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSuggestionUri) => {
-  return tasks_.bySuggestionUri(previousSuggestionUri)
-  .then(tap(tasks_.bulkDelete))
+  return getTasksBySuggestionUri(previousSuggestionUri)
+  .then(tap(bulkDeleteTasks))
   // Re-check entities after having archived obsolete tasks so that relationScores
   // are updated once every doc is in place.
   // No need to do anything with the newSuggestionUri as checkEntity should find it
   // if it is relevant
-  .then(promises_.map(task => checkEntity(task.suspectUri)))
+  .then(mappedArrayPromise(task => checkEntity(task.suspectUri)))
 }
 
 const archiveTasks = tasks => {
   if (tasks.length === 0) return
   const ids = _.map(tasks, '_id')
-  return tasks_.update({ ids, attribute: 'state', newValue: 'merged' })
+  return updateTask({ ids, attribute: 'state', newValue: 'merged' })
 }
 
-const revertArchive = uri => {
-  return tasks_.bySuspectUriAndState(uri, 'merged')
-  .then(tasks => {
-    const ids = _.map(tasks, '_id')
-    return tasks_.update({ ids, attribute: 'state', newValue: undefined })
-  })
+const revertArchive = async uri => {
+  const tasks = await getTasksBySuspectUriAndState(uri, 'merged')
+  const ids = _.map(tasks, '_id')
+  return updateTask({ ids, attribute: 'state', newValue: undefined })
 }

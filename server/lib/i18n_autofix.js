@@ -1,16 +1,17 @@
-const __ = require('config').universalPath
-const _ = require('builders/utils')
-const { readJsonFile, writeJsonFile } = require('lib/utils/json')
-const { isPropertyId } = require('wikidata-sdk')
-const { wait } = require('./promises')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
+import { readJsonFile, writeJsonFile } from '#lib/utils/json'
+import { success, info } from '#lib/utils/logs'
+import { wait } from './promises.js'
 
-module.exports = {
-  appendToFullKeys: keys => appendToI18nKeys(full, keys, true),
-  appendToShortKeys: keys => appendToI18nKeys(short, keys, false),
-  appendToServerKeys: key => {
-    const fullValue = !/^\w+_\w+/.test(key)
-    return appendToI18nKeys(server, [ key ], fullValue)
-  }
+const { isPropertyId } = wdk
+
+export const appendToFullKeys = keys => appendToI18nKeys(full, keys, true)
+export const appendToShortKeys = keys => appendToI18nKeys(short, keys, false)
+export const appendToServerKeys = key => {
+  const fullValue = !/^\w+_\w+/.test(key)
+  return appendToI18nKeys(server, [ key ], fullValue)
 }
 
 // Don't use 'require' as it will be cached until next start
@@ -24,23 +25,23 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
   for (const key of newKeys) {
     if (!keys[key]) {
       keys[key] = fullValue ? key : null
-      _.success(`+i18n: '${key}'`)
+      success(`+i18n: '${key}'`)
     } else {
-      _.info(`i18n: already there '${key}'`)
+      info(`i18n: already there '${key}'`)
     }
   }
 
   if (_.objLength(keys) > lengthBefore) {
     return writeJsonFile(path, reorder(keys))
-    .then(() => _.success(`i18n:updated ${path}`))
+    .then(() => success(`i18n:updated ${path}`))
   } else {
-    _.info(`i18n:not:updating ${path}: no new key`)
+    info(`i18n:not:updating ${path}: no new key`)
   }
 }
 
-const full = __.path('i18nSrc', 'fullkey.en.json')
-const short = __.path('i18nSrc', 'shortkey.en.json')
-const server = __.path('i18nSrc', 'server.en.json')
+const full = absolutePath('i18nSrc', 'fullkey.en.json')
+const short = absolutePath('i18nSrc', 'shortkey.en.json')
+const server = absolutePath('i18nSrc', 'server.en.json')
 
 const reorder = keys => {
   const reordered = {}

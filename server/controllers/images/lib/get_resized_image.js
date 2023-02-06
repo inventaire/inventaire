@@ -1,20 +1,23 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const images_ = require('lib/images')
-const { userAgent } = require('lib/requests')
-const { mediaStorage } = require('config')
+import CONFIG from 'config'
+import fetch from 'node-fetch'
+import { error_ } from '#lib/error/error'
+import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
+import { userAgent } from '#lib/requests'
+import { logError } from '#lib/utils/logs'
+
+const { mediaStorage } = CONFIG
+
 const { maxSize } = mediaStorage.images
-const fetch = require('node-fetch')
 const oneMB = 1024 ** 2
 const reqOptions = {
   headers: {
-    'user-agent': userAgent
-  }
+    'user-agent': userAgent,
+  },
 }
 
-module.exports = async (req, res, url, dimensions) => {
+export default async (req, res, url, dimensions) => {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
-  [ width, height ] = images_.applyLimits(width, height)
+  [ width, height ] = applyImageLimits(width, height)
 
   let response
   try {
@@ -63,14 +66,14 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
   const handleBufferError = buf => {
     const err = new Error(buf.toString())
     if (transmittedData || alreadySent) {
-      _.error(err, 'image error after some data was already sent')
+      logError(err, 'image error after some data was already sent')
     } else {
       error_.handler(req, res, err)
       alreadySent = true
     }
   }
 
-  return images_.shrinkAndFormatStream(imageStream, width, height)
+  return shrinkAndFormatStream(imageStream, width, height)
   .stream((err, stdout, stderr) => {
     if (err != null) return error_.handler(req, res, err)
     stdout.on('error', handleBufferError)

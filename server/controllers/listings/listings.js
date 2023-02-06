@@ -1,25 +1,34 @@
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from '#lib/actions_controllers'
+import addElements from './add_elements.js'
+import byCreators from './by_creators.js'
+import byEntities from './by_entities.js'
+import byId from './by_id.js'
+import byIds from './by_ids.js'
+import create from './create.js'
+import deleteByIds from './delete_by_ids.js'
+import removeElements from './remove_elements.js'
+import update from './update.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
-      'by-id': require('./by_id'),
-      'by-ids': require('./by_ids'),
-      'by-entities': require('./by_entities'),
-      'by-creators': require('./by_creators')
-    }
+      'by-id': byId,
+      'by-ids': byIds,
+      'by-entities': byEntities,
+      'by-creators': byCreators,
+    },
   }),
   post: ActionsControllers({
     authentified: {
-      create: require('./create'),
-      'add-elements': require('./add_elements'),
-      'remove-elements': require('./remove_elements'),
-      delete: require('./delete_by_ids')
-    }
+      create,
+      'add-elements': addElements,
+      'remove-elements': removeElements,
+      delete: deleteByIds,
+    },
   }),
   put: ActionsControllers({
     authentified: {
-      default: require('./update'),
-    }
-  })
+      default: update,
+    },
+  }),
 }

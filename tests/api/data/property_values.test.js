@@ -1,8 +1,9 @@
-require('should')
-const { publicReq } = require('../utils/utils')
-const allowedValuesPerTypePerProperty = require('controllers/entities/lib/properties/allowed_values_per_type_per_property')
+import 'should'
+import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=property-values'
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
 
 describe('data:property-values', () => {
   it('should reject without param', async () => {

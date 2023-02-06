@@ -1,26 +1,30 @@
-const _ = require('builders/utils')
-const { _id: seedUserId } = require('db/couchdb/hard_coded_documents').users.seed
-const { getByIsbns: getSeedsByIsbns } = require('./dataseed')
-const { enabled: dataseedEnabled } = require('config').dataseed
-const parseIsbn = require('server/lib/isbn/parse')
-const { resolvePublisher } = require('controllers/entities/lib/resolver/resolve_publisher')
-const temporarilyMemoize = require('lib/temporarily_memoize')
+import CONFIG from 'config'
+import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { parseIsbn } from '#lib/isbn/parse'
+import temporarilyMemoize from '#lib/temporarily_memoize'
+import { logError } from '#lib/utils/logs'
+import { getSeedsByIsbns } from './dataseed.js'
+
+const { _id: seedUserId } = hardCodedUsers.seed
+
+const { enabled: dataseedEnabled } = CONFIG.dataseed
 
 const resolverParams = {
   create: true,
   update: true,
   strict: true,
   enrich: true,
-  reqUserId: seedUserId
+  reqUserId: seedUserId,
 }
 
 let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedEntry
-const requireCircularDependencies = () => {
-  ({ resolveUpdateAndCreate } = require('controllers/entities/lib/resolver/resolve_update_and_create'))
-  getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-  getAuthoritiesAggregatedEntry = require('./get_authorities_aggregated_entry')
+const importCircularDependencies = async () => {
+  ;({ resolveUpdateAndCreate } = await import('#controllers/entities/lib/resolver/resolve_update_and_create'))
+  ;({ getEntityByUri } = await import('#controllers/entities/lib/get_entity_by_uri'))
+  ;({ getAuthoritiesAggregatedEntry } = await import('./get_authorities_aggregated_entry.js'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 const getResolvedEntry = async isbn => {
   try {
@@ -39,12 +43,12 @@ const getResolvedEntry = async isbn => {
       }
     }
   } catch (err) {
-    _.error(err, 'get_resolved_entry error')
+    logError(err, 'get_resolved_entry error')
   }
   return { isbn, notFound: true }
 }
 
-module.exports = temporarilyMemoize({
+export default temporarilyMemoize({
   fn: getResolvedEntry,
   ttlAfterFunctionCallReturned: 2000,
 })
@@ -66,18 +70,18 @@ const buildEntry = async seed => {
     edition: {
       isbn,
       claims: {
-        'wdt:P1476': title
+        'wdt:P1476': title,
       },
       image,
     },
     works: [
       {
-        labels: { [lang]: title }
+        labels: { [lang]: title },
       },
     ],
     authors: authors.map(authorName => ({
-      labels: { [lang]: authorName }
-    }))
+      labels: { [lang]: authorName },
+    })),
   }
   if (publicationDate) entry.edition.claims['wdt:P577'] = publicationDate
   if (publisher) {

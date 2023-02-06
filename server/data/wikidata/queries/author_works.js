@@ -5,7 +5,7 @@ const relationProperties = [
   'wdt:P6338',
 ]
 
-module.exports = {
+export default {
   parameters: [ 'qid' ],
 
   relationProperties,

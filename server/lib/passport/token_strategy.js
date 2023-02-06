@@ -1,17 +1,19 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { openPasswordUpdateWindow } = require('controllers/user/lib/token')
-const pw_ = require('lib/crypto').passwords
-const error_ = require('lib/error/error')
-const loginAttempts = require('./login_attempts')
-const { Strategy: LocalStrategy } = require('passport-local')
-const { tokenDaysToLive } = require('config')
+import CONFIG from 'config'
+import { Strategy as LocalStrategy } from 'passport-local'
+import { openPasswordUpdateWindow } from '#controllers/user/lib/token'
+import { findUserByEmail } from '#controllers/user/lib/user'
+import { passwords as pw_ } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
+import { logError, Log } from '#lib/utils/logs'
+import loginAttempts from './login_attempts.js'
+
+const { tokenDaysToLive } = CONFIG
 
 // Reusing LocalStrategy but substituing username/password by email/token
 const options = {
   usernameField: 'email',
   passwordField: 'token',
-  passReqToCallback: true
+  passReqToCallback: true,
 }
 
 const verify = (req, email, token, done) => {
@@ -19,7 +21,7 @@ const verify = (req, email, token, done) => {
     done(null, false, { message: 'too_many_attempts' })
   }
 
-  return user_.findOneByEmail(email)
+  return findUserByEmail(email)
   .catch(invalidEmailOrToken.bind(null, done, email, 'findOneByEmail'))
   .then(returnIfValid.bind(null, done, token, email))
   .catch(finalError.bind(null, done))
@@ -35,7 +37,7 @@ const returnIfValid = (done, token, email, user) => {
   .then(valid => {
     if (valid) {
       return openPasswordUpdateWindow(user)
-      .then(_.Log('clearToken res'))
+      .then(Log('clearToken res'))
       .then(() => done(null, user))
     } else {
       return invalidEmailOrToken(done, email, 'validity test')
@@ -55,8 +57,8 @@ const verifyToken = async (user, token) => {
 }
 
 const finalError = (done, err) => {
-  _.error(err, 'TokenStrategy verify err')
+  logError(err, 'TokenStrategy verify err')
   done(err)
 }
 
-module.exports = new LocalStrategy(options, verify)
+export default new LocalStrategy(options, verify)

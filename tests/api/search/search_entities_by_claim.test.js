@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-require('should')
-const { createHuman, createWorkWithAuthor } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { search, waitForIndexation } = require('../utils/search')
-const { getByUris } = require('../utils/entities')
+import _ from '#builders/utils'
+import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createHuman, createWorkWithAuthor } from '../fixtures/entities.js'
+import { getByUris } from '../utils/entities.js'
+import { search, waitForIndexation } from '../utils/search.js'
+
 const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
 const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925' ]
 

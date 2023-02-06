@@ -1,9 +1,16 @@
-require('should')
-const { authReq, authReqB, authReqC, getUser, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { createTransaction } = require('../fixtures/transactions')
-const { updateTransaction } = require('../utils/transactions')
-const { createItem } = require('../fixtures/items')
-const { createEditionFromWorkWithAuthor } = require('../fixtures/entities')
+import 'should'
+import {
+  authReq,
+  authReqB,
+  authReqC,
+  getUser,
+} from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createTransaction } from '../fixtures/transactions.js'
+import { updateTransaction } from '../utils/transactions.js'
+
 const endpoint = '/api/transactions?action=request'
 
 describe('transactions:request', () => {
@@ -33,7 +40,7 @@ describe('transactions:request', () => {
       const item = await createItem(getUser(), { transaction: 'giving', visibility: [ 'public' ] })
       await authReq('post', endpoint, {
         item: item._id,
-        message: 'yo'
+        message: 'yo',
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -47,7 +54,7 @@ describe('transactions:request', () => {
       const item = await createItem()
       await authReqB('post', endpoint, {
         item: item._id,
-        message: 'yo'
+        message: 'yo',
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -60,7 +67,7 @@ describe('transactions:request', () => {
     const item = await createItem(getUser(), { visibility: [ 'public' ], transaction: 'giving' })
     const res = await authReqB('post', endpoint, {
       item: item._id,
-      message: 'yo'
+      message: 'yo',
     })
     res.transaction.state.should.equal('requested')
   })

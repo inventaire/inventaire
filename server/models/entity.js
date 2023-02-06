@@ -22,16 +22,18 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const wikimediaLanguageCodes = new Set(Object.keys(require('wikidata-lang/indexes/by_wm_code')))
+import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
+import _ from '#builders/utils'
+import inferences from '#controllers/entities/lib/inferences'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { log, warn, info } from '#lib/utils/logs'
+import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
 
-const properties = require('controllers/entities/lib/properties/properties_values_constraints')
-const validateRequiredPropertiesValues = require('./validations/validate_required_properties_values')
-const inferences = require('controllers/entities/lib/inferences')
+const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 
-const Entity = module.exports = {
+const Entity = {
   create: () => {
     return {
       type: 'entity',
@@ -110,7 +112,7 @@ const Entity = module.exports = {
     if (_.isString(newVal)) newVal = _.superTrim(newVal)
 
     let propArray = _.get(doc, `claims.${property}`)
-    _.info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
+    info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
 
     if (propArray && newVal != null && propArray.includes(newVal)) {
       throw error_.new('claim property new value already exist', 400, [ propArray, newVal ])
@@ -170,9 +172,9 @@ const Entity = module.exports = {
         if (!toEntityDoc.claims[property].includes(value)) {
           if (toEntityDoc.claims[property].length > 0) {
             if (properties[property].uniqueValue) {
-              _.warn(value, `${property} can have only one value: ignoring merged entity value`)
+              warn(value, `${property} can have only one value: ignoring merged entity value`)
             } else if (properties[property].hasPlaceholders) {
-              _.warn(value, `${property} values may be placeholders: ignoring merged entity value`)
+              warn(value, `${property} values may be placeholders: ignoring merged entity value`)
             } else {
               toEntityDoc.claims[property].push(value)
             }
@@ -224,8 +226,10 @@ const Entity = module.exports = {
   preventRedirectionEdit: (doc, editLabel) => {
     if (doc.redirect == null) return
     throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
-  }
+  },
 }
+
+export default Entity
 
 const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const declaredProperties = doc._allClaimsProps || []
@@ -245,10 +249,10 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
       if (inferredValue != null) {
         if (!inferredPropertyArray.includes(inferredValue)) {
           inferredPropertyArray.push(inferredValue)
-          _.log(inferredValue, `added inferred ${inferredProperty} from ${property}`)
+          log(inferredValue, `added inferred ${inferredProperty} from ${property}`)
         }
       } else {
-        _.warn(newVal, `inferred value not found for ${inferredProperty} from ${property}`)
+        warn(newVal, `inferred value not found for ${inferredProperty} from ${property}`)
       }
     } else {
       // The current entity data model doesn't allow to check if the claim was
@@ -262,7 +266,7 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
       const inferredValue = convertor(oldVal)
       if (inferredPropertyArray.includes(inferredValue)) {
         inferredPropertyArray = _.without(inferredPropertyArray, inferredValue)
-        _.log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)
+        log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)
       }
     }
 

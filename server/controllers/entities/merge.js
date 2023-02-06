@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntitiesByUris = require('./lib/get_entities_by_uris')
-const mergeEntities = require('./lib/merge_entities')
-const { emit } = require('lib/radio')
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import { log } from '#lib/utils/logs'
+import getEntitiesByUris from './lib/get_entities_by_uris.js'
+import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {
   from: {},
-  to: {}
+  to: {},
 }
 
 // Assumptions:
@@ -30,7 +30,7 @@ const controller = async params => {
     throw error_.new(message, 400, params)
   }
 
-  _.log({ merge: params, user: reqUserId }, 'entity merge request')
+  log({ merge: params, user: reqUserId }, 'entity merge request')
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
@@ -104,4 +104,4 @@ const replaceIsbnUriByInvUri = (uri, invId) => {
   return uri
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

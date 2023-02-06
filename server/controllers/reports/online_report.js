@@ -1,8 +1,8 @@
-const onlineUsers = require('./lib/online_users')
-const responses_ = require('lib/responses')
-const headers_ = require('lib/headers')
+import { getLangFromHeaders } from '#lib/headers'
+import { responses_ } from '#lib/responses'
+import onlineUsers from './lib/online_users.js'
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const { headers } = req
   const { 'user-agent': userAgent } = headers
 
@@ -14,7 +14,7 @@ module.exports = (req, res) => {
     // For production, when behind a Nginx proxy
     ip: headers['x-forwarded-for'],
     userAgent: headers['user-agent'],
-    lang: headers_.getLang(headers)
+    lang: getLangFromHeaders(headers),
   })
 
   responses_.ok(res)

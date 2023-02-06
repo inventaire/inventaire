@@ -1,6 +1,7 @@
-const CONFIG = require('config')
-require('should')
-const fetch = require('node-fetch')
+import CONFIG from 'config'
+import 'should'
+import fetch from 'node-fetch'
+
 const origin = CONFIG.getLocalOrigin()
 
 describe('content', () => {
@@ -22,8 +23,8 @@ describe('content', () => {
         method: 'POST',
         body: 'bla=123',
         headers: {
-          'content-type': 'application/x-www-form-urlencoded'
-        }
+          'content-type': 'application/x-www-form-urlencoded',
+        },
       })
       res.status.should.equal(400)
       const body = await res.json()
@@ -36,8 +37,8 @@ describe('content', () => {
         body: 'bla=123',
         redirect: 'manual',
         headers: {
-          'content-type': 'application/x-www-form-urlencoded'
-        }
+          'content-type': 'application/x-www-form-urlencoded',
+        },
       })
       res.headers.get('location').should.equal(`${origin}/foo`)
       res.status.should.equal(302)
@@ -50,8 +51,8 @@ const makeRequest = async contentType => {
     method: 'POST',
     body: JSON.stringify({ bla: 123 }),
     headers: {
-      'content-type': contentType
-    }
+      'content-type': contentType,
+    },
   })
   res.status.should.equal(200)
   const body = await res.json()

@@ -1,10 +1,12 @@
-const gm = require('gm')
-const crypto_ = require('lib/crypto')
-const { readFile } = require('node:fs').promises
-const { maxSize } = require('config').mediaStorage.images
+import { readFile } from 'node:fs/promises'
+import CONFIG from 'config'
+import gm from 'gm'
+import { sha1 } from '#lib/crypto'
+
+const { maxSize } = CONFIG.mediaStorage.images
 
 // gm accepts either a path string or a stream
-const shrinkAndFormat = (data, width, height) => {
+export const shrinkAndFormatStream = (data, width, height) => {
   return gm(data)
   .setFormat('jpg')
   // only resize if bigger
@@ -17,31 +19,28 @@ const shrinkAndFormat = (data, width, height) => {
   .interlace('Line')
 }
 
-const removeExif = data => gm(data).noProfile()
+export const getHashFilename = path => {
+  return readFile(path)
+  .then(sha1)
+}
 
-module.exports = {
-  getHashFilename: path => {
-    return readFile(path)
-    .then(crypto_.sha1)
-  },
+export const shrinkAndFormat = (path, width = maxSize, height = maxSize) => {
+  return new Promise((resolve, reject) => shrinkAndFormatStream(path, width, height)
+  .write(path, returnPath(path, resolve, reject)))
+}
 
-  shrinkAndFormat: (path, width = maxSize, height = maxSize) => {
-    return new Promise((resolve, reject) => shrinkAndFormat(path, width, height)
-    .write(path, returnPath(path, resolve, reject)))
-  },
+export const removeExif = path => {
+  return new Promise((resolve, reject) => {
+    gm(path)
+    .noProfile()
+    .write(path, returnPath(path, resolve, reject))
+  })
+}
 
-  shrinkAndFormatStream: shrinkAndFormat,
+export const applyImageLimits = (width, height) => [ applyLimit(width), applyLimit(height) ]
 
-  removeExif: path => {
-    return new Promise((resolve, reject) => removeExif(path)
-    .write(path, returnPath(path, resolve, reject)))
-  },
-
-  applyLimits: (width, height) => [ applyLimit(width), applyLimit(height) ],
-
-  getUrlFromImageHash: (container, filename) => {
-    if (filename) return `/img/${container}/${filename}`
-  }
+export const getUrlFromImageHash = (container, filename) => {
+  if (filename) return `/img/${container}/${filename}`
 }
 
 const applyLimit = (dimension = maxSize) => {

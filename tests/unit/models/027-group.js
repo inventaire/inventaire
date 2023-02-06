@@ -1,11 +1,11 @@
-require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils')
+import 'should'
+import { wait } from '#lib/promises'
+import Group from '#models/group'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
 const someOtherUserId2 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac'
-const { wait } = require('lib/promises')
-
-const Group = require('models/group')
 
 const createSomeGroup = () => {
   return Group.create({
@@ -14,7 +14,7 @@ const createSomeGroup = () => {
     searchable: false,
     position: null,
     creatorId: someUserId,
-    open: false
+    open: false,
   })
 }
 
@@ -47,7 +47,7 @@ describe('group model', () => {
         description: '',
         searchable: false,
         position: null,
-        open: true
+        open: true,
       })
       doc.open.should.be.true()
     })

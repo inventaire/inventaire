@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const { firstClaim, uniqByUri } = entities_
-const runWdQuery = require('data/wikidata/run_query')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { getSimpleDayDate, sortByOrdinalOrDate } = require('./queries_utils')
-const { getCachedRelations } = require('./temporarily_cache_relations')
+import _ from '#builders/utils'
+import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
+import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
+import { getCachedRelations } from './temporarily_cache_relations.js'
 
-module.exports = params => {
+export default params => {
   const { uri, refresh, dry } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []
@@ -23,9 +23,9 @@ module.exports = params => {
   // There might be duplicates, mostly due to temporarily cached relations
   .then(uniqByUri)
   .then(results => ({
-    parts: results.sort(sortByOrdinalOrDate)
+    parts: results.sort(sortByOrdinalOrDate),
   }))
-  .catch(_.ErrorRethrow('get serie parts err'))
+  .catch(LogErrorAndRethrow('get serie parts err'))
 }
 
 const getWdSerieParts = async (qid, refresh, dry) => {
@@ -35,14 +35,14 @@ const getWdSerieParts = async (qid, refresh, dry) => {
     date: getSimpleDayDate(result.date),
     ordinal: result.ordinal,
     subparts: result.subparts,
-    superpart: prefixifyWd(result.superpart)
+    superpart: prefixifyWd(result.superpart),
   }))
 }
 
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
 const getInvSerieParts = async uri => {
-  const docs = await entities_.byClaim('wdt:P179', uri, true, true)
+  const docs = await getEntitiesByClaim('wdt:P179', uri, true, true)
   return docs.map(format)
 }
 
@@ -50,11 +50,11 @@ const format = ({ _id, claims }) => ({
   uri: `inv:${_id}`,
   date: claims['wdt:P577'] && claims['wdt:P577'][0],
   ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
-  subparts: 0
+  subparts: 0,
 })
 
 const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
-  ordinal: firstClaim(entity, 'wdt:P1545')
+  ordinal: firstClaim(entity, 'wdt:P1545'),
 })

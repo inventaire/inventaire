@@ -1,6 +1,6 @@
-const { omit } = require('lodash')
+import { omit } from 'lodash-es'
 
-module.exports = privateAttributes => {
+export default privateAttributes => {
   const omitPrivateAttributes = doc => omit(doc, privateAttributes)
 
   return {
@@ -9,6 +9,6 @@ module.exports = privateAttributes => {
     filterPrivateAttributes: reqUserId => doc => {
       if (doc.owner === reqUserId) return doc
       else return omitPrivateAttributes(doc)
-    }
+    },
   }
 }

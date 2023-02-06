@@ -1,12 +1,13 @@
-const CONFIG = require('config')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const { prefixifyInv } = require('controllers/entities/lib/prefix')
-const { i18n } = require('lib/emails/i18n/i18n')
-const getBestLangValue = require('lib/get_best_lang_value')
-const { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } = require('./helpers')
+import CONFIG from 'config'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { prefixifyInv } from '#controllers/entities/lib/prefix'
+import { i18n } from '#lib/emails/i18n/i18n'
+import getBestLangValue from '#lib/get_best_lang_value'
+import { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } from './helpers.js'
+
 const origin = CONFIG.getPublicOrigin()
 
-module.exports = rows => {
+export default rows => {
   rows = rows.filter(hasActivityText)
   return Promise.all(rows.map(formatEntityPatchActivity))
 }

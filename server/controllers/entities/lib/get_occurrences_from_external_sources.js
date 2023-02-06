@@ -1,27 +1,28 @@
 // A module to look for works labels occurrences in an author's external databases reference.
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const getWikipediaArticle = require('data/wikipedia/get_article')
-const getBnfAuthorWorksTitles = require('data/bnf/get_bnf_author_works_titles')
+import ASCIIFolder from 'fold-to-ascii'
+import _ from '#builders/utils'
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
-// const getBnbAuthorWorksTitles = require('data/bnb/get_bnb_author_works_titles')
-const getBneAuthorWorksTitles = require('data/bne/get_bne_author_works_titles')
-const getGndAuthorWorksTitles = require('data/gnd/get_gnd_author_works_titles')
-const getSelibrAuthorWorksTitle = require('data/selibr/get_selibr_author_works_titles')
-const getKjkAuthorWorksTitle = require('data/kjk/get_kjk_author_works_titles')
-const getNdlAuthorWorksTitle = require('data/ndl/get_ndl_author_works_titles')
-const getOlAuthorWorksTitles = require('data/openlibrary/get_ol_author_works_titles')
-const getEntityByUri = require('./get_entity_by_uri')
-const { normalizeTerm } = require('./terms_normalization')
-const { isWdEntityUri } = require('lib/boolean_validations')
-const ASCIIFolder = require('fold-to-ascii')
+// import getBnbAuthorWorksTitles from '#data/bne/get_bnb_author_works_titles'
+import getBneAuthorWorksTitles from '#data/bne/get_bne_author_works_titles'
+import getBnfAuthorWorksTitles from '#data/bnf/get_bnf_author_works_titles'
+import getGndAuthorWorksTitles from '#data/gnd/get_gnd_author_works_titles'
+import getKjkAuthorWorksTitle from '#data/kjk/get_kjk_author_works_titles'
+import getNdlAuthorWorksTitle from '#data/ndl/get_ndl_author_works_titles'
+import getOlAuthorWorksTitles from '#data/openlibrary/get_ol_author_works_titles'
+import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
+import getWikipediaArticle from '#data/wikipedia/get_article'
+import { isWdEntityUri } from '#lib/boolean_validations'
+import { assert_ } from '#lib/utils/assert_types'
+import { logError } from '#lib/utils/logs'
+import { getEntityByUri } from './get_entity_by_uri.js'
+import { normalizeTerm } from './terms_normalization.js'
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
+export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)
@@ -43,11 +44,11 @@ module.exports = async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getGndOccurrences(authorEntity, worksLabels),
       getSelibrOccurrences(authorEntity, worksLabels),
       getKjkOccurrences(authorEntity, worksLabels),
-      getNdlOccurrences(authorEntity, worksLabels)
+      getNdlOccurrences(authorEntity, worksLabels),
     ])
     return _.compact(occurrences.flat())
   } catch (err) {
-    _.error(err, 'has works labels occurrence err')
+    logError(err, 'has works labels occurrence err')
     return []
   }
 }
@@ -105,7 +106,7 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
     return {
       url: result.url,
       matchedTitles: [ title ],
-      structuredDataSource: true
+      structuredDataSource: true,
     }
   }
 }

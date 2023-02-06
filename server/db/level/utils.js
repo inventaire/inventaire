@@ -1,13 +1,11 @@
-const { forceArray } = require('builders/utils')
+import { forceArray } from '#lib/utils/base'
 
-module.exports = {
-  formatBatchOps: ops => forceArray(ops).map(setDefaultType),
+export const formatBatchOps = ops => forceArray(ops).map(setDefaultType)
 
-  // Levelup rejects `null` or `undefined` values, so the empty value should
-  // be an empty string.
-  // Useful when the key alone stores all the data that needs to be stored
-  emptyValue: ''
-}
+// Levelup rejects `null` or `undefined` values, so the empty value should
+// be an empty string.
+// Useful when the key alone stores all the data that needs to be stored
+export const emptyValue = ''
 
 const setDefaultType = operation => {
   operation.type = operation.type || 'put'

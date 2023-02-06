@@ -1,10 +1,12 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { getUser, authReq, customAuthReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
-const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
-const { getTwoFriends } = require('../fixtures/users')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
-const { humanName } = require('../fixtures/entities')
+import should from 'should'
+import _ from '#builders/utils'
+import { humanName } from '#fixtures/text'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
+import { getTwoFriends } from '../fixtures/users.js'
+
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-user-and-entities'
@@ -13,7 +15,7 @@ describe('items:get-by-user-and-entities', () => {
   it('should not get items of not requested entity uris', async () => {
     const [ item ] = await Promise.all([
       createItemWithEditionAndWork(getUser()),
-      createItemWithEditionAndWork(getUser())
+      createItemWithEditionAndWork(getUser()),
     ])
     const { owner, entity: uri } = item
     const { items } = await authReq('get', `${endpoint}&user=${owner}&uris=${uri}`)
@@ -33,7 +35,7 @@ describe('items:get-by-user-and-entities', () => {
   it('should get items by their entity uris', async () => {
     const items = await Promise.all([
       createItemWithEditionAndWork(getUser()),
-      createItemWithEditionAndWork(getUser())
+      createItemWithEditionAndWork(getUser()),
     ])
     const uris = _.map(items, 'entity')
     const { owner } = items[0]

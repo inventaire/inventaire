@@ -1,14 +1,20 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { getUser, getReservedUser, customAuthReq, publicReq } = require('../utils/utils')
-const { waitForIndexation, firstNWords } = require('../utils/search')
-const { getTwoFriends } = require('../fixtures/users')
-const { createItem, createItemWithEditionAndWork, createItemWithAuthor, createItemWithAuthorAndSerie } = require('../fixtures/items')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { createEdition } = require('tests/api/fixtures/entities')
-const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
-const { makeFriends } = require('tests/api/utils/relations')
-const { buildUrl } = require('lib/utils/url')
+import should from 'should'
+import _ from '#builders/utils'
+import { createEdition } from '#fixtures/entities'
+import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
+import { buildUrl } from '#lib/utils/url'
+import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createItem,
+  createItemWithEditionAndWork,
+  createItemWithAuthor,
+  createItemWithAuthorAndSerie,
+} from '../fixtures/items.js'
+import { getTwoFriends } from '../fixtures/users.js'
+import { waitForIndexation, firstNWords } from '../utils/search.js'
+import { getUser, getReservedUser, publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { user, search }) => {
   const url = buildUrl('/api/items', {
@@ -50,7 +56,7 @@ describe('items:search:user', () => {
       createItemWithEditionAndWork(user),
       // Create more items to check that we are not just getting all user items
       createItemWithEditionAndWork(user),
-      createItemWithEditionAndWork(user)
+      createItemWithEditionAndWork(user),
     ])
     await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
@@ -64,7 +70,7 @@ describe('items:search:user', () => {
       createItemWithEditionAndWork(user),
       // Create more items to check that we are not just getting all user items
       createItemWithEditionAndWork(user),
-      createItemWithEditionAndWork(user)
+      createItemWithEditionAndWork(user),
     ])
     await waitForIndexation('items', item._id)
     const { 'entity:subtitle': subtitle } = item.snapshot
@@ -78,7 +84,7 @@ describe('items:search:user', () => {
       createItemWithAuthor(user),
       // Create more items to check that we are not just getting all user items
       createItemWithAuthor(user),
-      createItemWithAuthor(user)
+      createItemWithAuthor(user),
     ])
     await waitForIndexation('items', item._id)
     const { 'entity:authors': authors } = item.snapshot
@@ -92,7 +98,7 @@ describe('items:search:user', () => {
       createItemWithAuthorAndSerie(user),
       // Create more items to check that we are not just getting all user items
       createItemWithAuthorAndSerie(user),
-      createItemWithAuthorAndSerie(user)
+      createItemWithAuthorAndSerie(user),
     ])
     await waitForIndexation('items', item._id)
     const { 'entity:series': series } = item.snapshot
@@ -105,8 +111,8 @@ describe('items:search:user', () => {
     const title = "L'éscadre"
     const edition = await createEdition({
       claims: {
-        'wdt:P1476': [ title ]
-      }
+        'wdt:P1476': [ title ],
+      },
     })
     const item = await createItem(user, { entity: edition.uri })
     await waitForIndexation('items', item._id)
@@ -120,7 +126,7 @@ describe('items:search:user', () => {
       createItemWithAuthorAndSerie(user),
       // Create more items to check that we are not just getting all user items
       createItemWithAuthorAndSerie(user),
-      createItemWithAuthorAndSerie(user)
+      createItemWithAuthorAndSerie(user),
     ])
     await waitForIndexation('items', item._id)
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot

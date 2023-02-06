@@ -1,17 +1,18 @@
-const _ = require('builders/utils')
-const tasks_ = require('./tasks')
+import _ from '#builders/utils'
+import { getTasksBySuspectUri, updateTask } from '#controllers/tasks/lib/tasks'
+
 // relationScore (between 0 & 1) express the number of tasks for the same suspect
 
-module.exports = suspectUri => {
-  return tasks_.bySuspectUri(suspectUri)
+export default suspectUri => {
+  return getTasksBySuspectUri(suspectUri)
   .then(tasks => {
     const relationScore = calculateRelationScore(tasks)
     const tasksToUpdate = tasks.filter(relationScoreIsntUpToDate(relationScore))
     if (tasksToUpdate.length === 0) return
-    return tasks_.update({
+    return updateTask({
       ids: _.map(tasksToUpdate, '_id'),
       attribute: 'relationScore',
-      newValue: relationScore
+      newValue: relationScore,
     })
   })
 }

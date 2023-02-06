@@ -1,7 +1,7 @@
-const { areFriends, getSharedGroupsIds } = require('controllers/user/lib/relations_status')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import { areFriends, getSharedGroupsIds } from '#controllers/user/lib/relations_status'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 
-const getAllowedVisibilityKeys = async (userId, reqUserId) => {
+export async function getAllowedVisibilityKeys (userId, reqUserId) {
   // This special case should be handled by consumers
   if (userId === reqUserId) return [ 'private' ]
 
@@ -17,8 +17,4 @@ const getAllowedVisibilityKeys = async (userId, reqUserId) => {
   if (sharedGroupsIds.length > 0) keys.push('groups', ...sharedGroupsIds.map(getGroupVisibilityKey))
 
   return keys
-}
-
-module.exports = {
-  getAllowedVisibilityKeys,
 }

@@ -1,9 +1,9 @@
-const { geoPoint, text } = require('./mappings_datatypes')
+import { geoPoint, text } from './mappings_datatypes.js'
 
-module.exports = {
+export default {
   properties: {
     username: text,
     bio: text,
     position: geoPoint,
-  }
+  },
 }

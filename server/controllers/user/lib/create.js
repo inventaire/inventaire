@@ -1,17 +1,19 @@
-const _ = require('builders/utils')
-const preventMultiAccountsCreation = require('./prevent_multi_accounts_creation')
-const invitations_ = require('controllers/invitations/lib/invitations')
-const User = require('models/user')
-const db = require('db/couchdb/base')('users')
-const token_ = require('./token')
-const availability_ = require('./availability')
+import invitations_ from '#controllers/invitations/lib/invitations'
+import { checkUsernameAvailability } from '#controllers/user/lib/availability'
+import { sendValidationEmail } from '#controllers/user/lib/token'
+import dbFactory from '#db/couchdb/base'
+import { success, Log } from '#lib/utils/logs'
+import User from '#models/user'
+import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
 
-module.exports = async (username, email, creationStrategy, language, password) => {
+const db = dbFactory('users')
+
+export default async (username, email, creationStrategy, language, password) => {
   preventMultiAccountsCreation(username)
 
-  return availability_.username(username)
+  return checkUsernameAvailability(username)
   .then(invitations_.findOneByEmail.bind(null, email))
-  .then(_.Log('invitedDoc'))
+  .then(Log('invitedDoc'))
   .then(invitedDoc => {
     return User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
     .then(db.putAndReturn)
@@ -34,13 +36,13 @@ const postCreation = user => {
     // but we do need both to be over to be sure that the user will
     // see the friends requests (converted from invitations)
     invitations_.convertInvitations(user),
-    token_.sendValidationEmail(user)
+    sendValidationEmail(user),
   ])
   // return the user updated with the validation token
   .then(([ invitationRes, updatedUser ]) => {
     // don't log the user doc to avoid having password hash in logs
     // but still return the doc
-    _.success(updatedUser.username, 'user successfully created')
+    success(updatedUser.username, 'user successfully created')
     return updatedUser
   })
 }

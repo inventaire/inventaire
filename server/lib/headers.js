@@ -1,8 +1,6 @@
 const separatorPattern = /\W/
 
-module.exports = {
-  getLang: headers => {
-    const acceptLanguage = headers['accept-language']
-    if (acceptLanguage) return acceptLanguage.split(separatorPattern)[0]
-  }
+export const getLangFromHeaders = headers => {
+  const acceptLanguage = headers['accept-language']
+  if (acceptLanguage) return acceptLanguage.split(separatorPattern)[0]
 }

@@ -1,41 +1,39 @@
-const groups_ = require('controllers/groups/lib/groups')
-const { getAllowedVisibilityKeys } = require('lib/visibility/allowed_visibility_keys')
-const db = require('db/couchdb/base')('items')
-const _ = require('builders/utils')
-const { uniqByKey } = require('lib/utils/base')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import _ from '#builders/utils'
+import { getGroupMembersIds } from '#controllers/groups/lib/groups'
+import dbFactory from '#db/couchdb/base'
+import { uniqByKey } from '#lib/utils/base'
+import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 
-const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
+const db = dbFactory('items')
+
+export const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
   const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)
   return [ ownerId, visibilityKeys ]
 }
 
 // Return what the reqUserId user is allowed to see
-module.exports = {
-  byUsers: async (usersIds, reqUserId, options = {}) => {
-    const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
-    const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
-    return getItemsFromViewAndAllowedVisibilityKeys(view, ownersIdsAndVisibilityKeysCombinations)
-  },
+export async function getAuthorizedItemsByUsers (usersIds, reqUserId, options = {}) {
+  const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
+  const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
+  return getItemsFromViewAndAllowedVisibilityKeys(view, ownersIdsAndVisibilityKeysCombinations)
+}
 
-  byGroup: async (groupId, reqUserId) => {
-    const allGroupMembersIds = await groups_.getGroupMembersIds(groupId)
-    const allowedVisibilityKeys = [ 'public' ]
-    if (reqUserId && allGroupMembersIds.includes(reqUserId)) {
-      allowedVisibilityKeys.push('groups', getGroupVisibilityKey(groupId))
-    }
-    return getUsersItems({
-      usersIds: allGroupMembersIds,
-      allowedVisibilityKeys,
-    })
-  },
+export async function getAuthorizedItemsByGroup (groupId, reqUserId) {
+  const allGroupMembersIds = await getGroupMembersIds(groupId)
+  const allowedVisibilityKeys = [ 'public' ]
+  if (reqUserId && allGroupMembersIds.includes(reqUserId)) {
+    allowedVisibilityKeys.push('groups', getGroupVisibilityKey(groupId))
+  }
+  return getUsersItems({
+    usersIds: allGroupMembersIds,
+    allowedVisibilityKeys,
+  })
+}
 
-  byShelves: async (shelves, reqUserId) => {
-    const keys = await getShelvesAllowedVisibilityKeys(shelves, reqUserId)
-    return getItemsFromViewAndAllowedVisibilityKeys('byShelfAndVisibilityKey', keys)
-  },
-
-  getOwnerIdAndVisibilityKeys,
+export async function getAuthorizedItemsByShelves (shelves, reqUserId) {
+  const keys = await getShelvesAllowedVisibilityKeys(shelves, reqUserId)
+  return getItemsFromViewAndAllowedVisibilityKeys('byShelfAndVisibilityKey', keys)
 }
 
 const getUsersAllowedVisibilityKeys = async (usersIds, reqUserId) => {

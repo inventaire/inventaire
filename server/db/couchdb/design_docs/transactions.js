@@ -1,9 +1,9 @@
-module.exports = {
+export default {
   byUserAndItem: {
     map: doc => {
       emit([ doc.owner, doc.item ], null)
       emit([ doc.requester, doc.item ], null)
-    }
+    },
   },
   byBusyItem: {
     map: doc => {
@@ -12,6 +12,6 @@ module.exports = {
       if (lastAction === 'accepted' || (doc.transaction === 'lending' && lastAction === 'confirmed')) {
         emit(doc.item, null)
       }
-    }
-  }
+    },
+  },
 }

@@ -1,7 +1,8 @@
-const couch_ = require('lib/couch')
-const assert_ = require('lib/utils/assert_types')
+import { setDocsDeletedTrue } from '#lib/couch'
+import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
 
-module.exports = (db, _) => {
+export default (db, _) => {
   const actionAndReturn = (verb, doc) => {
     assert_.object(doc)
     return db[verb](doc)
@@ -11,8 +12,8 @@ module.exports = (db, _) => {
   const bulkDelete = async docs => {
     assert_.objects(docs)
     if (docs.length === 0) return []
-    _.warn(docs, `${db.dbName} bulkDelete`)
-    return db.bulk(couch_.setDocsDeletedTrue(docs))
+    warn(docs, `${db.dbName} bulkDelete`)
+    return db.bulk(setDocsDeletedTrue(docs))
   }
 
   return {
@@ -23,7 +24,7 @@ module.exports = (db, _) => {
     },
     postAndReturn: actionAndReturn.bind(null, 'post'),
     putAndReturn: actionAndReturn.bind(null, 'put'),
-    bulkDelete
+    bulkDelete,
   }
 }
 

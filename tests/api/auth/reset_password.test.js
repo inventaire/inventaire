@@ -1,6 +1,7 @@
-require('should')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { publicReq, getUser } = require('../utils/utils')
+import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq, getUser } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=reset-password'
 
 describe('auth:reset-password', () => {

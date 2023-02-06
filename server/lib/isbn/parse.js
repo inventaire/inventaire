@@ -1,14 +1,16 @@
-const { parse: isbnParser } = require('isbn3')
-const groups = require('./groups')
+import isbn3 from 'isbn3'
+import groups from './groups.js'
 
-const parse = module.exports = isbn => {
+const { parse: isbnParser } = isbn3
+
+export function parseIsbn (isbn) {
   const isbnData = isbnParser(isbn)
 
   if (isbnData == null) {
     // Some people input an isbn 13 without EAN prefix
     // so if the first attempt to parse an ISBN-10 fails, try to consider it
     // as an unnecessarily trunkated ISBN-13
-    if (/^\d{10}$/.test(isbn)) return parse(`978${isbn}`)
+    if (/^\d{10}$/.test(isbn)) return parseIsbn(`978${isbn}`)
     else return
   }
 

@@ -1,37 +1,37 @@
-const error_ = require('lib/error/error')
-const headers_ = require('lib/headers')
-const getAuthentifiedUser = require('./lib/get_authentified_user')
-const userFeedData = require('./lib/user_feed_data')
-const groupFeedData = require('./lib/group_feed_data')
-const shelfFeedData = require('./lib/shelf_feed_data')
-const generateFeedFromFeedData = require('./lib/generate_feed_from_feed_data')
-const { ControllerWrapper } = require('lib/controller_wrapper')
+import { ControllerWrapper } from '#lib/controller_wrapper'
+import { error_ } from '#lib/error/error'
+import { getLangFromHeaders } from '#lib/headers'
+import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
+import getAuthentifiedUser from './lib/get_authentified_user.js'
+import groupFeedData from './lib/group_feed_data.js'
+import shelfFeedData from './lib/shelf_feed_data.js'
+import userFeedData from './lib/user_feed_data.js'
 
 const sanitization = {
   user: {
-    optional: true
+    optional: true,
   },
   group: {
-    optional: true
+    optional: true,
   },
   shelf: {
-    optional: true
+    optional: true,
   },
   requester: {
-    optional: true
+    optional: true,
   },
   token: {
-    optional: true
+    optional: true,
   },
   lang: {
     optional: true,
     // Set the defaults manually after having checked req.headers
-    default: null
-  }
+    default: null,
+  },
 }
 
 const controller = async (params, req, res) => {
-  const headersLang = headers_.getLang(req.headers)
+  const headersLang = getLangFromHeaders(req.headers)
   const xml = await getFeed(headersLang, params)
   res.header('content-type', 'application/rss+xml')
   res.send(xml)
@@ -70,10 +70,10 @@ const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
   else throw error_.newMissingQuery('user|group|shelf', 400)
 }
 
-module.exports = {
+export default {
   get: ControllerWrapper({
     access: 'public',
     sanitization,
     controller,
-  })
+  }),
 }

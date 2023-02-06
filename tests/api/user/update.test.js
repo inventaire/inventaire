@@ -1,21 +1,24 @@
-const should = require('should')
-const _ = require('lodash')
-const { customAuthReq, getReservedUser, getUser, getUserB } = require('../utils/utils')
-const { getRefreshedUser, createUser, createUsername } = require('../fixtures/users')
-const { getToken } = require('../utils/oauth')
-const { bearerTokenReq } = require('../utils/request')
-const { shouldNotBeCalled } = require('../../unit/utils')
+import _ from 'lodash-es'
+import should from 'should'
+import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getRefreshedUser, createUser, createUsername } from '../fixtures/users.js'
+import { getToken } from '../utils/oauth.js'
+import { bearerTokenReq } from '../utils/request.js'
+import { getIndexedDoc } from '../utils/search.js'
+import { getReservedUser, getUser, getUserB } from '../utils/utils.js'
+
+const { users: usersIndex } = indexesNamesByBaseNames
 const endpoint = '/api/user'
-const randomString = require('lib/utils/random_string')
-const { getIndexedDoc } = require('../utils/search')
-const { wait } = require('lib/promises')
-const { users: usersIndex } = require('db/elasticsearch/indexes').indexesNamesByBaseNames
 
 describe('user:update', () => {
   it('should update a user', async () => {
     const user = await getReservedUser()
     const attribute = 'username'
-    const value = randomString(6)
+    const value = getRandomString(6)
     await customAuthReq(user, 'put', endpoint, { attribute, value })
     const updatedUser = await getRefreshedUser(user)
     updatedUser[attribute].should.equal(value)
@@ -68,7 +71,7 @@ describe('user:update', () => {
       const [ userA, userB ] = await Promise.all([ getUser(), getUserB() ])
       await customAuthReq(userA, 'put', endpoint, {
         attribute: 'username',
-        value: userB.username
+        value: userB.username,
       })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -82,7 +85,7 @@ describe('user:update', () => {
       const user = await createUser({ username })
       await customAuthReq(user, 'put', endpoint, {
         attribute: 'username',
-        value: username + 'éäàĝ'
+        value: username + 'éäàĝ',
       })
     })
 
@@ -97,7 +100,7 @@ describe('user:update', () => {
       ])
       await customAuthReq(userA, 'put', endpoint, {
         attribute: 'username',
-        value: nonNormalizedUnicodeUsername
+        value: nonNormalizedUnicodeUsername,
       })
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -115,11 +118,11 @@ describe('user:update', () => {
       await bearerTokenReq(token, 'get', '/api/user')
       await customAuthReq(userB, 'put', endpoint, {
         attribute: 'username',
-        value: initialUsername + 'a'
+        value: initialUsername + 'a',
       })
       await customAuthReq(userA, 'put', endpoint, {
         attribute: 'username',
-        value: initialUsername
+        value: initialUsername,
       })
       .then(shouldNotBeCalled)
       .catch(err => {

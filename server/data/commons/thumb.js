@@ -1,10 +1,11 @@
 // There are no cases in the the app where we would need a higher definition than 1000px
 // So using 1000px as max width and resizing from that seems acceptable for a large majority of cases
 // Known exception: panoramas, but we don't use those much
-const width = 1000
-const { fixedEncodeURIComponent } = require('lib/utils/url')
+import { fixedEncodeURIComponent } from '#lib/utils/url'
 
-module.exports = file => {
+const width = 1000
+
+export default file => {
   if (!file) return {}
 
   return {
@@ -12,7 +13,7 @@ module.exports = file => {
     file,
     credits: {
       text: 'Wikimedia Commons',
-      url: `https://commons.wikimedia.org/wiki/File:${file}`
-    }
+      url: `https://commons.wikimedia.org/wiki/File:${file}`,
+    },
   }
 }

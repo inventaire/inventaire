@@ -1,10 +1,12 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const fs = require('node:fs')
-const path = require('node:path')
-const day = _.simpleDay()
-const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
-const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
+import fs from 'node:fs'
+import path from 'node:path'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { info } from '#lib/utils/logs'
+
+export const day = _.simpleDay()
+export const backupGeneralFolder = path.resolve(process.cwd(), CONFIG.db.backupFolder)
+export const backupFolder = path.resolve(backupGeneralFolder, `./${day}`)
 
 try {
   fs.mkdirSync(backupFolder, { recursive: true })
@@ -12,6 +14,4 @@ try {
   if (err.code !== 'EEXIST') throw err
 }
 
-_.info(backupFolder, 'backup folder')
-
-module.exports = { backupFolder, backupGeneralFolder, day }
+info(backupFolder, 'backup folder')

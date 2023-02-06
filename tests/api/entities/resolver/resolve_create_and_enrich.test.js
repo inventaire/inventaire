@@ -1,7 +1,7 @@
-const should = require('should')
-const { authReq } = require('tests/api/utils/utils')
-const { deleteByUris, deleteByExternalId } = require('tests/api/utils/entities')
-const { uploadSomeImage } = require('tests/api/utils/images')
+import should from 'should'
+import { deleteByUris, deleteByExternalId } from '#tests/api/utils/entities'
+import { uploadSomeImage } from '#tests/api/utils/images'
+import { authReq } from '#tests/api/utils/utils'
 
 describe('entities:resolve:create-and-enrich', () => {
   // This tests requires to have CONFIG.dataseed.enabled = true
@@ -12,7 +12,7 @@ describe('entities:resolve:create-and-enrich', () => {
     await deleteByUris(`isbn:${isbn}`)
     const edition = await resolveCreateAndEnrichEdition({
       edition: { isbn },
-      works: [ { labels: { fr: '1984' } } ]
+      works: [ { labels: { fr: '1984' } } ],
     })
     edition.isbn.should.equal(isbn)
     should(edition.claims['invp:P2']).not.be.ok()
@@ -26,7 +26,7 @@ describe('entities:resolve:create-and-enrich', () => {
     await deleteByUris(`isbn:${isbn}`)
     const edition = await resolveCreateAndEnrichEdition({
       edition: { isbn },
-      works: [ { labels: { fr: 'La Ferme des animaux' } } ]
+      works: [ { labels: { fr: 'La Ferme des animaux' } } ],
     }, true)
     edition.isbn.should.equal(isbn)
     should(edition.claims['invp:P2']).be.ok()
@@ -43,10 +43,10 @@ describe('entities:resolve:create-and-enrich', () => {
       edition: {
         isbn,
         claims: {
-          'invp:P2': [ hash ]
-        }
+          'invp:P2': [ hash ],
+        },
       },
-      works: [ { labels: { fr: 'La Ferme des animaux' } } ]
+      works: [ { labels: { fr: 'La Ferme des animaux' } } ],
     }, true)
     edition.isbn.should.equal(isbn)
     edition.claims['invp:P2'].should.deepEqual([ hash ])
@@ -61,9 +61,9 @@ describe('entities:resolve:create-and-enrich', () => {
         claims: {
           'wdt:P1476': [ 'The Phantom Castle' ],
           // This is a valid entry, as it has an external id
-          [goodreadsEditionIdProperty]: [ goodreadsEditionId ]
-        }
-      }
+          [goodreadsEditionIdProperty]: [ goodreadsEditionId ],
+        },
+      },
     }, true)
     edition.uri.should.startWith('inv:')
   })
@@ -80,7 +80,7 @@ const resolveCreateAndEnrichEdition = async (entry, enrich) => {
 const resolveCreateAndEnrich = async (entry, enrich) => {
   const data = {
     entries: [ entry ],
-    create: true
+    create: true,
   }
   if (enrich != null) data.enrich = enrich
   return authReq('post', '/api/entities?action=resolve', data)

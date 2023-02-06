@@ -1,7 +1,8 @@
-const _ = require('builders/utils')
-const getEntitiesByUris = require('controllers/entities/lib/get_entities_by_uris')
+import _ from '#builders/utils'
+import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { warn } from '#lib/utils/logs'
 
-module.exports = entities => {
+export default entities => {
   const { works, editions } = splitEntities(entities)
   const worksUris = _.map(works, 'uri')
   const data = { editionsWorksUris: [], editionWorkMap: {} }
@@ -13,7 +14,7 @@ module.exports = entities => {
   .then(editionsWorksEntities => {
     return {
       works: works.concat(Object.values(editionsWorksEntities)),
-      editionWorkMap
+      editionWorkMap,
     }
   })
 }
@@ -27,7 +28,7 @@ const splitWorksAndEditions = (results, entity) => {
   const { type } = entity
   if (type === 'work') results.works.push(entity)
   else if (type === 'edition') results.editions.push(entity)
-  else _.warn(entity, 'invalid item entity type')
+  else warn(entity, 'invalid item entity type')
   return results
 }
 
@@ -37,7 +38,7 @@ const aggregateEditionsWorksUris = (data, edition) => {
     data.editionWorkMap[edition.uri] = worksUris
     data.editionsWorksUris.push(...worksUris)
   } else {
-    _.warn(edition, 'edition without work')
+    warn(edition, 'edition without work')
   }
   return data
 }

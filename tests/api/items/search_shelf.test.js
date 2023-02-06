@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const { getUser, customAuthReq, publicReq } = require('../utils/utils')
-const { waitForIndexation } = require('../utils/search')
-const { createItem } = require('../fixtures/items')
-const { buildUrl } = require('lib/utils/url')
-const { createShelf, createShelfWithItem } = require('tests/api/fixtures/shelves')
+import _ from '#builders/utils'
+import { createShelf, createShelfWithItem } from '#fixtures/shelves'
+import { buildUrl } from '#lib/utils/url'
+import { customAuthReq } from '#tests/api/utils/request'
+import { createItem } from '../fixtures/items.js'
+import { waitForIndexation } from '../utils/search.js'
+import { getUser, publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { shelf, search }) => {
   const url = buildUrl('/api/items', {

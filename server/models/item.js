@@ -1,11 +1,17 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
+import itemAttributes from './attributes/item.js'
+import itemValidations from './validations/item.js'
 
-const Item = module.exports = {}
+const Item = {}
 
-const validations = Item.validations = require('./validations/item')
-const attributes = Item.attributes = require('./attributes/item')
+export default Item
+
+const validations = Item.validations = itemValidations
+const attributes = Item.attributes = itemAttributes
+
 const { defaultValue: defaultTransaction } = attributes.constrained.transaction
 
 Item.create = (userId, item) => {
@@ -65,10 +71,10 @@ Item.update = (userId, newAttributes, oldItem) => {
 
 Item.changeOwner = (transacDoc, item) => {
   assert_.objects([ transacDoc, item ])
-  _.log({ transacDoc, item }, 'changeOwner')
+  log({ transacDoc, item }, 'changeOwner')
 
   item = _.omit(item, attributes.reset)
-  _.log(item, 'item without reset attributes')
+  log(item, 'item without reset attributes')
 
   const { _id: transacId, owner, requester } = transacDoc
 
@@ -80,17 +86,17 @@ Item.changeOwner = (transacDoc, item) => {
   item.history.push({
     transaction: transacId,
     previousOwner: owner,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   })
 
-  _.log(item.history, 'updated history')
+  log(item.history, 'updated history')
 
   return Object.assign(item, {
     owner: requester,
     // default values
     transaction: 'inventorying',
     visibility: [],
-    updated: Date.now()
+    updated: Date.now(),
   })
 }
 

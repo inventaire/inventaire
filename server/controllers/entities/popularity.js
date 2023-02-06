@@ -1,8 +1,8 @@
-const { getEntitiesPopularities } = require('./lib/popularity')
+import { getEntitiesPopularities } from './lib/popularity.js'
 
 const sanitization = {
   uris: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async params => {
@@ -10,4 +10,4 @@ const controller = async params => {
   return { scores }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,6 +1,7 @@
-const { cpus, loadavg } = require('node:os')
-const { wait } = require('./promises')
-const assert_ = require('./utils/assert_types')
+import { cpus, loadavg } from 'node:os'
+import { wait } from './promises.js'
+import { assert_ } from './utils/assert_types.js'
+
 const cpusCount = cpus().length
 const checkIntervalBase = 10000
 
@@ -9,7 +10,7 @@ const getCPUsAverageLoad = () => {
   return last5MinutesAverageLoad / cpusCount
 }
 
-const waitForCPUsLoadToBeBelow = async ({ threshold }) => {
+export async function waitForCPUsLoadToBeBelow ({ threshold }) {
   assert_.number(threshold)
   const load = getCPUsAverageLoad()
   if (load > threshold) {
@@ -19,8 +20,4 @@ const waitForCPUsLoadToBeBelow = async ({ threshold }) => {
     await wait(checkIntervalBase * factor)
     return waitForCPUsLoadToBeBelow({ threshold, checkIntervalBase })
   }
-}
-
-module.exports = {
-  waitForCPUsLoadToBeBelow,
 }

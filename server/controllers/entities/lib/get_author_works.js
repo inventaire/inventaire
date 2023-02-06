@@ -1,21 +1,21 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const { firstClaim, uniqByUri } = entities_
-const runWdQuery = require('data/wikidata/run_query')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const { getSimpleDayDate, sortByScore } = require('./queries_utils')
-const { getPluralType, getPluralTypeByTypeUri } = require('lib/wikidata/aliases')
-const { getCachedRelations } = require('./temporarily_cache_relations')
+import _ from '#builders/utils'
+import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import runWdQuery from '#data/wikidata/run_query'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
+import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
+import { getSimpleDayDate, sortByScore } from './queries_utils.js'
+import { getCachedRelations } from './temporarily_cache_relations.js'
 
 let getEntitiesPopularities
-const requireCircularDependencies = () => {
-  ({ getEntitiesPopularities } = require('./popularity'))
+const importCircularDependencies = async () => {
+  ({ getEntitiesPopularities } = await import('./popularity.js'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 
-module.exports = params => {
+export function getAuthorWorks (params) {
   const { uri } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []
@@ -37,7 +37,7 @@ module.exports = params => {
   .then(uniqByUri)
   .then(results => getPopularityScores(results)
   .then(spreadByType(worksByTypes, results)))
-  .catch(_.ErrorRethrow('get author works err'))
+  .catch(LogErrorAndRethrow('get author works err'))
 }
 
 // # WD
@@ -67,7 +67,7 @@ const formatWdEntity = result => {
 
 // # INV
 const getInvAuthorWorks = async uri => {
-  const { rows } = await entities_.byClaim('wdt:P50', uri, true)
+  const { rows } = await getEntitiesByClaim('wdt:P50', uri, true)
   return rows.map(formatInvEntity).filter(_.identity)
 }
 
@@ -79,7 +79,7 @@ const formatInvEntity = row => {
     uri: `inv:${row.id}`,
     date: firstClaim(row.doc, 'wdt:P577'),
     serie: firstClaim(row.doc, 'wdt:P179'),
-    type: typeName
+    type: typeName,
   }
 }
 
@@ -114,5 +114,5 @@ const formatEntity = entity => ({
   uri: entity.uri,
   date: firstClaim(entity, 'wdt:P577'),
   serie: firstClaim(entity, 'wdt:P179'),
-  type: getPluralType(entity.type)
+  type: getPluralType(entity.type),
 })

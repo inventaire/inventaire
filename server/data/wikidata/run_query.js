@@ -1,19 +1,21 @@
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const cache_ = require('lib/cache')
-const error_ = require('lib/error/error')
-const wdk = require('wikidata-sdk')
-const makeSparqlRequest = require('./make_sparql_request')
-const { queries, queriesPerProperty } = require('./queries/queries')
-const { unprefixify } = require('controllers/entities/lib/prefix')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { radio } from '#lib/radio'
+import { info, LogErrorAndRethrow } from '#lib/utils/logs'
+import makeSparqlRequest from './make_sparql_request.js'
+import { queries, queriesPerProperty } from './queries/queries.js'
+
 const possibleQueries = Object.keys(queries)
 const dashesPattern = /-/g
 
 // Params:
-// - query: the name of the query to use from './queries/queries'
+// - query: the name of the query to use from './queries/queries.js'
 // - refresh
 // - custom parameters: see the query file
-module.exports = async params => {
+export default async params => {
   const { refresh, dry } = params
   let { query: queryName } = params
 
@@ -56,7 +58,7 @@ const buildKey = (queryName, params) => {
 
 const parametersTests = {
   qid: wdk.isItemId,
-  pid: wdk.isPropertyId
+  pid: wdk.isPropertyId,
 }
 
 const runQuery = (params, key) => {
@@ -64,12 +66,12 @@ const runQuery = (params, key) => {
   const sparql = queries[queryName].query(params)
 
   return makeSparqlRequest(sparql)
-  .catch(_.ErrorRethrow(key))
+  .catch(LogErrorAndRethrow(key))
 }
 
 radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch => {
   const keys = invalidatedQueriesBatch.flatMap(getQueriesKeys)
-  _.info(keys, 'invalidating queries cache')
+  info(keys, 'invalidating queries cache')
   await cache_.batchDelete(keys)
 })
 

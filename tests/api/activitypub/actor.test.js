@@ -1,16 +1,18 @@
-const _ = require('builders/utils')
-require('should')
-const { createUser, createUsername } = require('../fixtures/users')
-const { createHuman, createEdition } = require('../fixtures/entities')
-const { makeUrl, getEntityActorName, propertyLabel } = require('controllers/activitypub/lib/helpers')
-const propertiesDisplay = require('controllers/activitypub/lib/properties_display')
-const { updateUser } = require('../utils/users')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
-const { createShelf } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { rawRequest } = require('../utils/request')
-const { i18n } = require('lib/emails/i18n/i18n')
-const CONFIG = require('config')
+import 'should'
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activitypub/lib/helpers'
+import { propertiesDisplay } from '#controllers/activitypub/lib/properties_display'
+import { i18n } from '#lib/emails/i18n/i18n'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createHuman, createEdition } from '../fixtures/entities.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { rawRequest } from '../utils/request.js'
+import { getActorName } from '../utils/shelves.js'
+import { updateUser } from '../utils/users.js'
+import { publicReq } from '../utils/utils.js'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
@@ -231,8 +233,8 @@ describe('activitypub:actor', () => {
 const getHtml = url => {
   return rawRequest('get', url, {
     headers: {
-      accept: 'text/html'
-    }
+      accept: 'text/html',
+    },
   })
 }
 

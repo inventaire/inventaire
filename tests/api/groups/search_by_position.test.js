@@ -1,11 +1,13 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { publicReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { createGroup } = require('../fixtures/groups')
-const { getRandomPosition } = require('../fixtures/users')
-const { waitForIndexation } = require('../utils/search')
+import should from 'should'
+import _ from '#builders/utils'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { publicReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createGroup } from '../fixtures/groups.js'
+import { getRandomPosition } from '../fixtures/users.js'
+import { waitForIndexation } from '../utils/search.js'
+
 const endpoint = '/api/groups?action=search-by-position'
-const { fixedEncodeURIComponent } = require('lib/utils/url')
 
 describe('groups:search-by-position', () => {
   it('should reject without bbox', async () => {

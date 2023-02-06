@@ -1,13 +1,14 @@
-const CONFIG = require('config')
 // Doc: http://developer.piwik.org/api-reference/tracking-api
-const _ = require('builders/utils')
-const { buildUrl } = require('lib/utils/url')
+import CONFIG from 'config'
+import { LogError } from '#lib/utils/logs'
+import { buildUrl } from '#lib/utils/url'
+import { requests_ } from './requests.js'
+
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'
-const requests_ = require('./requests')
 
-const track = (req = {}, actionArray) => {
+export const track = (req = {}, actionArray) => {
   if (!enabled) return
 
   const { user = {}, headers = {} } = req
@@ -38,25 +39,21 @@ const track = (req = {}, actionArray) => {
   }
 
   requests_.get(buildUrl(endpoint, data), { parseJson: false })
-  .catch(_.Error('track error'))
+  .catch(LogError('track error'))
 
   // Do not return the promise as a failing track request
   // should not make the rest of operations fail
 }
 
-const trackActor = (actorUri, actionArray) => {
+export const trackActor = (actorUri, actionArray) => {
   const pseudoReq = {
-    user: { _id: actorUri }
+    user: { _id: actorUri },
   }
   track(pseudoReq, actionArray)
 }
 
-module.exports = {
-  track,
-  Track: (...args) => res => {
-    // Do not wait for the track action
-    track(...args)
-    return res
-  },
-  trackActor,
+export const Track = (...args) => res => {
+  // Do not wait for the track action
+  track(...args)
+  return res
 }

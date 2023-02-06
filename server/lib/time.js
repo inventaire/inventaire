@@ -1,11 +1,16 @@
-const { red, yellow, grey } = require('chalk')
+import { red, yellow, grey } from 'tiny-chalk'
 
-const oneSecond = 1000
-const oneMinute = 60 * oneSecond
-const oneHour = 60 * oneMinute
-const oneDay = 24 * oneHour
+export const oneSecond = 1000
+export const oneMinute = 60 * oneSecond
+export const tenMinutes = 10 * oneMinute
+export const fiveMinutes = 5 * oneMinute
+export const oneHour = 60 * oneMinute
+export const oneDay = 24 * oneHour
+export const oneWeek = 7 * oneDay
+export const oneMonth = 30 * oneDay
+export const oneYear = 365 * oneDay
 
-const msToHumanTime = ms => {
+export const msToHumanTime = ms => {
   const seconds = Math.trunc((ms / oneSecond) % 60)
   const minutes = Math.trunc((ms / oneMinute) % 60)
   const hours = Math.trunc((ms / oneHour) % 24)
@@ -13,7 +18,7 @@ const msToHumanTime = ms => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-const coloredElapsedTime = startTime => {
+export const coloredElapsedTime = startTime => {
   if (startTime == null) return ''
   const [ seconds, nanoseconds ] = process.hrtime(startTime)
   const elapsedMs = Math.round((seconds * 1000) + (nanoseconds / 1000000))
@@ -22,21 +27,6 @@ const coloredElapsedTime = startTime => {
   else return grey(`${elapsedMs}ms`)
 }
 
-module.exports = {
-  oneMinute,
-  tenMinutes: 10 * oneMinute,
-  fiveMinutes: 5 * oneMinute,
-  oneHour,
-  oneDay,
-  oneWeek: 7 * oneDay,
-  oneMonth: 30 * oneDay,
-  oneYear: 365 * oneDay,
+export const expired = (timestamp, ttl) => (Date.now() - timestamp) > ttl
 
-  expired: (timestamp, ttl) => (Date.now() - timestamp) > ttl,
-
-  msToHumanTime,
-
-  msToHumanAge: ms => msToHumanTime(Date.now() - ms),
-
-  coloredElapsedTime,
-}
+export const msToHumanAge = ms => msToHumanTime(Date.now() - ms)

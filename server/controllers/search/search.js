@@ -1,17 +1,17 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const normalizeResult = require('./lib/normalize_result')
-const { indexedTypes, socialTypes } = require('db/elasticsearch/indexes')
-const typeSearch = require('./lib/type_search')
-const Group = require('models/group')
-const { ControllerWrapper } = require('lib/controller_wrapper')
-const { addWarning } = require('lib/responses')
-const { someMatch } = require('lib/utils/base')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
+import _ from '#builders/utils'
+import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
+import { ControllerWrapper } from '#lib/controller_wrapper'
+import { error_ } from '#lib/error/error'
+import { addWarning } from '#lib/responses'
+import { someMatch } from '#lib/utils/base'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import Group from '#models/group'
+import normalizeResult from './lib/normalize_result.js'
+import typeSearch from './lib/type_search.js'
 
 const sanitization = {
   search: {
-    optional: true
+    optional: true,
   },
   lang: {},
   types: { allowlist: indexedTypes },
@@ -19,21 +19,21 @@ const sanitization = {
   offset: { default: 0, max: 500 },
   filter: {
     allowlist: [ 'wd', 'inv' ],
-    optional: true
+    optional: true,
   },
   exact: {
     generic: 'boolean',
     optional: true,
-    default: false
+    default: false,
   },
   'min-score': {
     generic: 'positiveInteger',
-    optional: true
+    optional: true,
   },
   claim: {
     generic: 'string',
-    optional: true
-  }
+    optional: true,
+  },
 }
 
 const controller = async (params, req, res) => {
@@ -88,7 +88,7 @@ const entitiesSearch = async params => {
   return {
     results: hits.map(normalizeResult(lang)),
     total,
-    continue: continu < total ? continu : undefined
+    continue: continu < total ? continu : undefined,
   }
 }
 
@@ -123,10 +123,10 @@ const removeUnauthorizedDocs = async (results, reqUserId) => {
   })
 }
 
-module.exports = {
+export default {
   get: ControllerWrapper({
     access: 'public',
     sanitization,
     controller,
-  })
+  }),
 }

@@ -1,7 +1,7 @@
-const user_ = require('controllers/user/lib/user')
+import { getUserById } from '#controllers/user/lib/user'
 
-module.exports = async (userId, reqUserId) => {
-  const user = await user_.byId(userId)
+export default async (userId, reqUserId) => {
+  const user = await getUserById(userId)
   return {
     users: [ user ],
     reqUserId,
@@ -10,7 +10,7 @@ module.exports = async (userId, reqUserId) => {
       description: user.bio,
       image: user.picture,
       queryString: `user=${user._id}`,
-      pathname: `inventory/${user._id}`
-    }
+      pathname: `inventory/${user._id}`,
+    },
   }
 }

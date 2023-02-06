@@ -1,15 +1,16 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
+import _ from '#builders/utils'
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
+import { assert_ } from '#lib/utils/assert_types'
+import { LogError, warn } from '#lib/utils/logs'
 
-const getUsersByIds = (user1Id, user2Id) => {
-  return user_.byIds([ user1Id, user2Id ])
+export const getParsedUsersIndexedByIds = (user1Id, user2Id) => {
+  return getUsersByIds([ user1Id, user2Id ])
   .then(usersData => {
     const [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
     return { user1, user2 }
   })
-  .catch(_.Error('getUsersByIds err'))
+  .catch(LogError('getParsedUsersIndexedByIds err'))
 }
 
 const parseUsersData = (user1Id, user2Id, usersData) => {
@@ -17,27 +18,25 @@ const parseUsersData = (user1Id, user2Id, usersData) => {
   const user1 = usersData[user1Id]
   const user2 = usersData[user2Id]
   assert_.objects([ user1, user2 ])
-  return [ user1, user2 ].map(user_.serializeData)
+  return [ user1, user2 ].map(serializeUserData)
 }
 
-const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
+export const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
   return Promise.all([
-    groups_.byId(groupId),
-    user_.byId(actingUserId),
-    user_.byId(userToNotifyId)
+    getGroupById(groupId),
+    getUserById(actingUserId),
+    getUserById(userToNotifyId),
   ])
   .then(([ group, actingUser, userToNotify ]) => {
     return {
       group,
-      actingUser: user_.serializeData(actingUser),
-      userToNotify: user_.serializeData(userToNotify)
+      actingUser: serializeUserData(actingUser),
+      userToNotify: serializeUserData(userToNotify),
     }
   })
 }
 
-const catchDisabledEmails = err => {
-  if (err.type === 'email_disabled') _.warn(err.context, err.message)
+export const catchDisabledEmails = err => {
+  if (err.type === 'email_disabled') warn(err.context, err.message)
   else throw err
 }
-
-module.exports = { getUsersByIds, getGroupAndUsersData, catchDisabledEmails }

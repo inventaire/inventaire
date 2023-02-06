@@ -1,14 +1,16 @@
-const error_ = require('lib/error/error')
-const { parseQuery } = require('lib/utils/url')
-const host = require('config').getPublicOrigin()
-const { createActivity, getFollowActivitiesByObject } = require('controllers/activitypub/lib/activities')
-const { signAndPostActivity } = require('./lib/post_activity')
-const { validateUser, validateShelf, validateEntity } = require('./lib/validations')
-const { makeUrl, getEntityUriFromActorName, context } = require('./lib/helpers')
-const { isEntityUri, isUsername } = require('lib/boolean_validations')
-const { trackActor } = require('lib/track')
+import CONFIG from 'config'
+import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
+import { isEntityUri, isUsername } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
+import { trackActor } from '#lib/track'
+import { parseQuery } from '#lib/utils/url'
+import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
+import { signAndPostActivity } from './lib/post_activity.js'
+import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
-module.exports = async params => {
+const host = CONFIG.getPublicOrigin()
+
+export default async params => {
   const { id: externalId, type } = params
   let { actor, object } = params
   if (!object?.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
@@ -49,7 +51,7 @@ const sendAcceptActivity = async (followActivity, actor, object) => {
     '@context': context,
     type: 'Accept',
     actor: followedActorUri,
-    object: followActivity.externalId
+    object: followActivity.externalId,
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."

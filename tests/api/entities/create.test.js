@@ -1,6 +1,9 @@
-require('should')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
-const { createEditionWithIsbn, humanName, randomLabel, someOpenLibraryId } = require('../fixtures/entities')
+import 'should'
+import { humanName } from '#fixtures/text'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/entities?action=create'
 
 describe('entities:create', () => {
@@ -25,7 +28,7 @@ describe('entities:create', () => {
   it('should reject entities of unknown entity types', async () => {
     await authReq('post', '/api/entities?action=create', {
       labels: {},
-      claims: { 'wdt:P31': [ 'wd:Q1' ] }
+      claims: { 'wdt:P31': [ 'wd:Q1' ] },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -37,10 +40,10 @@ describe('entities:create', () => {
   it('should reject entities of non-allowlisted entity types', async () => {
     await authReq('post', '/api/entities?action=create', {
       labels: {
-        en: randomLabel()
+        en: randomLabel(),
       },
       // Is in server/lib/wikidata/aliases.js, but gives a type 'movement'
-      claims: { 'wdt:P31': [ 'wd:Q2198855' ] }
+      claims: { 'wdt:P31': [ 'wd:Q2198855' ] },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -51,7 +54,7 @@ describe('entities:create', () => {
 
   it('should reject without a label (unless specific types)', async () => {
     await authReq('post', endpoint, {
-      claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344' ] },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -62,7 +65,7 @@ describe('entities:create', () => {
   it('should create a work entity', async () => {
     const res = await authReq('post', endpoint, {
       labels: { fr: humanName() },
-      claims: { 'wdt:P31': [ 'wd:Q47461344' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344' ] },
     })
     res._id.should.be.a.String()
     res._rev.should.be.a.String()
@@ -78,8 +81,8 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P648': [ someOpenLibraryId('work') ]
-      }
+        'wdt:P648': [ someOpenLibraryId('work') ],
+      },
     })
     _id.should.be.a.String()
   })
@@ -87,7 +90,7 @@ describe('entities:create', () => {
   it('should reject multiple values for a property that take one', async () => {
     await authReq('post', endpoint, {
       labels: { fr: humanName() },
-      claims: { 'wdt:P31': [ 'wd:Q47461344', 'wd:Q8274' ] }
+      claims: { 'wdt:P31': [ 'wd:Q47461344', 'wd:Q8274' ] },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -100,7 +103,7 @@ describe('entities:create', () => {
     await authReq('post', endpoint, {
       claims: {
         'wdt:P31': [ 'wd:Q123' ],
-      }
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -112,7 +115,7 @@ describe('entities:create', () => {
   it('should reject invalid labels datatype', async () => {
     await authReq('post', endpoint, {
       labels: [],
-      claims: {}
+      claims: {},
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -124,7 +127,7 @@ describe('entities:create', () => {
   it('should reject invalid claims datatype', async () => {
     await authReq('post', endpoint, {
       labels: {},
-      claims: []
+      claims: [],
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -138,8 +141,8 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': 'wd:Q535'
-      }
+        'wdt:P50': 'wd:Q535',
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -153,8 +156,8 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wd:P50': [ 'wd:Q535' ]
-      }
+        'wd:P50': [ 'wd:Q535' ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -168,8 +171,8 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': [ 'wd####Q535' ]
-      }
+        'wdt:P50': [ 'wd####Q535' ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -186,8 +189,8 @@ describe('entities:create', () => {
         'wdt:P1476': [ randomLabel() ],
         'wdt:P629': edition.claims['wdt:P629'],
         // The concurrent property
-        'wdt:P212': edition.claims['wdt:P212']
-      }
+        'wdt:P212': edition.claims['wdt:P212'],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -201,8 +204,8 @@ describe('entities:create', () => {
       labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ], // work
-        'wdt:P1104': [ 124 ] // edition pages counts
-      }
+        'wdt:P1104': [ 124 ], // edition pages counts
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -218,8 +221,8 @@ describe('entities:create', () => {
       labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q5' ], // human
-        'wdt:P213': [ someRecoverableIsni ]
-      }
+        'wdt:P213': [ someRecoverableIsni ],
+      },
     })
     res.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
   })
@@ -228,7 +231,7 @@ describe('entities:create', () => {
     await authReq('post', endpoint, {
       prefix: 'foo',
       labels: {},
-      claims: {}
+      claims: {},
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -243,8 +246,8 @@ describe('entities:create', () => {
       labels: { fr: humanName() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P648': [ someOpenLibraryId('work') ]
-      }
+        'wdt:P648': [ someOpenLibraryId('work') ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {

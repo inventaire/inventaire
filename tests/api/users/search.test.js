@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const should = require('should')
-const fakeText = require('../fixtures/text')
-const { publicReq, customAuthReq, getUser, getUserB, getReservedUser } = require('../utils/utils')
-const { createUser } = require('../fixtures/users')
-const { waitForIndexation } = require('../utils/search')
+import should from 'should'
+import _ from '#builders/utils'
+import { randomWords } from '#fixtures/text'
+import { customAuthReq } from '#tests/api/utils/request'
+import { createUser } from '../fixtures/users.js'
+import { waitForIndexation } from '../utils/search.js'
+import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
 describe('users:search', () => {
   it('should find a user', async () => {
@@ -43,7 +44,7 @@ describe('users:search', () => {
   })
 
   it('should find a user by its bio', async () => {
-    const bio = fakeText.randomWords(5)
+    const bio = randomWords(5)
     const user = await getReservedUser({ bio })
     await waitForIndexation('users', user._id)
     const res = await publicReq('get', `/api/users?action=search&search=${encodeURIComponent(bio)}`)

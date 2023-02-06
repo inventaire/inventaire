@@ -1,16 +1,17 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 // to be used in development only
+import CONFIG from 'config'
+import { error_ } from '#lib/error/error'
+import * as regex_ from '#lib/regex'
+import { logError } from '#lib/utils/logs'
 
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const regex_ = require('lib/regex')
-const { local: localStorage } = require('config').mediaStorage
+const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()
 
 // images urls look like /img/#{container}/#{hash}"
 // expect the pictures' files to be in #{storageFolder}
 
-module.exports = {
+export default {
   get: (req, res) => {
     const { pathname } = req._parsedUrl
 
@@ -42,15 +43,15 @@ module.exports = {
 
     res.sendFile(filepath, options, err => {
       if (err != null) {
-        _.error(err, `failed to send ${filepath}`)
+        logError(err, `failed to send ${filepath}`)
         res.status(err.statusCode).json(err)
       }
     })
-  }
+  },
 }
 
 const options = {
   headers: {
-    'content-type': 'image/jpeg'
-  }
+    'content-type': 'image/jpeg',
+  },
 }

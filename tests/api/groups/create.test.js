@@ -1,7 +1,9 @@
-require('should')
-const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { groupName } = require('../fixtures/groups')
-const slugify = require('controllers/groups/lib/slugify')
+import 'should'
+import slugify from '#controllers/groups/lib/slugify'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { groupName } from '../fixtures/groups.js'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=create'
 
 describe('groups:create', () => {

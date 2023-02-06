@@ -1,7 +1,8 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
-const { createEdition, someFakeUri } = require('../fixtures/entities')
+import { getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createEdition, someFakeUri } from '../fixtures/entities.js'
+import { createListing, createElement } from '../fixtures/listings.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action='
 const byIds = `${endpoint}by-ids&with-elements=true`
@@ -21,7 +22,7 @@ describe('listings:add-elements', () => {
     const { listing } = await createListing()
     try {
       await authReq('post', `${endpoint}add-elements`, {
-        id: listing._id
+        id: listing._id,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -35,7 +36,7 @@ describe('listings:add-elements', () => {
     const { listing } = await createListing()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
-      uris: [ someFakeUri ]
+      uris: [ someFakeUri ],
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -52,7 +53,7 @@ describe('listings:add-elements', () => {
     const { uri } = await createEdition()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
-      uris: [ uri ]
+      uris: [ uri ],
     })
     const res = await authReq('get', `${byIds}&ids=${listing._id}`)
     const firstListing = res.lists[listing._id]
@@ -64,7 +65,7 @@ describe('listings:add-elements', () => {
 
     const res = await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
-      uris: [ uri ]
+      uris: [ uri ],
     })
     res.ok.should.be.true()
     res.alreadyInList[0].uri.should.equal(uri)
@@ -81,7 +82,7 @@ describe('listings:add-elements', () => {
       const { uri } = await createEdition()
       await authReq('post', `${endpoint}add-elements`, {
         id: listing._id,
-        uris: [ uri ]
+        uris: [ uri ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {

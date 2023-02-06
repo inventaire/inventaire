@@ -1,21 +1,21 @@
-const { pick } = require('lodash')
-const getBestLangValue = require('lib/get_best_lang_value')
-const getOriginalLang = require('lib/wikidata/get_original_lang')
+import { pick } from 'lodash-es'
+import getBestLangValue from '#lib/get_best_lang_value'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
 
-const pickAttributes = (entities, attributes) => {
+export const pickAttributes = (entities, attributes) => {
   const formattedEntities = {}
   for (const uri of Object.keys(entities)) {
     const entity = entities[uri]
     const formattedEntity = {
       uri,
-      ...pick(entity, attributes)
+      ...pick(entity, attributes),
     }
     formattedEntities[uri] = formattedEntity
   }
   return formattedEntities
 }
 
-const pickLanguages = (entities, lang) => {
+export const pickLanguages = (entities, lang) => {
   const formattedEntities = {}
   for (const uri of Object.keys(entities)) {
     const entity = entities[uri]
@@ -41,11 +41,6 @@ const pickAttributesLanguages = (lang, originalLang, formattedEntity) => {
 const pickLanguage = (lang, originalLang, data) => {
   const { lang: pickedLang, value } = getBestLangValue(lang, originalLang, data)
   return {
-    [pickedLang]: value
+    [pickedLang]: value,
   }
-}
-
-module.exports = {
-  pickAttributes,
-  pickLanguages,
 }

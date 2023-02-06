@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const fetch = require('node-fetch')
-const AbortController = require('abort-controller')
-const error_ = require('lib/error/error')
-const { encodeURL } = require('builders/utils')
-const fs = require('node:fs')
-const isValidImageContentType = require('./is_valid_image_content_type')
+import fs from 'node:fs'
+import AbortController from 'abort-controller'
+import fetch from 'node-fetch'
+import { error_ } from '#lib/error/error'
+import { encodeURL } from '#lib/utils/base'
+import { logError } from '#lib/utils/logs'
+import isValidImageContentType from './is_valid_image_content_type.js'
+
 const oneMB = Math.pow(1024, 2)
 
-module.exports = async (url, path) => {
+export default async (url, path) => {
   url = encodeURL(url)
   const controller = new AbortController()
   try {
@@ -15,13 +16,13 @@ module.exports = async (url, path) => {
       timeout: 30000,
       signal: controller.signal,
       headers: {
-        accept: 'image/*'
+        accept: 'image/*',
       },
     })
     validateResponse(response, controller, url, path)
     return saveFile(response.body, path)
   } catch (err) {
-    _.error(err, 'download image private error')
+    logError(err, 'download image private error')
     throw error_.new('could not download image', 400, { url })
   }
 }

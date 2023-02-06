@@ -1,12 +1,22 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createWork, createHuman, someGoodReadsId, someLibraryThingsWorkId, someOpenLibraryId, createWorkWithAuthor, generateIsbn13, createPublisher } = require('tests/api/fixtures/entities')
-const { addClaim, getByUri } = require('tests/api/utils/entities')
-const { waitForIndexation } = require('tests/api/utils/search')
-const { createEditionWithIsbn, randomLabel } = require('tests/api/fixtures/entities')
-const getWorksFromAuthorsUris = require('controllers/entities/lib/resolver/get_works_from_authors_uris')
+import should from 'should'
+import _ from '#builders/utils'
+import getWorksFromAuthorsUris from '#controllers/entities/lib/resolver/get_works_from_authors_uris'
+import {
+  createWork,
+  createHuman,
+  someGoodReadsId,
+  someLibraryThingsWorkId,
+  someOpenLibraryId,
+  createWorkWithAuthor,
+  generateIsbn13,
+  createPublisher,
+  createEditionWithIsbn, randomLabel
+} from '#fixtures/entities'
+import { wait } from '#lib/promises'
+import { addClaim, getByUri } from '#tests/api/utils/entities'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolve = entries => {
   entries = _.forceArray(entries)
@@ -58,8 +68,8 @@ describe('entities:resolve', () => {
     const entry = {
       edition: { claims: { 'wdt:P1476': `${editionTitle}: novel` } },
       works: [
-        { uri: workUri }
-      ]
+        { uri: workUri },
+      ],
     }
     const { entries } = await resolve(entry)
     entries[0].should.be.an.Object()
@@ -72,8 +82,8 @@ describe('entities:resolve', () => {
     const entry = {
       edition: { claims: { 'wdt:P1476': 'some title' } },
       works: [
-        { uri: workUri }
-      ]
+        { uri: workUri },
+      ],
     }
     const { entries } = await resolve(entry)
     entries[0].should.be.an.Object()
@@ -90,11 +100,11 @@ describe('entities:resolve', () => {
         claims: {
           'wdt:P123': somePublisher.uri,
           'wdt:P1476': editionTitle,
-        }
+        },
       },
       works: [
-        { uri: workUri }
-      ]
+        { uri: workUri },
+      ],
     }
     const { entries } = await resolve(entry)
     entries[0].should.be.an.Object()
@@ -104,7 +114,7 @@ describe('entities:resolve', () => {
   it('should resolve multiple entries', async () => {
     const [ editionA, editionB ] = await Promise.all([
       createEditionWithIsbn(),
-      createEditionWithIsbn()
+      createEditionWithIsbn(),
     ])
     const { isbn: isbnA } = editionA
     const { isbn: isbnB } = editionB
@@ -130,7 +140,7 @@ describe('entities:resolve', () => {
     try {
       await resolve({
         edition: { isbn: generateIsbn13() },
-        works: [ { labels: { notalang: 'foo' } } ]
+        works: [ { labels: { notalang: 'foo' } } ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -143,7 +153,7 @@ describe('entities:resolve', () => {
     try {
       await resolve({
         edition: { isbn: generateIsbn13() },
-        works: [ { labels: { fr: [ 'foo' ] } } ]
+        works: [ { labels: { fr: [ 'foo' ] } } ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -156,7 +166,7 @@ describe('entities:resolve', () => {
     try {
       await resolve({
         edition: { isbn: generateIsbn13() },
-        works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ]
+        works: [ { claims: [ 'wdt:P31: wd:Q23' ] } ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -170,7 +180,7 @@ describe('entities:resolve', () => {
     try {
       await resolve({
         edition: { isbn },
-        works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ]
+        works: [ { claims: { 'wdt:P50': [ 'not a valid entity uri' ] } } ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -186,7 +196,7 @@ describe('entities:resolve', () => {
     const unknownProp = 'wdt:P6'
     const seed = {
       isbn: generateIsbn13(),
-      claims: { [unknownProp]: [ 'wd:Q23' ] }
+      claims: { [unknownProp]: [ 'wd:Q23' ] },
     }
     try {
       await resolve({ edition: seed }).then(shouldNotBeCalled)
@@ -203,10 +213,10 @@ describe('entities:resolve:external-id', () => {
       edition: { isbn: generateIsbn13() },
       works: [ {
         claims: {
-          'wdt:P1085': [ '28158' ]
-        }
-      }
-      ]
+          'wdt:P1085': [ '28158' ],
+        },
+      },
+      ],
     })
     entries[0].works.should.be.an.Array()
     entries[0].works[0].should.be.an.Object()
@@ -220,7 +230,7 @@ describe('entities:resolve:external-id', () => {
     await wait(10)
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ]
+      works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ],
     })
     entries[0].works.should.be.an.Array()
     entries[0].works[0].should.be.an.Object()
@@ -230,12 +240,12 @@ describe('entities:resolve:external-id', () => {
   it('should resolve wikidata author from external ids claim', async () => {
     const author = {
       claims: {
-        'wdt:P648': [ 'OL28127A' ]
-      }
+        'wdt:P648': [ 'OL28127A' ],
+      },
     }
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      authors: [ author ]
+      authors: [ author ],
     })
     entries[0].authors.should.be.an.Array()
     entries[0].authors[0].should.be.an.Object()
@@ -250,7 +260,7 @@ describe('entities:resolve:external-id', () => {
     await wait(10)
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ],
     })
     entries[0].authors.should.be.an.Array()
     entries[0].authors[0].should.be.an.Object()
@@ -268,7 +278,7 @@ describe('entities:resolve:external-id', () => {
     await wait(10)
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      authors: [ { claims } ]
+      authors: [ { claims } ],
     })
     entries[0].authors.should.be.an.Array()
     entries[0].authors[0].should.be.an.Object()
@@ -280,17 +290,17 @@ describe('entities:resolve:external-id', () => {
     const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
     const human = await createHuman({
       claims: {
-        'wdt:P213': [ someValidIsni ]
-      }
+        'wdt:P213': [ someValidIsni ],
+      },
     })
     const author = {
       claims: {
-        'wdt:P213': [ someRecoverableIsni ]
-      }
+        'wdt:P213': [ someRecoverableIsni ],
+      },
     }
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      authors: [ author ]
+      authors: [ author ],
     })
     entries[0].authors[0].uri.should.equal(human.uri)
   })
@@ -307,12 +317,12 @@ describe('entities:resolve:in-context', () => {
     await wait(10)
     await Promise.all([
       createWorkWithAuthor(author, missingWorkLabel),
-      createWorkWithAuthor(author, otherWorkLabel)
+      createWorkWithAuthor(author, otherWorkLabel),
     ])
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: missingWorkLabel } } ],
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ],
     })
     should(entries[0].works[0].uri).be.ok()
   })
@@ -322,7 +332,7 @@ describe('entities:resolve:in-context', () => {
     const { labels, claims } = work
     const { entries } = await resolve({
       edition: { isbn: generateIsbn13() },
-      works: [ { labels, claims } ]
+      works: [ { labels, claims } ],
     })
     should(entries[0].works[0].uri).be.ok()
   })
@@ -336,12 +346,12 @@ describe('entities:resolve:in-context', () => {
     await wait(10)
     await Promise.all([
       createWorkWithAuthor(author, workLabel),
-      createWorkWithAuthor(author, workLabel)
+      createWorkWithAuthor(author, workLabel),
     ])
     const entry = {
       edition: { isbn: generateIsbn13() },
       works: [ { labels: { en: workLabel } } ],
-      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ]
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] } } ],
     }
     const { entries } = await resolve(entry)
     should(entries[0].works[0].uri).not.be.ok()
@@ -357,7 +367,7 @@ describe('entities:resolve:in-context', () => {
     const entry = {
       edition: { isbn: generateIsbn13() },
       works: [ { claims: { 'wdt:P1085': [ libraryThingsWorkId ] } } ],
-      authors: [ { labels: author.labels } ]
+      authors: [ { labels: author.labels } ],
     }
     const { entries } = await resolve(entry)
     should(entries[0].works[0].uri).be.ok()
@@ -369,7 +379,7 @@ describe('entities:resolve:in-context', () => {
     const { uri: workUri, labels } = await getByUri(claims['wdt:P629'][0])
     const { entries } = await resolve({
       edition: { isbn },
-      works: [ { labels } ]
+      works: [ { labels } ],
     })
     entries[0].works[0].uri.should.equal(workUri)
   })
@@ -378,7 +388,7 @@ describe('entities:resolve:in-context', () => {
     const { isbn } = await createEditionWithIsbn()
     const { entries } = await resolve({
       edition: { isbn },
-      works: [ { labels: { en: randomLabel() } } ]
+      works: [ { labels: { en: randomLabel() } } ],
     })
     const entry = entries[0]
     entry.works[0].resolved.should.be.false()
@@ -428,7 +438,7 @@ describe('entities:resolve:on-labels', () => {
     const workLabel = randomLabel()
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(author, workLabel),
-      createWorkWithAuthor(author, randomLabel())
+      createWorkWithAuthor(author, randomLabel()),
     ])
     await Promise.all([
       waitForIndexation('entities', workA._id),
@@ -464,7 +474,7 @@ describe('entities:resolve:images', () => {
   it('should reject an invalid image URL', async () => {
     const editionSeed = {
       isbn: generateIsbn13(),
-      image: 'not a valid URL'
+      image: 'not a valid URL',
     }
     const entry = { edition: editionSeed }
     try {
@@ -479,7 +489,7 @@ describe('entities:resolve:images', () => {
     const work = { image: 'https://covers.openlibrary.org/w/id/263997-M.jpg' }
     const entry = {
       edition: { isbn: generateIsbn13() },
-      works: [ work ]
+      works: [ work ],
     }
     try {
       await resolve(entry).then(shouldNotBeCalled)
@@ -493,5 +503,5 @@ describe('entities:resolve:images', () => {
 const basicEntry = (workLabel, authorLabel) => ({
   edition: { isbn: generateIsbn13() },
   works: [ { labels: { en: workLabel } } ],
-  authors: [ { labels: { en: authorLabel } } ]
+  authors: [ { labels: { en: authorLabel } } ],
 })

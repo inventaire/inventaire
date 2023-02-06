@@ -1,20 +1,22 @@
-const _ = require('builders/utils')
-const { justReceivedActivitySummary } = require('controllers/user/lib/summary')
-const transporter_ = require('../transporter')
-const buildEmail = require('./build_email')
-const { disableUserUpdate } = require('config').activitySummary
+import CONFIG from 'config'
+import { justReceivedActivitySummary } from '#controllers/user/lib/summary'
+import { sendMail } from '#lib/emails/transporter'
+import { warn, info, logError } from '#lib/utils/logs'
+import buildEmail from './build_email.js'
+
+const { disableUserUpdate } = CONFIG.activitySummary
 
 let updateUser
 // It can be convenient in development to disable user update
 // to keep generate the same email from a given test user
 if (disableUserUpdate) {
-  updateUser = userId => _.warn(userId, 'disabledUserUpdate')
+  updateUser = userId => warn(userId, 'disabledUserUpdate')
 } else {
   updateUser = justReceivedActivitySummary
 }
 
-module.exports = async user => {
-  if (user == null) return _.info('no user waiting for summary')
+export default async user => {
+  if (user == null) return info('no user waiting for summary')
 
   const userId = user._id
 
@@ -24,7 +26,10 @@ module.exports = async user => {
   // to prevent re-attempting to send a summary to that same user
   if (!email) return updateUser(userId)
 
-  return transporter_.sendMail(email)
-  .then(() => updateUser(userId))
-  .catch(_.Error('activity summary'))
+  try {
+    await sendMail(email)
+    await updateUser(userId)
+  } catch (err) {
+    logError(err, 'activity summary')
+  }
 }

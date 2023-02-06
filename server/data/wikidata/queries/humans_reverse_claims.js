@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   parameters: [ 'pid', 'qid' ],
 
   relationProperties: [ '*' ],
@@ -25,5 +25,5 @@ module.exports = {
   UNION { ?work wdt:P31 wd:Q8274 . }
 }
 LIMIT 1000`
-  }
+  },
 }

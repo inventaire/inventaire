@@ -1,19 +1,23 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const wdk = require('wikidata-sdk')
-const { isValidIsbn } = require('lib/isbn/isbn')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { isValidIsbn } from '#lib/isbn/isbn'
+import { assert_ } from '#lib/utils/assert_types'
+import { LogErrorAndRethrow } from '#lib/utils/logs'
+import isbn from './get_entities_by_isbns.js'
+import inv from './get_inv_entities.js'
+import wd from './get_wikidata_enriched_entities.js'
 
 // Getters take ids, return an object on the model { entities, notFound }
 const getters = {
-  inv: require('./get_inv_entities'),
-  wd: require('./get_wikidata_enriched_entities'),
-  isbn: require('./get_entities_by_isbns')
+  inv,
+  wd,
+  isbn,
 }
 
 const prefixes = Object.keys(getters)
 
-module.exports = async params => {
+export default async params => {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}
@@ -41,7 +45,7 @@ module.exports = async params => {
 
   return getDomainsPromises(domains, params)
   .then(mergeResponses)
-  .catch(_.ErrorRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
+  .catch(LogErrorAndRethrow(`getEntitiesByUris err: ${uris.join('|')}`))
 }
 
 const getDomainsPromises = (domains, params) => {
@@ -64,7 +68,7 @@ const formatRichResults = results => {
     // collect redirections at the response root to let the possibility
     // to the client to alias entities
     redirects: {},
-    notFound: []
+    notFound: [],
   }
 
   for (const result of results) {
@@ -97,5 +101,5 @@ const formatRichResults = results => {
 const validators = {
   inv: _.isInvEntityId,
   wd: wdk.isItemId,
-  isbn: isValidIsbn
+  isbn: isValidIsbn,
 }

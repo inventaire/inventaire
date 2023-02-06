@@ -2,12 +2,15 @@
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time
 
-const _ = require('builders/utils')
-const radio = require('lib/radio')
-const updateSnapshotItemsCounts = require('./update_snapshot_items_counts')
-const { itemsCountDebounceTime: delay } = require('config')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { radio } from '#lib/radio'
+import { LogError } from '#lib/utils/logs'
+import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
-module.exports = () => {
+const { itemsCountDebounceTime: delay } = CONFIG
+
+export function keepSnapshotItemsCountsUpdated () {
   const debouncedUpdaters = {}
 
   const itemsCountsUpdater = userId => () => {
@@ -15,7 +18,7 @@ module.exports = () => {
     // to prevent blocking memory undefinitely
     delete debouncedUpdaters[userId]
     return updateSnapshotItemsCounts(userId)
-    .catch(_.Error('user itemsCountsUpdater err'))
+    .catch(LogError('user itemsCountsUpdater err'))
   }
 
   radio.on('user:inventory:update', userId => {

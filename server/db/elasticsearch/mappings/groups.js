@@ -1,10 +1,10 @@
-const { boolean, geoPoint, text } = require('./mappings_datatypes')
+import { boolean, geoPoint, text } from './mappings_datatypes.js'
 
-module.exports = {
+export default {
   properties: {
     name: text,
     description: text,
     searchable: boolean,
     position: geoPoint,
-  }
+  },
 }

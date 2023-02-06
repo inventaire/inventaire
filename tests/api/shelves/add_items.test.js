@@ -1,7 +1,8 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createShelf } = require('../fixtures/shelves')
-const { createItem } = require('../fixtures/items')
+import { getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=add-items'
 const shelfPromise = createShelf()
@@ -21,7 +22,7 @@ describe('shelves:add-items', () => {
     const { shelf } = await shelfPromise
     try {
       await authReq('post', endpoint, {
-        id: shelf._id
+        id: shelf._id,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -37,7 +38,7 @@ describe('shelves:add-items', () => {
     const { _id: id } = item
     const res = await authReq('post', endpoint, {
       id: shelf._id,
-      items: id // should be tolerant to single id
+      items: id, // should be tolerant to single id
     })
     res.shelves.should.be.ok()
     const firstShelf = res.shelves[shelf._id]
@@ -52,7 +53,7 @@ describe('shelves:add-items', () => {
       const item = await createItem(getUserB())
       await authReq('post', endpoint, {
         id: shelf._id,
-        items: [ item._id ]
+        items: [ item._id ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {

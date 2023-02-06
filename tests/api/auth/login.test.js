@@ -1,9 +1,11 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const { wait } = require('lib/promises')
+import 'should'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=login'
-const randomString = require('lib/utils/random_string')
-const { createUser, createUsername } = require('../fixtures/users')
 
 describe('auth:login', () => {
   it('should login a user with a username and a password', async () => {
@@ -26,7 +28,7 @@ describe('auth:login', () => {
 
   it('should reject wrong password', async () => {
     const username = createUsername()
-    const password = randomString(9)
+    const password = getRandomString(9)
     await createUser({ username, password })
     await wait(10)
     await publicReq('post', endpoint, { username, password: 'notthepassword' })

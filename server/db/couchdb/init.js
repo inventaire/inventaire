@@ -1,11 +1,12 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const couchInit = require('couch-init2')
-const dbBaseUrl = CONFIG.db.getOrigin()
-const initHardCodedDocuments = require('./init_hard_coded_documents')
+import CONFIG from 'config'
+import couchInit from 'couch-init2'
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
+import { log } from '#lib/utils/logs'
+import { databases } from './databases.js'
+import initHardCodedDocuments from './init_hard_coded_documents.js'
 
-const databases = require('./databases')
+const dbBaseUrl = CONFIG.db.getOrigin()
 const formattedList = []
 
 const setJsExtension = filename => `${filename}.js`
@@ -16,16 +17,16 @@ for (const dbName in databases) {
   formattedList.push({
     // Adding a suffix if needed
     name: CONFIG.db.name(dbName),
-    designDocs: designDocsNames.map(setJsExtension)
+    designDocs: designDocsNames.map(setJsExtension),
   })
 }
 
-const designDocFolder = __.path('db', 'couchdb/design_docs')
+const designDocFolder = absolutePath('db', 'couchdb/design_docs')
 
 const init = async () => {
   try {
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
-    if (_.objLength(res.operations) !== 0) _.log(res, 'couch init')
+    if (_.objLength(res.operations) !== 0) log(res, 'couch init')
     await initHardCodedDocuments()
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
@@ -38,10 +39,10 @@ const init = async () => {
   }
 }
 
-let waitForCouchInit
+let _waitForCouchInit
 
-module.exports = () => {
+export async function waitForCouchInit () {
   // Return the same promises to all consumers
-  waitForCouchInit = waitForCouchInit || init()
-  return waitForCouchInit
+  _waitForCouchInit = _waitForCouchInit || init()
+  return _waitForCouchInit
 }

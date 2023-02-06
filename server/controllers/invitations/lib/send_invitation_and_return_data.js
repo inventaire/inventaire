@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const user_ = require('controllers/user/lib/user')
-const sendInvitation = require('./send_invitations')
+import _ from '#builders/utils'
+import { getUsersAuthorizedDataByEmails } from '#controllers/user/lib/user'
+import { assert_ } from '#lib/utils/assert_types'
+import sendInvitation from './send_invitations.js'
 
-module.exports = params => {
+export default async params => {
   const { user, message, group, parsedEmails, reqUserId } = params
   assert_.object(user)
   assert_.type('string|null', message)
@@ -11,19 +11,15 @@ module.exports = params => {
   assert_.array(parsedEmails)
   assert_.string(reqUserId)
 
-  return user_.getUsersByEmails(parsedEmails, reqUserId)
-  .then(existingUsers => {
-    const existingUsersEmails = _.map(existingUsers, 'email')
-    const remainingEmails = _.difference(parsedEmails, existingUsersEmails)
+  const existingUsers = await getUsersAuthorizedDataByEmails(parsedEmails, reqUserId)
+  const existingUsersEmails = _.map(existingUsers, 'email')
+  const remainingEmails = _.difference(parsedEmails, existingUsersEmails)
 
-    return sendInvitation(user, group, remainingEmails, message)
-    .then(() => {
-      // letting the client do the friends requests
-      // to the existing users so that it updates itself
-      return {
-        users: existingUsers,
-        emails: remainingEmails
-      }
-    })
-  })
+  await sendInvitation(user, group, remainingEmails, message)
+  // letting the client do the friends requests
+  // to the existing users so that it updates itself
+  return {
+    users: existingUsers,
+    emails: remainingEmails,
+  }
 }

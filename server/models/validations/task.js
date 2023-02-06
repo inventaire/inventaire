@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const { pass, entityUri, userId, BoundedString } = require('./common')
+import _ from '#builders/utils'
+import attributes from '../attributes/task.js'
+import commonValidations from './common.js'
 
-const attributes = require('../attributes/task')
+const { pass, entityUri, userId, BoundedString } = commonValidations
 
-module.exports = {
+export default {
   pass,
   // in attributes/task.js, attributes keys should match
   // db keys to verify if attribute is updatable
@@ -16,5 +17,5 @@ module.exports = {
   relationScore: _.isNumber,
   externalSourcesOccurrences: _.isArray,
   reporter: userId,
-  clue: BoundedString(0, 500)
+  clue: BoundedString(0, 500),
 }

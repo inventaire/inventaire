@@ -1,3 +1,4 @@
-const verify = require('./verify_username_password')
-const { BasicStrategy } = require('passport-http')
-module.exports = new BasicStrategy(verify)
+import { BasicStrategy } from 'passport-http'
+import verify from './verify_username_password.js'
+
+export default new BasicStrategy(verify)

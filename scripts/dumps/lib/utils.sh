@@ -1,4 +1,4 @@
-folder=$(node -p "require('config').universalPath.path('root', 'dumps/inv')")
+folder=$(node ./server/lib/absolute_path.js root dumps/inv)
 today=$(date +'20%y-%m-%d')
 today_folder="${folder}/${today}"
 mkdir -p "$today_folder"

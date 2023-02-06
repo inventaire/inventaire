@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
+import _ from '#builders/utils'
 
-module.exports = res => {
+export default res => {
   const relations = _.initCollectionsIndex(relationsTypes)
   for (const row of res.rows) {
     spreadRelation(relations, row)
@@ -23,5 +23,5 @@ const relationsTypes = [
   'friends',
   'userRequested',
   'otherRequested',
-  'none'
+  'none',
 ]

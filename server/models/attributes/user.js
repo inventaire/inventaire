@@ -1,4 +1,6 @@
-const attributes = module.exports = {}
+const attributes = {}
+
+export default attributes
 
 // Attributes that can be send to the owner
 attributes.ownerSafe = [
@@ -39,13 +41,13 @@ attributes.public = [
   // snapshot.private
   // snapshot.network (unless requested by someone of the user network)
   // cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
-  'snapshot'
+  'snapshot',
 ]
 
 // Attributes that need availability check before update
 attributes.concurrencial = [
   'username',
-  'email'
+  'email',
 ]
 
 // Attributes that can be changed with a simple validity check
@@ -57,7 +59,7 @@ attributes.updatable = [
   'position',
   'fediversable',
   'summaryPeriodicity',
-  'customProperties'
+  'customProperties',
 ]
 
 // Attributes that are kept after a user deleted her account
@@ -75,12 +77,12 @@ attributes.critical = [
 // thus its absence here as long as only transactions doc uses snaphshot
 attributes.snapshot = [
   'username',
-  'picture'
+  'picture',
 ]
 
 attributes.acceptNullValue = [
   'position',
-  'picture'
+  'picture',
 ]
 
 attributes.creationStrategies = [ 'local' ]
@@ -104,11 +106,11 @@ attributes.settings = {
     // TRANSACTIONS
     'your_item_was_requested',
     'update_on_your_item',
-    'update_on_item_you_requested'
+    'update_on_item_you_requested',
   ],
   contributions: [
-    'anonymize'
-  ]
+    'anonymize',
+  ],
 }
 
 attributes.roles = [ 'admin', 'dataadmin' ]

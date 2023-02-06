@@ -1,24 +1,27 @@
-const publicActions = require('./public_actions')
-const ActionsControllers = require('lib/actions_controllers')
-const membersActions = require('./members_actions')
+import ActionsControllers from '#lib/actions_controllers'
+import create from './create.js'
+import getUserGroups from './get_user_groups.js'
+import membersActions from './members_actions.js'
+import publicActions from './public_actions.js'
+import updateSettings from './update_settings.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'by-id': publicActions.byId,
       'by-slug': publicActions.bySlug,
       'search-by-position': publicActions.searchByPositon,
-      slug: publicActions.slug
+      slug: publicActions.slug,
     },
     authentified: {
-      default: require('./get_user_groups')
-    }
+      default: getUserGroups,
+    },
   }),
 
   post: ActionsControllers({
     authentified: {
-      create: require('./create')
-    }
+      create,
+    },
   }),
 
   put: ActionsControllers({
@@ -33,7 +36,7 @@ module.exports = {
       'make-admin': membersActions('makeAdmin'),
       kick: membersActions('kick'),
       leave: membersActions('leave'),
-      'update-settings': require('./update_settings')
-    }
-  })
+      'update-settings': updateSettings,
+    },
+  }),
 }

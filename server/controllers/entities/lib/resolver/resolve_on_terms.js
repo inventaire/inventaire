@@ -1,16 +1,16 @@
-const _ = require('builders/utils')
-const getWorksFromAuthorsUris = require('./get_works_from_authors_uris')
-const typeSearch = require('controllers/search/lib/type_search')
-const { getEntityNormalizedTerms } = require('../terms_normalization')
-const getAuthorsUris = require('../get_authors_uris')
-const getOccurrencesFromExternalSources = require('../get_occurrences_from_external_sources')
-const { hasConvincingOccurrences } = require('server/controllers/tasks/lib/automerge')
+import _ from '#builders/utils'
+import typeSearch from '#controllers/search/lib/type_search'
+import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
+import getAuthorsUris from '../get_authors_uris.js'
+import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources.js'
+import { getEntityNormalizedTerms } from '../terms_normalization.js'
+import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
 
 // resolve :
 // - if seeds terms match entities terms
 // - if no other entity matches those terms
 
-module.exports = async entry => {
+export default async entry => {
   const { authors, works } = entry
   if ((authors.length === 0) || (works.length === 0)) return entry
 

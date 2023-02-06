@@ -1,8 +1,6 @@
-const _ = require('builders/utils')
-
-const should = require('should')
-
-const loginAttemps = require('lib/passport/login_attempts')
+import should from 'should'
+import loginAttemps from '#lib/passport/login_attempts'
+import { log } from '#lib/utils/logs'
 
 describe('loginAttemps', () => {
   it('env', () => {
@@ -37,7 +35,7 @@ describe('loginAttemps', () => {
     it('should return true when attempts are higher or equal to the limit', () => {
       for (let i = 1; i <= 10; i++) {
         loginAttemps.recordFail('notabot')
-        _.log(loginAttemps.tooMany('notabot'))
+        log(loginAttemps.tooMany('notabot'))
       }
       loginAttemps.tooMany('notabot').should.be.true()
     })

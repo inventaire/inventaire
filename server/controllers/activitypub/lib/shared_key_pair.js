@@ -7,15 +7,13 @@
 // cached keys will get refreshed at their next attempt
 // See https://socialhub.activitypub.rocks/t/caching-public-keys/688
 
-const { generateRsaKeyPair, sha1 } = require('lib/crypto')
+import { generateRsaKeyPair, sha1 } from '#lib/crypto'
 
 let sharedKeyPair
 
-const getSharedKeyPair = async () => {
+export const getSharedKeyPair = async () => {
   if (sharedKeyPair) return sharedKeyPair
   sharedKeyPair = await generateRsaKeyPair()
   sharedKeyPair.publicKeyHash = sha1(sharedKeyPair.publicKey).slice(0, 10)
   return sharedKeyPair
 }
-
-module.exports = { getSharedKeyPair }

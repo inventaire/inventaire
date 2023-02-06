@@ -1,9 +1,18 @@
-require('should')
-const { authReq, dataadminReq, shouldNotBeCalled } = require('../utils/utils')
-const randomString = require('lib/utils/random_string')
-const { getByUris, merge, getHistory, addClaim } = require('../utils/entities')
-const { getItemsByIds } = require('../utils/items')
-const { createWork, createHuman, createEdition, createEditionWithIsbn, createItemFromEntityUri, createWorkWithAuthor, someFakeUri } = require('../fixtures/entities')
+import 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createWork,
+  createHuman,
+  createEdition,
+  createEditionWithIsbn,
+  createItemFromEntityUri,
+  createWorkWithAuthor,
+  someFakeUri,
+} from '../fixtures/entities.js'
+import { getByUris, merge, getHistory, addClaim } from '../utils/entities.js'
+import { getItemsByIds } from '../utils/items.js'
+import { authReq, dataadminReq } from '../utils/utils.js'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {
@@ -62,7 +71,7 @@ describe('entities:merge', () => {
   it('should merge two entities with an inv URI', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     const { entities, redirects } = await getByUris(workA.uri)
@@ -73,14 +82,14 @@ describe('entities:merge', () => {
   it('should merge entities with inv and isbn URIs', async () => {
     const [ editionA, editionB ] = await Promise.all([
       createEdition(),
-      createEditionWithIsbn()
+      createEditionWithIsbn(),
     ])
     const item = await createItemFromEntityUri({ uri: editionA.uri })
     item.entity.should.equal(editionA.uri)
     await merge(editionA.uri, editionB.uri)
     const [ { entities, redirects }, { items } ] = await Promise.all([
       getByUris(editionA.uri),
-      getItemsByIds(item._id)
+      getItemsByIds(item._id),
     ])
     redirects[editionA.uri].should.equal(editionB.uri)
     entities[editionB.uri].should.be.ok()
@@ -90,13 +99,13 @@ describe('entities:merge', () => {
   it('should merge an entity with an ISBN', async () => {
     const [ editionA, editionB ] = await Promise.all([
       createEditionWithIsbn(),
-      createEdition()
+      createEdition(),
     ])
     const item = await createItemFromEntityUri({ uri: editionB.uri })
     await merge(editionA.uri, editionB.uri)
     const [ { entities, redirects }, { items } ] = await Promise.all([
       getByUris(editionB.uri),
-      getItemsByIds(item._id)
+      getItemsByIds(item._id),
     ])
     const updatedEditionB = entities[redirects[editionB.uri]]
     updatedEditionB.claims['wdt:P212'].should.deepEqual(editionA.claims['wdt:P212'])
@@ -107,7 +116,7 @@ describe('entities:merge', () => {
   it('should reject merge with different ISBNs', async () => {
     const [ editionA, editionB ] = await Promise.all([
       createEditionWithIsbn(),
-      createEditionWithIsbn()
+      createEditionWithIsbn(),
     ])
     await merge(editionA.uri, editionB.uri)
     .then(shouldNotBeCalled)
@@ -120,7 +129,7 @@ describe('entities:merge', () => {
   it('should transfer claims', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
     await merge(workA.uri, workB.uri)
@@ -130,10 +139,10 @@ describe('entities:merge', () => {
   })
 
   it('should transfer labels', async () => {
-    const label = randomString(6)
+    const label = getRandomString(6)
     const [ workA, workB ] = await Promise.all([
       createWork({ labels: { zh: label } }),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     const { entities } = await getByUris(workB.uri)
@@ -143,7 +152,7 @@ describe('entities:merge', () => {
   it('should keep track of the patch context', async () => {
     const [ workA, workB ] = await Promise.all([
       createWork(),
-      createWork()
+      createWork(),
     ])
     await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
     await merge(workA.uri, workB.uri)
@@ -155,7 +164,7 @@ describe('entities:merge', () => {
     const [ humanA, humanB, work ] = await Promise.all([
       createHuman(),
       createHuman(),
-      createWork()
+      createWork(),
     ])
     await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanA.uri })
     await merge(humanA.uri, humanB.uri)
@@ -173,7 +182,7 @@ describe('entities:merge', () => {
     const [ workA, workB, workC ] = await Promise.all([
       createWork(),
       createWork(),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     await merge(workA.uri, workC.uri)
@@ -188,7 +197,7 @@ describe('entities:merge', () => {
     const [ workA, workB, workC ] = await Promise.all([
       createWork(),
       createWork(),
-      createWork()
+      createWork(),
     ])
     await merge(workA.uri, workB.uri)
     await merge(workC.uri, workA.uri)
@@ -212,7 +221,7 @@ describe('entities:merge', () => {
   it('should remove isolated human "placeholders" entities on works merge', async () => {
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(),
-      createWorkWithAuthor()
+      createWorkWithAuthor(),
     ])
     const humanAUri = workA.claims['wdt:P50'][0]
     await merge(workA.uri, workB.uri)
@@ -224,7 +233,7 @@ describe('entities:merge', () => {
   it('should merge an entity with a non-canonical uri', async () => {
     const [ editionA, editionB ] = await Promise.all([
       createEditionWithIsbn(),
-      createEdition()
+      createEdition(),
     ])
     editionA.uri.should.startWith('isbn')
     await merge(`inv:${editionA._id}`, editionB.uri)

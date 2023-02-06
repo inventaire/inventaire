@@ -1,58 +1,69 @@
-const _ = require('builders/utils')
+import { warn } from '#lib/utils/logs'
 
 let assert_
-const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
-setImmediate(requireCircularDependencies)
+const importCircularDependencies = async () => {
+  ({ assert_ } = await import('#lib/utils/assert_types'))
+}
+setImmediate(importCircularDependencies)
 
-const responses_ = module.exports = {
-  // returns a function triggering a standard confirmation response
-  ok: (res, status = 200) => {
-    res.status(status)
-    responses_.send(res, { ok: true })
-  },
+// returns a function triggering a standard confirmation response
+const ok = (res, status = 200) => {
+  res.status(status)
+  send(res, { ok: true })
+}
 
-  Ok: (res, status) => responses_.ok.bind(null, res, status),
+const Ok = (res, status) => ok.bind(null, res, status)
 
-  okWarning: (res, category, warning, status = 200) => {
-    responses_.addWarning(res, category, warning)
-    res.status(status)
-    responses_.send(res, { ok: true })
-  },
+const okWarning = (res, category, warning, status = 200) => {
+  addWarning(res, category, warning)
+  res.status(status)
+  send(res, { ok: true })
+}
 
-  wrap: (res, key, data) => {
-    const obj = {}
-    obj[key] = data
-    responses_.send(res, obj)
-  },
+export const wrap = (res, key, data) => {
+  const obj = {}
+  obj[key] = data
+  send(res, obj)
+}
 
-  // FROM: .then (users)-> res.json { users }
-  // TO: .then _.Wrap(res, 'users')
-  Wrap: (res, key) => data => responses_.wrap(res, key, data),
+// FROM: .then (users)-> res.json { users }
+// TO: .then _.Wrap(res, 'users')
+export const Wrap = (res, key) => data => wrap(res, key, data)
 
-  send: (res, data) => {
-    assert_.object(res)
-    assert_.object(data)
-    setWarnings(res, data)
-    res.json(data)
-  },
+export const send = (res, data) => {
+  assert_.object(res)
+  assert_.object(data)
+  setWarnings(res, data)
+  res.json(data)
+}
 
-  sendText: (res, text) => res.send(text),
-  SendText: res => text => res.send(text),
+export const sendText = (res, text) => res.send(text)
+export const SendText = res => text => res.send(text)
 
-  // Stringify static JSON only once
-  sendStaticJson: (res, staticJson) => {
-    res.header('content-type', 'application/json').send(staticJson)
-  },
+// Stringify static JSON only once
+export const sendStaticJson = (res, staticJson) => {
+  res.header('content-type', 'application/json').send(staticJson)
+}
 
-  Send: res => responses_.send.bind(null, res),
+export const Send = res => send.bind(null, res)
 
-  addWarning: (res, message) => {
-    assert_.object(res)
-    assert_.string(message)
-    _.warn(message)
-    res.warnings = res.warnings || []
-    res.warnings.push(message)
-  }
+export const addWarning = (res, message) => {
+  assert_.object(res)
+  assert_.string(message)
+  warn(message)
+  res.warnings = res.warnings || []
+  res.warnings.push(message)
+}
+
+export const responses_ = {
+  addWarning,
+  ok,
+  Ok,
+  okWarning,
+  send,
+  Send,
+  sendText,
+  wrap,
 }
 
 const setWarnings = (res, data) => {

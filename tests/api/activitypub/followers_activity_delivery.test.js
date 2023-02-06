@@ -1,17 +1,18 @@
-const CONFIG = require('config')
-const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 100
-require('should')
-const { createItem } = require('../fixtures/items')
-const { createUser } = require('../fixtures/users')
-const { wait } = require('lib/promises')
-const { makeUrl, signedReq } = require('../utils/activitypub')
-const requests_ = require('lib/requests')
-const { createHuman, createWork, addAuthor } = require('../fixtures/entities')
-const { createShelf } = require('../fixtures/shelves')
-const { rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { addItemsToShelf, getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
-const { randomWords } = require('../fixtures/text')
+import CONFIG from 'config'
+import 'should'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { wait } from '#lib/promises'
+import { requests_ } from '#lib/requests'
+import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { randomWords } from '../fixtures/text.js'
+import { createUser } from '../fixtures/users.js'
+import { signedReq } from '../utils/activitypub.js'
+import { addItemsToShelf, getActorName } from '../utils/shelves.js'
+
+const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 200
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {
@@ -134,7 +135,7 @@ describe('followers activity delivery', () => {
       })
       const { remoteHost, remoteUserId, remoteUsername } = res
       const { _id: itemId } = await createItem(user, {
-        shelves: [ shelf._id ]
+        shelves: [ shelf._id ],
       })
       await wait(debounceTime)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)

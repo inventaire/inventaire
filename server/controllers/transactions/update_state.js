@@ -1,19 +1,21 @@
-const error_ = require('lib/error/error')
-const responses_ = require('lib/responses')
-const transactions_ = require('./lib/transactions')
-const { verifyIsRequester, verifyIsOwner, verifyRightToInteract } = require('./lib/rights_verification')
-const { states, statesList } = require('models/attributes/transaction')
-const { sanitize, validateSanitization } = require('lib/sanitize/sanitize')
-const { Track } = require('lib/track')
+import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#controllers/transactions/lib/transactions'
+import { error_ } from '#lib/error/error'
+import { responses_ } from '#lib/responses'
+import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import { Track } from '#lib/track'
+import transactionAttributes from '#models/attributes/transaction'
+import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
+
+const { states, statesList } = transactionAttributes
 
 const sanitization = validateSanitization({
   transaction: {},
   state: {
-    allowlist: statesList
-  }
+    allowlist: statesList,
+  },
 })
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const params = sanitize(req, res, sanitization)
   return updateState(params)
   .then(Track(req, [ 'transaction', 'update', params.state ]))
@@ -21,10 +23,10 @@ module.exports = (req, res) => {
 }
 
 const updateState = async ({ transactionId, state, reqUserId }) => {
-  const transaction = await transactions_.byId(transactionId)
+  const transaction = await getTransactionById(transactionId)
   validateRights(transaction, state, reqUserId)
   await checkForConcurrentTransactions(transaction, state)
-  return transactions_.updateState(transaction, state, reqUserId)
+  return updateTransactionState(transaction, state, reqUserId)
 }
 
 const validateRights = (transaction, state, reqUserId) => {
@@ -35,7 +37,7 @@ const validateRights = (transaction, state, reqUserId) => {
 const validateRightsFunctionByAllowedActor = {
   requester: verifyIsRequester,
   owner: verifyIsOwner,
-  both: verifyRightToInteract,
+  both: verifyRightToInteractWithTransaction,
 }
 
 const checkForConcurrentTransactions = async (transaction, requestedState) => {
@@ -43,7 +45,7 @@ const checkForConcurrentTransactions = async (transaction, requestedState) => {
     // No need to check that the transaction holding the item busy is not the updated transaction
     // as the requested state is 'accepted', which, to be valid, needs to be done on a transaction
     // in a 'requested' state
-    const itemIsBusy = await transactions_.itemIsBusy(transaction.item)
+    const itemIsBusy = await checkIfItemIsBusy(transaction.item)
     if (itemIsBusy) {
       throw error_.new('item already busy', 403, { transaction, requestedState })
     }

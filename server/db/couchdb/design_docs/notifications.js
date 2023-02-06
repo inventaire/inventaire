@@ -1,8 +1,8 @@
-module.exports = {
+export default {
   byUserAndTime: {
     map: doc => {
       emit([ doc.user, doc.time ], null)
-    }
+    },
   },
   bySubject: {
     map: doc => {
@@ -12,13 +12,13 @@ module.exports = {
       if (doc.type === 'groupUpdate' || doc.type === 'userMadeAdmin') {
         emit(data.group, 'data:group')
       }
-    }
+    },
   },
   unreadNotificationsByGroupAndAttribute: {
     map: doc => {
       if (doc.type === 'groupUpdate' && doc.status === 'unread') {
         emit([ doc.data.group, doc.data.attribute ], null)
       }
-    }
-  }
+    },
+  },
 }

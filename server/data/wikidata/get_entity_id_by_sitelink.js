@@ -1,8 +1,9 @@
-require('module-alias/register')
-const requests_ = require('lib/requests')
-const { getEntitiesFromSitelinks, isItemId } = require('wikidata-sdk')
+import wdk from 'wikidata-sdk'
+import { requests_ } from '#lib/requests'
 
-module.exports = async ({ site, title }) => {
+const { getEntitiesFromSitelinks, isItemId } = wdk
+
+export default async ({ site, title }) => {
   const url = getEntitiesFromSitelinks({ sites: site, titles: title, props: 'info' })
   const { entities } = await requests_.get(url)
   const id = Object.keys(entities)[0]

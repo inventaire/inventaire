@@ -1,12 +1,13 @@
-const CONFIG = require('config')
-const { wait } = require('lib/promises')
-require('should')
-const { authReq, getUser, getUserB } = require('../utils/utils')
-const { CountChange } = require('./helpers')
-const { createShelf } = require('../fixtures/shelves')
+import 'should'
+import CONFIG from 'config'
+import { createItem } from '#fixtures/items'
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createShelf } from '../fixtures/shelves.js'
+import { authReq, getUser, getUserB } from '../utils/utils.js'
+import { CountChange } from './helpers.js'
+
 const debounceDelay = CONFIG.itemsCountDebounceTime + 500
-const { shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createItem } = require('tests/api/fixtures/items')
 
 describe('items:update', () => {
   it('should reject invalid item id', async () => {

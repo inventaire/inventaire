@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { postActivityToActorFollowersInboxes } = require('./post_activity')
-const formatEntityPatchesActivities = require('./format_entity_patches_activities')
+import { logError } from '#lib/utils/logs'
+import formatEntityPatchesActivities from './format_entity_patches_activities.js'
+import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
-const deliverEntityActivitiesFromPatch = async patch => {
+export async function deliverEntityActivitiesFromPatch (patch) {
   try {
     const activities = await getActivitiesFromPatch(patch)
     if (activities.length === 0) return
@@ -11,11 +11,11 @@ const deliverEntityActivitiesFromPatch = async patch => {
       return postActivityToActorFollowersInboxes({ activity, actorName })
     }))
   } catch (err) {
-    _.error(err, 'create_activities_on_entities_updates err')
+    logError(err, 'create_activities_on_entities_updates err')
   }
 }
 
-const getActivitiesFromPatch = async patch => {
+export async function getActivitiesFromPatch (patch) {
   const rows = byClaimValueAndDate(patch)
   if (rows.length === 0) return []
   return formatEntityPatchesActivities(rows)
@@ -51,9 +51,4 @@ const addRow = (rows, id, property, claimValue, timestamp) => {
   if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
     rows.push({ id, key: [ claimValue, timestamp ], value: property })
   }
-}
-
-module.exports = {
-  deliverEntityActivitiesFromPatch,
-  getActivitiesFromPatch,
 }

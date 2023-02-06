@@ -1,19 +1,20 @@
-const _ = require('builders/utils')
-const validateObject = require('lib/validate_object')
+import { log } from '#lib/utils/logs'
+import validateObject from '#lib/validate_object'
+
 const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
 
 // Basic validation of controllers objects to ease debugging
-module.exports = path => {
-  const obj = require(`controllers/${path}`)
-
+export const AddRoute = routes => (route, controllerObj) => {
   try {
-    validateObject(obj, validEndpointKeys, 'function')
+    validateObject(controllerObj, validEndpointKeys, 'function')
   } catch (err) {
-    _.log(path, 'endpoint validation failed', 'red')
+    log(route, 'endpoint validation failed', 'red')
     // Let the error crash Express to prevent the server from starting
     // and make clear something needs to be fixed
     throw err
   }
 
-  return obj
+  routes[route] = controllerObj
+
+  return controllerObj
 }

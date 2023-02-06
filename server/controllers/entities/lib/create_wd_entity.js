@@ -1,22 +1,23 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const wdEdit = require('lib/wikidata/edit')
-const wdOauth = require('./wikidata_oauth')
-const validateEntity = require('./validate_entity')
-const getEntityType = require('./get_entity_type')
-const properties = require('./properties/properties_values_constraints')
-const { prefixifyWd, unprefixify } = require('./prefix')
-const { relocateQualifierProperties } = require('lib/wikidata/data_model_adapter')
+import { error_ } from '#lib/error/error'
+import { log } from '#lib/utils/logs'
+import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
+import wdEdit from '#lib/wikidata/edit'
+import getEntityType from './get_entity_type.js'
+import { prefixifyWd, unprefixify } from './prefix.js'
+import properties from './properties/properties_values_constraints.js'
+import validateEntity from './validate_entity.js'
+import wdOauth from './wikidata_oauth.js'
+
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
-module.exports = async params => {
+export default async params => {
   const { labels, claims, user, isAlreadyValidated } = params
   wdOauth.validate(user)
   const credentials = wdOauth.getOauthCredentials(user)
 
   const entity = { labels, claims }
 
-  _.log(entity, 'wd entity creation')
+  log(entity, 'wd entity creation')
 
   return validate(entity, isAlreadyValidated)
   .then(() => {

@@ -1,7 +1,8 @@
-require('should')
-const preventMultiAccountsCreation = require('controllers/user/lib/prevent_multi_accounts_creation')
-const { wait } = require('lib/promises')
-const { shouldNotBeCalled } = require('../utils')
+import 'should'
+import preventMultiAccountsCreation from '#controllers/user/lib/prevent_multi_accounts_creation'
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+
 const errorMessage = 'an account is already in the process of being created with this username'
 
 describe('prevent multi accounts creation', () => {

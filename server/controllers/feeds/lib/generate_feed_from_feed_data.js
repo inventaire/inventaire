@@ -1,26 +1,28 @@
-const _ = require('builders/utils')
-const { feed: feedConfig } = require('config')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const serializeFeed = require('./serialize_feed')
-const getAuthorizedItems = require('controllers/items/lib/get_authorized_items')
-const user_ = require('controllers/user/lib/user')
-const { filterPrivateAttributes } = require('controllers/items/lib/filter_private_attributes')
-const { paginate } = require('controllers/items/lib/queries_commons')
+import CONFIG from 'config'
+import { map } from 'lodash-es'
+import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
+import { getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
+import { paginate } from '#controllers/items/lib/queries_commons'
+import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { serializeUserData } from '#controllers/user/lib/user'
+import serializeFeed from './serialize_feed.js'
 
-module.exports = lang => async ({ reqUserId, feedOptions, users, shelves, filter }) => {
-  users = users.map(user_.serializeData)
-  const usersIds = _.map(users, '_id')
+const { feed: feedConfig } = CONFIG
+
+export default lang => async ({ reqUserId, feedOptions, users, shelves, context }) => {
+  users = users.map(serializeUserData)
+  const usersIds = map(users, '_id')
   let items
   if (shelves) {
-    items = await getAuthorizedItems.byShelves(shelves, reqUserId)
+    items = await getAuthorizedItemsByShelves(shelves, reqUserId)
   } else {
-    items = await getAuthorizedItems.byUsers(usersIds, reqUserId)
+    items = await getAuthorizedItemsByUsers(usersIds, reqUserId)
   }
   const page = paginate(items, {
-    filter,
+    context,
     limit: feedConfig.limitLength,
   })
-  items = await Promise.all(page.items.map(snapshot_.addToItem))
+  items = await Promise.all(page.items.map(addSnapshotToItem))
   items = items.map(filterPrivateAttributes(reqUserId))
   return serializeFeed(feedOptions, users, items, lang)
 }

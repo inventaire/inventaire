@@ -1,8 +1,9 @@
-require('should')
-const { authReq, authReqB, authReqC, getUserC } = require('../utils/utils')
-const { getSomeGroup } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { shouldNotBeCalled } = require('tests/unit/utils')
+import 'should'
+import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroup } from '../fixtures/groups.js'
+import { authReq, authReqB, authReqC, getUserC } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=decline'
 
 describe('groups:update:decline', () => {

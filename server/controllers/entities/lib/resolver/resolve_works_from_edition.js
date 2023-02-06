@@ -1,8 +1,8 @@
-const { someTermsMatch, resolveSeed } = require('./helpers')
-const getEntitiesList = require('../get_entities_list')
-const getEntityByUri = require('../get_entity_by_uri')
+import { getEntitiesList } from '../get_entities_list.js'
+import { getEntityByUri } from '../get_entity_by_uri.js'
+import { someTermsMatch, resolveSeed } from './helpers.js'
 
-module.exports = async (worksSeeds, editionSeed) => {
+export default async (worksSeeds, editionSeed) => {
   if (editionSeed.uri == null) return worksSeeds
 
   const editionEntity = await getEntityByUri({ uri: editionSeed.uri })

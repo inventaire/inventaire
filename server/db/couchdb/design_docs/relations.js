@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   byStatus: {
     map: doc => {
       if (doc.type === 'relation') {
@@ -16,6 +16,6 @@ module.exports = {
           emit([ a, 'otherRequested' ], b)
         }
       }
-    }
-  }
+    },
+  },
 }

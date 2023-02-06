@@ -1,6 +1,7 @@
-const should = require('should')
-const { getClient } = require('../utils/oauth')
-const { publicReq } = require('../utils/utils')
+import should from 'should'
+import { getClient } from '../utils/oauth.js'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/oauth/clients?action=by-ids'
 
 describe('oauth:clients:get-by-ids', () => {

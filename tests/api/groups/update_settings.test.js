@@ -1,9 +1,11 @@
-const should = require('should')
-const { publicReq, authReq, shouldNotBeCalled } = require('../utils/utils')
-const { getNotifications } = require('../utils/notifications')
-const { getSomeGroup, createGroup, createGroupWithAMember } = require('../fixtures/groups')
-const slugify = require('controllers/groups/lib/slugify')
-const { importSomeImage } = require('../utils/images')
+import should from 'should'
+import slugify from '#controllers/groups/lib/slugify'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroup, createGroup, createGroupWithAMember } from '../fixtures/groups.js'
+import { importSomeImage } from '../utils/images.js'
+import { getNotifications } from '../utils/notifications.js'
+import { publicReq, authReq } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=update-settings'
 
 describe('groups:update-settings', () => {
@@ -22,7 +24,7 @@ describe('groups:update-settings', () => {
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
       attribute: 'name',
-      value: updatedName
+      value: updatedName,
     })
     updateRes.ok.should.be.true()
     const { group: updatedGroup } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
@@ -36,7 +38,7 @@ describe('groups:update-settings', () => {
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
       attribute: 'name',
-      value: updatedName
+      value: updatedName,
     })
     updateRes.ok.should.be.true()
     updateRes.update.slug.should.equal(slugify(updatedName))
@@ -48,7 +50,7 @@ describe('groups:update-settings', () => {
     const updateRes = await authReq('put', endpoint, {
       group: groupId,
       attribute: 'description',
-      value: updatedDescription
+      value: updatedDescription,
     })
     updateRes.ok.should.be.true()
     Object.keys(updateRes.update).length.should.equal(0)
@@ -61,7 +63,7 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'position',
-      value: [ 0.123456789, 0.123456789 ]
+      value: [ 0.123456789, 0.123456789 ],
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.position.should.deepEqual([ 0.12346, 0.12346 ])
@@ -72,12 +74,12 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'position',
-      value: [ 0.123456789, 0.123456789 ]
+      value: [ 0.123456789, 0.123456789 ],
     })
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'position',
-      value: null
+      value: null,
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     should(group.position).not.be.ok()
@@ -89,7 +91,7 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'picture',
-      value: url
+      value: url,
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.picture.should.deepEqual(url)
@@ -101,12 +103,12 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'picture',
-      value: url
+      value: url,
     })
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'picture',
-      value: null
+      value: null,
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     should(group.picture).not.be.ok()
@@ -118,7 +120,7 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'searchable',
-      value: false
+      value: false,
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.searchable.should.be.false()
@@ -129,7 +131,7 @@ describe('groups:update-settings', () => {
     await authReq('put', endpoint, {
       group: groupId,
       attribute: 'open',
-      value: true
+      value: true,
     })
     const { group } = await publicReq('get', `/api/groups?action=by-id&id=${groupId}`)
     group.open.should.be.true()
@@ -143,7 +145,7 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
-        value: updatedName
+        value: updatedName,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       const notification = notifications.find(isAttributeNotification('name'))
@@ -159,7 +161,7 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'description',
-        value: updatedDescription
+        value: updatedDescription,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       const notification = notifications.find(isAttributeNotification('description'))
@@ -174,7 +176,7 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'searchable',
-        value: true
+        value: true,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       const notification = notifications.find(isAttributeNotification('searchable'))
@@ -189,7 +191,7 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'open',
-        value: true
+        value: true,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       const notification = notifications.find(isAttributeNotification('open'))
@@ -204,12 +206,12 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
-        value: `${initialName}-updated`
+        value: `${initialName}-updated`,
       })
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
-        value: `${initialName}-reupdated`
+        value: `${initialName}-reupdated`,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       notifications.length.should.equal(1)
@@ -224,12 +226,12 @@ describe('groups:update-settings', () => {
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
-        value: `${initialName}-updated`
+        value: `${initialName}-updated`,
       })
       await authReq('put', endpoint, {
         group: groupId,
         attribute: 'name',
-        value: initialName
+        value: initialName,
       })
       const notifications = await getNotifications({ user: member, type: 'groupUpdate', subject: groupId })
       const notification = notifications.find(isAttributeNotification('name'))

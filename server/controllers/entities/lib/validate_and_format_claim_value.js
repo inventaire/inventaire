@@ -1,16 +1,15 @@
-const error_ = require('lib/error/error')
+import { error_ } from '#lib/error/error'
+import properties from './properties/properties_values_constraints.js'
+import validateClaimValueSync from './validate_claim_value_sync.js'
 
-let getEntityByUri, entities_
-const requireCircularDependencies = () => {
-  getEntityByUri = require('./get_entity_by_uri')
-  entities_ = require('./entities')
+let getEntityByUri, getEntitiesByClaim
+const importCircularDependencies = async () => {
+  ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
+  ;({ getEntitiesByClaim } = await import('./entities.js'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
-const properties = require('./properties/properties_values_constraints')
-const validateClaimValueSync = require('./validate_claim_value_sync')
-
-module.exports = async params => {
+export default async params => {
   const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin, _id } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null
@@ -33,7 +32,7 @@ module.exports = async params => {
 
   await Promise.all([
     verifyClaimConcurrency(concurrency, property, formattedValue, _id),
-    verifyClaimEntityType(restrictedType, formattedValue)
+    verifyClaimEntityType(restrictedType, formattedValue),
   ])
 
   return formattedValue
@@ -44,7 +43,7 @@ module.exports = async params => {
 const verifyClaimConcurrency = async (concurrency, property, value, _id) => {
   if (!concurrency) return
 
-  let { rows } = await entities_.byClaim(property, value)
+  let { rows } = await getEntitiesByClaim(property, value)
 
   rows = rows.filter(isntCurrentlyValidatedEntity(_id))
 

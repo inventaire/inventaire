@@ -1,9 +1,11 @@
-const { getGroup } = require('tests/api/utils/groups')
-const { getUser, getUserB, customAuthReq, getReservedUser } = require('../utils/utils')
-const fakeText = require('./text')
-const endpointBase = '/api/groups'
+import { randomWords } from '#fixtures/text'
+import { getGroup } from '#tests/api/utils/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
-const createGroup = (params = {}) => {
+export const endpointBase = '/api/groups'
+
+export const createGroup = (params = {}) => {
   const {
     name = groupName(),
     description = groupDescription(),
@@ -21,7 +23,7 @@ const createGroup = (params = {}) => {
   })
 }
 
-const membershipAction = async (actor, action, group, user) => {
+export async function membershipAction (actor, action, group, user) {
   group = await group
   user = await user
   const data = { action, group: group._id }
@@ -29,7 +31,7 @@ const membershipAction = async (actor, action, group, user) => {
   return customAuthReq(actor, 'put', endpointBase, data)
 }
 
-const addMember = async (group, member) => {
+export async function addMember (group, member) {
   member = await member
   await membershipAction(member, 'request', group, member)
   await membershipAction(getUser(), 'accept-request', group, member)
@@ -37,7 +39,7 @@ const addMember = async (group, member) => {
   return [ refreshedGroup, member ]
 }
 
-const addAdmin = async (group, member) => {
+export async function addAdmin (group, member) {
   await addMember(group, member)
   await membershipAction(getUser(), 'make-admin', group, member)
   const refreshedGroup = await getGroup(group)
@@ -50,16 +52,16 @@ const createAndAddMember = async user => {
   return refreshedGroup
 }
 
-const createGroupAndMember = async () => {
+export const createGroupAndMember = async () => {
   const member = await getReservedUser()
   const group = await createAndAddMember(member)
   return { group, member }
 }
 
-const groupName = () => fakeText.randomWords(3, ' group')
-const groupDescription = () => fakeText.randomWords(10)
+export const groupName = () => randomWords(3, ' group')
+const groupDescription = () => randomWords(10)
 
-const createGroupWithAMember = async params => {
+export async function createGroupWithAMember (params) {
   const group = await createGroup(params)
   const admin = await getUser()
   const member = await getUserB()
@@ -68,27 +70,14 @@ const createGroupWithAMember = async params => {
 }
 
 let groupWithAMemberPromise
-const getSomeGroupWithAMember = () => {
+export const getSomeGroupWithAMember = () => {
   groupWithAMemberPromise = groupWithAMemberPromise || createGroupWithAMember()
   return groupWithAMemberPromise
 }
 
 let groupPromise
-const getSomeGroup = () => {
+export const getSomeGroup = () => {
   // Resolves to a group with userA as admin and userB as member
   groupPromise = groupPromise || getSomeGroupWithAMember().then(({ group }) => group)
   return groupPromise
-}
-
-module.exports = {
-  endpointBase,
-  createGroupWithAMember,
-  getSomeGroup,
-  getSomeGroupWithAMember,
-  groupName,
-  createGroup,
-  addMember,
-  addAdmin,
-  createGroupAndMember,
-  membershipAction
 }

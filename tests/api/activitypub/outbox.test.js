@@ -1,19 +1,20 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { wait } from '#lib/promises'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
+import { createItem, createItems } from '../fixtures/items.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
+import { createUser } from '../fixtures/users.js'
+import { updateItems } from '../utils/items.js'
+import { getActorName } from '../utils/shelves.js'
+import { publicReq, getFediversableUser } from '../utils/utils.js'
+
 const origin = CONFIG.getPublicOrigin()
 const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
-require('should')
-const { createItem, createItems } = require('../fixtures/items')
-const { updateItems } = require('../utils/items')
-const { createUser } = require('../fixtures/users')
-const { publicReq, customAuthReq, getFediversableUser } = require('../utils/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { wait } = require('lib/promises')
 const endpoint = '/api/activitypub?action=outbox&name='
-const { makeUrl } = require('../utils/activitypub')
-const { createWork, createHuman, addAuthor } = require('../fixtures/entities')
-const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { getActorName } = require('../utils/shelves')
-const { getEntityActorName } = require('controllers/activitypub/lib/helpers')
 
 describe('outbox', () => {
   describe('users', () => {
@@ -198,7 +199,7 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
-      await wait(500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const url = `${origin}${outboxUrl}`
@@ -228,7 +229,7 @@ describe('outbox', () => {
         addAuthor(workUri, authorUri),
         addAuthor(workUri2, authorUri),
       ])
-      await wait(500)
+      await wait(debounceTime)
       const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
       const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
       res1.orderedItems.length.should.equal(1)

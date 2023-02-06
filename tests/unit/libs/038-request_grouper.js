@@ -1,9 +1,8 @@
-const _ = require('builders/utils')
-
-require('should')
-const sinon = require('sinon')
-
-const requestGrouper = require('lib/request_grouper')
+import 'should'
+import sinon from 'sinon'
+import _ from '#builders/utils'
+import requestGrouper from '#lib/request_grouper'
+import { log } from '#lib/utils/logs'
 
 const MockRequester = (spy = _.noop) => async ids => {
   spy()
@@ -16,7 +15,7 @@ const mockRequesterSync = ids => {
     results[id] = mockRequesterSingleSync(id)
   }
 
-  _.log(results, 'results')
+  log(results, 'results')
   return results
 }
 
@@ -26,7 +25,7 @@ describe('Request Grouper', () => {
   it('should return a function', () => {
     const singleRequest = requestGrouper({
       delay: 10,
-      requester: MockRequester()
+      requester: MockRequester(),
     })
 
     singleRequest.should.be.a.Function()
@@ -35,7 +34,7 @@ describe('Request Grouper', () => {
   it('should return a function that returns a promise', async () => {
     const singleRequest = requestGrouper({
       delay: 10,
-      requester: MockRequester()
+      requester: MockRequester(),
     })
     await singleRequest('input1')
   })
@@ -44,13 +43,13 @@ describe('Request Grouper', () => {
     const spy = sinon.spy()
     const fn = requestGrouper({
       delay: 10,
-      requester: MockRequester(spy)
+      requester: MockRequester(spy),
     })
 
     await Promise.all([
       fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1'))),
       fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2'))),
-      fn('input3').then(res => res.should.equal(mockRequesterSingleSync('input3')))
+      fn('input3').then(res => res.should.equal(mockRequesterSingleSync('input3'))),
     ])
 
     spy.callCount.should.equal(1)
@@ -60,7 +59,7 @@ describe('Request Grouper', () => {
     const spy = sinon.spy()
     const fn = requestGrouper({
       delay: 10,
-      requester: MockRequester(spy)
+      requester: MockRequester(spy),
     })
 
     fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1')))

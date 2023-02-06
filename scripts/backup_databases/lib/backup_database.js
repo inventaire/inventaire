@@ -1,15 +1,14 @@
-require('module-alias/register')
-const _ = require('builders/utils')
-const { shellExec } = require('scripts/scripts_utils')
-const { backupFolder } = require('./get_backup_folder_data')
+import { log, warn } from '#lib/utils/logs'
+import { shellExec } from '#scripts/scripts_utils'
+import { backupFolder } from './get_backup_folder_data.js'
 
-module.exports = async params => {
+export default async params => {
   const { dbName } = params
   const args = buildArgsArray(params)
 
   const { stdout, stderr } = await shellExec('couchdb-backup', args)
-  _.log(stdout, `${dbName} stdout`)
-  _.warn(stderr, `${dbName} stderr`)
+  log(stdout, `${dbName} stdout`)
+  warn(stderr, `${dbName} stderr`)
 }
 
 // Depends on 'couchdb-backup' (from https://github.com/danielebailo/couchdb-dump)
@@ -26,6 +25,6 @@ const buildArgsArray = ({ username, password, hostname, port, dbName }) => {
     '-p', password,
     // Database-specific
     '-d', dbName,
-    '-f', outputFile
+    '-f', outputFile,
   ]
 }

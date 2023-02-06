@@ -1,10 +1,13 @@
-const _ = require('builders/utils')
-const { pass, itemId, userId, entityUri, BoundedString, imgUrl } = require('./common')
-const { constrained } = require('../attributes/item')
-const { isVisibilityKeyArray } = require('models/validations/visibility')
+import _ from '#builders/utils'
+import { isVisibilityKeyArray } from '#models/validations/visibility'
+import itemAttributes from '../attributes/item.js'
+import commonValidations from './common.js'
+
+const { pass, itemId, userId, entityUri, BoundedString, imgUrl } = commonValidations
+const { constrained } = itemAttributes
 const constrainedAttributes = Object.keys(constrained)
 
-module.exports = {
+export default {
   pass,
   itemId,
   userId,
@@ -24,6 +27,6 @@ module.exports = {
     'entity:lang': _.isLang,
     'entity:authors': _.isString,
     'entity:series': _.isString,
-    'entity:ordinal': _.isString
-  }
+    'entity:ordinal': _.isString,
+  },
 }

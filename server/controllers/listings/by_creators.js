@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { isNonEmptyArray } = require('lib/boolean_validations')
-const listings_ = require('controllers/listings/lib/listings')
-const elements_ = require('controllers/listings/lib/elements')
-const filterVisibleDocs = require('lib/visibility/filter_visible_docs')
-const { paginate } = require('controllers/items/lib/queries_commons')
+import _ from '#builders/utils'
+import { paginate } from '#controllers/items/lib/queries_commons'
+import elements_ from '#controllers/listings/lib/elements'
+import { getListingsByCreators } from '#controllers/listings/lib/listings'
+import { isNonEmptyArray } from '#lib/boolean_validations'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
   users: {},
@@ -14,12 +14,12 @@ const sanitization = {
     generic: 'boolean',
   },
   context: {
-    optional: true
+    optional: true,
   },
 }
 
 const controller = async ({ users, offset, limit, context, withElements, reqUserId }) => {
-  const foundListings = await listings_.byCreators(users)
+  const foundListings = await getListingsByCreators(users)
   const allVisibleListings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(allVisibleListings, { offset, limit, context })
   if (withElements && isNonEmptyArray(authorizedListings)) {
@@ -41,4 +41,4 @@ const assignElementsToList = elementsByList => listing => {
   listing.elements = elementsByList[listing._id] || []
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

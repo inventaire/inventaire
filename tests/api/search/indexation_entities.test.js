@@ -1,11 +1,13 @@
-const CONFIG = require('config')
-const should = require('should')
-const { wait } = require('lib/promises')
-const { createHuman, createEdition, addSerie } = require('../fixtures/entities')
-const { deleteByUris, merge, updateLabel } = require('../utils/entities')
+import CONFIG from 'config'
+import should from 'should'
+import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { createHuman, createEdition, addSerie } from '../fixtures/entities.js'
+import { deleteByUris, merge, updateLabel } from '../utils/entities.js'
+import { getIndexedDoc } from '../utils/search.js'
+
+const { entities: entitiesIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc } = require('../utils/search')
-const { entities: entitiesIndex } = require('db/elasticsearch/indexes').indexesNamesByBaseNames
 
 describe('indexation:entities', () => {
   it('should index a new local entity', async () => {

@@ -1,9 +1,10 @@
-const ActionsControllers = require('lib/actions_controllers')
+import ActionsControllers from '#lib/actions_controllers'
+import clientsByIds from './clients_by_ids.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
-      'by-ids': require('./clients_by_ids'),
-    }
-  })
+      'by-ids': clientsByIds,
+    },
+  }),
 }

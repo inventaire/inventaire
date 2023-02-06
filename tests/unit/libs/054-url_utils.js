@@ -1,5 +1,5 @@
-const { buildUrl } = require('lib/utils/url')
-require('should')
+import { buildUrl } from '#lib/utils/url'
+import 'should'
 
 describe('url utils', () => {
   describe('buildUrl', () => {

@@ -1,5 +1,5 @@
-module.exports = {
+export default {
   byOwner: {
-    map: doc => emit(doc.owner, null)
-  }
+    map: doc => emit(doc.owner, null),
+  },
 }

@@ -1,6 +1,6 @@
 
-require('should')
-const parseEmails = require('controllers/invitations/lib/parse_emails')
+import 'should'
+import parseEmails from '#controllers/invitations/lib/parse_emails'
 
 describe('parse emails', () => {
   it('should be a function', () => {

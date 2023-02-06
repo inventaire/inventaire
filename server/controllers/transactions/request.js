@@ -1,30 +1,30 @@
-const _ = require('builders/utils')
-const items_ = require('controllers/items/lib/items')
-const snapshot_ = require('controllers/items/lib/snapshot/snapshot')
-const transactions_ = require('./lib/transactions')
-const user_ = require('controllers/user/lib/user')
-const { verifyRightToRequest } = require('./lib/rights_verification')
+import { getItemById } from '#controllers/items/lib/items'
+import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { addTransactionMessage, createTransaction, getTransactionById } from '#controllers/transactions/lib/transactions'
+import { getUsersByIds } from '#controllers/user/lib/user'
+import { log } from '#lib/utils/logs'
+import { verifyRightToRequest } from './lib/rights_verification.js'
 
 const sanitization = {
   item: {},
-  message: {}
+  message: {},
 }
 
 const controller = async ({ item, message, reqUserId }) => {
-  _.log([ item, message ], 'item request')
-  const itemDoc = await items_.byId(item)
+  log([ item, message ], 'item request')
+  const itemDoc = await getItemById(item)
   await verifyRightToRequest(reqUserId, itemDoc)
-  await snapshot_.addToItem(itemDoc)
+  await addSnapshotToItem(itemDoc)
   const { owner: ownerId } = itemDoc
-  const [ ownerDoc, requesterDoc ] = await user_.byIds([ ownerId, reqUserId ])
-  const { id: transactionId } = await transactions_.create(itemDoc, ownerDoc, requesterDoc)
-  await transactions_.addMessage(reqUserId, message, transactionId)
-  const transaction = await transactions_.byId(transactionId)
+  const [ ownerDoc, requesterDoc ] = await getUsersByIds([ ownerId, reqUserId ])
+  const { id: transactionId } = await createTransaction(itemDoc, ownerDoc, requesterDoc)
+  await addTransactionMessage(reqUserId, message, transactionId)
+  const transaction = await getTransactionById(transactionId)
   return { transaction }
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'transaction', 'request' ]
+  track: [ 'transaction', 'request' ],
 }

@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, authReq, authReqB } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
-const { someCouchUuid } = require('tests/api/fixtures/general')
+import _ from '#builders/utils'
+import { someCouchUuid } from '#fixtures/general'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createListing, createElement } from '../fixtures/listings.js'
+import { publicReq, authReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-ids'
 

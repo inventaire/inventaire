@@ -1,22 +1,27 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { addItems, removeItems } = require('./items_actions')
+import ActionsControllers from '#lib/actions_controllers'
+import byIds from './by_ids.js'
+import byOwners from './by_owners.js'
+import create from './create.js'
+import deleteByIds from './delete_by_ids.js'
+import { addItems, removeItems } from './items_actions.js'
+import update from './update.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
-      'by-ids': require('./by_ids'),
-      'by-owners': require('./by_owners')
-    }
+      'by-ids': byIds,
+      'by-owners': byOwners,
+    },
   }),
   post: ActionsControllers({
     authentified: {
-      create: require('./create'),
+      create,
       // TODO: harmonize with other endpoints to have 'update'
       // and assimilated actions use the PUT verb
-      update: require('./update'),
+      update,
       'add-items': addItems,
       'remove-items': removeItems,
-      delete: require('./delete_by_ids')
-    }
-  })
+      delete: deleteByIds,
+    },
+  }),
 }

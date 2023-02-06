@@ -1,6 +1,7 @@
-require('should')
-const { authReq, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { getSomeTransaction, addMessage } = require('../fixtures/transactions')
+import 'should'
+import { authReq, authReqC } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeTransaction, addMessage } from '../fixtures/transactions.js'
 
 const endpoint = '/api/transactions?action=message'
 
@@ -23,7 +24,7 @@ describe('transactions:post:message', () => {
     const { transaction } = await getSomeTransaction()
     await authReq('post', endpoint, {
       action: 'message',
-      transaction: transaction._id
+      transaction: transaction._id,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -36,7 +37,7 @@ describe('transactions:post:message', () => {
     await authReq('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: ''
+      message: '',
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -49,7 +50,7 @@ describe('transactions:post:message', () => {
     await authReq('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: 1
+      message: 1,
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -62,7 +63,7 @@ describe('transactions:post:message', () => {
     await authReqC('post', endpoint, {
       action: 'message',
       transaction: transaction._id,
-      message: 'yo'
+      message: 'yo',
     })
     .then(shouldNotBeCalled)
     .catch(err => {

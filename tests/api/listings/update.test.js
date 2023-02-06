@@ -1,8 +1,10 @@
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors, customAuthReq, getReservedUser } = require('tests/api/utils/utils')
-const { authReq, authReqB, getUser } = require('../utils/utils')
-const { createListing, listingName, listingDescription } = require('../fixtures/listings')
-const { createGroupWithAMember, getSomeGroup } = require('tests/api/fixtures/groups')
-const { someCouchUuid } = require('tests/api/fixtures/general')
+import { someCouchUuid } from '#fixtures/general'
+import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
+import { authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/lists'
 
@@ -22,7 +24,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: listing._id,
-        foo: 'bar'
+        foo: 'bar',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -37,7 +39,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: listing._id,
-        name: ''
+        name: '',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -51,7 +53,7 @@ describe('listings:update', () => {
     try {
       const params = {
         id: someCouchUuid,
-        name: ''
+        name: '',
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -111,7 +113,7 @@ describe('listings:update', () => {
       const { listing } = await createListing()
       const params = {
         id: listing._id,
-        name: 'foo'
+        name: 'foo',
       }
       await authReqB('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {
@@ -126,7 +128,7 @@ describe('listings:update', () => {
       const { listing } = await createListing(getUser())
       const params = {
         id: listing._id,
-        name: listing.name
+        name: listing.name,
       }
       await authReq('put', endpoint, params).then(shouldNotBeCalled)
     } catch (err) {

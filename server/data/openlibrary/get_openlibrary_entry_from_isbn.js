@@ -1,11 +1,13 @@
-const { normalizeIsbn } = require('lib/isbn/isbn')
-const requests_ = require('lib/requests')
-const { setEditionPublisherClaim } = require('data/lib/set_edition_publisher_claim')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const wdIdByIso6392Code = require('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
-const { compact } = require('lodash')
+import { compact } from 'lodash-es'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { normalizeIsbn } from '#lib/isbn/isbn'
+import { requests_ } from '#lib/requests'
+import { requireJson } from '#lib/utils/json'
 
-module.exports = async isbn => {
+const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
+
+export default async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
   const data = await requests_.get(url)
@@ -74,8 +76,8 @@ const getEntitySeedFromOlId = async ({ key }) => {
   const seed = {
     labels: {},
     claims: {
-      'wdt:P648': id
-    }
+      'wdt:P648': id,
+    },
   }
   if (name || title) seed.labels.en = name || title
   if (remoteIds.wikidata) seed.uri = prefixifyWd(remoteIds.wikidata)
@@ -87,8 +89,8 @@ const getEntitySeedFromOlId = async ({ key }) => {
 const getPublisherSeed = label => {
   return {
     labels: {
-      en: label
-    }
+      en: label,
+    },
   }
 }
 

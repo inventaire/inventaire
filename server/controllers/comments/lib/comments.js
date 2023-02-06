@@ -1,9 +1,10 @@
-const Comment = require('models/comment')
-const assert_ = require('lib/utils/assert_types')
+import dbFactory from '#db/couchdb/base'
+import { assert_ } from '#lib/utils/assert_types'
+import Comment from '#models/comment'
 
-const db = require('db/couchdb/base')('comments')
+const db = dbFactory('comments')
 
-module.exports = {
+export default {
   byId: db.get,
 
   byTransactionId: transactionId => {
@@ -27,5 +28,5 @@ module.exports = {
   delete: comment => {
     comment._deleted = true
     return db.put(comment)
-  }
+  },
 }

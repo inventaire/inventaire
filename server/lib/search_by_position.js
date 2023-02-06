@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const { buildSearcher } = require('lib/elasticsearch')
-const assert_ = require('lib/utils/assert_types')
+import _ from '#builders/utils'
+import { buildSearcher } from '#lib/elasticsearch'
+import { assert_ } from '#lib/utils/assert_types'
 
-module.exports = (db, dbBaseName) => {
+export default (db, dbBaseName) => {
   const searchByPosition = buildSearcher({
     dbBaseName,
-    queryBuilder
+    queryBuilder,
   })
 
   return async bbox => {
@@ -27,12 +27,12 @@ const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
           geo_bounding_box: {
             position: {
               top_left: topLeft,
-              bottom_right: bottomRight
-            }
-          }
-        }
-      }
+              bottom_right: bottomRight,
+            },
+          },
+        },
+      },
     },
-    size: 500
+    size: 500,
   }
 }

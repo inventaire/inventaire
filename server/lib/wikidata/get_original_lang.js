@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
-const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
-const { unprefixify } = require('controllers/entities/lib/prefix')
+import _ from '#builders/utils'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { requireJson } from '#lib/utils/json'
 
-module.exports = claims => {
+const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
+
+export default claims => {
   const langPropertiesClaims = _.pick(claims, langProperties)
   if (_.objLength(langPropertiesClaims) === 0) return
 
@@ -18,5 +20,5 @@ const langProperties = [
   'wdt:P103', // native language
   'wdt:P407', // language of work
   'wdt:P1412', // languages spoken, written or signed
-  'wdt:P2439' // language (general)
+  'wdt:P2439', // language (general)
 ]

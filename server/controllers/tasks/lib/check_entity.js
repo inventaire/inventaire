@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getEntityByUri = require('controllers/entities/lib/get_entity_by_uri')
-const tasks_ = require('./tasks')
-const getNewTasks = require('./get_new_tasks')
-const updateRelationScore = require('./relation_score')
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { error_ } from '#lib/error/error'
+import { info } from '#lib/utils/logs'
+import getNewTasks from './get_new_tasks.js'
+import updateRelationScore from './relation_score.js'
+
 const supportedTypes = [ 'human' ]
 
-module.exports = async uri => {
-  _.info(`check entity: ${uri}`)
+export default async uri => {
+  info(`check entity: ${uri}`)
 
   if (uri.split(':')[0] !== 'inv') {
     throw error_.new('invalid uri domain', 400, { uri })
@@ -28,8 +29,8 @@ module.exports = async uri => {
 
   const existingTasks = await getExistingTasks(uri)
   const newSuggestions = await getNewTasks(entity, existingTasks)
-  await tasks_.create(uri, 'deduplicate', entity.type, newSuggestions)
+  await createTask(uri, 'deduplicate', entity.type, newSuggestions)
   await updateRelationScore(uri)
 }
 
-const getExistingTasks = uri => tasks_.bySuspectUris([ uri ])
+const getExistingTasks = uri => getTasksBySuspectUris([ uri ])

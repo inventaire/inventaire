@@ -1,7 +1,11 @@
-const wdIdByIso6391Code = require('wikidata-lang/mappings/wd_id_by_iso_639_1_code.json')
-const groupsData = require('isbn-groups')
+import groupsData from 'isbn-groups'
+import { requireJson } from '#lib/utils/json'
 
-const groupsMap = module.exports = {}
+const wdIdByIso6391Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_1_code.json')
+
+const groupsMap = {}
+
+export default groupsMap
 
 for (const gs1Prefix in groupsData) {
   const gs1PrefixData = groupsData[gs1Prefix]

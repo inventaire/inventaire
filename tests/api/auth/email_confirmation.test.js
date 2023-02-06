@@ -1,9 +1,13 @@
-require('should')
-const { customAuthReq, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import dbFactory from '#db/couchdb/base'
+import { BasicUpdater } from '#lib/doc_updates'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createUserEmail } from '../fixtures/users.js'
+import { getUserGetter } from '../utils/utils.js'
+
 const endpoint = '/api/auth?action=email-confirmation'
-const { createUserEmail } = require('../fixtures/users')
-const { BasicUpdater } = require('lib/doc_updates')
-const db = require('db/couchdb/base')('users')
+const db = dbFactory('users')
 
 describe('auth:email-confirmation', () => {
   it('should send a confirmation if email is not validated ', async () => {

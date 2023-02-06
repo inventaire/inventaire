@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const { ownerSafeData } = require('./lib/authorized_user_data_pickers')
+import _ from '#builders/utils'
+import { setUserStableUsername } from '#controllers/user/lib/user'
+import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
 const controller = async (params, req, res) => {
   // The logged in user as its document set on req.user by passport.js
@@ -13,7 +13,7 @@ const controller = async (params, req, res) => {
     // on the hypothesis that we will always return the same username for a given user
     // This behavior is tailored
     if (attributesShortlist.includes('stableUsername')) {
-      await user_.setStableUsername(userData)
+      await setUserStableUsername(userData)
     }
     return _.pick(userData, attributesShortlist)
   } else {
@@ -31,4 +31,4 @@ const attributesByScope = {
   email: 'email',
 }
 
-module.exports = { sanitization: {}, controller }
+export default { sanitization: {}, controller }

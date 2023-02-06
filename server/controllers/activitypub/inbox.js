@@ -1,31 +1,33 @@
-const _ = require('builders/utils')
-const { verifySignature } = require('./lib/security')
-const error_ = require('lib/error/error')
+import { error_ } from '#lib/error/error'
+import { warn } from '#lib/utils/logs'
+import Follow from './follow.js'
+import { verifySignature } from './lib/security.js'
+import Undo from './undo.js'
 
 const inboxActivityTypes = {
   Create: null,
   Delete: null,
-  Follow: require('./follow'),
-  Undo: require('./undo'),
+  Follow,
+  Undo,
 }
 
 const sanitization = {
   id: {
     // override couchUuid validation
-    generic: 'string'
+    generic: 'string',
   },
   type: {
-    allowlist: Object.keys(inboxActivityTypes)
+    allowlist: Object.keys(inboxActivityTypes),
   },
   '@context': {
     allowlist: [
       'https://www.w3.org/ns/activitystreams',
       'https://w3id.org/security/v1',
-    ]
+    ],
   },
   actor: {},
   object: {
-    generic: 'stringOrObject'
+    generic: 'stringOrObject',
   },
 
   cc: { generic: 'ignore' },
@@ -53,12 +55,12 @@ const controller = async (params, req) => {
     const message = 'unsupported activity type'
     const err = error_.new(message, 400, params)
     err.mute = true
-    _.warn(`${message}: ${type}`)
+    warn(`${message}: ${type}`)
     throw err
   }
 }
 
-module.exports = {
+export default {
   sanitization,
-  controller
+  controller,
 }

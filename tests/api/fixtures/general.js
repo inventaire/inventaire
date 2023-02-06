@@ -1,3 +1,1 @@
-module.exports = {
-  someCouchUuid: '00000000000000000000000000000000',
-}
+export const someCouchUuid = '00000000000000000000000000000000'

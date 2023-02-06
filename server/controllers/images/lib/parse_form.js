@@ -1,6 +1,8 @@
-const { IncomingForm } = require('formidable')
+import formidable from 'formidable'
 
-module.exports = req => new Promise((resolve, reject) => {
+const { IncomingForm } = formidable
+
+export default req => new Promise((resolve, reject) => {
   const form = new IncomingForm()
   return form.parse(req, (err, fields, files) => {
     if (err) reject(err)

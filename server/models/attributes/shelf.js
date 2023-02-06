@@ -1,4 +1,6 @@
-const attributes = module.exports = {}
+const attributes = {}
+
+export default attributes
 
 attributes.updatable = [
   'description',
@@ -8,7 +10,7 @@ attributes.updatable = [
 ]
 
 attributes.validAtCreation = attributes.updatable.concat([
-  'owner'
+  'owner',
 ])
 
 attributes.private = [

@@ -1,12 +1,12 @@
-const error_ = require('lib/error/error')
-const groups_ = require('./groups')
-const lists_ = require('./users_lists')
-const leave_ = require('./leave_groups')
+import { getInvitedUser } from '#controllers/groups/lib/groups'
+import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
+import { userIsInAdmins, userIsInGroup, userIsInGroupOrRequested, userIsInRequested } from '#controllers/groups/lib/users_lists'
+import { error_ } from '#lib/error/error'
 
 const validateRequestDecision = (reqUserId, groupId, requesterId) => {
   return Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInRequested(requesterId, groupId)
+    userIsInAdmins(reqUserId, groupId),
+    userIsInRequested(requesterId, groupId),
   ])
   .then(([ userInAdmins, requesterInRequested ]) => {
     if (!userInAdmins) {
@@ -19,7 +19,7 @@ const validateRequestDecision = (reqUserId, groupId, requesterId) => {
 }
 
 const validateInvite = (reqUserId, groupId, invitedUserId) => {
-  return lists_.userInGroup(reqUserId, groupId)
+  return userIsInGroup(reqUserId, groupId)
   .then(invitorInGroup => {
     if (!invitorInGroup) {
       const context = { reqUserId, groupId, invitedUserId }
@@ -29,7 +29,7 @@ const validateInvite = (reqUserId, groupId, invitedUserId) => {
 }
 
 const validateAdmin = (reqUserId, groupId) => {
-  return lists_.userInAdmins(reqUserId, groupId)
+  return userIsInAdmins(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('user is not a group admin', 403, reqUserId, groupId)
@@ -39,8 +39,8 @@ const validateAdmin = (reqUserId, groupId) => {
 
 const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
   return Promise.all([
-    lists_.userInAdmins(reqUserId, groupId),
-    lists_.userInAdmins(targetId, groupId)
+    userIsInAdmins(reqUserId, groupId),
+    userIsInAdmins(targetId, groupId),
   ])
   .then(([ userIsAdmin, targetIsAdmin ]) => {
     if (!userIsAdmin) {
@@ -54,8 +54,8 @@ const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
 
 const validateLeaving = (reqUserId, groupId) => {
   return Promise.all([
-    lists_.userInGroup(reqUserId, groupId),
-    leave_.userCanLeave(reqUserId, groupId)
+    userIsInGroup(reqUserId, groupId),
+    userCanLeaveGroup(reqUserId, groupId),
   ])
   .then(([ userInGroup, userCanLeave ]) => {
     if (!userInGroup) {
@@ -69,7 +69,7 @@ const validateLeaving = (reqUserId, groupId) => {
 }
 
 const validateRequest = (reqUserId, groupId) => {
-  return lists_.userInGroupOrOut(reqUserId, groupId)
+  return userIsInGroupOrRequested(reqUserId, groupId)
   .then(bool => {
     if (bool) {
       throw error_.new('user is already in group', 403, reqUserId, groupId)
@@ -78,7 +78,7 @@ const validateRequest = (reqUserId, groupId) => {
 }
 
 const validateCancelRequest = (reqUserId, groupId) => {
-  return lists_.userInRequested(reqUserId, groupId)
+  return userIsInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
       throw error_.new('request not found', 403, reqUserId, groupId)
@@ -86,11 +86,11 @@ const validateCancelRequest = (reqUserId, groupId) => {
   })
 }
 
-module.exports = {
+export default {
   invite: validateInvite,
-  // /!\ groups_.userInvited returns a group doc, not a boolean
-  accept: groups_.userInvited,
-  decline: groups_.userInvited,
+  // /!\ getInvitedUser returns a group doc, not a boolean
+  accept: getInvitedUser,
+  decline: getInvitedUser,
   request: validateRequest,
   cancelRequest: validateCancelRequest,
   acceptRequest: validateRequestDecision,
@@ -98,5 +98,5 @@ module.exports = {
   updateSettings: validateAdmin,
   makeAdmin: validateAdmin,
   kick: validateAdminWithoutAdminsConflict,
-  leave: validateLeaving
+  leave: validateLeaving,
 }

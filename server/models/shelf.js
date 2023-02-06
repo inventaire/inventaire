@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const validations = require('./validations/shelf')
-const attributes = require('./attributes/shelf')
-const error_ = require('lib/error/error')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import attributes from './attributes/shelf.js'
+import validations from './validations/shelf.js'
 
-module.exports = {
+export default {
   create: shelf => {
     assert_.object(shelf)
     assert_.string(shelf.owner)
@@ -53,10 +53,10 @@ module.exports = {
 
     updatedShelf.updated = Date.now()
     return updatedShelf
-  }
+  },
 }
 
 const defaultValues = {
   description: () => '',
-  visibility: () => []
+  visibility: () => [],
 }

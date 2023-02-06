@@ -1,7 +1,13 @@
-require('should')
-const { shouldNotBeCalled } = require('../utils/utils')
-const { addClaim, getRefreshedPopularityByUri } = require('../utils/entities')
-const { createEdition, createWork, createItemFromEntityUri, createSerie, createHuman } = require('../fixtures/entities')
+import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createEdition,
+  createWork,
+  createItemFromEntityUri,
+  createSerie,
+  createHuman,
+} from '../fixtures/entities.js'
+import { addClaim, getRefreshedPopularityByUri } from '../utils/entities.js'
 
 describe('entities:popularity', () => {
   describe('edition', () => {
@@ -79,11 +85,11 @@ const scoreShouldEqual = async (uri, value) => {
 const createSerieWithAWorkWithAnEditionWithAnItem = async () => {
   const [ work, serie ] = await Promise.all([
     createWork(),
-    createSerie()
+    createSerie(),
   ])
   const [ edition ] = await Promise.all([
     createEdition({ work }),
-    addClaim({ uri: work.uri, property: 'wdt:P179', value: serie.uri })
+    addClaim({ uri: work.uri, property: 'wdt:P179', value: serie.uri }),
   ])
   const item = await createItemFromEntityUri({
     uri: edition.uri,
@@ -96,7 +102,7 @@ const createHumanWithAWorkWithAnEditionWithAnItem = async () => {
   const [ serie, work, edition, item ] = await createSerieWithAWorkWithAnEditionWithAnItem()
   await Promise.all([
     addClaim({ uri: work.uri, property: 'wdt:P50', value: human.uri }),
-    addClaim({ uri: serie.uri, property: 'wdt:P50', value: human.uri })
+    addClaim({ uri: serie.uri, property: 'wdt:P50', value: human.uri }),
   ])
   return [ human, serie, work, edition, item ]
 }

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   autocomplete: {
     type: 'custom',
     // define standard stop words
@@ -13,7 +13,7 @@ module.exports = {
       'asciifolding',
       'custom_word_delimiter',
       'autocomplete_filter',
-    ]
+    ],
   },
   standard_truncated: {
     type: 'custom',
@@ -25,7 +25,7 @@ module.exports = {
       'asciifolding',
       'custom_word_delimiter',
       'truncate_to_max_gram',
-    ]
+    ],
   },
   standard_full: {
     type: 'custom',
@@ -34,6 +34,6 @@ module.exports = {
       'lowercase',
       'asciifolding',
       'custom_word_delimiter',
-    ]
+    ],
   },
 }

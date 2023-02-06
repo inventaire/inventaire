@@ -1,7 +1,7 @@
-const validateAndFormatClaimValue = require('./validate_and_format_claim_value')
-const { validateProperty } = require('./properties/validations')
+import { validateProperty } from './properties/validations.js'
+import validateAndFormatClaimValue from './validate_and_format_claim_value.js'
 
-module.exports = async params => {
+export default async params => {
   const { property } = params
   validateProperty(property)
   return validateAndFormatClaimValue(params)

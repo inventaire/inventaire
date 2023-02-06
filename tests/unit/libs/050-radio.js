@@ -1,7 +1,7 @@
-const CONFIG = require('config')
-const { wait } = require('lib/promises')
-const radio = require('lib/radio')
-require('should')
+import CONFIG from 'config'
+import 'should'
+import { wait } from '#lib/promises'
+import { emit, radio } from '#lib/radio'
 
 // Do not run without having set NODE_ENV
 CONFIG.env.should.startWith('tests')
@@ -14,7 +14,7 @@ describe('radio', () => {
         await wait(100)
         waited = true
       })
-      const promise = radio.emit('foo')
+      const promise = emit('foo')
       promise.should.be.a.Promise()
       await promise
       waited.should.be.true()
@@ -27,7 +27,7 @@ describe('radio', () => {
         waited = true
       })
       radio.on('foo', async () => { throw new Error('nop') })
-      const promise = radio.emit('foo')
+      const promise = emit('foo')
       promise.should.be.a.Promise()
       await promise
       waited.should.be.true()

@@ -1,25 +1,23 @@
-const _ = require('builders/utils')
-const wdk = require('wikidata-sdk')
-const isbn_ = require('lib/isbn/isbn')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 
-const prefixify = (id, prefix) => {
+export const prefixify = (id, prefix) => {
   if (id == null) return
   if (prefix) return `${prefix}:${id}`
 
   if (wdk.isItemId(id)) return `wd:${id}`
   else if (_.isInvEntityId(id)) return `inv:${id}`
   else if (wdk.isPropertyId(id)) return `wdt:${id}`
-  else if (isbn_.isValidIsbn(id)) return `isbn:${isbn_.normalizeIsbn(id)}`
+  else if (isValidIsbn(id)) return `isbn:${normalizeIsbn(id)}`
   else throw new Error('unknown id format')
 }
 
-const Prefixify = prefix => id => prefixify(id, prefix)
+export const Prefixify = prefix => id => prefixify(id, prefix)
 
-const prefixifyWd = Prefixify('wd')
-const prefixifyWdProperty = Prefixify('wdt')
-const prefixifyInv = Prefixify('inv')
-const prefixifyIsbn = isbn => prefixify(isbn_.normalizeIsbn(isbn), 'isbn')
+export const prefixifyWd = Prefixify('wd')
+export const prefixifyWdProperty = Prefixify('wdt')
+export const prefixifyInv = Prefixify('inv')
+export const prefixifyIsbn = isbn => prefixify(normalizeIsbn(isbn), 'isbn')
 
-const unprefixify = uri => uri.split(':')[1]
-
-module.exports = { prefixify, Prefixify, unprefixify, prefixifyWd, prefixifyWdProperty, prefixifyInv, prefixifyIsbn }
+export const unprefixify = uri => uri.split(':')[1]

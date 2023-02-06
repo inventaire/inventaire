@@ -1,6 +1,6 @@
-const _ = require('builders/utils')
-const Element = require('models/element')
-require('should')
+import _ from '#builders/utils'
+import Element from '#models/element'
+import 'should'
 
 const { create } = Element
 
@@ -9,7 +9,7 @@ const validUri = 'inv:12345678900987654321123456789012'
 
 const validListing = {
   uri: validUri,
-  list: validDocId
+  list: validDocId,
 }
 
 describe('element model', () => {

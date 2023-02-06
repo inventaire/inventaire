@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const checkEntity = require('./lib/check_entity')
+import _ from '#builders/utils'
+import checkEntity from './lib/check_entity.js'
 
 const sanitization = {
-  uris: {}
+  uris: {},
 }
 
 const controller = async ({ uris }) => {
@@ -10,4 +10,4 @@ const controller = async ({ uris }) => {
   return { tasks: _.compact(tasks.flat()) }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,12 +1,13 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { customAuthReq, publicReq } = require('../utils/utils')
-const { waitForIndexation } = require('../utils/search')
-const { createItem, createItemWithEditionAndWork } = require('../fixtures/items')
-const { createEdition } = require('tests/api/fixtures/entities')
-const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
-const { makeFriends } = require('tests/api/utils/relations')
-const { buildUrl } = require('lib/utils/url')
+import should from 'should'
+import _ from '#builders/utils'
+import { createEdition } from '#fixtures/entities'
+import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
+import { buildUrl } from '#lib/utils/url'
+import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
+import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
+import { waitForIndexation } from '../utils/search.js'
+import { publicReq } from '../utils/utils.js'
 
 const search = (reqUser, { group, search }) => {
   const url = buildUrl('/api/items', {

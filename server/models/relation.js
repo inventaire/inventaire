@@ -1,9 +1,11 @@
-const couch_ = require('lib/couch')
-const assert = require('node:assert')
-const assert_ = require('lib/utils/assert_types')
-const { userId } = require('./validations/common')
+import assert from 'node:assert'
+import { joinOrderedIds } from '#lib/couch'
+import { assert_ } from '#lib/utils/assert_types'
+import commonValidations from './validations/common.js'
 
-module.exports = {
+const { userId } = commonValidations
+
+export default {
   create: (id, status) => {
     assertValidId(id)
     assertValidStatus(status)
@@ -11,14 +13,14 @@ module.exports = {
       _id: id,
       type: 'relation',
       status,
-      created: Date.now()
+      created: Date.now(),
     }
   },
 
   docId: (userId, otherId) => {
     // TODO: add a receiver-read flag to stop notifying already read requestes
-    return couch_.joinOrderedIds(userId, otherId)
-  }
+    return joinOrderedIds(userId, otherId)
+  },
 }
 
 const assertValidId = id => {
@@ -35,5 +37,5 @@ const statuses = [
   'friends',
   'a-requested',
   'b-requested',
-  'none'
+  'none',
 ]

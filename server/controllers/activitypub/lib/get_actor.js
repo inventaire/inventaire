@@ -1,9 +1,10 @@
-const CONFIG = require('config')
-const { validateShelf, validateUser, validateEntity } = require('./validations')
-const { getSharedKeyPair } = require('./shared_key_pair')
-const { buildLink, getActorTypeFromName, defaultLabel, entityUrl } = require('./helpers')
-const { unprefixify } = require('controllers/entities/lib/prefix')
-const buildAttachements = require('./build_attachements')
+import CONFIG from 'config'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import buildAttachements from './build_attachements.js'
+import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
+import { getSharedKeyPair } from './shared_key_pair.js'
+import { validateShelf, validateUser, validateEntity } from './validations.js'
+
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
@@ -13,8 +14,8 @@ const getShelfActor = async name => {
   const links = [
     {
       name: 'shelf',
-      url: `${origin}/shelves/${shelf._id}`
-    }
+      url: `${origin}/shelves/${shelf._id}`,
+    },
   ]
 
   return buildActorObject({
@@ -29,7 +30,7 @@ const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links = [
-    { name: 'inventory', url: `${origin}/inventory/${username}` }
+    { name: 'inventory', url: `${origin}/inventory/${username}` },
   ]
   return buildActorObject({
     actorName: stableUsername,
@@ -44,7 +45,7 @@ const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
   const label = defaultLabel(entity)
   const links = [
-    { name: publicHost, url: entityUrl(entity.uri) }
+    { name: publicHost, url: entityUrl(entity.uri) },
   ]
 
   if (entity.uri.startsWith('wd:')) {
@@ -57,7 +58,7 @@ const getEntityActor = async name => {
     summary: entity.descriptions?.en,
     imagePath: entity.image.url,
     links,
-    attachment
+    attachment,
   })
 }
 
@@ -70,7 +71,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
   const actor = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
-      'https://w3id.org/security/v1'
+      'https://w3id.org/security/v1',
     ],
     type: 'Person',
     id: actorUrl,
@@ -81,15 +82,15 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
     publicKey: {
       id: keyUrl,
-      owner: `${origin}/api/activitypub?action=actor&name=${actorName}`
-    }
+      owner: `${origin}/api/activitypub?action=actor&name=${actorName}`,
+    },
   }
 
   if (imagePath) {
     actor.icon = {
       mediaType: 'image/jpeg',
       type: 'Image',
-      url: imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`
+      url: imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`,
     }
   }
 
@@ -101,7 +102,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
         type: 'PropertyValue',
         name,
         url,
-        value: buildLink(url, value)
+        value: buildLink(url, value),
       }
     })
     actor.attachment = linksAttachements.concat(attachment)
@@ -114,7 +115,7 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
   actor.publicKey = {
     id: keyUrl,
     owner: actorUrl, // must be actor.id
-    publicKeyPem: publicKey
+    publicKeyPem: publicKey,
   }
 
   return actor
@@ -126,7 +127,7 @@ const getActorByType = {
   entity: getEntityActor,
 }
 
-module.exports = name => {
+export default name => {
   const type = getActorTypeFromName(name)
   return getActorByType[type](name)
 }

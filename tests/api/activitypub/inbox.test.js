@@ -1,7 +1,8 @@
-require('should')
-const { createUser, createUsername } = require('../fixtures/users')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { signedReq, makeUrl, createActivity } = require('../utils/activitypub')
+import 'should'
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createUser, createUsername } from '../fixtures/users.js'
+import { signedReq, createActivity } from '../utils/activitypub.js'
 
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
@@ -10,7 +11,7 @@ describe('activitypub:post:inbox', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
         url: inboxUrl,
-        body: {}
+        body: {},
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -29,7 +30,7 @@ describe('activitypub:post:inbox', () => {
       delete body.type
       await signedReq({
         url: inboxUrl,
-        body
+        body,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -45,7 +46,7 @@ describe('activitypub:post:inbox', () => {
       const { username } = await createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
-        url: inboxUrl
+        url: inboxUrl,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -63,7 +64,7 @@ describe('activitypub:post:inbox', () => {
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
         object: actorUrl,
-        url: inboxUrl
+        url: inboxUrl,
       })
       .then(shouldNotBeCalled)
     } catch (err) {

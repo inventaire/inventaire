@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
-const { makeUrl } = require('./helpers')
-const items_ = require('controllers/items/lib/items')
+import _ from '#builders/utils'
+import { getPublicItemsByOwnerAndDate } from '#controllers/items/lib/items'
+import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
+import { makeUrl } from './helpers.js'
 
-module.exports = async (activitiesDocs, user) => {
+export default async (activitiesDocs, user) => {
   if (!_.isNonEmptyArray(activitiesDocs)) return []
   const { stableUsername: name } = user
   const actor = makeUrl({ params: { action: 'actor', name } })
@@ -11,7 +11,7 @@ module.exports = async (activitiesDocs, user) => {
   const { lang } = user
   const { since, until } = findFullRangeFromActivities(activitiesDocs)
 
-  const allActivitiesItems = await items_.publicByOwnerAndDate({
+  const allActivitiesItems = await getPublicItemsByOwnerAndDate({
     ownerId: user._id,
     since,
     until,

@@ -1,6 +1,6 @@
-require('should')
-const { authReq } = require('tests/api/utils/utils')
-const { randomLabel, generateIsbn13 } = require('tests/api/fixtures/entities')
+import 'should'
+import { randomLabel, generateIsbn13 } from '#fixtures/entities'
+import { authReq } from '#tests/api/utils/utils'
 
 describe('entities:resolve:non-strict mode', () => {
   it('should ignore and report sanitization errors (invalid isbn)', async () => {
@@ -24,9 +24,9 @@ describe('entities:resolve:non-strict mode', () => {
     const entry = {
       edition: {
         isbn: generateIsbn13(),
-        claims: { 'wdt:P1476': [ randomLabel() ] }
+        claims: { 'wdt:P1476': [ randomLabel() ] },
       },
-      works: [ {} ]
+      works: [ {} ],
     }
     const res = await authReq('post', '/api/entities?action=resolve', { entries: [ entry ], create: true, strict: false })
     res.entries.should.deepEqual([])

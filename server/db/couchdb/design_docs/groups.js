@@ -1,13 +1,13 @@
-module.exports = {
+export default {
   byId: {
     map: doc => {
       if (doc.type === 'group') emit(doc._id, null)
-    }
+    },
   },
   bySlug: {
     map: doc => {
       if (doc.type === 'group') emit(doc.slug, null)
-    }
+    },
   },
   byUser: {
     map: doc => {
@@ -19,14 +19,14 @@ module.exports = {
           emit(admin.user, null)
         }
       }
-    }
+    },
   },
   byName: {
     map: doc => {
       if (doc.type === 'group') {
         emit(doc.name.toLowerCase(), null)
       }
-    }
+    },
   },
   byInvitedUser: {
     map: doc => {
@@ -35,7 +35,7 @@ module.exports = {
           emit(invitation.user, null)
         }
       }
-    }
+    },
   },
   byPicture: {
     map: doc => {
@@ -44,6 +44,6 @@ module.exports = {
           emit(doc.picture.split('/')[3], null)
         }
       }
-    }
-  }
+    },
+  },
 }

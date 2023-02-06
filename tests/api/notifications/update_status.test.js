@@ -1,8 +1,9 @@
-const _ = require('builders/utils')
-require('should')
-const { getUser, getReservedUser, customAuthReq } = require('tests/api/utils/utils')
-const { makeFriends } = require('tests/api/utils/relations')
-const { getNotifications } = require('tests/api/utils/notifications')
+import _ from '#builders/utils'
+import 'should'
+import { getNotifications } from '#tests/api/utils/notifications'
+import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser, getReservedUser } from '#tests/api/utils/utils'
 
 describe('notifications:update status', () => {
   it('should update a notification', async () => {
@@ -13,7 +14,7 @@ describe('notifications:update status', () => {
     notifications.length.should.equal(1)
     notifications[0].status.should.equal('unread')
     await customAuthReq(user, 'post', '/api/notifications', {
-      times: _.map(notifications, 'time')
+      times: _.map(notifications, 'time'),
     })
     const updatedNotifications = await getNotifications({ user, type: 'friendAcceptedRequest', subject: friend._id })
     updatedNotifications.length.should.equal(1)

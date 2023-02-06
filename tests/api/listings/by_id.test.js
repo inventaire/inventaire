@@ -1,7 +1,7 @@
-const should = require('should')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { publicReq, authReqB } = require('../utils/utils')
-const { createListing, createElement } = require('../fixtures/listings')
+import should from 'should'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createListing, createElement } from '../fixtures/listings.js'
+import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
 

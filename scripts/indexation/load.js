@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const { indexes } = require('db/elasticsearch/indexes')
-const { logErrorAndExit } = require('../scripts_utils')
-const split = require('split')
-const { red } = require('chalk')
-const formatters = require('db/elasticsearch/formatters/formatters')
-const filters = require('db/elasticsearch/filters')
-const deindex = require('db/elasticsearch/deindex')
-const { addToBatch, postBatch } = require('db/elasticsearch/bulk')
-const createIndex = require('db/elasticsearch/create_index')
-const { wait } = require('lib/promises')
+import split from 'split'
+import { red } from 'tiny-chalk'
+import { addToBatch, postBatch } from '#db/elasticsearch/bulk'
+import createIndex from '#db/elasticsearch/create_index'
+import deindex from '#db/elasticsearch/deindex'
+import filters from '#db/elasticsearch/filters'
+import formatters from '#db/elasticsearch/formatters/formatters'
+import { indexes } from '#db/elasticsearch/indexes'
+import { wait } from '#lib/promises'
+import { warn, success, info, logError, LogError } from '#lib/utils/logs'
+import { logErrorAndExit } from '../scripts_utils.js'
+
 const [ indexBaseName ] = process.argv.slice(2)
 const indexBaseNames = Object.keys(indexes)
 
@@ -62,7 +62,7 @@ const addLine = async line => {
   if (batch.length >= 4000) await post()
 }
 
-const logStatusPeriodically = () => _.info({ received, queued, indexed, dropped }, 'indexation:load status')
+const logStatusPeriodically = () => info({ received, queued, indexed, dropped }, 'indexation:load status')
 const statusLogInterval = setInterval(logStatusPeriodically, 5000)
 const lastStatusLog = () => {
   clearInterval(statusLogInterval)
@@ -82,24 +82,24 @@ const loadFromStdin = () => {
       .catch(err => {
         err.context = err.context || {}
         err.context.line = line
-        _.error(err, 'loadFromStdin addLine error')
+        logError(err, 'loadFromStdin addLine error')
       })
     if (ongoing < 3 && this.paused) this.resume()
     ongoing--
   })
   .on('close', async () => {
-    _.info(`${indexBaseName} indexation:load stdin closed`)
+    info(`${indexBaseName} indexation:load stdin closed`)
     await waitForAllOngoingLines()
     await post().catch(stopLoading)
-    _.success(`${indexBaseName} indexation:load done`)
+    success(`${indexBaseName} indexation:load done`)
     lastStatusLog()
   })
-  .on('error', _.Error(`${indexBaseName} indexation:load err`))
+  .on('error', LogError(`${indexBaseName} indexation:load err`))
 }
 
 const waitForAllOngoingLines = async () => {
   if (ongoing === 0) return
-  _.warn(`waiting for ${ongoing} lines`)
+  warn(`waiting for ${ongoing} lines`)
   await wait(1000)
   return waitForAllOngoingLines()
 }

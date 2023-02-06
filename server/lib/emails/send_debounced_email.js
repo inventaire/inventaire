@@ -1,8 +1,8 @@
-const transporter_ = require('./transporter')
-const buildTransactionEmail = require('./build_transaction_email')
-const { catchDisabledEmails } = require('./helpers')
+import { sendMail } from '#lib/emails/transporter'
+import buildTransactionEmail from './build_transaction_email.js'
+import { catchDisabledEmails } from './helpers.js'
 
-module.exports = {
+export const debouncedEmailSenderByName = {
   transactionUpdate: async transactionId => {
     let email
     try {
@@ -13,6 +13,6 @@ module.exports = {
 
     if (!email) return
 
-    return transporter_.sendMail(email)
-  }
+    return sendMail(email)
+  },
 }

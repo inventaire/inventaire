@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const entities_ = require('./entities')
-const updateInvClaim = require('./update_inv_claim')
-const placeholders_ = require('./placeholders')
-const { unprefixify } = require('controllers/entities/lib/prefix')
+import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import { removePlaceholder } from '#controllers/entities/lib/placeholders'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { wait } from '#lib/promises'
+import { warn } from '#lib/utils/logs'
+import updateInvClaim from './update_inv_claim.js'
 
-module.exports = (user, uris) => {
+export default (user, uris) => {
   const reqUserId = user._id
 
   // Removing sequentially to avoid edit conflicts if entities or items
@@ -17,9 +17,9 @@ module.exports = (user, uris) => {
 
     const id = unprefixify(uri)
 
-    _.warn(uri, 'removing entity')
+    warn(uri, 'removing entity')
 
-    await placeholders_.remove(reqUserId, id)
+    await removePlaceholder(reqUserId, id)
     await deleteUriValueClaims(user, uri)
     await wait(100)
     return removeNext()
@@ -29,7 +29,7 @@ module.exports = (user, uris) => {
 }
 
 const deleteUriValueClaims = async (user, uri) => {
-  const claimsData = await entities_.byClaimsValue(uri)
+  const claimsData = await getEntitiesByClaimsValue(uri)
   return removeClaimsSequentially(user, uri, claimsData)
 }
 
@@ -37,7 +37,7 @@ const removeClaimsSequentially = (user, uri, claimsData) => {
   const removeNextClaim = async () => {
     const claimData = claimsData.pop()
     if (claimData == null) return
-    _.warn(claimData, `removing claims with value: ${uri}`)
+    warn(claimData, `removing claims with value: ${uri}`)
     await removeClaim(user, uri, claimData)
     await wait(100)
     return removeNextClaim()

@@ -1,9 +1,11 @@
-const CONFIG = require('config')
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
+import CONFIG from 'config'
+import 'should'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { rawRequest } from '../utils/request.js'
+import { publicReq } from '../utils/utils.js'
+
 const host = CONFIG.getPublicOrigin()
-const { fixedEncodeURIComponent } = require('lib/utils/url')
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {

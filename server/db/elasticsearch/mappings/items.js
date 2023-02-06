@@ -1,6 +1,6 @@
-const { autocompleteText, keyword, keywordArray, date } = require('./mappings_datatypes')
+import { autocompleteText, keyword, keywordArray, date } from './mappings_datatypes.js'
 
-module.exports = {
+export default {
   properties: {
     _rev: keyword,
     owner: keyword,
@@ -21,7 +21,7 @@ module.exports = {
         // Indexation can not be disabled here as it's not possible with type=keyword
         // See https://www.elastic.co/guide/en/elasticsearch/reference/current/enabled.html
         'entity:image': keyword,
-      }
-    }
-  }
+      },
+    },
+  },
 }

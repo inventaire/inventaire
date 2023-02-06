@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
 
-const validations = module.exports = {
+const validations = {
   attribute: _.isString,
   boolean: _.isBoolean,
   couchUuid: _.isCouchUuid,
@@ -29,13 +29,18 @@ const validations = module.exports = {
   shelves: shelves => _.isArray(shelves) && _.every(shelves, _.isCouchUuid),
 }
 
-validations.boundedString = (str, minLength, maxLength) => {
+export default validations
+
+export const boundedString = (str, minLength, maxLength) => {
   return _.isString(str) && (minLength <= str.length && str.length <= maxLength)
 }
 
-validations.BoundedString = (minLength, maxLength) => str => {
+export const BoundedString = (minLength, maxLength) => str => {
   return validations.boundedString(str, minLength, maxLength)
 }
+
+validations.boundedString = boundedString
+validations.BoundedString = BoundedString
 
 validations.imgUrl = url => validations.localImg(url) || _.isUrl(url) || _.isImageHash(url)
 

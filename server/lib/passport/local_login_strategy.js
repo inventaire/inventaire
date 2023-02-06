@@ -1,3 +1,4 @@
-const verify = require('./verify_username_password')
-const { Strategy: LocalStrategy } = require('passport-local')
-module.exports = new LocalStrategy(verify)
+import { Strategy as LocalStrategy } from 'passport-local'
+import verify from './verify_username_password.js'
+
+export default new LocalStrategy(verify)

@@ -1,20 +1,21 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
+import _ from '#builders/utils'
+import { getEntitiesByClaimsValue, getEntitiesByIds, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { log } from '#lib/utils/logs'
+import Entity from '#models/entity'
 
-module.exports = (userId, fromUri, toUri) => entities_.byClaimsValue(fromUri)
-.then(results => {
+export default async function (userId, fromUri, toUri) {
+  const results = await getEntitiesByClaimsValue(fromUri)
   const entitiesToEditIds = _.map(results, 'entity')
-  _.log(entitiesToEditIds, 'entitiesToEditIds')
+  log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
   // Doing all the redirects at once to avoid conflicts
   // within a same entity pointing several times to the redirected entity.
   // There is no identified case at the moment though.
-  return entities_.byIds(entitiesToEditIds)
-  .then(redirectEntitiesClaims(results, userId, fromUri, toUri))
-})
+  const entities = await getEntitiesByIds(entitiesToEditIds)
+  return redirectEntitiesClaims({ results, userId, fromUri, toUri, entities })
+}
 
-const redirectEntitiesClaims = (results, userId, fromUri, toUri) => entities => {
+const redirectEntitiesClaims = ({ results, userId, fromUri, toUri, entities }) => {
   const entitiesIndex = _.keyBy(entities, '_id')
   const entitiesIndexBeforeUpdate = _.cloneDeep(entitiesIndex)
 
@@ -26,7 +27,7 @@ const redirectEntitiesClaims = (results, userId, fromUri, toUri) => entities => 
     const currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
     // Add a context in case we need to revert those redirections later on
     const context = { redirectClaims: { fromUri } }
-    return entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+    return putEntityUpdate({ userId, currentDoc, updatedDoc, context })
   })
 
   return Promise.all(updatesPromises)

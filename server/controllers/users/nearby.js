@@ -1,13 +1,13 @@
-const user_ = require('controllers/user/lib/user')
+import { getUsersAuthorizedDataByIds, getUsersNearby } from '#controllers/user/lib/user'
 
 const sanitization = {
-  range: {}
+  range: {},
 }
 
 const controller = async ({ reqUserId, range }) => {
-  const usersIds = await user_.nearby(reqUserId, range)
-  const users = await user_.getUsersByIds(usersIds, reqUserId)
+  const usersIds = await getUsersNearby(reqUserId, range)
+  const users = await getUsersAuthorizedDataByIds(usersIds, reqUserId)
   return { users }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,7 +1,9 @@
-require('should')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
+import 'should'
+import { getRandomString } from '#lib/utils/random_string'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=wp-extract'
-const randomString = require('lib/utils/random_string')
 
 describe('wikipedia:extract', () => {
   it('should reject without title', async () => {
@@ -13,7 +15,7 @@ describe('wikipedia:extract', () => {
   })
 
   it('should reject when no page is found', async () => {
-    const randomTitle = randomString(15)
+    const randomTitle = getRandomString(15)
     await publicReq('get', `${endpoint}&title=${randomTitle}`)
     .then(shouldNotBeCalled)
     .catch(err => {

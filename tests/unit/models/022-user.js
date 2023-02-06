@@ -1,6 +1,5 @@
-const should = require('should')
-
-const User = require('models/user')
+import should from 'should'
+import User from '#models/user'
 
 const _create = args => User._create.apply(null, args)
 const create = args => User.create.apply(null, args)
@@ -10,7 +9,7 @@ const validUser = () => [
   'hi@validemail.org',
   'local',
   'se',
-  'password'
+  'password',
 ]
 
 const replaceParam = (index, value, baseArgGen = validUser) => {
@@ -103,7 +102,7 @@ describe('user model', () => {
         _id: user._id,
         _rev: user._rev,
         username: user.username,
-        type: 'deletedUser'
+        type: 'deletedUser',
       })
     })
   })
@@ -112,7 +111,7 @@ describe('user model', () => {
     const counts = {
       private: { 'items:count': 1 },
       network: { 'items:count': 2 },
-      public: { 'items:count': 3 }
+      public: { 'items:count': 3 },
     }
 
     it('should update items counts', () => {

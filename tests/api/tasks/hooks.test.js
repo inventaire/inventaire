@@ -1,10 +1,9 @@
-const should = require('should')
-const { merge, revertMerge } = require('../utils/entities')
-const { wait } = require('lib/promises')
-const { createHuman } = require('../fixtures/entities')
-const { deleteByUris: deleteEntityByUris, findOrIndexEntities } = require('../utils/entities')
-const { createTask } = require('../fixtures/tasks')
-const { getByIds, getBySuspectUri, update, checkEntities } = require('../utils/tasks')
+import should from 'should'
+import { wait } from '#lib/promises'
+import { createHuman } from '../fixtures/entities.js'
+import { createTask } from '../fixtures/tasks.js'
+import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities.js'
+import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks.js'
 
 describe('tasks:hooks', () => {
   describe('entity merge', () => {
@@ -13,7 +12,7 @@ describe('tasks:hooks', () => {
       const wikidataUris = [
         'wd:Q535', 'wd:Q54551995', // some Victor Hugos
         'wd:Q3182477', 'wd:Q228024', // some John Smiths
-        'wd:Q237087' // Fred Vargas
+        'wd:Q237087', // Fred Vargas
       ]
       await findOrIndexEntities(wikidataUris)
     })
@@ -33,7 +32,7 @@ describe('tasks:hooks', () => {
       const [ suspect, suggestion ] = await Promise.all([ createHuman(), createHuman() ])
       const taskParams = {
         suspectUri: suspect.uri,
-        suggestionUri: suggestion.uri
+        suggestionUri: suggestion.uri,
       }
       const task = await createTask(taskParams)
       await merge(suspect.uri, suggestion.uri)

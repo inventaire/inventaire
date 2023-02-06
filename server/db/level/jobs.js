@@ -1,9 +1,12 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const getSubDb = require('./get_sub_db')
-const { promisify } = require('node:util')
+import { promisify } from 'node:util'
+import CONFIG from 'config'
+import JobQueueServerAndClient from 'level-jobs'
+import JobsQueueClient from 'level-jobs/client.js'
+import { serverMode } from '#lib/server_mode'
+import { warn, info } from '#lib/utils/logs'
+import getSubDb from './get_sub_db.js'
 
-module.exports = {
+export default {
   // always return an object with 'push' and 'pushBatch' function
   // taking a payload and returning a promise
   initQueue: (jobName, worker, maxConcurrency) => {
@@ -15,9 +18,8 @@ module.exports = {
     }
 
     // Push & run jobs to queue if this job is enabled in config
-    if (CONFIG.serverMode && run) {
-      const JobQueueServerAndClient = require('level-jobs')
-      _.info(`${jobName} job in server & client mode`)
+    if (serverMode && run) {
+      info(`${jobName} job in server & client mode`)
       const depromisifiedWorker = workerDepromisifier(worker)
       return promisifyApi(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))
 
@@ -26,11 +28,10 @@ module.exports = {
     // Typically used in prod to let the alt-instance run the jobs
     // and let the main instance focus on answering user requests
     } else {
-      const JobsQueueClient = require('level-jobs/client')
-      _.warn(`${jobName} job in client mode only`)
+      warn(`${jobName} job in client mode only`)
       return promisifyApi(JobsQueueClient(db))
     }
-  }
+  },
 }
 
 const promisifyApi = API => {

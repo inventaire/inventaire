@@ -1,6 +1,6 @@
 const relationProperty = 'wdt:P123'
 
-module.exports = {
+export default {
   parameters: [ 'qid' ],
 
   relationProperties: [ relationProperty ],
@@ -13,5 +13,5 @@ module.exports = {
   OPTIONAL { ?collection wdt:P577|wdt:P580 ?starting_date }
 }
 ORDER BY DESC(?starting_date)`
-  }
+  },
 }

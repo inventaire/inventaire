@@ -1,13 +1,15 @@
-require('should')
-const { authReq, shouldNotBeCalled } = require('../../utils/utils')
-const { createWork, createSerie, randomLabel, generateIsbn13h } = require('../../fixtures/entities')
+import 'should'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createWork, createSerie, randomLabel, generateIsbn13h } from '../../fixtures/entities.js'
+
 const workEntityPromise = createWork()
 
 describe('entities:editions:create', () => {
   it('should not be able to create an edition entity without a work entity', async () => {
     await authReq('post', '/api/entities?action=create', {
       labels: {},
-      claims: { 'wdt:P31': [ 'wd:Q3331189' ] }
+      claims: { 'wdt:P31': [ 'wd:Q3331189' ] },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -22,8 +24,8 @@ describe('entities:editions:create', () => {
       labels: {},
       claims: {
         'wdt:P31': [ 'wd:Q3331189' ],
-        'wdt:P629': [ workEntity.uri ]
-      }
+        'wdt:P629': [ workEntity.uri ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -39,8 +41,8 @@ describe('entities:editions:create', () => {
       claims: {
         'wdt:P31': [ 'wd:Q3331189' ],
         'wdt:P629': [ workEntity.uri ],
-        'wdt:P1476': [ randomLabel() ]
-      }
+        'wdt:P1476': [ randomLabel() ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -70,6 +72,6 @@ const createEdition = uri => authReq('post', '/api/entities?action=create', {
     'wdt:P31': [ 'wd:Q3331189' ],
     'wdt:P629': [ uri ],
     'wdt:P1476': [ randomLabel() ],
-    'wdt:P212': [ generateIsbn13h() ]
-  }
+    'wdt:P212': [ generateIsbn13h() ],
+  },
 })

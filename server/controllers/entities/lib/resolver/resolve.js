@@ -1,9 +1,9 @@
-const resolveEdition = require('./resolve_edition')
-const { resolveAuthorsByExternalIds, resolveWorksByExternalIds } = require('./resolve_by_external_ids')
-const resolveInContext = require('./resolve_in_context')
-const resolveOnTerms = require('./resolve_on_terms')
+import { resolveAuthorsByExternalIds, resolveWorksByExternalIds } from './resolve_by_external_ids.js'
+import resolveEdition from './resolve_edition.js'
+import resolveInContext from './resolve_in_context.js'
+import resolveOnTerms from './resolve_on_terms.js'
 
-module.exports = async entry => {
+export default async entry => {
   await Promise.all([
     resolveEdition(entry),
     resolveAuthorsByExternalIds(entry),

@@ -1,15 +1,15 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
-const isbn_ = require('lib/isbn/isbn')
-const { getByIsbns: getSeedsByIsbns } = require('data/dataseed/dataseed')
+import { getSeedsByIsbns } from '#data/dataseed/dataseed'
+import { parseIsbn } from '#lib/isbn/parse'
 
 const sanitization = {
   isbn: {},
-  refresh: { optional: true }
+  refresh: { optional: true },
 }
 
 const controller = async ({ isbn, refresh }) => {
-  const data = isbn_.parse(isbn)
+  const data = parseIsbn(isbn)
 
   // Not using source to pass the original input as 'source'
   // has another meaning in entities search
@@ -25,4 +25,4 @@ const controller = async ({ isbn, refresh }) => {
   return data
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

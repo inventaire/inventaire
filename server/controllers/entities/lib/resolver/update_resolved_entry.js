@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const entities_ = require('../entities')
-const convertAndCleanupImageUrl = require('controllers/images/lib/convert_and_cleanup_image_url')
+import _ from '#builders/utils'
+import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { getEntityByIsbn, getEntityById, putEntityUpdate } from '../entities.js'
 
-module.exports = ({ reqUserId, batchId }) => async entry => {
+export default ({ reqUserId, batchId }) => async entry => {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)
@@ -27,9 +27,9 @@ const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
 
 const getEntity = (prefix, entityId) => {
   if (prefix === 'isbn') {
-    return entities_.byIsbn(entityId)
+    return getEntityByIsbn(entityId)
   } else {
-    return entities_.byId(entityId)
+    return getEntityById(entityId)
   }
 }
 
@@ -44,11 +44,11 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
   })
   updateDatePrecision(entity, updatedEntity, seedClaims)
   if (_.isEqual(updatedEntity, entity)) return
-  await entities_.putUpdate({
+  await putEntityUpdate({
     userId: reqUserId,
     currentDoc: entity,
     updatedDoc: updatedEntity,
-    batchId
+    batchId,
   })
 }
 

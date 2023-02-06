@@ -1,6 +1,6 @@
-const getEntitiesByUris = require('./lib/get_entities_by_uris')
-const addRelatives = require('./lib/add_relatives')
-const { pickAttributes, pickLanguages } = require('./lib/pick_attributes')
+import addRelatives from './lib/add_relatives.js'
+import getEntitiesByUris from './lib/get_entities_by_uris.js'
+import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
 
 const sanitization = {
   uris: {},
@@ -14,7 +14,7 @@ const sanitization = {
       'image',
       'originalLang',
     ],
-    optional: true
+    optional: true,
   },
   lang: {
     optional: true,
@@ -25,7 +25,7 @@ const sanitization = {
   autocreate: {
     generic: 'boolean',
     optional: true,
-    default: false
+    default: false,
   },
   relatives: {
     allowlist: [
@@ -33,8 +33,8 @@ const sanitization = {
       'wdt:P179',
       'wdt:P629',
     ],
-    optional: true
-  }
+    optional: true,
+  },
 }
 
 const controller = async ({ uris, attributes, lang, refresh, relatives, autocreate }) => {
@@ -45,4 +45,4 @@ const controller = async ({ uris, attributes, lang, refresh, relatives, autocrea
   return results
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

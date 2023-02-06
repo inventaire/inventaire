@@ -1,10 +1,14 @@
-const formatError = require('./format_error')
+import errorHandler from '#lib/error/error_handler'
+import preFilled from '#lib/error/pre_filled'
+import formatError from './format_error.js'
 
 let assert_
-const requireCircularDependencies = () => { assert_ = require('lib/utils/assert_types') }
-setImmediate(requireCircularDependencies)
+const importCircularDependencies = async () => {
+  ;({ assert_ } = await import('#lib/utils/assert_types'))
+}
+setImmediate(importCircularDependencies)
 
-const error_ = module.exports = {}
+export const error_ = {}
 
 // help bundling information at error instanciation
 // so that it can be catched and parsed in a standardized way
@@ -28,7 +32,7 @@ error_.addContext = (err, additionalContext) => {
   return err
 }
 
-const errorHandler = error_.handler = require('./error_handler')
+error_.handler = errorHandler
 
 // error_.handler with a binded res object
 // to be used in final promise chains like so:
@@ -50,14 +54,14 @@ error_.unauthorized = (req, message, context) => {
   return error_.new(message, statusCode, context)
 }
 
-error_.catchNotFound = err => {
+export const catchNotFound = err => {
   // notFound flag is set by: levelup, error_.notFound
   if (err && (err.notFound || err.statusCode === 404)) return
   throw err
 }
 
-error_.addContextToStack = err => {
+export const addContextToStack = err => {
   if (err.context) err.stack += `\n[Context] ${JSON.stringify(err.context)}`
 }
 
-Object.assign(error_, require('./pre_filled')(error_))
+Object.assign(error_, preFilled(error_))

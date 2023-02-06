@@ -1,9 +1,9 @@
-require('should')
-const { getUser, getReservedUser } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
-const { createItem, createItems } = require('../fixtures/items')
-const { getSomeGroup, createGroup } = require('../fixtures/groups')
-const { createShelf, createShelfWithItems } = require('../fixtures/shelves')
+import 'should'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { createItem, createItems } from '../fixtures/items.js'
+import { createShelf, createShelfWithItems } from '../fixtures/shelves.js'
+import { rawRequest } from '../utils/request.js'
+import { getUser, getReservedUser } from '../utils/utils.js'
 
 describe('feeds:get', () => {
   describe('user', () => {
@@ -20,7 +20,7 @@ describe('feeds:get', () => {
 
       const [ user, item ] = await Promise.all([
         userPromise,
-        itemPromise
+        itemPromise,
       ])
       const userId = user._id
       const { body } = await rawRequest('get', `/api/feeds?user=${userId}`)

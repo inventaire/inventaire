@@ -1,4 +1,4 @@
-const buildEntryFromFormattedRows = (formattedRows, getSourceId) => {
+export const buildEntryFromFormattedRows = (formattedRows, getSourceId) => {
   if (formattedRows.length === 0) return
 
   const editions = {}
@@ -34,5 +34,3 @@ const addByExternalId = (getSourceId, index, row, entityTypeName) => {
   const bnfId = getSourceId(draftEntity)
   index[bnfId] = draftEntity
 }
-
-module.exports = { buildEntryFromFormattedRows }

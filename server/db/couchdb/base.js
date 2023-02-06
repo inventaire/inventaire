@@ -1,10 +1,11 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const getDbApi = require('./cot_base')
-const memoize = require('lib/utils/memoize')
-const databases = require('db/couchdb/databases')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import bundlesFactory from '#db/couchdb/bundles'
+import { databases } from '#db/couchdb/databases'
+import { memoize } from '#lib/utils/memoize'
+import getDbApi from './cot_base.js'
 
-module.exports = (dbBaseName, designDocName) => {
+export default (dbBaseName, designDocName) => {
   const dbName = CONFIG.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,
   // assumes that it is the default design doc, which has the same name as the dbBaseName
@@ -17,7 +18,7 @@ module.exports = (dbBaseName, designDocName) => {
 const getHandler = memoize((dbBaseName, dbName, designDocName) => {
   validate(dbBaseName, designDocName)
   const db = getDbApi(dbName, designDocName)
-  const bundles = require('./bundles')(db, _)
+  const bundles = bundlesFactory(db, _)
   return Object.assign(db, bundles, { dbBaseName, dbName, designDocName })
 })
 

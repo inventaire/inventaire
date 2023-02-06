@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-const parseForm = require('./lib/parse_form')
-const error_ = require('lib/error/error')
-const { containers, uploadContainersNames } = require('./lib/containers')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { Log } from '#lib/utils/logs'
+import { containers, uploadContainersNames } from './lib/containers.js'
+import parseForm from './lib/parse_form.js'
 
 const sanitization = {
   nonJsonBody: true,
   container: {
     generic: 'allowlist',
-    allowlist: uploadContainersNames
+    allowlist: uploadContainersNames,
   },
 }
 
@@ -21,7 +22,7 @@ const controller = async (params, req) => {
 
   return Promise.all(files.map(putImage))
   .then(indexUrlById)
-  .then(_.Log('uploaded images'))
+  .then(Log('uploaded images'))
 }
 
 const getFilesFromFormData = formData => {
@@ -54,4 +55,4 @@ const indexUrlById = collection => {
   return index
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

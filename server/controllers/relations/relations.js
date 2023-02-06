@@ -1,11 +1,12 @@
-const ActionsControllers = require('lib/actions_controllers')
-const relationsActions = require('./actions')
+import ActionsControllers from '#lib/actions_controllers'
+import relationsActions from './actions.js'
+import get from './get.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
-      default: require('./get')
-    }
+      default: get,
+    },
   }),
 
   post: ActionsControllers({
@@ -14,7 +15,7 @@ module.exports = {
       cancel: relationsActions('cancel'),
       accept: relationsActions('accept'),
       discard: relationsActions('discard'),
-      unfriend: relationsActions('unfriend')
-    }
-  })
+      unfriend: relationsActions('unfriend'),
+    },
+  }),
 }

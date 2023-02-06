@@ -1,8 +1,10 @@
-const _ = require('builders/utils')
-const slugify = require('controllers/groups/lib/slugify')
-const { pass, boundedString, BoundedString, localImg, boolean, position, userId } = require('./common')
+import _ from '#builders/utils'
+import slugify from '#controllers/groups/lib/slugify'
+import commonValidations from './common.js'
 
-module.exports = {
+const { pass, boundedString, BoundedString, localImg, boolean, position, userId } = commonValidations
+
+export default {
   pass,
 
   // tests expected to be found on Group.tests for updates,
@@ -16,5 +18,5 @@ module.exports = {
   searchable: boolean,
   position,
   open: boolean,
-  creatorId: userId
+  creatorId: userId,
 }

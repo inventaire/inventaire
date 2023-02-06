@@ -1,7 +1,8 @@
-const _ = require('builders/utils')
-const crypto_ = require('lib/crypto')
+import _ from '#builders/utils'
+import { md5 } from '#lib/crypto'
+import { info } from '#lib/utils/logs'
 
-module.exports = data => {
+export default data => {
   const fingerPrint = getFingerPrint(data)
   // If we have a user id, the user is logged in
   if (data.userId) onlineUsers[fingerPrint] = 1
@@ -17,14 +18,14 @@ const updateOnlineUsers = () => {
   const report = `logged in ${loggedUsers} / total ${length}`
 
   // Only log the amount of users online when there is a change
-  if (report !== last) { _.info(report) }
+  if (report !== last) { info(report) }
   last = report
   onlineUsers = {}
 }
 
 const getFingerPrint = (...args) => {
   const str = JSON.stringify(args)
-  return crypto_.md5(str)
+  return md5(str)
 }
 
 setInterval(updateOnlineUsers, 30 * 1000)

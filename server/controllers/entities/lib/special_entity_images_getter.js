@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const getOriginalLang = require('lib/wikidata/get_original_lang')
-const getSerieParts = require('./get_serie_parts')
-const getEntityImagesFromClaims = require('./get_entity_images_from_claims')
+import _ from '#builders/utils'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
+import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
+import getSerieParts from './get_serie_parts.js'
 
-module.exports = {
+export default {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use
   // of the right to fair-use, thus the need to fetch editions covers instead
   work: (entity, limitPerLang = 1) => {
@@ -25,13 +25,13 @@ module.exports = {
 
   collection: async entity => {
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return entities_.byClaim('wdt:P195', entity.uri, true, true)
+    return getEntitiesByClaim('wdt:P195', entity.uri, true, true)
     .then(addEditionsImages(images))
-  }
+  },
 }
 
 const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
-  return entities_.byClaim('wdt:P629', workUri, true, true)
+  return getEntitiesByClaim('wdt:P629', workUri, true, true)
   .then(addEditionsImages(images, limitPerLang))
 }
 

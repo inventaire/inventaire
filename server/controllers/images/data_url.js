@@ -1,12 +1,14 @@
-const _ = require('builders/utils')
-const { cleanupImageUrl } = require('data/dataseed/dataseed')
-const error_ = require('lib/error/error')
-const isPrivateUrl = require('lib/network/is_private_url')
-const fetch = require('node-fetch')
-const { enabled: dataseedEnabled } = require('config').dataseed
+import CONFIG from 'config'
+import fetch from 'node-fetch'
+import { cleanupImageUrl } from '#data/dataseed/dataseed'
+import { error_ } from '#lib/error/error'
+import isPrivateUrl from '#lib/network/is_private_url'
+import { logError } from '#lib/utils/logs'
+
+const { enabled: dataseedEnabled } = CONFIG.dataseed
 
 const sanitization = {
-  url: {}
+  url: {},
 }
 
 // Get an image data-url from a URL
@@ -17,13 +19,13 @@ const controller = async ({ url }) => {
   } catch (err) {
     // In case of server-side request forgery, do not let internal services
     // error responses get out
-    _.error(err, 'data_url private error')
+    logError(err, 'data_url private error')
     throw error_.new('image could not be converted', 400, { url })
   }
 }
 
 const headers = {
-  accept: 'image/*'
+  accept: 'image/*',
 }
 
 const getImageDataUrl = async url => {
@@ -48,4 +50,4 @@ const getImageDataUrl = async url => {
   return `data:${contentType};base64,${buffer}`
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

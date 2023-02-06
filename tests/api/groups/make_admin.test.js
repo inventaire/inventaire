@@ -1,10 +1,12 @@
-const _ = require('builders/utils')
-require('should')
-const { authReq, authReqB, getUserGetter, shouldNotBeCalled } = require('../utils/utils')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
+import _ from '#builders/utils'
+import 'should'
+import { humanName } from '#fixtures/text'
+import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { authReq, authReqB, getUserGetter } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=make-admin'
-const { humanName } = require('../fixtures/entities')
 
 describe('groups:update:make-admin', () => {
   it('should reject without group', async () => {

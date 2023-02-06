@@ -4,34 +4,38 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-const _ = require('builders/utils')
-const { simplify } = require('wikidata-sdk')
-const { propertyClaims: simplifyPropertyClaims } = simplify
-const getOriginalLang = require('lib/wikidata/get_original_lang')
-const formatClaims = require('lib/wikidata/format_claims')
-const getEntityType = require('./get_entity_type')
-const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
-const cache_ = require('lib/cache')
-const getWdEntity = require('data/wikidata/get_entity')
-const addImageData = require('./add_image_data')
-const radio = require('lib/radio')
-const propagateRedirection = require('./propagate_redirection')
-const { _id: hookUserId } = require('db/couchdb/hard_coded_documents').users.hook
-const { partition, map } = require('lodash')
+import { partition, map } from 'lodash-es'
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import getWdEntity from '#data/wikidata/get_entity'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { cache_ } from '#lib/cache'
+import { emit } from '#lib/radio'
+import formatClaims from '#lib/wikidata/format_claims'
+import getOriginalLang from '#lib/wikidata/get_original_lang'
+import addImageData from './add_image_data.js'
+import getEntityType from './get_entity_type.js'
+import propagateRedirection from './propagate_redirection.js'
+
+const { simplify } = wdk
+const { propertyClaims: simplifyPropertyClaims } = wdk.simplify
+const { _id: hookUserId } = hardCodedUsers.hook
 
 let reindex
-const requireCircularDependencies = () => {
-  reindex = require('db/elasticsearch/indexation')('wikidata')
+const importCircularDependencies = async () => {
+  const { default: indexation } = await import('#db/elasticsearch/indexation')
+  reindex = indexation('wikidata')
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
-module.exports = async (ids, params) => {
+export default async (ids, params) => {
   const entities = await Promise.all(ids.map(getCachedEnrichedEntity(params)))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (params.dry) foundEntities = _.compact(foundEntities)
   return {
     entities: foundEntities,
-    notFound: map(notFoundEntities, 'uri')
+    notFound: map(notFoundEntities, 'uri'),
   }
 }
 
@@ -107,7 +111,7 @@ const formatAndPropagateRedirection = async entity => {
     const { from, to } = entity.redirects
     entity.redirects = {
       from: prefixifyWd(from),
-      to: prefixifyWd(to)
+      to: prefixifyWd(to),
     }
 
     // Take advantage of this request for a Wikidata entity to check
@@ -116,7 +120,7 @@ const formatAndPropagateRedirection = async entity => {
     // to their new entity
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
     reindex({ _id: unprefixify(entity.redirects.from), redirect: true })
-    await radio.emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
+    await emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
 }
 
@@ -124,7 +128,7 @@ const formatAndPropagateRedirection = async entity => {
 const formatEmpty = (type, entity) => ({
   id: entity.id,
   uri: `wd:${entity.id}`,
-  type
+  type,
 })
 
 const omitUndesiredPropertiesPerType = (type, claims) => {
@@ -139,5 +143,5 @@ const omitUndesiredPropertiesPerType = (type, claims) => {
 // Ignoring ISBN data set on work entities, as those
 // should be the responsability of edition entities
 const undesiredPropertiesPerType = {
-  work: [ 'P212', 'P957' ]
+  work: [ 'P212', 'P957' ],
 }

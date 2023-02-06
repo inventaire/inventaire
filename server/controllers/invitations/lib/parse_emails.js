@@ -1,11 +1,13 @@
-const _ = require('builders/utils')
-const { parseAddressList } = require('email-addresses')
-const error_ = require('lib/error/error')
+import emailAddresses from 'email-addresses'
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+
+const { parseAddressList } = emailAddresses
 
 // Takes a string (or an array) containing email addresses
 // (typically, the value of a text input filled with emails by a user)
 // and returns an array of parsed emails addresses
-module.exports = emails => {
+export default emails => {
   const emailsString = _.isArray(emails) ? emails.join(',') : emails
 
   if (!_.isNonEmptyString(emailsString)) {

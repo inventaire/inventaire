@@ -1,9 +1,9 @@
-const _ = require('builders/utils')
-const getAuthorWorks = require('controllers/entities/lib/get_author_works')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const { getEntityNormalizedTerms } = require('./terms_normalization')
+import _ from '#builders/utils'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getEntityNormalizedTerms } from './terms_normalization.js'
 
-module.exports = (uri, suspectWorksLabels) => {
+export default (uri, suspectWorksLabels) => {
   return getAuthorWorks({ uri })
   .then(getSuggestionWorks)
   .then(suggestionWorksData => {

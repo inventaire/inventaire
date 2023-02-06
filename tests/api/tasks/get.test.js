@@ -1,7 +1,13 @@
-require('should')
-const { createHuman, someFakeUri } = require('../fixtures/entities')
-const { getByScore, getBySuspectUris, getBySuggestionUris, getByEntitiesType, update } = require('../utils/tasks')
-const { createTask } = require('../fixtures/tasks')
+import 'should'
+import { createHuman, someFakeUri } from '../fixtures/entities.js'
+import { createTask } from '../fixtures/tasks.js'
+import {
+  getByScore,
+  getBySuspectUris,
+  getBySuggestionUris,
+  getByEntitiesType,
+  update,
+} from '../utils/tasks.js'
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {

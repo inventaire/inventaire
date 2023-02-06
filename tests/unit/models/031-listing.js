@@ -1,21 +1,20 @@
-const _ = require('builders/utils')
-const { expired } = require('lib/time')
-const Listing = require('models/listing')
-const { shouldNotBeCalled } = require('../utils')
-require('should')
+import 'should'
+import _ from '#builders/utils'
+import { randomWords } from '#fixtures/text'
+import { expired } from '#lib/time'
+import Listing from '#models/listing'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const someUserId = '1234567890a1234567890b1234567890'
 const { create, updateAttributes: update } = Listing
-
-const fakeText = require('tests/api/fixtures/text')
-const fakeName = fakeText.randomWords(4)
-const fakeDesc = fakeText.randomWords(15)
+const fakeName = randomWords(4)
+const fakeDesc = randomWords(15)
 
 const validListing = {
   creator: someUserId,
   description: fakeDesc,
   visibility: [],
-  name: fakeName
+  name: fakeName,
 }
 
 const extendListing = data => Object.assign({}, validListing, data)

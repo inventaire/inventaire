@@ -1,79 +1,77 @@
-require('should')
-const CONFIG = require('config')
+import 'should'
+import fs, { createReadStream } from 'node:fs'
+import CONFIG from 'config'
+import FormData from 'form-data'
+import fetch from 'node-fetch'
+import downloadImage from '#controllers/images/lib/download_image'
+import { assert_ } from '#lib/utils/assert_types'
+import { getRandomString } from '#lib/utils/random_string'
+import { createEdition } from '../fixtures/entities.js'
+import { createGroup } from '../fixtures/groups.js'
+import { updateClaim } from './entities.js'
+import { updateGroup } from './groups.js'
+import { updateUser } from './users.js'
+import { authReq, getUser } from './utils.js'
+
 const { mediaStorage } = CONFIG
 const host = CONFIG.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
-const randomString = require('lib/utils/random_string')
-const fs = require('node:fs')
-const downloadImage = require('controllers/images/lib/download_image')
-const { authReq, getUser } = require('../utils/utils')
-const { createReadStream } = require('node:fs')
-const fetch = require('node-fetch')
-const FormData = require('form-data')
-const assert_ = require('lib/utils/assert_types')
-const { createEdition } = require('../fixtures/entities')
-const { updateClaim } = require('./entities')
-const { createGroup } = require('../fixtures/groups')
-const { updateGroup } = require('../utils/groups')
-const { updateUser } = require('./users')
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
 }
 
-const someImageUrl = () => `https://via.placeholder.com/1000x1000.jpg?text=${randomString(10)}`
+const someImageUrl = () => `https://via.placeholder.com/1000x1000.jpg?text=${getRandomString(10)}`
 
-module.exports = {
-  getImageDataUrl: async url => {
-    url = encodeURIComponent(url)
-    const { 'data-url': dataUrl } = await authReq('get', `/api/images?action=data-url&url=${url}`)
-    return dataUrl
-  },
+export async function getImageDataUrl (url) {
+  url = encodeURIComponent(url)
+  const { 'data-url': dataUrl } = await authReq('get', `/api/images?action=data-url&url=${url}`)
+  return dataUrl
+}
 
-  importSomeImage: async ({ container }) => {
-    return uploadImageFromUrl({
-      container,
-      url: someImageUrl()
-    })
-  },
+export async function importSomeImage ({ container }) {
+  return uploadImageFromUrl({
+    container,
+    url: someImageUrl(),
+  })
+}
 
-  uploadSomeImage: async ({ container, imageFilePath, preventAutoRemove = false }) => {
-    imageFilePath = imageFilePath || `/tmp/${randomString(10)}.jpg`
-    const imageUrl = someImageUrl()
-    await downloadImage(imageUrl, imageFilePath)
-    const { cookie } = await getUser()
-    const form = new FormData()
-    form.append('somefile', createReadStream(imageFilePath))
-    const res = await fetch(`${host}/api/images?action=upload&container=${container}`, {
-      method: 'post',
-      headers: { cookie, ...form.getHeaders() },
-      body: form,
-    })
-    const { somefile } = await res.json()
-    const hash = somefile.split('/')[3]
-    if (preventAutoRemove) await useImage[container](hash)
-    return {
-      statusCode: res.status,
-      url: somefile,
-      hash,
-      imageFilePath,
-    }
-  },
+export async function uploadSomeImage ({ container, imageFilePath, preventAutoRemove = false }) {
+  imageFilePath = imageFilePath || `/tmp/${getRandomString(10)}.jpg`
+  const imageUrl = someImageUrl()
+  await downloadImage(imageUrl, imageFilePath)
+  const { cookie } = await getUser()
+  const form = new FormData()
+  form.append('somefile', createReadStream(imageFilePath))
+  const res = await fetch(`${host}/api/images?action=upload&container=${container}`, {
+    method: 'post',
+    headers: { cookie, ...form.getHeaders() },
+    body: form,
+  })
+  const { somefile } = await res.json()
+  const hash = somefile.split('/')[3]
+  if (preventAutoRemove) await useImage[container](hash)
+  return {
+    statusCode: res.status,
+    url: somefile,
+    hash,
+    imageFilePath,
+  }
+}
 
-  localContainerHasImage: ({ container, hash, url }) => {
-    if (url) [ container, hash ] = url.split('/').slice(2)
-    assert_.string(hash)
-    const localImagePath = `${localStorageFolder}/${container}/${hash}`
-    try {
-      // Using the sync method so that consumers can chain this function with ".shoud.be.true()"
-      const res = fs.statSync(localImagePath)
-      return res != null
-    } catch (err) {
-      if (err.code === 'ENOENT') return false
-      else throw err
-    }
-  },
+export const localContainerHasImage = ({ container, hash, url }) => {
+  if (url) [ container, hash ] = url.split('/').slice(2)
+  assert_.string(hash)
+  const localImagePath = `${localStorageFolder}/${container}/${hash}`
+  try {
+    // Using the sync method so that consumers can chain this function with ".shoud.be.true()"
+    const res = fs.statSync(localImagePath)
+    return res != null
+  } catch (err) {
+    if (err.code === 'ENOENT') return false
+    else throw err
+  }
 }
 
 const useImage = {

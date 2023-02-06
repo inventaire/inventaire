@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const getAuthorWorks = require('controllers/entities/lib/get_author_works')
-const getEntitiesList = require('../get_entities_list')
+import _ from '#builders/utils'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntitiesList } from '../get_entities_list.js'
 
-module.exports = authorUris => {
+export default authorUris => {
   return Promise.all(authorUris.map(getWorksFromAuthorsUri))
   .then(_.flatten)
 }

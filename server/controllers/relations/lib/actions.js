@@ -1,27 +1,25 @@
-const queries_ = require('./queries')
-const radio = require('lib/radio')
+import { emit } from '#lib/radio'
+import { putFriendStatus, putNoneStatus, putRequestedStatus } from './queries.js'
 
-module.exports = {
-  acceptRequest: async (userId, otherId) => {
-    const res = await queries_.putFriendStatus(userId, otherId)
-    await radio.emit('notify:friend:request:accepted', otherId, userId)
-    return res
-  },
-
-  simultaneousRequest: async (userId, otherId) => {
-    const res = await queries_.putFriendStatus(userId, otherId)
-    await radio.emit('notify:friend:request:accepted', otherId, userId)
-    await radio.emit('notify:friend:request:accepted', userId, otherId)
-    return res
-  },
-
-  makeRequest: async (inviterId, recipientId, notify = true) => {
-    const res = await queries_.putRequestedStatus(inviterId, recipientId)
-    // Use notify=false to avoid emails when a new user is created with waiting
-    // email invitations, which are then converted into requests
-    if (notify) await radio.emit('notify:friendship:request', recipientId, inviterId)
-    return res
-  },
-
-  removeRelation: queries_.putNoneStatus
+export const acceptRequest = async (userId, otherId) => {
+  const res = await putFriendStatus(userId, otherId)
+  await emit('notify:friend:request:accepted', otherId, userId)
+  return res
 }
+
+export const simultaneousRequest = async (userId, otherId) => {
+  const res = await putFriendStatus(userId, otherId)
+  await emit('notify:friend:request:accepted', otherId, userId)
+  await emit('notify:friend:request:accepted', userId, otherId)
+  return res
+}
+
+export const makeRequest = async (inviterId, recipientId, notify = true) => {
+  const res = await putRequestedStatus(inviterId, recipientId)
+  // Use notify=false to avoid emails when a new user is created with waiting
+  // email invitations, which are then converted into requests
+  if (notify) await emit('notify:friendship:request', recipientId, inviterId)
+  return res
+}
+
+export const removeRelation = putNoneStatus

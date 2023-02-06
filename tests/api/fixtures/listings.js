@@ -1,45 +1,44 @@
-const fakeText = require('./text')
-const { customAuthReq } = require('../utils/request')
-const { getUser } = require('../utils/utils')
-const { createEdition } = require('./entities')
-const { addElements } = require('tests/api/utils/listings')
+import { randomWords } from '#fixtures/text'
+import { addElements } from '#tests/api/utils/listings'
+import { customAuthReq } from '#tests/api/utils/request'
+import { getUser } from '../utils/utils.js'
+import { createEdition } from './entities.js'
+
 const endpoint = '/api/lists?action='
 
-const fixtures = module.exports = {
-  listingName: () => fakeText.randomWords(3, ' listing'),
-  listingDescription: () => {
-    return fakeText.randomWords(3, ' listing')
-  },
+export const listingName = () => randomWords(3, ' listing')
+export const listingDescription = () => {
+  return randomWords(3, ' listing')
+}
 
-  createListing: async (userPromise, listingData = {}) => {
-    userPromise = userPromise || getUser()
-    listingData.name = listingData.name || fixtures.listingName()
-    listingData.visibility = listingData.visibility || [ 'public' ]
-    listingData.description = listingData.description || fixtures.listingDescription()
-    const user = await userPromise
-    const { list: listing } = await customAuthReq(user, 'post', `${endpoint}create`, listingData)
-    return { listing, user }
-  },
+export const createListing = async (userPromise, listingData = {}) => {
+  userPromise = userPromise || getUser()
+  listingData.name = listingData.name || listingName()
+  listingData.visibility = listingData.visibility || [ 'public' ]
+  listingData.description = listingData.description || listingDescription()
+  const user = await userPromise
+  const { list: listing } = await customAuthReq(user, 'post', `${endpoint}create`, listingData)
+  return { listing, user }
+}
 
-  createElement: async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
-    userPromise = userPromise || getUser()
-    if (!listing) {
-      const fixtureListing = await fixtures.createListing(userPromise, { visibility })
-      listing = fixtureListing.listing
-    }
-    if (!uri) {
-      const edition = await createEdition()
-      uri = edition.uri
-    }
-    const res = await addElements(userPromise, {
-      id: listing._id,
-      uris: [ uri ]
-    })
-    const { createdElements } = res
-    return {
-      element: createdElements[0],
-      listing,
-      uri
-    }
+export const createElement = async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
+  userPromise = userPromise || getUser()
+  if (!listing) {
+    const fixtureListing = await createListing(userPromise, { visibility })
+    listing = fixtureListing.listing
+  }
+  if (!uri) {
+    const edition = await createEdition()
+    uri = edition.uri
+  }
+  const res = await addElements(userPromise, {
+    id: listing._id,
+    uris: [ uri ],
+  })
+  const { createdElements } = res
+  return {
+    element: createdElements[0],
+    listing,
+    uri,
   }
 }

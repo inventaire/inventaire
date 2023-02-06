@@ -1,14 +1,22 @@
-const queries = {
-  author_works: require('./author_works'),
-  serie_parts: require('./serie_parts'),
-  publisher_collections: require('./publisher_collections'),
-  editions_reverse_claims: require('./editions_reverse_claims'),
-  works_reverse_claims: require('./works_reverse_claims'),
-  humans_reverse_claims: require('./humans_reverse_claims'),
-  resolve_external_ids: require('./resolve_external_ids')
+import authorWorks from './author_works.js'
+import editionsReverseClaims from './editions_reverse_claims.js'
+import humansReverseClaims from './humans_reverse_claims.js'
+import publisherCollections from './publisher_collections.js'
+import resolveExternalIds from './resolve_external_ids.js'
+import serieParts from './serie_parts.js'
+import worksReverseClaims from './works_reverse_claims.js'
+
+export const queries = {
+  author_works: authorWorks,
+  serie_parts: serieParts,
+  publisher_collections: publisherCollections,
+  editions_reverse_claims: editionsReverseClaims,
+  works_reverse_claims: worksReverseClaims,
+  humans_reverse_claims: humansReverseClaims,
+  resolve_external_ids: resolveExternalIds,
 }
 
-const queriesPerProperty = {}
+export const queriesPerProperty = {}
 
 for (const queryName in queries) {
   const { relationProperties } = queries[queryName]
@@ -19,5 +27,3 @@ for (const queryName in queries) {
     })
   }
 }
-
-module.exports = { queries, queriesPerProperty }

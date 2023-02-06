@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { publicReq, authReq, getUser, getUserB } = require('../utils/utils')
-const { createElement } = require('../fixtures/listings')
-const { someFakeUri } = require('tests/api/fixtures/entities')
+import should from 'should'
+import _ from '#builders/utils'
+import { someFakeUri } from '#fixtures/entities'
+import { createElement } from '../fixtures/listings.js'
+import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-entities'
 

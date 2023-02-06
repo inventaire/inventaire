@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('module-alias/register')
-const { incrementUndeliveredMailCounter } = require('controllers/user/lib/user')
-const actionByEmail = require('./lib/action_by_email')
+import { incrementUndeliveredMailCounter } from '#controllers/user/lib/user'
+import actionByEmail from './lib/action_by_email.js'
+
 actionByEmail(incrementUndeliveredMailCounter)

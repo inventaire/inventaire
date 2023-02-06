@@ -1,10 +1,11 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = require('builders/utils')
-const { createTransport, getTestMessageUrl } = require('nodemailer')
-const hbs = require('nodemailer-express-handlebars')
-const handlebarsHelpers = require('./handlebars_helpers')
-const viewsPath = __.path('lib', 'emails/views')
+import CONFIG from 'config'
+import { createTransport, getTestMessageUrl } from 'nodemailer'
+import hbs from 'nodemailer-express-handlebars'
+import { absolutePath } from '#lib/absolute_path'
+import { warn, success, logError } from '#lib/utils/logs'
+import handlebarsHelpers from './handlebars_helpers.js'
+
+const viewsPath = absolutePath('lib', 'emails/views')
 const debugMode = CONFIG.mailer.nodemailer.host === 'smtp.ethereal.email'
 
 const options = {
@@ -13,10 +14,10 @@ const options = {
     layoutsDir: `${viewsPath}/layouts/`,
     defaultLayout: 'template',
     partialsDir: `${viewsPath}/partials/`,
-    helpers: handlebarsHelpers
+    helpers: handlebarsHelpers,
   },
   viewPath: viewsPath,
-  extName: '.hbs'
+  extName: '.hbs',
 }
 
 const { defaultFrom, nodemailer: nodemailerOptions } = CONFIG.mailer
@@ -26,16 +27,14 @@ const transporter = createTransport(nodemailerOptions, defaults)
 
 transporter.use('compile', hbs(options))
 
-module.exports = {
-  sendMail: async email => {
-    const { template, subject } = email
-    try {
-      const info = await transporter.sendMail(email)
-      const inspectUrl = debugMode ? ` inspect="${getTestMessageUrl(info)}"` : ''
-      _.success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
-    } catch (err) {
-      _.error(err, `email error (template="${template}" subject="${subject}")`)
-      return _.warn(email, 'associated email')
-    }
+export async function sendMail (email) {
+  const { template, subject } = email
+  try {
+    const info = await transporter.sendMail(email)
+    const inspectUrl = debugMode ? ` inspect="${getTestMessageUrl(info)}"` : ''
+    success(info, `email sent (template="${template}" subject="${subject}"${inspectUrl})`)
+  } catch (err) {
+    logError(err, `email error (template="${template}" subject="${subject}")`)
+    return warn(email, 'associated email')
   }
 }

@@ -41,10 +41,10 @@ const workAndSerie = all.concat([
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331', // OCLC work ID
   'wdt:P8383', // Goodreads work ID
-  ...socialNetworks
+  ...socialNetworks,
 ])
 
-module.exports = {
+export default {
   edition: all.concat([
     'wdt:P123', // publisher
     'wdt:P195', // collection
@@ -106,7 +106,7 @@ module.exports = {
     'wdt:P5361', // BNB person ID
     'wdt:P5491', // BD Gest' author ID
     'wdt:P7400', // LibraryThing author ID
-    ...socialNetworks
+    ...socialNetworks,
   ]),
 
   publisher: all.concat([
@@ -117,7 +117,7 @@ module.exports = {
     'wdt:P576', // dissolution
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035', // ISBN publisher prefix
-    ...socialNetworks
+    ...socialNetworks,
   ]),
 
   collection: all.concat([
@@ -126,6 +126,6 @@ module.exports = {
     'wdt:P1476', // title
     'wdt:P1680', // subtitle
     'wdt:P921', // main subject
-    ...socialNetworks
-  ])
+    ...socialNetworks,
+  ]),
 }

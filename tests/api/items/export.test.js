@@ -1,14 +1,24 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import 'should'
+import papaparse from 'papaparse'
+import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
+import { getReservedUser } from '#tests/api/utils/utils'
+import {
+  createEdition,
+  createWork,
+  createEditionFromWorks,
+  createEditionWithWorkAuthorAndSerie,
+  addTranslator,
+  someImageHash,
+} from '../fixtures/entities.js'
+import { createItem } from '../fixtures/items.js'
+import { createShelf } from '../fixtures/shelves.js'
+import { createUser } from '../fixtures/users.js'
+import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
+
+const { parse } = papaparse
+
 const host = CONFIG.getPublicOrigin()
-require('should')
-const { customAuthReq, rawCustomAuthReq } = require('tests/api/utils/request')
-const { getReservedUser } = require('tests/api/utils/utils')
-const { createItem } = require('../fixtures/items')
-const { createShelf } = require('../fixtures/shelves')
-const { createEdition, createWork, createEditionFromWorks, createEditionWithWorkAuthorAndSerie, addTranslator, someImageHash } = require('../fixtures/entities')
-const { createUser } = require('../fixtures/users')
-const { getByUri, addClaim, parseLabel, updateLabel } = require('../utils/entities')
-const { parse } = require('papaparse')
 
 const endpoint = '/api/items?action=export&format=csv'
 const generateUrl = path => `${host}${path}`
@@ -43,7 +53,7 @@ describe('items:export', () => {
       const { shelf } = await createShelf(userPromise, { name })
       await customAuthReq(userPromise, 'post', '/api/shelves?action=add-items', {
         id: shelf._id,
-        items: [ item._id ]
+        items: [ item._id ],
       })
 
       const itemRow = await reqAndParse(item._id)
@@ -116,7 +126,7 @@ describe('items:export', () => {
       await Promise.all([
         addClaim({ uri: work.uri, property: 'wdt:P921', value: subjectUri }),
         addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[0] }),
-        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[1] })
+        addClaim({ uri: work.uri, property: 'wdt:P136', value: genresUris[1] }),
       ])
       const item = await createItem(userPromise, { entity: edition.uri })
 

@@ -1,9 +1,9 @@
-const { allUserGroups } = require('./lib/groups')
+import { allUserGroups } from './lib/groups.js'
 
-module.exports = {
+export default {
   sanitization: {},
   controller: async ({ reqUserId }) => {
     const groups = await allUserGroups(reqUserId)
     return { groups }
-  }
+  },
 }

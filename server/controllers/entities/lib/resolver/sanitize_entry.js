@@ -1,15 +1,16 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const isbn_ = require('lib/isbn/isbn')
-const { isValidIsbn, normalizeIsbn } = require('lib/isbn/isbn')
-const wmLanguageCodeByWdId = require('wikidata-lang/mappings/wm_code_by_wd_id.json')
-const sanitizeSeed = require('./sanitize_seed')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
+import { requireJson } from '#lib/utils/json'
+import sanitizeSeed from './sanitize_seed.js'
+
+const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
 // Validate : requires only one edition to resolve from and a valid isbn
 // Format : if edition is a list, force pick the first edition
 // Warn : when a property is unknown
 
-module.exports = entry => {
+export default entry => {
   let { edition } = entry
 
   if (_.isArray(edition)) {
@@ -68,10 +69,10 @@ const createWorkSeedFromEdition = edition => {
   if (title == null) return
   const langClaim = claims['wdt:P407'] && _.forceArray(claims['wdt:P407'])[0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null
-  const lang = wmLanguageCodeByWdId[langWdId] || isbn_.guessLangFromIsbn(edition.isbn) || 'en'
+  const lang = wmLanguageCodeByWdId[langWdId] || guessLangFromIsbn(edition.isbn) || 'en'
   return {
     labels: {
-      [lang]: title
-    }
+      [lang]: title,
+    },
   }
 }

@@ -1,12 +1,21 @@
-const _ = require('builders/utils')
-const should = require('should')
-const { publicReq, authReq, customAuthReq, getUser, getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, getReservedUser } = require('tests/api/utils/utils')
-const { createUser, createUsername } = require('../fixtures/users')
-const randomString = require('lib/utils/random_string')
-const { getTwoFriends } = require('../fixtures/users')
-const { wait } = require('lib/promises')
-const { deleteUser, updateUser } = require('../utils/users')
-const specialUsersNames = Object.keys(require('db/couchdb/hard_coded_documents').users)
+import should from 'should'
+import _ from '#builders/utils'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import { customAuthReq } from '#tests/api/utils/request'
+import {
+  publicReq,
+  authReq,
+  getUser,
+  getUserB,
+  getReservedUser,
+} from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
+import { deleteUser, updateUser } from '../utils/users.js'
+
+const specialUsersNames = Object.keys(hardCodedUsers)
 
 const endpoint = '/api/users?action=by-usernames'
 
@@ -22,7 +31,7 @@ describe('users:by-usernames', () => {
   })
 
   it('should get a user with a non lowercase username', async () => {
-    let username = `notAllLowerCase${randomString(4)}`
+    let username = `notAllLowerCase${getRandomString(4)}`
     const lowerCasedUsername = username.toLowerCase()
     const user = await createUser({ username })
     await wait(10)

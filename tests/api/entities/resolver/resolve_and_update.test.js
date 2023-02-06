@@ -1,15 +1,26 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-require('should')
-const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { getByUris, getByUri, addClaim, getHistory } = require('tests/api/utils/entities')
-const { createWork, createHuman, createEditionWithIsbn, someGoodReadsId, someLibraryThingsWorkId, generateIsbn13, createEdition, generateIsbn13h } = require('tests/api/fixtures/entities')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import 'should'
+import {
+  createWork,
+  createHuman,
+  createEditionWithIsbn,
+  someGoodReadsId,
+  someLibraryThingsWorkId,
+  generateIsbn13,
+  createEdition,
+  generateIsbn13h,
+} from '#fixtures/entities'
+import { wait } from '#lib/promises'
+import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+
 const resolveAndUpdate = entries => {
   entries = _.forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {
     entries,
-    update: true
+    update: true,
   })
 }
 
@@ -23,10 +34,10 @@ describe('entities:resolver:update-resolved', () => {
       works: [ {
         claims: {
           'wdt:P1085': [ libraryThingsWorkId ],
-          'wdt:P50': [ authorUri ]
-        }
-      }
-      ]
+          'wdt:P50': [ authorUri ],
+        },
+      },
+      ],
     }
     const work = await createWork()
     await addClaim({ uri: work.uri, property: 'wdt:P1085', value: libraryThingsWorkId })
@@ -45,7 +56,7 @@ describe('entities:resolver:update-resolved', () => {
     const [ workA, workB ] = await Promise.all([ createWork(), createWork() ])
     await Promise.all([
       addClaim({ uri: workA.uri, property: 'wdt:P1085', value: libraryThingsWorkIdA }),
-      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB })
+      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB }),
     ])
     const { entries } = await resolveAndUpdate([ entryA, entryB ])
     const workAUri = entries[0].works[0].uri
@@ -65,10 +76,10 @@ describe('entities:resolver:update-resolved', () => {
       authors: [ {
         claims: {
           'wdt:P2963': [ goodReadsId ],
-          'wdt:P856': [ officialWebsite ]
-        }
-      }
-      ]
+          'wdt:P856': [ officialWebsite ],
+        },
+      },
+      ],
     }
     const human = await createHuman()
     await addClaim({ uri: human.uri, property: 'wdt:P2963', value: goodReadsId })
@@ -85,8 +96,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        claims: { 'wdt:P1104': numberOfPages }
-      }
+        claims: { 'wdt:P1104': numberOfPages },
+      },
     }
     await resolveAndUpdate(entry)
     await wait(10)
@@ -100,8 +111,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
-      }
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg',
+      },
     }
     await resolveAndUpdate(entry)
     await wait(10)
@@ -116,8 +127,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        image: validUrlButNotAnImage
-      }
+        image: validUrlButNotAnImage,
+      },
     }
     try {
       await resolveAndUpdate(entry).then(shouldNotBeCalled)
@@ -133,16 +144,16 @@ describe('entities:resolver:update-resolved', () => {
     const isbn13h = generateIsbn13h()
     const edition = await createEdition({
       claims: {
-        'wdt:P212': [ isbn13h ]
-      }
+        'wdt:P212': [ isbn13h ],
+      },
     })
     const originalImageHash = edition.claims['invp:P2'][0]
     originalImageHash.should.be.ok()
     const entry = {
       edition: {
         isbn: isbn13h,
-        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg'
-      }
+        image: 'https://covers.openlibrary.org/w/id/263997-M.jpg',
+      },
     }
     await resolveAndUpdate(entry)
     await wait(10)
@@ -159,12 +170,12 @@ describe('entities:resolver:update-resolved', () => {
     const [ workA, workB ] = await Promise.all([ createWork(), createWork() ])
     await Promise.all([
       addClaim({ uri: workA.uri, property: 'wdt:P1085', value: libraryThingsWorkIdA }),
-      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB })
+      addClaim({ uri: workB.uri, property: 'wdt:P1085', value: libraryThingsWorkIdB }),
     ])
     await resolveAndUpdate([ entryA, entryB ])
     const [ workAPatches, workBPatches ] = await Promise.all([
       getHistory(workA.uri),
-      getHistory(workB.uri)
+      getHistory(workB.uri),
     ])
     const lastWorkAPatch = workAPatches.at(-1)
     const lastWorkBPatch = workBPatches.at(-1)
@@ -181,8 +192,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        claims: { 'wdt:P577': year }
-      }
+        claims: { 'wdt:P577': year },
+      },
     }
     const { version } = await getByUri(uri)
     const preResolvedEntityVersion = version
@@ -200,8 +211,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        claims: { 'wdt:P577': entryDate }
-      }
+        claims: { 'wdt:P577': entryDate },
+      },
     }
     const { version } = await getByUri(uri)
     const preResolvedEntityVersion = version
@@ -219,8 +230,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        claims: { 'wdt:P577': entryDate }
-      }
+        claims: { 'wdt:P577': entryDate },
+      },
     }
     const { version } = await getByUri(uri)
     const preResolvedEntityVersion = version
@@ -237,8 +248,8 @@ describe('entities:resolver:update-resolved', () => {
     const entry = {
       edition: {
         isbn,
-        claims: { 'wdt:P577': entryDate }
-      }
+        claims: { 'wdt:P577': entryDate },
+      },
     }
     await resolveAndUpdate(entry)
     await wait(10)
@@ -255,10 +266,10 @@ describe('entities:resolver:update-resolved', () => {
       authors: [ {
         claims: {
           'wdt:P2963': [ goodReadsId ],
-          'wdt:P569': [ entryDate ]
-        }
-      }
-      ]
+          'wdt:P569': [ entryDate ],
+        },
+      },
+      ],
     }
     const human = await createHuman()
     await addClaim({ uri: human.uri, property: 'wdt:P2963', value: goodReadsId })
@@ -276,12 +287,12 @@ describe('entities:resolver:update-resolved', () => {
     const author = {
       uri: human.uri,
       claims: {
-        'wdt:P213': [ someRecoverableIsni ]
-      }
+        'wdt:P213': [ someRecoverableIsni ],
+      },
     }
     await resolveAndUpdate({
       edition: { isbn: generateIsbn13() },
-      authors: [ author ]
+      authors: [ author ],
     })
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
@@ -294,8 +305,8 @@ const someEntryWithAGoodReadsWorkId = () => ({
     {
       claims: {
         'wdt:P1085': [ someLibraryThingsWorkId() ],
-        'wdt:P50': [ 'wd:Q35802' ]
-      }
-    }
-  ]
+        'wdt:P50': [ 'wd:Q35802' ],
+      },
+    },
+  ],
 })

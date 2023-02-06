@@ -1,9 +1,9 @@
-const error_ = require('lib/error/error')
-const { md5 } = require('lib/crypto')
-const downloadImage = require('./download_image')
-const { containers } = require('controllers/images/lib/containers')
+import { containers } from '#controllers/images/lib/containers'
+import { md5 } from '#lib/crypto'
+import { error_ } from '#lib/error/error'
+import downloadImage from './download_image.js'
 
-module.exports = async (container, sourceUrl) => {
+export default async (container, sourceUrl) => {
   if (containers[container] == null || containers[container].putImage == null) {
     throw error_.newInvalid('container', container)
   }

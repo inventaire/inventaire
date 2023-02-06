@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'wdt:P31': {
     collections: [
       'wd:Q20655472', // editorial collection
@@ -43,5 +43,5 @@ module.exports = {
       'wd:Q128093', // ebook
       'wd:Q106833', // audiobook
     ],
-  }
+  },
 }

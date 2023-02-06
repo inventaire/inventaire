@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
-const error_ = require('lib/error/error')
-const { fixedEncodeURIComponent } = require('lib/utils/url')
 
-module.exports = async title => {
+export default async title => {
   title = fixedEncodeURIComponent(title)
   const url = `${apiBase}${title}`
 
@@ -19,8 +20,8 @@ module.exports = async title => {
     url: parseThumbUrl(source),
     credits: {
       text: 'English Wikipedia',
-      url: `https://en.wikipedia.org/wiki/${title}`
-    }
+      url: `https://en.wikipedia.org/wiki/${title}`,
+    },
   }
 }
 

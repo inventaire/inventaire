@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const entities_ = require('./entities')
-const formatEditionEntity = require('./format_edition_entity')
-const isbn_ = require('lib/isbn/isbn')
-const { prefixifyIsbn } = require('controllers/entities/lib/prefix')
-const getResolvedEntry = require('data/dataseed/get_resolved_entry')
+import _ from '#builders/utils'
+import { getEntitiesByIsbns } from '#controllers/entities/lib/entities'
+import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
+import getResolvedEntry from '#data/dataseed/get_resolved_entry'
+import { parseIsbn } from '#lib/isbn/parse'
+import formatEditionEntity from './format_edition_entity.js'
 
-module.exports = async (rawIsbns, params = {}) => {
+export default async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { autocreate } = params
   // search entities by isbn locally
-  let entities = await entities_.byIsbns(isbns)
+  let entities = await getEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = _.difference(isbns, foundIsbns)
 
@@ -49,7 +49,7 @@ const getRedirections = isbns => {
 // Redirection mechanism is coupled with the way
 // ./get_entities_by_uris 'mergeResponses' parses redirections
 const aggregateIsbnRedirections = (accumulator, rawIsbn) => {
-  const { isbn13: uriIsbn, isbn13h: claimIsbn } = isbn_.parse(rawIsbn)
+  const { isbn13: uriIsbn, isbn13h: claimIsbn } = parseIsbn(rawIsbn)
   const rawUri = `isbn:${rawIsbn}`
   const uri = `isbn:${uriIsbn}`
   accumulator[0].push(claimIsbn)

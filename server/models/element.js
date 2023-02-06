@@ -1,5 +1,9 @@
-const assert_ = require('lib/utils/assert_types')
-const { pass, entityUri, couchUuid } = require('./validations/common')
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import commonValidations from './validations/common.js'
+
+const { pass, entityUri, couchUuid } = commonValidations
+
 const validations = {
   pass,
   uri: entityUri,
@@ -10,12 +14,10 @@ const attributes = {
   validAtCreation: [
     'list',
     'uri',
-  ]
+  ],
 }
 
-const error_ = require('lib/error/error')
-
-module.exports = {
+export default {
   create: element => {
     assert_.object(element)
     assert_.string(element.uri)

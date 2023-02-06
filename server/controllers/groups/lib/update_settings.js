@@ -1,13 +1,16 @@
-const _ = require('builders/utils')
-const { attributes, validations, formatters } = require('models/group')
-const { updatable } = attributes
-const error_ = require('lib/error/error')
-const radio = require('lib/radio')
-const db = require('db/couchdb/base')('groups')
-const { add: addSlug } = require('./slug')
-const { acceptNullValue } = require('models/attributes/group')
+import _ from '#builders/utils'
+import dbFactory from '#db/couchdb/base'
+import { error_ } from '#lib/error/error'
+import { emit } from '#lib/radio'
+import groupAttributes from '#models/attributes/group'
+import Group from '#models/group'
+import { addSlug } from './slug.js'
 
-module.exports = async (data, userId) => {
+const { validations, formatters } = Group
+const { acceptNullValue, updatable } = groupAttributes
+const db = dbFactory('groups')
+
+export default async (data, userId) => {
   const { group: groupId, attribute } = data
   let { value } = data
 
@@ -31,10 +34,10 @@ module.exports = async (data, userId) => {
 
   await db.put(updatedDoc)
 
-  await radio.emit('group:update', notifData)
+  await emit('group:update', notifData)
 
   if (attribute === 'picture' && currentValue) {
-    await radio.emit('image:needs:check', { url: currentValue, context: 'update' })
+    await emit('image:needs:check', { url: currentValue, context: 'update' })
   }
 
   return { hooksUpdates }
@@ -52,7 +55,7 @@ const updateSlug = async groupDoc => {
   const updatedDoc = await addSlug(groupDoc)
   return {
     updatedDoc,
-    hooksUpdates: _.pick(updatedDoc, 'slug')
+    hooksUpdates: _.pick(updatedDoc, 'slug'),
   }
 }
 
@@ -62,7 +65,7 @@ const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   actorId: userId,
   attribute,
   newValue: value,
-  previousValue: groupDoc[attribute]
+  previousValue: groupDoc[attribute],
 })
 
 const getUsersToNotify = groupDoc => {

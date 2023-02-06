@@ -1,15 +1,16 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const { buildUrl } = require('lib/utils/url')
-const checkUserNotificationsSettings = require('./check_user_notifications_settings')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { kmBetween } from '#lib/geo'
+import { assert_ } from '#lib/utils/assert_types'
+import { warn } from '#lib/utils/logs'
+import { buildUrl } from '#lib/utils/url'
+import checkUserNotificationsSettings from './check_user_notifications_settings.js'
+import { i18n } from './i18n/i18n.js'
 
 const host = CONFIG.getPublicOrigin()
 const { defaultFrom } = CONFIG.mailer
-const { i18n } = require('./i18n/i18n')
-const { kmBetween } = require('lib/geo')
 
-module.exports = {
+export default {
   validationEmail: (user, token) => {
     // purposedly not checking notifications settings
     const { email, language } = user
@@ -20,7 +21,7 @@ module.exports = {
       to: email,
       subject: i18n(lang, 'email_confirmation_subject'),
       template: 'validation_email',
-      context: { lang, user, href }
+      context: { lang, user, href },
     }
   },
 
@@ -34,7 +35,7 @@ module.exports = {
       to: email,
       subject: i18n(lang, 'reset_password_subject'),
       template: 'reset_password',
-      context: { lang, user, href }
+      context: { lang, user, href },
     }
   },
 
@@ -48,7 +49,7 @@ module.exports = {
       to: user1.email,
       subject: i18n(lang, 'friend_accepted_request_subject', user2),
       template: 'friend_accepted_request',
-      context: { user: user1, friend: user2, lang, host }
+      context: { user: user1, friend: user2, lang, host },
     }
   },
 
@@ -73,7 +74,7 @@ module.exports = {
       to: user1.email,
       subject: i18n(lang, 'friendship_request_subject', user2),
       template: 'friendship_request',
-      context: { user: user1, otherUser: user2, lang, host }
+      context: { user: user1, otherUser: user2, lang, host },
     }
   },
 
@@ -86,7 +87,7 @@ module.exports = {
 
     const groupContext = {
       groupName: group.name,
-      actingUserUsername: actingUser.username
+      actingUserUsername: actingUser.username,
     }
 
     const title = `group_${action}_subject`
@@ -96,7 +97,7 @@ module.exports = {
       to: email,
       subject: i18n(lang, `group_${action}_subject`, groupContext),
       template: 'group',
-      context: { title, button, group, groupContext, lang, host }
+      context: { title, button, group, groupContext, lang, host },
     }
   },
 
@@ -110,7 +111,7 @@ module.exports = {
         checkUserNotificationsSettings(userToNotify, emailKey)
       } catch (err) {
         if (err.type === 'email_disabled') {
-          _.warn(`user ${userId} disabled ${emailKey} notifications: skip`)
+          warn(`user ${userId} disabled ${emailKey} notifications: skip`)
           return
         } else {
           throw err
@@ -129,7 +130,7 @@ module.exports = {
           group,
           lang,
           host,
-        }
+        },
       }
     }
   },
@@ -142,7 +143,7 @@ module.exports = {
       replyTo: user && user.email,
       subject: `[feedback][${username}] ${subject}`,
       template: 'feedback',
-      context: { subject, message, user, unknownUser, uris, host, context }
+      context: { subject, message, user, unknownUser, uris, host, context },
     }
   },
 
@@ -161,7 +162,7 @@ module.exports = {
         to: emailAddress,
         subject: i18n(lang, 'email_invitation_subject', inviter),
         template: 'email_invitation',
-        context: { inviter, message, lang, host }
+        context: { inviter, message, lang, host },
       }
     }
   },
@@ -177,7 +178,7 @@ module.exports = {
       to: emailAddress,
       subject: i18n(lang, 'group_email_invitation_subject', { username, groupName }),
       template: 'group_email_invitation',
-      context: { message, lang, host, username, groupName, pathname }
+      context: { message, lang, host, username, groupName, pathname },
     })
   },
 
@@ -192,8 +193,8 @@ module.exports = {
 
     updateOnItemYouRequested: transaction => {
       return transactionEmail(transaction, 'requester', 'update_on_item_you_requested')
-    }
-  }
+    },
+  },
 }
 
 const transactionEmail = (transaction, role, label) => {
@@ -203,7 +204,7 @@ const transactionEmail = (transaction, role, label) => {
 
   const titleContext = {
     username: transaction[other].username,
-    title: transaction.item.title
+    title: transaction.item.title,
   }
   return {
     to: transaction[role].email,
@@ -216,8 +217,8 @@ const transactionEmail = (transaction, role, label) => {
       username: transaction.other.username,
       subject: `${label}_subject`,
       button: `${label}_button`,
-      lang
-    })
+      lang,
+    }),
 
   }
 }

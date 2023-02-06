@@ -1,4 +1,4 @@
-const fetchExternalAuthorWorksTitles = require('data/lib/fetch_external_author_works_titles')
+import fetchExternalAuthorWorksTitles from '#data/lib/fetch_external_author_works_titles'
 
 const endpoint = 'https://jpsearch.go.jp/rdf/sparql'
 
@@ -7,4 +7,4 @@ const getQuery = ndlId => `SELECT * WHERE {
 ?work <http://schema.org/name> ?title .
 }`
 
-module.exports = fetchExternalAuthorWorksTitles('ndl', endpoint, getQuery)
+export default fetchExternalAuthorWorksTitles('ndl', endpoint, getQuery)

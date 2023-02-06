@@ -1,20 +1,22 @@
-const _ = require('builders/utils')
-const wdk = require('wikidata-sdk')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { setTermsFromClaims } from '#controllers/entities/lib/entities'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
+import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityPopularity } from '#controllers/entities/lib/popularity'
+import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
+import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
+import { warn } from '#lib/utils/logs'
+import { getSingularTypes } from '#lib/wikidata/aliases'
+import formatClaims from '#lib/wikidata/format_claims'
+import { activeI18nLangs } from '../helpers.js'
+import { getEntityId } from './entity_helpers.js'
+
 const { simplify } = wdk
-const { getEntityId } = require('./entity_helpers')
-const { activeI18nLangs } = require('../helpers')
-const getEntityImagesFromClaims = require('controllers/entities/lib/get_entity_images_from_claims')
-const { setTermsFromClaims } = require('controllers/entities/lib/entities')
-const getEntityType = require('controllers/entities/lib/get_entity_type')
-const { indexedEntitiesTypes } = require('db/elasticsearch/indexes')
-const specialEntityImagesGetter = require('controllers/entities/lib/special_entity_images_getter')
-const { getSingularTypes } = require('lib/wikidata/aliases')
-const { getEntityPopularity } = require('controllers/entities/lib/popularity')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const formatClaims = require('lib/wikidata/format_claims')
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
-module.exports = async (entity, options = {}) => {
+export default async (entity, options = {}) => {
   entity._id = getEntityId(entity)
 
   // Entities from Wikidata dump still have a type='item' set
@@ -56,12 +58,12 @@ module.exports = async (entity, options = {}) => {
         entity.images = await specialEntityImagesGetter[entity.type](entity)
       } catch (err) {
         // Known case: when Wikidata Query Service times out
-        _.warn(err, `failed to get image for ${entity.uri}: fallback to no image`)
+        warn(err, `failed to get image for ${entity.uri}: fallback to no image`)
         entity.images = {}
       }
     } else {
       entity.images = {
-        claims: getEntityImagesFromClaims(entity, needsSimplification)
+        claims: getEntityImagesFromClaims(entity, needsSimplification),
       }
     }
   }
@@ -122,7 +124,7 @@ module.exports = async (entity, options = {}) => {
     // as we aren't even waiting for the dryAndCache response to continue.
     // But, do not set dry=true when reindexing the rest of the time, as that would
     // in most cases mean never populating the popularity
-    dry: options.quick
+    dry: options.quick,
   })
 
   return entity
@@ -197,7 +199,7 @@ const getEntityTerms = entity => {
   const { labels, aliases } = entity
   // Known case: deleted Wikidata entity
   if (!labels) {
-    _.warn(entity, 'can not getEntityTerms: entity has no labels')
+    warn(entity, 'can not getEntityTerms: entity has no labels')
     return []
   }
   return getMainFieldsWords({ labels, aliases })

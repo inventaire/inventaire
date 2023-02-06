@@ -1,8 +1,17 @@
-const should = require('should')
-const { adminReq, dataadminReq, publicReq, authReq, shouldNotBeCalled, getReservedUser } = require('../utils/utils')
-const { createHuman } = require('../fixtures/entities')
-const { getDeanonymizedUser, customAuthReq } = require('../utils/utils')
-const { deleteByUris } = require('../utils/entities')
+import should from 'should'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createHuman } from '../fixtures/entities.js'
+import { deleteByUris } from '../utils/entities.js'
+import {
+  adminReq,
+  dataadminReq,
+  publicReq,
+  getReservedUser,
+  getDeanonymizedUser,
+  authReqB
+} from '../utils/utils.js'
+
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {
@@ -51,7 +60,7 @@ describe('entities:history', () => {
 
   it('should anonymize patches for authentified users', async () => {
     const human = await createHuman()
-    const { patches } = await authReq('get', `${endpoint}&id=${human._id}`)
+    const { patches } = await authReqB('get', `${endpoint}&id=${human._id}`)
     const patch = patches[0]
     should(patch.user).not.be.ok()
   })
@@ -66,12 +75,12 @@ describe('entities:history', () => {
   it('should not anonymize patches from users that disabled anonymization', async () => {
     const [ user, human ] = await Promise.all([
       getDeanonymizedUser(),
-      createHuman()
+      createHuman(),
     ])
     await customAuthReq(user, 'put', '/api/entities?action=update-label', {
       uri: human.uri,
       lang: 'es',
-      value: 'foo'
+      value: 'foo',
     })
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()
@@ -81,12 +90,12 @@ describe('entities:history', () => {
   it('should not anonymize patches when the author is the requesting user', async () => {
     const [ user, human ] = await Promise.all([
       getReservedUser(),
-      createHuman()
+      createHuman(),
     ])
     await customAuthReq(user, 'put', '/api/entities?action=update-label', {
       uri: human.uri,
       lang: 'es',
-      value: 'foo'
+      value: 'foo',
     })
     const { patches } = await customAuthReq(user, 'get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()

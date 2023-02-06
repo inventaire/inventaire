@@ -1,16 +1,11 @@
-const dns = require('node:dns')
-const { promisify } = require('node:util')
-const dnsLookup = promisify(dns.lookup)
+import dns from 'node:dns'
+import { promisify } from 'node:util'
 
-const getHostname = origin => origin ? new URL(origin).hostname : null
+export const dnsLookup = promisify(dns.lookup)
 
-const getHostnameIp = async hostname => {
+export const getHostname = origin => origin ? new URL(origin).hostname : null
+
+export async function getHostnameIp (hostname) {
   const { address } = await dnsLookup(hostname)
   return address
-}
-
-module.exports = {
-  dnsLookup,
-  getHostname,
-  getHostnameIp,
 }

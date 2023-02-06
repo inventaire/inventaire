@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const properties = require('../properties/properties_values_constraints')
-const { prefixifyWd } = require('controllers/entities/lib/prefix')
-const entities_ = require('controllers/entities/lib/entities')
-const runWdQuery = require('data/wikidata/run_query')
-const getInvEntityCanonicalUri = require('../get_inv_entity_canonical_uri')
-const { forceArray } = require('lib/utils/base')
+import _ from '#builders/utils'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import runWdQuery from '#data/wikidata/run_query'
+import { forceArray } from '#lib/utils/base'
+import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
+import properties from '../properties/properties_values_constraints.js'
 
-module.exports = async (claims, resolveOnWikidata = true) => {
+export default async (claims, resolveOnWikidata = true) => {
   const externalIds = []
 
   for (const prop in claims) {
@@ -41,6 +41,6 @@ const invQuery = externalIds => {
 }
 
 const invByClaim = async ([ prop, value ]) => {
-  const entities = await entities_.byClaim(prop, value, true, true)
+  const entities = await getEntitiesByClaim(prop, value, true, true)
   return entities.map(getInvEntityCanonicalUri)
 }

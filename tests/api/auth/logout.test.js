@@ -1,11 +1,13 @@
-const CONFIG = require('config')
-require('should')
+import CONFIG from 'config'
+import 'should'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'
+import { rawRequest } from '../utils/request.js'
+import { getUser } from '../utils/utils.js'
+
 const origin = CONFIG.getLocalOrigin()
-const { getUser, shouldNotBeCalled } = require('../utils/utils')
-const { rawRequest } = require('../utils/request')
 const endpoint = `${origin}/api/auth?action=logout`
 const authentifiedEndpoint = `${origin}/api/user`
-const { parseSessionCookies, parseBase64EncodedJson } = require('../utils/auth')
 
 describe('auth:logout', () => {
   it('should logout and unable to access an authentified endpoint', async () => {
@@ -14,16 +16,16 @@ describe('auth:logout', () => {
     parseBase64EncodedJson(sessionCookie).passport.user.should.equal(user._id)
     const { headers } = await rawRequest('post', endpoint, {
       headers: {
-        cookie: user.cookie
-      }
+        cookie: user.cookie,
+      },
     })
     const [ sessionCookieAfterLogout, signatureCookieAfterLogout ] = parseSessionCookies(headers['set-cookie'])
     parseBase64EncodedJson(sessionCookieAfterLogout).passport.should.deepEqual({})
     signatureCookieAfterLogout.should.not.equal(signatureCookie)
     await rawRequest('get', authentifiedEndpoint, {
       headers: {
-        cookie: headers['set-cookie']
-      }
+        cookie: headers['set-cookie'],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {

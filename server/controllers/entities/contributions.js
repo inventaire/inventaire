@@ -1,11 +1,13 @@
 // An endpoint to list entities edits made by a user
-const { byUserId, byDate, byUserIdAndFilter } = require('./lib/patches/patches')
-const error_ = require('lib/error/error')
-const { isPropertyUri, isLang } = require('lib/boolean_validations')
-const user_ = require('controllers/user/lib/user')
-const { shouldBeAnonymized } = require('models/user')
-const anonymizePatches = require('./lib/anonymize_patches')
-const { hasAdminAccess } = require('lib/user_access_levels')
+import { getPatchesByDate, getPatchesByUserId, getPatchesByUserIdAndFilter } from '#controllers/entities/lib/patches/patches'
+import { getUserById } from '#controllers/user/lib/user'
+import { isPropertyUri, isLang } from '#lib/boolean_validations'
+import { error_ } from '#lib/error/error'
+import { hasAdminAccess } from '#lib/user_access_levels'
+import User from '#models/user'
+import anonymizePatches from './lib/anonymize_patches.js'
+
+const { shouldBeAnonymized } = User
 
 const sanitization = {
   user: { optional: true },
@@ -14,7 +16,7 @@ const sanitization = {
   filter: {
     generic: 'string',
     optional: true,
-  }
+  },
 }
 
 const controller = async (params, req) => {
@@ -37,20 +39,20 @@ const controller = async (params, req) => {
 const getPatchesPage = async ({ userId, limit, offset, filter }) => {
   if (userId != null) {
     if (filter != null) {
-      return byUserIdAndFilter({ userId, filter, limit, offset })
+      return getPatchesByUserIdAndFilter({ userId, filter, limit, offset })
     } else {
-      return byUserId({ userId, limit, offset })
+      return getPatchesByUserId({ userId, limit, offset })
     }
   } else {
-    return byDate({ limit, offset })
+    return getPatchesByDate({ limit, offset })
   }
 }
 
 const checkPublicContributionsStatus = async userId => {
-  const user = await user_.byId(userId)
+  const user = await getUserById(userId)
   if (shouldBeAnonymized(user)) {
     throw error_.new('non-public contributions', 403, { userId })
   }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

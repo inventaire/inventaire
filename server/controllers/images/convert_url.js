@@ -1,12 +1,12 @@
-const convertAndCleanupImageUrl = require('./lib/convert_and_cleanup_image_url')
-const { uploadContainersNames } = require('controllers/images/lib/containers')
+import { uploadContainersNames } from '#controllers/images/lib/containers'
+import convertAndCleanupImageUrl from './lib/convert_and_cleanup_image_url.js'
 
 const sanitization = {
   url: {},
   container: {
     generic: 'allowlist',
-    allowlist: uploadContainersNames
+    allowlist: uploadContainersNames,
   },
 }
 
-module.exports = { sanitization, controller: convertAndCleanupImageUrl }
+export default { sanitization, controller: convertAndCleanupImageUrl }

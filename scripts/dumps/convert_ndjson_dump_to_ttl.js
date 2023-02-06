@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-require('module-alias/register')
-const _ = require('builders/utils')
-const split = require('split')
-const through = require('through')
-const { readFileSync } = require('node:fs')
-const serializeEntityInTurtle = require('./lib/serialize_entity_in_turtle')
-const path = require('node:path')
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import split from 'split'
+import through from 'through'
+import _ from '#builders/utils'
+import { LogError } from '#lib/utils/logs'
+import serializeEntityInTurtle from './lib/serialize_entity_in_turtle.js'
 
 const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
 // Prefix the dump by the headers
@@ -27,4 +27,4 @@ const parse = line => {
 process.stdin
 .pipe(split())
 .pipe(through(parse))
-.on('error', _.Error('conversion error'))
+.on('error', LogError('conversion error'))

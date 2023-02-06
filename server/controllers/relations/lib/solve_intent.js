@@ -1,7 +1,7 @@
-const _ = require('builders/utils')
+import { warn } from '#lib/utils/logs'
 
-module.exports = actions => {
-  const API = {
+export default actions => {
+  return {
     requestFriend: (userId, otherId, status) => {
       if (status === 'none') return actions.makeRequest(userId, otherId)
       else if (status === 'otherRequested') return actions.simultaneousRequest(userId, otherId)
@@ -25,7 +25,7 @@ module.exports = actions => {
       if (status === 'otherRequested') {
         return actions.acceptRequest(userId, otherId)
       } else if (status === 'none') {
-        return _.warn(`${userId} request to ${otherId} accepted after being cancelled`)
+        return warn(`${userId} request to ${otherId} accepted after being cancelled`)
       } else {
         doNothing(status, 'acceptRequest', userId, otherId)
       }
@@ -34,14 +34,12 @@ module.exports = actions => {
     discardRequest: (userId, otherId, status) => {
       if (status === 'otherRequested') return actions.removeRelation(userId, otherId)
       else doNothing(status, 'discardRequest', userId, otherId)
-    }
+    },
   }
-
-  return API
 }
 
 const doNothing = (status, method, userId, otherId) => {
-  _.warn(`Status mismatch: got status '${status}' \
+  warn(`Status mismatch: got status '${status}' \
   at ${method} for relation ${userId}, ${otherId}. \
   (it happens but it shouldn't be to often). \
   Here, doing nothing is the best.`)

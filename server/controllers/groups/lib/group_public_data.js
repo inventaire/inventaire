@@ -1,20 +1,21 @@
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const lists_ = require('./users_lists')
-const groups_ = require('./groups')
-const user_ = require('controllers/user/lib/user')
+import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
+import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { getGroupById, getGroupBySlug } from './groups.js'
 
 // fnName: byId or bySlug
 // fnArgs: [ id ] or [ slug ]
-module.exports = (fnName, fnArgs, reqUserId) => {
+export default async (fnName, fnArgs, reqUserId) => {
   assert_.array(fnArgs)
-  return groups_[fnName].apply(null, fnArgs)
-  .then(group => {
-    if (group == null) throw error_.notFound(fnArgs[0])
-
-    const usersIds = lists_.allGroupMembers(group)
-
-    return user_.getUsersByIds(usersIds, reqUserId)
-    .then(users => ({ group, users }))
-  })
+  let group
+  if (fnName === 'bySlug') {
+    group = await getGroupBySlug(...fnArgs)
+  } else {
+    group = await getGroupById(...fnArgs)
+  }
+  if (group == null) throw error_.notFound(fnArgs[0])
+  const usersIds = getAllGroupMembersIds(group)
+  const users = await getUsersAuthorizedDataByIds(usersIds, reqUserId)
+  return { group, users }
 }

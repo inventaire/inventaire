@@ -1,8 +1,11 @@
-require('should')
-const { customAuthReq, authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { getSomeGroup, createGroup } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
-const { createUser } = require('../fixtures/users')
+import 'should'
+import { getGroup } from '#tests/api/utils/groups'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { getSomeGroup, createGroup } from '../fixtures/groups.js'
+import { createUser } from '../fixtures/users.js'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=request'
 
 describe('groups:update:request', () => {
@@ -44,7 +47,7 @@ describe('groups:update:request', () => {
       await authReq('put', '/api/groups?action=update-settings', {
         group: group._id,
         attribute: 'open',
-        value: true
+        value: true,
       })
       const membersCount = group.members.length
       const requestedCount = group.requested.length

@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
 
 // Throws if the passed object doesn't respect the provided constraints:
 // - validKeys: a limited set of possible keys
 // - valuesType: the expected type of values (optional)
-module.exports = (obj, validKeys, valuesType) => {
+export default (obj, validKeys, valuesType) => {
   assert_.object(obj)
   assert_.array(validKeys)
   if (valuesType) assert_.string(valuesType)
@@ -17,7 +17,7 @@ module.exports = (obj, validKeys, valuesType) => {
     }
 
     if (valuesType) {
-      if (_.typeOf(value) !== valuesType) {
+      if (typeOf(value) !== valuesType) {
         throw error_.new(`invalid object value: ${value}`, 500, { obj, value, valuesType })
       }
     }

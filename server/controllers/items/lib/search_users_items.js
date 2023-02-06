@@ -1,5 +1,6 @@
-const error_ = require('lib/error/error')
-const { buildSearcher } = require('lib/elasticsearch')
+import { buildSearcher } from '#lib/elasticsearch'
+import { error_ } from '#lib/error/error'
+
 const textFields = [
   'snapshot.entity:title',
   'snapshot.entity:subtitle',
@@ -8,7 +9,7 @@ const textFields = [
   'details',
 ]
 
-module.exports = buildSearcher({
+export default buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
     const { search, limit = 10, ownersIdsAndVisibilityKeys, shelfId } = params
@@ -18,7 +19,7 @@ module.exports = buildSearcher({
     }
 
     const filter = [
-      buildOwnerAndVisibilityKeysClauses(ownersIdsAndVisibilityKeys)
+      buildOwnerAndVisibilityKeysClauses(ownersIdsAndVisibilityKeys),
     ]
 
     if (shelfId) {
@@ -31,42 +32,43 @@ module.exports = buildSearcher({
         analyzer: 'standard_truncated',
         fields: textFields,
         query: search,
-      }
+      },
     }
 
     const query = {
       bool: {
         filter,
-        should
-      }
+        should,
+      },
     }
 
     return { query, size: limit, min_score: 0.2 }
-  }
+  },
 })
+
 const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
   return {
     bool: {
       should: ownersIdsAndVisibilityKeys.map(buildOwnerFilterClause),
-      minimum_should_match: 1
-    }
+      minimum_should_match: 1,
+    },
   }
 }
 
 const buildOwnerFilterClause = ([ ownerId, visibilityKeys ]) => {
   const filter = [
-    { term: { owner: ownerId } }
+    { term: { owner: ownerId } },
   ]
   // The 'private' keyword signify that `reqUserId === ownerId`
   // and thus there is no need to check visibility keys
   if (visibilityKeys[0] !== 'private') {
     filter.push({
-      terms: { visibility: visibilityKeys }
+      terms: { visibility: visibilityKeys },
     })
   }
   return {
     bool: {
-      filter
-    }
+      filter,
+    },
   }
 }

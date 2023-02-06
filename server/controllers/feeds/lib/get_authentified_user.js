@@ -1,10 +1,10 @@
-const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
+import { getUserById } from '#controllers/user/lib/user'
+import { error_ } from '#lib/error/error'
 
-module.exports = async (requester, readToken) => {
+export default async (requester, readToken) => {
   if (requester == null) return null
 
-  return user_.byId(requester)
+  return getUserById(requester)
   .catch(formatNotFound(requester))
   .then(validateUserReadToken(readToken))
 }

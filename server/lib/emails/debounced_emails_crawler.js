@@ -1,11 +1,13 @@
-const _ = require('builders/utils')
-const { crawlPeriod, debounceDelay, disabled } = require('config').debouncedEmail
-const { expired } = require('lib/time')
-const db = require('db/level/get_sub_db')('waiting', 'utf8')
+import CONFIG from 'config'
+import dbFactory from '#db/level/get_sub_db'
+import { expired } from '#lib/time'
+import { LogError } from '#lib/utils/logs'
+import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
-const sendDebouncedEmail = require('./send_debounced_email')
+const db = dbFactory('waiting', 'utf8')
+const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
-module.exports = () => {
+export function initDebouncedEmailsCrawler () {
   if (!disabled) setInterval(crawl, crawlPeriod)
 }
 
@@ -14,17 +16,17 @@ module.exports = () => {
 const crawl = () => {
   return db.createReadStream()
   .on('data', onData)
-  .on('error', _.Error('crawl err'))
+  .on('error', LogError('crawl err'))
 }
 
 const onData = data => {
   const { key } = data
-  const [ domain, id, time ] = key.split(':')
+  const [ emailName, id, time ] = key.split(':')
 
   // if the last event happened more than debounceDelay ago
   if (expired(time, debounceDelay)) {
-    return sendDebouncedEmail[domain](id)
+    return debouncedEmailSenderByName[emailName](id)
     .then(db.del.bind(db, key))
-    .catch(_.Error(`sendDebouncedEmail (${domain}) and cleanup err`))
+    .catch(LogError(`debouncedEmailSenderByName (${emailName}) and cleanup err`))
   }
 }

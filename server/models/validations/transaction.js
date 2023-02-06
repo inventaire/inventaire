@@ -1,3 +1,5 @@
-const { pass, userId, itemId } = require('./common')
+import commonValidations from './common.js'
 
-module.exports = { pass, userId, itemId }
+const { pass, userId, itemId } = commonValidations
+
+export default { pass, userId, itemId }

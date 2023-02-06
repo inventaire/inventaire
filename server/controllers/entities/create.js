@@ -1,17 +1,19 @@
-const getEntityByUri = require('./lib/get_entity_by_uri')
+import inv from './lib/create_inv_entity.js'
+import wd from './lib/create_wd_entity.js'
+import { getEntityByUri } from './lib/get_entity_by_uri.js'
 
 const sanitization = {
   labels: {
     generic: 'object',
-    default: {}
+    default: {},
   },
   claims: {
-    generic: 'object'
+    generic: 'object',
   },
   prefix: {
     allowlist: [ 'inv', 'wd' ],
-    default: 'inv'
-  }
+    default: 'inv',
+  },
 }
 
 const controller = async (params, req) => {
@@ -29,12 +31,12 @@ const controller = async (params, req) => {
 }
 
 const creators = {
-  inv: require('./lib/create_inv_entity'),
-  wd: require('./lib/create_wd_entity')
+  inv,
+  wd,
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'entity', 'creation' ]
+  track: [ 'entity', 'creation' ],
 }

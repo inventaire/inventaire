@@ -1,6 +1,6 @@
 const hasCouchDbDeletedFlag = doc => doc._deleted === true
 
-module.exports = {
+export default {
   items: hasCouchDbDeletedFlag,
   groups: hasCouchDbDeletedFlag,
   shelves: hasCouchDbDeletedFlag,

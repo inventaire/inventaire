@@ -1,9 +1,16 @@
-const should = require('should')
-const { wait } = require('lib/promises')
-const { authReq, shouldNotBeCalled } = require('../utils/utils')
-const { getByUri, getByUris, deleteByUris } = require('../utils/entities')
-const { getItemById } = require('../utils/items')
-const { createHuman, createWork, createWorkWithAuthor, createEdition, createEditionWithIsbn } = require('../fixtures/entities')
+import should from 'should'
+import { wait } from '#lib/promises'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createHuman,
+  createWork,
+  createWorkWithAuthor,
+  createEdition,
+  createEditionWithIsbn,
+} from '../fixtures/entities.js'
+import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
+import { getItemById } from '../utils/items.js'
+import { authReq } from '../utils/utils.js'
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {
@@ -43,7 +50,7 @@ describe('entities:delete', () => {
   it('should remove several entities', async () => {
     const [ entityA, entityB ] = await Promise.all([
       createHuman(),
-      createWork()
+      createWork(),
     ])
     const uris = [ entityA.uri, entityB.uri ]
     await deleteByUris(uris)
@@ -65,7 +72,7 @@ describe('entities:delete', () => {
     const author = await createHuman()
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(author),
-      createWorkWithAuthor(author)
+      createWorkWithAuthor(author),
     ])
     const property = 'wdt:P50'
     const authorUri = workA.claims[property][0]

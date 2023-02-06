@@ -1,9 +1,9 @@
-const error_ = require('lib/error/error')
-const { validateProperty } = require('./properties/validations')
-const propertiesPerType = require('controllers/entities/lib/properties/properties_per_type')
-const assert_ = require('lib/utils/assert_types')
+import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { validateProperty } from './properties/validations.js'
 
-module.exports = (type, property) => {
+export default (type, property) => {
   assert_.strings([ type, property ])
 
   validateProperty(property)

@@ -1,9 +1,5 @@
-const { private: privateAttributes } = require('models/item').attributes
-const privateAttributesUtilsFactory = require('lib/private_attributes_utils_factory')
+import privateAttributesUtilsFactory from '#lib/private_attributes_utils_factory'
+import Item from '#models/item'
 
-const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)
-
-module.exports = {
-  omitPrivateAttributes,
-  filterPrivateAttributes,
-}
+const { private: privateAttributes } = Item.attributes
+export const { omitPrivateAttributes, filterPrivateAttributes } = privateAttributesUtilsFactory(privateAttributes)

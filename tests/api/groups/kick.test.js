@@ -1,11 +1,12 @@
-require('should')
-const { authReq, getUserGetter } = require('../utils/utils')
-const { getSomeGroup, addMember } = require('../fixtures/groups')
-const { getGroup } = require('tests/api/utils/groups')
+import 'should'
+import { humanName } from '#fixtures/text'
+import { wait } from '#lib/promises'
+import { getGroup } from '#tests/api/utils/groups'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroup, addMember } from '../fixtures/groups.js'
+import { authReq, getUserGetter } from '../utils/utils.js'
+
 const endpoint = '/api/groups?action=kick'
-const { wait } = require('lib/promises')
-const { humanName } = require('../fixtures/entities')
-const { shouldNotBeCalled } = require('tests/unit/utils')
 const userPromise = getUserGetter(humanName())()
 
 describe('groups:update:kick', () => {

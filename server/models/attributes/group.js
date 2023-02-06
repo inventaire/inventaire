@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   // Attributes that can be changed by an admin with a simple validity check
   updatable: [
     'name',
@@ -6,7 +6,7 @@ module.exports = {
     'description',
     'searchable',
     'position',
-    'open'
+    'open',
   ],
 
   usersLists: [
@@ -14,11 +14,11 @@ module.exports = {
     'members',
     'invited',
     'declined',
-    'requested'
+    'requested',
   ],
 
   acceptNullValue: [
     'position',
-    'picture'
+    'picture',
   ],
 }

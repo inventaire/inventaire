@@ -1,6 +1,6 @@
-require('should')
-const { action, assertRelation } = require('../utils/relations')
-const { getUsersWithoutRelation } = require('../fixtures/users')
+import 'should'
+import { getUsersWithoutRelation } from '../fixtures/users.js'
+import { action, assertRelation } from '../utils/relations.js'
 
 describe('relations:unfriend', () => {
   it('should unfriend a friend request', async () => {

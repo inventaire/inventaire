@@ -1,16 +1,16 @@
-const error_ = require('lib/error/error')
-const entities_ = require('./entities')
-const mergeEntities = require('./merge_entities')
-const { cacheEntityRelations } = require('./temporarily_cache_relations')
-const { unprefixify } = require('./prefix')
-const createWdEntity = require('./create_wd_entity')
+import { getEntityById } from '#controllers/entities/lib/entities'
+import { error_ } from '#lib/error/error'
+import createWdEntity from './create_wd_entity.js'
+import mergeEntities from './merge_entities.js'
+import { unprefixify } from './prefix.js'
+import { cacheEntityRelations } from './temporarily_cache_relations.js'
 
-module.exports = async (user, invEntityUri) => {
+export default async (user, invEntityUri) => {
   const { _id: reqUserId } = user
 
   const entityId = unprefixify(invEntityUri)
 
-  const entity = await entities_.byId(entityId).catch(rewrite404(invEntityUri))
+  const entity = await getEntityById(entityId).catch(rewrite404(invEntityUri))
 
   const { labels, claims } = entity
   const { uri: wdEntityUri } = await createWdEntity({ labels, claims, user, isAlreadyValidated: true })
@@ -25,8 +25,8 @@ module.exports = async (user, invEntityUri) => {
     fromUri: invEntityUri,
     toUri: wdEntityUri,
     context: {
-      action: 'move-to-wikidata'
-    }
+      action: 'move-to-wikidata',
+    },
   })
 
   return { uri: wdEntityUri }

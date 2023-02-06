@@ -1,17 +1,17 @@
-const _ = require('builders/utils')
-const parseIsbn = require('lib/isbn/parse')
-const leven = require('leven')
+import leven from 'leven'
+import _ from '#builders/utils'
+import { parseIsbn } from '#lib/isbn/parse'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
 
 let getEntitiesList, reverseClaims
-const requireCircularDependencies = () => {
-  getEntitiesList = require('controllers/entities/lib/get_entities_list')
-  reverseClaims = require('controllers/entities/lib/reverse_claims')
+const importCircularDependencies = async () => {
+  ;({ getEntitiesList } = await import('#controllers/entities/lib/get_entities_list'))
+  ;({ reverseClaims } = await import('#controllers/entities/lib/reverse_claims'))
 }
-setImmediate(requireCircularDependencies)
+setImmediate(importCircularDependencies)
 
-const resolvePublisher = async (isbn, publisherLabel) => {
+export async function resolvePublisher (isbn, publisherLabel) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { publisherPrefix } = isbnData
@@ -33,7 +33,7 @@ const getPublisherClosestTerm = publisherLabel => entity => {
   const id = entity.uri.split(':')[1]
   return {
     uri: `wd:${id}`,
-    distance: closestTerm.distance
+    distance: closestTerm.distance,
   }
 }
 
@@ -46,5 +46,3 @@ const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
 }
 
 const byDistance = (a, b) => a.distance - b.distance
-
-module.exports = { resolvePublisher }

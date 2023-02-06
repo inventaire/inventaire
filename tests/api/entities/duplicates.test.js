@@ -1,14 +1,16 @@
-const { wait } = require('lib/promises')
-const { adminReq } = require('../utils/utils')
+import { humanName } from '#fixtures/text'
+import { wait } from '#lib/promises'
+import { createHuman } from '../fixtures/entities.js'
+import { adminReq } from '../utils/utils.js'
+
 const endpoint = '/api/entities?action=duplicates'
-const { createHuman, humanName } = require('../fixtures/entities')
 
 describe('entities:duplicates', () => {
   it('should return names and duplicates number', async () => {
     const someName = humanName()
     await Promise.all([
       createHuman({ labels: { en: someName } }),
-      createHuman({ labels: { en: someName } })
+      createHuman({ labels: { en: someName } }),
     ])
     await wait(100)
     const { names } = await adminReq('get', endpoint)

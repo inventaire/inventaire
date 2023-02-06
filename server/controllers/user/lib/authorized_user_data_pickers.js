@@ -1,8 +1,8 @@
-const _ = require('builders/utils')
-const User = require('models/user')
-const { getUserAccessLevels } = require('lib/user_access_levels')
+import _ from '#builders/utils'
+import { getUserAccessLevels } from '#lib/user_access_levels'
+import User from '#models/user'
 
-const ownerSafeData = user => {
+export const ownerSafeData = user => {
   const safeUserDoc = _.pick(user, User.attributes.ownerSafe)
   if (user.type === 'deletedUser') return safeUserDoc
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
@@ -13,26 +13,22 @@ const ownerSafeData = user => {
   return safeUserDoc
 }
 
-module.exports = {
-  ownerSafeData,
+// Adapts the result to the requester authorization level
+export const omitPrivateData = (reqUserId, networkIds, extraAttribute) => {
+  const attributes = getAttributes(extraAttribute)
+  return userDoc => {
+    if (userDoc.type === 'deletedUser') return userDoc
 
-  // Adapts the result to the requester authorization level
-  omitPrivateData: (reqUserId, networkIds, extraAttribute) => {
-    const attributes = getAttributes(extraAttribute)
-    return userDoc => {
-      if (userDoc.type === 'deletedUser') return userDoc
+    const userId = userDoc._id
+    if (userId === reqUserId) return ownerSafeData(userDoc)
 
-      const userId = userDoc._id
-      if (userId === reqUserId) return ownerSafeData(userDoc)
+    userDoc = _.pick(userDoc, attributes)
+    delete userDoc.snapshot.private
 
-      userDoc = _.pick(userDoc, attributes)
-      delete userDoc.snapshot.private
+    if (networkIds.includes(userId)) return userDoc
 
-      if (networkIds.includes(userId)) return userDoc
-
-      delete userDoc.snapshot.network
-      return userDoc
-    }
+    delete userDoc.snapshot.network
+    return userDoc
   }
 }
 

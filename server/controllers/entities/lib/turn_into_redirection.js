@@ -1,26 +1,27 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const entities_ = require('./entities')
-const Entity = require('models/entity')
-const placeholders_ = require('./placeholders')
-const propagateRedirection = require('./propagate_redirection')
+import _ from '#builders/utils'
+import { getEntitiesByClaimsValue, getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { removePlaceholder } from '#controllers/entities/lib/placeholders'
+import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
+import Entity from '#models/entity'
+import propagateRedirection from './propagate_redirection.js'
 
-module.exports = async ({ userId, fromId, toUri, previousToUri, context }) => {
+export default async ({ userId, fromId, toUri, previousToUri, context }) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 
   const fromUri = `inv:${fromId}`
 
-  const currentFromDoc = await entities_.byId(fromId)
+  const currentFromDoc = await getEntityById(fromId)
   Entity.preventRedirectionEdit(currentFromDoc, 'turnIntoRedirection')
   // If an author has no more links to it, remove it
   const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
   const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
-  await entities_.putUpdate({
+  await putEntityUpdate({
     userId,
     currentDoc: currentFromDoc,
     updatedDoc: updatedFromDoc,
-    context
+    context,
   })
   return propagateRedirection(userId, fromUri, toUri, previousToUri)
 }
@@ -31,7 +32,7 @@ module.exports = async ({ userId, fromId, toUri, previousToUri, context }) => {
 // destination entity.
 const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirection) => {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
-  _.log(entityUrisToCheck, 'entityUrisToCheck')
+  log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
   const removedIds = await Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
   return _.compact(removedIds)
@@ -49,7 +50,7 @@ const getEntityUrisToCheck = claims => {
 
 const propertiesToCheckForPlaceholderDeletion = [
   // author
-  'wdt:P50'
+  'wdt:P50',
 ]
 
 const deleteIfIsolated = (userId, fromId) => async entityUri => {
@@ -57,7 +58,7 @@ const deleteIfIsolated = (userId, fromId) => async entityUri => {
   // Ignore wd or isbn entities
   if (prefix !== 'inv') return
 
-  let results = await entities_.byClaimsValue(entityUri)
+  let results = await getEntitiesByClaimsValue(entityUri)
   results = results.filter(result => result.entity !== fromId)
-  if (results.length === 0) return placeholders_.remove(userId, entityId)
+  if (results.length === 0) return removePlaceholder(userId, entityId)
 }

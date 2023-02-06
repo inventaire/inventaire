@@ -1,14 +1,14 @@
-const _ = require('builders/utils')
-const { makeUrl } = require('./helpers')
-const { createItemsNote, findFullRangeFromActivities } = require('./format_items_activities')
-const items_ = require('controllers/items/lib/items')
+import _ from '#builders/utils'
+import { getPublicItemsByShelfAndDate } from '#controllers/items/lib/items'
+import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
+import { makeUrl } from './helpers.js'
 
-module.exports = async (activitiesDocs, shelfId, name) => {
+export default async (activitiesDocs, shelfId, name) => {
   if (activitiesDocs.length === 0) return
   const actor = makeUrl({ params: { action: 'actor', name } })
   const parentLink = `/shelves/${shelfId}`
   const { since, until } = findFullRangeFromActivities(activitiesDocs)
-  const allActivitiesItems = await items_.publicByShelfAndDate({
+  const allActivitiesItems = await getPublicItemsByShelfAndDate({
     shelf: shelfId,
     since,
     until,

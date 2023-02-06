@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const { wait } = require('lib/promises')
-const refreshSnapshot = require('./lib/snapshot/refresh_snapshot')
+import _ from '#builders/utils'
+import { wait } from '#lib/promises'
+import { log, warn } from '#lib/utils/logs'
+import refreshSnapshot from './lib/snapshot/refresh_snapshot.js'
 
 const sanitization = {
-  uris: {}
+  uris: {},
 }
 
 const controller = async ({ uris }) => {
@@ -18,11 +19,11 @@ const refreshSequentially = async uris => {
     if (nextUri == null) return
 
     if (!_.isEntityUri(nextUri)) {
-      _.warn(nextUri, 'invalid entity URI: not refreshing')
+      warn(nextUri, 'invalid entity URI: not refreshing')
       return refreshNext()
     }
 
-    _.log(nextUri, 'next URI for items snapshot refresh')
+    log(nextUri, 'next URI for items snapshot refresh')
 
     await refreshSnapshot.fromUri(nextUri)
     // Space refreshes to lower stress on production resources
@@ -33,4 +34,4 @@ const refreshSequentially = async uris => {
   return refreshNext()
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

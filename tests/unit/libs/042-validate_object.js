@@ -1,6 +1,6 @@
 
-require('should')
-const validateObject = require('lib/validate_object')
+import 'should'
+import validateObject from '#lib/validate_object'
 
 describe('validate object', () => {
   it('should throw when passed an object with an invalid key', () => {

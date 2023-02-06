@@ -1,10 +1,12 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { origin } = require('config').elasticsearch
-const mappings = require('db/elasticsearch/mappings/mappings')
-const settings = require('db/elasticsearch/settings/settings')
+import CONFIG from 'config'
+import mappings from '#db/elasticsearch/mappings/mappings'
+import settings from '#db/elasticsearch/settings/settings'
+import { requests_ } from '#lib/requests'
+import { warn, success } from '#lib/utils/logs'
 
-module.exports = async index => {
+const { origin } = CONFIG.elasticsearch
+
+export default async index => {
   const url = `${origin}/${index}`
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]
@@ -12,7 +14,7 @@ module.exports = async index => {
   if (indexMappings) body.mappings = indexMappings
   try {
     const res = await requests_.put(url, { body })
-    _.success(res, `elasticsearch index created: ${url}`)
+    success(res, `elasticsearch index created: ${url}`)
   } catch (err) {
     ignoreAlreadyExisting(url, err)
   }
@@ -20,7 +22,7 @@ module.exports = async index => {
 
 const ignoreAlreadyExisting = (url, err) => {
   if (err.body && err.body.error.type === 'resource_already_exists_exception') {
-    return _.warn(url, 'database already exist')
+    return warn(url, 'database already exist')
   } else {
     throw err
   }

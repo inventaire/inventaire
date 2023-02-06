@@ -1,9 +1,18 @@
-const should = require('should')
-const { adminReq, getUser, getReservedUser, authReq, shouldNotBeCalled, getDeanonymizedUser, customAuthReq } = require('../utils/utils')
-const { createWork } = require('../fixtures/entities')
+import should from 'should'
+import { wait } from '#lib/promises'
+import { customAuthReq } from '#tests/api/utils/request'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createWork } from '../fixtures/entities.js'
+import { updateClaim, updateLabel } from '../utils/entities.js'
+import {
+  adminReq,
+  getUser,
+  getReservedUser,
+  authReq,
+  getDeanonymizedUser,
+} from '../utils/utils.js'
+
 const endpoint = '/api/entities?action=contributions'
-const { wait } = require('lib/promises')
-const { updateClaim, updateLabel } = require('../utils/entities')
 
 describe('entities:contributions', () => {
   it('should return contributions from all users by default', async () => {

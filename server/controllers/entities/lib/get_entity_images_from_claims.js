@@ -1,7 +1,7 @@
-const getCommonsFilenamesFromClaims = require('./get_commons_filenames_from_claims')
-const { getUrlFromEntityImageHash } = require('./entities')
+import { getUrlFromEntityImageHash } from './entities.js'
+import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
-module.exports = ({ claims }) => {
+export default ({ claims }) => {
   // Test claims existance to prevent crash when used on meta entities
   // for which entities claims were deleted
   if (claims == null) return []

@@ -1,12 +1,15 @@
-const _ = require('builders/utils')
-const resolve = require('./resolve')
-const UpdateResolvedEntry = require('./update_resolved_entry')
-const CreateUnresolvedEntry = require('./create_unresolved_entry')
-const sanitizeEntry = require('./sanitize_entry')
-const { waitForCPUsLoadToBeBelow } = require('lib/os')
-const { nice } = require('config')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import { log } from '#lib/utils/logs'
+import CreateUnresolvedEntry from './create_unresolved_entry.js'
+import resolve from './resolve.js'
+import sanitizeEntry from './sanitize_entry.js'
+import UpdateResolvedEntry from './update_resolved_entry.js'
 
-const resolveUpdateAndCreate = async params => {
+const { nice } = CONFIG
+
+export async function resolveUpdateAndCreate (params) {
   params.batchId = Date.now()
   const { create, update, strict } = params
   const { entries, errors } = sanitizeEntries(params.entries, strict)
@@ -23,7 +26,7 @@ const resolveUpdateAndCreate = async params => {
     const nextEntry = entries.shift()
     if (nextEntry == null) return { resolvedEntries, errors }
 
-    _.log(nextEntry, 'next entry')
+    log(nextEntry, 'next entry')
 
     return resolve(nextEntry)
     .then(updateResolvedEntry)
@@ -52,7 +55,7 @@ const handleError = (strict, errors, err, entry) => {
   }
 }
 
-const sanitizeEntries = (entries, strict) => {
+export const sanitizeEntries = (entries, strict) => {
   const errors = []
   const sanitizedEntries = []
   entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))
@@ -66,5 +69,3 @@ const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => 
     handleError(strict, errors, err, entry)
   }
 }
-
-module.exports = { resolveUpdateAndCreate, sanitizeEntries }

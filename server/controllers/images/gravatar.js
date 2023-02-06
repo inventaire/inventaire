@@ -1,7 +1,7 @@
 // An endpoint to get the request user email and convert it to a gravatar url
 // so that a client can offer to import an existing avatar
 
-const { md5 } = require('lib/crypto')
+import { md5 } from '#lib/crypto'
 
 const sanitization = {}
 
@@ -25,4 +25,4 @@ const getHash = email => {
   return md5(email)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

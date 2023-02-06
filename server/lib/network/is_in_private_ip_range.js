@@ -1,7 +1,7 @@
-const { getIpBinaryRepresentation } = require('./ip_binary_representation')
+import { getIpBinaryRepresentation } from './ip_binary_representation.js'
 
 // resolvedIp: ip as returned by dns.lookup
-module.exports = resolvedIp => {
+export default resolvedIp => {
   const isIpv6 = resolvedIp.includes(':')
   const binaryIp = getIpBinaryRepresentation(resolvedIp)
   const privateIpRangePrefixes = isIpv6 ? privateIpv6RangePrefixes : privateIpv4RangePrefixes

@@ -1,5 +1,5 @@
-require('should')
-const getOpenLibraryEntryFromIsbn = require('data/openlibrary/get_openlibrary_entry_from_isbn')
+import 'should'
+import getOpenLibraryEntryFromIsbn from '#data/openlibrary/get_openlibrary_entry_from_isbn'
 
 describe('get_openlibrary_entry_from_isbn', () => {
   it('should get an entry from an ISBN', async () => {

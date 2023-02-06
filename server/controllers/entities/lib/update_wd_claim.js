@@ -1,16 +1,17 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const getWdEntity = require('data/wikidata/get_entity')
-const wdk = require('wikidata-sdk')
-const wdEdit = require('lib/wikidata/edit')
-const wdOauth = require('./wikidata_oauth')
-const properties = require('./properties/properties_values_constraints')
-const entitiesRelationsTemporaryCache = require('./entities_relations_temporary_cache')
-const { cachedRelationProperties } = require('./temporarily_cache_relations')
-const { unprefixify, prefixifyWd } = require('./prefix')
-const { qualifierProperties } = require('lib/wikidata/data_model_adapter')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import getWdEntity from '#data/wikidata/get_entity'
+import { error_ } from '#lib/error/error'
+import { LogError } from '#lib/utils/logs'
+import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
+import wdEdit from '#lib/wikidata/edit'
+import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
+import { unprefixify, prefixifyWd } from './prefix.js'
+import properties from './properties/properties_values_constraints.js'
+import { cachedRelationProperties } from './temporarily_cache_relations.js'
+import wdOauth from './wikidata_oauth.js'
 
-module.exports = async (user, id, property, oldValue, newValue) => {
+export default async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
 
   if ((properties[property].datatype === 'entity')) {
@@ -42,11 +43,11 @@ module.exports = async (user, id, property, oldValue, newValue) => {
     const uri = prefixifyWd(id)
     if (newValue != null) {
       entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
-      .catch(_.Error('entitiesRelationsTemporaryCache.set err'))
+      .catch(LogError('entitiesRelationsTemporaryCache.set err'))
     }
     if (oldValue != null) {
       entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
-      .catch(_.Error('entitiesRelationsTemporaryCache.del err'))
+      .catch(LogError('entitiesRelationsTemporaryCache.del err'))
     }
   }
 

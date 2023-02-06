@@ -1,20 +1,20 @@
-const listings_ = require('controllers/listings/lib/listings')
-const error_ = require('lib/error/error')
+import { addListingElements, getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { error_ } from '#lib/error/error'
 
 const sanitization = {
   id: {},
-  uris: {}
+  uris: {},
 }
 
 const controller = async ({ id, uris, reqUserId }) => {
-  const listing = await listings_.getListingWithElements(id, uris, reqUserId)
+  const listing = await getListingWithElements(id, uris, reqUserId)
   if (!listing) throw error_.notFound({ id })
-  listings_.validateOwnership(reqUserId, listing)
-  return listings_.addElements({ listing, uris, userId: reqUserId })
+  validateListingOwnership(reqUserId, listing)
+  return addListingElements({ listing, uris, userId: reqUserId })
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'lists', 'addElements' ]
+  track: [ 'lists', 'addElements' ],
 }

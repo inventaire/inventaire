@@ -1,13 +1,14 @@
-const _ = require('builders/utils')
-require('should')
-const { publicReq, getUser, shouldNotBeCalled, getUserB, getReservedUser } = require('../utils/utils')
-const { search, waitForIndexation, firstNWords, customAuthSearch } = require('../utils/search')
-const { createGroup, createGroupWithAMember } = require('../fixtures/groups')
-const { getSomeGroupWithAMember, createGroupAndMember } = require('tests/api/fixtures/groups')
-const { makeFriends } = require('tests/api/utils/relations')
-const { createListing } = require('tests/api/fixtures/listings')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
-const { createShelf } = require('tests/api/fixtures/shelves')
+import _ from '#builders/utils'
+import 'should'
+import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
+import { createListing } from '#fixtures/listings'
+import { createShelf } from '#fixtures/shelves'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import { makeFriends } from '#tests/api/utils/relations'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createGroup, createGroupWithAMember } from '../fixtures/groups.js'
+import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search.js'
+import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
 describe('search:global', () => {
   describe('parameters', () => {

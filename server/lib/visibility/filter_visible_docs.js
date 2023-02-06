@@ -1,10 +1,10 @@
-const _ = require('builders/utils')
-const { isVisibilityGroupKey } = require('lib/boolean_validations')
-const { byIds: getGroupsByIds, getUserGroupsCoMembers } = require('controllers/groups/lib/groups')
-const { getUserFriends } = require('controllers/relations/lib/lists')
-const { allGroupMembers: parseAllGroupMembersIds } = require('server/controllers/groups/lib/users_lists')
+import _ from '#builders/utils'
+import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
+import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
+import { getUserFriends } from '#controllers/relations/lib/lists'
+import { isVisibilityGroupKey } from '#lib/boolean_validations'
 
-module.exports = async (docs, reqUserId) => {
+export async function filterVisibleDocs (docs, reqUserId) {
   if (!reqUserId) return docs.filter(isPublic)
 
   // Optimizing for the case where all requested docs belong to the requester
@@ -55,7 +55,7 @@ const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
 const getGroupsMembersIdsSets = groups => {
   const groupsMembersIdsSets = {}
   for (const group of groups) {
-    groupsMembersIdsSets[group._id] = new Set(parseAllGroupMembersIds(group))
+    groupsMembersIdsSets[group._id] = new Set(getAllGroupMembersIds(group))
   }
   return groupsMembersIdsSets
 }

@@ -7,24 +7,28 @@
 // - invitatitons: inviting people out of Inventaire
 // - users: finding users by their usernames, positions, etc
 
-const ActionsControllers = require('lib/actions_controllers')
+import { keepSnapshotItemsCountsUpdated } from '#controllers/user/lib/keep_snapshot_items_counts_updated'
+import ActionsControllers from '#lib/actions_controllers'
+import delet from './delete.js'
+import get from './get.js'
+import update from './update.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     authentified: {
-      default: require('./get')
-    }
+      default: get,
+    },
   }),
   put: ActionsControllers({
     authentified: {
-      default: require('./update')
-    }
+      default: update,
+    },
   }),
   delete: ActionsControllers({
     authentified: {
-      default: require('./delete')
-    }
-  })
+      default: delet,
+    },
+  }),
 }
 
-require('./lib/keep_snapshot_items_counts_updated')()
+keepSnapshotItemsCountsUpdated()

@@ -14,33 +14,33 @@
 // allows to display basic data or filter large lists of items by text
 // without having to query from 3 to 10+ entities per item
 
-const _ = require('builders/utils')
-const db = require('db/level/get_sub_db')('snapshot', 'json')
-const { formatBatchOps } = require('db/level/utils')
-const refreshSnapshot = require('./refresh_snapshot')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const pTimeout = require('p-timeout')
+import pTimeout from 'p-timeout'
+import dbFactory from '#db/level/get_sub_db'
+import { formatBatchOps } from '#db/level/utils'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { logError } from '#lib/utils/logs'
+import refreshSnapshot from './refresh_snapshot.js'
 
-module.exports = {
-  addToItem: async item => {
-    if (item.snapshot) return item
+const db = dbFactory('snapshot', 'json')
 
-    try {
-      assert_.string(item.entity)
-      item.snapshot = await getSnapshot(item.entity)
-    } catch (err) {
-      err.context = err.context || {}
-      err.context.item = item
-      _.error(err, 'snapshot_.addToItem error')
-      item.snapshot = item.snapshot || {}
-    }
+export async function addSnapshotToItem (item) {
+  if (item.snapshot) return item
 
-    return item
-  },
+  try {
+    assert_.string(item.entity)
+    item.snapshot = await getSnapshot(item.entity)
+  } catch (err) {
+    err.context = err.context || {}
+    err.context.item = item
+    logError(err, 'addSnapshotToItem error')
+    item.snapshot = item.snapshot || {}
+  }
 
-  batch: ops => db.batch(formatBatchOps(ops))
+  return item
 }
+
+export const saveSnapshotsInBatch = ops => db.batch(formatBatchOps(ops))
 
 const getSnapshot = (uri, preventLoop) => {
   // Setting a timeout as it happened in the past that leveldb would hang without responding.
@@ -49,18 +49,18 @@ const getSnapshot = (uri, preventLoop) => {
   // To be removed once this bug is long gone
   return pTimeout(db.get(uri), 50000)
   .catch(err => {
-    if (err.name === 'TimeoutError') _.error(err, `getSnapshot db.get(${uri}) TimeoutError`)
+    if (err.name === 'TimeoutError') logError(err, `getSnapshot db.get(${uri}) TimeoutError`)
     if (!(err.notFound || err.name === 'TimeoutError')) throw err
   })
   .then(snapshot => {
     if (snapshot != null) return snapshot
 
     if (preventLoop === true) {
-      // Known case: addToItem was called for an item which entity is a serie
+      // Known case: addSnapshotToItem was called for an item which entity is a serie
       // thus, the related works and editions were refreshed but as series aren't
       // supposed to be associated to items, no snapshot was created for the serie itself
       const err = error_.new("couldn't refresh item snapshot", 500, { uri })
-      _.error(err, 'getSnapshot err')
+      logError(err, 'getSnapshot err')
       return {}
     }
 

@@ -1,11 +1,11 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const verifyThatEntitiesCanBeRemoved = require('./lib/verify_that_entities_can_be_removed')
-const removeEntitiesByInvId = require('./lib/remove_entities_by_inv_id')
-const entities_ = require('./lib/entities')
+import _ from '#builders/utils'
+import { getEntitiesByIsbns } from '#controllers/entities/lib/entities'
+import { error_ } from '#lib/error/error'
+import removeEntitiesByInvId from './lib/remove_entities_by_inv_id.js'
+import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed.js'
 
 const sanitization = {
-  uris: {}
+  uris: {},
 }
 
 const controller = async (params, req) => {
@@ -36,8 +36,8 @@ const replaceIsbnUrisByInvUris = async uris => {
 
 const getInvUrisFromIsbnUris = async uris => {
   const isbns = uris.map(uri => uri.split(':')[1])
-  const entities = await entities_.byIsbns(isbns)
+  const entities = await getEntitiesByIsbns(isbns)
   return entities.map(entity => `inv:${entity._id}`)
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

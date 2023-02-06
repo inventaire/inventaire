@@ -1,13 +1,15 @@
-const CONFIG = require('config')
-const { wait } = require('lib/promises')
+import CONFIG from 'config'
+import { indexes } from '#db/elasticsearch/indexes'
+import { createShelf } from '#fixtures/shelves'
+import { randomWords } from '#fixtures/text'
+import { createUser } from '#fixtures/users'
+import { wait } from '#lib/promises'
+import { updateShelf, deleteShelves } from '#tests/api/utils/shelves'
+import { deleteUser } from '#tests/api/utils/users'
+import { getIndexedDoc } from '../utils/search.js'
+
 const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
-const { getIndexedDoc } = require('../utils/search')
-const { createShelf } = require('tests/api/fixtures/shelves')
-const { randomWords } = require('tests/api/fixtures/text')
-const { updateShelf, deleteShelves } = require('tests/api/utils/shelves')
-const { createUser } = require('tests/api/fixtures/users')
-const { deleteUser } = require('tests/api/utils/users')
-const { index } = require('db/elasticsearch/indexes').indexes.shelves
+const { index } = indexes.shelves
 
 describe('indexation:shelves', () => {
   it('should index a new shelf', async () => {

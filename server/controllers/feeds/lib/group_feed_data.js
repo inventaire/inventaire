@@ -1,21 +1,22 @@
-const user_ = require('controllers/user/lib/user')
-const groups_ = require('controllers/groups/lib/groups')
-const Group = require('models/group')
+import { getGroupById } from '#controllers/groups/lib/groups'
+import { getUsersByIds } from '#controllers/user/lib/user'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import Group from '#models/group'
 
-module.exports = async (groupId, reqUserId) => {
-  const group = await groups_.byId(groupId)
+export default async (groupId, reqUserId) => {
+  const group = await getGroupById(groupId)
   const membersIds = Group.getAllMembersIds(group)
-  const users = await user_.byIds(membersIds)
+  const users = await getUsersByIds(membersIds)
   return {
     users,
     reqUserId,
-    filter: 'group',
+    context: getGroupVisibilityKey(group._id),
     feedOptions: {
       title: group.name,
       description: group.description,
       image: group.picture,
       queryString: `group=${group._id}`,
-      pathname: `groups/${group._id}`
-    }
+      pathname: `groups/${group._id}`,
+    },
   }
 }

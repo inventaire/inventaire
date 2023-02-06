@@ -1,15 +1,16 @@
-const { getUserRelations, getNetworkIds } = require('controllers/user/lib/relations_status')
+import { getUserRelations } from '#controllers/relations/lib/lists'
+import { getNetworkIds } from '#controllers/user/lib/relations_status'
 
 const sanitization = {}
 
 const controller = async ({ reqUserId }) => {
   const [ relations, networkIds ] = await Promise.all([
     getUserRelations(reqUserId),
-    getNetworkIds(reqUserId)
+    getNetworkIds(reqUserId),
   ])
   delete relations.none
   relations.network = networkIds
   return relations
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

@@ -1,13 +1,15 @@
-require('should')
-const { getUserB } = require('../utils/utils')
-const { wait } = require('lib/promises')
-const { importSomeImage, uploadSomeImage, localContainerHasImage } = require('../utils/images')
-const { updateUser } = require('../utils/users')
-const { createGroup } = require('../fixtures/groups')
-const { updateGroup } = require('../utils/groups')
-const { createEdition } = require('../fixtures/entities')
-const { updateClaim } = require('../utils/entities')
-const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = require('config').mediaStorage.images.checkDelays
+import 'should'
+import CONFIG from 'config'
+import { wait } from '#lib/promises'
+import { createEdition } from '../fixtures/entities.js'
+import { createGroup } from '../fixtures/groups.js'
+import { updateClaim } from '../utils/entities.js'
+import { updateGroup } from '../utils/groups.js'
+import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images.js'
+import { updateUser } from '../utils/users.js'
+import { getUserB } from '../utils/utils.js'
+
+const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
 
 describe('images:auto-remove', () => {
   describe('upload', () => {
@@ -54,7 +56,7 @@ describe('images:auto-remove', () => {
       const [
         group,
         { url, hash },
-        { url: url2 }
+        { url: url2 },
       ] = await Promise.all([
         createGroup(),
         importSomeImage({ container: 'groups' }),
@@ -71,7 +73,7 @@ describe('images:auto-remove', () => {
         group,
         group2,
         { url, hash },
-        { url: url2 }
+        { url: url2 },
       ] = await Promise.all([
         createGroup(),
         createGroup(),

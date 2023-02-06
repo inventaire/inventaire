@@ -1,23 +1,22 @@
-const CONFIG = require('config')
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
+import CONFIG from 'config'
+import _ from '#builders/utils'
+import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#controllers/groups/lib/counts'
+import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
+import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
+import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
+import { objectPromise } from '#lib/promises'
+import { i18n } from '../i18n/i18n.js'
+import getLastNearbyPublicBooks from './last_nearby_books.js'
+import getLastNetworkBooks from './last_network_books.js'
+
 const host = CONFIG.getPublicOrigin()
-const { i18n } = require('../i18n/i18n')
 const { contactAddress } = CONFIG
 const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
 
-const relations_ = require('controllers/relations/lib/queries')
-const groupsCounts = require('controllers/groups/lib/counts')
-const notifications_ = require('controllers/notifications/lib/notifications')
-const transactions_ = require('controllers/transactions/lib/transactions')
-
-const getLastNetworkBooks = require('./last_network_books')
-const getLastNearbyPublicBooks = require('./last_nearby_books')
-
-module.exports = user => {
+export default user => {
   user.lang = _.shortLang(user.language)
 
   return getEmailData(user)
@@ -27,20 +26,20 @@ module.exports = user => {
 
 const getEmailData = user => {
   const { _id: userId, lang, lastSummary } = user
-  return promises_.props({
+  return objectPromise({
     // pending friends requests
-    friendsRequests: relations_.pendingFriendsRequestsCount(userId),
+    friendsRequests: getPendingFriendsRequestsCount(userId),
     // pending group invitation
-    groupInvitations: groupsCounts.pendingGroupInvitationsCount(userId),
-    groupRequests: groupsCounts.pendingGroupRequestsCount(userId),
+    groupInvitations: getPendingGroupInvitationsCount(userId),
+    groupRequests: getPendingGroupRequestsCount(userId),
     // unread notifications
-    unreadNotifications: notifications_.unreadCount(userId),
+    unreadNotifications: getUnreadNotificationsCount(userId),
     // waiting transaction
-    activeTransactions: transactions_.activeTransactionsCount(userId),
+    activeTransactions: getUserActiveTransactionsCount(userId),
     // new books in your network: preview + count for others 'X more...'
     lastFriendsBooks: getLastNetworkBooks(userId, lang, lastSummary),
     // new books nearby
-    lastNearbyPublicBooks: getLastNearbyPublicBooks(user, lastSummary)
+    lastNearbyPublicBooks: getLastNearbyPublicBooks(user, lastSummary),
   })
 }
 
@@ -67,7 +66,7 @@ const spreadEmailData = user => results => {
     unreadNotifications,
     activeTransactions,
     lastFriendsBooks,
-    lastNearbyPublicBooks
+    lastNearbyPublicBooks,
   } = results
 
   const { email, lang } = user
@@ -102,7 +101,7 @@ const spreadEmailData = user => results => {
         host,
         periodicity,
         settingsHref: `${host}/settings/notifications`,
-        contactAddress
+        contactAddress,
       },
       friendsRequests: counter(friendsRequests, '/network/friends'),
       groupInvitations: counter(groupInvitations, '/network/groups'),
@@ -113,15 +112,15 @@ const spreadEmailData = user => results => {
       lastNearbyPublicBooks,
       news,
       didYouKnowKey: getDidYouKnowKey(),
-      hasActivities: countTotal > 0
-    }
+      hasActivities: countTotal > 0,
+    },
   }
 }
 
 const counter = (count, path) => ({
   display: count > 0,
   smart_count: count,
-  href: host + path
+  href: host + path,
 })
 
 const newsData = user => {

@@ -1,8 +1,10 @@
-const should = require('should')
-const { createWork, createEdition, createHuman } = require('tests/api/fixtures/entities')
-const { getByUri } = require('tests/api/utils/entities')
-const { publicReq, shouldNotBeCalled } = require('../utils/utils')
-const requests_ = require('lib/requests')
+import should from 'should'
+import { createWork, createEdition, createHuman } from '#fixtures/entities'
+import { requests_ } from '#lib/requests'
+import { getByUri } from '#tests/api/utils/entities'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { publicReq } from '../utils/utils.js'
+
 const endpoint = '/api/data?action=summaries'
 
 describe('summaries', () => {
@@ -20,8 +22,8 @@ describe('summaries', () => {
       const olId = 'OL45804W'
       const work = await existsOrCreate({
         claims: {
-          [property]: [ olId ]
-        }
+          [property]: [ olId ],
+        },
       })
       const { uri } = work
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
@@ -39,8 +41,8 @@ describe('summaries', () => {
       const olId = 'OL4104668W'
       const work = await existsOrCreate({
         claims: {
-          [property]: [ olId ]
-        }
+          [property]: [ olId ],
+        },
       })
       const { uri } = work
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
@@ -60,8 +62,8 @@ describe('summaries', () => {
       const human = await existsOrCreate({
         createFn: createHuman,
         claims: {
-          [property]: [ olId ]
-        }
+          [property]: [ olId ],
+        },
       })
       const { uri } = human
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
@@ -77,8 +79,8 @@ describe('summaries', () => {
       const edition = await existsOrCreate({
         createFn: createEdition,
         claims: {
-          [property]: [ bnfId ]
-        }
+          [property]: [ bnfId ],
+        },
       })
       const { uri } = edition
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
@@ -97,8 +99,8 @@ describe('summaries', () => {
       const edition = await existsOrCreate({
         createFn: createEdition,
         claims: {
-          [property]: [ invalidBnfId ]
-        }
+          [property]: [ invalidBnfId ],
+        },
       })
       const { uri } = edition
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
@@ -121,7 +123,7 @@ describe('summaries', () => {
         sitelink: {
           title: 'Liv Strömquist',
           lang: 'sv',
-        }
+        },
       })
       enwikiSitelinkData.should.deepEqual({
         key: 'enwiki',
@@ -131,7 +133,7 @@ describe('summaries', () => {
         sitelink: {
           title: 'Liv Strömquist',
           lang: 'en',
-        }
+        },
       })
     })
   })

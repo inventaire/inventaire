@@ -1,19 +1,19 @@
 // A small memoize implementation optimized for module initialization: when you call
-// `require('./foo')` several times, it always returns the same value or object
-// (see https://nodejs.org/docs/latest-v8.x/api/modules.html#modules_require_cache),
+// `import foo from './foo.js'` several times, it always returns the same value or object
+// (see https://nodejs.org/docs/latest/api/esm.html#urls),
 // but if the initialization is done by passing arguments to a function
-// (ex: `require('./foo')('bar')`) there is no caching mechanism, unless
-// the  './foo' module implements it. This memoize function thus aims to help
+// (ex: `fooFactory('bar')`) there is no caching mechanism, unless
+// the  'fooFactory' module implements it. This memoize function thus aims to help
 // implementing this caching mechanism easily:
 //
-// const memoize = require('lib/utils/memoize')
+// import { memoize } from '#lib/utils/memoize'
 // const memoizedFn = memoize(fn)
 // memoizedFn('a', 'b') === memoizedFn('a', 'b')
 // memoizedFn('a', 'b') !== memoizedFn('a')
 //
 // See memoize unit tests for more details
 
-module.exports = fn => {
+export function memoize (fn) {
   const cache = {}
   return (...args) => {
     args = addUndefinedArguments(args, fn.length)

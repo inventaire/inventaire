@@ -1,15 +1,20 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const { truncateLatLng } = require('lib/geo')
-const assert_ = require('lib/utils/assert_types')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { truncateLatLng } from '#lib/geo'
+import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
+import groupAttributes from './attributes/group.js'
+import groupValidations from './validations/group.js'
 
-const Group = module.exports = {}
+const Group = {}
 
-const validations = Group.validations = require('./validations/group')
-const attributes = Group.attributes = require('./attributes/group')
+export default Group
+
+const validations = Group.validations = groupValidations
+const attributes = Group.attributes = groupAttributes
 
 Group.create = options => {
-  _.log(options, 'group create')
+  log(options, 'group create')
   const { name, description, searchable, position, creatorId, open } = options
   validations.pass('name', name)
   validations.pass('description', description)
@@ -34,7 +39,7 @@ Group.create = options => {
     open,
     creator: creatorId,
     // using the same timestamp for clarity
-    created: creator.timestamp
+    created: creator.timestamp,
   }
 }
 
@@ -83,7 +88,7 @@ const membershipActions = {
   leave: (userId, placeholder, group) => {
     const role = userIsAdmin(userId, group) ? 'admins' : 'members'
     return moveMembership(userId, group, role, null)
-  }
+  },
 }
 
 Group.deleteUser = (group, userId) => {
@@ -114,7 +119,7 @@ Object.assign(Group, membershipActions)
 const createMembership = (userId, invitorId) => ({
   user: userId,
   invitor: invitorId,
-  timestamp: Date.now()
+  timestamp: Date.now(),
 })
 
 // moving membership object from previousCategory to newCategory
@@ -161,7 +166,7 @@ Group.userIsMember = (userId, group) => userIsAdmin(userId, group) || userIsNonA
 
 Group.categories = {
   members: [ 'admins', 'members' ],
-  users: [ 'admins', 'members', 'invited', 'requested' ]
+  users: [ 'admins', 'members', 'invited', 'requested' ],
 }
 
 Group.getAllMembersIds = group => {
@@ -172,5 +177,5 @@ Group.getAllMembersIds = group => {
 }
 
 Group.formatters = {
-  position: truncateLatLng
+  position: truncateLatLng,
 }

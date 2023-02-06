@@ -1,17 +1,22 @@
-const { pass } = require('./common')
-const { types } = require('../attributes/notification')
-const assert_ = require('lib/utils/assert_types')
-const Group = require('../group')
+import { assert_ } from '#lib/utils/assert_types'
+import notificationAttributes from '../attributes/notification.js'
+import Group from '../group.js'
+import commonValidations from './common.js'
 
-const validations = module.exports = {
+const { types } = notificationAttributes
+const { pass } = commonValidations
+
+const validations = {
   pass,
   type: type => types.includes(type),
   data: (data, { type }) => {
     assert_.object(data)
     dataValidationPerType[type](data)
     return true
-  }
+  },
 }
+
+export default validations
 
 const dataValidationPerType = {
   friendAcceptedRequest: ({ user }) => {

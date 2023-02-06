@@ -1,7 +1,7 @@
-const error_ = require('lib/error/error')
-const validateObject = require('lib/validate_object')
-const { rolesByAccess } = require('./user_access_levels')
-const { controllerWrapper, validateControllerWrapperParams } = require('./controller_wrapper')
+import { error_ } from '#lib/error/error'
+import validateObject from '#lib/validate_object'
+import { controllerWrapper, validateControllerWrapperParams } from './controller_wrapper.js'
+import { rolesByAccess } from './user_access_levels.js'
 
 // A function to route requests to an endpoint to sub-endpoints
 // identified by their 'action' names:
@@ -17,7 +17,7 @@ const { controllerWrapper, validateControllerWrapperParams } = require('./contro
 //   }
 // }
 
-module.exports = controllers => {
+export default controllers => {
   const actionsControllersParams = getActionsControllersParams(controllers)
   return async (req, res) => {
     // Accepting the action to be passed either as a query string

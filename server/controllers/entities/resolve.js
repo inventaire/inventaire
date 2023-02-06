@@ -1,5 +1,5 @@
-const { oneDay } = require('lib/time')
-const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_create')
+import { oneDay } from '#lib/time'
+import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create.js'
 
 // Entry example:
 // {
@@ -25,25 +25,25 @@ const { resolveUpdateAndCreate } = require('./lib/resolver/resolve_update_and_cr
 
 const sanitization = {
   entries: {
-    generic: 'collection'
+    generic: 'collection',
   },
   create: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   update: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   enrich: {
     generic: 'boolean',
-    optional: true
+    optional: true,
   },
   strict: {
     generic: 'boolean',
     optional: true,
-    default: true
-  }
+    default: true,
+  },
 }
 
 const controller = async (params, req) => {
@@ -60,4 +60,4 @@ const formatError = err => {
   else return { message, context, entry }
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

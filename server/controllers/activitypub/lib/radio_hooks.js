@@ -1,19 +1,24 @@
-const _ = require('builders/utils')
-const { activitiesDebounceTime } = require('config').activitypub
-const radio = require('lib/radio')
-const user_ = require('controllers/user/lib/user')
-const shelves_ = require('controllers/shelves/lib/shelves')
-const { postActivityToActorFollowersInboxes } = require('./post_activity')
-const { byActorName, createActivity } = require('./activities')
-const formatUserItemsActivities = require('./format_user_items_activities')
-const formatShelfItemsActivities = require('./format_shelf_items_activities')
-const { deliverEntityActivitiesFromPatch } = require('./entity_patch_activities')
+import CONFIG from 'config'
+import { debounce } from 'lodash-es'
+import { getShelfById } from '#controllers/shelves/lib/shelves'
+import { getUserById } from '#controllers/user/lib/user'
+import { radio } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
+import { LogError } from '#lib/utils/logs'
+import { getActivitiesByActorName, createActivity } from './activities.js'
+import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
+import formatShelfItemsActivities from './format_shelf_items_activities.js'
+import formatUserItemsActivities from './format_user_items_activities.js'
+import { postActivityToActorFollowersInboxes } from './post_activity.js'
+
+const { activitiesDebounceTime } = CONFIG.activitypub
+assert_.number(activitiesDebounceTime)
 const debouncedActivities = {}
 
-module.exports = () => {
+export function initRadioHooks () {
   radio.on('user:inventory:update', userId => {
     if (!debouncedActivities[userId]) {
-      debouncedActivities[userId] = _.debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)
+      debouncedActivities[userId] = debounce(createDebouncedActivity({ userId }), activitiesDebounceTime)
     }
     return debouncedActivities[userId]()
   })
@@ -25,29 +30,29 @@ module.exports = () => {
 
 const createDebouncedActivity = ({ userId, shelfId }) => async () => {
   _createDebouncedActivity({ userId, shelfId })
-  .catch(_.Error('createDebouncedActivity error'))
+  .catch(LogError('createDebouncedActivity error'))
 }
 
 const _createDebouncedActivity = async ({ userId, shelfId }) => {
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
-    user = await user_.byId(userId)
+    user = await getUserById(userId)
     if (!user.fediversable) return
     name = user.stableUsername
   } else if (shelfId) {
     delete debouncedActivities[shelfId]
     // TODO: if this throws an error because the shelf was deleted
     // create a type=Delete activity instead, to notify the followers
-    const shelf = await shelves_.byId(shelfId)
+    const shelf = await getShelfById(shelfId)
     if (!shelf.visibility.includes('public')) return
-    const owner = await user_.byId(shelf.owner)
+    const owner = await getUserById(shelf.owner)
     if (!owner.fediversable) return
     // todo: use group slugify to create shelf name
-    // shelf = await shelves_.byId(shelfId)
+    // shelf = await getShelfById(shelfId)
     name = `shelf-${shelfId}`
   }
-  const [ lastActivity ] = await byActorName({ name, limit: 1 })
+  const [ lastActivity ] = await getActivitiesByActorName({ name, limit: 1 })
   const since = lastActivity?.updated || 0
 
   const activityDoc = await createActivity({
@@ -69,7 +74,7 @@ const _createDebouncedActivity = async ({ userId, shelfId }) => {
 
 const debounceActivities = async shelfId => {
   if (!debouncedActivities[shelfId]) {
-    debouncedActivities[shelfId] = _.debounce(createDebouncedActivity({ shelfId }), activitiesDebounceTime)
+    debouncedActivities[shelfId] = debounce(createDebouncedActivity({ shelfId }), activitiesDebounceTime)
   }
   return debouncedActivities[shelfId]()
 }

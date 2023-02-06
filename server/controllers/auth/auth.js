@@ -1,16 +1,20 @@
-const ActionsControllers = require('lib/actions_controllers')
-const { signup, login, logout } = require('./connection')
-const { usernameAvailability, emailAvailability } = require('./availability')
+import emailConfirmation from '#controllers/auth/email_confirmation'
+import resetPassword from '#controllers/auth/reset_password'
+import updatePassword from '#controllers/auth/update_password'
+import wikidataOauth from '#controllers/auth/wikidata_oauth'
+import ActionsControllers from '#lib/actions_controllers'
+import { usernameAvailability, emailAvailability } from './availability.js'
+import { signup, login, logout } from './connection.js'
 
-module.exports = {
+export default {
   get: ActionsControllers({
     public: {
       'username-availability': usernameAvailability,
-      'email-availability': emailAvailability
+      'email-availability': emailAvailability,
     },
     authentified: {
-      'wikidata-oauth': require('./wikidata_oauth')
-    }
+      'wikidata-oauth': wikidataOauth,
+    },
   }),
 
   post: ActionsControllers({
@@ -18,11 +22,11 @@ module.exports = {
       signup,
       login,
       logout,
-      'reset-password': require('./reset_password')
+      'reset-password': resetPassword,
     },
     authentified: {
-      'email-confirmation': require('./email_confirmation'),
-      'update-password': require('./update_password')
-    }
-  })
+      'email-confirmation': emailConfirmation,
+      'update-password': updatePassword,
+    },
+  }),
 }

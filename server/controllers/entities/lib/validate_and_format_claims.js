@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const validateAndFormatClaim = require('./validate_and_format_claim')
-const getEntityType = require('./get_entity_type')
-const validateClaimProperty = require('./validate_claim_property')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
+import { typeOf } from '#lib/utils/types'
+import getEntityType from './get_entity_type.js'
+import validateAndFormatClaim from './validate_and_format_claim.js'
+import validateClaimProperty from './validate_claim_property.js'
 
-module.exports = async ({ claims, type, _id }) => {
+export default async ({ claims, type, _id }) => {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)
@@ -33,8 +34,8 @@ const validatePropertyClaims = (claims, type, _id) => async property => {
     throw error_.new('invalid property value array', 400, {
       property,
       values,
-      type: _.typeOf(values),
-      expectedType: 'array'
+      type: typeOf(values),
+      expectedType: 'array',
     })
   }
 

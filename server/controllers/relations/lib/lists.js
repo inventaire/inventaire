@@ -1,41 +1,40 @@
-const _ = require('builders/utils')
-const couch_ = require('lib/couch')
-const { minKey, maxKey } = couch_
-const parseRelations = require('./parse_relations')
-const groups_ = require('controllers/groups/lib/groups')
-const db = require('db/couchdb/base')('users', 'relations')
+import _ from '#builders/utils'
+import { getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
+import dbFactory from '#db/couchdb/base'
+import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
+import parseRelations from './parse_relations.js'
+
+const db = dbFactory('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
   return db.view('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
-    include_docs: includeDocs
+    include_docs: includeDocs,
   })
 }
 
-const lists = module.exports = {
-  getUserRelations: userId => {
-    return getAllUserRelations(userId)
-    .then(parseRelations)
-  },
+export const getUserRelations = userId => {
+  return getAllUserRelations(userId)
+  .then(parseRelations)
+}
 
-  getUserFriends: userId => {
-    const query = { key: [ userId, 'friends' ] }
-    return db.view('relations', 'byStatus', query)
-    .then(couch_.mapValue)
-  },
+export const getUserFriends = userId => {
+  const query = { key: [ userId, 'friends' ] }
+  return db.view('relations', 'byStatus', query)
+  .then(mapValue)
+}
 
-  deleteUserRelations: userId => {
-    return getAllUserRelations(userId, true)
-    .then(couch_.mapDoc)
-    .then(db.bulkDelete)
-  },
+export const deleteUserRelations = userId => {
+  return getAllUserRelations(userId, true)
+  .then(mapDoc)
+  .then(db.bulkDelete)
+}
 
-  getUserFriendsAndCoGroupsMembers: userId => {
-    return Promise.all([
-      lists.getUserFriends(userId),
-      groups_.getUserGroupsCoMembers(userId)
-    ])
-    .then(([ friends, coMembers ]) => _.uniq(friends.concat(coMembers)))
-  }
+export const getUserFriendsAndGroupsCoMembers = async userId => {
+  const [ friends, coMembers ] = await Promise.all([
+    getUserFriends(userId),
+    getUserGroupsCoMembers(userId),
+  ])
+  return _.uniq(friends.concat(coMembers))
 }

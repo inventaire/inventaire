@@ -1,14 +1,14 @@
-const { emit } = require('lib/radio')
-const Patch = require('models/patch')
-const entities_ = require('./entities')
-const patches_ = require('./patches/patches')
-const validateEntity = require('./validate_entity')
+import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getPatchesByEntityId } from '#controllers/entities/lib/patches/patches'
+import { emit } from '#lib/radio'
+import Patch from '#models/patch'
+import validateEntity from './validate_entity.js'
 
-module.exports = async (patchId, userId) => {
+export default async (patchId, userId) => {
   const entityId = patchId.split(':')[0]
   const restoredPatchIdNum = parseInt(patchId.split(':')[1])
-  const currentDoc = await entities_.byId(entityId)
-  const patches = await patches_.byEntityId(entityId)
+  const currentDoc = await getEntityById(entityId)
+  const patches = await getPatchesByEntityId(entityId)
 
   const patchesToRevert = patches
     .filter(patch => getPatchIdNum(patch._id) > restoredPatchIdNum)
@@ -21,7 +21,7 @@ module.exports = async (patchId, userId) => {
 
   await validateEntity(updatedDoc)
   const context = { restoredPatch: patchId }
-  const docAfterUpdate = await entities_.putUpdate({ userId, currentDoc, updatedDoc, context })
+  const docAfterUpdate = await putEntityUpdate({ userId, currentDoc, updatedDoc, context })
   await emit('entity:restore:version', updatedDoc)
   return docAfterUpdate
 }

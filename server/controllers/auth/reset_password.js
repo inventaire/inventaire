@@ -1,13 +1,13 @@
-const error_ = require('lib/error/error')
-const user_ = require('controllers/user/lib/user')
-const { sendResetPasswordEmail } = require('controllers/user/lib/token')
+import { sendResetPasswordEmail } from '#controllers/user/lib/token'
+import { findUserByEmail } from '#controllers/user/lib/user'
+import { error_ } from '#lib/error/error'
 
 const sanitization = {
-  email: {}
+  email: {},
 }
 
 const controller = async ({ email }) => {
-  const user = await user_.findOneByEmail(email)
+  const user = await findUserByEmail(email)
     .catch(catchEmailNotFoundErr(email))
 
   await sendResetPasswordEmail(user)
@@ -20,4 +20,4 @@ const catchEmailNotFoundErr = email => err => {
   else throw err
 }
 
-module.exports = { sanitization, controller }
+export default { sanitization, controller }

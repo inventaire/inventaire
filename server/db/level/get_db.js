@@ -1,8 +1,10 @@
-const CONFIG = require('config')
-const __ = CONFIG.universalPath
-const _ = require('builders/utils')
+import CONFIG from 'config'
+import levelParty from 'level-party'
+import levelTest from 'level-test'
+import { absolutePath } from '#lib/absolute_path'
+import { warn, info } from '#lib/utils/logs'
 
-const dbFolder = __.path('root', 'db')
+const dbFolder = absolutePath('root', 'db')
 const { suffix } = CONFIG.db
 const { inMemoryLRUCacheSize, memoryBackend } = CONFIG.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`
@@ -26,21 +28,21 @@ const leveldownOptions = {
   // Additionnaly, the process itself should be given a higher limit
   // See https://github.com/inventaire/inventaire-deploy/commit/0ad6e2a
   // This limit can be checked by inspecting `cat /proc/${pid}/limits | grep 'Max open files'`
-  maxOpenFiles: Infinity
+  maxOpenFiles: Infinity,
 }
 
-let generalDb, cacheDb
+export let generalDb
+export let cacheDb
+
 if (memoryBackend) {
-  _.warn('leveldb in memory')
-  const level = require('level-test')()
+  warn('leveldb in memory')
+  const level = levelTest()
   generalDb = level()
   cacheDb = level()
 } else {
-  const level = require('level-party')
-  _.info(generalDbFolderPath, 'general leveldb path')
-  _.info(cacheDbFolderPath, 'cache leveldb path')
+  const level = levelParty
+  info(generalDbFolderPath, 'general leveldb path')
+  info(cacheDbFolderPath, 'cache leveldb path')
   generalDb = level(generalDbFolderPath, leveldownOptions)
   cacheDb = level(cacheDbFolderPath, leveldownOptions)
 }
-
-module.exports = { generalDb, cacheDb }

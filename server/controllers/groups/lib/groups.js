@@ -1,102 +1,94 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const Group = require('models/group')
-const db = require('db/couchdb/base')('groups')
-const lists_ = require('./users_lists')
-const { add: addSlug } = require('./slug')
-const assert_ = require('lib/utils/assert_types')
-const searchGroupsByPosition = require('lib/search_by_position')(db, 'groups')
+import { map, union, uniq, without } from 'lodash-es'
+import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
+import dbFactory from '#db/couchdb/base'
+import { error_ } from '#lib/error/error'
+import searchGroupsByPositionFactory from '#lib/search_by_position'
+import { assert_ } from '#lib/utils/assert_types'
+import { Log } from '#lib/utils/logs'
+import Group from '#models/group'
+import { addSlug } from './slug.js'
 
-const groups_ = module.exports = {
-  // using a view to avoid returning users or relations
-  byId: db.viewFindOneByKey.bind(db, 'byId'),
-  byIds: db.byIds,
-  bySlug: db.viewFindOneByKey.bind(db, 'bySlug'),
-  byUser: db.viewByKey.bind(db, 'byUser'),
-  byInvitedUser: db.viewByKey.bind(db, 'byInvitedUser'),
-  byAdmin: async userId => {
-    // could be simplified by making the byUser view
-    // emit an arrey key with the role as second parameter
-    // but it would make groups_.byUser more complex
-    // (i.e. use a range instead of a simple key)
-    const groups = await db.viewByKey('byUser', userId)
-    return groups.filter(group => Group.userIsAdmin(userId, group))
-  },
+const db = dbFactory('groups')
+const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-  // /!\ the 'byName' view does return groups with 'searchable' set to false
-  nameStartBy: (name, limit = 10) => {
-    name = name.toLowerCase()
-    return db.viewCustom('byName', {
-      startkey: name,
-      endkey: `${name}Z`,
-      include_docs: true,
-      limit
-    })
-  },
+// using a view to avoid returning users or relations
+export const getGroupById = db.viewFindOneByKey.bind(db, 'byId')
+export const getGroupsByIds = db.byIds
+export const getGroupBySlug = db.viewFindOneByKey.bind(db, 'bySlug')
+export const getGroupsByUser = db.viewByKey.bind(db, 'byUser')
+export const getGroupsByInvitedUser = db.viewByKey.bind(db, 'byInvitedUser')
 
-  // including invitations
-  allUserGroups: userId => {
-    return Promise.all([
-      groups_.byUser(userId),
-      groups_.byInvitedUser(userId)
-    ])
-    .then(groups => _.union(...groups))
-  },
+export async function getGroupsByAdmin (userId) {
+  // could be simplified by making the byUser view
+  // emit an arrey key with the role as second parameter
+  // but it would make getGroupsByUser more complex
+  // (i.e. use a range instead of a simple key)
+  const groups = await db.viewByKey('byUser', userId)
+  return groups.filter(group => Group.userIsAdmin(userId, group))
+}
 
-  getUserGroupsIds: async userId => {
-    assert_.string(userId)
-    const { rows } = await db.view('groups', 'byUser', {
-      include_docs: false,
-      key: userId,
-    })
-    return _.map(rows, 'id')
-  },
+// including invitations
+export async function allUserGroups (userId) {
+  const groups = await Promise.all([
+    getGroupsByUser(userId),
+    getGroupsByInvitedUser(userId),
+  ])
+  return union(...groups)
+}
 
-  getUsersGroupsIds: async usersIds => {
-    assert_.strings(usersIds)
-    const { rows } = await db.view('groups', 'byUser', {
-      include_docs: false,
-      keys: usersIds,
-    })
-    const groupsIdsByMembersIds = {}
-    usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
-    rows.forEach(({ id: groupId, key: userId }) => groupsIdsByMembersIds[userId].push(groupId))
-    return groupsIdsByMembersIds
-  },
+export async function getUserGroupsIds (userId) {
+  assert_.string(userId)
+  const { rows } = await db.view('groups', 'byUser', {
+    include_docs: false,
+    key: userId,
+  })
+  return map(rows, 'id')
+}
 
-  create: async options => {
-    const group = Group.create(options)
-    await addSlug(group)
-    return db.postAndReturn(group).then(_.Log('group created'))
-  },
+export async function getUsersGroupsIds (usersIds) {
+  assert_.strings(usersIds)
+  const { rows } = await db.view('groups', 'byUser', {
+    include_docs: false,
+    keys: usersIds,
+  })
+  const groupsIdsByMembersIds = {}
+  usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
+  rows.forEach(({ id: groupId, key: userId }) => groupsIdsByMembersIds[userId].push(groupId))
+  return groupsIdsByMembersIds
+}
 
-  getUserGroupsCoMembers: async userId => {
-    const groups = await groups_.byUser(userId)
-    return getCoMembersIds(groups, userId)
-  },
+export async function createGroup (options) {
+  const group = Group.create(options)
+  await addSlug(group)
+  return db.postAndReturn(group).then(Log('group created'))
+}
 
-  userInvited: async (userId, groupId) => {
-    const group = await groups_.byId(groupId)
-    return Group.findInvitation(userId, group, true)
-  },
+export async function getUserGroupsCoMembers (userId) {
+  const groups = await getGroupsByUser(userId)
+  return getCoMembersIds(groups, userId)
+}
 
-  getGroupMembersIds: async groupId => {
-    const group = await groups_.byId(groupId)
-    if (group == null) throw error_.notFound({ group: groupId })
-    return Group.getAllMembersIds(group)
-  },
+export async function getInvitedUser (userId, groupId) {
+  const group = await getGroupById(groupId)
+  return Group.findInvitation(userId, group, true)
+}
 
-  byPosition: searchGroupsByPosition,
+export async function getGroupMembersIds (groupId) {
+  const group = await getGroupById(groupId)
+  if (group == null) throw error_.notFound({ group: groupId })
+  return Group.getAllMembersIds(group)
+}
 
-  imageIsUsed: async imageHash => {
-    assert_.string(imageHash)
-    const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
-    return rows.length > 0
-  },
+export const getGroupsByPosition = searchGroupsByPosition
+
+export async function imageIsUsed (imageHash) {
+  assert_.string(imageHash)
+  const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
+  return rows.length > 0
 }
 
 const getCoMembersIds = (groups, userId) => {
-  const usersIds = lists_.allGroupsMembers(groups)
+  const usersIds = getAllGroupsMembersIds(groups)
   // Deduplicate and remove the user own id from the list
-  return _.uniq(_.without(usersIds, userId))
+  return uniq(without(usersIds, userId))
 }

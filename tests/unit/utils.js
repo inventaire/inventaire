@@ -1,18 +1,16 @@
-const { warn } = require('lib/utils/logs')
-const util = require('node:util')
+import util from 'node:util'
+import { warn } from '#lib/utils/logs'
 
-module.exports = {
-  shouldNotBeCalled: res => {
-    warn(util.inspect(res, false, null), 'undesired positive res')
-    const err = new Error('function was expected not to be called')
-    // Give 'shouldNotBeCalled' more chance to appear in the red text of the failing test
-    err.name = err.statusCode = 'shouldNotBeCalled'
-    err.body = { status_verbose: 'shouldNotBeCalled' }
-    err.context = { res }
-    throw err
-  },
+export const shouldNotBeCalled = res => {
+  warn(util.inspect(res, false, null), 'undesired positive res')
+  const err = new Error('function was expected not to be called')
+  // Give 'shouldNotBeCalled' more chance to appear in the red text of the failing test
+  err.name = err.statusCode = 'shouldNotBeCalled'
+  err.body = { status_verbose: 'shouldNotBeCalled' }
+  err.context = { res }
+  throw err
+}
 
-  rethrowShouldNotBeCalledErrors: err => {
-    if (err.name === 'shouldNotBeCalled') throw err
-  }
+export const rethrowShouldNotBeCalledErrors = err => {
+  if (err.name === 'shouldNotBeCalled') throw err
 }

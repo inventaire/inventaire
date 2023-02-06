@@ -1,24 +1,27 @@
-const _ = require('builders/utils')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { getReverseClaims, simplify } = require('wikidata-sdk')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import runWdQuery from '#data/wikidata/run_query'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
+import { log } from '#lib/utils/logs'
+import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import { getEntitiesPopularities } from './popularity.js'
+
+const { getReverseClaims, simplify } = wdk
 const { sparqlResults: simplifySparqlResults } = simplify
-const requests_ = require('lib/requests')
-const entities_ = require('./entities')
-const { prefixifyWd, unprefixify } = require('controllers/entities/lib/prefix')
-const cache_ = require('lib/cache')
-const getInvEntityCanonicalUri = require('./get_inv_entity_canonical_uri')
-const runWdQuery = require('data/wikidata/run_query')
-const { getEntitiesPopularities } = require('./popularity')
 
 const caseInsensitiveProperties = [
-  'wdt:P2002'
+  'wdt:P2002',
 ]
 
 const denylistedProperties = [
   // Too many results, can't be sorted
   'wdt:P31',
-  'wdt:P407'
+  'wdt:P407',
 ]
 
 const localOnlyProperties = [
@@ -26,10 +29,10 @@ const localOnlyProperties = [
   // as those are quarantined https://github.com/inventaire/inventaire/issues/182
   'wdt:P629',
   'wdt:P123',
-  'wdt:P195'
+  'wdt:P195',
 ]
 
-module.exports = async params => {
+export async function reverseClaims (params) {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
@@ -86,7 +89,7 @@ const generalWikidataReverseClaims = (property, value, refresh, dry) => {
 const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
-  _.log([ property, value ], 'reverse claim')
+  log([ property, value ], 'reverse claim')
   const url = getReverseClaims(wdProp, value, { caseInsensitive })
   const results = await requests_.get(url)
   return simplifySparqlResults(results)
@@ -95,7 +98,7 @@ const _wikidataReverseClaims = async (property, value) => {
 
 const invReverseClaims = async (property, value) => {
   try {
-    const entities = await entities_.byClaim(property, value, true, true)
+    const entities = await getEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
   } catch (err) {
     // Allow to request reverse claims for properties that aren't yet
@@ -138,7 +141,7 @@ const typeTailoredQuery = {
   // main subject
   'wdt:P921': 'works',
   // inspired by
-  'wdt:P941': 'works'
+  'wdt:P941': 'works',
 }
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]

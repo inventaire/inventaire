@@ -1,18 +1,17 @@
-const CONFIG = require('config')
+import CONFIG from 'config'
+import { getRandomBytes } from '#lib/crypto'
+
 const origin = CONFIG.getPublicOrigin()
-const { getRandomBytes } = require('lib/crypto')
 
-const randomActivityId = (customOrigin = origin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`
+export const randomActivityId = (customOrigin = origin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`
 
-const randomActivity = ({ externalId, emitterActorUrl, activityObject, type }) => {
+export const randomActivity = ({ externalId, emitterActorUrl, activityObject, type }) => {
   if (!externalId) externalId = randomActivityId(CONFIG.publicHost)
   return {
     '@context': [ 'https://www.w3.org/ns/activitystreams' ],
     id: externalId,
     type: type || 'Follow',
     actor: emitterActorUrl,
-    object: activityObject
+    object: activityObject,
   }
 }
-
-module.exports = { randomActivityId, randomActivity }

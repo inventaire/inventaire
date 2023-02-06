@@ -1,5 +1,6 @@
-require('should')
-const { authReq } = require('../utils/utils')
+import 'should'
+import { authReq } from '../utils/utils.js'
+
 const endpoint = '/api/relations'
 
 describe('relations:get', () => {

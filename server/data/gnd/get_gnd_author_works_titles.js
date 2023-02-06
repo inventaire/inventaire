@@ -1,4 +1,4 @@
-const fetchExternalAuthorWorksTitles = require('data/lib/fetch_external_author_works_titles')
+import fetchExternalAuthorWorksTitles from '#data/lib/fetch_external_author_works_titles'
 
 // Unofficial endpoint
 const endpoint = 'https://zbw.eu/beta/sparql/gnd/query'
@@ -8,4 +8,4 @@ const getQuery = gndId => `SELECT ?work ?title WHERE {
   ?work <https://d-nb.info/standards/elementset/gnd#preferredNameForTheWork> ?title .
 }`
 
-module.exports = fetchExternalAuthorWorksTitles('gnd', endpoint, getQuery)
+export default fetchExternalAuthorWorksTitles('gnd', endpoint, getQuery)

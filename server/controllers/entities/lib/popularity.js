@@ -1,19 +1,19 @@
-const _ = require('builders/utils')
-const promises_ = require('lib/promises')
-const error_ = require('lib/error/error')
-const cache_ = require('lib/cache')
-const buildPopularityByUri = require('./build_popularity_by_uri')
+import _ from '#builders/utils'
+import { cache_ } from '#lib/cache'
+import { error_ } from '#lib/error/error'
+import { objectPromise } from '#lib/promises'
+import { buildPopularityByUri } from './build_popularity_by_uri.js'
 
-const getEntitiesPopularities = async ({ uris, refresh, dry }) => {
+export async function getEntitiesPopularities ({ uris, refresh, dry }) {
   if (uris.length === 0) return {}
   const popularityPromises = {}
   for (const uri of uris) {
     popularityPromises[uri] = getEntityPopularity({ uri, refresh, dry })
   }
-  return promises_.props(popularityPromises)
+  return objectPromise(popularityPromises)
 }
 
-const getEntityPopularity = ({ uri, refresh, dry }) => {
+export const getEntityPopularity = ({ uri, refresh, dry }) => {
   if (!_.isEntityUri(uri)) throw error_.new('invalid uri', 400, uri)
 
   return cache_.get({
@@ -25,8 +25,6 @@ const getEntityPopularity = ({ uri, refresh, dry }) => {
     // as building a popularity score can take quite some time, and most consumers
     // just need a quick result
     dryAndCache: refresh !== true && dry !== true,
-    dryFallbackValue: 0
+    dryFallbackValue: 0,
   })
 }
-
-module.exports = { getEntitiesPopularities, getEntityPopularity }

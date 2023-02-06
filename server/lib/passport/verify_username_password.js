@@ -1,15 +1,15 @@
-const _ = require('builders/utils')
-const user_ = require('controllers/user/lib/user')
-const pw_ = require('lib/crypto').passwords
-const loginAttempts = require('./login_attempts')
+import { findUserByUsernameOrEmail } from '#controllers/user/lib/user'
+import { passwords as pw_ } from '#lib/crypto'
+import { logError } from '#lib/utils/logs'
+import loginAttempts from './login_attempts.js'
 
-module.exports = (username, password, done) => {
+export default (username, password, done) => {
   if (loginAttempts.tooMany(username)) {
     done(null, false, { message: 'too_many_attempts' })
   }
 
   // addressing the case an email is provided instead of a username
-  return user_.findOneByUsernameOrEmail(username)
+  return findUserByUsernameOrEmail(username)
   .catch(invalidUsernameOrPassword.bind(null, done, username, 'findOneByUsername'))
   .then(returnIfValid.bind(null, done, password, username))
   .catch(finalError.bind(null, done))
@@ -37,6 +37,6 @@ const invalidUsernameOrPassword = (done, username, label) => {
 const verifyUserPassword = (user, password) => pw_.verify(user.password, password)
 
 const finalError = (done, err) => {
-  _.error(err, 'username/password verify err')
+  logError(err, 'username/password verify err')
   done(err)
 }

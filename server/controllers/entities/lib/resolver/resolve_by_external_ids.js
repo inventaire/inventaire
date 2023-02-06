@@ -1,7 +1,8 @@
-const _ = require('builders/utils')
-const getEntityByUri = require('../get_entity_by_uri')
-const resolveExternalIds = require('./resolve_external_ids')
-const { isWdEntityUri } = require('lib/boolean_validations')
+import _ from '#builders/utils'
+import { isWdEntityUri } from '#lib/boolean_validations'
+import { warn } from '#lib/utils/logs'
+import { getEntityByUri } from '../get_entity_by_uri.js'
+import resolveExternalIds from './resolve_external_ids.js'
 
 const resolveSeedsByExternalIds = (seeds, expectedEntityType) => {
   return Promise.all(seeds.map(seed => resolveSeed(seed, expectedEntityType)))
@@ -18,7 +19,7 @@ const resolveSeed = async (seed, expectedEntityType) => {
     // There is no test for this, as this condition should not be possible to create,
     // other than by setting an external id already set on existing local entity on a Wikidata entity,
     // or alternatively, by bypassing local checks and writting directly in the database
-    _.warn({ uris, claims: seed.claims }, 'resolveExternalIds found too many uris, those are likely duplicates')
+    warn({ uris, claims: seed.claims }, 'resolveExternalIds found too many uris, those are likely duplicates')
     const wdUris = uris.filter(isWdEntityUri)
     // Use a Wikidata uri in priority, but if there are none,
     // use any of the remaining uris, rather than not resolving on any entity,
@@ -49,7 +50,7 @@ const resolveSectionSeedsByExternalIds = async (section, entry, expectedEntityTy
   .then(() => entry)
 }
 
-const resolveEntrySeedsByExternalIds = async entry => {
+export async function resolveEntrySeedsByExternalIds (entry) {
   await Promise.all([
     resolveSectionSeedsByExternalIds('authors', entry, 'human'),
     resolveSectionSeedsByExternalIds('works', entry, 'work'),
@@ -57,8 +58,5 @@ const resolveEntrySeedsByExternalIds = async entry => {
   return entry
 }
 
-module.exports = {
-  resolveEntrySeedsByExternalIds,
-  resolveAuthorsByExternalIds: entry => resolveSectionSeedsByExternalIds('authors', entry, 'human'),
-  resolveWorksByExternalIds: entry => resolveSectionSeedsByExternalIds('works', entry, 'work'),
-}
+export const resolveAuthorsByExternalIds = entry => resolveSectionSeedsByExternalIds('authors', entry, 'human')
+export const resolveWorksByExternalIds = entry => resolveSectionSeedsByExternalIds('works', entry, 'work')

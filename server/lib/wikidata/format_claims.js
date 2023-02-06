@@ -1,16 +1,18 @@
-const _ = require('builders/utils')
-const assert_ = require('lib/utils/assert_types')
-const { claims: simplifyClaims } = require('wikidata-sdk').simplify
-const allowlistedProperties = require('./allowlisted_properties')
-const { flattenQualifierProperties } = require('./data_model_adapter')
+import wdk from 'wikidata-sdk'
+import _ from '#builders/utils'
+import { assert_ } from '#lib/utils/assert_types'
+import { allowlistedProperties } from './allowlisted_properties.js'
+import { flattenQualifierProperties } from './data_model_adapter.js'
+
+const { claims: simplifyClaims } = wdk.simplify
 
 const options = {
   entityPrefix: 'wd',
   propertyPrefix: 'wdt',
-  timeConverter: 'simple-day'
+  timeConverter: 'simple-day',
 }
 
-module.exports = claims => {
+export default claims => {
   assert_.object(claims)
   const allowlistedClaims = _.pick(claims, allowlistedProperties)
   const simplifiedClaims = simplifyClaims(allowlistedClaims, options)

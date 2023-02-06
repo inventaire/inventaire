@@ -1,6 +1,8 @@
-const { getSitelinkData, getSitelinkUrl } = require('wikidata-sdk')
+import wdk from 'wikidata-sdk'
 
-const getWikipediaSitelinksData = sitelinks => {
+const { getSitelinkData, getSitelinkUrl } = wdk
+
+export const getWikipediaSitelinksData = sitelinks => {
   if (!sitelinks) return []
   return Object.entries(sitelinks).map(getWikipediaSummaryData)
 }
@@ -20,7 +22,4 @@ const getWikipediaSummaryData = ([ key, title ]) => {
       },
     }
   }
-}
-module.exports = {
-  getWikipediaSitelinksData,
 }

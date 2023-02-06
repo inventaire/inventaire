@@ -1,22 +1,22 @@
-const _ = require('builders/utils')
+import { warn } from '#lib/utils/logs'
 
 const base = () => ({
   author: {},
   genre: {},
-  subject: {}
+  subject: {},
 })
 
 const viewProperties = {
   'wdt:P50': 'author',
   'wdt:P136': 'genre',
-  'wdt:P921': 'subject'
+  'wdt:P921': 'subject',
 }
 
 const addToTree = (tree, entity) => {
   const { uri, claims } = entity
 
   if (claims == null) {
-    _.warn(entity, 'entity can not be added to tree')
+    warn(entity, 'entity can not be added to tree')
     return tree
   }
 
@@ -37,4 +37,4 @@ const addToTree = (tree, entity) => {
   return tree
 }
 
-module.exports = entities => entities.reduce(addToTree, base())
+export default entities => entities.reduce(addToTree, base())

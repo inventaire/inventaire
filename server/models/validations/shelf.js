@@ -1,12 +1,14 @@
-const { pass, BoundedString, userId } = require('./common')
-const { isColorHexCode } = require('lib/boolean_validations')
-const { isVisibilityKeyArray } = require('models/validations/visibility')
+import { isColorHexCode } from '#lib/boolean_validations'
+import { isVisibilityKeyArray } from '#models/validations/visibility'
+import commonValidations from './common.js'
 
-module.exports = {
+const { pass, BoundedString, userId } = commonValidations
+
+export default {
   pass,
   description: BoundedString(0, 5000),
   visibility: isVisibilityKeyArray,
   owner: userId,
   name: BoundedString(0, 128),
-  color: isColorHexCode
+  color: isColorHexCode,
 }

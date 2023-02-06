@@ -1,21 +1,17 @@
-const { authReq, getUser, customAuthReq } = require('./utils')
+import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, getUser } from './utils.js'
 
-const getGroup = async group => {
+export async function getGroup (group) {
   group = await group
   const { group: refreshedGroup } = await authReq('get', `/api/groups?action=by-id&id=${group._id}`)
   return refreshedGroup
 }
 
-const updateGroup = async ({ group, user, attribute, value }) => {
-  user = user || await getUser()
+export async function updateGroup ({ group, user, attribute, value }) {
+  user = user || (await getUser())
   return customAuthReq(user, 'put', '/api/groups?action=update-settings', {
     group: group._id,
     attribute,
-    value
+    value,
   })
-}
-
-module.exports = {
-  getGroup,
-  updateGroup,
 }

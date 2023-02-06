@@ -1,22 +1,22 @@
-const _ = require('builders/utils')
-const intent = require('./lib/intent')
-const error_ = require('lib/error/error')
+import { error_ } from '#lib/error/error'
+import { success } from '#lib/utils/logs'
+import * as intent from './lib/intent.js'
 
 const sanitization = {
-  user: {}
+  user: {},
 }
 
 const controller = action => async params => {
   const { reqUserId, user: userId } = params
   await solveNewRelation(action, userId, reqUserId)
-  _.success(userId, `${action}: OK!`)
+  success(userId, `${action}: OK!`)
   return { ok: true }
 }
 
-module.exports = action => ({
+export default action => ({
   sanitization,
   controller: controller(action),
-  track: [ 'relation', action ]
+  track: [ 'relation', action ],
 })
 
 const solveNewRelation = async (action, othersId, reqUserId) => {
@@ -33,5 +33,5 @@ const actions = {
   cancel: 'cancelFriendRequest',
   accept: 'acceptRequest',
   discard: 'discardRequest',
-  unfriend: 'removeFriendship'
+  unfriend: 'removeFriendship',
 }

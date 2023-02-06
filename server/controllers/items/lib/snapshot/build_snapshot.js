@@ -1,11 +1,13 @@
-const _ = require('builders/utils')
-const { getNames, aggregateClaims } = require('./helpers')
-const error_ = require('lib/error/error')
-const assert_ = require('lib/utils/assert_types')
-const { snapshotValidations } = require('models/validations/item')
-const getBestLangValue = require('lib/get_best_lang_value')
+import _ from '#builders/utils'
+import { error_ } from '#lib/error/error'
+import getBestLangValue from '#lib/get_best_lang_value'
+import { assert_ } from '#lib/utils/assert_types'
+import itemValidations from '#models/validations/item'
+import { getNames, aggregateClaims } from './helpers.js'
 
-module.exports = {
+const { snapshotValidations } = itemValidations
+
+export default {
   edition: (edition, works, authors, series) => {
     const lang = edition.originalLang || 'en'
     const { claims } = edition
@@ -21,7 +23,7 @@ module.exports = {
       lang,
       image: edition.image && edition.image.url,
       authors,
-      series
+      series,
     })
   },
 
@@ -37,9 +39,9 @@ module.exports = {
       lang,
       image: claims['wdt:P18'] && claims['wdt:P18'][0],
       authors,
-      series
+      series,
     })
-  }
+  },
 }
 
 const buildOperation = params => {
@@ -51,7 +53,7 @@ const buildOperation = params => {
 
   const snapshot = {
     'entity:title': title,
-    'entity:lang': lang
+    'entity:lang': lang,
   }
 
   const authorsNames = getNames(lang, authors)

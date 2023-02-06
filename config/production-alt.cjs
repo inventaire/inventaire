@@ -10,24 +10,24 @@ module.exports = {
   port: 3007,
   db: {
     follow: {
-      freeze: false
-    }
+      freeze: false,
+    },
   },
   activitySummary: {
     disabled: false,
-    maxEmailsPerHour: 20
+    maxEmailsPerHour: 20,
   },
   debouncedEmail: {
     // Let the main server handle it as its logs are archived so if if the mail
     // fails to be sent, it could be recovered
-    disabled: true
+    disabled: true,
   },
   jobs: {
     'inv:deduplicate': {
-      run: true
-    }
+      run: true,
+    },
   },
   dataseed: {
-    enabled: false
-  }
+    enabled: false,
+  },
 }

@@ -1,10 +1,12 @@
-const couch_ = require('lib/couch')
-const userRelativeRequest = require('./user-relative_request')
-const db = require('db/couchdb/base')('users', 'relations')
+import { getUserRelations } from '#controllers/relations/lib/lists'
+import dbFactory from '#db/couchdb/base'
+import { ignoreNotFound } from '#lib/couch'
+import Relation from '#models/relation'
+import userRelativeRequest from './user-relative_request.js'
 
-const Relation = require('models/relation')
+const db = dbFactory('users', 'relations')
 
-const get = (userId, otherId) => db.get(Relation.docId(userId, otherId))
+const getUsersRelation = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 
 const putStatus = (userId, otherId, status) => {
   const docId = Relation.docId(userId, otherId)
@@ -23,42 +25,32 @@ const updateStatus = (docId, status, doc) => {
   return doc
 }
 
-const queries = {
-  get,
-  putStatus,
-  getStatus: (userId, otherId) => {
-    return get(userId, otherId)
-    .catch(couch_.ignoreNotFound)
-    .then(doc => {
-      if (doc && doc.status) {
-        return userRelativeRequest(userId, otherId, doc.status)
-      } else {
-        return 'none'
-      }
-    })
-  },
-
-  putFriendStatus: (userId, otherId) => {
-    return putStatus(userId, otherId, 'friends')
-  },
-
-  putRequestedStatus: (userId, otherId) => {
-    const status = userId < otherId ? 'a-requested' : 'b-requested'
-    return putStatus(userId, otherId, status)
-  },
-
-  putNoneStatus: (userId, otherId) => {
-    return putStatus(userId, otherId, 'none')
-  }
+export const getRelationStatus = (userId, otherId) => {
+  return getUsersRelation(userId, otherId)
+  .catch(ignoreNotFound)
+  .then(doc => {
+    if (doc && doc.status) {
+      return userRelativeRequest(userId, otherId, doc.status)
+    } else {
+      return 'none'
+    }
+  })
 }
 
-const lists = require('./lists')
-
-const counts = {
-  pendingFriendsRequestsCount: userId => {
-    return lists.getUserRelations(userId)
-    .then(relations => relations.otherRequested.length)
-  }
+export const putFriendStatus = (userId, otherId) => {
+  return putStatus(userId, otherId, 'friends')
 }
 
-module.exports = Object.assign({}, queries, lists, counts)
+export const putRequestedStatus = (userId, otherId) => {
+  const status = userId < otherId ? 'a-requested' : 'b-requested'
+  return putStatus(userId, otherId, status)
+}
+
+export const putNoneStatus = (userId, otherId) => {
+  return putStatus(userId, otherId, 'none')
+}
+
+export const getPendingFriendsRequestsCount = userId => {
+  return getUserRelations(userId)
+  .then(relations => relations.otherRequested.length)
+}

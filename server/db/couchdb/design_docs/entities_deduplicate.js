@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   findHumansHomonymes: {
     map: [
       function normalize (label) {
@@ -19,8 +19,8 @@ module.exports = {
           const labelsSet = new Set(Object.values(doc.labels).map(normalize))
           labelsSet.forEach(label => emit(label, null))
         }
-      }
+      },
     ],
-    reduce: '_count'
-  }
+    reduce: '_count',
+  },
 }

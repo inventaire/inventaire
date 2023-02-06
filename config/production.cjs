@@ -23,12 +23,12 @@ module.exports = {
     disabled: false,
   },
   activitySummary: {
-    disabled: false
+    disabled: false,
   },
   // Let the alt instance run the jobs
   jobs: {
     'inv:deduplicate': {
-      run: false
-    }
-  }
+      run: false,
+    },
+  },
 }

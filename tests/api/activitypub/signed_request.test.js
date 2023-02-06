@@ -1,11 +1,17 @@
-const CONFIG = require('config')
-require('should')
-const { createUsername, createUser } = require('../fixtures/users')
-const { signedReq, makeUrl, createActivity, getSomeRemoteServerUser, createRemoteActivityPubServerUser } = require('../utils/activitypub')
-const { rawRequest } = require('../utils/request')
-const { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('../utils/utils')
-const { sign } = require('controllers/activitypub/lib/security')
-const { generateRsaKeyPair } = require('lib/crypto')
+import CONFIG from 'config'
+import 'should'
+import { makeUrl } from '#controllers/activitypub/lib/helpers'
+import { sign } from '#controllers/activitypub/lib/security'
+import { generateRsaKeyPair } from '#lib/crypto'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createUsername, createUser } from '../fixtures/users.js'
+import {
+  signedReq,
+  createActivity,
+  getSomeRemoteServerUser,
+  createRemoteActivityPubServerUser,
+} from '../utils/activitypub.js'
+import { rawRequest } from '../utils/request.js'
 
 const endpoint = '/api/activitypub'
 
@@ -16,7 +22,7 @@ const inboxReq = async ({ emitterUser, username }) => {
   return signedReq({
     emitterUser,
     object: actorUrl,
-    url: inboxUrl
+    url: inboxUrl,
   })
 }
 
@@ -28,9 +34,9 @@ describe('activitypub:signed:request', () => {
       const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest('post', inboxUrl, {
         headers: {
-          'content-type': 'application/activity+json'
+          'content-type': 'application/activity+json',
         },
-        body
+        body,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -93,7 +99,7 @@ describe('activitypub:signed:request', () => {
       const { publicHostname } = CONFIG
       const reqHeaders = {
         host: publicHostname,
-        date: thirtySecondsAgo
+        date: thirtySecondsAgo,
       }
       const signedHeadersNames = Object.keys(reqHeaders).join(' ')
       const method = 'post'
@@ -109,7 +115,7 @@ describe('activitypub:signed:request', () => {
       const body = createActivity({ actor: 'foo', object: 'bar' })
       await rawRequest(method, inboxUrl, {
         headers: reqHeaders,
-        body
+        body,
       })
       .then(shouldNotBeCalled)
     } catch (err) {

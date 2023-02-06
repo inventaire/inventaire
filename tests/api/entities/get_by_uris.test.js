@@ -1,11 +1,20 @@
-const should = require('should')
-const { authReq, shouldNotBeCalled, rethrowShouldNotBeCalledErrors, publicReq } = require('../utils/utils')
+import should from 'should'
+import getWdEntity from '#data/wikidata/get_entity'
+import { buildUrl } from '#lib/utils/url'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import {
+  createEditionWithIsbn,
+  createWorkWithAuthor,
+  createEditionWithWorkAuthorAndSerie,
+  createHuman,
+  someFakeUri,
+  generateIsbn13,
+  createEdition,
+} from '../fixtures/entities.js'
+import { getByUris, merge, deleteByUris } from '../utils/entities.js'
+import { authReq, publicReq } from '../utils/utils.js'
 
-const { createEditionWithIsbn, createWorkWithAuthor, createEditionWithWorkAuthorAndSerie, createHuman, someFakeUri, generateIsbn13, createEdition } = require('../fixtures/entities')
-const { getByUris, merge, deleteByUris } = require('../utils/entities')
 const workWithAuthorPromise = createWorkWithAuthor()
-const getWdEntity = require('data/wikidata/get_entity')
-const { buildUrl } = require('lib/utils/url')
 
 describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {
@@ -121,7 +130,7 @@ describe('entities:get:by-uris', () => {
         action: 'by-uris',
         uris: editionUri,
         attributes: 'type|labels',
-        relatives: 'wdt:P50|wdt:P179|wdt:P629'
+        relatives: 'wdt:P50|wdt:P179|wdt:P629',
       })
       let { entities } = await publicReq('get', url)
       entities = Object.values(entities)
@@ -144,7 +153,7 @@ describe('entities:get:by-uris', () => {
         action: 'by-uris',
         uris: `${invHumanUri}|${wdHumanUri}`,
         attributes: 'labels',
-        lang: 'es'
+        lang: 'es',
       })
       const { entities } = await publicReq('get', url)
       Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])
@@ -158,7 +167,7 @@ describe('entities:get:by-uris', () => {
       const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: `${invHumanUri}|${wdHumanUri}`,
-        lang: 'es'
+        lang: 'es',
       })
       const { entities } = await publicReq('get', url)
       Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])
@@ -172,7 +181,7 @@ describe('entities:get:by-uris', () => {
         action: 'by-uris',
         uris: `${invHumanUri}`,
         attributes: 'labels',
-        lang: 'fr'
+        lang: 'fr',
       })
       const { entities } = await publicReq('get', url)
       Object.keys(entities[invHumanUri].labels).should.deepEqual([ 'es' ])

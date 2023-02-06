@@ -1,10 +1,11 @@
-require('should')
-const _ = require('builders/utils')
-const { authReqB, authReqC, shouldNotBeCalled } = require('tests/api/utils/utils')
-const { createTransaction, getSomeTransaction } = require('../fixtures/transactions')
-const { updateTransaction } = require('../utils/transactions')
-const { getItem } = require('../utils/items')
-const { getUserC } = require('../utils/utils')
+import 'should'
+import _ from '#builders/utils'
+import { authReqB, authReqC } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
+import { getItem } from '../utils/items.js'
+import { updateTransaction } from '../utils/transactions.js'
+import { getUserC } from '../utils/utils.js'
 
 const endpoint = '/api/transactions?action=update-state'
 
@@ -13,7 +14,7 @@ describe('transactions:update-state', () => {
     const { transaction } = await createTransaction()
     const updateRes = await authReqB('put', endpoint, {
       transaction: transaction._id,
-      state: 'accepted'
+      state: 'accepted',
     })
     updateRes.ok.should.be.true()
   })
@@ -22,7 +23,7 @@ describe('transactions:update-state', () => {
     const { transaction } = await getSomeTransaction()
     await authReqB('put', endpoint, {
       transaction: transaction._id,
-      state: 'random state'
+      state: 'random state',
     })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -34,7 +35,7 @@ describe('transactions:update-state', () => {
     const { transaction } = await getSomeTransaction()
     await authReqC('put', endpoint, {
       transaction: transaction._id,
-      state: 'accepted'
+      state: 'accepted',
     })
     .then(shouldNotBeCalled)
     .catch(err => {

@@ -1,9 +1,10 @@
-const _ = require('builders/utils')
-const __ = require('config').universalPath
-const randomString = require('lib/utils/random_string')
-const { readFileSync } = require('node:fs')
+import { readFileSync } from 'node:fs'
+import _ from '#builders/utils'
+import { absolutePath } from '#lib/absolute_path'
+import { getRandomString } from '#lib/utils/random_string'
+
 const getFixtureWords = filename => {
-  return readFileSync(__.path('tests', `api/fixtures/${filename}`))
+  return readFileSync(absolutePath('tests', `api/fixtures/${filename}`))
   .toString()
   .split('\n')
 }
@@ -13,19 +14,18 @@ const firstNames = getFixtureWords('names')
 
 const capitalize = word => word[0].toUpperCase() + word.slice(1).toLowerCase()
 
-const randomWords = (numberOfWords, suffix = '') => _.sampleSize(lorem, numberOfWords).join(' ').concat(suffix)
+export const randomWords = (numberOfWords, suffix = '') => _.sampleSize(lorem, numberOfWords).join(' ').concat(suffix)
 
-const firstName = () => _.sampleSize(firstNames, 1)[0]
+export const firstName = () => _.sampleSize(firstNames, 1)[0]
 
-module.exports = {
-  randomWords,
-  username: () => firstName() + randomString(4),
-  firstName,
-  sentence: () => capitalize(randomWords(20)) + '.',
-  randomLongWord: wordLength => {
-    const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
-    return capitalize(longWord)
-  },
-  humanName: () => `${firstName()} ${firstName()}`,
-  email: () => `${firstName()}@${firstName()}.org`
+// Add a random string to prevent creating several users with the same username
+// and be rejected because of it
+export const getSomeUsername = () => firstName() + getRandomString(4)
+export const sentence = () => capitalize(randomWords(20)) + '.'
+export const randomLongWord = wordLength => {
+  const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
+  return capitalize(longWord)
 }
+
+export const humanName = () => `${firstName()} ${firstName()}`
+export const getSomeEmail = () => `${firstName()}@${firstName()}.org`

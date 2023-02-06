@@ -1,11 +1,13 @@
-const db = require('db/couchdb/base')('users')
-const User = require('models/user')
-const token_ = require('./token')
+import { sendValidationEmail } from '#controllers/user/lib/token'
+import dbFactory from '#db/couchdb/base'
+import User from '#models/user'
 
-module.exports = (user, email) => {
+const db = dbFactory('users')
+
+export default async function (user, email) {
   user = User.updateEmail(user, email)
-  return db.put(user)
+  await db.put(user)
   // sendValidationEmail doesn't need to access the last _rev
   // so it's ok to pass the user as it was before the database was updated
-  .then(() => token_.sendValidationEmail(user))
+  await sendValidationEmail(user)
 }

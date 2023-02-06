@@ -1,8 +1,8 @@
 // Pre-formatted error handlers to make error responses consistent
-const { pick } = require('lodash')
-const { typeOf } = require('../utils/types')
+import { pick } from 'lodash-es'
+import { typeOf } from '../utils/types.js'
 
-module.exports = error_ => {
+export default error_ => {
   const newFunctions = {
     // A standardized way to return a 400 missing parameter
     // either in the request query or body
@@ -27,7 +27,7 @@ module.exports = error_ => {
       err.error_type = 'invalid_parameter'
       err.error_name = `invalid_${parameter}`
       return err
-    }
+    },
   }
 
   newFunctions.newMissingQuery = newFunctions.newMissing.bind(null, 'query')
@@ -62,7 +62,7 @@ module.exports = error_ => {
         context.url = req.originalUrl
       }
       return error_.bundle(req, res, 'unknown action', 400, context)
-    }
+    },
   }
 
   return Object.assign(newFunctions, bundles)

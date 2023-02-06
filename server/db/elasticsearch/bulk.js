@@ -1,12 +1,14 @@
-const _ = require('builders/utils')
-const requests_ = require('lib/requests')
-const { origin: elasticOrigin } = require('config').elasticsearch
-const { logBulkRes } = require('./helpers')
-const assert_ = require('lib/utils/assert_types')
+import CONFIG from 'config'
+import { requests_ } from '#lib/requests'
+import { assert_ } from '#lib/utils/assert_types'
+import { warn, logError } from '#lib/utils/logs'
+import { logBulkRes } from './helpers.js'
+
+const { origin: elasticOrigin } = CONFIG.elasticsearch
 const headers = { 'content-type': 'application/x-ndjson' }
 
-const addToBatch = (batch, action, index, doc) => {
-  if (!doc) return _.warn('ignore empty doc')
+export const addToBatch = (batch, action, index, doc) => {
+  if (!doc) return warn('ignore empty doc')
   const { _id } = doc
   assert_.string(_id)
   // Prevent triggering the error
@@ -16,19 +18,17 @@ const addToBatch = (batch, action, index, doc) => {
   if (action === 'index') batch.push(JSON.stringify(doc))
 }
 
-const postBatch = async batch => {
-  if (batch.length === 0) return _.warn('elasticsearch bulk update: empty batch')
+export async function postBatch (batch) {
+  if (batch.length === 0) return warn('elasticsearch bulk update: empty batch')
   // It is required to end by a newline break
   const body = batch.join('\n') + '\n'
   try {
     const res = await requests_.post(`${elasticOrigin}/_doc/_bulk`, {
       headers,
-      body
+      body,
     })
     logBulkRes(res, 'bulk post res')
   } catch (err) {
-    _.error(err, 'bulk post err')
+    logError(err, 'bulk post err')
   }
 }
-
-module.exports = { addToBatch, postBatch }

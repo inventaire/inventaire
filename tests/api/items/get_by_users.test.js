@@ -1,11 +1,12 @@
-const _ = require('builders/utils')
-require('should')
-const { getUser, authReq, publicReq, getUserGetter } = require('tests/api/utils/utils')
-const { shouldNotBeCalled } = require('tests/unit/utils')
-const { createItem } = require('../fixtures/items')
-const { getSomeGroup, addMember, createGroup } = require('../fixtures/groups')
-const { humanName } = require('../fixtures/entities')
-const { getGroupVisibilityKey } = require('lib/visibility/visibility')
+import _ from '#builders/utils'
+import 'should'
+import { humanName } from '#fixtures/text'
+import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils'
+import { getSomeGroup, addMember, createGroup } from '../fixtures/groups.js'
+import { createItem } from '../fixtures/items.js'
+
 const userPromise = getUserGetter(humanName())()
 
 const endpoint = '/api/items?action=by-users'
@@ -53,14 +54,14 @@ describe('items:get-by-users', () => {
     resItemsIds.should.not.containEql(privateItem._id)
   })
 
-  it("should reject invalid filters'", async () => {
+  it("should reject invalid context'", async () => {
     const user = await getUser()
     const { _id: userId } = user
-    await authReq('get', `${endpoint}&users=${userId}&filter=bla`)
+    await authReq('get', `${endpoint}&users=${userId}&context=bla`)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.startWith('invalid filter')
+      err.body.status_verbose.should.startWith('invalid context')
     })
   })
 

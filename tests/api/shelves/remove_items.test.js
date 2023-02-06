@@ -1,7 +1,8 @@
-const { getUserB, shouldNotBeCalled, rethrowShouldNotBeCalledErrors } = require('tests/api/utils/utils')
-const { authReq } = require('../utils/utils')
-const { createShelf, createShelfWithItem } = require('../fixtures/shelves')
-const { createItem } = require('../fixtures/items')
+import { getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { createItem } from '../fixtures/items.js'
+import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=remove-items'
 
@@ -20,7 +21,7 @@ describe('shelves:remove-items', () => {
     const { shelf } = await createShelfWithItem()
     try {
       await authReq('post', endpoint, {
-        id: shelf._id
+        id: shelf._id,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -34,7 +35,7 @@ describe('shelves:remove-items', () => {
     const { shelf, item } = await createShelfWithItem()
     const res = await authReq('post', endpoint, {
       id: shelf._id,
-      items: [ item._id ]
+      items: [ item._id ],
     })
     res.shelves.should.be.ok()
     Object.values(res.shelves)[0].items.length.should.equal(0)
@@ -46,7 +47,7 @@ describe('shelves:remove-items', () => {
       const item = await createItem(getUserB())
       await authReq('post', endpoint, {
         id: shelf._id,
-        items: [ item._id ]
+        items: [ item._id ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -62,7 +63,7 @@ describe('shelves:remove-items', () => {
       const item = await createItem()
       await authReq('post', endpoint, {
         id: shelf._id,
-        items: [ item._id ]
+        items: [ item._id ],
       })
       .then(shouldNotBeCalled)
     } catch (err) {

@@ -1,4 +1,4 @@
-module.exports = ({ search, limit: size, minScore }) => {
+export default ({ search, limit: size, minScore }) => {
   const should = [
     // Username
     { match: { username: { query: search, boost: 5 } } },
@@ -11,14 +11,14 @@ module.exports = ({ search, limit: size, minScore }) => {
     { match_phrase_prefix: { name: { query: search, boost: 4 } } },
     { fuzzy: { name: search } },
     // Group or listing description
-    { match: { description: search } }
+    { match: { description: search } },
   ]
 
   return {
     query: {
-      bool: { should }
+      bool: { should },
     },
     size,
-    min_score: minScore
+    min_score: minScore,
   }
 }

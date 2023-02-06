@@ -1,4 +1,4 @@
-const groups_ = require('./lib/groups')
+import { createGroup } from '#controllers/groups/lib/groups'
 
 const sanitization = {
   name: {},
@@ -6,12 +6,12 @@ const sanitization = {
   position: { optional: true },
   searchable: {
     optional: true,
-    generic: 'boolean'
+    generic: 'boolean',
   },
   open: {
     optional: true,
-    generic: 'boolean'
-  }
+    generic: 'boolean',
+  },
 }
 
 const controller = async params => {
@@ -20,18 +20,18 @@ const controller = async params => {
 
   if (searchable == null) searchable = true
 
-  return groups_.create({
+  return createGroup({
     name,
     description: description || '',
     searchable,
     position: position || null,
     creatorId: reqUserId,
-    open: open || false
+    open: open || false,
   })
 }
 
-module.exports = {
+export default {
   sanitization,
   controller,
-  track: [ 'groups', 'create' ]
+  track: [ 'groups', 'create' ],
 }

@@ -1,11 +1,14 @@
-const _ = require('builders/utils')
-const mergeEntities = require('controllers/entities/lib/merge_entities')
-const getAuthorWorks = require('controllers/entities/lib/get_author_works')
-const getEntitiesList = require('controllers/entities/lib/get_entities_list')
-const { getEntityNormalizedTerms } = require('controllers/entities/lib/terms_normalization')
-const { _id: reconcilerUserId } = require('db/couchdb/hard_coded_documents').users.reconciler
+import _ from '#builders/utils'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
+import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { log } from '#lib/utils/logs'
 
-module.exports = authorUri => {
+const { _id: reconcilerUserId } = hardCodedUsers.reconciler
+
+export default authorUri => {
   return getAuthorWorksByDomain(authorUri)
   .then(findMergeableWorks)
   .then(automergeWorks(authorUri))
@@ -56,7 +59,7 @@ const haveSomeMatchingTerms = invWork => wdWork => _.someMatch(invWork.terms, wd
 const automergeWorks = authorUri => mergeableCouples => {
   if (mergeableCouples.length === 0) return
 
-  _.log(mergeableCouples, `automerging works from author ${authorUri}`)
+  log(mergeableCouples, `automerging works from author ${authorUri}`)
 
   const mergeNext = () => {
     const nextCouple = mergeableCouples.pop()

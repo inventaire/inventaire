@@ -1,12 +1,12 @@
-const _ = require('builders/utils')
-const responses_ = require('lib/responses')
-const { Track } = require('lib/track')
-const deleteUserAndCleanup = require('controllers/user/lib/delete_user_and_cleanup')
+import deleteUserAndCleanup from '#controllers/user/lib/delete_user_and_cleanup'
+import { responses_ } from '#lib/responses'
+import { Track } from '#lib/track'
+import { warn } from '#lib/utils/logs'
 
-module.exports = (req, res) => {
+export default (req, res) => {
   const reqUserId = req.user._id
 
-  _.warn(req.user, 'deleting user')
+  warn(req.user, 'deleting user')
 
   return deleteUserAndCleanup(reqUserId)
   // triggering track before logging out

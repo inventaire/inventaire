@@ -1,9 +1,7 @@
-module.exports = {
-  versioned: [
-    'type',
-    'labels',
-    'claims',
-    'redirect',
-    '_deleted'
-  ]
-}
+export const versioned = [
+  'type',
+  'labels',
+  'claims',
+  'redirect',
+  '_deleted',
+]

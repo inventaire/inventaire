@@ -1,11 +1,11 @@
-const { text, keyword, keywordArray, date } = require('./mappings_datatypes')
+import { text, keyword, keywordArray, date } from './mappings_datatypes.js'
 
-module.exports = {
+export default {
   properties: {
     name: text,
     description: text,
     creator: keyword,
     visibility: keywordArray,
     created: date,
-  }
+  },
 }
