@@ -1,6 +1,8 @@
 // This config file is used by eslint
 // See package.json scripts: lint*
 // Rules documentation: https://eslint.org/docs/rules/
+// Inspect the generated config:
+//    eslint --print-config .eslintrc.cjs
 module.exports = {
   root: true,
   extends: [
