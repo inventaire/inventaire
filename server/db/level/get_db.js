@@ -1,6 +1,4 @@
 import CONFIG from 'config'
-import levelParty from 'level-party'
-import levelTest from 'level-test'
 import { absolutePath } from '#lib/absolute_path'
 import { warn, info } from '#lib/utils/logs'
 
@@ -36,10 +34,12 @@ export let cacheDb
 
 if (memoryBackend) {
   warn('leveldb in memory')
+  const { default: levelTest } = await import('level-test')
   const level = levelTest()
   generalDb = level()
   cacheDb = level()
 } else {
+  const { default: levelParty } = await import('level-party')
   const level = levelParty
   info(generalDbFolderPath, 'general leveldb path')
   info(cacheDbFolderPath, 'cache leveldb path')
