@@ -38,7 +38,7 @@ export async function createUserNetworkWithEdition (user, edition) {
   info(commonEntityMessage)
   return Promise.all([
     addFriendsWithItems(user, editionUri),
-    createUsers(user, editionUri, { listing: 'public' }),
+    createUsers(user, editionUri, { visibility: [ 'public' ] }),
     addGroupAndFriends(user, editionUri),
   ])
 }
@@ -82,8 +82,8 @@ export async function createUsers (user, entityUri, itemData = {}) {
 }
 
 const createUserItem = (entityUri, itemData) => friend => {
-  const { listing, transaction } = itemData
-  itemData.listing = listing || _.sample([ 'public', 'network' ])
+  const { visibility, transaction } = itemData
+  itemData.visibility = visibility || _.sample([ [ 'public' ], [ 'public', 'friends' ] ])
   itemData.transaction = transaction || _.sample([ 'giving', 'selling', 'inventorying', 'lending' ])
   return createItemFromEntityUri({
     user: friend,
