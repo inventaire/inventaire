@@ -1,8 +1,8 @@
 import _ from '#builders/utils'
+import { createUser } from '#fixtures/users'
+import { importSomeImage } from '../utils/images.js'
+import { updateUser } from '../utils/users.js'
 import { createRandomizedItems } from './items.js'
-import { createUser } from './users.js'
-import{ updateUser }from 'tests/api/utils/users'
-import{ importSomeImage }from 'tests/api/utils/images'
 
 let populatePromise
 const usersCount = 2
@@ -14,7 +14,7 @@ export const populate = () => {
   return populatePromise
 }
 
-export const createUserWithItems = async (userData, itemsData = []) => {
+export const createUserWithItems = async (userData, itemsData = [], withPicture) => {
   let user = userData
   if (!userData._id) user = await createUser(userData)
   if (withPicture) {
@@ -30,6 +30,6 @@ const addPicture = async user => {
   await updateUser({
     user,
     attribute: 'picture',
-    value: url
+    value: url,
   })
 }
