@@ -88,6 +88,16 @@ describe('outbox', () => {
       createActivity.object.attachment.should.be.an.Array()
     })
 
+    it('should return clean content when no item details', async () => {
+      const user = createUser({ fediversable: true })
+      await createItem(user)
+      const { username } = await user
+      await wait(debounceTime)
+      const outboxUrl = `${endpoint}${username}&offset=0`
+      const res = await publicReq('get', outboxUrl)
+      res.orderedItems[0].object.content.should.not.containEql('undefined')
+    })
+
     it('should not return network items', async () => {
       const user = createUser({ fediversable: true })
       await createItem(user, { visibility: [ 'friends', 'groups' ] })

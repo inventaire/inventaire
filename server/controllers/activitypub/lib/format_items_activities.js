@@ -49,11 +49,13 @@ export const findFullRangeFromActivities = activitiesDocs => {
 const itemsWithinActivityRange = (since, until) => item => item.created > since && item.created < until
 
 const buildLinkContentFromItem = item => {
-  return {
+  const content = {
     text: item.snapshot['entity:title'],
     url: `${host}/items/${item._id}`,
-    details: `\n${item.details}`,
   }
+  const { details } = item
+  if (details) content.details = details
+  return content
 }
 
 const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }) => {
@@ -71,7 +73,7 @@ const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }) => 
   }
   if (links.length === 1) {
     const firstLinkDetails = links[0].details
-    if (firstLinkDetails) html += firstLinkDetails
+    if (firstLinkDetails) html += `\n${firstLinkDetails}`
   }
   html += '</p>'
   return html
