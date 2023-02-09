@@ -224,4 +224,12 @@ module.exports = {
     sanitizeUrls: true,
     activitiesDebounceTime: 60 * 1000,
   },
+
+  spam: {
+    suspectKeywords: [
+      'SEO',
+      'marketing',
+      'shopping',
+    ],
+  },
 }
