@@ -92,7 +92,7 @@
     "through": "^2.3.8",
     "tiny-chalk": "^3.0.1",
     "turtle-validator": "^1.0.2",
-    "wikibase-edit": "^5.3.1",
+    "wikibase-edit": "^5.3.2",
     "wikibase-sdk": "^8.1.1",
     "wikidata-lang": "^4.0.2",
     "wikidata-sdk": "^8.0.4"
