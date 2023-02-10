@@ -21,6 +21,7 @@ export default function (req, res, err) {
 
   // if a status code was attached to the error, use it
   const statusCode = err.statusCode || 500
+  console.log('🚀 ~ file: error_handler.js ~ line', 24, { statusCode })
 
   err.user = pick(req.user, '_id', 'username')
   err.headers = pick(req.headers, headersToKeep)
@@ -44,6 +45,7 @@ export default function (req, res, err) {
     delete err.context.headers
   }
 
+  console.log('🚀 ~ file: error_handler.js ~ line', 49, { statusCode })
   res.status(statusCode)
   responses_.send(res, {
     status: statusCode,
