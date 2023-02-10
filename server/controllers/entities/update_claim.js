@@ -34,7 +34,10 @@ const controller = async (params, req) => {
     throw error_.new(`unsupported uri prefix: ${prefix}`, 400, uri)
   }
 
+  console.log('update_claim.js', 37)
+  console.log('🚀 ~ file: update_claim.js ~ line', 39, 'controller ~ ', { id, property, oldValue, newValue })
   await updater(req.user, id, property, oldValue, newValue)
+  console.log('update_claim.js', 39)
   return { ok: true }
 }
 

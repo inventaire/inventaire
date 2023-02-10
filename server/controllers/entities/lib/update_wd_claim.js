@@ -12,6 +12,7 @@ import { cachedRelationProperties } from './temporarily_cache_relations.js'
 import wdOauth from './wikidata_oauth.js'
 
 export default async (user, id, property, oldValue, newValue) => {
+  console.log('🚀 ~ file: update_wd_claim.js ~ line', 15, { id, property, oldValue, newValue })
   wdOauth.validate(user)
 
   if ((properties[property].datatype === 'entity')) {
@@ -34,10 +35,15 @@ export default async (user, id, property, oldValue, newValue) => {
   let res
 
   if (qualifierProperties[propertyId]) {
+    console.log('update_wd_claim.js', 38)
     res = await updateRelocatedClaim({ id, propertyId, newValue, oldValue, credentials })
   } else {
+    console.log('update_wd_claim.js', 40)
     res = await updateClaim({ id, propertyId, newValue, oldValue, credentials })
+    console.log('🚀 ~ file: update_wd_claim.js ~ line', 40, { res })
   }
+
+  console.log('update_wd_claim.js', 43)
 
   if (cachedRelationProperties.includes(property)) {
     const uri = prefixifyWd(id)
