@@ -11,7 +11,7 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-export default (req, res, err, status) => {
+export default function (req, res, err) {
   // only accepts Error instances
   if (!(err instanceof Error)) {
     logError(err, 'bad error object')

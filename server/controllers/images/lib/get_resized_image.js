@@ -23,7 +23,8 @@ export default async (req, res, url, dimensions) => {
   try {
     response = await fetch(url, reqOptions)
   } catch (err) {
-    error_.handler(req, res, err, 500)
+    err.statusCode = 500
+    error_.handler(req, res, err)
     return
   }
 
