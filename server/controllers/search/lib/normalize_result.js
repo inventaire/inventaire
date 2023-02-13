@@ -48,6 +48,7 @@ const formatters = {
   genres: entityFormatter,
   movements: entityFormatter,
   collections: entityFormatter,
+  languages: entityFormatter,
   users: socialDocsFormatter('username', 'bio'),
   groups: socialDocsFormatter('name', 'description'),
   shelves: socialDocsFormatter('name', 'description'),

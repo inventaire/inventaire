@@ -8,6 +8,7 @@ import duplicates from './duplicates.js'
 import { authorWorks, serieParts, publisherPublications } from './get_entity_relatives.js'
 import history from './history.js'
 import images from './images.js'
+import languages from './languages.js'
 import merge from './merge.js'
 import moveToWikidata from './move_to_wikidata.js'
 import popularity from './popularity.js'
@@ -31,6 +32,7 @@ export default {
       popularity,
       history,
       contributions,
+      languages,
     },
     dataadmin: {
       duplicates,

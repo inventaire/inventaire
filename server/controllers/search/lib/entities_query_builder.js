@@ -25,7 +25,7 @@ export default params => {
 
   if (!search) minScore = 0
 
-  const shoulds = matchEntities(search, userLang, exact, safe)
+  const shoulds = matchEntities({ search, userLang, exact, safe })
 
   return {
     query: {
@@ -54,7 +54,7 @@ export default params => {
   }
 }
 
-const matchEntities = (search, userLang, exact, safe) => {
+export function matchEntities ({ search, userLang, exact = false, safe = true }) {
   const shoulds = []
   if (search == null) return shoulds
 
