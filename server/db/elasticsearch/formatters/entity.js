@@ -17,6 +17,7 @@ const { simplify } = wdk
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 export default async (entity, options = {}) => {
+  const { quick = false, hasNoType = false } = options
   entity._id = getEntityId(entity)
 
   // Entities from Wikidata dump still have a type='item' set
@@ -36,7 +37,7 @@ export default async (entity, options = {}) => {
   // for the corresponding type. To include an entity that was illegitimately rejected,
   // fix either server/lib/wikidata/aliases.js or server/controllers/entities/lib/get_entity_type.js
   // See https://github.com/inventaire/inventaire/pull/294
-  if (!indexedEntitiesTypesSet.has(entity.type)) return
+  if (!indexedEntitiesTypesSet.has(entity.type) && !hasNoType) return
 
   let needsSimplification = false
   const isWikidataEntity = wdk.isItemId(entity._id)
@@ -124,7 +125,7 @@ export default async (entity, options = {}) => {
     // as we aren't even waiting for the dryAndCache response to continue.
     // But, do not set dry=true when reindexing the rest of the time, as that would
     // in most cases mean never populating the popularity
-    dry: options.quick,
+    dry: quick,
   })
 
   return entity

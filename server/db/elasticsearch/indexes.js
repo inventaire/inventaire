@@ -4,6 +4,7 @@ import _ from '#builders/utils'
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [
   { indexBaseName: 'wikidata', index: 'wikidata', sync: false },
+  { indexBaseName: 'languages', index: 'languages', sync: false },
   // Match CouchDB database names
   { indexBaseName: 'entities', sync: true },
   { indexBaseName: 'items', sync: true },

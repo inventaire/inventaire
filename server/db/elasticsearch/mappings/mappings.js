@@ -13,4 +13,5 @@ export default {
   lists,
   users,
   wikidata: entities,
+  languages: entities,
 }

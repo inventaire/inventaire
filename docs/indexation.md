@@ -45,3 +45,8 @@ npm run indexation:load-from-couchdb entities
 ```sh
 npm run indexation:wikidata:load-from-dump
 ```
+
+### Wikidata languages entities
+```sh
+npm run indexation:wikidata:load-languages-from-query
+```

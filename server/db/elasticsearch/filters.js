@@ -13,4 +13,5 @@ export default {
   // Do not filter-out doc.searchable=false so that toggling this settings does
   // update the document in Elasticsearch and can then be filtered-out at search time
   wikidata: identity,
+  languages: identity,
 }

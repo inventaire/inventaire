@@ -15,7 +15,7 @@ const imageClaims = [
   'wdt:P6802',
 ]
 
-const nonPrefixedImageClaims = imageClaims.map(unprefixify)
+export const nonPrefixedImageClaims = imageClaims.map(unprefixify)
 
 export default (claims, needsSimplification = false) => {
   if (needsSimplification) {

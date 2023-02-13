@@ -12,9 +12,9 @@ const options = {
   timeConverter: 'simple-day',
 }
 
-export default claims => {
+export default (claims, propertiesShortlist = allowlistedProperties) => {
   assert_.object(claims)
-  const allowlistedClaims = _.pick(claims, allowlistedProperties)
+  const allowlistedClaims = _.pick(claims, propertiesShortlist)
   const simplifiedClaims = simplifyClaims(allowlistedClaims, options)
 
   flattenQualifierProperties(simplifiedClaims, allowlistedClaims)

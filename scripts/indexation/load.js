@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import split from 'split'
-import { red } from 'tiny-chalk'
+import { yellow } from 'tiny-chalk'
 import { addToBatch, postBatch } from '#db/elasticsearch/bulk'
 import createIndex from '#db/elasticsearch/create_index'
 import deindex from '#db/elasticsearch/deindex'
@@ -29,7 +29,7 @@ const parseLine = line => {
   try {
     return JSON.parse(line)
   } catch (err) {
-    console.error(red('fail to parse line:'), line)
+    console.error(yellow('failed to parse line (ignoring):'), line)
   }
 }
 

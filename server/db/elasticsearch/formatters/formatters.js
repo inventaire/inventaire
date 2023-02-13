@@ -13,4 +13,8 @@ export default {
   lists,
   users,
   wikidata: entities,
+  languages: (doc, options) => {
+    options.hasNoType = true
+    return entities(doc, options)
+  },
 }

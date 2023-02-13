@@ -1,0 +1,3 @@
+SELECT DISTINCT ?item {
+  ?item wdt:P218|wdt:P219|wdt:P220|wdt:P1798|wdt:P221 ?language_id
+}

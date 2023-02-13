@@ -19,6 +19,7 @@
     "indexation:load": "./scripts/indexation/load.js",
     "indexation:load-from-couchdb": "./scripts/indexation/load_from_couchdb.sh",
     "indexation:wikidata:load-from-dump": "./scripts/indexation/wikidata/load_from_dump.sh",
+    "indexation:wikidata:load-languages-from-query": "./scripts/indexation/wikidata/load_languages_from_query.sh",
     "inspect": "export NODE_ENV=dev ; node --inspect server/server.js",
     "install-client": "./scripts/install_client",
     "install-i18n": "./scripts/install_i18n",

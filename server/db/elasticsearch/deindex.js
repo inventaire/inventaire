@@ -8,4 +8,5 @@ export default {
   users: doc => doc.type === 'deletedUser',
   entities: doc => doc.type === 'removed:placeholder' || doc.redirect != null,
   wikidata: doc => doc.missing != null || doc.type == null || doc.type === 'missing' || doc.redirect != null,
+  languages: () => false,
 }
