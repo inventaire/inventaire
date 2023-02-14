@@ -7,19 +7,17 @@ const sanitization = {
   uri: { optional: true },
   id: { optional: true },
   lang: {},
-  value: { type: 'string', optional: true },
+  value: { type: 'string' },
 }
 
 const controller = async (params, req) => {
   let { uri, id, value, lang } = params
 
   const prefix = getPrefix(uri, id)
-  const updater = updaters[prefix]
+  const updater = labelUpdatersByPrefix[prefix]
 
   if (uri) id = unprefixify(uri)
 
-  // Let value=null through to allow to delete a label
-  if (value === undefined) throw error_.newMissingBody('value')
   if (value === '') throw error_.new('invalid value', 400, params)
 
   if (updater == null) {
@@ -35,7 +33,7 @@ const getPrefix = (uri, id) => {
   if (id) return 'inv'
 }
 
-const updaters = {
+export const labelUpdatersByPrefix = {
   inv,
   wd,
 }

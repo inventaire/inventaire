@@ -109,12 +109,4 @@ describe('entities:update-labels:inv', () => {
     const updatedHuman = await getByUri(uri)
     langs.forEach(lang => updatedHuman.labels[lang].should.equal(name))
   })
-
-  it('should remove a label', async () => {
-    const { _id, uri } = await humanPromise
-    const value = randomString(15)
-    await updateLabel({ uri: _id, lang: 'fr', value })
-    const updatedHuman = await getByUri(uri)
-    updatedHuman.labels.fr.should.equal(value)
-  })
 })
