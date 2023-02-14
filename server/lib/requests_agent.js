@@ -2,7 +2,7 @@ import { Agent as HttpAgent } from 'node:http'
 import { Agent as HttpsAgent } from 'node:https'
 
 const httpAgent = new HttpAgent({ keepAlive: true })
-const httpsAgent = new HttpsAgent({ keepAlive: true })
+export const httpsAgent = new HttpsAgent({ keepAlive: true })
 
 export const insecureHttpsAgent = new HttpsAgent({
   keepAlive: true,

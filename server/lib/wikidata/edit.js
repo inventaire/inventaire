@@ -1,6 +1,6 @@
-import { Agent as HttpsAgent } from 'node:https'
 import wbEdit from 'wikibase-edit'
 import { userAgent } from '#lib/requests'
+import { httpsAgent } from '#lib/requests_agent'
 
 // Return an instance of wikibase-edit with the general config pre-set
 export default wbEdit({
@@ -10,9 +10,5 @@ export default wbEdit({
   // See https://github.com/maxlath/wikibase-edit/blob/master/docs/how_to.md#maxlag
   // and https://www.mediawiki.org/wiki/Manual:Maxlag_parameter
   maxlag: null,
-  httpRequestAgent: new HttpsAgent({
-    keepAlive: true,
-    // Forcing the use of IPv4 to work-around our IPv6 being in an IP range currently blocked by Wikimedia
-    family: 4,
-  }),
+  httpRequestAgent: httpsAgent,
 })
