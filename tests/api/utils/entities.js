@@ -95,7 +95,9 @@ export const updateClaim = ({ uri, property, oldValue, newValue, user }) => {
 }
 
 export const addClaim = ({ user, uri, property, value }) => {
-  return updateClaim({ user, uri, property, newValue: value })
+  uri = normalizeUri(uri)
+  user = user || getUser()
+  return customAuthReq(user, 'put', '/api/entities?action=add-claim', { uri, property, value })
 }
 
 export const removeClaim = ({ user, uri, property, value }) => {

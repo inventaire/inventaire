@@ -16,7 +16,7 @@ const sanitization = {
 const controller = async (params, req) => {
   let { id, uri, property, oldValue, newValue } = params
   let prefix
-  log(params, 'update claim input')
+  log(params, 'update-claim input')
   if (_.isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
   if (uri == null) throw error_.newMissingBody('uri')
@@ -29,7 +29,7 @@ const controller = async (params, req) => {
   newValue = parseEmptyValue(newValue)
 
   ;[ prefix, id ] = uri.split(':')
-  const updater = updaters[prefix]
+  const updater = claimUpdatersByPrefix[prefix]
   if (updater == null) {
     throw error_.new(`unsupported uri prefix: ${prefix}`, 400, uri)
   }
@@ -40,7 +40,7 @@ const controller = async (params, req) => {
 
 const parseEmptyValue = value => value === '' ? null : value
 
-const updaters = {
+export const claimUpdatersByPrefix = {
   inv,
   wd,
 }
