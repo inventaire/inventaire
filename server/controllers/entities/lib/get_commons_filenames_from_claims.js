@@ -4,7 +4,7 @@ import { unprefixify } from './prefix.js'
 
 const { simplify } = wdk
 
-const imageClaims = [
+export const imageProperties = [
   // image
   'wdt:P18',
   // logo image
@@ -15,14 +15,14 @@ const imageClaims = [
   'wdt:P6802',
 ]
 
-export const nonPrefixedImageClaims = imageClaims.map(unprefixify)
+export const nonPrefixedImageProperties = imageProperties.map(unprefixify)
 
 export default (claims, needsSimplification = false) => {
   if (needsSimplification) {
-    const images = flatten(values(pick(claims, nonPrefixedImageClaims)))
+    const images = flatten(values(pick(claims, nonPrefixedImageProperties)))
     return images.map(simplify.claim)
   } else {
-    const images = flatten(values(pick(claims, imageClaims)))
+    const images = flatten(values(pick(claims, imageProperties)))
     return images
   }
 }

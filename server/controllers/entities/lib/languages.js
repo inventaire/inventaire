@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import { nonPrefixedImageClaims } from '#controllers/entities/lib/get_commons_filenames_from_claims'
+import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { matchEntities } from '#controllers/search/lib/entities_query_builder'
 import normalizeResult from '#controllers/search/lib/normalize_result'
 import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
@@ -17,7 +17,7 @@ const languagesCodesProperties = [
   'P9753', // Wikidata language code
 ]
 
-export const languagesProperties = languagesCodesProperties.concat(nonPrefixedImageClaims)
+export const languagesProperties = languagesCodesProperties.concat(nonPrefixedImageProperties)
 
 export async function searchLanguages ({ search, lang, limit, offset }) {
   const url = `${elasticOrigin}/languages/_search`

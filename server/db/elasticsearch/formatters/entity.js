@@ -1,6 +1,7 @@
 import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
+import { imageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
@@ -208,14 +209,18 @@ const getEntityTerms = entity => {
 
 const getFlattenedClaims = claims => {
   const flattenedClaims = []
-  for (const property in claims) {
-    const propertyClaims = claims[property]
-    for (const value of propertyClaims) {
-      flattenedClaims.push(`${property}=${value}`)
+  for (const [ property, propertyClaims ] of Object.entries(claims)) {
+    if (!ignoredPropertiesInFlattenedClaims.has(property)) {
+      for (const value of propertyClaims) {
+        flattenedClaims.push(`${property}=${value}`)
+      }
     }
   }
   return flattenedClaims
 }
+
+// Properties that are highly unlikely to ever be usefully queried by exact value
+const ignoredPropertiesInFlattenedClaims = new Set(imageProperties)
 
 const isRawWikidataClaims = claims => {
   const properties = Object.keys(claims)
