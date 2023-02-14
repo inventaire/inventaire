@@ -1,6 +1,5 @@
 import { claimUpdatersByPrefix } from '#controllers/entities/update_claim'
 import { error_ } from '#lib/error/error'
-import { log } from '#lib/utils/logs'
 
 const sanitization = {
   uri: {},
@@ -11,7 +10,6 @@ const sanitization = {
 const controller = async (params, req) => {
   const { uri, property, value } = params
   const [ prefix, id ] = uri.split(':')
-  log(params, 'add-claim input')
 
   const updater = claimUpdatersByPrefix[prefix]
   if (updater == null) {

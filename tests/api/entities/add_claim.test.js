@@ -2,7 +2,8 @@ import 'should'
 import { createWork, someOpenLibraryId } from '../fixtures/entities.js'
 import { getByUri, addClaim } from '../utils/entities.js'
 
-describe('entities:add-claim', () => {
+// For the internals, see ./add_update_remove_claim.test.js
+describe('entities:add-claim interface', () => {
   it('should add a claim', async () => {
     const { uri } = await createWork()
     const openlibraryId = someOpenLibraryId('work')

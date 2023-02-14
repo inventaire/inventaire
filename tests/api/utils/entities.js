@@ -88,10 +88,12 @@ export const updateLabel = ({ uri, lang, value, user }) => {
 export const updateClaim = ({ uri, property, oldValue, newValue, user }) => {
   uri = normalizeUri(uri)
   user = user || getUser()
-  const body = { uri, property }
-  if (oldValue) body['old-value'] = oldValue
-  if (newValue) body['new-value'] = newValue
-  return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
+  return customAuthReq(user, 'put', '/api/entities?action=update-claim', {
+    uri,
+    property,
+    'old-value': oldValue,
+    'new-value': newValue,
+  })
 }
 
 export const addClaim = ({ user, uri, property, value }) => {
@@ -101,7 +103,9 @@ export const addClaim = ({ user, uri, property, value }) => {
 }
 
 export const removeClaim = ({ user, uri, property, value }) => {
-  return updateClaim({ user, uri, property, oldValue: value })
+  uri = normalizeUri(uri)
+  user = user || getUser()
+  return customAuthReq(user, 'put', '/api/entities?action=remove-claim', { uri, property, value })
 }
 
 export const getRefreshedPopularityByUris = uris => {
