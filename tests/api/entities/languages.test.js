@@ -33,4 +33,18 @@ describe('entities:languages:search', () => {
     const language = res.languages[0]
     language.uri.should.equal('wd:Q33491')
   })
+
+  it('should find a language by its wikidata entity id', async () => {
+    const res = await publicReq('get', `${endpoint}&search=Q10134`)
+    res.languages.should.be.an.Array()
+    const language = res.languages[0]
+    language.uri.should.equal('wd:Q10134')
+  })
+
+  it('should find a language by its wikidata entity uri', async () => {
+    const res = await publicReq('get', `${endpoint}&search=wd:Q10134`)
+    res.languages.should.be.an.Array()
+    const language = res.languages[0]
+    language.uri.should.equal('wd:Q10134')
+  })
 })

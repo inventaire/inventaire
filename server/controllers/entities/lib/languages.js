@@ -1,7 +1,10 @@
 import CONFIG from 'config'
+import wdk from 'wikidata-sdk'
 import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { matchEntities } from '#controllers/search/lib/entities_query_builder'
 import normalizeResult from '#controllers/search/lib/normalize_result'
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import { requests_ } from '#lib/requests'
 
@@ -38,10 +41,21 @@ const setHitType = hit => {
 }
 
 function languagesQueryBuilder ({ search, lang, limit, offset }) {
-  const shoulds = matchEntities({ search, lang })
+  let shoulds = []
 
-  if (codePattern.test(search)) {
-    shoulds.push(matchLanguageCode(search))
+  let uri
+  if (wdk.isItemId(search)) uri = prefixifyWd(search)
+  else if (isWdEntityUri(search)) uri = search
+
+  if (uri) {
+    // Equivalent to getting the entity by uri,
+    // but allows to easily return the same output as non-uri queries
+    shoulds.push(matchUri(uri))
+  } else {
+    shoulds = matchEntities({ search, lang })
+    if (codePattern.test(search)) {
+      shoulds.push(matchLanguageCode(search))
+    }
   }
 
   return {
@@ -68,3 +82,14 @@ function matchLanguageCode (search) {
 }
 
 const codePattern = /^[\w-_]+$/
+
+function matchUri (uri) {
+  return {
+    term: {
+      uri: {
+        value: uri,
+        boost: 100,
+      },
+    },
+  }
+}
