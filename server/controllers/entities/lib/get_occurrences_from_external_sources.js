@@ -90,14 +90,12 @@ const getSelibrOccurrences = getAndCreateOccurrencesFromIds('wdt:P906', getSelib
 const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuthorWorksTitle)
 const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
 
-const createOccurrencesFromUnstructuredArticle = worksLabels => {
+const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
+  if (!article.extract) return
   const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
-  return article => {
-    if (!article.extract) return
-    const matchedTitles = _.uniq(normalize(article.extract).match(worksLabelsPattern))
-    if (matchedTitles.length <= 0) return
-    return { url: article.url, matchedTitles, structuredDataSource: false }
-  }
+  const matchedTitles = _.uniq(normalize(article.extract).match(worksLabelsPattern))
+  if (matchedTitles.length <= 0) return
+  return { url: article.url, matchedTitles, structuredDataSource: false }
 }
 
 const createOccurrencesFromExactTitles = worksLabels => result => {

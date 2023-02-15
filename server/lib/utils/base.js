@@ -6,8 +6,6 @@ import {
 } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
 
-const multipleSpacesPattern = /\s+/g
-
 export const combinations = (array1, array2) => {
   return array1.flatMap(key1 => {
     return array2.map(key2 => [ key1, key2 ])
@@ -43,7 +41,7 @@ export const stringToFloat = str => {
 export const isArrayLike = obj => _.isArray(obj) || _.isArguments(obj)
 
 // Remove any superfluous spaces
-export const superTrim = str => str.replace(multipleSpacesPattern, ' ').trim()
+export const superTrim = str => str.replaceAll(/\s+/g, ' ').trim()
 
 export const KeyBy = attribute => array => _.keyBy(array, attribute)
 

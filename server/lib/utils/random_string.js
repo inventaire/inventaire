@@ -1,7 +1,5 @@
 import { randomBytes } from 'node:crypto'
 
-const nonAlphaNumericCharacters = /\W/g
-
 // Generated strings should:
 // - be fast to generate
 // - be in a URL or file path without requiring to be escaped
@@ -14,7 +12,7 @@ export const getRandomString = length => {
 
   const result = randomBytes(length)
     .toString('base64')
-    .replace(nonAlphaNumericCharacters, '')
+    .replace(/\W/g, '')
 
   // Due to the dropped characters, there is chance we don't have enough
   if (result.length >= length) {

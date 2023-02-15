@@ -153,7 +153,7 @@ const operationFix = {
 }
 
 const getFromPatchPath = (obj, path) => {
-  const key = path.slice(1).replace(/\//g, '.')
+  const key = path.slice(1).replaceAll('/', '.')
   return _.get(obj, key)
 }
 

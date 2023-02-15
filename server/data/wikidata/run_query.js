@@ -9,7 +9,6 @@ import makeSparqlRequest from './make_sparql_request.js'
 import { queries, queriesPerProperty } from './queries/queries.js'
 
 const possibleQueries = Object.keys(queries)
-const dashesPattern = /-/g
 
 // Params:
 // - query: the name of the query to use from './queries/queries.js'
@@ -20,7 +19,7 @@ export default async params => {
   let { query: queryName } = params
 
   // Converting from kebab case to snake case
-  queryName = params.query = queryName.replace(dashesPattern, '_')
+  queryName = params.query = queryName.replaceAll('-', '_')
   if (!possibleQueries.includes(queryName)) {
     throw error_.new('unknown query', 400, params)
   }
