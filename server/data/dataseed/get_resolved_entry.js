@@ -35,7 +35,7 @@ const getResolvedEntry = async isbn => {
     }
     if (dataseedEnabled) {
       const [ seed ] = await getSeedsByIsbns(isbn)
-      if (seed) {
+      if (seed?.title) {
         const dataseedEntry = await buildEntry(seed)
         const entity = await getEditionEntityFromEntry(dataseedEntry)
         if (entity) return entity
