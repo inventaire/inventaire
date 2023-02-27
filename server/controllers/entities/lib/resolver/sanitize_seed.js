@@ -1,5 +1,7 @@
+import { compact } from 'lodash-es'
 import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { forceArray } from '#lib/utils/base'
 import properties from '../properties/properties_values_constraints.js'
 import { validateProperty } from '../properties/validations.js'
 import validateClaimValueSync from '../validate_claim_value_sync.js'
@@ -42,7 +44,7 @@ const validateAndFormatClaims = (seed, type) => {
 const validateAndFormatPropertyClaims = (claims, type) => prop => {
   validateProperty(prop)
   const { format } = properties[prop]
-  claims[prop] = _.forceArray(claims[prop])
+  claims[prop] = compact(forceArray(claims[prop]))
     .map(value => {
       validateClaimValueSync(prop, value, type)
       return format ? format(value) : value
