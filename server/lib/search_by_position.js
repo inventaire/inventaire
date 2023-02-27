@@ -16,23 +16,50 @@ export default (db, dbBaseName) => {
   }
 }
 
-// See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
 const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
-  const topLeft = { lat: maxLat, lon: minLng }
-  const bottomRight = { lat: minLat, lon: maxLng }
+  const bboxes = splitBboxOnAntiMeridian([ minLng, minLat, maxLng, maxLat ])
   return {
     query: {
       bool: {
         filter: {
-          geo_bounding_box: {
-            position: {
-              top_left: topLeft,
-              bottom_right: bottomRight,
-            },
+          bool: {
+            should: bboxes.map(buildGeoBoundingBoxClause),
           },
         },
       },
     },
     size: 500,
+  }
+}
+
+const splitBboxOnAntiMeridian = ([ minLng, minLat, maxLng, maxLat ]) => {
+  if (minLng < -180) {
+    return [
+      [ -180, minLat, maxLng, maxLat ],
+      [ (360 + minLng), minLat, 180, maxLat ],
+    ]
+  } else if (maxLng > 180) {
+    return [
+      [ minLng, minLat, 180, maxLat ],
+      [ -180, minLat, (maxLng - 360), maxLat ],
+    ]
+  } else {
+    return [
+      [ minLng, minLat, maxLng, maxLat ],
+    ]
+  }
+}
+
+const buildGeoBoundingBoxClause = ([ minLng, minLat, maxLng, maxLat ]) => {
+  const topLeft = { lat: maxLat, lon: minLng }
+  const bottomRight = { lat: minLat, lon: maxLng }
+  return {
+    // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
+    geo_bounding_box: {
+      position: {
+        top_left: topLeft,
+        bottom_right: bottomRight,
+      },
+    },
   }
 }
