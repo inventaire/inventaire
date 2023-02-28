@@ -2,7 +2,6 @@ import CONFIG from 'config'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { assert_ } from './utils/assert_types.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
@@ -20,7 +19,6 @@ export const buildSearcher = params => {
     return requests_.post(url, { body })
     .then(parseResponse)
     .catch(formatError)
-    .catch(LogErrorAndRethrow(`${index} search err`))
   }
 }
 
