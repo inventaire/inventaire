@@ -79,6 +79,22 @@ describe('users:search-by-position', () => {
     foundUsersIds.should.containEql(extremeEastUser._id)
   })
 
+  it('should support requests fully overpassing the anti-meridian', async () => {
+    const latitude = getRandomLatitude()
+    const extremeEastLatLng = [ latitude, 175 ]
+    const extremeEastUser = await createUser({ position: extremeEastLatLng })
+    await waitForIndexation('users', extremeEastUser._id)
+    const bbox = [
+      -186, // minLng
+      latitude - 1, // minLat
+      -184, // maxLng
+      latitude + 1, // maxLat
+    ]
+    const { users } = await publicReq('get', `/api/users?action=search-by-position&bbox=${encodeBbox(bbox)}`)
+    const foundUsersIds = map(users, '_id')
+    foundUsersIds.should.containEql(extremeEastUser._id)
+  })
+
   it('should reject requests overlapping the anti-meridian twice', async () => {
     const bbox = [
       -190 - 360, // minLng
