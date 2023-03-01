@@ -21,17 +21,17 @@ describe('entities:languages:search', () => {
   })
 
   it('should find a language by its language code', async () => {
-    const res = await publicReq('get', `${endpoint}&search=hat&lang=zh`)
+    const res = await publicReq('get', `${endpoint}&search=nb`)
     res.languages.should.be.an.Array()
     const language = res.languages[0]
-    language.uri.should.equal('wd:Q33491')
+    language.uri.should.equal('wd:Q25167')
   })
 
   it('should ignore the code case', async () => {
-    const res = await publicReq('get', `${endpoint}&search=HAT&lang=zh`)
+    const res = await publicReq('get', `${endpoint}&search=Nb`)
     res.languages.should.be.an.Array()
     const language = res.languages[0]
-    language.uri.should.equal('wd:Q33491')
+    language.uri.should.equal('wd:Q25167')
   })
 
   it('should find a language by its wikidata entity id', async () => {
