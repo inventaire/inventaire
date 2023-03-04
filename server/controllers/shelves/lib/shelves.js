@@ -1,4 +1,4 @@
-import { compact, difference, flatMap, pick, property, uniq } from 'lodash-es'
+import { compact, difference, flatMap, map, pick, property, uniq } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getAuthorizedItemsByShelves } from '#controllers/items/lib/get_authorized_items'
 import { getItemsByIds, itemsBulkDelete, updateItemsShelves } from '#controllers/items/lib/items'
@@ -58,7 +58,15 @@ export const removeItemsFromShelves = (shelvesIds, itemsIds, userId) => {
   return updateShelvesItems('deleteShelves', shelvesIds, userId, itemsIds)
 }
 
-export const bulkDeleteShelves = db.bulkDelete
+export const bulkDeleteShelves = async shelves => {
+  if (shelves.length === 0) return
+  await db.bulkDelete(shelves)
+  const reqUserId = shelves[0].owner
+  const shelvesIds = map(shelves, '_id')
+  const shelvesItems = await getAuthorizedItemsByShelves(shelves, reqUserId)
+  const itemsIds = map(shelvesItems, '_id')
+  await updateItemsShelves('deleteShelves', shelvesIds, reqUserId, itemsIds)
+}
 
 export const deleteShelvesItems = async shelves => {
   const itemsIds = uniq(flatMap(shelves, 'items'))
