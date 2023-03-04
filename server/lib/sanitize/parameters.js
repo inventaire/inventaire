@@ -247,7 +247,12 @@ export default {
       }
       const [ minLng, minLat, maxLng, maxLat ] = bbox
       if (minLng >= maxLng || minLat >= maxLat) return false
-      if (minLng < -180 || maxLng > 180 || minLat < -90 || maxLat > 90) return false
+      if (minLat < -90 || maxLat > 90) return false
+      // Let through bbox overlapping the anti-meridian (minLng < -180 || maxLng > 180)
+      // but do not let through bboxes overlapping on both sides
+      if (minLng < -180 && maxLng > 180) return false
+      // or overlapping twice
+      if (minLng < -(360 + 180) || maxLng > (360 + 180)) return false
       return true
     },
   },

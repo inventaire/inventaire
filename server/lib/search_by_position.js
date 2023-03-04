@@ -16,23 +16,57 @@ export default (db, dbBaseName) => {
   }
 }
 
-// See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
 const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
-  const topLeft = { lat: maxLat, lon: minLng }
-  const bottomRight = { lat: minLat, lon: maxLng }
+  const bboxes = splitBboxOnAntiMeridian([ minLng, minLat, maxLng, maxLat ])
   return {
     query: {
       bool: {
         filter: {
-          geo_bounding_box: {
-            position: {
-              top_left: topLeft,
-              bottom_right: bottomRight,
-            },
+          bool: {
+            should: bboxes.map(buildGeoBoundingBoxClause),
           },
         },
       },
     },
     size: 500,
+  }
+}
+
+const splitBboxOnAntiMeridian = ([ minLng, minLat, maxLng, maxLat ]) => {
+  if (minLng < -180 && maxLng > -180) {
+    return [
+      [ -180, minLat, maxLng, maxLat ],
+      [ normalizeLongitude(minLng), minLat, 180, maxLat ],
+    ]
+  } else if (maxLng > 180 && minLng < 180) {
+    return [
+      [ minLng, minLat, 180, maxLat ],
+      [ -180, minLat, normalizeLongitude(maxLng), maxLat ],
+    ]
+  } else {
+    return [
+      // Normalizing for the case where both minLng and maxLng are out of the [ -180, 180 ] range
+      [ normalizeLongitude(minLng), minLat, normalizeLongitude(maxLng), maxLat ],
+    ]
+  }
+}
+
+const normalizeLongitude = lng => {
+  if (lng < -180) return lng + 360
+  if (lng > 180) return lng - 360
+  return lng
+}
+
+const buildGeoBoundingBoxClause = ([ minLng, minLat, maxLng, maxLat ]) => {
+  const topLeft = { lat: maxLat, lon: minLng }
+  const bottomRight = { lat: minLat, lon: maxLng }
+  return {
+    // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
+    geo_bounding_box: {
+      position: {
+        top_left: topLeft,
+        bottom_right: bottomRight,
+      },
+    },
   }
 }

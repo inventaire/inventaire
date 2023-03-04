@@ -90,12 +90,12 @@ export const getTwoFriends = () => {
 
 export const getRandomPosition = () => {
   return [
-    // Latitude
-    randomCoordinate(-90, 90),
-    // Longitude
-    randomCoordinate(-180, 180),
+    getRandomLatitude(),
+    getRandomLongitude(),
   ]
 }
+export const getRandomLatitude = () => randomCoordinate(-90, 90)
+export const getRandomLongitude = () => randomCoordinate(-180, 180)
 
 const _getTwoFriends = async () => {
   const [ userA, userB ] = await Promise.all([
