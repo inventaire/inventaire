@@ -1,3 +1,4 @@
+import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
 import { error_ } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
 import Follow from './follow.js'
@@ -46,7 +47,8 @@ const sanitization = {
   url: { generic: 'ignore' },
 }
 
-const controller = async (params, req) => {
+const controller = async (params, req, res) => {
+  setActivityPubContentType(res)
   const { type } = params
   if (inboxActivityTypes[type] != null) {
     await verifySignature(req)

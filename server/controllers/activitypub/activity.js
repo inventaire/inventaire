@@ -5,7 +5,7 @@ import { error_ } from '#lib/error/error'
 import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
-import { isEntityActivityId } from './lib/helpers.js'
+import { isEntityActivityId, setActivityPubContentType } from './lib/helpers.js'
 import { validateShelf, validateUser } from './lib/validations.js'
 
 const sanitization = {
@@ -15,7 +15,8 @@ const sanitization = {
   },
 }
 
-const controller = async ({ id }) => {
+const controller = async ({ id }, req, res) => {
+  setActivityPubContentType(res)
   if (isEntityActivityId(id)) {
     return getEntityActivity(id)
   } else {

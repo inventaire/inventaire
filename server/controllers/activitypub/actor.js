@@ -1,5 +1,6 @@
 import getActor from '#controllers/activitypub/lib/get_actor'
 import getActorHtmlUrl from '#controllers/activitypub/lib/get_actor_html_url'
+import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
 
 const sanitization = {
   name: {},
@@ -14,7 +15,7 @@ const controller = async (params, req, res) => {
     const actorUrl = getActorHtmlUrl(name)
     res.redirect(actorUrl)
   } else {
-    res.header('content-type', 'application/activity+json')
+    setActivityPubContentType(res)
     return getActor(name)
   }
 }

@@ -5,7 +5,7 @@ import { error_ } from '#lib/error/error'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
+import { makeUrl, getEntityUriFromActorName, context, setActivityPubContentType } from './lib/helpers.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const sanitization = {
@@ -20,8 +20,9 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+const controller = async (params, req, res) => {
   const { name } = params
+  setActivityPubContentType(res)
   if (isEntityUri(getEntityUriFromActorName(name))) {
     return getEntityActivities(params)
   } else if (name.startsWith('shelf-')) {

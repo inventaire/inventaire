@@ -44,3 +44,7 @@ export const propertyLabel = prop => i18n('en', unprefixify(prop))
 export const context = [
   'https://www.w3.org/ns/activitystreams',
 ]
+
+export function setActivityPubContentType (res) {
+  res.header('content-type', 'application/activity+json')
+}
