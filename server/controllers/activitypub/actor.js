@@ -14,6 +14,7 @@ const controller = async (params, req, res) => {
     const actorUrl = getActorHtmlUrl(name)
     res.redirect(actorUrl)
   } else {
+    res.header('content-type', 'application/activity+json')
     return getActor(name)
   }
 }

@@ -50,6 +50,13 @@ describe('activitypub:actor', () => {
       }
     })
 
+    it('should return a json ld content type', async () => {
+      const { username } = await createUser({ fediversable: true })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const res = await rawRequest('get', actorUrl)
+      res.headers['content-type'].should.startWith('application/activity+json')
+    })
+
     it('should return a json ld file with a receiver actor url', async () => {
       const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
