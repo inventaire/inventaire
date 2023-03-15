@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
-import { mappedArrayPromise } from '#lib/promises'
+import { emit } from '#lib/radio'
 import Group from '#models/group'
 
 const db = dbFactory('groups')
@@ -22,12 +22,12 @@ export const userCanLeaveGroup = async (userId, groupId) => {
   else return true
 }
 
-export const leaveAllGroups = async userId => {
-  return getGroupsByUser(userId)
-  .then(mappedArrayPromise(group => removeUser(group, userId)))
+export async function leaveAllGroups (userId) {
+  const groups = await getGroupsByUser(userId)
+  return Promise.all(groups.map(group => removeUser(group, userId)))
 }
 
-const removeUser = (group, userId) => {
+async function removeUser (group, userId) {
   const updatedGroup = Group.deleteUser(group, userId)
   await db.put(updatedGroup)
   await emit('group:leave', group._id, userId)
