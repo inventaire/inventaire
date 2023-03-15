@@ -17,6 +17,9 @@ async function deleteGroupIfEmpty (groupId, userId) {
     if (group.admins.length === 0) {
       await db.update(groupId, setDeletedTrue).then(Log('group deleted'))
       await emit('resource:destroyed', 'group', groupId)
+      if (group.picture) {
+        await emit('image:needs:check', { url: group.picture, context: 'update' })
+      }
     }
   } catch (err) {
     logError(`group deletion err: ${groupId}`)

@@ -4,10 +4,10 @@ import { wait } from '#lib/promises'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
 import { updateClaim } from '../utils/entities.js'
-import { updateGroup } from '../utils/groups.js'
+import { leaveGroup, updateGroup } from '../utils/groups.js'
 import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images.js'
 import { updateUser } from '../utils/users.js'
-import { getUserB } from '../utils/utils.js'
+import { getUser, getUserB } from '../utils/utils.js'
 
 const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
 
@@ -91,6 +91,22 @@ describe('images:auto-remove', () => {
       await updateGroup({ group, attribute: 'picture', value: url2 })
       await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'groups', hash }).should.be.true()
+    })
+
+    it('should auto-remove a group image when the group is deleted', async () => {
+      const user = await getUser()
+      const [
+        group,
+        { url, hash },
+      ] = await Promise.all([
+        createGroup({ user }),
+        importSomeImage({ container: 'groups' }),
+      ])
+      await updateGroup({ group, user, attribute: 'picture', value: url })
+      localContainerHasImage({ container: 'groups', hash }).should.be.true()
+      await leaveGroup({ group, user })
+      await wait(postUpdateCheckDelay + 100)
+      localContainerHasImage({ container: 'groups', hash }).should.be.false()
     })
   })
 

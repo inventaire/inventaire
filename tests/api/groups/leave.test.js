@@ -1,5 +1,5 @@
 import 'should'
-import { getGroup } from '#tests/api/utils/groups'
+import { getGroup, leaveGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createGroup, createGroupAndMember } from '../fixtures/groups.js'
@@ -54,7 +54,7 @@ describe('groups:update:leave', () => {
   it('should delete the group when the last user left', async () => {
     const user = await getUser()
     const group = await createGroup({ user })
-    await customAuthReq(user, 'put', endpoint, { group: group._id })
+    await leaveGroup({ group, user })
     await getGroup(group)
     .then(shouldNotBeCalled)
     .catch(err => {

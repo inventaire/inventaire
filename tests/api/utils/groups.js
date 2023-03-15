@@ -15,3 +15,7 @@ export async function updateGroup ({ group, user, attribute, value }) {
     value,
   })
 }
+
+export async function leaveGroup ({ group, user }) {
+  return customAuthReq(user, 'put', '/api/groups?action=leave', { group: group._id })
+}
