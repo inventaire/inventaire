@@ -32,6 +32,8 @@ describe('images:auto-remove', () => {
     it('should auto-remove a user image', async () => {
       const { url, hash } = await importSomeImage({ container: 'users' })
       await updateUser({ attribute: 'picture', value: url })
+      // Prevent getting a false positive test by having the image auto-remove by the post-upload check
+      await wait(postUploadCheckDelay + 100)
       const { url: url2 } = await importSomeImage({ container: 'users' })
       await updateUser({ attribute: 'picture', value: url2 })
       await wait(postUpdateCheckDelay + 100)
@@ -52,17 +54,19 @@ describe('images:auto-remove', () => {
   })
 
   describe('groups', () => {
-    it('should auto-remove a group image', async () => {
+    it('should auto-remove a group image when updated', async () => {
       const [
         group,
         { url, hash },
-        { url: url2 },
       ] = await Promise.all([
         createGroup(),
         importSomeImage({ container: 'groups' }),
-        importSomeImage({ container: 'groups' }),
       ])
       await updateGroup({ group, attribute: 'picture', value: url })
+      // Prevent getting a false positive test by having the image auto-remove by the post-upload check
+      await wait(postUploadCheckDelay + 100)
+      localContainerHasImage({ container: 'groups', hash }).should.be.true()
+      const { url: url2 } = await importSomeImage({ container: 'groups' })
       await updateGroup({ group, attribute: 'picture', value: url2 })
       await wait(postUpdateCheckDelay + 100)
       localContainerHasImage({ container: 'groups', hash }).should.be.false()
@@ -92,35 +96,25 @@ describe('images:auto-remove', () => {
 
   describe('entities', () => {
     it('should auto-remove an entity image', async () => {
-      const [
-        { hash },
-        { hash: hash2 },
-      ] = await Promise.all([
-        importSomeImage({ container: 'entities' }),
-        importSomeImage({ container: 'entities' }),
-      ])
+      const { hash } = await importSomeImage({ container: 'entities' })
       const { uri } = await createEdition({ image: hash })
-      await wait(1000)
+      const { hash: hash2 } = await importSomeImage({ container: 'entities' })
       await updateClaim({ uri, property: 'invp:P2', oldValue: hash, newValue: hash2 })
-      await wait(postUpdateCheckDelay + 100)
+      // Prevent getting a false positive test by having the image auto-remove by the post-upload check
+      await wait(Math.max(postUploadCheckDelay, postUpdateCheckDelay) + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.false()
     })
 
     it('should not auto-remove an entity image if the same image is used by another entity', async () => {
-      const [
-        { hash },
-        { hash: hash2 },
-      ] = await Promise.all([
-        importSomeImage({ container: 'entities' }),
-        importSomeImage({ container: 'entities' }),
-      ])
+      const { hash } = await importSomeImage({ container: 'entities' })
       const [ { uri } ] = await Promise.all([
         createEdition({ image: hash }),
         createEdition({ image: hash }),
       ])
-      await wait(1000)
+      const { hash: hash2 } = await importSomeImage({ container: 'entities' })
       await updateClaim({ uri, property: 'invp:P2', oldValue: hash, newValue: hash2 })
-      await wait(postUpdateCheckDelay + 100)
+      // Prevent getting a false positive test by having the image auto-remove by the post-upload check
+      await wait(Math.max(postUploadCheckDelay, postUpdateCheckDelay) + 100)
       localContainerHasImage({ container: 'entities', hash }).should.be.true()
     })
   })
