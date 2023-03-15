@@ -97,6 +97,20 @@ describe('groups:update-settings', () => {
     group.picture.should.deepEqual(url)
   })
 
+  it('should reject a picture from another container', async () => {
+    const { _id: groupId } = await getSomeGroup()
+    const { url } = await importSomeImage({ container: 'users' })
+    await authReq('put', endpoint, {
+      group: groupId,
+      attribute: 'picture',
+      value: url,
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+    })
+  })
+
   it('should delete a picture', async () => {
     const { _id: groupId } = await getSomeGroup()
     const { url } = await importSomeImage({ container: 'groups' })
