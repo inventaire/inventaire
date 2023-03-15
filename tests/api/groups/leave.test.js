@@ -2,8 +2,8 @@ import 'should'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { createGroupAndMember } from '../fixtures/groups.js'
-import { authReq, authReqC } from '../utils/utils.js'
+import { createGroup, createGroupAndMember } from '../fixtures/groups.js'
+import { authReq, authReqC, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=leave'
 
@@ -49,5 +49,16 @@ describe('groups:update:leave', () => {
     await customAuthReq(member, 'put', endpoint, { group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.members.length.should.equal(memberCount - 1)
+  })
+
+  it('should delete the group when the last user left', async () => {
+    const user = await getUser()
+    const group = await createGroup({ user })
+    await customAuthReq(user, 'put', endpoint, { group: group._id })
+    await getGroup(group)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(404)
+    })
   })
 })
