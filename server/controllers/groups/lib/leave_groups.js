@@ -29,6 +29,6 @@ export const leaveAllGroups = async userId => {
 
 const removeUser = (group, userId) => {
   const updatedGroup = Group.deleteUser(group, userId)
-  if (updatedGroup.admins.length === 0) return db.delete(group._id, group._rev)
-  else return db.put(updatedGroup)
+  await db.put(updatedGroup)
+  await emit('group:leave', group._id, userId)
 }
