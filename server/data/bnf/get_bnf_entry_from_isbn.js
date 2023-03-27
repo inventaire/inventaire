@@ -1,5 +1,6 @@
 import { simplifySparqlResults } from 'wikibase-sdk'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { setEditionContributors } from '#data/bnf/helpers'
 import { formatAuthorName } from '#data/commons/format_author_name'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { parseSameasMatches } from '#data/lib/external_ids'
@@ -40,6 +41,7 @@ const getQuery = isbn => {
   const query = `
   PREFIX bibo: <http://purl.org/ontology/bibo/>
   PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+  PREFIX bnfroles: <http://data.bnf.fr/vocabulary/roles/>
   PREFIX dcterms: <http://purl.org/dc/terms/>
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX marcrel: <http://id.loc.gov/vocabulary/relators/>
@@ -47,7 +49,7 @@ const getQuery = isbn => {
   PREFIX rdagroup1elements: <http://rdvocab.info/Elements/>
   PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
 
-  SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?authorFamilyName ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
+  SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?authorFamilyName ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) (GROUP_CONCAT(?translator;separator=",") AS ?translators) (GROUP_CONCAT(?postfaceAuthor;separator=",") AS ?postfaceAuthors) (GROUP_CONCAT(?prefaceAuthor;separator=",") AS ?prefaceAuthors) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
   UNION { ?edition bnf-onto:isbn "${isbn13h}" }
@@ -63,7 +65,10 @@ const getQuery = isbn => {
 
   OPTIONAL {
     ?edition rdarelationships:expressionManifested ?expression_a .
-    ?expression_a dcterms:language ?expressionLang .
+    OPTIONAL { ?expression_a dcterms:language ?expressionLang . }
+    OPTIONAL { ?expression_a bnfroles:r680 ?translator . }
+    OPTIONAL { ?expression_a bnfroles:r540 ?postfaceAuthor . }
+    OPTIONAL { ?expression_a bnfroles:r550 ?prefaceAuthor . }
   }
 
   OPTIONAL {
@@ -105,7 +110,7 @@ GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPu
 }
 
 const formatRow = async (isbn, result, rawResult) => {
-  const { edition, work, author, publisherLabel } = result
+  const { edition, work, author, publisherLabel, translators, postfaceAuthors, prefaceAuthors } = result
   const expressionLang = result.expressionLang?.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
   const workLabelLang = rawResult.workLabel?.['xml:lang'] || wmCodeByIso6392Code[expressionLang]
   if (workLabelLang) result.work.labelLang = workLabelLang
@@ -123,6 +128,15 @@ const formatRow = async (isbn, result, rawResult) => {
     }
     if (expressionLang && wdIdByIso6392Code[expressionLang]) {
       entry.edition.claims['wdt:P407'] = prefixifyWd(wdIdByIso6392Code[expressionLang])
+    }
+    if (translators) {
+      await setEditionContributors(entry.edition, 'wdt:P655', translators)
+    }
+    if (prefaceAuthors) {
+      await setEditionContributors(entry.edition, 'wdt:P2679', prefaceAuthors)
+    }
+    if (postfaceAuthors) {
+      await setEditionContributors(entry.edition, 'wdt:P2680', postfaceAuthors)
     }
   }
   if (work.value) {
