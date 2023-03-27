@@ -38,7 +38,17 @@ const getQuery = isbn => {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10h, isbn13h, isbn13 } = isbnData
-  const query = `SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
+  const query = `
+  PREFIX bibo: <http://purl.org/ontology/bibo/>
+  PREFIX bnf-onto: <http://data.bnf.fr/ontology/bnf-onto/>
+  PREFIX dcterms: <http://purl.org/dc/terms/>
+  PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+  PREFIX marcrel: <http://id.loc.gov/vocabulary/relators/>
+  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+  PREFIX rdagroup1elements: <http://rdvocab.info/Elements/>
+  PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
+
+  SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
   UNION { ?edition bnf-onto:isbn "${isbn13h}" }
