@@ -2,7 +2,7 @@ import CONFIG from 'config'
 import { isString } from 'lodash-es'
 import moment from 'moment'
 import Polyglot from 'node-polyglot'
-import langs from '#i18nAssets/langs'
+import activeLanguages from '#i18nAssets/active_languages'
 import { absolutePath } from '#lib/absolute_path'
 import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
@@ -10,7 +10,6 @@ import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import translate from './translate.js'
 
-const { active: activeLangs } = langs
 const { autofixI18n } = CONFIG
 
 const polyglots = {}
@@ -28,7 +27,7 @@ const warnAndFix = warning => {
   return appendToServerKeys(key)
 }
 
-activeLangs.forEach(lang => {
+activeLanguages.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
   const phrases = requireJson(absolutePath('i18nDist', `${lang}.json`))
   polyglots[lang].extend(phrases)
@@ -38,7 +37,7 @@ activeLangs.forEach(lang => {
 const solveLang = lang => {
   // There is only support for 2 letters languages for now
   lang = shortLang(lang)
-  if (activeLangs.includes(lang)) return lang
+  if (activeLanguages.includes(lang)) return lang
   else return 'en'
 }
 

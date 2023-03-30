@@ -1,21 +1,22 @@
-import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info } from '#lib/utils/logs'
 import { wait } from './promises.js'
 
-const { isPropertyId } = wdk
+const clientSourceFile = absolutePath('i18nSrc', 'client/en.json')
+const serverSourceFile = absolutePath('i18nSrc', 'server/en.json')
 
-export const appendToFullKeys = keys => appendToI18nKeys(full, keys, true)
-export const appendToShortKeys = keys => appendToI18nKeys(short, keys, false)
-export const appendToServerKeys = key => {
-  const fullValue = !/^\w+_\w+/.test(key)
-  return appendToI18nKeys(server, [ key ], fullValue)
-}
+// Using _ as the convention to identify short keys: ex: awesome_title
+// (that is, keys with an English value different than the key itself)
+// the underscore should be surrounded by letters, not spaces
+const shortKeyPattern = /^\w+_\w+$/
+
+export const appendToClientKeys = keys => appendToI18nKeys(clientSourceFile, keys)
+export const appendToServerKeys = key => appendToI18nKeys(serverSourceFile, [ key ])
 
 // Don't use 'require' as it will be cached until next start
-const appendToI18nKeys = async (path, newKeys, fullValue) => {
+const appendToI18nKeys = async (path, newKeys) => {
   // Add a random pause so that several calls at the same time
   // are unlickly to conflict. Sort of a debounce ersatz
   await wait(Math.trunc(Math.random() * 1000))
@@ -24,7 +25,7 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
   const lengthBefore = _.objLength(keys)
   for (const key of newKeys) {
     if (!keys[key]) {
-      keys[key] = fullValue ? key : null
+      keys[key] = shortKeyPattern.test(key) ? null : key
       success(`+i18n: '${key}'`)
     } else {
       info(`i18n: already there '${key}'`)
@@ -32,43 +33,9 @@ const appendToI18nKeys = async (path, newKeys, fullValue) => {
   }
 
   if (_.objLength(keys) > lengthBefore) {
-    return writeJsonFile(path, reorder(keys))
+    return writeJsonFile(path, keys)
     .then(() => success(`i18n:updated ${path}`))
   } else {
     info(`i18n:not:updating ${path}: no new key`)
   }
 }
-
-const full = absolutePath('i18nSrc', 'fullkey.en.json')
-const short = absolutePath('i18nSrc', 'shortkey.en.json')
-const server = absolutePath('i18nSrc', 'server.en.json')
-
-const reorder = keys => {
-  const reordered = {}
-  const addKey = key => { reordered[key] = keys[key] }
-
-  // Add non-properties first
-  Object.keys(keys)
-  .filter(key => !isPropertyIdOrUri(key))
-  .sort(alphabetically)
-  .forEach(addKey)
-
-  // Then, Wikidata properties
-  Object.keys(keys)
-  .filter(isPropertyId)
-  .sort(byPropertyId)
-  .forEach(addKey)
-
-  // Then, Inventaire properties
-  Object.keys(keys)
-  .filter(key => key.startsWith('invp:'))
-  .sort(byPropertyId)
-  .forEach(addKey)
-
-  return reordered
-}
-
-const alphabetically = (a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1
-const byPropertyId = (a, b) => parseInt(a.split('P')[1]) - parseInt(b.split('P')[1])
-
-const isPropertyIdOrUri = str => isPropertyId(str) || str.startsWith('invp:')

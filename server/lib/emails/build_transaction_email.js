@@ -98,6 +98,14 @@ const buildTimeline = transaction => {
 const formatActions = (transaction, actions) => {
   const { owner, requester } = transaction
   return actions.map(action => {
+    // Possible keys:
+    // - requested_timeline_action
+    // - accepted_timeline_action
+    // - declined_timeline_action
+    // - confirmed_timeline_action
+    // - returned_timeline_action
+    // - cancelled_timeline_action
+    action.actionLabelKey = `${action.action}_timeline_action`
     action.user = ownerIsActor(action) ? owner : requester
     return action
   })

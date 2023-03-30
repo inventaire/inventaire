@@ -10,7 +10,7 @@ const folders = {
   lib: `${projectRoot}server/lib`,
   db: `${projectRoot}server/db`,
   i18nDist: `${projectRoot}inventaire-i18n/dist/server`,
-  i18nSrc: `${projectRoot}inventaire-i18n/original`,
+  i18nSrc: `${projectRoot}inventaire-i18n/src`,
 }
 
 export function absolutePath (folderAlias, filePath) {
