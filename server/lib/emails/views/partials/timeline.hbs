@@ -4,10 +4,10 @@
 </p>
 {{#each timeline}}
   <p style="margin-left: 10px; padding-bottom: 5px; background-color:#eee;">
-    {{#if action}}
+    {{#if actionLabelKey}}
       <strong>
         {{! relies on the fact that only action from the other user will be notified by mail }}
-        {{i18n ../lang action ../other}}
+        {{i18n ../lang actionLabelKey ../other}}
       </strong>
       {{! '../' allows to access parent's scope http://stackoverflow.com/questions/13645084/access-a-variable-outside-the-scope-of-a-handlebars-js-each-loop }}
       <span style="float:right">{{dateI18n ../lang timestamp}}</span>
