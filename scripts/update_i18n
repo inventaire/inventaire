@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
+set -eu
 
-# Assumes inventaire/inventaire-i18n is installed or symboly linked from the project root
+[ -e inventaire-i18n ] || {
+  git clone https://github.com/inventaire/inventaire-i18n.git
+}
+
 cd ./inventaire-i18n
-git fetch origin dist
-git checkout origin/dist
-git checkout -B dist
+rm -rf ./dist
+git checkout origin/master
+git checkout -B master
+git pull origin master
+npm run build
+cd ..

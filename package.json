@@ -21,7 +21,6 @@
     "indexation:wikidata:load-from-dump": "./scripts/indexation/wikidata/load_from_dump.sh",
     "inspect": "export NODE_ENV=dev ; node --inspect server/server.js",
     "install-client": "./scripts/install_client",
-    "install-i18n": "./scripts/install_i18n",
     "kill-tests-server": "./tests/api/scripts/kill_tests_server",
     "lint": "./scripts/lint",
     "lint-fix": "./scripts/lint_fix",

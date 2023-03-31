@@ -136,9 +136,8 @@ npm run watch
 - [**master**](https://github.com/inventaire/inventaire-client/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
 
 #### [i18n](https://github.com/inventaire/inventaire-i18n)
-the repo tracking strings used in the client and emails in all the supported languages. For helping to translate, see [translate.inventaire.io](http://translate.inventaire.io)
-- [**master**](https://github.com/inventaire/inventaire-i18n/tree/master): tracking translations fetched from the [translation tool](http://translate.inventaire.io) and build scripts
-- [**dist**](https://github.com/inventaire/inventaire-i18n/tree/dist): same as master but with pre-built files
+The repository tracking strings used in the server (for emails, activitypub) and client (for the web UI) in all the supported languages. For helping to translate, see the [Inventaire Weblate project](https://weblate.framasoft.org/engage/inventaire/)
+- [**master**](https://github.com/inventaire/inventaire-i18n/tree/master): tracking translations fetched from [Weblate](https://weblate.framasoft.org/engage/inventaire/) and build scripts
 
 #### [deploy](https://github.com/inventaire/inventaire-deploy)
 tracking installation scripts and documentation to run inventaire in production
@@ -148,7 +147,7 @@ tracking installation scripts and documentation to run inventaire in production
 - [**master**](https://github.com/inventaire/docker-inventaire/tree/master): tracking docker installation files for development and testing use
 
 ## Stack Map
-This repo correspond to the the "Server" section in the [stack map](https://inventaire.github.io/stack/)
+This repository correspond to the the "Server" section in the [stack map](https://inventaire.github.io/stack/)
 
 ## Concepts map
 the app has a few core concepts:

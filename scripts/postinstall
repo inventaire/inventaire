@@ -6,9 +6,8 @@ set -eu
 # and that all the following isn't needed
 [ -e client ] && exit 0
 
-# Needs to run before generate_lang_json so that client/public/i18n/dist is already populated
 npm run install-client
-npm run install-i18n
+npm run update-i18n
 
 mkdir -p logs run db/leveldb
 
