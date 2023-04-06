@@ -29,9 +29,12 @@ const sanitization = {
   },
   relatives: {
     allowlist: [
-      'wdt:P50',
-      'wdt:P179',
-      'wdt:P629',
+      'wdt:P50', // author
+      'wdt:P58', // scenarist
+      'wdt:P179', // part of the series
+      'wdt:P110', // illustrator
+      'wdt:P629', // edition or translation of
+      'wdt:P6338', // colorist
     ],
     optional: true,
   },
