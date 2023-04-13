@@ -1,6 +1,5 @@
-import should from 'should'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
-import { createListing, createElement } from '../fixtures/listings.js'
+import { createListing } from '../fixtures/listings.js'
 import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
@@ -31,28 +30,6 @@ describe('listings:by-id', () => {
       .catch(err => {
         err.statusCode.should.equal(403)
       })
-    })
-  })
-
-  describe('paginate:elements', () => {
-    it('should return listing with a limited number of elements', async () => {
-      const { listing } = await createElement({})
-      await createElement({ listing })
-      const { elements } = await publicReq('get', `${endpoint}&id=${listing._id}`)
-      elements.length.should.be.aboveOrEqual(2)
-      const { elements: elements2 } = await publicReq('get', `${endpoint}&id=${listing._id}&limit=1`)
-      elements2.length.should.equal(1)
-    })
-
-    it('should take an offset parameter', async () => {
-      const { uri, listing } = await createElement({})
-      await createElement({ uri, listing })
-      const { elements } = await publicReq('get', `${endpoint}&id=${listing._id}`)
-      const offset = 1
-      const { elements: elements2 } = await publicReq('get', `${endpoint}&id=${listing._id}&offset=${offset}`)
-      const elementsLength = elements.length
-      const elements2Length = elements2.length
-      should(elementsLength - offset).equal(elements2Length)
     })
   })
 })

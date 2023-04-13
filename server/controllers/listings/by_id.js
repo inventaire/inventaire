@@ -1,4 +1,3 @@
-import { paginate } from '#controllers/items/lib/queries_commons'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
 import { error_ } from '#lib/error/error'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
@@ -20,14 +19,7 @@ const controller = async ({ id, limit, offset, reqUserId }, req) => {
   }
   return {
     list: listing,
-    elements: await paginateElements(listing, offset, limit),
   }
-}
-
-const paginateElements = (listing, offset, limit) => {
-  const { elements } = listing
-  const page = paginate(elements, { offset, limit })
-  return page.items
 }
 
 export default { sanitization, controller }
