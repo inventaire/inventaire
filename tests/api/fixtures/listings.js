@@ -2,7 +2,7 @@ import { randomWords } from '#fixtures/text'
 import { addElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
-import { createEdition } from './entities.js'
+import { createWork } from './entities.js'
 
 const endpoint = '/api/lists?action='
 
@@ -28,7 +28,7 @@ export const createElement = async ({ visibility = [ 'public' ], uri, listing },
     listing = fixtureListing.listing
   }
   if (!uri) {
-    const edition = await createEdition()
+    const edition = await createWork()
     uri = edition.uri
   }
   const res = await addElements(userPromise, {
