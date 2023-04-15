@@ -6,37 +6,37 @@ import Element from '#models/element'
 
 const db = await dbFactory('elements')
 
-const elements_ = {
-  byId: db.get,
-  byIds: db.byIds,
-  byEntities: async uris => db.viewByKeys('byEntities', uris),
-  byListingsAndEntity: async (listingsIds, entitiesUris) => {
-    const keys = _.combinations(listingsIds, entitiesUris)
-    return db.viewByKeys('byListAndEntity', keys)
-  },
-  byListings: async listingsIds => db.viewByKeys('byListings', listingsIds),
-  bulkDelete: db.bulkDelete,
-  deleteListingsElements: async listings => {
-    const listingIds = map(listings, '_id')
-    const listingsElements = await elements_.byListings(listingIds)
-    if (_.isNonEmptyArray(listingsElements)) {
-      await elements_.bulkDelete(listingsElements)
-    }
-    return listingsElements
-  },
-  create: async ({ listing, uris, userId }) => {
-    const listingId = listing._id
-    if (listing.creator !== userId) {
-      throw error_.new('wrong user', 403, { userId, listingId })
-    }
-    const elements = uris.map(uri => Element.create({
-      list: listingId,
-      uri,
-    }))
-    const res = await db.bulk(elements)
-    const elementsIds = _.map(res, 'id')
-    return db.fetch(elementsIds)
-  },
+export const byId = db.get
+export const byIds = db.byIds
+export async function byEntities (uris) {
+  return db.viewByKeys('byEntities', uris)
 }
-
-export default elements_
+export async function byListingsAndEntity (listingsIds, entitiesUris) {
+  const keys = _.combinations(listingsIds, entitiesUris)
+  return db.viewByKeys('byListAndEntity', keys)
+}
+export async function byListings (listingsIds) {
+  return db.viewByKeys('byListings', listingsIds)
+}
+export const bulkDelete = db.bulkDelete
+export async function deleteListingsElements (listings) {
+  const listingIds = map(listings, '_id')
+  const listingsElements = await byListings(listingIds)
+  if (_.isNonEmptyArray(listingsElements)) {
+    await bulkDelete(listingsElements)
+  }
+  return listingsElements
+}
+export async function create ({ listing, uris, userId }) {
+  const listingId = listing._id
+  if (listing.creator !== userId) {
+    throw error_.new('wrong user', 403, { userId, listingId })
+  }
+  const elements = uris.map(uri => Element.create({
+    list: listingId,
+    uri,
+  }))
+  const res = await db.bulk(elements)
+  const elementsIds = _.map(res, 'id')
+  return db.fetch(elementsIds)
+}

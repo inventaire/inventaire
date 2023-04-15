@@ -1,4 +1,4 @@
-import elements_ from '#controllers/listings/lib/elements'
+import { deleteListingsElements } from '#controllers/listings/lib/elements'
 import { bulkDeleteListings, getListingsByIds, validateListingOwnership } from '#controllers/listings/lib/listings'
 
 const sanitization = {
@@ -9,7 +9,7 @@ const controller = async ({ ids, reqUserId }) => {
   const listings = await getListingsByIds(ids, reqUserId)
   validateListingOwnership(reqUserId, listings)
   const [ deletedElements ] = await Promise.all([
-    elements_.deleteListingsElements(listings),
+    deleteListingsElements(listings),
     bulkDeleteListings(listings),
   ])
   return {

@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
 import { paginate } from '#controllers/items/lib/queries_commons'
-import elements_ from '#controllers/listings/lib/elements'
+import { byListingsAndEntity, byEntities } from '#controllers/listings/lib/elements'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
@@ -15,9 +15,9 @@ const sanitization = {
 const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
   let foundElements
   if (lists) {
-    foundElements = await elements_.byListingsAndEntity(lists, uris)
+    foundElements = await byListingsAndEntity(lists, uris)
   } else {
-    foundElements = await elements_.byEntities(uris)
+    foundElements = await byEntities(uris)
   }
   // uniq here implies that a listing cannot refer several times to the same entity
   const listingsIds = _.uniq(_.map(foundElements, 'list'))
