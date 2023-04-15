@@ -1,5 +1,7 @@
+import { createWork } from '#fixtures/entities'
+import { createListing, createElement } from '#fixtures/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
-import { createListing } from '../fixtures/listings.js'
+import { merge } from '../utils/entities.js'
 import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
@@ -30,6 +32,17 @@ describe('listings:by-id', () => {
       .catch(err => {
         err.statusCode.should.equal(403)
       })
+    })
+  })
+
+  describe('redirects hook', () => {
+    it('should update element uri after merging entities', async () => {
+      const work = await createWork()
+      const { uri, listing } = await createElement({})
+      await merge(uri, work.uri)
+      const byIdEndpoint = '/api/lists?action=by-id'
+      const { list } = await publicReq('get', `${byIdEndpoint}&id=${listing._id}`)
+      list.elements[0].uri.should.equal(work.uri)
     })
   })
 })

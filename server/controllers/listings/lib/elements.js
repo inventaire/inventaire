@@ -2,6 +2,7 @@ import { map } from 'lodash-es'
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
+import { logError } from '#lib/utils/logs'
 import Element from '#models/element'
 
 const db = await dbFactory('elements')
@@ -40,3 +41,15 @@ export async function create ({ listing, uris, userId }) {
   const elementsIds = _.map(res, 'id')
   return db.fetch(elementsIds)
 }
+
+export async function bulkUpdate ({ oldElements, attribute, value }) {
+  const itemUpdateData = { [attribute]: value }
+  const newElements = oldElements.map(oldElement => Element.update(itemUpdateData, oldElement))
+  return elementsBulkUpdate(newElements)
+  .catch(err => {
+    err.context = { oldElements, attribute, value }
+    logError(err, 'could not update elements')
+  })
+}
+
+const elementsBulkUpdate = db.bulk
