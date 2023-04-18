@@ -65,10 +65,8 @@ const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }) => 
   })
   html += htmlLinks.join(', ')
   if (itemsLength > maxLinksToDisplay) {
-    const and = ' ' + i18n(lang, 'and') + ' '
-    html += and
-    const more = i18n(lang, 'x_more_books_to_inventory', { itemsLength: itemsLength - maxLinksToDisplay })
-    const moreLink = `<a href="${host}${parentLink}" rel="nofollow noopener noreferrer" target="_blank">${more}</a>`
+    const url = `${host}${parentLink}`
+    const moreLink = i18n(lang, 'and_x_more_books_to_inventory', { itemsLength: itemsLength - maxLinksToDisplay, link: url })
     html += moreLink
   }
   if (links.length === 1) {
