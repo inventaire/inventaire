@@ -1,10 +1,8 @@
-import wdk from 'wikidata-sdk'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { isWdEntityId } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
 import makeSparqlRequest from './make_sparql_request.js'
-
-const { isItemId } = wdk
 
 export default async isbn => {
   const sparql = getQuery(isbn)
@@ -47,8 +45,8 @@ const buildEntryFromFormattedRows = (rows, isbn) => {
 
   // "SERVICE wikibase:label" defaults to the item id
   // when it doesn't find the desired label
-  if (isItemId(item.label)) delete item.label
-  if (work && isItemId(work.label)) delete work.label
+  if (isWdEntityId(item.label)) delete item.label
+  if (work && isWdEntityId(work.label)) delete work.label
 
   // A title is required to be set on the edition
   if (!(item.label || title)) return

@@ -1,4 +1,4 @@
-import wdk from 'wikidata-sdk'
+import { simplifySparqlResults } from 'wikibase-sdk'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { formatAuthorName } from '#data/commons/format_author_name'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
@@ -12,7 +12,6 @@ import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
-const { sparqlResults: simplifySparqlResults } = wdk.simplify
 // Using a shorter timeout as the query is never critically needed but can make a user wait
 const timeout = 10000
 

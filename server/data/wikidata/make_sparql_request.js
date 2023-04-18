@@ -1,10 +1,9 @@
-import wdk from 'wikidata-sdk'
+import { simplifySparqlResults } from 'wikibase-sdk'
+import wdk from 'wikibase-sdk/wikidata.org'
 import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { warn, info } from '#lib/utils/logs'
-
-const { sparqlResults: simplifySparqlResults } = wdk.simplify
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -12,8 +11,10 @@ const maxConcurrency = 4
 let waiting = 0
 let ongoing = 0
 
+const { sparqlQuery } = wdk
+
 export default async sparql => {
-  const url = wdk.sparqlQuery(sparql)
+  const url = sparqlQuery(sparql)
 
   if (waiting > 500) {
     throw error_.new('too many requests in queue', 500, { sparql })

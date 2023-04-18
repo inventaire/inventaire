@@ -1,14 +1,14 @@
-import wdk from 'wikidata-sdk'
-import _ from '#builders/utils'
+import { isPropertyId } from 'wikibase-sdk'
+import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 
 export const prefixify = (id, prefix) => {
   if (id == null) return
   if (prefix) return `${prefix}:${id}`
 
-  if (wdk.isItemId(id)) return `wd:${id}`
-  else if (_.isInvEntityId(id)) return `inv:${id}`
-  else if (wdk.isPropertyId(id)) return `wdt:${id}`
+  if (isWdEntityId(id)) return `wd:${id}`
+  else if (isInvEntityId(id)) return `inv:${id}`
+  else if (isPropertyId(id)) return `wdt:${id}`
   else if (isValidIsbn(id)) return `isbn:${normalizeIsbn(id)}`
   else throw new Error('unknown id format')
 }

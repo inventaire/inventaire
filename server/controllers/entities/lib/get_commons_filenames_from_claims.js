@@ -1,8 +1,6 @@
 import { flatten, pick, values } from 'lodash-es'
-import wdk from 'wikidata-sdk'
+import { simplifyClaim } from 'wikibase-sdk'
 import { unprefixify } from './prefix.js'
-
-const { simplify } = wdk
 
 const imageClaims = [
   // image
@@ -20,7 +18,7 @@ const nonPrefixedImageClaims = imageClaims.map(unprefixify)
 export default (claims, needsSimplification = false) => {
   if (needsSimplification) {
     const images = flatten(values(pick(claims, nonPrefixedImageClaims)))
-    return images.map(simplify.claim)
+    return images.map(simplifyClaim)
   } else {
     const images = flatten(values(pick(claims, imageClaims)))
     return images

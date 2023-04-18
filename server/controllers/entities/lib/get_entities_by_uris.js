@@ -1,5 +1,5 @@
-import wdk from 'wikidata-sdk'
 import _ from '#builders/utils'
+import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
@@ -99,7 +99,7 @@ const formatRichResults = results => {
 }
 
 const validators = {
-  inv: _.isInvEntityId,
-  wd: wdk.isItemId,
+  inv: isInvEntityId,
+  wd: isWdEntityId,
   isbn: isValidIsbn,
 }

@@ -1,4 +1,5 @@
-import wdk from 'wikidata-sdk'
+import { simplifySparqlResults } from 'wikibase-sdk'
+import wdk from 'wikibase-sdk/wikidata.org'
 import _ from '#builders/utils'
 import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
@@ -11,8 +12,7 @@ import { log } from '#lib/utils/logs'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
-const { getReverseClaims, simplify } = wdk
-const { sparqlResults: simplifySparqlResults } = simplify
+const { getReverseClaims } = wdk
 
 const caseInsensitiveProperties = [
   'wdt:P2002',
@@ -90,7 +90,7 @@ const _wikidataReverseClaims = async (property, value) => {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   log([ property, value ], 'reverse claim')
-  const url = getReverseClaims(wdProp, value, { caseInsensitive })
+  const url = getReverseClaims({ properties: wdProp, values: value, caseInsensitive })
   const results = await requests_.get(url)
   return simplifySparqlResults(results)
   .map(result => prefixifyWd(result.subject))

@@ -1,4 +1,4 @@
-import wikimediaLanguageCodes from 'wikibase-sdk/lib/helpers/sitelinks_languages.js'
+import { wikimediaLanguageCodes } from 'wikibase-sdk'
 
 const wikimediaLanguageCodesSet = new Set(wikimediaLanguageCodes)
 

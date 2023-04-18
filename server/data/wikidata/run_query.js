@@ -1,6 +1,7 @@
-import wdk from 'wikidata-sdk'
+import { isPropertyId } from 'wikibase-sdk'
 import _ from '#builders/utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { isWdEntityId } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { radio } from '#lib/radio'
@@ -56,8 +57,8 @@ const buildKey = (queryName, params) => {
 }
 
 const parametersTests = {
-  qid: wdk.isItemId,
-  pid: wdk.isPropertyId,
+  qid: isWdEntityId,
+  pid: isPropertyId,
 }
 
 const runQuery = (params, key) => {

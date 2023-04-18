@@ -1,4 +1,4 @@
-import wdk from 'wikidata-sdk'
+import { isPropertyId, simplifyAliases, simplifyDescriptions, simplifyLabels } from 'wikibase-sdk'
 import _ from '#builders/utils'
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
@@ -7,13 +7,13 @@ import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
+import { isWdEntityId } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
 
-const { simplify } = wdk
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
 export default async (entity, options = {}) => {
@@ -39,7 +39,7 @@ export default async (entity, options = {}) => {
   if (!indexedEntitiesTypesSet.has(entity.type)) return
 
   let needsSimplification = false
-  const isWikidataEntity = wdk.isItemId(entity._id)
+  const isWikidataEntity = isWdEntityId(entity._id)
 
   if (isWikidataEntity) {
     // Only Wikidata entities imported from a dump need to be simplified
@@ -72,9 +72,9 @@ export default async (entity, options = {}) => {
   delete entity.image
 
   if (needsSimplification) {
-    entity.labels = simplify.labels(entity.labels)
-    entity.descriptions = simplify.descriptions(entity.descriptions)
-    entity.aliases = simplify.aliases(entity.aliases)
+    entity.labels = simplifyLabels(entity.labels)
+    entity.descriptions = simplifyDescriptions(entity.descriptions)
+    entity.aliases = simplifyAliases(entity.aliases)
   }
 
   const { labels, descriptions, aliases } = entity
@@ -218,5 +218,5 @@ const getFlattenedClaims = claims => {
 
 const isRawWikidataClaims = claims => {
   const properties = Object.keys(claims)
-  return wdk.isPropertyId(properties[0])
+  return isPropertyId(properties[0])
 }

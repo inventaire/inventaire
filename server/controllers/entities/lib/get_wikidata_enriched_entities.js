@@ -5,7 +5,7 @@
 //   such as ISBNs defined on work entities
 
 import { partition, map } from 'lodash-es'
-import wdk from 'wikidata-sdk'
+import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks } from 'wikibase-sdk'
 import _ from '#builders/utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import getWdEntity from '#data/wikidata/get_entity'
@@ -18,8 +18,6 @@ import addImageData from './add_image_data.js'
 import getEntityType from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
-const { simplify } = wdk
-const { propertyClaims: simplifyPropertyClaims } = wdk.simplify
 const { _id: hookUserId } = hardCodedUsers.hook
 
 let reindex
@@ -86,10 +84,10 @@ const simplifyClaimsOptions = { entityPrefix: 'wd' }
 const formatValidEntity = async entity => {
   const { id: wdId } = entity
   entity.uri = `wd:${wdId}`
-  entity.labels = simplify.labels(entity.labels)
-  entity.aliases = simplify.aliases(entity.aliases)
-  entity.descriptions = simplify.descriptions(entity.descriptions)
-  entity.sitelinks = simplify.sitelinks(entity.sitelinks)
+  entity.labels = simplifyLabels(entity.labels)
+  entity.aliases = simplifyAliases(entity.aliases)
+  entity.descriptions = simplifyDescriptions(entity.descriptions)
+  entity.sitelinks = simplifySitelinks(entity.sitelinks)
   entity.claims = formatClaims(entity.claims)
   entity.originalLang = getOriginalLang(entity.claims)
 

@@ -1,10 +1,8 @@
-import wdk from 'wikidata-sdk'
+import { getSitelinkUrl } from 'wikibase-sdk'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { buildUrl } from '#lib/utils/url'
-
-const { getSitelinkUrl } = wdk
 
 export default params => {
   const { lang, title, introOnly } = params

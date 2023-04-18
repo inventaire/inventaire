@@ -1,7 +1,5 @@
-import wdk from 'wikidata-sdk'
+import { simplifyQualifier } from 'wikibase-sdk'
 import { error_ } from '#lib/error/error'
-
-const { qualifier: simplifyQualifier } = wdk.simplify
 
 export const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   if (simplifiedClaims['wdt:P179']?.length === 1) {

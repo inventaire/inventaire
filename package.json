@@ -92,9 +92,8 @@
     "tiny-chalk": "^3.0.1",
     "turtle-validator": "^1.0.2",
     "wikibase-edit": "^5.3.2",
-    "wikibase-sdk": "^8.1.1",
-    "wikidata-lang": "^4.0.2",
-    "wikidata-sdk": "^8.0.4"
+    "wikibase-sdk": "^9.1.0",
+    "wikidata-lang": "^4.0.2"
   },
   "devDependencies": {
     "couchdb-backup": "^1.0.0",

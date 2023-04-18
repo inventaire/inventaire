@@ -1,4 +1,4 @@
-import wdk from 'wikidata-sdk'
+import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import _ from '#builders/utils'
 import getWdEntity from '#data/wikidata/get_entity'
 import { error_ } from '#lib/error/error'
@@ -94,14 +94,14 @@ const getPropertyClaims = async (id, propertyId) => {
 
 const getClaimGuid = async (id, propertyId, oldVal) => {
   const propClaims = await getPropertyClaims(id, propertyId)
-  const simplifyPropClaims = wdk.simplify.propertyClaims(propClaims)
+  const simplifyPropClaims = simplifyPropertyClaims(propClaims)
   const oldValIndex = simplifyPropClaims.indexOf(oldVal)
   const targetClaim = propClaims[oldValIndex]
   return targetClaim.id
 }
 
 const getQualifierHash = (claim, property, value) => {
-  const qualifiers = wdk.simplify.propertyQualifiers(claim.qualifiers[property], { keepHashes: true })
+  const qualifiers = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
   const matchingQualifiers = qualifiers.filter(qualifier => qualifier.value === value)
   if (matchingQualifiers.length !== 1) {
     throw error_.new('unique matching qualifier not found', 400, { claim, property, value })

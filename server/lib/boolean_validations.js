@@ -1,7 +1,7 @@
 // Keep in sync with client/app/lib/boolean_tests
 import CONFIG from 'config'
 import { isArray, isPlainObject, isString } from 'lodash-es'
-import wdk from 'wikidata-sdk'
+import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
 import { isNormalizedIsbn } from './isbn/isbn.js'
 
@@ -34,6 +34,7 @@ export const isLocalImg = bindedTest('LocalImg')
 export const isUserImg = bindedTest('UserImg')
 export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
+export const isWdEntityId = isWikidataItemId
 export const isInvEntityUri = uri => {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
@@ -49,10 +50,10 @@ export const isIsbnEntityUri = uri => {
 export const isWdEntityUri = uri => {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
-  return (prefix === 'wd') && wdk.isItemId(id)
+  return (prefix === 'wd') && isWikidataItemId(id)
 }
 
-export const isEntityId = id => wdk.isItemId(id) || isInvEntityId(id)
+export const isEntityId = id => isWikidataItemId(id) || isInvEntityId(id)
 export const isEmail = bindedTest('Email')
 export const isUserId = isCouchUuid
 export const isTransactionId = isCouchUuid
