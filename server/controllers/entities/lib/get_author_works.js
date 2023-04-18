@@ -101,7 +101,6 @@ const spreadByType = (worksByTypes, rows) => scores => {
 }
 
 // TODO: prevent a work with several wdt:P577 values to appear several times
-// ex: https://inventaire.io/api/entities?action=serie-parts&uri=wd:Q8337
 const sortTypesByScore = worksByTypes => {
   for (const name in worksByTypes) {
     const results = worksByTypes[name]

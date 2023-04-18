@@ -23,7 +23,7 @@ describe('item model', () => {
     })
 
     it('should throw when passed invalid attributes', () => {
-      const item = extendItem({ authors: 'Joanne K. Rowling' });
+      const item = extendItem({ authors: 'Heide Göttner-Abendroth' });
       (() => create(item)).should.throw()
       const item2 = extendItem({ updated: Date.now() });
       (() => create(item2)).should.throw()

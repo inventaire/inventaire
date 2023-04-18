@@ -19,7 +19,7 @@ import { humanName, randomLongWord, randomWords } from '../fixtures/text.js'
 import { getByUris } from '../utils/entities.js'
 import { search, waitForIndexation, getIndexedDoc } from '../utils/search.js'
 
-const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q8337', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
+const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q27536277', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const { max_gram: maxGram } = elasticsearchSettings.analysis.filter.edge_ngram
 
 assert_.number(maxGram)
@@ -175,10 +175,10 @@ describe('search:entities', () => {
 
     describe('not exact', () => {
       it('should match flattened terms', async () => {
-        const doc = await getIndexedDoc('wikidata', 'Q8337')
+        const doc = await getIndexedDoc('wikidata', 'Q42490')
         const firstTwoFlattenedLabelsWords = doc._source.flattenedLabels.split(' ').slice(0, 2).join(' ')
-        const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords })
-        _.map(results, 'uri').should.containEql('wd:Q8337')
+        const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords, limit: 100 })
+        _.map(results, 'uri').should.containEql('wd:Q42490')
       })
 
       it('should find a label with single letter words', async () => {
@@ -324,10 +324,10 @@ describe('search:entities', () => {
     })
 
     it('should return a wikidata serie', async () => {
-      const results = await search('series', 'Harry Potter')
+      const results = await search('series', 'Adamsberg')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
-      _.map(results, 'id').includes('Q8337').should.be.true()
+      _.map(results, 'id').includes('Q27536277').should.be.true()
     })
 
     it('should find a serie by its author name', async () => {
