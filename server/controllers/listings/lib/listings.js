@@ -1,10 +1,10 @@
+import { map } from 'lodash-es'
 import _ from '#builders/utils'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import elements_ from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
-import { tap } from '#lib/promises'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
 import Listing from '#models/listing'
@@ -17,11 +17,11 @@ export const getListingById = db.get
 export const getListingsByIds = db.byIds
 export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
 
-export const getListingsByIdsWithElements = async (ids, userId) => {
+export const getListingsByIdsWithElements = async ids => {
   const listings = await getListingsByIds(ids)
   if (!_.isNonEmptyArray(listings)) return []
-  const listingIds = listings.map(_.property('_id'))
-  const elements = await elements_.byListings(listingIds, userId)
+  const listingIds = map(listings, '_id')
+  const elements = await elements_.byListings(listingIds)
   if (!_.isNonEmptyArray(listings)) return []
   const elementsByListing = _.groupBy(elements, 'list')
   listings.forEach(assignElementsToListing(elementsByListing))
@@ -78,10 +78,12 @@ export const getListingWithElements = async (listingId, userId) => {
   return listings[0]
 }
 
-export const deleteUserListingsAndElements = userId => {
-  return getListingsByCreators([ userId ])
-  .then(tap(elements_.deleteListingsElements))
-  .then(db.bulkDelete)
+export const deleteUserListingsAndElements = async userId => {
+  const listings = await getListingsByCreators([ userId ])
+  return Promise.all([
+    db.bulkDelete(listings),
+    elements_.deleteListingsElements(listings),
+  ])
 }
 
 const assignElementsToListing = elementsByListing => listing => {

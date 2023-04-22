@@ -1,6 +1,8 @@
 import should from 'should'
 import _ from '#builders/utils'
+import { createElement, createListing } from '#fixtures/listings'
 import { getGroup } from '#tests/api/utils/groups'
+import { getListingById } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createGroup, addMember, addAdmin } from '../fixtures/groups.js'
 import { createItem } from '../fixtures/items.js'
@@ -128,6 +130,22 @@ describe('user:delete', () => {
       const reupdatedTransaction = await getTransaction(user, transaction._id)
       reupdatedTransaction.state.should.equal('declined')
       reupdatedTransaction._rev.should.equal(updatedTransaction._rev)
+    })
+  })
+
+  describe('listings', () => {
+    it('should delete listings', async () => {
+      const user = await getReservedUser()
+      const { listing } = await createListing(user, { visibility: [ 'public' ] })
+      // TODO: check that the element was also deleted
+      // Requires an endpoint to get elements directly?
+      await createElement({ listing }, user)
+      await deleteUser(user)
+      await getListingById(null, listing._id)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(404)
+      })
     })
   })
 })

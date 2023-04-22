@@ -1,3 +1,4 @@
+import { map } from 'lodash-es'
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
@@ -16,10 +17,12 @@ const elements_ = {
   byListings: async listingsIds => db.viewByKeys('byListings', listingsIds),
   bulkDelete: db.bulkDelete,
   deleteListingsElements: async listings => {
-    const listingsElements = listings.flatMap(listing => listing.elements)
+    const listingIds = map(listings, '_id')
+    const listingsElements = await elements_.byListings(listingIds)
     if (_.isNonEmptyArray(listingsElements)) {
       await elements_.bulkDelete(listingsElements)
     }
+    return listingsElements
   },
   create: async ({ listing, uris, userId }) => {
     const listingId = listing._id

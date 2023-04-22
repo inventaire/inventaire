@@ -1,17 +1,17 @@
-import _ from '#builders/utils'
 import elements_ from '#controllers/listings/lib/elements'
-import { bulkDeleteListings, getListingsByIdsWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { bulkDeleteListings, getListingsByIds, validateListingOwnership } from '#controllers/listings/lib/listings'
 
 const sanitization = {
   ids: {},
 }
 
 const controller = async ({ ids, reqUserId }) => {
-  const listingsRes = await getListingsByIdsWithElements(ids, reqUserId)
-  const listings = _.compact(listingsRes)
+  const listings = await getListingsByIds(ids, reqUserId)
   validateListingOwnership(reqUserId, listings)
-  const deletedElements = await elements_.deleteListingsElements(listings)
-  await bulkDeleteListings(listings)
+  const [ deletedElements ] = await Promise.all([
+    elements_.deleteListingsElements(listings),
+    bulkDeleteListings(listings),
+  ])
   return {
     ok: true,
     lists: listings,

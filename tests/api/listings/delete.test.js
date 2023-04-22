@@ -29,10 +29,10 @@ describe('listings:delete', () => {
   it('should return the deleted listing and delete elements', async () => {
     const elementFixture = await createElement({})
     const { listing: createdListing } = elementFixture
-    const { lists: listings } = await authReq('post', endpoint, { ids: createdListing._id })
+    const { lists: listings, elements } = await authReq('post', endpoint, { ids: createdListing._id })
     const [ listing ] = listings
     listing._id.should.equal(createdListing._id)
     listing._deleted.should.be.true()
-    listing.elements[0]._deleted.should.be.true()
+    elements[0]._deleted.should.be.true()
   })
 })
