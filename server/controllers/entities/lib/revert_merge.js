@@ -3,7 +3,6 @@ import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entiti
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
 import { error_ } from '#lib/error/error'
-import { warn } from '#lib/utils/logs'
 import { recoverPlaceholder } from './placeholders.js'
 import { revertFromPatchDoc } from './revert_edit.js'
 
@@ -63,14 +62,11 @@ const revertMergePatch = async (userId, fromUri, toUri) => {
     return patch.context && patch.context.mergeFrom === fromUri
   })
 
-  if (mergePatch == null) {
-    // This happens when the merged entity didn't bring any label or claim
-    // value that the merge target hadn't already
-    warn({ fromUri, toUri }, 'no merge patch found')
-    return
+  // There might be no mergePatch: that happens when the merged entity didn't bring
+  // any label or claim value that the merge target hadn't already
+  if (mergePatch) {
+    return revertFromPatchDoc(mergePatch, userId)
   }
-
-  return revertFromPatchDoc(mergePatch, userId)
 }
 
 const revertClaimsRedirections = async (userId, fromUri) => {
