@@ -1,4 +1,4 @@
-import invitations_ from '#controllers/invitations/lib/invitations'
+import { convertInvitations, findInvitationByEmail } from '#controllers/invitations/lib/invitations'
 import { checkUsernameAvailability } from '#controllers/user/lib/availability'
 import { sendValidationEmail } from '#controllers/user/lib/token'
 import dbFactory from '#db/couchdb/base'
@@ -12,7 +12,7 @@ export default async (username, email, creationStrategy, language, password) => 
   preventMultiAccountsCreation(username)
 
   return checkUsernameAvailability(username)
-  .then(invitations_.findOneByEmail.bind(null, email))
+  .then(findInvitationByEmail.bind(null, email))
   .then(Log('invitedDoc'))
   .then(invitedDoc => {
     return User.upgradeInvited(invitedDoc, username, creationStrategy, language, password)
@@ -35,7 +35,7 @@ const postCreation = user => {
     // convertInvitations doesnt edit the user document
     // but we do need both to be over to be sure that the user will
     // see the friends requests (converted from invitations)
-    invitations_.convertInvitations(user),
+    convertInvitations(user),
     sendValidationEmail(user),
   ])
   // return the user updated with the validation token

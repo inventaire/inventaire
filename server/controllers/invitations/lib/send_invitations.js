@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
+import { addInviter, createUnknownInvited, getInvitationsByEmails } from '#controllers/invitations/lib/invitations'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, LogError, Log } from '#lib/utils/logs'
 import Invited from '#models/invited'
-import invitations_ from './invitations.js'
 
 export default (user, group, emails, message) => {
   assert_.object(user)
@@ -14,7 +14,7 @@ export default (user, group, emails, message) => {
   const groupId = group && group._id
   log(emails, 'send_invitations emails')
 
-  return invitations_.byEmails(emails)
+  return getInvitationsByEmails(emails)
   .then(Log('known invited'))
   .then(existingInvitedUsers => {
     // Emails already invited by others but not this user
@@ -27,9 +27,9 @@ export default (user, group, emails, message) => {
 
     return Promise.all([
       // Create an invitation doc for unknown emails
-      invitations_.createUnknownInvited(userId, groupId, unknownEmails),
+      createUnknownInvited(userId, groupId, unknownEmails),
       // Add the invitation to the existing doc for known emails
-      invitations_.addInviter(userId, groupId, canBeInvited),
+      addInviter(userId, groupId, canBeInvited),
     ])
     .then(() => {
       const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)

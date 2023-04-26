@@ -9,56 +9,51 @@ import Invited from '#models/invited'
 
 const db = dbFactory('users', 'invited')
 
-const invitations_ = {
-  findOneByEmail: findOneByEmail.bind(null, db),
+export const findInvitationByEmail = findOneByEmail.bind(null, db)
 
-  byEmails: byEmails.bind(null, db),
+export const getInvitationsByEmails = byEmails.bind(null, db)
 
-  createUnknownInvited: (inviterId, groupId, unknownEmails) => {
-    assert_.string(inviterId)
-    assert_.array(unknownEmails)
-    if (groupId) assert_.string(groupId)
-    const invitedDocs = unknownEmails.map(Invited.create(inviterId, groupId))
-    return db.bulk(invitedDocs)
-    .catch(LogErrorAndRethrow('createUnknownInvited'))
-  },
-
-  addInviter: (inviterId, groupId, invitedDocs) => {
-    assert_.types([ 'string', 'array' ], [ inviterId, invitedDocs ])
-    if (groupId != null) { assert_.string(groupId) }
-    const addInviterFn = Invited.addInviter.bind(null, inviterId, groupId)
-    invitedDocs = invitedDocs.map(addInviterFn)
-    return db.bulk(invitedDocs)
-    .catch(LogErrorAndRethrow('addInviter'))
-  },
-
-  convertInvitations: async userDoc => {
-    const { _id: userId, inviters } = userDoc
-    let { invitersGroups } = userDoc
-
-    if (inviters == null && invitersGroups == null) return
-
-    invitersGroups = invitersGroups || {}
-    const groupInvitersIds = Object.values(invitersGroups)
-    log(groupInvitersIds, 'groupInvitersIds')
-
-    const invitersIds = _.difference(Object.keys(inviters), groupInvitersIds)
-    log(invitersIds, 'invitersIds')
-
-    const friendsPromises = convertFriendInvitations(invitersIds, userId)
-    const groupsPromises = convertGroupsInvitations(invitersGroups, userId)
-
-    return Promise.all(friendsPromises.concat(groupsPromises))
-  },
-
-  stopEmails: email => {
-    return invitations_.findOneByEmail(email)
-    .then(doc => db.update(doc._id, Invited.stopEmails))
-    .catch(LogErrorAndRethrow('stopEmails'))
-  },
+export const createUnknownInvited = (inviterId, groupId, unknownEmails) => {
+  assert_.string(inviterId)
+  assert_.array(unknownEmails)
+  if (groupId) assert_.string(groupId)
+  const invitedDocs = unknownEmails.map(Invited.create(inviterId, groupId))
+  return db.bulk(invitedDocs)
+  .catch(LogErrorAndRethrow('createUnknownInvited'))
 }
 
-export default invitations_
+export const addInviter = (inviterId, groupId, invitedDocs) => {
+  assert_.types([ 'string', 'array' ], [ inviterId, invitedDocs ])
+  if (groupId != null) { assert_.string(groupId) }
+  const addInviterFn = Invited.addInviter.bind(null, inviterId, groupId)
+  invitedDocs = invitedDocs.map(addInviterFn)
+  return db.bulk(invitedDocs)
+  .catch(LogErrorAndRethrow('addInviter'))
+}
+
+export const convertInvitations = async userDoc => {
+  const { _id: userId, inviters } = userDoc
+  let { invitersGroups } = userDoc
+
+  if (inviters == null && invitersGroups == null) return
+
+  invitersGroups = invitersGroups || {}
+  const groupInvitersIds = Object.values(invitersGroups)
+  log(groupInvitersIds, 'groupInvitersIds')
+
+  const invitersIds = _.difference(Object.keys(inviters), groupInvitersIds)
+  log(invitersIds, 'invitersIds')
+
+  const friendsPromises = convertFriendInvitations(invitersIds, userId)
+  const groupsPromises = convertGroupsInvitations(invitersGroups, userId)
+
+  return Promise.all(friendsPromises.concat(groupsPromises))
+}
+
+export async function stopInvitationEmails (email) {
+  const doc = await findInvitationByEmail(email)
+  await db.update(doc._id, Invited.stopEmails)
+}
 
 const emailNotification = false
 const convertFriendInvitations = (invitersIds, newUserId) => {
