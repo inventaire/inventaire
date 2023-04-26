@@ -22,7 +22,7 @@ Possible actions: `add`, `remove`
 Possible roles: `admin`, `dataadmin`
 
 ### Prevent sending further emails to an email address
-People invited by Inventaire users might not want those emails, to prevent sending further emails to a given address, run:
+People invited by Inventaire users might not want those emails, or some users might not know where to find email settings. To prevent sending further emails to a given address, run:
 ```sh
 npm run db-actions:stop-emails-to-address <email address>
 ```

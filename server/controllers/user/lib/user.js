@@ -1,4 +1,4 @@
-import { keyBy, without } from 'lodash-es'
+import { keyBy, set, without } from 'lodash-es'
 import { getNetworkIds } from '#controllers/user/lib/relations_status'
 import dbFactory from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
@@ -149,4 +149,11 @@ const findNearby = async (latLng, meterRange, iterations = 0, strict = false) =>
     iterations += 1
     return findNearby(latLng, meterRange * 2, iterations)
   }
+}
+
+export async function stopAllUserEmailNotifications (email) {
+  const user = await findUserByEmail(email)
+  return db.update(user._id, doc => {
+    return set(doc, 'settings.notifications.global', false)
+  })
 }
