@@ -7,6 +7,7 @@
   "scripts": {
     "create-entities-dumps": "./scripts/dumps/create_entities_dumps",
     "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
+    "couchdb:restore-databases": "./scripts/couchdb/restore_databases.sh",
     "couchdb:preload-design-docs-changes": "./scripts/couchdb/preload_design_docs_changes.js",
     "couchdb:cleanup-after-design-docs-changes": "./scripts/couchdb/cleanup_after_design_docs_changes.js",
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.js",
