@@ -54,7 +54,7 @@
     "config": "^3.3.8",
     "cookie-parser": "^1.4.0",
     "cookie-session": "^1.3.2",
-    "couch-init2": "^6.0.2",
+    "couch-init2": "^6.0.3",
     "credential": "^2.0.0",
     "email-addresses": "^2.0.1",
     "express": "^4.16.3",

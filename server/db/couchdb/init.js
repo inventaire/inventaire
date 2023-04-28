@@ -37,7 +37,7 @@ const init = async ({ preload }) => {
 
     const context = _.pick(CONFIG.db, 'protocol', 'hostname', 'port', 'username', 'password')
     // Avoid logging the password in plain text
-    context.password = _.obfuscate(context.password)
+    context.password = context.password.slice(0, 2) + _.obfuscate(context.password.slice(2, -1)) + context.password.at(-1)
     console.error(err.message, context)
     return process.exit(1)
   }
