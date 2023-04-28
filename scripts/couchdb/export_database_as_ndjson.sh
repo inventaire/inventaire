@@ -3,11 +3,11 @@
 set -euo pipefail
 
 # ex: "http://username:password@localhost:7984/comments"
-db_authentified_url="$1"
+db_authentified_database_url="$1"
 
-curl "$db_authentified_url/_all_docs?include_docs=true" |
+curl "$db_authentified_database_url/_all_docs?include_docs=true" |
   # Omit first and last lines
-  grep "id" |
+  grep 'id' |
   # Ignore design docs
   grep --invert-match 'id":"_design/' |
   # Drop end of line comma

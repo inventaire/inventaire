@@ -5,7 +5,7 @@
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "server/server.js",
   "scripts": {
-    "create-dumps": "./scripts/dumps/prepare_dumps",
+    "create-dumps": "./scripts/dumps/prepare_entities_dumps",
     "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
     "couchdb:preload-design-docs-changes": "./scripts/couchdb/preload_design_docs_changes.js",
     "couchdb:cleanup-after-design-docs-changes": "./scripts/couchdb/cleanup_after_design_docs_changes.js",
@@ -96,7 +96,6 @@
     "wikidata-lang": "^4.0.2"
   },
   "devDependencies": {
-    "couchdb-backup": "^1.0.0",
     "eslint": "^8.30.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",

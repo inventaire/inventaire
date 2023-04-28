@@ -9,11 +9,17 @@ export default entity => {
 
   let text = `inv:${_id} a wikibase:Item ;`
 
-  const dateCreated = new Date(created).toISOString()
-  text += `\n  schema:dateCreated "${dateCreated}"^^xsd:dateTime ;`
+  if (created) {
+    const dateCreated = new Date(created).toISOString()
+    text += `\n  schema:dateCreated "${dateCreated}"^^xsd:dateTime ;`
+  } else {
+    console.warn(yellow('missing "created" timestamp'), _id)
+  }
 
-  const dateModified = new Date(updated).toISOString()
-  text += `\n  schema:dateModified "${dateModified}"^^xsd:dateTime ;`
+  if (updated) {
+    const dateModified = new Date(updated).toISOString()
+    text += `\n  schema:dateModified "${dateModified}"^^xsd:dateTime ;`
+  }
 
   text += `\n  schema:version ${version} ;`
 

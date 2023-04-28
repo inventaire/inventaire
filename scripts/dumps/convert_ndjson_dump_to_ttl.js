@@ -7,7 +7,9 @@ import _ from '#builders/utils'
 import { LogError } from '#lib/utils/logs'
 import serializeEntityInTurtle from './lib/serialize_entity_in_turtle.js'
 
-const headers = readFileSync(path.join(__dirname, 'headers.ttl')).toString()
+const dirname = new URL('.', import.meta.url).pathname
+
+const headers = readFileSync(path.join(dirname, 'headers.ttl')).toString()
 // Prefix the dump by the headers
 process.stdout.write(headers + '\n')
 
