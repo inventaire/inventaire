@@ -98,7 +98,7 @@ This should have installed:
 
 #### server
 
-The installation step above should have triggered the creation of a `./config/local.js` file, in which you can override all present in `./config/default.js`: make sure to set `db` `username` and `password` to your CouchDB username and password.
+The installation step above should have triggered the creation of a `./config/local.cjs` file, in which you can override all present in `./config/default.cjs`: make sure to set `db` `username` and `password` to your CouchDB username and password.
 
 And now you should be all set! You can now start the server (on port `3006` by default)
 ```sh

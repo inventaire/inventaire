@@ -20,7 +20,7 @@ mkdir -p run
 mkdir -p ./storage/users ./storage/groups ./storage/entities
 touch run/3006 run/3009
 
-[ -z ./config/local.js ] && {
+[ -z ./config/local.cjs ] && {
   # Create a local config file
   emptyConfigFile="
   # Override settings from ./default.js in this file
@@ -32,9 +32,9 @@ touch run/3006 run/3009
     }
   }
   "
-  echo "$emptyConfigFile" >> ./config/local.js
-  chmod 600 ./config/local.js
-} || echo './config/local.js file already exist: skipping creation'
+  echo "$emptyConfigFile" >> ./config/local.cjs
+  chmod 600 ./config/local.cjs
+} || echo './config/local.cjs file already exist: skipping creation'
 
 # See https://git-scm.com/docs/git-config#Documentation/git-config.txt-blameignoreRevsFile
 git config blame.ignoreRevsFile .git-blame-ignore-revs

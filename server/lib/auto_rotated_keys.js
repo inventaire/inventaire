@@ -2,7 +2,7 @@
 // an array of keys that will be passed to auth middlewares to sign cookies
 
 // There are presently no automated tests for this behavior, but manual tests can be run
-// by deleting config/.sessions_keys and/or setting cookieMaxAge to a lower value in your config/local.js
+// by deleting config/.sessions_keys and/or setting cookieMaxAge to a lower value in your config/local.cjs
 // The default dev server can be started with CONFIG.autoRotateKeys=true and
 // the API tests server with CONFIG.autoRotateKeys=false
 // just make sure that both use the same CONFIG.cookieMaxAge value to avoid outdated keys errors
