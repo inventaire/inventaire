@@ -13,7 +13,7 @@ drop_ansi_colors(){
 }
 
 extract_mocha_results(){
-  grep -E '^  [[:digit:]]+ passing \(' --after-context 1000000 --color=never
+  grep --extended-regexp '^  [[:digit:]]+ passing \(' --after-context 1000000 --color=never
 }
 
 drop_ansi_colors < ./logs/tests.log | extract_mocha_results > ./logs/tests_results.log

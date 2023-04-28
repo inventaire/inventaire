@@ -4,7 +4,7 @@ set -eu
 
 # keep A (added) and M (modified) files
 # only if staged (0 space before/2 space after the letter)
-staged=$(git status --porcelain | grep -E "^(A|M)" | grep -E '.js$' | sed -E 's/^\w+\s+//')
+staged=$(git status --porcelain | grep --extended-regexp "^(A|M)" | grep --extended-regexp '.js$' | sed --regexp-extended 's/^\w+\s+//')
 
 if [ -z "$staged" ]
   then

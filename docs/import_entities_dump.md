@@ -20,9 +20,9 @@ cat entities_with_seeds.ndjson |
 # Keep only document lines
 grep '_id' |
 # Drop design docs (managed by the server)
-grep -v '"_id":"_design/' |
+grep --invert-match '"_id":"_design/' |
 # Drop _rev ids if restoring on a new database
-sed -E 's/,"_rev":"[0-9]+-[0-9a-f]{32}"//'  |
+sed --regexp-extended 's/,"_rev":"[0-9]+-[0-9a-f]{32}"//'  |
 couchdb-bulk2 "http://${couchdb_username}:${couchdb_password}@localhost:5984/entities" > "entities_upload.success" 2> "entities_upload.errors"
 ```
 
