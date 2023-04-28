@@ -5,7 +5,7 @@
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "server/server.js",
   "scripts": {
-    "create-dumps": "./scripts/dumps/prepare_entities_dumps",
+    "create-entities-dumps": "./scripts/dumps/create_entities_dumps",
     "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
     "couchdb:preload-design-docs-changes": "./scripts/couchdb/preload_design_docs_changes.js",
     "couchdb:cleanup-after-design-docs-changes": "./scripts/couchdb/cleanup_after_design_docs_changes.js",
