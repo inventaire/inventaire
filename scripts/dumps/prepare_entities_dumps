@@ -29,6 +29,7 @@ echo "backup output_file: $output_file"
 # Dumping the database only if the file doesn't already exist,
 # which means that this file should be deleted to start a new dump version
 [ -f "$output_file" ] && echo "$raw_db_json_filename already exist" || {
+  # TODO: replace couchdb-backup by scripts/couchdb/export_database_as_ndjson.sh
   couchdb-backup -b -H "$hostname" -P "$port" -u "$username" -p "$password" -d "$db_name" -f "$output_file"
 }
 

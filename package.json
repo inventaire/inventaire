@@ -6,7 +6,7 @@
   "main": "server/server.js",
   "scripts": {
     "create-dumps": "./scripts/dumps/prepare_dumps",
-    "couchdb:backup-databases": "./scripts/couchdb/backup_databases.js",
+    "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
     "couchdb:preload-design-docs-changes": "./scripts/couchdb/preload_design_docs_changes.js",
     "couchdb:cleanup-after-design-docs-changes": "./scripts/couchdb/cleanup_after_design_docs_changes.js",
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.js",
