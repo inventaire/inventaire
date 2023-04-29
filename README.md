@@ -65,16 +65,7 @@ For packages that need a more elaborated installation, see their own documentati
 * [Install CouchDB](https://docs.couchdb.org/en/stable/install/unix.html)
 * [Install ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/7.14/deb.html)
 
-Alternatively, CouchDB and Elasticsearch could be run in Docker:
-* Install [`docker`](https://docs.docker.com/get-docker/) and [`docker-compose`](https://docs.docker.com/compose/install/)
-* Get the `docker-compose.yml`:
-```sh
-wget https://raw.githubusercontent.com/inventaire/docker-inventaire/master/docker-compose.yml
-```
-* Run `couchdb` and `elasticsearch` services in the background:
-```sh
-docker-compose up -d couchdb elasticsearch
-```
+Alternatively, CouchDB and Elasticsearch could be run in Docker, see [docker-inventaire](https://github.com/inventaire/docker-inventaire)
 
 Whatever the way you installed CouchDB and Elasticsearch, you should now be able to get a response from them:
 ```sh
