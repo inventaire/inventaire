@@ -56,7 +56,7 @@ export default {
     'wdt:P629', // edition or translation of
     'wdt:P648', // Open Library ID
     'wdt:P655', // translator
-    'wdt:P675', // identifiant Google Livres
+    'wdt:P675', // Google Books ID
     'wdt:P957', // ISBN-10
     'wdt:P1025', // SUDOC editions
     'wdt:P1044', // SWB editions
