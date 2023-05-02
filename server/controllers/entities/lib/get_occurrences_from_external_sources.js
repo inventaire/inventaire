@@ -1,5 +1,3 @@
-// A module to look for works labels occurrences in an author's external databases reference.
-import ASCIIFolder from 'fold-to-ascii'
 import _ from '#builders/utils'
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
@@ -16,7 +14,7 @@ import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import { getEntityByUri } from './get_entity_by_uri.js'
-import { normalizeTerm } from './terms_normalization.js'
+import { normalizeTerm, normalizeASCII } from './terms_normalization.js'
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
@@ -92,8 +90,8 @@ const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAutho
 
 const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
   if (!article.extract) return
-  const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
-  const matchedTitles = _.uniq(normalize(article.extract).match(worksLabelsPattern))
+  const worksLabelsPattern = new RegExp(worksLabels.map(normalizeASCII).join('|'), 'g')
+  const matchedTitles = _.uniq(normalizeASCII(article.extract).match(worksLabelsPattern))
   if (matchedTitles.length <= 0) return
   return { url: article.url, matchedTitles, structuredDataSource: false }
 }
@@ -108,7 +106,3 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
     }
   }
 }
-
-// Example of a case requiring ascii-folding:
-// when "’" is used on one side and "'" on the other
-const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())

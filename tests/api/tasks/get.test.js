@@ -1,7 +1,8 @@
 import 'should'
-import { createHuman, someFakeUri } from '../fixtures/entities.js'
+import { createHuman, someFakeUri, createWorkWithAuthor } from '../fixtures/entities.js'
 import { createTask } from '../fixtures/tasks.js'
 import {
+  getByIds,
   getByScore,
   getBySuspectUris,
   getBySuggestionUris,
@@ -10,6 +11,39 @@ import {
 } from '../utils/tasks.js'
 
 // Tests dependency: having a populated Elasticsearch wikidata index
+
+describe('tasks:byIds', () => {
+  it('should return tasks by ids', async () => {
+    const { id: taskId } = await createTask()
+    const [ task ] = await getByIds(taskId)
+    task._id.should.equal(taskId)
+  })
+
+  it('should return wikipedia article context', async () => {
+    const suspect = await createHuman({ labels: { en: 'Victor Heymes' } })
+
+    // wpArticleUrl page should contain workLabel
+    const workLabel = 'Walscheid'
+    const wpArticleUrl = 'https://fr.wikipedia.org/wiki/Victor_Michel_Heym%C3%A8s'
+
+    await createWorkWithAuthor({ uri: suspect.uri }, workLabel)
+    const res = await createTask({
+      suspectUri: suspect.uri,
+      suggestionUri: 'wd:Q1562503', // Victor Michel Heymès
+      externalSourcesOccurrences: [
+        {
+          url: wpArticleUrl,
+          matchedTitles: [ 'Walscheid' ],
+          structuredDataSource: false,
+        },
+      ],
+    })
+    const [ task ] = await getByIds(res.id)
+    const lowercasedLabel = workLabel.toLowerCase()
+    task.externalSourcesOccurrences[0].contexts[0].should.containEql(lowercasedLabel)
+  })
+})
+
 describe('tasks:byScore', () => {
   it('should return 10 or less tasks by default', async () => {
     await createTask()

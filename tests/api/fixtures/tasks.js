@@ -44,7 +44,7 @@ const createTaskDoc = async (params = {}) => {
     suggestionUri: params.suggestionUri || suggestionUri,
     lexicalScore: 12.01775,
     relationScore: 0.1,
-    externalSourcesOccurrences: [],
+    externalSourcesOccurrences: params.externalSourcesOccurrences || [],
   }
 }
 

@@ -1,3 +1,5 @@
+// A module to look for works labels occurrences in an author's external databases reference.
+import ASCIIFolder from 'fold-to-ascii'
 import _ from 'lodash-es'
 
 export const normalizeTerm = term => {
@@ -26,3 +28,7 @@ export const getEntityNormalizedTerms = entity => {
   const terms = labels.concat(aliases).map(normalizeTerm)
   return _.uniq(terms)
 }
+
+// Example of a case requiring ascii-folding:
+// when "’" is used on one side and "'" on the other
+export const normalizeASCII = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
