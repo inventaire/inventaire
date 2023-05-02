@@ -31,4 +31,7 @@ module.exports = {
       run: false,
     },
   },
+  remoteImages: {
+    useProdCachedImages: false,
+  },
 }

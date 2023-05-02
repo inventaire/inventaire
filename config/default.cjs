@@ -175,6 +175,13 @@ module.exports = {
     },
   },
 
+  remoteImages: {
+    // As resized remote images are not cached in development, each request reaches remote services,
+    // typically Wikimedia Commons. By setting this flag to true, the images are taken from the inventaire.io
+    // which should be much faster as it likely already have those resized images in Nginx cache
+    useProdCachedImages: true,
+  },
+
   // Analytics service
   piwik: {
     enabled: false,

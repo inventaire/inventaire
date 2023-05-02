@@ -6,10 +6,16 @@ import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import getResizedImage from './lib/get_resized_image.js'
 
+const { env } = CONFIG
 const { mode } = CONFIG.mediaStorage
 const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
 const { offline } = CONFIG
 const containersList = Object.keys(containers)
+const { useProdCachedImages } = CONFIG.remoteImages
+
+if (env === 'production' && useProdCachedImages) {
+  throw new Error("useProdCachedImages can not be true when env is 'production'")
+}
 
 // resized images urls looks like
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
@@ -56,6 +62,14 @@ export default {
       // Here, we just check that we do get the same hash
       if (urlCode !== rest) {
         return error_.bundle(req, res, 'hash code and href dont match', 400)
+      }
+
+      // As resized remote images are not cached in development, each request reaches remote services,
+      // typically Wikimedia Commons. By setting useProdCachedImages=true, the images are taken from the inventaire.io
+      // which should be much faster as it likely already have those resized images in Nginx cache
+      if (useProdCachedImages) {
+        const prodUrl = `https://inventaire.io${req.url}`
+        return res.redirect(prodUrl)
       }
     } else {
       return error_.bundle(req, res, 'invalid image path', 400, rest)
