@@ -45,10 +45,11 @@ const req = method => async (url, options = {}) => {
 
   const timer = startReqTimer(method, url, options)
 
-  let res
+  let res, statusCode, errorCode
   try {
     res = await fetch(url, options)
   } catch (err) {
+    errorCode = err.code
     if (err.code === 'ECONNRESET' || retryOnceOnError) {
       // Retry after a short delay when socket hang up
       await wait(100)
@@ -58,11 +59,10 @@ const req = method => async (url, options = {}) => {
       if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
       throw err
     }
+  } finally {
+    statusCode = res?.status
+    endReqTimer(timer, statusCode || errorCode)
   }
-
-  const { status: statusCode } = res
-
-  endReqTimer(timer, statusCode)
 
   // Always parse as text, even if JSON, as in case of an error in the JSON response
   // (such as HTML being retunred instead of JSON), it allows to include the actual response
@@ -202,6 +202,7 @@ const endReqTimer = ({ reqTimerKey, requestId, startTime }, statusCode) => {
 }
 
 const getStatusColor = statusCode => {
+  if (typeof statusCode !== 'number') return red
   if (statusCode < 300) return green
   if (statusCode < 400) return cyan
   if (statusCode < 500) return yellow
