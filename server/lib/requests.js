@@ -7,6 +7,7 @@ import { addContextToStack, error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
+import { warn } from '#lib/utils/logs'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
@@ -51,6 +52,7 @@ const req = method => async (url, options = {}) => {
     if (err.code === 'ECONNRESET' || retryOnceOnError) {
       // Retry after a short delay when socket hang up
       await wait(100)
+      warn(err, `retrying request ${timer.requestId}`)
       res = await fetch(url, options)
     } else {
       if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
