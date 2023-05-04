@@ -9,6 +9,7 @@ import { log } from '#lib/utils/logs'
 const { getEntities, getManyEntities } = wdk
 
 const requester = ids => {
+  console.log('🚀 ~ file: get_entity.js ~ line', 12, { ids })
   if (ids.length > 50) {
     // Using getManyEntities to work around the 50 entities limit
     // But, normally, caching should allow to limit its use to some

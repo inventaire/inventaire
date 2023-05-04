@@ -47,7 +47,9 @@ const getCachedEnrichedEntity = params => wdId => {
 }
 
 const getEnrichedEntity = async wdId => {
+  console.log('🚀 ~ file: get_wikidata_enriched_entities.js ~ line', 51, { wdId })
   let entity = await getWdEntity(wdId)
+  console.log('🚀 ~ file: get_wikidata_enriched_entities.js ~ line', 53, { wdId })
   entity = entity || { id: wdId, missing: true }
   const formattedEntity = await format(entity)
   const indexationCopy = _.cloneDeep(formattedEntity)

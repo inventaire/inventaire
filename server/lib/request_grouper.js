@@ -24,6 +24,7 @@ export default params => {
   }
 
   const doGroupedRequest = () => {
+    console.log('🚀 ~ file: request_grouper.js ~ line', 27, 'doGroupedRequest ~ ', { keys })
     groupedPromise.resolve(requester(keys))
     reset()
   }
@@ -33,6 +34,7 @@ export default params => {
   // The request grouper abstract all the rest, namely the request grouping
   return key => {
     keys.push(key)
+    console.log('🚀 ~ file: request_grouper.js ~ line', 37, { key, keys })
 
     return getGroupedRequestPromise()
     .then(_.property(key))
