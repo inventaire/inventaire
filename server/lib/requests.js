@@ -1,7 +1,7 @@
 import { URL } from 'node:url'
 import CONFIG from 'config'
 import fetch from 'node-fetch'
-import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
+import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { absolutePath } from '#lib/absolute_path'
 import { addContextToStack, error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -14,9 +14,11 @@ import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requ
 import { coloredElapsedTime } from './time.js'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
-const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
+const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
 export const userAgent = `${CONFIG.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
+
+let requestCount = 0
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
@@ -154,6 +156,9 @@ const completeOptions = (method, options) => {
 }
 
 const basicAuthPattern = /\/\/\w+:[^@:]+@/
+
+const requestIntervalLogs = {}
+
 const startReqTimer = (method, url, options) => {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
@@ -166,13 +171,29 @@ const startReqTimer = (method, url, options) => {
     else body += ` ${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
   }
 
-  const reqTimerKey = `${method.toUpperCase()} ${url}${body}`
+  const requestId = `r${++requestCount}`
+  const reqTimerKey = `${method.toUpperCase()} ${url}${body.trimEnd()} [${requestId}]`
   const startTime = process.hrtime()
-  return [ reqTimerKey, startTime ]
+  if (logStart) process.stdout.write(`${grey(`${reqTimerKey} started`)}\n`)
+  if (logOngoingAtInterval) startLoggingRequestAtInterval({ requestId, reqTimerKey, startTime })
+  return { reqTimerKey, requestId, startTime }
 }
 
-const endReqTimer = ([ reqTimerKey, startTime ], statusCode) => {
-  if (!logOutgoingRequests) return
+const startLoggingRequestAtInterval = ({ requestId, reqTimerKey, startTime }) => {
+  requestIntervalLogs[requestId] = setInterval(() => {
+    const elapsed = coloredElapsedTime(startTime)
+    process.stdout.write(`${grey(`${reqTimerKey} ongoing`)} ${elapsed}\n`)
+  }, ongoingRequestLogInterval)
+}
+
+const stopLoggingRequestAtInterval = requestId => {
+  clearInterval(requestIntervalLogs[requestId])
+  delete requestIntervalLogs[requestId]
+}
+
+const endReqTimer = ({ reqTimerKey, requestId, startTime }, statusCode) => {
+  if (logOngoingAtInterval) stopLoggingRequestAtInterval(requestId)
+  if (!logEnd) return
   const elapsed = coloredElapsedTime(startTime)
   const statusColor = getStatusColor(statusCode)
   process.stdout.write(`${magenta(reqTimerKey)} ${statusColor(statusCode)} ${elapsed}\n`)

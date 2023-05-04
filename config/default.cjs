@@ -39,7 +39,10 @@ module.exports = {
   },
 
   outgoingRequests: {
-    log: true,
+    logStart: false,
+    logOngoingAtInterval: true,
+    ongoingRequestLogInterval: 5000,
+    logEnd: true,
     bodyLogLimit: 500,
     baseBanTime: 5000,
     banTimeIncreaseFactor: 4,
