@@ -49,7 +49,7 @@ const req = method => async (url, options = {}) => {
   try {
     res = await fetch(url, options)
   } catch (err) {
-    errorCode = err.code
+    errorCode = err.code || err.type || err.name || err.message
     if (err.code === 'ECONNRESET' || retryOnceOnError) {
       // Retry after a short delay when socket hang up
       await wait(100)
