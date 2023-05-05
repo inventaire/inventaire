@@ -1,6 +1,6 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import _ from '#builders/utils'
-import getWdEntity from '#data/wikidata/get_entity'
+import { getWdEntity } from '#data/wikidata/get_entity'
 import { error_ } from '#lib/error/error'
 import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'

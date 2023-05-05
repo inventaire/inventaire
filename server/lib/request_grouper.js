@@ -5,7 +5,7 @@ import { assert_ } from '#lib/utils/assert_types'
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time
 // but the requests can't be merged upstream to keep cache per-entity
-export default params => {
+export function requestGrouper (params) {
   const { delay, requester } = params
 
   let keys = []

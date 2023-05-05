@@ -1,5 +1,5 @@
 import should from 'should'
-import getWdEntity from '#data/wikidata/get_entity'
+import { getWdEntity } from '#data/wikidata/get_entity'
 import { buildUrl } from '#lib/utils/url'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import {
