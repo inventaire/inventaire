@@ -23,9 +23,16 @@ export default params => {
     return groupedPromise.promise
   }
 
-  const doGroupedRequest = () => {
-    groupedPromise.resolve(requester(keys))
+  const doGroupedRequest = async () => {
+    const batch = keys
+    const batchPromise = groupedPromise
     reset()
+    try {
+      const results = await requester(batch)
+      batchPromise.resolve(results)
+    } catch (err) {
+      batchPromise.reject(err)
+    }
   }
 
   // This is the request grouped only interface:
