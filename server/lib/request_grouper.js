@@ -30,7 +30,7 @@ export default params => {
     reset()
     try {
       const results = await requester(batch)
-      console.log('🚀 ~ file: request_grouper.js ~ line', 33, 'doGroupedRequest ~ ', { results })
+      console.log('🚀 ~ file: request_grouper.js ~ line', 33, 'doGroupedRequest ~ ', { results: Object.keys(results) })
       batchPromise.resolve(results)
     } catch (err) {
       console.log('🚀 ~ file: request_grouper.js ~ line', 36, 'doGroupedRequest ~ ', { err })
