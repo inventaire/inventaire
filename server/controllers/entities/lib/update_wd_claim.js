@@ -11,6 +11,8 @@ import properties from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
 import wdOauth from './wikidata_oauth.js'
 
+// /!\ There are no automatic tests for this function as it modifies Wikidata
+
 export default async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
 
@@ -88,7 +90,7 @@ const updateRelocatedClaim = async params => {
 }
 
 const getPropertyClaims = async (id, propertyId) => {
-  const entity = await getWdEntity([ id ])
+  const entity = await getWdEntity(id)
   return entity.claims[propertyId]
 }
 
