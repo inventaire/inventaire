@@ -1,12 +1,13 @@
 import { URL } from 'node:url'
 import CONFIG from 'config'
 import fetch from 'node-fetch'
-import { magenta, green, cyan, yellow, red } from 'tiny-chalk'
+import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { absolutePath } from '#lib/absolute_path'
 import { addContextToStack, error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
+import { warn } from '#lib/utils/logs'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
@@ -14,9 +15,11 @@ import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requ
 import { coloredElapsedTime } from './time.js'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
-const { log: logOutgoingRequests, bodyLogLimit } = CONFIG.outgoingRequests
+const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
 export const userAgent = `${CONFIG.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
+
+let requestCount = 0
 
 const req = method => async (url, options = {}) => {
   assert_.string(url)
@@ -42,23 +45,24 @@ const req = method => async (url, options = {}) => {
 
   const timer = startReqTimer(method, url, options)
 
-  let res
+  let res, statusCode, errorCode
   try {
     res = await fetch(url, options)
   } catch (err) {
+    errorCode = err.code
     if (err.code === 'ECONNRESET' || retryOnceOnError) {
       // Retry after a short delay when socket hang up
       await wait(100)
+      warn(err, `retrying request ${timer.requestId}`)
       res = await fetch(url, options)
     } else {
       if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
       throw err
     }
+  } finally {
+    statusCode = res?.status
+    endReqTimer(timer, statusCode || errorCode)
   }
-
-  const { status: statusCode } = res
-
-  endReqTimer(timer, statusCode)
 
   // Always parse as text, even if JSON, as in case of an error in the JSON response
   // (such as HTML being retunred instead of JSON), it allows to include the actual response
@@ -154,6 +158,9 @@ const completeOptions = (method, options) => {
 }
 
 const basicAuthPattern = /\/\/\w+:[^@:]+@/
+
+const requestIntervalLogs = {}
+
 const startReqTimer = (method, url, options) => {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
@@ -166,19 +173,36 @@ const startReqTimer = (method, url, options) => {
     else body += ` ${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
   }
 
-  const reqTimerKey = `${method.toUpperCase()} ${url}${body}`
+  const requestId = `r${++requestCount}`
+  const reqTimerKey = `${method.toUpperCase()} ${url}${body.trimEnd()} [${requestId}]`
   const startTime = process.hrtime()
-  return [ reqTimerKey, startTime ]
+  if (logStart) process.stdout.write(`${grey(`${reqTimerKey} started`)}\n`)
+  if (logOngoingAtInterval) startLoggingRequestAtInterval({ requestId, reqTimerKey, startTime })
+  return { reqTimerKey, requestId, startTime }
 }
 
-const endReqTimer = ([ reqTimerKey, startTime ], statusCode) => {
-  if (!logOutgoingRequests) return
+const startLoggingRequestAtInterval = ({ requestId, reqTimerKey, startTime }) => {
+  requestIntervalLogs[requestId] = setInterval(() => {
+    const elapsed = coloredElapsedTime(startTime)
+    process.stdout.write(`${grey(`${reqTimerKey} ongoing`)} ${elapsed}\n`)
+  }, ongoingRequestLogInterval)
+}
+
+const stopLoggingRequestAtInterval = requestId => {
+  clearInterval(requestIntervalLogs[requestId])
+  delete requestIntervalLogs[requestId]
+}
+
+const endReqTimer = ({ reqTimerKey, requestId, startTime }, statusCode) => {
+  if (logOngoingAtInterval) stopLoggingRequestAtInterval(requestId)
+  if (!logEnd) return
   const elapsed = coloredElapsedTime(startTime)
   const statusColor = getStatusColor(statusCode)
   process.stdout.write(`${magenta(reqTimerKey)} ${statusColor(statusCode)} ${elapsed}\n`)
 }
 
 const getStatusColor = statusCode => {
+  if (typeof statusCode !== 'number') return red
   if (statusCode < 300) return green
   if (statusCode < 400) return cyan
   if (statusCode < 500) return yellow
