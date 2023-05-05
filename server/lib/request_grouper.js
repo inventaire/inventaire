@@ -1,5 +1,6 @@
 import _ from '#builders/utils'
 import { defer } from '#lib/promises'
+import { assert_ } from '#lib/utils/assert_types'
 
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time
@@ -39,6 +40,7 @@ export default params => {
   // make a request for a single piece, get the result for this single piece.
   // The request grouper abstract all the rest, namely the request grouping
   return key => {
+    assert_.string(key)
     keys.push(key)
 
     return getGroupedRequestPromise()
