@@ -24,16 +24,17 @@ export default params => {
   }
 
   const doGroupedRequest = async () => {
-    console.log('🚀 ~ file: request_grouper.js ~ line', 27, 'doGroupedRequest ~ ', { keys })
+    const batch = keys
+    console.log('🚀 ~ file: request_grouper.js ~ line', 28, 'doGroupedRequest ~ ', { keys, batch })
+    const batchPromise = groupedPromise
+    reset()
     try {
-      const results = await requester(keys)
-      console.log('🚀 ~ file: request_grouper.js ~ line', 30, 'doGroupedRequest ~ ', { results })
-      groupedPromise.resolve(results)
+      const results = await requester(batch)
+      console.log('🚀 ~ file: request_grouper.js ~ line', 33, 'doGroupedRequest ~ ', { results })
+      batchPromise.resolve(results)
     } catch (err) {
-      console.log('🚀 ~ file: request_grouper.js ~ line', 33, 'doGroupedRequest ~ ', { err })
-      groupedPromise.reject(err)
-    } finally {
-      reset()
+      console.log('🚀 ~ file: request_grouper.js ~ line', 36, 'doGroupedRequest ~ ', { err })
+      batchPromise.reject(err)
     }
   }
 

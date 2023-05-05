@@ -1,6 +1,7 @@
 import 'should'
 import sinon from 'sinon'
 import _ from '#builders/utils'
+import { wait } from '#lib/promises'
 import requestGrouper from '#lib/request_grouper'
 import { log } from '#lib/utils/logs'
 
@@ -62,15 +63,17 @@ describe('Request Grouper', () => {
       requester: MockRequester(spy),
     })
 
-    fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1')))
-    fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2')))
+    await Promise.all([
+      fn('input1').then(res => res.should.equal(mockRequesterSingleSync('input1'))),
+      wait(1).then(() => fn('input2').then(res => res.should.equal(mockRequesterSingleSync('input2')))),
+      wait(5).then(() => fn('input3').then(res => res.should.equal(mockRequesterSingleSync('input3')))),
+      wait(9).then(() => fn('input4').then(res => res.should.equal(mockRequesterSingleSync('input4')))),
+      wait(11).then(() => fn('input5').then(res => res.should.equal(mockRequesterSingleSync('input5')))),
+      wait(13).then(() => fn('input6').then(res => res.should.equal(mockRequesterSingleSync('input6')))),
+      wait(16).then(() => fn('input7').then(res => res.should.equal(mockRequesterSingleSync('input7')))),
+      wait(28).then(() => fn('input8').then(res => res.should.equal(mockRequesterSingleSync('input8')))),
+    ])
 
-    const late = async () => {
-      const res = await fn('input3')
-      res.should.equal(mockRequesterSingleSync('input3'))
-      spy.callCount.should.equal(2)
-    }
-
-    setTimeout(late, 11)
+    spy.callCount.should.be.aboveOrEqual(2)
   })
 })
