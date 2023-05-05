@@ -1,11 +1,10 @@
 import CONFIG from 'config'
 import should from 'should'
-import sinon from 'sinon'
 import _ from '#builders/utils'
 import { cache_ } from '#lib/cache'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
 const { ttlCheckFrequency } = CONFIG.leveldb
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
@@ -32,7 +31,7 @@ describe('cache', () => {
     })
 
     it('should compute ones and cache for the nexts', async () => {
-      const spy = sinon.spy()
+      const spy = makeSpy()
       const keyA = getRandomString(8)
       const keyB = getRandomString(8)
       const someFn = key => key + key
@@ -66,7 +65,7 @@ describe('cache', () => {
     })
 
     it('should cache non-error empty results', async () => {
-      const spy = sinon.spy()
+      const spy = makeSpy()
       const empty = async () => { spy() }
 
       const key = getRandomString(8)

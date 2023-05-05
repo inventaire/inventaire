@@ -1,15 +1,15 @@
 
 import 'should'
-import sinon from 'sinon'
 import solveIntentFactory from '#controllers/relations/lib/solve_intent'
+import { makeSpy } from '#tests/unit/utils'
 
 let spies = {}
 
 const resetSpies = () => ({
-  acceptRequest: sinon.spy(),
-  simultaneousRequest: sinon.spy(),
-  makeRequest: sinon.spy(),
-  removeRelation: sinon.spy(),
+  acceptRequest: makeSpy(),
+  simultaneousRequest: makeSpy(),
+  makeRequest: makeSpy(),
+  removeRelation: makeSpy(),
 })
 
 const actions = {

@@ -14,3 +14,11 @@ export const shouldNotBeCalled = res => {
 export const rethrowShouldNotBeCalledErrors = err => {
   if (err.name === 'shouldNotBeCalled') throw err
 }
+
+export function makeSpy () {
+  const spy = () => {
+    spy.callCount++
+  }
+  spy.callCount = 0
+  return spy
+}

@@ -1,11 +1,10 @@
 import 'should'
-import sinon from 'sinon'
 import _ from '#builders/utils'
 import { wait } from '#lib/promises'
 import { requestGrouper } from '#lib/request_grouper'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
 const MockRequester = (spy = _.noop) => async ids => {
   spy()
@@ -51,7 +50,7 @@ describe('Request Grouper', () => {
   })
 
   it('should return a function that returns just the input value', async () => {
-    const spy = sinon.spy()
+    const spy = makeSpy()
     const fn = requestGrouper({
       delay: 10,
       requester: MockRequester(spy),
@@ -67,7 +66,7 @@ describe('Request Grouper', () => {
   })
 
   it('should throttle, not debounce: not waiting for inputs after the delay', async () => {
-    const spy = sinon.spy()
+    const spy = makeSpy()
     const fn = requestGrouper({
       delay: 10,
       requester: MockRequester(spy),
