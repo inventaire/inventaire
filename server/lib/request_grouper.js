@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import { defer } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 
@@ -39,14 +39,14 @@ export default params => {
   // This is the request grouped only interface:
   // make a request for a single piece, get the result for this single piece.
   // The request grouper abstract all the rest, namely the request grouping
-  return key => {
+  return async key => {
     assert_.string(key)
     keys.push(key)
 
-    return getGroupedRequestPromise()
-    .then(_.property(key))
+    const groupedResults = await getGroupedRequestPromise()
+    const keyResult = groupedResults[key]
     // Prevent several consumers requesting the same object
     // as it could create conflicts
-    .then(_.cloneDeep)
+    return cloneDeep(keyResult)
   }
 }
