@@ -1,5 +1,6 @@
 // A request regrouper to query entities full data one by one
 // while requests are actually regrouped in the background
+import { uniq } from 'lodash-es'
 import wdk from 'wikibase-sdk/wikidata.org'
 import _ from '#builders/utils'
 import requestGrouper from '#lib/request_grouper'
@@ -9,7 +10,9 @@ import { log } from '#lib/utils/logs'
 const { getEntities, getManyEntities } = wdk
 
 const requester = ids => {
-  console.log('🚀 ~ file: get_entity.js ~ line', 12, { ids })
+  console.log('🚀 ~ file: get_entity.js ~ line', 13, { ids })
+  ids = uniq(ids)
+  console.log('🚀 ~ file: get_entity.js ~ line', 15, { ids })
   if (ids.length > 50) {
     // Using getManyEntities to work around the 50 entities limit
     // But, normally, caching should allow to limit its use to some

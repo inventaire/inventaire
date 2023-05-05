@@ -23,10 +23,18 @@ export default params => {
     return groupedPromise.promise
   }
 
-  const doGroupedRequest = () => {
+  const doGroupedRequest = async () => {
     console.log('🚀 ~ file: request_grouper.js ~ line', 27, 'doGroupedRequest ~ ', { keys })
-    groupedPromise.resolve(requester(keys))
-    reset()
+    try {
+      const results = await requester(keys)
+      console.log('🚀 ~ file: request_grouper.js ~ line', 30, 'doGroupedRequest ~ ', { results })
+      groupedPromise.resolve(results)
+    } catch (err) {
+      console.log('🚀 ~ file: request_grouper.js ~ line', 33, 'doGroupedRequest ~ ', { err })
+      groupedPromise.reject(err)
+    } finally {
+      reset()
+    }
   }
 
   // This is the request grouped only interface:
