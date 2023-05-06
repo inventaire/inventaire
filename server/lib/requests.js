@@ -11,7 +11,7 @@ import { warn } from '#lib/utils/logs'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
-import { throwIfTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
+import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
@@ -32,7 +32,7 @@ const req = method => async (url, options = {}) => {
   }
 
   const { host } = new URL(url)
-  throwIfTemporarilyBanned(host)
+  assertHostIsNotTemporarilyBanned(host)
 
   const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false } = options
   // Removing options that don't concern node-fetch

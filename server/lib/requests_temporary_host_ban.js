@@ -32,7 +32,7 @@ const restoreNonExpiredBans = data => {
   if (Object.keys(banData).length > 0) success(banData, 'hosts bans data restored')
 }
 
-export const throwIfTemporarilyBanned = host => {
+export const assertHostIsNotTemporarilyBanned = host => {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
     throw error_.new(`temporary ban: ${host}`, 500, { host, hostBanData })
