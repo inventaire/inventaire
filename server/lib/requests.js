@@ -21,7 +21,7 @@ const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
-const req = method => async (url, options = {}) => {
+async function req (method, url, options = {}) {
   assert_.string(url)
   assert_.object(options)
 
@@ -112,18 +112,6 @@ const req = method => async (url, options = {}) => {
   }
 }
 
-// Same but doesn't parse response
-const head = async (url, options = {}) => {
-  completeOptions('head', options)
-  const timer = startReqTimer('head', url, options)
-  const { status: statusCode, headers } = await fetch(url, options)
-  endReqTimer(timer, statusCode)
-  return {
-    statusCode,
-    headers: formatHeaders(headers.raw()),
-  }
-}
-
 const formatHeaders = headers => {
   const flattenedHeaders = {}
   Object.keys(headers).forEach(key => {
@@ -210,12 +198,16 @@ const getStatusColor = statusCode => {
 }
 
 export const requests_ = {
-  get: req('get'),
-  post: req('post'),
-  put: req('put'),
-  delete: req('delete'),
-  head,
-  options: req('options'),
+  get: req.bind(null, 'get'),
+  post: req.bind(null, 'post'),
+  put: req.bind(null, 'put'),
+  delete: req.bind(null, 'delete'),
+  head: (url, options = {}) => {
+    options.parseJson = false
+    options.returnBodyOnly = false
+    return req('head', url, options)
+  },
+  options: req.bind(null, 'options'),
   userAgent,
 }
 

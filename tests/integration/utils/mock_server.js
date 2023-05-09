@@ -1,5 +1,7 @@
 import express from 'express'
+import { jsonBodyParser } from '#server/middlewares/content'
 import requestsLogger from '#server/middlewares/requests_logger'
+
 // Avoid reusing ports from the previous test session, as hosts bans data might be restored
 let port = 10000 + parseInt(Date.now().toString().slice(-4))
 
@@ -9,6 +11,7 @@ export const startGenericMockServer = serverSetupFn => new Promise(resolve => {
   const host = `127.0.0.1:${port}`
   const origin = `http://${host}`
   app.use(requestsLogger)
+  app.use(jsonBodyParser)
   serverSetupFn(app)
   const server = app.listen(port, () => resolve({ port, host, origin, server }))
 })
