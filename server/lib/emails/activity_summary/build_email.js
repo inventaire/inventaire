@@ -105,7 +105,7 @@ const spreadEmailData = user => results => {
       },
       friendsRequests: counter(friendsRequests, '/network/friends'),
       groupInvitations: counter(groupInvitations, '/network/groups'),
-      groupRequests: counter(groupRequests, '/network/groups'),
+      groupRequests: counter(groupRequests, '/notifications'),
       unreadNotifications: counter(unreadNotifications, '/notifications'),
       activeTransactions: counter(activeTransactions, '/transactions'),
       lastFriendsBooks,
