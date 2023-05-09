@@ -9,11 +9,14 @@ const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 
 const startMockServer = async () => {
   const { port, host, origin } = await startGenericMockServer(app => {
-    app.get('/no-timeout', (req, res) => res.json({ ok: true }))
+    app.all('/no-timeout', (req, res) => res.json({ ok: true }))
     // Always timeout
-    app.get('/timeout', () => {})
-    app.get('/error', (req, res) => res.status(500).json({ ok: false }))
-    app.get('/html', (req, res) => res.status(200).send('<p>hello</p>'))
+    app.all('/timeout', () => {})
+    app.all('/error', (req, res) => res.status(500).json({ ok: false }))
+    app.all('/html', (req, res) => res.status(200).send('<p>hello</p>'))
+  })
+  const { origin: secondaryOrigin } = await startGenericMockServer(app => {
+    app.all('/redirects-to-timeout', (req, res) => res.redirect(`${origin}/timeout`))
   })
   return {
     port,
@@ -23,6 +26,7 @@ const startMockServer = async () => {
     noTimeoutEndpoint: `${origin}/no-timeout`,
     errorEndpoint: `${origin}/error`,
     htmlEndpoint: `${origin}/html`,
+    redirectsToTimeoutEndpoint: `${secondaryOrigin}/redirects-to-timeout`,
   }
 }
 
@@ -151,6 +155,15 @@ describe('requests:hosts-bans', function () {
       err.context.statusCode.should.equal(200)
     })
     await hostIsCurrentlyBanned({ host, noTimeoutEndpoint })
+  })
+
+  it('should timeout after the specified time, even after a redirection', async () => {
+    const { redirectsToTimeoutEndpoint } = await startMockServer()
+    await requests_.head(redirectsToTimeoutEndpoint, { timeout: 100 })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.type.should.equal('request-timeout')
+    })
   })
 })
 
