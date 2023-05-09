@@ -29,7 +29,7 @@ const ensureIndexExists = index => {
 
 const waitForElastic = async () => {
   try {
-    await get(elasticOrigin)
+    await get(elasticOrigin, { noRetry: true })
   } catch (err) {
     if (err.statusCode === 503 || err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
       warn(`waiting for Elasticsearch on ${elasticOrigin}`)

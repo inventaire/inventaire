@@ -34,7 +34,7 @@ const req = method => async (url, options = {}) => {
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
 
-  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false } = options
   // Removing options that don't concern node-fetch
   delete options.sanitize
   delete options.returnBodyOnly
@@ -50,7 +50,7 @@ const req = method => async (url, options = {}) => {
     res = await fetch(url, options)
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
-    if (err.code === 'ECONNRESET' || retryOnceOnError) {
+    if (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError)) {
       // Retry after a short delay when socket hang up
       await wait(100)
       warn(err, `retrying request ${timer.requestId}`)
