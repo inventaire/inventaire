@@ -1,9 +1,9 @@
 import _ from '#builders/utils'
 import getThumbData from '#data/commons/thumb'
-import getOpenLibraryCover from '#data/openlibrary/cover'
-import getEnwikiImage from '#data/wikipedia/image'
+// import getOpenLibraryCover from '#data/openlibrary/cover'
+// import getEnwikiImage from '#data/wikipedia/image'
 import { objectPromise } from '#lib/promises'
-import { logError } from '#lib/utils/logs'
+// import { logError } from '#lib/utils/logs'
 import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
 
 export default async entity => {
@@ -23,8 +23,11 @@ const findAnImage = entity => {
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   return objectPromise({
     wm: getThumbData(commonsFilename),
-    wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
-    ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type),
+    // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
+    // when queries en masse
+    // TODO: re-enable with rate limiting (with `async-sema` package?)
+    // wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
+    // ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type),
   })
   .then(results => {
     const order = getPicSourceOrder(entity)
@@ -34,17 +37,17 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   })
 }
 
-const getSourcePromise = (sourceName, fn, ...args) => {
-  if (args[0] == null) return null
+// const getSourcePromise = (sourceName, fn, ...args) => {
+//   if (args[0] == null) return null
 
-  return fn.apply(null, args)
-  .catch(err => {
-    err.context = err.context || {}
-    err.context.args = args
-    // Do not rethrow the error to let a chance to other sources
-    logError(err, `${sourceName} image not found`)
-  })
-}
+//   return fn.apply(null, args)
+//   .catch(err => {
+//     err.context = err.context || {}
+//     err.context.args = args
+//     // Do not rethrow the error to let a chance to other sources
+//     logError(err, `${sourceName} image not found`)
+//   })
+// }
 
 const getPicSourceOrder = entity => {
   const { type } = entity
