@@ -35,26 +35,20 @@ async function req (method, url, options = {}) {
   assertHostIsNotTemporarilyBanned(host)
 
   const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false } = options
-  // Removing options that don't concern node-fetch
-  delete options.sanitize
-  delete options.returnBodyOnly
-  delete options.parseJson
-  delete options.retryOnceOnError
+  const fetchOptions = getFetchOptions(method, options)
 
-  completeOptions(method, options)
-
-  const timer = startReqTimer(method, url, options)
+  const timer = startReqTimer(method, url, fetchOptions)
 
   let res, statusCode, errorCode
   try {
-    res = await fetch(url, options)
+    res = await fetch(url, fetchOptions)
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
     if (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError)) {
       // Retry after a short delay when socket hang up
       await wait(100)
       warn(err, `retrying request ${timer.requestId}`)
-      res = await fetch(url, options)
+      res = await fetch(url, fetchOptions)
     } else {
       if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
       throw err
@@ -120,45 +114,52 @@ const formatHeaders = headers => {
   return flattenedHeaders
 }
 
-const completeOptions = (method, options) => {
-  options.method = method
-  options.headers = options.headers || {}
-  options.headers.accept = options.headers.accept || 'application/json'
+const getFetchOptions = (method, options) => {
+  const headers = options.headers || {}
+  const fetchOptions = {
+    method,
+    headers,
+    timeout: options.timeout || defaultTimeout,
+    redirect: options.redirect,
+    compress: true,
+  }
+  headers.accept = headers.accept || 'application/json'
   // A user agent is required by Wikimedia services
   // (reject with a 403 error otherwise)
-  options.headers['user-agent'] = userAgent
+  headers['user-agent'] = userAgent
 
   if (options.body && typeof options.body !== 'string') {
-    options.body = JSON.stringify(options.body)
-    options.headers['content-type'] = 'application/json'
-  } else if (options.bodyStream) {
+    fetchOptions.body = JSON.stringify(options.body)
+    headers['content-type'] = 'application/json'
+  } else if (options.bodyStream != null) {
     // Pass stream bodies as a 'bodyStream' option to avoid having it JSON.stringified
-    options.body = options.bodyStream
+    fetchOptions.body = options.bodyStream
+  } else {
+    fetchOptions.body = options.body
   }
 
-  options.timeout = options.timeout || defaultTimeout
-  options.compress = true
   if (options.ignoreCertificateErrors) {
-    options.agent = insecureHttpsAgent
+    fetchOptions.agent = insecureHttpsAgent
   } else {
-    options.agent = getAgent
+    fetchOptions.agent = getAgent
   }
+  return fetchOptions
 }
 
 const basicAuthPattern = /\/\/\w+:[^@:]+@/
 
 const requestIntervalLogs = {}
 
-const startReqTimer = (method, url, options) => {
+const startReqTimer = (method, url, fetchOptions) => {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
 
   let body = ''
-  if (options.bodyStream) body += ' [stream]'
-  else if (options && options.body) {
-    const { length } = options.body
-    if (length < bodyLogLimit) body += ' ' + options.body
-    else body += ` ${options.body.slice(0, bodyLogLimit)} [${length} total characters...]`
+  if (fetchOptions.bodyStream) body += ' [stream]'
+  else if (fetchOptions.body) {
+    const { length } = fetchOptions.body
+    if (length < bodyLogLimit) body += ' ' + fetchOptions.body
+    else body += ` ${fetchOptions.body.slice(0, bodyLogLimit)} [${length} total characters...]`
   }
 
   const requestId = `r${++requestCount}`
