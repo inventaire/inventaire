@@ -44,7 +44,7 @@ export function requestGrouper (params) {
     keys.push(key)
 
     const groupedResults = await getGroupedRequestPromise()
-    const keyResult = groupedResults[key]
+    const keyResult = groupedResults?.[key]
     // Prevent several consumers requesting the same object
     // as it could create conflicts
     return cloneDeep(keyResult)
