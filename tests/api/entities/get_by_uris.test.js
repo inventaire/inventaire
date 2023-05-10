@@ -64,6 +64,16 @@ describe('entities:get:by-uris', () => {
     notFound.should.deepEqual([ nonExistingUri ])
   })
 
+  it('should return wikidata found and not found uris', async () => {
+    const existingUri = 'wd:Q1345582'
+    const nonExistingUriA = 'wd:Q5359999999999998'
+    const nonExistingUriB = 'wd:Q5359999999999999'
+    const { entities, notFound } = await getByUris([ existingUri, nonExistingUriA, nonExistingUriB ], null, true)
+    entities[existingUri].uri.should.equal(existingUri)
+    notFound.should.containEql(nonExistingUriA)
+    notFound.should.containEql(nonExistingUriB)
+  })
+
   it('should return redirected uris', async () => {
     const [ humanA, humanB ] = await Promise.all([ createHuman(), createHuman() ])
     await merge(humanA.uri, humanB.uri)
