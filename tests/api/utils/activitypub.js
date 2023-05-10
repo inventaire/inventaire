@@ -2,12 +2,10 @@ import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { signRequest, verifySignature } from '#controllers/activitypub/lib/security'
 import { getSharedKeyPair } from '#controllers/activitypub/lib/shared_key_pair'
 import { getRandomBytes } from '#lib/crypto'
-import contentMiddlewares from '#server/middlewares/content'
+import { jsonBodyParser } from '#server/middlewares/content'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { createUsername } from '../fixtures/users.js'
 import { rawRequest } from './request.js'
-
-const { jsonBodyParser } = contentMiddlewares
 
 // In a separate file since createUser has a circular dependency in api/utils/request.js
 export async function signedReq ({ method, object, url, body, emitterUser, type }) {
