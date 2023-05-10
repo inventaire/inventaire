@@ -1,8 +1,8 @@
 import { Agent as HttpAgent } from 'node:http'
 import { Agent as HttpsAgent } from 'node:https'
 
-const httpAgent = new HttpAgent({ keepAlive: true })
-export const httpsAgent = new HttpsAgent({ keepAlive: true })
+const httpAgent = new HttpAgent({ keepAlive: true, family: 4 })
+export const httpsAgent = new HttpsAgent({ keepAlive: true, family: 4 })
 
 export const insecureHttpsAgent = new HttpsAgent({
   keepAlive: true,
@@ -10,6 +10,7 @@ export const insecureHttpsAgent = new HttpsAgent({
   // - accept self-signed certificates
   // - accept certificates that would otherwise generate a UNABLE_TO_VERIFY_LEAF_SIGNATURE error
   rejectUnauthorized: false,
+  family: 4,
 })
 
 // Using a custom agent to set keepAlive=true
