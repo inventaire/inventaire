@@ -13,7 +13,8 @@ describe('images:resize', () => {
     body.length.should.be.below(1000)
   })
 
-  it('should return a resized remote image from a trusted domain', async () => {
+  // Requires CONFIG.remoteImages.useProdCachedImages = false
+  xit('should return a resized remote image from a trusted domain', async () => {
     const remoteUrl = 'https://commons.wikimedia.org/wiki/Special:FilePath/Linet%2C%20martha.jpg?width=100'
     const urlHash = hashCode(remoteUrl)
     const url = `/img/remote/10x10/${urlHash}?href=${encodeURIComponent(remoteUrl)}`
