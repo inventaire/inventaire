@@ -113,7 +113,7 @@ const formatRow = async (isbn, result, rawResult) => {
       expectedEntityType: 'edition',
     })
     entry.edition.claims = {
-      'wdt:P1476': edition.title,
+      'wdt:P1476': cleanupTitle(edition.title),
       'wdt:P577': edition.publicationDate,
       ...claims,
     }
@@ -176,3 +176,9 @@ const placeholderContentLengths = [
   4566,
   4658,
 ]
+
+const cleanupTitle = title => {
+  return title
+  .replace(/: roman$/, '')
+  .trim()
+}

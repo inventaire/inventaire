@@ -24,4 +24,9 @@ describe('get_bnf_entry_from_isbn', () => {
     const entry = await getBnfEntryFromIsbn('978-2-207-11674-6')
     should(entry.edition.image).not.be.ok()
   })
+
+  it('should cleanup the title', async () => {
+    const entry = await getBnfEntryFromIsbn('9782848051031')
+    entry.edition.claims['wdt:P1476'].should.equal("La nuit du papillon d'or")
+  })
 })
