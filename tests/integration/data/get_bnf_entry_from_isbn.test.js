@@ -1,5 +1,5 @@
 import should from 'should'
-import getBnfEntryFromIsbn from '#data/bnf/get_bnf_entry_from_isbn'
+import getBnfEntryFromIsbn, { cleanupBnfTitle } from '#data/bnf/get_bnf_entry_from_isbn'
 
 describe('get_bnf_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {
@@ -28,5 +28,20 @@ describe('get_bnf_entry_from_isbn', () => {
   it('should cleanup the title', async () => {
     const entry = await getBnfEntryFromIsbn('9782848051031')
     entry.edition.claims['wdt:P1476'].should.equal("La nuit du papillon d'or")
+  })
+})
+
+describe('cleanupBnfTitle', () => {
+  it('should remove genre annotations', () => {
+    cleanupBnfTitle("La nuit d'or : roman").should.equal("La nuit d'or")
+    cleanupBnfTitle("La nuit d'or : récits").should.equal("La nuit d'or")
+    cleanupBnfTitle("La nuit d'or : [nouvelles]").should.equal("La nuit d'or")
+    cleanupBnfTitle("La nuit d'or : a biography").should.equal("La nuit d'or")
+    cleanupBnfTitle("La nuit d'or : une biographie").should.equal("La nuit d'or")
+    cleanupBnfTitle("La nuit d'or : roman policier").should.equal("La nuit d'or")
+  })
+
+  it('should remove number representations', () => {
+    cleanupBnfTitle(':20000 :+vingt mille+ lieues sous les mers : bande dessinée').should.equal('vingt mille lieues sous les mers')
   })
 })

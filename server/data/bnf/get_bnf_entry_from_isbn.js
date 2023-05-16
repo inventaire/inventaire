@@ -113,7 +113,7 @@ const formatRow = async (isbn, result, rawResult) => {
       expectedEntityType: 'edition',
     })
     entry.edition.claims = {
-      'wdt:P1476': cleanupTitle(edition.title),
+      'wdt:P1476': cleanupBnfTitle(edition.title),
       'wdt:P577': edition.publicationDate,
       ...claims,
     }
@@ -177,8 +177,14 @@ const placeholderContentLengths = [
   4658,
 ]
 
-const cleanupTitle = title => {
+export const cleanupBnfTitle = title => {
   return title
-  .replace(/: roman$/, '')
+  // 'some title : [roman]' => 'some title'
+  .replace(/: \[?((a|an|un|une) )?((actes|antholog(ie|y)|autobiograph(ie|y)|bande dessinée|biograph(ie|y)|casebook|comédie|conte|document|encyclopedia|encyclopédie|entretien|essai|history|memoir|mémoire|nouvelle|novel|photographies|poem|poème|poésie|récit|roman|stories|texte intégral|théâtre|thriller)s?)( \w+)?\]?$/i, '')
+  .trim()
+  // ':20000 :+vingt mille+ lieues sous les mers' => 'vingt mille lieues sous les mers'
+  .replace(/:\d+ :\+([^+]+)\+ /g, '$1 ')
+  // '"some title"' => 'some title'
+  .replace(/^"([^"]+)"$/, '$1')
   .trim()
 }
