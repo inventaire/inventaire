@@ -156,7 +156,7 @@ const startReqTimer = (method, url, fetchOptions) => {
 
   let body = ''
   if (fetchOptions.bodyStream) body += ' [stream]'
-  else if (fetchOptions.body) {
+  else if (typeof fetchOptions.body === 'string') {
     const { length } = fetchOptions.body
     if (length < bodyLogLimit) body += ' ' + fetchOptions.body
     else body += ` ${fetchOptions.body.slice(0, bodyLogLimit)} [${length} total characters...]`
