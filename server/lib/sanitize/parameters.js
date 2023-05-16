@@ -35,8 +35,12 @@ const parseNumberString = value => {
 
 const renameId = name => `${name}Id`
 
-const couchUuid = {
+const couchUuidWithoutRenaming = {
   validate: validations.common.couchUuid,
+}
+
+const couchUuid = {
+  ...couchUuidWithoutRenaming,
   rename: renameId,
 }
 
@@ -283,7 +287,7 @@ export default {
   from: entityUri,
   generics,
   group: couchUuid,
-  id: couchUuid,
+  id: couchUuidWithoutRenaming,
   ids: couchUuids,
   isbn,
   item: couchUuid,
