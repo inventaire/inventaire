@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import { shouldNotBeCalled } from '#tests/unit/utils'
+import { createEdition } from '../fixtures/entities.js'
 import { rawRequest } from '../utils/request.js'
 import { publicReq } from '../utils/utils.js'
 
@@ -30,5 +31,14 @@ describe('entities:images', () => {
     statusCode.should.equal(302)
     headers.location.should.startWith(`${host}/img/remote/32x1600/`)
     headers.location.should.containEql(`href=${encodedCommonsUrlChunk}`)
+  })
+
+  it('should return images from inventaire based uris', async () => {
+    const edition = await createEdition()
+    const uri = edition.claims['wdt:P629'][0]
+    const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+    const imagesRes = res.images[uri]
+    imagesRes.should.be.an.Object()
+    imagesRes.en.length.should.equal(1)
   })
 })
