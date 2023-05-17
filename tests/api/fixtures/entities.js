@@ -66,18 +66,19 @@ export const createEdition = async (params = {}) => {
 }
 
 export const createEditionWithIsbn = async (params = {}) => {
-  const { publisher, publicationDate } = params
+  const { publisher, publicationDate, claims } = params
   const work = await createWork()
   const isbn13h = generateIsbn13h()
-  const claims = {
+  const editionClaims = Object.assign({
     'wdt:P31': [ 'wd:Q3331189' ],
     'wdt:P629': [ work.uri ],
     'wdt:P212': [ isbn13h ],
     'wdt:P1476': [ randomLabel() ],
-  }
-  if (publisher) claims['wdt:P123'] = [ publisher ]
-  if (publicationDate !== null) claims['wdt:P577'] = [ publicationDate || '2020' ]
-  const edition = await authReq('post', '/api/entities?action=create', { claims })
+    'invp:P2': [ someImageHash ],
+  }, claims)
+  if (publisher) editionClaims['wdt:P123'] = [ publisher ]
+  if (publicationDate !== null) editionClaims['wdt:P577'] = [ publicationDate || '2020' ]
+  const edition = await authReq('post', '/api/entities?action=create', { claims: editionClaims })
   edition.isbn = edition.uri.split(':')[1]
   edition.invUri = `inv:${edition._id}`
   edition.isbn13h = isbn13h

@@ -48,7 +48,7 @@ export default async (req, res) => {
 }
 
 const findRawImage = async (uri, images, width, height) => {
-  const image = images[uri] && images[uri][0]
+  const image = images[uri]?.claims[0]
   if (image == null) {
     const err = error_.notFound({ uri })
     err.quiet = true
