@@ -46,6 +46,8 @@ module.exports = {
     bodyLogLimit: 500,
     baseBanTime: 5000,
     banTimeIncreaseFactor: 4,
+    // Set to 4 or 6 to force the use of IPv4 or IPv6
+    ipFamily: undefined,
   },
   // CouchDB settings
   db: {
