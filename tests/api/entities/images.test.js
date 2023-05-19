@@ -2,6 +2,14 @@ import CONFIG from 'config'
 import 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import { shouldNotBeCalled } from '#tests/unit/utils'
+import {
+  createEdition,
+  createEditionWithIsbn,
+  createCollection,
+  createSerie,
+  createWork,
+  someImageHash,
+} from '../fixtures/entities.js'
 import { rawRequest } from '../utils/request.js'
 import { publicReq } from '../utils/utils.js'
 
@@ -10,10 +18,13 @@ const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedi
 
 describe('entities:images', () => {
   it('should return an array of images associated with the passed uri', async () => {
-    const res = await publicReq('get', '/api/entities?action=images&uris=wd:Q535')
+    const uri = 'wd:Q535'
+    const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
     res.images.should.be.an.Object()
-    res.images['wd:Q535'].should.be.an.Array()
-    res.images['wd:Q535'][0].should.be.a.String()
+    const imagesRes = res.images[uri]
+    imagesRes.should.be.an.Object()
+    imagesRes.claims.should.be.a.Array()
+    imagesRes.claims.length.should.equal(1)
   })
 
   it('should reject redirect requests with multiple URIs', async () => {
@@ -30,5 +41,42 @@ describe('entities:images', () => {
     statusCode.should.equal(302)
     headers.location.should.startWith(`${host}/img/remote/32x1600/`)
     headers.location.should.containEql(`href=${encodedCommonsUrlChunk}`)
+  })
+
+  describe('inventaire:entities', () => {
+    it('should return images from isbn based uris', async () => {
+      const { uri } = await createEditionWithIsbn({ claims: { 'invp:P2': [ someImageHash ] } })
+      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+      const imagesRes = res.images[uri]
+      imagesRes.should.be.an.Object()
+      imagesRes.claims.should.be.a.Array()
+      imagesRes.claims.length.should.equal(1)
+    })
+
+    it('should return images from inventaire work', async () => {
+      const edition = await createEdition()
+      const uri = edition.claims['wdt:P629'][0]
+      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+      const imagesRes = res.images[uri]
+      imagesRes.claims.should.deepEqual([])
+      imagesRes.en.length.should.equal(1)
+    })
+
+    it('should return images from inventaire collection', async () => {
+      const { uri } = await createCollection()
+      await createEdition({ claims: { 'wdt:P195': [ uri ] } })
+      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+      const imagesRes = res.images[uri]
+      imagesRes.en.length.should.equal(1)
+    })
+
+    it('should return images from inventaire serie', async () => {
+      const { uri } = await createSerie()
+      const work = await createWork({ claims: { 'wdt:P179': [ uri ] } })
+      await createEdition({ work })
+      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+      const imagesRes = res.images[uri]
+      imagesRes.en.length.should.equal(1)
+    })
   })
 })

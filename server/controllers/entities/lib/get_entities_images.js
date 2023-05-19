@@ -16,7 +16,13 @@ const getEntityImages = entities => (promises, id) => {
   const entity = entities[id]
   // All entities type that don't have a specialEntityImagesGetter will
   // simply return their first wdt:P18 claim value, if any
-  const getter = specialEntityImagesGetter[entity.type] || getEntityImagesFromClaims
+  const getter = specialEntityImagesGetter[entity.type] || defaultEntityImageGetter
   promises[id] = getter(entity)
   return promises
+}
+
+const defaultEntityImageGetter = entity => {
+  return {
+    claims: getEntityImagesFromClaims(entity),
+  }
 }
