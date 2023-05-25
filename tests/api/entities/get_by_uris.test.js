@@ -1,17 +1,17 @@
 import should from 'should'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { buildUrl } from '#lib/utils/url'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils'
 import {
+  createEdition,
   createEditionWithIsbn,
-  createWorkWithAuthor,
   createEditionWithWorkAuthorAndSerie,
   createHuman,
-  someFakeUri,
+  createWorkWithAuthor,
   generateIsbn13,
-  createEdition,
+  someFakeUri,
 } from '../fixtures/entities.js'
-import { getByUris, merge, deleteByUris } from '../utils/entities.js'
+import { deleteByUris, getByUris, getEntitiesAttributesByUris, merge } from '../utils/entities.js'
 import { authReq, publicReq } from '../utils/utils.js'
 
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -114,12 +114,10 @@ describe('entities:get:by-uris', () => {
       const { uri: invWorkUri } = work
       const invAuthorUri = work.claims['wdt:P50'][0]
       const wdUri = 'wd:Q2300248'
-      const url = buildUrl('/api/entities', {
-        action: 'by-uris',
-        uris: `${invWorkUri}|${invAuthorUri}|${wdUri}`,
-        attributes: 'labels|descriptions',
+      const entities = await getEntitiesAttributesByUris({
+        uris: [ invWorkUri, invAuthorUri, wdUri ],
+        attributes: [ 'labels', 'descriptions' ],
       })
-      const { entities } = await publicReq('get', url)
       entities[invWorkUri].uri.should.be.ok()
       entities[invAuthorUri].uri.should.be.ok()
       entities[wdUri].uri.should.be.ok()
@@ -136,13 +134,11 @@ describe('entities:get:by-uris', () => {
 
     it('should get relatives attributes', async () => {
       const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
-      const url = buildUrl('/api/entities', {
-        action: 'by-uris',
+      let entities = await getEntitiesAttributesByUris({
         uris: editionUri,
-        attributes: 'info|labels',
-        relatives: 'wdt:P50|wdt:P179|wdt:P629',
+        attributes: [ 'info', 'labels' ],
+        relatives: [ 'wdt:P50', 'wdt:P179', 'wdt:P629' ],
       })
-      let { entities } = await publicReq('get', url)
       entities = Object.values(entities)
       const edition = entities.find(entity => entity.type === 'edition')
       const work = entities.find(entity => entity.type === 'work')
@@ -152,6 +148,32 @@ describe('entities:get:by-uris', () => {
       work.labels.en.should.be.ok()
       serie.labels.en.should.be.ok()
       human.labels.en.should.be.ok()
+    })
+
+    it('should return entities dry popularity', async () => {
+      const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+      const entities = await getEntitiesAttributesByUris({
+        uris: [ editionUri ],
+        attributes: [ 'info', 'labels', 'popularity' ],
+        relatives: [ 'wdt:P50', 'wdt:P179', 'wdt:P629' ],
+      })
+      Object.values(entities).forEach(entity => {
+        entity.popularity.should.equal(0)
+      })
+    })
+
+    it('should return entities fresh popularity', async () => {
+      const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+      const entities = await getEntitiesAttributesByUris({
+        uris: [ editionUri ],
+        attributes: [ 'info', 'labels', 'popularity' ],
+        relatives: [ 'wdt:P50', 'wdt:P179', 'wdt:P629' ],
+        refresh: true,
+      })
+      Object.values(entities).forEach(entity => {
+        if (entity.type === 'edition') entity.popularity.should.equal(0)
+        else entity.popularity.should.be.above(0)
+      })
     })
   })
 

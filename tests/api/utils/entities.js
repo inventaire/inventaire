@@ -27,6 +27,18 @@ export const getByUri = (uri, refresh) => {
   .then(res => res.entities[uri])
 }
 
+export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }) {
+  const query = {
+    action: 'by-uris',
+    uris: forceArray(uris).join('|'),
+    attributes: forceArray(attributes).join('|'),
+    refresh,
+  }
+  if (relatives) query.relatives = forceArray(relatives).join('|')
+  const { entities } = await publicReq('get', buildUrl('/api/entities', query))
+  return entities
+}
+
 export const findOrIndexEntities = async (uris, index = 'wikidata') => {
   const ids = map(uris, unprefixify)
   const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))

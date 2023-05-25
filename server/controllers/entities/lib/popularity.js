@@ -1,4 +1,5 @@
 import CONFIG from 'config'
+import { map } from 'lodash-es'
 import { initJobQueue } from '#db/level/jobs'
 import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
@@ -83,3 +84,11 @@ async function popularityWorker (jobId, uri) {
 }
 
 const popularityJobQueue = initJobQueue('entity:popularity', popularityWorker, 1)
+
+export async function addEntitiesPopularities ({ entities, refresh }) {
+  const uris = map(entities, 'uri')
+  const scoresByUri = await getEntitiesPopularities({ uris, refresh })
+  entities.forEach(entity => {
+    entity.popularity = scoresByUri[entity.uri]
+  })
+}
