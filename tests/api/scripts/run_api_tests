@@ -4,31 +4,10 @@ export NODE_ENV=tests-api NODE_APP_INSTANCE=mocha
 
 timeout=$(node -p 'require("config").mocha.timeout')
 
-# Warn if the file doesn't contain ".test.js"
-check_filename(){
-  echo "$1" | grep ".test.js" > /dev/null || {
-    echo -e "\e[0;33mWARNING: test file misses .test.js in filename: $1\e[0m"
-  }
-}
-
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]
 then
-  find tests/api -type f -name *.test.js |
-    xargs mocha --exit $MOCHA_OPTIONS --timeout "$timeout"
+  mocha --exit $MOCHA_OPTIONS --timeout "$timeout" --recursive ./tests/api
 else
-  files=''
-  for arg in $@
-  do
-    # If this argument is a file path
-    if [[ -f "$arg" ]] ; then
-      check_filename $arg
-      files="$files $arg"
-    else
-      # Add the directory test files to the list
-      files="$files $(find $arg -type f -name *.test.js)"
-    fi
-  done
-  echo "files: $files"
-  mocha --exit $MOCHA_OPTIONS --timeout "$timeout" --color $files
+  mocha --exit $MOCHA_OPTIONS --timeout "$timeout" --color --recursive "$@"
 fi

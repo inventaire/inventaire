@@ -1,7 +1,10 @@
 import 'should'
 import _ from '#builders/utils'
 import entityFormatter from '#db/elasticsearch/formatters/entity'
-import Q535 from './fixtures/Q535.customized.json.js'
+import { absolutePath } from '#lib/absolute_path'
+import { requireJson } from '#lib/utils/json'
+
+const Q535 = requireJson(absolutePath('tests', 'unit/indexation/fixtures/Q535.customized.json'))
 
 describe('indexation: entity formatter: dump/API entity format', () => {
   it('should find the type', async () => {
