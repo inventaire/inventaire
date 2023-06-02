@@ -3,11 +3,9 @@
 set -eu
 
 echo -e "\e[0;30mstarting to lint...\e[0m"
-# wanted to "grep ✗" but it doesnt stops the commit (exit 0)
 npm run lint-staged
 
-# if package.json was modified, update jsconfig.json
-git status --porcelain -- package.json scripts/generate_jsconfig.js | grep --extended-regexp "^ ?M" > /dev/null && {
+git status --porcelain -- package.json jsconfig.json scripts/update_jsconfig.js | grep --extended-regexp "^ ?M" > /dev/null && {
   echo -e "\e[0;30mupdating jsconfig.json...\e[0m"
   npm run update-jsconfig
 } || true
