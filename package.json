@@ -103,7 +103,6 @@
     "eslint-plugin-n": "^15.6.0",
     "eslint-plugin-promise": "^6.0.0",
     "form-data": "^4.0.0",
-    "level-test": "^8.0.0",
     "mocha": "^10.2.0",
     "papaparse": "^5.2.0",
     "should": "^11.1.1",

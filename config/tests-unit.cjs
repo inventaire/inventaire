@@ -6,7 +6,6 @@ module.exports = {
   env: 'tests-unit',
   verbose: false,
   leveldb: {
-    memoryBackend: true,
     ttlCheckFrequency: 100,
   },
   useSlowPasswordHashFunction: false,

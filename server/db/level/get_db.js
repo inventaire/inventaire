@@ -1,10 +1,10 @@
 import CONFIG from 'config'
 import { absolutePath } from '#lib/absolute_path'
-import { warn, info } from '#lib/utils/logs'
+import { info } from '#lib/utils/logs'
 
 const dbFolder = absolutePath('root', 'db')
 const { suffix } = CONFIG.db
-const { inMemoryLRUCacheSize, memoryBackend } = CONFIG.leveldb
+const { inMemoryLRUCacheSize } = CONFIG.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`
 const cacheDbPathBase = `${dbFolder}/leveldb_cache`
 const generalDbFolderPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase
@@ -29,20 +29,9 @@ const leveldownOptions = {
   maxOpenFiles: Infinity,
 }
 
-export let generalDb
-export let cacheDb
-
-if (memoryBackend) {
-  warn('leveldb in memory')
-  const { default: levelTest } = await import('level-test')
-  const level = levelTest()
-  generalDb = level()
-  cacheDb = level()
-} else {
-  const { default: levelParty } = await import('level-party')
-  const level = levelParty
-  info(generalDbFolderPath, 'general leveldb path')
-  info(cacheDbFolderPath, 'cache leveldb path')
-  generalDb = level(generalDbFolderPath, leveldownOptions)
-  cacheDb = level(cacheDbFolderPath, leveldownOptions)
-}
+const { default: levelParty } = await import('level-party')
+const level = levelParty
+info(generalDbFolderPath, 'general leveldb path')
+info(cacheDbFolderPath, 'cache leveldb path')
+export const generalDb = level(generalDbFolderPath, leveldownOptions)
+export const cacheDb = level(cacheDbFolderPath, leveldownOptions)
