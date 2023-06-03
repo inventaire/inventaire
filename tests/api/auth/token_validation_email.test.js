@@ -10,7 +10,7 @@ import { rawRequest } from '../utils/request.js'
 import { getUserGetter, publicReq } from '../utils/utils.js'
 
 const host = CONFIG.getPublicOrigin()
-const db = dbFactory('users')
+const db = await dbFactory('users')
 const endpoint = '/api/token?action=validation-email'
 
 describe('token:validation-email', () => {

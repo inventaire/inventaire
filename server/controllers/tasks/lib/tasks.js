@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
 import Task from '#models/task'
 
-const db = dbFactory('tasks')
+const db = await dbFactory('tasks')
 
 export async function createTask (suspectUri, type, entitiesType, suggestions) {
   // suggestions may only be an array of objects with a 'uri' key

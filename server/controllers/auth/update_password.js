@@ -5,7 +5,7 @@ import { error_ } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
 import User from '#models/user'
 
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 const sanitization = {
   'current-password': {

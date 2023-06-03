@@ -1,11 +1,11 @@
 import _ from '#builders/utils'
-import usersDbFactory from '#db/couchdb/base'
+import dbFactory from '#db/couchdb/base'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { success } from '#lib/utils/logs'
 
 const users = Object.values(hardCodedUsers)
 
-const usersDb = usersDbFactory('users')
+const usersDb = await dbFactory('users')
 
 export default function () {
   // Updating sequentially so that blue-cot initialize only a cookie session only once.

@@ -7,7 +7,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { log, LogError, LogErrorAndRethrow } from '#lib/utils/logs'
 import Invited from '#models/invited'
 
-const db = dbFactory('users', 'invited')
+const db = await dbFactory('users', 'invited')
 
 export const findInvitationByEmail = findOneByEmail.bind(null, db)
 

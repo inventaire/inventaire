@@ -1,7 +1,7 @@
 import dbFactory from '#db/couchdb/base'
 import Item from '#models/item'
 
-const db = dbFactory('items')
+const db = await dbFactory('items')
 
 let getItemsByEntity, getItemsByPreviousEntity
 const importCircularDependencies = async () => {

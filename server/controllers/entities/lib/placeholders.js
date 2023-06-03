@@ -11,7 +11,7 @@ import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
-const db = dbFactory('entities')
+const db = await dbFactory('entities')
 
 const PlaceholderHandler = actionName => {
   const modelFnName = `${actionName}Placeholder`

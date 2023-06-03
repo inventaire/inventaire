@@ -12,7 +12,7 @@ import User from '#models/user'
 import { omitPrivateData } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
-const db = dbFactory('users')
+const db = await dbFactory('users')
 const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
 const searchUsersByDistance = searchUsersByDistanceFactory('users')
 

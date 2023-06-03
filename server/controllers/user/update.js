@@ -11,7 +11,7 @@ import User from '#models/user'
 const { attributes, validations, formatters } = User
 
 const { updatable, concurrencial, acceptNullValue } = attributes
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 const sanitization = {
   attribute: {},

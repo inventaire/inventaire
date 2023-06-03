@@ -4,7 +4,7 @@ import { firstDoc } from '#lib/couch'
 import { BasicUpdater } from '#lib/doc_updates'
 
 const { newsKey } = CONFIG.activitySummary
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 const waitingForSummary = limit => {
   // Pick users with next summary between epoch 0 and now

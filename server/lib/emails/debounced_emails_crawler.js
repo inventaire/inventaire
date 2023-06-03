@@ -1,10 +1,10 @@
 import CONFIG from 'config'
-import dbFactory from '#db/level/get_sub_db'
+import leveldbFactory from '#db/level/get_sub_db'
 import { expired } from '#lib/time'
 import { LogError } from '#lib/utils/logs'
 import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
-const db = dbFactory('waiting', 'utf8')
+const db = leveldbFactory('waiting', 'utf8')
 const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
 
 export function initDebouncedEmailsCrawler () {

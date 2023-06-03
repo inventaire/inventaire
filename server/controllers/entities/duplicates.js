@@ -7,7 +7,7 @@
 import dbFactory from '#db/couchdb/base'
 
 const designDocName = 'entities_deduplicate'
-const db = dbFactory('entities', designDocName)
+const db = await dbFactory('entities', designDocName)
 
 const controller = async () => {
   const names = await getHomonymes()

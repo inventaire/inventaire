@@ -1,11 +1,11 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import dbFactory from '#db/level/get_sub_db'
+import leveldbFactory from '#db/level/get_sub_db'
 import { error_ } from '#lib/error/error'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 
-const db = dbFactory('hosts-bans', 'json')
+const db = leveldbFactory('hosts-bans', 'json')
 const { baseBanTime, banTimeIncreaseFactor } = CONFIG.outgoingRequests
 // Using port to keep instances data separated
 // to avoid overriding data between instances

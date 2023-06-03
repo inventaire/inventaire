@@ -11,7 +11,7 @@ import Listing from '#models/listing'
 
 const { updatable: updateAttributes } = listingAttributes
 
-const db = dbFactory('lists')
+const db = await dbFactory('lists')
 
 export const getListingById = db.get
 export const getListingsByIds = db.byIds

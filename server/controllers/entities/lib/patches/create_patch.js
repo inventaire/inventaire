@@ -3,7 +3,7 @@ import Patch from '#models/patch'
 import { getEntityLastPatches } from './patches.js'
 
 const designDocName = 'patches'
-const db = dbFactory('patches', designDocName)
+const db = await dbFactory('patches', designDocName)
 
 export default async params => {
   const { currentDoc, updatedDoc, userId } = params

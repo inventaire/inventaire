@@ -10,7 +10,7 @@ import checkEntity from './lib/check_entity.js'
 
 const { nice } = CONFIG
 
-const db = dbFactory('entities')
+const db = await dbFactory('entities')
 const batchLength = 1000
 
 const sanitization = {

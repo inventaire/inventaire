@@ -8,7 +8,7 @@ import Patch from '#models/patch'
 
 const designDocName = 'patches'
 
-export const db = dbFactory('patches', designDocName)
+export const db = await dbFactory('patches', designDocName)
 
 export const getPatchById = db.get
 

@@ -4,7 +4,7 @@ import { ignoreNotFound } from '#lib/couch'
 import Relation from '#models/relation'
 import userRelativeRequest from './user-relative_request.js'
 
-const db = dbFactory('users', 'relations')
+const db = await dbFactory('users', 'relations')
 
 const getUsersRelation = (userId, otherId) => db.get(Relation.docId(userId, otherId))
 

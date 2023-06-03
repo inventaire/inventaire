@@ -22,8 +22,8 @@ import { log, LogError } from '#lib/utils/logs'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
 
-const entitiesDb = dbFactory('entities')
-const patchesDb = dbFactory('patches')
+const entitiesDb = await dbFactory('entities')
+const patchesDb = await dbFactory('patches')
 const userId = hardCodedUsers.updater._id
 
 const [ updateFnFilePath ] = process.argv.slice(2)

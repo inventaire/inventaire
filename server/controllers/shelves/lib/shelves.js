@@ -12,7 +12,7 @@ import Shelf from '#models/shelf'
 
 const { updatable } = shelfAttributes
 
-const db = dbFactory('shelves')
+const db = await dbFactory('shelves')
 
 export const createShelf = async newShelf => {
   const shelf = Shelf.create(newShelf)

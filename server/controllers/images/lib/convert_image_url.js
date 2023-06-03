@@ -4,7 +4,7 @@ import { error_ } from '#lib/error/error'
 import { log } from '#lib/utils/logs'
 import importImage from './import_image.js'
 
-const db = dbFactory('images')
+const db = await dbFactory('images')
 
 export default ({ url: sourceImageUrl, container }) => importAndAddImage(container, sourceImageUrl)
 

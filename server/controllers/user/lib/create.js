@@ -6,7 +6,7 @@ import { success, Log } from '#lib/utils/logs'
 import User from '#models/user'
 import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
 
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 export default async (username, email, creationStrategy, language, password) => {
   preventMultiAccountsCreation(username)

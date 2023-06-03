@@ -4,7 +4,7 @@ import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
 import Element from '#models/element'
 
-const db = dbFactory('elements')
+const db = await dbFactory('elements')
 
 const elements_ = {
   byId: db.get,

@@ -2,7 +2,7 @@ import dbFactory from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import Comment from '#models/comment'
 
-const db = dbFactory('comments')
+const db = await dbFactory('comments')
 
 export default {
   byId: db.get,

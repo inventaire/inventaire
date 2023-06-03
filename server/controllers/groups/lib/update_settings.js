@@ -8,7 +8,7 @@ import { addSlug } from './slug.js'
 
 const { validations, formatters } = Group
 const { acceptNullValue, updatable } = groupAttributes
-const db = dbFactory('groups')
+const db = await dbFactory('groups')
 
 export default async (data, userId) => {
   const { group: groupId, attribute } = data

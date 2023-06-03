@@ -3,7 +3,7 @@ import { firstDoc } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import Activity from '#models/activity'
 
-const db = dbFactory('activities')
+const db = await dbFactory('activities')
 
 // activities are stored as documents in order to allow
 // grouping items (and entities) under the same activity, this

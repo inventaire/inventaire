@@ -7,7 +7,7 @@ import { createUserEmail } from '../fixtures/users.js'
 import { getUserGetter } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=email-confirmation'
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 describe('auth:email-confirmation', () => {
   it('should send a confirmation if email is not validated ', async () => {

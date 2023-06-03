@@ -8,7 +8,7 @@ import { Log } from '#lib/utils/logs'
 import Group from '#models/group'
 import { addSlug } from './slug.js'
 
-const db = dbFactory('groups')
+const db = await dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
 // using a view to avoid returning users or relations

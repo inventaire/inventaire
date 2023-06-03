@@ -12,7 +12,7 @@ import { getRandomString } from '#lib/utils/random_string'
 const { tokenDaysToLive } = CONFIG
 
 const testToken = pw_.verify
-const db = dbFactory('users')
+const db = await dbFactory('users')
 const wrappedUpdate = WrappedUpdater(db)
 export const tokenLength = 32
 

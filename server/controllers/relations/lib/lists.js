@@ -4,7 +4,7 @@ import dbFactory from '#db/couchdb/base'
 import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
 import parseRelations from './parse_relations.js'
 
-const db = dbFactory('users', 'relations')
+const db = await dbFactory('users', 'relations')
 
 const getAllUserRelations = (userId, includeDocs = false) => {
   return db.view('relations', 'byStatus', {

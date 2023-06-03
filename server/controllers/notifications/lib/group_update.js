@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import Notification from '#models/notification'
 
-const db = dbFactory('notifications')
+const db = await dbFactory('notifications')
 
 const groupAttributeWithNotification = [
   'name',

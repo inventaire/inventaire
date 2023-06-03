@@ -2,10 +2,12 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import bundlesFactory from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
+import { waitForCouchInit } from '#db/couchdb/init'
 import { memoize } from '#lib/utils/memoize'
 import getDbApi from './cot_base.js'
 
-export default (dbBaseName, designDocName) => {
+export default async function (dbBaseName, designDocName) {
+  await waitForCouchInit()
   const dbName = CONFIG.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,
   // assumes that it is the default design doc, which has the same name as the dbBaseName

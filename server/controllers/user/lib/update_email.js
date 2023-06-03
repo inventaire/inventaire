@@ -2,7 +2,7 @@ import { sendValidationEmail } from '#controllers/user/lib/token'
 import dbFactory from '#db/couchdb/base'
 import User from '#models/user'
 
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 export default async function (user, email) {
   user = User.updateEmail(user, email)

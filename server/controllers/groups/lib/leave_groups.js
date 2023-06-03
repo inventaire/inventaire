@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import Group from '#models/group'
 
-const db = dbFactory('groups')
+const db = await dbFactory('groups')
 
 let getGroupById, getGroupsByUser
 const importCircularDependencies = async () => {

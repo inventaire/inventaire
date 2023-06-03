@@ -3,7 +3,7 @@ import { setDeletedTrue } from '#lib/couch'
 import { emit, radio } from '#lib/radio'
 import { Log, logError } from '#lib/utils/logs'
 
-const db = dbFactory('groups')
+const db = await dbFactory('groups')
 
 export default function () {
   radio.on('group:leave', deleteGroupIfEmpty)

@@ -8,7 +8,7 @@ import { shouldNotBeCalled } from '#tests/unit/utils'
 import { authReq, getReservedUser } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=update-password'
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 describe('auth:update-password', () => {
   it('should reject short new password', async () => {

@@ -4,7 +4,7 @@ import { info, LogError } from '#lib/utils/logs'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import User from '#models/user'
 
-const db = dbFactory('users')
+const db = await dbFactory('users')
 
 export default userId => {
   return getItemsByOwner(userId)

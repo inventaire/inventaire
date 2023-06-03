@@ -3,7 +3,7 @@ import { minKey, maxKey } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import Notification from '#models/notification'
 
-const db = dbFactory('notifications')
+const db = await dbFactory('notifications')
 
 export const getNotificationsByUserId = userId => {
   assert_.string(userId)

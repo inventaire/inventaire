@@ -3,7 +3,7 @@ import { emit } from '#lib/radio'
 import Group from '#models/group'
 import initMembershipUpdateHooks from './membership_update_hooks.js'
 
-const db = dbFactory('groups')
+const db = await dbFactory('groups')
 
 export default async (action, params) => {
   const { reqUserId, group: groupId, user: secondaryUserId } = params

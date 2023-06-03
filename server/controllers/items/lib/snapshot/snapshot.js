@@ -15,14 +15,14 @@
 // without having to query from 3 to 10+ entities per item
 
 import pTimeout from 'p-timeout'
-import dbFactory from '#db/level/get_sub_db'
+import leveldbFactory from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import refreshSnapshot from './refresh_snapshot.js'
 
-const db = dbFactory('snapshot', 'json')
+const db = leveldbFactory('snapshot', 'json')
 
 export async function addSnapshotToItem (item) {
   if (item.snapshot) return item

@@ -10,7 +10,7 @@ import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import Transaction from '#models/transaction'
 
-const db = dbFactory('transactions')
+const db = await dbFactory('transactions')
 
 export const getTransactionById = db.get
 export const getTransactionsByUser = userId => {

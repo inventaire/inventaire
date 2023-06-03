@@ -5,7 +5,7 @@ import { uniqByKey } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 
-const db = dbFactory('items')
+const db = await dbFactory('items')
 
 export const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
   const visibilityKeys = await getAllowedVisibilityKeys(ownerId, reqUserId)

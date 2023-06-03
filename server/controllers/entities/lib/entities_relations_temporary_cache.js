@@ -1,13 +1,13 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
-import dbFactory from '#db/level/get_sub_db'
+import leveldbFactory from '#db/level/get_sub_db'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
 
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
-const db = dbFactory('entities-relations', 'utf8')
+const db = leveldbFactory('entities-relations', 'utf8')
 
 // This module implements a custom ttl, rather than using level-ttl
 // to be able to trigger actions once the ttl expired

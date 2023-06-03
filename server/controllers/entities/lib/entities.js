@@ -11,7 +11,7 @@ import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
 
-const db = dbFactory('entities')
+const db = await dbFactory('entities')
 
 export const getEntityById = db.get
 export const getEntitiesByIds = db.byIds

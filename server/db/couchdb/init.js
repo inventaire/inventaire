@@ -4,7 +4,6 @@ import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
 import { log } from '#lib/utils/logs'
 import { databases } from './databases.js'
-import initHardCodedDocuments from './init_hard_coded_documents.js'
 
 const dbBaseUrl = CONFIG.db.getOrigin()
 const formattedList = []
@@ -31,7 +30,8 @@ const init = async ({ preload }) => {
 
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
     if (_.objLength(res.operations) !== 0) log(res, 'couch init')
-    await initHardCodedDocuments()
+    // Work around circular dependencies
+    setImmediate(afterInit)
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
 
@@ -49,4 +49,9 @@ export async function waitForCouchInit (options = {}) {
   // Return the same promises to all consumers
   _waitForCouchInit = _waitForCouchInit || init(options)
   return _waitForCouchInit
+}
+
+async function afterInit () {
+  const { default: initHardCodedDocuments } = await import('./init_hard_coded_documents.js')
+  await initHardCodedDocuments()
 }

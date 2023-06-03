@@ -9,7 +9,7 @@ import { filterPrivateAttributes } from './filter_private_attributes.js'
 import { addSnapshotToItem } from './snapshot/snapshot.js'
 import { validateItemsAsync } from './validate_item_async.js'
 
-const db = dbFactory('items')
+const db = await dbFactory('items')
 
 export const getItemById = db.get
 export const getItemsByIds = db.byIds

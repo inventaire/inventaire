@@ -2,7 +2,7 @@ import { omit } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 
-const db = dbFactory('oauth_tokens')
+const db = await dbFactory('oauth_tokens')
 const idAttribute = 'accessToken'
 
 export const getOauthTokenbyId = async id => {
