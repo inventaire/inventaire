@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import _ from '#builders/utils'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
@@ -11,6 +12,11 @@ import { publicReq } from './utils.js'
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
 
 const endpoint = '/api/search'
+
+await waitForElasticsearchInit()
+// If Elasticsearch just started, it might answer with a "503 no_shard_available_action_exception"
+// so better to wait a bit
+await wait(500)
 
 export async function getIndexedDoc (index, id, options = {}) {
   assert_.string(index)

@@ -8,7 +8,7 @@ import reindexOnChange from './reindex_on_change.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
-export default async () => {
+export async function waitForElasticsearchInit () {
   await waitForElastic()
   await ensureIndexesExist()
   startCouchElasticSync()
