@@ -85,7 +85,7 @@ const formatValidEntity = async entity => {
   entity.labels = simplifyLabels(entity.labels)
   entity.aliases = simplifyAliases(entity.aliases)
   entity.descriptions = simplifyDescriptions(entity.descriptions)
-  entity.sitelinks = simplifySitelinks(entity.sitelinks)
+  entity.sitelinks = simplifySitelinks(entity.sitelinks, { keepBadges: true })
   entity.claims = formatClaims(entity.claims)
   entity.originalLang = getOriginalLang(entity.claims)
 

@@ -136,6 +136,17 @@ describe('summaries', () => {
         },
       })
     })
+
+    it('should ignore sitelinks that are redirections', async () => {
+      const uri = 'wd:Q3020076'
+      const entity = await getByUri(uri)
+      if (!entity.sitelinks.frwiki?.badges.includes('Q70893996')) {
+        throw new Error('Obsolete test: this test depends on the fact that wd:Q3020076 frwiki sitelink has a Q70893996 badge')
+      }
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const frwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'frwiki')
+      should(frwikiSitelinkData).not.be.ok()
+    })
   })
 
   it('should return a tailored subset when passed langs parameters', async () => {
