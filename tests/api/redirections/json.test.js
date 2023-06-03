@@ -134,7 +134,9 @@ describe('json redirections', () => {
 })
 
 const getGroupMembersIds = ({ admins, members }) => {
-  return admins.map(getGroupMemberId)
-  .concat(members.map(getGroupMemberId))
+  return [
+    ...admins.map(getGroupMemberId),
+    ...members.map(getGroupMemberId),
+  ]
 }
 const getGroupMemberId = ({ user }) => user

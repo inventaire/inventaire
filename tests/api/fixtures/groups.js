@@ -1,3 +1,4 @@
+import { getGroupById } from '#controllers/groups/lib/groups'
 import { randomWords } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -76,8 +77,10 @@ export const getSomeGroupWithAMember = () => {
 }
 
 let groupPromise
-export const getSomeGroup = () => {
+export async function getSomeGroup () {
   // Resolves to a group with userA as admin and userB as member
   groupPromise = groupPromise || getSomeGroupWithAMember().then(({ group }) => group)
-  return groupPromise
+  const group = await groupPromise
+  // Get fresh data
+  return getGroupById(group._id)
 }
