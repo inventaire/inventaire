@@ -11,7 +11,6 @@ import { request, rawRequest } from '../utils/request.js'
 
 const origin = CONFIG.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
-let twoFriendsPromise
 
 let getUser, getReservedUser, updateUser
 const importCircularDependencies = async () => {
@@ -83,11 +82,6 @@ export const getUsersWithoutRelation = async () => {
   return { userA, userB }
 }
 
-export const getTwoFriends = () => {
-  twoFriendsPromise = twoFriendsPromise || _getTwoFriends()
-  return twoFriendsPromise
-}
-
 export const getRandomPosition = () => {
   return [
     getRandomLatitude(),
@@ -97,7 +91,7 @@ export const getRandomPosition = () => {
 export const getRandomLatitude = () => randomCoordinate(-90, 90)
 export const getRandomLongitude = () => randomCoordinate(-180, 180)
 
-const _getTwoFriends = async () => {
+export async function getTwoFriends () {
   const [ userA, userB ] = await Promise.all([
     getUser(),
     getReservedUser(),
