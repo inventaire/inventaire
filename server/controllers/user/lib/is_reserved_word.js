@@ -27,6 +27,7 @@ const reservedWords = new Set([
   'item',
   'items',
   'last',
+  'latest',
   'lend',
   'listings',
   'local',

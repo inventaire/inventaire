@@ -14,7 +14,7 @@ export const ownerSafeData = user => {
 }
 
 // Adapts the result to the requester authorization level
-export const omitPrivateData = (reqUserId, networkIds, extraAttribute) => {
+export const omitPrivateData = (reqUserId, networkIds = [], extraAttribute) => {
   const attributes = getAttributes(extraAttribute)
   return userDoc => {
     if (userDoc.type === 'deletedUser') return userDoc
