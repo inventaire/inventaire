@@ -203,6 +203,16 @@ describe('entities:update-claims', () => {
     })
   })
 
+  it('should reject removing the wdt:P31 claim', async () => {
+    const edition = await createEdition()
+    await updateClaim({ uri: edition.uri, property: 'wdt:P31', oldValue: 'wd:Q3331189', newValue: null })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
+    })
+  })
+
   it('should reject a non-allowlisted value for a given entity type', async () => {
     const edition = await createEdition()
     await updateClaim({ uri: edition.uri, property: 'wdt:P31', oldValue: 'wd:Q3331189', newValue: 'wd:Q5' })

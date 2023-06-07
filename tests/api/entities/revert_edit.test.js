@@ -33,7 +33,7 @@ describe('entities:revert-edit', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.deepEqual("wdt:P31 array can't be empty")
+      err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
     })
   })
 
