@@ -3,7 +3,7 @@ import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities.js'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
-describe('entities:update-claims', () => {
+describe('entities:update-claims:inv', () => {
   it('should reject without uri', async () => {
     await updateClaim({ property: 'wdt:P123' })
     .then(shouldNotBeCalled)

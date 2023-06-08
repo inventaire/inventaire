@@ -7,7 +7,7 @@ import { authReq } from '../utils/utils.js'
 
 const humanPromise = createHuman()
 
-describe('entities:update-labels', () => {
+describe('entities:update-labels:inv', () => {
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {
