@@ -5,6 +5,7 @@ import { error_ } from '#lib/error/error'
 import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
+import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import properties from './properties/properties_values_constraints.js'
@@ -15,6 +16,8 @@ import wdOauth from './wikidata_oauth.js'
 
 export default async (user, id, property, oldValue, newValue) => {
   wdOauth.validate(user)
+
+  await validateWdEntityUpdate({ id, property, oldValue, newValue })
 
   if ((properties[property].datatype === 'entity')) {
     if (_.isInvEntityUri(newValue)) {
