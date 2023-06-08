@@ -187,6 +187,16 @@ describe('entities:update-claims', () => {
     })
   })
 
+  it('should reject changing the wdt:P31 type', async () => {
+    const edition = await createEdition()
+    await updateClaim({ uri: edition.uri, property: 'wdt:P31', oldValue: 'wd:Q3331189', newValue: 'wd:Q47461344' })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid property value for entity type "edition"')
+    })
+  })
+
   it('should accept an allowlisted value for a constrained property', async () => {
     const edition = await createEdition()
     const res = await updateClaim({ uri: edition.uri, property: 'wdt:P437', newValue: 'wd:Q128093' })
