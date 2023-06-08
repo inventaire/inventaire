@@ -46,3 +46,17 @@ async function getResolvedUris (uris) {
   const entities = await getEntitiesByUris({ uris, list: true, refresh: true })
   return map(entities, 'uri')
 }
+
+export async function redirectCachedRelations (fromUri, toUri) {
+  await Promise.all(cachedRelationProperties.map(redirectPropertyCachedRelations(fromUri, toUri)))
+}
+
+const redirectPropertyCachedRelations = (fromUri, toUri) => async property => {
+  const subjectUris = await entitiesRelationsTemporaryCache.get(property, fromUri)
+  await Promise.all(subjectUris.flatMap(subjectUri => {
+    return [
+      entitiesRelationsTemporaryCache.set(subjectUri, property, toUri),
+      entitiesRelationsTemporaryCache.del(subjectUri, property, fromUri),
+    ]
+  }))
+}
