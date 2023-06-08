@@ -1,3 +1,4 @@
+import { compact, map } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import getEntitiesByUris from './get_entities_by_uris.js'
@@ -29,12 +30,19 @@ export async function cacheEntityRelations (invEntityUri) {
 export async function getCachedRelations (valueUri, property, formatEntity) {
   const subjectUris = await entitiesRelationsTemporaryCache.get(property, valueUri)
   // Always request refreshed data to be able to confirm or not the cached relation
-  const entities = await getEntitiesByUris({ uris: subjectUris, list: true, refresh: true })
-  return entities
-  .filter(relationIsConfirmedByPrimaryData(property, valueUri))
-  .map(formatEntity)
+  let entities = await getEntitiesByUris({ uris: subjectUris, list: true, refresh: true })
+  entities = await Promise.all(entities.map(relationIsConfirmedByPrimaryData(property, valueUri)))
+  return compact(entities).map(formatEntity)
 }
 
-export const relationIsConfirmedByPrimaryData = (property, valueUri) => entity => {
-  return entity.claims[property] != null && entity.claims[property].includes(valueUri)
+export const relationIsConfirmedByPrimaryData = (property, valueUri) => async entity => {
+  // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
+  const canonicalValuesUris = await getResolvedUris(entity.claims[property])
+  if (canonicalValuesUris.includes(valueUri)) return entity
+}
+
+async function getResolvedUris (uris) {
+  if (!uris) return []
+  const entities = await getEntitiesByUris({ uris, list: true, refresh: true })
+  return map(entities, 'uri')
 }

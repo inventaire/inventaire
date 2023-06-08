@@ -109,9 +109,11 @@ const sortTypesByScore = worksByTypes => {
   return worksByTypes
 }
 
-const formatEntity = entity => ({
-  uri: entity.uri,
-  date: firstClaim(entity, 'wdt:P577'),
-  serie: firstClaim(entity, 'wdt:P179'),
-  type: getPluralType(entity.type),
-})
+const formatEntity = entity => {
+  return {
+    uri: entity.uri,
+    date: firstClaim(entity, 'wdt:P577'),
+    serie: firstClaim(entity, 'wdt:P179'),
+    type: getPluralType(entity.type),
+  }
+}
