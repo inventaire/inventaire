@@ -1,4 +1,5 @@
 import _ from '#builders/utils'
+import { info } from '#lib/utils/logs'
 import getSerieParts from './get_serie_parts.js'
 
 let getItemsByEntity, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
@@ -22,6 +23,7 @@ export async function buildPopularityByUri (uri) {
   const getter = popularityGettersByType[type]
   if (getter == null) return 0
 
+  info(`building popularity: ${type} ${uri}`)
   const score = await getter(uri)
   return addBonusPoints(uri, score)
 }
