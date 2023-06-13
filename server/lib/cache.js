@@ -23,25 +23,22 @@ export const cache_ = {
   // - dry: return what's in cache or nothing: if the cache is empty, do not call the function
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
-  // - dryAndCache: return what's in cache, but will then populate the cache in the background
   // - ttl: customize how long the cached data should be kept before being deleted
   get: async params => {
     const { key, fn, refresh, dryFallbackValue, ttl = oneMonth } = params
-    let { dry, dryAndCache } = params
+    let { dry } = params
 
     if (refresh) {
       dry = false
-      dryAndCache = false
     }
     if (dry == null) dry = false
-    if (dryAndCache == null) dryAndCache = false
 
     assert_.string(key)
     if (fn || !dry) assert_.function(fn)
 
     try {
       const cachedValue = refresh ? null : await checkCache(key)
-      return await requestOnlyIfNeeded(key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl)
+      return await requestOnlyIfNeeded(key, cachedValue, fn, dry, dryFallbackValue, ttl)
     } catch (err) {
       const label = `final cache_ err: ${key}`
       // not logging the stack trace in case of 404 and alikes
@@ -68,7 +65,7 @@ const checkCache = async key => {
   .catch(catchNotFound)
 }
 
-const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallbackValue, ttl) => {
+const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryFallbackValue, ttl) => {
   if (cachedValue != null) {
     // info(`from cache: ${key}`)
     return JSON.parse(cachedValue)
@@ -76,12 +73,6 @@ const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryAndCache, dryFallback
 
   if (dry) {
     // info(`empty cache on dry get: ${key}`)
-    return dryFallbackValue
-  }
-
-  if (dryAndCache) {
-    // info(`returning and populating cache: ${key}`)
-    populate(key, fn, ttl).catch(LogError(`dryAndCache err: ${key}`))
     return dryFallbackValue
   }
 

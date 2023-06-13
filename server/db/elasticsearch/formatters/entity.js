@@ -118,13 +118,9 @@ export default async (entity, options = {}) => {
 
   entity.popularity = await getEntityPopularity({
     uri: entity.uri,
-    // Only use already cached values in quick mode, instead of the default dryAndCache,
-    // as that would mean spamming Wikidata when reindexing all entities,
-    // and would result in that process being extremely slow, and possibibly crash
-    // as we aren't even waiting for the dryAndCache response to continue.
-    // But, do not set dry=true when reindexing the rest of the time, as that would
-    // in most cases mean never populating the popularity
-    dry: options.quick,
+    // Do not trigger cache population in quick mode, as that would mean adding
+    // all the entities to the popularity job queue
+    populateCacheOnCacheMiss: !options.quick,
   })
 
   return entity
