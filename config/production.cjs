@@ -30,6 +30,9 @@ module.exports = {
     'inv:deduplicate': {
       run: false,
     },
+    'entity:popularity': {
+      run: false,
+    },
   },
   remoteImages: {
     useProdCachedImages: false,

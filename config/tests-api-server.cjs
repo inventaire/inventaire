@@ -14,6 +14,9 @@ module.exports = {
     'inv:deduplicate': {
       run: true,
     },
+    'entity:popularity': {
+      run: true,
+    },
   },
   nice: false,
 }

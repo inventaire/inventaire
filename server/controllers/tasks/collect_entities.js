@@ -3,7 +3,7 @@ import _ from '#builders/utils'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import dbFactory from '#db/couchdb/base'
-import jobs_ from '#db/level/jobs'
+import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
 import checkEntity from './lib/check_entity.js'
@@ -87,4 +87,4 @@ const filterNotAlreadySuspectEntities = async uris => {
 
 export default { sanitization, controller }
 
-const invTasksEntitiesQueue = jobs_.initQueue('inv:deduplicate', deduplicateWorker, 1)
+const invTasksEntitiesQueue = initJobQueue('inv:deduplicate', deduplicateWorker, 1)

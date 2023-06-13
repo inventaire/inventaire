@@ -217,6 +217,9 @@ module.exports = {
     'inv:deduplicate': {
       run: true,
     },
+    'entity:popularity': {
+      run: true,
+    },
   },
 
   // give priority to more urgent matters

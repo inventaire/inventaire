@@ -5,8 +5,8 @@ const sanitization = {
   refresh: { optional: true },
 }
 
-const controller = async params => {
-  const scores = await getEntitiesPopularities(params)
+const controller = async ({ uris, refresh }) => {
+  const scores = await getEntitiesPopularities({ uris, refresh })
   return { scores }
 }
 

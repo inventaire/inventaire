@@ -119,21 +119,10 @@ describe('cache', () => {
         res.should.equal(dryFallbackValue)
       })
 
-      it('should populate the cache when requested', async () => {
-        const key = getRandomString(8)
-        const fn = getSomeRandomValue.bind(null, 'foo')
-        const res1 = await cache_.get({ key, fn, dryAndCache: true })
-        // Let the time to the cache to be actually populated
-        await wait(0)
-        should(res1).not.be.ok()
-        const res2 = await cache_.get({ key, dry: true })
-        should(res2).be.ok()
-      })
-
       it('should be overriden by refresh', async () => {
         const key = getRandomString(8)
         const fn = getSomeRandomValue.bind(null, 'foo')
-        const res1 = await cache_.get({ key, fn, refresh: true, dryAndCache: true })
+        const res1 = await cache_.get({ key, fn, refresh: true, dry: true })
         should(res1).be.ok()
       })
     })
