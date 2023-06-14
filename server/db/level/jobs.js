@@ -3,6 +3,7 @@ import CONFIG from 'config'
 import JobQueueServerAndClient from 'level-jobs'
 import JobsQueueClient from 'level-jobs/client.js'
 import { serverMode } from '#lib/server_mode'
+import { tenMinutes } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
 import getSubDb from './get_sub_db.js'
 
@@ -20,7 +21,9 @@ export const initJobQueue = (jobName, worker, maxConcurrency) => {
   if (serverMode && run) {
     info(`${jobName} job in server & client mode`)
     const depromisifiedWorker = workerDepromisifier(worker)
-    return promisifyApi(JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency))
+    const queue = JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency)
+    keepWorkerAwake(queue)
+    return promisifyApi(queue)
 
   // Otherwise, only push jobs to the queue, let another process run the jobs
   // See https://github.com/pgte/level-jobs#client-isolated-api
@@ -32,15 +35,27 @@ export const initJobQueue = (jobName, worker, maxConcurrency) => {
   }
 }
 
-const promisifyApi = API => {
+const promisifyApi = queue => {
   // Binding context, see https://nodejs.org/api/util.html#util_util_promisify_original
-  API.push = promisify(API.push).bind(API)
-  API.pushBatch = promisify(API.pushBatch).bind(API)
-  return API
+  queue.push = promisify(queue.push).bind(queue)
+  queue.pushBatch = promisify(queue.pushBatch).bind(queue)
+  return queue
 }
 
 const workerDepromisifier = workerFn => (jobId, payload, cb) => {
   return workerFn(jobId, payload)
   .then(() => cb())
   .catch(cb)
+}
+
+// level-jobs relies on level-hooks, which awakes the worker queue after put/del/batch ops,
+// but can not do it when those ops are called from another process (typically when
+// several process bind to the same leveldb via level-party). Thus the need to force
+// the queue awakening, by making a dummy op that will restart the queue, giving
+// a chance to jobs pushed by queue-client processes to be worked on, despite
+// the absence of new jobs on from the queue-server process
+function keepWorkerAwake (queue) {
+  setInterval(() => {
+    queue._work.del('fakekey')
+  }, tenMinutes)
 }
