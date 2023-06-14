@@ -47,10 +47,10 @@ export async function getEntityPopularity ({ uri, refresh = false, populateCache
 
   if (res === noPopularityCached) {
     if (populateCacheOnCacheMiss) {
-      info(`entity popularity not found, scheduling job to populate the cache: ${uri}`)
+      // info(`entity popularity not found, scheduling job to populate the cache: ${uri}`)
       popularityJobQueue.push(uri)
     } else {
-      info(`entity popularity not found, but populateCacheOnCacheMiss=false: no job scheduled: ${uri}`)
+      // info(`entity popularity not found, but populateCacheOnCacheMiss=false: no job scheduled: ${uri}`)
     }
     return 0
   } else {
@@ -60,12 +60,12 @@ export async function getEntityPopularity ({ uri, refresh = false, populateCache
 
 async function popularityWorker (jobId, uri) {
   try {
-    info(`popularity worker pending: ${uri}`)
+    // info(`popularity worker pending: ${uri}`)
     // Run the worker when the CPUs activity is below 50% load
     // to give the priority to more urgent matters,
     // such as answering users requests
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
-    info(`popularity worker running: ${uri}`)
+    // info(`popularity worker running: ${uri}`)
     const score = await cache_.get({
       key: `popularity:${uri}`,
       fn: buildPopularityByUri.bind(null, uri),
