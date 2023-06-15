@@ -8,8 +8,8 @@ const checkIntervalBase = 10000
 const maxCheckInterval = 5 * oneMinute
 
 const getCPUsAverageLoad = () => {
-  const [ last5MinutesAverageLoad ] = loadavg()
-  return last5MinutesAverageLoad / cpusCount
+  const [ lastMinuteAverageLoad ] = loadavg()
+  return lastMinuteAverageLoad / cpusCount
 }
 
 export async function waitForCPUsLoadToBeBelow ({ threshold }) {
