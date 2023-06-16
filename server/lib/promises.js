@@ -47,8 +47,3 @@ export const defer = () => {
     promise,
   }
 }
-
-export const Wait = ms => async res => {
-  await wait(ms)
-  return res
-}

@@ -3,8 +3,8 @@ import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
 import { catchDisabledEmails, getGroupAndUsersData, getParsedUsersIndexedByIds } from '#lib/emails/helpers'
 import { sendMail } from '#lib/emails/transporter'
-import { Wait } from '#lib/promises'
-import { info, LogError } from '#lib/utils/logs'
+import { wait } from '#lib/promises'
+import { logError, info, LogError } from '#lib/utils/logs'
 import email_ from './email.js'
 
 export default {
@@ -77,21 +77,22 @@ export default {
   },
 }
 
-const sendSequentially = (emails, label) => {
+async function sendSequentially (emails, label) {
   const totalEmails = emails.length
-  const sendNext = () => {
+
+  const sendNext = async () => {
     const nextEmail = emails.pop()
     if (!nextEmail) return
-
     info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)
-
-    // const email = emailFactory(nextEmail)
-    return sendMail(nextEmail)
-    .catch(LogError(`${label} (address: ${nextEmail.to} err)`))
+    try {
+      await sendMail(nextEmail)
+    } catch (err) {
+      logError(`${label} (address: ${nextEmail.to} err)`)
+    }
     // Wait to lower risk to trigger any API quota issue from the email service
-    .then(Wait(500))
+    await wait(500)
     // In any case, send the next
-    .then(sendNext)
+    return sendNext()
   }
 
   return sendNext()
