@@ -13,44 +13,51 @@ let ongoing = 0
 
 const { sparqlQuery } = wdk
 
-export default async sparql => {
+export async function makeSparqlRequest (sparql) {
   const url = sparqlQuery(sparql)
 
   if (waiting > 500) {
     throw error_.new('too many requests in queue', 500, { sparql })
   }
 
-  const persistentRequest = () => makeRequest(url)
-  .catch(err => {
-    if (err.statusCode === 429) {
-      warn(url, `${err.message}: retrying in 2s`)
-      return wait(2000).then(persistentRequest)
-    } else {
-      throw err
+  const persistentRequest = async () => {
+    try {
+      return await makeRequest(url)
+    } catch (err) {
+      if (err.statusCode === 429) {
+        warn(url, `${err.message}: retrying in 2s`)
+        await wait(2000)
+        return persistentRequest()
+      } else {
+        throw err
+      }
     }
-  })
+  }
 
   return persistentRequest()
 }
 
-const makeRequest = url => {
+async function makeRequest (url) {
   logStats()
   waiting += 1
 
-  const makePatientRequest = () => {
+  const makePatientRequest = async () => {
     if (ongoing >= maxConcurrency) {
-      return wait(100).then(makePatientRequest)
+      await wait(100)
+      return makePatientRequest()
     }
 
     waiting -= 1
     ongoing += 1
-    // Don't let a query block the queue more than 30 seconds
-    return requests_.get(url, { timeout: 30000 })
-    .then(res => simplifySparqlResults(res, { minimize: true }))
-    .finally(() => {
+    try {
+      // Don't let a query block the queue more than 30 seconds
+      const results = await requests_.get(url, { timeout: 30000 })
+      const simplifiedResults = simplifySparqlResults(results, { minimize: true })
+      return simplifiedResults
+    } finally {
       ongoing -= 1
       logStats()
-    })
+    }
   }
 
   return makePatientRequest()

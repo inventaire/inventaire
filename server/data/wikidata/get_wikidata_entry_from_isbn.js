@@ -2,7 +2,7 @@ import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
-import makeSparqlRequest from './make_sparql_request.js'
+import { makeSparqlRequest } from './make_sparql_request.js'
 
 export default async isbn => {
   const sparql = getQuery(isbn)

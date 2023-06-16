@@ -6,7 +6,7 @@ import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { radio } from '#lib/radio'
 import { info, LogErrorAndRethrow } from '#lib/utils/logs'
-import makeSparqlRequest from './make_sparql_request.js'
+import { makeSparqlRequest } from './make_sparql_request.js'
 import { queries, queriesPerProperty } from './queries/queries.js'
 
 const possibleQueries = Object.keys(queries)
