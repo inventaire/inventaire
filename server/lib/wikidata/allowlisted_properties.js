@@ -13,9 +13,23 @@ const editedProperties = Object.keys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))
   .map(unprefixify)
 
+// Properties used to avoid false positives in duplicates detection
+const relationsProperties = [
+  'P22', // father
+  'P25', // mother
+  'P26', // spouse
+  'P40', // child
+  'P1038', // relative
+  'P1889', // different from
+  'P3342', // significant person
+  'P3373', // sibling
+  'P3448', // stepparent
+  'P8810', // parent
+]
+
 // Properties that can not be edited from Inventaire, but that might
-// still be displayed in the client or used in some way by the server
-const nonEditedProperties = [
+// still be displayed or used in some way
+const otherNonEditedProperties = [
   'P18', // image
   'P27', // country of citizenship
   'P39', // position held
@@ -50,4 +64,4 @@ const nonEditedProperties = [
   'P6802', // related image
 ]
 
-export const allowlistedProperties = editedProperties.concat(nonEditedProperties)
+export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties)
