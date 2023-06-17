@@ -41,6 +41,7 @@ describe('users:nearby', () => {
     usersIds.includes(user1._id).should.be.false()
   })
 
+  // This test is known to occasionally fail
   it('should get users nearby sorted by distance', async () => {
     const user2 = await geolocatedUser2Promise
     const user3 = await geolocatedUser3Promise
