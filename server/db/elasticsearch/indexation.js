@@ -32,7 +32,11 @@ export default indexBaseName => {
       // to be used as a filter for cases that couldn't be filtered-out
       // by the filter function above
       const formattedDoc = await format(doc)
-      if (formattedDoc) addToBatch(batch, 'index', index, formattedDoc)
+      if (formattedDoc) {
+        addToBatch(batch, 'index', index, formattedDoc)
+      } else {
+        addToBatch(batch, 'delete', index, doc)
+      }
     }
     if (batch.length >= 1000) postAndReset(batch)
     // Known case where batch.length would still be 0: docs that won't generate
