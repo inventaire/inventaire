@@ -28,6 +28,7 @@ curl --silent https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.
   grep --file "$indexed_types_ids" |
   # Drop end-of-line comma to produce valid ndjson
   sed 's/,$//' |
+  head -n 100000 |
   ndjson-apply ./scripts/indexation/wikidata/format_dump_entity.js |
   gzip --best > entities.filtered.simplified.ndjson.gz
 
