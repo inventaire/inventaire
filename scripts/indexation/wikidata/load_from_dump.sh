@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+which jq > /dev/null || {
+  echo "requires to have jq (https://stedolan.github.io/jq/) installed"
+  exit 1
+}
+
 # Dependencies:
 # - an access to the Elasticsearch wikidata index to load
 # - CouchDB entities database should exist and be populated to be able to fetch works' editions
