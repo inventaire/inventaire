@@ -2,6 +2,8 @@
 
 set -eu
 
+./scripts/check_node_version.js
+
 # If the client folder already exist, assume that it's a re-install
 # and that all the following isn't needed
 [ -e client ] && exit 0
