@@ -47,6 +47,13 @@ describe('item model', () => {
       })
     })
 
+    describe('shelves', () => {
+      it('should initialize the shelves array', () => {
+        const item = create(validItem)
+        item.shelves.should.deepEqual([])
+      })
+    })
+
     describe('visibility', () => {
       it('should return an object with a visibility', () => {
         const item = create(validItem)

@@ -24,6 +24,7 @@ Item.create = (userId, item) => {
 
   item.visibility = item.visibility || []
   item.transaction = item.transaction || defaultTransaction
+  item.shelves = item.shelves || []
 
   for (const attr of passedAttributes) {
     if (!attributes.validAtCreation.includes(attr)) {
@@ -96,6 +97,7 @@ Item.changeOwner = (transacDoc, item) => {
     // default values
     transaction: 'inventorying',
     visibility: [],
+    shelves: [],
     updated: Date.now(),
   })
 }
