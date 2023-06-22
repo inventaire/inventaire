@@ -99,13 +99,16 @@ describe('items:get-by-ids', () => {
   describe('shelves', () => {
     it('should include shelves id', async () => {
       const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
-      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      const res = await publicReq('get', `${endpoint}&ids=${item._id}`)
       res.items[0].shelves.should.deepEqual([ shelf._id ])
     })
 
+    // TODO: actually remove private shelves ids
     xit('should not include private shelf id', async () => {
-      const { item } = await createShelfWithItem({ visibility: [] })
-      const res = await authReq('get', `${endpoint}&ids=${item._id}`)
+      const shelfData = { visibility: [] }
+      const itemData = { visibility: [ 'public' ] }
+      const { item } = await createShelfWithItem(shelfData, itemData)
+      const res = await authReqB('get', `${endpoint}&ids=${item._id}`)
       res.items[0].shelves.should.deepEqual([])
     })
   })
