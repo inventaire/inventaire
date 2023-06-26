@@ -11,7 +11,7 @@ export default dbBaseName => {
   return async (latLng, meterRange) => {
     assert_.numbers(latLng)
     assert_.number(meterRange)
-    const hits = await searchByDistance({ latLng, meterRange })
+    const { hits } = await searchByDistance({ latLng, meterRange })
     return getIdsSortedByDistance(hits, latLng)
   }
 }

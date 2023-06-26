@@ -1,4 +1,5 @@
 import CONFIG from 'config'
+import { isNumber } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
@@ -13,12 +14,24 @@ export const buildSearcher = params => {
 
   const url = `${elasticOrigin}/${index}/_search`
 
-  return params => {
+  return async params => {
     const body = queryBuilder(params)
-
-    return requests_.post(url, { body })
-    .then(parseResponse)
-    .catch(formatError)
+    const { limit, offset } = params
+    try {
+      const res = await requests_.post(url, { body })
+      const { hits, total } = getHitsAndTotal(res)
+      let continu
+      if (isNumber(limit) && isNumber(offset)) {
+        continu = limit + offset
+      }
+      return {
+        hits: hits.map(parseHit),
+        total,
+        continue: continu < total ? continu : undefined,
+      }
+    } catch (err) {
+      formatError(err)
+    }
   }
 }
 

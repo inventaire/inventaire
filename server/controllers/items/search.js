@@ -4,16 +4,18 @@ import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authoriz
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { error_ } from '#lib/error/error'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
-import searchUsersItems from './lib/search_users_items.js'
+import { searchUsersItems } from './lib/search_users_items.js'
 
 const sanitization = {
   user: { optional: true },
   group: { optional: true },
   shelf: { optional: true },
   search: {},
+  limit: {},
+  offset: {},
 }
 
-const controller = async ({ reqUserId, userId, groupId, shelfId, search }) => {
+const controller = async ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) => {
   if (!(userId || groupId || shelfId)) {
     throw error_.newMissingQuery('user|group|shelf')
   }
@@ -21,9 +23,18 @@ const controller = async ({ reqUserId, userId, groupId, shelfId, search }) => {
   if (usersIds.length === 0) return { items: [] }
 
   const ownersIdsAndVisibilityKeys = await Promise.all(usersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
-  const items = await searchUsersItems({ search, reqUserId, ownersIdsAndVisibilityKeys, shelfId })
+  const { hits: items, total, continue: continu } = await searchUsersItems({
+    search,
+    reqUserId,
+    ownersIdsAndVisibilityKeys,
+    shelfId,
+    limit,
+    offset,
+  })
   return {
     items: items.map(filterPrivateAttributes(reqUserId)),
+    total,
+    continue: continu,
   }
 }
 

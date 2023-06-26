@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { createEdition } from '#fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
 import { buildUrl } from '#lib/utils/url'
@@ -11,16 +11,19 @@ import {
   createItemWithEditionAndWork,
   createItemWithAuthor,
   createItemWithAuthorAndSerie,
+  createItems,
 } from '../fixtures/items.js'
 import { getTwoFriends } from '../fixtures/users.js'
 import { waitForIndexation, firstNWords } from '../utils/search.js'
 import { getUser, getReservedUser, publicReq } from '../utils/utils.js'
 
-const search = (reqUser, { user, search }) => {
+const search = (reqUser, { user, search, limit, offset }) => {
   const url = buildUrl('/api/items', {
     action: 'search',
     user,
     search,
+    limit,
+    offset,
   })
   if (reqUser) {
     return customAuthReq(reqUser, 'get', url)
@@ -61,7 +64,23 @@ describe('items:search:user', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(user, { user: user._id, search: title })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
+  })
+
+  it('should paginate', async () => {
+    const user = await getUser()
+    const edition = await createEdition()
+    const items = await createItems(user, [
+      { entity: edition.uri },
+      { entity: edition.uri },
+    ])
+    const { 'entity:title': title } = items[0].snapshot
+    await waitForIndexation('items', items[0]._id)
+    await waitForIndexation('items', items[1]._id)
+    const { items: foundItems1, total } = await search(user, { user: user._id, search: title, limit: 1, offset: 0 })
+    const { items: foundItems2 } = await search(user, { user: user._id, search: title, limit: 1, offset: 1 })
+    total.should.be.aboveOrEqual(2)
+    foundItems1[0]._id.should.not.equal(foundItems2[0]._id)
   })
 
   it('should find a user item by subtitle', async () => {
@@ -75,7 +94,7 @@ describe('items:search:user', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:subtitle': subtitle } = item.snapshot
     const { items } = await search(user, { user: user._id, search: subtitle })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by author', async () => {
@@ -89,7 +108,7 @@ describe('items:search:user', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:authors': authors } = item.snapshot
     const { items } = await search(user, { user: user._id, search: authors })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by serie', async () => {
@@ -103,7 +122,7 @@ describe('items:search:user', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:series': series } = item.snapshot
     const { items } = await search(user, { user: user._id, search: series })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by title with punctuation and diacritics', async () => {
@@ -117,7 +136,7 @@ describe('items:search:user', () => {
     const item = await createItem(user, { entity: edition.uri })
     await waitForIndexation('items', item._id)
     const { items } = await search(user, { user: user._id, search: 'Lesc' })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
   })
 
   it('should find a user item by title and author', async () => {
@@ -132,7 +151,7 @@ describe('items:search:user', () => {
     const { 'entity:title': title, 'entity:authors': authors } = item.snapshot
     const input = `${firstNWords(authors, 1)} ${firstNWords(title, 2)}`
     const { items } = await search(user, { user: user._id, search: input })
-    const foundItemsIds = _.map(items, '_id')
+    const foundItemsIds = map(items, '_id')
     foundItemsIds.should.containEql(item._id)
     foundItemsIds.should.not.containEql(item2._id)
   })
@@ -161,7 +180,7 @@ describe('items:search:user', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(userB, { user: userA._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(networkItem._id)
       itemsIds.should.containEql(publicItem._id)
@@ -179,7 +198,7 @@ describe('items:search:user', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(null, { user: userA._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(networkItem._id)
       itemsIds.should.containEql(publicItem._id)
@@ -197,7 +216,7 @@ describe('items:search:user', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(userB, { user: userA._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.containEql(networkItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
@@ -220,7 +239,7 @@ describe('items:search:user', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(member, { user: admin._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(friendsOnlyItem._id)
       itemsIds.should.containEql(groupsOnlyItem._id)
@@ -236,7 +255,7 @@ describe('items:search:user', () => {
       await waitForIndexation('items', groupsOnlyItem._id)
       const { 'entity:title': title } = groupsOnlyItem.snapshot
       const { items } = await search(memberOfAnotherGroup, { user: member._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(groupsOnlyItem._id)
     })
   })
@@ -249,7 +268,7 @@ describe('items:search:user', () => {
       await waitForIndexation('items', groupSpecificItem._id)
       const { 'entity:title': title } = groupSpecificItem.snapshot
       const { items } = await search(member, { user: admin._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })
@@ -263,7 +282,7 @@ describe('items:search:user', () => {
       await waitForIndexation('items', groupSpecificItem._id)
       const { 'entity:title': title } = groupSpecificItem.snapshot
       const { items } = await search(memberOfAnotherGroup, { user: member._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })

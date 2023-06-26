@@ -10,7 +10,7 @@ export default (db, dbBaseName) => {
 
   return async bbox => {
     assert_.numbers(bbox)
-    const hits = await searchByPosition(bbox)
+    const { hits } = await searchByPosition(bbox)
     const ids = _.map(hits, '_id')
     return db.byIds(ids)
   }

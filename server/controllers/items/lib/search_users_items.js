@@ -9,10 +9,16 @@ const textFields = [
   'details',
 ]
 
-export default buildSearcher({
+export const searchUsersItems = buildSearcher({
   dbBaseName: 'items',
   queryBuilder: params => {
-    const { search, limit = 10, ownersIdsAndVisibilityKeys, shelfId } = params
+    const {
+      search,
+      limit = 10,
+      offset = 0,
+      ownersIdsAndVisibilityKeys,
+      shelfId,
+    } = params
 
     if (ownersIdsAndVisibilityKeys.length === 0) {
       throw error_.new('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
@@ -42,7 +48,7 @@ export default buildSearcher({
       },
     }
 
-    return { query, size: limit, min_score: 0.2 }
+    return { query, size: limit, from: offset, min_score: 0.2 }
   },
 })
 
