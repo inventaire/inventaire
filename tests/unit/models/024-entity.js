@@ -1,4 +1,5 @@
 import should from 'should'
+import { superTrim } from '#lib/utils/base'
 import Entity from '#models/entity'
 
 const workDoc = () => {
@@ -144,6 +145,24 @@ describe('entity model', () => {
         const entityDoc = workDoc()
         const updater = () => Entity.updateClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q1541')
         updater.should.throw()
+      })
+
+      it('should allow to update a claim despite formatting issues that were previously accepted', () => {
+        const entityDoc = editionDoc()
+        const badlyFormattedTitle = 'too  many  spaces'
+        const newTitle = 'some title'
+        entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+        const updatedDoc = Entity.updateClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, newTitle)
+        updatedDoc.claims['wdt:P1476'].should.deepEqual([ newTitle ])
+      })
+
+      it('should allow to fix formatting issues that were previously accepted', () => {
+        const entityDoc = editionDoc()
+        const badlyFormattedTitle = 'too  many  spaces'
+        const fixedTitle = superTrim(badlyFormattedTitle)
+        entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+        const updatedDoc = Entity.updateClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, fixedTitle)
+        updatedDoc.claims['wdt:P1476'].should.deepEqual([ fixedTitle ])
       })
     })
 

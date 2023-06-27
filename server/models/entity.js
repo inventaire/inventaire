@@ -22,12 +22,14 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
+import { isString } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import _ from '#builders/utils'
 import inferences from '#controllers/entities/lib/inferences'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { superTrim } from '#lib/utils/base'
 import { log, warn, info } from '#lib/utils/logs'
 import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
 
@@ -119,13 +121,16 @@ const Entity = {
     }
 
     if (oldVal != null) {
+      if (propArray != null) {
+        propArray = propArray.map(value => isString(value) ? superTrim(value) : value)
+      }
       if (propArray == null || !propArray.includes(oldVal)) {
         throw error_.new('claim property value not found', 400, context)
       }
 
       if (newVal != null) {
-        const index = propArray.indexOf(oldVal)
-        doc.claims[property][index] = newVal
+        const oldValIndex = propArray.indexOf(oldVal)
+        doc.claims[property][oldValIndex] = newVal
       } else {
         // if the new value is null, it plays the role of a removeClaim
         propArray = _.without(propArray, oldVal)
