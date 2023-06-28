@@ -16,9 +16,9 @@ export const logBulkRes = (res, label) => {
         if (opRes.status === 404) {
           if (operation === 'delete') {
             // Known case: happens when an deindexation is requested before the indexation was done
-            warn(opRes._id, "can't deindex: doc not found")
+            warn(`can't deindex: doc not found ${opRes._id}`)
           } else {
-            warn(opRes._id, `${label} not found`)
+            warn(`${label} not found ${opRes._id}`)
           }
         } else {
           warn(item, `${label} failed`)
