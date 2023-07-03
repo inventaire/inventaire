@@ -29,6 +29,7 @@ const wikidataOnlyP31Values = {
     'wd:Q2005755', // novel sequence
     'wd:Q21190961', // fumetti series
     'wd:Q213369', // webcomic
+    'wd:Q2620972', // story arc
   ],
   works: [
     'wd:Q571', // book
