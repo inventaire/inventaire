@@ -4,12 +4,11 @@ import levelTtl from 'level-ttl'
 import _ from '#builders/utils'
 import { cacheDb } from '#db/level/get_db'
 import { catchNotFound, error_ } from '#lib/error/error'
-import { oneMonth } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError, LogError } from '#lib/utils/logs'
 
-const { ttlCheckFrequency } = CONFIG.leveldb
-const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: oneMonth })
+const { ttlCheckFrequency, defaultCacheTtl } = CONFIG.leveldb
+const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: defaultCacheTtl })
 const dbPut = promisify(db.put)
 const dbBatch = promisify(db.batch)
 // It's convenient in tests to have the guaranty that the cached value was saved
@@ -25,7 +24,7 @@ export const cache_ = {
   //   type consistent
   // - ttl: customize how long the cached data should be kept before being deleted
   get: async params => {
-    const { key, fn, refresh, dryFallbackValue, ttl = oneMonth } = params
+    const { key, fn, refresh, dryFallbackValue, ttl = defaultCacheTtl } = params
     let { dry } = params
 
     if (refresh) {
@@ -48,7 +47,7 @@ export const cache_ = {
     }
   },
 
-  put: async (key, value, ttl = oneMonth) => {
+  put: async (key, value, ttl = defaultCacheTtl) => {
     if (!_.isNonEmptyString(key)) throw error_.new('invalid key', 500)
     if (value == null) throw error_.new('missing value', 500)
     return putValue(key, value, { ttl })

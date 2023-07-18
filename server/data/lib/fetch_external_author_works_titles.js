@@ -1,6 +1,6 @@
 import { cache_ } from '#lib/cache'
 import { requests_ } from '#lib/requests'
-import { oneWeek } from '#lib/time'
+import { oneMonth } from '#lib/time'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 
@@ -9,7 +9,7 @@ export default (name, endpoint, getQuery, requestOptions) => async id => {
     return await cache_.get({
       key: `${name}:author-works-titles:${id}`,
       fn: makeRequest.bind(null, endpoint, getQuery(id), requestOptions),
-      ttl: oneWeek,
+      ttl: oneMonth,
     })
   } catch (err) {
     logError(err, `${name} error fetching ${id}`)
