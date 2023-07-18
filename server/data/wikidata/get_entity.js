@@ -37,4 +37,4 @@ async function getEntitiesBatch (idsBatch) {
 // Expose a single requester
 // Taking a Wikidata Id
 // Returning the corresponding entity object
-export const getWdEntity = requestGrouper({ requester, delay: 5 })
+export const getWdEntity = requestGrouper({ requester, delay: 500 })
