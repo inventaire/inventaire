@@ -64,7 +64,7 @@ async function popularityWorker (jobId, uri) {
     // Run the worker when the CPUs activity is below 50% load
     // to give the priority to more urgent matters,
     // such as answering users requests
-    if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
+    if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.4 })
     // info(`popularity worker running: ${uri}`)
     const score = await cache_.get({
       key: `popularity:${uri}`,

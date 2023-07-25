@@ -10,6 +10,7 @@ import _ from '#builders/utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
 import formatClaims from '#lib/wikidata/format_claims'
@@ -18,19 +19,19 @@ import addImageData from './add_image_data.js'
 import getEntityType from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
-const { _id: hookUserId } = hardCodedUsers.hook
-
-let reindex
+let reindexWdEntity
 const importCircularDependencies = async () => {
   const { default: indexation } = await import('#db/elasticsearch/indexation')
-  reindex = indexation('wikidata')
+  reindexWdEntity = indexation('wikidata')
 }
 setImmediate(importCircularDependencies)
 
-export default async (ids, params) => {
-  const entities = await Promise.all(ids.map(getCachedEnrichedEntity(params)))
+const { _id: hookUserId } = hardCodedUsers.hook
+
+export default async (ids, { refresh, dry }) => {
+  const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
-  if (params.dry) foundEntities = _.compact(foundEntities)
+  if (dry) foundEntities = _.compact(foundEntities)
   return {
     entities: foundEntities,
     notFound: map(notFoundEntities, 'uri'),
@@ -39,20 +40,17 @@ export default async (ids, params) => {
 
 const isNotMissing = entity => entity && entity.type !== 'missing'
 
-const getCachedEnrichedEntity = params => wdId => {
+export async function getCachedEnrichedEntity ({ wdId, refresh, dry }) {
   const key = `wd:enriched:${wdId}`
   const fn = getEnrichedEntity.bind(null, wdId)
-  const { refresh, dry } = params
   return cache_.get({ key, fn, refresh, dry })
 }
 
-const getEnrichedEntity = async wdId => {
+async function getEnrichedEntity (wdId) {
   let entity = await getWdEntity(wdId)
   entity = entity || { id: wdId, missing: true }
   const formattedEntity = await format(entity)
-  const indexationCopy = _.cloneDeep(formattedEntity)
-  indexationCopy._id = wdId
-  reindex(indexationCopy)
+  addWdEntityToIndexationQueue(wdId)
   return formattedEntity
 }
 
@@ -95,11 +93,13 @@ const formatValidEntity = async entity => {
 
   // Deleting unnecessary attributes
   delete entity.id
-  delete entity.modified
+  delete entity.title
   delete entity.pageid
   delete entity.ns
-  delete entity.title
-  delete entity.lastrevid
+  delete entity.modified
+
+  // Not deleting entity.lastrevid as it is used
+  // by server/db/elasticsearch/wikidata_entities_indexation_queue.js
 
   return addImageData(entity)
 }
@@ -117,7 +117,7 @@ const formatAndPropagateRedirection = async entity => {
     // if the redirected entity is used in Inventaire claims, redirect claims
     // to their new entity
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
-    reindex({ _id: unprefixify(entity.redirects.from), redirect: true })
+    reindexWdEntity({ _id: unprefixify(entity.redirects.from), redirect: true })
     await emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
   }
 }

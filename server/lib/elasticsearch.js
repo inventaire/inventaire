@@ -87,3 +87,7 @@ const parseHit = hit => {
   data._score = _score
   return data
 }
+
+export function getIndexedDocUrl (index, id) {
+  return `${elasticOrigin}/${index}/_doc/${id}`
+}

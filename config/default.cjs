@@ -221,6 +221,9 @@ module.exports = {
     'entity:popularity': {
       run: true,
     },
+    'wd:entity:indexation': {
+      run: true,
+    },
   },
 
   // give priority to more urgent matters

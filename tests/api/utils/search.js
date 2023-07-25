@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import _ from '#builders/utils'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
+import { getIndexedDocUrl } from '#lib/elasticsearch'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
@@ -23,7 +24,7 @@ export async function getIndexedDoc (index, id, options = {}) {
   assert_.string(id)
   if (options) assert_.object(options)
   const { retry = true, attempt = 0 } = options
-  const url = `${elasticOrigin}/${index}/_doc/${id}`
+  const url = getIndexedDocUrl(index, id)
   try {
     const { body } = await rawRequest('get', url)
     return JSON.parse(body)
