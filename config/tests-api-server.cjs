@@ -17,6 +17,9 @@ module.exports = {
     'entity:popularity': {
       run: true,
     },
+    'wd:entity:indexation': {
+      run: true,
+    },
   },
   nice: false,
 }

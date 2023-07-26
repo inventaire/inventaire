@@ -33,6 +33,9 @@ module.exports = {
     'entity:popularity': {
       run: false,
     },
+    'wd:entity:indexation': {
+      run: false,
+    },
   },
   remoteImages: {
     useProdCachedImages: false,

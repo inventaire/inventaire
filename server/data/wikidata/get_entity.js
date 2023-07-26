@@ -12,7 +12,11 @@ const { getEntities } = wdk
 const requester = async ids => {
   ids = uniq(ids)
   const idsBatches = chunk(ids, 50)
-  const entitiesBatches = await Promise.all(idsBatches.map(getEntitiesBatch))
+  const entitiesBatches = []
+  for (const idsBatch of idsBatches) {
+    const entitiesBatch = await getEntitiesBatch(idsBatch)
+    entitiesBatches.push(entitiesBatch)
+  }
   return Object.assign(...entitiesBatches)
 }
 
@@ -37,4 +41,4 @@ async function getEntitiesBatch (idsBatch) {
 // Expose a single requester
 // Taking a Wikidata Id
 // Returning the corresponding entity object
-export const getWdEntity = requestGrouper({ requester, delay: 5 })
+export const getWdEntity = requestGrouper({ requester, delay: 500 })

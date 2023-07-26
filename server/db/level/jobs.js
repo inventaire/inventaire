@@ -3,7 +3,7 @@ import CONFIG from 'config'
 import JobQueueServerAndClient from 'level-jobs'
 import JobsQueueClient from 'level-jobs/client.js'
 import { serverMode } from '#lib/server_mode'
-import { tenMinutes } from '#lib/time'
+import { oneMinute } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
 import getSubDb from './get_sub_db.js'
 
@@ -57,5 +57,5 @@ const workerDepromisifier = workerFn => (jobId, payload, cb) => {
 function keepWorkerAwake (queue) {
   setInterval(() => {
     queue._work.del('fakekey')
-  }, tenMinutes)
+  }, oneMinute)
 }
