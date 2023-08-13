@@ -98,11 +98,15 @@ describe('user model', () => {
       const user = _create(validUser())
       user._id = user._rev = 'foo'
       const userSouvenir = User.softDelete(user)
+      userSouvenir.deleted.should.be.a.Number()
+      should(Date.now() - userSouvenir.deleted).be.below(2)
+      delete userSouvenir.deleted
       userSouvenir.should.deepEqual({
         _id: user._id,
         _rev: user._rev,
         username: user.username,
         type: 'deletedUser',
+        created: user.created,
       })
     })
   })

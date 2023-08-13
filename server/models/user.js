@@ -98,6 +98,7 @@ User.attributes = userAttributes
 User.softDelete = userDoc => {
   const userSouvenir = _.pick(userDoc, User.attributes.critical)
   userSouvenir.type = 'deletedUser'
+  userSouvenir.deleted = Date.now()
   return userSouvenir
 }
 

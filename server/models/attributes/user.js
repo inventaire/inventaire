@@ -66,6 +66,7 @@ attributes.updatable = [
 attributes.critical = [
   '_id',
   '_rev',
+  'created',
   'username',
   'stableUsername',
 ]
