@@ -54,18 +54,6 @@ describe('auth:signup', () => {
 })
 
 describe('auth:username-availability', () => {
-  it('should reject an account with a username ', async () => {
-    const username = createUsername()
-    await createUser({ username })
-    // Wait for prevent_multi_accounts_creation username lock time to be over
-    await wait(600)
-    await signup({ username })
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.body.status_verbose.should.equal('this username is already used')
-    })
-  })
-
   it('should reject an account with a used username', async () => {
     const username = createUsername()
     await createUser({ username: username.toLowerCase() })
