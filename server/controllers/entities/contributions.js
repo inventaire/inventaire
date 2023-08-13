@@ -27,7 +27,7 @@ const controller = async (params, req) => {
     throw error_.new('invalid filter', 400, params)
   }
 
-  if (userId != null && !reqUserHasAdminAccess) await checkPublicContributionsStatus(userId)
+  if (userId != null && !reqUserHasAdminAccess) await checkPublicContributionsStatus({ userId, reqUserId })
 
   const patchesPage = await getPatchesPage({ userId, limit, offset, reqUserHasAdminAccess, filter })
   const { patches } = patchesPage
@@ -48,7 +48,8 @@ const getPatchesPage = async ({ userId, limit, offset, filter }) => {
   }
 }
 
-const checkPublicContributionsStatus = async userId => {
+const checkPublicContributionsStatus = async ({ userId, reqUserId }) => {
+  if (userId === reqUserId) return
   const user = await getUserById(userId)
   if (shouldBeAnonymized(user)) {
     throw error_.new('non-public contributions', 403, { userId })

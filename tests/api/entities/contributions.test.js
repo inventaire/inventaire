@@ -121,13 +121,19 @@ describe('entities:contributions', () => {
   })
 
   describe('non-admin access level', () => {
-    it('should reject requests for private contributions', async () => {
+    it('should reject requests for private contributions from another user', async () => {
       const { user } = await get2WorksAndUser()
       await authReq('get', `${endpoint}&user=${user._id}`)
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(403)
       })
+    })
+
+    it('should accept requests for private contributions from the user themselves', async () => {
+      const { user } = await get2WorksAndUser()
+      const { patches } = await customAuthReq(user, 'get', `${endpoint}&user=${user._id}`)
+      patches.should.be.an.Array()
     })
 
     it('should accept requests for public contributions', async () => {
