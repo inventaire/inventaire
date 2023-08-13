@@ -66,6 +66,15 @@ describe('auth:username-availability', () => {
     })
   })
 
+  it('should reject a reserved word username', async () => {
+    const username = 'Contact'
+    await signup({ username })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal("reserved words can't be usernames")
+    })
+  })
+
   it('should normalize unicode letters', async () => {
     const usernameBase = createUsername()
     const nonNormalizedUnicodeLetter = '\u0065\u0301'
