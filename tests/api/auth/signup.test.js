@@ -1,9 +1,10 @@
 import 'should'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import { deleteUser } from '#tests/api/utils/users'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
-import { publicReq } from '../utils/utils.js'
+import { getReservedUser, publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=signup'
 
@@ -72,6 +73,18 @@ describe('auth:username-availability', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("reserved words can't be usernames")
+    })
+  })
+
+  it('should reject an account with a username used by a deleted account', async () => {
+    const user = await getReservedUser()
+    await deleteUser(user)
+    // Wait for prevent_multi_accounts_creation username lock time to be over
+    await wait(600)
+    await signup({ username: user.username })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('this username is already used')
     })
   })
 
