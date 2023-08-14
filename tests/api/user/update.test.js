@@ -71,7 +71,7 @@ describe('user:update', () => {
       const [ userA, userB ] = await Promise.all([ getUser(), getUserB() ])
       await customAuthReq(userA, 'put', endpoint, {
         attribute: 'username',
-        value: userB.username,
+        value: userB.username.toUpperCase(),
       })
       .then(shouldNotBeCalled)
       .catch(err => {
