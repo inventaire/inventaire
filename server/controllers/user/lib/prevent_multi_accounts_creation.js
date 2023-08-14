@@ -7,7 +7,7 @@ import { normalizeString } from '#lib/utils/base'
 
 const { useSlowPasswordHashFunction } = CONFIG
 
-const lockTime = useSlowPasswordHashFunction ? 5000 : 500
+const lockTime = useSlowPasswordHashFunction ? 60000 : 500
 const lockedUsernames = new Set()
 const errMessage = 'an account is already in the process of being created with this username'
 
