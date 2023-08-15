@@ -1,7 +1,7 @@
 import _ from '#builders/utils'
 import 'should'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUserGetter } from '#tests/api/utils/utils'
+import { getReservedUser } from '#tests/api/utils/utils'
 import { createItem } from '../fixtures/items.js'
 import { getRandomPosition } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'
@@ -11,8 +11,8 @@ const positionUser2 = [
   positionUser1[0] - 0.1,
   positionUser1[1] - 0.1,
 ]
-const geolocatedUser1Promise = getUserGetter('geo1', null, { position: positionUser1 })()
-const geolocatedUser2Promise = getUserGetter('geo2', null, { position: positionUser2 })()
+const geolocatedUser1Promise = getReservedUser({ position: positionUser1 })
+const geolocatedUser2Promise = getReservedUser({ position: positionUser2 })
 const endpoint = '/api/items?action=nearby'
 
 describe('items:nearby', () => {

@@ -38,7 +38,7 @@ export const signup = email => {
   })
 }
 
-export const createUser = async (customData = {}, role) => {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -46,13 +46,25 @@ export const createUser = async (customData = {}, role) => {
     email: `${getRandomString(10)}@adomain.org`,
     language: customData.language || 'en',
   }
-
-  const cookie = await loginOrSignup(userData).then(parseCookie)
+  let cookie
+  if (mayReuseExistingUser) {
+    cookie = await loginOrSignup(userData).then(parseCookie)
+  } else {
+    cookie = await _signup(userData).then(parseCookie)
+  }
   assert_.string(cookie)
   const user = await getUserWithCookie(cookie)
   await setCustomData(user, customData)
   if (role) await addUserRole(user._id, role)
   return getUserWithCookie(cookie)
+}
+
+export function getOrCreateUser (customData, role) {
+  return _getOrCreateUser({ customData, role, mayReuseExistingUser: true })
+}
+
+export function createUser (customData = {}) {
+  return _getOrCreateUser({ customData, mayReuseExistingUser: false })
 }
 
 export const getUserWithCookie = async cookie => {

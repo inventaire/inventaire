@@ -2,7 +2,7 @@ import should from 'should'
 import _ from '#builders/utils'
 import { randomWords } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
-import { createUser } from '../fixtures/users.js'
+import { getOrCreateUser } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'
 import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
 
@@ -27,7 +27,7 @@ describe('users:search', () => {
     // Using a user with a non-random username to make the typo not to hard
     // to recover for ElasticSearch
     const username = 'testuser'
-    const user = await createUser({ username })
+    const user = await getOrCreateUser({ username })
     await waitForIndexation('users', user._id)
     const res = await customAuthReq(user, 'get', '/api/users?action=search&search=testusr')
     // should find any user with the same name (to pass as test-quick)

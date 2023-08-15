@@ -3,7 +3,7 @@ import 'should'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getRandomPosition } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'
-import { getUserGetter } from '../utils/utils.js'
+import { getReservedUser } from '../utils/utils.js'
 
 const positionUser1 = getRandomPosition()
 const positionUser2 = [
@@ -18,10 +18,10 @@ const positionUser4 = [
   positionUser1[0] - 0.12,
   positionUser1[1] - 0.12,
 ]
-const geolocatedUser1Promise = getUserGetter('geo1', null, { position: positionUser1 })()
-const geolocatedUser2Promise = getUserGetter('geo2', null, { position: positionUser2 })()
-const geolocatedUser3Promise = getUserGetter('geo3', null, { position: positionUser3 })()
-const geolocatedUser4Promise = getUserGetter('geo4', null, { position: positionUser4 })()
+const geolocatedUser1Promise = getReservedUser({ position: positionUser1 })
+const geolocatedUser2Promise = getReservedUser({ position: positionUser2 })
+const geolocatedUser3Promise = getReservedUser({ position: positionUser3 })
+const geolocatedUser4Promise = getReservedUser({ position: positionUser4 })
 const endpoint = '/api/users?action=nearby'
 
 describe('users:nearby', () => {
@@ -41,7 +41,6 @@ describe('users:nearby', () => {
     usersIds.includes(user1._id).should.be.false()
   })
 
-  // This test is known to occasionally fail
   it('should get users nearby sorted by distance', async () => {
     const user2 = await geolocatedUser2Promise
     const user3 = await geolocatedUser3Promise
