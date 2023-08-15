@@ -1,4 +1,4 @@
-import { map, union, uniq, without } from 'lodash-es'
+import { map, uniq, without } from 'lodash-es'
 import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
@@ -11,49 +11,66 @@ import { addSlug } from './slug.js'
 const db = await dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-// using a view to avoid returning users or relations
 export const getGroupById = db.viewFindOneByKey.bind(db, 'byId')
 export const getGroupsByIds = db.byIds
 export const getGroupBySlug = db.viewFindOneByKey.bind(db, 'bySlug')
-export const getGroupsByUser = db.viewByKey.bind(db, 'byUser')
-export const getGroupsByInvitedUser = db.viewByKey.bind(db, 'byInvitedUser')
 
-export async function getGroupsByAdmin (userId) {
-  // could be simplified by making the byUser view
-  // emit an arrey key with the role as second parameter
-  // but it would make getGroupsByUser more complex
-  // (i.e. use a range instead of a simple key)
-  const groups = await db.viewByKey('byUser', userId)
-  return groups.filter(group => Group.userIsAdmin(userId, group))
-}
-
-// including invitations
-export async function allUserGroups (userId) {
-  const groups = await Promise.all([
-    getGroupsByUser(userId),
-    getGroupsByInvitedUser(userId),
+export async function getGroupsWhereUserIsAdmin (userId) {
+  return db.viewByKeys('byRoleAndUser', [
+    [ 'admins', userId ],
   ])
-  return union(...groups)
 }
 
-export async function getUserGroupsIds (userId) {
+export async function getGroupsWhereUserIsAdminOrMember (userId) {
+  return db.viewByKeys('byRoleAndUser', [
+    [ 'admins', userId ],
+    [ 'members', userId ],
+  ])
+}
+
+export async function getGroupsWhereUserIsInvited (userId) {
+  return db.viewByKeys('byRoleAndUser', [
+    [ 'invited', userId ],
+  ])
+}
+
+export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
+  return db.viewByKeys('byRoleAndUser', [
+    [ 'admins', userId ],
+    [ 'members', userId ],
+    [ 'invited', userId ],
+  ])
+}
+
+export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
   assert_.string(userId)
-  const { rows } = await db.view('groups', 'byUser', {
+  const { rows } = await db.view('groups', 'byRoleAndUser', {
     include_docs: false,
-    key: userId,
+    keys: [
+      [ 'admins', userId ],
+      [ 'members', userId ],
+    ],
   })
   return map(rows, 'id')
 }
 
-export async function getUsersGroupsIds (usersIds) {
+export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
   assert_.strings(usersIds)
-  const { rows } = await db.view('groups', 'byUser', {
+  const { rows } = await db.view('groups', 'byRoleAndUser', {
     include_docs: false,
-    keys: usersIds,
+    keys: usersIds.flatMap(userId => {
+      return [
+        [ 'admins', userId ],
+        [ 'members', userId ],
+      ]
+    }),
   })
   const groupsIdsByMembersIds = {}
   usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
-  rows.forEach(({ id: groupId, key: userId }) => groupsIdsByMembersIds[userId].push(groupId))
+  rows.forEach(({ id: groupId, key }) => {
+    const userId = key[1]
+    groupsIdsByMembersIds[userId].push(groupId)
+  })
   return groupsIdsByMembersIds
 }
 
@@ -64,7 +81,7 @@ export async function createGroup (options) {
 }
 
 export async function getUserGroupsCoMembers (userId) {
-  const groups = await getGroupsByUser(userId)
+  const groups = await getGroupsWhereUserIsAdminOrMember(userId)
   return getCoMembersIds(groups, userId)
 }
 

@@ -1,4 +1,4 @@
-import { getUserGroupsIds } from '#controllers/groups/lib/groups'
+import { getGroupsIdsWhereUserIsAdminOrMember } from '#controllers/groups/lib/groups'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 
@@ -6,7 +6,7 @@ import { error_ } from '#lib/error/error'
 // by models/validations/visibility.js
 export async function validateVisibilityKeys (visibilityKeys, ownerId) {
   if (hasGroupKeys(visibilityKeys)) {
-    const userGroupsIds = await getUserGroupsIds(ownerId)
+    const userGroupsIds = await getGroupsIdsWhereUserIsAdminOrMember(ownerId)
     validateGroupKeys(visibilityKeys, userGroupsIds)
   }
 }

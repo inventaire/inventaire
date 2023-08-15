@@ -9,26 +9,18 @@ export default {
       emit(doc.slug, null)
     },
   },
-  byUser: {
+  byRoleAndUser: {
     map: doc => {
-      for (const member of doc.members) {
-        emit(member.user, null)
-      }
-      for (const admin of doc.admins) {
-        emit(admin.user, null)
+      for (const role of [ 'admins', 'members', 'invited', 'requested', 'declined' ]) {
+        for (const membership of doc[role]) {
+          emit([ role, membership.user ], null)
+        }
       }
     },
   },
   byName: {
     map: doc => {
       emit(doc.name.toLowerCase(), null)
-    },
-  },
-  byInvitedUser: {
-    map: doc => {
-      for (const invitation of doc.invited) {
-        emit(invitation.user, null)
-      }
     },
   },
   byPicture: {
