@@ -6,13 +6,12 @@ const sanitization = {
   uris: {},
   attributes: {
     allowlist: [
-      'type',
+      'info',
       'labels',
       'descriptions',
       'claims',
       'sitelinks',
       'image',
-      'originalLang',
     ],
     optional: true,
   },

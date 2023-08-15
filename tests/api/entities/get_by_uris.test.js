@@ -139,7 +139,7 @@ describe('entities:get:by-uris', () => {
       const url = buildUrl('/api/entities', {
         action: 'by-uris',
         uris: editionUri,
-        attributes: 'type|labels',
+        attributes: 'info|labels',
         relatives: 'wdt:P50|wdt:P179|wdt:P629',
       })
       let { entities } = await publicReq('get', url)

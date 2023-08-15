@@ -2,7 +2,20 @@ import { pick } from 'lodash-es'
 import getBestLangValue from '#lib/get_best_lang_value'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 
+const infoAttributes = [
+  '_id',
+  '_rev',
+  'type',
+  'created',
+  'updated',
+  'version',
+  'originalLang',
+]
+
 export const pickAttributes = (entities, attributes) => {
+  if (attributes.includes('info')) {
+    attributes = infoAttributes.concat(attributes)
+  }
   const formattedEntities = {}
   for (const uri of Object.keys(entities)) {
     const entity = entities[uri]
