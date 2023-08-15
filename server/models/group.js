@@ -3,7 +3,7 @@ import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import groupAttributes from './attributes/group.js'
+import * as groupAttributes from './attributes/group.js'
 import groupValidations from './validations/group.js'
 
 const Group = {}
@@ -12,6 +12,7 @@ export default Group
 
 const validations = Group.validations = groupValidations
 const attributes = Group.attributes = groupAttributes
+const { groupRoles } = attributes
 
 Group.create = options => {
   log(options, 'group create')
@@ -26,6 +27,8 @@ Group.create = options => {
   const creator = createMembership(creatorId, null)
 
   return {
+    // The type attribute is used in some places where group docs might be mixed with user docs
+    // such as search results
     type: 'group',
     name,
     description,
@@ -92,7 +95,7 @@ const membershipActions = {
 }
 
 Group.deleteUser = (group, userId) => {
-  for (const list of attributes.usersLists) {
+  for (const list of groupRoles) {
     group[list] = withoutUser(group[list], userId)
   }
 

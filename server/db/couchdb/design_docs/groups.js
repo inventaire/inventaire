@@ -1,48 +1,32 @@
 export default {
   byId: {
     map: doc => {
-      if (doc.type === 'group') emit(doc._id, null)
+      emit(doc._id, null)
     },
   },
   bySlug: {
     map: doc => {
-      if (doc.type === 'group') emit(doc.slug, null)
+      emit(doc.slug, null)
     },
   },
-  byUser: {
+  byRoleAndUser: {
     map: doc => {
-      if (doc.type === 'group') {
-        for (const member of doc.members) {
-          emit(member.user, null)
-        }
-        for (const admin of doc.admins) {
-          emit(admin.user, null)
+      for (const role of [ 'admins', 'members', 'invited', 'requested', 'declined' ]) {
+        for (const membership of doc[role]) {
+          emit([ role, membership.user ], null)
         }
       }
     },
   },
   byName: {
     map: doc => {
-      if (doc.type === 'group') {
-        emit(doc.name.toLowerCase(), null)
-      }
-    },
-  },
-  byInvitedUser: {
-    map: doc => {
-      if (doc.type === 'group') {
-        for (const invitation of doc.invited) {
-          emit(invitation.user, null)
-        }
-      }
+      emit(doc.name.toLowerCase(), null)
     },
   },
   byPicture: {
     map: doc => {
-      if (doc.type === 'group') {
-        if (doc.picture !== null) {
-          emit(doc.picture.split('/')[3], null)
-        }
+      if (doc.picture !== null) {
+        emit(doc.picture.split('/')[3], null)
       }
     },
   },

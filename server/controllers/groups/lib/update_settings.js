@@ -2,12 +2,11 @@ import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import groupAttributes from '#models/attributes/group'
+import { acceptNullValue, updatable } from '#models/attributes/group'
 import Group from '#models/group'
 import { addSlug } from './slug.js'
 
 const { validations, formatters } = Group
-const { acceptNullValue, updatable } = groupAttributes
 const db = await dbFactory('groups')
 
 export default async (data, userId) => {

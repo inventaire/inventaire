@@ -5,9 +5,9 @@ import Group from '#models/group'
 
 const db = await dbFactory('groups')
 
-let getGroupById, getGroupsByUser
+let getGroupById, getGroupsWhereUserHasAnyRole
 const importCircularDependencies = async () => {
-  ({ getGroupById, getGroupsByUser } = await import('./groups.js'))
+  ({ getGroupById, getGroupsWhereUserHasAnyRole } = await import('./groups.js'))
 }
 setImmediate(importCircularDependencies)
 
@@ -23,7 +23,7 @@ export const userCanLeaveGroup = async (userId, groupId) => {
 }
 
 export async function leaveAllGroups (userId) {
-  const groups = await getGroupsByUser(userId)
+  const groups = await getGroupsWhereUserHasAnyRole(userId)
   return Promise.all(groups.map(group => removeUser(group, userId)))
 }
 

@@ -1,6 +1,6 @@
 import { intersection } from 'lodash-es'
 import _ from '#builders/utils'
-import { getUserGroupsCoMembers, getUsersGroupsIds } from '#controllers/groups/lib/groups'
+import { getUserGroupsCoMembers, getGroupsIdsWhereUsersAreAdminsOrMembers } from '#controllers/groups/lib/groups'
 import { getUserFriends } from '#controllers/relations/lib/lists'
 import { getRelationStatus } from '#controllers/relations/lib/queries'
 
@@ -10,7 +10,7 @@ export async function areFriends (userId, otherId) {
 }
 
 export async function getSharedGroupsIds (userAId, userBId) {
-  const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getUsersGroupsIds([ userAId, userBId ])
+  const { [userAId]: aGroupsIds, [userBId]: bGroupsIds } = await getGroupsIdsWhereUsersAreAdminsOrMembers([ userAId, userBId ])
   return intersection(aGroupsIds, bGroupsIds)
 }
 
