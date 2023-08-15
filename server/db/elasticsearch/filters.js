@@ -4,7 +4,7 @@ const isntDesignDoc = doc => !doc._id.startsWith('_design/')
 
 export default {
   entities: isntDesignDoc,
-  groups: doc => doc.type === 'group',
+  groups: isntDesignDoc,
   items: isntDesignDoc,
   shelves: isntDesignDoc,
   lists: isntDesignDoc,

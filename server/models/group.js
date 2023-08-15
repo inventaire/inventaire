@@ -26,6 +26,8 @@ Group.create = options => {
   const creator = createMembership(creatorId, null)
 
   return {
+    // The type attribute is used in some places where group docs might be mixed with user docs
+    // such as search results
     type: 'group',
     name,
     description,
