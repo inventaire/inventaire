@@ -8,20 +8,17 @@ import { createGroup, addMember, addAdmin, addInvited, addRequested, addDeclined
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createTransaction } from '../fixtures/transactions.js'
-import { getRefreshedUser, getRandomPosition } from '../fixtures/users.js'
+import { getRefreshedUser, getRandomPosition, createUser } from '../fixtures/users.js'
 import { getItem } from '../utils/items.js'
 import { waitForIndexation, waitForDeindexation } from '../utils/search.js'
 import { getShelfById } from '../utils/shelves.js'
 import { getTransaction, updateTransaction } from '../utils/transactions.js'
 import { getUsersNearPosition, deleteUser } from '../utils/users.js'
-import {
-  getReservedUser,
-  getUser,
-} from '../utils/utils.js'
+import { getUser } from '../utils/utils.js'
 
 describe('user:delete', () => {
   it('should delete the user', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     const res = await deleteUser(user)
     res.ok.should.be.true()
     const deletedUser = await getRefreshedUser(user)
@@ -39,7 +36,7 @@ describe('user:delete', () => {
 
   it('should remove the user from the geo index', async () => {
     const position = getRandomPosition()
-    const user = await getReservedUser({ position })
+    const user = await createUser({ position })
     await waitForIndexation('users', user._id)
     const users = await getUsersNearPosition(position)
     _.map(users, '_id').should.containEql(user._id)
@@ -51,7 +48,7 @@ describe('user:delete', () => {
 
   describe('items', () => {
     it('should delete the user items', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const item = await createItem(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
@@ -62,7 +59,7 @@ describe('user:delete', () => {
 
   describe('shelves', () => {
     it('should delete the user shelves', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { shelf } = await createShelf(user, { visibility: [ 'public' ] })
       const deleteRes = await deleteUser(user)
       deleteRes.ok.should.be.true()
@@ -76,7 +73,7 @@ describe('user:delete', () => {
 
   describe('groups', () => {
     it('should remove the user when member', async () => {
-      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addMember(group, user)
       _.map(refreshedGroup.members, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -85,7 +82,7 @@ describe('user:delete', () => {
     })
 
     it('should remove the user when admin, but not delete the group', async () => {
-      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addAdmin(group, user)
       _.map(refreshedGroup.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -94,7 +91,7 @@ describe('user:delete', () => {
     })
 
     it('should delete the group when the user was the last member', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const group = await createGroup({ user })
       _.map(group.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -107,7 +104,7 @@ describe('user:delete', () => {
     })
 
     it('should remove the user when "invited"', async () => {
-      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addInvited(group, user)
       _.map(refreshedGroup.invited, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -116,7 +113,7 @@ describe('user:delete', () => {
     })
 
     it('should remove the user when "requested"', async () => {
-      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addRequested(group, user)
       _.map(refreshedGroup.requested, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -125,7 +122,7 @@ describe('user:delete', () => {
     })
 
     it('should remove the user when "declined"', async () => {
-      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addDeclined(group, user)
       _.map(refreshedGroup.declined, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -136,7 +133,7 @@ describe('user:delete', () => {
 
   describe('transactions', () => {
     it('should cancel active transactions', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { transaction } = await createTransaction({ userA: user, userB: getUser() })
       transaction.state.should.equal('requested')
       await deleteUser(user)
@@ -145,7 +142,7 @@ describe('user:delete', () => {
     })
 
     it('should not affect already terminated transactions', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { transaction } = await createTransaction({ userA: user, userB: getUser() })
       transaction.state.should.equal('requested')
       await updateTransaction(getUser(), transaction._id, 'declined')
@@ -160,7 +157,7 @@ describe('user:delete', () => {
 
   describe('listings', () => {
     it('should delete listings', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { listing } = await createListing(user, { visibility: [ 'public' ] })
       // TODO: check that the element was also deleted
       // Requires an endpoint to get elements directly?

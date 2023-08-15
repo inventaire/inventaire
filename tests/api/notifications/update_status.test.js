@@ -1,14 +1,15 @@
 import _ from '#builders/utils'
 import 'should'
+import { createUser } from '#fixtures/users'
 import { getNotifications } from '#tests/api/utils/notifications'
 import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser, getReservedUser } from '#tests/api/utils/utils'
+import { getUser } from '#tests/api/utils/utils'
 
 describe('notifications:update status', () => {
   it('should update a notification', async () => {
     const user = await getUser()
-    const friend = await getReservedUser()
+    const friend = await createUser()
     await makeFriends(user, friend)
     const notifications = await getNotifications({ user, type: 'friendAcceptedRequest', subject: friend._id })
     notifications.length.should.equal(1)

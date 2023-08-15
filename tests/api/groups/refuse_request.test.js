@@ -1,9 +1,10 @@
 import 'should'
+import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createGroup } from '../fixtures/groups.js'
-import { authReq, authReqC, getReservedUser } from '../utils/utils.js'
+import { authReq, authReqC } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=refuse-request'
 
@@ -20,7 +21,7 @@ describe('groups:update:refuse-request', () => {
   it('should remove user from requested list', async () => {
     const [ group, requester ] = await Promise.all([
       createGroup(),
-      getReservedUser(),
+      createUser(),
     ])
     const { _id: requesterId } = requester
     await customAuthReq(requester, 'put', '/api/groups?action=request', { group: group._id })

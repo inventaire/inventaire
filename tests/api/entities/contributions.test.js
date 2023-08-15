@@ -1,4 +1,5 @@
 import should from 'should'
+import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -7,7 +8,6 @@ import { updateClaim, updateLabel } from '../utils/entities.js'
 import {
   adminReq,
   getUser,
-  getReservedUser,
   authReq,
   getDeanonymizedUser,
 } from '../utils/utils.js'
@@ -89,7 +89,7 @@ describe('entities:contributions', () => {
 
   describe('filter', () => {
     it('should filter by claim property', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { uri } = await createWork({ user })
       const property = 'wdt:P921'
       await updateClaim({ uri, property, newValue: 'wd:Q1', user })
@@ -105,7 +105,7 @@ describe('entities:contributions', () => {
     })
 
     it('should filter by label lang', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { uri } = await createWork({ user })
       const lang = 'ca'
       await updateLabel({ uri, lang, value: 'foo', user })
@@ -153,7 +153,7 @@ describe('entities:contributions', () => {
     })
 
     it('should not anonymize contributions when the patch author is the requesting user', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const { _id: workId } = await createWork({ user })
       const { patches } = await customAuthReq(user, 'get', `${endpoint}&limit=1`)
       patches[0]._id.should.startWith(workId)
@@ -171,7 +171,7 @@ const get2WorksAndUser = () => {
 const create2WorksAndGetUser = async () => {
   // Use a reserved user to avoiding having contributions messed-up by tests
   // in other test files
-  const user = await getReservedUser()
+  const user = await createUser()
   const workA = await createWork({ user })
   // Do not parallelize so that we can assume that workB creation is the last patch
   const workB = await createWork({ user })

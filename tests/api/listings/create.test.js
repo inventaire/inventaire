@@ -1,6 +1,6 @@
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getReservedUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { listingName } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'
@@ -58,7 +58,7 @@ describe('listings:create', () => {
 
     it("should reject group-specific listing if user isn't a member", async () => {
       const [ user, group ] = await Promise.all([
-        getReservedUser(),
+        createUser(),
         getSomeGroup(),
       ])
       const visibility = [ `group:${group._id}` ]

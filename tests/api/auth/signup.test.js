@@ -4,7 +4,7 @@ import { getRandomString } from '#lib/utils/random_string'
 import { deleteUser } from '#tests/api/utils/users'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
-import { getReservedUser, publicReq } from '../utils/utils.js'
+import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=signup'
 
@@ -77,7 +77,7 @@ describe('auth:username-availability', () => {
   })
 
   it('should reject an account with a username used by a deleted account', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await deleteUser(user)
     // Wait for prevent_multi_accounts_creation username lock time to be over
     await wait(600)

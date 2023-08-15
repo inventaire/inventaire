@@ -1,9 +1,10 @@
 import 'should'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getToken } from '../utils/oauth.js'
 import { bearerTokenReq } from '../utils/request.js'
 import { deleteUser, updateUser } from '../utils/users.js'
-import { getUser, dataadminReq, adminReq, authReq, getReservedUser } from '../utils/utils.js'
+import { getUser, dataadminReq, adminReq, authReq } from '../utils/utils.js'
 
 const endpoint = '/api/user'
 
@@ -28,7 +29,7 @@ describe('user:get', () => {
   })
 
   it('should get delete user flag', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await deleteUser(user)
     const deletedUserData = await customAuthReq(user, 'get', endpoint)
     deletedUserData._id.should.equal(user._id)

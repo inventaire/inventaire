@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getReservedUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { getTwoFriends } from '../fixtures/users.js'
 import { deleteUser } from '../utils/users.js'
@@ -57,7 +57,7 @@ describe('users:by-ids', () => {
   })
 
   it('should get deleted users', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await deleteUser(user)
     const res = await publicReq('get', `${endpoint}&ids=${user._id}`)
     res.users[user._id].should.be.ok()

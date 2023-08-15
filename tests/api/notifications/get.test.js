@@ -1,11 +1,12 @@
 import 'should'
+import { createUser } from '#fixtures/users'
 import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getReservedUser, getUser, getUserB } from '#tests/api/utils/utils'
+import { getUser, getUserB } from '#tests/api/utils/utils'
 
 describe('notifications:get', () => {
   it('should get user notifications', async () => {
-    const requester = await getReservedUser()
+    const requester = await createUser()
     const requestee = await getUser()
     await makeFriends(requester, requestee)
 
@@ -25,7 +26,7 @@ describe('notifications:get', () => {
       friendA,
       friendB,
     ] = await Promise.all([
-      getReservedUser(),
+      createUser(),
       getUser(),
       getUserB(),
     ])

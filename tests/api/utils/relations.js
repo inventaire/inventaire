@@ -2,9 +2,9 @@ import { customAuthReq } from './request.js'
 
 const endpoint = '/api/relations'
 
-let getUser, getReservedUser
+let getUser, createUser
 const importCircularDependencies = async () => {
-  ({ getUser, getReservedUser } = await import('./utils.js'))
+  ({ getUser, createUser } = await import('./utils.js'))
 }
 setImmediate(importCircularDependencies)
 
@@ -35,7 +35,7 @@ export const action = (action, reqUser, otherUser) => {
 export const getUsersWithoutRelation = () => {
   return Promise.all([
     getUser(),
-    getReservedUser(),
+    createUser(),
   ])
   .then(([ userA, userB ]) => ({ userA, userB }))
 }

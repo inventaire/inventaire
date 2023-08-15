@@ -12,9 +12,9 @@ import { request, rawRequest } from '../utils/request.js'
 const origin = CONFIG.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
 
-let getUser, getReservedUser, updateUser
+let getUser, updateUser
 const importCircularDependencies = async () => {
-  ;({ getUser, getReservedUser } = await import('../utils/utils.js'))
+  ;({ getUser } = await import('../utils/utils.js'))
   ;({ updateUser } = await import('../utils/users.js'))
 }
 setImmediate(importCircularDependencies)
@@ -89,7 +89,7 @@ export const createUserEmail = () => getSomeEmail()
 export const getUsersWithoutRelation = async () => {
   const [ userA, userB ] = await Promise.all([
     getUser(),
-    getReservedUser(),
+    createUser(),
   ])
   return { userA, userB }
 }
@@ -106,7 +106,7 @@ export const getRandomLongitude = () => randomCoordinate(-180, 180)
 export async function getTwoFriends () {
   const [ userA, userB ] = await Promise.all([
     getUser(),
-    getReservedUser(),
+    createUser(),
   ])
   await makeFriends(userA, userB)
   return [ userA, userB ]

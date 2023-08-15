@@ -3,12 +3,13 @@ import 'should'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
 import { createListing } from '#fixtures/listings'
 import { createShelf } from '#fixtures/shelves'
+import { createUser } from '#fixtures/users'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { makeFriends } from '#tests/api/utils/relations'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createGroup, createGroupWithAMember } from '../fixtures/groups.js'
 import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search.js'
-import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
+import { publicReq, getUser, getUserB } from '../utils/utils.js'
 
 describe('search:global', () => {
   describe('parameters', () => {
@@ -151,7 +152,7 @@ describe('search:global', () => {
 
       it('should return a group-specific shelf when requested by a member', async () => {
         const { group, admin } = await createGroupWithAMember()
-        const someOtherUser = await getReservedUser()
+        const someOtherUser = await createUser()
         const { shelf } = await createShelf(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
         await waitForIndexation('shelves', shelf._id)
         const results = await customAuthSearch(someOtherUser, 'shelves', firstNWords(shelf.name, 2))
@@ -216,7 +217,7 @@ describe('search:global', () => {
 
       it('should not return a group-specific listing when requested by a non member', async () => {
         const { group, admin } = await createGroupWithAMember()
-        const someOtherUser = await getReservedUser()
+        const someOtherUser = await createUser()
         const { listing } = await createListing(admin, { visibility: [ getGroupVisibilityKey(group._id) ] })
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(someOtherUser, 'lists', firstNWords(listing.name, 2))

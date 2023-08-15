@@ -1,8 +1,8 @@
 import CONFIG from 'config'
 import 'should'
 import papaparse from 'papaparse'
+import { createUser } from '#fixtures/users'
 import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
-import { getReservedUser } from '#tests/api/utils/utils'
 import {
   createEdition,
   createWork,
@@ -13,7 +13,6 @@ import {
 } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
-import { createUser } from '../fixtures/users.js'
 import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
 
 const { parse } = papaparse
@@ -24,7 +23,7 @@ const endpoint = '/api/items?action=export&format=csv'
 const generateUrl = path => `${host}${path}`
 const generateEntityUrl = uri => generateUrl(`/entity/${uri}`)
 const generateEntitiesUrls = uris => uris.map(generateEntityUrl)
-const userPromise = getReservedUser()
+const userPromise = createUser()
 
 const reqAndParse = async (itemId, user) => {
   user = user || userPromise

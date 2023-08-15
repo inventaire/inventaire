@@ -1,10 +1,11 @@
 import should from 'should'
 import _ from '#builders/utils'
 import { randomWords } from '#fixtures/text'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getOrCreateUser } from '../fixtures/users.js'
 import { waitForIndexation } from '../utils/search.js'
-import { publicReq, getUser, getUserB, getReservedUser } from '../utils/utils.js'
+import { publicReq, getUser, getUserB } from '../utils/utils.js'
 
 describe('users:search', () => {
   it('should find a user', async () => {
@@ -45,7 +46,7 @@ describe('users:search', () => {
 
   it('should find a user by its bio', async () => {
     const bio = randomWords(5)
-    const user = await getReservedUser({ bio })
+    const user = await createUser({ bio })
     await waitForIndexation('users', user._id)
     const res = await publicReq('get', `/api/users?action=search&search=${encodeURIComponent(bio)}`)
     usersIds(res).includes(user._id).should.be.true()

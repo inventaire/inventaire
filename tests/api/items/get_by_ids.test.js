@@ -7,6 +7,7 @@ import {
   authReq,
   publicReq,
   getUserGetter,
+  authReqB,
 } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'

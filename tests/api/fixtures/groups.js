@@ -1,8 +1,9 @@
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { randomWords } from '#fixtures/text'
+import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser, getUserB, getReservedUser } from '../utils/utils.js'
+import { getUser, getUserB } from '../utils/utils.js'
 
 export const endpointBase = '/api/groups'
 
@@ -73,7 +74,7 @@ const createAndAddMember = async user => {
 }
 
 export const createGroupAndMember = async () => {
-  const member = await getReservedUser()
+  const member = await createUser()
   const group = await createAndAddMember(member)
   return { group, member }
 }

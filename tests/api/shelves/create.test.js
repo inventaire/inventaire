@@ -1,6 +1,6 @@
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getReservedUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'
 import { shelfName } from '../fixtures/shelves.js'
@@ -81,7 +81,7 @@ describe('shelves:create', () => {
 
   it("should reject creation of group-specific shelf if user isn't a member", async () => {
     const [ user, group ] = await Promise.all([
-      getReservedUser(),
+      createUser(),
       getSomeGroup(),
     ])
     const visibility = [ `group:${group._id}` ]

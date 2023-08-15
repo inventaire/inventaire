@@ -10,7 +10,7 @@ import {
   createWorkWithAuthor,
   generateIsbn13,
   createPublisher,
-  createEditionWithIsbn, randomLabel
+  createEditionWithIsbn, randomLabel,
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { addClaim, getByUri } from '#tests/api/utils/entities'

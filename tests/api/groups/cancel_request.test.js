@@ -1,9 +1,10 @@
 import 'should'
+import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup } from '../fixtures/groups.js'
-import { authReq, authReqC, getReservedUser } from '../utils/utils.js'
+import { authReq, authReqC } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=cancel-request'
 
@@ -28,7 +29,7 @@ describe('groups:update:cancel-request', () => {
   })
 
   it('should cancel a request', async () => {
-    const [ group, requester ] = await Promise.all([ getSomeGroup(), getReservedUser() ])
+    const [ group, requester ] = await Promise.all([ getSomeGroup(), createUser() ])
     await customAuthReq(requester, 'put', '/api/groups?action=request', { group: group._id })
     const updatedGroup = await getGroup(group)
     const requesterCount = updatedGroup.requested.length

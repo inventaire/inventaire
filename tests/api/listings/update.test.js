@@ -1,7 +1,7 @@
 import { someCouchUuid } from '#fixtures/general'
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getReservedUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
 import { authReq, authReqB, getUser } from '../utils/utils.js'
@@ -92,7 +92,7 @@ describe('listings:update', () => {
 
   it("should reject the update of a listing with a group-specific visibility from a group the user isn't a member of", async () => {
     const [ user, group ] = await Promise.all([
-      getReservedUser(),
+      createUser(),
       getSomeGroup(),
     ])
     const { listing } = await createListing(user)

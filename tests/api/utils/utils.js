@@ -1,5 +1,5 @@
 import 'should'
-import { createUser, getOrCreateUser, getRefreshedUser } from '../fixtures/users.js'
+import { getOrCreateUser, getRefreshedUser } from '../fixtures/users.js'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 
 const userPromises = {}
@@ -32,6 +32,3 @@ export const getDataadminUser = getUserGetter('dataadmin', 'dataadmin')
 export const getDeanonymizedUser = getUserGetter('deanonymized', null, {
   'settings.contributions.anonymize': false,
 })
-
-// TODO: replace calls to getReservedUser with calls to createUser
-export const getReservedUser = createUser

@@ -1,9 +1,10 @@
 import 'should'
+import { createUser } from '#fixtures/users'
 import { getSomeGroup, createGroup } from '../fixtures/groups.js'
 import { createItem, createItems } from '../fixtures/items.js'
 import { createShelf, createShelfWithItems } from '../fixtures/shelves.js'
 import { rawRequest } from '../utils/request.js'
-import { getUser, getReservedUser } from '../utils/utils.js'
+import { getUser } from '../utils/utils.js'
 
 describe('feeds:get', () => {
   describe('user', () => {
@@ -42,7 +43,7 @@ describe('feeds:get', () => {
     })
 
     it('should not return private items when not authorized', async () => {
-      const unknownUser = await getReservedUser()
+      const unknownUser = await createUser()
       const items = await createItems(unknownUser, [
         { visibility: [ 'public' ] },
         { visibility: [ 'friends', 'groups' ] },
@@ -96,7 +97,7 @@ describe('feeds:get', () => {
     })
 
     it('should not return non-public items when not authorized', async () => {
-      const groupMember = await getReservedUser()
+      const groupMember = await createUser()
       const group = await createGroup({ user: groupMember })
       const items = await createItems(groupMember, [
         { visibility: [ 'public' ] },

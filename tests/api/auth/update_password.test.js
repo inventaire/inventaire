@@ -1,11 +1,12 @@
 import 'should'
 import dbFactory from '#db/couchdb/base'
+import { createUser } from '#fixtures/users'
 import { BasicUpdater } from '#lib/doc_updates'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { authReq, getReservedUser } from '../utils/utils.js'
+import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=update-password'
 const db = await dbFactory('users')
@@ -44,7 +45,7 @@ describe('auth:update-password', () => {
   })
 
   it('should reject if reset password timestamp is invalid', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await updateCustomUser(user, 'resetPassword', 'invalid')
     await customAuthReq(user, 'post', endpoint, {
       'new-password': getRandomString(20),
@@ -56,7 +57,7 @@ describe('auth:update-password', () => {
   })
 
   it('should reject if reset password timestamp is too old', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await updateCustomUser(user, 'resetPassword', 1000)
     await customAuthReq(user, 'post', endpoint, {
       'new-password': getRandomString(20),
@@ -68,7 +69,7 @@ describe('auth:update-password', () => {
   })
 
   it('should reset password timestamp is recent', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     const recentTime = Date.now() - 1000
     await updateCustomUser(user, 'resetPassword', recentTime)
     await customAuthReq(user, 'post', endpoint, {
@@ -80,7 +81,7 @@ describe('auth:update-password', () => {
     const password = getRandomString(20)
     const newPassword = getRandomString(20)
     const newPassword2 = getRandomString(20)
-    const user = await getReservedUser({ password })
+    const user = await createUser({ password })
     await customAuthReq(user, 'post', endpoint, {
       'current-password': password,
       'new-password': newPassword,

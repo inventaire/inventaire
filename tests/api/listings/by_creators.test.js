@@ -1,12 +1,12 @@
 import { map } from 'lodash-es'
 import should from 'should'
 import { createGroupWithAMember, createGroup, addMember } from '#fixtures/groups'
-import { getTwoFriends } from '#fixtures/users'
+import { getTwoFriends, createUser } from '#fixtures/users'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
-import { publicReq, authReq, getUserB, getReservedUser } from '../utils/utils.js'
+import { publicReq, authReq, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-creators'
 
@@ -23,7 +23,7 @@ describe('listings:by-creators', () => {
   })
 
   it('should be empty without listings', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     const { _id: userId } = user
     const res = await publicReq('get', `${endpoint}&users=${userId}`)
     res.lists.should.deepEqual([])
@@ -86,7 +86,7 @@ describe('listings:by-creators', () => {
 
   describe('context', () => {
     it('should reject invalid visibility key', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       return customAuthReq(user, 'get', `${endpoint}&users=${user._id}&context=''`)
       .then(shouldNotBeCalled)
       .catch(err => {
@@ -97,7 +97,7 @@ describe('listings:by-creators', () => {
 
     it('should not return the requesting user private listings in a group context', async () => {
       // to avoid giving the false impression that those are visible by other members of the group
-      const user = await getReservedUser()
+      const user = await createUser()
       const group = await createGroup({ user })
       const groupVisibilityKey = getGroupVisibilityKey(group._id)
       const { listing: privateListing } = await createListing(user, { visibility: [] })

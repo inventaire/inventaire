@@ -9,7 +9,6 @@ import {
   authReq,
   getUser,
   getUserB,
-  getReservedUser,
 } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
@@ -79,7 +78,7 @@ describe('users:by-usernames', () => {
   })
 
   it('should get a deleted user', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     await deleteUser(user)
     const res = await publicReq('get', `${endpoint}&usernames=${user.username}`)
     res.users[user.username.toLowerCase()].should.be.ok()

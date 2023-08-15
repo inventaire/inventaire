@@ -9,14 +9,14 @@ import { getRefreshedUser, createUser, createUsername } from '../fixtures/users.
 import { getToken } from '../utils/oauth.js'
 import { bearerTokenReq } from '../utils/request.js'
 import { getIndexedDoc } from '../utils/search.js'
-import { getReservedUser, getUser, getUserB } from '../utils/utils.js'
+import { getUser, getUserB } from '../utils/utils.js'
 
 const { users: usersIndex } = indexesNamesByBaseNames
 const endpoint = '/api/user'
 
 describe('user:update', () => {
   it('should update a user', async () => {
-    const user = await getReservedUser()
+    const user = await createUser()
     const attribute = 'username'
     const value = getRandomString(6)
     await customAuthReq(user, 'put', endpoint, { attribute, value })
@@ -29,21 +29,21 @@ describe('user:update', () => {
     const value = [ 10, 10 ]
 
     it('should update the position', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value })
       const updatedUser = await getRefreshedUser(user)
       updatedUser[attribute].should.deepEqual(value)
     })
 
     it('should round the coordinates', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value: [ 10.123456, 10.123456 ] })
       const updatedUser = await getRefreshedUser(user)
       updatedUser[attribute].should.deepEqual([ 10.12346, 10.12346 ])
     })
 
     it('should allow to delete the position by passing null', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value })
       const updatedUser = await getRefreshedUser(user)
       updatedUser[attribute].should.deepEqual(value)
@@ -53,7 +53,7 @@ describe('user:update', () => {
     })
 
     it('should update the position index', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value })
       await wait(1000)
       const result = await getIndexedDoc(usersIndex, user._id)
@@ -111,7 +111,7 @@ describe('user:update', () => {
 
     it('should reject an update to an existing stableUsername', async () => {
       const userA = await getUser()
-      const userB = await getReservedUser()
+      const userB = await createUser()
       const initialUsername = userB.username
       const token = await getToken({ user: userB, scope: [ 'stable-username' ] })
       // Trigger the creation of a stableUsername
@@ -134,7 +134,7 @@ describe('user:update', () => {
 
   describe('settings', () => {
     it('should update a setting', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const attribute = 'settings.notifications.global'
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
@@ -142,7 +142,7 @@ describe('user:update', () => {
     })
 
     it('should update anonymize setting', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const attribute = 'settings.contributions.anonymize'
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
@@ -152,7 +152,7 @@ describe('user:update', () => {
 
   describe('fediversable', () => {
     it('should update a user', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const attribute = 'fediversable'
       const value = true
       await customAuthReq(user, 'put', endpoint, { attribute, value })
@@ -166,7 +166,7 @@ describe('user:update', () => {
 
   describe('custom properties', () => {
     it('should update custom properties', async () => {
-      const user = await getReservedUser()
+      const user = await createUser()
       const attribute = 'customProperties'
       const value = [ 'wdt:P268' ]
       await customAuthReq(user, 'put', endpoint, { attribute, value })
