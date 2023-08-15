@@ -4,7 +4,7 @@ import { createElement, createListing } from '#fixtures/listings'
 import { getGroup } from '#tests/api/utils/groups'
 import { getListingById } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
-import { createGroup, addMember, addAdmin } from '../fixtures/groups.js'
+import { createGroup, addMember, addAdmin, addInvited, addRequested, addDeclined } from '../fixtures/groups.js'
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createTransaction } from '../fixtures/transactions.js'
@@ -76,8 +76,7 @@ describe('user:delete', () => {
 
   describe('groups', () => {
     it('should remove the user when member', async () => {
-      const user = await getReservedUser()
-      const group = await createGroup()
+      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
       const [ refreshedGroup ] = await addMember(group, user)
       _.map(refreshedGroup.members, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -86,8 +85,7 @@ describe('user:delete', () => {
     })
 
     it('should remove the user when admin, but not delete the group', async () => {
-      const user = await getReservedUser()
-      const group = await createGroup()
+      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
       const [ refreshedGroup ] = await addAdmin(group, user)
       _.map(refreshedGroup.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
@@ -106,6 +104,33 @@ describe('user:delete', () => {
         rethrowShouldNotBeCalledErrors(err)
         err.statusCode.should.equal(404)
       }
+    })
+
+    it('should remove the user when "invited"', async () => {
+      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ refreshedGroup ] = await addInvited(group, user)
+      _.map(refreshedGroup.invited, 'user').should.containEql(user._id)
+      await deleteUser(user)
+      const rerefreshedGroup = await getGroup(group)
+      _.map(rerefreshedGroup.invited, 'user').should.not.containEql(user._id)
+    })
+
+    it('should remove the user when "requested"', async () => {
+      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ refreshedGroup ] = await addRequested(group, user)
+      _.map(refreshedGroup.requested, 'user').should.containEql(user._id)
+      await deleteUser(user)
+      const rerefreshedGroup = await getGroup(group)
+      _.map(rerefreshedGroup.requested, 'user').should.not.containEql(user._id)
+    })
+
+    it('should remove the user when "declined"', async () => {
+      const [ user, group ] = await Promise.all([ getReservedUser(), createGroup() ])
+      const [ refreshedGroup ] = await addDeclined(group, user)
+      _.map(refreshedGroup.declined, 'user').should.containEql(user._id)
+      await deleteUser(user)
+      const rerefreshedGroup = await getGroup(group)
+      _.map(rerefreshedGroup.declined, 'user').should.not.containEql(user._id)
     })
   })
 

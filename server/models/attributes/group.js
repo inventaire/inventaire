@@ -8,7 +8,7 @@ export const updatable = [
   'open',
 ]
 
-export const usersLists = [
+export const groupRoles = [
   'admins',
   'members',
   'invited',

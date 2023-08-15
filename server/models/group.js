@@ -12,6 +12,7 @@ export default Group
 
 const validations = Group.validations = groupValidations
 const attributes = Group.attributes = groupAttributes
+const { groupRoles } = attributes
 
 Group.create = options => {
   log(options, 'group create')
@@ -94,7 +95,7 @@ const membershipActions = {
 }
 
 Group.deleteUser = (group, userId) => {
-  for (const list of attributes.usersLists) {
+  for (const list of groupRoles) {
     group[list] = withoutUser(group[list], userId)
   }
 

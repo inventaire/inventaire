@@ -47,6 +47,25 @@ export async function addAdmin (group, member) {
   return [ refreshedGroup, member ]
 }
 
+export async function addInvited (group, invited) {
+  await membershipAction(getUser(), 'invite', group, invited)
+  const refreshedGroup = await getGroup(group)
+  return [ refreshedGroup, invited ]
+}
+
+export async function addRequested (group, requester) {
+  await membershipAction(requester, 'request', group)
+  const refreshedGroup = await getGroup(group)
+  return [ refreshedGroup, requester ]
+}
+
+export async function addDeclined (group, declined) {
+  await addInvited(group, declined)
+  await membershipAction(declined, 'decline', group)
+  const refreshedGroup = await getGroup(group)
+  return [ refreshedGroup, declined ]
+}
+
 const createAndAddMember = async user => {
   const group = await createGroup()
   const [ refreshedGroup ] = await addMember(group, user)

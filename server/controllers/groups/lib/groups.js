@@ -5,6 +5,7 @@ import { error_ } from '#lib/error/error'
 import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
+import { groupRoles } from '#models/attributes/group'
 import Group from '#models/group'
 import { addSlug } from './slug.js'
 
@@ -40,6 +41,10 @@ export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
     [ 'members', userId ],
     [ 'invited', userId ],
   ])
+}
+
+export async function getGroupsWhereUserHasAnyRole (userId) {
+  return db.viewByKeys('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
 }
 
 export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
