@@ -51,6 +51,37 @@ describe('group model', () => {
       })
       doc.open.should.be.true()
     })
+
+    it('should reject a too long name', () => {
+      try {
+        const name = 'hello'.repeat(100)
+        const doc = Group.create({ name, creatorId: someUserId })
+        shouldNotBeCalled(doc)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.message.should.startWith('invalid name')
+      }
+    })
+
+    it('should reject a name that could be a CouchDB uuid', () => {
+      try {
+        const doc = Group.create({ name: someUserId })
+        shouldNotBeCalled(doc)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.message.should.startWith('invalid name')
+      }
+    })
+
+    it('should reject a slug that could be a CouchDB uuid', () => {
+      try {
+        const doc = Group.create({ name: `  ${someUserId} -$` })
+        shouldNotBeCalled(doc)
+      } catch (err) {
+        rethrowShouldNotBeCalledErrors(err)
+        err.message.should.startWith('invalid name')
+      }
+    })
   })
 
   describe('invite', () => {
