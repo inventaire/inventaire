@@ -3,7 +3,7 @@ import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import groupAttributes from './attributes/group.js'
+import * as groupAttributes from './attributes/group.js'
 import groupValidations from './validations/group.js'
 
 const Group = {}

@@ -1,24 +1,22 @@
-export default {
-  // Attributes that can be changed by an admin with a simple validity check
-  updatable: [
-    'name',
-    'picture',
-    'description',
-    'searchable',
-    'position',
-    'open',
-  ],
+// Attributes that can be changed by an admin with a simple validity check
+export const updatable = [
+  'name',
+  'picture',
+  'description',
+  'searchable',
+  'position',
+  'open',
+]
 
-  usersLists: [
-    'admins',
-    'members',
-    'invited',
-    'declined',
-    'requested',
-  ],
+export const usersLists = [
+  'admins',
+  'members',
+  'invited',
+  'declined',
+  'requested',
+]
 
-  acceptNullValue: [
-    'position',
-    'picture',
-  ],
-}
+export const acceptNullValue = [
+  'position',
+  'picture',
+]
