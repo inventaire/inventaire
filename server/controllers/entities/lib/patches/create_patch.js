@@ -12,12 +12,12 @@ export default async params => {
   if (entityHasPreviousVersions(currentDoc)) {
     const [ previousPatchDoc ] = await getEntityLastPatches(currentDoc._id)
     if (lastPatchWasFromSameUser(previousPatchDoc, userId)) {
-      const aggregatedPatch = getAggregatedPatch(currentDoc, updatedDoc, previousPatchDoc)
+      const aggregatedOperations = getAggregatedOperations(currentDoc, updatedDoc, previousPatchDoc)
       if (isNotSpecialPatch(previousPatchDoc)) {
-        if (aggregatedPatchIsEmpty(aggregatedPatch)) {
+        if (aggregatedOperationsAreEmpty(aggregatedOperations)) {
           return deletePatch(previousPatchDoc)
-        } else if (aggregatedPatchIsShorter(aggregatedPatch, previousPatchDoc, newPatchDoc)) {
-          return updatePreviousPatch(aggregatedPatch, previousPatchDoc)
+        } else if (aggregatedOperationsAreShorter(aggregatedOperations, previousPatchDoc, newPatchDoc)) {
+          return updatePreviousPatch(aggregatedOperations, previousPatchDoc)
         }
       }
     }
@@ -32,24 +32,24 @@ const lastPatchWasFromSameUser = (previousPatchDoc, userId) => {
   return previousPatchDoc && previousPatchDoc.user === userId
 }
 
-const getAggregatedPatch = (currentDoc, updatedDoc, previousPatchDoc) => {
+const getAggregatedOperations = (currentDoc, updatedDoc, previousPatchDoc) => {
   const beforeLastPatch = Patch.revert(currentDoc, previousPatchDoc)
   return Patch.getDiff(beforeLastPatch, updatedDoc)
 }
 
 const isNotSpecialPatch = patch => patch.context == null && patch.batch == null
 
-const aggregatedPatchIsEmpty = patch => patch.length === 0
+const aggregatedOperationsAreEmpty = operations => operations.length === 0
 
-const aggregatedPatchIsShorter = (aggregatedPatch, previousPatchDoc, newPatchDoc) => {
-  return aggregatedPatch.length < (previousPatchDoc.patch.length + newPatchDoc.patch.length)
+const aggregatedOperationsAreShorter = (aggregatedOperations, previousPatchDoc, newPatchDoc) => {
+  return aggregatedOperations.length < (previousPatchDoc.operations.length + newPatchDoc.operations.length)
 }
 
 const deletePatch = async patch => {
   await db.delete(patch._id, patch._rev)
 }
 
-const updatePreviousPatch = async (aggregatedPatch, previousPatchDoc) => {
-  previousPatchDoc.patch = aggregatedPatch
+const updatePreviousPatch = async (aggregatedOperations, previousPatchDoc) => {
+  previousPatchDoc.operations = aggregatedOperations
   return db.putAndReturn(previousPatchDoc)
 }

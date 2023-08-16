@@ -36,10 +36,10 @@ const Patch = {
       type: 'patch',
       user: userId,
       timestamp: now,
-      patch: Patch.getDiff(currentDoc, updatedDoc),
+      operations: Patch.getDiff(currentDoc, updatedDoc),
     }
 
-    if (patch.patch.length === 0) {
+    if (patch.operations.length === 0) {
       throw error_.new('empty patch', 500, { currentDoc, updatedDoc })
     }
 
@@ -69,8 +69,8 @@ const Patch = {
     if (patch._id.split(':')[0] !== currentDoc._id) {
       throw error_.new('entity and patch ids do not match', 500, { currentDoc, patch })
     }
-    const inversePatch = jiff.inverse(patch.patch)
-    const updatedDoc = applyInversePatch(currentDoc, inversePatch)
+    const inverseOperations = jiff.inverse(patch.operations)
+    const updatedDoc = applyInverseOperations(currentDoc, inverseOperations)
     return updatedDoc
   },
 
@@ -79,7 +79,7 @@ const Patch = {
 
     // Assumes that patchesDocs are ordered from oldest to newest
     for (const patchDoc of patchesDocs) {
-      patchDoc.snapshot = jiff.patch(patchDoc.patch, previousVersion)
+      patchDoc.snapshot = jiff.patch(patchDoc.operations, previousVersion)
       // jiff.patch is non-mutating: we get a new object
       // without modifying the previous snapshot
       previousVersion = patchDoc.snapshot
@@ -91,16 +91,16 @@ const Patch = {
 
 export default Patch
 
-const applyInversePatch = (currentDoc, inversePatch) => {
+const applyInverseOperations = (currentDoc, inverseOperations) => {
   currentDoc = _.cloneDeep(currentDoc)
-  inversePatch.forEach(fixOperation(currentDoc, inversePatch))
+  inverseOperations.forEach(fixOperation(currentDoc, inverseOperations))
 
-  const updatedDoc = jiff.patch(inversePatch, currentDoc)
+  const updatedDoc = jiff.patch(inverseOperations, currentDoc)
 
   // Cleanup: remove empty claims arrays
   for (const prop in updatedDoc.claims) {
     const array = updatedDoc.claims[prop]
-    if (array.length === 0) { delete updatedDoc.claims[prop] }
+    if (array.length === 0) delete updatedDoc.claims[prop]
   }
 
   return updatedDoc
@@ -108,13 +108,13 @@ const applyInversePatch = (currentDoc, inversePatch) => {
 
 // Make the required modification for the jiff.patch to success
 // to work around cases known to crash
-const fixOperation = (currentDoc, inversePatch) => (op, index) => {
+const fixOperation = (currentDoc, inverseOperations) => (op, index) => {
   const opFn = operationFix[op.op]
-  if (opFn != null) return opFn(currentDoc, inversePatch, op, index)
+  if (opFn != null) return opFn(currentDoc, inverseOperations, op, index)
 }
 
 const operationFix = {
-  add: (currentDoc, inversePatch, op, index) => {
+  add: (currentDoc, inverseOperations, op, index) => {
     const { path, value } = op
     if (_.isArray(value) && (value.length === 1)) {
       const currentArray = getFromPatchPath(currentDoc, path)
@@ -130,9 +130,9 @@ const operationFix = {
     }
   },
 
-  test: (currentDoc, inversePatch, op, index) => {
+  test: (currentDoc, inverseOperations, op, index) => {
     const { value } = op
-    const nextOp = inversePatch[index + 1]
+    const nextOp = inverseOperations[index + 1]
     if ((nextOp.path === op.path) && (nextOp.op === 'remove')) {
       // Case when the 'remove' operation tries to remove an array with a value
       // in it, while this array might now contain more values

@@ -35,7 +35,7 @@ export default {
       },
       function (doc) {
         const { timestamp } = doc
-        for (const operation of doc.patch) {
+        for (const operation of doc.operations) {
           if (operation.op === 'add') {
             const [ , section, property, arrayIndex ] = operation.path.split('/')
             if (section === 'claims') {
@@ -56,7 +56,7 @@ export default {
   byUserIdAndFilterAndDate: {
     map: doc => {
       const { user, timestamp } = doc
-      for (const operation of doc.patch) {
+      for (const operation of doc.operations) {
         // ops included: 'add', 'remove'
         if (operation.op !== 'test') {
           // `filter` can be both a label lang or a claim property

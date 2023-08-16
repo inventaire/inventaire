@@ -58,7 +58,7 @@ describe('patch', () => {
       .should.throw()
     })
 
-    it('should throw if there are no changes', () => {
+    it('should throw if there are no operations', () => {
       const docClone = _.cloneDeep(currentDoc);
       (() => Patch.create({ userId, currentDoc, updatedDoc: docClone }))
       .should.throw()
@@ -97,21 +97,21 @@ describe('patch', () => {
 
     it('should return with a patch object', () => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
-      patch.patch.should.be.an.Array()
-      patch.patch.forEach(op => {
+      patch.operations.should.be.an.Array()
+      patch.operations.forEach(op => {
         op.should.be.an.Object()
         op.op.should.be.a.String()
         return op.path.should.be.a.String()
       })
 
-      const updateFromPatch = jiff.patch(patch.patch, currentDoc)
+      const updateFromPatch = jiff.patch(patch.operations, currentDoc)
       updateFromPatch.claims.should.deepEqual(updatedDoc.claims)
       updateFromPatch.labels.should.deepEqual(updatedDoc.labels)
     })
 
     it('should ignore data out of versioned attributes', () => {
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
-      const updateFromPatch = jiff.patch(patch.patch, currentDoc)
+      const updateFromPatch = jiff.patch(patch.operations, currentDoc)
       updateFromPatch.notTrackedAttr.should.equal(currentDoc.notTrackedAttr)
       updateFromPatch.notTrackedAttr.should.not.equal(updatedDoc.notTrackedAttr)
     })

@@ -25,7 +25,7 @@ export async function getActivitiesFromPatch (patch) {
 const byClaimValueAndDate = doc => {
   const { _id: id, timestamp } = doc
   const rows = []
-  for (const operation of doc.patch) {
+  for (const operation of doc.operations) {
     if (operation.op === 'add') {
       const [ , section, property, arrayIndex ] = operation.path.split('/')
       if (section === 'claims') {

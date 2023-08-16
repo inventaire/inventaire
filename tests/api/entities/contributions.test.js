@@ -99,8 +99,8 @@ describe('entities:contributions', () => {
       const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${property}`)
       patches.length.should.equal(3)
       total.should.equal(3)
-      patches.forEach(({ patch }) => {
-        patch.some(operation => operation.path.includes(`/${property}`)).should.be.true()
+      patches.forEach(({ operations }) => {
+        operations.some(operation => operation.path.includes(`/${property}`)).should.be.true()
       })
     })
 
@@ -114,8 +114,8 @@ describe('entities:contributions', () => {
       const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${lang}`)
       patches.length.should.equal(2)
       total.should.equal(2)
-      patches.forEach(({ patch }) => {
-        patch.some(operation => operation.path.includes(`/${lang}`)).should.be.true()
+      patches.forEach(({ operations }) => {
+        operations.some(operation => operation.path.includes(`/${lang}`)).should.be.true()
       })
     })
   })

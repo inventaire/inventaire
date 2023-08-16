@@ -13,7 +13,7 @@ describe('patch correction', () => {
       const patches = await getHistory(edition.uri)
       patches.length.should.equal(2)
       patches[1]._rev.should.startWith('2')
-      patches[1].patch.should.deepEqual([ { op: 'add', path: '/claims/wdt:P1104', value: [ 2 ] } ])
+      patches[1].operations.should.deepEqual([ { op: 'add', path: '/claims/wdt:P1104', value: [ 2 ] } ])
     })
 
     it('should not rewrite a patch when another user re-updates the same claim', async () => {
@@ -24,7 +24,7 @@ describe('patch correction', () => {
       const patches = await getHistory(edition.uri)
       patches.length.should.equal(3)
       patches[2]._rev.should.startWith('1')
-      patches[2].patch.should.deepEqual([
+      patches[2].operations.should.deepEqual([
         { op: 'add', path: '/claims/wdt:P1104/0', value: 2 },
         { op: 'test', path: '/claims/wdt:P1104/1', value: 1 },
         { op: 'remove', path: '/claims/wdt:P1104/1' },
@@ -38,7 +38,7 @@ describe('patch correction', () => {
       const patches = await getHistory(work.uri)
       patches.length.should.equal(2)
       patches[1]._rev.should.startWith('2')
-      patches[1].patch.should.deepEqual([ { op: 'add', path: '/labels/es', value: 'bar' } ])
+      patches[1].operations.should.deepEqual([ { op: 'add', path: '/labels/es', value: 'bar' } ])
     })
   })
 
