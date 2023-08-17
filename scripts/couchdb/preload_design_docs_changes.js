@@ -33,5 +33,6 @@ const createDesignDocsSymbolicLinks = async () => {
 
 await createDesignDocsSymbolicLinks()
 await waitForCouchInit({ preload: true })
+// Once here, CouchDB indexer started, this script could be terminated without stopping it
 await waitForActiveTasksToBeDone()
 success('done')

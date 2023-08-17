@@ -10,7 +10,7 @@ export const waitForActiveTasksToBeDone = async () => {
   const activeTasks = await requests_.get(`${dbBaseUrl}/_active_tasks`)
   if (activeTasks.length > 0) {
     info(formatTasks(activeTasks), `waiting for active tasks (${++count})`)
-    await wait(2000)
+    await wait(5000)
     return waitForActiveTasksToBeDone()
   }
 }
