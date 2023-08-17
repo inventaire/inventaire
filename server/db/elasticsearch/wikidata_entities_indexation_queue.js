@@ -3,6 +3,7 @@ import { getCachedEnrichedEntity } from '#controllers/entities/lib/get_wikidata_
 import { initJobQueue } from '#db/level/jobs'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
+import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { oneHour } from '#lib/time'
 import { info, logError, warn } from '#lib/utils/logs'
@@ -19,6 +20,11 @@ const importCircularDependencies = async () => {
 setImmediate(importCircularDependencies)
 
 async function entitiesIndexationWorker (jobId, wdId) {
+  if (!reindexWdEntity) {
+    warn('entitiesIndexationWorker: waiting for reindexWdEntity function to be available')
+    await wait(1000)
+    return entitiesIndexationWorker(jobId, wdId)
+  }
   try {
     info(`wd entity indexation worker pending: ${wdId}`)
     // Run the worker when the CPUs activity is below 55% load
