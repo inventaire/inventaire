@@ -56,18 +56,22 @@ export default {
   byUserIdAndFilterAndDate: {
     map: doc => {
       const { user, timestamp } = doc
+      // Use an object to deduplicate filters
+      const filters = {}
       for (const operation of doc.operations) {
         // ops included: 'add', 'remove'
         if (operation.op !== 'test') {
           // `filter` can be both a label lang or a claim property
           const filter = operation.path.split('/')[2]
           if (filter != null) {
-            // return to only emit once per matching doc
-            return emit([ user, filter, timestamp ])
+            filters[filter] = true
           }
           // TODO: handle case where path=/claims or path=/labels
           // Known case: after a reverse merge
         }
+      }
+      for (const filter of Object.keys(filters)) {
+        emit([ user, filter, timestamp ])
       }
     },
     reduce: '_count',

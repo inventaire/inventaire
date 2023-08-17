@@ -104,6 +104,24 @@ describe('entities:contributions', () => {
       })
     })
 
+    it('should filter by claim property in a multi-claim patch', async () => {
+      const user = await createUser()
+      const property = 'wdt:P941'
+      await createWork({
+        user,
+        claims: {
+          'wdt:P921': [ 'wd:Q1' ],
+          [property]: [ 'wd:Q180736' ],
+          'wdt:P144': [ 'wd:Q180736' ],
+        },
+      })
+      const { patches } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${property}`)
+      patches.length.should.be.aboveOrEqual(1)
+      patches.forEach(({ operations }) => {
+        operations.some(operation => operation.path.includes(`/${property}`)).should.be.true()
+      })
+    })
+
     it('should filter by label lang', async () => {
       const user = await createUser()
       const { uri } = await createWork({ user })
