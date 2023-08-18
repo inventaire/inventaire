@@ -45,10 +45,20 @@ const isClaim = claim => /^(wdt:|invp:)/.test(claim)
 
 const redirections = {
   json: {
-    entity: uri => {
-      // redirect claim uri to its entity value
-      if (isClaim(uri)) uri = uri.split('-')[1]
-      return `/api/entities?action=by-uris&uris=${uri}`
+    entity: (uri, section) => {
+      if (section) {
+        if (section === 'history') {
+          const [ prefix, id ] = uri.split(':')
+          if (prefix === 'inv') {
+            return `/api/entities?action=history&id=${id}`
+          }
+        }
+        throw error_.notFound({ uri, section })
+      } else {
+        // redirect claim uri to its entity value
+        if (isClaim(uri)) uri = uri.split('-')[1]
+        return `/api/entities?action=by-uris&uris=${uri}`
+      }
     },
     inventory: username => `/api/users?action=by-usernames&usernames=${username}`,
     users: async (id, section) => {

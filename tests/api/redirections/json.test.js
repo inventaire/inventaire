@@ -34,6 +34,13 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/entity/wdt:P921-${uri}.json`)
       headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
     })
+
+    it('should redirect to a local entity history', async () => {
+      const { _id } = await someEntityPromise
+      const uri = `inv:${_id}`
+      const { headers } = await rawRequest('get', `/entity/${uri}/history.json`)
+      headers.location.should.equal(`${host}/api/entities?action=history&id=${_id}`)
+    })
   })
 
   describe('users', () => {
