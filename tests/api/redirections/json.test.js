@@ -12,24 +12,28 @@ const someUserPromise = createUser()
 const someItemPromise = createItem()
 
 describe('json redirections', () => {
-  it('should redirect to an entity', async () => {
-    const { _id } = await someEntityPromise
-    const uri = `inv:${_id}`
-    const { headers } = await rawRequest('get', `/entity/${uri}.json`)
-    headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
+  describe('items', () => {
+    it('should redirect to an item by id', async () => {
+      const { _id } = await someItemPromise
+      const { headers } = await rawRequest('get', `/items/${_id}.json`)
+      headers.location.should.equal(`${host}/api/items?action=by-ids&ids=${_id}`)
+    })
   })
 
-  it('should redirect a claim to its entity value', async () => {
-    const { _id } = await someEntityPromise
-    const uri = `inv:${_id}`
-    const { headers } = await rawRequest('get', `/entity/wdt:P921-${uri}.json`)
-    headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
-  })
+  describe('entities', () => {
+    it('should redirect to an entity', async () => {
+      const { _id } = await someEntityPromise
+      const uri = `inv:${_id}`
+      const { headers } = await rawRequest('get', `/entity/${uri}.json`)
+      headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
+    })
 
-  it('should redirect to an item by id', async () => {
-    const { _id } = await someItemPromise
-    const { headers } = await rawRequest('get', `/items/${_id}.json`)
-    headers.location.should.equal(`${host}/api/items?action=by-ids&ids=${_id}`)
+    it('should redirect a claim to its entity value', async () => {
+      const { _id } = await someEntityPromise
+      const uri = `inv:${_id}`
+      const { headers } = await rawRequest('get', `/entity/wdt:P921-${uri}.json`)
+      headers.location.should.equal(`${host}/api/entities?action=by-uris&uris=${uri}`)
+    })
   })
 
   describe('users', () => {
@@ -42,13 +46,6 @@ describe('json redirections', () => {
     it('should redirect to a user by username', async () => {
       const { username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}.json`)
-      headers.location.should.equal(`${host}/api/users?action=by-usernames&usernames=${username}`)
-    })
-
-    // Legacy
-    it('should redirect to a user by username from /inventory/:username', async () => {
-      const { username } = await someUserPromise
-      const { headers } = await rawRequest('get', `/inventory/${username}.json`)
       headers.location.should.equal(`${host}/api/users?action=by-usernames&usernames=${username}`)
     })
 
@@ -68,6 +65,13 @@ describe('json redirections', () => {
       const { _id, username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}/contributions.json`)
       headers.location.should.equal(`${host}/api/entities?action=contributions&user=${_id}`)
+    })
+
+    // Legacy
+    it('should redirect to a user by username from /inventory/:username', async () => {
+      const { username } = await someUserPromise
+      const { headers } = await rawRequest('get', `/inventory/${username}.json`)
+      headers.location.should.equal(`${host}/api/users?action=by-usernames&usernames=${username}`)
     })
   })
 
