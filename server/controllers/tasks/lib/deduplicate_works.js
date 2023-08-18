@@ -11,6 +11,9 @@ export default async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })
   if (work == null) throw error_.notFound({ workUri })
 
+  // Make sure workUri isn't a redirection
+  workUri = work.uri
+
   const { type } = work
   if (type !== 'work') {
     throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })

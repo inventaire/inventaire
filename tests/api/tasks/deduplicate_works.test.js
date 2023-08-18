@@ -4,7 +4,7 @@ import { wait } from '#lib/promises'
 import { authReq, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '../fixtures/entities.js'
-import { getByUris, getByUri } from '../utils/entities.js'
+import { getByUris, getByUri, merge } from '../utils/entities.js'
 import { getBySuspectUri } from '../utils/tasks.js'
 
 const endpoint = '/api/tasks?action=deduplicate-works'
@@ -121,6 +121,16 @@ describe('tasks:deduplicate:works', () => {
     const isbn = edition.isbn
     const workUri = edition.claims['wdt:P629'][0]
     const { tasks } = await authReq('post', endpoint, { uri: workUri, isbn })
+    tasks.length.should.equal(0)
+  })
+
+  it('should ignore when the edition is already associated to the work via a redirection', async () => {
+    const edition = await createEditionWithIsbn()
+    const workUri = edition.claims['wdt:P629'][0]
+    const { uri: otherWorkUri } = await createWork()
+    await merge(otherWorkUri, workUri)
+    const { isbn } = edition
+    const { tasks } = await authReq('post', endpoint, { uri: otherWorkUri, isbn })
     tasks.length.should.equal(0)
   })
 })
