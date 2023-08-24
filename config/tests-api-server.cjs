@@ -8,7 +8,7 @@ module.exports = {
     enabled: false,
   },
   mailer: {
-    enabled: false,
+    disabled: true,
   },
   jobs: {
     'inv:deduplicate': {
