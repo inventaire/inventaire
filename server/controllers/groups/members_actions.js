@@ -1,6 +1,6 @@
 import { log } from '#lib/utils/logs'
+import { groupAction } from './lib/group_action.js'
 import membershipValidations from './lib/membership_validations.js'
-import modelAction from './lib/model_action.js'
 
 const sanitization = {
   group: {},
@@ -11,7 +11,7 @@ const controller = action => async params => {
   const { group: groupId, user: userId, reqUserId } = params
   log(params, `${action} group`)
   await membershipValidations[action](reqUserId, groupId, userId)
-  await modelAction(action, params)
+  await groupAction(action, params)
   return { ok: true }
 }
 

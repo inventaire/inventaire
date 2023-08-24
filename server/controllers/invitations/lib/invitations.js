@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import groupAction from '#controllers/groups/lib/model_action'
+import { groupAction } from '#controllers/groups/lib/group_action'
 import { makeRequest } from '#controllers/relations/lib/actions'
 import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
 import dbFactory from '#db/couchdb/base'

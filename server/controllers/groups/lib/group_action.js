@@ -5,7 +5,7 @@ import initMembershipUpdateHooks from './membership_update_hooks.js'
 
 const db = await dbFactory('groups')
 
-export default async (action, params) => {
+export async function groupAction (action, params) {
   const { reqUserId, group: groupId, user: secondaryUserId } = params
   const docUpdateFn = Group[action].bind(null, reqUserId, secondaryUserId)
   await db.update(groupId, docUpdateFn)
