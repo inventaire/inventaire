@@ -9,7 +9,7 @@ import { Track } from '#lib/track'
 import { Log } from '#lib/utils/logs'
 import Group from '#models/group'
 import parseEmails from './lib/parse_emails.js'
-import sendInvitationAndReturnData from './lib/send_invitation_and_return_data.js'
+import { sendInvitationAndReturnData } from './lib/send_invitation_and_return_data.js'
 
 const sanitization = validateSanitization({
   emails: {},
@@ -20,8 +20,8 @@ const sanitization = validateSanitization({
 export default async (req, res) => {
   const params = sanitize(req, res, sanitization)
   const { emails, groupId, reqUserId } = params
-  const { user } = req
   let { message } = params
+  const { user } = req
 
   // Convert undefined or empty string message to null to make following type checks easier
   if (!message) message = null
@@ -31,7 +31,7 @@ export default async (req, res) => {
     validateGroup(groupId, reqUserId),
   ])
 
-  return sendInvitationAndReturnData({ user, message, group, parsedEmails, reqUserId })
+  return sendInvitationAndReturnData({ reqUser: user, message, group, parsedEmails, reqUserId })
   .then(Log('invitationByEmails data'))
   .then(responses_.Send(res))
   .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))

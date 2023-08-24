@@ -1,64 +1,55 @@
-import _ from '#builders/utils'
+import { difference, map } from 'lodash-es'
 import { addInviter, createUnknownInvited, getInvitationsByEmails } from '#controllers/invitations/lib/invitations'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import { log, LogError, Log } from '#lib/utils/logs'
+import { log } from '#lib/utils/logs'
 import Invited from '#models/invited'
 
-export default (user, group, emails, message) => {
-  assert_.object(user)
+export async function sendInvitation ({ reqUser, group, emails, message }) {
+  assert_.object(reqUser)
   assert_.type('object|null', group)
   assert_.array(emails)
   assert_.type('string|null', message)
-  const userId = user._id
+  const reqUserId = reqUser._id
   const groupId = group && group._id
   log(emails, 'send_invitations emails')
 
-  return getInvitationsByEmails(emails)
-  .then(Log('known invited'))
-  .then(existingInvitedUsers => {
-    // Emails already invited by others but not this user
-    const canBeInvited = extractCanBeInvited(userId, groupId, existingInvitedUsers)
-    log(canBeInvited, 'known emails that canBeInvited by the current user')
+  const existingInvitedUsers = await getInvitationsByEmails(emails)
+  log(existingInvitedUsers, 'known invited')
+  // Emails already invited by others but not this user
+  const canBeInvited = extractCanBeInvited(reqUserId, groupId, existingInvitedUsers)
+  log(canBeInvited, 'known emails that canBeInvited by the current user')
 
-    // Find emails that were never invited by anyone
-    const unknownEmails = extractUnknownEmails(emails, existingInvitedUsers)
-    log(unknownEmails, 'unknown emails')
+  // Find emails that were never invited by anyone
+  const unknownEmails = extractUnknownEmails(emails, existingInvitedUsers)
+  log(unknownEmails, 'unknown emails')
 
-    return Promise.all([
-      // Create an invitation doc for unknown emails
-      createUnknownInvited(userId, groupId, unknownEmails),
-      // Add the invitation to the existing doc for known emails
-      addInviter(userId, groupId, canBeInvited),
-    ])
-    .then(() => {
-      const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)
-      log(remainingEmails, 'effectively sent emails')
+  await Promise.all([
+    // Create an invitation doc for unknown emails
+    createUnknownInvited(reqUserId, groupId, unknownEmails),
+    // Add the invitation to the existing doc for known emails
+    addInviter(reqUserId, groupId, canBeInvited),
+  ])
+  const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)
+  log(remainingEmails, 'effectively sent emails')
 
-      return triggerInvitation(user, group, remainingEmails, message)
-    })
-  })
-  .catch(LogError('send invitations err'))
-}
-
-const triggerInvitation = async (user, group, emails, message) => {
   if (group) {
-    await emit('send:group:email:invitations', user, group, emails, message)
+    await emit('send:group:email:invitations', reqUser, group, emails, message)
   } else {
-    await emit('send:email:invitations', user, emails, message)
+    await emit('send:email:invitations', reqUser, emails, message)
   }
 }
 
-const extractUnknownEmails = (emails, knownInvitedUsers) => {
-  const knownInvitedUsersEmails = _.map(knownInvitedUsers, 'email')
-  return _.difference(emails, knownInvitedUsersEmails)
+function extractUnknownEmails (emails, knownInvitedUsers) {
+  const knownInvitedUsersEmails = map(knownInvitedUsers, 'email')
+  return difference(emails, knownInvitedUsersEmails)
 }
 
-const extractCanBeInvited = (userId, groupId, knownInvitedUsers) => {
-  return knownInvitedUsers.filter(Invited.canBeInvited(userId, groupId))
+function extractCanBeInvited (reqUserId, groupId, knownInvitedUsers) {
+  return knownInvitedUsers.filter(Invited.canBeInvited(reqUserId, groupId))
 }
 
-const concatRemainingEmails = (canBeInvited, unknownEmails) => {
-  const knownEmails = _.map(canBeInvited, 'email')
+function concatRemainingEmails (canBeInvited, unknownEmails) {
+  const knownEmails = map(canBeInvited, 'email')
   return unknownEmails.concat(knownEmails)
 }

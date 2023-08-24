@@ -4,9 +4,9 @@ import { getGroup } from '#tests/api/utils/groups'
 import { getRelationStatus } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { getSomeGroup } from '../fixtures/groups.js'
+import { getSomeGroup, getSomeGroupWithAMember } from '../fixtures/groups.js'
 import { createUser, signup } from '../fixtures/users.js'
-import { authReq, authReqB, authReqC } from '../utils/utils.js'
+import { authReq, authReqB, authReqC, getUser } from '../utils/utils.js'
 
 const randomEmail = () => `a${getRandomString(4).toLowerCase()}@foo.org`
 const endpoint = '/api/invitations?action=by-emails'
@@ -57,11 +57,23 @@ describe('invitations:by-emails', () => {
       })
     })
 
+    it('should ignore self invitations', async () => {
+      const user = await getUser()
+      const res = await customAuthReq(user, 'post', endpoint, { emails: user.email })
+      res.users.should.deepEqual([])
+      res.emails.should.deepEqual([])
+    })
+
+    it('should trigger a friend request when a user uses the invited email', async () => {
+      const [ invitingUser, invitedUser ] = await Promise.all([ createUser(), createUser() ])
+      await customAuthReq(invitingUser, 'post', endpoint, { emails: invitedUser.email })
+      const relationStatus = await getRelationStatus(invitingUser, invitedUser)
+      relationStatus.should.equal('userRequested')
+    })
+
     it('should trigger a friend request on signup', async () => {
       const email = randomEmail()
-
       const invite = () => authReq('post', endpoint, { emails: email })
-
       await invite()
       await signup(email)
       const relations = await authReq('get', '/api/relations')
@@ -115,6 +127,16 @@ describe('invitations:by-emails', () => {
         err.statusCode.should.equal(403)
         err.body.status_verbose.should.equal("user isn't a group member")
       })
+    })
+
+    it('should trigger a group invite when a user uses the invited email', async () => {
+      const { group, member } = await getSomeGroupWithAMember()
+      const invitedUser = await createUser()
+      await customAuthReq(member, 'post', endpoint, { emails: invitedUser.email, group: group._id })
+      const updatedGroup = await getGroup(group)
+      const invitation = updatedGroup.invited.find(({ user }) => user === invitedUser._id)
+      invitation.should.be.an.Object()
+      invitation.invitor.should.equal(member._id)
     })
 
     it('should trigger an invite on signup', async () => {
