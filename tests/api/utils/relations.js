@@ -10,18 +10,12 @@ setImmediate(importCircularDependencies)
 
 const getRelations = user => customAuthReq(user, 'get', endpoint)
 
-const getRelationStatus = async (reqUser, otherUser) => {
-  const { _id: reqUserId } = reqUser
+export async function getRelationStatus (reqUser, otherUser) {
   const { _id: otherUserId } = otherUser
-  const [ reqUserRelations, otherUserRelations ] = await Promise.all([
-    getRelations(reqUser),
-    getRelations(otherUser),
-  ])
+  const reqUserRelations = await getRelations(reqUser)
   if (reqUserRelations.friends.includes(otherUserId)) return 'friends'
+  if (reqUserRelations.userRequested.includes(otherUserId)) return 'userRequested'
   if (reqUserRelations.otherRequested.includes(otherUserId)) return 'otherRequested'
-  // Unfortunatly, the endpoint doesn't return userRequested user ids
-  // so we need to query those from the point of view of the other user
-  if (otherUserRelations.otherRequested.includes(reqUserId)) return 'userRequested'
   return 'none'
 }
 
@@ -40,10 +34,14 @@ export const getUsersWithoutRelation = () => {
   .then(([ userA, userB ]) => ({ userA, userB }))
 }
 
-export const makeFriends = (userA, userB) => {
-  return action('request', userA, userB)
-  .then(() => action('accept', userB, userA))
-  .then(() => [ userA, userB ])
+export async function makeFriendRequest (userA, userB) {
+  await action('request', userA, userB)
+}
+
+export async function makeFriends (userA, userB) {
+  await action('request', userA, userB)
+  await action('accept', userB, userA)
+  return [ userA, userB ]
 }
 
 export async function assertRelation (userA, userB, relationStatus) {
