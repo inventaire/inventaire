@@ -53,3 +53,11 @@ export const allowedPropertyValues = property => {
     },
   })
 }
+
+export const externalIdWithFormatter = ({ regex, format }) => {
+  return Object.assign({}, concurrentString, {
+    validate: regex.test.bind(regex),
+    format,
+    isExternalId: true,
+  })
+}

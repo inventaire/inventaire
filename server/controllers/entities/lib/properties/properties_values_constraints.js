@@ -21,7 +21,7 @@ import {
 import { collectionEntity, entity, humanEntity, imageHash, ordinal, positiveInteger, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
-import { isbnProperty, externalId, typedExternalId, allowedPropertyValues } from './properties_config_builders.js'
+import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
 
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)
@@ -53,7 +53,8 @@ export default {
   // ISBN 13
   'wdt:P212': isbnProperty(13),
   // ISNI
-  'wdt:P213': extend(externalId(/^\d{4} ?\d{4} ?\d{4} ?\d{3}[0-9X]$/), {
+  'wdt:P213': externalIdWithFormatter({
+    regex: /^\d{4} \d{4} \d{4} \d{3}[0-9X]$/,
     format: id => {
       id = id.replace(/\s/g, '')
       return `${id.slice(0, 4)} ${id.slice(4, 8)} ${id.slice(8, 12)} ${id.slice(12)}`
@@ -68,7 +69,10 @@ export default {
   // Library of Congress authority ID
   'wdt:P244': externalId(/^(gf|n|nb|nr|no|ns|sh|sj)([4-9][0-9]|00|20[0-2][0-9])[0-9]{6}$/),
   // BNF id
-  'wdt:P268': externalId(/^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/),
+  'wdt:P268': externalIdWithFormatter({
+    regex: /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/,
+    format: id => id.replace(/^cb/, ''),
+  }),
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
   // language of work

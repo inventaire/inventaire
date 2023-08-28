@@ -1,6 +1,6 @@
 import should from 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri } from '../fixtures/entities.js'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId } from '../fixtures/entities.js'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
 describe('entities:update-claims:inv', () => {
@@ -254,5 +254,14 @@ describe('entities:update-claims:inv', () => {
     await addClaim({ uri: human.uri, property: 'wdt:P213', value: someRecoverableIsni })
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
+  })
+
+  it('should accept a recoverable BNF id', async () => {
+    const human = await createHuman()
+    const someValidBnfId = someBnfId()
+    const recoverableBnfId = `cb${someValidBnfId}`
+    await addClaim({ uri: human.uri, property: 'wdt:P268', value: recoverableBnfId })
+    const updatedHuman = await getByUri(human.uri)
+    updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
   })
 })

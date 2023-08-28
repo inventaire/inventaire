@@ -146,6 +146,8 @@ export const createItemFromEntityUri = ({ user, uri, item = {} }) => {
 
 export const someFakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
+export const someBnfId = () => `1${Math.random().toString().slice(2, 9)}p`
+
 export const someOpenLibraryId = (type = 'human') => {
   const numbers = Math.random().toString().slice(2, 6)
   const typeLetter = openLibraryTypeLetters[type]
