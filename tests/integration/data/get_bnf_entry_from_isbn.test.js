@@ -29,6 +29,12 @@ describe('get_bnf_entry_from_isbn', () => {
     const entry = await getBnfEntryFromIsbn('9782848051031')
     entry.edition.claims['wdt:P1476'].should.equal("La nuit du papillon d'or")
   })
+
+  it('should handle authors with only a family name', async () => {
+    const entry = await getBnfEntryFromIsbn('9782723480451')
+    const author = entry.authors.find(author => author.claims['wdt:P268'] === '16545057v')
+    author.labels.fr.should.equal('Juzhen')
+  })
 })
 
 describe('cleanupBnfTitle', () => {

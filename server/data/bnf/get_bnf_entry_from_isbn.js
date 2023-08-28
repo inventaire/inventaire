@@ -7,6 +7,7 @@ import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { parseIsbn } from '#lib/isbn/parse'
 import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
+import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
@@ -46,7 +47,7 @@ const getQuery = isbn => {
   PREFIX rdagroup1elements: <http://rdvocab.info/Elements/>
   PREFIX rdarelationships: <http://rdvocab.info/RDARelationshipsWEMI/>
 
-  SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
+  SELECT DISTINCT ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?authorFamilyName ?expressionLang ?publisherLabel (GROUP_CONCAT(?editionMatch;separator=",") AS ?editionMatches) (GROUP_CONCAT(?workMatch;separator=",") AS ?workMatches) (GROUP_CONCAT(?authorMatch;separator=",") AS ?authorMatches) WHERE {
 
   { ?edition bnf-onto:isbn "${isbn10h}" }
   UNION { ?edition bnf-onto:isbn "${isbn13h}" }
@@ -87,6 +88,9 @@ const getQuery = isbn => {
       ?author foaf:name ?authorLabel .
     }
     OPTIONAL {
+      ?author foaf:familyName ?authorFamilyName .
+    }
+    OPTIONAL {
       { ?author owl:sameAs ?authorMatch . }
       UNION { ?author skos:exactMatch ?authorMatch . }
       UNION {
@@ -96,7 +100,7 @@ const getQuery = isbn => {
     }
   }
 }
-GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?expressionLang ?publisherLabel`
+GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPublicationDate ?author ?authorLabel ?authorFamilyName ?expressionLang ?publisherLabel`
   return fixedEncodeURIComponent(query)
 }
 
@@ -144,10 +148,16 @@ const formatRow = async (isbn, result, rawResult) => {
       uri,
       claims,
     }
-    if (author.label) {
+    if (author.label || author.familyName) {
       entry.author.labels = {
-        fr: formatAuthorName(author.label),
+        fr: formatAuthorName(author.label || author.familyName),
       }
+    }
+    // Remove author if it doesn't match a valid entry format
+    // as it would otherwise crash at validation
+    if (!(entry.author.uri || entry.author.labels.fr)) {
+      warn(author, 'invalid BNF author entry')
+      delete entry.author
     }
   }
   if (publisherLabel) {
