@@ -14,7 +14,7 @@ export default async entity => {
 
 const findAnImage = entity => {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
-  const enwikiTitle = entity.sitelinks.enwiki
+  const enwikiTitle = entity.sitelinks.enwiki?.title
   const { claims } = entity
   const openLibraryId = claims['wdt:P648'] && claims['wdt:P648'][0]
   return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)

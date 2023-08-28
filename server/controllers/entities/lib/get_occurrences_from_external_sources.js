@@ -68,7 +68,7 @@ const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
 }
 
 const getArticleParams = sitelinks => lang => {
-  const title = sitelinks[`${lang}wiki`]
+  const title = sitelinks[`${lang}wiki`]?.title
   if (title) return { lang, title }
 }
 
