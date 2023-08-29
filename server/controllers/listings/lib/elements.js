@@ -49,8 +49,8 @@ export async function createListingElements ({ listing, uris, userId }) {
 }
 
 export async function bulkUpdateElements ({ oldElements, attribute, value }) {
-  const itemUpdateData = { [attribute]: value }
-  const newElements = oldElements.map(oldElement => Element.update(itemUpdateData, oldElement))
+  const elementUpdateData = { [attribute]: value }
+  const newElements = oldElements.map(oldElement => Element.update(elementUpdateData, oldElement))
   return elementsBulkUpdate(newElements)
 }
 
