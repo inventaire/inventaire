@@ -2,33 +2,39 @@ import { map } from 'lodash-es'
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
-import { logError } from '#lib/utils/logs'
 import Element from '#models/element'
 
 const db = await dbFactory('elements')
 
-export const byId = db.get
-export const byIds = db.byIds
-export async function byEntities (uris) {
+export const getElementById = db.get
+
+export const getElementsByIds = db.byIds
+
+export async function getElementsByEntities (uris) {
   return db.viewByKeys('byEntities', uris)
 }
-export async function byListingsAndEntity (listingsIds, entitiesUris) {
+
+export async function getElementsByListingsAndEntity (listingsIds, entitiesUris) {
   const keys = _.combinations(listingsIds, entitiesUris)
   return db.viewByKeys('byListAndEntity', keys)
 }
-export async function byListings (listingsIds) {
+
+export async function getElementsByListings (listingsIds) {
   return db.viewByKeys('byListings', listingsIds)
 }
-export const bulkDelete = db.bulkDelete
+
+export const bulkDeleteElements = db.bulkDelete
+
 export async function deleteListingsElements (listings) {
   const listingIds = map(listings, '_id')
-  const listingsElements = await byListings(listingIds)
+  const listingsElements = await getElementsByListings(listingIds)
   if (_.isNonEmptyArray(listingsElements)) {
-    await bulkDelete(listingsElements)
+    await bulkDeleteElements(listingsElements)
   }
   return listingsElements
 }
-export async function create ({ listing, uris, userId }) {
+
+export async function createListingElements ({ listing, uris, userId }) {
   const listingId = listing._id
   if (listing.creator !== userId) {
     throw error_.new('wrong user', 403, { userId, listingId })
@@ -42,14 +48,10 @@ export async function create ({ listing, uris, userId }) {
   return db.fetch(elementsIds)
 }
 
-export async function bulkUpdate ({ oldElements, attribute, value }) {
+export async function bulkUpdateElements ({ oldElements, attribute, value }) {
   const itemUpdateData = { [attribute]: value }
   const newElements = oldElements.map(oldElement => Element.update(itemUpdateData, oldElement))
   return elementsBulkUpdate(newElements)
-  .catch(err => {
-    err.context = { oldElements, attribute, value }
-    logError(err, 'could not update elements')
-  })
 }
 
 const elementsBulkUpdate = db.bulk

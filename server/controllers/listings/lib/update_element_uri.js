@@ -1,8 +1,8 @@
-import { bulkUpdate, byEntities } from '#controllers/listings/lib/elements'
+import { bulkUpdateElements, getElementsByEntities } from '#controllers/listings/lib/elements'
 
-export default async (currentUri, newUri) => {
-  const oldElements = await byEntities([ currentUri ])
-  await bulkUpdate({
+export async function updateElementsUris (currentUri, newUri) {
+  const oldElements = await getElementsByEntities([ currentUri ])
+  await bulkUpdateElements({
     oldElements,
     attribute: 'uri',
     value: newUri,

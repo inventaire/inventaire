@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
 import _ from '#builders/utils'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
-import { byListings, create, deleteListingsElements } from '#controllers/listings/lib/elements'
+import { getElementsByListings, createListingElements, deleteListingsElements } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
@@ -21,7 +21,7 @@ export const getListingsByIdsWithElements = async ids => {
   const listings = await getListingsByIds(ids)
   if (!_.isNonEmptyArray(listings)) return []
   const listingIds = map(listings, '_id')
-  const elements = await byListings(listingIds)
+  const elements = await getElementsByListings(listingIds)
   if (!_.isNonEmptyArray(listings)) return []
   const elementsByListing = _.groupBy(elements, 'list')
   listings.forEach(assignElementsToListing(elementsByListing))
@@ -57,7 +57,7 @@ export const addListingElements = async ({ listing, uris, userId }) => {
   const currentElements = listing.elements
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)
-  const { docs: createdElements } = await create({ uris: notFoundUris, listing, userId })
+  const { docs: createdElements } = await createListingElements({ uris: notFoundUris, listing, userId })
   if (_.isNonEmptyArray(foundElements)) {
     return { ok: true, alreadyInList: foundElements, createdElements }
   }

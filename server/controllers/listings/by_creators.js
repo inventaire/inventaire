@@ -1,6 +1,6 @@
 import _ from '#builders/utils'
 import { paginate } from '#controllers/items/lib/queries_commons'
-import { byListings } from '#controllers/listings/lib/elements'
+import { getElementsByListings } from '#controllers/listings/lib/elements'
 import { getListingsByCreators } from '#controllers/listings/lib/listings'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
@@ -32,7 +32,7 @@ const controller = async ({ users, offset, limit, context, withElements, reqUser
 
 const assignElementsToLists = async authorizedListings => {
   const authorizedListingsIds = authorizedListings.map(_.property('_id'))
-  const foundElements = await byListings(authorizedListingsIds)
+  const foundElements = await getElementsByListings(authorizedListingsIds)
   const elementsByList = _.groupBy(foundElements, 'list')
   authorizedListings.forEach(assignElementsToList(elementsByList))
 }
