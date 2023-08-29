@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import elements_ from '#controllers/listings/lib/elements'
+import { bulkDeleteElements } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import { getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
 import { error_ } from '#lib/error/error'
@@ -20,7 +20,7 @@ const controller = async ({ id, uris, reqUserId }, req, res) => {
   if (elementsToDelete.length === 0) {
     throw error_.notFound({ uris })
   }
-  await elements_.bulkDelete(elementsToDelete)
+  await bulkDeleteElements(elementsToDelete)
   if (_.isNonEmptyArray(notFoundUris)) {
     addWarning(res, `entities uris not found in list: ${notFoundUris.join(', ')}`)
   }

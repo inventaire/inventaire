@@ -1,4 +1,4 @@
-import elements_ from '#controllers/listings/lib/elements'
+import { getElementById } from '#controllers/listings/lib/elements'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -85,7 +85,7 @@ describe('listings:remove-elements', () => {
       uris: [ uri ],
     })
 
-    await elements_.byId(element._id)
+    await getElementById(element._id)
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(404)

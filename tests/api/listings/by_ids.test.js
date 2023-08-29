@@ -56,7 +56,7 @@ describe('listings:by-ids', () => {
   })
 
   describe('with-elements', () => {
-    it('should get lists with elements', async () => {
+    it('should get lists with empty elements', async () => {
       const { listing } = await createListing()
       const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
       res.lists[listing._id].elements.should.be.deepEqual([])
