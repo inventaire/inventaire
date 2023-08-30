@@ -15,7 +15,7 @@ export default async ({ claims, type, _id }) => {
     throw error_.new('invalid claims', 400, { claims })
   }
 
-  await Promise.all(validatePropertiesClaims(claims, type, _id))
+  await validatePropertiesClaims(claims, type, _id)
 
   // Returning validated and formatted claims on the mutated object
   return claims
@@ -23,11 +23,10 @@ export default async ({ claims, type, _id }) => {
 
 const validatePropertiesClaims = (claims, type, _id) => {
   const properties = Object.keys(claims)
-  return properties.map(validatePropertyClaims(claims, type, _id))
+  return Promise.all(properties.map(validatePropertyClaims(claims, type, _id)))
 }
 
 const validatePropertyClaims = (claims, type, _id) => async property => {
-  validateClaimProperty(type, property)
   let values = claims[property]
 
   if (!_.isArray(values)) {
@@ -38,6 +37,13 @@ const validatePropertyClaims = (claims, type, _id) => async property => {
       expectedType: 'array',
     })
   }
+
+  if (values.length === 0) {
+    delete claims[property]
+    return
+  }
+
+  validateClaimProperty(type, property)
 
   values = _.uniq(values)
 

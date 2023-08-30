@@ -1,4 +1,4 @@
-import 'should'
+import should from 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
@@ -71,6 +71,18 @@ describe('entities:create', () => {
     .catch(err => {
       err.body.status_verbose.should.equal('invalid labels')
     })
+  })
+
+  it('should ignore empty claims arrays', async () => {
+    const entity = await authReq('post', endpoint, {
+      labels: { fr: randomLabel() },
+      claims: {
+        'wdt:P31': [ 'wd:Q47461344' ],
+        // Works can't have wdt:P629 claims
+        'wdt:P629': [],
+      },
+    })
+    should(entity.claims['wdt:P629']).not.be.ok()
   })
 
   it('should create a work entity', async () => {
