@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import _ from '#builders/utils'
+import { sampleSize } from 'lodash-es'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomString } from '#lib/utils/random_string'
 
@@ -14,9 +14,9 @@ const firstNames = getFixtureWords('names')
 
 const capitalize = word => word[0].toUpperCase() + word.slice(1).toLowerCase()
 
-export const randomWords = (numberOfWords, suffix = '') => _.sampleSize(lorem, numberOfWords).join(' ').concat(suffix)
+export const randomWords = (numberOfWords = 3, suffix = '') => sampleSize(lorem, numberOfWords).join(' ').concat(suffix)
 
-export const firstName = () => _.sampleSize(firstNames, 1)[0]
+export const firstName = () => sampleSize(firstNames, 1)[0]
 
 // Add a random string to prevent creating several users with the same username
 // and be rejected because of it

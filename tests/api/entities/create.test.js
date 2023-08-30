@@ -1,5 +1,4 @@
 import 'should'
-import { humanName } from '#fixtures/text'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
@@ -39,7 +38,7 @@ describe('entities:create', () => {
 
   it('should reject entities of unknown entity types', async () => {
     await authReq('post', '/api/entities?action=create', {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: { 'wdt:P31': [ 'wd:Q1' ] },
     })
     .then(shouldNotBeCalled)
@@ -76,7 +75,7 @@ describe('entities:create', () => {
 
   it('should create a work entity', async () => {
     const res = await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: { 'wdt:P31': [ 'wd:Q47461344' ] },
     })
     res._id.should.be.a.String()
@@ -88,9 +87,9 @@ describe('entities:create', () => {
     res.labels.should.be.an.Object()
   })
 
-  it('should create claim with a type specific validation', async () => {
+  it('should create claim with a type-specific value', async () => {
     const { _id } = await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P648': [ someOpenLibraryId('work') ],
@@ -99,9 +98,24 @@ describe('entities:create', () => {
     _id.should.be.a.String()
   })
 
+  it('should reject claims with the wrong type-specific value', async () => {
+    await authReq('post', endpoint, {
+      labels: { fr: randomLabel() },
+      claims: {
+        'wdt:P31': [ 'wd:Q5' ],
+        'wdt:P648': [ someOpenLibraryId('work') ],
+      },
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.message.should.containEql('invalid property value for entity type "human"')
+    })
+  })
+
   it('should reject multiple values for a property that take one', async () => {
     await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: { 'wdt:P31': [ 'wd:Q47461344', 'wd:Q8274' ] },
     })
     .then(shouldNotBeCalled)
@@ -150,7 +164,7 @@ describe('entities:create', () => {
 
   it('should reject invalid claim property values', async () => {
     await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P50': 'wd:Q535',
@@ -165,7 +179,7 @@ describe('entities:create', () => {
 
   it('should reject invalid prefix properties', async () => {
     await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wd:P50': [ 'wd:Q535' ],
@@ -180,7 +194,7 @@ describe('entities:create', () => {
 
   it('should reject invalid claim property value', async () => {
     await authReq('post', endpoint, {
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P50': [ 'wd####Q535' ],
@@ -255,7 +269,7 @@ describe('entities:create', () => {
   it('should create wikidata entities', async () => {
     await authReq('post', endpoint, {
       prefix: 'wd',
-      labels: { fr: humanName() },
+      labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P648': [ someOpenLibraryId('work') ],
