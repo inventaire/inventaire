@@ -77,7 +77,9 @@ export default {
     'invp:P2', // cover image hash
   ]),
 
-  work: workAndSerie,
+  work: workAndSerie.concat([
+    'wdt:P7823', // BookBrainz work ID
+  ]),
 
   serie: workAndSerie,
 
@@ -99,6 +101,7 @@ export default {
     'wdt:P1412', // languages of expression
     'wdt:P1960', // Google Scholar author ID
     'wdt:P1982', // Anime News Network person ID
+    'wdt:P2607', // BookBrainz author ID
     'wdt:P2963', // GoodReads author ID
     'wdt:P3630', // Babelio author ID
     'wdt:P4084', // MyAnimeList people ID
@@ -117,6 +120,7 @@ export default {
     'wdt:P576', // dissolution
     'wdt:P1983', // Anime News Network company ID
     'wdt:P3035', // ISBN publisher prefix
+    'wdt:P8063', // BookBrainz publisher ID
     ...socialNetworks,
   ]),
 

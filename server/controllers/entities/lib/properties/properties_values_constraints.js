@@ -26,6 +26,8 @@ import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, exter
 // Make sure to not mutate the base, while letting the last word to the extension
 const extend = (base, extension) => Object.assign({}, base, extension)
 
+const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
+
 // Keep in sync with ./properties_per_type
 export default {
   // image
@@ -169,6 +171,8 @@ export default {
   'wdt:P2013': externalId(/^(\d+|[.\w]+)$/),
   // YouTube channel ID
   'wdt:P2397': externalId(/^UC[\w-]{21}[AQgw]$/),
+  // BookBrainz author ID"
+  'wdt:P2607': externalId(uuidPattern),
   // number of volumes
   'wdt:P2635': positiveInteger,
   // author of foreword
@@ -207,6 +211,10 @@ export default {
   'wdt:P5571': externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
   'wdt:P7400': externalId(/^[^\s/]+$/),
+  // BookBrainz work ID"
+  'wdt:P7823': externalId(uuidPattern),
+  // BookBrainz publisher ID
+  'wdt:P8063': externalId(uuidPattern),
   // Goodreads work ID
   'wdt:P8383': externalId(strictlyPositiveIntegerPattern),
 }
