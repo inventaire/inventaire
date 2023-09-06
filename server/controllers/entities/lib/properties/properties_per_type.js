@@ -20,6 +20,9 @@ const socialNetworks = [
 
 const workAndSerie = all.concat([
   'wdt:P50', // author
+  'wdt:P58', // scenarist
+  'wdt:P98', // editor
+  'wdt:P110', // illustrator
   'wdt:P136', // genre
   'wdt:P144', // based on
   'wdt:P179', // series
@@ -39,6 +42,7 @@ const workAndSerie = all.concat([
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331', // OCLC work ID
+  'wdt:P6338', // colorist
   'wdt:P8383', // Goodreads work ID
   ...socialNetworks,
 ])
