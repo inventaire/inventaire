@@ -1,4 +1,4 @@
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 
 export default {
   parameters: [ 'qid' ],

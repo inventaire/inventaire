@@ -1,5 +1,5 @@
 import { chain } from 'lodash-es'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 
 export default work => {
   return chain(work.claims)

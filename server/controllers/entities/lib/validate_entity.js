@@ -1,4 +1,4 @@
-import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
+import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { Lang } from '#lib/regex'

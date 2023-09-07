@@ -1,5 +1,5 @@
 import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import addRelatives from './lib/add_relatives.js'
 import getEntitiesByUris from './lib/get_entities_by_uris.js'
 import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'

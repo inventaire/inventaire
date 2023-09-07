@@ -29,7 +29,6 @@ const extend = (base, extension) => Object.assign({}, base, extension)
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
-// Keep in sync with ./properties_per_type
 export const propertiesValuesConstraints = {
   // image
   'invp:P2': imageHash,
@@ -156,6 +155,9 @@ export const propertiesValuesConstraints = {
   'wdt:P1292': externalId(/^\d{8,9}[X\d]?$/),
   // languages of expression
   'wdt:P1412': languageEntity,
+  // published in
+  // TODO: restrict to journal entities
+  'wdt:P1433': entity,
   // title
   'wdt:P1476': uniqueString,
   // series ordinal

@@ -1,4 +1,4 @@
-import propertiesPerType from '#controllers/entities/lib/properties/properties_per_type'
+import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { validateProperty } from './properties/validations.js'

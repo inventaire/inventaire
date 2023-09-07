@@ -1,5 +1,5 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc, mapDoc } from '#lib/couch'
 import { error_ } from '#lib/error/error'
