@@ -32,7 +32,6 @@ const workAndSerie = all.concat([
   'wdt:P921', // main subject
   'wdt:P941', // inspired by
   'wdt:P1085', // Librarything work ID
-  'wdt:P1143', // BN (Argentine) editions
   'wdt:P1545', // series ordinal
   'wdt:P1844', // HathiTrust ID
   'wdt:P1984', // Anime News Network manga ID
@@ -61,6 +60,7 @@ export default {
     'wdt:P1025', // SUDOC editions
     'wdt:P1044', // SWB editions
     'wdt:P1104', // number of pages
+    'wdt:P1143', // BN (Argentine) editions
     'wdt:P1144', // Library of Congress Control Number
     'wdt:P1182', // LIBRIS editions
     'wdt:P1274', // ISFDB title ID
