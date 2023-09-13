@@ -84,6 +84,8 @@ export const propertiesValuesConstraints = {
   }),
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
+  // NDL Authority ID
+  'wdt:P349': externalId(/^(a1|s)?[0-9]?\d{8}$/),
   // language of work
   'wdt:P407': languageEntity,
   // distribution format
@@ -118,6 +120,8 @@ export const propertiesValuesConstraints = {
   'wdt:P840': entity,
   // official website
   'wdt:P856': url,
+  // SELIBR ID
+  'wdt:P906': externalId(/^[1-9]\d{4,5}$/),
   // main subject
   'wdt:P921': entity,
   // inspired by
