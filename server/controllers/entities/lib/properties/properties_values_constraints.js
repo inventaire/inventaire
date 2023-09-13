@@ -19,7 +19,7 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
-import { collectionEntity, entity, humanEntity, imageHash, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -50,9 +50,9 @@ export const propertiesValuesConstraints = {
   // owned by
   'wdt:P127': entity,
   // movement
-  'wdt:P135': entity,
+  'wdt:P135': movementEntity,
   // genre
-  'wdt:P136': entity,
+  'wdt:P136': genreEntity,
   // based on
   'wdt:P144': workOrSerieEntity,
   // serie
@@ -85,7 +85,7 @@ export const propertiesValuesConstraints = {
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
   // language of work
-  'wdt:P407': entity,
+  'wdt:P407': languageEntity,
   // distribution format
   'wdt:P437': allowedPropertyValues('wdt:P437'),
   // ORCID ID
@@ -151,7 +151,7 @@ export const propertiesValuesConstraints = {
   // DNB editions
   'wdt:P1292': externalId(/^\d{8,9}[X\d]?$/),
   // languages of expression
-  'wdt:P1412': entity,
+  'wdt:P1412': languageEntity,
   // title
   'wdt:P1476': uniqueString,
   // series ordinal
