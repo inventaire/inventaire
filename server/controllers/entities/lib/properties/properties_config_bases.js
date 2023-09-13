@@ -6,12 +6,13 @@ const { BoundedString } = commonValidations
 
 export const entity = {
   datatype: 'entity',
-  type: 'string',
+  primitiveType: 'string',
   validate: EntityUri.test.bind(EntityUri),
 }
 
 export const uniqueString = {
   datatype: 'string',
+  primitiveType: 'string',
   // Aligning max length on Wikidata's limit
   validate: BoundedString(1, 1500),
   uniqueValue: true,
@@ -26,18 +27,17 @@ export const collectionEntity = restrictedEntityType('collection')
 export const uniqueEntity = Object.assign({}, entity, { uniqueValue: true })
 
 export const concurrentString = Object.assign({}, uniqueString, { concurrency: true })
-// For the moment, ordinals can be only positive integers, but stringified
-// to stay consistent with Wikidata and let the door open to custom ordinals
-// later (ex: roman numbers, letters, etc.)
+export const concurrentExternalId = Object.assign({}, concurrentString, { datatype: 'external-id' })
 
 export const url = {
-  datatype: 'string',
+  datatype: 'url',
+  primitiveType: 'string',
   validate: isUrl,
 }
 
 export const uniqueSimpleDay = {
-  datatype: 'simple-day',
-  type: 'string',
+  datatype: 'date',
+  primitiveType: 'string',
   // See SimpleDay specifications in [inventaire-client]/test/106-regex.js
   validate: isSimpleDay,
   uniqueValue: true,
@@ -45,20 +45,21 @@ export const uniqueSimpleDay = {
 
 export const positiveInteger = {
   datatype: 'positive-integer',
-  type: 'number',
+  primitiveType: 'number',
   validate: value => Number.isInteger(value) && value > 0,
   uniqueValue: true,
 }
 
-export const ordinal = {
-  datatype: 'string',
+export const positiveIntegerString = {
+  datatype: 'positive-integer-string',
+  primitiveType: 'string',
   validate: isPositiveIntegerString,
   uniqueValue: true,
 }
 
 export const imageHash = {
-  datatype: 'image-hash',
-  type: 'string',
+  datatype: 'image',
+  primitiveType: 'string',
   validate: isImageHash,
   uniqueValue: true,
 }

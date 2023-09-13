@@ -4,7 +4,7 @@ import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
 import { getPluralType } from '#lib/wikidata/aliases'
 import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
-import { concurrentString, uniqueEntity } from './properties_config_bases.js'
+import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export const isbnProperty = num => {
   return Object.assign({}, concurrentString, {
@@ -23,16 +23,14 @@ export const isbnProperty = num => {
 // External ids regexs can be found
 // on their Wikidata property page P1793 statement
 export const externalId = regex => {
-  return Object.assign({}, concurrentString, {
+  return Object.assign({}, concurrentExternalId, {
     validate: regex.test.bind(regex),
-    isExternalId: true,
   })
 }
 
 export const typedExternalId = regexPerType => {
-  return Object.assign({}, concurrentString, {
+  return Object.assign({}, concurrentExternalId, {
     typeSpecificValidation: true,
-    isExternalId: true,
     validate: (value, entityType) => {
       assert_.string(entityType)
       if (regexPerType[entityType] == null) {
@@ -55,9 +53,8 @@ export const allowedPropertyValues = property => {
 }
 
 export const externalIdWithFormatter = ({ regex, format }) => {
-  return Object.assign({}, concurrentString, {
+  return Object.assign({}, concurrentExternalId, {
     validate: regex.test.bind(regex),
     format,
-    isExternalId: true,
   })
 }

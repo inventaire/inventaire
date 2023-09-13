@@ -1,6 +1,7 @@
 // Each property configuration object is made of the following attributes:
 
-// datatype: {String}
+// primitiveType: {Stirng} which type a property value should return when passed to typeOf
+// datatype: {String} the more specific property value type
 // validate: {Function}
 // format: {Function} (optional)
 // uniqueValue: {Boolean} (default: false)
@@ -18,7 +19,7 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
-import { collectionEntity, entity, humanEntity, imageHash, ordinal, positiveInteger, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, humanEntity, imageHash, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -29,7 +30,7 @@ const extend = (base, extension) => Object.assign({}, base, extension)
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
 // Keep in sync with ./properties_per_type
-export default {
+export const propertiesValuesConstraints = {
   // image
   'invp:P2': imageHash,
   // instance of
@@ -154,7 +155,10 @@ export default {
   // title
   'wdt:P1476': uniqueString,
   // series ordinal
-  'wdt:P1545': ordinal,
+  // For the moment, ordinals can be only positive integers, but stringified
+  // to stay consistent with Wikidata and let the door open to custom ordinals
+  // later (ex: roman numbers, letters, etc.)
+  'wdt:P1545': positiveIntegerString,
   // subtitle
   'wdt:P1680': uniqueString,
   // HathiTrust ID
@@ -232,3 +236,5 @@ export default {
   // penciller
   'wdt:P10837': humanEntity,
 }
+
+export default propertiesValuesConstraints
