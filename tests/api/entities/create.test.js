@@ -1,4 +1,5 @@
 import should from 'should'
+import { getSomeUsername } from '#fixtures/text'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
@@ -105,6 +106,17 @@ describe('entities:create', () => {
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
         'wdt:P648': [ someOpenLibraryId('work') ],
+      },
+    })
+    _id.should.be.a.String()
+  })
+
+  it('should create claim with a recoverable format error', async () => {
+    const { _id } = await authReq('post', endpoint, {
+      labels: { fr: randomLabel() },
+      claims: {
+        'wdt:P31': [ 'wd:Q47461344' ],
+        'wdt:P4033': [ `${getSomeUsername()}@example.org   ` ],
       },
     })
     _id.should.be.a.String()

@@ -10,7 +10,8 @@ const importCircularDependencies = async () => {
 setImmediate(importCircularDependencies)
 
 export default async params => {
-  const { type, property, oldVal, newVal, letEmptyValuePass, userIsAdmin, _id } = params
+  const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
+  let { newVal } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
   if (letEmptyValuePass && newVal == null) return null
 
@@ -24,6 +25,7 @@ export default async params => {
     throw error_.new("updating property requires admin's rights", 403, property, newVal)
   }
 
+  if (typeof newVal === 'string') newVal = newVal.trim().normalize()
   validateClaimValueSync(property, newVal, type)
 
   const formattedValue = prop.format != null ? prop.format(newVal) : newVal
