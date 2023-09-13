@@ -18,12 +18,13 @@ export const uniqueString = {
   uniqueValue: true,
 }
 
-const restrictedEntityType = type => Object.assign({ restrictedType: type }, entity)
+const restrictedEntityTypes = types => Object.assign({ entityValueTypes: types }, entity)
 
-export const workEntity = restrictedEntityType('work')
-export const serieEntity = restrictedEntityType('serie')
-export const humanEntity = restrictedEntityType('human')
-export const collectionEntity = restrictedEntityType('collection')
+export const workEntity = restrictedEntityTypes([ 'work' ])
+export const serieEntity = restrictedEntityTypes([ 'serie' ])
+export const workOrSerieEntity = restrictedEntityTypes([ 'work', 'serie' ])
+export const humanEntity = restrictedEntityTypes([ 'human' ])
+export const collectionEntity = restrictedEntityTypes([ 'collection' ])
 export const uniqueEntity = Object.assign({}, entity, { uniqueValue: true })
 
 export const concurrentString = Object.assign({}, uniqueString, { concurrency: true })

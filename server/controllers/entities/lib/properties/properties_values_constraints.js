@@ -7,7 +7,7 @@
 // uniqueValue: {Boolean} (default: false)
 // concurrency: {Boolean} (default: false)
 // adminUpdateOnly: {Boolean} (default: false)
-// restrictedType: {String} (only for properties of datatype 'entity' )
+// entityValueTypes: {String[]} (only for properties of datatype 'entity' )
 
 // Those attributes aim to constrain the claims properties and values
 // to keep those consistent.
@@ -19,7 +19,7 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
-import { collectionEntity, entity, humanEntity, imageHash, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, humanEntity, imageHash, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -54,7 +54,7 @@ export const propertiesValuesConstraints = {
   // genre
   'wdt:P136': entity,
   // based on
-  'wdt:P144': workEntity,
+  'wdt:P144': workOrSerieEntity,
   // serie
   'wdt:P179': serieEntity,
   // collection
@@ -121,7 +121,7 @@ export const propertiesValuesConstraints = {
   // main subject
   'wdt:P921': entity,
   // inspired by
-  'wdt:P941': workEntity,
+  'wdt:P941': workOrSerieEntity,
   // Biblioteca Nacional de España ID
   'wdt:P950': typedExternalId({
     edition: /^(bima|bimo|bipa)\d{10}$/,
