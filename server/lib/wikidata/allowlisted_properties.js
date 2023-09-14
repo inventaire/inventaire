@@ -7,6 +7,7 @@
 // - saving everyone's bandwidth
 
 import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
+import { nonPrefixedLanguagesCodesProperties } from '#controllers/entities/lib/languages'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import propertiesValuesConstraints from '#controllers/entities/lib/properties/properties_values_constraints'
 
@@ -58,4 +59,4 @@ const otherNonEditedProperties = [
   'P4258', // Gallica ID
 ]
 
-export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties, nonPrefixedImageProperties)
+export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties, nonPrefixedLanguagesCodesProperties, nonPrefixedImageProperties)
