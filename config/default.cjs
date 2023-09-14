@@ -89,6 +89,7 @@ module.exports = {
   elasticsearch: {
     origin: 'http://localhost:9200',
     updateDelay: 1000,
+    minReindexationInterval: 60 * 60 * 1000,
   },
 
   // See server/data/dataseed/dataseed.js

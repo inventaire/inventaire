@@ -22,4 +22,7 @@ module.exports = {
     },
   },
   nice: false,
+  elasticsearch: {
+    minReindexationInterval: 0,
+  },
 }

@@ -5,10 +5,12 @@ import { getIndexedDocUrl } from '#lib/elasticsearch'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
-import { oneHour } from '#lib/time'
+import { assert_ } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
 
 const { nice } = CONFIG
+const { minReindexationInterval } = CONFIG.elasticsearch
+assert_.number(minReindexationInterval)
 
 const indexName = 'wikidata'
 
@@ -36,7 +38,7 @@ async function entitiesIndexationWorker (jobId, wdId) {
     if (formattedEntity) {
       const indexedEntity = await getIndexedEntity(wdId)
       const indexationTime = indexedEntity?._indexationTime
-      const entityWasRecentlyIndexed = indexationTime && ((Date.now() - indexationTime) < oneHour)
+      const entityWasRecentlyIndexed = indexationTime && ((Date.now() - indexationTime) < minReindexationInterval)
       if (entityWasRecentlyIndexed && indexedEntity.lastrevid === formattedEntity.lastrevid) {
         info(`wd entity indexation worker skipped (too recently reindexed): ${wdId}`)
       } else {
