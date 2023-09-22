@@ -1,3 +1,5 @@
+import addClaim from '#controllers/entities/add_claim'
+import removeClaim from '#controllers/entities/remove_claim'
 import ActionsControllers from '#lib/actions_controllers'
 import byUrisGet from './by_uris_get.js'
 import contributions from './contributions.js'
@@ -53,7 +55,9 @@ export default {
 
   put: ActionsControllers({
     authentified: {
+      'add-claim': addClaim,
       'update-claim': updateClaim,
+      'remove-claim': removeClaim,
       'update-label': updateLabel,
       'revert-edit': revertEdit,
       'restore-version': restoreVersion,
