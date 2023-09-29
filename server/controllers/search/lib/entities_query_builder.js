@@ -168,7 +168,7 @@ function matchLanguageCode (search) {
   return {
     terms: {
       claim: claimTerms,
-      boost: 100,
+      boost: 1000,
     },
   }
 }

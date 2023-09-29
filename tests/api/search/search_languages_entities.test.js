@@ -2,7 +2,7 @@ import { findOrIndexEntities } from '#tests/api/utils/entities'
 import { search } from '#tests/api/utils/search'
 import 'should'
 
-const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111' ]
+const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ]
 
 describe('entities:languages:search', () => {
   before(async () => {
@@ -30,6 +30,15 @@ describe('entities:languages:search', () => {
     results.should.be.an.Array()
     const language = results[0]
     language.uri.should.equal('wd:Q19852850')
+  })
+
+  it('should find a language by its language code despite the competition from popular languages with matching terms', async () => {
+    // Testing with "Old English" wd:Q42365 as "English" wd:Q1860 would be a better match,
+    // especially in French ("Anglais"), if it wasn't for the language code boost
+    const results = await search({ types: 'languages', search: 'ang', lang: 'fr' })
+    results.should.be.an.Array()
+    const language = results[0]
+    language.uri.should.equal('wd:Q42365')
   })
 
   it('should ignore the code case', async () => {
