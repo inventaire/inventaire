@@ -78,7 +78,7 @@ const getEntitiesPopularityTotal = uris => {
   .then(results => sum(results) + results.length)
 }
 
-const getTypeAgnosticEntityScore = async uri => {
+const getSimpleEntityScore = async uri => {
   const entity = await getEntityByUri({ uri })
   const claimCount = Object.values(entity.claims).flat().length
   const sitelinksCount = Object.keys(entity.sitelinks).length
@@ -92,9 +92,9 @@ const popularityGettersByType = {
   serie: getPartsScores,
   human: getAuthorWorksScores,
   publisher: getPublisherScore,
-  genre: getTypeAgnosticEntityScore,
-  movement: getTypeAgnosticEntityScore,
-  language: getTypeAgnosticEntityScore,
+  genre: getSimpleEntityScore,
+  movement: getSimpleEntityScore,
+  language: getSimpleEntityScore,
 }
 
 // Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
