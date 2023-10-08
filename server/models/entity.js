@@ -49,7 +49,6 @@ const Entity = {
   setLabel: (doc, lang, value) => {
     assert_.object(doc)
     assert_.string(lang)
-    assert_.string(value)
 
     if (!wikimediaLanguageCodes.has(lang)) {
       throw error_.new('invalid lang', 400, { doc, lang, value })
@@ -57,13 +56,18 @@ const Entity = {
 
     Entity.preventRedirectionEdit(doc, 'setLabel')
 
-    value = _.superTrim(value)
+    if (value === null) {
+      deleteLabel(doc, lang)
+    } else {
+      assert_.string(value)
+      value = _.superTrim(value)
 
-    if (doc.labels[lang] === value) {
-      throw error_.new('already up-to-date', 400, { doc, lang, value })
+      if (doc.labels[lang] === value) {
+        throw error_.new('already up-to-date', 400, { doc, lang, value })
+      }
+
+      doc.labels[lang] = value
     }
-
-    doc.labels[lang] = value
 
     return doc
   },
@@ -288,4 +292,16 @@ const setPossiblyEmptyPropertyArray = (doc, property, propertyArray) => {
   } else {
     doc.claims[property] = propertyArray
   }
+}
+
+const deleteLabel = (doc, lang) => {
+  if (doc.labels[lang] == null) {
+    throw error_.new('can not delete a non-existant label', 400, { doc, lang })
+  }
+
+  if (Object.keys(doc.labels).length === 1) {
+    throw error_.new('can not delete the last label', 400, { doc, lang })
+  }
+
+  delete doc.labels[lang]
 }

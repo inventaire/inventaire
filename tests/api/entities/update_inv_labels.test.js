@@ -11,7 +11,7 @@ describe('entities:update-labels:inv', () => {
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {
-      await updateLabel({ uri: _id, lang: 'fr', value: null }).then(shouldNotBeCalled)
+      await updateLabel({ uri: _id, lang: 'fr' }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
       err.body.status_verbose.should.equal('missing parameter in body: value')

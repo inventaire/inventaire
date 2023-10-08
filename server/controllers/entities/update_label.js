@@ -14,7 +14,7 @@ const controller = async (params, req) => {
   let { uri, id, value, lang } = params
 
   const prefix = getPrefix(uri, id)
-  const updater = updaters[prefix]
+  const updater = labelUpdatersByPrefix[prefix]
 
   if (uri) id = unprefixify(uri)
 
@@ -33,7 +33,7 @@ const getPrefix = (uri, id) => {
   if (id) return 'inv'
 }
 
-const updaters = {
+export const labelUpdatersByPrefix = {
   inv,
   wd,
 }

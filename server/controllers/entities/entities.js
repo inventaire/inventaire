@@ -1,3 +1,4 @@
+import removeLabel from '#controllers/entities/remove_label'
 import ActionsControllers from '#lib/actions_controllers'
 import byUrisGet from './by_uris_get.js'
 import contributions from './contributions.js'
@@ -55,6 +56,7 @@ export default {
     authentified: {
       'update-claim': updateClaim,
       'update-label': updateLabel,
+      'remove-label': removeLabel,
       'revert-edit': revertEdit,
       'restore-version': restoreVersion,
       'move-to-wikidata': moveToWikidata,

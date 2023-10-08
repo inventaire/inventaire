@@ -1,6 +1,7 @@
 import should from 'should'
 import { superTrim } from '#lib/utils/base'
 import Entity from '#models/entity'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const workDoc = () => {
   const doc = Entity.create()
@@ -229,6 +230,38 @@ describe('entity model', () => {
         const entityDoc = workDoc()
         Entity.setLabel(entityDoc, 'fr', nonTrimmedString)
         entityDoc.labels.fr.should.equal('foo bar')
+      })
+
+      it('should delete the label in the given lang', () => {
+        const entityDoc = workDoc()
+        Entity.setLabel(entityDoc, 'fr', 'hello')
+        Entity.setLabel(entityDoc, 'de', 'hello')
+        should(entityDoc.labels.de).be.ok()
+        Entity.setLabel(entityDoc, 'de', null)
+        should(entityDoc.labels.de).not.be.ok()
+      })
+
+      it('should reject deleting a non-existant label', () => {
+        const entityDoc = workDoc()
+        should(entityDoc.labels.de).not.be.ok()
+        try {
+          const doc = Entity.setLabel(entityDoc, 'de', null)
+          shouldNotBeCalled(doc)
+        } catch (err) {
+          err.statusCode.should.equal(400)
+        }
+      })
+
+      it('should reject deleting the last label', () => {
+        const entityDoc = workDoc()
+        Entity.setLabel(entityDoc, 'de', 'hello')
+        Object.keys(entityDoc.labels).length.should.equal(1)
+        try {
+          const doc = Entity.setLabel(entityDoc, 'de', null)
+          shouldNotBeCalled(doc)
+        } catch (err) {
+          err.statusCode.should.equal(400)
+        }
       })
     })
 

@@ -85,6 +85,12 @@ export const updateLabel = ({ uri, lang, value, user }) => {
   return customAuthReq(user, 'put', '/api/entities?action=update-label', { uri, lang, value })
 }
 
+export const removeLabel = ({ uri, lang, user }) => {
+  user = user || getUser()
+  uri = normalizeUri(uri)
+  return customAuthReq(user, 'put', '/api/entities?action=remove-label', { uri, lang })
+}
+
 export const updateClaim = ({ uri, property, oldValue, newValue, user }) => {
   uri = normalizeUri(uri)
   user = user || getUser()
