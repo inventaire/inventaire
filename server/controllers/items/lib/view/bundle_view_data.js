@@ -6,9 +6,10 @@ export default (items, entitiesData) => {
   const worksTree = buildInvertedClaimTree(works)
   const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})
   const itemsByDate = getItemsIdsByDate(items)
+  const totalItems = itemsByDate.length
   const worksByOwner = items.reduce(aggregateOwnersWorks(editionWorkMap), {})
   worksTree.owner = worksByOwner
-  return { worksTree, workUriItemsMap, itemsByDate }
+  return { worksTree, workUriItemsMap, itemsByDate, totalItems }
 }
 
 const buildWorkUriItemsMap = editionWorkMap => (workUriItemsMap, item) => {
