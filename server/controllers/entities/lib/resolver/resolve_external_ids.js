@@ -6,7 +6,7 @@ import { forceArray } from '#lib/utils/base'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
 import properties from '../properties/properties_values_constraints.js'
 
-export default async (claims, resolveOnWikidata = true) => {
+export async function resolveExternalIds (claims, resolveOnWikidata = true) {
   const externalIds = []
 
   for (const prop in claims) {

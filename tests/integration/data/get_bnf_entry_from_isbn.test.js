@@ -35,6 +35,11 @@ describe('get_bnf_entry_from_isbn', () => {
     const author = entry.authors.find(author => author.claims['wdt:P268'] === '16545057v')
     author.labels.fr.should.equal('Juzhen')
   })
+
+  it('should include resolvable edition contributors', async () => {
+    const entry = await getBnfEntryFromIsbn('978-2-7555-0824-6')
+    entry.edition.claims['wdt:P2679'][0].should.equal('wd:Q17628988')
+  })
 })
 
 describe('cleanupBnfTitle', () => {
