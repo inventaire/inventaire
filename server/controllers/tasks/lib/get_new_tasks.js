@@ -10,7 +10,7 @@ import { automerge } from './automerge.js'
 
 export default async function (entity, existingTasks) {
   const [ newSuggestions, suspectWorksData ] = await Promise.all([
-    searchEntityDuplicatesSuggestions(entity, existingTasks),
+    searchEntityDuplicatesSuggestions(entity),
     getAuthorWorksData(entity._id),
   ])
   if (newSuggestions.length <= 0) return []

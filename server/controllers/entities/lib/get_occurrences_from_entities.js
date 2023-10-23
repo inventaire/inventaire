@@ -9,15 +9,22 @@ export default (uri, suspectWorksLabels) => {
   .then(suggestionWorksData => {
     const occurrences = []
     for (const sugWork of suggestionWorksData) {
-      const sugWorkTerms = getEntityNormalizedTerms(sugWork)
-      const matchedTitles = intersection(suspectWorksLabels, sugWorkTerms)
+      const matchedTitles = filterMatchedTitles(sugWork, suspectWorksLabels)
       if (matchedTitles.length > 0) {
-        uri = sugWork.uri
-        occurrences.push({ uri, matchedTitles, structuredDataSource: true })
+        occurrences.push({
+          uri: sugWork.uri,
+          matchedTitles,
+          structuredDataSource: true,
+        })
       }
     }
     return occurrences
   })
+}
+
+function filterMatchedTitles (sugWork, suspectWorksLabels) {
+  const sugWorkTerms = getEntityNormalizedTerms(sugWork)
+  return intersection(suspectWorksLabels, sugWorkTerms)
 }
 
 const getSuggestionWorks = res => {

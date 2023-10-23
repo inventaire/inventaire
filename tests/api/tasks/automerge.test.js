@@ -7,7 +7,7 @@ import { checkEntities } from '../utils/tasks.js'
 describe('tasks:automerge', () => {
   before(async () => {
     // Tests dependency: having a populated ElasticSearch wikidata index
-    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248' ]
+    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248', 'wd:Q259507' ]
     await findOrIndexEntities(wikidataUris)
   })
 
@@ -47,6 +47,17 @@ describe('tasks:automerge', () => {
     tasks.length.should.aboveOrEqual(1)
     const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
     firstOccurenceMatch.should.equal(normalize(humanLabel))
+  })
+
+  it('should not automerge if work title found in unstructured data source is too short', async () => {
+    const humanLabel = 'Penelope Curtis' // wd:Q20630876
+    // string that should reasonably appear in a wikipedia article extract
+    const shortWorkLabel = 'The'
+    const human = await createHuman({ labels: { en: humanLabel } })
+    await createWorkWithAuthor(human, shortWorkLabel)
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[human.uri].should.be.ok()
   })
 })
 
