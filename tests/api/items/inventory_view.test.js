@@ -30,6 +30,7 @@ describe('items:inventory-view', () => {
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
     res.itemsByDate.should.containEql(item._id)
+    res.totalItems.should.be.a.Number()
   })
 
   it('should return an inventory-view for user items without shelf', async () => {
@@ -60,6 +61,7 @@ describe('items:inventory-view', () => {
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
     res.itemsByDate.should.containEql(item._id)
+    res.totalItems.should.be.a.Number()
   })
 
   it('should return a shelf inventory-view', async () => {
@@ -73,5 +75,6 @@ describe('items:inventory-view', () => {
     res.workUriItemsMap.should.be.an.Object()
     res.itemsByDate.should.be.an.Array()
     res.itemsByDate.should.containEql(item._id)
+    res.totalItems.should.be.a.Number()
   })
 })
