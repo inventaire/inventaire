@@ -104,8 +104,7 @@ describe('items:get-by-ids', () => {
       res.items[0].shelves.should.deepEqual([ shelf._id ])
     })
 
-    // TODO: actually remove private shelves ids
-    xit('should not include private shelf id', async () => {
+    it('should not include private shelf id', async () => {
       const shelfData = { visibility: [] }
       const itemData = { visibility: [ 'public' ] }
       const { item } = await createShelfWithItem(shelfData, itemData)

@@ -1,8 +1,10 @@
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { getShelvesByIds } from '#controllers/shelves/lib/shelves'
 import { setItemsBusyFlag } from '#controllers/transactions/lib/transactions'
 import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
+import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const addUsersData = async (page, reqParams) => {
   const { reqUserId, includeUsers } = reqParams
@@ -14,7 +16,7 @@ const addUsersData = async (page, reqParams) => {
     return page
   }
 
-  const ownersIds = _.uniq(items.map(_.property('owner')))
+  const ownersIds = uniq(map(items, 'owner'))
 
   const users = await getUsersAuthorizedDataByIds(ownersIds, reqUserId)
   page.users = users
@@ -30,8 +32,19 @@ export async function addAssociatedData (page, reqParams) {
     addItemsSnapshots(page.items),
     addUsersData(page, reqParams),
     setItemsBusyFlag(page.items),
+    removeUnauthorizedShelves(page.items, reqParams.reqUserId),
   ])
   return page
+}
+
+async function removeUnauthorizedShelves (items, reqUserId) {
+  const shelvesIds = uniq(map(items, 'shelves').flat())
+  const shelves = await getShelvesByIds(shelvesIds)
+  const authorizedShelves = await filterVisibleDocs(shelves, reqUserId)
+  const authorizedShelvesIds = new Set(map(authorizedShelves, '_id'))
+  for (const item of items) {
+    item.shelves = item.shelves.filter(shelfdId => authorizedShelvesIds.has(shelfdId))
+  }
 }
 
 export const paginate = (items, params) => {
