@@ -1,12 +1,15 @@
-import { map, uniq } from 'lodash-es'
+import { map, uniq, intersection } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
 import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
-import { isNonEmptyString } from '#lib/boolean_validations'
-import { automerge } from './automerge.js'
+import { isNonEmptyString, isNonEmptyArray } from '#lib/boolean_validations'
+import { forceArray } from '#lib/utils/base'
+import { automerge, validateAndAutomerge } from './automerge.js'
 
 export default async function (entity, existingTasks) {
   const [ newSuggestions, suspectWorksData ] = await Promise.all([
@@ -20,15 +23,54 @@ export default async function (entity, existingTasks) {
   .then(filterNewTasks(existingTasks))
 }
 
-const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
+const filterOrMergeSuggestions = (suspect, workLabels) => async suggestions => {
+  const suspectUri = suspect.uri
+  // Merge if entities have a common external identifier
+  const suggestionUriCommonExternalId = await findSuggestionWithSameExternalId(suspect, suggestions)
+  if (suggestionUriCommonExternalId) return automerge(suspectUri, suggestionUriCommonExternalId)
+
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
   // as it confuses occurences found on Wikipedia pages
   if (haveExactMatch(suspectTerms, workLabels)) return suggestions
+
   const sourcedSuggestions = filterSourced(suggestions)
   if (sourcedSuggestions.length === 0) return suggestions
   if (sourcedSuggestions.length > 1) return sourcedSuggestions
-  return automerge(suspect.uri, sourcedSuggestions[0])
+  return validateAndAutomerge(suspectUri, sourcedSuggestions[0])
+}
+
+async function findSuggestionWithSameExternalId (suspect, suggestionsSearchResult) {
+  // Known case: inv entity had an externalId before wd item
+  // Using typeSearch results allows to only merge homonyms,
+  // but could be switched to byClaimValue db request (?)
+  const suspectExternalIds = getExternalIdsClaimsValues(suspect.claims)
+  const uris = suggestionsSearchResult.map(suggestion => suggestion.uri)
+  const { entities: suggestionsByUris } = await getEntitiesByUris({ uris })
+  return Object.keys(suggestionsByUris).find(suggestionUri => {
+    const { claims } = suggestionsByUris[suggestionUri]
+    const suggestionExternalIds = getExternalIdsClaimsValues(claims)
+    return isNonEmptyArray(intersection(suggestionExternalIds, suspectExternalIds))
+  })
+}
+
+function getExternalIdsClaimsValues (claims) {
+  const externalIdsClaims = []
+
+  for (const prop in claims) {
+    const values = claims[prop]
+    if (properties[prop]) {
+      const { isExternalId, format } = properties[prop]
+      if (isExternalId) {
+        forceArray(values).forEach(value => {
+          if (format) value = format(value)
+          externalIdsClaims.push(value)
+        })
+      }
+    }
+  }
+
+  return externalIdsClaims
 }
 
 const filterNewTasks = existingTasks => suggestions => {

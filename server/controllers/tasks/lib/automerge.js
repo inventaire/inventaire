@@ -9,12 +9,15 @@ const { _id: reconcilerUserId } = hardCodedUsers.reconciler
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough
-export async function automerge (suspectUri, suggestion) {
+export async function validateAndAutomerge (suspectUri, suggestion) {
   const { uri: suggestionUri } = suggestion
   if (!hasConvincingOccurrences(suggestion.occurrences)) {
     return [ suggestion ]
   }
+  return automerge(suspectUri, suggestionUri)
+}
 
+export async function automerge (suspectUri, suggestionUri) {
   log({ suspectUri, suggestionUri }, 'automerging')
 
   await mergeEntities({ userId: reconcilerUserId, fromUri: suspectUri, toUri: suggestionUri })

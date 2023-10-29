@@ -1,5 +1,7 @@
 import 'should'
 import ASCIIFolder from 'fold-to-ascii'
+import { cloneDeep } from 'lodash-es'
+import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities.js'
 import { getByUris, findOrIndexEntities } from '../utils/entities.js'
 import { checkEntities } from '../utils/tasks.js'
@@ -59,6 +61,33 @@ describe('tasks:automerge', () => {
     const { entities } = await getByUris(human.uri)
     entities[human.uri].should.be.ok()
   })
+
+  it('should automerge if authors have same external id', async () => {
+    const wikidataUri = 'wd:Q259507'
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const claims = {
+      'wdt:P648': [ 'OL2631291A' ], // OLID from wd:Q259507
+    }
+    const labels = { en: humanLabel }
+    const human = await createHuman({ labels })
+    await forceUpdateEntityClaims(human, claims)
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[wikidataUri].should.be.ok()
+  })
 })
 
 const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+
+async function forceUpdateEntityClaims (entity, claims, userId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab') {
+  // By pass API entity validations,
+  // to create another entity with same claims
+  const updatedDoc = cloneDeep(entity)
+  Object.assign(updatedDoc.claims, claims)
+
+  await putInvEntityUpdate({
+    currentDoc: entity,
+    updatedDoc,
+    userId,
+  })
+}
