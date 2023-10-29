@@ -23,30 +23,30 @@ export default async function (entity, existingTasks) {
   .then(filterNewTasks(existingTasks))
 }
 
-const filterOrMergeSuggestions = (suspect, workLabels) => async suggestions => {
+const filterOrMergeSuggestions = (suspect, workLabels) => async suggestionsSearchResult => {
   const suspectUri = suspect.uri
+  const uris = suggestionsSearchResult.map(suggestion => suggestion.uri)
+  const { entities: suggestionsByUris } = await getEntitiesByUris({ uris })
   // Merge if entities have a common external identifier
-  const suggestionUriCommonExternalId = await findSuggestionWithSameExternalId(suspect, suggestions)
+  const suggestionUriCommonExternalId = await findSuggestionWithSameExternalId(suspect, suggestionsByUris)
   if (suggestionUriCommonExternalId) return automerge(suspectUri, suggestionUriCommonExternalId)
 
   const suspectTerms = getEntityNormalizedTerms(suspect)
   // Do not automerge if author name is in work title
   // as it confuses occurences found on Wikipedia pages
-  if (haveExactMatch(suspectTerms, workLabels)) return suggestions
+  if (haveExactMatch(suspectTerms, workLabels)) return suggestionsSearchResult
 
-  const sourcedSuggestions = filterSourced(suggestions)
-  if (sourcedSuggestions.length === 0) return suggestions
+  const sourcedSuggestions = filterSourced(suggestionsSearchResult)
+  if (sourcedSuggestions.length === 0) return suggestionsSearchResult
   if (sourcedSuggestions.length > 1) return sourcedSuggestions
   return validateAndAutomerge(suspectUri, sourcedSuggestions[0])
 }
 
-async function findSuggestionWithSameExternalId (suspect, suggestionsSearchResult) {
+async function findSuggestionWithSameExternalId (suspect, suggestionsByUris) {
   // Known case: inv entity had an externalId before wd item
   // Using typeSearch results allows to only merge homonyms,
   // but could be switched to byClaimValue db request (?)
   const suspectExternalIds = getExternalIdsClaimsValues(suspect.claims)
-  const uris = suggestionsSearchResult.map(suggestion => suggestion.uri)
-  const { entities: suggestionsByUris } = await getEntitiesByUris({ uris })
   return Object.keys(suggestionsByUris).find(suggestionUri => {
     const { claims } = suggestionsByUris[suggestionUri]
     const suggestionExternalIds = getExternalIdsClaimsValues(claims)
