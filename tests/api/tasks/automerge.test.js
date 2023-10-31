@@ -2,8 +2,9 @@ import 'should'
 import ASCIIFolder from 'fold-to-ascii'
 import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities.js'
-import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
+import { createHuman, createWorkWithAuthor, randomLabel, createEdition } from '../fixtures/entities.js'
+import { getByUris, findOrIndexEntities, deleteByUris } from '../utils/entities.js'
 import { checkEntities } from '../utils/tasks.js'
 
 describe('tasks:automerge', () => {
@@ -71,6 +72,27 @@ describe('tasks:automerge', () => {
     const labels = { en: humanLabel }
     const human = await createHuman({ labels })
     await forceUpdateEntityClaims(human, claims)
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[wikidataUri].should.be.ok()
+  })
+
+  it('should automerge author if ISBN is found on a Wikipedia article', async () => {
+    const wikidataUri = 'wd:Q259507'
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const labels = { en: humanLabel }
+    const isbn = '978-0-89608-613-5' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
+
+    const human = await createHuman({ labels })
+    // make sure edition is not already existing
+    await deleteByUris(prefixifyIsbn(isbn))
+    const work = await createWorkWithAuthor(human)
+    await createEdition({
+      work,
+      claims: {
+        'wdt:P212': [ isbn ],
+      },
+    })
     await checkEntities(human.uri)
     const { entities } = await getByUris(human.uri)
     entities[wikidataUri].should.be.ok()

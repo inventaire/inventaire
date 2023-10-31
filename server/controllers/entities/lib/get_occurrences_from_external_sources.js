@@ -22,7 +22,7 @@ import { normalizeTerm } from './terms_normalization.js'
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
+export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabels, worksLabelsLangs) {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)
@@ -58,9 +58,9 @@ const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLan
   return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
-const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
+export const getMostRelevantWikipediaArticles = async (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
-  const langs = uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
+  const langs = compact(uniq(worksLabelsLangs.concat([ originalLang, 'en' ])))
   const articlesParams = langs
     .map(getArticleParams(sitelinks))
     .filter(identity)
@@ -92,10 +92,15 @@ const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAutho
 
 const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
   if (!article.extract) return
-  const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
-  const matchedTitles = uniq(normalize(article.extract).match(worksLabelsPattern))
+  const matchedTitles = matchLabelsInArticle(worksLabels, article)
   if (matchedTitles.length <= 0) return
   return { url: article.url, matchedTitles, structuredDataSource: false }
+}
+
+export function matchLabelsInArticle (labels, article) {
+  if (!article.extract || labels.length === 0) return []
+  const worksLabelsPattern = new RegExp(labels.map(normalize).join('|'), 'g')
+  return uniq(normalize(article.extract).match(worksLabelsPattern))
 }
 
 const createOccurrencesFromExactTitles = worksLabels => result => {

@@ -2,14 +2,16 @@ import { map, uniq, intersection } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
-import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
+import { getOccurrencesFromExternalSources } from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
 import { isNonEmptyString, isNonEmptyArray } from '#lib/boolean_validations'
 import { forceArray } from '#lib/utils/base'
 import { automerge, validateAndAutomerge } from './automerge.js'
+import { findAuthorsWithIsbnsInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
 
 export default async function (entity, existingTasks) {
   const [ newSuggestionsSearchResults, suspectWorksData ] = await Promise.all([
@@ -18,8 +20,13 @@ export default async function (entity, existingTasks) {
   ])
   if (newSuggestionsSearchResults.length <= 0) return []
   const { labels: worksLabels } = suspectWorksData
-
   const suggestions = await getAndFormatSuggestionsEntities(newSuggestionsSearchResults)
+
+  const suggestionWithIsbnInWpArticle = await findAuthorsWithIsbnsInWikipediaArticles(suspectWorksData, suggestions)
+  if (suggestionWithIsbnInWpArticle) {
+    return automerge(entity.uri, suggestionWithIsbnInWpArticle.uri)
+  }
+
   return Promise.all(suggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
   .then(filterOrMergeSuggestions(entity, worksLabels))
   .then(filterNewTasks(existingTasks))
@@ -96,7 +103,7 @@ const filterSourced = suggestions => suggestions.filter(sug => sug.occurrences.l
 const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
   if (suggestion == null) return []
   const { labels, langs } = suspectWorksData
-  const { uri } = suggestion
+  const { uri: suggestionUri } = suggestion
 
   if (labels.length === 0) {
     suggestion.occurrences = []
@@ -104,8 +111,8 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
   }
 
   return Promise.all([
-    getOccurrencesFromExternalSources(uri, labels, langs),
-    getOccurrencesFromEntities(uri, labels),
+    getOccurrencesFromExternalSources(suggestionUri, labels, langs),
+    getOccurrencesFromEntities(suggestionUri, labels),
   ])
   .then(([ externalOccurrences, entitiesOccurrences ]) => {
     suggestion.occurrences = externalOccurrences.concat(entitiesOccurrences)
@@ -121,7 +128,8 @@ const getAuthorWorksData = async authorId => {
   // ]
   const labels = uniq(works.flatMap(getEntityNormalizedTerms))
   const langs = uniq(works.flatMap(getLangs))
-  return { authorId, labels, langs }
+  const worksUris = works.map(work => prefixifyInv(work._id))
+  return { authorId, labels, langs, worksUris }
 }
 
 const getLangs = work => Object.keys(work.labels)
