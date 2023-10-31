@@ -251,4 +251,6 @@ module.exports = {
       'shopping',
     ],
   },
+
+  mapTilesAccessToken: 'youraccesstoken',
 }
