@@ -18,11 +18,18 @@ const socialNetworks = [
   'wdt:P4033', // Mastodon address
 ]
 
-const workAndSerie = all.concat([
+export const authorRelationsProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
-  'wdt:P98', // editor
   'wdt:P110', // illustrator
+  'wdt:P6338', // colorist
+  'wdt:P9191', // letterer
+  'wdt:P10836', // inker
+  'wdt:P10837', // penciller
+]
+
+const workAndSerie = all.concat(authorRelationsProperties, [
+  'wdt:P98', // editor
   'wdt:P136', // genre
   'wdt:P144', // based on
   'wdt:P179', // series
@@ -42,7 +49,6 @@ const workAndSerie = all.concat([
   'wdt:P3631', // Babelio work ID
   'wdt:P4087', // MyAnimeList manga ID
   'wdt:P5331', // OCLC work ID
-  'wdt:P6338', // colorist
   'wdt:P8383', // Goodreads work ID
   ...socialNetworks,
 ])

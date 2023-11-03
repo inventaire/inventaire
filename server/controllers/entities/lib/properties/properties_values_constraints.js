@@ -225,4 +225,10 @@ export default {
   'wdt:P8063': externalId(uuidPattern),
   // Goodreads work ID
   'wdt:P8383': externalId(strictlyPositiveIntegerPattern),
+  // letterer
+  'wdt:P9191': humanEntity,
+  // inker
+  'wdt:P10836': humanEntity,
+  // penciller
+  'wdt:P10837': humanEntity,
 }

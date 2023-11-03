@@ -5,6 +5,7 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import { isWdEntityId } from '#lib/boolean_validations'
@@ -174,13 +175,9 @@ const getRelationsTerms = async ({ type, claims }) => {
   return relationsEntities.map(getEntityTerms).flat().join(' ')
 }
 
-const worksAndSeriesProperties = [
-  'wdt:P50', // author
-  'wdt:P58', // scenarist
-  'wdt:P110', // illustrator
+const worksAndSeriesProperties = authorRelationsProperties.concat([
   'wdt:P179', // serie
-  'wdt:P6338', // colorist
-]
+])
 
 const indexedRelationsPerType = {
   collection: [

@@ -1,6 +1,7 @@
 import { pick } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import { error_ } from '#lib/error/error'
 import { deepCompact } from '#lib/utils/base'
 
@@ -62,13 +63,7 @@ const aggregateWorks = (works, getWorkEntitiesUris) => {
   return deepCompact(works.map(getWorkEntitiesUris))
 }
 
-const getWorkAuthorsUris = work => Object.values(pick(work.claims, authorProperties)).flat()
-const authorProperties = [
-  'wdt:P50',
-  'wdt:P58',
-  'wdt:P110',
-  'wdt:P6338',
-]
+const getWorkAuthorsUris = work => Object.values(pick(work.claims, authorRelationsProperties)).flat()
 const getWorkSeriesUris = work => work.claims['wdt:P179']
 const getWorkGenresUris = work => work.claims['wdt:P136']
 const getWorkSubjetsUris = work => work.claims['wdt:P921']
