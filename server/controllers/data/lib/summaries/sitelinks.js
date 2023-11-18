@@ -1,4 +1,5 @@
 import { getSitelinkData, getSitelinkUrl } from 'wikibase-sdk'
+import { logError } from '#lib/utils/logs'
 
 export const getWikipediaSitelinksData = sitelinks => {
   if (!sitelinks) return []
@@ -6,20 +7,25 @@ export const getWikipediaSitelinksData = sitelinks => {
 }
 
 const getWikipediaSummaryData = ([ key, { title, badges } ]) => {
-  if (badges.includes(redirectionBadge)) return
-  const { lang, project } = getSitelinkData(key)
-  if (project === 'wikipedia') {
-    const link = getSitelinkUrl({ site: key, title })
-    return {
-      key,
-      name: `Wikipedia (${lang})`,
-      lang,
-      link,
-      sitelink: {
-        title,
+  try {
+    if (badges.includes(redirectionBadge)) return
+    const { lang, project } = getSitelinkData(key)
+    if (project === 'wikipedia') {
+      const link = getSitelinkUrl({ site: key, title })
+      return {
+        key,
+        name: `Wikipedia (${lang})`,
         lang,
-      },
+        link,
+        sitelink: {
+          title,
+          lang,
+        },
+      }
     }
+  } catch (err) {
+    // Do not crash the request for a "sitelink lang not found" error
+    logError(err, 'getWikipediaSummaryData err')
   }
 }
 
