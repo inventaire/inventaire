@@ -2,7 +2,8 @@
 
 export NODE_ENV=tests-api NODE_APP_INSTANCE=mocha
 
-timeout=$(node -p 'require("config").mocha.timeout')
+# Use `toString` to prevent getting colored output
+timeout=$(node -p 'require("config").mocha.timeout.toString()')
 
 # If no test file is passed as argument, run all tests
 if [ -z "$1" ]

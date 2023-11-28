@@ -2,7 +2,8 @@
 
 # Env variables required to get the right port
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
-server_port=$(node -p "require('config').port")
+# Use `toString` to prevent getting colored output
+server_port=$(node -p "require('config').port.toString()")
 supervisor_pid_path="./run/${server_port}-supervisor"
 
 if [[ -f "$supervisor_pid_path" ]] ;
@@ -13,7 +14,7 @@ fi
 if [[ "$supervisor_pid" != '' ]] ;
 then
   # Send a SIGTERM to supervisor, which should then unlink $supervisor_pid_path
-  kill $supervisor_pid
+  kill "$supervisor_pid"
 else
   echo "no test server to kill"
 fi
