@@ -7,7 +7,7 @@ import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
 export default params => {
-  const { uri, refresh, dry } = params
+  const { uri, refresh, dry, useCacheRelations = true } = params
   const [ prefix, id ] = uri.split(':')
   const promises = []
 
@@ -16,7 +16,7 @@ export default params => {
 
   promises.push(getInvSerieParts(uri))
 
-  promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
+  if (useCacheRelations) promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
 
   return Promise.all(promises)
   .then(_.flatten)

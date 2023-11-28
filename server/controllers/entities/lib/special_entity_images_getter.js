@@ -17,7 +17,14 @@ export default {
   serie: async entity => {
     const { uri } = entity
     const images = { claims: getEntityImagesFromClaims(entity) }
-    const { parts } = await getSerieParts({ uri })
+    const { parts } = await getSerieParts({
+      uri,
+      // Do not use cached relations, to break the loop between entitiesIndexationWorker
+      // and addWdEntityToIndexationQueue
+      // This loop can be observed by removing the following flag, and running the test
+      // 'temporarily cache relations' > 'should check the primary data'
+      useCacheRelations: false,
+    })
     const worksUris = _.map(parts, 'uri')
     const worksImages = await Promise.all(worksUris.map(getOneWorkImagePerLang))
     return worksImages.reduce(aggregateWorkImages, images)
