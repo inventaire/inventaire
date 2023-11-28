@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
+import { refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
+import { isEntityUri } from '#lib/boolean_validations'
 import { wait } from '#lib/promises'
 import { log, warn } from '#lib/utils/logs'
-import refreshSnapshot from './lib/snapshot/refresh_snapshot.js'
 
 const sanitization = {
   uris: {},
@@ -18,14 +18,14 @@ const refreshSequentially = async uris => {
 
     if (nextUri == null) return
 
-    if (!_.isEntityUri(nextUri)) {
+    if (!isEntityUri(nextUri)) {
       warn(nextUri, 'invalid entity URI: not refreshing')
       return refreshNext()
     }
 
     log(nextUri, 'next URI for items snapshot refresh')
 
-    await refreshSnapshot.fromUri(nextUri)
+    await refreshSnapshotFromUri(nextUri)
     // Space refreshes to lower stress on production resources
     await wait(100)
     return refreshNext()

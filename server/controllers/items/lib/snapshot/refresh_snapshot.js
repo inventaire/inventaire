@@ -1,8 +1,6 @@
-import _ from '#builders/utils'
 import { getInvUrisByClaim } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { mappedArrayPromise } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import buildSnapshot from './build_snapshot.js'
@@ -15,23 +13,21 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-const fromDoc = changedEntityDoc => {
+export async function refreshSnapshotFromDoc (changedEntityDoc) {
   const [ uri, type ] = getDocData(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
   const label = `${uri} items snapshot refresh`
 
   info(`${label}: starting`)
-  return getSnapshotsByType[type](uri)
-  .then(saveSnapshotsInBatch)
+  const ops = await getSnapshotsByType[type](uri)
+  return saveSnapshotsInBatch(ops)
 }
 
-const fromUri = changedEntityUri => {
+export async function refreshSnapshotFromUri (changedEntityUri) {
   return getEntityByUri({ uri: changedEntityUri })
-  .then(fromDoc)
+  .then(refreshSnapshotFromDoc)
 }
-
-export default { fromDoc, fromUri }
 
 const multiWorkRefresh = relationProperty => async uri => {
   const uris = await getInvUrisByClaim(relationProperty, uri)
@@ -47,18 +43,14 @@ const getSnapshotsByType = {
     .then(getEditionSnapshot)
   },
 
-  work: uri => {
-    return getEntityByUri({ uri })
-    .then(work => {
-      return getWorkAuthorsAndSeries(work)
-      .then(([ authors, series ]) => {
-        return Promise.all([
-          getWorkSnapshot(uri, work, authors, series),
-          getEditionsSnapshots(uri, [ work ], authors, series),
-        ])
-        .then(_.flatten)
-      })
-    })
+  work: async uri => {
+    const work = await getEntityByUri({ uri })
+    const [ authors, series ] = await getWorkAuthorsAndSeries(work)
+    const snapshots = await Promise.all([
+      getWorkSnapshot(uri, work, authors, series),
+      getEditionsSnapshots(uri, [ work ], authors, series),
+    ])
+    return snapshots.flat()
   },
 
   human: multiWorkRefresh('wdt:P50'),
@@ -67,7 +59,7 @@ const getSnapshotsByType = {
 
 const refreshTypes = Object.keys(getSnapshotsByType)
 
-const getWorkSnapshot = (uri, work, authors, series) => {
+function getWorkSnapshot (uri, work, authors, series) {
   assert_.string(uri)
   assert_.object(work)
   assert_.array(authors)
@@ -75,19 +67,21 @@ const getWorkSnapshot = (uri, work, authors, series) => {
   return buildSnapshot.work(work, authors, series)
 }
 
-const getEditionsSnapshots = async (uri, works, authors, series) => {
+async function getEditionsSnapshots (uri, works, authors, series) {
   assert_.string(uri)
   assert_.array(works)
   assert_.array(authors)
   assert_.array(series)
 
-  return getInvUrisByClaim('wdt:P629', uri)
-  .then(uris => getEntitiesByUris({ uris }))
-  .then(res => Object.values(res.entities))
-  .then(mappedArrayPromise(edition => getEditionSnapshot([ edition, works, authors, series ])))
+  const uris = await getInvUrisByClaim('wdt:P629', uri)
+  const res = await getEntitiesByUris({ uris })
+  const editions = Object.values(res.entities)
+  return Promise.all(editions.map(edition => {
+    return getEditionSnapshot([ edition, works, authors, series ])
+  }))
 }
 
-const getEditionSnapshot = ([ edition, works, authors, series ]) => {
+function getEditionSnapshot ([ edition, works, authors, series ]) {
   assert_.object(edition)
   assert_.array(works)
   assert_.array(authors)

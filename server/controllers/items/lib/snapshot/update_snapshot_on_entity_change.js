@@ -1,5 +1,5 @@
+import { refreshSnapshotFromDoc, refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import { radio } from '#lib/radio'
-import refreshSnapshot from './refresh_snapshot.js'
 
 // Items keep some data about their related entities, and those entities graphs
 // to make querying items quick, while keeping the required data at end
@@ -19,13 +19,13 @@ import refreshSnapshot from './refresh_snapshot.js'
 // https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
 export function updateSnapshotOnEntityChange () {
-  radio.on('entity:update:label', refreshSnapshot.fromDoc)
-  radio.on('entity:update:claim', refreshSnapshot.fromDoc)
-  radio.on('entity:revert:edit', refreshSnapshot.fromDoc)
-  radio.on('entity:restore:version', refreshSnapshot.fromDoc)
+  radio.on('entity:update:label', refreshSnapshotFromDoc)
+  radio.on('entity:update:claim', refreshSnapshotFromDoc)
+  radio.on('entity:revert:edit', refreshSnapshotFromDoc)
+  radio.on('entity:restore:version', refreshSnapshotFromDoc)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
-  radio.on('entity:revert:merge', refreshSnapshot.fromUri)
+  radio.on('entity:revert:merge', refreshSnapshotFromUri)
 }
 
 // Using the toUri as its the URI the items are using now
-const updateSnapshotOnEntityMerge = (fromUri, toUri) => refreshSnapshot.fromUri(toUri)
+const updateSnapshotOnEntityMerge = (fromUri, toUri) => refreshSnapshotFromUri(toUri)
