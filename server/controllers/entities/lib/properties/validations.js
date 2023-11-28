@@ -1,3 +1,4 @@
+import { isPropertyUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
 import properties from './properties_values_constraints.js'
@@ -9,7 +10,7 @@ const allowset = new Set(allowlist)
 export const propertyType = property => properties[property].type || properties[property].datatype
 
 export const validateProperty = property => {
-  if (!/^(wdt|invp):P\d+$/.test(property)) {
+  if (!isPropertyUri(property)) {
     throw error_.new('invalid property', 400, property)
   }
 

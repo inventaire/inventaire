@@ -38,6 +38,18 @@ export async function getInvEntitiesByClaim (property, value, includeDocs = fals
   else return res
 }
 
+export async function getInvEntitiesByClaims ({ claims, includeDocs = false, parseDoc = false }) {
+  claims.forEach(([ property ]) => validateProperty(property))
+
+  const res = await db.view('entities', 'byClaim', {
+    keys: claims,
+    include_docs: includeDocs,
+  })
+
+  if (parseDoc) return mapDoc(res)
+  else return res
+}
+
 export async function getInvUrisByClaim (property, value) {
   const entities = await getInvEntitiesByClaim(property, value, true, true)
   return entities.map(getInvEntityCanonicalUri)

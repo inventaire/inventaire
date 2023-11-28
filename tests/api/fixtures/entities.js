@@ -91,15 +91,21 @@ export const createEditionFromWorks = (...works) => {
 }
 
 export const createWorkWithAuthor = async (human, label) => {
+  const { work } = await createWorkWithSpecificRoleAuthor({ human, label, roleProperty: 'wdt:P50' })
+  return work
+}
+
+export const createWorkWithSpecificRoleAuthor = async ({ human, label, roleProperty }) => {
   label = label || randomLabel()
   human = await (human || createHuman())
-  return authReq('post', '/api/entities?action=create', {
+  const work = await authReq('post', '/api/entities?action=create', {
     labels: { en: label },
     claims: {
       'wdt:P31': [ 'wd:Q47461344' ],
-      'wdt:P50': [ human.uri ],
+      [roleProperty]: [ human.uri ],
     },
   })
+  return { work, human }
 }
 
 export const createSerieWithAuthor = async params => {

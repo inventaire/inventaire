@@ -1,6 +1,7 @@
 import { flatten, identity, map, uniqBy } from 'lodash-es'
-import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import runWdQuery from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -68,7 +69,8 @@ const formatWdEntity = result => {
 
 // # INV
 const getInvAuthorWorks = async uri => {
-  const { rows } = await getInvEntitiesByClaim('wdt:P50', uri, true)
+  const authorClaims = authorRelationsProperties.map(property => [ property, uri ])
+  const { rows } = await getInvEntitiesByClaims({ claims: authorClaims, includeDocs: true })
   return rows.map(formatInvEntity).filter(identity)
 }
 
