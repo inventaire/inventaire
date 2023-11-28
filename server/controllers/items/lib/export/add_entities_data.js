@@ -1,9 +1,8 @@
-import { pick } from 'lodash-es'
+import { uniq } from 'lodash-es'
+import { getWorksAuthorsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import { error_ } from '#lib/error/error'
-import { deepCompact } from '#lib/utils/base'
 
 export default async item => {
   const { entity: uri } = item
@@ -36,11 +35,11 @@ export default async item => {
   }
 
   item.works = works
-  item.authorsUris = aggregateWorks(works, getWorkAuthorsUris)
-  item.seriesUris = aggregateWorks(works, getWorkSeriesUris)
-  item.genresUris = aggregateWorks(works, getWorkGenresUris)
-  item.subjectsUris = aggregateWorks(works, getWorkSubjetsUris)
-  item.originalLangsUris = aggregateWorks(works, getWorkOriginalLangsUris)
+  item.authorsUris = getWorksAuthorsUris(works)
+  item.seriesUris = aggregateWorksRelationsUris(works, getWorkSeriesUris)
+  item.genresUris = aggregateWorksRelationsUris(works, getWorkGenresUris)
+  item.subjectsUris = aggregateWorksRelationsUris(works, getWorkSubjetsUris)
+  item.originalLangsUris = aggregateWorksRelationsUris(works, getWorkOriginalLangsUris)
 
   const [ authors, series, genres, subjects, originalLangs ] = await Promise.all([
     getEntitiesList(item.authorsUris),
@@ -59,11 +58,10 @@ export default async item => {
   return item
 }
 
-const aggregateWorks = (works, getWorkEntitiesUris) => {
-  return deepCompact(works.map(getWorkEntitiesUris))
+const aggregateWorksRelationsUris = (works, relationsUrisGetter) => {
+  return uniq(works.map(relationsUrisGetter).flat())
 }
 
-const getWorkAuthorsUris = work => Object.values(pick(work.claims, authorRelationsProperties)).flat()
 const getWorkSeriesUris = work => work.claims['wdt:P179']
 const getWorkGenresUris = work => work.claims['wdt:P136']
 const getWorkSubjetsUris = work => work.claims['wdt:P921']

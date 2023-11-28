@@ -1,18 +1,20 @@
+import { getAggregatedPropertiesValues } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import { assert_ } from '#lib/utils/assert_types'
 import { aggregateClaims } from './helpers.js'
 
-const getRelativeEntities = relationProperty => async entity => {
-  const uris = entity.claims[relationProperty]
+const getRelativeEntities = relationProperties => async entity => {
+  const uris = getAggregatedPropertiesValues(entity.claims, relationProperties)
   if (uris == null || uris.length === 0) return []
-  const res = await getEntitiesByUris({ uris })
-  return Object.values(res.entities)
+  const { entities } = await getEntitiesByUris({ uris })
+  return Object.values(entities)
 }
 
-const getEditionWorks = getRelativeEntities('wdt:P629')
-const getWorkAuthors = getRelativeEntities('wdt:P50')
-const getWorkSeries = getRelativeEntities('wdt:P179')
+const getEditionWorks = getRelativeEntities([ 'wdt:P629' ])
+const getWorkAuthors = getRelativeEntities(authorRelationsProperties)
+const getWorkSeries = getRelativeEntities([ 'wdt:P179' ])
 
 export async function getWorkAuthorsAndSeries (work) {
   return Promise.all([
@@ -34,13 +36,13 @@ function getWorksAuthorsAndSeries (works) {
   return getWorkAuthorsAndSeries(mergedWorks)
 }
 
+const workRelationsProperties = authorRelationsProperties.concat([ 'wdt:P179' ])
 // Aggregating edition's potentially multiple works claims to fit
 // dependent functions' needs
 function mergeWorksClaims (works) {
-  return {
-    'wdt:P50': aggregateClaims(works, 'wdt:P50'),
-    'wdt:P179': aggregateClaims(works, 'wdt:P179'),
-  }
+  return Object.fromEntries(workRelationsProperties.map(property => {
+    return [ property, aggregateClaims(works, property) ]
+  }))
 }
 
 export async function getEditionGraphEntities (uri) {

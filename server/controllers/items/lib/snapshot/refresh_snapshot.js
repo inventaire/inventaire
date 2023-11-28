@@ -1,6 +1,7 @@
-import { getInvUrisByClaim } from '#controllers/entities/lib/entities'
+import { getInvEntitiesUrisByClaims, getInvUrisByClaim } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import buildSnapshot from './build_snapshot.js'
@@ -29,8 +30,8 @@ export async function refreshSnapshotFromUri (changedEntityUri) {
   .then(refreshSnapshotFromDoc)
 }
 
-const multiWorkRefresh = relationProperty => async uri => {
-  const uris = await getInvUrisByClaim(relationProperty, uri)
+const multiWorkRefresh = relationProperties => async uri => {
+  const uris = await getInvEntitiesUrisByClaims(relationProperties, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
   return snapshots.flat()
 }
@@ -53,8 +54,8 @@ const getSnapshotsByType = {
     return snapshots.flat()
   },
 
-  human: multiWorkRefresh('wdt:P50'),
-  serie: multiWorkRefresh('wdt:P179'),
+  human: multiWorkRefresh(authorRelationsProperties),
+  serie: multiWorkRefresh([ 'wdt:P179' ]),
 }
 
 const refreshTypes = Object.keys(getSnapshotsByType)

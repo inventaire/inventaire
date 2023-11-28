@@ -1,5 +1,5 @@
-import { compact, map, pick, uniq } from 'lodash-es'
-import { getEntityById } from '#controllers/entities/lib/entities'
+import { compact, map, uniq } from 'lodash-es'
+import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entities/lib/entities'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import getEntitiesByUris from './get_entities_by_uris.js'
@@ -43,7 +43,7 @@ async function getSubjectsUris (valueUri, properties) {
 }
 
 export const relationIsConfirmedByPrimaryData = (properties, valueUri) => async entity => {
-  const relationsUris = uniq(Object.values(pick(entity.claims, properties)).flat())
+  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties)
   // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
   const canonicalValuesUris = await getResolvedUris(relationsUris)
   if (canonicalValuesUris.includes(valueUri)) return entity
