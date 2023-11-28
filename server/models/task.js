@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { round } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
 import validations from './validations/task.js'
 
@@ -18,7 +18,7 @@ export default {
       created: Date.now(),
     }
 
-    if (lexicalScore) lexicalScore = _.round(lexicalScore, 2)
+    if (lexicalScore) lexicalScore = round(lexicalScore, 2)
 
     validateAndAssign(task, 'entitiesType', entitiesType)
     validateAndAssign(task, 'lexicalScore', lexicalScore)

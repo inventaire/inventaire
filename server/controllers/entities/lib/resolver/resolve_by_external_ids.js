@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { some } from 'lodash-es'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getEntityByUri } from '../get_entity_by_uri.js'
@@ -43,7 +43,7 @@ const resolveSeed = async (seed, expectedEntityType) => {
 
 const resolveSectionSeedsByExternalIds = async (section, entry, expectedEntityType) => {
   const seeds = entry[section]
-  if (!_.some(seeds)) return entry
+  if (!some(seeds)) return entry
 
   return resolveSeedsByExternalIds(seeds, expectedEntityType)
   .then(seeds => { entry[section] = seeds })

@@ -1,5 +1,6 @@
-import _ from '#builders/utils'
+import { compact, escape, identity } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
 import { platforms } from './platforms.js'
 import { propertiesDisplay } from './properties_display.js'
@@ -13,7 +14,7 @@ export default async entity => {
   const attachementsList = propertiesDisplay[type]
   const properties = Object.keys(attachementsList)
   const attachements = await Promise.all(properties.map(buildAttachement(claims, attachementsList)))
-  return _.compact(attachements)
+  return compact(attachements)
 }
 
 const buildAttachement = (claims, attachementsList) => async prop => {
@@ -24,7 +25,7 @@ const buildAttachement = (claims, attachementsList) => async prop => {
     name: propertyLabel(prop),
   }
   const attachementValue = await buildAttachementValues(claimValues, prop, attachementsList)
-  if (attachementValue && _.isNonEmptyString(attachementValue)) {
+  if (attachementValue && isNonEmptyString(attachementValue)) {
     attachement.value = attachementValue
     return attachement
   }
@@ -33,7 +34,7 @@ const buildAttachement = (claims, attachementsList) => async prop => {
 const buildAttachementValues = async (claimValues, prop, attachementsList) => {
   const claimType = attachementsList[prop]
   const attachementValues = await Promise.all(claimValues.map(buildAttachementValue(claimType, prop)))
-  return _.compact(attachementValues).join(', ') || null
+  return compact(attachementValues).join(', ') || null
 }
 
 const buildEntity = async ({ claimValue, claimType }) => {
@@ -69,14 +70,14 @@ const buildPlatform = ({ claimValue, prop }) => {
 const claimTypesActions = {
   entity: buildEntity,
   entityString: buildEntity,
-  string: _.identity,
+  string: identity,
   time: buildTime,
   platform: buildPlatform,
   url: buildLinkWrapper,
 }
 
 const buildAttachementValue = (claimType, prop) => async claimValue => {
-  const escapeClaimValue = _.escape(claimValue) // html urls
+  const escapeClaimValue = escape(claimValue) // html urls
   const claimTypeAction = claimTypesActions[claimType]
   if (claimTypeAction) return claimTypeAction({ claimValue: escapeClaimValue, claimType, prop })
 }

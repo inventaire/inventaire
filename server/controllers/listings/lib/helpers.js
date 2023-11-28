@@ -1,9 +1,9 @@
-import _ from '#builders/utils'
+import { keyBy } from 'lodash-es'
 
 export const filterFoundElementsUris = (elements, uris) => {
   const foundElements = []
   const notFoundUris = []
-  const elementsByUris = _.keyBy(elements, 'uri')
+  const elementsByUris = keyBy(elements, 'uri')
   uris.forEach(assignElement(elementsByUris, foundElements, notFoundUris))
   return { foundElements, notFoundUris }
 }

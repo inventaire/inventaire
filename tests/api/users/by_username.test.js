@@ -1,7 +1,8 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { wait } from '#lib/promises'
+import { toLowerCase } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
 import { customAuthReq } from '#tests/api/utils/request'
 import {
@@ -66,9 +67,9 @@ describe('users:by-usernames', () => {
 
   it('should get several users', async () => {
     const users = await Promise.all([ getUser(), getUserB() ])
-    const usernames = users.map(_.property('username'))
+    const usernames = map(users, 'username')
     const res = await publicReq('get', `${endpoint}&usernames=${usernames.join('|')}`)
-    const lowercasedUsernames = usernames.map(_.toLowerCase)
+    const lowercasedUsernames = usernames.map(toLowerCase)
     Object.keys(res.users).should.deepEqual(lowercasedUsernames)
   })
 

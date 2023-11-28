@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { difference } from 'lodash-es'
 import { groupAction } from '#controllers/groups/lib/group_action'
 import { makeRequest } from '#controllers/relations/lib/actions'
 import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
@@ -41,7 +41,7 @@ export const convertInvitations = async userDoc => {
   const groupInvitersIds = Object.values(invitersGroups)
   log(groupInvitersIds, 'groupInvitersIds')
 
-  const invitersIds = _.difference(Object.keys(inviters), groupInvitersIds)
+  const invitersIds = difference(Object.keys(inviters), groupInvitersIds)
   log(invitersIds, 'invitersIds')
 
   const friendsPromises = convertFriendInvitations(invitersIds, userId)

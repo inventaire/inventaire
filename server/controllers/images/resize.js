@@ -1,9 +1,10 @@
 import { URL } from 'node:url'
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { containers } from '#controllers/images/lib/containers'
+import { isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
+import { hashCode } from '#lib/utils/base'
 import getResizedImage from './lib/get_resized_image.js'
 
 const { env } = CONFIG
@@ -46,7 +47,7 @@ export default {
       url = `${mediaStorageEndpoint}${container}/${rest}`
     } else if (/^\d+$/.test(rest)) {
       url = req.query.href
-      if (!_.isUrl(url)) {
+      if (!isUrl(url)) {
         return error_.bundle(req, res, 'invalid href query', 400, url)
       }
 
@@ -56,7 +57,7 @@ export default {
         return error_.bundle(req, res, 'image domain not allowed', 400, url)
       }
 
-      const urlCode = _.hashCode(url).toString()
+      const urlCode = hashCode(url).toString()
       // The hashcode can be used by Nginx for caching, while the url is passed
       // as query argument in case it isnt in cache.
       // Here, we just check that we do get the same hash

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { property } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import Group from '#models/group'
@@ -14,7 +14,7 @@ setImmediate(importCircularDependencies)
 export const userCanLeaveGroup = async (userId, groupId) => {
   const group = await getGroupById(groupId)
   const { admins, members } = group
-  const adminsIds = admins.map(_.property('user'))
+  const adminsIds = admins.map(property('user'))
   if (!adminsIds.includes(userId)) return true
   const mainUserIsTheOnlyAdmin = admins.length === 1
   const thereAreOtherMembers = members.length > 0

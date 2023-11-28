@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import split from 'split'
 import through from 'through'
-import _ from '#builders/utils'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { LogError } from '#lib/utils/logs'
 import serializeEntityInTurtle from './lib/serialize_entity_in_turtle.js'
 
@@ -15,7 +15,7 @@ process.stdout.write(headers + '\n')
 
 const parse = line => {
   // Omit the last empty line
-  if (!_.isNonEmptyString(line)) return
+  if (!isNonEmptyString(line)) return
   try {
     const json = JSON.parse(line.replace(/,$/, ''))
     // Output on process.stdin

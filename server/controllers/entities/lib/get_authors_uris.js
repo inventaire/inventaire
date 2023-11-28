@@ -1,4 +1,4 @@
-import _ from 'lodash-es'
+import { chain } from 'lodash-es'
 
 const authorProperties = [
   // author
@@ -12,7 +12,7 @@ const authorProperties = [
 ]
 
 export default work => {
-  return _(work.claims)
+  return chain(work.claims)
   .pick(authorProperties)
   .values()
   .flatten()

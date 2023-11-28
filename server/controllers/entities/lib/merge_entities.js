@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
@@ -49,12 +49,12 @@ const mergeInvEntities = async (userId, fromId, toId) => {
 
   // Transfer all data from the 'fromEntity' to the 'toEntity'
   // if any difference can be found
-  const toEntityDocBeforeMerge = _.cloneDeep(toEntityDoc)
+  const toEntityDocBeforeMerge = cloneDeep(toEntityDoc)
   const toEntityDocAfterMerge = Entity.mergeDocs(fromEntityDoc, toEntityDoc)
 
   // If the doc hasn't changed, don't run putInvEntityUpdate
   // as it will throw an 'empty patch' error
-  if (!_.isEqual(toEntityDocBeforeMerge, toEntityDocAfterMerge)) {
+  if (!isEqual(toEntityDocBeforeMerge, toEntityDocAfterMerge)) {
     await putInvEntityUpdate({
       userId,
       currentDoc: toEntityDocBeforeMerge,

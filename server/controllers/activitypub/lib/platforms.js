@@ -1,8 +1,8 @@
-import _ from '#builders/utils'
+import { identity } from 'lodash-es'
 
 export const platforms = {
   'wdt:P4033': {
-    text: _.identity,
+    text: identity,
     url: address => {
       const [ username, domain ] = address.split('@')
       return `https://${domain}/@${username}`

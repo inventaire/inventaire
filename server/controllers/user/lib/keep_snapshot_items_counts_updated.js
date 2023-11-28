@@ -3,7 +3,7 @@
 // are created/edited in a short period of time
 
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { debounce } from 'lodash-es'
 import { radio } from '#lib/radio'
 import { LogError } from '#lib/utils/logs'
 import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
@@ -25,7 +25,7 @@ export function keepSnapshotItemsCountsUpdated () {
     // Creating a personnalized debouncer as a global debounce would be delayed
     // undefinitely "at scale"
     if (!debouncedUpdaters[userId]) {
-      debouncedUpdaters[userId] = _.debounce(itemsCountsUpdater(userId), delay)
+      debouncedUpdaters[userId] = debounce(itemsCountsUpdater(userId), delay)
     }
     return debouncedUpdaters[userId]()
   })

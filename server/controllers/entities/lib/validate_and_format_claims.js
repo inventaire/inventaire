@@ -1,4 +1,5 @@
-import _ from '#builders/utils'
+import { isArray, uniq } from 'lodash-es'
+import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
@@ -11,7 +12,7 @@ export default async ({ claims, type, _id }) => {
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)
 
-  if (!_.isNonEmptyPlainObject(claims)) {
+  if (!isNonEmptyPlainObject(claims)) {
     throw error_.new('invalid claims', 400, { claims })
   }
 
@@ -29,7 +30,7 @@ const validatePropertiesClaims = (claims, type, _id) => {
 const validatePropertyClaims = (claims, type, _id) => async property => {
   let values = claims[property]
 
-  if (!_.isArray(values)) {
+  if (!isArray(values)) {
     throw error_.new('invalid property value array', 400, {
       property,
       values,
@@ -45,7 +46,7 @@ const validatePropertyClaims = (claims, type, _id) => async property => {
 
   validateClaimProperty(type, property)
 
-  values = _.uniq(values)
+  values = uniq(values)
 
   claims[property] = await Promise.all(values.map(newVal => validateAndFormatClaim({
     type,

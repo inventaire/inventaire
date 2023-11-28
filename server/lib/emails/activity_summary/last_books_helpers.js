@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { clone, keyBy, pick } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
 import Item from '#models/item'
@@ -29,12 +29,12 @@ export const formatData = (lastItems, label, lang, highlighted) => {
 
 export const embedUsersData = (items, users, position) => {
   users = users.map(serializeUserData)
-  users = _.keyBy(users, '_id')
+  users = keyBy(users, '_id')
   return items.map(item => {
     const user = users[item.owner]
     if (user) {
       item.href = `${host}/items/${item._id}`
-      item.user = _.pick(user, requiredUserData)
+      item.user = pick(user, requiredUserData)
       if ((user.position != null) && (position != null)) {
         item.user.distance = kmBetween(user.position, position)
       }
@@ -55,7 +55,7 @@ const requiredUserData = [ 'username', 'picture' ]
 
 const getItemsWithTransactionFirst = (lastItems, highlightedLength) => {
   // create a new array as items.pop() would affect lastItems everywhere
-  const items = _.clone(lastItems)
+  const items = clone(lastItems)
   const withTransaction = []
   const withoutTransaction = []
   // go through all items until withTransaction is equal to

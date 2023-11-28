@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { clone } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import commonValidations from './validations/common.js'
@@ -45,7 +45,7 @@ export default {
     assert_.object(newAttributes)
     assert_.object(oldElement)
 
-    const newElement = _.clone(oldElement)
+    const newElement = clone(oldElement)
 
     const passedAttributes = Object.keys(newAttributes)
 

@@ -1,7 +1,8 @@
 // Send an email to invite someone to connect to the requester as friends
 // If a group id is passed, invite to join the group instead (group admins only)
-import _ from '#builders/utils'
+import { without } from 'lodash-es'
 import { getGroupById } from '#controllers/groups/lib/groups'
+import { isGroupId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
@@ -41,14 +42,14 @@ const parseAndValidateEmails = async (emails, userEmail) => {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
-  const filteredEmails = _.without(parsedEmails, userEmail.toLowerCase())
+  const filteredEmails = without(parsedEmails, userEmail.toLowerCase())
   return applyLimit(filteredEmails)
 }
 
 const validateGroup = async (groupId, reqUserId) => {
   if (groupId == null) return null
 
-  if (!_.isGroupId(groupId)) {
+  if (!isGroupId(groupId)) {
     throw error_.newInvalid('group id', groupId)
   }
 

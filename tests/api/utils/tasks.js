@@ -1,16 +1,16 @@
-import _ from '#builders/utils'
+import { forceArray } from '#lib/utils/base'
 import { publicReq, adminReq } from './utils.js'
 
 const endpoint = '/api/tasks?action='
 
 export const getByIds = ids => {
-  ids = _.forceArray(ids).join('|')
+  ids = forceArray(ids).join('|')
   return publicReq('get', `${endpoint}by-ids&ids=${ids}`)
   .then(({ tasks }) => tasks)
 }
 
 export const getBySuspectUris = uris => {
-  uris = _.forceArray(uris).join('|')
+  uris = forceArray(uris).join('|')
   return publicReq('get', `${endpoint}by-suspect-uris&uris=${uris}`)
   .then(({ tasks }) => tasks)
 }
@@ -21,7 +21,7 @@ export const getBySuspectUri = uri => {
 }
 
 export const getBySuggestionUris = uris => {
-  uris = _.forceArray(uris).join('|')
+  uris = forceArray(uris).join('|')
   return publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}`)
   .then(({ tasks }) => tasks)
 }
@@ -49,7 +49,7 @@ export const update = (id, attribute, value) => {
 }
 
 export const checkEntities = uris => {
-  uris = _.forceArray(uris)
+  uris = forceArray(uris)
   return adminReq('post', `${endpoint}check-entities`, { uris })
   .then(() => getBySuspectUris(uris))
   .then(getTasksBySuspectUris => Object.values(getTasksBySuspectUris).flat())

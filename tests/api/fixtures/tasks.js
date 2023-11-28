@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { createTasksInBulk } from '#controllers/tasks/lib/tasks'
 import { checkEntities } from '../utils/tasks.js'
 import { createHuman, createWork } from './entities.js'
@@ -12,7 +12,7 @@ export const createSomeTasks = humanLabel => {
 
   promises[humanLabel] = Promise.all([ createHuman(human), createHuman(human) ])
     .then(humans => {
-      return checkEntities(_.map(humans, 'uri'))
+      return checkEntities(map(humans, 'uri'))
       .then(tasks => ({ tasks, humans }))
     })
 

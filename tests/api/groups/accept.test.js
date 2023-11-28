@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { humanName } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -54,7 +54,7 @@ describe('groups:update:accept', () => {
     await customAuthReq(user, 'put', endpoint, { user: userId, group: groupId })
     const updatedGroup = await getGroup(group)
     updatedGroup.members.length.should.equal(memberCount + 1)
-    const membersIds = _.map(updatedGroup.members, 'user')
+    const membersIds = map(updatedGroup.members, 'user')
     membersIds.should.containEql(userId)
   })
 })

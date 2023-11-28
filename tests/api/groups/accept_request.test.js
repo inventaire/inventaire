@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { humanName } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -26,7 +26,7 @@ describe('groups:update:accept-request', () => {
     await customAuthReq(requesterPromise, 'put', '/api/groups?action=request', { group: group._id })
     await authReq('put', endpoint, { user: requesterId, group: group._id })
     const updatedGroup = await getGroup(group)
-    updatedGroup.members.map(_.property('user')).should.containEql(requesterId)
+    map(updatedGroup.members, 'user').should.containEql(requesterId)
   })
 
   it('reject if not admin user', async () => {

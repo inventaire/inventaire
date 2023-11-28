@@ -1,7 +1,8 @@
-import _ from '#builders/utils'
+import { camelCase, cloneDeep, isPlainObject } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
 import { assert_ } from '#lib/utils/assert_types'
+import { obfuscate } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 import parameters from './parameters.js'
 
@@ -17,10 +18,10 @@ export const sanitize = (req, res, configs) => {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
-  const input = _.cloneDeep(req[place])
+  const input = cloneDeep(req[place])
   delete input.action
 
-  if (!_.isPlainObject(input)) {
+  if (!isPlainObject(input)) {
     const type = typeOf(input)
     throw error_.new(`${place} should be an object, got ${type}`, 400)
   }
@@ -72,7 +73,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
 
   enforceBoundaries(input, name, config, parameter, res)
 
-  renameParameter(input, name, _.camelCase)
+  renameParameter(input, name, camelCase)
   renameParameter(input, name, parameter.rename)
 }
 
@@ -142,15 +143,15 @@ const format = (input, name, formatFn, config) => {
 const applyDefaultValue = (input, name, config, parameter) => {
   // Accept 'null' as a default value
   if (config.default !== undefined) {
-    input[name] = _.cloneDeep(config.default)
+    input[name] = cloneDeep(config.default)
   } else if (parameter.default !== undefined) {
-    input[name] = _.cloneDeep(parameter.default)
+    input[name] = cloneDeep(parameter.default)
   }
 }
 
 const obfuscateSecret = (parameter, err) => {
   if (parameter.secret && typeof err.context.value === 'string') {
-    err.context.value = _.obfuscate(err.context.value)
+    err.context.value = obfuscate(err.context.value)
   }
 }
 

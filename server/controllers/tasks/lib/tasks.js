@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { groupBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
 import Task from '#models/task'
@@ -79,7 +79,7 @@ export async function getTasksBySuspectUris (suspectUris, options = {}) {
   const { index, includeArchived } = options
   const tasks = await db.viewByKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
   if (index !== true) return tasks
-  const getTasksBySuspectUris = _.groupBy(tasks, 'suspectUri')
+  const getTasksBySuspectUris = groupBy(tasks, 'suspectUri')
   return completeWithEmptyArrays(getTasksBySuspectUris, suspectUris)
 }
 
@@ -87,7 +87,7 @@ export async function getTasksBySuggestionUris (suggestionUris, options = {}) {
   const { index, includeArchived } = options
   const tasks = await db.viewByKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
   if (index !== true) return tasks
-  const getTasksBySuggestionUris = _.groupBy(tasks, 'suggestionUri')
+  const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
   return completeWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)
 }
 

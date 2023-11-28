@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getRandomPosition } from '../fixtures/users.js'
@@ -29,7 +29,7 @@ describe('users:nearby', () => {
     const user1 = await geolocatedUser1Promise
     await waitForIndexation('users', user1._id)
     const { users } = await customAuthReq(geolocatedUser2Promise, 'get', endpoint)
-    const usersIds = _.map(users, '_id')
+    const usersIds = map(users, '_id')
     usersIds.includes(user1._id).should.be.true()
   })
 
@@ -37,7 +37,7 @@ describe('users:nearby', () => {
     const user1 = await geolocatedUser1Promise
     await waitForIndexation('users', user1._id)
     const { users } = await customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1`)
-    const usersIds = _.map(users, '_id')
+    const usersIds = map(users, '_id')
     usersIds.includes(user1._id).should.be.false()
   })
 
@@ -51,7 +51,7 @@ describe('users:nearby', () => {
       waitForIndexation('users', user4._id),
     ])
     const { users } = await customAuthReq(geolocatedUser1Promise, 'get', endpoint)
-    const usersIds = _.map(users, '_id')
+    const usersIds = map(users, '_id')
     usersIds.includes(user2._id).should.be.true()
     usersIds.includes(user3._id).should.be.true()
     usersIds.includes(user4._id).should.be.true()

@@ -1,6 +1,6 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import leveldbFactory from '#db/level/get_sub_db'
+import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
@@ -59,9 +59,9 @@ const getKeys = params => {
 const getSubject = key => key.split('-')[2]
 
 const buildKey = (subjectUri, property, valueUri) => {
-  if (!_.isEntityUri(subjectUri)) throw error_.new('invalid subject', { subjectUri })
-  if (!_.isPropertyUri(property)) throw error_.new('invalid property', { property })
-  if (!_.isEntityUri(valueUri)) throw error_.new('invalid value', { valueUri })
+  if (!isEntityUri(subjectUri)) throw error_.new('invalid subject', { subjectUri })
+  if (!isPropertyUri(property)) throw error_.new('invalid property', { property })
+  if (!isEntityUri(valueUri)) throw error_.new('invalid value', { valueUri })
   return `${property}-${valueUri}-${subjectUri}`
 }
 

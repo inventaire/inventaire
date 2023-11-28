@@ -1,9 +1,10 @@
+import { compact, flatten } from 'lodash-es'
 import { simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
-import _ from '#builders/utils'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
+import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
@@ -49,8 +50,8 @@ export async function reverseClaims (params) {
   promises.push(invReverseClaims(property, value))
 
   return Promise.all(promises)
-  .then(_.flatten)
-  .then(_.compact)
+  .then(flatten)
+  .then(compact)
   .then(uris => {
     if (!sort) return uris
 
@@ -60,7 +61,7 @@ export async function reverseClaims (params) {
 }
 
 const requestWikidataReverseClaims = (property, value, refresh, dry) => {
-  if (_.isEntityUri(value)) {
+  if (isEntityUri(value)) {
     const [ prefix, id ] = value.split(':')
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
     if (prefix === 'wd') return wikidataReverseClaims(property, id, refresh, dry)

@@ -1,4 +1,4 @@
-import _ from 'lodash-es'
+import { get } from 'lodash-es'
 import should from 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
@@ -138,7 +138,7 @@ describe('user:update', () => {
       const attribute = 'settings.notifications.global'
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
-      _.get(updatedUser, attribute).should.be.false()
+      get(updatedUser, attribute).should.be.false()
     })
 
     it('should update anonymize setting', async () => {
@@ -146,7 +146,7 @@ describe('user:update', () => {
       const attribute = 'settings.contributions.anonymize'
       await customAuthReq(user, 'put', endpoint, { attribute, value: false })
       const updatedUser = await getRefreshedUser(user)
-      _.get(updatedUser, attribute).should.be.false()
+      get(updatedUser, attribute).should.be.false()
     })
   })
 

@@ -1,7 +1,8 @@
 import CONFIG from 'config'
 import couchInit from 'couch-init2'
-import _ from '#builders/utils'
+import { pick } from 'lodash-es'
 import { absolutePath } from '#lib/absolute_path'
+import { obfuscate, objLength } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { databases } from './databases.js'
 
@@ -29,15 +30,15 @@ const init = async ({ preload }) => {
     }
 
     const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
-    if (_.objLength(res.operations) !== 0) log(res, 'couch init')
+    if (objLength(res.operations) !== 0) log(res, 'couch init')
     // Work around circular dependencies
     setImmediate(afterInit)
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
 
-    const context = _.pick(CONFIG.db, 'protocol', 'hostname', 'port', 'username', 'password')
+    const context = pick(CONFIG.db, 'protocol', 'hostname', 'port', 'username', 'password')
     // Avoid logging the password in plain text
-    context.password = context.password.slice(0, 2) + _.obfuscate(context.password.slice(2, -1)) + context.password.at(-1)
+    context.password = context.password.slice(0, 2) + obfuscate(context.password.slice(2, -1)) + context.password.at(-1)
     console.error(err.message, context)
     return process.exit(1)
   }

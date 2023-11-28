@@ -1,5 +1,6 @@
-import _ from '#builders/utils'
+import { property, uniq } from 'lodash-es'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { flatMapUniq, mapUniq } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
@@ -57,9 +58,9 @@ export async function validateShelves (userId, shelvesIds) {
 }
 
 const validateShelvesOwnership = (userId, shelves) => {
-  if (_.isNonEmptyArray(shelves)) {
-    const shelvesOwners = shelves.map(_.property('owner'))
-    const allShelvesBelongToUser = _.uniq(shelvesOwners)[0] === userId
+  if (isNonEmptyArray(shelves)) {
+    const shelvesOwners = shelves.map(property('owner'))
+    const allShelvesBelongToUser = uniq(shelvesOwners)[0] === userId
 
     if (!allShelvesBelongToUser) {
       throw error_.new('invalid owner', 400, { userId })

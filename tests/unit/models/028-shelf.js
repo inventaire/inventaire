@@ -1,5 +1,5 @@
 import 'should'
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import { randomWords } from '#fixtures/text'
 import { expired } from '#lib/time'
 import Shelf from '#models/shelf'
@@ -39,14 +39,14 @@ describe('shelf model', () => {
 
     describe('mandatory attributes', () => {
       it('should throw on missing owner', () => {
-        const invalidShelf = _.cloneDeep(validShelf)
+        const invalidShelf = cloneDeep(validShelf)
         delete invalidShelf.owner
         const creator = () => Shelf.create(invalidShelf)
         creator.should.throw()
       })
 
       it('should throw on missing name', () => {
-        const invalidShelf = _.cloneDeep(validShelf)
+        const invalidShelf = cloneDeep(validShelf)
         delete invalidShelf.name
         const creator = () => Shelf.create(invalidShelf)
         creator.should.throw()

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { get } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
@@ -13,7 +13,7 @@ export default async title => {
   const { query } = await requests_.get(url)
   const { pages } = query
   const page = Object.values(pages)[0]
-  const source = _.get(page, 'thumbnail.source')
+  const source = get(page, 'thumbnail.source')
   if (!source) throw error_.notFound(title)
 
   return {

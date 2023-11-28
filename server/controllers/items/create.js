@@ -1,15 +1,17 @@
-import _ from '#builders/utils'
+import { isPlainObject } from 'lodash-es'
 import { createItems } from '#controllers/items/lib/items'
+import { isEntityUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { track } from '#lib/track'
+import { forceArray } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 export default async (req, res) => {
   let { body: items, user } = req
-  const singleItemMode = _.isPlainObject(items)
+  const singleItemMode = isPlainObject(items)
 
-  items = _.forceArray(items)
+  items = forceArray(items)
 
   log(items, 'create items')
 
@@ -17,7 +19,7 @@ export default async (req, res) => {
     const { entity: entityUri } = item
     if (entityUri == null) throw error_.newMissingBody('entity')
 
-    if (!_.isEntityUri(entityUri)) {
+    if (!isEntityUri(entityUri)) {
       throw error_.newInvalid('entity', entityUri)
     }
   }

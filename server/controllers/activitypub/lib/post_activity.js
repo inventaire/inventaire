@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import { signRequest } from '#controllers/activitypub/lib/security'
 import { isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
@@ -67,7 +67,7 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
   if (followActivities.length === 0) return
-  const followersActorsUris = _.uniq(_.map(followActivities, 'actor.uri'))
+  const followersActorsUris = uniq(map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
     return signAndPostActivity({ actorName, recipientActorUri: uri, activity })
   }))

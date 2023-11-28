@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { humanName } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -48,6 +48,6 @@ describe('groups:update:make-admin', () => {
     await authReq('put', endpoint, { user: memberId, group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.admins.length.should.equal(adminsCount + 1)
-    updatedGroup.admins.map(_.property('user')).should.containEql(memberId)
+    map(updatedGroup.admins, 'user').should.containEql(memberId)
   })
 })

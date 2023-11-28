@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { keyBy } from 'lodash-es'
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
 import { assert_ } from '#lib/utils/assert_types'
@@ -14,7 +14,7 @@ export const getParsedUsersIndexedByIds = (user1Id, user2Id) => {
 }
 
 const parseUsersData = (user1Id, user2Id, usersData) => {
-  usersData = _.keyBy(usersData, '_id')
+  usersData = keyBy(usersData, '_id')
   const user1 = usersData[user1Id]
   const user2 = usersData[user2Id]
   assert_.objects([ user1, user2 ])

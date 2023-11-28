@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
 import { firstDoc } from '#lib/couch'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { toLowerCase } from '#lib/utils/base'
 
 export const byEmail = (db, email) => {
   assert_.string(email)
@@ -10,7 +10,7 @@ export const byEmail = (db, email) => {
 
 export const byEmails = (db, emails) => {
   assert_.strings(emails)
-  return db.viewByKeys('byEmail', emails.map(_.toLowerCase))
+  return db.viewByKeys('byEmail', emails.map(toLowerCase))
 }
 
 export const findOneByEmail = (db, email) => {

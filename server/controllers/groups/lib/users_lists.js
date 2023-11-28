@@ -1,4 +1,4 @@
-import _ from 'lodash-es'
+import { chain } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
 import Group from '#models/group'
 
@@ -33,7 +33,7 @@ export const userIsInAdmins = (userId, groupId) => {
 }
 
 export const getAllGroupsMembersIds = groups => {
-  return _(groups)
+  return chain(groups)
   .map(getAllGroupMembersIds)
   .flatten()
   .value()
@@ -57,7 +57,7 @@ export const getGroupRequestedUsersIds = group => {
 
 const getUsersIdsByAgregatedCategories = (group, categories) => {
   assert_.array(categories)
-  return _(group)
+  return chain(group)
   .pick(categories)
   .values()
   .flatten()

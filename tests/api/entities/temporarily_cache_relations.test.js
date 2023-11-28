@@ -1,6 +1,6 @@
 import CONFIG from 'config'
-import _ from 'lodash-es'
 import 'should'
+import { identity, map } from 'lodash-es'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import { wait } from '#lib/promises'
@@ -22,16 +22,16 @@ describe('temporarily cache relations', () => {
     const someAuthorUri = 'wd:Q1345582'
     const { uri: workUri } = await createWorkWithAuthor({ uri: someAuthorUri })
     await cacheEntityRelations(workUri)
-    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', _.identity)
-    _.map(cachedRelationsEntity, 'uri').should.containEql(workUri)
+    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', identity)
+    map(cachedRelationsEntity, 'uri').should.containEql(workUri)
   })
 
   it('should add serie relation to cache', async () => {
     const someSerieUri = 'wd:Q3656893'
     const { uri: workUri } = await createWorkWithSerie({ uri: someSerieUri })
     await cacheEntityRelations(workUri)
-    const cachedRelationsEntity = await getCachedRelations(someSerieUri, 'wdt:P179', _.identity)
-    _.map(cachedRelationsEntity, 'uri').should.containEql(workUri)
+    const cachedRelationsEntity = await getCachedRelations(someSerieUri, 'wdt:P179', identity)
+    map(cachedRelationsEntity, 'uri').should.containEql(workUri)
   })
 
   it('should check the primary data', async () => {
@@ -58,8 +58,8 @@ describe('temporarily cache relations', () => {
     await cacheEntityRelations(workUri)
     const { uri: otherWorkUri } = await createWork()
     await merge(workUri, otherWorkUri)
-    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', _.identity)
-    _.map(cachedRelationsEntity, 'uri').should.containEql(otherWorkUri)
+    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', identity)
+    map(cachedRelationsEntity, 'uri').should.containEql(otherWorkUri)
   })
 
   it('should find a claim subject when the value has been redirected', async () => {

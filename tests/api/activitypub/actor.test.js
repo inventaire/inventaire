@@ -1,6 +1,6 @@
 import 'should'
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { find } from 'lodash-es'
 import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activitypub/lib/helpers'
 import { propertiesDisplay } from '#controllers/activitypub/lib/properties_display'
 import { i18n } from '#lib/emails/i18n/i18n'
@@ -19,7 +19,7 @@ const publicHost = origin.split('://')[1]
 const getAttachement = async (actorName, prop) => {
   const actorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
   const { attachment } = await publicReq('get', actorUrl)
-  return _.find(attachment, { name: i18n('en', prop) })
+  return find(attachment, { name: i18n('en', prop) })
 }
 
 describe('activitypub:actor', () => {

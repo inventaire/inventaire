@@ -1,5 +1,5 @@
 import 'should'
-import _ from '#builders/utils'
+import { sample } from 'lodash-es'
 import { authReqB, authReqC } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
@@ -45,7 +45,7 @@ describe('transactions:update-state', () => {
 
   describe('side effects: item.busy flag', () => {
     describe('giving and selling transactions', () => {
-      const itemData = { transaction: _.sample([ 'giving', 'selling' ]), visibility: [ 'public' ] }
+      const itemData = { transaction: sample([ 'giving', 'selling' ]), visibility: [ 'public' ] }
 
       it('should be false when the transaction is just requested', async () => {
         const { userBItem } = await createTransaction({ itemData })

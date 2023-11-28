@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { some } from 'lodash-es'
 import { expired } from '#lib/time'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -29,13 +29,13 @@ describe('items:recent-public', () => {
   it('should take a lang parameter', async () => {
     await populate()
     const res = await publicReq('get', `${recentPublicUrl}&lang=en`)
-    _.some(res.items, itemLangIs('en')).should.be.true()
+    some(res.items, itemLangIs('en')).should.be.true()
   })
 
   it('should return some of the most recent items', async () => {
     await populate()
     const res = await publicReq('get', recentPublicUrl)
-    _.some(res.items, createdLately).should.be.true()
+    some(res.items, createdLately).should.be.true()
   })
 
   it('should reject invalid limit', async () => {

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { cloneDeep, isEqual, omit, pick } from 'lodash-es'
 import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
 
@@ -36,14 +36,14 @@ const getEntity = (prefix, entityId) => {
 const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
   // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
-  const updatedEntity = _.cloneDeep(entity)
-  const newClaims = _.omit(seedClaims, Object.keys(entity.claims))
+  const updatedEntity = cloneDeep(entity)
+  const newClaims = omit(seedClaims, Object.keys(entity.claims))
   await addImageClaim(entity, imageUrl, newClaims)
   Object.keys(newClaims).forEach(prop => {
     updatedEntity.claims[prop] = newClaims[prop]
   })
   updateDatePrecision(entity, updatedEntity, seedClaims)
-  if (_.isEqual(updatedEntity, entity)) return
+  if (isEqual(updatedEntity, entity)) return
   await putInvEntityUpdate({
     userId: reqUserId,
     currentDoc: entity,
@@ -61,7 +61,7 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
 }
 
 const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
-  const seedDateClaims = _.pick(seedClaims, simpleDayProperties)
+  const seedDateClaims = pick(seedClaims, simpleDayProperties)
   Object.keys(seedDateClaims).forEach(prop => {
     const seedDate = seedDateClaims[prop][0]
     if (!seedDate) return

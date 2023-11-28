@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { flatten, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
@@ -26,8 +26,8 @@ export async function resolveExternalIds (claims, resolveOnWikidata = true) {
   if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }
 
   return Promise.all(requests)
-  .then(_.flatten)
-  .then(_.uniq)
+  .then(flatten)
+  .then(uniq)
 }
 
 const wdQuery = async externalIds => {
@@ -37,7 +37,7 @@ const wdQuery = async externalIds => {
 
 const invQuery = externalIds => {
   return Promise.all(externalIds.map(invByClaim))
-  .then(_.flatten)
+  .then(flatten)
 }
 
 const invByClaim = async ([ prop, value ]) => {

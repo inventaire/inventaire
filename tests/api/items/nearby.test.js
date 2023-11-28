@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { createItem } from '../fixtures/items.js'
@@ -21,7 +21,7 @@ describe('items:nearby', () => {
     await waitForIndexation('users', user._id)
     const item = await createItem(user)
     const { items } = await customAuthReq(geolocatedUser2Promise, 'get', endpoint)
-    const itemsIds = _.map(items, '_id')
+    const itemsIds = map(items, '_id')
     itemsIds.includes(item._id).should.be.true()
   })
 
@@ -30,7 +30,7 @@ describe('items:nearby', () => {
     await waitForIndexation('users', user._id)
     const item = await createItem(user)
     const { items } = await customAuthReq(geolocatedUser2Promise, 'get', `${endpoint}&range=1&strict-range=true`)
-    const itemsIds = _.map(items, '_id')
+    const itemsIds = map(items, '_id')
     itemsIds.includes(item._id).should.be.false()
   })
 })

@@ -1,6 +1,7 @@
-import _ from '#builders/utils'
+import { isArray, isPlainObject } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
+import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import sanitizeSeed from './sanitize_seed.js'
 
@@ -13,7 +14,7 @@ const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_i
 export default entry => {
   let { edition } = entry
 
-  if (_.isArray(edition)) {
+  if (isArray(edition)) {
     if (edition.length > 1) throw error_.new('multiple editions not supported', 400, { edition })
     else edition = entry.edition = edition[0]
   }
@@ -22,8 +23,8 @@ export default entry => {
     throw error_.new('missing edition in entry', 400, { entry })
   }
 
-  if (_.isPlainObject(entry.works)) entry.works = [ entry.works ]
-  if (_.isPlainObject(entry.authors)) entry.authors = [ entry.authors ]
+  if (isPlainObject(entry.works)) entry.works = [ entry.works ]
+  if (isPlainObject(entry.authors)) entry.authors = [ entry.authors ]
 
   entry.works = entry.works || []
   entry.authors = entry.authors || []
@@ -65,9 +66,9 @@ const getIsbn = edition => {
 
 const createWorkSeedFromEdition = edition => {
   const { claims } = edition
-  const title = claims?.['wdt:P1476'] ? _.forceArray(claims['wdt:P1476'])[0] : null
+  const title = claims?.['wdt:P1476'] ? forceArray(claims['wdt:P1476'])[0] : null
   if (title == null) return
-  const langClaim = claims['wdt:P407'] && _.forceArray(claims['wdt:P407'])[0]
+  const langClaim = claims['wdt:P407'] && forceArray(claims['wdt:P407'])[0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null
   const lang = wmLanguageCodeByWdId[langWdId] || guessLangFromIsbn(edition.isbn) || 'en'
   return {

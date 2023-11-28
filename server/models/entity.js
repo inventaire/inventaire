@@ -22,9 +22,8 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-import { isString } from 'lodash-es'
+import { isString, cloneDeep, get, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
-import _ from '#builders/utils'
 import inferences from '#controllers/entities/lib/inferences'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { error_ } from '#lib/error/error'
@@ -60,7 +59,7 @@ const Entity = {
       deleteLabel(doc, lang)
     } else {
       assert_.string(value)
-      value = _.superTrim(value)
+      value = superTrim(value)
 
       if (doc.labels[lang] === value) {
         throw error_.new('already up-to-date', 400, { doc, lang, value })
@@ -114,10 +113,10 @@ const Entity = {
       throw error_.new('missing old or new value', 400, context)
     }
 
-    if (_.isString(oldVal)) oldVal = _.superTrim(oldVal)
-    if (_.isString(newVal)) newVal = _.superTrim(newVal)
+    if (isString(oldVal)) oldVal = superTrim(oldVal)
+    if (isString(newVal)) newVal = superTrim(newVal)
 
-    let propArray = _.get(doc, `claims.${property}`)
+    let propArray = get(doc, `claims.${property}`)
     info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
 
     if (propArray && newVal != null && propArray.includes(newVal)) {
@@ -137,7 +136,7 @@ const Entity = {
         doc.claims[property][oldValIndex] = newVal
       } else {
         // if the new value is null, it plays the role of a removeClaim
-        propArray = _.without(propArray, oldVal)
+        propArray = without(propArray, oldVal)
 
         setPossiblyEmptyPropertyArray(doc, property, propArray)
       }
@@ -204,7 +203,7 @@ const Entity = {
       throw error_.new('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
     }
 
-    const redirection = _.cloneDeep(fromEntityDoc)
+    const redirection = cloneDeep(fromEntityDoc)
 
     redirection.redirect = toUri
     delete redirection.labels
@@ -221,13 +220,13 @@ const Entity = {
       throw error_.new(message, 400, entityDoc)
     }
 
-    const removedDoc = _.cloneDeep(entityDoc)
+    const removedDoc = cloneDeep(entityDoc)
     removedDoc.type = 'removed:placeholder'
     return removedDoc
   },
 
   recoverPlaceholder: entityDoc => {
-    const recoveredDoc = _.cloneDeep(entityDoc)
+    const recoveredDoc = cloneDeep(entityDoc)
     recoveredDoc.type = 'entity'
     return recoveredDoc
   },
@@ -243,7 +242,7 @@ export default Entity
 const updateInferredProperties = (doc, property, oldVal, newVal) => {
   const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
-  const propInferences = _.omit(inferences[property], declaredProperties)
+  const propInferences = omit(inferences[property], declaredProperties)
 
   const addingOrUpdatingValue = (newVal != null)
 
@@ -274,7 +273,7 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
       // }
       const inferredValue = convertor(oldVal)
       if (inferredPropertyArray.includes(inferredValue)) {
-        inferredPropertyArray = _.without(inferredPropertyArray, inferredValue)
+        inferredPropertyArray = without(inferredPropertyArray, inferredValue)
         log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)
       }
     }
@@ -288,7 +287,7 @@ const updateInferredProperties = (doc, property, oldVal, newVal) => {
 const setPossiblyEmptyPropertyArray = (doc, property, propertyArray) => {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
-    doc.claims = _.omit(doc.claims, property)
+    doc.claims = omit(doc.claims, property)
   } else {
     doc.claims[property] = propertyArray
   }

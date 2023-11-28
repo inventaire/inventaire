@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { randomWords } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { addItemsToShelf } from '../utils/shelves.js'
@@ -38,7 +38,7 @@ export const createShelfWithItem = async (shelfData = {}, itemData, userPromise)
 
 export const createShelfWithItems = async (shelfData = {}, items) => {
   items = await Promise.all(items.map(item => item || createItem()))
-  const itemsIds = _.map(items, '_id')
+  const itemsIds = map(items, '_id')
   const { shelf } = await createShelf(null, shelfData)
   await addItemsToShelf(null, shelf, itemsIds)
   return { shelf, items }

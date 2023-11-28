@@ -1,17 +1,17 @@
 import 'should'
-import _ from '#builders/utils'
+import { noop } from 'lodash-es'
 import { wait } from '#lib/promises'
 import { requestGrouper } from '#lib/request_grouper'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
-const MockRequester = (spy = _.noop) => async ids => {
+const MockRequester = (spy = noop) => async ids => {
   spy()
   return mockRequesterSync(ids)
 }
 
-const MockRequesterSyncAsyncMixup = (spy = _.noop) => ids => {
+const MockRequesterSyncAsyncMixup = (spy = noop) => ids => {
   spy()
   return Promise.resolve(mockRequesterSync(ids))
 }

@@ -1,14 +1,14 @@
-import _ from '#builders/utils'
+import { difference, map, uniq } from 'lodash-es'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { warn } from '#lib/utils/logs'
 
 export default entities => {
   const { works, editions } = splitEntities(entities)
-  const worksUris = _.map(works, 'uri')
+  const worksUris = map(works, 'uri')
   const data = { editionsWorksUris: [], editionWorkMap: {} }
   let { editionsWorksUris, editionWorkMap } = editions.reduce(aggregateEditionsWorksUris, data)
   // Do no refetch works already fetched
-  editionsWorksUris = _.uniq(_.difference(editionsWorksUris, worksUris))
+  editionsWorksUris = uniq(difference(editionsWorksUris, worksUris))
   return getEntitiesByUris({ uris: editionsWorksUris })
   .then(({ entities }) => entities)
   .then(editionsWorksEntities => {

@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { error_ } from '#lib/error/error'
+import { hashCode } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 
 const { deduplicateRequests: dedupRequests } = CONFIG
@@ -41,7 +41,7 @@ export function deduplicateRequests (req, res, next) {
   // Known case with an empty body:
   // - image upload: its using application/octet-stream header instead of json
   //   thus body-parser won't populate req.body
-  const data = _.hashCode(JSON.stringify(req.body || {}))
+  const data = hashCode(JSON.stringify(req.body || {}))
 
   const key = `${sessionId}:${method}:${url}`
   const previousData = requestsCache[key]
@@ -60,7 +60,7 @@ export function deduplicateRequests (req, res, next) {
   next()
 }
 
-const headersHash = req => _.hashCode(JSON.stringify(req.headers))
+const headersHash = req => hashCode(JSON.stringify(req.headers))
 
 const temporaryLock = (key, data) => {
   requestsCache[key] = data

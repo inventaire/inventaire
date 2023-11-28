@@ -1,6 +1,6 @@
 import CONFIG from 'config'
 import express from 'express'
-import _ from '#builders/utils'
+import { isArray } from 'lodash-es'
 import { info } from '#lib/utils/logs'
 import { middlewareErrorHandler } from '#server/middlewares/middleware_error_handler'
 import { routes } from './controllers/routes.js'
@@ -12,7 +12,7 @@ export function initExpress () {
   const app = express()
 
   for (const middleware of middlewares) {
-    if (_.isArray(middleware)) {
+    if (isArray(middleware)) {
       app.use.apply(app, middleware)
     } else {
       app.use(middleware)

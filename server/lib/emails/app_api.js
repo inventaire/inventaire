@@ -1,12 +1,13 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { isAssetImg, isEntityUri, isLocalImg, isNonEmptyString } from '#lib/boolean_validations'
+import { hashCode } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
 
 const root = CONFIG.getPublicOrigin()
 
 // Keep in sync with client/app/api/img
 export const imgUrlBuilder = (path, width = 1600, height = 1600) => {
-  if (!_.isNonEmptyString(path)) return
+  if (!isNonEmptyString(path)) return
 
   if (path.startsWith('/ipfs/')) {
     console.warn('outdated img path', path)
@@ -14,13 +15,13 @@ export const imgUrlBuilder = (path, width = 1600, height = 1600) => {
   }
 
   // Converting image hashes to a full URL
-  if (_.isLocalImg(path) || _.isAssetImg(path)) {
+  if (isLocalImg(path) || isAssetImg(path)) {
     const [ container, filename ] = path.split('/').slice(2)
     return `${root}/img/${container}/${width}x${height}/${filename}`
   } else if (path.startsWith('http')) {
-    const key = _.hashCode(path)
+    const key = hashCode(path)
     return buildUrl(`${root}/img/remote/${width}x${height}/${key}`, { href: path })
-  } else if (_.isEntityUri(path)) {
+  } else if (isEntityUri(path)) {
     return buildUrl(`${root}/api/entities`, {
       action: 'images',
       uris: path,

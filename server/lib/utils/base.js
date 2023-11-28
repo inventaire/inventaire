@@ -1,4 +1,4 @@
-import _ from 'lodash-es'
+import { chain, isArguments, isArray, keyBy, sum } from 'lodash-es'
 import {
   Integer as integerPattern,
   PositiveInteger as PositiveIntegerPattern,
@@ -12,7 +12,7 @@ export const combinations = (array1, array2) => {
   })
 }
 
-export const sumValues = obj => _.sum(Object.values(obj))
+export const sumValues = obj => sum(Object.values(obj))
 
 export const sameObjects = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 
@@ -38,17 +38,17 @@ export const stringToFloat = str => {
   return parseFloat(str)
 }
 
-export const isArrayLike = obj => _.isArray(obj) || _.isArguments(obj)
+export const isArrayLike = obj => isArray(obj) || isArguments(obj)
 
 // Remove any superfluous spaces
 export const superTrim = str => str.replaceAll(/\s+/g, ' ').trim()
 
-export const KeyBy = attribute => array => _.keyBy(array, attribute)
+export const KeyBy = attribute => array => keyBy(array, attribute)
 
 export const uniqByKey = (collection, key) => {
   assert_.array(collection)
   assert_.string(key)
-  return Object.values(_.keyBy(collection, key))
+  return Object.values(keyBy(collection, key))
 }
 
 export const initCollectionsIndex = names => names.reduce(aggregateCollections, {})
@@ -70,7 +70,7 @@ export const hashCode = string => {
 }
 
 export const someMatch = (arrayA, arrayB) => {
-  if (!_.isArray(arrayA) || !_.isArray(arrayB)) return false
+  if (!isArray(arrayA) || !isArray(arrayB)) return false
   for (const valueA of arrayA) {
     for (const valueB of arrayB) {
       // Return true as soon as possible
@@ -104,7 +104,7 @@ export const simpleDay = date => {
 // Helpers to simplify polymorphisms
 export const forceArray = keys => {
   if (keys == null || keys === '') return []
-  if (_.isArray(keys)) return keys
+  if (isArray(keys)) return keys
   else return [ keys ]
 }
 
@@ -115,7 +115,7 @@ export const mapKeysValues = (obj, fn) => {
 }
 
 export const deepCompact = arrays => {
-  return _(arrays)
+  return chain(arrays)
   .flatten()
   .uniq()
   .compact()
@@ -123,14 +123,14 @@ export const deepCompact = arrays => {
 }
 
 export const mapUniq = (collection, key) => {
-  return _(collection)
+  return chain(collection)
   .map(key)
   .uniq()
   .value()
 }
 
 export const flatMapUniq = (collection, key) => {
-  return _(collection)
+  return chain(collection)
   .map(key)
   .flatten()
   .uniq()
@@ -148,7 +148,7 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   const value = obj[key]
   const newKeyValue = fn(key, value)
 
-  if (!_.isArray(newKeyValue)) {
+  if (!isArray(newKeyValue)) {
     const errMessage = `function should return a [ key, value ] array (got ${newKeyValue})`
     throw new Error(errMessage)
   }

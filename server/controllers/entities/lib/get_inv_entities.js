@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
 import addRedirection from './add_redirection.js'
@@ -18,7 +18,7 @@ export default async (ids, params) => {
   let entities = await getEntitiesByIds(ids)
   entities = await Promise.all(entities.map(Format(params)))
   const found = entities.reduce(aggregateFoundIds, [])
-  const notFound = _.difference(ids, found).map(prefixifyInv)
+  const notFound = difference(ids, found).map(prefixifyInv)
   return { entities, notFound }
 }
 

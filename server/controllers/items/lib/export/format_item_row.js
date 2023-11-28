@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { isArray } from 'lodash-es'
 import { getNames } from '../snapshot/helpers.js'
 
 const host = CONFIG.getPublicOrigin()
@@ -71,7 +71,7 @@ export default lang => item => {
 
 const formatField = text => {
   if (!text) return ''
-  if (_.isArray(text)) text = text.join(',')
+  if (isArray(text)) text = text.join(',')
   if (text.includes('"')) {
     // Escaping double quotes
     // See https://tools.ietf.org/html/rfc4180#section-2

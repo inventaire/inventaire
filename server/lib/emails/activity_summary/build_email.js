@@ -1,10 +1,11 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { map, sample } from 'lodash-es'
 import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#controllers/groups/lib/counts'
 import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
 import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
 import { objectPromise } from '#lib/promises'
+import { shortLang } from '#lib/utils/base'
 import { i18n } from '../i18n/i18n.js'
 import getLastNearbyPublicBooks from './last_nearby_books.js'
 import getLastNetworkBooks from './last_network_books.js'
@@ -17,7 +18,7 @@ const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
 const defaultPeriodicity = 20
 
 export default user => {
-  user.lang = _.shortLang(user.language)
+  user.lang = shortLang(user.language)
 
   return getEmailData(user)
   .then(filterOutDuplicatedItems)
@@ -52,7 +53,7 @@ const getEmailData = user => {
 
 const filterOutDuplicatedItems = results => {
   const { lastFriendsBooks, lastNearbyPublicBooks } = results
-  const lastFriendsBooksIds = _.map(lastFriendsBooks.highlighted, '_id')
+  const lastFriendsBooksIds = map(lastFriendsBooks.highlighted, '_id')
   lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
     .filter(item => !lastFriendsBooksIds.includes(item._id))
   return results
@@ -133,6 +134,6 @@ const newsData = user => {
 }
 
 const getDidYouKnowKey = () => {
-  const num = _.sample(didYouKnowKeys)
+  const num = sample(didYouKnowKeys)
   return `did_you_know_${num}`
 }

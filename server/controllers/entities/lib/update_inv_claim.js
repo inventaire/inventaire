@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -45,7 +45,7 @@ const updateClaim = async params => {
   const { property, oldVal, userId, currentDoc } = params
   params.letEmptyValuePass = true
   const formattedNewVal = await validateAndFormatClaim(params)
-  const updatedDoc = Entity.updateClaim(_.cloneDeep(currentDoc), property, oldVal, formattedNewVal)
+  const updatedDoc = Entity.updateClaim(cloneDeep(currentDoc), property, oldVal, formattedNewVal)
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 

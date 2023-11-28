@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isString, pick } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import itemAttributes from './attributes/item.js'
 import transactionAttributes from './attributes/transaction.js'
@@ -68,7 +68,7 @@ Transaction.validatePossibleState = (transaction, newState) => {
 
 // do the item change of owner or return to its previous owner
 Transaction.isOneWay = transacDoc => {
-  if (!_.isString(transacDoc.transaction)) {
+  if (!isString(transacDoc.transaction)) {
     throw error_.new('transaction transaction inaccessible', 500, transacDoc)
   }
   return oneWay[transacDoc.transaction]
@@ -93,10 +93,10 @@ Transaction.isActive = transacDoc => {
 }
 
 const snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
-  item: _.pick(itemDoc, snapshotItemAttributes),
+  item: pick(itemDoc, snapshotItemAttributes),
   entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
-  owner: _.pick(ownerDoc, snapshotUserAttributes),
-  requester: _.pick(requesterDoc, snapshotUserAttributes),
+  owner: pick(ownerDoc, snapshotUserAttributes),
+  requester: pick(requesterDoc, snapshotUserAttributes),
 })
 
 const getEntitySnapshotFromItemSnapshot = itemSnapshot => {

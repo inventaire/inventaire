@@ -1,6 +1,7 @@
-import _ from '#builders/utils'
+import { chain } from 'lodash-es'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
@@ -18,7 +19,7 @@ export const getDocData = updatedDoc => {
 }
 
 export const getNames = (preferedLang, entities) => {
-  if (!_.isNonEmptyArray(entities)) return
+  if (!isNonEmptyArray(entities)) return
 
   return entities
   .map(getName(preferedLang))
@@ -29,7 +30,7 @@ export const aggregateClaims = (entities, property) => {
   assert_.array(entities)
   assert_.string(property)
 
-  return _(entities)
+  return chain(entities)
   .filter(entity => {
     const hasClaims = (entity.claims != null)
     if (hasClaims) return true

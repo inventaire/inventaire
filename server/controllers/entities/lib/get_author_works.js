@@ -1,7 +1,8 @@
-import _ from '#builders/utils'
+import { flatten, identity, map, uniqBy } from 'lodash-es'
 import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
+import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
@@ -20,7 +21,7 @@ export function getAuthorWorks (params) {
   const [ prefix, id ] = uri.split(':')
   const promises = []
 
-  const worksByTypes = _.initCollectionsIndex(allowlistedTypesNames)
+  const worksByTypes = initCollectionsIndex(allowlistedTypesNames)
 
   // If the prefix is 'inv' or 'isbn', no need to check Wikidata
   if (prefix === 'wd') {
@@ -32,7 +33,7 @@ export function getAuthorWorks (params) {
   promises.push(getCachedRelations(uri, 'wdt:P50', formatEntity))
 
   return Promise.all(promises)
-  .then(_.flatten)
+  .then(flatten)
   // There might be duplicates, mostly due to temporarily cached relations
   .then(uniqByUri)
   .then(results => getPopularityScores(results)
@@ -44,13 +45,13 @@ export function getAuthorWorks (params) {
 const getWdAuthorWorks = async (qid, params) => {
   const { refresh, dry } = params
   let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
-  results = results.map(formatWdEntity).filter(_.identity)
+  results = results.map(formatWdEntity).filter(identity)
   // Known case of duplicate: when an entity has two P31 values that both
   // resolve to the same allowlisted type
   // ex: Q23701761 → P31 → Q571/Q17518461
   // Deduplicate after formatting so that if an entity has one valid P31
   // and an invalid one, it still gets one
-  return _.uniqBy(results, 'uri')
+  return uniqBy(results, 'uri')
 }
 
 const formatWdEntity = result => {
@@ -68,7 +69,7 @@ const formatWdEntity = result => {
 // # INV
 const getInvAuthorWorks = async uri => {
   const { rows } = await getInvEntitiesByClaim('wdt:P50', uri, true)
-  return rows.map(formatInvEntity).filter(_.identity)
+  return rows.map(formatInvEntity).filter(identity)
 }
 
 const formatInvEntity = row => {
@@ -85,7 +86,7 @@ const formatInvEntity = row => {
 
 // # COMMONS
 const getPopularityScores = results => {
-  const uris = _.map(results, 'uri')
+  const uris = map(results, 'uri')
   return getEntitiesPopularities({ uris })
 }
 

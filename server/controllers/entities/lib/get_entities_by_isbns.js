@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import getResolvedEntry from '#data/dataseed/get_resolved_entry'
@@ -11,7 +11,7 @@ export default async (rawIsbns, params = {}) => {
   // search entities by isbn locally
   let entities = await getInvEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
-  const missingIsbns = _.difference(isbns, foundIsbns)
+  const missingIsbns = difference(isbns, foundIsbns)
 
   entities = entities.map(formatEditionEntity)
 

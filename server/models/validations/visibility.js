@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isArray, isString } from 'lodash-es'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
 
 const keywordValues = [
@@ -8,10 +8,10 @@ const keywordValues = [
 ]
 
 export const isVisibilityKey = value => {
-  if (!_.isString(value)) return false
+  if (!isString(value)) return false
   if (keywordValues.includes(value)) return true
   if (isVisibilityGroupKey(value)) return true
   return false
 }
 
-export const isVisibilityKeyArray = arr => _.isArray(arr) && arr.every(isVisibilityKey)
+export const isVisibilityKeyArray = arr => isArray(arr) && arr.every(isVisibilityKey)

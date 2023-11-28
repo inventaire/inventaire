@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { createEdition } from '#fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
 import { buildUrl } from '#lib/utils/url'
@@ -32,7 +32,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', item._id)
       const { 'entity:title': title } = item.snapshot
       const { items } = await search(null, { group: group._id, search: title })
-      _.map(items, '_id').should.containEql(item._id)
+      map(items, '_id').should.containEql(item._id)
     })
   })
 
@@ -46,7 +46,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', item._id)
       const { 'entity:title': title } = item.snapshot
       const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
-      _.map(items, '_id').should.not.containEql(item._id)
+      map(items, '_id').should.not.containEql(item._id)
     })
   })
 
@@ -66,7 +66,7 @@ describe('items:search:group', () => {
       ])
       const { 'entity:title': title } = privateItem.snapshot
       const { items } = await search(member, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(friendsOnlyItem._id)
       itemsIds.should.containEql(groupsOnlyItem._id)
@@ -82,7 +82,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', groupsOnlyItem._id)
       const { 'entity:title': title } = groupsOnlyItem.snapshot
       const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(groupsOnlyItem._id)
     })
   })
@@ -95,7 +95,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', groupSpecificItem._id)
       const { 'entity:title': title } = groupSpecificItem.snapshot
       const { items } = await search(member, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })
@@ -109,7 +109,7 @@ describe('items:search:group', () => {
       await waitForIndexation('items', groupSpecificItem._id)
       const { 'entity:title': title } = groupSpecificItem.snapshot
       const { items } = await search(memberOfAnotherGroup, { group: group._id, search: title })
-      const itemsIds = _.map(items, '_id')
+      const itemsIds = map(items, '_id')
       itemsIds.should.not.containEql(groupSpecificItem._id)
       items.forEach(item => should(item.visibility).not.be.ok())
     })

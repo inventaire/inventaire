@@ -1,6 +1,7 @@
 import CONFIG from 'config'
+import { isArray, keyBy } from 'lodash-es'
 import Rss from 'rss'
-import _ from '#builders/utils'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import templateHelpers from '#lib/emails/handlebars_helpers'
 import getItemDescription from './get_item_description.js'
 
@@ -30,7 +31,7 @@ export default (feedOptions, users, items, lang) => {
     ttl: oneDayInMinutes,
   })
 
-  const usersIndex = _.keyBy(users, '_id')
+  const usersIndex = keyBy(users, '_id')
 
   items.map(serializeItem(usersIndex, lang))
   .forEach(feed.item.bind(feed))
@@ -53,7 +54,7 @@ const serializeItem = (usersIndex, lang) => item => {
     date: item.created,
   }
 
-  if (_.isArray(user.position)) {
+  if (isArray(user.position)) {
     const [ lat, long ] = user.position
     data.lat = lat
     data.long = long
@@ -66,7 +67,7 @@ const getItemTitle = (item, user, lang) => {
   const { transaction, snapshot } = item
   let title = snapshot['entity:title']
   const authors = snapshot['entity:authors']
-  if (_.isNonEmptyString(authors)) { title += ` - ${authors}` }
+  if (isNonEmptyString(authors)) { title += ` - ${authors}` }
 
   const i18nKey = `${transaction}_personalized`
   const transactionLabel = templateHelpers.i18n(lang, i18nKey, user)

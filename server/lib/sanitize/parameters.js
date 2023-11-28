@@ -1,10 +1,10 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
-import { isNonEmptyArray, isLocalActivityPubActorUrl } from '#lib/boolean_validations'
+import { isArray, isNumber, isPlainObject, isString, uniq } from 'lodash-es'
+import { isNonEmptyArray, isLocalActivityPubActorUrl, isLang, isCollection, isPositiveIntegerString, isStrictlyPositiveInteger, isNonEmptyString, isColorHexCode, isPatchId, isPropertyUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { isValidIsbn } from '#lib/isbn/isbn'
-import { normalizeString } from '#lib/utils/base'
+import { normalizeString, parseBooleanString } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 import { isWikimediaLanguageCode } from '#lib/wikimedia'
 import common from '#models/validations/common'
@@ -27,9 +27,9 @@ const validations = {
 }
 
 const parseNumberString = value => {
-  if (_.isNumber(value)) return value
+  if (isNumber(value)) return value
   const parsedValue = parseFloat(value)
-  if (_.isNaN(parsedValue)) return value
+  if (isNaN(parsedValue)) return value
   else return parsedValue
 }
 
@@ -59,7 +59,7 @@ const nonEmptyString = {
   validate: (value, name, config) => {
     if (value == null && config.optional) return true
 
-    if (!_.isString(value)) {
+    if (!isString(value)) {
       const details = `expected string, got ${typeOf(value)}`
       throw error_.new(`invalid ${name}: ${details}`, 400, { value })
     }
@@ -80,7 +80,7 @@ const nonEmptyString = {
 }
 
 const arrayOfAType = validation => (values, type, config) => {
-  if (!_.isArray(values)) {
+  if (!isArray(values)) {
     const details = `expected array, got ${typeOf(values)}`
     throw error_.new(`invalid ${type}: ${details}`, 400, { values })
   }
@@ -102,8 +102,8 @@ const arrayOfAType = validation => (values, type, config) => {
 }
 
 const arrayOrSeparatedString = separator => value => {
-  if (_.isString(value)) value = value.split(separator)
-  if (_.isArray(value)) return _.uniq(value).map(formatStringArrayElement)
+  if (isString(value)) value = value.split(separator)
+  if (isArray(value)) return uniq(value).map(formatStringArrayElement)
   // Let the 'validate' function reject non-arrayfied values
   else return value
 }
@@ -144,7 +144,7 @@ const couchUuids = {
 }
 
 const arrayOfNumbers = {
-  validate: arrayOfAType(_.isNumber),
+  validate: arrayOfAType(isNumber),
 }
 
 const imgUrl = {
@@ -183,7 +183,7 @@ const lang = {
     if (config.type === 'wikimedia') {
       return isWikimediaLanguageCode(value)
     } else {
-      return _.isLang(value)
+      return isLang(value)
     }
   },
 }
@@ -199,14 +199,14 @@ const generics = {
   },
   boolean: {
     format: (value, name, config) => {
-      if (_.isString(value)) return _.parseBooleanString(value, config.default)
+      if (isString(value)) return parseBooleanString(value, config.default)
       else return value
     },
     validate: value => typeOf(value) === 'boolean',
   },
   collection: {
     validate: (values, name, config) => {
-      if (!_.isCollection(values)) return false
+      if (!isCollection(values)) return false
       const { limit } = config
       const { length } = values
       if (limit != null && length > limit) {
@@ -219,18 +219,18 @@ const generics = {
     drop: true,
   },
   object: {
-    validate: _.isPlainObject,
+    validate: isPlainObject,
   },
   positiveInteger: {
     format: value => {
-      if (_.isPositiveIntegerString) return parseInt(value)
+      if (isPositiveIntegerString) return parseInt(value)
       else return value
     },
-    validate: _.isStrictlyPositiveInteger,
+    validate: isStrictlyPositiveInteger,
   },
   string: nonEmptyString,
   stringOrObject: {
-    validate: value => _.isNonEmptyString(value) || _.isPlainObject(value),
+    validate: value => isNonEmptyString(value) || isPlainObject(value),
   },
 }
 
@@ -269,7 +269,7 @@ export default {
         return hash
       }
     },
-    validate: _.isColorHexCode,
+    validate: isColorHexCode,
   },
   context: {
     validate: value => {
@@ -311,7 +311,7 @@ export default {
     validate: validations.user.password,
   },
   patch: {
-    validate: _.isPatchId,
+    validate: isPatchId,
     rename: renameId,
   },
   position: {
@@ -319,7 +319,7 @@ export default {
     validate: arrayOfNumbers.validate,
   },
   prefix: allowlistedString,
-  property: { validate: _.isPropertyUri },
+  property: { validate: isPropertyUri },
   range: Object.assign({}, positiveInteger, {
     default: 50,
     max: 500,
@@ -335,7 +335,7 @@ export default {
       }
     },
     validate: resource => {
-      if (!_.isString(resource)) return false
+      if (!isString(resource)) return false
       if (resource.startsWith('acct:')) {
         const actorWithHost = resource.slice(5)
         const actorParts = actorWithHost.split('@')

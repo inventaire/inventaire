@@ -1,10 +1,10 @@
-import _ from '#builders/utils'
+import { isArray, map } from 'lodash-es'
 import { forceArray } from '#lib/utils/base'
 import { customAuthReq } from './request.js'
 import { getUser } from './utils.js'
 
 const getShelvesByIds = async (user, ids) => {
-  if (_.isArray(ids)) ids = ids.join('|')
+  if (isArray(ids)) ids = ids.join('|')
   return customAuthReq(user, 'get', `/api/shelves?action=by-ids&ids=${ids}`)
 }
 
@@ -15,7 +15,7 @@ export async function getShelfById (user, shelfId) {
 
 export async function addItemsToShelf (user, shelfId, itemsIds) {
   shelfId = shelfId._id || shelfId
-  if (typeof itemsIds[0] === 'object') itemsIds = _.map(itemsIds, '_id')
+  if (typeof itemsIds[0] === 'object') itemsIds = map(itemsIds, '_id')
   user = user || getUser()
   const { shelves } = await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
     id: shelfId,

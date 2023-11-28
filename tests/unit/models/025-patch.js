@@ -1,6 +1,6 @@
 import jiff from 'jiff'
+import { cloneDeep } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { getRandomString } from '#lib/utils/random_string'
 import Entity from '#models/entity'
 import Patch from '#models/patch'
@@ -59,7 +59,7 @@ describe('patch', () => {
     })
 
     it('should throw if there are no operations', () => {
-      const docClone = _.cloneDeep(currentDoc);
+      const docClone = cloneDeep(currentDoc);
       (() => Patch.create({ userId, currentDoc, updatedDoc: docClone }))
       .should.throw()
     })
@@ -89,7 +89,7 @@ describe('patch', () => {
     })
 
     it('should return with a timestamp', () => {
-      const now = _.now()
+      const now = Date.now()
       const patch = Patch.create({ userId, currentDoc, updatedDoc })
       patch.timestamp.should.be.a.Number()
       should(patch.timestamp >= now).be.true()
@@ -138,9 +138,9 @@ describe('patch', () => {
     })
 
     it('should revert an update patch', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'] = [ 'wd:Q184226' ]
       const patchB = Patch.create({
         userId,
@@ -153,7 +153,7 @@ describe('patch', () => {
     })
 
     it('should revert a patch between patches', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
       const patchA = Patch.create({
         userId,
@@ -161,7 +161,7 @@ describe('patch', () => {
         updatedDoc: authorDocUpdatedA,
       })
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
 
       const revertedDoc = Patch.revert(authorDocUpdatedB, patchA)
@@ -169,10 +169,10 @@ describe('patch', () => {
     })
 
     it('should revert a patch between more patches', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
       const patchB = Patch.create({
         userId,
@@ -180,7 +180,7 @@ describe('patch', () => {
         updatedDoc: authorDocUpdatedB,
       })
 
-      const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
+      const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'].push('wd:Q237087')
 
       const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
@@ -188,10 +188,10 @@ describe('patch', () => {
     })
 
     it('should revert a delete patch', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       delete authorDocUpdatedB.claims['wdt:P50']
       const patchB = Patch.create({
         userId,
@@ -204,10 +204,10 @@ describe('patch', () => {
     })
 
     it('should revert a delete patch after the doc was re-edited', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       delete authorDocUpdatedB.claims['wdt:P50']
       const patchB = Patch.create({
         userId,
@@ -215,7 +215,7 @@ describe('patch', () => {
         updatedDoc: authorDocUpdatedB,
       })
 
-      const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
+      const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'] = [ 'wd:Q237087' ]
 
       const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
@@ -223,10 +223,10 @@ describe('patch', () => {
     })
 
     it('should revert a patch between patches on different claims', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P58'] = [ 'wd:Q184226' ]
       delete authorDocUpdatedB.claims['wdt:P50']
       const patchB = Patch.create({
@@ -241,10 +241,10 @@ describe('patch', () => {
     })
 
     it('should revert successive patches', () => {
-      const authorDocUpdatedA = _.cloneDeep(authorDoc)
+      const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
 
-      const authorDocUpdatedB = _.cloneDeep(authorDocUpdatedA)
+      const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
       const patchB = Patch.create({
         userId,
@@ -252,7 +252,7 @@ describe('patch', () => {
         updatedDoc: authorDocUpdatedB,
       })
 
-      const authorDocUpdatedC = _.cloneDeep(authorDocUpdatedB)
+      const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'].push('wd:Q42')
       const patchC = Patch.create({
         userId,
@@ -303,7 +303,7 @@ describe('patch', () => {
 })
 
 const generateSomePatch = previousVersion => {
-  const newVersion = _.cloneDeep(previousVersion)
+  const newVersion = cloneDeep(previousVersion)
   newVersion._id = validDocId
   newVersion.version++
   if (newVersion.labels.en) delete newVersion.labels.en

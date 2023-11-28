@@ -1,6 +1,7 @@
+import { identity, padStart } from 'lodash-es'
 import { yellow } from 'tiny-chalk'
-import _ from '#builders/utils'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { superTrim } from '#lib/utils/base'
 
 export default entity => {
   const { _id, version, created, updated, type, redirect } = entity
@@ -61,7 +62,7 @@ export default entity => {
 }
 
 const datatypePropClaimsFormatter = {
-  entity: _.identity,
+  entity: identity,
   string: propClaims => propClaims.map(formatStringValue),
   'positive-integer': propClaims => propClaims.map(formatPositiveInteger),
   'simple-day': propClaims => propClaims.filter(validSimpleDay).map(formatDate),
@@ -82,14 +83,14 @@ const formatStringValue = str => {
     // Remove escape caracters
     .replaceAll('\\', '')
 
-  return `"${_.superTrim(str)}"`
+  return `"${superTrim(str)}"`
 }
 
 const formatPositiveInteger = number => `"+${number}"^^xsd:decimal`
 const formatDate = simpleDay => {
   const sign = simpleDay[0] === '-' ? '-' : ''
   let [ year, month, day ] = simpleDay.replace(/^-/, '').split('-')
-  year = _.padStart(year, 4, '0')
+  year = padStart(year, 4, '0')
   if (!month) { month = '01' }
   if (!day) { day = '01' }
   const formattedDay = `${sign}${year}-${month}-${day}`

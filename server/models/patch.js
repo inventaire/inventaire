@@ -1,5 +1,5 @@
 import jiff from 'jiff'
-import _ from '#builders/utils'
+import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import Entity from '#models/entity'
@@ -59,8 +59,8 @@ const Patch = {
   },
 
   getDiff: (currentDoc, updatedDoc) => {
-    currentDoc = _.pick(currentDoc, versioned)
-    updatedDoc = _.pick(updatedDoc, versioned)
+    currentDoc = pick(currentDoc, versioned)
+    updatedDoc = pick(updatedDoc, versioned)
     return jiff.diff(currentDoc, updatedDoc)
   },
 
@@ -92,7 +92,7 @@ const Patch = {
 export default Patch
 
 const applyInverseOperations = (currentDoc, inverseOperations) => {
-  currentDoc = _.cloneDeep(currentDoc)
+  currentDoc = cloneDeep(currentDoc)
   inverseOperations.forEach(fixOperation(currentDoc, inverseOperations))
 
   const updatedDoc = jiff.patch(inverseOperations, currentDoc)
@@ -116,7 +116,7 @@ const fixOperation = (currentDoc, inverseOperations) => (op, index) => {
 const operationFix = {
   add: (currentDoc, inverseOperations, op, index) => {
     const { path, value } = op
-    if (_.isArray(value) && (value.length === 1)) {
+    if (isArray(value) && (value.length === 1)) {
       const currentArray = getFromPatchPath(currentDoc, path)
       // Case when the 'add' operation tries to add an array with a value in it,
       // but this array as been re-created later on: the final result
@@ -136,7 +136,7 @@ const operationFix = {
     if ((nextOp.path === op.path) && (nextOp.op === 'remove')) {
       // Case when the 'remove' operation tries to remove an array with a value
       // in it, while this array might now contain more values
-      if (_.isArray(value) && (value.length === 1)) {
+      if (isArray(value) && (value.length === 1)) {
         op.value = value[0]
         op.path = (nextOp.path = `${op.path}/0`)
       }
@@ -154,10 +154,10 @@ const operationFix = {
 
 const getFromPatchPath = (obj, path) => {
   const key = path.slice(1).replaceAll('/', '.')
-  return _.get(obj, key)
+  return get(obj, key)
 }
 
 const getEntityHistoryBase = () => {
   const entityBase = Entity.create()
-  return _.pick(entityBase, versioned)
+  return pick(entityBase, versioned)
 }

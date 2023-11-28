@@ -2,7 +2,7 @@
 // event to all the subscribed followers
 import follow from 'cloudant-follow'
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { debounce } from 'lodash-es'
 import metaDbFactory from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -147,7 +147,7 @@ const SetLastSeq = dbName => {
   }
   // setLastSeq might be triggered many times if a log of changes arrive at once
   // no need to write to the database at each times, just the last
-  return _.debounce(setLastSeq, 1000)
+  return debounce(setLastSeq, 1000)
 }
 
 const buildKey = dbName => `${dbName}-last-seq`

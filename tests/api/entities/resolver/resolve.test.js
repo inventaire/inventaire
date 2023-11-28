@@ -1,5 +1,4 @@
 import should from 'should'
-import _ from '#builders/utils'
 import getWorksFromAuthorsUris from '#controllers/entities/lib/resolver/get_works_from_authors_uris'
 import {
   createWork,
@@ -13,13 +12,14 @@ import {
   createEditionWithIsbn, randomLabel,
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
+import { forceArray } from '#lib/utils/base'
 import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { waitForIndexation } from '#tests/api/utils/search'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolve = entries => {
-  entries = _.forceArray(entries)
+  entries = forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', { entries })
 }
 

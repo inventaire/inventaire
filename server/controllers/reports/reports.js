@@ -1,6 +1,6 @@
-import _ from '#builders/utils'
 import onlineReport from '#controllers/reports/online_report'
 import ActionsControllers from '#lib/actions_controllers'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { logError, warn } from '#lib/utils/logs'
@@ -56,7 +56,7 @@ const getErrStack = err => {
   // Adding the message at the top of the stack trace
   // as expected by logError that will log only the stack trace, assuming it
   // contains the error message too
-  if (_.isNonEmptyString(message) && (stack.search(message) === -1)) {
+  if (isNonEmptyString(message) && (stack.search(message) === -1)) {
     stack = `${message}\n${stack}`
   }
   return stack

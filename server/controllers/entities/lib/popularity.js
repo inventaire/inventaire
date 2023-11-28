@@ -1,6 +1,6 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { initJobQueue } from '#db/level/jobs'
+import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
@@ -28,7 +28,7 @@ export async function getEntitiesPopularities ({ uris, refresh }) {
 const noPopularityCached = Symbol('no-popularity-cached')
 
 export async function getEntityPopularity ({ uri, refresh = false, populateCacheOnCacheMiss = true }) {
-  if (!_.isEntityUri(uri)) throw error_.new('invalid uri', 400, uri)
+  if (!isEntityUri(uri)) throw error_.new('invalid uri', 400, uri)
 
   // Building a popularity score can take quite some time, and most consumers
   // just need a quick result, so unless explicity requested with refresh=true,

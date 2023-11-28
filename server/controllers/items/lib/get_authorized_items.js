@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import { getGroupMembersIds } from '#controllers/groups/lib/groups'
 import dbFactory from '#db/couchdb/base'
-import { uniqByKey } from '#lib/utils/base'
+import { combinations, uniqByKey } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 
@@ -39,23 +39,23 @@ export async function getAuthorizedItemsByShelves (shelves, reqUserId) {
 const getUsersAllowedVisibilityKeys = async (usersIds, reqUserId) => {
   const ownersIdsAndVisibilityKeys = await Promise.all(usersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
   return ownersIdsAndVisibilityKeys.flatMap(([ ownerId, allowedVisibilityKeys ]) => {
-    return _.combinations([ ownerId ], allowedVisibilityKeys)
+    return combinations([ ownerId ], allowedVisibilityKeys)
   })
 }
 
 const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
-  const ownersIds = _.uniq(_.map(shelves, 'owner'))
+  const ownersIds = uniq(map(shelves, 'owner'))
   const ownersIdsAndVisibilityKeys = await Promise.all(ownersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
   const allowedVisibilityKeysByOwner = Object.fromEntries(ownersIdsAndVisibilityKeys)
   return shelves.flatMap(shelf => {
     const allowedVisibilityKeys = allowedVisibilityKeysByOwner[shelf.owner]
-    return _.combinations([ shelf._id ], allowedVisibilityKeys)
+    return combinations([ shelf._id ], allowedVisibilityKeys)
   })
 }
 
 const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) => {
   const view = withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
-  const keys = _.combinations(usersIds, allowedVisibilityKeys)
+  const keys = combinations(usersIds, allowedVisibilityKeys)
   return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
 }
 

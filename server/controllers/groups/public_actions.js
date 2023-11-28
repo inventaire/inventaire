@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { property } from 'lodash-es'
 import { getGroupsByPosition } from '#controllers/groups/lib/groups'
 import getGroupPublicData from './lib/group_public_data.js'
 import { getSlug } from './lib/slug.js'
@@ -39,4 +39,4 @@ export default {
   },
 }
 
-const searchable = _.property('searchable')
+const searchable = property('searchable')

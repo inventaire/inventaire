@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { sample } from 'lodash-es'
 import { sentence } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
@@ -52,8 +52,8 @@ const someVisibilityValues = [
 ]
 
 const fillItemWithRandomData = (itemData = {}) => {
-  itemData.visibility = itemData.visibility || _.sample(someVisibilityValues)
-  itemData.transaction = itemData.transaction || _.sample(transactions)
+  itemData.visibility = itemData.visibility || sample(someVisibilityValues)
+  itemData.transaction = itemData.transaction || sample(transactions)
   itemData.details = sentence()
   itemData.notes = sentence()
   return itemData

@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { humanName } from '#fixtures/text'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
@@ -24,11 +24,11 @@ describe('items:get-by-users', () => {
       createItem(getUser(), { visibility: [ 'public' ] }),
       createItem(getUser(), { visibility: [ 'friends' ] }),
     ])
-    const itemsIds = _.map(items, '_id')
+    const itemsIds = map(items, '_id')
     const userId = items[0].owner
     const { items: resItems } = await authReq('get', `${endpoint}&users=${userId}`)
-    const resUserId = _.map(resItems, 'owner')
-    const resItemsIds = _.map(resItems, '_id')
+    const resUserId = map(resItems, 'owner')
+    const resItemsIds = map(resItems, '_id')
     resUserId.should.containEql(userId)
     resItemsIds.should.containDeep(itemsIds)
   })
@@ -45,9 +45,9 @@ describe('items:get-by-users', () => {
     ])
     const userId = groupsItem.owner
     const { items } = await authReq('get', `${endpoint}&users=${userId}&context=${groupVisibilityKey}`)
-    const resUserId = _.map(items, 'owner')
+    const resUserId = map(items, 'owner')
     resUserId.should.containEql(userId)
-    const resItemsIds = items.map(_.property('_id'))
+    const resItemsIds = map(items, '_id')
     resItemsIds.should.containEql(publicItem._id)
     resItemsIds.should.containEql(groupsItem._id)
     resItemsIds.should.not.containEql(friendsItem._id)
@@ -71,7 +71,7 @@ describe('items:get-by-users', () => {
       const userId = user._id
       const item = await createItem(userPromise, { visibility: [ 'public' ] })
       const res = await publicReq('get', `${endpoint}&users=${userId}`)
-      _.map(res.items, '_id').should.containEql(item._id)
+      map(res.items, '_id').should.containEql(item._id)
     })
   })
 
@@ -84,7 +84,7 @@ describe('items:get-by-users', () => {
       ])
       const userId = publicItem.owner
       const { items: resItems } = await authReq('get', `${endpoint}&users=${userId}`)
-      const resItemsIds = _.map(resItems, '_id')
+      const resItemsIds = map(resItems, '_id')
       resItemsIds.should.containEql(publicItem._id)
       resItemsIds.should.not.containEql(friendsItem._id)
       resItemsIds.should.not.containEql(privateItem._id)
@@ -97,7 +97,7 @@ describe('items:get-by-users', () => {
       const userId = user._id
       const item = await createItem(userPromise, { visibility: [] })
       const res = await authReq('get', `${endpoint}&users=${userId}`)
-      _.map(res.items, '_id').should.not.containEql(item._id)
+      map(res.items, '_id').should.not.containEql(item._id)
     })
   })
 
@@ -108,7 +108,7 @@ describe('items:get-by-users', () => {
       const userId = user._id
       const item = await createItem(userPromise, { visibility: [ 'groups' ] })
       const res = await authReq('get', `${endpoint}&users=${userId}`)
-      _.map(res.items, '_id').should.containEql(item._id)
+      map(res.items, '_id').should.containEql(item._id)
     })
 
     it('should not include group items of non-group co-members', async () => {
@@ -117,7 +117,7 @@ describe('items:get-by-users', () => {
       const userId = user._id
       const item = await createItem(userPromise, { visibility: [ 'groups' ] })
       const res = await authReq('get', `${endpoint}&users=${userId}`)
-      _.map(res.items, '_id').should.not.containEql(item._id)
+      map(res.items, '_id').should.not.containEql(item._id)
     })
   })
 })

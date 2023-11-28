@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { compact, pick } from 'lodash-es'
 import getThumbData from '#data/commons/thumb'
 // import getOpenLibraryCover from '#data/openlibrary/cover'
 // import getEnwikiImage from '#data/wikipedia/image'
@@ -31,8 +31,8 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   })
   .then(results => {
     const order = getPicSourceOrder(entity)
-    const orderedResults = _.pick(results, order)
-    const bestPicData = _.compact(Object.values(orderedResults))[0]
+    const orderedResults = pick(results, order)
+    const bestPicData = compact(Object.values(orderedResults))[0]
     return bestPicData
   })
 }

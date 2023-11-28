@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import {
   randomLabel,
   generateIsbn13,
@@ -122,7 +122,7 @@ describe('entities:resolve:create-unresolved', () => {
     const result = entries[0]
     should(result.edition.uri).be.ok()
     const { works } = result
-    const { entities } = await getByUris(works.map(_.property('uri')))
+    const { entities } = await getByUris(map(works, 'uri'))
     const newWorkClaimValue = Object.values(entities)[0].claims['wdt:P1085'][0]
     newWorkClaimValue.should.equal(libraryThingsWorkId)
   })
@@ -137,7 +137,7 @@ describe('entities:resolve:create-unresolved', () => {
     const result = entries[0]
     should(result.edition.uri).be.ok()
     const { authors } = result
-    const { entities } = await getByUris(authors.map(_.property('uri')))
+    const { entities } = await getByUris(map(authors, 'uri'))
     const newWorkClaimValue = Object.values(entities)[0].claims['wdt:P2963'][0]
     newWorkClaimValue.should.equal(goodReadsId)
   })

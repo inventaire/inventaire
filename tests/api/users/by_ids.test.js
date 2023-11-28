@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -51,7 +51,7 @@ describe('users:by-ids', () => {
 
   it('should get several users', async () => {
     const users = await Promise.all([ getUser(), getUserB() ])
-    const ids = users.map(_.property('_id'))
+    const ids = map(users, '_id')
     const res = await publicReq('get', `${endpoint}&ids=${ids.join('|')}`)
     Object.keys(res.users).should.deepEqual(ids)
   })

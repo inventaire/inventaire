@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isArray } from 'lodash-es'
 import { responses_ } from '#lib/responses'
 import { updateNotificationReadStatus } from './lib/notifications.js'
 
@@ -6,7 +6,7 @@ export default (req, res) => {
   const reqUserId = req.user._id
 
   const { times } = req.body
-  if (!_.isArray(times) || (times.length <= 0)) return _.ok(res)
+  if (!isArray(times) || (times.length <= 0)) return responses_.ok(res)
 
   // TODO: consider using doc ids rather than timestamps
   return updateNotificationReadStatus(reqUserId, times)

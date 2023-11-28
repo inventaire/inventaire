@@ -1,5 +1,5 @@
 import 'should'
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import entityFormatter from '#db/elasticsearch/formatters/entity'
 import { absolutePath } from '#lib/absolute_path'
 import { requireJson } from '#lib/utils/json'
@@ -8,18 +8,18 @@ const Q535 = requireJson(absolutePath('tests', 'unit/indexation/fixtures/Q535.cu
 
 describe('indexation: entity formatter: dump/API entity format', () => {
   it('should find the type', async () => {
-    const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+    const doc = await entityFormatter(cloneDeep(Q535), { quick: true })
     doc.type.should.equal('human')
   })
 
   it('should format claims', async () => {
-    const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+    const doc = await entityFormatter(cloneDeep(Q535), { quick: true })
     doc.claim.should.containEql('wdt:P31=wd:Q5')
   })
 
   describe('flatten fields', () => {
     it('should include words from inactive languages', async () => {
-      const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+      const doc = await entityFormatter(cloneDeep(Q535), { quick: true })
       doc.flattenedLabels.includes('rdtfgexupo').should.be.true()
       doc.flattenedAliases.includes('bbcpsptnhh').should.be.true()
       doc.flattenedAliases.includes('ebnkwspgrw').should.be.true()
@@ -28,7 +28,7 @@ describe('indexation: entity formatter: dump/API entity format', () => {
     })
 
     it('should not duplicate main fields words', async () => {
-      const doc = await entityFormatter(_.cloneDeep(Q535), { quick: true })
+      const doc = await entityFormatter(cloneDeep(Q535), { quick: true })
       const flattenedLabelsWords = doc.flattenedLabels.split(' ')
       const flattenedAliasesWords = doc.flattenedAliases.split(' ')
       const flattenedDescriptionsWords = doc.flattenedDescriptions.split(' ')

@@ -1,7 +1,8 @@
 import { map } from 'lodash-es'
-import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
+import { combinations } from '#lib/utils/base'
 import Element from '#models/element'
 
 const db = await dbFactory('elements')
@@ -15,7 +16,7 @@ export async function getElementsByEntities (uris) {
 }
 
 export async function getElementsByListingsAndEntity (listingsIds, entitiesUris) {
-  const keys = _.combinations(listingsIds, entitiesUris)
+  const keys = combinations(listingsIds, entitiesUris)
   return db.viewByKeys('byListAndEntity', keys)
 }
 
@@ -28,7 +29,7 @@ export const bulkDeleteElements = db.bulkDelete
 export async function deleteListingsElements (listings) {
   const listingIds = map(listings, '_id')
   const listingsElements = await getElementsByListings(listingIds)
-  if (_.isNonEmptyArray(listingsElements)) {
+  if (isNonEmptyArray(listingsElements)) {
     await bulkDeleteElements(listingsElements)
   }
   return listingsElements
@@ -44,7 +45,7 @@ export async function createListingElements ({ listing, uris, userId }) {
     uri,
   }))
   const res = await db.bulk(elements)
-  const elementsIds = _.map(res, 'id')
+  const elementsIds = map(res, 'id')
   return db.fetch(elementsIds)
 }
 

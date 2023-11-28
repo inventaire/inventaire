@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { chain, pick } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -54,7 +54,7 @@ const updateSlug = async groupDoc => {
   const updatedDoc = await addSlug(groupDoc)
   return {
     updatedDoc,
-    hooksUpdates: _.pick(updatedDoc, 'slug'),
+    hooksUpdates: pick(updatedDoc, 'slug'),
   }
 }
 
@@ -68,7 +68,7 @@ const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
 })
 
 const getUsersToNotify = groupDoc => {
-  return _(groupDoc)
+  return chain(groupDoc)
   .pick('admins', 'members')
   .values()
   .flatten()

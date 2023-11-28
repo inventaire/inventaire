@@ -1,5 +1,4 @@
-import { uniqBy } from 'lodash-es'
-import _ from '#builders/utils'
+import { uniqBy, cloneDeep, identity } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc, mapDoc } from '#lib/couch'
 import { error_ } from '#lib/error/error'
@@ -20,7 +19,7 @@ export const getEntitiesByIds = db.byIds
 export const getInvEntitiesByIsbns = isbns => {
   const keys = isbns
     .map(toIsbn13h)
-    .filter(_.identity)
+    .filter(identity)
     .map(isbn => [ 'wdt:P212', isbn ])
   return db.viewByKeys('byClaim', keys)
 }
@@ -58,7 +57,7 @@ export async function getInvEntitiesByClaimsValue (value, count) {
 
 export async function editInvEntity (params) {
   const { userId, updatedLabels, updatedClaims, currentDoc, batchId, create } = params
-  let updatedDoc = _.cloneDeep(currentDoc)
+  let updatedDoc = cloneDeep(currentDoc)
   updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
   updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc, batchId, create })

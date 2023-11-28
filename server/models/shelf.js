@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { clone, isEqual } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/shelf.js'
@@ -40,14 +40,14 @@ export default {
       }
     }
 
-    const updatedShelf = _.clone(oldShelf)
+    const updatedShelf = clone(oldShelf)
     for (const attr of Object.keys(newAttributes)) {
       const newVal = newAttributes[attr] || defaultValues[attr]?.()
       validations.pass(attr, newVal)
       updatedShelf[attr] = newVal
     }
 
-    if (_.isEqual(updatedShelf, oldShelf)) {
+    if (isEqual(updatedShelf, oldShelf)) {
       throw error_.new('nothing to update', 400, newAttributes)
     }
 

@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { absolutePath } from '#lib/absolute_path'
+import { objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info } from '#lib/utils/logs'
 import { wait } from './promises.js'
@@ -22,7 +22,7 @@ const appendToI18nKeys = async (path, newKeys) => {
   await wait(Math.trunc(Math.random() * 1000))
 
   const keys = await readJsonFile(path)
-  const lengthBefore = _.objLength(keys)
+  const lengthBefore = objLength(keys)
   for (const key of newKeys) {
     if (!keys[key]) {
       keys[key] = shortKeyPattern.test(key) ? null : key
@@ -32,7 +32,7 @@ const appendToI18nKeys = async (path, newKeys) => {
     }
   }
 
-  if (_.objLength(keys) > lengthBefore) {
+  if (objLength(keys) > lengthBefore) {
     return writeJsonFile(path, keys)
     .then(() => success(`i18n:updated ${path}`))
   } else {

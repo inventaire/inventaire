@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { someCouchUuid } from '#fixtures/general'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
@@ -66,7 +66,7 @@ describe('listings:by-ids', () => {
       const { uri, listing } = await createElement({})
       const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
       const { elements } = res.lists[listing._id]
-      elements.map(_.property('uri')).should.containEql(uri)
+      map(elements, 'uri').should.containEql(uri)
     })
   })
 })

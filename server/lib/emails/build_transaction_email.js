@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { some, sortBy, union } from 'lodash-es'
 import comments_ from '#controllers/comments/lib/comments'
 import { getItemById } from '#controllers/items/lib/items'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
@@ -65,9 +65,9 @@ const findUserToNotify = transaction => {
 }
 
 const newTransaction = transaction => {
-  const ownerActed = _.some(transaction.actions, ownerIsActor)
+  const ownerActed = some(transaction.actions, ownerIsActor)
   if (ownerActed) return false
-  const ownerSentMessage = _.some(transaction.messages, OwnerIsSender(transaction))
+  const ownerSentMessage = some(transaction.messages, OwnerIsSender(transaction))
   if (ownerSentMessage) return false
   else return true
 }
@@ -88,8 +88,8 @@ const buildTimeline = transaction => {
   let { actions, messages } = transaction
   actions = formatActions(transaction, actions)
   messages = formatMessages(transaction, messages)
-  let timeline = _.union(actions, messages)
-  timeline = _.sortBy(timeline, ev => ev.created || ev.timestamp)
+  let timeline = union(actions, messages)
+  timeline = sortBy(timeline, ev => ev.created || ev.timestamp)
 
   return extractTimelineLastSequence(transaction, timeline)
 }

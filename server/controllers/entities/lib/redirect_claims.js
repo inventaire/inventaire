@@ -1,11 +1,11 @@
-import _ from '#builders/utils'
+import { cloneDeep, keyBy, map } from 'lodash-es'
 import { getInvEntitiesByClaimsValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
 export default async function (userId, fromUri, toUri) {
   const results = await getInvEntitiesByClaimsValue(fromUri)
-  const entitiesToEditIds = _.map(results, 'entity')
+  const entitiesToEditIds = map(results, 'entity')
   log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
   // Doing all the redirects at once to avoid conflicts
@@ -16,8 +16,8 @@ export default async function (userId, fromUri, toUri) {
 }
 
 const redirectEntitiesClaims = ({ results, userId, fromUri, toUri, entities }) => {
-  const entitiesIndex = _.keyBy(entities, '_id')
-  const entitiesIndexBeforeUpdate = _.cloneDeep(entitiesIndex)
+  const entitiesIndex = keyBy(entities, '_id')
+  const entitiesIndexBeforeUpdate = cloneDeep(entitiesIndex)
 
   // Apply all the redirection updates on the entities docs
   results.forEach(applyRedirections(entitiesIndex, fromUri, toUri))

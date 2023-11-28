@@ -1,5 +1,6 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { error_ } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
@@ -38,7 +39,7 @@ const sanitization = {
 
 const controller = async (params, req, res) => {
   const { types, search, claim } = params
-  if (!(_.isNonEmptyString(search) || _.isNonEmptyString(claim))) {
+  if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
     throw error_.newMissing('query', 'search or claim')
   }
 
@@ -54,7 +55,7 @@ const controller = async (params, req, res) => {
 const socialSearch = async (params, res) => {
   const { search, lang, limit, offset, reqUserId } = params
 
-  if (!(_.isNonEmptyString(search))) {
+  if (!(isNonEmptyString(search))) {
     throw error_.newMissing('query', 'search')
   }
 
@@ -79,7 +80,7 @@ const socialSearch = async (params, res) => {
 const entitiesSearch = async params => {
   const { search, lang, limit, offset, claim } = params
 
-  if (!(_.isNonEmptyString(search) || _.isNonEmptyString(claim))) {
+  if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
     throw error_.newMissing('query', 'search or claim')
   }
 
@@ -113,7 +114,7 @@ const removeUnauthorizedDocs = async (results, reqUserId) => {
     .filter(result => typesWithVisibility.includes(result._source.type))
     .map(({ _id, _source }) => ({ _id, ..._source }))
   const authorizedDocs = await filterVisibleDocs(docsRequiringAuthorization, reqUserId)
-  const authorizedDocsIds = _.map(authorizedDocs, '_id')
+  const authorizedDocsIds = map(authorizedDocs, '_id')
   return results.filter(result => {
     if (typesWithVisibility.includes(result._source.type)) {
       return authorizedDocsIds.includes(result._id)

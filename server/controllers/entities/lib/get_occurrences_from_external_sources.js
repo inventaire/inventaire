@@ -1,9 +1,9 @@
 // A module to look for works labels occurrences in an author's external databases reference.
 import ASCIIFolder from 'fold-to-ascii'
-import _ from '#builders/utils'
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
 // import getBnbAuthorWorksTitles from '#data/bne/get_bnb_author_works_titles'
+import { compact, flatten, identity, uniq } from 'lodash-es'
 import getBneAuthorWorksTitles from '#data/bne/get_bne_author_works_titles'
 import getBnfAuthorWorksTitles from '#data/bnf/get_bnf_author_works_titles'
 import getGndAuthorWorksTitles from '#data/gnd/get_gnd_author_works_titles'
@@ -46,7 +46,7 @@ export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
       getKjkOccurrences(authorEntity, worksLabels),
       getNdlOccurrences(authorEntity, worksLabels),
     ])
-    return _.compact(occurrences.flat())
+    return compact(occurrences.flat())
   } catch (err) {
     logError(err, 'has works labels occurrence err')
     return []
@@ -60,10 +60,10 @@ const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLan
 
 const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
-  const langs = _.uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
+  const langs = uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
   const articlesParams = langs
     .map(getArticleParams(sitelinks))
-    .filter(_.identity)
+    .filter(identity)
   return Promise.all(articlesParams.map(getWikipediaArticle))
 }
 
@@ -77,7 +77,7 @@ const getAndCreateOccurrencesFromIds = (prop, getWorkTitlesFn) => async (authorE
   // but if there are several, check every available ids
   const ids = authorEntity.claims[prop]
   if (ids == null) return
-  const results = await Promise.all(ids.map(getWorkTitlesFn)).then(_.flatten)
+  const results = await Promise.all(ids.map(getWorkTitlesFn)).then(flatten)
   return Promise.all(results.map(createOccurrencesFromExactTitles(worksLabels)))
 }
 
@@ -93,7 +93,7 @@ const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAutho
 const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
   if (!article.extract) return
   const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
-  const matchedTitles = _.uniq(normalize(article.extract).match(worksLabelsPattern))
+  const matchedTitles = uniq(normalize(article.extract).match(worksLabelsPattern))
   if (matchedTitles.length <= 0) return
   return { url: article.url, matchedTitles, structuredDataSource: false }
 }

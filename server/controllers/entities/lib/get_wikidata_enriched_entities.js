@@ -4,9 +4,8 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-import { partition, map } from 'lodash-es'
+import { partition, map, compact, omit } from 'lodash-es'
 import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks } from 'wikibase-sdk'
-import _ from '#builders/utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
@@ -31,7 +30,7 @@ const { _id: hookUserId } = hardCodedUsers.hook
 export default async (ids, { refresh, dry }) => {
   const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
-  if (dry) foundEntities = _.compact(foundEntities)
+  if (dry) foundEntities = compact(foundEntities)
   return {
     entities: foundEntities,
     notFound: map(notFoundEntities, 'uri'),
@@ -132,7 +131,7 @@ const formatEmpty = (type, entity) => ({
 const omitUndesiredPropertiesPerType = (type, claims) => {
   const propertiesToOmit = undesiredPropertiesPerType[type]
   if (propertiesToOmit) {
-    return _.omit(claims, propertiesToOmit)
+    return omit(claims, propertiesToOmit)
   } else {
     return claims
   }

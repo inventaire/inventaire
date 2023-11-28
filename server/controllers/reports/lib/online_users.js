@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { md5 } from '#lib/crypto'
+import { objLength, sumValues } from '#lib/utils/base'
 import { info } from '#lib/utils/logs'
 
 export default data => {
@@ -13,8 +13,8 @@ let onlineUsers = {}
 let last
 
 const updateOnlineUsers = () => {
-  const length = _.objLength(onlineUsers)
-  const loggedUsers = _.sumValues(onlineUsers)
+  const length = objLength(onlineUsers)
+  const loggedUsers = sumValues(onlineUsers)
   const report = `logged in ${loggedUsers} / total ${length}`
 
   // Only log the amount of users online when there is a change

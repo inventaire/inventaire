@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isInvEntityId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { log } from '#lib/utils/logs'
 // TODO: accept ISBN URIs
@@ -17,7 +17,7 @@ const controller = async (params, req) => {
   let { id, uri, property, oldValue, newValue } = params
   let prefix
   log(params, 'update claim input')
-  if (_.isInvEntityId(id) && uri == null) uri = `inv:${id}`
+  if (isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
   if (uri == null) throw error_.newMissingBody('uri')
   if (oldValue == null && newValue == null) {

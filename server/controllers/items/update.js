@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import { updateItems } from '#controllers/items/lib/items'
+import { isEntityUri, isItemId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { track } from '#lib/track'
@@ -20,11 +20,11 @@ export default async (req, res) => {
   if (_id == null) throw error_.newMissingBody('_id')
   if (entity == null) throw error_.newMissingBody('entity')
 
-  if (!_.isItemId(_id)) {
+  if (!isItemId(_id)) {
     throw error_.newInvalid('_id', _id)
   }
 
-  if (!_.isEntityUri(entity)) {
+  if (!isEntityUri(entity)) {
     throw error_.newInvalid('entity', entity)
   }
 

@@ -1,7 +1,7 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { wait } from '#lib/promises'
 import 'should'
+import { forceArray } from '#lib/utils/base'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'
 import { authReq, authReqB, getUser } from '../utils/utils.js'
@@ -11,7 +11,7 @@ const debounceDelay = CONFIG.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {
   if (!authReqFn) { authReqFn = authReq }
-  ids = _.forceArray(ids)
+  ids = forceArray(ids)
   return authReqFn('post', '/api/items?action=delete-by-ids', { ids })
 }
 

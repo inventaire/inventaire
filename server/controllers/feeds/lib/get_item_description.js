@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import transactionsColors from '#lib/emails/activity_summary/transactions_colors'
 import templateHelpers from '#lib/emails/handlebars_helpers'
 
@@ -8,7 +8,7 @@ export default (item, user, lang) => {
   const title = snapshot['entity:title']
 
   let imageHtml
-  if (_.isNonEmptyString(image)) {
+  if (isNonEmptyString(image)) {
     const imageSrc = templateHelpers.imgSrc(image, 300)
     imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`
   } else {
@@ -22,7 +22,7 @@ export default (item, user, lang) => {
 
   const transactionColor = transactionsColors[transaction]
 
-  const detailsHtml = _.isNonEmptyString(details) ? `<p>${item.details}<p>` : ''
+  const detailsHtml = isNonEmptyString(details) ? `<p>${item.details}<p>` : ''
 
   return `<a href="${item.href}" alt="${title}">${imageHtml}</a>
 <table width="300"><tr>

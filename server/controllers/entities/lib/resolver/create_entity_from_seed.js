@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { chain, compact, map } from 'lodash-es'
 import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { toIsbn13h } from '#lib/isbn/isbn'
@@ -16,7 +16,7 @@ export const createAuthor = (userId, batchId) => author => {
 
 export const createWork = (userId, batchId, authors) => work => {
   if (work.uri != null) return work
-  const authorsUris = _.compact(_.map(authors, 'uri'))
+  const authorsUris = compact(map(authors, 'uri'))
   const claims = {}
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q47461344' ], 'work')
   addClaimIfValid(claims, 'wdt:P50', authorsUris)
@@ -28,7 +28,7 @@ export async function createEdition (edition, works, userId, batchId, enrich) {
 
   const { isbn } = edition
   let { image: imageUrl } = edition
-  const worksUris = _.compact(_.map(works, 'uri'))
+  const worksUris = compact(map(works, 'uri'))
   const claims = {}
 
   addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q3331189' ], 'edition')
@@ -111,8 +111,9 @@ const buildBestEditionTitle = (edition, works) => {
 // TODO: give priority to work label in the edition lang
 // if this one is known
 const guessEditionTitleFromWorksLabels = works => {
-  return _(works)
+  return chain(works)
   .flatMap(work => Object.values(work.labels))
   .uniq()
   .join(' - ')
+  .value()
 }

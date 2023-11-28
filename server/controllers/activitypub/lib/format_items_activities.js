@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { compact, map, max, min } from 'lodash-es'
 import { context } from '#controllers/activitypub/lib/helpers'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
@@ -27,7 +27,7 @@ export const createItemsNote = ({ allActivitiesItems, lang, name, actor, parentL
     type: 'Note',
     content: buildContent({ links, name, lang, itemsLength, parentLink }),
     published: new Date(until).toISOString(),
-    attachment: _.compact(firstItems.map(buildAttachement)),
+    attachment: compact(firstItems.map(buildAttachement)),
   }
   return {
     id: `${id}#create`,
@@ -41,8 +41,8 @@ export const createItemsNote = ({ allActivitiesItems, lang, name, actor, parentL
 
 export const findFullRangeFromActivities = activitiesDocs => {
   return {
-    since: _.min(_.map(activitiesDocs, 'object.items.since')),
-    until: _.max(_.map(activitiesDocs, 'object.items.until')),
+    since: min(map(activitiesDocs, 'object.items.since')),
+    until: max(map(activitiesDocs, 'object.items.until')),
   }
 }
 

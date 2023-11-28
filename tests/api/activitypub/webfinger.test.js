@@ -1,6 +1,6 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import 'should'
+import { find } from 'lodash-es'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -100,7 +100,7 @@ describe('activitypub:webfinger', () => {
       const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${username}`
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
-      const firstLink = _.find(links, { rel: 'self' })
+      const firstLink = find(links, { rel: 'self' })
       firstLink.should.be.an.Object()
       firstLink.type.should.equal('application/activity+json')
       firstLink.href.should.equal(actorUrl)
@@ -142,7 +142,7 @@ describe('activitypub:webfinger', () => {
       const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${actorName}`
       aliases[0].should.equal(actorUrl)
       aliases.should.matchAny(actorUrl)
-      const firstLink = _.find(links, { rel: 'self' })
+      const firstLink = find(links, { rel: 'self' })
       firstLink.href.should.equal(actorUrl)
     })
   })
@@ -172,7 +172,7 @@ describe('activitypub:webfinger', () => {
       subject.should.equal(resource)
       const actorUrl = `${publicOrigin}/api/activitypub?action=actor&name=${name}`
       decodeURIComponent(aliases[0]).should.equal(actorUrl)
-      const firstLink = _.find(links, { rel: 'self' })
+      const firstLink = find(links, { rel: 'self' })
       decodeURIComponent(firstLink.href).should.equal(actorUrl)
     })
   })

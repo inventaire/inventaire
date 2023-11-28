@@ -1,7 +1,7 @@
 // Enrich ../by_uris results with entities related to the directly
 // requested entities, following those entities claims
 
-import _ from '#builders/utils'
+import { chain, pick } from 'lodash-es'
 import getEntitiesByUris from './get_entities_by_uris.js'
 
 const addRelatives = (results, relatives, refresh) => {
@@ -25,7 +25,7 @@ const addRelatives = (results, relatives, refresh) => {
 }
 
 const getAdditionalEntitiesUris = (entities, relatives) => {
-  return _(entities)
+  return chain(entities)
   .values()
   .map(getEntityRelativesUris(relatives))
   .flattenDeep()
@@ -33,6 +33,6 @@ const getAdditionalEntitiesUris = (entities, relatives) => {
   .value()
 }
 
-const getEntityRelativesUris = relatives => entity => Object.values(_.pick(entity.claims, relatives))
+const getEntityRelativesUris = relatives => entity => Object.values(pick(entity.claims, relatives))
 
 export default addRelatives

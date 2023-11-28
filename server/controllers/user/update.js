@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { get } from 'lodash-es'
 import { availability_ } from '#controllers/user/lib/availability'
 import updateEmail from '#controllers/user/lib/update_email'
 import { setUserStableUsername } from '#controllers/user/lib/user'
@@ -39,7 +39,7 @@ const update = async (user, attribute, value) => {
   const rootAttribute = attribute.split('.')[0]
 
   // Support deep objects
-  const currentValue = _.get(user, attribute)
+  const currentValue = get(user, attribute)
 
   if (value === currentValue) {
     throw error_.new('already up-to-date', 400, { attribute, value })
@@ -54,7 +54,7 @@ const update = async (user, attribute, value) => {
   if (formatters[attribute]) value = formatters[attribute](value)
 
   if (updatable.includes(rootAttribute)) {
-    if (!_.get(validations, rootAttribute)(value)) {
+    if (!get(validations, rootAttribute)(value)) {
       throw error_.newInvalid('value', value)
     }
 

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { clone, omit } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -19,7 +19,7 @@ Item.create = (userId, item) => {
   // _id: We want to get couchdb sequential id so we need to let _id blank
   // owner: ignore any passed owner, the owner is the authentified user
   // created: ignore what the client may say, it will be re-set here
-  item = _.omit(item, [ '_id', 'owner', 'created' ])
+  item = omit(item, [ '_id', 'owner', 'created' ])
   const passedAttributes = Object.keys(item)
 
   item.visibility = item.visibility || []
@@ -50,9 +50,9 @@ Item.update = (userId, newAttributes, oldItem) => {
     throw error_.new('user is not item owner', 400, { userId, ownerId: oldItem.owner })
   }
 
-  const newItem = _.clone(oldItem)
+  const newItem = clone(oldItem)
 
-  newAttributes = _.omit(newAttributes, attributes.notUpdatable)
+  newAttributes = omit(newAttributes, attributes.notUpdatable)
 
   const passedAttributes = Object.keys(newAttributes)
 
@@ -74,7 +74,7 @@ Item.changeOwner = (transacDoc, item) => {
   assert_.objects([ transacDoc, item ])
   log({ transacDoc, item }, 'changeOwner')
 
-  item = _.omit(item, attributes.reset)
+  item = omit(item, attributes.reset)
   log(item, 'item without reset attributes')
 
   const { _id: transacId, owner, requester } = transacDoc

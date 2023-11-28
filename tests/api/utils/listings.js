@@ -1,9 +1,9 @@
-import _ from '#builders/utils'
+import { isArray } from 'lodash-es'
 import { getUser } from '#tests/api/utils/utils'
 import { customAuthReq } from './request.js'
 
 const getByIds = async (user, ids) => {
-  if (_.isArray(ids)) ids = ids.join('|')
+  if (isArray(ids)) ids = ids.join('|')
   return customAuthReq(user, 'get', `/api/lists?action=by-ids&ids=${ids}`)
 }
 

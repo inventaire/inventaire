@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { someFakeUri } from '#fixtures/entities'
 import { createElement } from '../fixtures/listings.js'
 import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
@@ -59,7 +59,7 @@ describe('listings:by-entities', () => {
       const { uri, listing } = await createElement({}, getUser())
       const { uri: anotherUri, listing: anotherListing } = await createElement({})
       const { lists: listings } = await authReq('get', `${endpoint}&uris=${uri}|${anotherUri}&lists=${listing._id}`)
-      const listingsIds = listings[uri].map(_.property('_id'))
+      const listingsIds = map(listings[uri], '_id')
       listingsIds.should.containEql(listing._id)
       listingsIds.should.not.containEql(anotherListing._id)
     })

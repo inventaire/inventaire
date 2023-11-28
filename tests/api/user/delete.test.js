@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { createElement, createListing } from '#fixtures/listings'
 import { getGroup } from '#tests/api/utils/groups'
 import { getListingById } from '#tests/api/utils/listings'
@@ -39,11 +39,11 @@ describe('user:delete', () => {
     const user = await createUser({ position })
     await waitForIndexation('users', user._id)
     const users = await getUsersNearPosition(position)
-    _.map(users, '_id').should.containEql(user._id)
+    map(users, '_id').should.containEql(user._id)
     await deleteUser(user)
     await waitForDeindexation('users', user._id)
     const refreshedUsers = await getUsersNearPosition(position)
-    _.map(refreshedUsers, '_id').should.not.containEql(user._id)
+    map(refreshedUsers, '_id').should.not.containEql(user._id)
   })
 
   describe('items', () => {
@@ -75,25 +75,25 @@ describe('user:delete', () => {
     it('should remove the user when member', async () => {
       const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addMember(group, user)
-      _.map(refreshedGroup.members, 'user').should.containEql(user._id)
+      map(refreshedGroup.members, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)
-      _.map(rerefreshedGroup.members, 'user').should.not.containEql(user._id)
+      map(rerefreshedGroup.members, 'user').should.not.containEql(user._id)
     })
 
     it('should remove the user when admin, but not delete the group', async () => {
       const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addAdmin(group, user)
-      _.map(refreshedGroup.admins, 'user').should.containEql(user._id)
+      map(refreshedGroup.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)
-      _.map(rerefreshedGroup.admins, 'user').should.not.containEql(user._id)
+      map(rerefreshedGroup.admins, 'user').should.not.containEql(user._id)
     })
 
     it('should delete the group when the user was the last member', async () => {
       const user = await createUser()
       const group = await createGroup({ user })
-      _.map(group.admins, 'user').should.containEql(user._id)
+      map(group.admins, 'user').should.containEql(user._id)
       await deleteUser(user)
       try {
         await getGroup(group).then(shouldNotBeCalled)
@@ -106,28 +106,28 @@ describe('user:delete', () => {
     it('should remove the user when "invited"', async () => {
       const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addInvited(group, user)
-      _.map(refreshedGroup.invited, 'user').should.containEql(user._id)
+      map(refreshedGroup.invited, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)
-      _.map(rerefreshedGroup.invited, 'user').should.not.containEql(user._id)
+      map(rerefreshedGroup.invited, 'user').should.not.containEql(user._id)
     })
 
     it('should remove the user when "requested"', async () => {
       const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addRequested(group, user)
-      _.map(refreshedGroup.requested, 'user').should.containEql(user._id)
+      map(refreshedGroup.requested, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)
-      _.map(rerefreshedGroup.requested, 'user').should.not.containEql(user._id)
+      map(rerefreshedGroup.requested, 'user').should.not.containEql(user._id)
     })
 
     it('should remove the user when "declined"', async () => {
       const [ user, group ] = await Promise.all([ createUser(), createGroup() ])
       const [ refreshedGroup ] = await addDeclined(group, user)
-      _.map(refreshedGroup.declined, 'user').should.containEql(user._id)
+      map(refreshedGroup.declined, 'user').should.containEql(user._id)
       await deleteUser(user)
       const rerefreshedGroup = await getGroup(group)
-      _.map(rerefreshedGroup.declined, 'user').should.not.containEql(user._id)
+      map(rerefreshedGroup.declined, 'user').should.not.containEql(user._id)
     })
   })
 

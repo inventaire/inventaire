@@ -5,9 +5,6 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "#builders/*": [
-        "./server/builders/*.js"
-      ],
       "#controllers/*": [
         "./server/controllers/*.js"
       ],

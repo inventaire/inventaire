@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { omit, pick } from 'lodash-es'
 import { findUserByEmail } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
@@ -18,7 +18,7 @@ export const tokenLength = 32
 
 export async function sendValidationEmail (user) {
   if (user.validEmail) {
-    const log = _.pick(user, [ '_id', 'creationStrategy' ])
+    const log = pick(user, [ '_id', 'creationStrategy' ])
     warn(log, 'email was already validated')
     return user
   }
@@ -77,7 +77,7 @@ const updateValidEmail = (_id, valid) => {
 
 const emailIsValid = user => {
   user.validEmail = true
-  return _.omit(user, 'emailValidation')
+  return omit(user, 'emailValidation')
 }
 
 const getTokenData = () => {

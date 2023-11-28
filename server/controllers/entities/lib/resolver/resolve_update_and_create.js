@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { identity } from 'lodash-es'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
@@ -41,7 +41,7 @@ export async function resolveUpdateAndCreate (params) {
 
 const buildActionFn = (flag, ActionFn, params) => {
   if (flag) return ActionFn(params)
-  else return _.identity
+  else return identity
 }
 
 const handleError = (strict, errors, err, entry) => {

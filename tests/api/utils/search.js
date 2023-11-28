@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { isArray, map } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
@@ -56,7 +56,7 @@ export async function getAnalyze ({ indexBaseName, text, analyzer }) {
 
 export async function getAnalyzedTokens ({ indexBaseName, text, analyzer }) {
   const analyze = await getAnalyze({ indexBaseName, text, analyzer })
-  return _.map(analyze.tokens, 'token')
+  return map(analyze.tokens, 'token')
 }
 
 export async function waitForIndexation (indexBaseName, id) {
@@ -95,7 +95,7 @@ export async function search (...args) {
   let types, search, lang, filter, limit, offset, exact, minScore, claim
   if (args.length === 1) ({ types, search, lang, filter, limit, offset, exact, minScore, claim } = args[0])
   else [ types, search, lang, filter ] = args
-  if (_.isArray(types)) types = types.join('|')
+  if (isArray(types)) types = types.join('|')
   const url = buildUrl(endpoint, {
     types,
     search,

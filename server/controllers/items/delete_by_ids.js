@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { compact } from 'lodash-es'
 import { getItemsByIds, itemsBulkDelete } from '#controllers/items/lib/items'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -9,7 +9,7 @@ const sanitization = {
 
 const controller = async ({ ids, reqUserId }) => {
   await getItemsByIds(ids)
-  .then(_.compact)
+  .then(compact)
   .then(verifyOwnership(reqUserId))
   .then(itemsBulkDelete)
 

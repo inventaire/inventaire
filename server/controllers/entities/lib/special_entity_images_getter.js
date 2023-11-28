@@ -1,5 +1,6 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { isLang } from '#lib/boolean_validations'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
@@ -25,7 +26,7 @@ export default {
       // 'temporarily cache relations' > 'should check the primary data'
       useCacheRelations: false,
     })
-    const worksUris = _.map(parts, 'uri')
+    const worksUris = map(parts, 'uri')
     const worksImages = await Promise.all(worksUris.map(getOneWorkImagePerLang))
     return worksImages.reduce(aggregateWorkImages, images)
   },
@@ -61,7 +62,7 @@ const aggregateWorkImages = (images, workImages) => {
   for (const key in workImages) {
     // Ignore work claims images
     const values = workImages[key]
-    if (_.isLang(key)) addImage(images, key, 4, values[0])
+    if (isLang(key)) addImage(images, key, 4, values[0])
   }
 
   return images

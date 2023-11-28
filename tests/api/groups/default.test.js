@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { authReq, publicReq } from '../utils/utils.js'
@@ -19,7 +19,7 @@ describe('groups:get:default', () => {
     const group = await getSomeGroup()
     const { groups } = await authReq('get', endpoint)
     groups.should.be.an.Array()
-    const groupsIds = _.map(groups, '_id')
+    const groupsIds = map(groups, '_id')
     should(groupsIds.includes(group._id)).be.true()
   })
 })

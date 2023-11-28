@@ -1,5 +1,5 @@
-import { compact } from 'lodash-es'
-import _ from '#builders/utils'
+import { compact, isPlainObject } from 'lodash-es'
+import { isLang, isNonEmptyString, isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { forceArray } from '#lib/utils/base'
 import properties from '../properties/properties_values_constraints.js'
@@ -16,17 +16,17 @@ export default (seed, type) => {
 
 const validateLabels = (seed, type) => {
   const { labels } = seed
-  if (!_.isPlainObject(labels)) {
+  if (!isPlainObject(labels)) {
     throw error_.new('invalid labels', 400, { seed, type })
   }
 
   for (const lang in labels) {
     const label = labels[lang]
-    if (!_.isLang(lang)) {
+    if (!isLang(lang)) {
       throw error_.new('invalid label lang', 400, { lang, label, seed, type })
     }
 
-    if (!_.isNonEmptyString(label)) {
+    if (!isNonEmptyString(label)) {
       throw error_.new('invalid label', 400, { lang, label, seed, type })
     }
   }
@@ -34,7 +34,7 @@ const validateLabels = (seed, type) => {
 
 const validateAndFormatClaims = (seed, type) => {
   const { claims } = seed
-  if (!_.isPlainObject(claims)) {
+  if (!isPlainObject(claims)) {
     throw error_.new('invalid claims', 400, { seed })
   }
 
@@ -54,7 +54,7 @@ const validateAndFormatPropertyClaims = (claims, type) => prop => {
 const validateImage = (seed, type) => {
   if (seed.image != null) {
     if (type === 'edition') {
-      if (!_.isUrl(seed.image)) {
+      if (!isUrl(seed.image)) {
         throw error_.new('invalid image url', 400, { seed })
       }
     } else {

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { createShelf, createShelfWithItem } from '#fixtures/shelves'
 import { buildUrl } from '#lib/utils/url'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -25,7 +25,7 @@ describe('items:search:shelves', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(null, { shelf: shelf._id, search: title })
-    _.map(items, '_id').should.containEql(item._id)
+    map(items, '_id').should.containEql(item._id)
   })
 
   it('should not find an item not in the shelf', async () => {
@@ -37,6 +37,6 @@ describe('items:search:shelves', () => {
     await waitForIndexation('items', item._id)
     const { 'entity:title': title } = item.snapshot
     const { items } = await search(null, { shelf: shelf._id, search: title })
-    _.map(items, '_id').should.not.containEql(item._id)
+    map(items, '_id').should.not.containEql(item._id)
   })
 })

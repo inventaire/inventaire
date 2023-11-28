@@ -5,9 +5,9 @@
 // Its place should be progressively decreased until complete removal
 
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
+import { forceArray } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 
@@ -17,7 +17,7 @@ const reqOptions = { timeout: 60 * 1000 }
 if (origin.startsWith('https')) reqOptions.ignoreCertificateErrors = true
 
 export async function getSeedsByIsbns (isbns, refresh) {
-  isbns = _.forceArray(isbns)
+  isbns = forceArray(isbns)
   if (!enabled) return isbns.map(emptySeed)
   isbns = isbns.join('|')
   const url = buildUrl(`${origin}/books`, { isbns, refresh })

@@ -1,6 +1,8 @@
 import emailAddresses from 'email-addresses'
-import _ from '#builders/utils'
+import { chain, isArray, property } from 'lodash-es'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
+import { toLowerCase } from '#lib/utils/base'
 
 const { parseAddressList } = emailAddresses
 
@@ -8,9 +10,9 @@ const { parseAddressList } = emailAddresses
 // (typically, the value of a text input filled with emails by a user)
 // and returns an array of parsed emails addresses
 export default emails => {
-  const emailsString = _.isArray(emails) ? emails.join(',') : emails
+  const emailsString = isArray(emails) ? emails.join(',') : emails
 
-  if (!_.isNonEmptyString(emailsString)) {
+  if (!isNonEmptyString(emailsString)) {
     throw error_.newMissingBody('emails')
   }
 
@@ -20,9 +22,9 @@ export default emails => {
     throw error_.new("couldn't parse emails", 400, emails)
   }
 
-  return _(parsedEmails)
-  .map(_.property('address'))
-  .map(_.toLowerCase)
+  return chain(parsedEmails)
+  .map(property('address'))
+  .map(toLowerCase)
   .uniq()
   .value()
 }

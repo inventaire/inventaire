@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map, uniq } from 'lodash-es'
 import { wait } from '#lib/promises'
 import { authReq, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -112,7 +112,7 @@ describe('tasks:deduplicate:works', () => {
     await authReq('post', endpoint, { uri, isbn })
     await wait(100)
     const tasks = await getBySuspectUri(uri)
-    const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
+    const uniqSuggestiontUris = uniq(map(tasks, 'suggestionUri'))
     tasks.length.should.equal(uniqSuggestiontUris.length)
   })
 

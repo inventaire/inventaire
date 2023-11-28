@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { property } from 'lodash-es'
 import buildInvertedClaimTree from './build_inverted_claim_tree.js'
 
 export default (items, entitiesData) => {
@@ -39,5 +39,5 @@ const getItemsIdsByDate = items => {
   .map(getId)
 }
 
-const getId = _.property('_id')
+const getId = property('_id')
 const sortByCreationDate = (a, b) => b.created - a.created

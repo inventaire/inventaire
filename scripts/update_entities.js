@@ -12,7 +12,7 @@
 //   - updateFn: Function: entity doc -> updated entity doc
 //   - stats: Function: -> stats object
 
-import _ from '#builders/utils'
+import { cloneDeep, keyBy, map } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import docDiff from '#db/couchdb/doc_diffs'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
@@ -46,7 +46,7 @@ const updateSequentially = () => {
 
     const updatesData = rows.map(row => {
       const { doc: currentDoc } = row
-      const updatedDoc = updateFn(_.cloneDeep(currentDoc))
+      const updatedDoc = updateFn(cloneDeep(currentDoc))
       Entity.beforeSave(updatedDoc)
       if (!silent) { docDiff(currentDoc, updatedDoc, preview) }
       return { currentDoc, updatedDoc }
@@ -58,10 +58,10 @@ const updateSequentially = () => {
   })
 }
 
-const postEntitiesBulk = updatesData => entitiesDb.bulk(_.map(updatesData, 'updatedDoc'))
+const postEntitiesBulk = updatesData => entitiesDb.bulk(map(updatesData, 'updatedDoc'))
 
 const postPatchesBulk = updatesData => entityBulkRes => {
-  const entityResById = _.keyBy(entityBulkRes, 'id')
+  const entityResById = keyBy(entityBulkRes, 'id')
   const patches = updatesData.map(buildPatches(entityResById))
   return patchesDb.bulk(patches)
 }

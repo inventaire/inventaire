@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { Log } from '#lib/utils/logs'
 import { containers, uploadContainersNames } from './lib/containers.js'
@@ -28,7 +28,7 @@ const controller = async (params, req) => {
 const getFilesFromFormData = formData => {
   const { files } = formData
 
-  if (!_.isNonEmptyPlainObject(files)) {
+  if (!isNonEmptyPlainObject(files)) {
     throw error_.new('no file provided', 400, formData)
   }
 

@@ -113,7 +113,6 @@
     "node": ">= 16.6"
   },
   "imports": {
-    "#builders/*": "./server/builders/*.js",
     "#controllers/*": "./server/controllers/*.js",
     "#data/*": "./server/data/*.js",
     "#db/*": "./server/db/*.js",

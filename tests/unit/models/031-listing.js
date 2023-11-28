@@ -1,5 +1,5 @@
 import 'should'
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import { randomWords } from '#fixtures/text'
 import { expired } from '#lib/time'
 import Listing from '#models/listing'
@@ -39,14 +39,14 @@ describe('listing model', () => {
 
     describe('mandatory attributes', () => {
       it('should throw on missing creator', () => {
-        const invalidListing = _.cloneDeep(validListing)
+        const invalidListing = cloneDeep(validListing)
         delete invalidListing.creator
         const creator = () => Listing.create(invalidListing)
         creator.should.throw()
       })
 
       it('should throw on missing name', () => {
-        const invalidListing = _.cloneDeep(validListing)
+        const invalidListing = cloneDeep(validListing)
         delete invalidListing.name
         const creator = () => Listing.create(invalidListing)
         creator.should.throw()

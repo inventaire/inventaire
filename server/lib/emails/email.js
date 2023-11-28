@@ -1,7 +1,7 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import { kmBetween } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
+import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
@@ -14,7 +14,7 @@ export default {
   validationEmail: (user, token) => {
     // purposedly not checking notifications settings
     const { email, language } = user
-    const lang = _.shortLang(language)
+    const lang = shortLang(language)
     const href = buildTokenUrl('validation-email', email, token)
 
     return {
@@ -28,7 +28,7 @@ export default {
   resetPassword: (user, token) => {
     // purposedly not checking notifications settings
     const { email, language } = user
-    const lang = _.shortLang(language)
+    const lang = shortLang(language)
     const href = buildTokenUrl('reset-password', email, token)
 
     return {
@@ -41,7 +41,7 @@ export default {
 
   friendAcceptedRequest: options => {
     const [ user1, user2 ] = validateOptions(options)
-    const lang = _.shortLang(user1.language)
+    const lang = shortLang(user1.language)
 
     checkUserNotificationsSettings(user1, 'friend_accepted_request')
 
@@ -55,7 +55,7 @@ export default {
 
   friendshipRequest: options => {
     const [ user1, user2 ] = Array.from(validateOptions(options))
-    const lang = _.shortLang(user1.language)
+    const lang = shortLang(user1.language)
 
     checkUserNotificationsSettings(user1, 'friendship_request')
 
@@ -81,7 +81,7 @@ export default {
   group: (action, context) => {
     const { group, actingUser, userToNotify } = context
     const { language, email } = userToNotify
-    const lang = _.shortLang(language)
+    const lang = shortLang(language)
 
     checkUserNotificationsSettings(userToNotify, `group_${action}`)
 
@@ -154,7 +154,7 @@ export default {
     // - Invited users who don't want more emails should have been filtered-out
     //   by invitations/lib/send_invitations extractCanBeInvited
     const { username, language } = inviter
-    const lang = _.shortLang(language)
+    const lang = shortLang(language)
 
     inviter.pathname = `${host}/users/${username}`
     return emailAddress => {
@@ -170,7 +170,7 @@ export default {
   GroupInvitation: (inviter, group, message) => {
     // No email settings to check here neither (idem FriendInvitation)
     const { username, language } = inviter
-    const lang = _.shortLang(language)
+    const lang = shortLang(language)
     const { name: groupName, slug } = group
     const pathname = `${host}/groups/${slug}`
     // Object required to pass as i18n strings context
@@ -200,7 +200,7 @@ export default {
 const transactionEmail = (transaction, role, label) => {
   checkUserNotificationsSettings(transaction.mainUser, label)
   const other = role === 'owner' ? 'requester' : 'owner'
-  const lang = _.shortLang(transaction.mainUser.language)
+  const lang = shortLang(transaction.mainUser.language)
 
   const titleContext = {
     username: transaction[other].username,

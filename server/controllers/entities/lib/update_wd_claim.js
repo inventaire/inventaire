@@ -1,6 +1,6 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
-import _ from '#builders/utils'
 import { getWdEntity } from '#data/wikidata/get_entity'
+import { isInvEntityUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
@@ -20,7 +20,7 @@ export default async (user, id, property, oldValue, newValue) => {
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
 
   if ((properties[property].datatype === 'entity')) {
-    if (_.isInvEntityUri(newValue)) {
+    if (isInvEntityUri(newValue)) {
       throw error_.new("wikidata entities can't link to inventaire entities", 400)
     }
 

@@ -1,11 +1,11 @@
-import _ from '#builders/utils'
+import { compact, flatten } from 'lodash-es'
 import { getEntitiesList } from '../get_entities_list.js'
 
 export default workUris => {
   return getEntitiesList(workUris)
   .then(getAuthorUris)
-  .then(_.flatten)
-  .then(_.compact)
+  .then(flatten)
+  .then(compact)
   .then(getEntitiesList)
 }
 

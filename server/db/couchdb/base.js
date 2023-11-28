@@ -1,6 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
-import bundlesFactory from '#db/couchdb/bundles'
+import { couchdbBundlesFactory } from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
 import { memoize } from '#lib/utils/memoize'
@@ -20,7 +19,7 @@ export default async function (dbBaseName, designDocName) {
 const getHandler = memoize((dbBaseName, dbName, designDocName) => {
   validate(dbBaseName, designDocName)
   const db = getDbApi(dbName, designDocName)
-  const bundles = bundlesFactory(db, _)
+  const bundles = couchdbBundlesFactory(db)
   return Object.assign(db, bundles, { dbBaseName, dbName, designDocName })
 })
 

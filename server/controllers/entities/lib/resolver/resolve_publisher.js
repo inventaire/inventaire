@@ -1,5 +1,5 @@
 import leven from 'leven'
-import _ from '#builders/utils'
+import { uniq } from 'lodash-es'
 import { parseIsbn } from '#lib/isbn/parse'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
@@ -40,7 +40,7 @@ const getPublisherClosestTerm = publisherLabel => entity => {
 const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
   const allAliases = Object.values(aliases).flat()
   const terms = Object.values(labels).concat(allAliases)
-  return _.uniq(terms)
+  return uniq(terms)
   .map(term => ({ term, distance: leven(term, publisherLabel) }))
   .sort(byDistance)[0]
 }

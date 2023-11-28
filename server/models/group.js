@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { find, map, without } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
@@ -128,7 +128,7 @@ const createMembership = (userId, invitorId) => ({
 // moving membership object from previousCategory to newCategory
 const moveMembership = (userId, group, previousCategory, newCategory) => {
   const membership = findMembership(userId, group, previousCategory, true)
-  group[previousCategory] = _.without(group[previousCategory], membership)
+  group[previousCategory] = without(group[previousCategory], membership)
   // Let the possibility to just destroy the membership
   // by letting newCategory undefined
   if (newCategory != null) group[newCategory].push(membership)
@@ -136,7 +136,7 @@ const moveMembership = (userId, group, previousCategory, newCategory) => {
 }
 
 const findMembership = (userId, group, previousCategory, wanted) => {
-  const membership = _.find(group[previousCategory], { user: userId })
+  const membership = find(group[previousCategory], { user: userId })
   if (wanted) {
     // expect to find a membership
     if (membership != null) {
@@ -158,7 +158,7 @@ const findMembership = (userId, group, previousCategory, wanted) => {
 }
 
 const userIsRole = role => (userId, group) => {
-  const ids = _.map(group[role], 'user')
+  const ids = map(group[role], 'user')
   return ids.includes(userId)
 }
 
@@ -174,8 +174,8 @@ Group.categories = {
 
 Group.getAllMembersIds = group => {
   assert_.object(group)
-  const adminsIds = _.map(group.admins, 'user')
-  const membersIds = _.map(group.members, 'user')
+  const adminsIds = map(group.admins, 'user')
+  const membersIds = map(group.members, 'user')
   return adminsIds.concat(membersIds)
 }
 

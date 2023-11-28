@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { humanName } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import {
@@ -37,9 +37,9 @@ describe('items:get-by-ids', () => {
   it('should get items by ids', async () => {
     const emptyItemsData = [ {}, {}, {} ]
     const items = await createItems(getUser(), emptyItemsData)
-    const ids = _.map(items, '_id').sort()
+    const ids = map(items, '_id').sort()
     const res = await authReq('get', `${endpoint}&ids=${ids.join('|')}`)
-    const resIds = _.map(res.items, '_id').sort()
+    const resIds = map(res.items, '_id').sort()
     resIds.should.deepEqual(ids)
     resIds.length.should.equal(ids.length)
   })
@@ -69,7 +69,7 @@ describe('items:get-by-ids', () => {
     it('should include public items of other users', async () => {
       const item = await createItem(userPromise, { visibility: [ 'public' ] })
       const res = await publicReq('get', `${endpoint}&ids=${item._id}`)
-      _.map(res.items, '_id').should.containEql(item._id)
+      map(res.items, '_id').should.containEql(item._id)
     })
   })
 
@@ -77,7 +77,7 @@ describe('items:get-by-ids', () => {
     it('should not include private items of other users', async () => {
       const item = await createItem(userPromise, { visibility: [] })
       const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-      _.map(res.items, '_id').should.not.containEql(item._id)
+      map(res.items, '_id').should.not.containEql(item._id)
     })
   })
 
@@ -86,14 +86,14 @@ describe('items:get-by-ids', () => {
       await addMember(getSomeGroup(), userPromise)
       const item = await createItem(userPromise, { visibility: [ 'groups' ] })
       const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-      _.map(res.items, '_id').should.containEql(item._id)
+      map(res.items, '_id').should.containEql(item._id)
     })
 
     it('should not include group items of non-group co-members', async () => {
       const userPromise = getUserGetter(humanName())()
       const item = await createItem(userPromise, { visibility: [ 'groups' ] })
       const res = await authReq('get', `${endpoint}&ids=${item._id}`)
-      _.map(res.items, '_id').should.not.containEql(item._id)
+      map(res.items, '_id').should.not.containEql(item._id)
     })
   })
 

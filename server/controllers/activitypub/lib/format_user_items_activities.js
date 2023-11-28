@@ -1,10 +1,11 @@
-import _ from '#builders/utils'
+import { compact } from 'lodash-es'
 import { getPublicItemsByOwnerAndDate } from '#controllers/items/lib/items'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
 import { makeUrl } from './helpers.js'
 
 export default async (activitiesDocs, user) => {
-  if (!_.isNonEmptyArray(activitiesDocs)) return []
+  if (!isNonEmptyArray(activitiesDocs)) return []
   const { stableUsername: name } = user
   const actor = makeUrl({ params: { action: 'actor', name } })
   const parentLink = `/inventory/${name}`
@@ -18,5 +19,5 @@ export default async (activitiesDocs, user) => {
   })
 
   const formattedActivities = await Promise.all(activitiesDocs.map(createItemsNote({ allActivitiesItems, lang, name, actor, parentLink })))
-  return _.compact(formattedActivities)
+  return compact(formattedActivities)
 }

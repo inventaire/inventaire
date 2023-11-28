@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { flatMap, keyBy } from 'lodash-es'
 import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
@@ -59,7 +59,7 @@ const getDomainsPromises = (domains, params) => {
   return Promise.all(promises)
 }
 
-const formatList = results => _.flatMap(results, 'entities')
+const formatList = results => flatMap(results, 'entities')
 
 const formatRichResults = results => {
   const response = {
@@ -91,7 +91,7 @@ const formatRichResults = results => {
     }
   }
 
-  response.entities = _.keyBy(response.entities, 'uri')
+  response.entities = keyBy(response.entities, 'uri')
 
   if (response.notFound.length === 0) delete response.notFound
 

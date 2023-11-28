@@ -1,11 +1,11 @@
-import _ from '#builders/utils'
+import { isObject, set } from 'lodash-es'
 
 // The simplest doc update: set one or several key/values
 export const basicUpdater = (attribute, value, doc) => {
   // /!\ imperfect polymorphism:
-  // Object.assign doesn't handle deep values while _.set does
-  if (_.isObject(attribute)) return Object.assign(doc, attribute)
-  else return _.set(doc, attribute, value)
+  // Object.assign doesn't handle deep values while set does
+  if (isObject(attribute)) return Object.assign(doc, attribute)
+  else return set(doc, attribute, value)
 }
 
 // In case key/values are passed in one object

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
@@ -39,7 +39,7 @@ const getItems = async params => {
 }
 
 const getItemsEntitiesData = items => {
-  const uris = _.uniq(_.map(items, 'entity'))
+  const uris = uniq(map(items, 'entity'))
   return getEntitiesByUris({ uris })
   .then(({ entities }) => entities)
   .then(replaceEditionsByTheirWork)

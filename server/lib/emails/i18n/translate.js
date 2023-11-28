@@ -12,7 +12,7 @@ const isShortkey = key => /_/.test(key)
 const vowels = 'aeiouy'
 
 const modifiers = {
-  // make _.i18n('user_comment', { username: 'adamsberg' })
+  // make i18n('user_comment', { username: 'adamsberg' })
   // return "Commentaire d'adamsberg" instead of "Commentaire de adamsberg"
   fr: (polyglot, key, val, data) => {
     if (data && isShortkey(key)) {

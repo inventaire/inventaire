@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { humanName } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
@@ -28,7 +28,7 @@ describe('items:get-by-user-and-entities', () => {
     const itemB = await createItem(getUser(), { entity: uri })
     const { items } = await authReq('get', `${endpoint}&user=${itemA.owner}&uris=${uri}`)
     const itemsIds = [ itemA._id, itemB._id ]
-    const resItemsIds = _.map(items, '_id')
+    const resItemsIds = map(items, '_id')
     resItemsIds.should.containDeep(itemsIds)
   })
 
@@ -37,7 +37,7 @@ describe('items:get-by-user-and-entities', () => {
       createItemWithEditionAndWork(getUser()),
       createItemWithEditionAndWork(getUser()),
     ])
-    const uris = _.map(items, 'entity')
+    const uris = map(items, 'entity')
     const { owner } = items[0]
     const res = await authReq('get', `${endpoint}&user=${owner}&uris=${uris.join('|')}`)
     res.items.length.should.equal(2)
@@ -89,14 +89,14 @@ describe('items:get-by-user-and-entities', () => {
       const item = await createItemWithEditionAndWork(userPromise, { visibility: [ 'groups' ] })
       await addMember(getSomeGroup(), userPromise)
       const { items } = await authReq('get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
-      _.map(items, '_id').should.containEql(item._id)
+      map(items, '_id').should.containEql(item._id)
     })
 
     it('should not include group items of non-group co-members', async () => {
       const [ userA, userB ] = await getTwoFriends()
       const item = await createItemWithEditionAndWork(userA, { visibility: [ 'groups' ] })
       const { items } = await customAuthReq(userB, 'get', `${endpoint}&user=${item.owner}&uris=${item.entity}`)
-      _.map(items, '_id').should.not.containEql(item._id)
+      map(items, '_id').should.not.containEql(item._id)
     })
   })
 

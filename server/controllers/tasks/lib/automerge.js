@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { flatMap, map, some } from 'lodash-es'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { wait } from '#lib/promises'
@@ -27,10 +27,10 @@ export async function automerge (suspectUri, suggestion) {
 }
 
 export const hasConvincingOccurrences = suggestionOccurrences => {
-  const hasOccurencesInStructuredDataSources = _.some(_.map(suggestionOccurrences, 'structuredDataSource'))
+  const hasOccurencesInStructuredDataSources = some(map(suggestionOccurrences, 'structuredDataSource'))
   if (hasOccurencesInStructuredDataSources) return true
 
-  const matchedTitles = _.flatMap(suggestionOccurrences, 'matchedTitles')
+  const matchedTitles = flatMap(suggestionOccurrences, 'matchedTitles')
   const longTitles = matchedTitles.filter(isLongTitle)
   return longTitles.length > 0
 }

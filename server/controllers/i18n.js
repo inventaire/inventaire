@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isString } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { appendToClientKeys } from '#lib/i18n_autofix'
 import { responses_ } from '#lib/responses'
@@ -35,6 +35,6 @@ const looksLikeAKey = key => {
   return true
 }
 
-const areStrings = array => _.every(array, _.isString)
+const areStrings = array => array.every(isString)
 
 export default { post: i18nMissingKeys }

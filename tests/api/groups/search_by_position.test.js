@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -33,7 +33,7 @@ describe('groups:search-by-position', () => {
     await waitForIndexation('groups', group._id)
     const res = await publicReq('get', `${endpoint}&bbox=${bbox}`)
     res.groups.should.be.an.Array()
-    const groupsIds = _.map(res.groups, '_id')
+    const groupsIds = map(res.groups, '_id')
     should(groupsIds.includes(group._id)).be.true()
   })
 })

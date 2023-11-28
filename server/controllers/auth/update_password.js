@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isNumber } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
 import { error_ } from '#lib/error/error'
@@ -36,7 +36,7 @@ const validatePassword = async ({ user, currentPassword, resetPassword }) => {
 
   // token-based password reset, with expiration date
   } else if (resetPassword != null) {
-    if (!_.isNumber(resetPassword)) {
+    if (!isNumber(resetPassword)) {
       throw error_.new('invalid resetPassword timestamp', 500)
     }
     await testOpenResetPasswordWindow(resetPassword)

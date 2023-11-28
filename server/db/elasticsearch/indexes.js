@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { keyBy, map, mapValues, property } from 'lodash-es'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [
@@ -17,13 +17,13 @@ const indexesData = [
   return data
 })
 
-export const indexes = _.keyBy(indexesData, 'indexBaseName')
-export const indexesList = _.map(indexesData, 'index')
-export const indexesNamesByBaseNames = _.mapValues(indexes, 'index')
+export const indexes = keyBy(indexesData, 'indexBaseName')
+export const indexesList = map(indexesData, 'index')
+export const indexesNamesByBaseNames = mapValues(indexes, 'index')
 
 export const syncIndexesList = indexesData
   .filter(indexData => indexData.sync)
-  .map(_.property('indexBaseName'))
+  .map(property('indexBaseName'))
 
 export const indexedEntitiesTypes = [
   // inventaire and wikidata entities

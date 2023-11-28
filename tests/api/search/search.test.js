@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map } from 'lodash-es'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
 import { createListing } from '#fixtures/listings'
 import { createShelf } from '#fixtures/shelves'
@@ -64,7 +64,7 @@ describe('search:global', () => {
       await waitForIndexation('users', user._id)
       const results = await search('users', user.username)
       results.should.be.an.Array()
-      _.map(results, 'id').should.containEql(user._id)
+      map(results, 'id').should.containEql(user._id)
     })
 
     it('should only return users', async () => {
@@ -83,17 +83,17 @@ describe('search:global', () => {
       const results = await search('groups', group.name)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('groups'))
-      _.map(results, 'id').should.containEql(group._id)
+      map(results, 'id').should.containEql(group._id)
     })
 
     it('should not return a private group unless requester is a member', async () => {
       const group = await createGroup({ searchable: false })
       await waitForIndexation('groups', group._id)
       const results = await search('groups', group.name)
-      _.map(results, 'id').should.not.containEql(group._id)
+      map(results, 'id').should.not.containEql(group._id)
       // The same request but authentified with a group member account should find the group
       const refreshedResults = await customAuthSearch(getUser(), 'groups', group.name)
-      _.map(refreshedResults, 'id').should.containEql(group._id)
+      map(refreshedResults, 'id').should.containEql(group._id)
     })
   })
 
@@ -103,7 +103,7 @@ describe('search:global', () => {
       await waitForIndexation('shelves', shelf._id)
       const results = await search('shelves', firstNWords(shelf.name, 2))
       results.should.be.an.Array()
-      _.map(results, 'id').should.containEql(shelf._id)
+      map(results, 'id').should.containEql(shelf._id)
     })
 
     it('should find a shelf with words from the description', async () => {
@@ -111,7 +111,7 @@ describe('search:global', () => {
       await waitForIndexation('shelves', shelf._id)
       const results = await search('shelves', firstNWords(shelf.description, 2))
       results.should.be.an.Array()
-      _.map(results, 'id').should.containEql(shelf._id)
+      map(results, 'id').should.containEql(shelf._id)
     })
 
     describe('public request', () => {
@@ -120,7 +120,7 @@ describe('search:global', () => {
         await waitForIndexation('shelves', shelf._id)
         const results = await search('shelves', firstNWords(shelf.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(shelf._id)
+        map(results, 'id').should.not.containEql(shelf._id)
       })
     })
 
@@ -130,7 +130,7 @@ describe('search:global', () => {
         await waitForIndexation('shelves', shelf._id)
         const results = await customAuthSearch(getUser(), 'shelves', firstNWords(shelf.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.containEql(shelf._id)
+        map(results, 'id').should.containEql(shelf._id)
       })
 
       it('should not return a private shelf from another user', async () => {
@@ -138,7 +138,7 @@ describe('search:global', () => {
         await waitForIndexation('shelves', shelf._id)
         const results = await customAuthSearch(getUserB(), 'shelves', firstNWords(shelf.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(shelf._id)
+        map(results, 'id').should.not.containEql(shelf._id)
       })
 
       it('should return a group-specific shelf when requested by a member', async () => {
@@ -147,7 +147,7 @@ describe('search:global', () => {
         await waitForIndexation('shelves', shelf._id)
         const results = await customAuthSearch(member, 'shelves', firstNWords(shelf.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.containEql(shelf._id)
+        map(results, 'id').should.containEql(shelf._id)
       })
 
       it('should return a group-specific shelf when requested by a member', async () => {
@@ -157,7 +157,7 @@ describe('search:global', () => {
         await waitForIndexation('shelves', shelf._id)
         const results = await customAuthSearch(someOtherUser, 'shelves', firstNWords(shelf.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(shelf._id)
+        map(results, 'id').should.not.containEql(shelf._id)
       })
     })
   })
@@ -168,7 +168,7 @@ describe('search:global', () => {
       await waitForIndexation('lists', listing._id)
       const results = await search('lists', firstNWords(listing.name, 2))
       results.should.be.an.Array()
-      _.map(results, 'id').should.containEql(listing._id)
+      map(results, 'id').should.containEql(listing._id)
     })
 
     it('should find a listing with words from the description', async () => {
@@ -176,7 +176,7 @@ describe('search:global', () => {
       await waitForIndexation('lists', listing._id)
       const results = await search('lists', firstNWords(listing.description, 2))
       results.should.be.an.Array()
-      _.map(results, 'id').should.containEql(listing._id)
+      map(results, 'id').should.containEql(listing._id)
     })
 
     describe('public request', () => {
@@ -185,7 +185,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await search('lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(listing._id)
+        map(results, 'id').should.not.containEql(listing._id)
       })
     })
 
@@ -195,7 +195,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(getUser(), 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.containEql(listing._id)
+        map(results, 'id').should.containEql(listing._id)
       })
 
       it('should not return a private listing from another user', async () => {
@@ -203,7 +203,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(getUserB(), 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(listing._id)
+        map(results, 'id').should.not.containEql(listing._id)
       })
 
       it('should return a group-specific listing when requested by a member', async () => {
@@ -212,7 +212,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(member, 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.containEql(listing._id)
+        map(results, 'id').should.containEql(listing._id)
       })
 
       it('should not return a group-specific listing when requested by a non member', async () => {
@@ -222,7 +222,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(someOtherUser, 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(listing._id)
+        map(results, 'id').should.not.containEql(listing._id)
       })
 
       it('should not find listings visible by groups while the users are friends but not in a common group', async () => {
@@ -233,7 +233,7 @@ describe('search:global', () => {
         await waitForIndexation('lists', listing._id)
         const results = await customAuthSearch(memberOfAnotherGroup, 'lists', firstNWords(listing.name, 2))
         results.should.be.an.Array()
-        _.map(results, 'id').should.not.containEql(listing._id)
+        map(results, 'id').should.not.containEql(listing._id)
       })
     })
   })

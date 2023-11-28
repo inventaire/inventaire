@@ -2,7 +2,7 @@
 // mainly changing item availability (toggling items' "busy" attribute)
 // and moving items between inventories (actually archiving in one and forking in the other)
 
-import _ from '#builders/utils'
+import { noop } from 'lodash-es'
 import { changeItemOwner } from '#controllers/items/lib/items'
 import { radio } from '#lib/radio'
 import { log, LogErrorAndRethrow } from '#lib/utils/logs'
@@ -26,9 +26,9 @@ const changeOwnerIfOneWay = transacDoc => {
 }
 
 const sideEffects = {
-  accepted: _.noop,
-  declined: _.noop,
+  accepted: noop,
+  declined: noop,
   confirmed: changeOwnerIfOneWay,
-  returned: _.noop,
-  cancelled: _.noop,
+  returned: noop,
+  cancelled: noop,
 }

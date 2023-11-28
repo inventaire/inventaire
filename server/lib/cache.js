@@ -1,10 +1,11 @@
 import { promisify } from 'util'
 import CONFIG from 'config'
 import levelTtl from 'level-ttl'
-import _ from '#builders/utils'
 import { cacheDb } from '#db/level/get_db'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { catchNotFound, error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { forceArray } from '#lib/utils/base'
 import { warn, logError, LogError } from '#lib/utils/logs'
 
 const { ttlCheckFrequency, defaultCacheTtl } = CONFIG.leveldb
@@ -48,13 +49,13 @@ export const cache_ = {
   },
 
   put: async (key, value, ttl = defaultCacheTtl) => {
-    if (!_.isNonEmptyString(key)) throw error_.new('invalid key', 500)
+    if (!isNonEmptyString(key)) throw error_.new('invalid key', 500)
     if (value == null) throw error_.new('missing value', 500)
     return putValue(key, value, { ttl })
   },
 
   batchDelete: keys => {
-    const batch = _.forceArray(keys).map(key => ({ type: 'del', key }))
+    const batch = forceArray(keys).map(key => ({ type: 'del', key }))
     return dbBatch(batch)
   },
 }

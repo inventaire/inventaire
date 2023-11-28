@@ -1,7 +1,7 @@
-import _ from '#builders/utils'
+import { initCollectionsIndex } from '#lib/utils/base'
 
 export default res => {
-  const relations = _.initCollectionsIndex(relationsTypes)
+  const relations = initCollectionsIndex(relationsTypes)
   for (const row of res.rows) {
     spreadRelation(relations, row)
   }

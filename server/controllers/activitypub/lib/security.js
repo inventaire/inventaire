@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { getSha256Base64Digest } from '#lib/crypto'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
@@ -112,7 +112,7 @@ const fetchActorPublicKey = async actorUrl => {
   if (!publicKey) {
     throw error_.new('no publicKey found', 400, actor)
   }
-  if (!_.isNonEmptyPlainObject(publicKey) || !publicKey.publicKeyPem) {
+  if (!isNonEmptyPlainObject(publicKey) || !publicKey.publicKeyPem) {
     throw error_.new('invalid publicKey found', 400, actor.publicKey)
   }
   const { publicKeyPem } = actor.publicKey

@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
-import { isPropertyUri } from '#lib/boolean_validations'
+import { get, isArray } from 'lodash-es'
+import { isLang, isPropertyUri } from '#lib/boolean_validations'
 import userAttributes from '../attributes/user.js'
 import commonValidations from './common.js'
 
@@ -14,14 +14,14 @@ const validations = {
   email,
   password: BoundedString(8, 5000),
   // Accepting second level languages (like es-AR), but only using first level yet
-  language: _.isLang,
+  language: isLang,
   picture: userImg,
   creationStrategy: creationStrategy => creationStrategies.includes(creationStrategy),
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,
   fediversable: boolean,
-  customProperties: props => _.isArray(props) && props.every(isPropertyUri),
+  customProperties: props => isArray(props) && props.every(isPropertyUri),
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1,
 }
 
@@ -38,4 +38,4 @@ for (const settingCategory in settings) {
   }
 }
 
-validations.deepAttributesExistance = attribute => _.get(deepAttributes, attribute) != null
+validations.deepAttributesExistance = attribute => get(deepAttributes, attribute) != null

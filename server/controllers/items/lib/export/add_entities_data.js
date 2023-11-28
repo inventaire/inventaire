@@ -1,7 +1,8 @@
-import _ from '#builders/utils'
+import { pick } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { error_ } from '#lib/error/error'
+import { deepCompact } from '#lib/utils/base'
 
 export default async item => {
   const { entity: uri } = item
@@ -58,10 +59,10 @@ export default async item => {
 }
 
 const aggregateWorks = (works, getWorkEntitiesUris) => {
-  return _.deepCompact(works.map(getWorkEntitiesUris))
+  return deepCompact(works.map(getWorkEntitiesUris))
 }
 
-const getWorkAuthorsUris = work => Object.values(_.pick(work.claims, authorProperties)).flat()
+const getWorkAuthorsUris = work => Object.values(pick(work.claims, authorProperties)).flat()
 const authorProperties = [
   'wdt:P50',
   'wdt:P58',

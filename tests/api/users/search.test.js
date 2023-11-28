@@ -1,5 +1,5 @@
+import { map } from 'lodash-es'
 import should from 'should'
-import _ from '#builders/utils'
 import { randomWords } from '#fixtures/text'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -33,7 +33,7 @@ describe('users:search', () => {
     const res = await customAuthReq(user, 'get', '/api/users?action=search&search=testusr')
     // should find any user with the same name (to pass as test-quick)
     // not necessarly the one created for this test
-    _.map(res.users, 'username').includes(username).should.be.true()
+    map(res.users, 'username').includes(username).should.be.true()
   })
 
   it('should not return snapshot data', async () => {
@@ -53,4 +53,4 @@ describe('users:search', () => {
   })
 })
 
-const usersIds = res => _.map(res.users, '_id')
+const usersIds = res => map(res.users, '_id')

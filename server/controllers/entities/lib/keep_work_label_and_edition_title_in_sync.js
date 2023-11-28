@@ -1,6 +1,7 @@
-import _ from '#builders/utils'
+import { uniq } from 'lodash-es'
 import { getInvEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import updateLabel from './update_label.js'
@@ -28,7 +29,7 @@ export default (edition, oldTitle) => {
   // Check the opinion from other editions of this lang
   return fetchLangConsensusTitle(workUri, editionLang)
   .then(consensusEditionTitle => {
-    if (!_.isNonEmptyString(consensusEditionTitle)) return
+    if (!isNonEmptyString(consensusEditionTitle)) return
     return getEntityById(id)
     .then(updateWorkLabel(editionLang, oldTitle, consensusEditionTitle))
   })
@@ -42,7 +43,7 @@ const fetchLangConsensusTitle = async (workUri, editionLang) => {
     .filter(edition => getOriginalLang(edition.claims) === editionLang)
     .map(edition => edition.claims['wdt:P1476'][0])
 
-  const differentTitles = _.uniq(titles)
+  const differentTitles = uniq(titles)
   if (differentTitles.length === 1) {
     return differentTitles[0]
   } else {

@@ -1,7 +1,7 @@
 import 'should'
 import { randomBytes } from 'node:crypto'
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { isPlainObject, random, round } from 'lodash-es'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { assert_ } from '#lib/utils/assert_types'
@@ -119,7 +119,7 @@ const setCustomData = async (user, customData) => {
   delete customData.password
   for (const attribute in customData) {
     const value = customData[attribute]
-    if (_.isPlainObject(value)) {
+    if (isPlainObject(value)) {
       // ex: 'settings.contributions.anonymize': false
       throw new Error('use object path syntax')
     }
@@ -132,5 +132,5 @@ const randomCoordinate = (min, max) => {
   // from adding/removing less than 5 from any random coordinate composant
   min = min + 5
   max = max - 5
-  return _.round(_.random(min, max, true), 4)
+  return round(random(min, max, true), 4)
 }

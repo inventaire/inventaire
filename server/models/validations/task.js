@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isArray, isNumber } from 'lodash-es'
 import attributes from '../attributes/task.js'
 import commonValidations from './common.js'
 
@@ -13,9 +13,9 @@ export default {
   entitiesType: entitiesType => attributes.entitiesType.includes(entitiesType),
   state: taskState => attributes.state.includes(taskState),
   suspectUri: entityUri,
-  lexicalScore: _.isNumber,
-  relationScore: _.isNumber,
-  externalSourcesOccurrences: _.isArray,
+  lexicalScore: isNumber,
+  relationScore: isNumber,
+  externalSourcesOccurrences: isArray,
   reporter: userId,
   clue: BoundedString(0, 500),
 }

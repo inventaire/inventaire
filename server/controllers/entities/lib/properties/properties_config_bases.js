@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import commonValidations from '#models/validations/common'
 
@@ -32,14 +32,14 @@ export const concurrentString = Object.assign({}, uniqueString, { concurrency: t
 
 export const url = {
   datatype: 'string',
-  validate: _.isUrl,
+  validate: isUrl,
 }
 
 export const uniqueSimpleDay = {
   datatype: 'simple-day',
   type: 'string',
   // See SimpleDay specifications in [inventaire-client]/test/106-regex.js
-  validate: _.isSimpleDay,
+  validate: isSimpleDay,
   uniqueValue: true,
 }
 
@@ -52,13 +52,13 @@ export const positiveInteger = {
 
 export const ordinal = {
   datatype: 'string',
-  validate: _.isPositiveIntegerString,
+  validate: isPositiveIntegerString,
   uniqueValue: true,
 }
 
 export const imageHash = {
   datatype: 'image-hash',
   type: 'string',
-  validate: _.isImageHash,
+  validate: isImageHash,
   uniqueValue: true,
 }

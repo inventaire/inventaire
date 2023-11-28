@@ -1,10 +1,11 @@
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
 import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { automerge } from './automerge.js'
 
 export default async function (entity, existingTasks) {
@@ -31,7 +32,7 @@ const filterOrMergeSuggestions = (suspect, workLabels) => suggestions => {
 }
 
 const filterNewTasks = existingTasks => suggestions => {
-  const existingTasksUris = _.map(existingTasks, 'suggestionUri')
+  const existingTasksUris = map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
 
@@ -63,8 +64,8 @@ const getAuthorWorksData = async authorId => {
   //   { labels: { fr: 'Matiere et Memoire'} },
   //   { labels: { en: 'foo' } }
   // ]
-  const labels = _.uniq(works.flatMap(getEntityNormalizedTerms))
-  const langs = _.uniq(works.flatMap(getLangs))
+  const labels = uniq(works.flatMap(getEntityNormalizedTerms))
+  const langs = uniq(works.flatMap(getLangs))
   return { authorId, labels, langs }
 }
 
@@ -72,7 +73,7 @@ const getLangs = work => Object.keys(work.labels)
 
 const searchEntityDuplicatesSuggestions = async entity => {
   const name = Object.values(entity.labels)[0]
-  if (!_.isNonEmptyString(name)) return []
+  if (!isNonEmptyString(name)) return []
 
   const { hits } = await typeSearch({
     search: name,

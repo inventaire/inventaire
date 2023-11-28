@@ -1,9 +1,10 @@
-import _ from '#builders/utils'
+import { difference, map, union } from 'lodash-es'
 import { addItemsSnapshots } from '#controllers/items/lib/queries_commons'
 import dbFactory from '#db/couchdb/base'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
+import { deepCompact, forceArray } from '#lib/utils/base'
 import Item from '#models/item'
 import { filterPrivateAttributes } from './filter_private_attributes.js'
 import { addSnapshotToItem } from './snapshot/snapshot.js'
@@ -65,8 +66,8 @@ export const createItems = async (userId, items) => {
   items = items.map(item => Item.create(userId, item))
   await validateItemsAsync(items)
   const res = await db.bulk(items)
-  const itemsIds = _.map(res, 'id')
-  const shelvesIds = _.deepCompact(_.map(items, 'shelves'))
+  const itemsIds = map(res, 'id')
+  const shelvesIds = deepCompact(map(items, 'shelves'))
   const [ { docs } ] = await Promise.all([
     db.fetch(itemsIds),
     emit('user:inventory:update', userId),
@@ -115,7 +116,7 @@ export const itemsBulkUpdate = db.bulk
 export const itemsBulkDelete = db.bulkDelete
 
 const validateOwnership = (userId, items) => {
-  items = _.forceArray(items)
+  items = forceArray(items)
   for (const item of items) {
     if (item.owner !== userId) {
       throw error_.new('wrong owner', 400, { userId, itemId: item._id })
@@ -137,6 +138,6 @@ const filterWithImage = assertImage => async items => {
 const itemWithImage = item => item.snapshot['entity:image'] != null
 
 const actionFunctions = {
-  addShelves: _.union,
-  deleteShelves: _.difference,
+  addShelves: union,
+  deleteShelves: difference,
 }

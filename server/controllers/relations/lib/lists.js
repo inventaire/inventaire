@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { uniq } from 'lodash-es'
 import { getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
 import dbFactory from '#db/couchdb/base'
 import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
@@ -36,5 +36,5 @@ export const getUserFriendsAndGroupsCoMembers = async userId => {
     getUserFriends(userId),
     getUserGroupsCoMembers(userId),
   ])
-  return _.uniq(friends.concat(coMembers))
+  return uniq(friends.concat(coMembers))
 }

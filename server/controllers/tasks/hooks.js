@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { bulkDeleteTasks, getTasksBySuggestionUri, getTasksBySuspectUri, getTasksBySuspectUriAndState, updateTask } from '#controllers/tasks/lib/tasks'
 import { tap, mappedArrayPromise } from '#lib/promises'
 import { radio } from '#lib/radio'
@@ -29,12 +29,12 @@ const deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSugge
 
 const archiveTasks = tasks => {
   if (tasks.length === 0) return
-  const ids = _.map(tasks, '_id')
+  const ids = map(tasks, '_id')
   return updateTask({ ids, attribute: 'state', newValue: 'merged' })
 }
 
 const revertArchive = async uri => {
   const tasks = await getTasksBySuspectUriAndState(uri, 'merged')
-  const ids = _.map(tasks, '_id')
+  const ids = map(tasks, '_id')
   return updateTask({ ids, attribute: 'state', newValue: undefined })
 }

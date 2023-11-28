@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
 import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
 import { getUserFriends } from '#controllers/relations/lib/lists'
@@ -29,7 +29,7 @@ const belongToRequester = reqUserId => doc => {
 }
 
 const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
-  const allVisibilityKeys = _.uniq(_.map(docs, 'visibility').flat())
+  const allVisibilityKeys = uniq(map(docs, 'visibility').flat())
 
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)
   let friendsIdsPromise

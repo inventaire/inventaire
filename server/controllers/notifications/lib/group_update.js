@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { keyBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import Notification from '#models/notification'
@@ -59,5 +59,5 @@ const getNotificationUpdate = (existingNotification, newValue) => {
 const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
   const key = [ groupId, attribute ]
   const docs = await db.viewByKeys('unreadNotificationsByGroupAndAttribute', [ key ])
-  return _.keyBy(docs, 'user')
+  return keyBy(docs, 'user')
 }

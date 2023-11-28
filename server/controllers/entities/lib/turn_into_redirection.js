@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { chain, compact } from 'lodash-es'
 import { getInvEntitiesByClaimsValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
@@ -35,11 +35,11 @@ const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirect
   log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
   const removedIds = await Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
-  return _.compact(removedIds)
+  return compact(removedIds)
 }
 
 const getEntityUrisToCheck = claims => {
-  return _(claims)
+  return chain(claims)
   .pick(propertiesToCheckForPlaceholderDeletion)
   .values()
   // Merge properties arrays

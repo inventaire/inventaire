@@ -1,4 +1,5 @@
-import _ from '#builders/utils'
+import { map, property, sum, uniq } from 'lodash-es'
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { info } from '#lib/utils/logs'
 import getSerieParts from './get_serie_parts.js'
 
@@ -30,9 +31,9 @@ export async function buildPopularityByUri (uri) {
 
 const getItemsCount = async uri => {
   const items = await getItemsByEntity(uri)
-  const owners = _.map(items, 'owner')
+  const owners = map(items, 'owner')
   // Count the owners so that no more than one item per user is counted
-  return _.uniq(owners).length
+  return uniq(owners).length
 }
 
 // Limit request to local entities as Wikidata editions entities are currently ignored
@@ -42,7 +43,7 @@ const getEditionsScores = property => uri => {
   .then(editonsUris => {
     const editonsCount = editonsUris.length
     return Promise.all(editonsUris.map(getItemsCount))
-    .then(editionsItemsCounts => _.sum(editionsItemsCounts) + editonsCount)
+    .then(editionsItemsCounts => sum(editionsItemsCounts) + editonsCount)
   })
 }
 
@@ -68,13 +69,13 @@ const getAuthorWorksScores = uri => {
   })
 }
 
-const getUri = _.property('uri')
+const getUri = property('uri')
 
 const getEntitiesPopularityTotal = uris => {
   return getEntitiesPopularities({ uris, refresh: true })
   .then(Object.values)
   // Total = sum of all popularities + number of subentities
-  .then(results => _.sum(results) + results.length)
+  .then(results => sum(results) + results.length)
 }
 
 const popularityGettersByType = {
@@ -88,6 +89,6 @@ const popularityGettersByType = {
 // Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 // level of popularity
 const addBonusPoints = (uri, score) => {
-  if (_.isWdEntityUri(uri)) return score + 2
+  if (isWdEntityUri(uri)) return score + 2
   else return score
 }

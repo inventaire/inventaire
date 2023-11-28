@@ -1,5 +1,4 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
 import 'should'
 import {
   createWork,
@@ -12,12 +11,13 @@ import {
   generateIsbn13h,
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
+import { forceArray } from '#lib/utils/base'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const resolveAndUpdate = entries => {
-  entries = _.forceArray(entries)
+  entries = forceArray(entries)
   return authReq('post', '/api/entities?action=resolve', {
     entries,
     update: true,

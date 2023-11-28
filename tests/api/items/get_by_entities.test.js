@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map, uniq } from 'lodash-es'
 import { publicReq } from '#tests/api/utils/utils'
 import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
 
@@ -15,9 +15,9 @@ describe('items:get-by-entities', () => {
       createItemWithEditionAndWork(),
       createItemWithEditionAndWork(),
     ])
-    const uris = _.uniq(_.map(items, 'entity'))
+    const uris = uniq(map(items, 'entity'))
     const res = await publicReq('get', `/api/items?action=by-entities&uris=${uris.join('|')}`)
-    const resUserIds = _.uniq(_.map(res.items, 'entity'))
+    const resUserIds = uniq(map(res.items, 'entity'))
     resUserIds.should.containDeep(uris)
   })
 })

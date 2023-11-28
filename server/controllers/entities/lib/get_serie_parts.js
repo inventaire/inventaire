@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { flatten } from 'lodash-es'
 import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
@@ -19,7 +19,7 @@ export default params => {
   if (useCacheRelations) promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
 
   return Promise.all(promises)
-  .then(_.flatten)
+  .then(flatten)
   // There might be duplicates, mostly due to temporarily cached relations
   .then(uniqByUri)
   .then(results => ({

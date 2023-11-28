@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { pick } from 'lodash-es'
 import { setUserStableUsername } from '#controllers/user/lib/user'
 import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
@@ -15,7 +15,7 @@ const controller = async (params, req, res) => {
     if (attributesShortlist.includes('stableUsername')) {
       await setUserStableUsername(userData)
     }
-    return _.pick(userData, attributesShortlist)
+    return pick(userData, attributesShortlist)
   } else {
     return userData
   }

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { map } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
@@ -31,7 +31,7 @@ export default async (userId, fromId) => {
 }
 
 const findVersionBeforeRedirect = patches => {
-  const versions = _.map(patches, 'snapshot')
+  const versions = map(patches, 'snapshot')
   const lastVersion = versions.at(-1)
   if (lastVersion.redirect == null) {
     throw error_.new("last version isn't a redirection", 400, lastVersion)

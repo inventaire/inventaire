@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isArray, isNumber } from 'lodash-es'
 import { imgUrlBuilder } from '#lib/emails/app_api'
 import { log } from '#lib/utils/logs'
 import * as i18nHelpers from './i18n/i18n.js'
@@ -28,12 +28,12 @@ export default Object.assign({}, i18nHelpers, {
 })
 
 const onePictureOnly = arg => {
-  if (_.isArray(arg)) return arg[0]
+  if (isArray(arg)) return arg[0]
   else return arg
 }
 
 const getImgDimension = (dimension, defaultValue) => {
-  if (_.isNumber(dimension)) return dimension
+  if (isNumber(dimension)) return dimension
   else return defaultValue
 }
 

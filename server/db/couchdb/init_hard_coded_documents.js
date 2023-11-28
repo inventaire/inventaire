@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isEqual } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { success } from '#lib/utils/logs'
@@ -31,7 +31,7 @@ const updateDoc = async (db, doc) => {
     // and, if not, so that we can use db.put
     const docPath = `${db.name}/${id}`
     doc._rev = currentDoc._rev
-    if (!_.isEqual(currentDoc, doc)) {
+    if (!isEqual(currentDoc, doc)) {
       const res = await db.put(doc)
       success(res, `${docPath} updated`)
     }

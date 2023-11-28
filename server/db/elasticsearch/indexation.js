@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { throttle } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
 import { addToBatch, postBatch } from './bulk.js'
 import deindex from './deindex.js'
@@ -50,4 +50,4 @@ const postAndReset = () => {
   batch = []
 }
 
-const lazyPostAndReset = _.throttle(postAndReset, bulkThrottleDelay, { leading: false })
+const lazyPostAndReset = throttle(postAndReset, bulkThrottleDelay, { leading: false })

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { cloneDeep } from 'lodash-es'
 import Element from '#models/element'
 import 'should'
 
@@ -30,14 +30,14 @@ describe('element model', () => {
 
     describe('mandatory attributes', () => {
       it('should throw on missing uri', () => {
-        const invalidListing = _.cloneDeep(validListing)
+        const invalidListing = cloneDeep(validListing)
         delete invalidListing.uri
         const creator = () => Element.create(invalidListing)
         creator.should.throw()
       })
 
       it('should throw on missing listing', () => {
-        const invalidListing = _.cloneDeep(validListing)
+        const invalidListing = cloneDeep(validListing)
         delete invalidListing.list
         const creator = () => Element.create(invalidListing)
         creator.should.throw()

@@ -1,8 +1,9 @@
 import { setDocsDeletedTrue } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
+import { forceArray } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 
-export default (db, _) => {
+export function couchdbBundlesFactory (db) {
   const actionAndReturn = (verb, doc) => {
     assert_.object(doc)
     return db[verb](doc)
@@ -18,7 +19,7 @@ export default (db, _) => {
 
   return {
     byIds: async ids => {
-      ids = _.forceArray(ids)
+      ids = forceArray(ids)
       const { docs } = await db.fetch(ids)
       return docs
     },

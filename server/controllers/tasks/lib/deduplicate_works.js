@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { isEqual, map } from 'lodash-es'
 import getInvEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
@@ -21,7 +21,7 @@ export default async (workUri, isbn, userId) => {
   const editionsRes = await getInvEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
-  if (_.isEqual(editionWorksUris, [ workUri ])) return
+  if (isEqual(editionWorksUris, [ workUri ])) return
 
   const editionWorks = await getEntitiesList(editionWorksUris)
   const suggestions = await getSuggestionsOrAutomerge(work, editionWorks, userId)
@@ -29,7 +29,7 @@ export default async (workUri, isbn, userId) => {
   if (suggestions.length === 0) return
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
-  newSuggestions = _.map(newSuggestions, addToSuggestion(userId, isbn))
+  newSuggestions = map(newSuggestions, addToSuggestion(userId, isbn))
   return createTask(workUri, 'deduplicate', work.type, newSuggestions)
 }
 
@@ -48,7 +48,7 @@ const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
 const getExistingTasks = uri => getTasksBySuspectUris([ uri ])
 
 const filterNewTasks = (existingTasks, suggestions) => {
-  const existingTasksUris = _.map(existingTasks, 'suggestionUri')
+  const existingTasksUris = map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
 

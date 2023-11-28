@@ -1,5 +1,5 @@
+import { isString } from 'lodash-es'
 import { isPropertyId } from 'wikibase-sdk'
-import _ from '#builders/utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
@@ -50,7 +50,7 @@ const buildKey = (queryName, params) => {
   for (const k of queries[queryName].parameters) {
     let value = params[k]
     // Known case: resolve_external_ids expects an array of [ property, value ] pairs
-    if (!_.isString(value)) value = JSON.stringify(value)
+    if (!isString(value)) value = JSON.stringify(value)
     key += `:${value}`
   }
   return key

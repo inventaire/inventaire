@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { get, omit, pick, without } from 'lodash-es'
 import { passwords as pw_ } from '#lib/crypto'
 import { error_ } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
@@ -96,7 +96,7 @@ const withHashedPassword = async user => {
 User.attributes = userAttributes
 
 User.softDelete = userDoc => {
-  const userSouvenir = _.pick(userDoc, User.attributes.critical)
+  const userSouvenir = pick(userDoc, User.attributes.critical)
   userSouvenir.type = 'deletedUser'
   userSouvenir.deleted = Date.now()
   return userSouvenir
@@ -112,7 +112,7 @@ User.updateEmail = (doc, email) => {
 
 User.updatePassword = (user, newHash) => {
   user.password = newHash
-  user = _.omit(user, 'resetPassword')
+  user = omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side
   // for users originally created with browserid if they ask for a password reset
   if (user.creationStrategy === 'browserid') { user.hasPassword = true }
@@ -160,7 +160,7 @@ User.removeRole = role => user => {
     throw error_.new('unknown role', 400)
   }
   user.roles = user.roles || []
-  user.roles = _.without(user.roles, role)
+  user.roles = without(user.roles, role)
   return user
 }
 
@@ -172,7 +172,7 @@ User.setStableUsername = user => {
 }
 
 User.shouldBeAnonymized = user => {
-  const userSetting = _.get(user, 'settings.contributions.anonymize')
+  const userSetting = get(user, 'settings.contributions.anonymize')
   return userSetting !== false
 }
 

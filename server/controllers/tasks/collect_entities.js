@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { difference, map } from 'lodash-es'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import dbFactory from '#db/couchdb/base'
@@ -61,7 +61,7 @@ const getFilteredUris = async (uris, refresh) => {
   else return filterNotAlreadySuspectEntities(uris)
 }
 
-const getUris = rows => _.map(rows, 'id').map(prefixifyInv)
+const getUris = rows => map(rows, 'id').map(prefixifyInv)
 
 const deduplicateWorker = async (jobId, uri) => {
   try {
@@ -81,8 +81,8 @@ const deduplicateWorker = async (jobId, uri) => {
 
 const filterNotAlreadySuspectEntities = async uris => {
   const { rows } = await getTasksBySuspectUris(uris, { includeArchived: true })
-  const alreadyCheckedUris = _.map(rows, 'suspectUri')
-  return _.difference(uris, alreadyCheckedUris)
+  const alreadyCheckedUris = map(rows, 'suspectUri')
+  return difference(uris, alreadyCheckedUris)
 }
 
 export default { sanitization, controller }

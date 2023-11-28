@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { times } from 'lodash-es'
 import { createRandomizedItems } from './items.js'
 import { createUser } from './users.js'
 
@@ -8,13 +8,13 @@ const publicItemsPerUser = 10
 
 export const populate = () => {
   if (populatePromise) return populatePromise
-  populatePromise = Promise.all(_.times(usersCount, createUserWithItems))
+  populatePromise = Promise.all(times(usersCount, createUserWithItems))
   return populatePromise
 }
 
 export const createUserWithItems = async (userData, itemsData = []) => {
   const user = await createUser(userData)
-  itemsData = _.times(publicItemsPerUser, i => itemsData[i] || {})
+  itemsData = times(publicItemsPerUser, i => itemsData[i] || {})
   await createRandomizedItems(user, itemsData)
   return user
 }

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { groupBy, map } from 'lodash-es'
 import { paginate } from '#controllers/items/lib/queries_commons'
 import { getElementsByListings } from '#controllers/listings/lib/elements'
 import { getListingsByCreators } from '#controllers/listings/lib/listings'
@@ -31,9 +31,9 @@ const controller = async ({ users, offset, limit, context, withElements, reqUser
 }
 
 const assignElementsToLists = async authorizedListings => {
-  const authorizedListingsIds = authorizedListings.map(_.property('_id'))
+  const authorizedListingsIds = map(authorizedListings, '_id')
   const foundElements = await getElementsByListings(authorizedListingsIds)
-  const elementsByList = _.groupBy(foundElements, 'list')
+  const elementsByList = groupBy(foundElements, 'list')
   authorizedListings.forEach(assignElementsToList(elementsByList))
 }
 

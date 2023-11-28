@@ -1,5 +1,6 @@
-import _ from '#builders/utils'
+import { flatten, identity, intersection, uniq } from 'lodash-es'
 import typeSearch from '#controllers/search/lib/type_search'
+import { someMatch } from '#lib/utils/base'
 import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
 import getAuthorsUris from '../get_authors_uris.js'
 import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources.js'
@@ -30,8 +31,8 @@ const searchAuthorAndResolve = works => async author => {
 
 const searchAuthorsBySeedAuthorTerms = terms => {
   return Promise.all(terms.map(searchUrisByAuthorTerm))
-  .then(_.flatten)
-  .then(_.uniq)
+  .then(flatten)
+  .then(uniq)
 }
 
 const types = [ 'humans' ]
@@ -42,7 +43,7 @@ const searchUrisByAuthorTerm = async term => {
   // Exact match on normalized author terms
   .filter(hit => getEntityNormalizedTerms(hit._source).includes(term))
   .map(hit => hit._source.uri)
-  .filter(_.identity)
+  .filter(identity)
 }
 
 const resolveWorksAndAuthor = async (works, author, foundAuthorsUris) => {
@@ -61,7 +62,7 @@ const resolveWorkAndAuthor = (foundAuthorsUris, authorSeed, workSeed, workTerms,
   // Several foundAuthorsWorks could match authors homonyms/duplicates
   if (matchingSearchedWorks.length !== 1) return
   const matchingWork = matchingSearchedWorks[0]
-  const matchedAuthorsUris = _.intersection(getAuthorsUris(matchingWork), foundAuthorsUris)
+  const matchedAuthorsUris = intersection(getAuthorsUris(matchingWork), foundAuthorsUris)
   // If unique author to avoid assigning a work to a duplicated author
   if (matchedAuthorsUris.length !== 1) return
   authorSeed.uri = matchedAuthorsUris[0]
@@ -70,12 +71,12 @@ const resolveWorkAndAuthor = (foundAuthorsUris, authorSeed, workSeed, workTerms,
 
 const isMatchingWork = workTerms => searchedWork => {
   const searchedWorkTerms = getEntityNormalizedTerms(searchedWork)
-  return _.someMatch(workTerms, searchedWorkTerms)
+  return someMatch(workTerms, searchedWorkTerms)
 }
 
 const resolveAuthorFromExternalWorksTerms = async (authorSeed, worksSeeds, foundAuthorsUris) => {
-  const worksLabels = _.uniq(worksSeeds.flatMap(getLabels))
-  const worksLabelsLangs = _.uniq(worksSeeds.flatMap(getLabelsLangs))
+  const worksLabels = uniq(worksSeeds.flatMap(getLabels))
+  const worksLabelsLangs = uniq(worksSeeds.flatMap(getLabelsLangs))
   const authorsUrisWithOccurrences = await Promise.all(foundAuthorsUris.map(getOccurrences(worksLabels, worksLabelsLangs)))
   const matchingAuthors = authorsUrisWithOccurrences
     .filter(({ occurrences }) => hasConvincingOccurrences(occurrences))

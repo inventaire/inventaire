@@ -27,7 +27,7 @@ export const wrap = (res, key, data) => {
 }
 
 // FROM: .then (users)-> res.json { users }
-// TO: .then _.Wrap(res, 'users')
+// TO: .then Wrap(res, 'users')
 export const Wrap = (res, key) => data => wrap(res, key, data)
 
 export const send = (res, data) => {

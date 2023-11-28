@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { compact, map } from 'lodash-es'
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user/lib/user'
 import { catchDisabledEmails, getGroupAndUsersData, getParsedUsersIndexedByIds } from '#lib/emails/helpers'
@@ -49,12 +49,12 @@ export default {
   groupJoinRequest: async (groupId, requestingUserId) => {
     const group = await getGroupById(groupId)
     if (group.open) return
-    const adminsIds = _.map(group.admins, 'user')
+    const adminsIds = map(group.admins, 'user')
     const admins = await getUsersByIds(adminsIds)
     const userData = await getUserById(requestingUserId)
     let emails = admins.map(email_.GroupJoinRequest(userData, group))
     // Remove emails aborted due to user settings
-    emails = _.compact(emails)
+    emails = compact(emails)
     return sendSequentially(emails, 'groupJoinRequest')
   },
 

@@ -1,4 +1,4 @@
-import _ from '#builders/utils'
+import { clone, isEqual } from 'lodash-es'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/listing.js'
@@ -36,14 +36,14 @@ export default {
         throw error_.new(`invalid attribute: ${attr}`, 400, oldListing)
       }
     }
-    const updatedListing = _.clone(oldListing)
+    const updatedListing = clone(oldListing)
     for (const attr of Object.keys(newAttributes)) {
       const newVal = newAttributes[attr] || defaultValues[attr]
       validations.pass(attr, newVal)
       updatedListing[attr] = newVal
     }
 
-    if (_.isEqual(updatedListing, oldListing)) {
+    if (isEqual(updatedListing, oldListing)) {
       throw error_.new('nothing to update', 400, newAttributes)
     }
     updatedListing.updated = Date.now()

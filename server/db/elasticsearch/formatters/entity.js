@@ -1,5 +1,5 @@
+import { chain, isArray, pick } from 'lodash-es'
 import { isPropertyId, simplifyAliases, simplifyDescriptions, simplifyLabels } from 'wikibase-sdk'
-import _ from '#builders/utils'
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
@@ -141,9 +141,9 @@ const dropPlural = type => {
 const flattenTerms = (terms, mainFieldsWords) => {
   terms = Object.values(terms)
   // Required for aliases
-  if (_.isArray(terms[0])) terms = terms.flat()
+  if (isArray(terms[0])) terms = terms.flat()
 
-  return _.chain(terms)
+  return chain(terms)
     .flatMap(term => term.split(' '))
     .filter(word => !mainFieldsWords.has(word.toLowerCase()))
     .uniq()
@@ -153,14 +153,14 @@ const flattenTerms = (terms, mainFieldsWords) => {
 
 // Reject terms langs not used by inventaire-i18n, as entity object indexation shall be less than 1000 keys long
 // See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
-const removeUnusedLangs = terms => _.pick(terms, activeI18nLangs)
+const removeUnusedLangs = terms => pick(terms, activeI18nLangs)
 
 const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
   const labelsTerms = Object.values(labels)
   const descriptionsTerms = Object.values(descriptions)
   const aliasesTerms = Object.values(aliases).flat()
   const allTerms = labelsTerms.concat(descriptionsTerms, aliasesTerms)
-  return _.chain(allTerms)
+  return chain(allTerms)
     .flatMap(term => term.toLowerCase().split(' '))
     .uniq()
     .value()
@@ -169,7 +169,7 @@ const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
 const getRelationsTerms = async ({ type, claims }) => {
   const indexedRelations = indexedRelationsPerType[type]
   if (!indexedRelations) return ''
-  const relationsUris = Object.values(_.pick(claims, indexedRelations)).flat()
+  const relationsUris = Object.values(pick(claims, indexedRelations)).flat()
   const relationsEntities = await getEntitiesList(relationsUris)
   return relationsEntities.map(getEntityTerms).flat().join(' ')
 }

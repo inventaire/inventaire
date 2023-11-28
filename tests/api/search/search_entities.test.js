@@ -1,5 +1,5 @@
 import 'should'
-import _ from '#builders/utils'
+import { map, uniq } from 'lodash-es'
 import elasticsearchSettings from '#db/elasticsearch/settings/settings'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
@@ -54,14 +54,14 @@ describe('search:entities', () => {
       it('should return results that contains the exact searched words', async () => {
         const humanLabel = human.labels.en
         const results = await search({ types: 'humans', search: humanLabel, exact: true })
-        _.map(results, 'uri').should.containEql(human.uri)
+        map(results, 'uri').should.containEql(human.uri)
       })
 
       it('should not return results that do not contain the exact searched words', async () => {
         const humanLabel = human.labels.en
         const humanLabelWithoutLastLetter = humanLabel.slice(0, -1)
         const results = await search({ types: 'humans', search: humanLabelWithoutLastLetter, exact: true })
-        _.map(results, 'uri').should.not.containEql(human.uri)
+        map(results, 'uri').should.not.containEql(human.uri)
       })
 
       it('should reject types that are not entity related', async () => {
@@ -102,8 +102,8 @@ describe('search:entities', () => {
 
         const results = await search({ types: 'humans', search: humanLabel, lang: 'en', exact: true })
         results.should.be.an.Array()
-        const labelsInResults = results.map(_.property('label'))
-        _.uniq(labelsInResults).should.deepEqual([ humanLabel ])
+        const labelsInResults = map(results, 'label')
+        uniq(labelsInResults).should.deepEqual([ humanLabel ])
       })
 
       it('should not match on descriptions', async () => {
@@ -121,7 +121,7 @@ describe('search:entities', () => {
         const work = await createWork({ labels: { fr: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
-        _.map(results, 'uri').should.containEql(work.uri)
+        map(results, 'uri').should.containEql(work.uri)
       })
 
       it('should find a label with single letter words', async () => {
@@ -129,7 +129,7 @@ describe('search:entities', () => {
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', exact: true, filter: 'inv' })
-        _.map(results, 'uri').should.containEql(work.uri)
+        map(results, 'uri').should.containEql(work.uri)
       })
 
       it('should ignore the case', async () => {
@@ -139,7 +139,7 @@ describe('search:entities', () => {
         const work = await createWork({ labels: { fr: label.toLowerCase() } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'fr', exact: true })
-        _.map(results, 'uri').should.containEql(work.uri)
+        map(results, 'uri').should.containEql(work.uri)
       })
 
       it('should find a label containing terms longer than the autocomplete max ngram', async () => {
@@ -148,7 +148,7 @@ describe('search:entities', () => {
         const work = await createWork({ labels: { de: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'de', exact: true })
-        _.map(results, 'uri').should.containEql(work.uri)
+        map(results, 'uri').should.containEql(work.uri)
       })
 
       // This test is known to occasionally fail
@@ -166,8 +166,8 @@ describe('search:entities', () => {
           search({ types: 'works', search: label, lang: 'es', exact: true }),
           search({ types: 'works', search: label, lang: 'fr', exact: true }),
         ])
-        const resultsEsUris = _.map(resultsEs, 'uri')
-        const resultsFrUris = _.map(resultsFr, 'uri')
+        const resultsEsUris = map(resultsEs, 'uri')
+        const resultsFrUris = map(resultsFr, 'uri')
         resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
         resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
       })
@@ -178,7 +178,7 @@ describe('search:entities', () => {
         const doc = await getIndexedDoc('wikidata', 'Q42490')
         const firstTwoFlattenedLabelsWords = doc._source.flattenedLabels.split(' ').slice(0, 2).join(' ')
         const results = await search({ types: 'series', search: firstTwoFlattenedLabelsWords, limit: 100 })
-        _.map(results, 'uri').should.containEql('wd:Q42490')
+        map(results, 'uri').should.containEql('wd:Q42490')
       })
 
       it('should find a label with single letter words', async () => {
@@ -186,7 +186,7 @@ describe('search:entities', () => {
         const work = await createWork({ labels: { en: label } })
         await waitForIndexation('entities', work._id)
         const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
-        _.map(results, 'uri').should.containEql(work.uri)
+        map(results, 'uri').should.containEql(work.uri)
       })
 
       it('should favor matches in the requested language', async () => {
@@ -203,8 +203,8 @@ describe('search:entities', () => {
           search({ types: 'works', search: label, lang: 'es' }),
           search({ types: 'works', search: label, lang: 'fr' }),
         ])
-        const resultsEsUris = _.map(resultsEs, 'uri')
-        const resultsFrUris = _.map(resultsFr, 'uri')
+        const resultsEsUris = map(resultsEs, 'uri')
+        const resultsFrUris = map(resultsFr, 'uri')
         resultsEsUris.indexOf(workEs.uri).should.be.below(resultsEsUris.indexOf(workFr.uri))
         resultsFrUris.indexOf(workEs.uri).should.be.above(resultsFrUris.indexOf(workFr.uri))
       })
@@ -228,7 +228,7 @@ describe('search:entities', () => {
         humanAScore.should.be.above(humanBScore + 2)
         const minScore = Math.trunc(humanAScore - 1)
         const resultsWithMinScore = await search({ types: 'humans', search: label, lang: 'en', filter: 'inv', minScore })
-        const foundIds = _.map(resultsWithMinScore, 'id')
+        const foundIds = map(resultsWithMinScore, 'id')
         foundIds.should.containEql(humanA._id)
         foundIds.should.not.containEql(humanB._id)
       })
@@ -265,7 +265,7 @@ describe('search:entities', () => {
       const results = await search('humans', 'Gilles Deleuze')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('humans'))
-      _.map(results, 'id').includes('Q184226').should.be.true()
+      map(results, 'id').includes('Q184226').should.be.true()
     })
 
     it('should return a local human', async () => {
@@ -273,7 +273,7 @@ describe('search:entities', () => {
       const results = await search('humans', humanLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('humans'))
-      _.map(results, 'id').includes(human._id).should.be.true()
+      map(results, 'id').includes(human._id).should.be.true()
     })
   })
 
@@ -283,14 +283,14 @@ describe('search:entities', () => {
       const results = await search('works', workLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('works'))
-      _.map(results, 'id').includes(work._id).should.be.true()
+      map(results, 'id').includes(work._id).should.be.true()
     })
 
     it('should return a wikidata work', async () => {
       const results = await search('works', 'Les Misérables')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('works'))
-      _.map(results, 'id').includes('Q180736').should.be.true()
+      map(results, 'id').includes('Q180736').should.be.true()
     })
 
     it('should find a work by its author name', async () => {
@@ -299,7 +299,7 @@ describe('search:entities', () => {
       const work = await createWorkWithAuthor(human)
       await waitForIndexation('entities', work._id)
       const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
-      const foundIds = _.map(results, 'id')
+      const foundIds = map(results, 'id')
       foundIds.should.containEql(work._id)
     })
 
@@ -309,7 +309,7 @@ describe('search:entities', () => {
       const work = await createWorkWithSerie(serie)
       await waitForIndexation('entities', work._id)
       const results = await search({ types: 'works', search: label, lang: 'en', filter: 'inv' })
-      const foundIds = _.map(results, 'id')
+      const foundIds = map(results, 'id')
       foundIds.should.containEql(work._id)
     })
   })
@@ -320,14 +320,14 @@ describe('search:entities', () => {
       const results = await search('series', serieLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
-      _.map(results, 'id').includes(serie._id).should.be.true()
+      map(results, 'id').includes(serie._id).should.be.true()
     })
 
     it('should return a wikidata serie', async () => {
       const results = await search('series', 'Adamsberg')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('series'))
-      _.map(results, 'id').includes('Q27536277').should.be.true()
+      map(results, 'id').includes('Q27536277').should.be.true()
     })
 
     it('should find a serie by its author name', async () => {
@@ -336,7 +336,7 @@ describe('search:entities', () => {
       const serie = await createSerieWithAuthor({ human })
       await waitForIndexation('entities', serie._id)
       const results = await search({ types: 'series', search: label, lang: 'en', filter: 'inv' })
-      const foundIds = _.map(results, 'id')
+      const foundIds = map(results, 'id')
       foundIds.should.containEql(serie._id)
     })
   })
@@ -350,14 +350,14 @@ describe('search:entities', () => {
       const results = await search({ types: 'collections', search: collectionLabel, filter: 'inv' })
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('collections'))
-      _.map(results, 'id').includes(collection._id).should.be.true()
+      map(results, 'id').includes(collection._id).should.be.true()
     })
 
     it('should return a wikidata collection', async () => {
       const results = await search('collections', 'Présence du futur')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('collections'))
-      _.map(results, 'id').includes('Q3409094').should.be.true()
+      map(results, 'id').includes('Q3409094').should.be.true()
     })
 
     it('should find a collection by its publisher name', async () => {
@@ -370,7 +370,7 @@ describe('search:entities', () => {
       })
       await waitForIndexation('entities', collection._id)
       const results = await search({ types: 'collections', search: label, lang: 'en', filter: 'inv' })
-      const foundIds = _.map(results, 'id')
+      const foundIds = map(results, 'id')
       foundIds.should.containEql(collection._id)
     })
   })
@@ -381,14 +381,14 @@ describe('search:entities', () => {
       const results = await search('publishers', publisherLabel)
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('publishers'))
-      _.map(results, 'id').includes(publisher._id).should.be.true()
+      map(results, 'id').includes(publisher._id).should.be.true()
     })
 
     it('should return a wikidata publisher', async () => {
       const results = await search('publishers', 'Les liens qui libèrent')
       results.should.be.an.Array()
       results.forEach(result => result.type.should.equal('publishers'))
-      _.map(results, 'id').includes('Q3236382').should.be.true()
+      map(results, 'id').includes('Q3236382').should.be.true()
     })
   })
 
@@ -397,12 +397,12 @@ describe('search:entities', () => {
       const types = [ 'works', 'series' ]
       const results = await search({ types, search: serie.labels.en, limit: 20 })
       results.forEach(result => types.should.containEql(result.type))
-      _.map(results, 'id').includes(serie._id).should.be.true()
+      map(results, 'id').includes(serie._id).should.be.true()
     })
   })
 
   it('should find a label with diacritics without those diacritics', async () => {
     const results = await search({ types: 'publishers', search: 'liberent', filter: 'wd' })
-    _.map(results, 'uri').should.containEql('wd:Q3236382')
+    map(results, 'uri').should.containEql('wd:Q3236382')
   })
 })

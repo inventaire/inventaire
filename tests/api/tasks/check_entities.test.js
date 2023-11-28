@@ -1,5 +1,5 @@
-import _ from '#builders/utils'
 import 'should'
+import { map, uniq } from 'lodash-es'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createHuman, createWork } from '../fixtures/entities.js'
 import { findOrIndexEntities, deleteByUris } from '../utils/entities.js'
@@ -42,7 +42,7 @@ describe('tasks:check-entities', () => {
     await checkEntities(human.uri)
     await checkEntities(human.uri)
     const tasks = await getBySuspectUri(human.uri)
-    const uniqSuggestiontUris = _.uniq(_.map(tasks, 'suggestionUri'))
+    const uniqSuggestiontUris = uniq(map(tasks, 'suggestionUri'))
     tasks.length.should.equal(uniqSuggestiontUris.length)
   })
 

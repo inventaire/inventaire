@@ -1,14 +1,15 @@
-import _ from '#builders/utils'
+import { pick } from 'lodash-es'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { objLength, pickOne } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
 export default claims => {
-  const langPropertiesClaims = _.pick(claims, langProperties)
-  if (_.objLength(langPropertiesClaims) === 0) return
+  const langPropertiesClaims = pick(claims, langProperties)
+  if (objLength(langPropertiesClaims) === 0) return
 
-  const someLangPropertyClaims = _.pickOne(langPropertiesClaims)
+  const someLangPropertyClaims = pickOne(langPropertiesClaims)
   const originalLangUri = someLangPropertyClaims[0]
   if (originalLangUri != null) {
     const wdId = unprefixify(originalLangUri)

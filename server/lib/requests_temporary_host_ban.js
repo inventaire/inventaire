@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import _ from '#builders/utils'
+import { debounce, noop } from 'lodash-es'
 import leveldbFactory from '#db/level/get_sub_db'
 import { error_ } from '#lib/error/error'
 import { serverMode } from '#lib/server_mode'
@@ -70,6 +70,6 @@ const backup = () => {
   .catch(LogError('hosts bans data backup err'))
 }
 
-const lazyBackup = serverMode ? _.debounce(backup, 60 * 1000) : _.noop
+const lazyBackup = serverMode ? debounce(backup, 60 * 1000) : noop
 
 if (serverMode) restoreBanData()
