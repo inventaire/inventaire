@@ -22,7 +22,11 @@ describe('temporarily cache relations', () => {
     const someAuthorUri = 'wd:Q1345582'
     const { uri: workUri } = await createWorkWithAuthor({ uri: someAuthorUri })
     await cacheEntityRelations(workUri)
-    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', identity)
+    const cachedRelationsEntity = await getCachedRelations({
+      valueUri: someAuthorUri,
+      properties: [ 'wdt:P50' ],
+      formatEntity: identity,
+    })
     map(cachedRelationsEntity, 'uri').should.containEql(workUri)
   })
 
@@ -30,7 +34,11 @@ describe('temporarily cache relations', () => {
     const someSerieUri = 'wd:Q3656893'
     const { uri: workUri } = await createWorkWithSerie({ uri: someSerieUri })
     await cacheEntityRelations(workUri)
-    const cachedRelationsEntity = await getCachedRelations(someSerieUri, 'wdt:P179', identity)
+    const cachedRelationsEntity = await getCachedRelations({
+      valueUri: someSerieUri,
+      properties: [ 'wdt:P179' ],
+      formatEntity: identity,
+    })
     map(cachedRelationsEntity, 'uri').should.containEql(workUri)
   })
 
@@ -58,7 +66,11 @@ describe('temporarily cache relations', () => {
     await cacheEntityRelations(workUri)
     const { uri: otherWorkUri } = await createWork()
     await merge(workUri, otherWorkUri)
-    const cachedRelationsEntity = await getCachedRelations(someAuthorUri, 'wdt:P50', identity)
+    const cachedRelationsEntity = await getCachedRelations({
+      valueUri: someAuthorUri,
+      properties: [ 'wdt:P50' ],
+      formatEntity: identity,
+    })
     map(cachedRelationsEntity, 'uri').should.containEql(otherWorkUri)
   })
 

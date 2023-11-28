@@ -31,7 +31,11 @@ export function getAuthorWorks (params) {
 
   promises.push(getInvAuthorWorks(uri))
 
-  promises.push(getCachedRelations(uri, 'wdt:P50', formatEntity))
+  promises.push(getCachedRelations({
+    properties: authorRelationsProperties,
+    valueUri: uri,
+    formatEntity,
+  }))
 
   return Promise.all(promises)
   .then(flatten)

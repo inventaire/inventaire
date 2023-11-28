@@ -1,4 +1,4 @@
-import { compact, map } from 'lodash-es'
+import { compact, map, pick, uniq } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
@@ -27,17 +27,25 @@ export async function cacheEntityRelations (invEntityUri) {
   return Promise.all(promises)
 }
 
-export async function getCachedRelations (valueUri, property, formatEntity) {
-  const subjectUris = await entitiesRelationsTemporaryCache.get(property, valueUri)
+export async function getCachedRelations ({ valueUri, properties, formatEntity }) {
+  const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
-  let entities = await getEntitiesByUris({ uris: subjectUris, list: true, refresh: true })
-  entities = await Promise.all(entities.map(relationIsConfirmedByPrimaryData(property, valueUri)))
+  let entities = await getEntitiesByUris({ uris: subjectsUris, list: true, refresh: true })
+  entities = await Promise.all(entities.map(relationIsConfirmedByPrimaryData(properties, valueUri)))
   return compact(entities).map(formatEntity)
 }
 
-export const relationIsConfirmedByPrimaryData = (property, valueUri) => async entity => {
+async function getSubjectsUris (valueUri, properties) {
+  const subjectsUris = await Promise.all(properties.map(property => {
+    return entitiesRelationsTemporaryCache.get(property, valueUri)
+  }))
+  return uniq(subjectsUris.flat())
+}
+
+export const relationIsConfirmedByPrimaryData = (properties, valueUri) => async entity => {
+  const relationsUris = uniq(Object.values(pick(entity.claims, properties)).flat())
   // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
-  const canonicalValuesUris = await getResolvedUris(entity.claims[property])
+  const canonicalValuesUris = await getResolvedUris(relationsUris)
   if (canonicalValuesUris.includes(valueUri)) return entity
 }
 
@@ -52,8 +60,8 @@ export async function redirectCachedRelations (fromUri, toUri) {
 }
 
 const redirectPropertyCachedRelations = (fromUri, toUri) => async property => {
-  const subjectUris = await entitiesRelationsTemporaryCache.get(property, fromUri)
-  await Promise.all(subjectUris.flatMap(subjectUri => {
+  const subjectsUris = await entitiesRelationsTemporaryCache.get(property, fromUri)
+  await Promise.all(subjectsUris.flatMap(subjectUri => {
     return [
       entitiesRelationsTemporaryCache.set(subjectUri, property, toUri),
       entitiesRelationsTemporaryCache.del(subjectUri, property, fromUri),
