@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByIsbns } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import getResolvedEntry from '#data/dataseed/get_resolved_entry'
 import { parseIsbn } from '#lib/isbn/parse'
@@ -9,7 +9,7 @@ export default async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { autocreate } = params
   // search entities by isbn locally
-  let entities = await getEntitiesByIsbns(isbns)
+  let entities = await getInvEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = _.difference(isbns, foundIsbns)
 

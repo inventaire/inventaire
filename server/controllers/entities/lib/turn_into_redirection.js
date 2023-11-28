@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaimsValue, getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaimsValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -17,7 +17,7 @@ export default async ({ userId, fromId, toUri, previousToUri, context }) => {
   // If an author has no more links to it, remove it
   const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
   const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
-  await putEntityUpdate({
+  await putInvEntityUpdate({
     userId,
     currentDoc: currentFromDoc,
     updatedDoc: updatedFromDoc,
@@ -58,7 +58,7 @@ const deleteIfIsolated = (userId, fromId) => async entityUri => {
   // Ignore wd or isbn entities
   if (prefix !== 'inv') return
 
-  let results = await getEntitiesByClaimsValue(entityUri)
+  let results = await getInvEntitiesByClaimsValue(entityUri)
   results = results.filter(result => result.entity !== fromId)
   if (results.length === 0) return removePlaceholder(userId, entityId)
 }

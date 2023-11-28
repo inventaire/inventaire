@@ -1,4 +1,4 @@
-import { getEntityByIsbn } from '#controllers/entities/lib/entities'
+import { getInvEntityByIsbn } from '#controllers/entities/lib/entities'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
 import { resolveExternalIds } from './resolve_external_ids.js'
 // Do not try to resolve edition on Wikidata while Wikidata editions are in quarantine
@@ -22,7 +22,7 @@ export default entry => {
 const resolveByIsbn = async isbn => {
   if (isbn == null) return
   // Resolve directly on the database to avoid making undersired requests to dataseed
-  const edition = await getEntityByIsbn(isbn)
+  const edition = await getInvEntityByIsbn(isbn)
   if (edition != null) return getInvEntityCanonicalUri(edition)
 }
 

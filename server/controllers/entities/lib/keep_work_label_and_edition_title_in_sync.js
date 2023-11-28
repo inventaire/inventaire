@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { warn, info, LogError } from '#lib/utils/logs'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
@@ -36,7 +36,7 @@ export default (edition, oldTitle) => {
 }
 
 const fetchLangConsensusTitle = async (workUri, editionLang) => {
-  const editions = await getEntitiesByClaim('wdt:P629', workUri, true, true)
+  const editions = await getInvEntitiesByClaim('wdt:P629', workUri, true, true)
 
   const titles = editions
     .filter(edition => getOriginalLang(edition.claims) === editionLang)

@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import retryOnConflict from '#lib/retry_on_conflict'
@@ -46,7 +46,7 @@ const updateClaim = async params => {
   params.letEmptyValuePass = true
   const formattedNewVal = await validateAndFormatClaim(params)
   const updatedDoc = Entity.updateClaim(_.cloneDeep(currentDoc), property, oldVal, formattedNewVal)
-  return putEntityUpdate({ userId, currentDoc, updatedDoc })
+  return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 
 export default retryOnConflict({ updateFn: updateInvClaim })

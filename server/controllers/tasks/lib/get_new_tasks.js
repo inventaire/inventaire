@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
 import getOccurrencesFromExternalSources from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
@@ -58,7 +58,7 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
 }
 
 const getAuthorWorksData = async authorId => {
-  const works = await getEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
+  const works = await getInvEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
   // works = [
   //   { labels: { fr: 'Matiere et Memoire'} },
   //   { labels: { en: 'foo' } }

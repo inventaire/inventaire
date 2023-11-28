@@ -1,7 +1,7 @@
 import { simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import _ from '#builders/utils'
-import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { cache_ } from '#lib/cache'
@@ -98,7 +98,7 @@ const _wikidataReverseClaims = async (property, value) => {
 
 const invReverseClaims = async (property, value) => {
   try {
-    const entities = await getEntitiesByClaim(property, value, true, true)
+    const entities = await getInvEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
   } catch (err) {
     // Allow to request reverse claims for properties that aren't yet

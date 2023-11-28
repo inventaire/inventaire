@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByIsbns } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import removeEntitiesByInvId from './lib/remove_entities_by_inv_id.js'
 import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed.js'
@@ -36,7 +36,7 @@ const replaceIsbnUrisByInvUris = async uris => {
 
 const getInvUrisFromIsbnUris = async uris => {
   const isbns = uris.map(uri => uri.split(':')[1])
-  const entities = await getEntitiesByIsbns(isbns)
+  const entities = await getInvEntitiesByIsbns(isbns)
   return entities.map(entity => `inv:${entity._id}`)
 }
 

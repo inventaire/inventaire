@@ -1,4 +1,4 @@
-import { getEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { error_ } from '#lib/error/error'
 import getEntitiesByUris from './get_entities_by_uris.js'
@@ -19,7 +19,7 @@ export default uris => {
 const entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
 
 const entityIsntUsedMuch = async uri => {
-  const claims = await getEntitiesByClaimsValue(uri)
+  const claims = await getInvEntitiesByClaimsValue(uri)
 
   claims.forEach(claim => { claim.entity = prefixifyInv(claim.entity) })
 

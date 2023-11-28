@@ -1,4 +1,4 @@
-import { editEntity } from '#controllers/entities/lib/entities'
+import { editInvEntity } from '#controllers/entities/lib/entities'
 import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 import { prefixifyInv } from './prefix.js'
@@ -12,7 +12,7 @@ export default async params => {
 
   const blankEntityDoc = Entity.create()
 
-  const entity = await editEntity({
+  const entity = await editInvEntity({
     create: true,
     userId,
     currentDoc: blankEntityDoc,

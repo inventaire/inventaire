@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { urisByClaim } from '#controllers/entities/lib/entities'
+import { getInvUrisByClaim } from '#controllers/entities/lib/entities'
 import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { mappedArrayPromise } from '#lib/promises'
@@ -34,7 +34,7 @@ const fromUri = changedEntityUri => {
 export default { fromDoc, fromUri }
 
 const multiWorkRefresh = relationProperty => async uri => {
-  const uris = await urisByClaim(relationProperty, uri)
+  const uris = await getInvUrisByClaim(relationProperty, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
   return snapshots.flat()
 }
@@ -81,7 +81,7 @@ const getEditionsSnapshots = async (uri, works, authors, series) => {
   assert_.array(authors)
   assert_.array(series)
 
-  return urisByClaim('wdt:P629', uri)
+  return getInvUrisByClaim('wdt:P629', uri)
   .then(uris => getEntitiesByUris({ uris }))
   .then(res => Object.values(res.entities))
   .then(mappedArrayPromise(edition => getEditionSnapshot([ edition, works, authors, series ])))

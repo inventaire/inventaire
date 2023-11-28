@@ -1,4 +1,4 @@
-import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
@@ -16,7 +16,7 @@ export default async ({ uri, refresh, dry }) => {
 }
 
 const getInvPublisherCollections = async uri => {
-  const docs = await getEntitiesByClaim('wdt:P123', uri, true, true)
+  const docs = await getInvEntitiesByClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []
 

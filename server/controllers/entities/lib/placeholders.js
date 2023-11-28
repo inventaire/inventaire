@@ -5,7 +5,7 @@
 // But mistakes happen, and some merges will need to be reverted:
 // thus the remove/recover mechanism hereafter
 
-import { putEntityUpdate } from '#controllers/entities/lib/entities'
+import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
@@ -38,7 +38,7 @@ const PlaceholderHandler = actionName => {
       }
     }
 
-    await putEntityUpdate({ userId, currentDoc, updatedDoc })
+    await putInvEntityUpdate({ userId, currentDoc, updatedDoc })
     await emit(`entity:${actionName}`, `inv:${entityId}`)
     return currentDoc._id
   }

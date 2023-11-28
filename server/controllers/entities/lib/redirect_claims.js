@@ -1,10 +1,10 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaimsValue, getEntitiesByIds, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaimsValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
 export default async function (userId, fromUri, toUri) {
-  const results = await getEntitiesByClaimsValue(fromUri)
+  const results = await getInvEntitiesByClaimsValue(fromUri)
   const entitiesToEditIds = _.map(results, 'entity')
   log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
@@ -27,7 +27,7 @@ const redirectEntitiesClaims = ({ results, userId, fromUri, toUri, entities }) =
     const currentDoc = entitiesIndexBeforeUpdate[updatedDoc._id]
     // Add a context in case we need to revert those redirections later on
     const context = { redirectClaims: { fromUri } }
-    return putEntityUpdate({ userId, currentDoc, updatedDoc, context })
+    return putInvEntityUpdate({ userId, currentDoc, updatedDoc, context })
   })
 
   return Promise.all(updatesPromises)

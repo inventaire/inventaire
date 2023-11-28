@@ -2,10 +2,10 @@ import { error_ } from '#lib/error/error'
 import properties from './properties/properties_values_constraints.js'
 import validateClaimValueSync from './validate_claim_value_sync.js'
 
-let getEntityByUri, getEntitiesByClaim
+let getEntityByUri, getInvEntitiesByClaim
 const importCircularDependencies = async () => {
   ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
-  ;({ getEntitiesByClaim } = await import('./entities.js'))
+  ;({ getInvEntitiesByClaim } = await import('./entities.js'))
 }
 setImmediate(importCircularDependencies)
 
@@ -45,7 +45,7 @@ export default async params => {
 const verifyClaimConcurrency = async (concurrency, property, value, _id) => {
   if (!concurrency) return
 
-  let { rows } = await getEntitiesByClaim(property, value)
+  let { rows } = await getInvEntitiesByClaim(property, value)
 
   rows = rows.filter(isntCurrentlyValidatedEntity(_id))
 

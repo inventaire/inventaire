@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { putEntityUpdate } from '#controllers/entities/lib/entities'
+import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import Entity from '#models/entity'
@@ -11,7 +11,7 @@ export default async (lang, value, userId, currentDoc) => {
 
   let updatedDoc = _.cloneDeep(currentDoc)
   updatedDoc = Entity.setLabel(updatedDoc, lang, value)
-  const docAfterUpdate = await putEntityUpdate({ userId, currentDoc, updatedDoc })
+  const docAfterUpdate = await putInvEntityUpdate({ userId, currentDoc, updatedDoc })
   await emit('entity:update:label', updatedDoc)
   return docAfterUpdate
 }

@@ -1,4 +1,4 @@
-import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchesByEntityId } from '#controllers/entities/lib/patches/patches'
 import { emit } from '#lib/radio'
 import Patch from '#models/patch'
@@ -21,7 +21,7 @@ export default async (patchId, userId) => {
 
   await validateEntity(updatedDoc)
   const context = { restoredPatch: patchId }
-  const docAfterUpdate = await putEntityUpdate({ userId, currentDoc, updatedDoc, context })
+  const docAfterUpdate = await putInvEntityUpdate({ userId, currentDoc, updatedDoc, context })
   await emit('entity:restore:version', updatedDoc)
   return docAfterUpdate
 }

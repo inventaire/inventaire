@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -42,7 +42,7 @@ const getWdSerieParts = async (qid, refresh, dry) => {
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
 const getInvSerieParts = async uri => {
-  const docs = await getEntitiesByClaim('wdt:P179', uri, true, true)
+  const docs = await getInvEntitiesByClaim('wdt:P179', uri, true, true)
   return docs.map(format)
 }
 
@@ -55,6 +55,6 @@ const format = ({ _id, claims }) => ({
 
 const formatEntity = entity => ({
   uri: entity.uri,
-  date: firstClaim(entity, 'wdt:P577'),
-  ordinal: firstClaim(entity, 'wdt:P1545'),
+  date: getFirstPropertyClaim(entity, 'wdt:P577'),
+  ordinal: getFirstPropertyClaim(entity, 'wdt:P1545'),
 })

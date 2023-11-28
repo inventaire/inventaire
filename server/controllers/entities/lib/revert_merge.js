@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntityById, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
 import { error_ } from '#lib/error/error'
@@ -16,7 +16,7 @@ export default async (userId, fromId) => {
   targetVersion._rev = currentVersion._rev
   targetVersion.version = currentVersion.version
 
-  const updateRes = await putEntityUpdate({
+  const updateRes = await putInvEntityUpdate({
     userId,
     currentDoc: currentVersion,
     updatedDoc: targetVersion,

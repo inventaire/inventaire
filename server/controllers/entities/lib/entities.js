@@ -1,3 +1,4 @@
+import { uniqBy } from 'lodash-es'
 import _ from '#builders/utils'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc, mapDoc } from '#lib/couch'
@@ -16,7 +17,7 @@ const db = await dbFactory('entities')
 export const getEntityById = db.get
 export const getEntitiesByIds = db.byIds
 
-export const getEntitiesByIsbns = isbns => {
+export const getInvEntitiesByIsbns = isbns => {
   const keys = isbns
     .map(toIsbn13h)
     .filter(_.identity)
@@ -24,9 +25,9 @@ export const getEntitiesByIsbns = isbns => {
   return db.viewByKeys('byClaim', keys)
 }
 
-export const getEntityByIsbn = isbn => getEntitiesByIsbns([ isbn ]).then(firstDoc)
+export const getInvEntityByIsbn = isbn => getInvEntitiesByIsbns([ isbn ]).then(firstDoc)
 
-export async function getEntitiesByClaim (property, value, includeDocs = false, parseDoc = false) {
+export async function getInvEntitiesByClaim (property, value, includeDocs = false, parseDoc = false) {
   validateProperty(property)
 
   const res = await db.view('entities', 'byClaim', {
@@ -38,12 +39,12 @@ export async function getEntitiesByClaim (property, value, includeDocs = false, 
   else return res
 }
 
-export async function urisByClaim (property, value) {
-  const entities = await getEntitiesByClaim(property, value, true, true)
+export async function getInvUrisByClaim (property, value) {
+  const entities = await getInvEntitiesByClaim(property, value, true, true)
   return entities.map(getInvEntityCanonicalUri)
 }
 
-export async function getEntitiesByClaimsValue (value, count) {
+export async function getInvEntitiesByClaimsValue (value, count) {
   const { rows } = await db.view('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
@@ -55,15 +56,15 @@ export async function getEntitiesByClaimsValue (value, count) {
   }))
 }
 
-export async function editEntity (params) {
+export async function editInvEntity (params) {
   const { userId, updatedLabels, updatedClaims, currentDoc, batchId, create } = params
   let updatedDoc = _.cloneDeep(currentDoc)
   updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
   updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
-  return putEntityUpdate({ userId, currentDoc, updatedDoc, batchId, create })
+  return putInvEntityUpdate({ userId, currentDoc, updatedDoc, batchId, create })
 }
 
-export async function putEntityUpdate (params) {
+export async function putInvEntityUpdate (params) {
   const { userId, currentDoc, updatedDoc, create } = params
   assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
 
@@ -93,23 +94,23 @@ export async function putEntityUpdate (params) {
 
 export const getUrlFromEntityImageHash = getUrlFromImageHash.bind(null, 'entities')
 
-export const uniqByUri = entities => _.uniqBy(entities, getUri)
+export const uniqByUri = entities => uniqBy(entities, getUri)
 
 export async function imageIsUsed (imageHash) {
   assert_.string(imageHash)
-  const { rows } = await getEntitiesByClaim('invp:P2', imageHash)
+  const { rows } = await getInvEntitiesByClaim('invp:P2', imageHash)
   return rows.length > 0
 }
 
 const getUri = entity => entity.uri
 
-export const firstClaim = (entity, property) => {
+export const getFirstPropertyClaim = (entity, property) => {
   if (entity.claims?.[property] != null) return entity.claims[property][0]
 }
 
 export const setTermsFromClaims = entity => {
-  const title = firstClaim(entity, 'wdt:P1476')
-  const subtitle = firstClaim(entity, 'wdt:P1680')
+  const title = getFirstPropertyClaim(entity, 'wdt:P1476')
+  const subtitle = getFirstPropertyClaim(entity, 'wdt:P1680')
   if (title) {
     entity.labels = entity.labels || {}
     entity.labels.fromclaims = title

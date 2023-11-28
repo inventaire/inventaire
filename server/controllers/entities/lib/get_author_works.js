@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaim, firstClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -67,7 +67,7 @@ const formatWdEntity = result => {
 
 // # INV
 const getInvAuthorWorks = async uri => {
-  const { rows } = await getEntitiesByClaim('wdt:P50', uri, true)
+  const { rows } = await getInvEntitiesByClaim('wdt:P50', uri, true)
   return rows.map(formatInvEntity).filter(_.identity)
 }
 
@@ -77,8 +77,8 @@ const formatInvEntity = row => {
   if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
-    date: firstClaim(row.doc, 'wdt:P577'),
-    serie: firstClaim(row.doc, 'wdt:P179'),
+    date: getFirstPropertyClaim(row.doc, 'wdt:P577'),
+    serie: getFirstPropertyClaim(row.doc, 'wdt:P179'),
     type: typeName,
   }
 }
@@ -112,8 +112,8 @@ const sortTypesByScore = worksByTypes => {
 const formatEntity = entity => {
   return {
     uri: entity.uri,
-    date: firstClaim(entity, 'wdt:P577'),
-    serie: firstClaim(entity, 'wdt:P179'),
+    date: getFirstPropertyClaim(entity, 'wdt:P577'),
+    serie: getFirstPropertyClaim(entity, 'wdt:P179'),
     type: getPluralType(entity.type),
   }
 }

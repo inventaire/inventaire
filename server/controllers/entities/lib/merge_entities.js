@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByIds, putEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
@@ -52,10 +52,10 @@ const mergeInvEntities = async (userId, fromId, toId) => {
   const toEntityDocBeforeMerge = _.cloneDeep(toEntityDoc)
   const toEntityDocAfterMerge = Entity.mergeDocs(fromEntityDoc, toEntityDoc)
 
-  // If the doc hasn't changed, don't run putEntityUpdate
+  // If the doc hasn't changed, don't run putInvEntityUpdate
   // as it will throw an 'empty patch' error
   if (!_.isEqual(toEntityDocBeforeMerge, toEntityDocAfterMerge)) {
-    await putEntityUpdate({
+    await putInvEntityUpdate({
       userId,
       currentDoc: toEntityDocBeforeMerge,
       updatedDoc: toEntityDocAfterMerge,

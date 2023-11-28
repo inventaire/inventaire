@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import getEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
+import getInvEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
@@ -18,7 +18,7 @@ export default async (workUri, isbn, userId) => {
   if (type !== 'work') {
     throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
-  const editionsRes = await getEntitiesByIsbns([ isbn ])
+  const editionsRes = await getInvEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
   if (_.isEqual(editionWorksUris, [ workUri ])) return

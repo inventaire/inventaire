@@ -1,5 +1,5 @@
 import _ from '#builders/utils'
-import { getEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
@@ -25,13 +25,13 @@ export default {
 
   collection: async entity => {
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return getEntitiesByClaim('wdt:P195', entity.uri, true, true)
+    return getInvEntitiesByClaim('wdt:P195', entity.uri, true, true)
     .then(addEditionsImages(images))
   },
 }
 
 const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
-  return getEntitiesByClaim('wdt:P629', workUri, true, true)
+  return getInvEntitiesByClaim('wdt:P629', workUri, true, true)
   .then(addEditionsImages(images, limitPerLang))
 }
 
