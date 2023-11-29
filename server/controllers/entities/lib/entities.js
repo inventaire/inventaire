@@ -43,16 +43,23 @@ export async function getInvUrisByClaim (property, value) {
   return entities.map(getInvEntityCanonicalUri)
 }
 
-export async function getInvEntitiesByClaimsValue (value, count) {
+export async function getInvClaimsByClaimValue (value) {
   const { rows } = await db.view('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
   })
-  if (count) return rows.length
   return rows.map(row => ({
     entity: row.id,
     property: row.value,
   }))
+}
+
+export async function getInvEntitiesClaimValueCount (value) {
+  const { rows } = await db.view('entities', 'byClaimValue', {
+    key: value,
+    include_docs: false,
+  })
+  return rows.length
 }
 
 export async function editInvEntity (params) {

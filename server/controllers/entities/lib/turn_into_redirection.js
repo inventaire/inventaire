@@ -1,5 +1,5 @@
 import { chain, compact } from 'lodash-es'
-import { getInvEntitiesByClaimsValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -58,7 +58,7 @@ const deleteIfIsolated = (userId, fromId) => async entityUri => {
   // Ignore wd or isbn entities
   if (prefix !== 'inv') return
 
-  let results = await getInvEntitiesByClaimsValue(entityUri)
+  let results = await getInvClaimsByClaimValue(entityUri)
   results = results.filter(result => result.entity !== fromId)
   if (results.length === 0) return removePlaceholder(userId, entityId)
 }

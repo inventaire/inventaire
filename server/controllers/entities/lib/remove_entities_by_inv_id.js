@@ -1,4 +1,4 @@
-import { getInvEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import { getInvClaimsByClaimValue } from '#controllers/entities/lib/entities'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { wait } from '#lib/promises'
@@ -29,7 +29,7 @@ export default (user, uris) => {
 }
 
 const deleteUriValueClaims = async (user, uri) => {
-  const claimsData = await getInvEntitiesByClaimsValue(uri)
+  const claimsData = await getInvClaimsByClaimValue(uri)
   return removeClaimsSequentially(user, uri, claimsData)
 }
 

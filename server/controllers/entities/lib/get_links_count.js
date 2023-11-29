@@ -1,6 +1,6 @@
 // Get the amount of entities linking to a given entity
 import { first, sum } from 'lodash-es'
-import { getInvEntitiesByClaimsValue } from '#controllers/entities/lib/entities'
+import { getInvEntitiesClaimValueCount } from '#controllers/entities/lib/entities'
 import runWdQuery from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 
@@ -10,7 +10,7 @@ export default (uri, refresh) => {
 
   if (prefix === 'wd') { promises.push(getWdLinksScore(id, refresh)) }
 
-  promises.push(getLocalLinksCount(uri))
+  promises.push(getInvEntitiesClaimValueCount(uri))
 
   return Promise.all(promises)
   .then(sum)
@@ -21,5 +21,3 @@ const getWdLinksScore = (qid, refresh) => {
   return runWdQuery({ query: 'links-count', qid, refresh })
   .then(first)
 }
-
-const getLocalLinksCount = uri => getInvEntitiesByClaimsValue(uri, true)

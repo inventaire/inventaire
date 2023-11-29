@@ -1,10 +1,10 @@
 import { cloneDeep, keyBy, map } from 'lodash-es'
-import { getInvEntitiesByClaimsValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { getInvClaimsByClaimValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
 export default async function (userId, fromUri, toUri) {
-  const results = await getInvEntitiesByClaimsValue(fromUri)
+  const results = await getInvClaimsByClaimValue(fromUri)
   const entitiesToEditIds = map(results, 'entity')
   log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
