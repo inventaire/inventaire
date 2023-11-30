@@ -7,10 +7,7 @@
 
 set -eu
 
-# source: https://stackoverflow.com/a/18000433
-drop_ansi_colors(){
-  sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"
-}
+source ./scripts/scripts_utils.sh
 
 extract_mocha_results(){
   grep --extended-regexp '^  [[:digit:]]+ passing \(' --after-context 1000000 --color=never

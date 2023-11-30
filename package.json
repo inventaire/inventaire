@@ -5,6 +5,8 @@
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
   "main": "server/server.js",
   "scripts": {
+    "build": "./scripts/typescript/build.sh",
+    "check-types": "./scripts/typescript/check_types.sh",
     "create-entities-dumps": "./scripts/dumps/create_entities_dumps.sh",
     "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
     "couchdb:restore-databases": "./scripts/couchdb/restore_databases.sh",
@@ -31,7 +33,8 @@
     "populate-users-fixtures": "./scripts/populate_users_fixtures.js",
     "postinstall": "./scripts/postinstall.sh",
     "replicate-tests-db": "./scripts/tests/replicate_tests_db.js",
-    "start": "node server/server.js",
+    "start": "ts-node server/server.js",
+    "start-built-server": "./scripts/typescript/start_built_server.sh",
     "start-tests-server": "./scripts/tests/api/start_tests_server.sh",
     "test": "./scripts/tests/run_tests.sh",
     "test-api": "./scripts/tests/run_api_slow_tests.sh",
@@ -39,9 +42,8 @@
     "test-integration": "./scripts/tests/run_integration_tests.sh",
     "test-unit": "./scripts/tests/run_unit_tests.sh",
     "update-i18n": "./scripts/update_i18n.sh",
-    "update-jsconfig": "./scripts/update_jsconfig.js",
     "update-toc": "./scripts/update_toc.sh",
-    "watch": "./scripts/watch.sh"
+    "watch": "./scripts/start_dev_server.sh"
   },
   "license": "AGPL-3.0",
   "repository": {
@@ -49,6 +51,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
+    "@swc/core": "^1.3.100",
     "abort-controller": "^3.0.0",
     "blue-cot": "^7.0.3",
     "body-parser": "^1.18.2",
@@ -98,6 +101,10 @@
     "wikidata-lang": "^4.0.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/lodash-es": "^4.17.12",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.1",
     "eslint": "^8.30.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -106,9 +113,11 @@
     "eslint-plugin-promise": "^6.0.0",
     "form-data": "^4.0.0",
     "mocha": "^10.2.0",
+    "nodemon": "^3.0.1",
     "papaparse": "^5.2.0",
-    "should": "^11.1.1",
-    "supervisor": "^0.10.0"
+    "should": "^13.2.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
   },
   "engines": {
     "node": ">= 16.6"
