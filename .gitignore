@@ -16,3 +16,5 @@ inventaire-i18n
 config/.sessions_keys
 *.ndjson
 *.logs
+*.tsbuildinfo
+dist/

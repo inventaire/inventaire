@@ -11,9 +11,9 @@
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
 # Use `toString` to prevent getting colored output
 server_port=$(node -p "require('config').port.toString()")
+watcher_pid=$(pgrep --full "nodemon_server_port_${server_port}")
 
-# A supervisor process id is known for that port && that process is still running
-if [ -f "./run/${server_port}-supervisor" ] && [ -n "$(ps -o pid= --pid $(< ./run/${server_port}-supervisor))" ];
+if [ -n "$watcher_pid" ];
 then
   echo -e "\e[0;32mtests server is running: see logs in ./logs/test-server.log\e[0;30m"
 else
