@@ -3,7 +3,7 @@ import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { authReq } from '../utils/utils.js'
 
-const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png')
+const imageUrl = encodeURIComponent('https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png')
 const dataUrlStart = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYA'
 const endpoint = '/api/images?action=data-url'
 

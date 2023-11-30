@@ -120,21 +120,21 @@ npm run watch
 ### Repositories and Branches
 
 #### [server](https://github.com/inventaire/inventaire)
-- [**master**](https://github.com/inventaire/inventaire/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
+- [**main**](https://github.com/inventaire/inventaire/tree/main): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in the main branch. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
 
 #### [client](https://github.com/inventaire/inventaire-client)
-- [**master**](https://github.com/inventaire/inventaire-client/tree/master): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in master. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
+- [**main**](https://github.com/inventaire/inventaire-client/tree/main): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in the main branch. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
 
 #### [i18n](https://github.com/inventaire/inventaire-i18n)
 The repository tracking strings used in the server (for emails, activitypub) and client (for the web UI) in all the supported languages. For helping to translate, see the [Inventaire Weblate project](https://weblate.framasoft.org/engage/inventaire/)
-- [**master**](https://github.com/inventaire/inventaire-i18n/tree/master): tracking translations fetched from [Weblate](https://weblate.framasoft.org/engage/inventaire/) and build scripts
+- [**main**](https://github.com/inventaire/inventaire-i18n/tree/main): tracking translations fetched from [Weblate](https://weblate.framasoft.org/engage/inventaire/) and build scripts
 
 #### [deploy](https://github.com/inventaire/inventaire-deploy)
 tracking installation scripts and documentation to run inventaire in production
-- [**master**](https://github.com/inventaire/inventaire-deploy/tree/master): the main implementation targeting Ubuntu 16.04. Additional branches can be started to document installation on other environments
+- [**main**](https://github.com/inventaire/inventaire-deploy/tree/main): the main implementation targeting Ubuntu 16.04. Additional branches can be started to document installation on other environments
 
 #### [docker](https://github.com/inventaire/docker-inventaire)
-- [**master**](https://github.com/inventaire/docker-inventaire/tree/master): tracking docker installation files for development and testing use
+- [**main**](https://github.com/inventaire/docker-inventaire/tree/main): tracking docker installation files for development and testing use
 
 ## Stack Map
 This repository correspond to the the "Server" section in the [stack map](https://inventaire.github.io/stack/)
@@ -147,15 +147,15 @@ the app has a few core concepts:
 - Transactions : discussion between two users about a specific item with an open transaction mode (giving, lending, selling). Transactions have effects on items: giving and selling an item make it move from the owner to the requester inventory; lending an item shows it as unavailable.
 - Groups: groups of users with one or more admins
 
-![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/master/docs/visualizations/concepts.jpg)
+![concepts map](https://raw.githubusercontent.com/inventaire/inventaire/main/docs/visualizations/concepts.jpg)
 
-![entities map](https://raw.githubusercontent.com/inventaire/entities-map/master/screenshots/entities-map-2.png)
+![entities map](https://raw.githubusercontent.com/inventaire/entities-map/main/screenshots/entities-map-2.png)
 
 ## Contribute
 For code-related contributions, see [*How to contribute* on wiki.inventaire.io](https://wiki.inventaire.io/wiki/Technic#How_to_contribute).
 
 ## Documentation
-see [docs](https://github.com/inventaire/inventaire/tree/master/docs/)
+see [docs](https://github.com/inventaire/inventaire/tree/main/docs/)
 
 ## Wiki
 see [wiki.inventaire.io](https://wiki.inventaire.io)

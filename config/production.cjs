@@ -11,7 +11,7 @@ module.exports = {
     return `${this.publicProtocol}://${this.publicHostname}`
   },
   // Let Nginx serve the static files
-  // https://github.com/inventaire/inventaire-deploy/blob/master/nginx/inventaire.original.nginx
+  // https://github.com/inventaire/inventaire-deploy/blob/main/nginx/inventaire.original.nginx
   serveStaticFiles: false,
   db: {
     username: 'OVERRIDE',

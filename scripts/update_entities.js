@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// This is the alternative to [data transformation](https://github.com/inventaire/inventaire/blob/master/docs/data_transformation.md)
+// This is the alternative to [data transformation](https://github.com/inventaire/inventaire/blob/main/docs/data_transformation.md)
 // to make a transformation with patches. This patch will be signed by a special user: updater
 
 // HOW TO:

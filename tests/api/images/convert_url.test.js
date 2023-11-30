@@ -18,28 +18,28 @@ describe('images:convert-url', () => {
   })
 
   it('should upload an image to the entities container from a URL', async () => {
-    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
+    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png'
     const { url, hash } = await convertUrl('entities', imageUrl)
     isImageHash(hash).should.be.true()
     isEntityImg(url).should.be.true()
   })
 
   it('should upload an image to the users container from a URL', async () => {
-    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
+    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png'
     const { url, hash } = await convertUrl('users', imageUrl)
     isImageHash(hash).should.be.true()
     isUserImg(url).should.be.true()
   })
 
   it('should upload an image to the groups container from a URL', async () => {
-    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
+    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png'
     const { url, hash } = await convertUrl('groups', imageUrl)
     isImageHash(hash).should.be.true()
     isGroupImg(url).should.be.true()
   })
 
   it('should reject an image being uploaded to the assets container', async () => {
-    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
+    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png'
     await convertUrl('assets', imageUrl)
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -48,7 +48,7 @@ describe('images:convert-url', () => {
   })
 
   it('should reject an image being uploaded to an invalid container', async () => {
-    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/master/app/assets/icon/32.png'
+    const imageUrl = 'https://raw.githubusercontent.com/inventaire/inventaire-client/main/app/assets/icon/32.png'
     await convertUrl('foo', imageUrl)
     .then(shouldNotBeCalled)
     .catch(err => {
