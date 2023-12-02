@@ -33,7 +33,7 @@
     "start": "node server/server.js",
     "start-tests-server": "./scripts/tests/api/start_tests_server.sh",
     "test": "./scripts/tests/run_tests.sh",
-    "test-api": "./scripts/tests/api/test_api.sh $@ | tee ./logs/tests.log && ./scripts/tests/extract_tests_results.sh",
+    "test-api": "./scripts/tests/run_api_slow_tests.sh",
     "test-api-quick": "./scripts/tests/run_api_quick_tests.sh",
     "test-integration": "./scripts/tests/run_integration_tests.sh",
     "test-unit": "./scripts/tests/run_unit_tests.sh",
