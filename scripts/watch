@@ -3,7 +3,7 @@
 
 # Use `toString` to prevent getting colored output
 server_port=$(node -p "require('config').port.toString()")
-# supervisor pid is used by tests/api/scripts
+# supervisor pid is used by scripts/tests/api
 supervisor_pid_file="./run/${server_port}-supervisor"
 
 export FORCE_COLOR=true
