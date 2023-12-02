@@ -8,11 +8,14 @@ module.exports = {
   extends: [
     // See https://github.com/standard/eslint-config-standard/blob/master/.eslintrc.json
     'standard',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   env: {
     node: true,
     es2022: true,
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: false,
@@ -40,7 +43,7 @@ module.exports = {
         pathGroups: [
           { pattern: '#*/**', group: 'internal', position: 'before' },
         ],
-        groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling' ],
+        groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'object', 'type' ],
         'newlines-between': 'never',
         alphabetize: { order: 'asc' },
       },
@@ -55,5 +58,8 @@ module.exports = {
     'one-var': [ 'off' ],
     'prefer-arrow-callback': [ 'error' ],
     'prefer-const': [ 'error' ],
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/consistent-type-imports': [ 'error', { prefer: 'type-imports' } ],
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 }
