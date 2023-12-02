@@ -16,7 +16,7 @@ mkdir -p logs run db/leveldb
 touch ./logs/server.log ./logs/error.log
 # Expected by scripts/actions/backup_databases.js
 mkdir -p ./db/couchdb/backups
-# Expected by scripts/test_api
+# Expected by scripts/test_api.sh
 mkdir -p run
 # Create folders for when mediaStorage is in local mode (which is the default)
 mkdir -p ./storage/users ./storage/groups ./storage/entities

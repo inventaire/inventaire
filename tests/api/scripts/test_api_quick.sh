@@ -17,7 +17,7 @@ if [ -f "./run/${server_port}-supervisor" ] && [ -n "$(ps -o pid= --pid $(< ./ru
 then
   echo -e "\e[0;32mtests server is running: see logs in ./logs/test-server.log\e[0;30m"
 else
-  ./scripts/tests/api/start_tests_server
+  ./scripts/tests/api/start_tests_server.sh
 fi
 
-./scripts/tests/api/run_api_tests $@
+./scripts/tests/api/run_api_tests.sh $@
