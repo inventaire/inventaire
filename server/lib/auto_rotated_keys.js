@@ -29,6 +29,7 @@ const getKeysFromFileSync = () => {
   return readFileSync(keysFilePath)
   .toString()
   .split('\n')
+  .filter(line => /^\d+/.test(line))
   .map(line => {
     const [ timestampStr, key ] = line.trim().split(':')
     const timestamp = parseInt(timestampStr)
