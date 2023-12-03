@@ -44,6 +44,9 @@
       "#tests/*": [
         "./tests/*.js",
       ],
+      "#types/*": [
+        "./types/*.js",
+      ],
       "#root/*": [
         "./*"
       ]
@@ -71,7 +74,8 @@
     "config/**/*",
     "server/**/*",
     "scripts/**/*",
-    "tests/**/*"
+    "tests/**/*",
+    "types/**/*",
   ],
   "exclude": [
     "**/node_modules/*",
