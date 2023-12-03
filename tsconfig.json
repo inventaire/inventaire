@@ -47,7 +47,25 @@
       "#root/*": [
         "./*"
       ]
-    }
+    },
+    // Type checking flags, see https://www.typescriptlang.org/tsconfig#Type_Checking_6248
+    // "allowUnreachableCode": true,
+    // "allowUnusedLabels": true,
+    // "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noImplicitAny": true,
+    "noImplicitOverride": true,
+    // "noImplicitReturns": true,
+    // "noImplicitThis": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    // "noUncheckedIndexedAccess": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    // "strictFunctionTypes": true,
+    // "strictNullChecks": true,
+    // "strictPropertyInitialization": true,
+    // "useUnknownInCatchVariables": true,
   },
   "include": [
     "config/**/*",
