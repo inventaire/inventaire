@@ -23,6 +23,23 @@ describe('wikipedia:extract', () => {
     })
   })
 
+  it('should reject an invalid title', async () => {
+    const invalidTitle = "{'title': 'Peter Kropotkin', 'badges': []}"
+    await publicReq('get', `${endpoint}&title=${invalidTitle}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject invalid wikimedia language codes', async () => {
+    await publicReq('get', `${endpoint}&lang=be_xzzzz&title=Віктор%20Юго`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+    })
+  })
+
   it('should get english Wikipedia article by default', async () => {
     const res = await publicReq('get', `${endpoint}&title=Gilbert_Simondon`)
     res.url.should.equal('https://en.wikipedia.org/wiki/Gilbert_Simondon')
