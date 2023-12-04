@@ -2,7 +2,6 @@ import CONFIG from 'config'
 import activitypub from './activitypub/activitypub.js'
 import webfinger from './activitypub/webfinger.js'
 import auth from './auth/auth.js'
-import fakeSubmit from './auth/fake_submit.js'
 import oauthClients from './auth/oauth_clients.js'
 import oauthServer from './auth/oauth_server.js'
 import authToken from './auth/token.js'
@@ -60,7 +59,6 @@ addRoute('api/relations', relations)
 addRoute('api/reports', reports)
 addRoute('api/search', search)
 addRoute('api/shelves', shelves)
-addRoute('api/submit', fakeSubmit)
 addRoute('api/tasks', tasks)
 addRoute('api/tests*', tests)
 addRoute('api/token', authToken)

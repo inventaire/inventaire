@@ -12,10 +12,6 @@ export default [
 
   security.setCorsPolicy,
 
-  // server/controllers/auth/fake_submit.js relies on the possibility
-  // to submit a url encoded form data, so it needs to have the body-parser ready for it
-  acceptUrlencoded('/api/submit'),
-
   // OAuth clients might send urlencoded content
   acceptUrlencoded('/api/oauth/token'),
 

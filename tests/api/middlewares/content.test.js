@@ -30,19 +30,6 @@ describe('content', () => {
       const body = await res.json()
       body.status_verbose.should.equal('invalid JSON body')
     })
-
-    it('should make an exception for /api/submit', async () => {
-      const res = await fetch(`${origin}/api/submit?redirect=foo`, {
-        method: 'POST',
-        body: 'bla=123',
-        redirect: 'manual',
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded',
-        },
-      })
-      res.headers.get('location').should.equal(`${origin}/foo`)
-      res.status.should.equal(302)
-    })
   })
 })
 
