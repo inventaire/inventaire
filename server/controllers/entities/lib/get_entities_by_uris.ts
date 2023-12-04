@@ -17,7 +17,14 @@ const getters = {
 
 const prefixes = Object.keys(getters)
 
-export async function getEntitiesByUris (params) {
+interface GetEntityByUrisArgs {
+  uris: string[]
+  refresh?: boolean
+  list?: boolean
+  dry?: boolean
+}
+
+export async function getEntitiesByUris (params: GetEntityByUrisArgs) {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}
