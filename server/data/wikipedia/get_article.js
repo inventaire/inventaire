@@ -3,6 +3,7 @@ import { cache_ } from '#lib/cache'
 import { error_ } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { buildUrl } from '#lib/utils/url'
+import { normalizeSiteKey } from '#lib/wikimedia'
 
 export default params => {
   const { lang, title, introOnly } = params
@@ -15,7 +16,8 @@ export default params => {
 }
 
 const getArticle = async (lang, title, introOnly) => {
-  const url = getSitelinkUrl({ site: `${lang}wiki`, title })
+  const site = normalizeSiteKey(`${lang}wiki`)
+  const url = getSitelinkUrl({ site, title })
   const { host } = new URL(url)
   const queryUrl = apiQuery(host, title, introOnly)
   const { query } = await requests_.get(queryUrl)

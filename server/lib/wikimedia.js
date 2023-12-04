@@ -9,3 +9,7 @@ export const isWikimediaLanguageCode = lang => wikimediaLanguageCodesSet.has(nor
 export function normalizeWikimediaLang (lang) {
   return lang.replace(/_/g, '-')
 }
+
+export function normalizeSiteKey (site) {
+  return site.replace(/-/g, '_')
+}
