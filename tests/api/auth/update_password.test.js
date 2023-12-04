@@ -19,6 +19,7 @@ describe('auth:update-password', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid new-password')
+      err.statusCode.should.equal(400)
     })
   })
 
@@ -30,6 +31,7 @@ describe('auth:update-password', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid current-password')
+      err.statusCode.should.equal(400)
     })
   })
 
@@ -41,6 +43,7 @@ describe('auth:update-password', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.startWith('invalid current-password')
+      err.statusCode.should.equal(400)
     })
   })
 
@@ -53,6 +56,7 @@ describe('auth:update-password', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid resetPassword timestamp')
+      err.statusCode.should.equal(500)
     })
   })
 
@@ -65,6 +69,7 @@ describe('auth:update-password', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('reset password timespan experied')
+      err.statusCode.should.equal(400)
     })
   })
 
