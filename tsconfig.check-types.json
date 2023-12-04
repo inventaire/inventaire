@@ -2,5 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true,
-  }
+  },
+  "include": [
+    "config/**/*",
+    "server/**/*",
+    // "scripts/**/*",
+    // "tests/**/*"
+  ],
 }
