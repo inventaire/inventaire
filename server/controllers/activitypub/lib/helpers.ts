@@ -7,7 +7,17 @@ import { stringifyQuery } from '#lib/utils/url'
 
 const host = CONFIG.getPublicOrigin()
 
-export const makeUrl = ({ origin, endpoint, params }) => {
+interface MakeUrlArgs {
+  origin?: string
+  endpoint?: string
+  params?: {
+    action?: string
+    name?: string
+    offset?: number
+  }
+}
+
+export function makeUrl ({ origin, endpoint, params }: MakeUrlArgs) {
   origin = origin || host
   endpoint = endpoint || '/api/activitypub'
   let url = `${origin}${endpoint}`
