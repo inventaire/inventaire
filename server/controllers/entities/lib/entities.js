@@ -1,4 +1,5 @@
-import { uniqBy, cloneDeep, identity } from 'lodash-es'
+import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc, mapDoc } from '#lib/couch'
 import { error_ } from '#lib/error/error'
@@ -38,8 +39,29 @@ export async function getInvEntitiesByClaim (property, value, includeDocs = fals
   else return res
 }
 
+export async function getInvEntitiesByClaims ({ claims, includeDocs = false, parseDoc = false }) {
+  claims.forEach(([ property ]) => validateProperty(property))
+
+  const res = await db.view('entities', 'byClaim', {
+    keys: claims,
+    include_docs: includeDocs,
+  })
+
+  if (parseDoc) return mapDoc(res)
+  else return res
+}
+
 export async function getInvUrisByClaim (property, value) {
   const entities = await getInvEntitiesByClaim(property, value, true, true)
+  return entities.map(getInvEntityCanonicalUri)
+}
+
+export async function getInvEntitiesUrisByClaims (properties, value) {
+  const entities = await getInvEntitiesByClaims({
+    claims: properties.map(property => [ property, value ]),
+    includeDocs: true,
+    parseDoc: true,
+  })
   return entities.map(getInvEntityCanonicalUri)
 }
 
@@ -125,4 +147,17 @@ export const setTermsFromClaims = entity => {
     entity.descriptions = entity.descriptions || {}
     entity.descriptions.fromclaims = subtitle
   }
+}
+
+export function getAggregatedPropertiesValues (claims, properties) {
+  return uniq(Object.values(pick(claims, properties)).flat())
+}
+
+export function getWorksAuthorsUris (works) {
+  const uris = works.map(getWorkAuthorsUris).flat()
+  return uniq(uris)
+}
+
+function getWorkAuthorsUris (work) {
+  return Object.values(pick(work.claims, authorRelationsProperties)).flat()
 }

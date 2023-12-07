@@ -1,19 +1,9 @@
 import { chain } from 'lodash-es'
-
-const authorProperties = [
-  // author
-  'wdt:P50',
-  // scenarist
-  'wdt:P58',
-  // illustrator
-  'wdt:P110',
-  // colorist
-  'wdt:P6338',
-]
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 
 export default work => {
   return chain(work.claims)
-  .pick(authorProperties)
+  .pick(authorRelationsProperties)
   .values()
   .flatten()
   .uniq()

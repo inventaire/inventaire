@@ -1,4 +1,5 @@
 import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 import addRelatives from './lib/add_relatives.js'
 import getEntitiesByUris from './lib/get_entities_by_uris.js'
 import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
@@ -29,14 +30,10 @@ const sanitization = {
     default: false,
   },
   relatives: {
-    allowlist: [
-      'wdt:P50', // author
-      'wdt:P58', // scenarist
+    allowlist: authorRelationsProperties.concat([
       'wdt:P179', // part of the series
-      'wdt:P110', // illustrator
       'wdt:P629', // edition or translation of
-      'wdt:P6338', // colorist
-    ],
+    ]),
     optional: true,
   },
 }

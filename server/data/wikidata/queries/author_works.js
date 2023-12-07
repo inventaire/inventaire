@@ -1,19 +1,14 @@
-const relationProperties = [
-  'wdt:P50',
-  'wdt:P58',
-  'wdt:P110',
-  'wdt:P6338',
-]
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
 
 export default {
   parameters: [ 'qid' ],
 
-  relationProperties,
+  relationProperties: authorRelationsProperties,
 
   query: params => {
     const { qid: authorQid } = params
     return `SELECT ?work ?type ?date ?serie WHERE {
-  ?work ${relationProperties.join('|')} wd:${authorQid} .
+  ?work ${authorRelationsProperties.join('|')} wd:${authorQid} .
   ?work wdt:P31 ?type .
   FILTER NOT EXISTS { ?work wdt:P31 wd:Q3331189 }
   OPTIONAL { ?work wdt:P577 ?date . }

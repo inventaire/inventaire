@@ -16,7 +16,13 @@ export default params => {
 
   promises.push(getInvSerieParts(uri))
 
-  if (useCacheRelations) promises.push(getCachedRelations(uri, 'wdt:P179', formatEntity))
+  if (useCacheRelations) {
+    promises.push(getCachedRelations({
+      valueUri: uri,
+      properties: [ 'wdt:P179' ],
+      formatEntity,
+    }))
+  }
 
   return Promise.all(promises)
   .then(flatten)

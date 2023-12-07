@@ -1,12 +1,8 @@
-import { compact, flatten } from 'lodash-es'
+import { getWorksAuthorsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '../get_entities_list.js'
 
-export default workUris => {
-  return getEntitiesList(workUris)
-  .then(getAuthorUris)
-  .then(flatten)
-  .then(compact)
-  .then(getEntitiesList)
+export async function getAuthorsFromWorksUris (workUris) {
+  const works = await getEntitiesList(workUris)
+  const authorsUris = getWorksAuthorsUris(works)
+  return getEntitiesList(authorsUris)
 }
-
-const getAuthorUris = works => works.map(work => work.claims['wdt:P50'])

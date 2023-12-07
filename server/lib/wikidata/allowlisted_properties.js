@@ -33,12 +33,10 @@ const otherNonEditedProperties = [
   'P18', // image
   'P27', // country of citizenship
   'P39', // position held
-  'P58', // screen writer
   'P69', // educated at
   'P103', // native language
   'P106', // occupation
   'P109', // signature
-  'P110', // illustrator
   'P138', // named after
   'P154', // logo image
   'P155', // follow
@@ -60,7 +58,6 @@ const otherNonEditedProperties = [
   'P2860', // cite
   'P2959', // permanent duplicated item
   'P4258', // Gallica ID
-  'P6338', // colorist
   'P6802', // related image
 ]
 

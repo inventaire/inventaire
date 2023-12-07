@@ -10,6 +10,7 @@ import {
   createWorkWithAuthor,
   generateIsbn13,
   someFakeUri,
+  createWorkWithSpecificRoleAuthor,
 } from '../fixtures/entities.js'
 import { deleteByUris, getByUris, getEntitiesAttributesByUris, merge } from '../utils/entities.js'
 import { authReq, publicReq } from '../utils/utils.js'
@@ -174,6 +175,20 @@ describe('entities:get:by-uris', () => {
         if (entity.type === 'edition') entity.popularity.should.equal(0)
         else entity.popularity.should.be.above(0)
       })
+    })
+
+    it('should support alternative author roles', async () => {
+      const roleProperty = 'wdt:P10837'
+      const { work, human } = await createWorkWithSpecificRoleAuthor({ roleProperty })
+      const url = buildUrl('/api/entities', {
+        action: 'by-uris',
+        uris: work.uri,
+        attributes: 'info|labels',
+        relatives: roleProperty,
+      })
+      const { entities } = await publicReq('get', url)
+      entities[work.uri].should.be.ok()
+      entities[human.uri].should.be.ok()
     })
   })
 

@@ -36,6 +36,12 @@ export default {
   'wdt:P31': allowedPropertyValues('wdt:P31'),
   // author
   'wdt:P50': extend(humanEntity, { hasPlaceholders: true }),
+  // scenarist
+  'wdt:P58': humanEntity,
+  // editor
+  'wdt:P98': humanEntity,
+  // illustrator
+  'wdt:P110': humanEntity,
   // founded by
   'wdt:P112': humanEntity,
   // publisher
@@ -209,6 +215,8 @@ export default {
   'wdt:P5199': externalId(/^\d{9}$/),
   // NooSFere book ID
   'wdt:P5571': externalId(strictlyPositiveIntegerPattern),
+  // colorist
+  'wdt:P6338': humanEntity,
   // Librarything author ID
   'wdt:P7400': externalId(/^[^\s/]+$/),
   // BookBrainz work ID"
@@ -217,4 +225,10 @@ export default {
   'wdt:P8063': externalId(uuidPattern),
   // Goodreads work ID
   'wdt:P8383': externalId(strictlyPositiveIntegerPattern),
+  // letterer
+  'wdt:P9191': humanEntity,
+  // inker
+  'wdt:P10836': humanEntity,
+  // penciller
+  'wdt:P10837': humanEntity,
 }

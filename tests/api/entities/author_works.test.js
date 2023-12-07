@@ -1,9 +1,8 @@
 import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { createWorkWithAuthor, createHuman } from '../fixtures/entities.js'
+import { createWorkWithAuthor, createHuman, createWorkWithSpecificRoleAuthor } from '../fixtures/entities.js'
 import { publicReq } from '../utils/utils.js'
 
-const workWithAuthorPromise = createWorkWithAuthor()
 const endpoint = '/api/entities?action=author-works'
 
 describe('entities:author-works', () => {
@@ -23,11 +22,18 @@ describe('entities:author-works', () => {
     res.articles.should.be.an.Array()
   })
 
-  it('should get an authors works', async () => {
-    const work = await workWithAuthorPromise
+  it("should get an author's inv works", async () => {
+    const work = await createWorkWithAuthor()
     const authorUri = work.claims['wdt:P50'][0]
     const res = await publicReq('get', `${endpoint}&uri=${authorUri}`)
     res.works[0].should.be.an.Object()
-    res.works[0].uri.should.equal(`inv:${work._id}`)
+    res.works[0].uri.should.equal(work.uri)
+  })
+
+  it("should get an author's inv works, where they have a custom role", async () => {
+    const roleProperty = 'wdt:P110'
+    const { work, human } = await createWorkWithSpecificRoleAuthor({ roleProperty })
+    const res = await publicReq('get', `${endpoint}&uri=${human.uri}`)
+    res.works[0].uri.should.equal(work.uri)
   })
 })
