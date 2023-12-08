@@ -1,5 +1,5 @@
-import { createRequire } from 'module'
 import { readFile, writeFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { assert_ } from './assert_types.js'
 
 const stringify = data => JSON.stringify(data, null, 2)

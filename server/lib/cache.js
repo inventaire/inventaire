@@ -1,4 +1,4 @@
-import { promisify } from 'util'
+import { promisify } from 'node:util'
 import CONFIG from 'config'
 import levelTtl from 'level-ttl'
 import { cacheDb } from '#db/level/get_db'

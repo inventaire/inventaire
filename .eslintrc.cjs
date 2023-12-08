@@ -18,6 +18,9 @@ module.exports = {
       jsx: false,
     },
   },
+  plugins: [
+    'node-import',
+  ],
   rules: {
     'array-bracket-spacing': [ 'error', 'always' ],
     'arrow-parens': [ 'error', 'as-needed' ],
@@ -45,6 +48,7 @@ module.exports = {
     indent: [ 'error', 2, { MemberExpression: 'off' } ],
     'no-ex-assign': [ 'off' ],
     'no-var': [ 'error' ],
+    'node-import/prefer-node-protocol': 2,
     'nonblock-statement-body-position': [ 'error', 'beside' ],
     'object-curly-spacing': [ 'error', 'always' ],
     'object-shorthand': [ 'error', 'properties' ],
