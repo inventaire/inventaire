@@ -126,6 +126,15 @@ const wikidataOnlyP31Values = {
     'wd:Q838296', // international auxiliary language
     'wd:Q2519134', // engineered language
     'wd:Q17376908', // languoid
+    'wd:Q838296', // international auxiliary language
+    'wd:Q1149626', // written language
+    'wd:Q1208380', // dialect group
+    'wd:Q152559', // ISO 639-3 macrolanguage
+    'wd:Q33289', // creole language
+    'wd:Q399495', // standard language
+    'wd:Q43091', // orthography
+    'wd:Q64362969', // language in script
+    'wd:Q839470', // sacred language
   ],
   // Types to ignore (Category pages, homonymie, etc.)
   meta: [
