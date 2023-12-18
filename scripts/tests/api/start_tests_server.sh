@@ -4,4 +4,4 @@
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server FORCE_COLOR=true
 
 echo -e "\e[0;34mStarting test server in the background: see logs in ./logs/test-server.log\e[0;30m"
-npm run watch > logs/test-server.log 2>&1 &
+./scripts/watch.sh > logs/test-server.log 2>&1 &
