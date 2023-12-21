@@ -5,7 +5,7 @@ import Task from '#models/task'
 
 const db = await dbFactory('tasks')
 
-export async function createTask (suspectUri, type, entitiesType, suggestions) {
+export async function createTasksFromSuggestions ({ suspectUri, type, entitiesType, suggestions }) {
   // suggestions may only be an array of objects with a 'uri' key
   const newTasksObjects = suggestions.map(suggestion => {
     const { lexicalScore, uri: suggestionUri, occurrences, reporter, clue } = suggestion
