@@ -11,7 +11,7 @@ import typeSearch from '#controllers/search/lib/type_search'
 import { isNonEmptyString, isNonEmptyArray } from '#lib/boolean_validations'
 import { forceArray } from '#lib/utils/base'
 import { automerge, validateAndAutomerge } from './automerge.js'
-import { findAuthorsWithIsbnsInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
+import { findAuthorWithMatchingIsbnInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
 
 export default async function (entity, existingTasks) {
   const [ newSuggestionsSearchResults, suspectWorksData ] = await Promise.all([
@@ -22,7 +22,7 @@ export default async function (entity, existingTasks) {
   const { labels: worksLabels } = suspectWorksData
   const suggestions = await getAndFormatSuggestionsEntities(newSuggestionsSearchResults)
 
-  const suggestionWithIsbnInWpArticle = await findAuthorsWithIsbnsInWikipediaArticles(suspectWorksData, suggestions)
+  const suggestionWithIsbnInWpArticle = await findAuthorWithMatchingIsbnInWikipediaArticles(suspectWorksData, suggestions)
   if (suggestionWithIsbnInWpArticle) {
     return automerge(entity.uri, suggestionWithIsbnInWpArticle.uri)
   }

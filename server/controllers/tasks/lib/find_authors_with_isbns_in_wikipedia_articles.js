@@ -2,7 +2,7 @@ import { flatMap } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getMostRelevantWikipediaArticles, matchLabelsInArticle } from '#controllers/entities/lib/get_occurrences_from_external_sources'
 
-export async function findAuthorsWithIsbnsInWikipediaArticles (worksData, authors) {
+export async function findAuthorWithMatchingIsbnInWikipediaArticles (worksData, authors) {
   // worksData is built with getAuthorWorksData
   const { langs, worksUris } = worksData
   const editions = await Promise.all(getEditionsFromWorks(worksUris))
