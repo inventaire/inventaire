@@ -13,12 +13,11 @@ export async function findAuthorsWithIsbnsInWikipediaArticles (worksData, author
 }
 
 function getIsbnsClaimValues (editions) {
-  const isbns = []
-  editions.forEach(edition => {
-    const isbn = edition.claims['wdt:P212']?.[0]
-    if (isbn) isbns.push(isbn)
+  return editions.flatMap(edition => {
+    const isbns13 = edition.claims['wdt:P212'] || []
+    const isbns10 = edition.claims['wdt:P957'] || []
+    return isbns13.concat(isbns10)
   })
-  return isbns
 }
 
 const hasIsbnInWikipediaArticles = (langs, isbns) => async suggestion => {
