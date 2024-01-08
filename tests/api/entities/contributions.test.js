@@ -93,7 +93,7 @@ describe('entities:contributions', () => {
       const { uri } = await createWork({ user })
       const property = 'wdt:P921'
       await updateClaim({ uri, property, newValue: 'wd:Q1', user })
-      await updateClaim({ uri, property: 'wdt:P136', newValue: 'wd:Q2', user })
+      await updateClaim({ uri, property: 'wdt:P136', newValue: 'wd:Q208505', user })
       await updateClaim({ uri, property, newValue: 'wd:Q3', user })
       await updateClaim({ uri, property, oldValue: 'wd:Q1', user })
       const { patches, total } = await adminReq('get', `${endpoint}&user=${user._id}&filter=${property}`)

@@ -6,9 +6,6 @@ import properties from './properties_values_constraints.js'
 const allowlist = Object.keys(properties)
 const allowset = new Set(allowlist)
 
-// Which type a property value should return when passed to typeOf
-export const propertyType = property => properties[property].type || properties[property].datatype
-
 export const validateProperty = property => {
   if (!isPropertyUri(property)) {
     throw error_.new('invalid property', 400, property)
@@ -20,5 +17,5 @@ export const validateProperty = property => {
 }
 
 export const validateValueType = (property, value) => {
-  return typeOf(value) === propertyType(property)
+  return typeOf(value) === properties[property].primitiveType
 }

@@ -1,7 +1,7 @@
 import { flatten, identity, map, uniqBy } from 'lodash-es'
 import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import runWdQuery from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'

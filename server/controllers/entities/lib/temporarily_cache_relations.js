@@ -1,6 +1,6 @@
 import { compact, map, uniq } from 'lodash-es'
 import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entities/lib/entities'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties_per_type'
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import getEntitiesByUris from './get_entities_by_uris.js'
 import { unprefixify } from './prefix.js'

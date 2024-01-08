@@ -2,11 +2,11 @@ import { isEntityId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
 import properties from './properties/properties_values_constraints.js'
-import { validateValueType, propertyType } from './properties/validations.js'
+import { validateValueType } from './properties/validations.js'
 
 export default (property, value, entityType) => {
   if (!validateValueType(property, value)) {
-    const expected = propertyType(property)
+    const expected = properties[property].primitiveType
     const actual = typeOf(value)
     const message = `invalid value type: expected ${expected}, got ${actual}`
     throw error_.new(message, 400, { property, value })

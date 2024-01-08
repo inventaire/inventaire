@@ -1,12 +1,13 @@
 // Each property configuration object is made of the following attributes:
 
-// datatype: {String}
+// primitiveType: {Stirng} which type a property value should return when passed to typeOf
+// datatype: {String} the more specific property value type
 // validate: {Function}
 // format: {Function} (optional)
 // uniqueValue: {Boolean} (default: false)
 // concurrency: {Boolean} (default: false)
 // adminUpdateOnly: {Boolean} (default: false)
-// restrictedType: {String} (only for properties of datatype 'entity' )
+// entityValueTypes: {String[]} (only for properties of datatype 'entity' )
 
 // Those attributes aim to constrain the claims properties and values
 // to keep those consistent.
@@ -18,7 +19,7 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
-import { collectionEntity, entity, humanEntity, imageHash, ordinal, positiveInteger, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -28,8 +29,7 @@ const extend = (base, extension) => Object.assign({}, base, extension)
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
-// Keep in sync with ./properties_per_type
-export default {
+export const propertiesValuesConstraints = {
   // image
   'invp:P2': imageHash,
   // instance of
@@ -49,11 +49,11 @@ export default {
   // owned by
   'wdt:P127': entity,
   // movement
-  'wdt:P135': entity,
+  'wdt:P135': movementEntity,
   // genre
-  'wdt:P136': entity,
+  'wdt:P136': genreEntity,
   // based on
-  'wdt:P144': workEntity,
+  'wdt:P144': workOrSerieEntity,
   // serie
   'wdt:P179': serieEntity,
   // collection
@@ -83,8 +83,10 @@ export default {
   }),
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
+  // NDL Authority ID
+  'wdt:P349': externalId(/^(a1|s)?[0-9]?\d{8}$/),
   // language of work
-  'wdt:P407': entity,
+  'wdt:P407': languageEntity,
   // distribution format
   'wdt:P437': allowedPropertyValues('wdt:P437'),
   // ORCID ID
@@ -117,10 +119,12 @@ export default {
   'wdt:P840': entity,
   // official website
   'wdt:P856': url,
+  // SELIBR ID
+  'wdt:P906': externalId(/^[1-9]\d{4,5}$/),
   // main subject
   'wdt:P921': entity,
   // inspired by
-  'wdt:P941': workEntity,
+  'wdt:P941': workOrSerieEntity,
   // Biblioteca Nacional de España ID
   'wdt:P950': typedExternalId({
     edition: /^(bima|bimo|bipa)\d{10}$/,
@@ -150,11 +154,17 @@ export default {
   // DNB editions
   'wdt:P1292': externalId(/^\d{8,9}[X\d]?$/),
   // languages of expression
-  'wdt:P1412': entity,
+  'wdt:P1412': languageEntity,
+  // published in
+  // TODO: restrict to journal entities
+  'wdt:P1433': entity,
   // title
   'wdt:P1476': uniqueString,
   // series ordinal
-  'wdt:P1545': ordinal,
+  // For the moment, ordinals can be only positive integers, but stringified
+  // to stay consistent with Wikidata and let the door open to custom ordinals
+  // later (ex: roman numbers, letters, etc.)
+  'wdt:P1545': positiveIntegerString,
   // subtitle
   'wdt:P1680': uniqueString,
   // HathiTrust ID
@@ -232,3 +242,5 @@ export default {
   // penciller
   'wdt:P10837': humanEntity,
 }
+
+export default propertiesValuesConstraints

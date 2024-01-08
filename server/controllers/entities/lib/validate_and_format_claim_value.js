@@ -30,11 +30,11 @@ export default async params => {
 
   const formattedValue = prop.format != null ? prop.format(newVal) : newVal
 
-  const { concurrency, restrictedType } = prop
+  const { concurrency, entityValueTypes } = prop
 
   await Promise.all([
     verifyClaimConcurrency(concurrency, property, formattedValue, _id),
-    verifyClaimEntityType(restrictedType, formattedValue),
+    verifyClaimEntityType(entityValueTypes, formattedValue),
   ])
 
   return formattedValue
@@ -63,8 +63,8 @@ const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
-const verifyClaimEntityType = async (restrictedType, value) => {
-  if (restrictedType == null) return
+const verifyClaimEntityType = async (entityValueTypes, value) => {
+  if (entityValueTypes == null) return
 
   const entity = await getEntityByUri({ uri: value })
 
@@ -72,7 +72,7 @@ const verifyClaimEntityType = async (restrictedType, value) => {
     throw error_.new('entity not found', 400, value)
   }
 
-  if (entity.type !== restrictedType) {
+  if (!entityValueTypes.includes(entity.type)) {
     throw error_.new(`invalid claim entity type: ${entity.type}`, 400, value)
   }
 }

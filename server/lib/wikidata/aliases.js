@@ -87,6 +87,7 @@ const wikidataOnlyP31Values = {
     'wd:Q20087698', // comics genre
     'wd:Q28468127', // target audience for manga
     'wd:Q13136', // reference work
+    'wd:Q108368282', // literary genre by form
   ],
   publishers: [
     'wd:Q1320047', // book publishing company
@@ -109,6 +110,31 @@ const wikidataOnlyP31Values = {
     'wd:Q5891', // philosophy
     'wd:Q49773', // social movement
     'wd:Q2738074', // political movement
+  ],
+  languages: [
+    'wd:Q34770', // language
+    'wd:Q1288568', // modern language
+    'wd:Q38058796', // extinct language
+    'wd:Q45762', // dead language
+    'wd:Q33384', // dialect
+    'wd:Q33742', // natural language
+    'wd:Q34228', // sign language
+    'wd:Q436240', // ancient language
+    'wd:Q2315359', // historical language
+    'wd:Q315', // language
+    'wd:Q33215', // constructed language
+    'wd:Q838296', // international auxiliary language
+    'wd:Q2519134', // engineered language
+    'wd:Q17376908', // languoid
+    'wd:Q838296', // international auxiliary language
+    'wd:Q1149626', // written language
+    'wd:Q1208380', // dialect group
+    'wd:Q152559', // ISO 639-3 macrolanguage
+    'wd:Q33289', // creole language
+    'wd:Q399495', // standard language
+    'wd:Q43091', // orthography
+    'wd:Q64362969', // language in script
+    'wd:Q839470', // sacred language
   ],
   // Types to ignore (Category pages, homonymie, etc.)
   meta: [

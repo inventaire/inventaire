@@ -61,12 +61,16 @@ export default entity => {
   return text.replace(/;$/, '.\n')
 }
 
+const stringPropClaimsFormatter = propClaims => propClaims.map(formatStringValue)
 const datatypePropClaimsFormatter = {
   entity: identity,
-  string: propClaims => propClaims.map(formatStringValue),
+  string: stringPropClaimsFormatter,
+  url: stringPropClaimsFormatter,
+  'external-id': stringPropClaimsFormatter,
   'positive-integer': propClaims => propClaims.map(formatPositiveInteger),
-  'simple-day': propClaims => propClaims.filter(validSimpleDay).map(formatDate),
-  'image-hash': propClaims => propClaims.map(formatImageHash),
+  'positive-integer-string': stringPropClaimsFormatter,
+  date: propClaims => propClaims.filter(validSimpleDay).map(formatDate),
+  image: propClaims => propClaims.map(formatImageHash),
 }
 
 const formatStringValue = str => {
