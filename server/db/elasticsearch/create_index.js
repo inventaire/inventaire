@@ -21,9 +21,15 @@ export default async index => {
 }
 
 const ignoreAlreadyExisting = (url, err) => {
-  if (err.body && err.body.error.type === 'resource_already_exists_exception') {
+  if (err.body && ignoredErrorTypes.includes(err.body.error.type)) {
     return warn(url, 'database already exist')
   } else {
     throw err
   }
 }
+
+const ignoredErrorTypes = [
+  'resource_already_exists_exception',
+  // Typically associated with "reason: 'Invalid index name [wikidata], already exists as alias'"
+  'invalid_index_name_exception',
+]
