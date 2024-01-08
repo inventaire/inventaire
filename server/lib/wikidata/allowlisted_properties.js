@@ -6,6 +6,8 @@
 // - saving space in server and client cache
 // - saving everyone's bandwidth
 
+import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
+import { nonPrefixedLanguagesCodesProperties } from '#controllers/entities/lib/languages'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import propertiesValuesConstraints from '#controllers/entities/lib/properties/properties_values_constraints'
 
@@ -30,7 +32,6 @@ const relationsProperties = [
 // Properties that can not be edited from Inventaire, but that might
 // still be displayed or used in some way
 const otherNonEditedProperties = [
-  'P18', // image
   'P27', // country of citizenship
   'P39', // position held
   'P69', // educated at
@@ -38,7 +39,6 @@ const otherNonEditedProperties = [
   'P106', // occupation
   'P109', // signature
   'P138', // named after
-  'P154', // logo image
   'P155', // follow
   'P156', // is follow by
   'P166', // award received
@@ -54,11 +54,9 @@ const otherNonEditedProperties = [
   'P1433', // published in
   'P2034', // Project Gutenberg ebook ID
   'P2093', // author name string
-  'P2716', // collage image
   'P2860', // cite
   'P2959', // permanent duplicated item
   'P4258', // Gallica ID
-  'P6802', // related image
 ]
 
-export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties)
+export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties, nonPrefixedLanguagesCodesProperties, nonPrefixedImageProperties)

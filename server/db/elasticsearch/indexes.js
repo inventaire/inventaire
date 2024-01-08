@@ -37,6 +37,7 @@ export const indexedEntitiesTypes = [
   // wikidata entities only
   'genres',
   'movements',
+  'languages',
 ]
 
 export const socialTypes = [

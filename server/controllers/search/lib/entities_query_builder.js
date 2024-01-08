@@ -1,4 +1,5 @@
 import { trim } from 'lodash-es'
+import { languageCodePattern, languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
@@ -26,6 +27,9 @@ export default params => {
   if (!search) minScore = 0
 
   const shoulds = matchEntities(search, userLang, exact, safe)
+  if (types.includes('language') && languageCodePattern.test(search)) {
+    shoulds.push(matchLanguageCode(search))
+  }
 
   return {
     query: {
@@ -155,5 +159,16 @@ const validatePropertyAndValue = condition => {
         throw error_.new('invalid property value', 400, { property, value })
       }
     }
+  }
+}
+
+function matchLanguageCode (search) {
+  search = search.toLowerCase()
+  const claimTerms = languagesCodesProperties.map(property => `${property}=${search}`)
+  return {
+    terms: {
+      claim: claimTerms,
+      boost: 1000,
+    },
   }
 }
