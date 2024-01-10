@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import AbortController from 'abort-controller'
 import fetch from 'node-fetch'
 import { error_ } from '#lib/error/error'
+import { endReqTimer, startReqTimer } from '#lib/requests'
 import { encodeURL } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import isValidImageContentType from './is_valid_image_content_type.js'
@@ -11,19 +12,25 @@ const oneMB = Math.pow(1024, 2)
 export default async (url, path) => {
   url = encodeURL(url)
   const controller = new AbortController()
+  let res, errorCode
+  const fetchOptions = {
+    timeout: 30000,
+    signal: controller.signal,
+    headers: {
+      accept: 'image/*',
+    },
+  }
+  const timer = startReqTimer('get', url, fetchOptions)
   try {
-    const response = await fetch(url, {
-      timeout: 30000,
-      signal: controller.signal,
-      headers: {
-        accept: 'image/*',
-      },
-    })
-    validateResponse(response, controller, url, path)
-    return saveFile(response.body, path)
+    res = await fetch(url, fetchOptions)
+    validateResponse(res, controller, url, path)
+    return await saveFile(res.body, path)
   } catch (err) {
+    errorCode = err.code || err.type || err.name || err.message
     logError(err, 'download image private error')
     throw error_.new('could not download image', 400, { url })
+  } finally {
+    endReqTimer(timer, res?.status || errorCode)
   }
 }
 

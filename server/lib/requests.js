@@ -106,7 +106,7 @@ async function req (method, url, options = {}) {
   }
 }
 
-const formatHeaders = headers => {
+function formatHeaders (headers) {
   const flattenedHeaders = {}
   Object.keys(headers).forEach(key => {
     flattenedHeaders[key] = headers[key].join(';')
@@ -114,7 +114,7 @@ const formatHeaders = headers => {
   return flattenedHeaders
 }
 
-const getFetchOptions = (method, options) => {
+function getFetchOptions (method, options) {
   const headers = options.headers || {}
   const fetchOptions = {
     method,
@@ -150,7 +150,7 @@ const basicAuthPattern = /\/\/\w+:[^@:]+@/
 
 const requestIntervalLogs = {}
 
-const startReqTimer = (method, url, fetchOptions) => {
+export function startReqTimer (method, url, fetchOptions) {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
 
@@ -170,19 +170,19 @@ const startReqTimer = (method, url, fetchOptions) => {
   return { reqTimerKey, requestId, startTime }
 }
 
-const startLoggingRequestAtInterval = ({ requestId, reqTimerKey, startTime }) => {
+function startLoggingRequestAtInterval ({ requestId, reqTimerKey, startTime }) {
   requestIntervalLogs[requestId] = setInterval(() => {
     const elapsed = coloredElapsedTime(startTime)
     process.stdout.write(`${grey(`${reqTimerKey} ongoing`)} ${elapsed}\n`)
   }, ongoingRequestLogInterval)
 }
 
-const stopLoggingRequestAtInterval = requestId => {
+function stopLoggingRequestAtInterval (requestId) {
   clearInterval(requestIntervalLogs[requestId])
   delete requestIntervalLogs[requestId]
 }
 
-const endReqTimer = ({ reqTimerKey, requestId, startTime }, statusCode) => {
+export function endReqTimer ({ reqTimerKey, requestId, startTime }, statusCode) {
   if (logOngoingAtInterval) stopLoggingRequestAtInterval(requestId)
   if (!logEnd) return
   const elapsed = coloredElapsedTime(startTime)
@@ -190,7 +190,7 @@ const endReqTimer = ({ reqTimerKey, requestId, startTime }, statusCode) => {
   process.stdout.write(`${magenta(reqTimerKey)} ${statusColor(statusCode)} ${elapsed}\n`)
 }
 
-const getStatusColor = statusCode => {
+function getStatusColor (statusCode) {
   if (typeof statusCode !== 'number') return red
   if (statusCode < 300) return green
   if (statusCode < 400) return cyan
