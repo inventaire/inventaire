@@ -29,7 +29,7 @@ import properties from '#controllers/entities/lib/properties/properties_values_c
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'
-import { log, warn, info } from '#lib/utils/logs'
+import { log, warn } from '#lib/utils/logs'
 import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
@@ -117,7 +117,6 @@ const Entity = {
     if (isString(newVal)) newVal = superTrim(newVal)
 
     let propArray = get(doc, `claims.${property}`)
-    info(`${property} propArray: ${propArray} /oldVal: ${oldVal} /newVal: ${newVal}`)
 
     if (propArray && newVal != null && propArray.includes(newVal)) {
       throw error_.new('claim property new value already exist', 400, [ propArray, newVal ])
