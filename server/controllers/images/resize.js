@@ -5,7 +5,7 @@ import { isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
 import { hashCode } from '#lib/utils/base'
-import getResizedImage from './lib/get_resized_image.js'
+import { getResizedImage } from './lib/get_resized_image.js'
 
 const { env } = CONFIG
 const { mode } = CONFIG.mediaStorage

@@ -184,10 +184,10 @@ function stopLoggingRequestAtInterval (requestId) {
   delete requestIntervalLogs[requestId]
 }
 
-export function endReqTimer ({ reqTimerKey, requestId, startTime }, statusCode) {
+export function endReqTimer ({ reqTimerKey, requestId, startTime, processingResponseStream = false }, statusCode) {
   if (logOngoingAtInterval) stopLoggingRequestAtInterval(requestId)
   if (!logEnd) return
-  const elapsed = coloredElapsedTime(startTime)
+  const elapsed = processingResponseStream ? yellow('streaming') : coloredElapsedTime(startTime)
   const statusColor = getStatusColor(statusCode)
   process.stdout.write(`${magenta(reqTimerKey)} ${statusColor(statusCode)} ${elapsed}\n`)
 }

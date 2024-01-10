@@ -2,30 +2,37 @@ import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { error_ } from '#lib/error/error'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
-import { userAgent } from '#lib/requests'
+import { endReqTimer, startReqTimer, userAgent } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
 
 const { mediaStorage } = CONFIG
 
 const { maxSize } = mediaStorage.images
 const oneMB = 1024 ** 2
-const reqOptions = {
+const fetchOptions = {
   headers: {
     'user-agent': userAgent,
   },
 }
 
-export default async (req, res, url, dimensions) => {
+export async function getResizedImage (req, res, url, dimensions) {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
   [ width, height ] = applyImageLimits(width, height)
 
-  let response
+  let response, errorCode
+  const timer = startReqTimer('get', url, fetchOptions)
   try {
-    response = await fetch(url, reqOptions)
+    // No need to call sanitizeUrl here, as the url should have been validated
+    // in server/controllers/images/resize.js
+    response = await fetch(url, fetchOptions)
+    timer.processingResponseStream = true
   } catch (err) {
+    errorCode = err.code || err.type || err.name || err.message
     err.statusCode = 500
     error_.handler(req, res, err)
     return
+  } finally {
+    endReqTimer(timer, response?.status || errorCode)
   }
 
   const { statusText } = response
