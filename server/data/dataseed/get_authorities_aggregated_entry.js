@@ -5,6 +5,7 @@ import { resolveEntrySeedsByExternalIds } from '#controllers/entities/lib/resolv
 // import bnb from import('data/bnb/get_bnb_entry_from_isbn')
 import bne from '#data/bne/get_bne_entry_from_isbn'
 import bnf from '#data/bnf/get_bnf_entry_from_isbn'
+import openlibrary from '#data/openlibrary/get_openlibrary_entry_from_isbn'
 import wikidata from '#data/wikidata/get_wikidata_entry_from_isbn'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { isNotEmpty, objLength } from '#lib/utils/base'
@@ -16,6 +17,7 @@ const authorities = {
   // bnb,
   bne,
   bnf,
+  openlibrary,
   wikidata,
 }
 
