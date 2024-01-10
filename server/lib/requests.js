@@ -25,11 +25,7 @@ async function req (method, url, options = {}) {
   assert_.string(url)
   assert_.object(options)
 
-  if (options.sanitize) {
-    if (!isUrl(url) || (await isPrivateUrl(url))) {
-      throw error_.newInvalid('url', url)
-    }
-  }
+  if (options.sanitize) await sanitizeUrl(url)
 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
@@ -106,6 +102,12 @@ async function req (method, url, options = {}) {
   }
 }
 
+export async function sanitizeUrl (url) {
+  if (!isUrl(url) || (await isPrivateUrl(url))) {
+    throw error_.newInvalid('url', url)
+  }
+}
+
 function formatHeaders (headers) {
   const flattenedHeaders = {}
   Object.keys(headers).forEach(key => {
@@ -150,7 +152,7 @@ const basicAuthPattern = /\/\/\w+:[^@:]+@/
 
 const requestIntervalLogs = {}
 
-export function startReqTimer (method, url, fetchOptions) {
+export function startReqTimer (method = 'get', url, fetchOptions) {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
 

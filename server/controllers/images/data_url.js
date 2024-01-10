@@ -3,6 +3,7 @@ import fetch from 'node-fetch'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { error_ } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
+import { endReqTimer, sanitizeUrl, startReqTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
@@ -38,16 +39,28 @@ const getImageDataUrl = async url => {
     url = res.url
   }
 
-  const res = await fetch(url, { headers, sanitize: true })
-  const contentType = res.headers.get('content-type')
+  await sanitizeUrl(url)
 
-  if (contentType.split('/')[0] !== 'image') {
-    throw error_.new('invalid content type', 400, { url, contentType })
+  const fetchOptions = { headers }
+  let res, errorCode
+  const timer = startReqTimer('get', url, fetchOptions)
+  try {
+    res = await fetch(url, { headers })
+    const contentType = res.headers.get('content-type')
+
+    if (contentType.split('/')[0] !== 'image') {
+      throw error_.new('invalid content type', 400, { url, contentType })
+    }
+
+    const body = await res.buffer()
+    const buffer = body.toString('base64')
+    return `data:${contentType};base64,${buffer}`
+  } catch (err) {
+    errorCode = err.code || err.type || err.name || err.message
+    throw err
+  } finally {
+    endReqTimer(timer, res?.status || errorCode)
   }
-
-  const body = await res.buffer()
-  const buffer = body.toString('base64')
-  return `data:${contentType};base64,${buffer}`
 }
 
 export default { sanitization, controller }
