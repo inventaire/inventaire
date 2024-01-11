@@ -10,7 +10,17 @@ const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2
 export default async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
-  const data = await requests_.get(url)
+  let data
+  try {
+    data = await requests_.get(url)
+  } catch (err) {
+    // No need to flood the logs with 404 html pages
+    if (err.statusCode === 404) {
+      delete err.context.resBody
+      delete err.body
+    }
+    throw err
+  }
   data.works = data.works || []
   data.authors = data.authors || []
   const edition = getEditionSeed(normalizedIsbn, data)
