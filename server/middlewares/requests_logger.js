@@ -10,15 +10,13 @@ export default (req, res, next) => {
 
   res.on('close', () => {
     if (skip(req)) return
-    const line = format(req, res)
-    if (line == null) return
-    process.stdout.write(`${line}\n`)
+    logRequest(req, res)
   })
 
   next()
 }
 
-const skip = req => {
+function skip (req) {
   // /!\ resources behind the /public endpoint will have their pathname
   // with /public removed: /public/css/app.css will have a pathname=/css/app.css
   // In that case, req._parsedOriginalUrl would be defined to the original /public/css/app.css,
@@ -28,7 +26,7 @@ const skip = req => {
   return mutedDomains.includes(domain) || mutedPath.includes(path)
 }
 
-const format = (req, res) => {
+function logRequest (req, res) {
   const { method, originalUrl: url, user } = req
   const { statusCode: status, finished } = res
 
@@ -48,7 +46,13 @@ const format = (req, res) => {
   // Log cross-site requests origin
   if (origin != null && origin !== host) line += ` - origin:${origin}`
 
-  return `${line}${resetColors}`
+  if (status === 302) {
+    const location = res.get('location')
+    line += ` ${cyan}=> ${grey}${location}`
+  }
+
+  line += resetColors
+  process.stdout.write(`${line}\n`)
 }
 
 // Using escape codes rather than chalk to save a few characters per line
