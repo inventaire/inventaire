@@ -19,7 +19,7 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
-import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -45,9 +45,9 @@ export const propertiesValuesConstraints = {
   // founded by
   'wdt:P112': humanEntity,
   // publisher
-  'wdt:P123': entity,
+  'wdt:P123': publisherEntity,
   // owned by
-  'wdt:P127': entity,
+  'wdt:P127': humanEntity,
   // movement
   'wdt:P135': movementEntity,
   // genre
@@ -114,7 +114,7 @@ export const propertiesValuesConstraints = {
   // Google Books ID
   'wdt:P675': externalId(/^[\w-]{12}$/),
   // influenced by
-  'wdt:P737': entity,
+  'wdt:P737': humanEntity,
   // narrative set in
   'wdt:P840': entity,
   // official website
