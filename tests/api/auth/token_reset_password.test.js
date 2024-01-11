@@ -44,4 +44,16 @@ describe('token:reset-password', () => {
     const { headers } = await rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
     headers.location.should.equal(`${host}/login/forgot-password?resetPasswordFail=true`)
   })
+
+  it('should reject HEAD requests', async () => {
+    const email = createUserEmail()
+    const token = getRandomString(32)
+    await rawRequest('head', `${endpoint}&email=${email}&token=${token}`)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      // The body content can not be tested as its a HEAD request
+      // err.body.status_verbose.should.equal('wrong http method')
+    })
+  })
 })
