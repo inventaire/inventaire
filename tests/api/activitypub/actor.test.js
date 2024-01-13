@@ -96,7 +96,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${origin}/inventory/${username}`)
+      headers.location.should.equal(`${origin}/users/${username}`)
     })
   })
 

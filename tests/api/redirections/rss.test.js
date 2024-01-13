@@ -16,6 +16,12 @@ describe('rss redirections', () => {
 
   it('should redirect to a user feed by username', async () => {
     const { _id, username } = await getUser()
+    const { headers } = await rawRequest('get', `/users/${username}.rss`)
+    headers.location.should.equal(`${host}/api/feeds?user=${_id}`)
+  })
+
+  it('should redirect to a user feed by username (legacy)', async () => {
+    const { _id, username } = await getUser()
     const { headers } = await rawRequest('get', `/inventory/${username}.rss`)
     headers.location.should.equal(`${host}/api/feeds?user=${_id}`)
   })

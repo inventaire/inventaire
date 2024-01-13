@@ -38,7 +38,7 @@ export const embedUsersData = (items, users, position) => {
       if ((user.position != null) && (position != null)) {
         item.user.distance = kmBetween(user.position, position)
       }
-      item.user.href = `${host}/inventory/${user.username}`
+      item.user.href = `${host}/users/${user.username}`
       item.transactionLabel = `${item.transaction}_personalized_strong`
       item.transactionColor = transactionsColors[item.transaction]
     }

@@ -59,7 +59,7 @@ export default {
 
     checkUserNotificationsSettings(user1, 'friendship_request')
 
-    user2.href = `${host}/inventory/${user2.username}`
+    user2.href = `${host}/users/${user2.username}`
 
     let { bio } = user2
     if (bio == null) bio = ''

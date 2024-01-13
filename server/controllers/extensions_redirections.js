@@ -107,8 +107,7 @@ const redirections = {
   },
 
   rss: {
-    users: id => `/api/feeds?user=${id}`,
-    inventory: async username => {
+    users: async username => {
       const userId = await getUserId(username)
       return `/api/feeds?user=${userId}`
     },
@@ -124,6 +123,9 @@ const redirections = {
     shelves: id => `/api/feeds?shelf=${id}`,
   },
 }
+
+// Legacy
+redirections.rss.inventory = redirections.rss.users
 
 const getUserId = async id => {
   if (isCouchUuid(id)) {

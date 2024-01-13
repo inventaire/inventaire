@@ -42,7 +42,7 @@ export default (feedOptions, users, items, lang) => {
 const serializeItem = (usersIndex, lang) => item => {
   const { owner } = item
   const user = usersIndex[owner]
-  user.href = `${root}/inventory/${user._id}`
+  user.href = `${root}/users/${user._id}`
   item.href = `${root}/items/${item._id}`
 
   const data = {

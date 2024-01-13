@@ -8,7 +8,7 @@ export default async (activitiesDocs, user) => {
   if (!isNonEmptyArray(activitiesDocs)) return []
   const { stableUsername: name } = user
   const actor = makeUrl({ params: { action: 'actor', name } })
-  const parentLink = `/inventory/${name}`
+  const parentLink = `/users/${name}`
   const { lang } = user
   const { since, until } = findFullRangeFromActivities(activitiesDocs)
 

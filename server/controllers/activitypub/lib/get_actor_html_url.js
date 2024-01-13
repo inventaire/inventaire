@@ -1,7 +1,7 @@
 import { getActorTypeFromName, getEntityUriFromActorName } from './helpers.js'
 
 const getActorHtmlUrlByType = {
-  user: name => `/inventory/${name}`,
+  user: name => `/users/${name}`,
   shelf: name => {
     const shelfId = name.split('-')[1]
     return `/shelves/${shelfId}`

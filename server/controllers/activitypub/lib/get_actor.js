@@ -30,7 +30,7 @@ const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links = [
-    { name: 'inventory', url: `${origin}/inventory/${username}` },
+    { name: 'inventory', url: `${origin}/users/${username}` },
   ]
   return buildActorObject({
     actorName: stableUsername,
