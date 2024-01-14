@@ -1,6 +1,7 @@
-import { flatMap } from 'lodash-es'
+import { flatMap, intersection } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
-import { getMostRelevantWikipediaArticles, matchLabelsInArticle } from '#controllers/entities/lib/get_occurrences_from_external_sources'
+import { getMostRelevantWikipediaArticles } from '#controllers/entities/lib/get_occurrences_from_external_sources'
+import { normalizeIsbn, findIsbns, isValidIsbn } from '#lib/isbn/isbn'
 
 export async function findAuthorWithMatchingIsbnInWikipediaArticles (worksData, authors) {
   // worksData is built with getAuthorWorksData
@@ -20,16 +21,19 @@ function getIsbnsClaimValues (editions) {
   })
 }
 
-const hasIsbnInWikipediaArticles = (langs, isbns) => async suggestion => {
+const hasIsbnInWikipediaArticles = (langs, claimsIsbns) => async suggestion => {
   const articles = await getMostRelevantWikipediaArticles(suggestion, langs)
   if (articles.length === 0) return
-  const matchedArticle = articles.find(hasMatchingLabels(isbns))
-  if (matchedArticle) return suggestion
+  return articles.find(hasMatchingIsbns(claimsIsbns))
 }
 
-const hasMatchingLabels = article => labels => {
-  const matchedLabels = matchLabelsInArticle(labels, article)
-  return matchedLabels.length > 0
+const hasMatchingIsbns = claimsIsbns => article => {
+  const articleIsbns = findIsbns(article.extract)
+  if (articleIsbns.length > 0) {
+    const normalizedClaimsIsbns = claimsIsbns.map(normalizeIsbn)
+    const normalizedArticleIsbns = articleIsbns.map(normalizeIsbn).filter(isValidIsbn)
+    return intersection(normalizedClaimsIsbns, normalizedArticleIsbns)
+  }
 }
 
 function getEditionsFromWorks (worksUris) {

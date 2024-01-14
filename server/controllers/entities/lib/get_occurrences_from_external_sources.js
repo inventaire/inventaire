@@ -97,7 +97,7 @@ const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
   return { url: article.url, matchedTitles, structuredDataSource: false }
 }
 
-export function matchLabelsInArticle (labels, article) {
+function matchLabelsInArticle (labels, article) {
   if (!article.extract || labels.length === 0) return []
   const worksLabelsPattern = new RegExp(labels.map(normalize).join('|'), 'g')
   return uniq(normalize(article.extract).match(worksLabelsPattern))
