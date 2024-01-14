@@ -1,6 +1,6 @@
 import { createReadStream } from 'node:fs'
 import CONFIG from 'config'
-import { getContentLength } from '#lib/fs'
+import { getContentLength, rm } from '#lib/fs'
 import { requests_ } from '#lib/requests'
 import { log } from '#lib/utils/logs'
 import getToken from './get_swift_token.js'
@@ -35,6 +35,8 @@ export default {
     const stream = createReadStream(path)
     await requests_.put(url, { headers, bodyStream: stream, parseJson: false })
     log({ container, path, filename }, 'swift: put image')
+    // Cleanup tmp file
+    await rm(path)
     return relativeUrl(container, filename)
   },
 
