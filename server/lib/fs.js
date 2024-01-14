@@ -1,4 +1,4 @@
-import { stat, unlink } from 'node:fs/promises'
+import { stat, unlink, mkdir } from 'node:fs/promises'
 import { promisify } from 'node:util'
 import mvWithCallback from 'mv'
 
@@ -7,3 +7,7 @@ export const mv = promisify(mvWithCallback)
 // See https://nodejs.org/api/fs.html#fs_fspromises_rm_path_options
 export const rm = unlink
 export const getContentLength = src => stat(src).then(({ size }) => size)
+
+export async function mkdirp (path) {
+  return mkdir(path, { recursive: true })
+}
