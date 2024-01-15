@@ -44,14 +44,20 @@ const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
 }
 
 const addEditionsImages = (images, limitPerLang = 3) => editions => {
+  editions.sort((a, b) => getEditionImagePreferrability(b) - getEditionImagePreferrability(a))
   for (const edition of editions) {
     const { claims } = edition
     const lang = getOriginalLang(claims)
     const image = claims['invp:P2'] && claims['invp:P2'][0]
     if (lang && image) addImage(images, lang, limitPerLang, image)
   }
-
   return images
+}
+
+// TODO: take edition popularity into account
+function getEditionImagePreferrability (edition) {
+  const numberOfWorks = edition.claims['wdt:P629'].length
+  return -numberOfWorks
 }
 
 const getOneWorkImagePerLang = workUri => {

@@ -47,8 +47,7 @@ export const createEdition = async (params = {}) => {
   publicationDate = publicationDate || '2020'
   const lang = params.lang || 'en'
   if (work != null && works == null) works = [ work ]
-  const worksPromise = works ? Promise.resolve(works) : createWork()
-  works = await worksPromise
+  works = await (works || createWork())
   works = forceArray(works)
   title = title || Object.values(works[0].labels)[0]
   const worksUris = map(works, 'uri')

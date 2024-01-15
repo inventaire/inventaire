@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import 'should'
+import should from 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
@@ -55,11 +55,28 @@ describe('entities:images', () => {
 
     it('should return images from inventaire work', async () => {
       const edition = await createEdition()
-      const uri = edition.claims['wdt:P629'][0]
-      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
-      const imagesRes = res.images[uri]
+      const workUri = edition.claims['wdt:P629'][0]
+      const res = await publicReq('get', `/api/entities?action=images&uris=${workUri}`)
+      const imagesRes = res.images[workUri]
       imagesRes.claims.should.deepEqual([])
       imagesRes.en.length.should.equal(1)
+    })
+
+    it('should prefer images from mono-work editions to illustrate works', async () => {
+      const [ workA, workB ] = await Promise.all([ createWork(), createWork() ])
+      const imageHashX = '1aaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      const imageHashY = '2aaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      const imageHashZ = '3aaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+      await Promise.all([
+        createEdition({ works: [ workA, workB ], image: imageHashX }),
+        createEdition({ works: [ workA ], image: imageHashY }),
+        createEdition({ works: [ workA ], image: imageHashZ }),
+      ])
+      const res = await publicReq('get', `/api/entities?action=images&uris=${workA.uri}|${workB.uri}`)
+      const workAImage = res.images[workA.uri].en[0]
+      should(workAImage === imageHashY || workAImage === imageHashZ).be.true()
+      const workBImage = res.images[workB.uri].en[0]
+      workBImage.should.equal(imageHashX)
     })
 
     it('should return images from inventaire collection', async () => {
