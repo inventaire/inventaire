@@ -98,6 +98,8 @@ const parseEntry = (entry, bestEntry) => entryKey => {
     return
   }
 
+  bestEntryValue.claims = bestEntryValue.claims || {}
+
   const entryClaims = entryValue.claims
   const bestEntryClaims = bestEntryValue.claims
   const claimsKeys = Object.keys(entryClaims)
