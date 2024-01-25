@@ -69,6 +69,7 @@ const wikidataOnlyP31Values = {
     'wd:Q1391417', // specialized dictionary
     'wd:Q35760', // essay
     'wd:Q16363676', // manual
+    'wd:Q11826511', // work of science
   ],
   editions: [
     'wd:Q3972943', // publishing
