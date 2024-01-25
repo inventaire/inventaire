@@ -227,6 +227,8 @@ export const propertiesValuesConstraints = {
   'wdt:P5571': externalId(strictlyPositiveIntegerPattern),
   // colorist
   'wdt:P6338': humanEntity,
+  // Goodreads series ID
+  'wdt:P6947': externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
   'wdt:P7400': externalId(/^[^\s/]+$/),
   // BookBrainz work ID"

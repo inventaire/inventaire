@@ -340,6 +340,10 @@ export const properties = {
   'wdt:P5571': {
     subjectTypes: [ 'edition' ],
   },
+  // Goodreads series ID
+  'wdt:P6947': {
+    subjectTypes: [ 'serie' ],
+  },
   // LibraryThing author ID
   'wdt:P7400': {
     subjectTypes: [ 'human' ],
@@ -354,7 +358,7 @@ export const properties = {
   },
   // Goodreads work ID
   'wdt:P8383': {
-    subjectTypes: [ 'work', 'serie' ],
+    subjectTypes: [ 'work' ],
   },
 }
 
