@@ -281,8 +281,8 @@ describe('entities:resolver:update-resolved', () => {
   })
 
   it('should update recoverable ids', async () => {
-    const someValidIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
-    const someRecoverableIsni = someValidIsni.replace(/\s/g, '')
+    const someRecoverableIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
     const human = await createHuman()
     const author = {
       uri: human.uri,
