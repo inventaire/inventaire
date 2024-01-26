@@ -187,7 +187,7 @@ export const propertiesValuesConstraints = {
   'wdt:P2013': externalId(/^(\d+|[.\w]+)$/),
   // YouTube channel ID
   'wdt:P2397': externalId(/^UC[\w-]{21}[AQgw]$/),
-  // BookBrainz author ID"
+  // BookBrainz author ID
   'wdt:P2607': externalId(uuidPattern),
   // number of volumes
   'wdt:P2635': positiveInteger,
@@ -231,7 +231,7 @@ export const propertiesValuesConstraints = {
   'wdt:P6947': externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
   'wdt:P7400': externalId(/^[^\s/]+$/),
-  // BookBrainz work ID"
+  // BookBrainz work ID
   'wdt:P7823': externalId(uuidPattern),
   // LibraryThing series ID
   'wdt:P8513': externalId(/^[1-9]\d{0,7}$/),
@@ -247,6 +247,8 @@ export const propertiesValuesConstraints = {
   'wdt:P10837': humanEntity,
   // Babelio serial ID
   'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
+  // BookBrainz series ID
+  'wdt:P12048': externalId(uuidPattern),
 }
 
 export default propertiesValuesConstraints

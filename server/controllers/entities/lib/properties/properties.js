@@ -364,6 +364,10 @@ export const properties = {
   'wdt:P8513': {
     subjectTypes: [ 'serie' ],
   },
+  // BookBrainz series ID
+  'wdt:P12048': {
+    subjectTypes: [ 'serie' ],
+  },
   // Babelio serial ID
   'wdt:P12319': {
     subjectTypes: [ 'serie' ],
