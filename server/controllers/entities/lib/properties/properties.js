@@ -230,7 +230,7 @@ export const properties = {
   },
   // HathiTrust ID
   'wdt:P1844': {
-    subjectTypes: [ 'work', 'serie' ],
+    subjectTypes: [ 'edition' ],
   },
   // Google Scholar author ID
   'wdt:P1960': {
