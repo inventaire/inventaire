@@ -182,7 +182,7 @@ export const properties = {
   },
   // Librarything work ID
   'wdt:P1085': {
-    subjectTypes: [ 'work', 'serie' ],
+    subjectTypes: [ 'work' ],
   },
   // number of pages
   'wdt:P1104': {
@@ -302,7 +302,7 @@ export const properties = {
   },
   // Babelio work ID
   'wdt:P3631': {
-    subjectTypes: [ 'work', 'serie' ],
+    subjectTypes: [ 'work' ],
   },
   // Mastodon address
   'wdt:P4033': {
@@ -359,6 +359,14 @@ export const properties = {
   // Goodreads work ID
   'wdt:P8383': {
     subjectTypes: [ 'work' ],
+  },
+  // LibraryThing series ID
+  'wdt:P8513': {
+    subjectTypes: [ 'serie' ],
+  },
+  // Babelio serial ID
+  'wdt:P12319': {
+    subjectTypes: [ 'serie' ],
   },
 }
 

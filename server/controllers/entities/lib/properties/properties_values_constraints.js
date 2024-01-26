@@ -233,6 +233,8 @@ export const propertiesValuesConstraints = {
   'wdt:P7400': externalId(/^[^\s/]+$/),
   // BookBrainz work ID"
   'wdt:P7823': externalId(uuidPattern),
+  // LibraryThing series ID
+  'wdt:P8513': externalId(/^[1-9]\d{0,7}$/),
   // BookBrainz publisher ID
   'wdt:P8063': externalId(uuidPattern),
   // Goodreads work ID
@@ -243,6 +245,8 @@ export const propertiesValuesConstraints = {
   'wdt:P10836': humanEntity,
   // penciller
   'wdt:P10837': humanEntity,
+  // Babelio serial ID
+  'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
 }
 
 export default propertiesValuesConstraints
