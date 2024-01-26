@@ -294,7 +294,7 @@ export const properties = {
   },
   // Czech National Bibliography book ID
   'wdt:P3184': {
-    subjectTypes: [ 'work', 'serie', 'edition' ],
+    subjectTypes: [ 'edition' ],
   },
   // Babelio author ID
   'wdt:P3630': {
