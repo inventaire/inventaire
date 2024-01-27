@@ -300,6 +300,7 @@ describe('entities:get:by-isbns', () => {
     it('should return editions isbn in notFound array when autocreation is true', async () => {
       const isbnUnknownBySeedsSources = '9783981898743'
       const uri = `isbn:${isbnUnknownBySeedsSources}`
+      await deleteByUris([ uri ])
       const res = await authReq('get', `/api/entities?action=by-uris&uris=${uri}&autocreate=true`)
       res.entities.should.deepEqual({})
       res.notFound[0].should.equal(uri)
