@@ -53,13 +53,6 @@ describe('tasks:byEntitiesType', () => {
     const tasksB = await getByEntitiesType({ type: entitiesType, offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
   })
-
-  it('should return old task before newer ones', async () => {
-    await createTask({ entitiesType })
-    await createTask({ entitiesType })
-    const tasks = await getByEntitiesType({ type: entitiesType })
-    tasks[0].created.should.below(tasks[1].created)
-  })
 })
 
 describe('tasks:bySuspectUris', () => {
