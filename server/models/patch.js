@@ -69,9 +69,15 @@ const Patch = {
     if (patch._id.split(':')[0] !== currentDoc._id) {
       throw error_.new('entity and patch ids do not match', 500, { currentDoc, patch })
     }
-    const inverseOperations = jiff.inverse(patch.operations)
-    const updatedDoc = applyInverseOperations(currentDoc, inverseOperations)
-    return updatedDoc
+    let inverseOperations
+    try {
+      inverseOperations = jiff.inverse(patch.operations)
+      const updatedDoc = applyInverseOperations(currentDoc, inverseOperations)
+      return updatedDoc
+    } catch (err) {
+      err.context = { currentDoc, patch, inverseOperations }
+      throw err
+    }
   },
 
   addSnapshots: patchesDocs => {
@@ -116,16 +122,28 @@ const fixOperation = (currentDoc, inverseOperations) => (op, index) => {
 const operationFix = {
   add: (currentDoc, inverseOperations, op, index) => {
     const { path, value } = op
-    if (isArray(value) && (value.length === 1)) {
-      const currentArray = getFromPatchPath(currentDoc, path)
-      // Case when the 'add' operation tries to add an array with a value in it,
-      // but this array as been re-created later on: the final result
-      // should be an array with the current values + the added value.
-      // The operation is thus converted into simply pushing the added value
-      // at the end of the existing array
-      if (currentArray != null) {
-        op.value = value[0]
-        op.path += `/${currentArray.length}`
+    if (isArray(value)) {
+      if (value.length === 1) {
+        const currentArray = getFromPatchPath(currentDoc, path)
+        // Case when the 'add' operation tries to add an array with a value in it,
+        // but this array as been re-created later on: the final result
+        // should be an array with the current values + the added value.
+        // The operation is thus converted into simply pushing the added value
+        // at the end of the existing array
+        if (currentArray != null) {
+          op.value = value[0]
+          op.path += `/${currentArray.length}`
+        }
+      }
+    } else if (path.split('/').length > 3) {
+      const parentObjectPath = path.split('/').slice(0, -1).join('/')
+      const currentArray = getFromPatchPath(currentDoc, parentObjectPath)
+      if (isArray(currentArray)) {
+        const valueIndex = parseInt(path.split('/').at(-1))
+        // Avoid "InvalidPatchOperationError: target of add outside of array bounds"
+        if (valueIndex > currentArray.length) {
+          op.path = `${parentObjectPath}/${currentArray.length}`
+        }
       }
     }
   },

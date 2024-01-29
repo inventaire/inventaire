@@ -269,6 +269,21 @@ describe('patch', () => {
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
     })
 
+    it('should be able to recover from array indexes issues', () => {
+      const docVersion1 = cloneDeep(authorDoc)
+      const docVersion2 = cloneDeep(authorDoc)
+      const docVersion3 = cloneDeep(authorDoc)
+      docVersion1.claims['wdt:P50'] = [ 'x', 'y' ]
+      docVersion2.claims['wdt:P50'] = [ 'x', 'z' ]
+      docVersion3.claims['wdt:P50'] = [ 'z' ]
+      const patch2 = Patch.create({ userId, currentDoc: docVersion1, updatedDoc: docVersion2 })
+      const patch3 = Patch.create({ userId, currentDoc: docVersion2, updatedDoc: docVersion3 })
+      const docVersion4 = Patch.revert(docVersion3, patch2)
+      docVersion4.claims['wdt:P50'].should.deepEqual([ 'y' ])
+      const docVersion5 = Patch.revert(docVersion4, patch3)
+      docVersion5.claims['wdt:P50'].should.deepEqual([ 'x', 'y' ])
+    })
+
     it('should reject mismatching entity and patch', () => {
       const currentDoc = {
         _id: '10b3006aab5842379c06109b8f09530e',

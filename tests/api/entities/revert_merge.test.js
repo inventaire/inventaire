@@ -130,6 +130,28 @@ describe('entities:revert-merge', () => {
     authorsUris.should.deepEqual([ humanA.uri ])
   })
 
+  it('should restore deduplicated redirected claims', async () => {
+    const [ humanA, humanB, humanC, work ] = await Promise.all([
+      createHuman(),
+      createHuman(),
+      createHuman(),
+      createWork(),
+    ])
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanA.uri })
+    await addClaim({ uri: work.uri, property: 'wdt:P50', value: humanB.uri })
+    await Promise.all([
+      merge(humanA.uri, humanC.uri),
+      merge(humanB.uri, humanC.uri),
+    ])
+    await Promise.all([
+      revertMerge(humanA.uri),
+      revertMerge(humanB.uri),
+    ])
+    const res = await getByUris(work.uri)
+    const authorsUris = res.entities[work.uri].claims['wdt:P50']
+    authorsUris.should.deepEqual([ humanA.uri, humanB.uri ])
+  })
+
   it('should restore removed human placeholders', async () => {
     const [ workA, workB ] = await Promise.all([
       createWorkWithAuthor(),

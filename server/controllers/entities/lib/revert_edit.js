@@ -1,10 +1,11 @@
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { emit } from '#lib/radio'
+import { retryOnConflict } from '#lib/retry_on_conflict'
 import Patch from '#models/patch'
 import validateEntity from './validate_entity.js'
 
-export async function revertFromPatchDoc (patch, userId) {
+async function _revertFromPatchDoc (patch, userId) {
   const entityId = patch._id.split(':')[0]
   const currentDoc = await getEntityById(entityId)
   const updatedDoc = Patch.revert(currentDoc, patch)
@@ -19,3 +20,5 @@ export async function revertFromPatchId (patchId, userId) {
   const patch = await getPatchById(patchId)
   return revertFromPatchDoc(patch, userId)
 }
+
+export const revertFromPatchDoc = retryOnConflict({ updateFn: _revertFromPatchDoc })
