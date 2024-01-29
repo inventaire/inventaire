@@ -26,9 +26,11 @@ export default function (req, res, err) {
   err.headers = pick(req.headers, headersToKeep)
 
   // Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
-  if (err.attachReqContext && emptyContext(err.context)) {
+  err.attachReqContext = err.attachReqContext || 'body'
+  if (emptyContext(err.context)) {
     err.context = pick(req, err.attachReqContext)
   }
+  delete err.attachReqContext
 
   if (err.mute !== true) {
     if (statusCode.toString().startsWith('4')) {
