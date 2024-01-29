@@ -1,5 +1,5 @@
 import { property, uniq } from 'lodash-es'
-import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { flatMapUniq, mapUniq } from '#lib/utils/base'

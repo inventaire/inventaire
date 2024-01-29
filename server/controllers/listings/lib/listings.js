@@ -1,5 +1,5 @@
 import { groupBy, map, pick } from 'lodash-es'
-import getEntitiesByUris from '#controllers/entities/lib/get_entities_by_uris'
+import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getElementsByListings, createListingElements, deleteListingsElements } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import dbFactory from '#db/couchdb/base'

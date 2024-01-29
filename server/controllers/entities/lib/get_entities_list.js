@@ -1,5 +1,5 @@
 import { compact } from 'lodash-es'
-import getEntitiesByUris from './get_entities_by_uris.js'
+import { getEntitiesByUris } from './get_entities_by_uris.js'
 
 // A convenience function wrapping getEntitiesByUris, typically to be used in a promise chain
 // ex: getSomeUris.then(getEntitiesList)

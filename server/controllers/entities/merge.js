@@ -1,7 +1,7 @@
 import { error_ } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
-import getEntitiesByUris from './lib/get_entities_by_uris.js'
+import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {

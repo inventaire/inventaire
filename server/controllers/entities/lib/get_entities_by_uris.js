@@ -17,7 +17,7 @@ const getters = {
 
 const prefixes = Object.keys(getters)
 
-export default async params => {
+export async function getEntitiesByUris (params) {
   const { uris, list } = params
   assert_.array(uris)
   const domains = {}

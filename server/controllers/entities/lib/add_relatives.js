@@ -2,7 +2,7 @@
 // requested entities, following those entities claims
 
 import { chain, pick } from 'lodash-es'
-import getEntitiesByUris from './get_entities_by_uris.js'
+import { getEntitiesByUris } from './get_entities_by_uris.js'
 
 const addRelatives = (results, relatives, refresh) => {
   const { entities } = results

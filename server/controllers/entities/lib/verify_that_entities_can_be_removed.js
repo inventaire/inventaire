@@ -1,7 +1,7 @@
 import { getInvClaimsByClaimValue } from '#controllers/entities/lib/entities'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { error_ } from '#lib/error/error'
-import getEntitiesByUris from './get_entities_by_uris.js'
+import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { prefixifyInv } from './prefix.js'
 
 const criticalClaimProperties = [
