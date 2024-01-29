@@ -162,6 +162,10 @@ const operationFix = {
       const arrayPath = op.path.replace(/\/\d+$/, '')
       const patchedArray = getFromPatchPath(currentDoc, arrayPath)
 
+      if (!patchedArray) {
+        throw error_.new('unhandled patch case', 500, { currentDoc, inverseOperations, op, index, arrayPath })
+      }
+
       const currentValueIndex = patchedArray.indexOf(op.value)
       // Update the operation path to the current value index
       // to avoid removing the wrong value if changes messed with the value index
