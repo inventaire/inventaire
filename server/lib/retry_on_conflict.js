@@ -2,7 +2,7 @@ import { error_ } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
 
-export default params => {
+export function retryOnConflict (params) {
   let { updateFn, maxAttempts } = params
   if (!maxAttempts) maxAttempts = 10
   return (...args) => {

@@ -1,9 +1,10 @@
 import { cloneDeep, keyBy, map } from 'lodash-es'
 import { getInvClaimsByClaimValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { retryOnConflict } from '#lib/retry_on_conflict'
 import { log } from '#lib/utils/logs'
 import Entity from '#models/entity'
 
-export default async function (userId, fromUri, toUri) {
+async function _redirectClaims (userId, fromUri, toUri) {
   const results = await getInvClaimsByClaimValue(fromUri)
   const entitiesToEditIds = map(results, 'entity')
   log(entitiesToEditIds, 'entitiesToEditIds')
@@ -48,3 +49,5 @@ const applyRedirections = (entitiesIndex, fromUri, toUri) => result => {
 
   entitiesIndex[entity] = Entity.updateClaim(doc, property, fromUri, newVal)
 }
+
+export const redirectClaims = retryOnConflict({ updateFn: _redirectClaims })

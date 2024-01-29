@@ -1,4 +1,4 @@
-import 'should'
+import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
@@ -176,6 +176,41 @@ describe('entities:merge', () => {
     // patch 1: add a wdt:P50 claim pointing to to humanA
     // patch 2: redirect to humanB
     patches[2].context.redirectClaims.should.deepEqual({ fromUri: humanA.uri })
+  })
+
+  it('should recover from parallel edit conflicts while redirecting claims', async () => {
+    const [ humanA, humanB, humanC, workX, workY, workZ ] = await Promise.all([
+      createHuman(),
+      createHuman(),
+      createHuman(),
+      createWork(),
+      createWork(),
+      createWork(),
+    ])
+    await Promise.all([
+      // workX will have both soon-to-be redirected authors, which should trigger a conflict
+      // when trying to redirect claims at the same time
+      addClaim({ uri: workX.uri, property: 'wdt:P50', value: humanA.uri }),
+      addClaim({ uri: workX.uri, property: 'wdt:P50', value: humanB.uri }),
+      // while workY and workZ should have their claims redirected without problem on the first attempt
+      // but are here to control that it doesn't raise an issue when retrying to redirect claims
+      // due to the conflict above
+      addClaim({ uri: workY.uri, property: 'wdt:P50', value: humanA.uri }),
+      addClaim({ uri: workZ.uri, property: 'wdt:P50', value: humanB.uri }),
+    ])
+    await Promise.all([
+      merge(humanA.uri, humanC.uri),
+      merge(humanB.uri, humanC.uri),
+    ])
+    const { entities } = await getByUris(workX.uri)
+    const authorsUris = entities[workX.uri].claims['wdt:P50']
+    authorsUris.should.deepEqual([ humanC.uri ])
+    const patches = await getHistory(workX._id)
+    const { fromUri: fromUri1 } = patches.at(-2).context.redirectClaims
+    const { fromUri: fromUri2 } = patches.at(-1).context.redirectClaims
+    fromUri1.should.not.equal(fromUri2)
+    should(fromUri1 === humanA.uri || fromUri1 === humanB.uri).be.true()
+    should(fromUri1 === humanA.uri || fromUri1 === humanB.uri).be.true()
   })
 
   it('should reject a merge from a redirection', async () => {
