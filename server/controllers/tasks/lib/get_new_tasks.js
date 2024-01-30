@@ -22,6 +22,7 @@ export default async function (entity, existingTasks) {
   const { labels: worksLabels } = suspectWorksData
   const suggestions = await getAndFormatSuggestionsEntities(newSuggestionsSearchResults)
 
+  // Early merge to avoid triggering external sources requests
   const suggestionWithIsbnInWpArticle = await findAuthorWithMatchingIsbnInWikipediaArticles(suspectWorksData, suggestions)
   if (suggestionWithIsbnInWpArticle) {
     return automerge(entity.uri, suggestionWithIsbnInWpArticle.uri)
