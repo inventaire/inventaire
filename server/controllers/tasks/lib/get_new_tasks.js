@@ -80,8 +80,8 @@ function getExternalIdsClaimsValues (claims) {
   for (const prop in claims) {
     const values = claims[prop]
     if (properties[prop]) {
-      const { isExternalId, format } = properties[prop]
-      if (isExternalId) {
+      const { datatype, format } = properties[prop]
+      if (datatype === 'external-id') {
         forceArray(values).forEach(value => {
           if (format) value = format(value)
           externalIdsClaims.push(value)
