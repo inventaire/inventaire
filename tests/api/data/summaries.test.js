@@ -1,5 +1,6 @@
 import should from 'should'
 import { createWork, createEdition, createHuman } from '#fixtures/entities'
+import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { getByUri } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -69,6 +70,27 @@ describe('summaries', () => {
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
       const summaryData = summaries.find(summaryData => summaryData.key === property)
       summaryData.text.should.containEql('Pratchett')
+    })
+
+    it('should find summaries by ISBN', async () => {
+      const isbn = '978-1-59184-233-0'
+      const property = 'wdt:P212'
+      const edition = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+          [property]: [ isbn ],
+        },
+      })
+      const { uri } = edition
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
+      summaryData.key.should.equal(property)
+      summaryData.text.should.startWith('According to Godin')
+      summaryData.claim.id.should.equal(isbn)
+      summaryData.claim.property.should.equal(property)
+      summaryData.name.should.equal('OpenLibrary')
+      summaryData.link.should.equal(`https://openlibrary.org/isbn/${normalizeIsbn(isbn)}`)
+      summaryData.lang.should.equal('en')
     })
   })
 

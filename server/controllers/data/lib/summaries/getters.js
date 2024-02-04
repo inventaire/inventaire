@@ -1,10 +1,11 @@
 import { logError } from '#lib/utils/logs'
 import bnf from './bnf.js'
-import openlibrary from './openlibrary.js'
+import { getOpenLibrarySummaryByIsbn, getOpenLibrarySummaryByOpenLibraryId } from './openlibrary.js'
 
 const summaryGettersByClaimProperty = {
+  'wdt:P212': getOpenLibrarySummaryByIsbn,
   'wdt:P268': bnf,
-  'wdt:P648': openlibrary,
+  'wdt:P648': getOpenLibrarySummaryByOpenLibraryId,
 }
 
 const propertiesWithGetters = Object.keys(summaryGettersByClaimProperty)
