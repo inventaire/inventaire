@@ -39,5 +39,5 @@ export function guessLangFromIsbn (isbn) {
 
 export function formatIsbn (isbn, formatCode) {
   const isbnData = parseIsbn(isbn)
-  return isbnData[`isbn${formatCode}`]
+  return isbnData?.[`isbn${formatCode}`]
 }

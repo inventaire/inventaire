@@ -15,7 +15,7 @@ export const isbnProperty = num => {
       return isbn === isbnData[`isbn${num}h`]
     },
     uniqueValue: true,
-    format: isbn => formatIsbn(isbn, `${num}h`),
+    format: isbn => formatIsbn(isbn, `${num}h`) || isbn,
     adminUpdateOnly: true,
   })
 }
