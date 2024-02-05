@@ -38,6 +38,21 @@ describe('summaries', () => {
       summaryData.lang.should.equal('en')
     })
 
+    it('should detect summary language', async () => {
+      const olId = 'OL40222382M'
+      const work = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+
+          [property]: [ olId ],
+        },
+      })
+      const { uri } = work
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
+      summaryData.lang.should.equal('fr')
+    })
+
     it('should return empty summaries when no description is provided', async () => {
       const olId = 'OL4104668W'
       const work = await existsOrCreate({

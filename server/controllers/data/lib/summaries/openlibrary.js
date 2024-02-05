@@ -1,6 +1,9 @@
 import { cache_ } from '#lib/cache'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
+import { requireJson } from '#lib/utils/json'
+
+const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
 
 const timeout = 10 * 1000
 
@@ -28,24 +31,30 @@ export async function getOpenLibrarySummary ({ claims, refresh }) {
   } else {
     return
   }
-  const text = await cache_.get({
+  const res = await cache_.get({
     key: cacheKey,
     refresh,
     fn: async () => {
-      const { bio, description } = await requests_.get(url, { timeout })
+      const { bio, description, languages } = await requests_.get(url, { timeout })
       const text = bio || description
       if (!text) return
-      if (text.value) return text.value
-      else if (typeof text === 'string') return text
+      let lang
+      if (languages?.[0]) lang = parseLanguage(languages[0])
+      if (text.value) {
+        return { text: text.value, lang }
+      } else if (typeof text === 'string') {
+        return { text, lang }
+      }
     },
   })
-  if (text) {
+  if (res?.text) {
+    const { text, lang } = res
     return {
       text,
       name: 'OpenLibrary',
       link,
       key,
-      lang: 'en',
+      lang: lang || 'en',
       claim,
     }
   }
@@ -55,4 +64,9 @@ const openLibrarySectionByLetter = {
   A: 'authors',
   W: 'works',
   M: 'books',
+}
+
+function parseLanguage (language) {
+  const lang = language.key.split('/').at(-1)
+  return wmCodeByIso6392Code[lang]
 }

@@ -14,16 +14,17 @@ export async function getBnfSummary ({ claims, refresh }) {
   }`
   const headers = { accept: '*/*' }
   const url = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=${fixedEncodeURIComponent(sparql)}`
-  const text = await cache_.get({
+  const res = await cache_.get({
     key: `summary:${property}:${id}`,
     refresh,
     fn: async () => {
       const response = await requests_.get(url, { headers, timeout })
       const simplifiedResults = simplifySparqlResults(response)
-      return simplifiedResults[0]?.summary
+      return { text: simplifiedResults[0]?.summary }
     },
   })
-  if (text) {
+  if (res?.text) {
+    const { text } = res
     return {
       text,
       name: 'BNF',
