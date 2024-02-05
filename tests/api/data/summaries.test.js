@@ -107,6 +107,20 @@ describe('summaries', () => {
       summaryData.link.should.equal(`https://openlibrary.org/isbn/${normalizeIsbn(isbn)}`)
       summaryData.lang.should.equal('en')
     })
+
+    it('should ignore unknown ISBNs', async () => {
+      const isbn = '978-99993-999-9-9'
+      const property = 'wdt:P212'
+      const edition = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+          [property]: [ isbn ],
+        },
+      })
+      const { uri } = edition
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      summaries.length.should.equal(0)
+    })
   })
 
   describe('bnf', () => {
