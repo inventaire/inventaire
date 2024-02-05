@@ -83,8 +83,8 @@ describe('summaries', () => {
       })
       const { uri } = edition
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
-      const summaryData = summaries.find(summaryData => summaryData.key === property)
-      summaryData.key.should.equal(property)
+      const summaryData = summaries.find(summaryData => summaryData.key === 'wdt:P212:openlibrary')
+      summaryData.key.should.equal('wdt:P212:openlibrary')
       summaryData.text.should.startWith('According to Godin')
       summaryData.claim.id.should.equal(isbn)
       summaryData.claim.property.should.equal(property)

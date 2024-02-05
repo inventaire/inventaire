@@ -4,12 +4,14 @@ import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 
 const timeout = 10 * 1000
+const property = 'wdt:P268'
 
-export default async ({ id, refresh }) => {
+export async function getBnfSummary ({ claims, refresh }) {
+  const id = claims[property]?.[0]
+  if (!id) return
   const sparql = `SELECT * {
     <http://data.bnf.fr/ark:/12148/cb${id}#about> <http://purl.org/dc/terms/abstract> ?summary .
   }`
-  const property = 'wdt:P268'
   const headers = { accept: '*/*' }
   const url = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=${fixedEncodeURIComponent(sparql)}`
   const text = await cache_.get({
@@ -27,6 +29,8 @@ export default async ({ id, refresh }) => {
       name: 'BNF',
       link: `https://catalogue.bnf.fr/ark:/12148/cb${id}`,
       lang: 'fr',
+      key: 'wdt:P268',
+      claim: { id, property },
     }
   }
 }
