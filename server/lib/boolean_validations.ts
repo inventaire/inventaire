@@ -110,6 +110,7 @@ export function isNonEmptyPlainObject (obj): obj is Record<string | number, unkn
 }
 export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)
 export const isStrictlyPositiveInteger = num => Number.isInteger(num) && num > 0
+export const isNonNegativeInteger = num => Number.isInteger(num) && num >= 0
 export const isExtendedUrl = str => isUrl(str) || isLocalImg(str)
 export const isCollection = array => isArray(array) && array.every(isPlainObject)
 

@@ -41,10 +41,14 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  const elements = uris.map(uri => createElementDoc({
-    list: listingId,
-    uri,
-  }))
+  let currentOrdinal = 0
+  const elements = uris.map(uri => {
+    return createElementDoc({
+      list: listingId,
+      uri,
+      ordinal: currentOrdinal++,
+    })
+  })
   const res = await db.bulk(elements)
   const elementsIds = map(res, 'id')
   return db.fetch<ListingElement>(elementsIds)
