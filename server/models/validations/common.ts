@@ -1,5 +1,5 @@
 import { isArray, isBoolean, isNumber, isObject, isString } from 'lodash-es'
-import { isCouchUuid, isEmail, isEntityUri, isGroupId, isImageHash, isItemId, isLang, isLocalImg, isPatchId, isTransactionId, isUrl, isUserId, isUserImg, isUsername } from '#lib/boolean_validations'
+import { isCouchUuid, isEmail, isEntityUri, isGroupId, isImageHash, isItemId, isLang, isLocalImg, isPatchId, isNonNegativeInteger, isTransactionId, isUrl, isUserId, isUserImg, isUsername } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 
@@ -27,6 +27,7 @@ const commonValidations = {
     if (latLng === null) return true
     else return isArray(latLng) && (latLng.length === 2) && latLng.every(isNumber)
   },
+  nonNegativeInteger: isNonNegativeInteger,
   patchId: isPatchId,
   transactionId: isTransactionId,
   userId: isUserId,
