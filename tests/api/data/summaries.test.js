@@ -159,6 +159,13 @@ describe('summaries', () => {
     dewikiSitelinkData.should.be.ok()
     should(enwikiSitelinkData).not.be.ok()
   })
+
+  it('should accept wikimedia language codes', async () => {
+    const uri = 'wd:Q25338'
+    const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}&langs=dsb`)
+    const dsbwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'dsbwiki')
+    dsbwikiSitelinkData.should.be.ok()
+  })
 })
 
 const existsOrCreate = async ({ claims, createFn = createWork }) => {
