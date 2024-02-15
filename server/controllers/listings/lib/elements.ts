@@ -1,4 +1,4 @@
-import { map } from 'lodash-es'
+import { map, maxBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -41,12 +41,12 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  let currentOrdinal = 0
   const elements = uris.map(uri => {
+    const ordinal = highestOrdinal(listing.elements) + 1
     return createElementDoc({
       list: listingId,
       uri,
-      ordinal: currentOrdinal++,
+      ordinal,
     })
   })
   const res = await db.bulk(elements)
@@ -61,3 +61,10 @@ export async function bulkUpdateElements ({ oldElements, attribute, value }) {
 }
 
 const elementsBulkUpdate = db.bulk
+
+function highestOrdinal (elements: ListingElement[]) {
+  if (elements.length === 0) return -1
+
+  const highestOrdinalElement = maxBy(elements, 'ordinal')
+  return highestOrdinalElement.ordinal
+}
