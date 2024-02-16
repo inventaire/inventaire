@@ -1,8 +1,9 @@
 import { map } from 'lodash-es'
 import { someCouchUuid } from '#fixtures/general'
+import { getById, getByIdWithElements } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
-import { publicReq, authReq, authReqB } from '../utils/utils.js'
+import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-ids'
 
@@ -18,7 +19,7 @@ describe('listings:by-ids', () => {
   })
 
   it('should be empty when the id does not exist', async () => {
-    await publicReq('get', `${endpoint}&ids=${someCouchUuid}`)
+    return getById({ id: someCouchUuid })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(404)
@@ -29,8 +30,8 @@ describe('listings:by-ids', () => {
   // for detail visibility validations, see ./visibility.test.js
     it('should get a public listing', async () => {
       const { listing } = await createListing()
-      const res = await publicReq('get', `${endpoint}&ids=${listing._id}`)
-      res.lists[listing._id].should.be.ok()
+      const resListing = await getById({ id: listing._id })
+      resListing.should.be.ok()
     })
 
     it('should not return a private listing to an authentified user', async () => {
@@ -58,14 +59,13 @@ describe('listings:by-ids', () => {
   describe('with-elements', () => {
     it('should get lists with empty elements', async () => {
       const { listing } = await createListing()
-      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
-      res.lists[listing._id].elements.should.be.deepEqual([])
+      const resListing = await getByIdWithElements({ id: listing._id })
+      resListing.elements.should.be.deepEqual([])
     })
 
-    it('should get lists with elements', async () => {
+    it('should get list with elements', async () => {
       const { uri, listing } = await createElement({})
-      const res = await authReq('get', `${endpoint}&ids=${listing._id}&with-elements=true`)
-      const { elements } = res.lists[listing._id]
+      const { elements } = await getByIdWithElements({ id: listing._id })
       map(elements, 'uri').should.containEql(uri)
     })
   })

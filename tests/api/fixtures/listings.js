@@ -1,5 +1,5 @@
 import { randomWords } from '#fixtures/text'
-import { addElements } from '#tests/api/utils/listings'
+import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
 import { createWork } from './entities.js'
@@ -21,6 +21,15 @@ export const createListing = async (userPromise, listingData = {}) => {
   return { listing, user }
 }
 
+export const createListingWithElements = async userPromise => {
+  userPromise = userPromise || getUser()
+  const { listing, user } = await createListing(userPromise)
+  const { uri: uri2 } = await createElement({ listing }, userPromise)
+  const { uri } = await createElement({ listing }, userPromise)
+  const updatedListing = await getByIdWithElements({ user, id: listing._id })
+  return { listing: updatedListing, user, uris: [ uri, uri2 ] }
+}
+
 export const createElement = async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
   userPromise = userPromise || getUser()
   if (!listing) {
@@ -31,11 +40,10 @@ export const createElement = async ({ visibility = [ 'public' ], uri, listing },
     const edition = await createWork()
     uri = edition.uri
   }
-  const res = await addElements(userPromise, {
+  const { createdElements } = await addElements(userPromise, {
     id: listing._id,
     uris: [ uri ],
   })
-  const { createdElements } = res
   return {
     element: createdElements[0],
     listing,

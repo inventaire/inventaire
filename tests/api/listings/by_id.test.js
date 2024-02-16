@@ -1,8 +1,9 @@
 import { createWork } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
+import { getById } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { merge } from '../utils/entities.js'
-import { publicReq, authReqB } from '../utils/utils.js'
+import { publicReq, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
 
@@ -21,13 +22,13 @@ describe('listings:by-id', () => {
   // for detail visibility validations, see ./visibility.test.js
     it('should get a public listing', async () => {
       const { listing: reqListing } = await createListing()
-      const { list: listing } = await publicReq('get', `${endpoint}&id=${reqListing._id}`)
+      const listing = await getById({ id: reqListing._id })
       listing.should.be.an.Object()
     })
 
     it('should not return a private listing to an authentified user', async () => {
       const { listing } = await createListing(null, { visibility: [] })
-      await authReqB('get', `${endpoint}&id=${listing._id}`)
+      return getById({ user: getUserB(), id: listing._id })
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(403)

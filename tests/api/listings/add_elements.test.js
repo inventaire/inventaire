@@ -1,3 +1,4 @@
+import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createEdition, someFakeUri } from '../fixtures/entities.js'
@@ -5,7 +6,6 @@ import { createListing, createElement } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action='
-const byIds = `${endpoint}by-ids&with-elements=true`
 
 describe('listings:add-elements', () => {
   it('should reject without listing id', async () => {
@@ -43,9 +43,8 @@ describe('listings:add-elements', () => {
       err.statusCode.should.equal(403)
       err.body.status_verbose.should.equal('entities not found')
     })
-    const res = await authReq('get', `${byIds}&ids=${listing._id}`)
-    const firstListing = res.lists[listing._id]
-    firstListing.elements.length.should.equal(0)
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements.length.should.equal(0)
   })
 
   it('should add uri and create element', async () => {
@@ -55,9 +54,8 @@ describe('listings:add-elements', () => {
       id: listing._id,
       uris: [ uri ],
     })
-    const res = await authReq('get', `${byIds}&ids=${listing._id}`)
-    const firstListing = res.lists[listing._id]
-    firstListing.elements[0].uri.should.equal(uri)
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements[0].uri.should.equal(uri)
   })
 
   it('should not add twice an element already in listing', async () => {
@@ -70,10 +68,9 @@ describe('listings:add-elements', () => {
     res.ok.should.be.true()
     res.alreadyInList[0].uri.should.equal(uri)
 
-    const { lists: listings } = await authReq('get', `${byIds}&ids=${listing._id}`)
-    const firstListing = listings[listing._id]
-    firstListing.elements.length.should.equal(1)
-    firstListing.elements[0].uri.should.equal(uri)
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements.length.should.equal(1)
+    updatedListing.elements[0].uri.should.equal(uri)
   })
 
   it('should reject adding an element to a listing of another creator', async () => {
