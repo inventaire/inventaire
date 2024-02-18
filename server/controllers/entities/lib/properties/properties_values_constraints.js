@@ -188,6 +188,8 @@ export const propertiesValuesConstraints = {
   'wdt:P2607': externalId(uuidPattern),
   // number of volumes
   'wdt:P2635': positiveInteger,
+  // reply to
+  'wdt:P2675': workOrSerieEntity,
   // author of foreword
   'wdt:P2679': humanEntity,
   // author of afterword

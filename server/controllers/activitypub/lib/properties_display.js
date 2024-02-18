@@ -8,6 +8,7 @@ const workProperties = {
   'wdt:P407': 'entityString', // original language
   'wdt:P577': 'time', // publication date
   'wdt:P144': 'entity', // based on
+  'wdt:P2675': 'entity', // reply to
   'wdt:P941': 'entity', // inspired by
   'wdt:P136': 'entity', // genre
   'wdt:P135': 'entity', // movement

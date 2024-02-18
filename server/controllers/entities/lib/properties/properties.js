@@ -272,6 +272,10 @@ export const properties = {
   'wdt:P2635': {
     subjectTypes: [ 'edition' ],
   },
+  // reply to
+  'wdt:P2675': {
+    subjectTypes: [ 'work', 'serie' ],
+  },
   // author of foreword
   'wdt:P2679': {
     subjectTypes: [ 'edition' ],
