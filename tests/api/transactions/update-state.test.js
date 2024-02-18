@@ -48,39 +48,39 @@ describe('transactions:update-state', () => {
       const itemData = { transaction: sample([ 'giving', 'selling' ]), visibility: [ 'public' ] }
 
       it('should be false when the transaction is just requested', async () => {
-        const { userBItem } = await createTransaction({ itemData })
-        userBItem.busy.should.be.false()
+        const { item } = await createTransaction({ itemData })
+        item.busy.should.be.false()
       })
 
       it('should be true when the transaction is accepted', async () => {
-        const { transaction, userBItem, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.true()
       })
 
       it('should be false when the transaction is just declined', async () => {
-        const { transaction, userBItem, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'declined')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'declined')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.false()
       })
 
       it('should be false when the transaction is confirmed and change owner', async () => {
-        const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
-        userBItem.owner.should.equal(userB._id)
-        await updateTransaction(userB, transaction, 'accepted')
-        await updateTransaction(userA, transaction, 'confirmed')
-        const updatedItem = await getItem(userBItem)
-        updatedItem.owner.should.equal(userA._id)
+        const { transaction, item, requester, owner } = await createTransaction({ itemData })
+        item.owner.should.equal(owner._id)
+        await updateTransaction(owner, transaction, 'accepted')
+        await updateTransaction(requester, transaction, 'confirmed')
+        const updatedItem = await getItem(item)
+        updatedItem.owner.should.equal(requester._id)
         updatedItem.busy.should.be.false()
       })
 
       it('should be false when the transaction is cancelled', async () => {
-        const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        await updateTransaction(userA, transaction, 'cancelled')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, requester, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        await updateTransaction(requester, transaction, 'cancelled')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.false()
       })
     })
@@ -89,47 +89,47 @@ describe('transactions:update-state', () => {
       const itemData = { transaction: 'lending', visibility: [ 'public' ] }
 
       it('should be false when the transaction is just requested', async () => {
-        const { userBItem } = await createTransaction({ itemData })
-        userBItem.busy.should.be.false()
+        const { item } = await createTransaction({ itemData })
+        item.busy.should.be.false()
       })
 
       it('should be true when the transaction is accepted', async () => {
-        const { transaction, userBItem, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.true()
       })
 
       it('should be false when the transaction is just declined', async () => {
-        const { transaction, userBItem, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'declined')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'declined')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.false()
       })
 
       it('should be true when the transaction is confirmed', async () => {
-        const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        await updateTransaction(userA, transaction, 'confirmed')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, requester, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        await updateTransaction(requester, transaction, 'confirmed')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.true()
       })
 
       it('should be false when the transaction is returned', async () => {
-        const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        await updateTransaction(userA, transaction, 'confirmed')
-        await updateTransaction(userB, transaction, 'returned')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, requester, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        await updateTransaction(requester, transaction, 'confirmed')
+        await updateTransaction(owner, transaction, 'returned')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.false()
       })
 
       it('should be false when the transaction is cancelled', async () => {
-        const { transaction, userBItem, userA, userB } = await createTransaction({ itemData })
-        await updateTransaction(userB, transaction, 'accepted')
-        await updateTransaction(userA, transaction, 'confirmed')
-        await updateTransaction(userA, transaction, 'cancelled')
-        const updatedItem = await getItem(userBItem)
+        const { transaction, item, requester, owner } = await createTransaction({ itemData })
+        await updateTransaction(owner, transaction, 'accepted')
+        await updateTransaction(requester, transaction, 'confirmed')
+        await updateTransaction(requester, transaction, 'cancelled')
+        const updatedItem = await getItem(item)
         updatedItem.busy.should.be.false()
       })
     })
@@ -137,10 +137,10 @@ describe('transactions:update-state', () => {
 
   describe('concurrent transactions', () => {
     it("should not allow to 'accept' when the item is already busy", async () => {
-      const { transaction: transactionX, userB, userBItem } = await createTransaction()
-      const { transaction: transactionY } = await createTransaction({ userA: getUserC(), item: userBItem })
-      await updateTransaction(userB, transactionX, 'accepted')
-      await updateTransaction(userB, transactionY, 'accepted')
+      const { transaction: transactionX, owner, item } = await createTransaction()
+      const { transaction: transactionY } = await createTransaction({ requester: getUserC(), item })
+      await updateTransaction(owner, transactionX, 'accepted')
+      await updateTransaction(owner, transactionY, 'accepted')
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(403)

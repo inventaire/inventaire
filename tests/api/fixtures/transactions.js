@@ -6,20 +6,22 @@ import { getItem } from '../utils/items.js'
 import { createItem } from './items.js'
 
 export async function createTransaction (params = {}) {
-  const userA = await (params.userA || getUser())
-  const userB = await (params.userB || getUserB())
+  const [ requester, owner ] = await Promise.all([
+    params.requester || getUser(),
+    params.owner || getUserB(),
+  ])
   let { item, itemData } = params
   if (!item) {
     itemData = itemData || { visibility: [ 'public' ], transaction: 'giving' }
-    item = await createItem(userB, itemData)
+    item = await createItem(owner, itemData)
   }
   await wait(100)
   const refreshedItem = await getItem(item)
-  const res = await customAuthReq(userA, 'post', '/api/transactions?action=request', {
+  const res = await customAuthReq(requester, 'post', '/api/transactions?action=request', {
     item: item._id,
     message: 'yo',
   })
-  Object.assign(res, { userA, userB, userBItem: refreshedItem })
+  Object.assign(res, { requester, owner, item: refreshedItem })
   return res
 }
 

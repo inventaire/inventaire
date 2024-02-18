@@ -75,23 +75,23 @@ describe('transactions:request', () => {
   it('should create a transaction', async () => {
     const edition = await createEditionFromWorkWithAuthor()
     const itemData = { entity: edition.uri, visibility: [ 'public' ], transaction: 'lending' }
-    const { transaction, userA, userB, userBItem } = await createTransaction({ itemData })
+    const { transaction, requester, owner, item } = await createTransaction({ itemData })
     transaction.should.be.an.Object()
-    transaction.item.should.equal(userBItem._id)
-    transaction.requester.should.equal(userA._id)
-    transaction.owner.should.equal(userB._id)
+    transaction.item.should.equal(item._id)
+    transaction.requester.should.equal(requester._id)
+    transaction.owner.should.equal(owner._id)
     const { snapshot } = transaction
-    snapshot.item.entity.should.equal(userBItem.entity)
-    snapshot.owner.username.should.equal(userB.username)
-    snapshot.requester.username.should.equal(userA.username)
-    snapshot.entity.image.should.equal(userBItem.snapshot['entity:image'])
-    snapshot.entity.authors.should.equal(userBItem.snapshot['entity:authors'])
+    snapshot.item.entity.should.equal(item.entity)
+    snapshot.owner.username.should.equal(owner.username)
+    snapshot.requester.username.should.equal(requester.username)
+    snapshot.entity.image.should.equal(item.snapshot['entity:image'])
+    snapshot.entity.authors.should.equal(item.snapshot['entity:authors'])
   })
 
   it('should reject if the item is already busy', async () => {
-    const { transaction, userB, userBItem } = await createTransaction()
-    await updateTransaction(userB, transaction, 'accepted')
-    await authReqC('post', endpoint, { item: userBItem._id, message: 'hi' })
+    const { transaction, owner, item } = await createTransaction()
+    await updateTransaction(owner, transaction, 'accepted')
+    await authReqC('post', endpoint, { item: item._id, message: 'hi' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)
