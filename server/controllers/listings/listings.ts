@@ -7,6 +7,7 @@ import byIds from './by_ids.js'
 import create from './create.js'
 import deleteByIds from './delete_by_ids.js'
 import removeElements from './remove_elements.js'
+import reorder from './reorder.js'
 import update from './update.js'
 
 export default {
@@ -24,6 +25,7 @@ export default {
       'add-elements': addElements,
       'remove-elements': removeElements,
       delete: deleteByIds,
+      reorder,
     },
   }),
   put: ActionsControllers({

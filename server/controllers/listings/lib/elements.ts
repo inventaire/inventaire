@@ -62,9 +62,35 @@ export async function bulkUpdateElements ({ oldElements, attribute, value }) {
 
 const elementsBulkUpdate = db.bulk
 
+export async function reorderElements (uris, currentElements) {
+  const docsToUpdate = reorderAndUpdateDocs({
+    updateDocFn: updateElementDoc,
+    newOrderedKeys: uris,
+    currentDocs: currentElements,
+    attributeToSortBy: 'uri',
+    indexKey: 'ordinal',
+  })
+  if (docsToUpdate.length > 0) {
+    await elementsBulkUpdate(docsToUpdate)
+  }
+}
+
 function highestOrdinal (elements: ListingElement[]) {
   if (elements.length === 0) return -1
 
   const highestOrdinalElement = maxBy(elements, 'ordinal')
   return highestOrdinalElement.ordinal
+}
+
+function reorderAndUpdateDocs ({ updateDocFn, newOrderedKeys, currentDocs, attributeToSortBy, indexKey }) {
+  const docsToUpdate = []
+  for (let i = 0; i < newOrderedKeys.length; i++) {
+    const currentDoc = currentDocs.find(el => el[attributeToSortBy] === newOrderedKeys[i])
+    if (currentDoc[indexKey] !== i) {
+      const newAttributes = {}
+      newAttributes[indexKey] = i
+      docsToUpdate.push(updateDocFn(newAttributes, currentDoc))
+    }
+  }
+  return docsToUpdate
 }
