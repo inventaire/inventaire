@@ -50,3 +50,14 @@ export const createElement = async ({ visibility = [ 'public' ], uri, listing },
     uri,
   }
 }
+
+export const removeElement = async ({ uri, listing }, userPromise) => {
+  userPromise = userPromise || getUser()
+  const user = await userPromise
+  const removeElements = '/api/lists?action=remove-elements'
+
+  return customAuthReq(user, 'post', removeElements, {
+    id: listing._id,
+    uris: [ uri ],
+  })
+}
