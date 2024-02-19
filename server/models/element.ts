@@ -17,8 +17,10 @@ const attributes = {
   validAtCreation: [
     'list',
     'uri',
+    'ordinal',
   ],
   updatable: [
+    'ordinal',
     'uri',
   ],
 }

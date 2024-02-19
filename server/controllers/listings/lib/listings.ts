@@ -1,4 +1,4 @@
-import { groupBy, map, pick } from 'lodash-es'
+import { groupBy, map, pick, difference } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getElementsByListings, createListingElements, deleteListingsElements } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
@@ -28,7 +28,6 @@ export async function getListingsByIdsWithElements (ids: ListingId[]) {
   if (!isNonEmptyArray(listings)) return []
   const listingIds = map(listings, '_id')
   const elements = await getElementsByListings(listingIds)
-  if (!isNonEmptyArray(listings)) return []
   const elementsByListing: ElementsByListing = groupBy(elements, 'list')
   listings.forEach(assignElementsToListing(elementsByListing))
   return listings as ListingWithElements[]
@@ -54,14 +53,15 @@ export async function updateListingAttributes (params) {
 export const bulkDeleteListings = db.bulkDelete
 
 export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri, userId: UserId }) {
-  const currentElements = listing.elements
+  const currentElements = listing.elements || []
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)
   const { docs: createdElements } = await createListingElements({ uris: notFoundUris, listing, userId })
+  const res = { ok: true, createdElements }
   if (isNonEmptyArray(foundElements)) {
-    return { ok: true, alreadyInList: foundElements, createdElements }
+    return Object.assign(res, { alreadyInList: foundElements })
   }
-  return { ok: true, createdElements }
+  return res
 }
 
 export function validateListingsOwnership (userId: UserId, listings: Listing[]) {
@@ -69,6 +69,17 @@ export function validateListingsOwnership (userId: UserId, listings: Listing[]) 
     if (listing.creator !== userId) {
       throw newError('wrong user', 403, { userId, listId: listing._id })
     }
+  }
+}
+
+export const validateElementsUrisInListing = (uris, listingElements) => {
+  if (listingElements.length === 0) return true
+  const listingElementsUris = map(listingElements, 'uri')
+  // truncate array to allow more performant validation on elements subset
+  listingElementsUris.length = uris.length
+  const urisNotInListing = difference(listingElementsUris, uris)
+  if (urisNotInListing.length > 0) {
+    throw newError('some elements are not in the list', 400, { uris: urisNotInListing })
   }
 }
 
@@ -86,7 +97,8 @@ export async function deleteUserListingsAndElements (userId: UserId) {
 }
 
 const assignElementsToListing = (elementsByListing: ElementsByListing) => listing => {
-  listing.elements = elementsByListing[listing._id] || []
+  const listingElements = elementsByListing[listing._id] || []
+  listing.elements = listingElements.sort((a, b) => a.ordinal - b.ordinal)
 }
 
 async function validateExistingEntities (uris: EntityUri[]) {
