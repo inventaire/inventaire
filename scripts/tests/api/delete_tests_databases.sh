@@ -3,7 +3,7 @@ databases=$(./scripts/print_module_exports.js server/db/couchdb/databases.js dat
 dbHost=$(node -p "require('config').db.getOrigin()")
 elasticOrigin=$(node -p "require('config').elasticsearch.origin")
 leveldbPathBase=$(node ./server/lib/absolute_path.js root db/leveldb)
-leveldbPath="${leveldbPathBase}-tests"
+leveldbPath="${leveldbPathBase}*-tests"
 
 for db in $databases
 do
