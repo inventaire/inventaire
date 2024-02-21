@@ -224,7 +224,11 @@ const existsOrCreate = async ({ claims, createFn = createWork }) => {
     const entity = await createFn({ claims })
     return entity
   } catch (err) {
-    const existingEntityUri = err.body.context.entity
-    return getByUri(existingEntityUri)
+    if (err.body.status_verbose === 'this property value is already used') {
+      const existingEntityUri = err.body.context.entity
+      return getByUri(existingEntityUri)
+    } else {
+      throw err
+    }
   }
 }
