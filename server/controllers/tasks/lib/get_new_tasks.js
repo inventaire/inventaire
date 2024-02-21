@@ -18,7 +18,7 @@ export default async function (entity, existingTasks) {
     searchEntityDuplicatesSuggestions(entity),
     getAuthorWorksData(entity._id),
   ])
-  if (newSuggestionsSearchResults.length <= 0) return []
+  if (newSuggestionsSearchResults.length === 0) return []
   const { labels: worksLabels } = suspectWorksData
   const suggestions = await getAndFormatSuggestionsEntities(newSuggestionsSearchResults)
 
@@ -34,7 +34,7 @@ export default async function (entity, existingTasks) {
 }
 
 async function getAndFormatSuggestionsEntities (newSuggestionsSearchResults) {
-  const uris = newSuggestionsSearchResults.map(suggestion => suggestion.uri)
+  const uris = map(newSuggestionsSearchResults, 'uri')
   const { entities } = await getEntitiesByUris({ uris })
   newSuggestionsSearchResults.forEach(addLexicalScoreToSuggestionsEntities(entities))
   return Object.values(entities)
@@ -78,8 +78,7 @@ async function findSuggestionWithSameExternalId (suspect, suggestions) {
 function getExternalIdsClaimsValues (claims) {
   const externalIdsClaims = []
 
-  for (const prop in claims) {
-    const values = claims[prop]
+  for (const [ prop, values ] of Object.entries(claims)) {
     if (properties[prop]) {
       const { datatype, format } = properties[prop]
       if (datatype === 'external-id') {

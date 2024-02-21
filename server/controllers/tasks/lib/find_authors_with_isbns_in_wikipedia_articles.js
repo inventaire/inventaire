@@ -7,8 +7,7 @@ import { asyncFilter } from '#lib/promises'
 export async function findAuthorWithMatchingIsbnInWikipediaArticles (worksData, authors) {
   // worksData is built with getAuthorWorksData
   const { langs, worksUris } = worksData
-  const editions = await Promise.all(getEditionsFromWorks(worksUris))
-    .then(flatMap)
+  const editions = await getEditionsFromWorks(worksUris)
   const isbns = getIsbnsClaimValues(editions)
   if (isbns.length === 0) return
 
@@ -39,6 +38,8 @@ const hasMatchingIsbns = claimsIsbns => article => {
   }
 }
 
-function getEditionsFromWorks (worksUris) {
-  return worksUris.map(uri => getInvEntitiesByClaim('wdt:P629', uri, true, true))
+async function getEditionsFromWorks (worksUris) {
+  return Promise.all(worksUris.map(uri => {
+    return getInvEntitiesByClaim('wdt:P629', uri, true, true)
+  })).then(flatMap)
 }
