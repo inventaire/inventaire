@@ -1,4 +1,4 @@
-import { map, uniq, intersection } from 'lodash-es'
+import { map, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
@@ -8,8 +8,8 @@ import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import properties from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
-import { isNonEmptyString, isNonEmptyArray } from '#lib/boolean_validations'
-import { forceArray } from '#lib/utils/base'
+import { isNonEmptyString } from '#lib/boolean_validations'
+import { forceArray, someMatch } from '#lib/utils/base'
 import { automerge, validateAndAutomerge } from './automerge.js'
 import { findAuthorWithMatchingIsbnInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
 
@@ -67,24 +67,26 @@ async function findSuggestionWithSameExternalId (suspect, suggestions) {
   // Known case: inv entity had an externalId before wd item
   // Using typeSearch results allows to only merge homonyms,
   // but could be switched to byClaimValue db request (?)
-  const suspectExternalIds = getExternalIdsClaimsValues(suspect.claims)
+  const suspectExternalIdsClaims = getExternalIdsClaims(suspect.claims)
   return suggestions.find(suggestion => {
-    const { claims } = suggestion
-    const suggestionExternalIds = getExternalIdsClaimsValues(claims)
-    return isNonEmptyArray(intersection(suggestionExternalIds, suspectExternalIds))
+    const suggestionExternalIdsClaims = getExternalIdsClaims(suggestion.claims)
+    for (const [ property, values ] of Object.entries(suggestionExternalIdsClaims)) {
+      if (someMatch(values, suspectExternalIdsClaims[property])) return true
+    }
+    return false
   })
 }
 
-function getExternalIdsClaimsValues (claims) {
-  const externalIdsClaims = []
+function getExternalIdsClaims (claims) {
+  const externalIdsClaims = {}
 
-  for (const [ prop, values ] of Object.entries(claims)) {
-    if (properties[prop]) {
-      const { datatype, format } = properties[prop]
+  for (const [ property, values ] of Object.entries(claims)) {
+    if (properties[property]) {
+      const { datatype, format } = properties[property]
       if (datatype === 'external-id') {
-        forceArray(values).forEach(value => {
-          if (format) value = format(value)
-          externalIdsClaims.push(value)
+        externalIdsClaims[property] = forceArray(values).map(value => {
+          if (format) return format(value)
+          else return value
         })
       }
     }
