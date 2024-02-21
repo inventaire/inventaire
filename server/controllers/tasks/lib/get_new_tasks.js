@@ -43,7 +43,10 @@ async function getAndFormatSuggestionsEntities (newSuggestionsSearchResults) {
 const addLexicalScoreToSuggestionsEntities = entities => suggestionSearchResults => {
   const { uri, _score } = suggestionSearchResults
   const entity = entities[uri]
-  entity.lexicalScore = _score
+  // There as been a case during tests where the entity was not found
+  // but the reason why could not then be identified.
+  // Possibly because of an already merged entity?
+  if (entity) entity.lexicalScore = _score
 }
 
 const filterOrMergeSuggestions = (suspect, workLabels) => async suggestions => {
