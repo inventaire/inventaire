@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import should from 'should'
 import { createElement, createListing } from '#fixtures/listings'
 import { getGroup } from '#tests/api/utils/groups'
-import { getListingById } from '#tests/api/utils/listings'
+import { getById as getListingById } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createGroup, addMember, addAdmin, addInvited, addRequested, addDeclined } from '../fixtures/groups.js'
 import { createItem } from '../fixtures/items.js'
@@ -163,7 +163,7 @@ describe('user:delete', () => {
       // Requires an endpoint to get elements directly?
       await createElement({ listing }, user)
       await deleteUser(user)
-      await getListingById(null, listing._id)
+      await getListingById({ id: listing._id })
       .then(shouldNotBeCalled)
       .catch(err => {
         err.statusCode.should.equal(404)
