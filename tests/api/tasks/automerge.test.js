@@ -3,7 +3,7 @@ import ASCIIFolder from 'fold-to-ascii'
 import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
-import { createHuman, createWorkWithAuthor, randomLabel, createEdition } from '../fixtures/entities.js'
+import { generateIsbn13, createHuman, createWorkWithAuthor, randomLabel, createEdition } from '../fixtures/entities.js'
 import { getByUris, findOrIndexEntities, deleteByUris } from '../utils/entities.js'
 import { checkEntities } from '../utils/tasks.js'
 
@@ -54,7 +54,7 @@ describe('tasks:automerge', () => {
 
   it('should not automerge if work title found in unstructured data source is too short', async () => {
     const humanLabel = 'Penelope Curtis' // wd:Q20630876
-    // string that should reasonably appear in a wikipedia article extract
+    // string that should reasonably appear in a wikipedia article
     const shortWorkLabel = 'The'
     const human = await createHuman({ labels: { en: humanLabel } })
     await createWorkWithAuthor(human, shortWorkLabel)
@@ -81,7 +81,7 @@ describe('tasks:automerge', () => {
     const wikidataUri = 'wd:Q259507'
     const humanLabel = 'bell hooks' // label from wd:Q259507
     const labels = { en: humanLabel }
-    const isbn = '978-0-89608-613-5' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
+    const isbn = '978-0786825530' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
 
     const human = await createHuman({ labels })
     // make sure edition is not already existing
@@ -96,6 +96,26 @@ describe('tasks:automerge', () => {
     await checkEntities(human.uri)
     const { entities } = await getByUris(human.uri)
     entities[wikidataUri].should.be.ok()
+  })
+
+  it('should not automerge author if ISBN is not found on a Wikipedia article', async () => {
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const labels = { en: humanLabel }
+    const isbn = generateIsbn13()
+
+    const human = await createHuman({ labels })
+    // make sure edition is not already existing
+    await deleteByUris(prefixifyIsbn(isbn))
+    const work = await createWorkWithAuthor(human)
+    await createEdition({
+      work,
+      claims: {
+        'wdt:P212': [ isbn ],
+      },
+    })
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[human.uri].should.be.ok()
   })
 })
 

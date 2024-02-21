@@ -47,3 +47,8 @@ export const defer = () => {
     promise,
   }
 }
+
+export async function asyncFilter (array, testFn) {
+  const testsResults = await Promise.all(array.map(testFn))
+  return array.filter((_, index) => testsResults[index])
+}
