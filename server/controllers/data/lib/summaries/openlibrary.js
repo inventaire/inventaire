@@ -35,15 +35,22 @@ export async function getOpenLibrarySummary ({ claims, refresh }) {
     key: cacheKey,
     refresh,
     fn: async () => {
-      const { bio, description, languages } = await requests_.get(url, { timeout })
-      const text = bio || description
-      if (!text) return
-      let lang
-      if (languages?.[0]) lang = parseLanguage(languages[0])
-      if (text.value) {
-        return { text: text.value, lang }
-      } else if (typeof text === 'string') {
-        return { text, lang }
+      try {
+        const { bio, description, languages } = await requests_.get(url, { timeout })
+        const text = bio || description
+        if (!text) return
+        let lang
+        if (languages?.[0]) lang = parseLanguage(languages[0])
+        if (text.value) {
+          return { text: text.value, lang }
+        } else if (typeof text === 'string') {
+          return { text, lang }
+        }
+      } catch (err) {
+        if (err.statusCode === 404) return
+        // Prevent logging long HTML responses
+        if (err.body?.includes('<html')) err.body = '[HTML response]'
+        throw err
       }
     },
   })

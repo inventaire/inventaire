@@ -12,8 +12,10 @@ const getSummaryFromPropertyClaims = ({ claims, refresh }) => async getter => {
   try {
     summaryData = await getter({ claims, refresh })
   } catch (err) {
-    err.context = { getter }
-    logError(err, 'getSummaryFromPropertyClaims')
+    if (err.statusCode !== 404) {
+      err.context = { getter }
+      logError(err, 'getSummaryFromPropertyClaims')
+    }
     return
   }
   return summaryData
