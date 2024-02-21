@@ -1,4 +1,4 @@
-import { map, maxBy } from 'lodash-es'
+import { map, maxBy, property } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -41,15 +41,24 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  const elements = uris.map(uri => {
-    const ordinal = highestOrdinal(listing.elements) + 1
+  let { elements } = listing
+
+  if (isNonEmptyArray(elements)) {
+    // Legacy reasons: some elements may not have ordinal
+    if (areSomeWithoutOrdinal(elements)) {
+      await updateOrdinal(elements)
+      elements = await getElementsByListing(listingId)
+    }
+  }
+  const elementsToCreate = uris.map(uri => {
+    const ordinal = highestOrdinal(elements) + 1
     return createElementDoc({
       list: listingId,
       uri,
       ordinal,
     })
   })
-  const res = await db.bulk(elements)
+  const res = await db.bulk(elementsToCreate)
   const elementsIds = map(res, 'id')
   return db.fetch<ListingElement>(elementsIds)
 }
@@ -80,6 +89,15 @@ function highestOrdinal (elements: ListingElement[]) {
 
   const highestOrdinalElement = maxBy(elements, 'ordinal')
   return highestOrdinalElement.ordinal
+}
+
+function areSomeWithoutOrdinal (elements) {
+  return elements.find(el => (typeof (el) !== 'undefined'))
+}
+
+async function updateOrdinal (elements) {
+  const orderedUris = elements.map(property('uri'))
+  return reorderElements(orderedUris, elements)
 }
 
 function reorderAndUpdateDocs ({ updateDocFn, newOrderedKeys, currentDocs, attributeToSortBy, indexKey }) {
