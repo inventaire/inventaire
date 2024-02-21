@@ -3,7 +3,7 @@ import typeSearch from '#controllers/search/lib/type_search'
 import { someMatch } from '#lib/utils/base'
 import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
 import getAuthorsUris from '../get_authors_uris.js'
-import getOccurrencesFromExternalSources from '../get_occurrences_from_external_sources.js'
+import { getOccurrencesFromExternalSources } from '../get_occurrences_from_external_sources.js'
 import { getEntityNormalizedTerms } from '../terms_normalization.js'
 import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
 

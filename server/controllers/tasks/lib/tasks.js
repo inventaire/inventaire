@@ -5,15 +5,15 @@ import Task from '#models/task'
 
 const db = await dbFactory('tasks')
 
-export async function createTask (suspectUri, type, entitiesType, suggestions) {
+export async function createTasksFromSuggestions ({ suspectUri, type, entitiesType, suggestions }) {
   // suggestions may only be an array of objects with a 'uri' key
   const newTasksObjects = suggestions.map(suggestion => {
-    const { _score, uri: suggestionUri, occurrences, reporter, clue } = suggestion
+    const { lexicalScore, uri: suggestionUri, occurrences, reporter, clue } = suggestion
 
     const newTask = { type, suspectUri, suggestionUri }
 
     assignKeyIfExists(newTask, 'entitiesType', entitiesType)
-    assignKeyIfExists(newTask, 'lexicalScore', _score)
+    assignKeyIfExists(newTask, 'lexicalScore', lexicalScore)
     assignKeyIfExists(newTask, 'reporter', reporter)
     assignKeyIfExists(newTask, 'externalSourcesOccurrences', occurrences)
     assignKeyIfExists(newTask, 'clue', clue)

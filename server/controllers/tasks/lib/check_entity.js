@@ -1,5 +1,5 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { error_ } from '#lib/error/error'
 import { info } from '#lib/utils/logs'
 import getNewTasks from './get_new_tasks.js'
@@ -29,7 +29,13 @@ export default async uri => {
 
   const existingTasks = await getExistingTasks(uri)
   const newSuggestions = await getNewTasks(entity, existingTasks)
-  await createTask(uri, 'deduplicate', entity.type, newSuggestions)
+  await createTasksFromSuggestions({
+    suspectUri: uri,
+    type: 'deduplicate',
+    entitiesType: entity.type,
+    suggestions: newSuggestions,
+  })
+
   await updateRelationScore(uri)
 }
 

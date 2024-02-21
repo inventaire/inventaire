@@ -1,28 +1,24 @@
 #!/usr/bin/env node
-import { addUserRole, findUserByUsername } from '#controllers/user/lib/user'
+import { addUserRole } from '#controllers/user/lib/user'
 import { info } from '#lib/utils/logs'
-import { createGroup, addMember, addAdmin } from '../tests/api/fixtures/groups.js'
-import { createUserWithItems } from '../tests/api/fixtures/populate.js'
-import { makeFriends } from '../tests/api/utils/relations.js'
+import { createGroup, addMember, addAdmin } from '#tests/api/fixtures/groups'
+import { createUserWithItems } from '#tests/api/fixtures/populate'
+import { getOrCreateUser } from '#tests/api/fixtures/users'
+import { makeFriends } from '#tests/api/utils/relations'
 
 const [ username ] = process.argv.slice(2)
 
 const run = async () => {
-  try {
-    const { _id } = await findUserByUsername(username)
-    console.log(`Username ${username} already exists at ${_id}`)
-    return process.exit(0)
-  } catch (err) {
-    createUserAndGroupAndGFriends(username)
+  const user = await getOrCreateUser({ username })
+  if (!user.roles.includes('admin')) {
+    await addUserRole(user._id, 'admin')
+    info(`${user.username} has now an 'admin' role`)
   }
+  await createGroupAndFriends(user)
+  process.exit(0)
 }
 
-const createUserAndGroupAndGFriends = async username => {
-  const user = await createUserWithItems({ username })
-  info(`${user.username} is a new user`)
-  await addUserRole(user._id, 'admin')
-  info(`${user.username} has now an 'admin' role`)
-
+const createGroupAndFriends = async user => {
   const [ friend1, friend2 ] = await Promise.all([
     addFriendsToUser(user),
     addFriendsToUser(user),

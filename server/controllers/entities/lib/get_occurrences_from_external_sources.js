@@ -11,7 +11,7 @@ import getKjkAuthorWorksTitle from '#data/kjk/get_kjk_author_works_titles'
 import getNdlAuthorWorksTitle from '#data/ndl/get_ndl_author_works_titles'
 import getOlAuthorWorksTitles from '#data/openlibrary/get_ol_author_works_titles'
 import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
-import getWikipediaArticle from '#data/wikipedia/get_article'
+import { getWikipediaArticle } from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
@@ -22,7 +22,7 @@ import { normalizeTerm } from './terms_normalization.js'
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-export default async (wdAuthorUri, worksLabels, worksLabelsLangs) => {
+export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabels, worksLabelsLangs) {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)
@@ -58,9 +58,9 @@ const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLan
   return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
-const getMostRelevantWikipediaArticles = (authorEntity, worksLabelsLangs) => {
+export const getMostRelevantWikipediaArticles = async (authorEntity, worksLabelsLangs) => {
   const { sitelinks, originalLang } = authorEntity
-  const langs = uniq(worksLabelsLangs.concat([ originalLang, 'en' ]))
+  const langs = compact(uniq(worksLabelsLangs.concat([ originalLang, 'en' ])))
   const articlesParams = langs
     .map(getArticleParams(sitelinks))
     .filter(identity)
@@ -91,11 +91,16 @@ const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuth
 const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
 
 const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
-  if (!article.extract) return
-  const worksLabelsPattern = new RegExp(worksLabels.map(normalize).join('|'), 'g')
-  const matchedTitles = uniq(normalize(article.extract).match(worksLabelsPattern))
+  if (!article.wikitext) return
+  const matchedTitles = matchLabelsInArticle(worksLabels, article)
   if (matchedTitles.length <= 0) return
   return { url: article.url, matchedTitles, structuredDataSource: false }
+}
+
+function matchLabelsInArticle (labels, article) {
+  if (!article.wikitext || labels.length === 0) return []
+  const worksLabelsPattern = new RegExp(labels.map(normalize).join('|'), 'g')
+  return uniq(normalize(article.wikitext).match(worksLabelsPattern))
 }
 
 const createOccurrencesFromExactTitles = worksLabels => result => {

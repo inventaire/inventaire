@@ -4,7 +4,7 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
-import { createTask, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { error_ } from '#lib/error/error'
 
 export default async (workUri, isbn, userId) => {
@@ -30,7 +30,12 @@ export default async (workUri, isbn, userId) => {
   const existingTasks = await getExistingTasks(workUri)
   let newSuggestions = await filterNewTasks(existingTasks, suggestions)
   newSuggestions = map(newSuggestions, addToSuggestion(userId, isbn))
-  return createTask(workUri, 'deduplicate', work.type, newSuggestions)
+  return createTasksFromSuggestions({
+    suspectUri: workUri,
+    type: 'deduplicate',
+    entitiesType: work.type,
+    suggestions: newSuggestions,
+  })
 }
 
 const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {

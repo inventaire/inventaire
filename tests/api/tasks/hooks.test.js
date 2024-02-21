@@ -10,7 +10,7 @@ describe('tasks:hooks', () => {
     before(async () => {
       // Tests dependency: having a populated ElasticSearch wikidata index
       const wikidataUris = [
-        'wd:Q535', 'wd:Q54551995', // some Victor Hugos
+        'wd:Q535', 'wd:Q15339037', // some Victor Hugos
         'wd:Q3182477', 'wd:Q228024', // some John Smiths
         'wd:Q237087', // Fred Vargas
       ]

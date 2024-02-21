@@ -1,13 +1,16 @@
 import 'should'
 import ASCIIFolder from 'fold-to-ascii'
-import { createHuman, createWorkWithAuthor, randomLabel } from '../fixtures/entities.js'
-import { getByUris, findOrIndexEntities } from '../utils/entities.js'
+import { cloneDeep } from 'lodash-es'
+import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
+import { generateIsbn13, createHuman, createWorkWithAuthor, randomLabel, createEdition } from '../fixtures/entities.js'
+import { getByUris, findOrIndexEntities, deleteByUris } from '../utils/entities.js'
 import { checkEntities } from '../utils/tasks.js'
 
 describe('tasks:automerge', () => {
   before(async () => {
     // Tests dependency: having a populated ElasticSearch wikidata index
-    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248' ]
+    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248', 'wd:Q259507' ]
     await findOrIndexEntities(wikidataUris)
   })
 
@@ -48,6 +51,85 @@ describe('tasks:automerge', () => {
     const firstOccurenceMatch = tasks[0].externalSourcesOccurrences[0].matchedTitles[0]
     firstOccurenceMatch.should.equal(normalize(humanLabel))
   })
+
+  it('should not automerge if work title found in unstructured data source is too short', async () => {
+    const humanLabel = 'Penelope Curtis' // wd:Q20630876
+    // string that should reasonably appear in a wikipedia article
+    const shortWorkLabel = 'The'
+    const human = await createHuman({ labels: { en: humanLabel } })
+    await createWorkWithAuthor(human, shortWorkLabel)
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[human.uri].should.be.ok()
+  })
+
+  it('should automerge if authors have same external id', async () => {
+    const wikidataUri = 'wd:Q259507'
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const claims = {
+      'wdt:P648': [ 'OL2631291A' ], // OLID from wd:Q259507
+    }
+    const labels = { en: humanLabel }
+    const human = await createHuman({ labels })
+    await forceUpdateEntityClaims(human, claims)
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[wikidataUri].should.be.ok()
+  })
+
+  it('should automerge author if ISBN is found on a Wikipedia article', async () => {
+    const wikidataUri = 'wd:Q259507'
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const labels = { en: humanLabel }
+    const isbn = '978-0-89608-613-5' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
+
+    const human = await createHuman({ labels })
+    // make sure edition is not already existing
+    await deleteByUris(prefixifyIsbn(isbn))
+    const work = await createWorkWithAuthor(human)
+    await createEdition({
+      work,
+      claims: {
+        'wdt:P212': [ isbn ],
+      },
+    })
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[wikidataUri].should.be.ok()
+  })
+
+  it('should not automerge author if ISBN is not found on a Wikipedia article', async () => {
+    const humanLabel = 'bell hooks' // label from wd:Q259507
+    const labels = { en: humanLabel }
+    const isbn = generateIsbn13()
+
+    const human = await createHuman({ labels })
+    // make sure edition is not already existing
+    await deleteByUris(prefixifyIsbn(isbn))
+    const work = await createWorkWithAuthor(human)
+    await createEdition({
+      work,
+      claims: {
+        'wdt:P212': [ isbn ],
+      },
+    })
+    await checkEntities(human.uri)
+    const { entities } = await getByUris(human.uri)
+    entities[human.uri].should.be.ok()
+  })
 })
 
 const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+
+async function forceUpdateEntityClaims (entity, claims, userId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab') {
+  // By pass API entity validations,
+  // to create another entity with same claims
+  const updatedDoc = cloneDeep(entity)
+  Object.assign(updatedDoc.claims, claims)
+
+  await putInvEntityUpdate({
+    currentDoc: entity,
+    updatedDoc,
+    userId,
+  })
+}

@@ -14,6 +14,13 @@ export const normalizeIsbn = text => {
 
 export const isNormalizedIsbn = text => /^(97(8|9))?\d{9}(\d|X)$/.test(text)
 
+// Generate a regex at every function call to be able to use g flag
+// see https://stackoverflow.com/questions/1520800/why-does-a-regexp-with-global-flag-give-wrong-results
+export function findIsbns (text) {
+  const matches = text.match(/(97(8|9))?[\d-]{9,13}([\dX])/g) || []
+  return matches.map(normalizeIsbn).filter(isNormalizedIsbn)
+}
+
 export function looksLikeAnIsbn (text) {
   if (typeof text !== 'string') return false
   const cleanedText = normalizeIsbn(text)
