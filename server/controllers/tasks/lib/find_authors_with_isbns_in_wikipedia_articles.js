@@ -30,7 +30,7 @@ const hasIsbnInWikipediaArticles = (langs, claimsIsbns) => async author => {
 }
 
 const hasMatchingIsbns = claimsIsbns => article => {
-  const articleIsbns = findIsbns(article.extract)
+  const articleIsbns = findIsbns(article.wikitext)
   if (articleIsbns.length > 0) {
     const normalizedClaimsIsbns = claimsIsbns.map(normalizeIsbn)
     const normalizedArticleIsbns = articleIsbns.map(normalizeIsbn).filter(isValidIsbn)

@@ -81,7 +81,7 @@ describe('tasks:automerge', () => {
     const wikidataUri = 'wd:Q259507'
     const humanLabel = 'bell hooks' // label from wd:Q259507
     const labels = { en: humanLabel }
-    const isbn = '978-0786825530' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
+    const isbn = '978-0-89608-613-5' // should appear on https://en.wikipedia.org/wiki/Bell_hooks
 
     const human = await createHuman({ labels })
     // make sure edition is not already existing

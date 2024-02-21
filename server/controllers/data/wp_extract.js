@@ -1,4 +1,4 @@
-import getArticle from '#data/wikipedia/get_article'
+import { getWikipediaArticle } from '#data/wikipedia/get_article'
 import { error_ } from '#lib/error/error'
 import { normalizeWikimediaLang } from '#lib/wikimedia'
 
@@ -14,7 +14,7 @@ const controller = async ({ lang, title }) => {
   if (isInvalidTitle(title)) {
     throw error_.new('invalid title', 400, { title })
   }
-  return getArticle({ lang, title, introOnly: true })
+  return getWikipediaArticle({ lang, title, introOnly: true })
 }
 
 const isInvalidTitle = title => /[{}]/.test(title)

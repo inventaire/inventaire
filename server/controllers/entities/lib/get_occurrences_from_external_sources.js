@@ -11,7 +11,7 @@ import getKjkAuthorWorksTitle from '#data/kjk/get_kjk_author_works_titles'
 import getNdlAuthorWorksTitle from '#data/ndl/get_ndl_author_works_titles'
 import getOlAuthorWorksTitles from '#data/openlibrary/get_ol_author_works_titles'
 import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
-import getWikipediaArticle from '#data/wikipedia/get_article'
+import { getWikipediaArticle } from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
@@ -91,16 +91,16 @@ const getKjkOccurrences = getAndCreateOccurrencesFromIds('wdt:P1006', getKjkAuth
 const getNdlOccurrences = getAndCreateOccurrencesFromIds('wdt:P349', getNdlAuthorWorksTitle)
 
 const createOccurrencesFromUnstructuredArticle = worksLabels => article => {
-  if (!article.extract) return
+  if (!article.wikitext) return
   const matchedTitles = matchLabelsInArticle(worksLabels, article)
   if (matchedTitles.length <= 0) return
   return { url: article.url, matchedTitles, structuredDataSource: false }
 }
 
 function matchLabelsInArticle (labels, article) {
-  if (!article.extract || labels.length === 0) return []
+  if (!article.wikitext || labels.length === 0) return []
   const worksLabelsPattern = new RegExp(labels.map(normalize).join('|'), 'g')
-  return uniq(normalize(article.extract).match(worksLabelsPattern))
+  return uniq(normalize(article.wikitext).match(worksLabelsPattern))
 }
 
 const createOccurrencesFromExactTitles = worksLabels => result => {
