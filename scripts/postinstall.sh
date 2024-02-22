@@ -4,6 +4,11 @@ set -eu
 
 ./scripts/check_node_version.js
 
+# Make git hooks trackable (see https://stackoverflow.com/a/4457124/3324977)
+rm -rf .git/hooks
+# Symbolic link is relative to the .git directory, thus the path starting with ".."
+ln -s ../scripts/githooks .git/hooks
+
 # If the client folder already exist, assume that it's a re-install
 # and that all the following isn't needed
 [ -e client ] && exit 0
