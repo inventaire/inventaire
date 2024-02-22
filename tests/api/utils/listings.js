@@ -6,7 +6,7 @@ import { customAuthReq } from './request.js'
 const endpoint = '/api/lists?action='
 const byIds = 'by-ids'
 
-const getByIds = async (user, ids, params = '') => {
+const getListingByIds = async (user, ids, params = '') => {
   if (isArray(ids)) ids = ids.join('|')
   let promise
   const path = `${endpoint}${byIds}${params}&ids=${ids}`
@@ -18,14 +18,14 @@ const getByIds = async (user, ids, params = '') => {
   return promise
 }
 
-export async function getById ({ user, id, params }) {
+export async function getListingById ({ user, id, params }) {
   user = user || getUser()
-  const { lists } = await getByIds(user, id, params)
+  const { lists } = await getListingByIds(user, id, params)
   return lists[id]
 }
 
 export async function getByIdWithElements ({ user, id }) {
-  return getById({ user, id, params: '&with-elements=true' })
+  return getListingById({ user, id, params: '&with-elements=true' })
 }
 
 export async function addElements (user, { id, uris }) {

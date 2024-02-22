@@ -1,6 +1,6 @@
 import { map } from 'lodash-es'
 import { someCouchUuid } from '#fixtures/general'
-import { getById, getByIdWithElements } from '#tests/api/utils/listings'
+import { getListingById, getByIdWithElements } from '#tests/api/utils/listings'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { publicReq, authReqB } from '../utils/utils.js'
@@ -19,7 +19,7 @@ describe('listings:by-ids', () => {
   })
 
   it('should be empty when the id does not exist', async () => {
-    return getById({ id: someCouchUuid })
+    return getListingById({ id: someCouchUuid })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(404)
@@ -30,7 +30,7 @@ describe('listings:by-ids', () => {
   // for detail visibility validations, see ./visibility.test.js
     it('should get a public listing', async () => {
       const { listing } = await createListing()
-      const resListing = await getById({ id: listing._id })
+      const resListing = await getListingById({ id: listing._id })
       resListing.should.be.ok()
     })
 
