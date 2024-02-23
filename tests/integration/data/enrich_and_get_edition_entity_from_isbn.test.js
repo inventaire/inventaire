@@ -1,8 +1,12 @@
 import 'should'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
+import { wait } from '#lib/promises'
 
 describe('get resolved seed', () => {
+  // Give the time to importCircularDependencies to run
+  before(async () => await wait(1000))
+
   it('should get an edition entity when only one authority returns a seed', async () => {
     // Expect only BNF to return a seed. If that's not the case, you can find new candidates with
     // https://query.inventaire.io/#SELECT%20%2a%20%7B%0A%20%20%3Fitem%20wdt%3AP268%20%3FbnfId%20.%0A%20%20%3Fitem%20wdt%3AP629%20%3Fwork%20.%0A%20%20FILTER%20NOT%20EXISTS%20%7B%20%3Fwork%20wdt%3AP31%20%3Ftype%20%7D%20.%0A%20%20%3Fitem%20wdt%3AP212%20%3Fisbn%20.%0A%20%20%3Fitem%20wdt%3AP577%20%3Fdate%20.%0A%7D%0AORDER%20BY%20%3Fdate
