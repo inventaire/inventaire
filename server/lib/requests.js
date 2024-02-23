@@ -86,8 +86,9 @@ async function req (method, url, options = {}) {
 
   if (statusCode >= 400) {
     if (statusCode >= 500) declareHostError(host)
-    const err = error_.new('request error', statusCode, { method, url, reqBody, statusCode, resBody: body })
-    err.body = body
+    const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
+    const err = error_.new('request error', statusCode, { method, url, reqBody, statusCode, resBody })
+    err.body = resBody
     addContextToStack(err)
     throw err
   }
@@ -101,6 +102,8 @@ async function req (method, url, options = {}) {
     return { statusCode, headers, body }
   }
 }
+
+const looksLikeHtml = body => typeof body === 'string' && (body.trim().startsWith('<') || body.includes('<head>'))
 
 export async function sanitizeUrl (url) {
   if (!isUrl(url) || (await isPrivateUrl(url))) {
