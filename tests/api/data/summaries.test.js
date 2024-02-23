@@ -1,5 +1,6 @@
 import should from 'should'
 import { createWork, createEdition, createHuman } from '#fixtures/entities'
+import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { getByUri } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -37,6 +38,21 @@ describe('summaries', () => {
       summaryData.lang.should.equal('en')
     })
 
+    it('should detect summary language', async () => {
+      const olId = 'OL40222382M'
+      const work = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+
+          [property]: [ olId ],
+        },
+      })
+      const { uri } = work
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === property)
+      summaryData.lang.should.equal('fr')
+    })
+
     it('should return empty summaries when no description is provided', async () => {
       const olId = 'OL4104668W'
       const work = await existsOrCreate({
@@ -69,6 +85,41 @@ describe('summaries', () => {
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
       const summaryData = summaries.find(summaryData => summaryData.key === property)
       summaryData.text.should.containEql('Pratchett')
+    })
+
+    it('should find summaries by ISBN', async () => {
+      const isbn = '978-1-59184-233-0'
+      const property = 'wdt:P212'
+      const edition = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+          [property]: [ isbn ],
+        },
+      })
+      const { uri } = edition
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      const summaryData = summaries.find(summaryData => summaryData.key === 'wdt:P212:openlibrary')
+      summaryData.key.should.equal('wdt:P212:openlibrary')
+      summaryData.text.should.startWith('According to Godin')
+      summaryData.claim.id.should.equal(isbn)
+      summaryData.claim.property.should.equal(property)
+      summaryData.name.should.equal('OpenLibrary')
+      summaryData.link.should.equal(`https://openlibrary.org/isbn/${normalizeIsbn(isbn)}`)
+      summaryData.lang.should.equal('en')
+    })
+
+    it('should ignore unknown ISBNs', async () => {
+      const isbn = '978-99993-999-9-9'
+      const property = 'wdt:P212'
+      const edition = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+          [property]: [ isbn ],
+        },
+      })
+      const { uri } = edition
+      const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
+      summaries.length.should.equal(0)
     })
   })
 
@@ -173,7 +224,11 @@ const existsOrCreate = async ({ claims, createFn = createWork }) => {
     const entity = await createFn({ claims })
     return entity
   } catch (err) {
-    const existingEntityUri = err.body.context.entity
-    return getByUri(existingEntityUri)
+    if (err.body.status_verbose === 'this property value is already used') {
+      const existingEntityUri = err.body.context.entity
+      return getByUri(existingEntityUri)
+    } else {
+      throw err
+    }
   }
 }

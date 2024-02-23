@@ -22,9 +22,9 @@ export const getByUris = (uris, relatives, refresh) => {
   return publicReq('get', url)
 }
 
-export const getByUri = (uri, refresh) => {
-  return getByUris(uri, null, refresh)
-  .then(res => res.entities[uri])
+export async function getByUri (uri, refresh) {
+  const res = await getByUris(uri, null, refresh)
+  return Object.values(res.entities)[0]
 }
 
 export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }) {
