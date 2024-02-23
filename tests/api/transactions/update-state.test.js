@@ -17,6 +17,7 @@ describe('transactions:update-state', () => {
       state: 'accepted',
     })
     updateRes.ok.should.be.true()
+    updateRes.transaction.state.should.equal('accepted')
   })
 
   it('should not update unknown state', async () => {

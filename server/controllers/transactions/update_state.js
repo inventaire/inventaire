@@ -1,26 +1,26 @@
 import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#controllers/transactions/lib/transactions'
 import { error_ } from '#lib/error/error'
-import { responses_ } from '#lib/responses'
-import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import { Track } from '#lib/track'
+import { track } from '#lib/track'
 import transactionAttributes from '#models/attributes/transaction'
 import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
 
 const { states, statesList } = transactionAttributes
 
-const sanitization = validateSanitization({
+const sanitization = {
   transaction: {},
   state: {
     allowlist: statesList,
   },
-})
-
-export default (req, res) => {
-  const params = sanitize(req, res, sanitization)
-  return updateState(params)
-  .then(Track(req, [ 'transaction', 'update', params.state ]))
-  .then(responses_.Ok(res))
 }
+
+async function controller (params, req) {
+  await updateState(params)
+  const transaction = await getTransactionById(params.transaction)
+  track(req, [ 'transaction', 'update', params.state ])
+  return { ok: true, transaction }
+}
+
+export default { sanitization, controller }
 
 const updateState = async ({ transactionId, state, reqUserId }) => {
   const transaction = await getTransactionById(transactionId)
