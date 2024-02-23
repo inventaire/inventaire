@@ -1,19 +1,19 @@
 import 'should'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import getResolvedEntry from '#data/dataseed/get_resolved_entry'
+import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 
 describe('get resolved seed', () => {
   it('should get an edition entity when only one authority returns a seed', async () => {
     // Expect only BNF to return a seed. If that's not the case, you can find new candidates with
     // https://query.inventaire.io/#SELECT%20%2a%20%7B%0A%20%20%3Fitem%20wdt%3AP268%20%3FbnfId%20.%0A%20%20%3Fitem%20wdt%3AP629%20%3Fwork%20.%0A%20%20FILTER%20NOT%20EXISTS%20%7B%20%3Fwork%20wdt%3AP31%20%3Ftype%20%7D%20.%0A%20%20%3Fitem%20wdt%3AP212%20%3Fisbn%20.%0A%20%20%3Fitem%20wdt%3AP577%20%3Fdate%20.%0A%7D%0AORDER%20BY%20%3Fdate
-    const edition = await getResolvedEntry('978-0-316-76953-2')
+    const edition = await enrichAndGetEditionEntityFromIsbn('978-0-316-76953-2')
     edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q183883' ])
     edition.claims['wdt:P268'].should.deepEqual([ '37461803r' ])
   })
 
   it('should get an edition entity when multiple authorities return a seed', async () => {
     // Expect both BNE and BNF to return seeds
-    const edition = await getResolvedEntry('84-00-06759-2')
+    const edition = await enrichAndGetEditionEntityFromIsbn('84-00-06759-2')
     // with the BNF seed to be considered more resolved, and thus be selected
     edition.claims['wdt:P268'].should.deepEqual([ '43031012r' ])
     const workUri = edition.claims['wdt:P629'][0]
@@ -28,18 +28,18 @@ describe('get resolved seed', () => {
   })
 
   it('should not get an entry from an unknown ISBN', async () => {
-    const edition = await getResolvedEntry('978-3-9818987-4-3')
+    const edition = await enrichAndGetEditionEntityFromIsbn('978-3-9818987-4-3')
     edition.notFound.should.be.true()
   })
 
   it('should get an edition from an ISBN found on Wikidata', async () => {
     // Expect the following triple to exist: wd:Q154763 wdt:P212 "978-85-359-1404-7"
-    const edition = await getResolvedEntry('978-85-359-1404-7')
+    const edition = await enrichAndGetEditionEntityFromIsbn('978-85-359-1404-7')
     edition.claims['wdt:P629'].should.deepEqual([ 'wd:Q154763' ])
   })
 
   it('should create local entity when resolved entity has an unknown type', async () => {
-    const edition = await getResolvedEntry('978-88-7799-292-5')
+    const edition = await enrichAndGetEditionEntityFromIsbn('978-88-7799-292-5')
     // BNF finds that the work is wd:Q238476, which is not identified
     // as a work by server/controllers/entities/lib/get_entity_type.js
     // wd:Q238476 should thus be discarded and an new inv entity should be set as wdt:P629

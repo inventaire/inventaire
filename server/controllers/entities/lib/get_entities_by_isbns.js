@@ -1,7 +1,7 @@
 import { difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
-import getResolvedEntry from '#data/dataseed/get_resolved_entry'
+import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
 import formatEditionEntity from './format_edition_entity.js'
 
@@ -10,7 +10,7 @@ export default async (rawIsbns, params = {}) => {
   const { autocreate, refresh } = params
   let entities
   if (autocreate && refresh) {
-    entities = await Promise.all(isbns.map(isbn => getResolvedEntry(isbn)))
+    entities = await Promise.all(isbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
   } else {
     entities = await getInvEntitiesByIsbns(isbns)
   }
@@ -27,7 +27,7 @@ export default async (rawIsbns, params = {}) => {
 
   // The cases where autocreate && refresh was already checked above
   if (autocreate && !refresh) {
-    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => getResolvedEntry(isbn)))
+    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
     const newEntities = []
     const notFound = []
     for (const resolvedEdition of resolvedEditions) {
