@@ -4,7 +4,7 @@ import { tap, mappedArrayPromise } from '#lib/promises'
 import { radio } from '#lib/radio'
 import type { EntityUri } from '#types/entity'
 import type { Task } from '#types/task'
-import checkEntity from './lib/check_entity.js'
+import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 export function initTasksHooks () {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
@@ -24,9 +24,9 @@ function deleteBySuggestionUriAndRecheckSuspects (previousSuggestionUri: EntityU
   .then(tap(bulkDeleteTasks))
   // Re-check entities after having archived obsolete tasks so that relationScores
   // are updated once every doc is in place.
-  // No need to do anything with the newSuggestionUri as checkEntity should find it
+  // No need to do anything with the newSuggestionUri as checkHumanDuplicate should find it
   // if it is relevant
-  .then(mappedArrayPromise(task => checkEntity(task.suspectUri)))
+  .then(mappedArrayPromise(task => checkHumanDuplicate(task.suspectUri)))
 }
 
 function archiveTasks (tasks: Task[]) {

@@ -4,8 +4,8 @@ import byEntitiesType from './by_entities_type.js'
 import { bySuspectUris, bySuggestionUris } from './by_entity_uris.js'
 import byIds from './by_ids.js'
 import byScore from './by_score.js'
-import checkEntities from './check_entities.js'
-import collectEntities from './collect_entities.js'
+import checkHumanDuplicates from './check_human_duplicates.js'
+import collectHumanDuplicates from './collect_human_duplicates.js'
 import deduplicateWorks from './deduplicate_works.js'
 import update from './update.js'
 
@@ -25,8 +25,10 @@ export default {
       'deduplicate-works': deduplicateWorks,
     },
     admin: {
-      'collect-entities': collectEntities,
-      'check-entities': checkEntities,
+      // Endpoint with no automatic tests coverage that triggers a global check of local database entities,
+      // it searches for wd:Q5 (human) duplicates and merge or create task accordingly
+      'collect-human-duplicates': collectHumanDuplicates,
+      'check-human-duplicates': checkHumanDuplicates,
     },
   }),
 
