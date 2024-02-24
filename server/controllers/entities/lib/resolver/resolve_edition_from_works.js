@@ -1,7 +1,6 @@
-import ASCIIFolder from 'fold-to-ascii'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
-import { normalizeString } from '#lib/utils/base'
+import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 
 export default async (editionSeed, worksSeeds) => {
   if (editionSeed.uri) return
@@ -30,8 +29,7 @@ const isMatchingEdition = (editionSeed, editionSeedTitle) => edition => {
 
 const getNormalizedTitle = ({ claims }) => {
   const title = claims['wdt:P1476']?.[0]
-  if (!title) return
-  return ASCIIFolder.foldMaintaining(normalizeString(title)).toLowerCase()
+  if (title) return normalizeTitle(title)
 }
 
 const editionSeedHasNoContradictingClaim = (editionSeed, edition) => {

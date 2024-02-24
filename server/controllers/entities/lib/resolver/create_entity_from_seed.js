@@ -44,6 +44,9 @@ export async function createEdition (edition, works, userId, batchId, enrich) {
     const title = buildBestEditionTitle(edition, works)
     edition.claims['wdt:P1476'] = [ title ]
   }
+  if (edition.claims['wdt:P1476']?.[0] && !edition.claims['wdt:P1680']) {
+    extractSubtitleFromTitle(edition.claims)
+  }
 
   // garantee that an edition shall not have label
   edition.labels = {}
@@ -117,3 +120,15 @@ const guessEditionTitleFromWorksLabels = works => {
   .join(' - ')
   .value()
 }
+
+function extractSubtitleFromTitle (claims) {
+  let title = claims['wdt:P1476'][0]
+  let subtitle
+  if (title.length > 10 && title.split(subtitleSeparator).length === 2) {
+    [ title, subtitle ] = title.split(subtitleSeparator)
+    claims['wdt:P1476'] = [ title.trim() ]
+    claims['wdt:P1680'] = [ subtitle.trim() ]
+  }
+}
+
+const subtitleSeparator = /[-—:] /

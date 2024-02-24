@@ -1,4 +1,5 @@
 import { cloneDeep, isEqual, omit, pick } from 'lodash-es'
+import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
 
@@ -37,6 +38,7 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
   // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity = cloneDeep(entity)
+  dropLikelyBadSubtitle({ updatedEntity, seedClaims })
   const newClaims = omit(seedClaims, Object.keys(entity.claims))
   await addImageClaim(entity, imageUrl, newClaims)
   Object.keys(newClaims).forEach(prop => {
@@ -50,6 +52,23 @@ const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) =>
     updatedDoc: updatedEntity,
     batchId,
   })
+}
+
+function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }) {
+  const oldTitle = updatedEntity.claims['wdt:P1476']?.[0]
+  const newTitle = seedClaims['wdt:P1476']?.[0]
+  const newSubtitle = seedClaims['wdt:P1680']?.[0]
+  if (oldTitle && newSubtitle) {
+    if (normalizeTitle(newTitle) === normalizeTitle(oldTitle)) {
+      if (normalizeTitle(newSubtitle).includes(normalizeTitle(oldTitle))) {
+        // Avoid adding a subtitle already present in the title
+        delete seedClaims['wdt:P1680']
+      }
+    } else {
+      // Only attempt to edit the subtitle if the old and the new title match
+      delete seedClaims['wdt:P1680']
+    }
+  }
 }
 
 const addImageClaim = async (entity, imageUrl, newClaims) => {

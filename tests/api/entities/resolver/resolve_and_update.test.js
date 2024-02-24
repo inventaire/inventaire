@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import 'should'
+import should from 'should'
 import {
   createWork,
   createHuman,
@@ -103,6 +103,48 @@ describe('entities:resolver:update-resolved', () => {
     await wait(10)
     const { claims } = await getByUri(uri)
     claims['wdt:P1104'].should.containEql(numberOfPages)
+  })
+
+  it('should not add a subtitle without a title matching the current title', async () => {
+    const { uri, claims } = await createEdition({
+      claims: {
+        'wdt:P1680': [],
+      },
+    })
+    should(claims['wdt:P1680']).not.be.ok()
+    const entry = {
+      edition: {
+        uri,
+        claims: { 'wdt:P1680': 'foo' },
+      },
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { claims: updatedClaims } = await getByUri(uri)
+    should(updatedClaims['wdt:P1680']).not.be.ok()
+  })
+
+  it('should not add a subtitle already present in the title', async () => {
+    const { uri, claims } = await createEdition({
+      claims: {
+        'wdt:P1680': [],
+      },
+    })
+    const title = claims['wdt:P1476'][0]
+    should(claims['wdt:P1680']).not.be.ok()
+    const entry = {
+      edition: {
+        uri,
+        claims: {
+          'wdt:P1476': title,
+          'wdt:P1680': `Amazing ${title.toUpperCase()} - Augmented edition`,
+        },
+      },
+    }
+    await resolveAndUpdate(entry)
+    await wait(10)
+    const { claims: updatedClaims } = await getByUri(uri)
+    should(updatedClaims['wdt:P1680']).not.be.ok()
   })
 
   // Requires a running dataseed service and CONFIG.dataseed.enabled=true

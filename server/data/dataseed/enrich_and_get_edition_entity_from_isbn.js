@@ -26,34 +26,34 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-const getResolvedEntry = async isbn => {
+const _enrichAndGetEditionEntityFromIsbn = async isbn => {
   try {
     const entry = await getAuthoritiesAggregatedEntry(isbn)
     if (entry) {
-      const entity = await getEditionEntityFromEntry(entry)
+      const entity = await enrichAndGetEditionEntityFromEntry(entry)
       if (entity) return entity
     }
     if (dataseedEnabled) {
       const [ seed ] = await getSeedsByIsbns(isbn)
       if (seed?.title) {
         const dataseedEntry = await buildEntry(seed)
-        const entity = await getEditionEntityFromEntry(dataseedEntry)
+        const entity = await enrichAndGetEditionEntityFromEntry(dataseedEntry)
         if (entity) return entity
         return dataseedEntry
       }
     }
   } catch (err) {
-    logError(err, 'get_resolved_entry error')
+    logError(err, 'enrich_and_get_edition_entity_from_isbn error')
   }
   return { isbn, notFound: true }
 }
 
-export default temporarilyMemoize({
-  fn: getResolvedEntry,
+export const enrichAndGetEditionEntityFromIsbn = temporarilyMemoize({
+  fn: _enrichAndGetEditionEntityFromIsbn,
   ttlAfterFunctionCallReturned: 2000,
 })
 
-const getEditionEntityFromEntry = async entry => {
+const enrichAndGetEditionEntityFromEntry = async entry => {
   const { resolvedEntries } = await resolveUpdateAndCreate({ entries: [ entry ], ...resolverParams })
   const [ resolvedEntry ] = resolvedEntries
   if (resolvedEntry) {
