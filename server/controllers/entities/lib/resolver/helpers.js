@@ -1,5 +1,6 @@
+import ASCIIFolder from 'fold-to-ascii'
 import { compact, map } from 'lodash-es'
-import { someMatch } from '#lib/utils/base'
+import { someMatch, normalizeString } from '#lib/utils/base'
 import { getEntityNormalizedTerms } from '../terms_normalization.js'
 
 export const getAlreadyResolvedUris = seed => compact(map(seed, 'uri'))
@@ -24,4 +25,8 @@ export const resolveSeed = (seed, expectedEntityType) => entities => {
     }
   }
   return seed
+}
+
+export const normalizeTitle = title => {
+  if (title) return ASCIIFolder.foldMaintaining(normalizeString(title)).toLowerCase()
 }
