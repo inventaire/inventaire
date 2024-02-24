@@ -3,6 +3,8 @@ import { simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import runWdQuery from '#data/wikidata/run_query'
 import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
@@ -45,6 +47,7 @@ export async function reverseClaims (params) {
 
   if (!localOnlyProperties.includes(property)) {
     promises.push(requestWikidataReverseClaims(property, value, refresh, dry))
+    promises.push(getReverseClaimsFromCachedRelations(property, value))
   }
 
   promises.push(invReverseClaims(property, value))
@@ -146,3 +149,13 @@ const typeTailoredQuery = {
 }
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
+
+async function getReverseClaimsFromCachedRelations (property, value) {
+  if (getPropertyDatatype(property) === 'entity') {
+    return getCachedRelations({
+      valueUri: value,
+      properties: [ property ],
+      formatEntity: entity => entity.uri,
+    })
+  }
+}

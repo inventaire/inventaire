@@ -5,7 +5,7 @@ import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import { wait } from '#lib/promises'
 import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '../fixtures/entities.js'
-import { merge } from '../utils/entities.js'
+import { addClaim, merge } from '../utils/entities.js'
 import { publicReq } from '../utils/utils.js'
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
@@ -37,6 +37,19 @@ describe('temporarily cache relations', () => {
     const cachedRelationsEntity = await getCachedRelations({
       valueUri: someSerieUri,
       properties: [ 'wdt:P179' ],
+      formatEntity: identity,
+    })
+    map(cachedRelationsEntity, 'uri').should.containEql(workUri)
+  })
+
+  it('should add any entity relation to cache', async () => {
+    const someSubjectUri = 'wd:Q8314'
+    const { uri: workUri } = await createWork()
+    await addClaim(({ uri: workUri, property: 'wdt:P921', value: someSubjectUri }))
+    await cacheEntityRelations(workUri)
+    const cachedRelationsEntity = await getCachedRelations({
+      valueUri: someSubjectUri,
+      properties: [ 'wdt:P921' ],
       formatEntity: identity,
     })
     map(cachedRelationsEntity, 'uri').should.containEql(workUri)

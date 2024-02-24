@@ -1,13 +1,12 @@
 import { compact, map, uniq } from 'lodash-es'
 import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entities/lib/entities'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { propertiesValuesConstraints, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { unprefixify } from './prefix.js'
 
-export const cachedRelationProperties = authorRelationsProperties.concat([
-  'wdt:P179',
-])
+export const cachedRelationProperties = Object.keys(propertiesValuesConstraints)
+  .filter(property => getPropertyDatatype(property) === 'entity')
 
 export async function cacheEntityRelations (invEntityUri) {
   const id = unprefixify(invEntityUri)
