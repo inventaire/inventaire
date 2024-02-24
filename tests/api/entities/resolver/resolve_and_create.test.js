@@ -9,7 +9,7 @@ import {
   createWork,
 } from '#fixtures/entities'
 import { humanName } from '#fixtures/text'
-import { getByUris, getHistory } from '#tests/api/utils/entities'
+import { getByUri, getByUris, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
@@ -57,6 +57,19 @@ describe('entities:resolve:create-unresolved', () => {
 
     should(editionClaims['wdt:P212'][0]).be.ok()
     newEditionTitle.should.equal(editionLabel)
+  })
+
+  it('should extract the subtitle from the title when meaningful', async () => {
+    const title = randomLabel()
+    const subtitle = randomLabel()
+    const { entries } = await resolveAndCreate({
+      edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': `${title} - ${subtitle}` } },
+      works: [ { labels: { en: title } } ],
+    })
+    const { uri } = entries[0].edition
+    const edition = await getByUri(uri)
+    edition.claims['wdt:P1476'][0].should.equal(title)
+    edition.claims['wdt:P1680'][0].should.equal(subtitle)
   })
 
   it('should create an edition with a title and no isbn', async () => {
