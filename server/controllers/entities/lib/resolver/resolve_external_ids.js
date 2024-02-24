@@ -4,7 +4,7 @@ import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { forceArray } from '#lib/utils/base'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
-import properties from '../properties/properties_values_constraints.js'
+import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 
 export async function resolveExternalIds (claims, resolveOnWikidata = true) {
   const externalIds = []

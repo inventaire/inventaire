@@ -4,7 +4,7 @@ import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import getEntityType from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
-import properties from './properties/properties_values_constraints.js'
+import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import validateEntity from './validate_entity.js'
 import wdOauth from './wikidata_oauth.js'
 
@@ -51,7 +51,7 @@ const validateWikidataCompliance = entity => {
 
   for (const property in claims) {
     const values = claims[property]
-    if (properties[property].datatype === 'entity') {
+    if (getPropertyDatatype(property) === 'entity') {
       for (const value of values) {
         if (value.split(':')[0] === 'inv') {
           throw error_.new('claim value is an inv uri', 400, { property, value })
@@ -76,7 +76,7 @@ const unprefixifyClaims = claims => (formattedClaims, property) => {
   const unprefixifiedProp = unprefixify(property)
   const propertyValues = claims[property]
 
-  if (properties[property].datatype === 'entity') {
+  if (getPropertyDatatype(property) === 'entity') {
     formattedClaims[unprefixifiedProp] = propertyValues.map(unprefixify)
   } else {
     // datatype 'string' should not be unprefixified, ex: 'Jules Vernes'

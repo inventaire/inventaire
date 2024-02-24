@@ -250,4 +250,4 @@ export const propertiesValuesConstraints = {
   'wdt:P12048': externalId(uuidPattern),
 }
 
-export default propertiesValuesConstraints
+export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype

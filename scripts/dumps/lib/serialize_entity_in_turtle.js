@@ -1,6 +1,6 @@
 import { identity, padStart } from 'lodash-es'
 import { yellow } from 'tiny-chalk'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { superTrim } from '#lib/utils/base'
 
 export default entity => {
@@ -35,8 +35,8 @@ export default entity => {
   for (const property in entity.claims) {
     statementsCount += 1
     const propClaims = entity.claims[property]
-    if (properties[property] != null) {
-      const { datatype } = properties[property]
+    const datatype = getPropertyDatatype(property)
+    if (datatype) {
       const formatter = datatypePropClaimsFormatter[datatype]
       if (formatter != null) {
         const formattedPropClaims = formatter(propClaims)

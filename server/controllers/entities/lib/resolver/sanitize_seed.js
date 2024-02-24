@@ -2,7 +2,7 @@ import { compact, isPlainObject } from 'lodash-es'
 import { isLang, isNonEmptyString, isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { forceArray } from '#lib/utils/base'
-import properties from '../properties/properties_values_constraints.js'
+import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 import { validateProperty } from '../properties/validations.js'
 import validateClaimValueSync from '../validate_claim_value_sync.js'
 

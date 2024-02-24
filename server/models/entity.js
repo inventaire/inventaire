@@ -25,7 +25,7 @@
 import { isString, cloneDeep, get, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import inferences from '#controllers/entities/lib/inferences'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { error_ } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'

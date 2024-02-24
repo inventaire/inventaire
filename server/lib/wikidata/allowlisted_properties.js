@@ -9,7 +9,7 @@
 import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { nonPrefixedLanguagesCodesProperties } from '#controllers/entities/lib/languages'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import propertiesValuesConstraints from '#controllers/entities/lib/properties/properties_values_constraints'
+import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 
 const editedProperties = Object.keys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))

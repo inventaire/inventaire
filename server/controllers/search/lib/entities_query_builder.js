@@ -1,7 +1,7 @@
 import { trim } from 'lodash-es'
 import { languageCodePattern, languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { getSingularTypes } from '#lib/wikidata/aliases'

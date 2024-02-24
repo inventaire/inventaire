@@ -4,7 +4,7 @@ import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
 import createInvEntity from '../create_inv_entity.js'
-import properties from '../properties/properties_values_constraints.js'
+import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 
 export const createAuthor = (userId, batchId) => author => {
   if (author.uri != null) return author

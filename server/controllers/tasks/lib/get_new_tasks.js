@@ -5,7 +5,7 @@ import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrence
 import { getOccurrencesFromExternalSources } from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
 import { isNonEmptyString } from '#lib/boolean_validations'

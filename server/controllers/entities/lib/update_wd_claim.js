@@ -8,7 +8,7 @@ import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
-import properties from './properties/properties_values_constraints.js'
+import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
 import wdOauth from './wikidata_oauth.js'
 
@@ -19,7 +19,7 @@ export default async (user, id, property, oldValue, newValue) => {
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
 
-  if ((properties[property].datatype === 'entity')) {
+  if ((getPropertyDatatype(property) === 'entity')) {
     if (isInvEntityUri(newValue)) {
       throw error_.new("wikidata entities can't link to inventaire entities", 400)
     }

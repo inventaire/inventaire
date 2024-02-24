@@ -1,7 +1,7 @@
 import { isPropertyUri } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
-import properties from './properties_values_constraints.js'
+import { propertiesValuesConstraints as properties } from './properties_values_constraints.js'
 
 const allowlist = Object.keys(properties)
 const allowset = new Set(allowlist)

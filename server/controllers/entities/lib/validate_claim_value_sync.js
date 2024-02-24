@@ -1,7 +1,7 @@
 import { isEntityId } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
-import properties from './properties/properties_values_constraints.js'
+import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateValueType } from './properties/validations.js'
 
 export default (property, value, entityType) => {

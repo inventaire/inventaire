@@ -1,5 +1,5 @@
 import getEntityType from '#controllers/entities/lib/get_entity_type'
-import properties from '#controllers/entities/lib/properties/properties_values_constraints'
+import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { error_ } from '#lib/error/error'
 
 export default (claims, checkedProperties) => {
