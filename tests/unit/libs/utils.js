@@ -1,11 +1,11 @@
 import 'should'
-import { forceArray, hashCode, mapKeysValues, uniqByKey } from '#lib/utils/base'
+import { forceArray, getHashCode, mapKeysValues, uniqByKey } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 
 describe('utils', () => {
-  describe('hashCode', () => {
+  describe('getHashCode', () => {
     it('should return a hash', () => {
-      hashCode('whatever').should.be.a.Number()
+      getHashCode('whatever').should.be.a.Number()
     })
   })
 

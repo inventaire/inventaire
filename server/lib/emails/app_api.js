@@ -1,6 +1,6 @@
 import CONFIG from 'config'
 import { isAssetImg, isEntityUri, isLocalImg, isNonEmptyString } from '#lib/boolean_validations'
-import { hashCode } from '#lib/utils/base'
+import { getHashCode } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
 
 const root = CONFIG.getPublicOrigin()
@@ -19,7 +19,7 @@ export const imgUrlBuilder = (path, width = 1600, height = 1600) => {
     const [ container, filename ] = path.split('/').slice(2)
     return `${root}/img/${container}/${width}x${height}/${filename}`
   } else if (path.startsWith('http')) {
-    const key = hashCode(path)
+    const key = getHashCode(path)
     return buildUrl(`${root}/img/remote/${width}x${height}/${key}`, { href: path })
   } else if (isEntityUri(path)) {
     return buildUrl(`${root}/api/entities`, {

@@ -2,14 +2,14 @@ import CONFIG from 'config'
 import should from 'should'
 import { cache_ } from '#lib/cache'
 import { wait } from '#lib/promises'
-import { hashCode } from '#lib/utils/base'
+import { getHashCode } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
 import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
 const { ttlCheckFrequency } = CONFIG.leveldb
 if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
 
-const hashKey = async key => hashCode(key)
+const hashKey = async key => getHashCode(key)
 const getSomeRandomValue = async () => getRandomString(8)
 const failingFn = async () => {
   const err = new Error('Jag är Döden')

@@ -4,7 +4,7 @@ import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
 import { error_ } from '#lib/error/error'
 import { responses_ } from '#lib/responses'
-import { hashCode } from '#lib/utils/base'
+import { getHashCode } from '#lib/utils/base'
 import { getResizedImage } from './lib/get_resized_image.js'
 
 const { env } = CONFIG
@@ -19,7 +19,7 @@ if (env === 'production' && useProdCachedImages) {
 }
 
 // resized images urls looks like
-// /img/#{container}/#{w}x#{h}/(#{hash}|#{external url hashCode?href=escaped url})"
+// /img/#{container}/#{w}x#{h}/(#{hash}|#{external url getHashCode?href=escaped url})"
 
 export default {
   get: (req, res) => {
@@ -57,7 +57,7 @@ export default {
         return error_.bundle(req, res, 'image domain not allowed', 400, url)
       }
 
-      const urlCode = hashCode(url).toString()
+      const urlCode = getHashCode(url).toString()
       // The hashcode can be used by Nginx for caching, while the url is passed
       // as query argument in case it isnt in cache.
       // Here, we just check that we do get the same hash

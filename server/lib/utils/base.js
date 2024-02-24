@@ -56,7 +56,7 @@ export const initCollectionsIndex = names => names.reduce(aggregateCollections, 
 export const obfuscate = str => str.replace(/./g, '*')
 
 // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-export const hashCode = string => {
+export const getHashCode = string => {
   let [ hash, i, len ] = [ 0, 0, string.length ]
   if (len === 0) return hash
 
