@@ -65,12 +65,10 @@ const getOneWorkImagePerLang = workUri => {
 }
 
 const aggregateWorkImages = (images, workImages) => {
-  for (const key in workImages) {
+  for (const [ key, values ] of Object.entries(workImages)) {
     // Ignore work claims images
-    const values = workImages[key]
-    if (isLang(key)) addImage(images, key, 4, values[0])
+    if (isLang(key)) addImage(images, key, 6, values[0])
   }
-
   return images
 }
 
