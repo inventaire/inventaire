@@ -8,6 +8,8 @@ import bnf from '#data/bnf/get_bnf_entry_from_isbn'
 import openlibrary from '#data/openlibrary/get_openlibrary_entry_from_isbn'
 import wikidata from '#data/wikidata/get_wikidata_entry_from_isbn'
 import { isNonEmptyArray } from '#lib/boolean_validations'
+import { cache_ } from '#lib/cache'
+import { oneMonth } from '#lib/time'
 import { isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 
@@ -31,7 +33,11 @@ export async function getAuthoritiesAggregatedEntry (isbn) {
 
 const wrap = isbn => async name => {
   try {
-    return await authorities[name](isbn)
+    return await cache_.get({
+      key: `seed:${name}:${isbn}`,
+      fn: () => authorities[name](isbn),
+      ttl: oneMonth,
+    })
   } catch (err) {
     logError(err, `${name} entry error`)
   }
