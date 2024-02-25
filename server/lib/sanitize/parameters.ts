@@ -279,7 +279,7 @@ export default {
       return true
     },
   },
-  entitiesType: allowlistedString,
+  'entities-type': allowlistedString,
   email: { validate: validations.common.email },
   emails,
   description: nonEmptyString,

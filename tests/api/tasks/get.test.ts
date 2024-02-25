@@ -54,11 +54,11 @@ describe('tasks:byEntitiesType', () => {
     return publicReq('get', url)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('missing parameter in query: entitiesType')
+      err.body.status_verbose.should.equal('missing parameter in query: entities-type')
     })
   })
 
-  it('should return tasks with a specific entitiesType', async () => {
+  it('should return tasks with a specific entities type', async () => {
     await createTask({ entitiesType })
     const tasks = await getByEntitiesType({ type, entitiesType })
     tasks[0].entitiesType.should.equal(entitiesType)
