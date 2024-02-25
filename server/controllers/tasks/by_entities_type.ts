@@ -2,6 +2,9 @@ import { getTasksByEntitiesType } from '#controllers/tasks/lib/tasks'
 
 const sanitization = {
   type: {
+    allowlist: [ 'deduplicate' ],
+  },
+  entitiesType: {
     allowlist: [ 'work' ],
   },
   limit: {
