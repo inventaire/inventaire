@@ -265,6 +265,9 @@ const config = {
 
   mapTilesAccessToken: 'youraccesstoken',
 
+  tasks: {
+    minimumScoreToAutogenerate: 350,
+  },
   waitFactor: 1,
 }
 
