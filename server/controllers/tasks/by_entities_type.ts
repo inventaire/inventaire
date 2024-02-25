@@ -4,7 +4,7 @@ const sanitization = {
   type: {
     allowlist: [ 'deduplicate' ],
   },
-  entitiesType: {
+  'entities-type': {
     allowlist: [ 'work' ],
   },
   limit: {
