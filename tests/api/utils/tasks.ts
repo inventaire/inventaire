@@ -36,8 +36,8 @@ export const getByScore = (options = {}) => {
 }
 
 export const getByEntitiesType = (options = {}) => {
-  const { type, limit, offset } = options
-  let url = `${endpoint}by-entities-type&type=${type}`
+  const { type, entitiesType, limit, offset } = options
+  let url = `${endpoint}by-entities-type&type=${type}&entitiesType=${entitiesType}`
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
   return publicReq('get', url)
