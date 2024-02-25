@@ -21,10 +21,10 @@ export const views: Views<Task> = {
       }
     },
   },
-  byEntitiesType: {
+  byTypeAndEntitiesType: {
     map: doc => {
       if (!doc.state) {
-        emit(doc.entitiesType, null)
+        emit([ doc.type, doc.entitiesType ], null)
       }
     },
   },

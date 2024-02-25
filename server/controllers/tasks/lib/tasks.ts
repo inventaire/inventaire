@@ -55,10 +55,10 @@ export function getTasksByScore (options) {
 }
 
 export function getTasksByEntitiesType (options) {
-  const { type, limit, offset } = options
-  return db.getDocsByViewQuery<Task>('byEntitiesType', {
-    startkey: type,
-    endkey: type,
+  const { type, entitiesType, limit, offset } = options
+  return db.getDocsByViewQuery<Task>('byTypeAndEntitiesType', {
+    startkey: [ type, entitiesType ],
+    endkey: [ type, entitiesType ],
     limit,
     skip: offset,
     include_docs: true,
