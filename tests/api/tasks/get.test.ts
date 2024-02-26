@@ -94,7 +94,7 @@ describe('tasks:bySuspectUris', () => {
     const suspect = await createHuman()
     const { uri } = suspect
     const task = await createTask({ uri })
-    await update(task.id, 'state', 'dismissed')
+    await update(task._id, 'state', 'dismissed')
     const tasks = await getBySuspectUris(uri)
     tasks[uri].length.should.equal(0)
   })
