@@ -23,7 +23,8 @@ export const views: Views<Task> = {
   },
   byTypeAndEntitiesType: {
     map: doc => {
-      if (!doc.state) {
+      // filter reporter to not get bot generated tasks
+      if (!doc.state && doc.reporter) {
         emit([ doc.type, doc.entitiesType ], null)
       }
     },

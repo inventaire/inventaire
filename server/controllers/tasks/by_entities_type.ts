@@ -5,7 +5,7 @@ const sanitization = {
     allowlist: [ 'deduplicate' ],
   },
   'entities-type': {
-    allowlist: [ 'work' ],
+    allowlist: [ 'work', 'human' ],
   },
   limit: {
     default: 10,
@@ -14,6 +14,9 @@ const sanitization = {
     default: 0,
   },
 }
+
+// This endpoint should only return tasks created by a user,
+// to return bot generated tasks, see endpoint 'byScore'
 
 async function controller (params) {
   const tasks = await getTasksByEntitiesType(params)
