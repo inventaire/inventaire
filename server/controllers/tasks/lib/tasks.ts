@@ -55,6 +55,8 @@ export function getTasksByScore (options) {
 }
 
 export function getTasksByEntitiesType (options) {
+  // Only tasks with a key `reporter` will be requested.
+  // To query tasks without, see getTasksByScore
   const { type, entitiesType, limit, offset } = options
   return db.getDocsByViewQuery<Task>('byTypeAndEntitiesType', {
     startkey: [ type, entitiesType ],
