@@ -2,13 +2,14 @@
 import CONFIG from 'config'
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
+import type { Req } from '#types/server'
 import { requests_ } from './requests.js'
 
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
 const origin = CONFIG.getPublicOrigin()
 const placeholderUrl = '/unknown'
 
-export const track = (req = {}, actionArray) => {
+export function track (req: Req, actionArray: string[]) {
   if (!enabled) return
 
   const { user = {}, headers = {} } = req
@@ -45,10 +46,10 @@ export const track = (req = {}, actionArray) => {
   // should not make the rest of operations fail
 }
 
-export const trackActor = (actorUri, actionArray) => {
+export function trackActor (actorUri, actionArray) {
   const pseudoReq = {
     user: { _id: actorUri },
-  }
+  } as Req
   track(pseudoReq, actionArray)
 }
 
