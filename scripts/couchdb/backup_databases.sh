@@ -15,7 +15,7 @@ backup_folder="$backup_folder_base/$today"
 mkdir -p "$backup_folder"
 echo "backup folder: $backup_folder"
 
-for name in $(./scripts/couchdb/get_databases_names.js "$suffix") ; do
+for name in $(./scripts/couchdb/get_databases_names.ts "$suffix") ; do
   echo "backup database: $name"
   export_file="${backup_folder}/${name}.ndjson"
   ./scripts/couchdb/export_database_as_ndjson.sh "$couchdb_url/$name" > "$export_file"

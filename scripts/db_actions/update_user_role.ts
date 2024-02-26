@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import { addUserRole, removeUserRole } from '#controllers/user/lib/user'
 import { logSuccessAndExit, logErrorAndExit } from '../scripts_utils.js'
 

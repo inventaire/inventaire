@@ -25,7 +25,7 @@ drop_revs(){
   sed --regexp-extended 's/,"_rev":"[0-9]+-[0-9a-f]{32}"//'
 }
 
-for name in $(./scripts/couchdb/get_databases_names.js "$suffix") ; do
+for name in $(./scripts/couchdb/get_databases_names.ts "$suffix") ; do
   file_path="$backup_folder/$name.ndjson.gz"
   echo -e "\nrestoring $name from $file_path"
   db_url="$couchdb_url/$name"

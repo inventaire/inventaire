@@ -2,7 +2,7 @@
 
 set -eu
 
-./scripts/check_node_version.js
+./scripts/check_node_version.ts
 
 # Make git hooks trackable (see https://stackoverflow.com/a/4457124/3324977)
 rm -rf .git/hooks
@@ -19,7 +19,7 @@ npm run update-i18n
 mkdir -p logs run db/leveldb
 
 touch ./logs/server.log ./logs/error.log
-# Expected by scripts/actions/backup_databases.js
+# Expected by scripts/actions/backup_databases.ts
 mkdir -p ./db/couchdb/backups
 # Expected by scripts/test_api.sh
 mkdir -p run
@@ -30,7 +30,7 @@ touch run/3006 run/3009
 if [ ! -f ./config/local.cjs ]; then
   # Create a local config file
   emptyConfigFile="
-  # Override settings from ./default.js in this file
+  // Override settings from ./default.cjs in this file
   module.exports = {
     db: {
       username: 'yourcouchdbusername',

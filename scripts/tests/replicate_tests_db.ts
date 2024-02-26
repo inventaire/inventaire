@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import CONFIG from 'config'
 import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'

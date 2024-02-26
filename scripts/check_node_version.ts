@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 import { absolutePath } from '#lib/absolute_path'
 import { requireJson } from '#lib/utils/json'
