@@ -1,5 +1,5 @@
 import { getUserById } from '#controllers/user/lib/user'
-import { error_ } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 
 export default async (requester, readToken) => {
   if (requester == null) return null
@@ -10,7 +10,7 @@ export default async (requester, readToken) => {
 }
 
 const formatNotFound = requester => err => {
-  if (err.statusCode === 404) { err = error_.newInvalid('requester', requester) }
+  if (err.statusCode === 404) { err = newInvalidError('requester', requester) }
   throw err
 }
 
@@ -18,6 +18,6 @@ const validateUserReadToken = readToken => user => {
   if (user.readToken === readToken) {
     return user
   } else {
-    throw error_.newInvalid('token', readToken)
+    throw newInvalidError('token', readToken)
   }
 }

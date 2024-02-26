@@ -1,11 +1,11 @@
 import { containers } from '#controllers/images/lib/containers'
 import { md5 } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import downloadImage from './download_image.js'
 
 export default async (container, sourceUrl) => {
   if (containers[container] == null || containers[container].putImage == null) {
-    throw error_.newInvalid('container', container)
+    throw newInvalidError('container', container)
   }
 
   const tmpFilename = md5(sourceUrl)

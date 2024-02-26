@@ -8,7 +8,7 @@ import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_
 import runWdQuery from '#data/wikidata/run_query'
 import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -40,7 +40,7 @@ export async function reverseClaims (params) {
   assert_.strings([ property, value ])
 
   if (denylistedProperties.includes(property)) {
-    throw error_.new('denylisted property', 400, { property })
+    throw newError('denylisted property', 400, { property })
   }
 
   const promises = []

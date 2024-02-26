@@ -3,7 +3,8 @@
 import { without } from 'lodash-es'
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { isGroupId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { Track } from '#lib/track'
@@ -50,20 +51,20 @@ const validateGroup = async (groupId, reqUserId) => {
   if (groupId == null) return null
 
   if (!isGroupId(groupId)) {
-    throw error_.newInvalid('group id', groupId)
+    throw newInvalidError('group id', groupId)
   }
 
   return getGroupById(groupId)
   .then(group => {
     const userIsMember = Group.userIsMember(reqUserId, group)
     if (!userIsMember) {
-      throw error_.new("user isn't a group member", 403, { groupId, reqUserId })
+      throw newError("user isn't a group member", 403, { groupId, reqUserId })
     }
     return group
   })
   .catch(err => {
     if (err.statusCode === 404) {
-      throw error_.new('group not found', 404, { groupId, reqUserId })
+      throw newError('group not found', 404, { groupId, reqUserId })
     } else {
       throw err
     }
@@ -75,7 +76,7 @@ const validateGroup = async (groupId, reqUserId) => {
 const limit = 50
 const applyLimit = emails => {
   if (emails.length > limit) {
-    throw error_.new(`you can't send more than ${limit} invitations at a time`, 400)
+    throw newError(`you can't send more than ${limit} invitations at a time`, 400)
   } else {
     return emails
   }

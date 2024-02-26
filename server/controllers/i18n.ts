@@ -1,5 +1,5 @@
 import { isString } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { bundleInvalidError, bundleMissingBodyError } from '#lib/error/pre_filled'
 import { appendToClientKeys } from '#lib/i18n_autofix'
 import { responses_ } from '#lib/responses'
 import { info } from '#lib/utils/logs'
@@ -12,11 +12,11 @@ const i18nMissingKeys = (req, res) => {
   let { missingKeys } = req.body
 
   if (missingKeys == null) {
-    return error_.bundleMissingBody(req, res, 'token')
+    return bundleMissingBodyError(req, res, 'token')
   }
 
   if (!areStrings(missingKeys)) {
-    return error_.bundleInvalid(req, res, 'missingKeys', missingKeys)
+    return bundleInvalidError(req, res, 'missingKeys', missingKeys)
   }
 
   missingKeys = missingKeys.filter(looksLikeAKey)

@@ -3,7 +3,7 @@ import { languageCodePattern, languagesCodesProperties } from '#controllers/enti
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import { allowlistedProperties } from '#lib/wikidata/allowlisted_properties'
 
@@ -142,21 +142,21 @@ const getClaimFilters = claimParameter => {
 const validatePropertyAndValue = condition => {
   const [ property, value ] = condition.split('=')
   if (!isPropertyUri(property)) {
-    throw error_.new('invalid property', 400, { property })
+    throw newError('invalid property', 400, { property })
   }
   if (!allowedProperties.has(property)) {
-    throw error_.new('unknown property', 400, { property, value })
+    throw newError('unknown property', 400, { property, value })
   }
   // Using a custom validation for wdt:P31, to avoid having to pass an entityType
   if (property === 'wdt:P31') {
     if (!isWdEntityUri(value)) {
-      throw error_.new('invalid property value', 400, { property, value })
+      throw newError('invalid property value', 400, { property, value })
     }
   } else {
     // Some allowed properties do not have a validation function
     if (properties[property]) {
       if (!properties[property].validate(value)) {
-        throw error_.new('invalid property value', 400, { property, value })
+        throw newError('invalid property value', 400, { property, value })
       }
     }
   }

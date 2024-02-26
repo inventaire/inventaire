@@ -4,7 +4,7 @@ import { findUserByEmail } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
 import { WrappedUpdater } from '#lib/doc_updates'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
@@ -64,14 +64,14 @@ const updateIfValidToken = (token, user) => {
 }
 
 const noEmailValidationFound = (token, key) => {
-  return error_.new('no email validation token found', 401, { token, key })
+  return newError('no email validation token found', 401, { token, key })
 }
 
 const updateValidEmail = (_id, valid) => {
   if (valid) {
     return db.update(_id, emailIsValid)
   } else {
-    throw error_.new('token is invalid or expired', 401, _id)
+    throw newError('token is invalid or expired', 401, _id)
   }
 }
 

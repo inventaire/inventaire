@@ -2,12 +2,12 @@ import { uniq } from 'lodash-es'
 import { getWorksAuthorsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export default async item => {
   const { entity: uri } = item
   const entity = await getEntityByUri({ uri })
-  if (!entity) throw error_.new('entity not found', 500, { item: item._id, uri })
+  if (!entity) throw newError('entity not found', 500, { item: item._id, uri })
 
   let works
   if (entity.type === 'edition') {
@@ -31,7 +31,7 @@ export default async item => {
     works = [ entity ]
   } else {
     // Known case: if an item is associated to an Wikidata entity which type was changed
-    throw error_.new('invalid item entity type', 500, { item, entity })
+    throw newError('invalid item entity type', 500, { item, entity })
   }
 
   item.works = works

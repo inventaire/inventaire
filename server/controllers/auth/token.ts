@@ -1,6 +1,6 @@
 import { tokenLength, confirmEmailTokenValidity } from '#controllers/user/lib/token'
 import ActionsControllers from '#lib/actions_controllers'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import passport_ from '#lib/passport/passport'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { logError } from '#lib/utils/logs'
@@ -47,7 +47,7 @@ const Redirect = res => () => {
 // before the real GET request is made, but then the HEAD request already consumed the token.
 function assertGetReq ({ method }) {
   if (method !== 'GET') {
-    throw error_.new('wrong http method', 400, { method })
+    throw newError('wrong http method', 400, { method })
   }
 }
 

@@ -2,7 +2,7 @@ import CONFIG from 'config'
 import { map, uniq } from 'lodash-es'
 import { signRequest } from '#controllers/activitypub/lib/security'
 import { isUrl } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
@@ -22,7 +22,7 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
     actorRes = await requests_.get(recipientActorUri, { timeout, sanitize })
   } catch (err) {
     logError(err, 'signAndPostActivity private error')
-    throw error_.new('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity })
+    throw newError('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity })
   }
   const inboxUri = actorRes.inbox
   if (!inboxUri) {

@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import CONFIG from 'config'
-import { error_ } from '#lib/error/error'
+import { bundleError } from '#lib/error/pre_filled'
 import { getHashCode } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 
@@ -47,7 +47,7 @@ export function deduplicateRequests (req, res, next) {
   const previousData = requestsCache[key]
 
   if (data === previousData) {
-    return error_.bundle(req, res, 'duplicated request', 429, [ key, req.body ])
+    return bundleError(req, res, 'duplicated request', 429, [ key, req.body ])
   }
 
   temporaryLock(key, data)

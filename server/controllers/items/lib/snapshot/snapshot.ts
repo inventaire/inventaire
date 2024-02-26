@@ -18,7 +18,7 @@ import pTimeout from 'p-timeout'
 import { refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import leveldbFactory from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 
@@ -61,7 +61,7 @@ async function getSnapshot (uri, preventLoop) {
     // Known case: addSnapshotToItem was called for an item which entity is a serie
     // thus, the related works and editions were refreshed but as series aren't
     // supposed to be associated to items, no snapshot was created for the serie itself
-    const err = error_.new("couldn't refresh item snapshot", 500, { uri })
+    const err = newError("couldn't refresh item snapshot", 500, { uri })
     logError(err, 'getSnapshot err')
     return {}
   }

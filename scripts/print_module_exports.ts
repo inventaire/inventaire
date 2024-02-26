@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 import { get } from 'lodash-es'
 import { absolutePath, projectRoot } from '#lib/absolute_path'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { ignorePipedProcessErrors } from '#scripts/scripts_utils'
 
 ignorePipedProcessErrors()
@@ -17,5 +17,5 @@ if (json) {
   process.stdout.write(json)
 } else {
   const context = { data, filePath, exportPath, availableExports: Object.keys(exports) }
-  throw error_.new('can not print module export', 500, context)
+  throw newError('can not print module export', 500, context)
 }

@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { absolutePath } from '#lib/absolute_path'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 // We assume that serverPath has the right value to avoid having to rely
 // on the server file itself to declare its path, as that would be too light
@@ -12,7 +12,7 @@ const serverPathWithoutExtension = absolutePath('server', 'server.js')
 export function confirmServerPath (url) {
   const realServerPath = fileURLToPath(url)
   if (realServerPath.includes(serverPathWithoutExtension)) {
-    throw error_.new('serverPath needs to be updated', 500, { serverPathWithoutExtension, realServerPath })
+    throw newError('serverPath needs to be updated', 500, { serverPathWithoutExtension, realServerPath })
   }
 }
 

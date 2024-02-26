@@ -1,7 +1,7 @@
 import { difference, map, union } from 'lodash-es'
 import { addItemsSnapshots } from '#controllers/items/lib/queries_commons'
 import dbFactory from '#db/couchdb/base'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { deepCompact, forceArray } from '#lib/utils/base'
@@ -119,7 +119,7 @@ const validateOwnership = (userId, items) => {
   items = forceArray(items)
   for (const item of items) {
     if (item.owner !== userId) {
-      throw error_.new('wrong owner', 400, { userId, itemId: item._id })
+      throw newError('wrong owner', 400, { userId, itemId: item._id })
     }
   }
 }

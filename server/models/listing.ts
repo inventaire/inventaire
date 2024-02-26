@@ -1,5 +1,5 @@
 import { clone, isEqual } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/listing.js'
 import validations from './validations/listing.js'
@@ -14,7 +14,7 @@ export default {
     Object.keys(listing).forEach(key => {
       const value = listing[key] || defaultValues[key]
       if (!attributes.validAtCreation.includes(key)) {
-        throw error_.new(`invalid attribute: ${value}`, 400, { list: listing, key, value })
+        throw newError(`invalid attribute: ${value}`, 400, { list: listing, key, value })
       }
       validations.pass(key, value)
       newListing[key] = value
@@ -29,11 +29,11 @@ export default {
     assert_.object(oldListing)
     assert_.object(newAttributes)
     if (oldListing.creator !== creatorId) {
-      throw error_.new('wrong user', 403, oldListing.creator)
+      throw newError('wrong user', 403, oldListing.creator)
     }
     for (const attr of Object.keys(newAttributes)) {
       if (!(attributes.updatable.includes(attr))) {
-        throw error_.new(`invalid attribute: ${attr}`, 400, oldListing)
+        throw newError(`invalid attribute: ${attr}`, 400, oldListing)
       }
     }
     const updatedListing = clone(oldListing)
@@ -44,7 +44,7 @@ export default {
     }
 
     if (isEqual(updatedListing, oldListing)) {
-      throw error_.new('nothing to update', 400, newAttributes)
+      throw newError('nothing to update', 400, newAttributes)
     }
     updatedListing.updated = Date.now()
     return updatedListing

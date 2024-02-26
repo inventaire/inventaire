@@ -1,6 +1,6 @@
 import { cloneDeep, isEqual } from 'lodash-es'
 import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import Entity from '#models/entity'
@@ -16,7 +16,7 @@ export default ({ userId, fromUri, toUri, context }) => {
       info({ fromUri, toUri }, 'merge: switching fromUri and toUri');
       [ fromPrefix, fromId, toPrefix, toId ] = [ toPrefix, toId, fromPrefix, fromId ]
     } else {
-      throw error_.new('cannot merge wd entites', 500, { fromUri, toUri })
+      throw newError('cannot merge wd entites', 500, { fromUri, toUri })
     }
   }
 
@@ -38,11 +38,11 @@ const mergeInvEntities = async (userId, fromId, toId) => {
   // At this point if the entities are not found, that's the server's fault,
   // thus the 500 statusCode
   if (fromEntityDoc._id !== fromId) {
-    throw error_.new("'from' entity doc not found", 500)
+    throw newError("'from' entity doc not found", 500)
   }
 
   if (toEntityDoc._id !== toId) {
-    throw error_.new("'to' entity doc not found", 500)
+    throw newError("'to' entity doc not found", 500)
   }
 
   const previousToUri = getInvEntityCanonicalUri(toEntityDoc)

@@ -1,5 +1,5 @@
 import { simplifyQualifier } from 'wikibase-sdk'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   if (simplifiedClaims['wdt:P179']?.length === 1) {
@@ -19,15 +19,15 @@ export const relocateQualifierProperties = invEntity => {
   if (!seriesOrdinals) return
 
   if (!series) {
-    throw error_.new('a serie ordinal can not be move to Wikidata without a serie', 400, invEntity)
+    throw newError('a serie ordinal can not be move to Wikidata without a serie', 400, invEntity)
   }
 
   if (series.length !== 1) {
-    throw error_.new('a serie ordinal can not be set on several serie claims', 400, invEntity)
+    throw newError('a serie ordinal can not be set on several serie claims', 400, invEntity)
   }
 
   if (seriesOrdinals.length !== 1) {
-    throw error_.new('can not import several serie ordinals', 400, invEntity)
+    throw newError('can not import several serie ordinals', 400, invEntity)
   }
 
   // Using wikibase-edit compact notation

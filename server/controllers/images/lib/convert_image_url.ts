@@ -1,7 +1,7 @@
 import { uniq } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isImageHash } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { log } from '#lib/utils/logs'
 import importImage from './import_image.js'
 
@@ -14,7 +14,7 @@ const importAndAddImage = async (container, sourceImageUrl) => {
   const hash = url.split('/').at(-1)
 
   if (!isImageHash(hash)) {
-    throw error_.new('invalid hash', 500, { sourceImageUrl, hash })
+    throw newError('invalid hash', 500, { sourceImageUrl, hash })
   }
 
   if (container === 'entities') await saveImageSource(sourceImageUrl, hash)

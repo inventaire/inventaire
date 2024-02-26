@@ -1,5 +1,5 @@
 import { clone, omit } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import itemAttributes from './attributes/item.js'
@@ -28,7 +28,7 @@ Item.create = (userId, item) => {
 
   for (const attr of passedAttributes) {
     if (!attributes.validAtCreation.includes(attr)) {
-      throw error_.new(`invalid attribute: ${attr}`, 400, { userId, item })
+      throw newError(`invalid attribute: ${attr}`, 400, { userId, item })
     }
 
     validations.pass(attr, item[attr])
@@ -47,7 +47,7 @@ Item.update = (userId, newAttributes, oldItem) => {
   assert_.object(oldItem)
 
   if (oldItem.owner !== userId) {
-    throw error_.new('user is not item owner', 400, { userId, ownerId: oldItem.owner })
+    throw newError('user is not item owner', 400, { userId, ownerId: oldItem.owner })
   }
 
   const newItem = clone(oldItem)
@@ -58,7 +58,7 @@ Item.update = (userId, newAttributes, oldItem) => {
 
   for (const attr of passedAttributes) {
     if (!attributes.updatable.includes(attr)) {
-      throw error_.new(`invalid attribute: ${attr}`, 400, { userId, newAttributes, oldItem })
+      throw newError(`invalid attribute: ${attr}`, 400, { userId, newAttributes, oldItem })
     }
     const newVal = newAttributes[attr]
     validations.pass(attr, newVal)
@@ -106,7 +106,7 @@ Item.allowTransaction = item => attributes.allowTransaction.includes(item.transa
 
 Item.updateEntity = (fromUri, toUri, item) => {
   if (item.entity !== fromUri) {
-    throw error_.new(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
+    throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
   }
 
   item.entity = toUri
@@ -121,12 +121,12 @@ Item.revertEntity = (fromUri, toUri, item) => {
   const { entity } = item
   const previousEntity = item.previousEntity[0]
   if (item.entity !== toUri) {
-    throw error_.new(`wrong entity uri: expected ${entity}, got ${toUri}`, 500)
+    throw newError(`wrong entity uri: expected ${entity}, got ${toUri}`, 500)
   }
 
   if (fromUri !== previousEntity) {
     const message = `wrong previous entity: expected ${previousEntity}, got ${fromUri}`
-    throw error_.new(message, 500)
+    throw newError(message, 500)
   }
 
   item.entity = previousEntity

@@ -1,6 +1,6 @@
 import { getInvClaimsByClaimValue } from '#controllers/entities/lib/entities'
 import { getItemsByEntity } from '#controllers/items/lib/items'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { prefixifyInv } from './prefix.js'
 
@@ -26,12 +26,12 @@ const entityIsntUsedMuch = async uri => {
   // Tolerating 1 claim: typically when a junk author entity is linked via a wdt:P50 claim
   // to a work, the author can be deleted, which will also remove the claim on the work
   if (claims.length > 1) {
-    throw error_.new('this entity is used has value in too many claims to be removed', 403, { uri, claims })
+    throw newError('this entity is used has value in too many claims to be removed', 403, { uri, claims })
   }
 
   for (const claim of claims) {
     if (criticalClaimProperties.includes(claim.property)) {
-      throw error_.new('this entity is used in a critical claim', 403, { uri, claim })
+      throw newError('this entity is used in a critical claim', 403, { uri, claim })
     }
   }
 }
@@ -51,6 +51,6 @@ const getAllUris = async uris => {
 const entityIsntUsedByAnyItem = async uri => {
   const items = await getItemsByEntity(uri)
   if (items.length > 0) {
-    throw error_.new("entities that are used by an item can't be removed", 403, { uri })
+    throw newError("entities that are used by an item can't be removed", 403, { uri })
   }
 }

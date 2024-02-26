@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
@@ -34,7 +34,7 @@ export const typedExternalId = regexPerType => {
     validate: (value, entityType) => {
       assert_.string(entityType)
       if (regexPerType[entityType] == null) {
-        throw error_.new('unsupported type', 500, { regexPerType, entityType, value })
+        throw newError('unsupported type', 500, { regexPerType, entityType, value })
       }
       return regexPerType[entityType].test(value)
     },

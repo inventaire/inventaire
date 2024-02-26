@@ -1,5 +1,5 @@
 import { labelUpdatersByPrefix } from '#controllers/entities/update_label'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 const sanitization = {
   uri: {},
@@ -13,7 +13,7 @@ const controller = async (params, req) => {
   const updater = labelUpdatersByPrefix[prefix]
 
   if (updater == null) {
-    throw error_.new(`unsupported uri prefix: ${prefix}`, 400, params)
+    throw newError(`unsupported uri prefix: ${prefix}`, 400, params)
   }
 
   await updater(req.user, id, lang, null)

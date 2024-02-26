@@ -1,11 +1,11 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export default (user, notificationLabel) => {
   const { _id, type, settings, undeliveredEmail } = user
 
   if (type === 'deletedUser') throw emailDisabled({ user: _id, reason: 'deleted user' })
 
-  if (!settings) throw error_.new('invalid user doc', user)
+  if (!settings) throw newError('invalid user doc', user)
 
   if (undeliveredEmail > 1) {
     throw emailDisabled({ user: _id, reason: 'too many undelivered emails' })
@@ -26,4 +26,4 @@ const checkSetting = (userId, notifications, label) => {
   }
 }
 
-const emailDisabled = context => error_.new('email disabled', 'email_disabled', context)
+const emailDisabled = context => newError('email disabled', 'email_disabled', context)

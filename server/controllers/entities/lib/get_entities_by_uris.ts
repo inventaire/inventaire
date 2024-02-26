@@ -1,6 +1,6 @@
 import { flatMap, keyBy } from 'lodash-es'
 import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -36,12 +36,12 @@ export async function getEntitiesByUris (params: GetEntityByUrisArgs) {
 
     if (!prefixes.includes(prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
-      throw error_.new(errMessage, 400, uri)
+      throw newError(errMessage, 400, uri)
     }
 
     if (!validators[prefix](id)) {
       errMessage = `invalid uri id: ${id} (uri: ${uri})`
-      throw error_.new(errMessage, 400, uri)
+      throw newError(errMessage, 400, uri)
     }
 
     if (!domains[prefix]) { domains[prefix] = [] }

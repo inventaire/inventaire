@@ -1,5 +1,6 @@
 import { isInvEntityId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newMissingBodyError } from '#lib/error/pre_filled'
 import { log } from '#lib/utils/logs'
 // TODO: accept ISBN URIs
 import inv from './lib/update_inv_claim.js'
@@ -19,9 +20,9 @@ const controller = async (params, req) => {
   log(params, 'update claim input')
   if (isInvEntityId(id) && uri == null) uri = `inv:${id}`
 
-  if (uri == null) throw error_.newMissingBody('uri')
+  if (uri == null) throw newMissingBodyError('uri')
   if (oldValue == null && newValue == null) {
-    throw error_.newMissingBody('old-value|new-value')
+    throw newMissingBodyError('old-value|new-value')
   }
 
   // An empty string is interpreted as a null value
@@ -31,7 +32,7 @@ const controller = async (params, req) => {
   ;[ prefix, id ] = uri.split(':')
   const updater = updaters[prefix]
   if (updater == null) {
-    throw error_.new(`unsupported uri prefix: ${prefix}`, 400, uri)
+    throw newError(`unsupported uri prefix: ${prefix}`, 400, uri)
   }
 
   await updater(req.user, id, property, oldValue, newValue)

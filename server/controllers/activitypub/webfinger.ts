@@ -3,7 +3,7 @@ import { makeUrl, getEntityUriFromActorName, getEntityActorName } from '#control
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
 import { validateUser, validateShelf } from './lib/validations.js'
 
 const origin = CONFIG.getPublicOrigin()
@@ -25,7 +25,7 @@ const controller = async ({ resource }) => {
     const { user } = await validateUser(name)
     return formatWebfinger(user.stableUsername)
   }
-  throw error_.notFound({ resource, name })
+  throw notFoundError({ resource, name })
 }
 
 export default {

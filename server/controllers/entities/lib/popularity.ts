@@ -3,7 +3,7 @@ import { map } from 'lodash-es'
 import { initJobQueue } from '#db/level/jobs'
 import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { objectPromise } from '#lib/promises'
 import { oneMonth } from '#lib/time'
@@ -29,7 +29,7 @@ export async function getEntitiesPopularities ({ uris, refresh }) {
 const noPopularityCached = Symbol('no-popularity-cached')
 
 export async function getEntityPopularity ({ uri, refresh = false, populateCacheOnCacheMiss = true }) {
-  if (!isEntityUri(uri)) throw error_.new('invalid uri', 400, uri)
+  if (!isEntityUri(uri)) throw newError('invalid uri', 400, uri)
 
   // Building a popularity score can take quite some time, and most consumers
   // just need a quick result, so unless explicity requested with refresh=true,

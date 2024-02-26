@@ -1,6 +1,6 @@
 import { simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { warn, info } from '#lib/utils/logs'
@@ -17,7 +17,7 @@ export async function makeSparqlRequest (sparql) {
   const url = sparqlQuery(sparql)
 
   if (waiting > 500) {
-    throw error_.new('too many requests in queue', 500, { sparql })
+    throw newError('too many requests in queue', 500, { sparql })
   }
 
   const persistentRequest = async () => {

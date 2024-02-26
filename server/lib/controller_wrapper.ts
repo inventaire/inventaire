@@ -1,6 +1,7 @@
-import { error_ } from '#lib/error/error'
+import { errorHandler } from '#lib/error/error_handler'
 import { someMatch } from '#lib/utils/base'
 import validateObject from '#lib/validate_object'
+import { bundleUnauthorizedApiAccess } from './error/pre_filled.js'
 import { send } from './responses.js'
 import { sanitize, validateSanitization } from './sanitize/sanitize.js'
 import { track } from './track.js'
@@ -23,7 +24,7 @@ export async function controllerWrapper (controllerParams, req, res) {
   }
 
   if (!someMatch(roles, rolesByAccess[access])) {
-    return error_.unauthorizedApiAccess(req, res, { roles, requiredAccessLevel: access })
+    return bundleUnauthorizedApiAccess(req, res, { roles, requiredAccessLevel: access })
   }
 
   try {
@@ -38,7 +39,7 @@ export async function controllerWrapper (controllerParams, req, res) {
       await controller(req, res)
     }
   } catch (err) {
-    error_.handler(req, res, err)
+    errorHandler(req, res, err)
   }
 }
 

@@ -1,6 +1,6 @@
 import { getSitelinkUrl } from 'wikibase-sdk'
 import { cache_ } from '#lib/cache'
-import { error_ } from '#lib/error/error'
+import { notFoundError, newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { buildUrl } from '#lib/utils/url'
 import { normalizeSiteKey } from '#lib/wikimedia'
@@ -45,8 +45,8 @@ async function getArticleIntroExtract ({ host, title, lang, url }) {
   if (extract != null) {
     return { extract, url }
   } else {
-    if (pages['-1']?.missing === '') throw error_.notFound({ lang, title, url, pages })
-    else throw error_.new('invalid extract response', 500, { lang, title, url, pages })
+    if (pages['-1']?.missing === '') throw notFoundError({ lang, title, url, pages })
+    else throw newError('invalid extract response', 500, { lang, title, url, pages })
   }
 }
 

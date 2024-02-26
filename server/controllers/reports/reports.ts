@@ -1,7 +1,8 @@
 import onlineReport from '#controllers/reports/online_report'
 import ActionsControllers from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { bundleMissingBodyError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { logError, warn } from '#lib/utils/logs'
 
@@ -16,7 +17,7 @@ const errorReport = (req, res) => {
   const { error: errData } = req.body
 
   if (errData == null) {
-    return error_.bundleMissingBody(req, res, 'error')
+    return bundleMissingBodyError(req, res, 'error')
   }
 
   const message = errData.message || 'client error'
@@ -36,7 +37,7 @@ const errorReport = (req, res) => {
 
 const buildError = (message, errData, req) => {
   const statusCode = errData.statusCode || 500
-  const err = error_.new(message, statusCode, errData)
+  const err = newError(message, statusCode, errData)
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
   delete err.emitter

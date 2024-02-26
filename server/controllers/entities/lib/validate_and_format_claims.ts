@@ -1,6 +1,6 @@
 import { isArray, uniq } from 'lodash-es'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
 import getEntityType from './get_entity_type.js'
@@ -13,7 +13,7 @@ export default async ({ claims, type, _id }) => {
   assert_.string(type)
 
   if (!isNonEmptyPlainObject(claims)) {
-    throw error_.new('invalid claims', 400, { claims })
+    throw newError('invalid claims', 400, { claims })
   }
 
   await validatePropertiesClaims(claims, type, _id)
@@ -31,7 +31,7 @@ const validatePropertyClaims = (claims, type, _id) => async property => {
   let values = claims[property]
 
   if (!isArray(values)) {
-    throw error_.new('invalid property value array', 400, {
+    throw newError('invalid property value array', 400, {
       property,
       values,
       type: typeOf(values),

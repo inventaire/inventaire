@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export const getIpBinaryRepresentation = ip => {
   const isIpv6 = ip.includes(':')
@@ -6,7 +6,7 @@ export const getIpBinaryRepresentation = ip => {
   const parts = isIpv6 ? getIpv6Parts(ip) : getIpv4Parts(ip)
   // Assumes that dns.lookup was already performed
   // and thus that only doted-decimal IPs will be passed as IPv4
-  if (!isIpv6 && parts.length !== 4) throw error_.new('unexpected ip representation', 500, { ip })
+  if (!isIpv6 && parts.length !== 4) throw newError('unexpected ip representation', 500, { ip })
   return parts.map(part => getPaddedBinary(part, maxLength)).join('')
 }
 

@@ -2,7 +2,7 @@ import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc, mapDoc } from '#lib/couch'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
@@ -111,7 +111,7 @@ export async function putInvEntityUpdate (params) {
     const patch = await createPatch(params)
     if (patch) await emit('patch:created', patch)
   } catch (err) {
-    const patchErr = error_.new('patch creation failed', 500, { currentDoc, updatedDoc })
+    const patchErr = newError('patch creation failed', 500, { currentDoc, updatedDoc })
     patchErr.name = 'patch_creation_failed'
     patchErr.cause = err
     throw patchErr

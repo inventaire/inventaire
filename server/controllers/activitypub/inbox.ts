@@ -1,5 +1,5 @@
 import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
 import Follow from './follow.js'
 import { verifySignature } from './lib/security.js'
@@ -55,7 +55,7 @@ const controller = async (params, req, res) => {
     return inboxActivityTypes[type](params)
   } else {
     const message = 'unsupported activity type'
-    const err = error_.new(message, 400, params)
+    const err = newError(message, 400, params)
     err.mute = true
     warn(`${message}: ${type}`)
     throw err

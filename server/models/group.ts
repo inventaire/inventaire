@@ -1,5 +1,5 @@
 import { find, map, without } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -144,7 +144,7 @@ const findMembership = (userId, group, previousCategory, wanted) => {
     } else {
       const context = { userId }
       context[previousCategory] = group[previousCategory]
-      throw error_.new('membership not found', 403, context)
+      throw newError('membership not found', 403, context)
     }
   } else {
     // expect to find no existing membership
@@ -152,7 +152,7 @@ const findMembership = (userId, group, previousCategory, wanted) => {
       // return a 200 to avoid to show an error on client-side
       // while the membership does exist
       const context = { groupId: group._id, userId }
-      throw error_.new('membership already exist', 200, context)
+      throw newError('membership already exist', 200, context)
     }
   }
 }

@@ -1,6 +1,8 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { errorHandler } from '#lib/error/error_handler'
+import { bundleError } from '#lib/error/pre_filled'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
 import { endReqTimer, startReqTimer, userAgent } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
@@ -29,7 +31,7 @@ export async function getResizedImage (req, res, url, dimensions) {
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
     err.statusCode = 500
-    error_.handler(req, res, err)
+    errorHandler(req, res, err)
     return
   } finally {
     endReqTimer(timer, response?.status || errorCode)
@@ -50,11 +52,11 @@ export async function getResizedImage (req, res, url, dimensions) {
 
   if (errMessage) {
     statusCode = statusCode === 404 ? 404 : 400
-    const err = error_.new(errMessage, statusCode)
+    const err = newError(errMessage, statusCode)
     // Do not pass the URL as error.context in the response to prevent leaking internal information
     // but still get it logged with the error
     err.privateContext = url
-    error_.handler(req, res, err, statusCode)
+    errorHandler(req, res, err, statusCode)
   } else {
     res.header('content-type', 'image/jpeg')
     res.header('cache-control', 'immutable')
@@ -76,14 +78,14 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
     if (transmittedData || alreadySent) {
       logError(err, 'image error after some data was already sent')
     } else {
-      error_.handler(req, res, err)
+      errorHandler(req, res, err)
       alreadySent = true
     }
   }
 
   return shrinkAndFormatStream(imageStream, width, height)
   .stream((err, stdout, stderr) => {
-    if (err != null) return error_.handler(req, res, err)
+    if (err != null) return errorHandler(req, res, err)
     stdout.on('error', handleBufferError)
     stderr.on('data', handleBufferError)
 
@@ -106,7 +108,7 @@ const resizeFromStream = (imageStream, width, height, req, res) => {
       // usually solved by `sudo apt-get install graphicsmagick`
       } else {
         const message = 'empty graphicsmagick response: make sure graphicsmagick is installed'
-        error_.bundle(req, res, message, 500)
+        bundleError(req, res, message, 500)
       }
     })
   })

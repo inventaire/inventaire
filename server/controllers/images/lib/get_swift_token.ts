@@ -1,7 +1,7 @@
 // Identity: v3
-// Swift: v2
 import CONFIG from 'config'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+// Swift: v2
 import { requests_ } from '#lib/requests'
 import { tenMinutes } from '#lib/time'
 import { logError } from '#lib/utils/logs'
@@ -53,10 +53,10 @@ export default async () => {
 
 const parseIdentificationRes = ({ body, headers }) => {
   const newToken = headers['x-subject-token']
-  if (!newToken) throw error_.new('swift token not found', 500, { headers })
+  if (!newToken) throw newError('swift token not found', 500, { headers })
 
   const expirationTime = body.token.expires_at && (new Date(body.token.expires_at)).getTime()
-  if (!expirationTime) throw error_.new('swift expiration time not found', 500, { body, headers })
+  if (!expirationTime) throw newError('swift expiration time not found', 500, { body, headers })
 
   lastToken = newToken
   lastTokenExpirationTime = expirationTime

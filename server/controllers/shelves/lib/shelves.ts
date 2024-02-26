@@ -3,7 +3,7 @@ import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_a
 import { getAuthorizedItemsByShelves } from '#controllers/items/lib/get_authorized_items'
 import { getItemsByIds, itemsBulkDelete, updateItemsShelves } from '#controllers/items/lib/items'
 import dbFactory from '#db/couchdb/base'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
@@ -79,7 +79,7 @@ export const validateShelfOwnership = (userId, shelves) => {
   shelves = forceArray(shelves)
   for (const shelf of shelves) {
     if (shelf.owner !== userId) {
-      throw error_.new('wrong owner', 403, { userId, shelfId: shelf._id })
+      throw newError('wrong owner', 403, { userId, shelfId: shelf._id })
     }
   }
 }

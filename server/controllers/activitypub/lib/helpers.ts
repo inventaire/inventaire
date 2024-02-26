@@ -2,7 +2,7 @@ import CONFIG from 'config'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { i18n } from '#lib/emails/i18n/i18n'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
 
 const host = CONFIG.getPublicOrigin()
@@ -36,7 +36,7 @@ export const getActorTypeFromName = name => {
   if (isEntityUri(getEntityUriFromActorName(name))) return 'entity'
   else if (name.startsWith('shelf-')) return 'shelf'
   else if (isUsername(name)) return 'user'
-  else throw error_.notFound({ name })
+  else throw notFoundError({ name })
 }
 
 export const defaultLabel = entity => entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]

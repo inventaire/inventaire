@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import commonValidations from './common.js'
 
@@ -12,7 +12,7 @@ const contentLimit = 256
 const validateAnObject = validations => obj => {
   Object.keys(obj).forEach(key => {
     if (!Object.keys(validations).includes(key)) {
-      throw error_.new(`invalid attribute: ${key}`, 400, { obj })
+      throw newError(`invalid attribute: ${key}`, 400, { obj })
     }
     validations.pass(key, obj[key])
   })

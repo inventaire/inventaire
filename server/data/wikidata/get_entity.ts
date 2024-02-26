@@ -2,7 +2,7 @@
 // while requests are actually regrouped in the background
 import { chunk, uniq, without } from 'lodash-es'
 import wdk from 'wikibase-sdk/wikidata.org'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requestGrouper } from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
@@ -34,7 +34,7 @@ async function getEntitiesBatch (idsBatch) {
       return {}
     }
   } else {
-    throw error_.new('error getting wikidata entities', 500, { idsBatch, error })
+    throw newError('error getting wikidata entities', 500, { idsBatch, error })
   }
 }
 

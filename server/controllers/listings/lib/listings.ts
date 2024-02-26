@@ -4,7 +4,7 @@ import { getElementsByListings, createListingElements, deleteListingsElements } 
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
@@ -33,7 +33,7 @@ export const createListing = async params => {
   const listing = Listing.create(params)
   const invalidGroupId = await validateVisibilityKeys(listing.visibility, listing.creator)
   if (invalidGroupId) {
-    throw error_.new('list creator is not in that group', 400, {
+    throw newError('list creator is not in that group', 400, {
       visibilityKeys: listing.visibility,
       groupId: invalidGroupId,
     })
@@ -69,7 +69,7 @@ export const validateListingOwnership = (userId, listings) => {
   listings = forceArray(listings)
   for (const listing of listings) {
     if (listing.creator !== userId) {
-      throw error_.new('wrong user', 403, { userId, listId: listing._id })
+      throw newError('wrong user', 403, { userId, listId: listing._id })
     }
   }
 }
@@ -94,6 +94,6 @@ const assignElementsToListing = elementsByListing => listing => {
 const validateExistingEntities = async uris => {
   const { notFound } = await getEntitiesByUris({ uris })
   if (isNonEmptyArray(notFound)) {
-    throw error_.new('entities not found', 403, { uris: notFound })
+    throw newError('entities not found', 403, { uris: notFound })
   }
 }

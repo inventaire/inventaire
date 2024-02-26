@@ -1,5 +1,5 @@
 import { isInvEntityId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import revertMerge from './lib/revert_merge.js'
 
@@ -13,7 +13,7 @@ const controller = async params => {
 
   if ((fromPrefix !== 'inv') || !isInvEntityId(fromId)) {
     const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: inv`
-    throw error_.new(message, 400, params)
+    throw newError(message, 400, params)
   }
 
   const result = await revertMerge(reqUserId, fromId)

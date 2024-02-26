@@ -1,5 +1,5 @@
 import { ControllerWrapper } from '#lib/controller_wrapper'
-import { error_ } from '#lib/error/error'
+import { newMissingQueryError } from '#lib/error/pre_filled'
 import { getLangFromHeaders } from '#lib/headers'
 import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
 import getAuthentifiedUser from './lib/get_authentified_user.js'
@@ -44,9 +44,9 @@ const getFeed = async (headersLang, params) => {
   const lang = params.lang || headersLang || 'en'
 
   if (requesterId) {
-    if (token == null) throw error_.newMissingQuery('token')
+    if (token == null) throw newMissingQueryError('token')
   } else {
-    if (token != null) throw error_.newMissingQuery('requester')
+    if (token != null) throw newMissingQueryError('requester')
   }
 
   // The reason to have this authentifying token system on a public endpoint
@@ -67,7 +67,7 @@ const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
   if (userId) return userFeedData(userId, reqUserId)
   else if (groupId) return groupFeedData(groupId, reqUserId)
   else if (shelfId) return shelfFeedData(shelfId, reqUserId)
-  else throw error_.newMissingQuery('user|group|shelf', 400)
+  else throw newMissingQueryError('user|group|shelf')
 }
 
 export default {

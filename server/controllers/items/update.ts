@@ -1,6 +1,6 @@
 import { updateItems } from '#controllers/items/lib/items'
 import { isEntityUri, isItemId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { track } from '#lib/track'
 import { log } from '#lib/utils/logs'
@@ -17,15 +17,15 @@ export default async (req, res) => {
 
   log(item, 'item update')
 
-  if (_id == null) throw error_.newMissingBody('_id')
-  if (entity == null) throw error_.newMissingBody('entity')
+  if (_id == null) throw newMissingBodyError('_id')
+  if (entity == null) throw newMissingBodyError('entity')
 
   if (!isItemId(_id)) {
-    throw error_.newInvalid('_id', _id)
+    throw newInvalidError('_id', _id)
   }
 
   if (!isEntityUri(entity)) {
-    throw error_.newInvalid('entity', entity)
+    throw newInvalidError('entity', entity)
   }
 
   const reqUserId = req.user._id

@@ -1,6 +1,7 @@
 import { chain, pick } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { emit } from '#lib/radio'
 import { acceptNullValue, updatable } from '#models/attributes/group'
 import Group from '#models/group'
@@ -14,11 +15,11 @@ export default async (data, userId) => {
   let { value } = data
 
   if (!updatable.includes(attribute)) {
-    throw error_.new(`${attribute} can't be updated`, 400, data)
+    throw newError(`${attribute} can't be updated`, 400, data)
   }
 
   if (!validations[attribute](value) && !(value === null && acceptNullValue.includes(attribute))) {
-    throw error_.newInvalid(attribute, value)
+    throw newInvalidError(attribute, value)
   }
 
   if (formatters[attribute]) value = formatters[attribute](value)

@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import itemValidations from '#models/validations/item'
@@ -48,7 +48,7 @@ const buildOperation = params => {
   const { entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array(works)
   if (!isNonEmptyString(title)) {
-    throw error_.new('no title found', 400, entity)
+    throw newError('no title found', 400, entity)
   }
 
   const snapshot = {

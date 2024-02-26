@@ -1,10 +1,10 @@
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export default (claims, checkedProperties) => {
   if (claims['wdt:P31']?.[0] == null) {
-    throw error_.new("wdt:P31 array can't be empty", 400, { claims })
+    throw newError("wdt:P31 array can't be empty", 400, { claims })
   }
 
   const type = getEntityType(claims['wdt:P31'])
@@ -36,13 +36,13 @@ const validateControlledPropertiesClaimsPerType = {
 const assertPropertyHasValue = (claims, property, entityLabel, propertyLabel) => {
   if (!(claims[property] && claims[property][0] != null)) {
     const message = `${entityLabel} should have ${propertyLabel} (${property})`
-    throw error_.new(message, 400, claims)
+    throw newError(message, 400, claims)
   }
 }
 
 const validateUniqueValue = (property, propertyClaims) => {
   const { uniqueValue } = properties[property]
   if (uniqueValue && propertyClaims != null && propertyClaims.length > 1) {
-    throw error_.new('this property accepts only one value', 400, { property, propertyClaims })
+    throw newError('this property accepts only one value', 400, { property, propertyClaims })
   }
 }

@@ -1,6 +1,6 @@
-import { error_ } from '#lib/error/error'
 import validateObject from '#lib/validate_object'
 import { controllerWrapper, validateControllerWrapperParams } from './controller_wrapper.js'
+import { bundleMissingQueryError, bundleUnknownAction } from './error/pre_filled.js'
 import { rolesByAccess } from './user_access_levels.js'
 
 // A function to route requests to an endpoint to sub-endpoints
@@ -25,11 +25,11 @@ export default controllers => {
     const action = req.query.action || req.body.action || 'default'
 
     if (action === 'default' && actionsControllersParams.default == null) {
-      return error_.bundleMissingQuery(req, res, 'action')
+      return bundleMissingQueryError(req, res, 'action')
     }
 
     const controllerParams = actionsControllersParams[action]
-    if (controllerParams == null) return error_.unknownAction(req, res)
+    if (controllerParams == null) return bundleUnknownAction(req, res)
 
     return controllerWrapper(controllerParams, req, res)
   }

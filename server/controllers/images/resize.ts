@@ -2,7 +2,7 @@ import { URL } from 'node:url'
 import CONFIG from 'config'
 import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
 import { getResizedImage } from './lib/get_resized_image.js'
@@ -33,7 +33,7 @@ export default {
     let [ container, dimensions, rest ] = parseReq(req)
 
     if (!containersList.includes(container)) {
-      return error_.bundleInvalid(req, res, 'container', container)
+      return bundleInvalidError(req, res, 'container', container)
     }
 
     // if no dimensions are passed, should return the maximum dimension
@@ -48,13 +48,13 @@ export default {
     } else if (/^\d+$/.test(rest)) {
       url = req.query.href
       if (!isUrl(url)) {
-        return error_.bundle(req, res, 'invalid href query', 400, url)
+        return bundleError(req, res, 'invalid href query', 400, url)
       }
 
       const { hostname } = new URL(url)
 
       if (!trustedRemoteHosts.has(hostname)) {
-        return error_.bundle(req, res, 'image domain not allowed', 400, url)
+        return bundleError(req, res, 'image domain not allowed', 400, url)
       }
 
       const urlCode = getHashCode(url).toString()
@@ -62,7 +62,7 @@ export default {
       // as query argument in case it isnt in cache.
       // Here, we just check that we do get the same hash
       if (urlCode !== rest) {
-        return error_.bundle(req, res, 'hash code and href dont match', 400)
+        return bundleError(req, res, 'hash code and href dont match', 400)
       }
 
       // As resized remote images are not cached in development, each request reaches remote services,
@@ -73,7 +73,7 @@ export default {
         return res.redirect(prodUrl)
       }
     } else {
-      return error_.bundle(req, res, 'invalid image path', 400, rest)
+      return bundleError(req, res, 'invalid image path', 400, rest)
     }
 
     getResizedImage(req, res, url, dimensions)

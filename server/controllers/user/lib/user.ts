@@ -3,7 +3,7 @@ import { getNetworkIds } from '#controllers/user/lib/relations_status'
 import dbFactory from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
 import { firstDoc } from '#lib/couch'
-import { error_ } from '#lib/error/error'
+import { newError, notFoundError } from '#lib/error/error'
 import searchUsersByDistanceFactory from '#lib/search_by_distance'
 import searchUsersByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
@@ -39,7 +39,7 @@ export const findUserByUsername = username => {
   .then(firstDoc)
   .then(user => {
     if (user) return user
-    else throw error_.notFound({ username })
+    else throw notFoundError({ username })
   })
 }
 
@@ -116,7 +116,7 @@ export const setUserStableUsername = async userData => {
 export const getUsersNearby = async (userId, meterRange, strict) => {
   const { position } = await getUserById(userId)
   if (position == null) {
-    throw error_.new('user has no position set', 400, userId)
+    throw newError('user has no position set', 400, userId)
   }
   const usersIds = await findNearby(position, meterRange, null, strict)
   return without(usersIds, userId)

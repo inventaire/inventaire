@@ -1,5 +1,5 @@
 import { clone } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import commonValidations from './validations/common.js'
 
@@ -30,7 +30,7 @@ export default {
     const newElement = {}
     Object.keys(element).forEach(attribute => {
       if (!attributes.validAtCreation.includes(attribute)) {
-        throw error_.new('invalid attribute', 400, { attribute, element })
+        throw newError('invalid attribute', 400, { attribute, element })
       }
       validations.pass(attribute, element[attribute])
       newElement[attribute] = element[attribute]
@@ -51,7 +51,7 @@ export default {
 
     for (const attribute of passedAttributes) {
       if (!attributes.updatable.includes(attribute)) {
-        throw error_.new('invalid attribute', 400, { attribute, oldElement })
+        throw newError('invalid attribute', 400, { attribute, oldElement })
       }
       const newVal = newAttributes[attribute]
 

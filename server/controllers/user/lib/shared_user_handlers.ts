@@ -1,5 +1,5 @@
 import { firstDoc } from '#lib/couch'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 
@@ -18,6 +18,6 @@ export const findOneByEmail = (db, email) => {
   .then(firstDoc)
   .then(user => {
     if (user) return user
-    else throw error_.notFound(email)
+    else throw notFoundError(email)
   })
 }

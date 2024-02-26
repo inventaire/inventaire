@@ -6,7 +6,7 @@ import {
   socialTypes,
 } from '#db/elasticsearch/indexes'
 import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { someMatch } from '#lib/utils/base'
@@ -21,7 +21,7 @@ const typeSearch = async params => {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
   assert_.array(types)
   for (const type of types) {
-    if (!indexedTypesSet.has(type)) throw error_.new('invalid type', 500, { type, types })
+    if (!indexedTypesSet.has(type)) throw newError('invalid type', 500, { type, types })
   }
   if (search) assert_.string(search)
 
@@ -36,7 +36,7 @@ const typeSearch = async params => {
   // Query must be either social (user, group) or entities related
   // but cannot be both as results scores are built very differently
   if (hasSocialTypes && hasEntityTypes) {
-    throw error_.new('can not have both social and entity types', 400, { types })
+    throw newError('can not have both social and entity types', 400, { types })
   }
 
   let body, queryIndexes
@@ -45,7 +45,7 @@ const typeSearch = async params => {
     body = socialQueryBuilder({ search, limit, minScore })
   } else {
     queryIndexes = entitiesIndexesPerFilter[filter]
-    if (queryIndexes == null) throw error_.new('invalid filter', 500, { filter })
+    if (queryIndexes == null) throw newError('invalid filter', 500, { filter })
     body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
 
@@ -74,5 +74,5 @@ const entitiesIndexesPerFilter = {
 
 const typeParameterError = (parameter, types) => {
   const context = { givenTypes: types, validTypes: indexedEntitiesTypes }
-  throw error_.new(`${parameter} search is restricted to entity types`, 400, context)
+  throw newError(`${parameter} search is restricted to entity types`, 400, context)
 }

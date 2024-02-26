@@ -1,38 +1,43 @@
 // Using minimal dependencies to avoid circular dependencies
 // as this is depended on by lib/error which is called very early
-import { isNumber, isPlainObject, flatten, compact } from 'lodash-es'
 
 // Global conventions:
 // - all error objects should have a statusCode (mimicking HTTP status codes)
 //   this is already the case for errors rejected by the lib blue-cot and server/lib/requests
 
-export default (err, filter, ...context) => {
+export interface ContextualizedError extends Error {
+  context?: Record<string, unknown>
+  emitter: string
+  notFound?: boolean
+  statusCode?: number
+  type?: string
+  attachReqContext?: string
+  error_type?: string
+  error_name?: string
+}
+
+export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: unknown) {
   // numbers filters are used as HTTP codes
   // while string will be taken as a type
-  const attribute = isNumber(filter) ? 'statusCode' : 'type'
-  err[attribute] = filter
-
-  // context arguments prefered format is a single object (possibly with data
-  // the client can depend on) but there are still exceptions
-  context = compact(flatten(context))
-  if (context.length === 1 && isPlainObject(context[0])) {
-    context = context[0]
+  if (typeof filter === 'number') {
+    err.statusCode = filter
+  } else {
+    err.type = filter
   }
-
   err.context = context
   err.emitter = getErrorEmittingLines(err)
 
   return err
 }
 
-const getErrorEmittingLines = err => {
+function getErrorEmittingLines (err) {
   return err.stack.split('\n')
   .filter(line => !line.match(/lib\/error/))
   .slice(0, 5)
   .map(getErrorEmittingLine)
 }
 
-const getErrorEmittingLine = line => {
+function getErrorEmittingLine (line) {
   if (!line) return
   if (!line.trim().startsWith('at ')) return line
   return line

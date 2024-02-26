@@ -1,6 +1,6 @@
 import jiff from 'jiff'
 import { cloneDeep, get, isArray, pick } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import Entity from '#models/entity'
 import { versioned } from './attributes/entity.js'
@@ -18,7 +18,7 @@ const Patch = {
     if (batchId != null) assert_.number(batchId)
 
     if (currentDoc === updatedDoc) {
-      throw error_.new('invalid update: same document objects', 500, { currentDoc, updatedDoc })
+      throw newError('invalid update: same document objects', 500, { currentDoc, updatedDoc })
     }
 
     const now = Date.now()
@@ -40,7 +40,7 @@ const Patch = {
     }
 
     if (patch.operations.length === 0) {
-      throw error_.new('empty patch', 500, { currentDoc, updatedDoc })
+      throw newError('empty patch', 500, { currentDoc, updatedDoc })
     }
 
     // Let the consumer pass any data object helping to contextualize the patch
@@ -67,7 +67,7 @@ const Patch = {
   // Reverts the effects of a patch on a entity doc
   revert: (currentDoc, patch) => {
     if (patch._id.split(':')[0] !== currentDoc._id) {
-      throw error_.new('entity and patch ids do not match', 500, { currentDoc, patch })
+      throw newError('entity and patch ids do not match', 500, { currentDoc, patch })
     }
     let inverseOperations
     try {
@@ -163,7 +163,7 @@ const operationFix = {
       const patchedArray = getFromPatchPath(currentDoc, arrayPath)
 
       if (!patchedArray) {
-        throw error_.new('unhandled patch case', 500, { currentDoc, inverseOperations, op, index, arrayPath })
+        throw newError('unhandled patch case', 500, { currentDoc, inverseOperations, op, index, arrayPath })
       }
 
       const currentValueIndex = patchedArray.indexOf(op.value)
