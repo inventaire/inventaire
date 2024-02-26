@@ -6,3 +6,5 @@ export interface Req extends Express.Request {
 }
 
 export type Res = Express.Response
+
+export type Next = () => void
