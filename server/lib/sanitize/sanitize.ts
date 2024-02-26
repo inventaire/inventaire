@@ -1,5 +1,6 @@
 import { camelCase, cloneDeep, isPlainObject } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newMissingError, newInvalidError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
 import { assert_ } from '#lib/utils/assert_types'
 import { obfuscate } from '#lib/utils/base'
@@ -23,7 +24,7 @@ export const sanitize = (req, res, configs) => {
 
   if (!isPlainObject(input)) {
     const type = typeOf(input)
-    throw error_.new(`${place} should be an object, got ${type}`, 400)
+    throw newError(`${place} should be an object, got ${type}`, 400)
   }
 
   for (const name in input) {
@@ -58,7 +59,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
   if (input[name] == null) {
     if (config.canBeNull && input[name] === null) return
     else if (config.optional) return
-    else throw error_.newMissing(place, name)
+    else throw newMissingError(place, name)
   }
 
   format(input, name, parameter.format, config)
@@ -66,7 +67,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
   // May throw a custom error, to avoid getting the general error
   // created hereafter
   if (!parameter.validate(input[name], name, config)) {
-    const err = error_.newInvalid(name, input[name])
+    const err = newInvalidError(name, input[name])
     obfuscateSecret(parameter, err)
     throw err
   }
@@ -105,9 +106,9 @@ const validateSanitizationParameter = (name, config) => {
   const parameter = getParameterFunctions(name, generic)
   if (parameter == null) {
     if (generic) {
-      throw error_.new('invalid generic name', 500, { name, generic })
+      throw newError('invalid generic name', 500, { name, generic })
     } else {
-      throw error_.new('invalid parameter name', 500, { name })
+      throw newError('invalid parameter name', 500, { name })
     }
   }
 }
@@ -134,7 +135,7 @@ const format = (input, name, formatFn, config) => {
   try {
     input[name] = formatFn(input[name], name, config)
   } catch (err) {
-    const formatError = error_.new('could not format input', 500, { input, name, formatFn, config })
+    const formatError = newError('could not format input', 500, { input, name, formatFn, config })
     formatError.cause = err
     throw formatError
   }

@@ -1,6 +1,6 @@
 import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
 import getEntityType from './get_entity_type.js'
@@ -29,39 +29,39 @@ const validate = async entity => {
 const getValueType = claims => {
   const wdtP31 = claims['wdt:P31']
   if (!isNonEmptyArray(wdtP31)) {
-    throw error_.new("wdt:P31 array can't be empty", 400, wdtP31)
+    throw newError("wdt:P31 array can't be empty", 400, wdtP31)
   }
   return getEntityType(wdtP31)
 }
 
 const validateValueType = (type, wdtP31) => {
   if (type == null) {
-    throw error_.new("wdt:P31 value isn't a known value", 400, wdtP31)
+    throw newError("wdt:P31 value isn't a known value", 400, wdtP31)
   }
 
   if (!allowlistedTypes.includes(type)) {
-    throw error_.new("wdt:P31 value isn't a allowlisted value", 400, wdtP31)
+    throw newError("wdt:P31 value isn't a allowlisted value", 400, wdtP31)
   }
 }
 
 const validateLabels = (labels, type) => {
   if (typeWithoutLabels.has(type)) {
     if (isNonEmptyPlainObject(labels)) {
-      throw error_.new(`${type}s can't have labels`, 400, { type, labels })
+      throw newError(`${type}s can't have labels`, 400, { type, labels })
     }
   } else {
     if (!isNonEmptyPlainObject(labels)) {
-      throw error_.new('invalid labels', 400, { type, labels })
+      throw newError('invalid labels', 400, { type, labels })
     }
 
     for (const lang in labels) {
       const value = labels[lang]
       if (!Lang.test(lang)) {
-        throw error_.new(`invalid label language: ${lang}`, 400, { type, labels })
+        throw newError(`invalid label language: ${lang}`, 400, { type, labels })
       }
 
       if (!isNonEmptyString(value)) {
-        throw error_.new(`invalid label value: ${value}`, 400, { type, labels })
+        throw newError(`invalid label value: ${value}`, 400, { type, labels })
       }
     }
   }

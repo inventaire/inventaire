@@ -1,24 +1,24 @@
 import crypto from 'node:crypto'
 import { promisify } from 'node:util'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import pw from './password_hashing.js'
 
 const generateKeyPair = promisify(crypto.generateKeyPair)
 
 export const passwords = {
   hash: async password => {
-    if (password == null) throw error_.new('missing password', 400)
+    if (password == null) throw newError('missing password', 400)
     return pw.hash(password)
   },
 
   verify: async (hash, password, tokenDaysToLive) => {
-    if (hash == null) throw error_.new('missing hash', 400)
+    if (hash == null) throw newError('missing hash', 400)
 
     if (tokenDaysToLive != null && pw.expired(hash, tokenDaysToLive)) {
-      throw error_.new('token expired', 401)
+      throw newError('token expired', 401)
     }
 
-    if (password == null) throw error_.new('missing password', 400)
+    if (password == null) throw newError('missing password', 400)
 
     return pw.verify(hash, password)
   },

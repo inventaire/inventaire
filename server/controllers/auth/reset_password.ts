@@ -1,6 +1,6 @@
 import { sendResetPasswordEmail } from '#controllers/user/lib/token'
 import { findUserByEmail } from '#controllers/user/lib/user'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 const sanitization = {
   email: {},
@@ -16,7 +16,7 @@ const controller = async ({ email }) => {
 }
 
 const catchEmailNotFoundErr = email => err => {
-  if (err.statusCode === 404) throw error_.new('email not found', 400, email)
+  if (err.statusCode === 404) throw newError('email not found', 400, email)
   else throw err
 }
 

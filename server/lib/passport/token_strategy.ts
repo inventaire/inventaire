@@ -3,7 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local'
 import { openPasswordUpdateWindow } from '#controllers/user/lib/token'
 import { findUserByEmail } from '#controllers/user/lib/user'
 import { passwords as pw_ } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { logError, Log } from '#lib/utils/logs'
 import loginAttempts from './login_attempts.js'
 
@@ -52,7 +52,7 @@ const invalidEmailOrToken = (done, email, label, err) => {
 }
 
 const verifyToken = async (user, token) => {
-  if (user.token == null) throw error_.new('no token found', 401)
+  if (user.token == null) throw newError('no token found', 401)
   return pw_.verify(user.token, token, tokenDaysToLive)
 }
 

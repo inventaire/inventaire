@@ -13,7 +13,7 @@ import CONFIG from 'config'
 import { invert } from 'lodash-es'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomBytes } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
 import { warn, info, LogError } from '#lib/utils/logs'
 
@@ -160,8 +160,8 @@ const getTimeUntilEndOfNewestKeyHalfLife = () => {
 const fixMessage = `Start a leading server (with CONFIG.autoRotateKeys=true) to fix.
 Also make sure to use the same CONFIG.cookieMaxAge value`
 
-const missingKeysError = () => error_.new(`no key found: ${fixMessage}`, 500)
-const outdatedKeysError = () => error_.new(`found outdated keys: ${fixMessage}`, 500, { keysStatus: getKeysStatus() })
+const missingKeysError = () => newError(`no key found: ${fixMessage}`, 500)
+const outdatedKeysError = () => newError(`found outdated keys: ${fixMessage}`, 500, { keysStatus: getKeysStatus() })
 
 recoverKeysFromFile()
 checkState()

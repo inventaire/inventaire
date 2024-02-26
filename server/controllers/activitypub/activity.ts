@@ -1,7 +1,7 @@
 import { getActivityById } from '#controllers/activitypub/lib/activities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { isCouchUuid } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { notFoundError, newError } from '#lib/error/error'
 import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
@@ -31,12 +31,12 @@ const getEntityActivity = async id => {
   const activities = await getActivitiesFromPatch(patch)
   activityNumber = parseInt(activityNumber)
   const activity = activities[activityNumber]
-  if (!activity) throw error_.notFound({ id })
+  if (!activity) throw notFoundError({ id })
   return activity
 }
 
 const getActivity = async id => {
-  if (!isCouchUuid(id)) throw error_.new('invalid activity id', 400, { id })
+  if (!isCouchUuid(id)) throw newError('invalid activity id', 400, { id })
   const activityDoc = await getActivityById(id)
   const { name } = activityDoc.actor
   if (name.startsWith('shelf-')) {

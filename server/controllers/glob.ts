@@ -1,5 +1,5 @@
 import { absolutePath } from '#lib/absolute_path'
-import { error_ } from '#lib/error/error'
+import { bundleError } from '#lib/error/pre_filled'
 
 const publicFolder = absolutePath('client', 'public')
 
@@ -17,12 +17,12 @@ export default {
     const { pathname } = req._parsedUrl
     const domain = pathname.split('/')[1]
     if (domain === 'api') {
-      error_.bundle(req, res, `GET ${pathname}: api route not found`, 404)
+      bundleError(req, res, `GET ${pathname}: api route not found`, 404)
     } else if (domain === 'public') {
-      error_.bundle(req, res, `GET ${pathname}: asset not found`, 404)
+      bundleError(req, res, `GET ${pathname}: asset not found`, 404)
     } else if (imageHeader(req)) {
       const err = `GET ${pathname}: wrong content-type: ${req.headers.accept}`
-      error_.bundle(req, res, err, 400)
+      bundleError(req, res, err, 400)
     } else {
       // the routing will be done on the client side
       res.sendFile('./index.html', indexOptions)
@@ -32,7 +32,7 @@ export default {
   redirectToApiDoc: (req, res) => res.redirect('https://api.inventaire.io'),
 
   api: (req, res) => {
-    error_.bundle(req, res, 'wrong API route or http verb', 404, {
+    bundleError(req, res, 'wrong API route or http verb', 404, {
       verb: req.method,
       url: req._parsedUrl.href,
     })

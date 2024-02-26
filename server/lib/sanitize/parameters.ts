@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import { isArray, isNumber, isPlainObject, isString, uniq } from 'lodash-es'
 import { isNonEmptyArray, isLocalActivityPubActorUrl, isLang, isCollection, isPositiveIntegerString, isStrictlyPositiveInteger, isNonEmptyString, isColorHexCode, isPatchId, isPropertyUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { normalizeString, parseBooleanString } from '#lib/utils/base'
@@ -61,18 +61,18 @@ const nonEmptyString = {
 
     if (!isString(value)) {
       const details = `expected string, got ${typeOf(value)}`
-      throw error_.new(`invalid ${name}: ${details}`, 400, { value })
+      throw newError(`invalid ${name}: ${details}`, 400, { value })
     }
 
     if (value.length < 1) {
       const details = `${name} cannot be empty`
-      throw error_.new(`invalid ${name}: ${details}`, 400, { value })
+      throw newError(`invalid ${name}: ${details}`, 400, { value })
     }
 
     if (config.length && value.length !== config.length) {
       const message = `invalid ${name} length`
       const details = `expected ${config.length}, got ${value.length}`
-      throw error_.new(`${message}: ${details}`, 400, { value })
+      throw newError(`${message}: ${details}`, 400, { value })
     }
 
     return true
@@ -82,11 +82,11 @@ const nonEmptyString = {
 const arrayOfAType = validation => (values, type, config) => {
   if (!isArray(values)) {
     const details = `expected array, got ${typeOf(values)}`
-    throw error_.new(`invalid ${type}: ${details}`, 400, { values })
+    throw newError(`invalid ${type}: ${details}`, 400, { values })
   }
 
   if (values.length === 0) {
-    throw error_.new(`${type} array can't be empty`, 400)
+    throw newError(`${type} array can't be empty`, 400)
   }
 
   for (const value of values) {
@@ -94,7 +94,7 @@ const arrayOfAType = validation => (values, type, config) => {
       // approximative way to get singular of a word
       const singularType = type.replace(/s$/, '')
       const details = `expected ${singularType}, got ${value} (${typeOf(value)})`
-      throw error_.new(`invalid ${singularType}: ${details}`, 400, { values })
+      throw newError(`invalid ${singularType}: ${details}`, 400, { values })
     }
   }
 
@@ -160,7 +160,7 @@ const allowlistedString = {
   validate: (value, name, config) => {
     if (!config.allowlist.includes(value)) {
       const details = `possible values: ${config.allowlist.join(', ')}`
-      throw error_.new(`invalid ${name}: ${value} (${details})`, 400, { value })
+      throw newError(`invalid ${name}: ${value} (${details})`, 400, { value })
     }
     return true
   },
@@ -210,7 +210,7 @@ const generics = {
       const { limit } = config
       const { length } = values
       if (limit != null && length > limit) {
-        throw error_.new('limit length exceeded', 400, { limit, length })
+        throw newError('limit length exceeded', 400, { limit, length })
       }
       return true
     },
@@ -274,7 +274,7 @@ export default {
   context: {
     validate: value => {
       if (!isVisibilityKey(value)) {
-        throw error_.new(`invalid context: ${value}`, 400, { value })
+        throw newError(`invalid context: ${value}`, 400, { value })
       }
       return true
     },
@@ -380,7 +380,7 @@ export default {
       if (expectedType) {
         const valueType = typeOf(value)
         if (valueType !== expectedType) {
-          throw error_.new(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
+          throw newError(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
         }
       }
       return true

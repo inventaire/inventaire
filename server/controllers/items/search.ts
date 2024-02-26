@@ -2,7 +2,7 @@ import { getGroupMembersIds } from '#controllers/groups/lib/groups'
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authorized_items'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
-import { error_ } from '#lib/error/error'
+import { newMissingQueryError } from '#lib/error/pre_filled'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import { searchUsersItems } from './lib/search_users_items.js'
 
@@ -17,7 +17,7 @@ const sanitization = {
 
 const controller = async ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) => {
   if (!(userId || groupId || shelfId)) {
-    throw error_.newMissingQuery('user|group|shelf')
+    throw newMissingQueryError('user|group|shelf')
   }
   const usersIds = await getUsersIds({ userId, groupId, shelfId, reqUserId })
   if (usersIds.length === 0) return { items: [] }

@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { unprefixify } from './lib/prefix.js'
 import inv from './lib/update_inv_label.js'
 import wd from './lib/update_wd_label.js'
@@ -18,10 +18,10 @@ const controller = async (params, req) => {
 
   if (uri) id = unprefixify(uri)
 
-  if (value === '') throw error_.new('invalid value', 400, params)
+  if (value === '') throw newError('invalid value', 400, params)
 
   if (updater == null) {
-    throw error_.new(`unsupported uri prefix: ${prefix}`, 400, params)
+    throw newError(`unsupported uri prefix: ${prefix}`, 400, params)
   }
 
   await updater(req.user, id, lang, value)

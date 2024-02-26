@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
 import Element from '#models/element'
 
@@ -38,7 +38,7 @@ export async function deleteListingsElements (listings) {
 export async function createListingElements ({ listing, uris, userId }) {
   const listingId = listing._id
   if (listing.creator !== userId) {
-    throw error_.new('wrong user', 403, { userId, listingId })
+    throw newError('wrong user', 403, { userId, listingId })
   }
   const elements = uris.map(uri => Element.create({
     list: listingId,

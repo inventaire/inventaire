@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
 
@@ -13,12 +13,12 @@ export default (obj, validKeys, valuesType) => {
   for (const key in obj) {
     const value = obj[key]
     if (!validKeys.includes(key)) {
-      throw error_.new(`invalid object key: ${key}`, 500, { obj, key, validKeys })
+      throw newError(`invalid object key: ${key}`, 500, { obj, key, validKeys })
     }
 
     if (valuesType) {
       if (typeOf(value) !== valuesType) {
-        throw error_.new(`invalid object value: ${value}`, 500, { obj, value, valuesType })
+        throw newError(`invalid object value: ${value}`, 500, { obj, value, valuesType })
       }
     }
   }

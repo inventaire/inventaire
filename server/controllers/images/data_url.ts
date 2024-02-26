@@ -1,7 +1,8 @@
 import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import isPrivateUrl from '#lib/network/is_private_url'
 import { endReqTimer, sanitizeUrl, startReqTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
@@ -21,7 +22,7 @@ const controller = async ({ url }) => {
     // In case of server-side request forgery, do not let internal services
     // error responses get out
     logError(err, 'data_url private error')
-    throw error_.new('image could not be converted', 400, { url })
+    throw newError('image could not be converted', 400, { url })
   }
 }
 
@@ -31,7 +32,7 @@ const headers = {
 
 const getImageDataUrl = async url => {
   if (await isPrivateUrl(url)) {
-    throw error_.newInvalid('url', url)
+    throw newInvalidError('url', url)
   }
 
   if (dataseedEnabled) {
@@ -49,7 +50,7 @@ const getImageDataUrl = async url => {
     const contentType = res.headers.get('content-type')
 
     if (contentType.split('/')[0] !== 'image') {
-      throw error_.new('invalid content type', 400, { url, contentType })
+      throw newError('invalid content type', 400, { url, contentType })
     }
 
     const body = await res.buffer()

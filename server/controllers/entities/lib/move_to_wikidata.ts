@@ -1,5 +1,5 @@
 import { getEntityById } from '#controllers/entities/lib/entities'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import createWdEntity from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
 import { unprefixify } from './prefix.js'
@@ -34,7 +34,7 @@ export default async (user, invEntityUri) => {
 
 const rewrite404 = invEntityUri => err => {
   if (err.statusCode === 404) {
-    throw error_.new('entity not found', 400, { invEntityUri })
+    throw newError('entity not found', 400, { invEntityUri })
   } else {
     throw err
   }

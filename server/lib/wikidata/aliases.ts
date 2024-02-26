@@ -1,5 +1,5 @@
 import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 
@@ -168,7 +168,7 @@ export const typesNames = Object.keys(typesAliases)
 
 export const getPluralType = singularType => {
   const pluralizedType = singularType + 's'
-  if (!typesAliases[pluralizedType]) throw error_.new('invalid type', { singularType })
+  if (!typesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
   return pluralizedType
 }
 

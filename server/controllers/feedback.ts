@@ -1,7 +1,7 @@
 import { audit as auditIsbn } from 'isbn3'
 import { isPlainObject } from 'lodash-es'
 import { isEntityUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { bundleError } from '#lib/error/pre_filled'
 import { emit } from '#lib/radio'
 import { responses_ } from '#lib/responses'
 import { log, info } from '#lib/utils/logs'
@@ -13,7 +13,7 @@ export default {
     let { context } = body
 
     if (subject == null && message == null) {
-      return error_.bundle(req, res, 'message is empty', 400)
+      return bundleError(req, res, 'message is empty', 400)
     }
 
     if (!isPlainObject(context)) context = { sentContext: context }
@@ -21,7 +21,7 @@ export default {
     if (uris) {
       for (const uri of uris) {
         if (!isEntityUri(uri)) {
-          return error_.bundle(req, res, 'invalid entity uri', 400, { uri })
+          return bundleError(req, res, 'invalid entity uri', 400, { uri })
         }
         const [ prefix, id ] = uri.split(':')
         if (prefix === 'isbn') context[uri] = auditIsbn(id)

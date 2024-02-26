@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import { isNumber } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from './utils/assert_types.js'
 
@@ -53,7 +53,7 @@ export const getHitsAndTotal = res => {
 export const checkShardError = ({ _shards }) => {
   if (_shards.failures) {
     const failure = _shards.failures[0]
-    throw error_.new(failure.reason.reason, 500, failure)
+    throw newError(failure.reason.reason, 500, failure)
   }
 }
 

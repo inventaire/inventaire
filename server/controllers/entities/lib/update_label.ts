@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import Entity from '#models/entity'
 import getEntityType from './get_entity_type.js'
@@ -20,6 +20,6 @@ const checkEntityTypeCanHaveLabel = currentDoc => {
   const type = getEntityType(currentDoc.claims['wdt:P31'])
 
   if (typeWithoutLabels.has(type)) {
-    throw error_.new(`${type}s can't have labels`, 400)
+    throw newError(`${type}s can't have labels`, 400)
   }
 }

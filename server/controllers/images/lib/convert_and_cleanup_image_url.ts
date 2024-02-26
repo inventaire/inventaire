@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { isUrl } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
@@ -18,7 +18,7 @@ export default async ({ container, url }) => {
     url = res.url
   }
   if (!isUrl(url) || (await isPrivateUrl(url))) {
-    throw error_.new('invalid image url', 400, { url, originalUrl })
+    throw newError('invalid image url', 400, { url, originalUrl })
   }
   const data = await convertImageUrl({ container, url })
   if (bannedHashes.has(data.hash)) return {}

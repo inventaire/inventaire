@@ -1,5 +1,5 @@
 import { buildSearcher } from '#lib/elasticsearch'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 const textFields = [
   'snapshot.entity:title',
@@ -21,7 +21,7 @@ export const searchUsersItems = buildSearcher({
     } = params
 
     if (ownersIdsAndVisibilityKeys.length === 0) {
-      throw error_.new('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
+      throw newError('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
     }
 
     const filter = [

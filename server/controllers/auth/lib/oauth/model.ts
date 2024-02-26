@@ -7,7 +7,7 @@ import { getOauthClientById } from '#controllers/auth/lib/oauth/clients'
 import { getOauthTokenbyId, saveOauthToken } from '#controllers/auth/lib/oauth/tokens'
 import { getUserById } from '#controllers/user/lib/user'
 import { passwords } from '#lib/crypto'
-import { error_, catchNotFound } from '#lib/error/error'
+import { newError, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 
 export default {
@@ -27,7 +27,7 @@ export default {
     try {
       client = await getOauthClientById(clientId)
     } catch (err) {
-      if (err.statusCode === 404) throw error_.new('unknown client', 400, { clientId })
+      if (err.statusCode === 404) throw newError('unknown client', 400, { clientId })
       else throw err
     }
 

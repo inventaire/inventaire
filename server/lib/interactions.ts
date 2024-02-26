@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { someMatch } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 
@@ -23,5 +23,5 @@ export async function verifyRightToInteractWithItem ({ reqUserId, item, ownerAll
 }
 
 const forbidden = (userId, item) => {
-  return error_.new('not allowed with this item', 403, userId, item)
+  return newError('not allowed with this item', 403, userId, item)
 }

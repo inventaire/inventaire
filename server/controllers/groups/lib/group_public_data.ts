@@ -1,6 +1,6 @@
 import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
 import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { getGroupById, getGroupBySlug } from './groups.js'
 
@@ -14,7 +14,7 @@ export default async (fnName, fnArgs, reqUserId) => {
   } else {
     group = await getGroupById(...fnArgs)
   }
-  if (group == null) throw error_.notFound(fnArgs[0])
+  if (group == null) throw notFoundError(fnArgs[0])
   const usersIds = getAllGroupMembersIds(group)
   const users = await getUsersAuthorizedDataByIds(usersIds, reqUserId)
   return { group, users }

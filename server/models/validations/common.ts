@@ -1,6 +1,7 @@
 import { isArray, isBoolean, isNumber, isObject, isString } from 'lodash-es'
 import { isCouchUuid, isEmail, isEntityUri, isGroupId, isImageHash, isItemId, isLang, isLocalImg, isPatchId, isTransactionId, isUrl, isUserId, isUserImg, isUsername } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 
 const validations = {
   attribute: isString,
@@ -50,13 +51,13 @@ validations.valid = function (attribute, value, option) {
   // if no test are set at this attribute for this context
   // default to common validations
   if (test == null) test = validations[attribute]
-  if (test == null) throw error_.new('missing validation function', 500, { attribute, context: this })
+  if (test == null) throw newError('missing validation function', 500, { attribute, context: this })
   return test(value, option)
 }
 
 validations.pass = function (attribute, value, option) {
   if (!validations.valid.call(this, attribute, value, option)) {
     if (isObject(value)) value = JSON.stringify(value)
-    throw error_.newInvalid(attribute, value)
+    throw newInvalidError(attribute, value)
   }
 }

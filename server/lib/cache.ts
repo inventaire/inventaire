@@ -3,7 +3,7 @@ import CONFIG from 'config'
 import levelTtl from 'level-ttl'
 import { cacheDb } from '#db/level/get_db'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { catchNotFound, error_ } from '#lib/error/error'
+import { newError, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn, logError, LogError } from '#lib/utils/logs'
@@ -49,8 +49,8 @@ export const cache_ = {
   },
 
   put: async (key, value, ttl = defaultCacheTtl) => {
-    if (!isNonEmptyString(key)) throw error_.new('invalid key', 500)
-    if (value == null) throw error_.new('missing value', 500)
+    if (!isNonEmptyString(key)) throw newError('invalid key', 500)
+    if (value == null) throw newError('missing value', 500)
     return putValue(key, value, { ttl })
   },
 

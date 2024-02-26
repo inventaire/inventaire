@@ -1,6 +1,7 @@
 import { get, omit, pick, without } from 'lodash-es'
 import { passwords as pw_ } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
@@ -31,7 +32,7 @@ User._create = (username, email, creationStrategy, language, password) => {
 
   // it's ok to have an undefined language
   if (language && !validations.language(language)) {
-    throw error_.newInvalid('language', language)
+    throw newInvalidError('language', language)
   }
 
   const user = {
@@ -62,11 +63,11 @@ User._create = (username, email, creationStrategy, language, password) => {
     if (!validations.password(password)) {
       // Do NOT pass the password as context, as it would be logged
       // and returned in the response
-      throw error_.new('invalid password', 400)
+      throw newError('invalid password', 400)
     }
     user.password = password
   } else {
-    throw error_.new('unknown strategy', 400)
+    throw newError('unknown strategy', 400)
   }
 
   return user
@@ -145,11 +146,11 @@ User.updateItemsCounts = itemsCounts => user => {
 
 User.addRole = role => user => {
   if (!User.attributes.roles.includes(role)) {
-    throw error_.new('unknown role', 400)
+    throw newError('unknown role', 400)
   }
   user.roles = user.roles || []
   if (user.roles.includes(role)) {
-    throw error_.new('user already has role', 400)
+    throw newError('user already has role', 400)
   }
   user.roles.push(role)
   return user
@@ -157,7 +158,7 @@ User.addRole = role => user => {
 
 User.removeRole = role => user => {
   if (!User.attributes.roles.includes(role)) {
-    throw error_.new('unknown role', 400)
+    throw newError('unknown role', 400)
   }
   user.roles = user.roles || []
   user.roles = without(user.roles, role)

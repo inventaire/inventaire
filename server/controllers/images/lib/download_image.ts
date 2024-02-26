@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import AbortController from 'abort-controller'
 import fetch from 'node-fetch'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { endReqTimer, startReqTimer } from '#lib/requests'
 import { encodeURL } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
@@ -28,7 +28,7 @@ export default async (url, path) => {
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
     logError(err, 'download image private error')
-    throw error_.new('could not download image', 400, { url })
+    throw newError('could not download image', 400, { url })
   } finally {
     endReqTimer(timer, res?.status || errorCode)
   }
@@ -58,7 +58,7 @@ const validateResponse = (response, controller, url, path) => {
   if (errMessage != null) {
     controller.abort()
     statusCode = statusCode || 400
-    throw error_.new(errMessage, statusCode, { url, path })
+    throw newError(errMessage, statusCode, { url, path })
   }
 }
 

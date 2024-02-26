@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import validateClaimValueSync from './validate_claim_value_sync.js'
 
@@ -22,7 +22,7 @@ export default async params => {
 
   // Ex: a user can freely set a wdt:P31 value, but only an admin can change it
   if (updatingValue && prop.adminUpdateOnly && !userIsAdmin) {
-    throw error_.new("updating property requires admin's rights", 403, property, newVal)
+    throw newError("updating property requires admin's rights", 403, { property, newVal })
   }
 
   if (typeof newVal === 'string') newVal = newVal.trim().normalize()
@@ -55,7 +55,7 @@ const verifyClaimConcurrency = async (concurrency, property, value, _id) => {
     const message = 'this property value is already used'
     const entity = `inv:${rows[0].id}`
     // /!\ The client relies on the entity being passed in the context
-    throw error_.new(message, 400, { entity, property, value })
+    throw newError(message, 400, { entity, property, value })
   }
 }
 
@@ -69,10 +69,10 @@ const verifyClaimEntityType = async (entityValueTypes, value) => {
   const entity = await getEntityByUri({ uri: value })
 
   if (!entity) {
-    throw error_.new('entity not found', 400, value)
+    throw newError('entity not found', 400, value)
   }
 
   if (!entityValueTypes.includes(entity.type)) {
-    throw error_.new(`invalid claim entity type: ${entity.type}`, 400, value)
+    throw newError(`invalid claim entity type: ${entity.type}`, 400, value)
   }
 }

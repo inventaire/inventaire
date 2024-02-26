@@ -1,5 +1,5 @@
 import { isArray, isPlainObject } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
@@ -15,12 +15,12 @@ export default entry => {
   let { edition } = entry
 
   if (isArray(edition)) {
-    if (edition.length > 1) throw error_.new('multiple editions not supported', 400, { edition })
+    if (edition.length > 1) throw newError('multiple editions not supported', 400, { edition })
     else edition = entry.edition = edition[0]
   }
 
   if (edition == null) {
-    throw error_.new('missing edition in entry', 400, { entry })
+    throw newError('missing edition in entry', 400, { entry })
   }
 
   if (isPlainObject(entry.works)) entry.works = [ entry.works ]
@@ -30,7 +30,7 @@ export default entry => {
   entry.authors = entry.authors || []
 
   if (Object.keys(edition).length === 0 && entry.works.length === 0) {
-    throw error_.new('either edition or works should not be empty', 400, { entry })
+    throw newError('either edition or works should not be empty', 400, { entry })
   }
 
   if (entry.works.length === 0) {
@@ -50,7 +50,7 @@ const sanitizeEdition = edition => {
   const rawIsbn = getIsbn(edition)
 
   if (rawIsbn != null) {
-    if (!isValidIsbn(rawIsbn)) throw error_.new('invalid isbn', 400, { edition })
+    if (!isValidIsbn(rawIsbn)) throw newError('invalid isbn', 400, { edition })
     edition.isbn = normalizeIsbn(rawIsbn)
   }
 }

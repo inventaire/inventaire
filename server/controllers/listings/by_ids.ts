@@ -1,6 +1,6 @@
 import { difference, keyBy, map } from 'lodash-es'
 import { getListingsByIds, getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
-import { error_ } from '#lib/error/error'
+import { notFoundError, unauthorizedError } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
@@ -24,7 +24,7 @@ const controller = async ({ ids, withElements, reqUserId }, req, res) => {
 }
 
 const checkNotFoundListing = (ids, foundListings, foundListingsIds, res) => {
-  if (foundListings.length === 0) throw error_.notFound({ ids })
+  if (foundListings.length === 0) throw notFoundError({ ids })
   if (foundListings.length !== ids.length) {
     const notFoundListingsIds = difference(ids, foundListingsIds)
     addWarning(res, `listings not found: ${notFoundListingsIds.join(', ')}`)
@@ -33,7 +33,7 @@ const checkNotFoundListing = (ids, foundListings, foundListingsIds, res) => {
 
 const checkUnauthorizedListings = (ids, authorizedListings, foundListingsIds, req, res) => {
   if (authorizedListings.length === 0) {
-    throw error_.unauthorized(req, 'unauthorized listings access', { ids: foundListingsIds })
+    throw unauthorizedError(req, 'unauthorized listings access', { ids: foundListingsIds })
   }
   if (authorizedListings.length !== ids.length) {
     const authorizedListingsIds = map(authorizedListings, '_id')

@@ -1,7 +1,7 @@
 import { getActivitiesByActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { notFoundError, newError } from '#lib/error/error'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
@@ -30,7 +30,7 @@ const controller = async (params, req, res) => {
   } else if (isUsername(name)) {
     return getUserActivities(params)
   } else {
-    throw error_.new('invalid name', 400, { name })
+    throw newError('invalid name', 400, { name })
   }
 }
 
@@ -48,7 +48,7 @@ const getShelfActivities = async ({ name, offset, limit }) => {
 
 const getEntityActivities = async ({ name, offset, limit }) => {
   const { entity } = await validateEntity(name)
-  if (!entity) throw error_.notFound({ name })
+  if (!entity) throw notFoundError({ name })
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: entity.actorName } })
   const baseOutbox = {
     '@context': context,

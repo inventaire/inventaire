@@ -1,5 +1,5 @@
 import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#controllers/transactions/lib/transactions'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { track } from '#lib/track'
 import transactionAttributes from '#models/attributes/transaction'
 import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
@@ -47,7 +47,7 @@ const checkForConcurrentTransactions = async (transaction, requestedState) => {
     // in a 'requested' state
     const itemIsBusy = await checkIfItemIsBusy(transaction.item)
     if (itemIsBusy) {
-      throw error_.new('item already busy', 403, { transaction, requestedState })
+      throw newError('item already busy', 403, { transaction, requestedState })
     }
   }
 }

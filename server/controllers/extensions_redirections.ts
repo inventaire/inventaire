@@ -1,7 +1,9 @@
 import { getGroupBySlug, getGroupMembersIds } from '#controllers/groups/lib/groups'
 import { findUserByUsername } from '#controllers/user/lib/user'
 import { isUsername, isCouchUuid, isGroupId } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
+import { errorHandler } from '#lib/error/error_handler'
+import { newInvalidError } from '#lib/error/pre_filled'
 
 const extensionRedirect = extension => async (req, res) => {
   try {
@@ -9,13 +11,13 @@ const extensionRedirect = extension => async (req, res) => {
     const redirectionFn = redirections[extension][domain]
 
     if (redirectionFn == null) {
-      throw error_.newInvalid('domain', domain)
+      throw newInvalidError('domain', domain)
     } else {
       const url = await redirectionFn(id, section)
       res.redirect(url)
     }
   } catch (err) {
-    error_.handler(req, res, err)
+    errorHandler(req, res, err)
   }
 }
 
@@ -53,7 +55,7 @@ const redirections = {
             return `/api/entities?action=history&id=${id}`
           }
         }
-        throw error_.notFound({ uri, section })
+        throw notFoundError({ uri, section })
       } else {
         // redirect claim uri to its entity value
         if (isClaim(uri)) uri = uri.split('-')[1]
@@ -71,7 +73,7 @@ const redirections = {
         } else if (section === 'contributions') {
           return `/api/entities?action=contributions&user=${userId}`
         } else {
-          throw error_.notFound({ id, section })
+          throw notFoundError({ id, section })
         }
       } else {
         if (isUsername(id)) {
@@ -90,7 +92,7 @@ const redirections = {
         } else if (section === 'lists') {
           return `/api/lists?action=by-creators&users=${usersIds.join('|')}`
         } else {
-          throw error_.notFound({ id, section })
+          throw notFoundError({ id, section })
         }
       } else {
         if (isGroupId(id)) {

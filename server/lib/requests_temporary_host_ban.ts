@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import { debounce, noop } from 'lodash-es'
 import leveldbFactory from '#db/level/get_sub_db'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 
@@ -35,7 +35,7 @@ const restoreNonExpiredBans = data => {
 export const assertHostIsNotTemporarilyBanned = host => {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
-    throw error_.new(`temporary ban: ${host}`, 500, { host, hostBanData })
+    throw newError(`temporary ban: ${host}`, 500, { host, hostBanData })
   }
 }
 

@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { success } from '#lib/utils/logs'
 import * as intent from './lib/intent.js'
 
@@ -21,7 +21,7 @@ export default action => ({
 
 const solveNewRelation = async (action, othersId, reqUserId) => {
   if (reqUserId === othersId) {
-    throw error_.new('cant create relation between identical ids', 400, { action, othersId, reqUserId })
+    throw newError('cant create relation between identical ids', 400, { action, othersId, reqUserId })
   }
 
   const type = actions[action]

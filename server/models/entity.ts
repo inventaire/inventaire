@@ -26,7 +26,7 @@ import { isString, cloneDeep, get, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import inferences from '#controllers/entities/lib/inferences'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
@@ -50,7 +50,7 @@ const Entity = {
     assert_.string(lang)
 
     if (!wikimediaLanguageCodes.has(lang)) {
-      throw error_.new('invalid lang', 400, { doc, lang, value })
+      throw newError('invalid lang', 400, { doc, lang, value })
     }
 
     Entity.preventRedirectionEdit(doc, 'setLabel')
@@ -62,7 +62,7 @@ const Entity = {
       value = superTrim(value)
 
       if (doc.labels[lang] === value) {
-        throw error_.new('already up-to-date', 400, { doc, lang, value })
+        throw newError('already up-to-date', 400, { doc, lang, value })
       }
 
       doc.labels[lang] = value
@@ -110,7 +110,7 @@ const Entity = {
     const context = { doc, property, oldVal, newVal }
     Entity.preventRedirectionEdit(doc, 'updateClaim')
     if (oldVal == null && newVal == null) {
-      throw error_.new('missing old or new value', 400, context)
+      throw newError('missing old or new value', 400, context)
     }
 
     if (isString(oldVal)) oldVal = superTrim(oldVal)
@@ -119,7 +119,7 @@ const Entity = {
     let propArray = get(doc, `claims.${property}`)
 
     if (propArray && newVal != null && propArray.includes(newVal)) {
-      throw error_.new('claim property new value already exist', 400, [ propArray, newVal ])
+      throw newError('claim property new value already exist', 400, [ propArray, newVal ])
     }
 
     if (oldVal != null) {
@@ -127,7 +127,7 @@ const Entity = {
         propArray = propArray.map(value => isString(value) ? superTrim(value) : value)
       }
       if (propArray == null || !propArray.includes(oldVal)) {
-        throw error_.new('claim property value not found', 400, context)
+        throw newError('claim property value not found', 400, context)
       }
 
       if (newVal != null) {
@@ -199,7 +199,7 @@ const Entity = {
     const [ prefix, id ] = toUri.split(':')
 
     if (prefix === 'inv' && id === fromEntityDoc._id) {
-      throw error_.new('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
+      throw newError('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
     }
 
     const redirection = cloneDeep(fromEntityDoc)
@@ -216,7 +216,7 @@ const Entity = {
   removePlaceholder: entityDoc => {
     if (entityDoc.redirect) {
       const message = "can't turn a redirection into a removed placeholder"
-      throw error_.new(message, 400, entityDoc)
+      throw newError(message, 400, entityDoc)
     }
 
     const removedDoc = cloneDeep(entityDoc)
@@ -232,7 +232,7 @@ const Entity = {
 
   preventRedirectionEdit: (doc, editLabel) => {
     if (doc.redirect == null) return
-    throw error_.new(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
+    throw newError(`${editLabel} failed: the entity is a redirection`, 400, { doc, editLabel })
   },
 }
 
@@ -294,11 +294,11 @@ const setPossiblyEmptyPropertyArray = (doc, property, propertyArray) => {
 
 const deleteLabel = (doc, lang) => {
   if (doc.labels[lang] == null) {
-    throw error_.new('can not delete a non-existant label', 400, { doc, lang })
+    throw newError('can not delete a non-existant label', 400, { doc, lang })
   }
 
   if (Object.keys(doc.labels).length === 1) {
-    throw error_.new('can not delete the last label', 400, { doc, lang })
+    throw newError('can not delete the last label', 400, { doc, lang })
   }
 
   delete doc.labels[lang]

@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import updateItemEntity from '#controllers/items/lib/update_entity'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { recoverPlaceholder } from './placeholders.js'
 import { revertFromPatchDoc } from './revert_edit.js'
 
@@ -34,7 +34,7 @@ const findVersionBeforeRedirect = patches => {
   const versions = map(patches, 'snapshot')
   const lastVersion = versions.at(-1)
   if (lastVersion.redirect == null) {
-    throw error_.new("last version isn't a redirection", 400, lastVersion)
+    throw newError("last version isn't a redirection", 400, lastVersion)
   }
 
   return versions

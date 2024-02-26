@@ -1,7 +1,7 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
-// to be used in development only
 import CONFIG from 'config'
-import { error_ } from '#lib/error/error'
+import { bundleError } from '#lib/error/pre_filled'
+// to be used in development only
 import * as regex_ from '#lib/regex'
 import { logError } from '#lib/utils/logs'
 
@@ -16,27 +16,27 @@ export default {
     const { pathname } = req._parsedUrl
 
     if (!pathname) {
-      return error_.bundle(req, res, 'invalid pathname', 400, { url: req._parsedUrl })
+      return bundleError(req, res, 'invalid pathname', 400, { url: req._parsedUrl })
     }
 
     const [ container, filename ] = pathname.split('/').slice(2)
 
     if (!container) {
-      return error_.bundle(req, res, 'invalid container', 400, { pathname, container, filename })
+      return bundleError(req, res, 'invalid container', 400, { pathname, container, filename })
     }
 
     if (!filename) {
-      return error_.bundle(req, res, 'invalid filename', 400, { pathname, container, filename })
+      return bundleError(req, res, 'invalid filename', 400, { pathname, container, filename })
     }
 
     const [ hash, extension, ...others ] = filename.split('.')
 
     if (others.length > 0) {
-      return error_.bundle(req, res, 'invalid image path', 400, { filename })
+      return bundleError(req, res, 'invalid image path', 400, { filename })
     }
 
     if (!regex_.Sha1.test(hash) && container !== 'assets') {
-      return error_.bundle(req, res, 'invalid image hash', 400, { filename, hash, extension })
+      return bundleError(req, res, 'invalid image hash', 400, { filename, hash, extension })
     }
 
     const filepath = `${storageFolder}/${container}/${filename}`

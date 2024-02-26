@@ -3,7 +3,7 @@ import comments_ from '#controllers/comments/lib/comments'
 import dbFactory from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
 import { BasicUpdater } from '#lib/doc_updates'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
@@ -122,14 +122,14 @@ const updateReadStates = (userId, transaction) => {
   const role = userRole(userId, transaction)
   if (role === 'owner') return { owner: true, requester: false }
   else if (role === 'requester') return { owner: false, requester: true }
-  else throw error_.new('updateReadStates err', 500, { userId, transaction })
+  else throw newError('updateReadStates err', 500, { userId, transaction })
 }
 
 const userRole = (userId, transaction) => {
   const { owner, requester } = transaction
   if (userId === owner) return 'owner'
   else if (userId === requester) return 'requester'
-  else throw error_.new('no role found', 500, { userId, transaction })
+  else throw newError('no role found', 500, { userId, transaction })
 }
 
 const activeCount = transactions => transactions.filter(Transaction.isActive).length

@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
@@ -27,7 +27,7 @@ const controller = async params => {
   if (!validFromUriPrefix.includes(fromPrefix)) {
     // 'to' prefix doesn't need validation as it can be anything
     const message = `invalid 'from' uri domain: ${fromPrefix}. Accepted domains: ${validFromUriPrefix}`
-    throw error_.new(message, 400, params)
+    throw newError(message, 400, params)
   }
 
   log({ merge: params, user: reqUserId }, 'entity merge request')
@@ -59,16 +59,16 @@ const validateEntities = ({ fromUri, toUri, fromEntity, toEntity }) => {
   validateEntity(fromEntity, fromUri, 'from')
   validateEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {
-    throw error_.new("can't merge an entity into itself", 400, { fromUri, toUri })
+    throw newError("can't merge an entity into itself", 400, { fromUri, toUri })
   }
 }
 
 const validateEntity = (entity, originalUri, label) => {
   if (entity == null) {
-    throw error_.new(`'${label}' entity not found`, 400, originalUri)
+    throw newError(`'${label}' entity not found`, 400, originalUri)
   }
   if (entity.uri !== originalUri && `inv:${entity._id}` !== originalUri) {
-    throw error_.new(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
+    throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
   }
 }
 
@@ -81,7 +81,7 @@ const validateEntitiesByType = ({ fromEntity, toEntity }) => {
     // which will not get a 'human' type
     if ((fromEntity.type !== 'human') || !(toEntity.type == null)) {
       const message = `type don't match: ${fromEntity.type} / ${toEntity.type}`
-      throw error_.new(message, 400, fromUri, toUri)
+      throw newError(message, 400, fromUri, toUri)
     }
   }
 
@@ -92,7 +92,7 @@ const validateEntitiesByType = ({ fromEntity, toEntity }) => {
     const fromEntityIsbn = fromEntity.claims['wdt:P212'] != null ? fromEntity.claims['wdt:P212'][0] : undefined
     const toEntityIsbn = toEntity.claims['wdt:P212'] != null ? toEntity.claims['wdt:P212'][0] : undefined
     if ((fromEntityIsbn != null) && (toEntityIsbn != null) && (fromEntityIsbn !== toEntityIsbn)) {
-      throw error_.new("can't merge editions with different ISBNs", 400, fromUri, toUri)
+      throw newError("can't merge editions with different ISBNs", 400, { fromUri, toUri })
     }
   }
 }

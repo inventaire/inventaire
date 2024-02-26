@@ -1,6 +1,6 @@
 import { getGroupsIdsWhereUserIsAdminOrMember } from '#controllers/groups/lib/groups'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 // This does async validations that can not be performed sync
 // by models/validations/visibility.js
@@ -22,7 +22,7 @@ const validateGroupKeys = (visibilityKeys, userGroupsIds) => {
 const validateGroupKey = (userGroupsIds, visibilityKeys) => key => {
   const groupId = key.split(':')[1]
   if (!userGroupsIds.includes(groupId)) {
-    throw error_.new('user is not in that group', 400, { visibilityKeys, groupId })
+    throw newError('user is not in that group', 400, { visibilityKeys, groupId })
   }
 }
 

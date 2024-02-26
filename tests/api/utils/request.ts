@@ -1,5 +1,5 @@
 import CONFIG from 'config'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
@@ -53,7 +53,7 @@ export async function request (method, endpoint, body, cookie) {
       err.message = `${err.message}: ${err.body.status_verbose}`
     }
     if (err.type === 'no-redirect') {
-      err = error_.new('request was redirected: use rawRequest to test redirections', 500, { method, url, options })
+      err = newError('request was redirected: use rawRequest to test redirections', 500, { method, url, options })
     }
     throw err
   }

@@ -3,7 +3,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import validateClaimValueSync from '#controllers/entities/lib/validate_claim_value_sync'
 import { isNonEmptyArray } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 
 export async function validateWdEntityUpdate ({ id, property, oldValue, newValue }) {
   const entity = await getEntityByUri({ uri: `wd:${id}`, refresh: true })
@@ -31,9 +31,9 @@ export function validateP31Update ({ wdtP31Array, oldValue, newValue }) {
   }
   const typeAfterUpdate = getEntityType(postUpdateWdtP31Array)
   if (postUpdateWdtP31Array.length === 0) {
-    throw error_.new("wdt:P31 array can't be empty", 400, { wdtP31Array, postUpdateWdtP31Array, oldValue, newValue })
+    throw newError("wdt:P31 array can't be empty", 400, { wdtP31Array, postUpdateWdtP31Array, oldValue, newValue })
   }
   if (typeBeforeUpdate !== typeAfterUpdate) {
-    throw error_.new("This edit would change the entity's type", 400, { wdtP31Array, postUpdateWdtP31Array, typeBeforeUpdate, typeAfterUpdate })
+    throw newError("This edit would change the entity's type", 400, { wdtP31Array, postUpdateWdtP31Array, typeBeforeUpdate, typeAfterUpdate })
   }
 }

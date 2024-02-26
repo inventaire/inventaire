@@ -1,5 +1,5 @@
 import { ownerSafeData } from '#controllers/user/lib/authorized_user_data_pickers'
-import { error_ } from '#lib/error/error'
+import { errorHandler } from '#lib/error/error_handler'
 import passport_ from '#lib/passport/passport'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import setLoggedInCookie from './lib/set_logged_in_cookie.js'
@@ -34,7 +34,7 @@ export const login = (req, res) => {
 export const logout = logoutRedirect.bind(null, '/')
 
 const loggedIn = (req, res) => result => {
-  if (result instanceof Error) return error_.handler(req, res, result)
+  if (result instanceof Error) return errorHandler(req, res, result)
 
   setLoggedInCookie(res)
   const data = { ok: true }

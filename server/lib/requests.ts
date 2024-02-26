@@ -3,7 +3,8 @@ import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { absolutePath } from '#lib/absolute_path'
-import { addContextToStack, error_ } from '#lib/error/error'
+import { newError, addContextToStack } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
@@ -87,7 +88,7 @@ async function req (method, url, options = {}) {
   if (statusCode >= 400) {
     if (statusCode >= 500) declareHostError(host)
     const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
-    const err = error_.new('request error', statusCode, { method, url, reqBody, statusCode, resBody })
+    const err = newError('request error', statusCode, { method, url, reqBody, statusCode, resBody })
     err.body = resBody
     addContextToStack(err)
     throw err
@@ -107,7 +108,7 @@ const looksLikeHtml = body => typeof body === 'string' && (body.trim().startsWit
 
 export async function sanitizeUrl (url) {
   if (!isUrl(url) || (await isPrivateUrl(url))) {
-    throw error_.newInvalid('url', url)
+    throw newInvalidError('url', url)
   }
 }
 

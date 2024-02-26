@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
 import User from '#models/user'
 
@@ -27,22 +27,22 @@ const validatePassword = async ({ user, currentPassword, resetPassword }) => {
   // classic password update
   if (currentPassword != null) {
     if (!User.validations.password(currentPassword)) {
-      throw error_.new('invalid current-password', 400)
+      throw newError('invalid current-password', 400)
     }
     const isValid = await verifyCurrentPassword(user, currentPassword)
     if (!isValid) {
-      throw error_.new('invalid current-password', 400)
+      throw newError('invalid current-password', 400)
     }
 
   // token-based password reset, with expiration date
   } else if (resetPassword != null) {
     if (!isNumber(resetPassword)) {
-      throw error_.new('invalid resetPassword timestamp', 500)
+      throw newError('invalid resetPassword timestamp', 500)
     }
     await testOpenResetPasswordWindow(resetPassword)
   } else {
     // Known case: a resetPassword request but without a valid reset
-    throw error_.new('reset password token expired: request a new token', 403)
+    throw newError('reset password token expired: request a new token', 403)
   }
 }
 
@@ -62,7 +62,7 @@ const updateUserPassword = (userId, user, newHash) => {
 
 const testOpenResetPasswordWindow = async resetPassword => {
   if (expired(resetPassword, oneHour)) {
-    throw error_.new('reset password timespan experied', 400)
+    throw newError('reset password timespan experied', 400)
   }
 }
 

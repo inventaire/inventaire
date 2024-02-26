@@ -2,7 +2,7 @@ import crypto from 'node:crypto'
 import CONFIG from 'config'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { getSha256Base64Digest } from '#lib/crypto'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
@@ -34,8 +34,8 @@ export const verifySignature = async req => {
   const { method, path: pathname, headers: reqHeaders } = req
   const { date, signature } = reqHeaders
   // 30 seconds time window for thtat signature to be considered valid
-  if (thirtySecondsTimeWindow(date)) throw error_.new('outdated request', 400, reqHeaders)
-  if (signature === undefined) throw error_.new('no signature header', 400, reqHeaders)
+  if (thirtySecondsTimeWindow(date)) throw newError('outdated request', 400, reqHeaders)
+  if (signature === undefined) throw newError('no signature header', 400, reqHeaders)
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
   const { keyId: actorUrl, signature: signatureString, headers: signedHeadersNames } = parseSignature(signature)
   let publicKey
@@ -54,7 +54,7 @@ export const verifySignature = async req => {
   })
   verifier.update(signedString)
   if (!(verifier.verify(publicKey.publicKeyPem, signatureString, 'base64'))) {
-    throw error_.new('signature verification failed', 400, { publicKey })
+    throw newError('signature verification failed', 400, { publicKey })
   }
   // TODO: verify date
 }
@@ -99,7 +99,7 @@ const buildSignatureString = params => {
     if (reqHeaders[key] != null) {
       signatureString += `\n${key}: ${reqHeaders[key]}`
     } else {
-      throw error_.new('missing header', 400, { key, params })
+      throw newError('missing header', 400, { key, params })
     }
   }
   return signatureString
@@ -110,17 +110,17 @@ const fetchActorPublicKey = async actorUrl => {
   assert_.object(actor)
   const { publicKey } = actor
   if (!publicKey) {
-    throw error_.new('no publicKey found', 400, actor)
+    throw newError('no publicKey found', 400, actor)
   }
   if (!isNonEmptyPlainObject(publicKey) || !publicKey.publicKeyPem) {
-    throw error_.new('invalid publicKey found', 400, actor.publicKey)
+    throw newError('invalid publicKey found', 400, actor.publicKey)
   }
   const { publicKeyPem } = actor.publicKey
   if (!publicKeyPem) {
-    throw error_.new('no publicKeyPem found', 400, actor)
+    throw newError('no publicKeyPem found', 400, actor)
   }
   if (!publicKeyPem.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
-    throw error_.new('invalid publicKeyPem found', 400, actor.publicKey)
+    throw newError('invalid publicKeyPem found', 400, actor.publicKey)
   }
   // TODO: handle timeout
   return actor.publicKey

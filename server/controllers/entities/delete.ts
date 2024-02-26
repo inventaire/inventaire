@@ -1,7 +1,7 @@
 import { uniq } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { isInvEntityUri, isIsbnEntityUri, isWdEntityUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import removeEntitiesByInvId from './lib/remove_entities_by_inv_id.js'
 import verifyThatEntitiesCanBeRemoved from './lib/verify_that_entities_can_be_removed.js'
 
@@ -22,7 +22,7 @@ const controller = async (params, req) => {
 const validateUris = uris => {
   for (const uri of uris) {
     // Wikidata entities can't be delete
-    if (isWdEntityUri(uri)) throw error_.newInvalid('uri', uri)
+    if (isWdEntityUri(uri)) throw newInvalidError('uri', uri)
   }
 }
 

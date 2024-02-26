@@ -2,7 +2,7 @@ import { map, uniq } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
-import { error_ } from '#lib/error/error'
+import { newMissingQueryError } from '#lib/error/pre_filled'
 import bundleViewData from './lib/view/bundle_view_data.js'
 import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work.js'
 
@@ -22,7 +22,7 @@ const controller = async params => {
 
 const validateUserOrGroup = params => {
   if (!(params.user || params.group || params.shelf)) {
-    throw error_.newMissingQuery('user|group|shelf', 400, params)
+    throw newMissingQueryError('user|group|shelf')
   }
 }
 

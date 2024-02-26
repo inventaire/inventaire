@@ -1,7 +1,7 @@
 import { isPlainObject } from 'lodash-es'
 import { createItems } from '#controllers/items/lib/items'
 import { isEntityUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { track } from '#lib/track'
 import { forceArray } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
@@ -17,10 +17,10 @@ export default async (req, res) => {
 
   for (const item of items) {
     const { entity: entityUri } = item
-    if (entityUri == null) throw error_.newMissingBody('entity')
+    if (entityUri == null) throw newMissingBodyError('entity')
 
     if (!isEntityUri(entityUri)) {
-      throw error_.newInvalid('entity', entityUri)
+      throw newInvalidError('entity', entityUri)
     }
   }
 

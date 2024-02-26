@@ -1,6 +1,6 @@
 import CONFIG from 'config'
 import OAuthServer from 'express-oauth-server'
-import { error_ } from '#lib/error/error'
+import { bundleError, bundleMissingQueryError, bundleUnauthorizedApiAccess } from '#lib/error/pre_filled'
 import oauthServerModel from './lib/oauth/model.js'
 import { getAcceptedScopes, allScopes } from './lib/oauth/scopes.js'
 
@@ -27,15 +27,15 @@ export default {
   // Implements https://aaronparecki.com/oauth-2-simplified/#web-server-apps "Authorization"
   authorize: {
     get: (req, res, next) => {
-      if (req.user == null) return error_.unauthorizedApiAccess(req, res)
+      if (req.user == null) return bundleUnauthorizedApiAccess(req, res)
 
       const { scope } = req.query
-      if (!scope) return error_.bundleMissingQuery(req, res, 'scope')
+      if (!scope) return bundleMissingQueryError(req, res, 'scope')
       const scopes = scope.split(/[\s+]/)
 
       for (const scopeName of scopes) {
         if (!allScopes.includes(scopeName)) {
-          return error_.bundle(req, res, `invalid scope: ${scopeName}`, 400, { invalid: scopeName, valid: allScopes })
+          return bundleError(req, res, `invalid scope: ${scopeName}`, 400, { invalid: scopeName, valid: allScopes })
         }
       }
 
@@ -56,6 +56,6 @@ export default {
   authenticate: (req, res, next) => {
     const scope = getAcceptedScopes(req)
     if (scope != null) oauthServer.authenticate({ scope })(req, res, next)
-    else return error_.bundle(req, res, 'this resource can not be accessed with an OAuth bearer token', 403)
+    else return bundleError(req, res, 'this resource can not be accessed with an OAuth bearer token', 403)
   },
 }

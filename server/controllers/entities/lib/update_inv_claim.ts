@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { assert_ } from '#lib/utils/assert_types'
@@ -18,7 +18,7 @@ const updateInvClaim = async (user, id, property, oldVal, newVal) => {
     currentDoc = await getEntityById(id)
   } catch (err) {
     if (err.statusCode === 404) {
-      throw error_.new('entity not found', 400, { id, property, oldVal, newVal })
+      throw newError('entity not found', 400, { id, property, oldVal, newVal })
     } else {
       throw err
     }
@@ -26,7 +26,7 @@ const updateInvClaim = async (user, id, property, oldVal, newVal) => {
   // Known cases: entities turned into redirections or removed:placeholders
   if (currentDoc.claims == null) {
     const context = { id, property, oldVal, newVal }
-    throw error_.new('this entity is obsolete', 400, context)
+    throw newError('this entity is obsolete', 400, context)
   }
   const type = getEntityType(currentDoc.claims['wdt:P31'])
   validateClaimProperty(type, property)

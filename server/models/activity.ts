@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import attributes from './attributes/activity.js'
 import { baseActivityValidations } from './validations/activity.js'
@@ -17,7 +17,7 @@ export default {
     Object.keys(activity).forEach(key => {
       const value = activity[key]
       if (!attributes.includes(key)) {
-        throw error_.new(`invalid attribute: ${value}`, 400, { activity })
+        throw newError(`invalid attribute: ${value}`, 400, { activity })
       }
       baseActivityValidations.pass(key, value)
       newActivity[key] = value

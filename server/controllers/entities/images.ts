@@ -8,7 +8,7 @@
 
 import getThumbData from '#data/commons/thumb'
 import { imgUrlBuilder } from '#lib/emails/app_api'
-import { error_ } from '#lib/error/error'
+import { notFoundError, newError } from '#lib/error/error'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import getEntitiesImages from './lib/get_entities_images.js'
 
@@ -33,7 +33,7 @@ export default async (req, res) => {
   const { uris, refresh, redirect, width, height } = sanitize(req, res, sanitization)
   if (redirect) {
     if (uris.length !== 1) {
-      throw error_.new('only one URI is allowed in redirect mode', 400, req.query)
+      throw newError('only one URI is allowed in redirect mode', 400, req.query)
     }
   }
 
@@ -50,7 +50,7 @@ export default async (req, res) => {
 const findRawImage = async (uri, images, width, height) => {
   const image = images[uri]?.claims[0]
   if (image == null) {
-    const err = error_.notFound({ uri })
+    const err = notFoundError({ uri })
     err.quiet = true
     throw err
   }

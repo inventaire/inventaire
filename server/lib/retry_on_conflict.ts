@@ -1,4 +1,4 @@
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
 
@@ -8,7 +8,7 @@ export function retryOnConflict (params) {
   return (...args) => {
     const run = attemptsCount => {
       if (attemptsCount > maxAttempts) {
-        throw error_.new('maximum attempt reached', 400, { updateFn, maxAttempts, args })
+        throw newError('maximum attempt reached', 400, { updateFn, maxAttempts, args })
       }
 
       if (attemptsCount > 1) {

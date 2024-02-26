@@ -1,7 +1,8 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isInvEntityUri } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
@@ -21,7 +22,7 @@ export default async (user, id, property, oldValue, newValue) => {
 
   if ((getPropertyDatatype(property) === 'entity')) {
     if (isInvEntityUri(newValue)) {
-      throw error_.new("wikidata entities can't link to inventaire entities", 400)
+      throw newError("wikidata entities can't link to inventaire entities", 400)
     }
 
     if (oldValue) oldValue = unprefixify(oldValue)
@@ -31,7 +32,7 @@ export default async (user, id, property, oldValue, newValue) => {
   const [ propertyPrefix, propertyId ] = property.split(':')
 
   if (propertyPrefix !== 'wdt') {
-    throw error_.newInvalid('property', propertyPrefix)
+    throw newInvalidError('property', propertyPrefix)
   }
 
   const credentials = wdOauth.getOauthCredentials(user)
@@ -76,8 +77,8 @@ const updateRelocatedClaim = async params => {
   const { id, propertyId, newValue, oldValue, credentials } = params
   const { claimProperty, noClaimErrorMessage, tooManyClaimsErrorMessage } = qualifierProperties[propertyId]
   const propertyClaims = await getPropertyClaims(id, claimProperty)
-  if (!propertyClaims) throw error_.new(noClaimErrorMessage, 400, params)
-  if (propertyClaims.length !== 1) throw error_.new(tooManyClaimsErrorMessage, 400, params)
+  if (!propertyClaims) throw newError(noClaimErrorMessage, 400, params)
+  if (propertyClaims.length !== 1) throw newError(tooManyClaimsErrorMessage, 400, params)
   const claim = propertyClaims[0]
   const guid = claim.id
   if (newValue) {
@@ -109,7 +110,7 @@ const getQualifierHash = (claim, property, value) => {
   const qualifiers = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
   const matchingQualifiers = qualifiers.filter(qualifier => qualifier.value === value)
   if (matchingQualifiers.length !== 1) {
-    throw error_.new('unique matching qualifier not found', 400, { claim, property, value })
+    throw newError('unique matching qualifier not found', 400, { claim, property, value })
   }
   return matchingQualifiers[0].hash
 }

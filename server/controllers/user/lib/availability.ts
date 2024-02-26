@@ -1,5 +1,6 @@
 import { getUserByEmail, getUserByUsername } from '#controllers/user/lib/user'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { success } from '#lib/utils/logs'
 import User from '#models/user'
 import isReservedWord from './is_reserved_word.js'
@@ -13,11 +14,11 @@ export async function checkUsernameAvailability (username, currentUsername) {
   }
 
   if (!User.validations.username(username)) {
-    throw error_.newInvalid('username', username)
+    throw newInvalidError('username', username)
   }
 
   if (isReservedWord(username)) {
-    throw error_.new("reserved words can't be usernames", 400, username)
+    throw newError("reserved words can't be usernames", 400, username)
   }
 
   return getUserByUsername(username)
@@ -26,7 +27,7 @@ export async function checkUsernameAvailability (username, currentUsername) {
 
 export async function checkEmailAvailability (email) {
   if (!User.validations.email(email)) {
-    throw error_.newInvalid('email', email)
+    throw newInvalidError('email', email)
   }
 
   return getUserByEmail(email)
@@ -40,7 +41,7 @@ export const availability_ = {
 
 const checkAvailability = (value, label, docs) => {
   if (docs.length !== 0) {
-    throw error_.new(`this ${label} is already used`, 400, value)
+    throw newError(`this ${label} is already used`, 400, value)
   }
 
   success(value, 'available')

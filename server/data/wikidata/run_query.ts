@@ -3,7 +3,8 @@ import { isPropertyId } from 'wikibase-sdk'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
+import { newInvalidError } from '#lib/error/pre_filled'
 import { radio } from '#lib/radio'
 import { info, LogErrorAndRethrow } from '#lib/utils/logs'
 import { makeSparqlRequest } from './make_sparql_request.js'
@@ -22,7 +23,7 @@ export default async params => {
   // Converting from kebab case to snake case
   queryName = params.query = queryName.replaceAll('-', '_')
   if (!possibleQueries.includes(queryName)) {
-    throw error_.new('unknown query', 400, params)
+    throw newError('unknown query', 400, params)
   }
 
   validateValues(queryName, params)
@@ -39,7 +40,7 @@ const validateValues = (queryName, params) => {
   for (const k of queries[queryName].parameters) {
     const value = params[k]
     if ((parametersTests[k] != null) && !parametersTests[k](value)) {
-      throw error_.newInvalid(k, params)
+      throw newInvalidError(k, params)
     }
   }
 }

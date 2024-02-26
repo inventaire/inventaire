@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { getUserById } from '#controllers/user/lib/user'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import basicStrategy from '#lib/passport/basic_strategy'
 import localLoginStrategy from '#lib/passport/local_login_strategy'
 import localSignupStrategy from '#lib/passport/local_signup_strategy'
@@ -23,7 +23,7 @@ passport.deserializeUser((id, done) => {
   .then(user => done(null, user))
   .catch(err => {
     if (err.statusCode === 404) {
-      err = error_.new("Couldn't deserialize cookies: user not found", 400, id)
+      err = newError("Couldn't deserialize cookies: user not found", 400, id)
       err.name = 'SessionError'
     }
     logError(err, 'deserializeUser err')

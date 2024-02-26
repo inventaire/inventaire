@@ -1,7 +1,7 @@
 import CONFIG from 'config'
 import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import { error_ } from '#lib/error/error'
+import { notFoundError, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
 import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
@@ -13,12 +13,12 @@ const host = CONFIG.getPublicOrigin()
 export default async params => {
   const { id: externalId, type } = params
   let { actor, object } = params
-  if (!object?.startsWith(host)) throw error_.new(`invalid object, string should start with ${host}`, 400, { object })
+  if (!object?.startsWith(host)) throw newError(`invalid object, string should start with ${host}`, 400, { object })
   const { name: requestedObjectName } = parseQuery(object)
 
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)
-    if (!entity) throw error_.notFound({ name: requestedObjectName })
+    if (!entity) throw notFoundError({ name: requestedObjectName })
     object = { name: entity.actorName }
     actor = { uri: actor }
   } else if (requestedObjectName.startsWith('shelf-')) {
@@ -31,7 +31,7 @@ export default async params => {
     const { stableUsername } = user
     object = { name: stableUsername }
   } else {
-    throw error_.new('invalid object name', 400, { object })
+    throw newError('invalid object name', 400, { object })
   }
 
   let followActivity = await getExistingFollowActivity(actor, object.name)

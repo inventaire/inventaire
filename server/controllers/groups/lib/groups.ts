@@ -1,7 +1,7 @@
 import { map, uniq, without } from 'lodash-es'
 import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
 import dbFactory from '#db/couchdb/base'
-import { error_ } from '#lib/error/error'
+import { notFoundError } from '#lib/error/error'
 import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
@@ -97,7 +97,7 @@ export async function getInvitedUser (userId, groupId) {
 
 export async function getGroupMembersIds (groupId) {
   const group = await getGroupById(groupId)
-  if (group == null) throw error_.notFound({ group: groupId })
+  if (group == null) throw notFoundError({ group: groupId })
   return Group.getAllMembersIds(group)
 }
 

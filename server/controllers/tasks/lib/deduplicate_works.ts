@@ -5,18 +5,18 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
-import { error_ } from '#lib/error/error'
+import { newError, notFoundError } from '#lib/error/error'
 
 export default async (workUri, isbn, userId) => {
   const work = await getEntityByUri({ uri: workUri })
-  if (work == null) throw error_.notFound({ workUri })
+  if (work == null) throw notFoundError({ workUri })
 
   // Make sure workUri isn't a redirection
   workUri = work.uri
 
   const { type } = work
   if (type !== 'work') {
-    throw error_.new(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
+    throw newError(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
   const editionsRes = await getInvEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]

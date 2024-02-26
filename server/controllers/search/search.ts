@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
-import { error_ } from '#lib/error/error'
+import { newMissingError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
 import { someMatch } from '#lib/utils/base'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
@@ -40,7 +40,7 @@ const sanitization = {
 const controller = async (params, req, res) => {
   const { types, search, claim } = params
   if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
-    throw error_.newMissing('query', 'search or claim')
+    throw newMissingError('query', 'search or claim')
   }
 
   const useSocialSearch = someMatch(socialTypes, types)
@@ -56,7 +56,7 @@ const socialSearch = async (params, res) => {
   const { search, lang, limit, offset, reqUserId } = params
 
   if (!(isNonEmptyString(search))) {
-    throw error_.newMissing('query', 'search')
+    throw newMissingError('query', 'search')
   }
 
   if (offset !== 0) {
@@ -81,7 +81,7 @@ const entitiesSearch = async params => {
   const { search, lang, limit, offset, claim } = params
 
   if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
-    throw error_.newMissing('query', 'search or claim')
+    throw newMissingError('query', 'search or claim')
   }
 
   const { hits, total } = await typeSearch(params)

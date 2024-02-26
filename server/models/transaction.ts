@@ -1,5 +1,5 @@
 import { isString, pick } from 'lodash-es'
-import { error_ } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import itemAttributes from './attributes/item.js'
 import transactionAttributes from './attributes/transaction.js'
 import userAttributes from './attributes/user.js'
@@ -26,7 +26,7 @@ Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
   validations.pass('userId', requesterId)
 
   if (!requestable.includes(itemDoc.transaction)) {
-    throw error_.new("this item can't be requested", 400, itemDoc)
+    throw newError("this item can't be requested", 400, itemDoc)
   }
 
   const now = Date.now()
@@ -58,18 +58,18 @@ const requestable = [
 
 Transaction.validatePossibleState = (transaction, newState) => {
   if (!states[transaction.state].next.includes(newState)) {
-    throw error_.new('invalid state update', 400, transaction, newState)
+    throw newError('invalid state update', 400, transaction, newState)
   }
 
   if ((newState === 'returned') && (transaction.transaction !== 'lending')) {
-    throw error_.new('transaction and state mismatch', 400, transaction, newState)
+    throw newError('transaction and state mismatch', 400, transaction, newState)
   }
 }
 
 // do the item change of owner or return to its previous owner
 Transaction.isOneWay = transacDoc => {
   if (!isString(transacDoc.transaction)) {
-    throw error_.new('transaction transaction inaccessible', 500, transacDoc)
+    throw newError('transaction transaction inaccessible', 500, transacDoc)
   }
   return oneWay[transacDoc.transaction]
 }
