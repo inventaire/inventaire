@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 // This cleanup script does several things:
 // - Delete the design docs created in CouchDB by ./preload_design_docs_changes

@@ -47,7 +47,7 @@ cat "$full_database_export_path" |
   grep --invert-match ',"redirect":' > "$entities_export_path"
 
 echo "converting to turtle: $turtle_export_filename"
-cat "$entities_export_path" | ./scripts/dumps/convert_ndjson_dump_to_ttl.js > "${turtle_export_path}"
+cat "$entities_export_path" | ./scripts/dumps/convert_ndjson_dump_to_ttl.ts > "${turtle_export_path}"
 
 validate_ttl(){
   file_path_hash=$(echo $1 | md5sum | awk '{printf $1}')

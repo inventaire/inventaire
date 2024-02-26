@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import split from 'split'
 import { red } from 'tiny-chalk'
 import { addToBatch, postBatch } from '#db/elasticsearch/bulk'

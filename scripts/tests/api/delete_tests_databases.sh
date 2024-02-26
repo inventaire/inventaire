@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-databases=$(./scripts/print_module_exports.js server/db/couchdb/databases.js databases | jq 'keys | join(" ")' -r)
+databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys | join(" ")' -r)
 dbHost=$(node -p "require('config').db.getOrigin()")
 elasticOrigin=$(node -p "require('config').elasticsearch.origin")
 leveldbPathBase=$(node ./server/lib/absolute_path.js root db/leveldb)

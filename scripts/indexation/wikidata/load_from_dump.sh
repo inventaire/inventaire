@@ -18,7 +18,7 @@ which jq > /dev/null || {
 
 indexed_types_ids=$(mktemp)
 
-./scripts/print_module_exports.js server/lib/wikidata/aliases.js typesAliases |
+./scripts/print_module_exports.ts server/lib/wikidata/aliases.ts typesAliases |
   # Get uris used as P31 from indexed types
   jq '[ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
   # Get the id, wrapped between double quotes
@@ -33,14 +33,14 @@ curl --silent https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.
   grep --file "$indexed_types_ids" |
   # Drop end-of-line comma to produce valid ndjson
   sed 's/,$//' |
-  ndjson-apply ./scripts/indexation/wikidata/format_dump_entity.js |
+  ndjson-apply ./scripts/indexation/wikidata/format_dump_entity.ts |
   gzip --best > entities.filtered.simplified.ndjson.gz
 
 # This pipeline should ideally be done on a machine with access to
 # - the Elasticsearch wikidata index
 # - the entities-prod database (CouchDB)
 # - popularity scores (LevelDB)
-gzip -d < entities.filtered.simplified.ndjson.gz | ./scripts/indexation/load.js wikidata
+gzip -d < entities.filtered.simplified.ndjson.gz | ./scripts/indexation/load.ts wikidata
 
 # ## Tip ##
 # If importing the dump fails at some point, rather than re-starting from 0,

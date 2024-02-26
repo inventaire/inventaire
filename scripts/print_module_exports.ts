@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import { get } from 'lodash-es'
 import { absolutePath, projectRoot } from '#lib/absolute_path'
 import { error_ } from '#lib/error/error'

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import { stopInvitationEmails } from '#controllers/invitations/lib/invitations'
 import { stopAllUserEmailNotifications } from '#controllers/user/lib/user'
 import { Log, warn } from '#lib/utils/logs'

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import split from 'split'

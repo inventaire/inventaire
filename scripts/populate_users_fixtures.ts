@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 import { addUserRole } from '#controllers/user/lib/user'
 import { info } from '#lib/utils/logs'
 import { createGroup, addMember, addAdmin } from '#tests/api/fixtures/groups'

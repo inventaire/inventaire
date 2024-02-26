@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 // Preloading design docs so that when design docs are
 // effectively updated on server reboot the views are already indexed
