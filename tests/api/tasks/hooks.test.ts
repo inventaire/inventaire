@@ -13,20 +13,24 @@ describe('tasks:hooks', () => {
       // Tests dependency: having a populated ElasticSearch wikidata index
       const wikidataUris = [
         'wd:Q535', 'wd:Q15339037', // some Victor Hugos
-        'wd:Q3182477', 'wd:Q228024', // some John Smiths
         'wd:Q237087', // Fred Vargas
       ]
       await findOrIndexEntities(wikidataUris)
     })
 
     it('should update same suspect tasks to merged state ', async () => {
-      const human = await createHuman({ labels: { en: 'Victor Hugo' } }) // having several merge suggestions
-      const tasks = await checkEntities(human.uri)
-      const task = tasks[0]
-      const anotherTask = tasks[1]
-      await merge(task.suspectUri, task.suggestionUri)
+      const { uri: suspectUri } = await createHuman({ labels: { en: 'Victor Hugo' } })
+      await createTask({
+        suspectUri,
+        suggestionUri: 'wd:Q535',
+      })
+      const otherTask = await createTask({
+        suspectUri,
+        suggestionUri: 'wd:Q15339037',
+      })
+      await merge(suspectUri, 'wd:Q535')
       await wait(hookDelay)
-      const [ updatedTask ] = await getByIds(anotherTask._id)
+      const [ updatedTask ] = await getByIds(otherTask._id)
       updatedTask.state.should.equal('merged')
     })
 
@@ -46,16 +50,21 @@ describe('tasks:hooks', () => {
 
   describe('task update', () => {
     it('should update relationScore of tasks with same suspect', async () => {
-      // John Smith is expected to have several merge suggestions
-      const human = await createHuman({ labels: { en: 'John Smith' } })
-      const tasks = await checkEntities(human.uri)
-      const taskToUpdate = tasks[0]
-      const otherTask = tasks[1]
-      const { relationScore: taskRelationScore } = taskToUpdate
+      const { uri: suspectUri } = await createHuman({ labels: { en: 'Victor Hugo' } })
+      const taskToUpdate = await createTask({
+        suspectUri,
+        suggestionUri: 'wd:Q535',
+      })
+      const { _id: otherTaskId } = await createTask({
+        suspectUri,
+        suggestionUri: 'wd:Q15339037',
+      })
+      const [ otherTask ] = await getByIds(otherTaskId)
+      const { relationScore: otherTaskRelationScore } = otherTask
       await update(taskToUpdate._id, 'state', 'dismissed')
       await wait(hookDelay)
       const [ updatedTask ] = await getByIds(otherTask._id)
-      updatedTask.relationScore.should.not.equal(taskRelationScore)
+      updatedTask.relationScore.should.not.equal(otherTaskRelationScore)
     })
   })
 
@@ -68,7 +77,7 @@ describe('tasks:hooks', () => {
       const [ refreshedTask ] = await getByIds(task._id)
       refreshedTask.state.should.equal('merged')
       await revertMerge(refreshedTask.suspectUri)
-      await wait(100)
+      await wait(150)
       const [ rerefreshedTask ] = await getByIds(task._id)
       should(rerefreshedTask.state).not.be.ok()
     })
