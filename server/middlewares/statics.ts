@@ -2,9 +2,10 @@ import CONFIG from 'config'
 import express from 'express'
 import serveFavicon from 'serve-favicon'
 import { absolutePath } from '#lib/absolute_path'
-import pass from './pass.js'
+import { pass } from './pass.js'
 
-let statics = {}
+export let mountStaticFiles
+export let favicon
 
 if (CONFIG.serveStaticFiles) {
   const publicPath = absolutePath('client', 'public')
@@ -18,13 +19,13 @@ if (CONFIG.serveStaticFiles) {
   }
   const staticMiddleware = express.static(publicPath, options)
   // the 2 arguments array will be apply'ied to app.use by server/init_express
-  const mountStaticFiles = [ '/public', staticMiddleware ]
+  mountStaticFiles = [ '/public', staticMiddleware ]
 
   const faviconPath = absolutePath('client', 'public/favicon.ico')
-  const favicon = serveFavicon(faviconPath)
-  statics = { mountStaticFiles, favicon }
+  favicon = serveFavicon(faviconPath)
+  // statics = { mountStaticFiles, favicon }
 } else {
-  statics = { mountStaticFiles: pass, favicon: pass }
+  // statics = { mountStaticFiles: pass, favicon: pass }
+  mountStaticFiles = pass
+  favicon = pass
 }
-
-export default statics

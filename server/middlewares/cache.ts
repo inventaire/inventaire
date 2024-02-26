@@ -1,9 +1,10 @@
 import CONFIG from 'config'
-import pass from './pass.js'
+import { pass } from './pass.js'
 
 const { noCache } = CONFIG
 
-let cacheControl
+export let cacheControl
+
 // Applies to both API and static files requests
 if (noCache) {
   cacheControl = (req, res, next) => {
@@ -13,5 +14,3 @@ if (noCache) {
 } else {
   cacheControl = pass
 }
-
-export default { cacheControl }

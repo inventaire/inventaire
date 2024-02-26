@@ -1,9 +1,9 @@
 import auth from './auth.js'
-import cache from './cache.js'
+import { cacheControl } from './cache.js'
 import { acceptUrlencoded, jsonBodyParser, deduplicateRequests } from './content.js'
 import requestsLogger from './requests_logger.js'
 import security from './security.js'
-import statics from './statics.js'
+import { favicon, mountStaticFiles } from './statics.js'
 
 export default [
   // Place the request logger first so that even requests that generate an error
@@ -16,10 +16,10 @@ export default [
   acceptUrlencoded('/api/oauth/token'),
 
   jsonBodyParser,
-  statics.favicon,
-  statics.mountStaticFiles,
+  favicon,
+  mountStaticFiles,
 
-  cache.cacheControl,
+  cacheControl,
 
   auth.cookieParser,
   auth.session,
