@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 import CONFIG from 'config'
 import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'

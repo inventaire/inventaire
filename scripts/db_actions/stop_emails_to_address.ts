@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 import { stopInvitationEmails } from '#controllers/invitations/lib/invitations'
 import { stopAllUserEmailNotifications } from '#controllers/user/lib/user'
 import { Log, warn } from '#lib/utils/logs'

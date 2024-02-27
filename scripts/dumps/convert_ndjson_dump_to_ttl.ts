@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import split from 'split'
