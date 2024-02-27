@@ -18,7 +18,9 @@ module.exports = {
     password: 'OVERRIDE',
     suffix: 'prod',
   },
-  autofixI18n: false,
+  i18n: {
+    autofix: false,
+  },
   mailer: {
     disabled: false,
   },

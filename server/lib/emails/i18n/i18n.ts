@@ -1,16 +1,15 @@
 import CONFIG from 'config'
+import { activeLanguages } from 'inventaire-i18n'
 import { isString } from 'lodash-es'
 import moment from 'moment'
 import Polyglot from 'node-polyglot'
-import { activeLanguages } from '#i18nAssets/active_languages'
-import { absolutePath } from '#lib/absolute_path'
 import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import translate from './translate.js'
 
-const { autofixI18n } = CONFIG
+const { autofix } = CONFIG.i18n
 
 const polyglots = {}
 const translators = {}
@@ -20,7 +19,7 @@ const warnAndFix = warning => {
     return warn(warning)
   }
 
-  if (!autofixI18n) return
+  if (!autofix) return
 
   // hacky solution to extract the key from polyglot warning
   const key = warning.split('"')[1]
@@ -29,7 +28,7 @@ const warnAndFix = warning => {
 
 activeLanguages.forEach(lang => {
   const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
-  const phrases = requireJson(absolutePath('i18nDist', `${lang}.json`))
+  const phrases = requireJson(`inventaire-i18n/dist/server/${lang}.json`)
   polyglots[lang].extend(phrases)
   translators[lang] = translate(lang, polyglot)
 })

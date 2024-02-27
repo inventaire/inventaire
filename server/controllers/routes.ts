@@ -69,7 +69,7 @@ addRoute('api/activitypub', activitypub)
 addRoute('img/*', resizeImages)
 addRoute('.well-known/webfinger', webfinger)
 
-if (CONFIG.autofixI18n) {
+if (CONFIG.i18n.autofix) {
   addRoute('api/i18n', i18n)
 }
 
