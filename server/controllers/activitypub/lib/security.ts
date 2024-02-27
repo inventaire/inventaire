@@ -126,6 +126,12 @@ const fetchActorPublicKey = async actorUrl => {
   return actor.publicKey
 }
 
+interface Signature {
+  keyId: string
+  signature: string
+  headers: string
+}
+
 const parseSignature = signature => {
   const signatureParts = signature.split('",')
   const signatureObj = {}
@@ -135,7 +141,7 @@ const parseSignature = signature => {
     if (key === 'signature') value += '='
     signatureObj[key] = removeTrailingQuote(value)
   }
-  return signatureObj
+  return signatureObj as Signature
 }
 
 const removeTrailingQuote = line => line.replace(/"$/, '')
