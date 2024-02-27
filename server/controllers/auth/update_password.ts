@@ -4,6 +4,7 @@ import { passwords as pw_ } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
 import User from '#models/user'
+import userValidations from '#models/validations/user'
 
 const db = await dbFactory('users')
 
@@ -26,7 +27,7 @@ const controller = async (params, req) => {
 const validatePassword = async ({ user, currentPassword, resetPassword }) => {
   // classic password update
   if (currentPassword != null) {
-    if (!User.validations.password(currentPassword)) {
+    if (!userValidations.password(currentPassword)) {
       throw newError('invalid current-password', 400)
     }
     const isValid = await verifyCurrentPassword(user, currentPassword)
@@ -56,7 +57,7 @@ const updatePassword = async (user, newPassword) => {
 }
 
 const updateUserPassword = (userId, user, newHash) => {
-  const updateFn = User.updatePassword.bind(null, user, newHash)
+  const updateFn = updateUserPassword.bind(null, user, newHash)
   return db.update(userId, updateFn)
 }
 

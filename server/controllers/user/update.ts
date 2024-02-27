@@ -7,11 +7,11 @@ import { basicUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'
 import { newInvalidError, newMissingBodyError } from '#lib/error/pre_filled'
 import { emit } from '#lib/radio'
-import User from '#models/user'
+import userAttributes from '#models/attributes/user'
+import { userFormatters } from '#models/user'
+import userValidations from '#models/validations/user'
 
-const { attributes, validations, formatters } = User
-
-const { updatable, concurrencial, acceptNullValue } = attributes
+const { updatable, concurrencial, acceptNullValue } = userAttributes
 const db = await dbFactory('users')
 
 const sanitization = {
@@ -47,15 +47,15 @@ const update = async (user, attribute, value) => {
   }
 
   if (attribute !== rootAttribute) {
-    if (!validations.deepAttributesExistance(attribute)) {
+    if (!userValidations.deepAttributesExistance(attribute)) {
       throw newInvalidError('attribute', attribute)
     }
   }
 
-  if (formatters[attribute]) value = formatters[attribute](value)
+  if (userFormatters[attribute]) value = userFormatters[attribute](value)
 
   if (updatable.includes(rootAttribute)) {
-    if (!get(validations, rootAttribute)(value)) {
+    if (!get(userValidations, rootAttribute)(value)) {
       throw newInvalidError('value', value)
     }
 

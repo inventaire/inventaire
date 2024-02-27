@@ -30,7 +30,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import validateRequiredPropertiesValues from './validations/validate_required_properties_values.js'
+import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 

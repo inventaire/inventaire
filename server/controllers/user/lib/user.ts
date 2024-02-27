@@ -8,7 +8,8 @@ import searchUsersByDistanceFactory from '#lib/search_by_distance'
 import searchUsersByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
-import User from '#models/user'
+import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
+import userValidations from '#models/validations/user'
 import { omitPrivateData } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
@@ -44,7 +45,7 @@ export const findUserByUsername = username => {
 }
 
 export const findUserByUsernameOrEmail = str => {
-  if (User.validations.email(str)) {
+  if (userValidations.email(str)) {
     return findUserByEmail(str)
   } else {
     return findUserByUsername(str)
@@ -96,18 +97,18 @@ export const incrementUndeliveredMailCounter = async email => {
   })
 }
 
-export const addUserRole = (userId, role) => db.update(userId, User.addRole(role))
+export const addUserRole = (userId, role) => db.update(userId, addUserDocRole(role))
 
-export const removeUserRole = (userId, role) => db.update(userId, User.removeRole(role))
+export const removeUserRole = (userId, role) => db.update(userId, removeUserDocRole(role))
 
 export const setUserOauthTokens = (userId, provider, data) => {
-  return db.update(userId, User.setOauthTokens(provider, data))
+  return db.update(userId, setUserDocOauthTokens(provider, data))
 }
 
 export const setUserStableUsername = async userData => {
   const { _id: userId, username, stableUsername } = userData
   if (stableUsername == null) {
-    await db.update(userId, User.setStableUsername)
+    await db.update(userId, setUserDocStableUsername)
     userData.stableUsername = username
   }
   return userData

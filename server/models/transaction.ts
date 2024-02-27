@@ -7,23 +7,20 @@ import transactionValidations from './validations/transaction.js'
 
 const { states, basicNextActions, nextActionsWithReturn } = transactionAttributes
 const { snapshot: snapshotUserAttributes } = userAttributes
-
 const { snapshot: snapshotItemAttributes } = itemAttributes
 
 const Transaction = {}
 
 export default Transaction
 
-const validations = Transaction.validations = transactionValidations
-
 Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
   const itemId = itemDoc._id
   const ownerId = ownerDoc._id
   const requesterId = requesterDoc._id
 
-  validations.pass('itemId', itemId)
-  validations.pass('userId', ownerId)
-  validations.pass('userId', requesterId)
+  transactionValidations.pass('itemId', itemId)
+  transactionValidations.pass('userId', ownerId)
+  transactionValidations.pass('userId', requesterId)
 
   if (!requestable.includes(itemDoc.transaction)) {
     throw newError("this item can't be requested", 400, itemDoc)

@@ -9,7 +9,6 @@ const Item = {}
 
 export default Item
 
-const validations = Item.validations = itemValidations
 const attributes = Item.attributes = itemAttributes
 
 const { defaultValue: defaultTransaction } = attributes.constrained.transaction

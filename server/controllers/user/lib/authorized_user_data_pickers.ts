@@ -1,9 +1,9 @@
 import { isString, pick } from 'lodash-es'
 import { getUserAccessLevels } from '#lib/user_access_levels'
-import User from '#models/user'
+import userAttributes from '#models/attributes/user'
 
 export const ownerSafeData = user => {
-  const safeUserDoc = pick(user, User.attributes.ownerSafe)
+  const safeUserDoc = pick(user, userAttributes.ownerSafe)
   if (user.type === 'deletedUser') return safeUserDoc
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
@@ -33,7 +33,7 @@ export const omitPrivateData = (reqUserId, networkIds = [], extraAttribute) => {
 }
 
 const getAttributes = extraAttribute => {
-  const attributes = User.attributes.public
+  const attributes = userAttributes.public
   // Making sure we are not dealing with a map index accidently
   // passed as second argument.
   // Returning a different object

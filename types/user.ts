@@ -1,11 +1,11 @@
-import type { CouchDoc } from './couchdb'
-import type { PropertyUri } from './entity'
+import type { CouchDoc } from '#types/couchdb'
+import type { PropertyUri } from '#types/entity'
 
 export type Email = `${string}@${string}`
 export type LatLng = [ number, number ]
 
 export interface UserSettings {
-  notifications: {
+  notifications?: {
     global?: boolean
     inventories_activity_summary?: boolean
     friendship_request?: boolean
@@ -17,7 +17,7 @@ export interface UserSettings {
     group_acceptRequest?: boolean
     group_join_request?: boolean
   }
-  contributions: {
+  contributions?: {
     anonymize?: boolean
   }
 }
@@ -25,20 +25,22 @@ export interface UserSettings {
 export type SnapshotVisibilitySectionName = 'private' | 'network' | 'public'
 
 export interface SnapshotVisibilitySection {
-  'items:count': number,
-  'items:last-add': EpochTimeStamp
+  'items:count'?: number,
+  'items:last-add'?: EpochTimeStamp
 }
 
 export type UserDataSnapshot = Record<SnapshotVisibilitySectionName, SnapshotVisibilitySection>
 
 export type UserRole = 'admin' | 'dataadmin'
 
+export type CreationStrategy = 'local' | 'browserid'
+
 export interface User extends CouchDoc {
-  type: 'user'
+  type: 'user' | 'deletedUser'
   username: string
   stableUsername?: string
   created: EpochTimeStamp
-  creationStrategy: 'local' | 'browserid'
+  creationStrategy: CreationStrategy
   email?: Email
   password?: string
   picture?: string

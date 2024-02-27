@@ -7,35 +7,30 @@ import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
+import type { User, CreationStrategy, Email } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
 
 const generateReadToken = getRandomString.bind(null, 32)
 
-const User = {}
-
-export default User
-
-const validations = User.validations = userValidations
-
 // TODO: remove the last traces of creationStrategy=browserid: optional password
-User._create = (username, email, creationStrategy, language, password) => {
+export async function createUserDoc (username: string, email: Email, creationStrategy: CreationStrategy, language: string, password: string) {
   log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
   assert_.strings([ username, email, creationStrategy ])
   if (language != null) { assert_.string(language) }
 
-  username = User.formatters.username(username)
+  username = userFormatters.username(username)
 
-  validations.pass('username', username)
-  validations.pass('email', email)
-  validations.pass('creationStrategy', creationStrategy)
+  userValidations.pass('username', username)
+  userValidations.pass('email', email)
+  userValidations.pass('creationStrategy', creationStrategy)
 
   // it's ok to have an undefined language
-  if (language && !validations.language(language)) {
+  if (language && !userValidations.language(language)) {
     throw newInvalidError('language', language)
   }
 
-  const user = {
+  const user: Partial<User> = {
     username,
     email,
     type: 'user',
@@ -60,7 +55,7 @@ User._create = (username, email, creationStrategy, language, password) => {
 
   if (creationStrategy === 'local') {
     user.validEmail = false
-    if (!validations.password(password)) {
+    if (!userValidations.password(password)) {
       // Do NOT pass the password as context, as it would be logged
       // and returned in the response
       throw newError('invalid password', 400)
@@ -70,40 +65,34 @@ User._create = (username, email, creationStrategy, language, password) => {
     throw newError('unknown strategy', 400)
   }
 
+  await hashPassword(user)
+
   return user
 }
 
-User.create = async (...args) => {
-  const user = User._create.apply(null, args)
-  return withHashedPassword(user)
-}
-
-User.upgradeInvited = (invitedDoc, username, creationStrategy, language, password) => {
-  const { email } = invitedDoc
-  return User.create(username, email, creationStrategy, language, password)
-  // Will override type but keep inviters and inviting groups
-  .then(userDoc => Object.assign(invitedDoc, userDoc))
-}
-
-const withHashedPassword = async user => {
+const hashPassword = async user => {
   const { password } = user
   if (password != null) {
     const hash = await pw_.hash(password)
     user.password = hash
   }
-  return user
 }
 
-User.attributes = userAttributes
+export async function upgradeInvitedUser (invitedDoc, username, creationStrategy, language, password) {
+  const { email } = invitedDoc
+  const userDoc = await createUserDoc(username, email, creationStrategy, language, password)
+  // Will override type but keep inviters and inviting groups
+  return Object.assign(invitedDoc, userDoc)
+}
 
-User.softDelete = userDoc => {
-  const userSouvenir = pick(userDoc, User.attributes.critical)
+export function softDeleteUser (userDoc: User) {
+  const userSouvenir = pick(userDoc, userAttributes.critical)
   userSouvenir.type = 'deletedUser'
   userSouvenir.deleted = Date.now()
   return userSouvenir
 }
 
-User.updateEmail = (doc, email) => {
+export function updateUserDocEmail (doc, email) {
   if (email !== doc.email) {
     doc.email = email
     doc.validEmail = false
@@ -111,7 +100,7 @@ User.updateEmail = (doc, email) => {
   return doc
 }
 
-User.updatePassword = (user, newHash) => {
+export const updateUserPassword = (user, newHash) => {
   user.password = newHash
   user = omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side
@@ -123,7 +112,7 @@ User.updatePassword = (user, newHash) => {
   return user
 }
 
-User.setOauthTokens = (provider, data) => user => {
+export const setUserDocOauthTokens = (provider, data) => user => {
   assert_.string(provider)
   assert_.object(data)
   assert_.string(data.token)
@@ -133,7 +122,7 @@ User.setOauthTokens = (provider, data) => user => {
   return user
 }
 
-User.updateItemsCounts = itemsCounts => user => {
+export const updateUserItemsCounts = itemsCounts => user => {
   // This function is used by db.update and should thus always return a user doc
   // even if unmodified
   if (user.type === 'deletedUser') return user
@@ -144,8 +133,8 @@ User.updateItemsCounts = itemsCounts => user => {
   return user
 }
 
-User.addRole = role => user => {
-  if (!User.attributes.roles.includes(role)) {
+export const addUserDocRole = role => user => {
+  if (!userAttributes.roles.includes(role)) {
     throw newError('unknown role', 400)
   }
   user.roles = user.roles || []
@@ -156,8 +145,8 @@ User.addRole = role => user => {
   return user
 }
 
-User.removeRole = role => user => {
-  if (!User.attributes.roles.includes(role)) {
+export const removeUserDocRole = role => user => {
+  if (!userAttributes.roles.includes(role)) {
     throw newError('unknown role', 400)
   }
   user.roles = user.roles || []
@@ -167,17 +156,17 @@ User.removeRole = role => user => {
 
 // We need a stable username for services that use the username as unique user id
 // such as wiki.inventaire.io (https://github.com/inventaire/inventaire-mediawiki)
-User.setStableUsername = user => {
+export function setUserDocStableUsername (user) {
   user.stableUsername = user.stableUsername || user.username
   return user
 }
 
-User.shouldBeAnonymized = user => {
+export const userShouldBeAnonymized = user => {
   const userSetting = get(user, 'settings.contributions.anonymize')
   return userSetting !== false
 }
 
-User.formatters = {
+export const userFormatters = {
   username: normalizeString,
   position: truncateLatLng,
 }

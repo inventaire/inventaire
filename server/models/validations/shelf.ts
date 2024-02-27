@@ -4,7 +4,7 @@ import commonValidations from './common.js'
 
 const { pass, BoundedString, userId } = commonValidations
 
-export default {
+const shelfValidations = {
   pass,
   description: BoundedString(0, 5000),
   visibility: isVisibilityKeyArray,
@@ -12,3 +12,5 @@ export default {
   name: BoundedString(0, 128),
   color: isColorHexCode,
 }
+
+export default shelfValidations

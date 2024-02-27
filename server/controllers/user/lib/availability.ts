@@ -3,6 +3,7 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { success } from '#lib/utils/logs'
 import User from '#models/user'
+import userValidations from '#models/validations/user'
 import isReservedWord from './is_reserved_word.js'
 
 export async function checkUsernameAvailability (username, currentUsername) {
@@ -13,7 +14,7 @@ export async function checkUsernameAvailability (username, currentUsername) {
     if (username.toLowerCase() === currentUsername.toLowerCase()) return
   }
 
-  if (!User.validations.username(username)) {
+  if (!userValidations.username(username)) {
     throw newInvalidError('username', username)
   }
 
@@ -26,7 +27,7 @@ export async function checkUsernameAvailability (username, currentUsername) {
 }
 
 export async function checkEmailAvailability (email) {
-  if (!User.validations.email(email)) {
+  if (!userValidations.email(email)) {
     throw newInvalidError('email', email)
   }
 

@@ -1,4 +1,4 @@
-export default {
+const userAttributes = {
   // Attributes that can be send to the owner
   ownerSafe: [
     '_id',
@@ -113,3 +113,5 @@ export default {
 
   roles: [ 'admin', 'dataadmin' ],
 }
+
+export default userAttributes
