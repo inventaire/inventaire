@@ -71,13 +71,19 @@
     // "useUnknownInCatchVariables": true,
   },
   "include": [
-    "config/**/*",
     "server/**/*",
     "scripts/**/*",
     "tests/**/*",
     "types/**/*",
   ],
   "exclude": [
+    "./client/**/*",
+    "./config/**/*",
+    "./db/**/*",
+    "./dist/**/*",
+    "./dumps/**/*",
+    "./server/db/couchdb/design_docs/*",
+    "./storage/**/*",
     "**/node_modules/*",
   ]
 }

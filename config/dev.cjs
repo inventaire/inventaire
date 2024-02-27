@@ -10,5 +10,7 @@ module.exports = {
   piwik: {
     enabled: false,
   },
-  autofixI18n: true,
+  i18n: {
+    autofix: true,
+  },
 }

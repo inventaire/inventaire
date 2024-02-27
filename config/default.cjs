@@ -3,7 +3,7 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
-const path = require('path')
+const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
 const port = 3006
@@ -109,8 +109,12 @@ module.exports = {
       '/api/reports?action=online',
     ],
   },
-  // enable the api/i18n endpoint and its i18nMissingKeys controller
-  autofixI18n: false,
+
+  i18n: {
+    // enable the api/i18n endpoint and its i18nMissingKeys controller
+    autofix: false,
+    srcFolderPath: '../inventaire-i18n/src',
+  },
 
   // parameters for Nodemailer
   mailer: {

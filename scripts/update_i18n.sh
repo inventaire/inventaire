@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 set -eu
 
-[ -e inventaire-i18n ] || {
-  git clone https://github.com/inventaire/inventaire-i18n.git
-}
+if [ -e pnpm-lock.yaml ]; then
+  pnpm i git+https://github.com/inventaire/inventaire-i18n.git
+else
+  npm i git+https://github.com/inventaire/inventaire-i18n.git
+fi
 
-cd ./inventaire-i18n
-rm -rf ./dist
-git checkout origin/main
-git checkout -B main
-git pull origin main
+cd node_modules/inventaire-i18n
 npm run build
-cd ..
