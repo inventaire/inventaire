@@ -2,6 +2,7 @@ import util from 'node:util'
 import CONFIG from 'config'
 import { isArguments } from 'lodash-es'
 import chalk, { red, grey } from 'tiny-chalk'
+import type { ContextualizedError } from '#lib/error/format_error'
 
 const { offline, verbose } = CONFIG
 // Log full objects
@@ -10,9 +11,9 @@ util.inspect.defaultOptions.depth = 20
 let errorCount = 0
 const countsByErrorStatusCode = {}
 
-const print = str => process.stdout.write(str + '\n')
+const print = (str: string) => process.stdout.write(str + '\n')
 
-export const log = (obj, label, color = 'cyan') => {
+export const log = (obj: unknown, label: string, color: string = 'cyan') => {
   if (!verbose) return
   if ((typeof obj === 'string') && (label == null)) {
     print(chalk[color](obj))
@@ -33,9 +34,9 @@ export const log = (obj, label, color = 'cyan') => {
   }
 }
 
-export const success = (obj, label) => log(obj, label, 'green')
-export const info = (obj, label) => log(obj, label, 'blue')
-export const warn = (err, label) => {
+export const success = (obj: unknown, label?: string) => log(obj, label, 'green')
+export const info = (obj: unknown, label?: string) => log(obj, label, 'blue')
+export const warn = (err: ContextualizedError, label?: string) => {
   const url = err.context && err.context.url
   // Local 404 errors don't need to be logged, as they will be logged
   // by the request logger middleware and logging the error object is of no help,
@@ -49,7 +50,7 @@ export const warn = (err, label) => {
   log(err, label, 'yellow')
 }
 
-export const logError = (err, label) => {
+export const logError = (err: ContextualizedError, label?: string) => {
   if (!(err instanceof Error)) {
     throw new Error('invalid error object')
   }
@@ -82,7 +83,7 @@ const tapLogger = logger => label => obj => {
 export const Log = tapLogger(log)
 export const LogError = tapLogger(logError)
 
-const errorRethrow = (err, label) => {
+const errorRethrow = (err: ContextualizedError, label?: string) => {
   logError(err, label)
   throw err
 }
