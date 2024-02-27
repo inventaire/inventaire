@@ -6,7 +6,7 @@ import { sha1 } from '#lib/crypto'
 const { maxSize } = CONFIG.mediaStorage.images
 
 // gm accepts either a path string or a stream
-export const shrinkAndFormatStream = (data, width, height) => {
+export function shrinkAndFormatStream (data, width, height) {
   return gm(data)
   .setFormat('jpg')
   // only resize if bigger
@@ -19,7 +19,7 @@ export const shrinkAndFormatStream = (data, width, height) => {
   .interlace('Line')
 }
 
-export const getHashFilename = path => {
+export function getHashFilename (path) {
   return readFile(path)
   .then(sha1)
 }
@@ -29,7 +29,7 @@ export const shrinkAndFormat = (path, width = maxSize, height = maxSize) => {
   .write(path, returnPath(path, resolve, reject)))
 }
 
-export const removeExif = path => {
+export function removeExif (path) {
   return new Promise((resolve, reject) => {
     gm(path)
     .noProfile()
@@ -39,7 +39,7 @@ export const removeExif = path => {
 
 export const applyImageLimits = (width, height) => [ applyLimit(width), applyLimit(height) ]
 
-export const getUrlFromImageHash = (container, filename) => {
+export function getUrlFromImageHash (container, filename) {
   if (filename) return `/img/${container}/${filename}`
 }
 

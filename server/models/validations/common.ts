@@ -3,7 +3,7 @@ import { isCouchUuid, isEmail, isEntityUri, isGroupId, isImageHash, isItemId, is
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 
-export const boundedString = (str, minLength, maxLength) => {
+export function boundedString (str, minLength, maxLength) {
   return isString(str) && (minLength <= str.length && str.length <= maxLength)
 }
 

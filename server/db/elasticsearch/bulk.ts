@@ -7,7 +7,7 @@ import { logBulkRes } from './helpers.js'
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 const headers = { 'content-type': 'application/x-ndjson' }
 
-export const addToBatch = (batch, action, index, doc) => {
+export function addToBatch (batch, action, index, doc) {
   if (!doc) return warn('ignore empty doc')
   const { _id } = doc
   assert_.string(_id)

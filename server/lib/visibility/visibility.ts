@@ -26,7 +26,7 @@ const validateGroupKey = (userGroupsIds, visibilityKeys) => key => {
   }
 }
 
-export const getVisibilitySummaryKey = visibilityKeys => {
+export function getVisibilitySummaryKey (visibilityKeys) {
   if (visibilityKeys.length === 0) return 'private'
   if (visibilityKeys.includes('public')) return 'public'
   return 'network'

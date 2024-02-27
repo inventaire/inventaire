@@ -5,7 +5,7 @@ import { getEntityNormalizedTerms } from '../terms_normalization.js'
 
 export const getAlreadyResolvedUris = seed => compact(map(seed, 'uri'))
 
-export const someTermsMatch = seed => {
+export function someTermsMatch (seed) {
   const seedTerms = getEntityNormalizedTerms(seed)
   return entity => {
     const entityTerms = getEntityNormalizedTerms(entity)
@@ -27,6 +27,6 @@ export const resolveSeed = (seed, expectedEntityType) => entities => {
   return seed
 }
 
-export const normalizeTitle = title => {
+export function normalizeTitle (title) {
   if (title) return ASCIIFolder.foldMaintaining(normalizeString(title)).toLowerCase()
 }

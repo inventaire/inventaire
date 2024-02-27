@@ -96,7 +96,7 @@ export const getGlobalContributions = async () => {
   .slice(0, 100)
 }
 
-export const getContributionsFromLastDay = days => {
+export function getContributionsFromLastDay (days) {
   assert_.number(days)
   const now = Date.now()
   const startTime = now - (oneDay * days)

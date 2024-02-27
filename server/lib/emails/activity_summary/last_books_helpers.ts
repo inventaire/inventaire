@@ -9,11 +9,11 @@ const { allowTransaction } = Item
 
 const host = CONFIG.getPublicOrigin()
 
-export const getLastItems = (limitDate, items) => {
+export function getLastItems (limitDate, items) {
   return items.filter(item => item.created > limitDate)
 }
 
-export const formatData = (lastItems, label, lang, highlighted) => {
+export function formatData (lastItems, label, lang, highlighted) {
   const more = lastItems.length - highlighted.length
   return {
     display: highlighted.length > 0,
@@ -27,7 +27,7 @@ export const formatData = (lastItems, label, lang, highlighted) => {
   }
 }
 
-export const embedUsersData = (items, users, position) => {
+export function embedUsersData (items, users, position) {
   users = users.map(serializeUserData)
   users = keyBy(users, '_id')
   return items.map(item => {
@@ -46,7 +46,7 @@ export const embedUsersData = (items, users, position) => {
   })
 }
 
-export const getHighlightedItems = (lastItems, highlightedLength) => {
+export function getHighlightedItems (lastItems, highlightedLength) {
   if (lastItems.length <= highlightedLength) return lastItems
   return getItemsWithTransactionFirst(lastItems, highlightedLength)
 }

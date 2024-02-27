@@ -23,7 +23,7 @@ export const getUserByEmail = byEmail.bind(null, db)
 export const getUsersByEmails = byEmails.bind(null, db)
 export const findUserByEmail = findOneByEmail.bind(null, db)
 
-export const getUsersAuthorizedDataByEmails = (emails, reqUserId) => {
+export function getUsersAuthorizedDataByEmails (emails, reqUserId) {
   assert_.array(emails)
   // Keeping the email is required to map the users returned
   // with the initial input
@@ -31,11 +31,11 @@ export const getUsersAuthorizedDataByEmails = (emails, reqUserId) => {
 }
 
 export const getUserByUsername = username => db.viewByKey('byUsername', username.toLowerCase())
-export const getUsersByUsernames = usernames => {
+export function getUsersByUsernames (usernames) {
   return db.viewByKeys('byUsername', usernames.map(toLowerCase))
 }
 
-export const findUserByUsername = username => {
+export function findUserByUsername (username) {
   return getUserByUsername(username)
   .then(firstDoc)
   .then(user => {
@@ -44,7 +44,7 @@ export const findUserByUsername = username => {
   })
 }
 
-export const findUserByUsernameOrEmail = str => {
+export function findUserByUsernameOrEmail (str) {
   if (userValidations.email(str)) {
     return findUserByEmail(str)
   } else {
@@ -52,13 +52,13 @@ export const findUserByUsernameOrEmail = str => {
   }
 }
 
-export const getUsersAuthorizedDataByIds = async (ids, reqUserId) => {
+export async function getUsersAuthorizedDataByIds (ids, reqUserId) {
   assert_.array(ids)
   if (ids.length === 0) return []
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
 }
 
-export const getUsersAuthorizedData = async (usersDocsPromise, reqUserId, extraAttribute) => {
+export async function getUsersAuthorizedData (usersDocsPromise, reqUserId, extraAttribute) {
   const [ usersDocs, networkIds ] = await Promise.all([
     usersDocsPromise,
     getNetworkIds(reqUserId),
@@ -68,12 +68,12 @@ export const getUsersAuthorizedData = async (usersDocsPromise, reqUserId, extraA
   .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
 }
 
-export const getUsersIndexedByIds = async (ids, reqUserId) => {
+export async function getUsersIndexedByIds (ids, reqUserId) {
   const users = await getUsersAuthorizedDataByIds(ids, reqUserId)
   return keyBy(users, '_id')
 }
 
-export const getUsersIndexByUsernames = async (reqUserId, usernames) => {
+export async function getUsersIndexByUsernames (reqUserId, usernames) {
   const users = await getUsersAuthorizedData(getUsersByUsernames(usernames), reqUserId)
   const usersByLowercasedUsername = {}
   const lowercasedUsernames = usernames.map(username => username.toLowerCase())
@@ -87,7 +87,7 @@ export const getUsersIndexByUsernames = async (reqUserId, usernames) => {
   return usersByLowercasedUsername
 }
 
-export const incrementUndeliveredMailCounter = async email => {
+export async function incrementUndeliveredMailCounter (email) {
   const doc = await findUserByEmail(email)
   const { _id } = doc
   return db.update(_id, doc => {
@@ -101,11 +101,11 @@ export const addUserRole = (userId, role) => db.update(userId, addUserDocRole(ro
 
 export const removeUserRole = (userId, role) => db.update(userId, removeUserDocRole(role))
 
-export const setUserOauthTokens = (userId, provider, data) => {
+export function setUserOauthTokens (userId, provider, data) {
   return db.update(userId, setUserDocOauthTokens(provider, data))
 }
 
-export const setUserStableUsername = async userData => {
+export async function setUserStableUsername (userData) {
   const { _id: userId, username, stableUsername } = userData
   if (stableUsername == null) {
     await db.update(userId, setUserDocStableUsername)
@@ -114,7 +114,7 @@ export const setUserStableUsername = async userData => {
   return userData
 }
 
-export const getUsersNearby = async (userId, meterRange, strict) => {
+export async function getUsersNearby (userId, meterRange, strict) {
   const { position } = await getUserById(userId)
   if (position == null) {
     throw newError('user has no position set', 400, userId)
@@ -125,14 +125,14 @@ export const getUsersNearby = async (userId, meterRange, strict) => {
 
 export const getUserByPosition = searchUsersByPosition
 
-export const imageIsUsed = async imageHash => {
+export async function imageIsUsed (imageHash) {
   assert_.string(imageHash)
   const { rows } = await db.view('users', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 
 // View model serialization for emails and rss feeds templates
-export const serializeUserData = user => {
+export function serializeUserData (user) {
   user.picture = user.picture || defaultAvatar
   return user
 }

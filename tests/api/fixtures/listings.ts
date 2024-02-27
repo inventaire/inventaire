@@ -21,7 +21,7 @@ export const createListing = async (userPromise, listingData = {}) => {
   return { listing, user }
 }
 
-export const createListingWithElements = async userPromise => {
+export async function createListingWithElements (userPromise) {
   userPromise = userPromise || getUser()
   const { listing, user } = await createListing(userPromise)
   const { uri: uri2 } = await createElement({ listing }, userPromise)

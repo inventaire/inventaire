@@ -18,7 +18,7 @@ export const getListingById = db.get
 export const getListingsByIds = db.byIds
 export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
 
-export const getListingsByIdsWithElements = async ids => {
+export async function getListingsByIdsWithElements (ids) {
   const listings = await getListingsByIds(ids)
   if (!isNonEmptyArray(listings)) return []
   const listingIds = map(listings, '_id')
@@ -29,7 +29,7 @@ export const getListingsByIdsWithElements = async ids => {
   return listings
 }
 
-export const createListing = async params => {
+export async function createListing (params) {
   const listing = Listing.create(params)
   const invalidGroupId = await validateVisibilityKeys(listing.visibility, listing.creator)
   if (invalidGroupId) {
@@ -41,7 +41,7 @@ export const createListing = async params => {
   return db.postAndReturn(listing)
 }
 
-export const updateListingAttributes = async params => {
+export async function updateListingAttributes (params) {
   const { id, reqUserId } = params
   const newAttributes = pick(params, updateAttributes)
   if (newAttributes.visibility) {
@@ -54,7 +54,7 @@ export const updateListingAttributes = async params => {
 
 export const bulkDeleteListings = db.bulkDelete
 
-export const addListingElements = async ({ listing, uris, userId }) => {
+export async function addListingElements ({ listing, uris, userId }) {
   const currentElements = listing.elements
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)
@@ -65,7 +65,7 @@ export const addListingElements = async ({ listing, uris, userId }) => {
   return { ok: true, createdElements }
 }
 
-export const validateListingOwnership = (userId, listings) => {
+export function validateListingOwnership (userId, listings) {
   listings = forceArray(listings)
   for (const listing of listings) {
     if (listing.creator !== userId) {
@@ -74,12 +74,12 @@ export const validateListingOwnership = (userId, listings) => {
   }
 }
 
-export const getListingWithElements = async (listingId, userId) => {
+export async function getListingWithElements (listingId, userId) {
   const listings = await getListingsByIdsWithElements(listingId, userId)
   return listings[0]
 }
 
-export const deleteUserListingsAndElements = async userId => {
+export async function deleteUserListingsAndElements (userId) {
   const listings = await getListingsByCreators([ userId ])
   return Promise.all([
     db.bulkDelete(listings),

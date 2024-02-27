@@ -1,4 +1,4 @@
-export const getEntityId = entity => {
+export function getEntityId (entity) {
   // Working around differences in entities formatting between
   // - Wikidata entities from a dump or from Wikidata API (entity.id)
   // - Wikidata entities with inventaire formatting (entity.uri)

@@ -6,11 +6,11 @@ export const parseQuery = query => Object.fromEntries(new URLSearchParams(query)
 
 // encodeURIComponent ignores !, ', (, ), and *
 // cf https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#Description
-export const fixedEncodeURIComponent = str => {
+export function fixedEncodeURIComponent (str) {
   return encodeURIComponent(str).replace(/[!'()*]/g, encodeCharacter)
 }
 
-export const buildUrl = (pathname, queryObj) => {
+export function buildUrl (pathname, queryObj) {
   const queryEntries = Object.entries(queryObj).filter(hasNonEmptyValue)
   const queryString = new URLSearchParams(queryEntries)
   return queryString ? `${pathname}?${queryString}` : pathname

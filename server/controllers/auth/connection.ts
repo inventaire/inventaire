@@ -10,21 +10,21 @@ const signupSanitization = validateSanitization({
   password: {},
 })
 
-export const logoutRedirect = (redirect, req, res) => {
+export function logoutRedirect (redirect, req, res) {
   res.clearCookie('loggedIn')
   req.logout()
   res.redirect(redirect)
 }
 
 // TODO: rate limit to 10 signup per IP per 10 minutes
-export const signup = (req, res) => {
+export function signup (req, res) {
   // Use sanitize to format and validate body parameters
   req.body = sanitize(req, res, signupSanitization)
   const next = loggedIn(req, res)
   passport_.authenticate.localSignup(req, res, next)
 }
 
-export const login = (req, res) => {
+export function login (req, res) {
   // Not using sanitize as an email can be passed in place of a username,
   // but still by using the key 'username', and would thus be rejected at sanitization
   const next = loggedIn(req, res)

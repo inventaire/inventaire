@@ -5,7 +5,7 @@ export const sessionSignatureCookieName = `${sessionCookieName}.sig`
 const sessionCookiePattern = new RegExp(`${sessionCookieName}=([^;]+);`)
 const sessionSignatureCookiePattern = new RegExp(`${sessionCookieName}\\.sig=([^;]+);`)
 
-export const parseSessionCookies = cookieStr => {
+export function parseSessionCookies (cookieStr) {
   const sessionCookieMatch = cookieStr.match(sessionCookiePattern)
   const sessionSignatureCookieMatch = cookieStr.match(sessionSignatureCookiePattern)
   const sessionCookie = sessionCookieMatch && sessionCookieMatch[1]
@@ -13,7 +13,7 @@ export const parseSessionCookies = cookieStr => {
   return [ sessionCookie, signatureCookie ]
 }
 
-export const buildSessionCookies = (sessionCookie, signatureCookie) => {
+export function buildSessionCookies (sessionCookie, signatureCookie) {
   return `${sessionCookieName}=${sessionCookie}; ${sessionSignatureCookieName}=${signatureCookie};`
 }
 

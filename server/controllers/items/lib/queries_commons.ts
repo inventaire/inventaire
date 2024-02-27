@@ -23,7 +23,7 @@ const addUsersData = async (page, reqParams) => {
   return page
 }
 
-export const addItemsSnapshots = items => {
+export function addItemsSnapshots (items) {
   return Promise.all(items.map(addSnapshotToItem))
 }
 
@@ -47,7 +47,7 @@ async function removeUnauthorizedShelves (items, reqUserId) {
   }
 }
 
-export const paginate = (items, params) => {
+export function paginate (items, params) {
   let { limit, offset, context } = params
   items = items.sort(byCreationDate)
   if (context != null) {

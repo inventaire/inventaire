@@ -21,7 +21,7 @@ export const findOneWaitingForSummary = () => {
   .then(firstDoc)
 }
 
-export const justReceivedActivitySummary = id => {
+export function justReceivedActivitySummary (id) {
   const updater = BasicUpdater({
     lastSummary: Date.now(),
     lastNews: newsKey,

@@ -7,12 +7,12 @@ export const mapValue = res => res.rows.map(row => row.value)
 
 export const firstDoc = docs => docs != null ? docs[0] : null
 
-export const joinOrderedIds = (idA, idB) => {
+export function joinOrderedIds (idA, idB) {
   if (idA < idB) return `${idA}:${idB}`
   else return `${idB}:${idA}`
 }
 
-export const ignoreNotFound = err => {
+export function ignoreNotFound (err) {
   if (!(err && err.statusCode === 404)) throw err
 }
 

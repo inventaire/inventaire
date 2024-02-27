@@ -6,7 +6,7 @@ import { propertiesValuesConstraints as properties } from './properties_values_c
 const allowlist = Object.keys(properties)
 const allowset = new Set(allowlist)
 
-export const validateProperty = property => {
+export function validateProperty (property) {
   if (!isPropertyUri(property)) {
     throw newError('invalid property', 400, property)
   }
@@ -16,6 +16,6 @@ export const validateProperty = property => {
   }
 }
 
-export const validateValueType = (property, value) => {
+export function validateValueType (property, value) {
   return typeOf(value) === properties[property].primitiveType
 }

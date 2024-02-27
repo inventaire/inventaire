@@ -6,7 +6,7 @@ import {
 } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
 
-export const combinations = (array1, array2) => {
+export function combinations (array1, array2) {
   return array1.flatMap(key1 => {
     return array2.map(key2 => [ key1, key2 ])
   })
@@ -18,7 +18,7 @@ export const sameObjects = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 
 export const toLowerCase = str => str.toLowerCase()
 
-export const stringToInt = str => {
+export function stringToInt (str) {
   if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
   // testing the validity of the string is needed
   // to avoid getting NaN from parseInt
@@ -26,13 +26,13 @@ export const stringToInt = str => {
   return parseInt(str)
 }
 
-export const parsePositiveInteger = str => {
+export function parsePositiveInteger (str) {
   // /!\ Difference with parseInt: not throwing
   if ((typeof str !== 'string') || !PositiveIntegerPattern.test(str)) return
   return parseInt(str)
 }
 
-export const stringToFloat = str => {
+export function stringToFloat (str) {
   if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
   if (!floatPattern.test(str)) throw new Error(`invalid float string: ${str}`)
   return parseFloat(str)
@@ -45,7 +45,7 @@ export const superTrim = str => str.replaceAll(/\s+/g, ' ').trim()
 
 export const KeyBy = attribute => array => keyBy(array, attribute)
 
-export const uniqByKey = (collection, key) => {
+export function uniqByKey (collection, key) {
   assert_.array(collection)
   assert_.string(key)
   return Object.values(keyBy(collection, key))
@@ -56,7 +56,7 @@ export const initCollectionsIndex = names => names.reduce(aggregateCollections, 
 export const obfuscate = str => str.replace(/./g, '*')
 
 // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-export const getHashCode = string => {
+export function getHashCode (string) {
   let [ hash, i, len ] = [ 0, 0, string.length ]
   if (len === 0) return hash
 
@@ -69,7 +69,7 @@ export const getHashCode = string => {
   return Math.abs(hash)
 }
 
-export const someMatch = (arrayA, arrayB) => {
+export function someMatch (arrayA, arrayB) {
   if (!isArray(arrayA) || !isArray(arrayB)) return false
   for (const valueA of arrayA) {
     for (const valueB of arrayB) {
@@ -86,7 +86,7 @@ export const expired = (timestamp, ttl) => (Date.now() - timestamp) > ttl
 
 export const shortLang = lang => lang && lang.slice(0, 2)
 
-export const pickOne = obj => {
+export function pickOne (obj) {
   const key = Object.keys(obj)[0]
   if (key != null) return obj[key]
 }
@@ -96,13 +96,13 @@ export const parseBooleanString = (booleanString, defaultVal = false) => {
   else return booleanString !== 'false'
 }
 
-export const simpleDay = date => {
+export function simpleDay (date) {
   const dateObj = date != null ? new Date(date) : new Date()
   return dateObj.toISOString().split('T')[0]
 }
 
 // Helpers to simplify polymorphisms
-export const forceArray = keys => {
+export function forceArray (keys) {
   if (keys == null || keys === '') return []
   if (isArray(keys)) return keys
   else return [ keys ]
@@ -110,11 +110,11 @@ export const forceArray = keys => {
 
 // Iterates on an object, with the passed function: fn(key, value)
 // Expected returned value: [ newKey, newValue ]
-export const mapKeysValues = (obj, fn) => {
+export function mapKeysValues (obj, fn) {
   return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
 }
 
-export const deepCompact = arrays => {
+export function deepCompact (arrays) {
   return chain(arrays)
   .flatten()
   .uniq()
@@ -122,14 +122,14 @@ export const deepCompact = arrays => {
   .value()
 }
 
-export const mapUniq = (collection, key) => {
+export function mapUniq (collection, key) {
   return chain(collection)
   .map(key)
   .uniq()
   .value()
 }
 
-export const flatMapUniq = (collection, key) => {
+export function flatMapUniq (collection, key) {
   return chain(collection)
   .map(key)
   .flatten()

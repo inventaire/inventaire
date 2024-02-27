@@ -84,17 +84,17 @@ export const createEditionWithIsbn = async (params = {}) => {
   return edition
 }
 
-export const createEditionFromWorks = (...works) => {
+export function createEditionFromWorks (...works) {
   const params = { works }
   return createEdition(params)
 }
 
-export const createWorkWithAuthor = async (human, label) => {
+export async function createWorkWithAuthor (human, label) {
   const { work } = await createWorkWithSpecificRoleAuthor({ human, label, roleProperty: 'wdt:P50' })
   return work
 }
 
-export const createWorkWithSpecificRoleAuthor = async ({ human, label, roleProperty }) => {
+export async function createWorkWithSpecificRoleAuthor ({ human, label, roleProperty }) {
   label = label || randomLabel()
   human = await (human || createHuman())
   const work = await authReq('post', '/api/entities?action=create', {
@@ -107,7 +107,7 @@ export const createWorkWithSpecificRoleAuthor = async ({ human, label, rolePrope
   return { work, human }
 }
 
-export const createSerieWithAuthor = async params => {
+export async function createSerieWithAuthor (params) {
   let { human } = params
   human = await (human || createHuman())
   const serie = await createSerie(params)
@@ -120,7 +120,7 @@ export const createEditionFromWorkWithAuthor = async () => {
   return createEditionFromWorks(work)
 }
 
-export const createWorkWithSerie = async serie => {
+export async function createWorkWithSerie (serie) {
   const work = await createWork()
   await addSerie(work, serie)
   // Get a refreshed version of the work
@@ -176,7 +176,7 @@ export const generateIsbn13 = () => {
 
 export const generateIsbn13h = () => toIsbn13h(generateIsbn13())
 
-export const sameFirstNameLabel = label => {
+export function sameFirstNameLabel (label) {
   const newLastName = firstName()
   const labelNames = label.split(' ')
   labelNames[1] = newLastName

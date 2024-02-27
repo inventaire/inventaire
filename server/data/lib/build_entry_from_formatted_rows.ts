@@ -1,4 +1,4 @@
-export const buildEntryFromFormattedRows = (formattedRows, getSourceId) => {
+export function buildEntryFromFormattedRows (formattedRows, getSourceId) {
   if (formattedRows.length === 0) return
 
   const editions = {}

@@ -4,7 +4,7 @@ import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user
 import { assert_ } from '#lib/utils/assert_types'
 import { LogError, warn } from '#lib/utils/logs'
 
-export const getParsedUsersIndexedByIds = (user1Id, user2Id) => {
+export function getParsedUsersIndexedByIds (user1Id, user2Id) {
   return getUsersByIds([ user1Id, user2Id ])
   .then(usersData => {
     const [ user1, user2 ] = parseUsersData(user1Id, user2Id, usersData)
@@ -21,7 +21,7 @@ const parseUsersData = (user1Id, user2Id, usersData) => {
   return [ user1, user2 ].map(serializeUserData)
 }
 
-export const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
+export function getGroupAndUsersData (groupId, actingUserId, userToNotifyId) {
   return Promise.all([
     getGroupById(groupId),
     getUserById(actingUserId),
@@ -36,7 +36,7 @@ export const getGroupAndUsersData = (groupId, actingUserId, userToNotifyId) => {
   })
 }
 
-export const catchDisabledEmails = err => {
+export function catchDisabledEmails (err) {
   if (err.type === 'email_disabled') warn(err.context, err.message)
   else throw err
 }

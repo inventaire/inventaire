@@ -29,7 +29,7 @@ export async function automerge (suspectUri, suggestionUri) {
   return []
 }
 
-export const hasConvincingOccurrences = suggestionOccurrences => {
+export function hasConvincingOccurrences (suggestionOccurrences) {
   const hasOccurencesInStructuredDataSources = some(map(suggestionOccurrences, 'structuredDataSource'))
   if (hasOccurencesInStructuredDataSources) return true
 

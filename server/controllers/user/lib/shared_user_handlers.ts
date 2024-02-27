@@ -3,17 +3,17 @@ import { notFoundError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 
-export const byEmail = (db, email) => {
+export function byEmail (db, email) {
   assert_.string(email)
   return db.viewByKey('byEmail', email.toLowerCase())
 }
 
-export const byEmails = (db, emails) => {
+export function byEmails (db, emails) {
   assert_.strings(emails)
   return db.viewByKeys('byEmail', emails.map(toLowerCase))
 }
 
-export const findOneByEmail = (db, email) => {
+export function findOneByEmail (db, email) {
   return byEmail(db, email)
   .then(firstDoc)
   .then(user => {

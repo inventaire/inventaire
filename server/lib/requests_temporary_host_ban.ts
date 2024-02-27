@@ -32,19 +32,19 @@ const restoreNonExpiredBans = data => {
   if (Object.keys(banData).length > 0) success(banData, 'hosts bans data restored')
 }
 
-export const assertHostIsNotTemporarilyBanned = host => {
+export function assertHostIsNotTemporarilyBanned (host) {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
     throw newError(`temporary ban: ${host}`, 500, { host, hostBanData })
   }
 }
 
-export const resetBanData = host => {
+export function resetBanData (host) {
   delete banData[host]
   lazyBackup()
 }
 
-export const declareHostError = host => {
+export function declareHostError (host) {
   // Never ban local services
   if (host.startsWith('localhost')) return
 

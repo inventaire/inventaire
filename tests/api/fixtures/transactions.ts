@@ -31,7 +31,7 @@ export const getSomeTransaction = async () => {
   return someTransactionData
 }
 
-export const addMessage = transaction => {
+export function addMessage (transaction) {
   return authReq('post', '/api/transactions?action=message', {
     action: 'message',
     transaction: transaction._id,

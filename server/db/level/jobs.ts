@@ -9,7 +9,7 @@ import getSubDb from './get_sub_db.js'
 
 // always return an object with 'push' and 'pushBatch' function
 // taking a payload and returning a promise
-export const initJobQueue = (jobName, worker, maxConcurrency) => {
+export function initJobQueue (jobName, worker, maxConcurrency) {
   const db = getSubDb(`job:${jobName}`, 'utf8')
 
   const run = CONFIG.jobs[jobName] && CONFIG.jobs[jobName].run

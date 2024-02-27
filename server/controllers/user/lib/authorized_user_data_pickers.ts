@@ -2,7 +2,7 @@ import { isString, pick } from 'lodash-es'
 import { getUserAccessLevels } from '#lib/user_access_levels'
 import userAttributes from '#models/attributes/user'
 
-export const ownerSafeData = user => {
+export function ownerSafeData (user) {
   const safeUserDoc = pick(user, userAttributes.ownerSafe)
   if (user.type === 'deletedUser') return safeUserDoc
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []

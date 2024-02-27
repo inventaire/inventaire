@@ -10,7 +10,7 @@ import { warn } from '#lib/utils/logs'
 
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
-export const sign = params => {
+export function sign (params) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params
   const signedHeadersNames = Object.keys(reqHeaders).join(' ')
   const signer = crypto.createSign('rsa-sha256')
@@ -30,7 +30,7 @@ export const sign = params => {
   return `keyId="${keyId}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
 }
 
-export const verifySignature = async req => {
+export async function verifySignature (req) {
   const { method, path: pathname, headers: reqHeaders } = req
   const { date, signature } = reqHeaders
   // 30 seconds time window for thtat signature to be considered valid
@@ -59,7 +59,7 @@ export const verifySignature = async req => {
   // TODO: verify date
 }
 
-export const signRequest = ({ url, method, keyId, privateKey, body }) => {
+export function signRequest ({ url, method, keyId, privateKey, body }) {
   const date = new Date().toUTCString()
   const { host, pathname } = new URL(url)
   // The minimum recommended data to sign is the (request-target), host, and date.

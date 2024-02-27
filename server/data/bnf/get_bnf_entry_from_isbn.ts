@@ -201,7 +201,7 @@ const placeholderContentLengths = [
   4658,
 ]
 
-export const cleanupBnfTitle = title => {
+export function cleanupBnfTitle (title) {
   return title
   // 'some title : [roman]' => 'some title'
   .replace(/: \[?((a|an|un|une) )?((actes|antholog(ie|y)|autobiograph(ie|y)|bande dessinée|biograph(ie|y)|casebook|comédie|conte|document|encyclopedia|encyclopédie|entretien|essai|history|memoir|mémoire|nouvelle|novel|photographies|poem|poème|poésie|récit|roman|stories|texte intégral|théâtre|thriller)s?)( \w+)?\]?$/i, '')

@@ -4,7 +4,7 @@ import { parseIsbn } from '#lib/isbn/parse'
 const { parse: isbnParser } = isbn3
 
 // Removing any non-alpha numeric characters, especially '-' and spaces
-export const normalizeIsbn = text => {
+export function normalizeIsbn (text) {
   return text
   // Remove hypens
   .replace(/\W/g, '')

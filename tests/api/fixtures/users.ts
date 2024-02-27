@@ -30,7 +30,7 @@ const loginOrSignup = async userData => {
   }
 }
 
-export const signup = email => {
+export function signup (email) {
   return _signup({
     email,
     username: createUsername(),
@@ -67,14 +67,14 @@ export function createUser (customData = {}) {
   return _getOrCreateUser({ customData, mayReuseExistingUser: false })
 }
 
-export const getUserWithCookie = async cookie => {
+export async function getUserWithCookie (cookie) {
   const user = await request('get', '/api/user', null, cookie)
   user.cookie = cookie
   assert_.string(user.cookie)
   return user
 }
 
-export const getRefreshedUser = async user => {
+export async function getRefreshedUser (user) {
   // Allow to pass either a user doc or a user promise
   user = await user
   // Get the up-to-date user doc while keeping the cookie

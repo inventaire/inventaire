@@ -13,7 +13,7 @@ export const findInvitationByEmail = findOneByEmail.bind(null, db)
 
 export const getInvitationsByEmails = byEmails.bind(null, db)
 
-export const createUnknownInvited = (inviterId, groupId, unknownEmails) => {
+export function createUnknownInvited (inviterId, groupId, unknownEmails) {
   assert_.string(inviterId)
   assert_.array(unknownEmails)
   if (groupId) assert_.string(groupId)
@@ -22,7 +22,7 @@ export const createUnknownInvited = (inviterId, groupId, unknownEmails) => {
   .catch(LogErrorAndRethrow('createUnknownInvited'))
 }
 
-export const addInviter = (inviterId, groupId, invitedDocs) => {
+export function addInviter (inviterId, groupId, invitedDocs) {
   assert_.types([ 'string', 'array' ], [ inviterId, invitedDocs ])
   if (groupId != null) { assert_.string(groupId) }
   const addInviterFn = Invited.addInviter.bind(null, inviterId, groupId)
@@ -31,7 +31,7 @@ export const addInviter = (inviterId, groupId, invitedDocs) => {
   .catch(LogErrorAndRethrow('addInviter'))
 }
 
-export const convertInvitations = async userDoc => {
+export async function convertInvitations (userDoc) {
   const { _id: userId, inviters } = userDoc
   let { invitersGroups } = userDoc
 

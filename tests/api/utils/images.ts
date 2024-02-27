@@ -60,7 +60,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
   }
 }
 
-export const localContainerHasImage = ({ container, hash, url }) => {
+export function localContainerHasImage ({ container, hash, url }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
   assert_.string(hash)
   const localImagePath = `${localStorageFolder}/${container}/${hash}`

@@ -100,7 +100,7 @@ export function updateUserDocEmail (doc, email) {
   return doc
 }
 
-export const updateUserPassword = (user, newHash) => {
+export function updateUserPassword (user, newHash) {
   user.password = newHash
   user = omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side
@@ -161,7 +161,7 @@ export function setUserDocStableUsername (user) {
   return user
 }
 
-export const userShouldBeAnonymized = user => {
+export function userShouldBeAnonymized (user) {
   const userSetting = get(user, 'settings.contributions.anonymize')
   return userSetting !== false
 }

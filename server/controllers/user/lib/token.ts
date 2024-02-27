@@ -29,7 +29,7 @@ export async function sendValidationEmail (user) {
   return user
 }
 
-export const confirmEmailTokenValidity = (email, token) => {
+export function confirmEmailTokenValidity (email, token) {
   return findUserByEmail(email)
   .then(updateIfValidToken.bind(null, token))
   .catch(err => {
@@ -45,7 +45,7 @@ export async function sendResetPasswordEmail (user) {
   return user
 }
 
-export const openPasswordUpdateWindow = user => {
+export function openPasswordUpdateWindow (user) {
   return db.update(user._id, doc => {
     doc.token = null
     doc.resetPassword = Date.now()

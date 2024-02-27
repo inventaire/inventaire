@@ -28,21 +28,21 @@ export async function verifyRightToRequest (reqUserId, item) {
   await verifyNoExistingTransaction(reqUserId, item)
 }
 
-export const verifyRightToInteractWithTransaction = (userId, transaction) => {
+export function verifyRightToInteractWithTransaction (userId, transaction) {
   const { owner, requester } = transaction
   if (!(userId === owner || userId === requester)) {
     throw newError('wrong user', 403, userId, transaction)
   }
 }
 
-export const verifyIsOwner = (userId, transaction) => {
+export function verifyIsOwner (userId, transaction) {
   const { owner } = transaction
   if (userId !== owner) {
     throw newError('wrong user', 403, userId, transaction)
   }
 }
 
-export const verifyIsRequester = (userId, transaction) => {
+export function verifyIsRequester (userId, transaction) {
   const { requester } = transaction
   if (userId !== requester) {
     throw newError('wrong user', 403, userId, transaction)

@@ -36,7 +36,7 @@ export const log = (obj: unknown, label: string, color: string = 'cyan') => {
 
 export const success = (obj: unknown, label?: string) => log(obj, label, 'green')
 export const info = (obj: unknown, label?: string) => log(obj, label, 'blue')
-export const warn = (err: ContextualizedError, label?: string) => {
+export function warn (err: ContextualizedError, label?: string) {
   const url = err.context && err.context.url
   // Local 404 errors don't need to be logged, as they will be logged
   // by the request logger middleware and logging the error object is of no help,
@@ -50,7 +50,7 @@ export const warn = (err: ContextualizedError, label?: string) => {
   log(err, label, 'yellow')
 }
 
-export const logError = (err: ContextualizedError, label?: string) => {
+export function logError (err: ContextualizedError, label?: string) {
   if (!(err instanceof Error)) {
     throw new Error('invalid error object')
   }

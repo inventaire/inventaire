@@ -38,7 +38,7 @@ export async function getImageByIsbn (isbn) {
   return requests_.get(url, reqOptions)
 }
 
-export const cleanupImageUrl = imageUrl => {
+export function cleanupImageUrl (imageUrl) {
   const url = buildUrl(`${origin}/images`, { url: imageUrl })
   return requests_.get(url, reqOptions)
 }

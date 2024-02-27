@@ -6,7 +6,7 @@ import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 
-export const getDocData = updatedDoc => {
+export function getDocData (updatedDoc) {
   let { uri, type } = updatedDoc
   // Case when a formatted entity doc is passed
   if (uri) return [ uri, type ]
@@ -18,7 +18,7 @@ export const getDocData = updatedDoc => {
   return [ uri, type ]
 }
 
-export const getNames = (preferedLang, entities) => {
+export function getNames (preferedLang, entities) {
   if (!isNonEmptyArray(entities)) return
 
   return entities
@@ -26,7 +26,7 @@ export const getNames = (preferedLang, entities) => {
   .join(', ')
 }
 
-export const aggregateClaims = (entities, property) => {
+export function aggregateClaims (entities, property) {
   assert_.array(entities)
   assert_.string(property)
 

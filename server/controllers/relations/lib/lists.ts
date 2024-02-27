@@ -14,24 +14,24 @@ const getAllUserRelations = (userId, includeDocs = false) => {
   })
 }
 
-export const getUserRelations = userId => {
+export function getUserRelations (userId) {
   return getAllUserRelations(userId)
   .then(parseRelations)
 }
 
-export const getUserFriends = userId => {
+export function getUserFriends (userId) {
   const query = { key: [ userId, 'friends' ] }
   return db.view('relations', 'byStatus', query)
   .then(mapValue)
 }
 
-export const deleteUserRelations = userId => {
+export function deleteUserRelations (userId) {
   return getAllUserRelations(userId, true)
   .then(mapDoc)
   .then(db.bulkDelete)
 }
 
-export const getUserFriendsAndGroupsCoMembers = async userId => {
+export async function getUserFriendsAndGroupsCoMembers (userId) {
   const [ friends, coMembers ] = await Promise.all([
     getUserFriends(userId),
     getUserGroupsCoMembers(userId),
