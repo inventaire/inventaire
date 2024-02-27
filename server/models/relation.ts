@@ -5,25 +5,23 @@ import commonValidations from './validations/common.js'
 
 const { userId } = commonValidations
 
-export default {
-  create: (id, status) => {
-    assertValidId(id)
-    assertValidStatus(status)
-    return {
-      _id: id,
-      type: 'relation',
-      status,
-      created: Date.now(),
-    }
-  },
-
-  docId: (userId, otherId) => {
-    // TODO: add a receiver-read flag to stop notifying already read requestes
-    return joinOrderedIds(userId, otherId)
-  },
+export function createRelationDoc (id, status) {
+  assertValidId(id)
+  assertValidStatus(status)
+  return {
+    _id: id,
+    type: 'relation',
+    status,
+    created: Date.now(),
+  }
 }
 
-const assertValidId = id => {
+export function getRelationDocId (userId, otherId) {
+  // TODO: add a receiver-read flag to stop notifying already read requestes
+  return joinOrderedIds(userId, otherId)
+}
+
+function assertValidId (id) {
   const [ userA, userB ] = id.split(':')
   assert(userA !== userB)
   assert_.string(userA)

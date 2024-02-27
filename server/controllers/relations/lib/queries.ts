@@ -1,15 +1,15 @@
 import { getUserRelations } from '#controllers/relations/lib/lists'
 import dbFactory from '#db/couchdb/base'
 import { ignoreNotFound } from '#lib/couch'
-import Relation from '#models/relation'
+import { createRelationDoc, getRelationDocId } from '#models/relation'
 import userRelativeRequest from './user-relative_request.js'
 
 const db = await dbFactory('users', 'relations')
 
-const getUsersRelation = (userId, otherId) => db.get(Relation.docId(userId, otherId))
+const getUsersRelation = (userId, otherId) => db.get(getRelationDocId(userId, otherId))
 
 const putStatus = (userId, otherId, status) => {
-  const docId = Relation.docId(userId, otherId)
+  const docId = getRelationDocId(userId, otherId)
   return db.update(docId, updateStatus.bind(null, docId, status), { createIfMissing: true })
 }
 
@@ -19,7 +19,7 @@ const updateStatus = (docId, status, doc) => {
   if (doc && doc.status) {
     doc.status = status
   } else {
-    doc = Relation.create(docId, status)
+    doc = createRelationDoc(docId, status)
   }
   doc.updated = Date.now()
   return doc

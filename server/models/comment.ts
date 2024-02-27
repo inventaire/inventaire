@@ -1,17 +1,13 @@
-import validations from './validations/comment.js'
+import commenntValidations from './validations/comment.js'
 
-export default {
-  createTransactionComment: (userId, message, transactionId) => {
-    validations.pass('transactionId', transactionId)
-    return createComment(userId, message, 'transaction', transactionId)
-  },
-
-  validations,
+export function createTransactionComment (userId, message, transactionId) {
+  commenntValidations.pass('transactionId', transactionId)
+  return createComment(userId, message, 'transaction', transactionId)
 }
 
 const createComment = (userId, message, key, value) => {
-  validations.pass('userId', userId)
-  validations.pass('message', message)
+  commenntValidations.pass('userId', userId)
+  commenntValidations.pass('message', message)
 
   const comment = {
     user: userId,

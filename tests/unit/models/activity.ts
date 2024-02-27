@@ -1,5 +1,5 @@
+import { createActivityDoc } from '#models/activity'
 import 'should'
-import Activity from '#models/activity'
 
 const someActitvityData = () => ({
   type: 'Create',
@@ -15,7 +15,7 @@ const someActitvityData = () => ({
 describe('activity model', () => {
   describe('create', () => {
     it('should reject activity without a type', () => {
-      Activity.create.bind(null, {
+      createActivityDoc.bind(null, {
         actor: {},
         object: {},
       })
@@ -23,7 +23,7 @@ describe('activity model', () => {
     })
 
     it('should reject activity without an actor', () => {
-      Activity.create.bind(null, {
+      createActivityDoc.bind(null, {
         type: 'Follow',
         object: {},
       })
@@ -33,33 +33,33 @@ describe('activity model', () => {
     it('should reject activity with an invalid type', () => {
       const activity = someActitvityData()
       activity.type = 'foo'
-      Activity.create.bind(null, activity)
+      createActivityDoc.bind(null, activity)
       .should.throw(/invalid type/)
     })
 
     it('should reject object with invalid attribute', () => {
       const activity = someActitvityData()
       activity.object.foo = 'bar'
-      Activity.create.bind(null, activity)
+      createActivityDoc.bind(null, activity)
       .should.throw(/invalid attribute/)
     })
 
     it('should reject activity with an invalid actor', () => {
       const activity = someActitvityData()
       activity.actor.foo = 'bar'
-      Activity.create.bind(null, activity)
+      createActivityDoc.bind(null, activity)
       .should.throw(/invalid attribute/)
     })
 
     it('should reject object with an invalid timestamp', () => {
       const activity = someActitvityData()
       activity.object.items.until = 'bar'
-      Activity.create.bind(null, activity)
+      createActivityDoc.bind(null, activity)
       .should.throw(/expected number/)
     })
 
     it('should return a activity object', () => {
-      const activityDoc = Activity.create(someActitvityData())
+      const activityDoc = createActivityDoc(someActitvityData())
       activityDoc.should.be.an.Object()
       activityDoc.type.should.equal('Create')
       activityDoc.actor.name.should.be.a.String()

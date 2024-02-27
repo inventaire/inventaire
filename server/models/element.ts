@@ -21,46 +21,44 @@ const attributes = {
   ],
 }
 
-export default {
-  create: element => {
-    assert_.object(element)
-    assert_.string(element.uri)
-    assert_.string(element.list)
+export function createElementDoc (element) {
+  assert_.object(element)
+  assert_.string(element.uri)
+  assert_.string(element.list)
 
-    const newElement = {}
-    Object.keys(element).forEach(attribute => {
-      if (!attributes.validAtCreation.includes(attribute)) {
-        throw newError('invalid attribute', 400, { attribute, element })
-      }
-      validations.pass(attribute, element[attribute])
-      newElement[attribute] = element[attribute]
-    })
-
-    newElement.created = Date.now()
-
-    return newElement
-  },
-
-  update: (newAttributes, oldElement) => {
-    assert_.object(newAttributes)
-    assert_.object(oldElement)
-
-    const newElement = clone(oldElement)
-
-    const passedAttributes = Object.keys(newAttributes)
-
-    for (const attribute of passedAttributes) {
-      if (!attributes.updatable.includes(attribute)) {
-        throw newError('invalid attribute', 400, { attribute, oldElement })
-      }
-      const newVal = newAttributes[attribute]
-
-      validations.pass(attribute, newVal)
-      newElement[attribute] = newVal
+  const newElement = {}
+  Object.keys(element).forEach(attribute => {
+    if (!attributes.validAtCreation.includes(attribute)) {
+      throw newError('invalid attribute', 400, { attribute, element })
     }
+    validations.pass(attribute, element[attribute])
+    newElement[attribute] = element[attribute]
+  })
 
-    const now = Date.now()
-    newElement.updated = now
-    return newElement
-  },
+  newElement.created = Date.now()
+
+  return newElement
+}
+
+export function updateElementDoc (newAttributes, oldElement) {
+  assert_.object(newAttributes)
+  assert_.object(oldElement)
+
+  const newElement = clone(oldElement)
+
+  const passedAttributes = Object.keys(newAttributes)
+
+  for (const attribute of passedAttributes) {
+    if (!attributes.updatable.includes(attribute)) {
+      throw newError('invalid attribute', 400, { attribute, oldElement })
+    }
+    const newVal = newAttributes[attribute]
+
+    validations.pass(attribute, newVal)
+    newElement[attribute] = newVal
+  }
+
+  const now = Date.now()
+  newElement.updated = now
+  return newElement
 }

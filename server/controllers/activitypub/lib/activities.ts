@@ -1,7 +1,7 @@
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
-import Activity from '#models/activity'
+import { createActivityDoc } from '#models/activity'
 
 const db = await dbFactory('activities')
 
@@ -18,7 +18,7 @@ export async function getFollowActivitiesByObject (name) {
 }
 
 export async function createActivity (newActivity) {
-  const activity = Activity.create(newActivity)
+  const activity = createActivityDoc(newActivity)
   return db.postAndReturn(activity)
 }
 

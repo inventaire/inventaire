@@ -1,53 +1,51 @@
 import { round } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
-import validations from './validations/task.js'
+import taskValidations from './validations/task.js'
 
-export default {
-  create: newTask => {
-    assert_.object(newTask)
-    const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
-    let { lexicalScore } = newTask
+export function createTaskDoc (newTask) {
+  assert_.object(newTask)
+  const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
+  let { lexicalScore } = newTask
 
-    validations.pass('type', type)
-    validations.pass('suspectUri', suspectUri)
+  taskValidations.pass('type', type)
+  taskValidations.pass('suspectUri', suspectUri)
 
-    const task = {
-      type,
-      suspectUri,
-      suggestionUri,
-      created: Date.now(),
-    }
+  const task = {
+    type,
+    suspectUri,
+    suggestionUri,
+    created: Date.now(),
+  }
 
-    if (lexicalScore) lexicalScore = round(lexicalScore, 2)
+  if (lexicalScore) lexicalScore = round(lexicalScore, 2)
 
-    validateAndAssign(task, 'entitiesType', entitiesType)
-    validateAndAssign(task, 'lexicalScore', lexicalScore)
-    validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
-    validateAndAssign(task, 'reporter', reporter)
-    validateAndAssign(task, 'clue', clue)
-    return task
-  },
-
-  update: (task, attribute, value) => {
-    assert_.object(task)
-    assert_.string(attribute)
-    // Accept an undefined state value as that's the default state
-    if (value || attribute !== 'state') assert_.type('string|number', value)
-
-    validations.pass('attribute', attribute)
-    validations.pass(attribute, value)
-
-    const now = Date.now()
-
-    task[attribute] = value
-    task.updated = now
-    return task
-  },
+  validateAndAssign(task, 'entitiesType', entitiesType)
+  validateAndAssign(task, 'lexicalScore', lexicalScore)
+  validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
+  validateAndAssign(task, 'reporter', reporter)
+  validateAndAssign(task, 'clue', clue)
+  return task
 }
 
-const validateAndAssign = (task, name, attribute) => {
+export function updateTaskDoc (task, attribute, value) {
+  assert_.object(task)
+  assert_.string(attribute)
+  // Accept an undefined state value as that's the default state
+  if (value || attribute !== 'state') assert_.type('string|number', value)
+
+  taskValidations.pass('attribute', attribute)
+  taskValidations.pass(attribute, value)
+
+  const now = Date.now()
+
+  task[attribute] = value
+  task.updated = now
+  return task
+}
+
+function validateAndAssign (task, name, attribute) {
   if (attribute) {
-    validations.pass(name, attribute)
+    taskValidations.pass(name, attribute)
     task[name] = attribute
   }
 }
