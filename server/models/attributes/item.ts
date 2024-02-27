@@ -1,8 +1,4 @@
-const attributes = {}
-
-export default attributes
-
-attributes.updatable = [
+const updatable = [
   'transaction',
   'pictures',
   'visibility',
@@ -13,7 +9,7 @@ attributes.updatable = [
   'entity',
 ]
 
-attributes.validAtCreation = [
+const validAtCreation = [
   'entity',
   'transaction',
   'pictures',
@@ -24,7 +20,7 @@ attributes.validAtCreation = [
 ]
 
 // Not updatable by the user
-attributes.notUpdatable = [
+const notUpdatable = [
   '_id',
   '_rev',
   'created',
@@ -38,45 +34,45 @@ attributes.notUpdatable = [
 
   // Updated as side effects of entity redirections
   'previousEntity',
-
 ]
 
-attributes.known = attributes.notUpdatable.concat(attributes.updatable)
-
-attributes.private = [
+const privat = [
   'notes',
   'visibility',
 ]
 
-// Attribute to reset on owner change
-attributes.reset = attributes.private.concat([
-  'details',
-])
-
 const allowTransaction = [ 'giving', 'lending', 'selling' ]
 const doesntAllowTransaction = [ 'inventorying' ]
 
-attributes.allowTransaction = allowTransaction
-attributes.doesntAllowTransaction = doesntAllowTransaction
-
-attributes.constrained = {
-  transaction: {
-    possibilities: allowTransaction.concat(doesntAllowTransaction),
-    defaultValue: 'inventorying',
+export default {
+  updatable,
+  validAtCreation,
+  notUpdatable,
+  known: notUpdatable.concat(updatable),
+  private: privat,
+  // Attribute to reset on owner change
+  reset: privat.concat([
+    'details',
+  ]),
+  allowTransaction,
+  doesntAllowTransaction,
+  constrained: {
+    transaction: {
+      possibilities: allowTransaction.concat(doesntAllowTransaction),
+      defaultValue: 'inventorying',
+    },
   },
+  // Attributes to keep in documents where a stakeholder might loose
+  // access to those data
+  // ex: in a transaction, when the item isn't visible to the previous owner anymore
+  // Attributes such as _id and transaction are already recorded by a transaction
+  // thus their absence here as long as only transactions doc uses snaphshot
+  snapshot: [
+    'entity',
+    'details',
+  ],
+  notIndexed: [
+    'previousEntity',
+    'notes',
+  ],
 }
-
-// Attributes to keep in documents where a stakeholder might loose
-// access to those data
-// ex: in a transaction, when the item isn't visible to the previous owner anymore
-// Attributes such as _id and transaction are already recorded by a transaction
-// thus their absence here as long as only transactions doc uses snaphshot
-attributes.snapshot = [
-  'entity',
-  'details',
-]
-
-attributes.notIndexed = [
-  'previousEntity',
-  'notes',
-]

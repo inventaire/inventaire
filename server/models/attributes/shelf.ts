@@ -1,18 +1,16 @@
-const attributes = {}
-
-export default attributes
-
-attributes.updatable = [
+const updatable = [
   'description',
   'visibility',
   'name',
   'color',
 ]
 
-attributes.validAtCreation = attributes.updatable.concat([
-  'owner',
-])
-
-attributes.private = [
-  'visibility',
-]
+export default {
+  updatable,
+  validAtCreation: updatable.concat([
+    'owner',
+  ]),
+  private: [
+    'visibility',
+  ],
+}
