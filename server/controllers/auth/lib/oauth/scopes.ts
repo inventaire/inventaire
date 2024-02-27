@@ -4,7 +4,7 @@ const scopeByMethodAndRoute = {
   },
 }
 
-export const getAcceptedScopes = ({ method, url }) => {
+export function getAcceptedScopes ({ method, url }) {
   method = method.toLowerCase()
   if (scopeByMethodAndRoute[method] != null) {
     return scopeByMethodAndRoute[method][url]

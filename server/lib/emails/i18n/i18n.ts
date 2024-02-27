@@ -40,18 +40,18 @@ const solveLang = lang => {
   else return 'en'
 }
 
-export const i18n = (lang, key, args) => {
+export function i18n (lang, key, args) {
   lang = solveLang(lang)
   return translators[lang](key, args)
 }
 
-export const I18n = (...args) => {
+export function I18n (...args) {
   const text = i18n.apply(null, args)
   const firstLetter = text[0].toUpperCase()
   return firstLetter + text.slice(1)
 }
 
-export const dateI18n = (lang, epochTime, format) => {
+export function dateI18n (lang, epochTime, format) {
   // set default while neutralizeing handlebars object
   if (!isString(format)) format = 'LLL'
   lang = solveLang(lang)

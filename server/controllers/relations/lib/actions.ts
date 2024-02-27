@@ -1,13 +1,13 @@
 import { emit } from '#lib/radio'
 import { putFriendStatus, putNoneStatus, putRequestedStatus } from './queries.js'
 
-export const acceptRequest = async (userId, otherId) => {
+export async function acceptRequest (userId, otherId) {
   const res = await putFriendStatus(userId, otherId)
   await emit('notify:friend:request:accepted', otherId, userId)
   return res
 }
 
-export const simultaneousRequest = async (userId, otherId) => {
+export async function simultaneousRequest (userId, otherId) {
   const res = await putFriendStatus(userId, otherId)
   await emit('notify:friend:request:accepted', otherId, userId)
   await emit('notify:friend:request:accepted', userId, otherId)

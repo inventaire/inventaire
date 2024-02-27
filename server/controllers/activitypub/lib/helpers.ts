@@ -32,7 +32,7 @@ export const getActivityIdFromPatchId = (patchId, rowIndex) => `inv-${patchId.re
 const activityIdPattern = /^inv-[0-9a-f]{32}-\d{1,3}-\d{1,3}$/
 export const isEntityActivityId = activityId => activityIdPattern.test(activityId)
 
-export const getActorTypeFromName = name => {
+export function getActorTypeFromName (name) {
   if (isEntityUri(getEntityUriFromActorName(name))) return 'entity'
   else if (name.startsWith('shelf-')) return 'shelf'
   else if (isUsername(name)) return 'user'
@@ -41,7 +41,7 @@ export const getActorTypeFromName = name => {
 
 export const defaultLabel = entity => entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
 
-export const buildLink = (url, text) => {
+export function buildLink (url, text) {
   if (!text) text = url.split('://')[1]
   // Mimicking Mastodon
   return `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank">${text}</a>`

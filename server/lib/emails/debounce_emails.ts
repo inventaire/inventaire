@@ -7,7 +7,7 @@ import { warn } from '#lib/utils/logs'
 
 const db = leveldbFactory('waiting', 'utf8')
 
-export const transactionUpdate = transaction => {
+export function transactionUpdate (transaction) {
   // Polymorphism: accepts transaction doc or directly the transaction _id
   let transactionId
   if (isObject(transaction)) {

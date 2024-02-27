@@ -8,50 +8,50 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-export const userIsInGroup = (userId, groupId) => {
+export function userIsInGroup (userId, groupId) {
   return getGroupById(groupId)
   .then(getAllGroupMembersIds)
   .then(usersIncludeUserId(userId))
 }
 
-export const userIsInRequested = (userId, groupId) => {
+export function userIsInRequested (userId, groupId) {
   return getGroupById(groupId)
   .then(getGroupRequestedUsersIds)
   .then(usersIncludeUserId(userId))
 }
 
-export const userIsInGroupOrRequested = (userId, groupId) => {
+export function userIsInGroupOrRequested (userId, groupId) {
   return getGroupById(groupId)
   .then(getGroupMembersAndRequestedUsersIds)
   .then(usersIncludeUserId(userId))
 }
 
-export const userIsInAdmins = (userId, groupId) => {
+export function userIsInAdmins (userId, groupId) {
   return getGroupById(groupId)
   .then(getGroupAdminsIds)
   .then(usersIncludeUserId(userId))
 }
 
-export const getAllGroupsMembersIds = groups => {
+export function getAllGroupsMembersIds (groups) {
   return chain(groups)
   .map(getAllGroupMembersIds)
   .flatten()
   .value()
 }
 
-export const getGroupAdminsIds = group => {
+export function getGroupAdminsIds (group) {
   return getUsersIdsByAgregatedCategories(group, [ 'admins' ])
 }
 
-export const getAllGroupMembersIds = group => {
+export function getAllGroupMembersIds (group) {
   return getUsersIdsByAgregatedCategories(group, Group.categories.members)
 }
 
-export const getGroupMembersAndRequestedUsersIds = group => {
+export function getGroupMembersAndRequestedUsersIds (group) {
   return getUsersIdsByAgregatedCategories(group, Group.categories.members.concat([ 'requested' ]))
 }
 
-export const getGroupRequestedUsersIds = group => {
+export function getGroupRequestedUsersIds (group) {
   return getUsersIdsByAgregatedCategories(group, [ 'requested' ])
 }
 

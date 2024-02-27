@@ -2,7 +2,7 @@ import { assert_ } from '#lib/utils/assert_types'
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo
-export const distanceBetween = (latLngA, latLngB) => {
+export function distanceBetween (latLngA, latLngB) {
   const [ latA, lngA ] = latLngA
   const [ latB, lngB ] = latLngB
 
@@ -25,7 +25,7 @@ const R = 6378137
 // DEG_TO_RAD
 const d2r = Math.PI / 180
 
-export const kmBetween = (latLngA, latLngB) => {
+export function kmBetween (latLngA, latLngB) {
   assert_.arrays([ latLngA, latLngB ])
   const meters = distanceBetween(latLngA, latLngB)
   // 1km precision above 10km

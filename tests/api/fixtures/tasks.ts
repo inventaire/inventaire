@@ -5,7 +5,7 @@ import { createHuman, createWork } from './entities.js'
 
 const promises = {}
 
-export const createSomeTasks = humanLabel => {
+export function createSomeTasks (humanLabel) {
   if (promises[humanLabel] != null) return promises[humanLabel]
 
   const human = { labels: { en: humanLabel } }

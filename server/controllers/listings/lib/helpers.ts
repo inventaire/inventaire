@@ -1,6 +1,6 @@
 import { keyBy } from 'lodash-es'
 
-export const filterFoundElementsUris = (elements, uris) => {
+export function filterFoundElementsUris (elements, uris) {
   const foundElements = []
   const notFoundUris = []
   const elementsByUris = keyBy(elements, 'uri')

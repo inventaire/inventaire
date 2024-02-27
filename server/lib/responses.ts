@@ -20,7 +20,7 @@ const okWarning = (res, category, warning, status = 200) => {
   send(res, { ok: true })
 }
 
-export const wrap = (res, key, data) => {
+export function wrap (res, key, data) {
   const obj = {}
   obj[key] = data
   send(res, obj)
@@ -30,7 +30,7 @@ export const wrap = (res, key, data) => {
 // TO: .then Wrap(res, 'users')
 export const Wrap = (res, key) => data => wrap(res, key, data)
 
-export const send = (res, data) => {
+export function send (res, data) {
   assert_.object(res)
   assert_.object(data)
   setWarnings(res, data)
@@ -41,13 +41,13 @@ export const sendText = (res, text) => res.send(text)
 export const SendText = res => text => res.send(text)
 
 // Stringify static JSON only once
-export const sendStaticJson = (res, staticJson) => {
+export function sendStaticJson (res, staticJson) {
   res.header('content-type', 'application/json').send(staticJson)
 }
 
 export const Send = res => send.bind(null, res)
 
-export const addWarning = (res, message) => {
+export function addWarning (res, message) {
   assert_.object(res)
   assert_.string(message)
   warn(message)

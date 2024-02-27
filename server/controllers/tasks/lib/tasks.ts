@@ -42,7 +42,7 @@ export const getTaskById = db.get
 
 export const getTasksByIds = db.byIds
 
-export const getTasksByScore = options => {
+export function getTasksByScore (options) {
   const { limit, offset } = options
   return db.viewCustom('byScore', {
     limit,
@@ -52,7 +52,7 @@ export const getTasksByScore = options => {
   })
 }
 
-export const getTasksByEntitiesType = options => {
+export function getTasksByEntitiesType (options) {
   const { type, limit, offset } = options
   return db.viewCustom('byEntitiesType', {
     startkey: type,
@@ -63,15 +63,15 @@ export const getTasksByEntitiesType = options => {
   })
 }
 
-export const getTasksBySuspectUri = (suspectUri, options) => {
+export function getTasksBySuspectUri (suspectUri, options) {
   return getTasksBySuspectUris([ suspectUri ], options)
 }
 
-export const getTasksBySuspectUriAndState = (suspectUri, state) => {
+export function getTasksBySuspectUriAndState (suspectUri, state) {
   return db.viewByKey('bySuspectUriAndState', [ suspectUri, state ])
 }
 
-export const getTasksBySuggestionUri = suggestionUri => {
+export function getTasksBySuggestionUri (suggestionUri) {
   return db.viewByKey('bySuggestionUriAndState', [ suggestionUri, null ])
 }
 

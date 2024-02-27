@@ -42,7 +42,7 @@ export const sha1 = createHexHash('sha1')
 export const md5 = createHexHash('md5')
 export const sha1FromStream = createHexHashFromStream('sha1')
 
-export const getSha256Base64Digest = input => {
+export function getSha256Base64Digest (input) {
   return crypto.createHash('sha256')
   .update(input)
   .digest('base64')

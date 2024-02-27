@@ -25,7 +25,7 @@ const updateStatus = (docId, status, doc) => {
   return doc
 }
 
-export const getRelationStatus = (userId, otherId) => {
+export function getRelationStatus (userId, otherId) {
   return getUsersRelation(userId, otherId)
   .catch(ignoreNotFound)
   .then(doc => {
@@ -37,20 +37,20 @@ export const getRelationStatus = (userId, otherId) => {
   })
 }
 
-export const putFriendStatus = (userId, otherId) => {
+export function putFriendStatus (userId, otherId) {
   return putStatus(userId, otherId, 'friends')
 }
 
-export const putRequestedStatus = (userId, otherId) => {
+export function putRequestedStatus (userId, otherId) {
   const status = userId < otherId ? 'a-requested' : 'b-requested'
   return putStatus(userId, otherId, status)
 }
 
-export const putNoneStatus = (userId, otherId) => {
+export function putNoneStatus (userId, otherId) {
   return putStatus(userId, otherId, 'none')
 }
 
-export const getPendingFriendsRequestsCount = userId => {
+export function getPendingFriendsRequestsCount (userId) {
   return getUserRelations(userId)
   .then(relations => relations.otherRequested.length)
 }

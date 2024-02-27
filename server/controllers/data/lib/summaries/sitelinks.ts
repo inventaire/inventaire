@@ -1,7 +1,7 @@
 import { getSitelinkData, getSitelinkUrl } from 'wikibase-sdk'
 import { logError } from '#lib/utils/logs'
 
-export const getWikipediaSitelinksData = sitelinks => {
+export function getWikipediaSitelinksData (sitelinks) {
   if (!sitelinks) return []
   return Object.entries(sitelinks).map(getWikipediaSummaryData)
 }

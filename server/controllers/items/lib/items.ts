@@ -19,14 +19,14 @@ export const getItemsByOwners = ownersIds => db.viewByKeys('byOwner', ownersIds)
 export const getItemsByEntity = entityUri => db.viewByKeys('byEntity', [ entityUri ])
 export const getItemsByEntities = entitiesUris => db.viewByKeys('byEntity', entitiesUris)
 
-export const getItemsByOwnerAndEntities = (ownerId, entitiesUris) => {
+export function getItemsByOwnerAndEntities (ownerId, entitiesUris) {
   const keys = entitiesUris.map(uri => [ ownerId, uri ])
   return db.viewByKeys('byOwnerAndEntity', keys)
 }
 
 export const getItemsByPreviousEntity = entityUri => db.viewByKey('byPreviousEntity', entityUri)
 
-export const getPublicItemsByOwnerAndDate = ({ ownerId, since, until }) => {
+export function getPublicItemsByOwnerAndDate ({ ownerId, since, until }) {
   assert_.string(ownerId)
   assert_.number(since)
   assert_.number(until)
@@ -38,7 +38,7 @@ export const getPublicItemsByOwnerAndDate = ({ ownerId, since, until }) => {
   })
 }
 
-export const getPublicItemsByShelfAndDate = ({ shelf, since, until }) => {
+export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
   assert_.string(shelf)
   assert_.number(since)
   assert_.number(until)
@@ -61,7 +61,7 @@ export const getPublicItemsByDate = (limit = 15, offset = 0, assertImage = false
   .then(formatItems(reqUserId))
 }
 
-export const createItems = async (userId, items) => {
+export async function createItems (userId, items) {
   assert_.array(items)
   items = items.map(item => Item.create(userId, item))
   await validateItemsAsync(items)
@@ -76,7 +76,7 @@ export const createItems = async (userId, items) => {
   return docs
 }
 
-export const updateItems = async (userId, itemUpdateData) => {
+export async function updateItems (userId, itemUpdateData) {
   await validateItemsAsync([ itemUpdateData ])
   const currentItem = await db.get(itemUpdateData._id)
   let updatedItem = Item.update(userId, itemUpdateData, currentItem)
@@ -85,7 +85,7 @@ export const updateItems = async (userId, itemUpdateData) => {
   return updatedItem
 }
 
-export const changeItemOwner = transacDoc => {
+export function changeItemOwner (transacDoc) {
   const { item } = transacDoc
   return db.get(item)
   .then(Item.changeOwner.bind(null, transacDoc))
@@ -93,7 +93,7 @@ export const changeItemOwner = transacDoc => {
 }
 
 // Data serializa emails and rss feeds templates
-export const serializeItemData = async item => {
+export async function serializeItemData (item) {
   item = await addSnapshotToItem(item)
   const { 'entity:title': title, 'entity:authors': authors, 'entity:image': image } = item.snapshot
   item.title = title
@@ -102,7 +102,7 @@ export const serializeItemData = async item => {
   return item
 }
 
-export const updateItemsShelves = async (action, shelvesIds, userId, itemsIds) => {
+export async function updateItemsShelves (action, shelvesIds, userId, itemsIds) {
   const items = await getItemsByIds(itemsIds)
   validateOwnership(userId, items)
   const updatedItems = items.map(item => {

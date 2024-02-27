@@ -25,7 +25,7 @@ export const createItems = async (user, itemsData = []) => {
   return customAuthReq(user, 'post', '/api/items', items)
 }
 
-export const createItem = async (user, itemData) => {
+export async function createItem (user, itemData) {
   user = user || getUser()
   itemData = itemData || {}
   itemData.visibility = itemData.visibility || [ 'public' ]
@@ -34,7 +34,7 @@ export const createItem = async (user, itemData) => {
   return item
 }
 
-export const createRandomizedItems = (user, itemsData) => {
+export function createRandomizedItems (user, itemsData) {
   return createItems(user, itemsData.map(fillItemWithRandomData))
 }
 

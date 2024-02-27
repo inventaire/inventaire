@@ -78,7 +78,7 @@ export async function rawCustomAuthReq ({ user, method, url, options = {} }) {
   return rawRequest(method, url, options)
 }
 
-export const postUrlencoded = (url, body) => {
+export function postUrlencoded (url, body) {
   return rawRequest('post', url, {
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
@@ -88,7 +88,7 @@ export const postUrlencoded = (url, body) => {
   })
 }
 
-export const bearerTokenReq = (token, method, endpoint, body) => {
+export function bearerTokenReq (token, method, endpoint, body) {
   assert_.object(token)
   assert_.string(token.access_token)
   return rawRequest(method, endpoint, {

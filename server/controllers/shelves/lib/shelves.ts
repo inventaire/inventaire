@@ -14,7 +14,7 @@ const { updatable } = shelfAttributes
 
 const db = await dbFactory('shelves')
 
-export const createShelf = async newShelf => {
+export async function createShelf (newShelf) {
   const shelf = Shelf.create(newShelf)
   await validateVisibilityKeys(shelf.visibility, shelf.owner)
   return db.postAndReturn(shelf)
@@ -24,7 +24,7 @@ export const getShelfById = db.get
 
 export const getShelvesByIds = db.byIds
 
-export const getShelvesByIdsWithItems = async (ids, reqUserId) => {
+export async function getShelvesByIdsWithItems (ids, reqUserId) {
   const shelves = await getShelvesByIds(ids)
   const shelvesCount = compact(shelves).length
   if (shelvesCount === 0) return []
@@ -33,11 +33,11 @@ export const getShelvesByIdsWithItems = async (ids, reqUserId) => {
   return assignItemsToShelves(shelves, items)
 }
 
-export const getShelvesByOwners = ownersIds => {
+export function getShelvesByOwners (ownersIds) {
   return db.viewByKeys('byOwner', ownersIds)
 }
 
-export const updateShelfAttributes = async params => {
+export async function updateShelfAttributes (params) {
   const { shelfId, reqUserId } = params
   const newAttributes = pick(params, updatable)
   if (newAttributes.visibility) {
@@ -48,17 +48,17 @@ export const updateShelfAttributes = async params => {
   return db.putAndReturn(updatedShelf)
 }
 
-export const addItemsToShelves = async (shelvesIds, itemsIds, userId) => {
+export async function addItemsToShelves (shelvesIds, itemsIds, userId) {
   const docs = await updateShelvesItems('addShelves', shelvesIds, userId, itemsIds)
   await emit('shelves:update', shelvesIds)
   return docs
 }
 
-export const removeItemsFromShelves = (shelvesIds, itemsIds, userId) => {
+export function removeItemsFromShelves (shelvesIds, itemsIds, userId) {
   return updateShelvesItems('deleteShelves', shelvesIds, userId, itemsIds)
 }
 
-export const bulkDeleteShelves = async shelves => {
+export async function bulkDeleteShelves (shelves) {
   if (shelves.length === 0) return
   await db.bulkDelete(shelves)
   const reqUserId = shelves[0].owner
@@ -68,14 +68,14 @@ export const bulkDeleteShelves = async shelves => {
   await updateItemsShelves('deleteShelves', shelvesIds, reqUserId, itemsIds)
 }
 
-export const deleteShelvesItems = async shelves => {
+export async function deleteShelvesItems (shelves) {
   const itemsIds = uniq(flatMap(shelves, 'items'))
   const docs = await getItemsByIds(itemsIds).then(compact)
   await itemsBulkDelete(docs)
   return docs
 }
 
-export const validateShelfOwnership = (userId, shelves) => {
+export function validateShelfOwnership (userId, shelves) {
   shelves = forceArray(shelves)
   for (const shelf of shelves) {
     if (shelf.owner !== userId) {
@@ -84,7 +84,7 @@ export const validateShelfOwnership = (userId, shelves) => {
   }
 }
 
-export const deleteUserShelves = userId => {
+export function deleteUserShelves (userId) {
   return db.viewByKeys('byOwner', [ userId ])
   .then(db.bulkDelete)
 }

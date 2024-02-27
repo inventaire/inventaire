@@ -166,7 +166,7 @@ for (let type in typesAliases) {
 
 export const typesNames = Object.keys(typesAliases)
 
-export const getPluralType = singularType => {
+export function getPluralType (singularType) {
   const pluralizedType = singularType + 's'
   if (!typesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
   return pluralizedType

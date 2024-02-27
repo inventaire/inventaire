@@ -5,7 +5,7 @@ import Notification from '#models/notification'
 
 const db = await dbFactory('notifications')
 
-export const getNotificationsByUserId = userId => {
+export function getNotificationsByUserId (userId) {
   assert_.string(userId)
   return db.viewCustom('byUserAndTime', {
     startkey: [ userId, maxKey ],
@@ -17,16 +17,16 @@ export const getNotificationsByUserId = userId => {
 
 // Make notifications accessible by the subjects they involve:
 // user, group, item etc
-export const getNotificationsBySubject = subjectId => {
+export function getNotificationsBySubject (subjectId) {
   return db.viewByKey('bySubject', subjectId)
 }
 
-export const createNotification = (user, type, data) => {
+export function createNotification (user, type, data) {
   const doc = Notification.create({ user, type, data })
   return db.post(doc)
 }
 
-export const updateNotificationReadStatus = async (userId, times) => {
+export async function updateNotificationReadStatus (userId, times) {
   assert_.string(userId)
   assert_.numbers(times)
   const keys = times.map(time => [ userId, time ])
@@ -35,7 +35,7 @@ export const updateNotificationReadStatus = async (userId, times) => {
   return db.bulk(docs)
 }
 
-export const deleteAllNotificationsBySubjectId = subjectId => {
+export function deleteAllNotificationsBySubjectId (subjectId) {
   // You absolutly don't want this id to be undefined
   // as this would end up deleting the whole database
   assert_.string(subjectId)
@@ -43,7 +43,7 @@ export const deleteAllNotificationsBySubjectId = subjectId => {
   .then(db.bulkDelete)
 }
 
-export const getUnreadNotificationsCount = userId => {
+export function getUnreadNotificationsCount (userId) {
   return getNotificationsByUserId(userId)
   .then(getUnreadCount)
 }

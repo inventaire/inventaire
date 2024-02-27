@@ -6,7 +6,7 @@ import { getPluralType } from '#lib/wikidata/aliases'
 import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
-export const isbnProperty = num => {
+export function isbnProperty (num) {
   return Object.assign({}, concurrentString, {
     validate: isbn => {
       if (isbn == null) return false
@@ -22,13 +22,13 @@ export const isbnProperty = num => {
 
 // External ids regexs can be found
 // on their Wikidata property page P1793 statement
-export const externalId = regex => {
+export function externalId (regex) {
   return Object.assign({}, concurrentExternalId, {
     validate: regex.test.bind(regex),
   })
 }
 
-export const typedExternalId = regexPerType => {
+export function typedExternalId (regexPerType) {
   return Object.assign({}, concurrentExternalId, {
     typeSpecificValidation: true,
     validate: (value, entityType) => {
@@ -41,7 +41,7 @@ export const typedExternalId = regexPerType => {
   })
 }
 
-export const allowedPropertyValues = property => {
+export function allowedPropertyValues (property) {
   const allowedValuesPerType = allowedValuesPerTypePerProperty[property]
   return Object.assign({}, uniqueEntity, {
     typeSpecificValidation: true,
@@ -52,7 +52,7 @@ export const allowedPropertyValues = property => {
   })
 }
 
-export const externalIdWithFormatter = ({ regex, format }) => {
+export function externalIdWithFormatter ({ regex, format }) {
   return Object.assign({}, concurrentExternalId, {
     validate: regex.test.bind(regex),
     format,

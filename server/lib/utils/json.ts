@@ -4,13 +4,13 @@ import { assert_ } from './assert_types.js'
 
 const stringify = data => JSON.stringify(data, null, 2)
 
-export const readJsonFile = path => {
+export function readJsonFile (path) {
   assert_.string(path)
   return readFile(path, 'utf-8')
   .then(JSON.parse)
 }
 
-export const writeJsonFile = (path, data) => {
+export function writeJsonFile (path, data) {
   assert_.string(path)
   assert_.type('object|array', data)
   const json = stringify(data)

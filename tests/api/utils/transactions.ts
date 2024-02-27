@@ -11,7 +11,7 @@ export async function getTransaction (user, id) {
   else throw new Error(`transaction not found: ${id}`)
 }
 
-export const getTransactionsByItem = (user, itemId) => {
+export function getTransactionsByItem (user, itemId) {
   return customAuthReq(user, 'get', `${endpoint}?action=by-item&item=${itemId}`)
 }
 

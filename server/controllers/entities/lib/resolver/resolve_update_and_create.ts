@@ -55,7 +55,7 @@ const handleError = (strict, errors, err, entry) => {
   }
 }
 
-export const sanitizeEntries = (entries, strict) => {
+export function sanitizeEntries (entries, strict) {
   const errors = []
   const sanitizedEntries = []
   entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))

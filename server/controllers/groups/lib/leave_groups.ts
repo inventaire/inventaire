@@ -11,7 +11,7 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-export const userCanLeaveGroup = async (userId, groupId) => {
+export async function userCanLeaveGroup (userId, groupId) {
   const group = await getGroupById(groupId)
   const { admins, members } = group
   const adminsIds = admins.map(property('user'))

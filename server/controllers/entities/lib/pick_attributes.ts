@@ -12,7 +12,7 @@ const infoAttributes = [
   'originalLang',
 ]
 
-export const pickAttributes = (entities, attributes) => {
+export function pickAttributes (entities, attributes) {
   if (attributes.includes('info')) {
     attributes = infoAttributes.concat(attributes)
   }
@@ -28,7 +28,7 @@ export const pickAttributes = (entities, attributes) => {
   return formattedEntities
 }
 
-export const pickLanguages = (entities, lang) => {
+export function pickLanguages (entities, lang) {
   const formattedEntities = {}
   for (const uri of Object.keys(entities)) {
     const entity = entities[uri]

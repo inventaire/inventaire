@@ -13,7 +13,7 @@ import Transaction from '#models/transaction'
 const db = await dbFactory('transactions')
 
 export const getTransactionById = db.get
-export const getTransactionsByUser = userId => {
+export function getTransactionsByUser (userId) {
   return db.viewCustom('byUserAndItem', {
     // get all the docs with this userId
     startkey: [ userId, minKey ],
@@ -22,12 +22,12 @@ export const getTransactionsByUser = userId => {
   })
 }
 
-export const getTransactionsByUserAndItem = (userId, itemId) => {
+export function getTransactionsByUserAndItem (userId, itemId) {
   assert_.strings([ userId, itemId ])
   return db.viewByKey('byUserAndItem', [ userId, itemId ])
 }
 
-export const createTransaction = async (itemDoc, ownerDoc, requesterDoc) => {
+export async function createTransaction (itemDoc, ownerDoc, requesterDoc) {
   const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
   log(transaction, 'transaction')
   const couchRes = await db.post(transaction)
@@ -35,39 +35,39 @@ export const createTransaction = async (itemDoc, ownerDoc, requesterDoc) => {
   return couchRes
 }
 
-export const addTransactionMessage = (userId, message, transactionId) => {
+export function addTransactionMessage (userId, message, transactionId) {
   assert_.strings([ userId, message, transactionId ])
   if (message) {
     return comments_.addTransactionComment(userId, message, transactionId)
   }
 }
 
-export const updateTransactionState = async (transaction, newState, userId) => {
+export async function updateTransactionState (transaction, newState, userId) {
   Transaction.validatePossibleState(transaction, newState)
   await db.update(transaction._id, stateUpdater(newState, userId, transaction))
   await emit('transaction:update', transaction, newState)
 }
 
-export const markTransactionAsRead = (userId, transaction) => {
+export function markTransactionAsRead (userId, transaction) {
   const role = userRole(userId, transaction)
   // Not handling cases when both user are connected:
   // should be clarified once sockets/server events will be implemented
   return db.update(transaction._id, BasicUpdater(`read.${role}`, true))
 }
 
-export const updateReadForNewMessage = async (userId, transaction) => {
+export async function updateReadForNewMessage (userId, transaction) {
   const updatedReadStates = updateReadStates(userId, transaction)
   // Spares a db write if updatedReadStates is already the current read state object
   if (sameObjects(updatedReadStates, transaction.read)) return
   return db.update(transaction._id, BasicUpdater('read', updatedReadStates))
 }
 
-export const getUserActiveTransactionsCount = userId => {
+export function getUserActiveTransactionsCount (userId) {
   return getTransactionsByUser(userId)
   .then(activeCount)
 }
 
-export const cancelAllActiveTransactions = async userId => {
+export async function cancelAllActiveTransactions (userId) {
   const transactions = await getTransactionsByUser(userId)
   const activeTransactions = transactions.filter(Transaction.isActive)
   await Promise.all(activeTransactions.map(transaction => {
@@ -75,13 +75,13 @@ export const cancelAllActiveTransactions = async userId => {
   }))
 }
 
-export const checkIfItemIsBusy = async itemId => {
+export async function checkIfItemIsBusy (itemId) {
   assert_.string(itemId)
   const rows = await getBusyItems([ itemId ])
   return rows.length > 0
 }
 
-export const setItemsBusyFlag = async items => {
+export async function setItemsBusyFlag (items) {
   assert_.objects(items)
   const itemsIdsToCheck = map(items.filter(mayBeBusy), '_id')
   const rows = await getBusyItems(itemsIdsToCheck)

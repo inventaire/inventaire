@@ -39,7 +39,7 @@ export const createItemsNote = ({ allActivitiesItems, lang, name, actor, parentL
   }
 }
 
-export const findFullRangeFromActivities = activitiesDocs => {
+export function findFullRangeFromActivities (activitiesDocs) {
   return {
     since: min(map(activitiesDocs, 'object.items.since')),
     until: max(map(activitiesDocs, 'object.items.until')),

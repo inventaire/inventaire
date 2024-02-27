@@ -58,7 +58,7 @@ const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLan
   return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }
 
-export const getMostRelevantWikipediaArticles = async (authorEntity, worksLabelsLangs) => {
+export async function getMostRelevantWikipediaArticles (authorEntity, worksLabelsLangs) {
   const { sitelinks, originalLang } = authorEntity
   const langs = compact(uniq(worksLabelsLangs.concat([ originalLang, 'en' ])))
   const articlesParams = langs

@@ -17,7 +17,7 @@ for (const access in rolesByAccess) {
   }
 }
 
-export const getUserAccessLevels = user => {
+export function getUserAccessLevels (user) {
   if (!user) return []
   const { roles: userRoles } = user
   if (!userRoles || userRoles.length === 0) return []

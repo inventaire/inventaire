@@ -1,6 +1,6 @@
 import { newError } from '#lib/error/error'
 
-export const getIpBinaryRepresentation = ip => {
+export function getIpBinaryRepresentation (ip) {
   const isIpv6 = ip.includes(':')
   const maxLength = isIpv6 ? 16 : 8
   const parts = isIpv6 ? getIpv6Parts(ip) : getIpv4Parts(ip)

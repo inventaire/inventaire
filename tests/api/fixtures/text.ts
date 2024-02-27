@@ -22,7 +22,7 @@ export const firstName = () => sampleSize(firstNames, 1)[0]
 // and be rejected because of it
 export const getSomeUsername = () => firstName() + getRandomString(4)
 export const sentence = () => capitalize(randomWords(20)) + '.'
-export const randomLongWord = wordLength => {
+export function randomLongWord (wordLength) {
   const longWord = randomWords(wordLength).replaceAll(' ', '').slice(0, wordLength + 10)
   return capitalize(longWord)
 }

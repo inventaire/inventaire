@@ -17,7 +17,7 @@ const db = await dbFactory('entities')
 export const getEntityById = db.get
 export const getEntitiesByIds = db.byIds
 
-export const getInvEntitiesByIsbns = isbns => {
+export function getInvEntitiesByIsbns (isbns) {
   const keys = isbns
     .map(toIsbn13h)
     .filter(identity)
@@ -132,11 +132,11 @@ export async function imageIsUsed (imageHash) {
 
 const getUri = entity => entity.uri
 
-export const getFirstPropertyClaim = (entity, property) => {
+export function getFirstPropertyClaim (entity, property) {
   if (entity.claims?.[property] != null) return entity.claims[property][0]
 }
 
-export const setTermsFromClaims = entity => {
+export function setTermsFromClaims (entity) {
   const title = getFirstPropertyClaim(entity, 'wdt:P1476')
   const subtitle = getFirstPropertyClaim(entity, 'wdt:P1680')
   if (title) {

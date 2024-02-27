@@ -43,7 +43,7 @@ export async function controllerWrapper (controllerParams, req, res) {
   }
 }
 
-export const ControllerWrapper = controllerParams => {
+export function ControllerWrapper (controllerParams) {
   validateControllerWrapperParams(controllerParams)
   return controllerWrapper.bind(null, controllerParams)
 }
@@ -51,7 +51,7 @@ export const ControllerWrapper = controllerParams => {
 // Allow to validate parameters separately, so that
 // consumers of controllerWrapper can run this validate only once
 // when the server is starting (rather than for each request)
-export const validateControllerWrapperParams = controllerParams => {
+export function validateControllerWrapperParams (controllerParams) {
   validateObject(controllerParams, controllerParamsKeys)
   const { access, controller, sanitization, track: trackActionArray } = controllerParams
   assert_.string(access)

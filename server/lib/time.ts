@@ -10,7 +10,7 @@ export const oneWeek = 7 * oneDay
 export const oneMonth = 30 * oneDay
 export const oneYear = 365 * oneDay
 
-export const msToHumanTime = ms => {
+export function msToHumanTime (ms) {
   const seconds = Math.trunc((ms / oneSecond) % 60)
   const minutes = Math.trunc((ms / oneMinute) % 60)
   const hours = Math.trunc((ms / oneHour) % 24)
@@ -18,7 +18,7 @@ export const msToHumanTime = ms => {
   return `${days}d ${hours}h ${minutes}m ${seconds}s`
 }
 
-export const coloredElapsedTime = startTime => {
+export function coloredElapsedTime (startTime) {
   if (startTime == null) return ''
   const [ seconds, nanoseconds ] = process.hrtime(startTime)
   const elapsedMs = Math.round((seconds * 1000) + (nanoseconds / 1000000))

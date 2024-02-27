@@ -5,7 +5,7 @@ import { assert_ } from '#lib/utils/assert_types'
 const db = await dbFactory('oauth_tokens')
 const idAttribute = 'accessToken'
 
-export const getOauthTokenbyId = async id => {
+export async function getOauthTokenbyId (id) {
   const doc = await db.get(id)
   doc[idAttribute] = doc._id
   doc.accessTokenExpiresAt = new Date(doc.accessTokenExpiresAt)
@@ -13,7 +13,7 @@ export const getOauthTokenbyId = async id => {
   return doc
 }
 
-export const saveOauthToken = async (token, userId, clientId) => {
+export async function saveOauthToken (token, userId, clientId) {
   assert_.object(token)
   assert_.string(userId)
   assert_.string(clientId)

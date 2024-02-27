@@ -2,7 +2,7 @@ import { log, warn } from '#lib/utils/logs'
 
 export const activeI18nLangs = 'ar bn ca cs da de el en eo es fr hu id it ja nb nl pa pl pt ro ru sk sv tr uk'.split(' ')
 
-export const logBulkRes = (res, label) => {
+export function logBulkRes (res, label) {
   const { items } = res
   const globalStatus = {}
 

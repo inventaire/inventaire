@@ -7,7 +7,7 @@ import { assert_ } from './utils/assert_types.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
 
-export const buildSearcher = params => {
+export function buildSearcher (params) {
   const { dbBaseName, queryBuilder } = params
   const index = indexesNamesByBaseNames[dbBaseName]
   assert_.string(index)
@@ -35,13 +35,13 @@ export const buildSearcher = params => {
   }
 }
 
-export const getHits = res => {
+export function getHits (res) {
   checkShardError(res)
   const { hits } = res
   return hits.hits
 }
 
-export const getHitsAndTotal = res => {
+export function getHitsAndTotal (res) {
   checkShardError(res)
   const { hits } = res
   return {
@@ -50,7 +50,7 @@ export const getHitsAndTotal = res => {
   }
 }
 
-export const checkShardError = ({ _shards }) => {
+export function checkShardError ({ _shards }) {
   if (_shards.failures) {
     const failure = _shards.failures[0]
     throw newError(failure.reason.reason, 500, failure)
@@ -60,7 +60,7 @@ export const checkShardError = ({ _shards }) => {
 export const parseResponse = res => getHits(res).map(parseHit)
 
 // Reshape the error object to be fully displayed when logged by warn
-export const formatError = err => {
+export function formatError (err) {
   // Directly rethrow errors that aren't from Elasticsearch
   // like ECONNREFUSED errors
   if (err.body == null) throw err

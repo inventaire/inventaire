@@ -1,6 +1,6 @@
 import { isPositiveIntegerString } from '#lib/boolean_validations'
 
-export const getSimpleDayDate = date => {
+export function getSimpleDayDate (date) {
   if (date) {
     // Parse ISO date
     date.split('T')[0]

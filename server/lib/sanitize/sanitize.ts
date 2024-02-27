@@ -15,7 +15,7 @@ const { generics } = parameters
 // when something needs to be done during the current tick.
 // Example: consumers of the request (aka req) stream need to run on the same tick.
 // If they have to wait for the next tick, 'data' events might be over
-export const sanitize = (req, res, configs) => {
+export function sanitize (req, res, configs) {
   assert_.object(req.query)
 
   const place = getPlace(req.method, configs)
@@ -91,7 +91,7 @@ const getParameterFunctions = (name, generic) => {
   return parameter
 }
 
-export const validateSanitization = configs => {
+export function validateSanitization (configs) {
   for (const name in configs) {
     if (!optionsNames.has(name)) {
       const config = configs[name]

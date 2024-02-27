@@ -19,7 +19,7 @@ export async function getRelationStatus (reqUser, otherUser) {
   return 'none'
 }
 
-export const action = (action, reqUser, otherUser) => {
+export function action (action, reqUser, otherUser) {
   return customAuthReq(reqUser, 'post', endpoint, {
     action,
     user: otherUser._id,

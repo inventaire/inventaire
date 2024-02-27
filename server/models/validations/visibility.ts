@@ -7,7 +7,7 @@ const keywordValues = [
   'public',
 ]
 
-export const isVisibilityKey = value => {
+export function isVisibilityKey (value) {
   if (!isString(value)) return false
   if (keywordValues.includes(value)) return true
   if (isVisibilityGroupKey(value)) return true

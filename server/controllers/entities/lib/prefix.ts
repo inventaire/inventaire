@@ -2,7 +2,7 @@ import { isPropertyId } from 'wikibase-sdk'
 import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 
-export const prefixify = (id, prefix) => {
+export function prefixify (id, prefix) {
   if (id == null) return
   if (prefix) return `${prefix}:${id}`
 

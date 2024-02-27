@@ -1,7 +1,7 @@
 import { simplifyQualifier } from 'wikibase-sdk'
 import { newError } from '#lib/error/error'
 
-export const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
+export function flattenQualifierProperties (simplifiedClaims, rawClaims) {
   if (simplifiedClaims['wdt:P179']?.length === 1) {
     const { qualifiers: serieQualifiers } = rawClaims.P179[0]
     if (serieQualifiers?.P1545?.length === 1) {
@@ -11,7 +11,7 @@ export const flattenQualifierProperties = (simplifiedClaims, rawClaims) => {
   }
 }
 
-export const relocateQualifierProperties = invEntity => {
+export function relocateQualifierProperties (invEntity) {
   const { claims } = invEntity
   const series = claims.P179
   const seriesOrdinals = claims.P1545

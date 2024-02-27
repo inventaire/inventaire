@@ -1,4 +1,4 @@
-export const formatAuthorName = name => {
+export function formatAuthorName (name) {
   if (name.includes(', ')) {
     const [ lastName, firstName ] = name.split(', ')
     return `${firstName} ${lastName}`
