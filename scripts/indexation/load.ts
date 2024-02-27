@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 import split from 'split'
 import { red } from 'tiny-chalk'
 import { addToBatch, postBatch } from '#db/elasticsearch/bulk'

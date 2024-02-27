@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 
 // Preloading design docs so that when design docs are
 // effectively updated on server reboot the views are already indexed

@@ -1,4 +1,4 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
 import { addUserRole, removeUserRole } from '#controllers/user/lib/user'
 import { logSuccessAndExit, logErrorAndExit } from '../scripts_utils.js'
 
