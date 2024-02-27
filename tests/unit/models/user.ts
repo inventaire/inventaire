@@ -1,103 +1,120 @@
 import should from 'should'
-import User from '#models/user'
+import { addUserDocRole, createUserDoc, removeUserDocRole, softDeleteUser, updateUserDocEmail, updateUserItemsCounts } from '#models/user'
+import { shouldNotBeCalled } from '#tests/unit/utils'
 
-const _create = args => User._create.apply(null, args)
-const create = args => User.create.apply(null, args)
-
-const validUser = () => [
-  'rocky4',
-  'hi@validemail.org',
-  'local',
-  'se',
-  'password',
-]
-
-const replaceParam = (index, value, baseArgGen = validUser) => {
-  const args = baseArgGen()
-  args[index] = value
-  return args
-}
+const someUsername = 'rocky4'
+const someEmail = 'hi@validemail.org'
+const someCreationStrategy = 'local'
+const someLanguage = 'se'
+const somePassword = 'password'
 
 describe('user model', () => {
   describe('creation strategy', () => {
-    it('should throw on missing strategy', () => {
-      const args = replaceParam(2, null);
-      (() => _create(args)).should.throw()
+    it('should throw on missing strategy', async () => {
+      await createUserDoc(someUsername, someEmail, null, someLanguage, somePassword)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.should.be.ok()
+      })
     })
 
-    it('should throw on invalid strategy', () => {
-      const args = replaceParam(2, 'flower!');
-      (() => _create(args)).should.throw()
+    it('should throw on invalid strategy', async () => {
+      // @ts-ignore
+      await createUserDoc(someUsername, someEmail, 'flower!', someLanguage, somePassword)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.should.be.ok()
+      })
     })
   })
 
   describe('local signup', () => {
-    it('should return a user on valid args', () => {
-      const user = create(validUser())
+    it('should return a user on valid args', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
       user.should.be.an.Object()
     })
 
     describe('username validation', () => {
-      it('should throw on empty username', () => {
-        const args = replaceParam(0, '');
-        (() => _create(args)).should.throw()
+      it('should throw on empty username', async () => {
+        await createUserDoc('', someEmail, someCreationStrategy, someLanguage, somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
 
-      it('should throw on username with space', () => {
-        const args = replaceParam(0, 'with space');
-        (() => _create(args)).should.throw()
+      it('should throw on username with space', async () => {
+        await createUserDoc('with space', someEmail, someCreationStrategy, someLanguage, somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
 
-      it('should throw on username with special characters', () => {
-        const args = replaceParam(0, 'with$special%characters');
-        (() => _create(args)).should.throw()
+      it('should throw on username with special characters', async () => {
+        await createUserDoc('with$special%characters', someEmail, someCreationStrategy, someLanguage, somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
 
-      it('should normalize usernames', () => {
+      it('should normalize usernames', async () => {
         const nfdNormalizedUsername = 'àéï'.normalize('NFD')
-        const args = replaceParam(0, nfdNormalizedUsername)
-        const { username } = _create(args)
+        const { username } = await createUserDoc(nfdNormalizedUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
         username.should.equal(nfdNormalizedUsername.normalize())
       })
     })
 
     describe('email validation', () => {
-      it('should throw on invalid email', () => {
-        const args = replaceParam(1, 'notanemail');
-        (() => _create(args)).should.throw()
+      it('should throw on invalid email', async () => {
+        await createUserDoc(someUsername, 'notanemail', someCreationStrategy, someLanguage, somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
 
-      it('should throw on missing domain', () => {
-        const args = replaceParam(1, 'morelike@');
-        (() => _create(args)).should.throw()
+      it('should throw on missing domain', async () => {
+        await createUserDoc(someUsername, 'morelike@', someCreationStrategy, someLanguage, somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
     })
 
     describe('language validation', () => {
-      it('should throw on invalid language', () => {
-        const args = replaceParam(3, 'badlang');
-        (() => _create(args)).should.throw()
+      it('should throw on invalid language', async () => {
+        await createUserDoc(someUsername, someEmail, someCreationStrategy, 'badlang', somePassword)
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
 
-      it('should not throw on missing language', () => {
-        const args = replaceParam(3, undefined);
-        (() => _create(args)).should.not.throw()
+      it('should not throw on missing language', async () => {
+        await createUserDoc(someUsername, someEmail, someCreationStrategy, undefined, somePassword)
       })
     })
 
     describe('password validation', () => {
-      it('should throw on passwords too short', () => {
-        const args = replaceParam(4, 'shortpw');
-        (() => _create(args)).should.throw()
+      it('should throw on passwords too short', async () => {
+        await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, 'shortpw')
+        .then(shouldNotBeCalled)
+        .catch(err => {
+          err.should.be.ok()
+        })
       })
     })
   })
 
   describe('delete', () => {
-    it('should delete user attributes not needed by the user souvenir', () => {
-      const user = _create(validUser())
+    it('should delete user attributes not needed by the user souvenir', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
       user._id = user._rev = 'foo'
-      const userSouvenir = User.softDelete(user)
+      // @ts-ignore
+      const userSouvenir = softDeleteUser(user)
       userSouvenir.deleted.should.be.a.Number()
       should(Date.now() - userSouvenir.deleted).be.below(2)
       delete userSouvenir.deleted
@@ -118,70 +135,71 @@ describe('user model', () => {
       public: { 'items:count': 3 },
     }
 
-    it('should update items counts', () => {
-      const user = _create(validUser())
-      const updatedUser = User.updateItemsCounts(counts)(user)
-      updatedUser.snapshot.should.deepEqual(counts)
+    it('should update items counts', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
+      const updatedUser = updateUserItemsCounts(counts)(user)
+      should(updatedUser.snapshot).deepEqual(counts)
     })
 
     // This especially needs to be tested as it might happen that a debounced event
-    // make User.updateItemsCounts be called after a user was deleted
-    it('should not throw if the user was deleted', () => {
-      const user = _create(validUser())
-      const userSouvenir = User.softDelete(user)
-      const updatedUser = User.updateItemsCounts(counts)(userSouvenir)
-      updatedUser.should.equal(userSouvenir)
+    // make updateItemsCounts be called after a user was deleted
+    it('should not throw if the user was deleted', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
+      // @ts-ignore
+      const userSouvenir = softDeleteUser(user)
+      const updatedUser = updateUserItemsCounts(counts)(userSouvenir)
+      should(updatedUser).equal(userSouvenir)
       should(updatedUser.snapshot).not.be.ok()
     })
   })
 
-  describe('addRole', () => {
-    it('should add a first role', () => {
-      const user = _create(validUser())
+  describe('addUserDocRole', () => {
+    it('should add a first role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
       should(user.roles).not.be.ok()
-      User.addRole('admin')(user)
+      addUserDocRole('admin')(user)
       user.roles.should.deepEqual([ 'admin' ])
     })
 
-    it('should add a new role', () => {
-      const user = _create(validUser())
-      User.addRole('admin')(user)
-      User.addRole('dataadmin')(user)
+    it('should add a new role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
+      addUserDocRole('admin')(user)
+      addUserDocRole('dataadmin')(user)
       user.roles.should.deepEqual([ 'admin', 'dataadmin' ])
     })
 
-    it('should not add a duplicated role', () => {
-      const user = _create(validUser())
-      User.addRole('admin')(user);
-      (() => User.addRole('admin')(user)).should.throw()
+    it('should not add a duplicated role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
+      addUserDocRole('admin')(user);
+      (() => addUserDocRole('admin')(user)).should.throw()
     })
 
-    it('should reject an invalid role', () => {
-      const user = _create(validUser());
-      (() => User.addRole('foo')(user)).should.throw()
+    it('should reject an invalid role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword);
+      (() => addUserDocRole('foo')(user)).should.throw()
     })
   })
 
-  describe('removeRole', () => {
-    it('should remove role', () => {
-      const user = _create(validUser())
-      User.addRole('admin')(user)
-      User.addRole('dataadmin')(user)
-      User.removeRole('dataadmin')(user)
+  describe('removeUserDocRole', () => {
+    it('should remove role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
+      addUserDocRole('admin')(user)
+      addUserDocRole('dataadmin')(user)
+      removeUserDocRole('dataadmin')(user)
       user.roles.should.deepEqual([ 'admin' ])
     })
 
-    it('should reject an invalid role', () => {
-      const user = _create(validUser());
-      (() => User.addRole('foo')(user)).should.throw()
+    it('should reject an invalid role', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword);
+      (() => addUserDocRole('foo')(user)).should.throw()
     })
   })
 
-  describe('updateEmail', () => {
-    it('should reset validEmail flag', () => {
-      const user = _create(validUser())
+  describe('updateUserDocEmail', () => {
+    it('should reset validEmail flag', async () => {
+      const user = await createUserDoc(someUsername, someEmail, someCreationStrategy, someLanguage, somePassword)
       user.validEmail = true
-      const updatedEmail = User.updateEmail(user, 'foo@example.org')
+      const updatedEmail = updateUserDocEmail(user, 'foo@example.org')
       updatedEmail.validEmail.should.be.false()
     })
   })

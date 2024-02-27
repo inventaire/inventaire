@@ -3,6 +3,7 @@ import createUser from '#controllers/user/lib/create'
 import { getLangFromHeaders } from '#lib/headers'
 import { track } from '#lib/track'
 import User from '#models/user'
+import userValidations from '#models/validations/user'
 
 const options = { passReqToCallback: true }
 
@@ -25,7 +26,7 @@ const verify = (req, username, password, done) => {
 
 const findLanguage = req => {
   const lang = getLangFromHeaders(req.headers)
-  if (User.validations.language(lang)) return lang
+  if (userValidations.language(lang)) return lang
 }
 
 export default new LocalStrategy(options, verify)

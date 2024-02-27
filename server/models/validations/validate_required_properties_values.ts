@@ -2,7 +2,7 @@ import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 
-export default (claims, checkedProperties) => {
+export function validateRequiredPropertiesValues (claims, checkedProperties) {
   if (claims['wdt:P31']?.[0] == null) {
     throw newError("wdt:P31 array can't be empty", 400, { claims })
   }

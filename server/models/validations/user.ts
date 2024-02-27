@@ -7,7 +7,18 @@ const { creationStrategies, settings } = userAttributes
 
 const { pass, userId, username, email, userImg, boolean, position, BoundedString } = commonValidations
 
-const validations = {
+const deepAttributes = {
+  settings: {},
+}
+
+for (const settingCategory in settings) {
+  deepAttributes.settings[settingCategory] = {}
+  for (const settingName of settings[settingCategory]) {
+    deepAttributes.settings[settingCategory][settingName] = true
+  }
+}
+
+const userValidations = {
   pass,
   userId,
   username,
@@ -23,19 +34,7 @@ const validations = {
   fediversable: boolean,
   customProperties: props => isArray(props) && props.every(isPropertyUri),
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1,
+  deepAttributesExistance: attribute => get(deepAttributes, attribute) != null,
 }
 
-export default validations
-
-const deepAttributes = {
-  settings: {},
-}
-
-for (const settingCategory in settings) {
-  deepAttributes.settings[settingCategory] = {}
-  for (const settingName of settings[settingCategory]) {
-    deepAttributes.settings[settingCategory][settingName] = true
-  }
-}
-
-validations.deepAttributesExistance = attribute => get(deepAttributes, attribute) != null
+export default userValidations

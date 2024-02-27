@@ -3,26 +3,22 @@ import { newError } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import * as groupAttributes from './attributes/group.js'
+import { groupRoles } from '#models/attributes/group'
 import groupValidations from './validations/group.js'
 
 const Group = {}
 
 export default Group
 
-const validations = Group.validations = groupValidations
-const attributes = Group.attributes = groupAttributes
-const { groupRoles } = attributes
-
 Group.create = options => {
   log(options, 'group create')
   const { name, description, searchable, position, creatorId, open } = options
-  validations.pass('name', name)
-  validations.pass('description', description)
-  validations.pass('searchable', searchable)
-  validations.pass('position', position)
-  validations.pass('creatorId', creatorId)
-  validations.pass('open', open)
+  groupValidations.pass('name', name)
+  groupValidations.pass('description', description)
+  groupValidations.pass('searchable', searchable)
+  groupValidations.pass('position', position)
+  groupValidations.pass('creatorId', creatorId)
+  groupValidations.pass('open', open)
 
   const creator = createMembership(creatorId, null)
 

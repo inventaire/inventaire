@@ -4,7 +4,7 @@ import commonValidations from './common.js'
 
 const { pass, boundedString, BoundedString, boolean, position, userId } = commonValidations
 
-export default {
+const groupValidations = {
   pass,
 
   // tests expected to be found on Group.tests for updates,
@@ -20,3 +20,5 @@ export default {
   open: boolean,
   creatorId: userId,
 }
+
+export default groupValidations

@@ -8,7 +8,7 @@ const { pass, itemId, userId, entityUri, BoundedString, imgUrl } = commonValidat
 const { constrained } = itemAttributes
 const constrainedAttributes = Object.keys(constrained)
 
-export default {
+const itemValidations = {
   pass,
   itemId,
   userId,
@@ -31,3 +31,5 @@ export default {
     'entity:ordinal': isString,
   },
 }
+
+export default itemValidations

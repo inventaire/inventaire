@@ -2,4 +2,6 @@ import commonValidations from './common.js'
 
 const { pass, userId, itemId } = commonValidations
 
-export default { pass, userId, itemId }
+const transactionValidations = { pass, userId, itemId }
+
+export default transactionValidations

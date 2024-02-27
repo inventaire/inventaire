@@ -4,7 +4,7 @@ import commonValidations from './common.js'
 
 const { pass, entityUri, userId, BoundedString } = commonValidations
 
-export default {
+const taskValidations = {
   pass,
   // in attributes/task.js, attributes keys should match
   // db keys to verify if attribute is updatable
@@ -19,3 +19,5 @@ export default {
   reporter: userId,
   clue: BoundedString(0, 500),
 }
+
+export default taskValidations

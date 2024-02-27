@@ -20,3 +20,9 @@ export const acceptNullValue = [
   'position',
   'picture',
 ]
+
+export const groupAttributes = {
+  updatable,
+  groupRoles,
+  acceptNullValue,
+}

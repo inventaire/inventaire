@@ -3,7 +3,15 @@ import { isCouchUuid, isEmail, isEntityUri, isGroupId, isImageHash, isItemId, is
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 
-const validations = {
+export const boundedString = (str, minLength, maxLength) => {
+  return isString(str) && (minLength <= str.length && str.length <= maxLength)
+}
+
+export const BoundedString = (minLength, maxLength) => str => {
+  return boundedString(str, minLength, maxLength)
+}
+
+const commonValidations = {
   attribute: isString,
   boolean: isBoolean,
   couchUuid: isCouchUuid,
@@ -29,35 +37,23 @@ const validations = {
   },
   username: isUsername,
   shelves: shelves => isArray(shelves) && shelves.every(isCouchUuid),
+  boundedString,
+  BoundedString,
+  imgUrl: url => isLocalImg(url) || isUrl(url) || isImageHash(url),
+  valid: function (attribute: string, value: unknown, option?: unknown) {
+    let test = this[attribute]
+    // if no test are set at this attribute for this context
+    // default to commonValidations
+    if (test == null) test = commonValidations[attribute]
+    if (test == null) throw newError('missing validation function', 500, { attribute, context: this })
+    return test(value, option)
+  },
+  pass: function (attribute: string, value: unknown, option?: unknown) {
+    if (!commonValidations.valid.call(this, attribute, value, option)) {
+      if (isObject(value)) value = JSON.stringify(value)
+      throw newInvalidError(attribute, value)
+    }
+  },
 }
 
-export default validations
-
-export const boundedString = (str, minLength, maxLength) => {
-  return isString(str) && (minLength <= str.length && str.length <= maxLength)
-}
-
-export const BoundedString = (minLength, maxLength) => str => {
-  return validations.boundedString(str, minLength, maxLength)
-}
-
-validations.boundedString = boundedString
-validations.BoundedString = BoundedString
-
-validations.imgUrl = url => validations.localImg(url) || isUrl(url) || isImageHash(url)
-
-validations.valid = function (attribute, value, option) {
-  let test = this[attribute]
-  // if no test are set at this attribute for this context
-  // default to common validations
-  if (test == null) test = validations[attribute]
-  if (test == null) throw newError('missing validation function', 500, { attribute, context: this })
-  return test(value, option)
-}
-
-validations.pass = function (attribute, value, option) {
-  if (!validations.valid.call(this, attribute, value, option)) {
-    if (isObject(value)) value = JSON.stringify(value)
-    throw newInvalidError(attribute, value)
-  }
-}
+export default commonValidations

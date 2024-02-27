@@ -4,10 +4,8 @@ import { getUserById } from '#controllers/user/lib/user'
 import { isPropertyUri, isLang } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasAdminAccess } from '#lib/user_access_levels'
-import User from '#models/user'
+import { userShouldBeAnonymized } from '#models/user'
 import anonymizePatches from './lib/anonymize_patches.js'
-
-const { shouldBeAnonymized } = User
 
 const sanitization = {
   user: { optional: true },
@@ -51,7 +49,7 @@ const getPatchesPage = async ({ userId, limit, offset, filter }) => {
 const checkPublicContributionsStatus = async ({ userId, reqUserId }) => {
   if (userId === reqUserId) return
   const user = await getUserById(userId)
-  if (shouldBeAnonymized(user)) {
+  if (userShouldBeAnonymized(user)) {
     throw newError('non-public contributions', 403, { userId })
   }
 }

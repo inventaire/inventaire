@@ -44,7 +44,7 @@ const privat = [
 const allowTransaction = [ 'giving', 'lending', 'selling' ]
 const doesntAllowTransaction = [ 'inventorying' ]
 
-export default {
+const itemAttributes = {
   updatable,
   validAtCreation,
   notUpdatable,
@@ -76,3 +76,5 @@ export default {
     'notes',
   ],
 }
+
+export default itemAttributes
