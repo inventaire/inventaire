@@ -8,14 +8,14 @@ import { emit } from '#lib/radio'
 import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import shelfAttributes from '#models/attributes/shelf'
-import Shelf from '#models/shelf'
+import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
 
 const { updatable } = shelfAttributes
 
 const db = await dbFactory('shelves')
 
 export async function createShelf (newShelf) {
-  const shelf = Shelf.create(newShelf)
+  const shelf = createShelfDoc(newShelf)
   await validateVisibilityKeys(shelf.visibility, shelf.owner)
   return db.postAndReturn(shelf)
 }
@@ -44,7 +44,7 @@ export async function updateShelfAttributes (params) {
     await validateVisibilityKeys(newAttributes.visibility, reqUserId)
   }
   const shelf = await db.get(shelfId)
-  const updatedShelf = Shelf.updateAttributes(shelf, newAttributes, reqUserId)
+  const updatedShelf = updateShelfDocAttributes(shelf, newAttributes, reqUserId)
   return db.putAndReturn(updatedShelf)
 }
 

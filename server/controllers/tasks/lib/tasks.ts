@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
-import Task from '#models/task'
+import { createTaskDoc, updateTaskDoc } from '#models/task'
 
 const db = await dbFactory('tasks')
 
@@ -23,7 +23,7 @@ export async function createTasksFromSuggestions ({ suspectUri, type, entitiesTy
 }
 
 export async function createTasksInBulk (tasksDocs) {
-  const tasks = tasksDocs.map(Task.create)
+  const tasks = tasksDocs.map(createTaskDoc)
   return db.bulk(tasks)
 }
 
@@ -32,7 +32,7 @@ export async function updateTask (options) {
   if (ids.length === 0) return []
 
   return getTasksByIds(ids)
-  .then(mappedArrayPromise(task => Task.update(task, attribute, newValue)))
+  .then(mappedArrayPromise(task => updateTaskDoc(task, attribute, newValue)))
   .then(db.bulk)
 }
 

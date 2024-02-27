@@ -1,6 +1,6 @@
 import 'should'
 import { expired } from '#lib/time'
-import Task from '#models/task'
+import { createTaskDoc, updateTaskDoc } from '#models/task'
 
 const validDoc = () => ({
   type: 'deduplicate',
@@ -15,13 +15,13 @@ const validDoc = () => ({
 describe('task model', () => {
   describe('create', () => {
     it('should return an object with type', () => {
-      const taskDoc = Task.create(validDoc())
+      const taskDoc = createTaskDoc(validDoc())
       taskDoc.should.be.an.Object()
       taskDoc.type.should.equal('deduplicate')
     })
 
     it('should return suspectUri and a suggestionUri', () => {
-      const taskDoc = Task.create(validDoc())
+      const taskDoc = createTaskDoc(validDoc())
       taskDoc.suspectUri.should.equal(validDoc().suspectUri)
       taskDoc.suggestionUri.should.equal(validDoc().suggestionUri)
       expired(taskDoc.created, 100).should.be.false()
@@ -32,7 +32,7 @@ describe('task model', () => {
         type: 'deduplicate',
         suggestionUri: 'wd:Q42',
       }
-      const taskDoc = () => Task.create(invalidDoc)
+      const taskDoc = () => createTaskDoc(invalidDoc)
       taskDoc.should.throw()
     })
 
@@ -42,7 +42,7 @@ describe('task model', () => {
         suspectId: '',
         suggestionUri: 'wd:Q42',
       }
-      const taskDoc = () => Task.create(invalidDoc)
+      const taskDoc = () => createTaskDoc(invalidDoc)
       try {
         taskDoc()
       } catch (err) {
@@ -54,18 +54,18 @@ describe('task model', () => {
 
   describe('update', () => {
     it('should update a valid task with an dismissed state', () => {
-      const taskDoc = Task.update(validDoc(), 'state', 'dismissed')
+      const taskDoc = updateTaskDoc(validDoc(), 'state', 'dismissed')
       taskDoc.state.should.equal('dismissed')
     })
 
     it('should throw if invalid attribute to update', () => {
-      const taskDoc = () => Task.update(validDoc(), 'blob', 'dismissed')
+      const taskDoc = () => updateTaskDoc(validDoc(), 'blob', 'dismissed')
       try { taskDoc() } catch (err) { err.message.should.startWith('invalid attribute') }
       taskDoc.should.throw()
     })
 
     it('should throw if invalid value', () => {
-      const taskDoc = () => Task.update(validDoc(), 'state', 'invalidValue')
+      const taskDoc = () => updateTaskDoc(validDoc(), 'state', 'invalidValue')
       try { taskDoc() } catch (err) { err.message.should.startWith('invalid state') }
       taskDoc.should.throw()
     })

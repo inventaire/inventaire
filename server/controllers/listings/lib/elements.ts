@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
-import Element from '#models/element'
+import { createElementDoc, updateElementDoc } from '#models/element'
 
 const db = await dbFactory('elements')
 
@@ -40,7 +40,7 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  const elements = uris.map(uri => Element.create({
+  const elements = uris.map(uri => createElementDoc({
     list: listingId,
     uri,
   }))
@@ -51,7 +51,7 @@ export async function createListingElements ({ listing, uris, userId }) {
 
 export async function bulkUpdateElements ({ oldElements, attribute, value }) {
   const elementUpdateData = { [attribute]: value }
-  const newElements = oldElements.map(oldElement => Element.update(elementUpdateData, oldElement))
+  const newElements = oldElements.map(oldElement => updateElementDoc(elementUpdateData, oldElement))
   return elementsBulkUpdate(newElements)
 }
 
