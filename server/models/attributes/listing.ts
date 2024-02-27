@@ -1,13 +1,12 @@
-const attributes = {}
-
-export default attributes
-
-attributes.updatable = [
+const updatable = [
   'description',
   'visibility',
   'name',
 ]
 
-attributes.validAtCreation = attributes.updatable.concat([
-  'creator',
-])
+export default {
+  updatable,
+  validAtCreation: updatable.concat([
+    'creator',
+  ]),
+}
