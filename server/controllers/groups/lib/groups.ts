@@ -6,7 +6,7 @@ import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
-import Group from '#models/group'
+import Group, { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds } from '#models/group'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')
@@ -80,7 +80,7 @@ export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
 }
 
 export async function createGroup (options) {
-  const group = Group.create(options)
+  const group = createGroupDoc(options)
   await addSlug(group)
   return db.postAndReturn(group).then(Log('group created'))
 }
@@ -92,13 +92,13 @@ export async function getUserGroupsCoMembers (userId) {
 
 export async function getInvitedUser (userId, groupId) {
   const group = await getGroupById(groupId)
-  return Group.findInvitation(userId, group, true)
+  return findGroupInvitation(userId, group, true)
 }
 
 export async function getGroupMembersIds (groupId) {
   const group = await getGroupById(groupId)
   if (group == null) throw notFoundError({ group: groupId })
-  return Group.getAllMembersIds(group)
+  return getAllGroupDocMembersIds(group)
 }
 
 export const getGroupsByPosition = searchGroupsByPosition

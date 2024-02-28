@@ -6,7 +6,7 @@ import { newMissingError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
 import { someMatch } from '#lib/utils/base'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
-import Group from '#models/group'
+import { userIsGroupMember } from '#models/group'
 import normalizeResult from './lib/normalize_result.js'
 import typeSearch from './lib/type_search.js'
 
@@ -101,7 +101,7 @@ const isSearchable = reqUserId => result => {
     if (source.searchable) return true
     if (reqUserId == null) return false
     // Only members should be allowed to find non-searchable groups in search
-    return Group.userIsMember(reqUserId, source)
+    return userIsGroupMember(reqUserId, source)
   } else {
     return true
   }

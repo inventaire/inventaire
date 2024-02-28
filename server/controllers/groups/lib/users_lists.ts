@@ -1,6 +1,6 @@
 import { chain } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
-import Group from '#models/group'
+import { groupCategories } from '#models/group'
 
 let getGroupById
 const importCircularDependencies = async () => {
@@ -44,11 +44,11 @@ export function getGroupAdminsIds (group) {
 }
 
 export function getAllGroupMembersIds (group) {
-  return getUsersIdsByAgregatedCategories(group, Group.categories.members)
+  return getUsersIdsByAgregatedCategories(group, groupCategories.members)
 }
 
 export function getGroupMembersAndRequestedUsersIds (group) {
-  return getUsersIdsByAgregatedCategories(group, Group.categories.members.concat([ 'requested' ]))
+  return getUsersIdsByAgregatedCategories(group, groupCategories.members.concat([ 'requested' ]))
 }
 
 export function getGroupRequestedUsersIds (group) {
