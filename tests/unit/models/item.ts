@@ -1,11 +1,11 @@
 import should from 'should'
 import { expired } from '#lib/time'
-import Item from '#models/item'
+import { createItemDoc, updateItemDoc } from '#models/item'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const someUserId = '1234567890a1234567890b1234567890'
-const create = Item.create.bind(null, someUserId)
-const update = Item.update.bind(null, someUserId)
+const create = createItemDoc.bind(null, someUserId)
+const update = updateItemDoc.bind(null, someUserId)
 
 const validItem = {
   entity: 'wd:Q35160',

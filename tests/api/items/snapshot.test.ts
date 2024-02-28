@@ -223,7 +223,7 @@ describe('items:snapshot', () => {
       updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
       await revertMerge(authorEntityA.uri)
       await wait(200)
-      const reupdatedItem = await getItem(updatedItem)
+      const reupdatedItem = await getupdateItemDocdItem)
       const oldAuthors = authorEntityA.labels.en
       reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
     })

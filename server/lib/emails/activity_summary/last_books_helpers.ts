@@ -2,10 +2,8 @@ import CONFIG from 'config'
 import { clone, keyBy, pick } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
-import Item from '#models/item'
+import { itemAllowsTransactions } from '#models/item'
 import transactionsColors from './transactions_colors.js'
-
-const { allowTransaction } = Item
 
 const host = CONFIG.getPublicOrigin()
 
@@ -62,7 +60,7 @@ const getItemsWithTransactionFirst = (lastItems, highlightedLength) => {
   // the expected amount of highlightedItems
   while ((withTransaction.length < highlightedLength) && (items.length > 0)) {
     const item = items.pop()
-    if (allowTransaction(item)) {
+    if (itemAllowsTransactions(item)) {
       withTransaction.push(item)
     } else {
       withoutTransaction.push(item)

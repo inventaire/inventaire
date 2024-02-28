@@ -5,7 +5,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { deepCompact, forceArray } from '#lib/utils/base'
-import Item from '#models/item'
+import { changeItemDocOwner, createItemDoc, updateItemDoc } from '#models/item'
 import { filterPrivateAttributes } from './filter_private_attributes.js'
 import { addSnapshotToItem } from './snapshot/snapshot.js'
 import { validateItemsAsync } from './validate_item_async.js'
@@ -63,7 +63,7 @@ export const getPublicItemsByDate = (limit = 15, offset = 0, assertImage = false
 
 export async function createItems (userId, items) {
   assert_.array(items)
-  items = items.map(item => Item.create(userId, item))
+  items = items.map(item => createItemDoc(userId, item))
   await validateItemsAsync(items)
   const res = await db.bulk(items)
   const itemsIds = map(res, 'id')
@@ -79,7 +79,7 @@ export async function createItems (userId, items) {
 export async function updateItems (userId, itemUpdateData) {
   await validateItemsAsync([ itemUpdateData ])
   const currentItem = await db.get(itemUpdateData._id)
-  let updatedItem = Item.update(userId, itemUpdateData, currentItem)
+  let updatedItem = updateItemDoc(userId, itemUpdateData, currentItem)
   updatedItem = await db.putAndReturn(updatedItem)
   await emit('user:inventory:update', userId)
   return updatedItem
@@ -88,7 +88,7 @@ export async function updateItems (userId, itemUpdateData) {
 export function changeItemOwner (transacDoc) {
   const { item } = transacDoc
   return db.get(item)
-  .then(Item.changeOwner.bind(null, transacDoc))
+  .then(changeItemDocOwner.bind(null, transacDoc))
   .then(db.postAndReturn)
 }
 

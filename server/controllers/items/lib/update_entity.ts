@@ -1,5 +1,5 @@
 import dbFactory from '#db/couchdb/base'
-import Item from '#models/item'
+import { revertItemDocEntity, updateItemDocEntity } from '#models/item'
 
 const db = await dbFactory('items')
 
@@ -9,18 +9,18 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-const AfterFn = (viewName, modelFnName) => async (fromUri, toUri) => {
+const AfterFn = (viewName, modelFn) => async (fromUri, toUri) => {
   let items
   if (viewName === 'byPreviousEntity') {
     items = await getItemsByPreviousEntity(fromUri)
   } else {
     items = await getItemsByEntity(fromUri)
   }
-  const updatedItems = items.map(Item[modelFnName].bind(null, fromUri, toUri))
+  const updatedItems = items.map(modelFn.bind(null, fromUri, toUri))
   return db.bulk(updatedItems)
 }
 
 export default {
-  afterMerge: AfterFn('byEntity', 'updateEntity'),
-  afterRevert: AfterFn('byPreviousEntity', 'revertEntity'),
+  afterMerge: AfterFn('byEntity', updateItemDocEntity),
+  afterRevert: AfterFn('byPreviousEntity', revertItemDocEntity),
 }
