@@ -4,12 +4,12 @@ import { validateShelves } from '#controllers/items/lib/validate_item_async'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
-import Item from '#models/item'
+import { updateItemDoc } from '#models/item'
 
 export const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
   const itemUpdateData = { [attribute]: value }
   const currentItems = await getItemsByIds(ids)
-  const formattedItems = currentItems.map(currentItem => Item.update(reqUserId, itemUpdateData, currentItem))
+  const formattedItems = currentItems.map(currentItem => updateItemDoc(reqUserId, itemUpdateData, currentItem))
   await validateValue({ attribute, value, reqUserId })
   try {
     const successfulUpdates = await itemsBulkUpdate(formattedItems)

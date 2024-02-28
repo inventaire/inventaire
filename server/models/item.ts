@@ -5,15 +5,9 @@ import { log } from '#lib/utils/logs'
 import itemAttributes from './attributes/item.js'
 import itemValidations from './validations/item.js'
 
-const Item = {}
+const { defaultValue: defaultTransaction } = itemAttributes.constrained.transaction
 
-export default Item
-
-const attributes = Item.attributes = itemAttributes
-
-const { defaultValue: defaultTransaction } = attributes.constrained.transaction
-
-Item.create = (userId, item) => {
+export function createItemDoc (userId, item) {
   assert_.types([ 'string', 'object' ], [ userId, item ])
   // _id: We want to get couchdb sequential id so we need to let _id blank
   // owner: ignore any passed owner, the owner is the authentified user
@@ -26,21 +20,21 @@ Item.create = (userId, item) => {
   item.shelves = item.shelves || []
 
   for (const attr of passedAttributes) {
-    if (!attributes.validAtCreation.includes(attr)) {
+    if (!itemAttributes.validAtCreation.includes(attr)) {
       throw newError(`invalid attribute: ${attr}`, 400, { userId, item })
     }
 
-    validations.pass(attr, item[attr])
+    itemValidations.pass(attr, item[attr])
   }
 
-  validations.pass('userId', userId)
+  itemValidations.pass('userId', userId)
 
   item.owner = userId
   item.created = Date.now()
   return item
 }
 
-Item.update = (userId, newAttributes, oldItem) => {
+export function updateItemDoc (userId, newAttributes, oldItem) {
   assert_.string(userId)
   assert_.object(newAttributes)
   assert_.object(oldItem)
@@ -51,16 +45,16 @@ Item.update = (userId, newAttributes, oldItem) => {
 
   const newItem = clone(oldItem)
 
-  newAttributes = omit(newAttributes, attributes.notUpdatable)
+  newAttributes = omit(newAttributes, itemAttributes.notUpdatable)
 
   const passedAttributes = Object.keys(newAttributes)
 
   for (const attr of passedAttributes) {
-    if (!attributes.updatable.includes(attr)) {
+    if (!itemAttributes.updatable.includes(attr)) {
       throw newError(`invalid attribute: ${attr}`, 400, { userId, newAttributes, oldItem })
     }
     const newVal = newAttributes[attr]
-    validations.pass(attr, newVal)
+    itemValidations.pass(attr, newVal)
     newItem[attr] = newVal
   }
 
@@ -69,11 +63,11 @@ Item.update = (userId, newAttributes, oldItem) => {
   return newItem
 }
 
-Item.changeOwner = (transacDoc, item) => {
+export function changeItemDocOwner (transacDoc, item) {
   assert_.objects([ transacDoc, item ])
   log({ transacDoc, item }, 'changeOwner')
 
-  item = omit(item, attributes.reset)
+  item = omit(item, itemAttributes.reset)
   log(item, 'item without reset attributes')
 
   const { _id: transacId, owner, requester } = transacDoc
@@ -101,9 +95,11 @@ Item.changeOwner = (transacDoc, item) => {
   })
 }
 
-Item.allowTransaction = item => attributes.allowTransaction.includes(item.transaction)
+export function itemAllowsTransactions (item) {
+  return itemAttributes.allowTransaction.includes(item.transaction)
+}
 
-Item.updateEntity = (fromUri, toUri, item) => {
+export function updateItemDocEntity (fromUri, toUri, item) {
   if (item.entity !== fromUri) {
     throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
   }
@@ -116,7 +112,7 @@ Item.updateEntity = (fromUri, toUri, item) => {
   return item
 }
 
-Item.revertEntity = (fromUri, toUri, item) => {
+export function revertItemDocEntity (fromUri, toUri, item) {
   const { entity } = item
   const previousEntity = item.previousEntity[0]
   if (item.entity !== toUri) {
