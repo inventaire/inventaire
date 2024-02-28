@@ -1,6 +1,6 @@
 import { editInvEntity } from '#controllers/entities/lib/entities'
 import { log } from '#lib/utils/logs'
-import Entity from '#models/entity'
+import { createBlankEntityDoc } from '#models/entity'
 import { prefixifyInv } from './prefix.js'
 import validateEntity from './validate_entity.js'
 
@@ -10,7 +10,7 @@ export default async params => {
 
   await validateEntity({ labels, claims })
 
-  const blankEntityDoc = Entity.create()
+  const blankEntityDoc = createBlankEntityDoc()
 
   const entity = await editInvEntity({
     create: true,

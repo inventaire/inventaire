@@ -7,7 +7,7 @@ import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import Entity from '#models/entity'
+import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -87,8 +87,8 @@ export async function getInvEntitiesClaimValueCount (value) {
 export async function editInvEntity (params) {
   const { userId, updatedLabels, updatedClaims, currentDoc, batchId, create } = params
   let updatedDoc = cloneDeep(currentDoc)
-  updatedDoc = Entity.setLabels(updatedDoc, updatedLabels)
-  updatedDoc = Entity.addClaims(updatedDoc, updatedClaims)
+  updatedDoc = setEntityDocLabels(updatedDoc, updatedLabels)
+  updatedDoc = addEntityDocClaims(updatedDoc, updatedClaims)
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc, batchId, create })
 }
 
@@ -96,7 +96,7 @@ export async function putInvEntityUpdate (params) {
   const { userId, currentDoc, updatedDoc, create } = params
   assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
 
-  Entity.beforeSave(updatedDoc)
+  beforeEntityDocSave(updatedDoc)
 
   // It is to the consumers responsability to check if there is an update:
   // empty patches at this stage will throw 500 errors

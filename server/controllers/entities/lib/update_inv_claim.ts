@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { assert_ } from '#lib/utils/assert_types'
-import Entity from '#models/entity'
+import { updateEntityDocClaim } from '#models/entity'
 import getEntityType from './get_entity_type.js'
 import inferredClaimUpdates from './inferred_claim_updates.js'
 import validateAndFormatClaim from './validate_and_format_claim.js'
@@ -45,7 +45,7 @@ const updateClaim = async params => {
   const { property, oldVal, userId, currentDoc } = params
   params.letEmptyValuePass = true
   const formattedNewVal = await validateAndFormatClaim(params)
-  const updatedDoc = Entity.updateClaim(cloneDeep(currentDoc), property, oldVal, formattedNewVal)
+  const updatedDoc = updateEntityDocClaim(cloneDeep(currentDoc), property, oldVal, formattedNewVal)
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 
