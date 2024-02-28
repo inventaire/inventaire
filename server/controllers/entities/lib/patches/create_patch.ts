@@ -1,5 +1,5 @@
 import dbFactory from '#db/couchdb/base'
-import Patch from '#models/patch'
+import { createPatchDoc, getPatchDiff, revertPatch } from '#models/patch'
 import { getEntityLastPatches } from './patches.js'
 
 const designDocName = 'patches'
@@ -7,7 +7,7 @@ const db = await dbFactory('patches', designDocName)
 
 export default async params => {
   const { currentDoc, updatedDoc, userId } = params
-  const newPatchDoc = Patch.create(params)
+  const newPatchDoc = createPatchDoc(params)
 
   if (entityHasPreviousVersions(currentDoc)) {
     const [ previousPatchDoc ] = await getEntityLastPatches(currentDoc._id)
@@ -33,8 +33,8 @@ const lastPatchWasFromSameUser = (previousPatchDoc, userId) => {
 }
 
 const getAggregatedOperations = (currentDoc, updatedDoc, previousPatchDoc) => {
-  const beforeLastPatch = Patch.revert(currentDoc, previousPatchDoc)
-  return Patch.getDiff(beforeLastPatch, updatedDoc)
+  const beforeLastPatch = revertPatch(currentDoc, previousPatchDoc)
+  return getPatchDiff(beforeLastPatch, updatedDoc)
 }
 
 const isNotSpecialPatch = patch => patch.context == null && patch.batch == null

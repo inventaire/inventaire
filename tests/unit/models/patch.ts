@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash-es'
 import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
 import { createBlankEntityDoc } from '#models/entity'
-import Patch from '#models/patch'
+import { addVersionsSnapshots, createPatchDoc, revertPatch } from '#models/patch'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const validDocId = '12345678900987654321123456789012'
@@ -49,54 +49,54 @@ const authorDoc = {
 describe('patch', () => {
   describe('create', () => {
     it('should throw if passed an invalid user id', () => {
-      (() => Patch.create({ userId: 'invalid user id', currentDoc, updatedDoc }))
+      (() => createPatchDoc({ userId: 'invalid user id', currentDoc, updatedDoc }))
       .should.throw()
     })
 
     it('should throw if passed identical objects', () => {
-      (() => Patch.create({ userId, currentDoc, updatedDoc: currentDoc }))
+      (() => createPatchDoc({ userId, currentDoc, updatedDoc: currentDoc }))
       .should.throw()
     })
 
     it('should throw if there are no operations', () => {
       const docClone = cloneDeep(currentDoc);
-      (() => Patch.create({ userId, currentDoc, updatedDoc: docClone }))
+      (() => createPatchDoc({ userId, currentDoc, updatedDoc: docClone }))
       .should.throw()
     })
 
     it('should throw if passed an updated doc without id', () => {
       const invalidDoc = Object.assign({}, updatedDoc, { _id: 'invalid id' });
-      (() => Patch.create({ userId, currentDoc, updatedDoc: invalidDoc }))
+      (() => createPatchDoc({ userId, currentDoc, updatedDoc: invalidDoc }))
       .should.throw()
     })
 
     it('should throw if passed an invalid doc object', () => {
-      (() => Patch.create({ userId, currentDoc: 'not an object', updatedDoc }))
+      (() => createPatchDoc({ userId, currentDoc: 'not an object', updatedDoc }))
       .should.throw();
-      (() => Patch.create({ userId, currentDoc, updatedDoc: 'not an object' }))
+      (() => createPatchDoc({ userId, currentDoc, updatedDoc: 'not an object' }))
       .should.throw()
     })
 
     it('should return an object of type patch', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       patch.should.be.an.Object()
       patch.type.should.equal('patch')
     })
 
     it('should return with user set to the user passed', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       patch.user.should.equal(userId)
     })
 
     it('should return with a timestamp', () => {
       const now = Date.now()
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       patch.timestamp.should.be.a.Number()
       should(patch.timestamp >= now).be.true()
     })
 
     it('should return with a patch object', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       patch.operations.should.be.an.Array()
       patch.operations.forEach(op => {
         op.should.be.an.Object()
@@ -110,20 +110,20 @@ describe('patch', () => {
     })
 
     it('should ignore data out of versioned attributes', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       const updateFromPatch = jiff.patch(patch.operations, currentDoc)
       updateFromPatch.notTrackedAttr.should.equal(currentDoc.notTrackedAttr)
       updateFromPatch.notTrackedAttr.should.not.equal(updatedDoc.notTrackedAttr)
     })
 
     it('should return with an id based on the updated doc version number', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
       patch._id.should.equal(`${updatedDoc._id}:${updatedDoc.version}`)
     })
 
     it('should accept an arbitrary context object', () => {
       const params = { userId, currentDoc, updatedDoc, context: { mergeFrom: 'bla' } }
-      const patch = Patch.create(params)
+      const patch = createPatchDoc(params)
       patch.should.be.an.Object()
       patch.type.should.equal('patch')
     })
@@ -131,8 +131,8 @@ describe('patch', () => {
 
   describe('revert', () => {
     it('should revert a patch', () => {
-      const patch = Patch.create({ userId, currentDoc, updatedDoc })
-      const revertedDoc = Patch.revert(updatedDoc, patch)
+      const patch = createPatchDoc({ userId, currentDoc, updatedDoc })
+      const revertedDoc = revertPatch(updatedDoc, patch)
       revertedDoc.labels.should.deepEqual(currentDoc.labels)
       revertedDoc.claims.should.deepEqual(currentDoc.claims)
     })
@@ -142,20 +142,20 @@ describe('patch', () => {
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'] = [ 'wd:Q184226' ]
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
       })
 
-      const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
+      const revertedDoc = revertPatch(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
     })
 
     it('should revert a patch between patches', () => {
       const authorDocUpdatedA = cloneDeep(authorDoc)
       authorDocUpdatedA.claims['wdt:P50'] = [ 'wd:Q535' ]
-      const patchA = Patch.create({
+      const patchA = createPatchDoc({
         userId,
         currentDoc: authorDoc,
         updatedDoc: authorDocUpdatedA,
@@ -164,7 +164,7 @@ describe('patch', () => {
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
 
-      const revertedDoc = Patch.revert(authorDocUpdatedB, patchA)
+      const revertedDoc = revertPatch(authorDocUpdatedB, patchA)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q184226' ])
     })
 
@@ -174,7 +174,7 @@ describe('patch', () => {
 
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
@@ -183,7 +183,7 @@ describe('patch', () => {
       const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'].push('wd:Q237087')
 
-      const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
+      const revertedDoc = revertPatch(authorDocUpdatedC, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535', 'wd:Q237087' ])
     })
 
@@ -193,13 +193,13 @@ describe('patch', () => {
 
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       delete authorDocUpdatedB.claims['wdt:P50']
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
       })
 
-      const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
+      const revertedDoc = revertPatch(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
     })
 
@@ -209,7 +209,7 @@ describe('patch', () => {
 
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       delete authorDocUpdatedB.claims['wdt:P50']
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
@@ -218,7 +218,7 @@ describe('patch', () => {
       const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'] = [ 'wd:Q237087' ]
 
-      const revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
+      const revertedDoc = revertPatch(authorDocUpdatedC, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q237087', 'wd:Q535' ])
     })
 
@@ -229,13 +229,13 @@ describe('patch', () => {
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P58'] = [ 'wd:Q184226' ]
       delete authorDocUpdatedB.claims['wdt:P50']
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
       })
 
-      const revertedDoc = Patch.revert(authorDocUpdatedB, patchB)
+      const revertedDoc = revertPatch(authorDocUpdatedB, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
       should(revertedDoc.claims['wdt:P58']).not.be.ok()
     })
@@ -246,7 +246,7 @@ describe('patch', () => {
 
       const authorDocUpdatedB = cloneDeep(authorDocUpdatedA)
       authorDocUpdatedB.claims['wdt:P50'].push('wd:Q184226')
-      const patchB = Patch.create({
+      const patchB = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedA,
         updatedDoc: authorDocUpdatedB,
@@ -254,18 +254,18 @@ describe('patch', () => {
 
       const authorDocUpdatedC = cloneDeep(authorDocUpdatedB)
       authorDocUpdatedC.claims['wdt:P50'].push('wd:Q42')
-      const patchC = Patch.create({
+      const patchC = createPatchDoc({
         userId,
         currentDoc: authorDocUpdatedB,
         updatedDoc: authorDocUpdatedC,
       })
 
-      let revertedDoc = Patch.revert(authorDocUpdatedC, patchB)
+      let revertedDoc = revertPatch(authorDocUpdatedC, patchB)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535', 'wd:Q42' ])
 
       // Tests that the revert works despite the patch keeping an outdated
       // index of the value
-      revertedDoc = Patch.revert(revertedDoc, patchC)
+      revertedDoc = revertPatch(revertedDoc, patchC)
       revertedDoc.claims['wdt:P50'].should.deepEqual([ 'wd:Q535' ])
     })
 
@@ -276,11 +276,11 @@ describe('patch', () => {
       docVersion1.claims['wdt:P50'] = [ 'x', 'y' ]
       docVersion2.claims['wdt:P50'] = [ 'x', 'z' ]
       docVersion3.claims['wdt:P50'] = [ 'z' ]
-      const patch2 = Patch.create({ userId, currentDoc: docVersion1, updatedDoc: docVersion2 })
-      const patch3 = Patch.create({ userId, currentDoc: docVersion2, updatedDoc: docVersion3 })
-      const docVersion4 = Patch.revert(docVersion3, patch2)
+      const patch2 = createPatchDoc({ userId, currentDoc: docVersion1, updatedDoc: docVersion2 })
+      const patch3 = createPatchDoc({ userId, currentDoc: docVersion2, updatedDoc: docVersion3 })
+      const docVersion4 = revertPatch(docVersion3, patch2)
       docVersion4.claims['wdt:P50'].should.deepEqual([ 'y' ])
-      const docVersion5 = Patch.revert(docVersion4, patch3)
+      const docVersion5 = revertPatch(docVersion4, patch3)
       docVersion5.claims['wdt:P50'].should.deepEqual([ 'x', 'y' ])
     })
 
@@ -292,7 +292,7 @@ describe('patch', () => {
         _id: 'e03590f8b90160c9732485baa6003e18:2',
       }
       try {
-        const res = Patch.revert(currentDoc, patch)
+        const res = revertPatch(currentDoc, patch)
         shouldNotBeCalled(res)
       } catch (err) {
         err.message.should.equal('entity and patch ids do not match')
@@ -306,7 +306,7 @@ describe('patch', () => {
       const { patch, newVersion } = generateSomePatch(base)
       const patches = [ patch ]
       should(patch.snapshot).not.be.ok()
-      Patch.addSnapshots(patches)
+      addVersionsSnapshots(patches)
       patch.snapshot.should.be.an.Object()
       patch.snapshot.claims.should.deepEqual({})
       patch.snapshot.labels.en.should.equal(newVersion.labels.en)
@@ -323,6 +323,6 @@ const generateSomePatch = previousVersion => {
   newVersion.version++
   if (newVersion.labels.en) delete newVersion.labels.en
   else newVersion.labels = { en: getRandomString(6) }
-  const patch = Patch.create({ userId, currentDoc: previousVersion, updatedDoc: newVersion })
+  const patch = createPatchDoc({ userId, currentDoc: previousVersion, updatedDoc: newVersion })
   return { patch, newVersion }
 }
