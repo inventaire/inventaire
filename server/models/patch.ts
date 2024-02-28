@@ -6,98 +6,94 @@ import { createBlankEntityDoc } from '#models/entity'
 import { versioned } from './attributes/entity.js'
 import validations from './validations/common.js'
 
-const Patch = {
-  create: params => {
-    const { userId, currentDoc, updatedDoc, context, batchId } = params
-    validations.pass('userId', userId)
-    assert_.object(currentDoc)
-    assert_.object(updatedDoc)
-    validations.pass('couchUuid', updatedDoc._id)
+export function createPatchDoc (params) {
+  const { userId, currentDoc, updatedDoc, context, batchId } = params
+  validations.pass('userId', userId)
+  assert_.object(currentDoc)
+  assert_.object(updatedDoc)
+  validations.pass('couchUuid', updatedDoc._id)
 
-    if (context != null) assert_.object(context)
-    if (batchId != null) assert_.number(batchId)
+  if (context != null) assert_.object(context)
+  if (batchId != null) assert_.number(batchId)
 
-    if (currentDoc === updatedDoc) {
-      throw newError('invalid update: same document objects', 500, { currentDoc, updatedDoc })
-    }
+  if (currentDoc === updatedDoc) {
+    throw newError('invalid update: same document objects', 500, { currentDoc, updatedDoc })
+  }
 
-    const now = Date.now()
+  const now = Date.now()
 
-    // Use the updated doc _id as the the current doc
-    // will miss an _id at creation.
-    let { _id: entityId, version: entityVersion } = updatedDoc
+  // Use the updated doc _id as the the current doc
+  // will miss an _id at creation.
+  let { _id: entityId, version: entityVersion } = updatedDoc
 
-    // If for some reason the entity document is malformed and lacks a version number,
-    // fallback on using the timestamp, rather than crashing
-    entityVersion = entityVersion || now
+  // If for some reason the entity document is malformed and lacks a version number,
+  // fallback on using the timestamp, rather than crashing
+  entityVersion = entityVersion || now
 
-    const patch = {
-      _id: `${entityId}:${entityVersion}`,
-      type: 'patch',
-      user: userId,
-      timestamp: now,
-      operations: Patch.getDiff(currentDoc, updatedDoc),
-    }
+  const patch = {
+    _id: `${entityId}:${entityVersion}`,
+    type: 'patch',
+    user: userId,
+    timestamp: now,
+    operations: getPatchDiff(currentDoc, updatedDoc),
+  }
 
-    if (patch.operations.length === 0) {
-      throw newError('empty patch', 500, { currentDoc, updatedDoc })
-    }
+  if (patch.operations.length === 0) {
+    throw newError('empty patch', 500, { currentDoc, updatedDoc })
+  }
 
-    // Let the consumer pass any data object helping to contextualize the patch
-    // Current uses:
-    // - `{ mergeFrom: entityId }` where entityId is the entity being merged
-    //   with the current entity. This is useful to be able to easily find
-    //   the merge patch during a merge revert
-    // - `{ redirectClaims: { fromUri } }` where fromUri is the entity that was merged
-    //   in the patched entity, and from which claims that had it as value are being redirected
-    // - `{ revertPatch: mergePatchId }` where mergePatchId is the patch where the merge
-    //    being reverted was done
-    if (context != null) patch.context = context
-    if (batchId != null) patch.batch = batchId
+  // Let the consumer pass any data object helping to contextualize the patch
+  // Current uses:
+  // - `{ mergeFrom: entityId }` where entityId is the entity being merged
+  //   with the current entity. This is useful to be able to easily find
+  //   the merge patch during a merge revert
+  // - `{ redirectClaims: { fromUri } }` where fromUri is the entity that was merged
+  //   in the patched entity, and from which claims that had it as value are being redirected
+  // - `{ revertPatch: mergePatchId }` where mergePatchId is the patch where the merge
+  //    being reverted was done
+  if (context != null) patch.context = context
+  if (batchId != null) patch.batch = batchId
 
-    return patch
-  },
-
-  getDiff: (currentDoc, updatedDoc) => {
-    currentDoc = pick(currentDoc, versioned)
-    updatedDoc = pick(updatedDoc, versioned)
-    return jiff.diff(currentDoc, updatedDoc)
-  },
-
-  // Reverts the effects of a patch on a entity doc
-  revert: (currentDoc, patch) => {
-    if (patch._id.split(':')[0] !== currentDoc._id) {
-      throw newError('entity and patch ids do not match', 500, { currentDoc, patch })
-    }
-    let inverseOperations
-    try {
-      inverseOperations = jiff.inverse(patch.operations)
-      const updatedDoc = applyInverseOperations(currentDoc, inverseOperations)
-      return updatedDoc
-    } catch (err) {
-      err.context = { currentDoc, patch, inverseOperations }
-      throw err
-    }
-  },
-
-  addSnapshots: patchesDocs => {
-    let previousVersion = getEntityHistoryBase()
-
-    // Assumes that patchesDocs are ordered from oldest to newest
-    for (const patchDoc of patchesDocs) {
-      patchDoc.snapshot = jiff.patch(patchDoc.operations, previousVersion)
-      // jiff.patch is non-mutating: we get a new object
-      // without modifying the previous snapshot
-      previousVersion = patchDoc.snapshot
-    }
-
-    return patchesDocs
-  },
+  return patch
 }
 
-export default Patch
+export function getPatchDiff (currentDoc, updatedDoc) {
+  currentDoc = pick(currentDoc, versioned)
+  updatedDoc = pick(updatedDoc, versioned)
+  return jiff.diff(currentDoc, updatedDoc)
+}
 
-const applyInverseOperations = (currentDoc, inverseOperations) => {
+// Reverts the effects of a patch on a entity doc
+export function revertPatch (currentDoc, patch) {
+  if (patch._id.split(':')[0] !== currentDoc._id) {
+    throw newError('entity and patch ids do not match', 500, { currentDoc, patch })
+  }
+  let inverseOperations
+  try {
+    inverseOperations = jiff.inverse(patch.operations)
+    const updatedDoc = applyInverseOperations(currentDoc, inverseOperations)
+    return updatedDoc
+  } catch (err) {
+    err.context = { currentDoc, patch, inverseOperations }
+    throw err
+  }
+}
+
+export function addVersionsSnapshots (patchesDocs) {
+  let previousVersion = getEntityHistoryBase()
+
+  // Assumes that patchesDocs are ordered from oldest to newest
+  for (const patchDoc of patchesDocs) {
+    patchDoc.snapshot = jiff.patch(patchDoc.operations, previousVersion)
+    // jiff.patch is non-mutating: we get a new object
+    // without modifying the previous snapshot
+    previousVersion = patchDoc.snapshot
+  }
+
+  return patchesDocs
+}
+
+function applyInverseOperations (currentDoc, inverseOperations) {
   currentDoc = cloneDeep(currentDoc)
   inverseOperations.forEach(fixOperation(currentDoc, inverseOperations))
 
@@ -174,7 +170,7 @@ const operationFix = {
   },
 }
 
-const getFromPatchPath = (obj, path) => {
+function getFromPatchPath (obj, path) {
   const key = path.slice(1).replaceAll('/', '.')
   return get(obj, key)
 }

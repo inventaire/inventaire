@@ -4,7 +4,7 @@ import { maxKey } from '#lib/couch'
 import { oneDay } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { simpleDay } from '#lib/utils/base'
-import Patch from '#models/patch'
+import { addVersionsSnapshots } from '#models/patch'
 
 const designDocName = 'patches'
 
@@ -84,7 +84,7 @@ export const getPatchesByRedirectUri = db.viewByKey.bind(null, 'byRedirectUri')
 
 export async function getPatchesWithSnapshots (entityId) {
   const patches = await getPatchesByEntityId(entityId)
-  Patch.addSnapshots(patches)
+  addVersionsSnapshots(patches)
   return patches
 }
 
