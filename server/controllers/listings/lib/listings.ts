@@ -8,7 +8,7 @@ import { newError } from '#lib/error/error'
 import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
-import Listing from '#models/listing'
+import { createListingDoc, updateListingDocAttributes } from '#models/listing'
 
 const { updatable: updateAttributes } = listingAttributes
 
@@ -30,7 +30,7 @@ export async function getListingsByIdsWithElements (ids) {
 }
 
 export async function createListing (params) {
-  const listing = Listing.create(params)
+  const listing = createListingDoc(params)
   const invalidGroupId = await validateVisibilityKeys(listing.visibility, listing.creator)
   if (invalidGroupId) {
     throw newError('list creator is not in that group', 400, {
@@ -48,7 +48,7 @@ export async function updateListingAttributes (params) {
     await validateVisibilityKeys(newAttributes.visibility, reqUserId)
   }
   const listing = await db.get(id)
-  const updatedList = Listing.updateAttributes(listing, newAttributes, reqUserId)
+  const updatedList = updateListingDocAttributes(listing, newAttributes, reqUserId)
   return db.putAndReturn(updatedList)
 }
 
