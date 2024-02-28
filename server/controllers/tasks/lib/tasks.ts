@@ -88,8 +88,8 @@ export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: 
   const { index, includeArchived } = options
   const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
   if (index !== true) return tasks
-  const getTasksBySuspectUris = groupBy(tasks, 'suspectUri')
-  return completeWithEmptyArrays(getTasksBySuspectUris, suspectUris)
+  const tasksBySuspectUris = groupBy(tasks, 'suspectUri')
+  return fillWithEmptyArrays(tasksBySuspectUris, suspectUris)
 }
 
 export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], options: TasksQueryOptions = {}) {
@@ -97,7 +97,7 @@ export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], opt
   const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
   if (index !== true) return tasks
   const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
-  return completeWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)
+  return fillWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)
 }
 
 function getKeys (uris: EntityUri[], includeArchived?: boolean) {
@@ -110,7 +110,7 @@ function getKeys (uris: EntityUri[], includeArchived?: boolean) {
 
 const buildKey = state => uri => [ uri, state ]
 
-function completeWithEmptyArrays (getTasksByUris, uris: EntityUri[]) {
+function fillWithEmptyArrays (getTasksByUris, uris: EntityUri[]) {
   for (const uri of uris) {
     if (getTasksByUris[uri] == null) getTasksByUris[uri] = []
   }
