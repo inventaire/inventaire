@@ -9,14 +9,13 @@ import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
-import Entity from '#models/entity'
+import { convertEntityDocIntoARedirection, recoverEntityDocFromPlaceholder } from '#models/entity'
 
 const db = await dbFactory('entities')
 
-const PlaceholderHandler = actionName => {
-  const modelFnName = `${actionName}Placeholder`
+function PlaceholderHandler (actionName, modelFn) {
   return async (userId, entityId) => {
-    warn(entityId, `${modelFnName} entity`)
+    warn(entityId, `${actionName} placeholder entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
     const currentDoc = await db.get(entityId)
@@ -26,7 +25,7 @@ const PlaceholderHandler = actionName => {
     }
     let updatedDoc
     try {
-      updatedDoc = Entity[modelFnName](currentDoc)
+      updatedDoc = modelFn(currentDoc)
     } catch (err) {
       if (err.message === "can't turn a redirection into a removed placeholder") {
         // Ignore this error as the effects of those two states are close
@@ -44,5 +43,5 @@ const PlaceholderHandler = actionName => {
   }
 }
 
-export const removePlaceholder = PlaceholderHandler('remove')
-export const recoverPlaceholder = PlaceholderHandler('recover')
+export const removePlaceholder = PlaceholderHandler('remove', convertEntityDocIntoARedirection)
+export const recoverPlaceholder = PlaceholderHandler('recover', recoverEntityDocFromPlaceholder)

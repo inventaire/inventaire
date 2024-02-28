@@ -2,7 +2,7 @@ import jiff from 'jiff'
 import { cloneDeep } from 'lodash-es'
 import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
-import Entity from '#models/entity'
+import { createBlankEntityDoc } from '#models/entity'
 import Patch from '#models/patch'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
@@ -302,7 +302,7 @@ describe('patch', () => {
 
   describe('addSnapshots', () => {
     it('should return an array of snapshots', () => {
-      const base = Entity.create()
+      const base = createBlankEntityDoc()
       const { patch, newVersion } = generateSomePatch(base)
       const patches = [ patch ]
       should(patch.snapshot).not.be.ok()

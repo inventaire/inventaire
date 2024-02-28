@@ -3,7 +3,7 @@ import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate } from '#co
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import Entity from '#models/entity'
+import { convertEntityDocIntoARedirection, preventRedirectionEdit } from '#models/entity'
 import propagateRedirection from './propagate_redirection.js'
 
 export default async ({ userId, fromId, toUri, previousToUri, context }) => {
@@ -13,10 +13,10 @@ export default async ({ userId, fromId, toUri, previousToUri, context }) => {
   const fromUri = `inv:${fromId}`
 
   const currentFromDoc = await getEntityById(fromId)
-  Entity.preventRedirectionEdit(currentFromDoc, 'turnIntoRedirection')
+  preventRedirectionEdit(currentFromDoc)
   // If an author has no more links to it, remove it
   const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
-  const updatedFromDoc = Entity.turnIntoRedirection(currentFromDoc, toUri, removedIds)
+  const updatedFromDoc = convertEntityDocIntoARedirection(currentFromDoc, toUri, removedIds)
   await putInvEntityUpdate({
     userId,
     currentDoc: currentFromDoc,

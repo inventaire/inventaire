@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import Entity from '#models/entity'
+import { setEntityDocLabel } from '#models/entity'
 import getEntityType from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
 
@@ -10,7 +10,7 @@ export default async (lang, value, userId, currentDoc) => {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = cloneDeep(currentDoc)
-  updatedDoc = Entity.setLabel(updatedDoc, lang, value)
+  updatedDoc = setEntityDocLabel(updatedDoc, lang, value)
   const docAfterUpdate = await putInvEntityUpdate({ userId, currentDoc, updatedDoc })
   await emit('entity:update:label', updatedDoc)
   return docAfterUpdate

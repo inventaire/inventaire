@@ -2,7 +2,7 @@ import jiff from 'jiff'
 import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import Entity from '#models/entity'
+import { createBlankEntityDoc } from '#models/entity'
 import { versioned } from './attributes/entity.js'
 import validations from './validations/common.js'
 
@@ -180,6 +180,6 @@ const getFromPatchPath = (obj, path) => {
 }
 
 const getEntityHistoryBase = () => {
-  const entityBase = Entity.create()
+  const entityBase = createBlankEntityDoc()
   return pick(entityBase, versioned)
 }

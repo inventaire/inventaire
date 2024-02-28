@@ -3,7 +3,7 @@ import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
-import Entity from '#models/entity'
+import { mergeEntitiesDocs } from '#models/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import turnIntoRedirection from './turn_into_redirection.js'
 
@@ -50,7 +50,7 @@ const mergeInvEntities = async (userId, fromId, toId) => {
   // Transfer all data from the 'fromEntity' to the 'toEntity'
   // if any difference can be found
   const toEntityDocBeforeMerge = cloneDeep(toEntityDoc)
-  const toEntityDocAfterMerge = Entity.mergeDocs(fromEntityDoc, toEntityDoc)
+  const toEntityDocAfterMerge = mergeEntitiesDocs(fromEntityDoc, toEntityDoc)
 
   // If the doc hasn't changed, don't run putInvEntityUpdate
   // as it will throw an 'empty patch' error
