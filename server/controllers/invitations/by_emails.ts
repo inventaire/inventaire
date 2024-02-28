@@ -9,7 +9,7 @@ import { responses_ } from '#lib/responses'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { Track } from '#lib/track'
 import { Log } from '#lib/utils/logs'
-import Group from '#models/group'
+import { userIsGroupMember } from '#models/group'
 import parseEmails from './lib/parse_emails.js'
 import { sendInvitationAndReturnData } from './lib/send_invitation_and_return_data.js'
 
@@ -56,7 +56,7 @@ const validateGroup = async (groupId, reqUserId) => {
 
   return getGroupById(groupId)
   .then(group => {
-    const userIsMember = Group.userIsMember(reqUserId, group)
+    const userIsMember = userIsGroupMember(reqUserId, group)
     if (!userIsMember) {
       throw newError("user isn't a group member", 403, { groupId, reqUserId })
     }

@@ -6,11 +6,7 @@ import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
 import groupValidations from './validations/group.js'
 
-const Group = {}
-
-export default Group
-
-Group.create = options => {
+export function createGroupDoc (options) {
   log(options, 'group create')
   const { name, description, searchable, position, creatorId, open } = options
   groupValidations.pass('name', name)
@@ -42,13 +38,13 @@ Group.create = options => {
   }
 }
 
-Group.findInvitation = (userId, group, wanted) => findMembership(userId, group, 'invited', wanted)
+export const findGroupInvitation = (userId, group, wanted) => findMembership(userId, group, 'invited', wanted)
 
-const membershipActions = {
+export const groupMembershipActions = {
   invite: (invitorId, invitedId, group) => {
-    // Using Group.findInvitation as a validator throwing
+    // Using findGroupInvitation as a validator throwing
     // if the document isn't in the desired state
-    Group.findInvitation(invitedId, group, false)
+    findGroupInvitation(invitedId, group, false)
     group.invited.push(createMembership(invitedId, invitorId))
     return group
   },
@@ -90,7 +86,7 @@ const membershipActions = {
   },
 }
 
-Group.deleteUser = (group, userId) => {
+export function removeUserFromGroupDoc (group, userId) {
   for (const list of groupRoles) {
     group[list] = withoutUser(group[list], userId)
   }
@@ -110,9 +106,6 @@ const byTimestamp = (a, b) => a.timestamp - b.timestamp
 const withoutUser = (memberships, userId) => {
   return memberships.filter(memberData => memberData.user !== userId)
 }
-
-Group.membershipActionsList = Object.keys(membershipActions)
-Object.assign(Group, membershipActions)
 
 // create user's membership object that will be moved between categories
 const createMembership = (userId, invitorId) => ({
@@ -158,23 +151,23 @@ const userIsRole = role => (userId, group) => {
   return ids.includes(userId)
 }
 
-const userIsAdmin = Group.userIsAdmin = userIsRole('admins')
+const userIsAdmin = userIsRole('admins')
 const userIsNonAdminMember = userIsRole('members')
 
-Group.userIsMember = (userId, group) => userIsAdmin(userId, group) || userIsNonAdminMember(userId, group)
+export const userIsGroupMember = (userId, group) => userIsAdmin(userId, group) || userIsNonAdminMember(userId, group)
 
-Group.categories = {
+export const groupCategories = {
   members: [ 'admins', 'members' ],
   users: [ 'admins', 'members', 'invited', 'requested' ],
 }
 
-Group.getAllMembersIds = group => {
+export const getAllGroupDocMembersIds = group => {
   assert_.object(group)
   const adminsIds = map(group.admins, 'user')
   const membersIds = map(group.members, 'user')
   return adminsIds.concat(membersIds)
 }
 
-Group.formatters = {
+export const groupFormatters = {
   position: truncateLatLng,
 }

@@ -1,11 +1,11 @@
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
-import Group from '#models/group'
+import { getAllGroupDocMembersIds } from '#models/group'
 
 export default async (groupId, reqUserId) => {
   const group = await getGroupById(groupId)
-  const membersIds = Group.getAllMembersIds(group)
+  const membersIds = getAllGroupDocMembersIds(group)
   const users = await getUsersByIds(membersIds)
   return {
     users,

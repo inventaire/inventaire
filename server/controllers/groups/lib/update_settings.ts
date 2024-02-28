@@ -4,10 +4,10 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { emit } from '#lib/radio'
 import { acceptNullValue, updatable } from '#models/attributes/group'
-import Group from '#models/group'
+import { groupFormatters } from '#models/group'
+import groupValidations from '#models/validations/group'
 import { addSlug } from './slug.js'
 
-const { validations, formatters } = Group
 const db = await dbFactory('groups')
 
 export default async (data, userId) => {
@@ -18,11 +18,11 @@ export default async (data, userId) => {
     throw newError(`${attribute} can't be updated`, 400, data)
   }
 
-  if (!validations[attribute](value) && !(value === null && acceptNullValue.includes(attribute))) {
+  if (!groupValidations[attribute](value) && !(value === null && acceptNullValue.includes(attribute))) {
     throw newInvalidError(attribute, value)
   }
 
-  if (formatters[attribute]) value = formatters[attribute](value)
+  if (groupFormatters[attribute]) value = groupFormatters[attribute](value)
 
   const groupDoc = await db.get(groupId)
   const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)

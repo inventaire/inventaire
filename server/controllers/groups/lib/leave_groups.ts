@@ -1,7 +1,7 @@
 import { property } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
-import Group from '#models/group'
+import { removeUserFromGroupDoc } from '#models/group'
 
 const db = await dbFactory('groups')
 
@@ -28,7 +28,7 @@ export async function leaveAllGroups (userId) {
 }
 
 async function removeUser (group, userId) {
-  const updatedGroup = Group.deleteUser(group, userId)
+  const updatedGroup = removeUserFromGroupDoc(group, userId)
   await db.put(updatedGroup)
   await emit('group:leave', group._id, userId)
 }
