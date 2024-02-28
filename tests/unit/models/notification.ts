@@ -1,7 +1,6 @@
 import 'should'
 import { someCouchUuid } from '#fixtures/general'
 import { wait } from '#lib/promises'
-import Notification from '#models/notification'
 
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({
@@ -12,7 +11,7 @@ const someGroupUpdateData = () => ({
   previousValue: 'laborum eum nihil group',
 })
 const someNotificationDoc = () => {
-  const notificationDoc = Notification.create({
+  const notificationDoc = createNotificationDoc({
     user: someUserId,
     type: 'groupUpdate',
     data: someGroupUpdateData(),
@@ -25,7 +24,7 @@ const someNotificationDoc = () => {
 describe('notification model', () => {
   describe('create', () => {
     it('should reject notification without a user id', () => {
-      Notification.create.bind(null, {
+      createNotificationDoc.bind(null, {
         type: 'groupUpdate',
         data: someGroupUpdateData(),
       })
@@ -33,7 +32,7 @@ describe('notification model', () => {
     })
 
     it('should reject notification with an invalid user id', () => {
-      Notification.create.bind(null, {
+      createNotificationDoc.bind(null, {
         user: 'foo',
         type: 'groupUpdate',
         data: someGroupUpdateData(),
@@ -42,7 +41,7 @@ describe('notification model', () => {
     })
 
     it('should reject notification without a type', () => {
-      Notification.create.bind(null, {
+      createNotificationDoc.bind(null, {
         user: someUserId,
         data: someGroupUpdateData(),
       })
@@ -50,7 +49,7 @@ describe('notification model', () => {
     })
 
     it('should reject notification with an invalid type', () => {
-      Notification.create.bind(null, {
+      createNotificationDoc.bind(null, {
         user: someUserId,
         type: 'foo',
         data: someGroupUpdateData(),
@@ -59,7 +58,7 @@ describe('notification model', () => {
     })
 
     it('should reject notification without a data object', () => {
-      Notification.create.bind(null, {
+      createNotificationDoc.bind(null, {
         user: someUserId,
         type: 'groupUpdate',
       })
@@ -67,7 +66,7 @@ describe('notification model', () => {
     })
 
     it('should return a notification object', () => {
-      const notificationDoc = Notification.create({
+      const notificationDoc = createNotificationDoc({
         user: someUserId,
         type: 'groupUpdate',
         data: someGroupUpdateData(),
@@ -84,7 +83,7 @@ describe('notification model', () => {
       it('should reject notification without a data.attribute', () => {
         const data = someGroupUpdateData()
         delete data.attribute
-        Notification.create.bind(null, {
+        createNotificationDoc.bind(null, {
           user: someUserId,
           type: 'groupUpdate',
           data,
@@ -99,12 +98,12 @@ describe('notification model', () => {
       const notificationDoc = someNotificationDoc()
       const { time } = notificationDoc
       await wait(2)
-      Notification.update(notificationDoc)
+      updateNotificationDoc(notificationDoc)
       notificationDoc.time.should.be.above(time)
     })
 
     it('should reject an invalid doc object', async () => {
-      Notification.update.bind(null, {}).should.throw(/^invalid doc _id/)
+      updateNotificationDoc.bind(null, {}).should.throw(/^invalid doc _id/)
     })
   })
 })

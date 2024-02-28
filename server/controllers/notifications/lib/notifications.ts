@@ -1,7 +1,7 @@
 import dbFactory from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
-import Notification from '#models/notification'
+import { createNotificationDoc, markNotificationDocAsRead } from '#models/notification'
 
 const db = await dbFactory('notifications')
 
@@ -22,7 +22,7 @@ export function getNotificationsBySubject (subjectId) {
 }
 
 export function createNotification (user, type, data) {
-  const doc = Notification.create({ user, type, data })
+  const doc = createNotificationDoc({ user, type, data })
   return db.post(doc)
 }
 
@@ -31,7 +31,7 @@ export async function updateNotificationReadStatus (userId, times) {
   assert_.numbers(times)
   const keys = times.map(time => [ userId, time ])
   const docs = await db.viewByKeys('byUserAndTime', keys)
-  docs.forEach(Notification.markAsRead)
+  docs.forEach(markNotificationDocAsRead)
   return db.bulk(docs)
 }
 

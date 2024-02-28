@@ -1,7 +1,7 @@
 import { keyBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
-import Notification from '#models/notification'
+import { createNotificationDoc, updateNotificationDoc } from '#models/notification'
 
 const db = await dbFactory('notifications')
 
@@ -34,7 +34,7 @@ const getNotificationUpdateOrCreation = (data, existingNotificationsByUsers) => 
 
 const getNewNotification = (userToNotify, data) => {
   const { groupId, actorId, attribute, previousValue, newValue } = data
-  return Notification.create({
+  return createNotificationDoc({
     user: userToNotify,
     type: 'groupUpdate',
     data: {
@@ -53,7 +53,7 @@ const getNotificationUpdate = (existingNotification, newValue) => {
   } else {
     existingNotification.data.newValue = newValue
   }
-  return Notification.update(existingNotification)
+  return updateNotificationDoc(existingNotification)
 }
 
 const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
