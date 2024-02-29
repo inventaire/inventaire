@@ -15,7 +15,7 @@ export default {
       'by-ids': byIds,
       'by-score': byScore,
       'by-entities-type': byEntitiesType,
-      'by-suspect-uris': bySuspectUris,
+      'by-uris': bySuspectUris,
       'by-suggestion-uris': bySuggestionUris,
     },
   }),
