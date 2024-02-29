@@ -25,7 +25,7 @@ describe('tasks:bySuspectUris', () => {
     const suspect = await createHuman()
     await createTask({ suspectUri: suspect.uri })
     const { uri } = suspect
-    const { tasks } = await publicReq('get', `${endpoint}by-suspect-uris&uris=${uri}`)
+    const { tasks } = await publicReq('get', `${endpoint}by-uris&uris=${uri}`)
     tasks[uri][0].should.be.an.Object()
   })
 
