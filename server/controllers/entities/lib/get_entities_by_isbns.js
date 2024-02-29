@@ -8,12 +8,14 @@ import formatEditionEntity from './format_edition_entity.js'
 export default async (rawIsbns, params = {}) => {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { autocreate, refresh } = params
-  let entities
   if (autocreate && refresh) {
-    entities = await Promise.all(isbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
-  } else {
-    entities = await getInvEntitiesByIsbns(isbns)
+    // Enrich editions that can be, but let getInvEntitiesByIsbns get the results
+    // as enrichAndGetEditionEntityFromIsbn might return { isbn, notFound: true }
+    // even if the local database has an existing entity with that ISBN.
+    // Likely because getAuthoritiesAggregatedEntry didn't find anything
+    await Promise.all(isbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
   }
+  let entities = await getInvEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = difference(isbns, foundIsbns)
 
