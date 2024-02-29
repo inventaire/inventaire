@@ -88,24 +88,26 @@ export function getTasksBySuggestionUri (suggestionUri) {
 export async function getTasksBySuspectUrisAndType (uris: EntityUri[], types: string[]) {
   const keys = combinations(uris, types)
   const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndType', keys)
-  const tasksBySuspectUris = groupBy(tasks, 'suspectUri')
-  return fillWithEmptyArrays(tasksBySuspectUris, uris)
+  return indexByTasksKey(tasks, 'suspectUri', uris)
 }
 
-export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: TasksQueryOptions = {}) {
+export async function getTasksBySuspectUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(uris, includeArchived))
   if (index !== true) return tasks
-  const tasksBySuspectUris = groupBy(tasks, 'suspectUri')
-  return fillWithEmptyArrays(tasksBySuspectUris, suspectUris)
+  return indexByTasksKey(tasks, 'suspectUri', uris)
 }
 
-export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], options: TasksQueryOptions = {}) {
+export async function getTasksBySuggestionUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(uris, includeArchived))
   if (index !== true) return tasks
-  const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
-  return fillWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)
+  return indexByTasksKey(tasks, 'suggestionUri', uris)
+}
+
+function indexByTasksKey (tasks, key, tasksUris) {
+  const tasksBySuspectUris = groupBy(tasks, key)
+  return fillWithEmptyArrays(tasksBySuspectUris, tasksUris)
 }
 
 function getKeys (uris: EntityUri[], includeArchived?: boolean) {
