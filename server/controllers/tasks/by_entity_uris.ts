@@ -1,13 +1,21 @@
-import { getTasksBySuspectUris, getTasksBySuggestionUris } from './lib/tasks.js'
+import { forceArray } from '#lib/utils/base'
+import { getTasksBySuspectUrisAndType, getTasksBySuggestionUris } from './lib/tasks.js'
+
+const typeAllowList = [ 'deduplicate' ]
 
 const sanitization = {
   uris: {},
+  type: {
+    allowlist: typeAllowList,
+    optional: true,
+  },
 }
 
 export const bySuspectUris = {
   sanitization,
-  controller: async ({ uris }) => {
-    const tasks = await getTasksBySuspectUris(uris, { index: true })
+  controller: async ({ uris, type = typeAllowList }) => {
+    const types = forceArray(type)
+    const tasks = await getTasksBySuspectUrisAndType(uris, types)
     return { tasks }
   },
 }

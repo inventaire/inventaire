@@ -1,7 +1,9 @@
 import 'should'
+import { publicReq } from '#tests/api/utils/utils'
 import { createHuman, someFakeUri } from '../fixtures/entities.js'
 import { createTask } from '../fixtures/tasks.js'
 import {
+  endpoint,
   getBySuspectUris,
   getBySuggestionUris,
   update,
@@ -16,6 +18,14 @@ describe('tasks:bySuspectUris', () => {
     tasks.should.be.an.Object()
     Object.keys(tasks).length.should.equal(1)
     tasks[uri].should.be.an.Array()
+    tasks[uri][0].should.be.an.Object()
+  })
+
+  it('with empty type should return an array of tasks', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const { uri } = suspect
+    const { tasks } = await publicReq('get', `${endpoint}by-suspect-uris&uris=${uri}`)
     tasks[uri][0].should.be.an.Object()
   })
 

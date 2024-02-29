@@ -1,4 +1,4 @@
-import { groupBy } from 'lodash-es'
+import { groupBy, zip } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
@@ -82,6 +82,13 @@ export function getTasksBySuspectUriAndState (suspectUri: EntityUri, state: Task
 
 export function getTasksBySuggestionUri (suggestionUri) {
   return db.getDocsByViewKey<Task>('bySuggestionUriAndState', [ suggestionUri, null ])
+}
+
+export async function getTasksBySuspectUrisAndType (uris: EntityUri[], types: string[]) {
+  const keys = zip(uris, types)
+  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndType', keys)
+  const tasksBySuspectUris = groupBy(tasks, 'suspectUri')
+  return fillWithEmptyArrays(tasksBySuspectUris, uris)
 }
 
 export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: TasksQueryOptions = {}) {
