@@ -20,4 +20,6 @@ export const databases = {
   oauth_tokens: [],
   transactions: [ 'transactions' ],
   users: [ 'users', 'relations', 'invited' ],
-}
+} as const
+
+export type DbName = keyof typeof databases

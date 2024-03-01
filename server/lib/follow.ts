@@ -3,6 +3,7 @@
 import follow from 'cloudant-follow'
 import CONFIG from 'config'
 import { debounce } from 'lodash-es'
+import type { DbName } from '#db/couchdb/databases'
 import metaDbFactory from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -10,10 +11,13 @@ import { requests_ } from '#lib/requests'
 import { serverMode } from '#lib/server_mode'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
+import type { Url } from '#types/common'
 
 const metaDb = metaDbFactory('meta', 'utf8')
-const dbHost = CONFIG.db.getOrigin()
+const dbHost = CONFIG.db.getOrigin() as Url
 const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
+
+type DatabaseSeq = `${number}-{string}`
 
 let waitForCouchInit
 const importCircularDependencies = async () => {
@@ -69,11 +73,11 @@ const getLastSeq = async dbName => {
   return metaDb.get(key).catch(catchNotFound)
 }
 
-const initFollow = async (dbName, reset, lastSeq) => {
+const initFollow = async (dbName: DbName, reset: () => Promise<void>, lastSeq: DatabaseSeq) => {
   if (lastSeq != null) assert_.string(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
-  const dbUrl = `${dbHost}/${dbName}`
+  const dbUrl = `${dbHost}/${dbName}` as Url
 
   await waitForCouchInit()
   const dbLastSeq = await getDbLastSeq(dbUrl)
@@ -132,7 +136,7 @@ const startFollowingDb = params => {
   })
 }
 
-const SetLastSeq = dbName => {
+const SetLastSeq = (dbName: DbName) => {
   const key = buildKey(dbName)
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
@@ -150,9 +154,9 @@ const SetLastSeq = dbName => {
   return debounce(setLastSeq, 1000)
 }
 
-const buildKey = dbName => `${dbName}-last-seq`
+const buildKey = (dbName: DbName) => `${dbName}-last-seq`
 
-const getDbLastSeq = async dbUrl => {
+const getDbLastSeq = async (dbUrl: Url) => {
   const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`)
-  return lastSeq
+  return lastSeq as DatabaseSeq
 }
