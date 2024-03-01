@@ -9,11 +9,13 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
+import type { HttpHeaders, HttpMethod, Url } from '#types/common'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
 import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
+import type { Agent } from 'node:http'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
@@ -22,7 +24,19 @@ const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
-async function req (method, url, options = {}) {
+interface ReqOptions {
+  sanitize?: boolean
+  returnBodyOnly?: boolean
+  parseJson?: boolean
+  body?: unknown
+  bodyStream?: Stream
+  headers?: HttpHeaders
+  retryOnceOnError?: boolean
+  noRetry?: boolean
+  timeout?: number
+}
+
+async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {
   assert_.string(url)
   assert_.object(options)
 
@@ -120,9 +134,20 @@ function formatHeaders (headers) {
   return flattenedHeaders
 }
 
+interface FetchOptions {
+  method: string,
+  headers: Record<string, string>
+  body?: unknown
+  agent?: Agent | typeof getAgent
+  redirect: 'follow' | 'error' | 'manual'
+  compress: boolean
+  // Non-standard: node-fetch@2 only
+  timeout?: number
+}
+
 function getFetchOptions (method, options) {
   const headers = options.headers || {}
-  const fetchOptions = {
+  const fetchOptions: FetchOptions = {
     method,
     headers,
     timeout: options.timeout || defaultTimeout,
@@ -210,7 +235,7 @@ export const requests_ = {
   post: req.bind(null, 'post'),
   put: req.bind(null, 'put'),
   delete: req.bind(null, 'delete'),
-  head: (url, options = {}) => {
+  head: (url: Url, options: ReqOptions = {}) => {
     options.parseJson = false
     options.returnBodyOnly = false
     return req('head', url, options)
