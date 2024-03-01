@@ -1,9 +1,8 @@
-import type { CouchDoc, CouchUuid } from '#types/common'
+import type { CouchDoc, CouchUuid, LatLng } from '#types/common'
 import type { PropertyUri } from '#types/entity'
 
 export type UserId = CouchUuid
 export type Email = `${string}@${string}`
-export type LatLng = [ number, number ]
 
 export interface UserSettings {
   notifications?: {
@@ -35,6 +34,8 @@ export type UserDataSnapshot = Record<SnapshotVisibilitySectionName, SnapshotVis
 export type UserRole = 'admin' | 'dataadmin'
 
 export type CreationStrategy = 'local' | 'browserid'
+
+export type UserImg = `/img/users/${string}`
 
 export interface User extends CouchDoc {
   type: 'user' | 'deletedUser'
