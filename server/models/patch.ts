@@ -3,6 +3,7 @@ import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { createBlankEntityDoc } from '#models/entity'
+import type { Patch } from '#types/patch'
 import { versioned } from './attributes/entity.js'
 import validations from './validations/common.js'
 
@@ -30,7 +31,7 @@ export function createPatchDoc (params) {
   // fallback on using the timestamp, rather than crashing
   entityVersion = entityVersion || now
 
-  const patch = {
+  const patch: Partial<Patch> = {
     _id: `${entityId}:${entityVersion}`,
     type: 'patch',
     user: userId,
