@@ -6,7 +6,7 @@ import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
-import Group, { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds } from '#models/group'
+import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds } from '#models/group'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')

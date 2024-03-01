@@ -3,7 +3,6 @@ import dbFactory from '#db/couchdb/base'
 import { passwords as pw_ } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
-import User from '#models/user'
 import userValidations from '#models/validations/user'
 
 const db = await dbFactory('users')
