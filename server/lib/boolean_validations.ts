@@ -3,6 +3,11 @@ import CONFIG from 'config'
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
+import type { LocalActorUrl } from '#types/activity'
+import type { Url } from '#types/common'
+import type { InvEntityUri, IsbnEntityUri, WdEntityUri } from '#types/entity'
+import type { AuthentifiedReq } from '#types/server'
+import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
@@ -13,7 +18,7 @@ const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 export const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 export const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
-export function isUrl (url) {
+export function isUrl (url): url is Url {
   try {
     const { protocol, username, password } = new URL(url)
     if (!(protocol === 'http:' || protocol === 'https:')) return false
@@ -35,19 +40,20 @@ export const isUserImg = bindedTest('UserImg')
 export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
 export const isWdEntityId = isWikidataItemId
-export function isInvEntityUri (uri) {
+
+export function isInvEntityUri (uri): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'inv') && isCouchUuid(id)
 }
 
-export function isIsbnEntityUri (uri) {
+export function isIsbnEntityUri (uri): uri is IsbnEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'isbn') && isNormalizedIsbn(id)
 }
 
-export function isWdEntityUri (uri) {
+export function isWdEntityUri (uri): uri is WdEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri && uri.split(':')
   return (prefix === 'wd') && isWikidataItemId(id)
@@ -93,7 +99,7 @@ export const isStrictlyPositiveInteger = num => Number.isInteger(num) && num > 0
 export const isExtendedUrl = str => isUrl(str) || isLocalImg(str)
 export const isCollection = array => isArray(array) && array.every(isPlainObject)
 
-export function isLocalActivityPubActorUrl (url) {
+export function isLocalActivityPubActorUrl (url): url is LocalActorUrl {
   if (!isUrl(url)) return false
   const { origin, pathname, searchParams } = new URL(url)
   if (origin !== publicOrigin) return false
@@ -102,7 +108,11 @@ export function isLocalActivityPubActorUrl (url) {
   return isNonEmptyString(searchParams.get('name'))
 }
 
-export function isVisibilityGroupKey (value) {
+export function isVisibilityGroupKey (value): value is VisibilityGroupKey {
   const [ prefix, id ] = value.split(':')
   return prefix === 'group' && isCouchUuid(id)
+}
+
+export function isAuthentifiedReq (req): req is AuthentifiedReq {
+  return req.user != null
 }
