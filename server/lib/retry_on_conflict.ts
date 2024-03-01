@@ -19,7 +19,7 @@ export function retryOnConflict (params) {
 
       attemptsCount += 1
 
-      return updateFn.apply(null, args)
+      return updateFn(...args)
       .catch(err => {
         // Retry only if the conflict comes from then entity
         if (err.statusCode === 409 && err.name !== 'patch_creation_failed') {
