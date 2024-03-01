@@ -1,3 +1,4 @@
+import parseUrl from 'parseurl'
 import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
 
@@ -14,7 +15,7 @@ const indexOptions = {
 
 export default {
   get: (req, res) => {
-    const { pathname } = req._parsedUrl
+    const { pathname } = parseUrl(req)
     const domain = pathname.split('/')[1]
     if (domain === 'api') {
       bundleError(req, res, `GET ${pathname}: api route not found`, 404)
@@ -34,7 +35,7 @@ export default {
   api: (req, res) => {
     bundleError(req, res, 'wrong API route or http verb', 404, {
       verb: req.method,
-      url: req._parsedUrl.href,
+      url: parseUrl(req).href,
     })
   },
 }

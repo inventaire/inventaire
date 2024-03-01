@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser'
 import CONFIG from 'config'
+import parseUrl from 'parseurl'
 import { bundleError } from '#lib/error/pre_filled'
 import { getHashCode } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
@@ -29,7 +30,7 @@ export function deduplicateRequests (req, res, next) {
   const { method, url } = req
   if (!methodsWithBody.includes(method)) return next()
 
-  const { pathname } = req._parsedUrl
+  const { pathname } = parseUrl(req)
   if (ignorePathname.includes(pathname)) return next()
 
   // If the request as no session cookie, simply use a hash of the header

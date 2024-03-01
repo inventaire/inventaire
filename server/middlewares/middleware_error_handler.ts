@@ -1,4 +1,5 @@
 // A middleware to catch other middlewares errors and repackage them
+import parseUrl from 'parseurl'
 import { logoutRedirect } from '#controllers/auth/connection'
 import { errorHandler } from '#lib/error/error_handler'
 import { bundleError } from '#lib/error/pre_filled'
@@ -9,7 +10,7 @@ export function middlewareErrorHandler (err, req, res, next) {
   if ((err.name === 'SyntaxError') && err.message.startsWith('Unexpected token')) {
     bundleError(req, res, 'invalid JSON body', 400)
   } else if (err.name === 'SessionError') {
-    const { pathname } = req._parsedUrl
+    const { pathname } = parseUrl(req)
     logoutRedirect(`/login?redirect=${pathname}`, req, res, next)
   } else {
     errorHandler(req, res, err)

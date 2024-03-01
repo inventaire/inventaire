@@ -1,4 +1,5 @@
 import CONFIG from 'config'
+import parseUrl from 'parseurl'
 import { coloredElapsedTime } from '#lib/time'
 
 const host = CONFIG.getPublicOrigin()
@@ -21,7 +22,7 @@ function skip (req) {
   // with /public removed: /public/css/app.css will have a pathname=/css/app.css
   // In that case, req._parsedOriginalUrl would be defined to the original /public/css/app.css,
   // but it's also fine to just set 'css' or 'js' as muted domains instead
-  const { path, pathname } = req._parsedUrl
+  const { path, pathname } = parseUrl(req)
   const domain = pathname.split('/')[1]
   return mutedDomains.includes(domain) || mutedPath.includes(path)
 }
