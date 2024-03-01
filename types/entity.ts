@@ -1,4 +1,4 @@
-import type { CouchUuid } from '#types/couchdb'
+import type { CouchUuid } from '#types/common'
 
 export type WdPropertyUri = `wdt:P${number}`
 export type InvPropertyUri = `invp:P${number}`

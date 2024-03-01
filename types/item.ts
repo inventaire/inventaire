@@ -1,5 +1,5 @@
 import type { itemTransactionModes } from '#models/attributes/item'
-import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { CouchDoc, CouchUuid } from '#types/common'
 import type { EntityUri } from '#types/entity'
 import type { ShelfId } from '#types/shelf'
 import type { TransactionId } from '#types/transaction'
