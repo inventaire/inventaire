@@ -8,7 +8,7 @@ import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
-import Transaction from '#models/transaction'
+import { createTransactionDoc, transactionIsActive, validateTransactionPossibleState } from '#models/transaction'
 
 const db = await dbFactory('transactions')
 
@@ -28,7 +28,7 @@ export function getTransactionsByUserAndItem (userId, itemId) {
 }
 
 export async function createTransaction (itemDoc, ownerDoc, requesterDoc) {
-  const transaction = Transaction.create(itemDoc, ownerDoc, requesterDoc)
+  const transaction = createTransactionDoc(itemDoc, ownerDoc, requesterDoc)
   log(transaction, 'transaction')
   const couchRes = await db.post(transaction)
   await emit('transaction:request', couchRes.id)
@@ -43,7 +43,7 @@ export function addTransactionMessage (userId, message, transactionId) {
 }
 
 export async function updateTransactionState (transaction, newState, userId) {
-  Transaction.validatePossibleState(transaction, newState)
+  validateTransactionPossibleState(transaction, newState)
   await db.update(transaction._id, stateUpdater(newState, userId, transaction))
   await emit('transaction:update', transaction, newState)
 }
@@ -69,7 +69,7 @@ export function getUserActiveTransactionsCount (userId) {
 
 export async function cancelAllActiveTransactions (userId) {
   const transactions = await getTransactionsByUser(userId)
-  const activeTransactions = transactions.filter(Transaction.isActive)
+  const activeTransactions = transactions.filter(transactionIsActive)
   await Promise.all(activeTransactions.map(transaction => {
     return updateTransactionState(transaction, 'cancelled', userId)
   }))
@@ -132,4 +132,4 @@ const userRole = (userId, transaction) => {
   else throw newError('no role found', 500, { userId, transaction })
 }
 
-const activeCount = transactions => transactions.filter(Transaction.isActive).length
+const activeCount = transactions => transactions.filter(transactionIsActive).length
