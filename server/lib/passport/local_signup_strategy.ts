@@ -2,7 +2,6 @@ import { Strategy as LocalStrategy } from 'passport-local'
 import createUser from '#controllers/user/lib/create'
 import { getLangFromHeaders } from '#lib/headers'
 import { track } from '#lib/track'
-import User from '#models/user'
 import userValidations from '#models/validations/user'
 
 const options = { passReqToCallback: true }

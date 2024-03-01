@@ -2,7 +2,6 @@ import { getUserByEmail, getUserByUsername } from '#controllers/user/lib/user'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { success } from '#lib/utils/logs'
-import User from '#models/user'
 import userValidations from '#models/validations/user'
 import isReservedWord from './is_reserved_word.js'
 
