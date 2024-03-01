@@ -1,5 +1,7 @@
 import { isArray, isString } from 'lodash-es'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
+import { arrayIncludes } from '#lib/utils/base'
+import type { VisibilityKey } from '#types/visibility'
 
 export const visibilityKeywords = [
   'friends',
@@ -7,9 +9,9 @@ export const visibilityKeywords = [
   'public',
 ] as const
 
-export function isVisibilityKey (value) {
+export function isVisibilityKey (value): value is VisibilityKey {
   if (!isString(value)) return false
-  if (visibilityKeywords.includes(value)) return true
+  if (arrayIncludes(visibilityKeywords, value)) return true
   if (isVisibilityGroupKey(value)) return true
   return false
 }
