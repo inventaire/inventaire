@@ -14,6 +14,7 @@ export interface ContextualizedError extends Error {
   attachReqContext?: string
   error_type?: string
   error_name?: string
+  mute?: boolean
 }
 
 export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: unknown) {
