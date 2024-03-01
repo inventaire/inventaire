@@ -1,6 +1,7 @@
 import { clone } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
 const { pass, entityUri, couchUuid } = commonValidations
@@ -26,7 +27,7 @@ export function createElementDoc (element) {
   assert_.string(element.uri)
   assert_.string(element.list)
 
-  const newElement = {}
+  const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {
     if (!attributes.validAtCreation.includes(attribute)) {
       throw newError('invalid attribute', 400, { attribute, element })
