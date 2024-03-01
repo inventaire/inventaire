@@ -1,9 +1,9 @@
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
-import type { PropertyUri } from '#types/entity'
+import type { Claims, PropertyUri } from '#types/entity'
 
-export function validateRequiredPropertiesValues (claims, checkedProperties?: PropertyUri[]) {
+export function validateRequiredPropertiesValues (claims: Claims, checkedProperties?: PropertyUri[]) {
   if (claims['wdt:P31']?.[0] == null) {
     throw newError("wdt:P31 array can't be empty", 400, { claims })
   }
@@ -13,7 +13,7 @@ export function validateRequiredPropertiesValues (claims, checkedProperties?: Pr
     validateControlledPropertiesClaimsPerType[type](claims)
   }
 
-  checkedProperties = checkedProperties || Object.keys(claims)
+  checkedProperties = checkedProperties || (Object.keys(claims) as PropertyUri[])
 
   checkedProperties.forEach(property => {
     validateUniqueValue(property, claims[property])

@@ -32,6 +32,8 @@ export type InvClaimValue = EntityValue | StringValue | ExternalIdValue | UrlVal
 
 export type InvPropertyClaims = InvClaimValue[]
 
+export type Claims = Record<PropertyUri, InvPropertyClaims>
+
 type LocalPropertyUri = typeof localPropertiesUris[number]
 
 export interface InvEntity extends CouchDoc {
