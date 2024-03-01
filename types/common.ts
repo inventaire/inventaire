@@ -5,3 +5,5 @@ export interface CouchDoc {
   _id: CouchUuid
   _rev: CouchRevId
 }
+
+export type LatLng = [ number, number ]
