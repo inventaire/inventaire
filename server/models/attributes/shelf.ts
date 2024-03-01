@@ -3,14 +3,14 @@ const updatable = [
   'visibility',
   'name',
   'color',
-]
+] as const
 
 export default {
   updatable,
-  validAtCreation: updatable.concat([
-    'owner',
-  ]),
+  validAtCreation: [ ...updatable, 'owner' ] as const,
   private: [
     'visibility',
-  ],
+  ] as const,
 }
+
+export type UpdatableShelfAttributes = typeof updatable[number]
