@@ -6,7 +6,7 @@ import { getAuthorizationById, deleteAuthorization, saveAuthorization } from '#c
 import { getOauthClientById } from '#controllers/auth/lib/oauth/clients'
 import { getOauthTokenbyId, saveOauthToken } from '#controllers/auth/lib/oauth/tokens'
 import { getUserById } from '#controllers/user/lib/user'
-import { passwords } from '#lib/crypto'
+import { verifyPassword } from '#lib/crypto'
 import { newError, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 
@@ -34,7 +34,7 @@ export default {
     // Secret validation is done only while trying to optain a token, not when generating an authorization
     if (clientSecret === null) return client
 
-    const isValidSecret = await passwords.verify(client.secret, clientSecret)
+    const isValidSecret = await verifyPassword(client.secret, clientSecret)
     if (isValidSecret) {
       return client
     } else {

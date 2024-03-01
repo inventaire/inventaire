@@ -2,7 +2,7 @@ import CONFIG from 'config'
 import { omit, pick } from 'lodash-es'
 import { findUserByEmail } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
-import { passwords as pw_ } from '#lib/crypto'
+import { hashPassword, verifyPassword } from '#lib/crypto'
 import { WrappedUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -11,7 +11,7 @@ import { getRandomString } from '#lib/utils/random_string'
 
 const { tokenDaysToLive } = CONFIG
 
-const testToken = pw_.verify
+const testToken = verifyPassword
 const db = await dbFactory('users')
 const wrappedUpdate = WrappedUpdater(db)
 export const tokenLength = 32
@@ -82,6 +82,6 @@ const emailIsValid = user => {
 
 const getTokenData = () => {
   const token = getRandomString(tokenLength)
-  return pw_.hash(token)
+  return hashPassword(token)
   .then(tokenHash => [ token, tokenHash ])
 }

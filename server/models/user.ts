@@ -1,5 +1,5 @@
 import { get, omit, pick, without } from 'lodash-es'
-import { passwords as pw_ } from '#lib/crypto'
+import { hashPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { truncateLatLng } from '#lib/geo'
@@ -65,15 +65,15 @@ export async function createUserDoc (username: string, email: Email, creationStr
     throw newError('unknown strategy', 400)
   }
 
-  await hashPassword(user)
+  await hashUserPassword(user)
 
   return user
 }
 
-const hashPassword = async user => {
+const hashUserPassword = async user => {
   const { password } = user
   if (password != null) {
-    const hash = await pw_.hash(password)
+    const hash = await hashPassword(password)
     user.password = hash
   }
 }

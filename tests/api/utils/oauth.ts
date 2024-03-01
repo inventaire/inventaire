@@ -1,5 +1,5 @@
 import dbFactory from '#db/couchdb/base'
-import { sha1, passwords, getRandomBytes } from '#lib/crypto'
+import { sha1, hashPassword, getRandomBytes } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { buildUrl, parseQuery } from '#lib/utils/url'
@@ -24,7 +24,7 @@ export async function getClient (params = {}) {
     // Store the secret in plain text to let tests access it
     // This should obviously not be done in other environments
     testsPseudoSecret: secret,
-    secret: await passwords.hash(secret),
+    secret: await hashPassword(secret),
     redirectUris: [
       'http://localhost:8888/wiki/Special:OAuth2Client/callback',
     ],
