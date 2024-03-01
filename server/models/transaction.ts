@@ -9,11 +9,7 @@ const { states, basicNextActions, nextActionsWithReturn } = transactionAttribute
 const { snapshot: snapshotUserAttributes } = userAttributes
 const { snapshot: snapshotItemAttributes } = itemAttributes
 
-const Transaction = {}
-
-export default Transaction
-
-Transaction.create = (itemDoc, ownerDoc, requesterDoc) => {
+export function createTransactionDoc (itemDoc, ownerDoc, requesterDoc) {
   const itemId = itemDoc._id
   const ownerId = ownerDoc._id
   const requesterId = requesterDoc._id
@@ -53,7 +49,7 @@ const requestable = [
   'selling',
 ]
 
-Transaction.validatePossibleState = (transaction, newState) => {
+export function validateTransactionPossibleState (transaction, newState) {
   if (!states[transaction.state].next.includes(newState)) {
     throw newError('invalid state update', 400, transaction, newState)
   }
@@ -64,7 +60,7 @@ Transaction.validatePossibleState = (transaction, newState) => {
 }
 
 // do the item change of owner or return to its previous owner
-Transaction.isOneWay = transacDoc => {
+export function transactionIsOneWay (transacDoc) {
   if (!isString(transacDoc.transaction)) {
     throw newError('transaction transaction inaccessible', 500, transacDoc)
   }
@@ -77,7 +73,7 @@ const oneWay = {
   selling: true,
 }
 
-Transaction.isActive = transacDoc => {
+export function transactionIsActive (transacDoc) {
   const transacData = {
     name: transacDoc.transaction,
     state: transacDoc.state,

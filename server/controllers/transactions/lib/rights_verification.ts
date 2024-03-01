@@ -1,6 +1,6 @@
 import { newError } from '#lib/error/error'
 import { verifyRightToInteractWithItem } from '#lib/interactions'
-import Transaction from '#models/transaction'
+import { transactionIsActive } from '#models/transaction'
 
 let getTransactionsByUserAndItem, checkIfItemIsBusy
 const importCircularDependencies = async () => {
@@ -10,7 +10,7 @@ setImmediate(importCircularDependencies)
 
 const verifyNoExistingTransaction = async (reqUserId, item) => {
   const transactionsDocs = await getTransactionsByUserAndItem(reqUserId, item._id)
-  const activeTransactionsDocs = transactionsDocs.filter(Transaction.isActive)
+  const activeTransactionsDocs = transactionsDocs.filter(transactionIsActive)
   if (activeTransactionsDocs.length > 0) {
     const message = 'user already made a request on this item'
     throw newError(message, 403, reqUserId, item, activeTransactionsDocs[0])

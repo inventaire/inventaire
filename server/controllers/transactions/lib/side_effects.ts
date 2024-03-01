@@ -6,7 +6,7 @@ import { noop } from 'lodash-es'
 import { changeItemOwner } from '#controllers/items/lib/items'
 import { radio } from '#lib/radio'
 import { log, LogErrorAndRethrow } from '#lib/utils/logs'
-import Transaction from '#models/transaction'
+import { transactionIsOneWay } from '#models/transaction'
 
 export function initSideEffects () {
   radio.on('transaction:update', applySideEffects)
@@ -18,7 +18,7 @@ const applySideEffects = (transacDoc, newState) => {
 }
 
 const changeOwnerIfOneWay = transacDoc => {
-  if (Transaction.isOneWay(transacDoc)) {
+  if (transactionIsOneWay(transacDoc)) {
     log({ transacDoc }, 'changeOwner')
     return changeItemOwner(transacDoc)
     .catch(LogErrorAndRethrow('changeOwner'))
