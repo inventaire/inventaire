@@ -7,3 +7,7 @@ export interface CouchDoc {
 }
 
 export type LatLng = [ number, number ]
+
+export type Url = `http${string}`
+
+export type ImageHash = string

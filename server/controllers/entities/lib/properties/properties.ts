@@ -406,3 +406,5 @@ for (const [ property, { subjectTypes } ] of Object.entries(properties)) {
     throw new Error(`missing property values constraints: ${property}`)
   }
 }
+
+export const localPropertiesUris = Object.keys(properties)

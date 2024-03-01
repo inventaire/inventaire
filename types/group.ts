@@ -1,9 +1,9 @@
-import type { CouchDoc, CouchUuid, LatLng } from '#types/common'
+import type { CouchDoc, CouchUuid, ImageHash, LatLng } from '#types/common'
 import type { UserId } from '#types/user'
 
 export type GroupId = CouchUuid
 
-export type GroupImg = `/img/groups/${string}`
+export type GroupImg = `/img/groups/${ImageHash}`
 
 export interface GroupMembership {
   user: UserId
