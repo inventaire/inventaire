@@ -21,6 +21,6 @@ export async function waitForCPUsLoadToBeBelow ({ threshold }) {
     const factor = (load / threshold) ** 3
     const waitTime = Math.min(checkIntervalBase * factor, maxCheckInterval)
     await wait(waitTime)
-    return waitForCPUsLoadToBeBelow({ threshold, checkIntervalBase })
+    return waitForCPUsLoadToBeBelow({ threshold })
   }
 }
