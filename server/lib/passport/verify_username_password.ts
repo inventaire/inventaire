@@ -1,5 +1,5 @@
 import { findUserByUsernameOrEmail } from '#controllers/user/lib/user'
-import { passwords as pw_ } from '#lib/crypto'
+import { verifyPassword } from '#lib/crypto'
 import { logError } from '#lib/utils/logs'
 import loginAttempts from './login_attempts.js'
 
@@ -21,7 +21,7 @@ const returnIfValid = (done, password, username, user) => {
   // in case findOneByUsername returned an error
   if (!user) return
 
-  return verifyUserPassword(user, password)
+  return verifyPassword(user.password, password)
   .then(valid => {
     if (valid) done(null, user)
     else return invalidUsernameOrPassword(done, username, 'validity test')
@@ -33,8 +33,6 @@ const invalidUsernameOrPassword = (done, username, label) => {
   loginAttempts.recordFail(username, label)
   done(null, false, { message: 'invalid_username_or_password' })
 }
-
-const verifyUserPassword = (user, password) => pw_.verify(user.password, password)
 
 const finalError = (done, err) => {
   logError(err, 'username/password verify err')

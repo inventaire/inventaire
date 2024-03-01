@@ -1,9 +1,10 @@
 import { isNumber } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
-import { passwords as pw_ } from '#lib/crypto'
+import { hashPassword, verifyPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
 import userValidations from '#models/validations/user'
+import type { AuthentifiedReq } from '#types/server'
 
 const db = await dbFactory('users')
 
@@ -14,7 +15,7 @@ const sanitization = {
   'new-password': {},
 }
 
-const controller = async (params, req) => {
+async function controller (params, req: AuthentifiedReq) {
   const { user } = req
   const { currentPassword, newPassword } = params
   const { resetPassword } = user
@@ -23,7 +24,7 @@ const controller = async (params, req) => {
   return { ok: true }
 }
 
-const validatePassword = async ({ user, currentPassword, resetPassword }) => {
+async function validatePassword ({ user, currentPassword, resetPassword }) {
   // classic password update
   if (currentPassword != null) {
     if (!userValidations.password(currentPassword)) {
@@ -46,21 +47,21 @@ const validatePassword = async ({ user, currentPassword, resetPassword }) => {
   }
 }
 
-const verifyCurrentPassword = async (user, currentPassword) => {
-  return pw_.verify(user.password, currentPassword)
+async function verifyCurrentPassword (user, currentPassword) {
+  return verifyPassword(user.password, currentPassword)
 }
 
-const updatePassword = async (user, newPassword) => {
-  const newHash = await pw_.hash(newPassword)
+async function updatePassword (user, newPassword) {
+  const newHash = await hashPassword(newPassword)
   await updateUserPassword(user._id, user, newHash)
 }
 
-const updateUserPassword = (userId, user, newHash) => {
+function updateUserPassword (userId, user, newHash) {
   const updateFn = updateUserPassword.bind(null, user, newHash)
   return db.update(userId, updateFn)
 }
 
-const testOpenResetPasswordWindow = async resetPassword => {
+async function testOpenResetPasswordWindow (resetPassword) {
   if (expired(resetPassword, oneHour)) {
     throw newError('reset password timespan experied', 400)
   }
