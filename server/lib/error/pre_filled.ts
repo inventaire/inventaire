@@ -1,5 +1,6 @@
 // Pre-formatted error handlers to make error responses consistent
 import { pick } from 'lodash-es'
+import { isAuthentifiedReq } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { errorHandler } from '#lib/error/error_handler'
 import { typeOf } from '#lib/utils/types'
@@ -46,7 +47,7 @@ export const bundleMissingBodyError = Bundle(newMissingBodyError)
 export const bundleInvalidError = Bundle(newInvalidError)
 
 export function bundleUnauthorizedApiAccess (req: Req, res: Res, context?) {
-  const statusCode = req.user ? 403 : 401
+  const statusCode = isAuthentifiedReq(req) ? 403 : 401
   return bundleError(req, res, 'unauthorized api access', statusCode, context)
 }
 

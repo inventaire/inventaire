@@ -1,9 +1,14 @@
 import { pick } from 'lodash-es'
+import { isAuthentifiedReq } from '#lib/boolean_validations'
+import type { ContextualizedError } from '#lib/error/format_error'
 import { objLength } from '#lib/utils/base'
 import { warn, logError } from '#lib/utils/logs'
 import { typeOf } from '#lib/utils/types'
+import type { Req, Res } from '#types/server'
+import type { User } from '#types/user'
 
-const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ]
+const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ] as const
+const loggedUserAttributes = [ '_id', 'username' ] as const
 
 let responses_
 const importCircularDependencies = async () => {
@@ -11,7 +16,12 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-export function errorHandler (req, res, err) {
+interface ErrorResponse extends ContextualizedError {
+  user?: Pick<User, typeof loggedUserAttributes[number]>
+  headers?: Pick<Req['headers'], typeof headersToKeep[number]>
+}
+
+export function errorHandler (req: Req, res: Res, err: ErrorResponse) {
   // only accepts Error instances
   if (!(err instanceof Error)) {
     logError(err, 'bad error object')
@@ -22,7 +32,9 @@ export function errorHandler (req, res, err) {
   // if a status code was attached to the error, use it
   const statusCode = err.statusCode || 500
 
-  err.user = pick(req.user, '_id', 'username')
+  if (isAuthentifiedReq(req)) {
+    err.user = pick(req.user, loggedUserAttributes)
+  }
   err.headers = pick(req.headers, headersToKeep)
 
   // Ex: to pass req.query as err.context, set err.attachReqContext = 'query'
@@ -34,7 +46,7 @@ export function errorHandler (req, res, err) {
 
   if (err.mute !== true) {
     if (statusCode.toString().startsWith('4')) {
-      warn(err, statusCode)
+      warn(err, statusCode.toString())
     } else {
       logError(err, err.message)
     }
