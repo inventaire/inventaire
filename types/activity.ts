@@ -1,4 +1,4 @@
-import type { CouchDoc } from '#types/common'
+import type { CouchDoc, Url } from '#types/common'
 
 export interface Activity extends CouchDoc {
   type: string
@@ -9,3 +9,5 @@ export interface Activity extends CouchDoc {
   created: EpochTimeStamp
   updated: EpochTimeStamp
 }
+
+export type LocalActorUrl = Url
