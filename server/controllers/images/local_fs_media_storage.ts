@@ -1,5 +1,6 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
 import CONFIG from 'config'
+import parseUrl from 'parseurl'
 import { bundleError } from '#lib/error/pre_filled'
 // to be used in development only
 import * as regex_ from '#lib/regex'
@@ -13,10 +14,10 @@ const storageFolder = localStorage.folder()
 
 export default {
   get: (req, res) => {
-    const { pathname } = req._parsedUrl
+    const { pathname } = parseUrl(req)
 
     if (!pathname) {
-      return bundleError(req, res, 'invalid pathname', 400, { url: req._parsedUrl })
+      return bundleError(req, res, 'invalid pathname', 400, { url: parseUrl(req) })
     }
 
     const [ container, filename ] = pathname.split('/').slice(2)

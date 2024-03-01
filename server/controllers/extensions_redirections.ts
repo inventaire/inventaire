@@ -1,3 +1,4 @@
+import parseUrl from 'parseurl'
 import { getGroupBySlug, getGroupMembersIds } from '#controllers/groups/lib/groups'
 import { findUserByUsername } from '#controllers/user/lib/user'
 import { isUsername, isCouchUuid, isGroupId } from '#lib/boolean_validations'
@@ -7,7 +8,7 @@ import { newInvalidError } from '#lib/error/pre_filled'
 
 const extensionRedirect = extension => async (req, res) => {
   try {
-    const { domain, id, section } = parseUrl(req, extension)
+    const { domain, id, section } = parseReqUrl(req, extension)
     const redirectionFn = redirections[extension][domain]
 
     if (redirectionFn == null) {
@@ -31,8 +32,8 @@ const extensionPatterns = {
   rss: /\.rss$/,
 }
 
-const parseUrl = (req, extension) => {
-  const { pathname } = req._parsedUrl
+const parseReqUrl = (req, extension) => {
+  const { pathname } = parseUrl(req)
   let [ domain, id, section ] = pathname.split('/').slice(1)
   if (section) section = removeExtension(section, extension)
   else if (id) id = removeExtension(id, extension)

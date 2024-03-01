@@ -1,5 +1,6 @@
 import { URL } from 'node:url'
 import CONFIG from 'config'
+import parseUrl from 'parseurl'
 import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
 import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
@@ -81,7 +82,7 @@ export default {
 }
 
 const parseReq = req => {
-  let { pathname } = req._parsedUrl
+  let { pathname } = parseUrl(req)
   pathname = pathname.replace('/img/', '')
   return pathname.split('/')
 }
