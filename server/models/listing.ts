@@ -1,6 +1,7 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import type { Listing } from '#types/listing'
 import attributes from './attributes/listing.js'
 import validations from './validations/listing.js'
 
@@ -9,7 +10,7 @@ export function createListingDoc (listing) {
   assert_.string(listing.creator)
   assert_.string(listing.name)
 
-  const newListing = {}
+  const newListing: Partial<Listing> = {}
   Object.keys(listing).forEach(key => {
     const value = listing[key] || defaultValues[key]
     if (!attributes.validAtCreation.includes(key)) {
