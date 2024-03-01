@@ -1,4 +1,4 @@
-import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { CouchDoc, CouchUuid } from '#types/common'
 import type { PropertyUri } from '#types/entity'
 
 export type UserId = CouchUuid

@@ -1,4 +1,4 @@
-import type { CouchDoc } from '#types/couchdb'
+import type { CouchDoc } from '#types/common'
 
 export interface Activity extends CouchDoc {
   type: string

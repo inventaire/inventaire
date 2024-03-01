@@ -1,4 +1,4 @@
-import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { CouchDoc, CouchUuid } from '#types/common'
 import type { UserId } from '#types/user'
 import type { VisibilityKey } from '#types/visibility'
 
