@@ -1,8 +1,11 @@
 import { clone, omit } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
-import itemAttributes from './attributes/item.js'
+import type { Item } from '#types/item'
+import type { UserId } from '#types/user'
+import itemAttributes, { type UpdatableItemAttributes } from './attributes/item.js'
 import itemValidations from './validations/item.js'
 
 const { defaultValue: defaultTransaction } = itemAttributes.constrained.transaction
@@ -34,7 +37,9 @@ export function createItemDoc (userId, item) {
   return item
 }
 
-export function updateItemDoc (userId, newAttributes, oldItem) {
+type NewAttributes = Partial<Pick<Item, UpdatableItemAttributes>>
+
+export function updateItemDoc (userId: UserId, newAttributes: NewAttributes, oldItem: Item) {
   assert_.string(userId)
   assert_.object(newAttributes)
   assert_.object(oldItem)
@@ -50,7 +55,7 @@ export function updateItemDoc (userId, newAttributes, oldItem) {
   const passedAttributes = Object.keys(newAttributes)
 
   for (const attr of passedAttributes) {
-    if (!itemAttributes.updatable.includes(attr)) {
+    if (!arrayIncludes(itemAttributes.updatable, attr)) {
       throw newError(`invalid attribute: ${attr}`, 400, { userId, newAttributes, oldItem })
     }
     const newVal = newAttributes[attr]

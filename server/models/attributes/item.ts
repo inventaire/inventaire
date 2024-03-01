@@ -1,13 +1,17 @@
 const updatable = [
   'transaction',
-  'pictures',
   'visibility',
   'details',
   'notes',
   'shelves',
-  // Use case: change from a work entity to an edition entity
+  // Use case for making entity updatable: change from a work entity to an edition entity
   'entity',
-]
+
+  // TODO: remove (unused)
+  'pictures',
+] as const
+
+export type UpdatableItemAttributes = typeof updatable[number]
 
 const validAtCreation = [
   'entity',
@@ -41,8 +45,10 @@ const privat = [
   'visibility',
 ]
 
-const allowTransaction = [ 'giving', 'lending', 'selling' ]
-const doesntAllowTransaction = [ 'inventorying' ]
+const allowTransaction = [ 'giving', 'lending', 'selling' ] as const
+const doesntAllowTransaction = [ 'inventorying' ] as const
+
+export const itemTransactionModes = [ ...allowTransaction, ...doesntAllowTransaction ] as const
 
 const itemAttributes = {
   updatable,
@@ -58,7 +64,7 @@ const itemAttributes = {
   doesntAllowTransaction,
   constrained: {
     transaction: {
-      possibilities: allowTransaction.concat(doesntAllowTransaction),
+      possibilities: itemTransactionModes,
       defaultValue: 'inventorying',
     },
   },
