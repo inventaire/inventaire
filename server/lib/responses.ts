@@ -15,7 +15,7 @@ const ok = (res, status = 200) => {
 const Ok = (res, status) => ok.bind(null, res, status)
 
 const okWarning = (res, category, warning, status = 200) => {
-  addWarning(res, category, warning)
+  addWarning(res, `${category}: ${warning}`)
   res.status(status)
   send(res, { ok: true })
 }
