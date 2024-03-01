@@ -41,3 +41,5 @@ export interface InvEntity extends CouchDoc {
   created: EpochTimeStamp
   version: number
 }
+
+export type EntityImg = `/img/entities/${ImageHash}`

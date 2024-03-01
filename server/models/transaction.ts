@@ -1,13 +1,13 @@
 import { isString, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
+import { transactionBasicNextActions, transactionNextActionsWithReturn, transactionStates } from '#models/attributes/transaction'
+import type { Transaction, TransactionSnapshot } from '#types/transaction'
 import itemAttributes from './attributes/item.js'
-import transactionAttributes from './attributes/transaction.js'
 import userAttributes from './attributes/user.js'
 import transactionValidations from './validations/transaction.js'
 
-const { states, basicNextActions, nextActionsWithReturn } = transactionAttributes
-const { snapshot: snapshotUserAttributes } = userAttributes
-const { snapshot: snapshotItemAttributes } = itemAttributes
+const { snapshot: userSnapshotAttributes } = userAttributes
+const { snapshot: itemSnapshotAttributes } = itemAttributes
 
 export function createTransactionDoc (itemDoc, ownerDoc, requesterDoc) {
   const itemId = itemDoc._id
@@ -50,21 +50,21 @@ const requestable = [
 ]
 
 export function validateTransactionPossibleState (transaction, newState) {
-  if (!states[transaction.state].next.includes(newState)) {
-    throw newError('invalid state update', 400, transaction, newState)
+  if (!transactionStates[transaction.state].next.includes(newState)) {
+    throw newError('invalid state update', 400, { transaction, newState })
   }
 
   if ((newState === 'returned') && (transaction.transaction !== 'lending')) {
-    throw newError('transaction and state mismatch', 400, transaction, newState)
+    throw newError('transaction and state mismatch', 400, { transaction, newState })
   }
 }
 
 // do the item change of owner or return to its previous owner
-export function transactionIsOneWay (transacDoc) {
-  if (!isString(transacDoc.transaction)) {
-    throw newError('transaction transaction inaccessible', 500, transacDoc)
+export function transactionIsOneWay (transaction: Transaction) {
+  if (!isString(transaction.transaction)) {
+    throw newError('transaction transaction inaccessible', 500, { transaction })
   }
-  return oneWay[transacDoc.transaction]
+  return oneWay[transaction.transaction]
 }
 
 const oneWay = {
@@ -86,14 +86,14 @@ export function transactionIsActive (transacDoc) {
 }
 
 const snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
-  item: pick(itemDoc, snapshotItemAttributes),
+  item: pick(itemDoc, itemSnapshotAttributes),
   entity: getEntitySnapshotFromItemSnapshot(itemDoc.snapshot),
-  owner: pick(ownerDoc, snapshotUserAttributes),
-  requester: pick(requesterDoc, snapshotUserAttributes),
+  owner: pick(ownerDoc, userSnapshotAttributes),
+  requester: pick(requesterDoc, userSnapshotAttributes),
 })
 
 const getEntitySnapshotFromItemSnapshot = itemSnapshot => {
-  const entitySnapshot = {}
+  const entitySnapshot: TransactionSnapshot['entity'] = {}
   if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title'] }
   if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image'] }
   if (itemSnapshot['entity:authors'] != null) { entitySnapshot.authors = itemSnapshot['entity:authors'] }
@@ -102,15 +102,15 @@ const getEntitySnapshotFromItemSnapshot = itemSnapshot => {
 
 const getNextActionsList = transactionName => {
   if (transactionName === 'lending') {
-    return nextActionsWithReturn
+    return transactionNextActionsWithReturn
   } else {
-    return basicNextActions
+    return transactionBasicNextActions
   }
 }
 
 const findNextActions = transacData => {
   const { name, state, mainUserIsOwner } = transacData
-  const nextActions = getNextActionsList(name, state)
+  const nextActions = getNextActionsList(name)
   const role = mainUserIsOwner ? 'owner' : 'requester'
   return nextActions[state][role]
 }

@@ -1,15 +1,13 @@
 import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#controllers/transactions/lib/transactions'
 import { newError } from '#lib/error/error'
 import { track } from '#lib/track'
-import transactionAttributes from '#models/attributes/transaction'
+import { transactionStates, transactionStatesList } from '#models/attributes/transaction'
 import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
-
-const { states, statesList } = transactionAttributes
 
 const sanitization = {
   transaction: {},
   state: {
-    allowlist: statesList,
+    allowlist: transactionStatesList,
   },
 }
 
@@ -30,7 +28,7 @@ const updateState = async ({ transactionId, state, reqUserId }) => {
 }
 
 const validateRights = (transaction, state, reqUserId) => {
-  const { actor } = states[state]
+  const { actor } = transactionStates[state]
   validateRightsFunctionByAllowedActor[actor](reqUserId, transaction)
 }
 

@@ -50,6 +50,16 @@ const doesntAllowTransaction = [ 'inventorying' ] as const
 
 export const itemTransactionModes = [ ...allowTransaction, ...doesntAllowTransaction ] as const
 
+// Attributes to keep in documents where a stakeholder might loose
+// access to those data
+// ex: in a transaction, when the item isn't visible to the previous owner anymore
+// Attributes such as _id and transaction are already recorded by a transaction
+// thus their absence here as long as only transactions doc uses snaphshot
+export const itemSnapshotAttributes = [
+  'entity',
+  'details',
+] as const
+
 const itemAttributes = {
   updatable,
   validAtCreation,
@@ -68,15 +78,7 @@ const itemAttributes = {
       defaultValue: 'inventorying',
     },
   },
-  // Attributes to keep in documents where a stakeholder might loose
-  // access to those data
-  // ex: in a transaction, when the item isn't visible to the previous owner anymore
-  // Attributes such as _id and transaction are already recorded by a transaction
-  // thus their absence here as long as only transactions doc uses snaphshot
-  snapshot: [
-    'entity',
-    'details',
-  ],
+  snapshot: itemSnapshotAttributes,
   notIndexed: [
     'previousEntity',
     'notes',
