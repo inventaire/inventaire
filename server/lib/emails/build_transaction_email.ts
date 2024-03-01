@@ -4,10 +4,8 @@ import { getItemById } from '#controllers/items/lib/items'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { getTransactionById } from '#controllers/transactions/lib/transactions'
 import { getUserById, serializeUserData } from '#controllers/user/lib/user'
-import transactionAttributes from '#models/attributes/transaction'
+import { transactionStates } from '#models/attributes/transaction'
 import email_ from './email.js'
-
-const { states } = transactionAttributes
 
 export default async transactionId => {
   const transaction = await getTransactionById(transactionId)
@@ -156,7 +154,7 @@ const findMainUser = transaction => {
 }
 
 const ownerIsActor = action => {
-  const actor = action.actor || states[action.action].actor
+  const actor = action.actor || transactionStates[action.action].actor
   return actor === 'owner'
 }
 const OwnerIsSender = transaction => message => message.user === transaction.owner

@@ -76,7 +76,7 @@ const userAttributes = {
   snapshot: [
     'username',
     'picture',
-  ],
+  ] as const,
 
   acceptNullValue: [
     'position',

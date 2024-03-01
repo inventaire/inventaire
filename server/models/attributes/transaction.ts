@@ -2,7 +2,7 @@
 
 // actor: the key on which VerifyRights switches
 // see controllers/transactions/update_state.js
-const states = {
+export const transactionStates = {
   requested: {
     // Current action actor
     actor: 'requester',
@@ -31,9 +31,9 @@ const states = {
   },
 }
 
-const statesList = Object.keys(states)
+export const transactionStatesList = Object.keys(transactionStates)
 
-const basicNextActions = {
+export const transactionBasicNextActions = {
   // Current state:
   requested: {
     // key: main user role in this transaction
@@ -61,7 +61,7 @@ const basicNextActions = {
 
 // customizing actions for transactions where the item should be returned
 // currently only 'lending'
-const nextActionsWithReturn = Object.assign({}, basicNextActions, {
+export const transactionNextActionsWithReturn = Object.assign({}, transactionBasicNextActions, {
   confirmed: {
     owner: 'returned',
     requester: 'waiting:returned',
@@ -70,7 +70,4 @@ const nextActionsWithReturn = Object.assign({}, basicNextActions, {
     owner: null,
     requester: null,
   },
-}
-)
-
-export default { states, statesList, basicNextActions, nextActionsWithReturn }
+})
