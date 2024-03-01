@@ -1,6 +1,7 @@
-import type { CouchDoc } from '#types/couchdb'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
 
+export type UserId = CouchUuid
 export type Email = `${string}@${string}`
 export type LatLng = [ number, number ]
 

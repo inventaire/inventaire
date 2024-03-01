@@ -1,4 +1,7 @@
+export type CouchUuid = string
+export type CouchRevId = `${number}-${string}`
+
 export interface CouchDoc {
-  _id: string
-  _rev: string
+  _id: CouchUuid
+  _rev: CouchRevId
 }
