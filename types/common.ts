@@ -1,3 +1,5 @@
+import type { uploadContainersNames } from '#controllers/images/lib/containers'
+
 export type CouchUuid = string
 export type CouchRevId = `${number}-${string}`
 
@@ -17,3 +19,4 @@ export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
 
 export type ImageHash = string
+export type ImageContainer = typeof uploadContainersNames[number]

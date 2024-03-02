@@ -1,4 +1,4 @@
-import type { localPropertiesUris } from '#controllers/entities/lib/properties/properties'
+import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
 import type { CouchDoc, CouchUuid, ImageHash, Url } from '#types/common'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -35,8 +35,8 @@ export type InvPropertyClaims = InvClaimValue[]
 
 export type LocalPropertyUri = typeof localPropertiesUris[number]
 
-export type LocalClaims = Record<LocalPropertyUri, InvPropertyClaims>
-export type Claims = Record<PropertyUri, InvPropertyClaims>
+export type LocalClaims = Partial<Record<LocalPropertyUri, InvPropertyClaims>>
+export type Claims = Partial<Record<PropertyUri, InvPropertyClaims>>
 
 export interface InvEntity extends CouchDoc {
   type: 'entity'
@@ -59,3 +59,5 @@ export interface EntityRedirection extends Omit<InvEntity, 'labels' | 'claims'> 
 export type InvEntityDoc = InvEntity | RemovedPlaceholderEntity | EntityRedirection
 
 export type EntityImg = `/img/entities/${ImageHash}`
+
+export type EntityType = typeof allLocallyEditedEntitiesTypes[number]

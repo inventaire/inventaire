@@ -1,12 +1,17 @@
 import { chain, compact, map } from 'lodash-es'
-import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
+import type { Claims, EntityType, InvPropertyClaims, PropertyUri } from '#types/entity'
+import type { BatchId } from '#types/patch'
+import type { EditionSeed, EntitySeed } from '#types/resolver'
+import type { UserId } from '#types/user'
 import createInvEntity from '../create_inv_entity.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
+import type { Entries } from 'type-fest'
 
-export const createAuthor = (userId, batchId) => author => {
+export const createAuthor = (userId: UserId, batchId: BatchId) => (author: EntitySeed) => {
   if (author.uri != null) return author
   const claims = {}
 
@@ -14,7 +19,7 @@ export const createAuthor = (userId, batchId) => author => {
   return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId })
 }
 
-export const createWork = (userId, batchId, authors) => work => {
+export const createWork = (userId: UserId, batchId: BatchId, authors: EntitySeed[]) => (work: EntitySeed) => {
   if (work.uri != null) return work
   const authorsUris = compact(map(authors, 'uri'))
   const claims = {}
@@ -23,7 +28,7 @@ export const createWork = (userId, batchId, authors) => work => {
   return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
 }
 
-export async function createEdition (edition, works, userId, batchId, enrich) {
+export async function createEdition (edition: EditionSeed, works: EntitySeed[], userId: UserId, batchId: BatchId, enrich?: boolean) {
   if (edition.uri != null) return
 
   const { isbn } = edition
@@ -72,7 +77,7 @@ export async function createEdition (edition, works, userId, batchId, enrich) {
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-const addClaimIfValid = (claims, property, values, type) => {
+function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvPropertyClaims, type?: EntityType) {
   for (const value of values) {
     if (value != null && properties[property].validate(value, type)) {
       if (claims[property] == null) claims[property] = []
@@ -81,7 +86,7 @@ const addClaimIfValid = (claims, property, values, type) => {
   }
 }
 
-const createEntityFromSeed = async ({ type, seed, claims, userId, batchId }) => {
+async function createEntityFromSeed ({ type, seed, claims, userId, batchId }: { type: EntityType, seed: EntitySeed, claims: Claims, userId: UserId, batchId: BatchId }) {
   const entity = await createInvEntity({
     labels: seed.labels,
     claims: addSeedClaims(claims, seed.claims, type),
@@ -97,15 +102,14 @@ const createEntityFromSeed = async ({ type, seed, claims, userId, batchId }) => 
   seed.claims = entity.claims
 }
 
-const addSeedClaims = (claims, seedClaims, type) => {
-  for (const property in seedClaims) {
-    const values = seedClaims[property]
+function addSeedClaims (claims: Claims, seedClaims: Claims, type: EntityType) {
+  for (const [ property, values ] of (Object.entries(seedClaims) as Entries<Claims>)) {
     addClaimIfValid(claims, property, values, type)
   }
   return claims
 }
 
-const buildBestEditionTitle = (edition, works) => {
+function buildBestEditionTitle (edition, works) {
   const editionTitleClaims = edition.claims['wdt:P1476']
   if (editionTitleClaims) return editionTitleClaims[0]
   else return guessEditionTitleFromWorksLabels(works)
@@ -113,7 +117,7 @@ const buildBestEditionTitle = (edition, works) => {
 
 // TODO: give priority to work label in the edition lang
 // if this one is known
-const guessEditionTitleFromWorksLabels = works => {
+function guessEditionTitleFromWorksLabels (works) {
   return chain(works)
   .flatMap(work => Object.values(work.labels))
   .uniq()

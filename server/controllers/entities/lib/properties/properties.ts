@@ -1,6 +1,6 @@
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 
-const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ]
+export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
 export const authorRelationsProperties = [
   'wdt:P50', // author

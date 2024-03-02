@@ -143,7 +143,7 @@ const wikidataOnlyP31Values = {
     'wd:Q4167836', // Wikimedia category
     'wd:Q4167410', // Wikimedia disambiguation page
   ],
-}
+} as const
 
 export const typesAliases = {}
 
