@@ -1,6 +1,7 @@
 import { cache_ } from '#lib/cache'
 import { requests_ } from '#lib/requests'
 import { info } from '#lib/utils/logs'
+import type { Url } from '#types/common'
 
 const endpoint = 'https://openlibrary.org'
 const base = `${endpoint}/search.json`
@@ -16,7 +17,7 @@ export default olId => {
 
 const getAuthorWorksTitles = async olId => {
   info(olId, 'olId')
-  const url = `${base}?author=${olId}`
+  const url = `${base}?author=${olId}` as Url
   const { docs } = await requests_.get(url, { headers })
   return docs.map(parseResult)
 }

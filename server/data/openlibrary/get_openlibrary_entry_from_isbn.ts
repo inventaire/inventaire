@@ -4,12 +4,13 @@ import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
+import type { Url } from '#types/common'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
 export default async isbn => {
   const normalizedIsbn = normalizeIsbn(isbn)
-  const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json`
+  const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json` as Url
   let data
   try {
     data = await requests_.get(url)

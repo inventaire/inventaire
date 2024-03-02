@@ -1,4 +1,5 @@
 import { addItemsToShelves, createShelf } from '#controllers/shelves/lib/shelves'
+import type { Shelf } from '#types/shelf'
 
 const sanitization = {
   name: {},
@@ -17,7 +18,7 @@ const controller = async params => {
 
 const formatNewShelf = params => {
   const { name, description, visibility, color, reqUserId: owner } = params
-  const shelfData = {
+  const shelfData: Partial<Shelf> = {
     name,
     description,
     visibility,

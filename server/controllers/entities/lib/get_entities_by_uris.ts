@@ -22,6 +22,7 @@ interface GetEntityByUrisArgs {
   refresh?: boolean
   list?: boolean
   dry?: boolean
+  autocreate?: boolean
 }
 
 export async function getEntitiesByUris (params: GetEntityByUrisArgs) {

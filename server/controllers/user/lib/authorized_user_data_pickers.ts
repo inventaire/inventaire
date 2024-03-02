@@ -1,9 +1,15 @@
 import { isString, pick } from 'lodash-es'
-import { getUserAccessLevels } from '#lib/user_access_levels'
+import { getUserAccessLevels, type rolesByAccess } from '#lib/user_access_levels'
 import userAttributes from '#models/attributes/user'
+import type { User, UserId } from '#types/user'
 
-export function ownerSafeData (user) {
-  const safeUserDoc = pick(user, userAttributes.ownerSafe)
+interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
+  oauth?: string[]
+  accessLevels: typeof rolesByAccess['public'][number]
+}
+
+export function ownerSafeData (user: User) {
+  const safeUserDoc = pick(user, userAttributes.ownerSafe) as OwnerSafeUser
   if (user.type === 'deletedUser') return safeUserDoc
   safeUserDoc.oauth = user.oauth ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
@@ -14,7 +20,7 @@ export function ownerSafeData (user) {
 }
 
 // Adapts the result to the requester authorization level
-export const omitPrivateData = (reqUserId, networkIds = [], extraAttribute) => {
+export const omitPrivateData = (reqUserId?: UserId, networkIds = [], extraAttribute?: string) => {
   const attributes = getAttributes(extraAttribute)
   return userDoc => {
     if (userDoc.type === 'deletedUser') return userDoc

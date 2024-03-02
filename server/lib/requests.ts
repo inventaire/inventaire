@@ -16,6 +16,7 @@ import { getAgent, insecureHttpsAgent } from './requests_agent.js'
 import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
 import type { Agent } from 'node:http'
+import type { Stream } from 'node:stream'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
@@ -34,6 +35,7 @@ interface ReqOptions {
   retryOnceOnError?: boolean
   noRetry?: boolean
   timeout?: number
+  ignoreCertificateErrors?: boolean
 }
 
 async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {

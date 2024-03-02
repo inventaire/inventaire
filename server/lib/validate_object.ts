@@ -5,7 +5,7 @@ import { typeOf } from '#lib/utils/types'
 // Throws if the passed object doesn't respect the provided constraints:
 // - validKeys: a limited set of possible keys
 // - valuesType: the expected type of values (optional)
-export default (obj, validKeys, valuesType) => {
+export default (obj: Record<string, unknown>, validKeys: string[], valuesType?: string) => {
   assert_.object(obj)
   assert_.array(validKeys)
   if (valuesType) assert_.string(valuesType)

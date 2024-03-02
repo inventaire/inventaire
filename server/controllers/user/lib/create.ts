@@ -39,7 +39,7 @@ const postCreation = user => {
     sendValidationEmail(user),
   ])
   // return the user updated with the validation token
-  .then(([ invitationRes, updatedUser ]) => {
+  .then(([ , updatedUser ]) => {
     // don't log the user doc to avoid having password hash in logs
     // but still return the doc
     success(updatedUser.username, 'user successfully created')

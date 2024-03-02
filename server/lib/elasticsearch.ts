@@ -3,6 +3,7 @@ import { isNumber } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
+import type { Url } from '#types/common'
 import { assert_ } from './utils/assert_types.js'
 
 const { origin: elasticOrigin } = CONFIG.elasticsearch
@@ -12,7 +13,7 @@ export function buildSearcher (params) {
   const index = indexesNamesByBaseNames[dbBaseName]
   assert_.string(index)
 
-  const url = `${elasticOrigin}/${index}/_search`
+  const url = `${elasticOrigin}/${index}/_search` as Url
 
   return async params => {
     const body = queryBuilder(params)

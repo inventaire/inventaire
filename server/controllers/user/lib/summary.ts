@@ -1,7 +1,6 @@
 import CONFIG from 'config'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
-import { BasicUpdater } from '#lib/doc_updates'
 
 const { newsKey } = CONFIG.activitySummary
 const db = await dbFactory('users')
@@ -22,10 +21,10 @@ export const findOneWaitingForSummary = () => {
 }
 
 export function justReceivedActivitySummary (id) {
-  const updater = BasicUpdater({
-    lastSummary: Date.now(),
-    lastNews: newsKey,
+  return db.update(id, doc => {
+    return Object.assign(doc, {
+      lastSummary: Date.now(),
+      lastNews: newsKey,
+    })
   })
-
-  return db.update(id, updater)
 }

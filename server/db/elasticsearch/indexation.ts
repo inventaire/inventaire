@@ -38,7 +38,7 @@ export default indexBaseName => {
         addToBatch(batch, 'delete', index, doc)
       }
     }
-    if (batch.length >= 1000) postAndReset(batch)
+    if (batch.length >= 1000) postAndReset()
     // Known case where batch.length would still be 0: docs that won't generate
     // a formattedDoc and thus not be indexed such as edition entities
     else if (batch.length > 0) lazyPostAndReset()

@@ -5,9 +5,9 @@ import { getUserFriendsAndGroupsCoMembers } from '#controllers/relations/lib/lis
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers.js'
 
-export default async (userId, lang, limitDate = 0) => {
+export async function getLastNetworkBooks (userId, lang, limitDate = 0) {
   const networkUsersIds = await getUserFriendsAndGroupsCoMembers(userId)
-  const networkItems = await getAuthorizedItemsByUsers(networkUsersIds)
+  const networkItems = await getAuthorizedItemsByUsers(networkUsersIds, userId)
   const lastNetworkItems = getLastItems(limitDate, networkItems)
   const selectionData = await extractHighlightedItems(lastNetworkItems, lang)
   // Serializing items last, as fetching items snapshots data can be expensive,

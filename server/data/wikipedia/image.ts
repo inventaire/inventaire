@@ -2,13 +2,14 @@ import { get } from 'lodash-es'
 import { notFoundError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import type { Url } from '#types/common'
 
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
 
 export default async title => {
   title = fixedEncodeURIComponent(title)
-  const url = `${apiBase}${title}`
+  const url = `${apiBase}${title}` as Url
 
   const { query } = await requests_.get(url)
   const { pages } = query

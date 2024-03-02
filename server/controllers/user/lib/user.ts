@@ -10,6 +10,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
+import type { User, UserId } from '#types/user'
 import { omitPrivateData } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
@@ -58,7 +59,7 @@ export async function getUsersAuthorizedDataByIds (ids, reqUserId) {
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
 }
 
-export async function getUsersAuthorizedData (usersDocsPromise, reqUserId, extraAttribute) {
+export async function getUsersAuthorizedData (usersDocsPromise: Promise<User[]>, reqUserId: UserId, extraAttribute?: string) {
   const [ usersDocs, networkIds ] = await Promise.all([
     usersDocsPromise,
     getNetworkIds(reqUserId),
@@ -114,7 +115,7 @@ export async function setUserStableUsername (userData) {
   return userData
 }
 
-export async function getUsersNearby (userId, meterRange, strict) {
+export async function getUsersNearby (userId: UserId, meterRange: number, strict?: boolean) {
   const { position } = await getUserById(userId)
   if (position == null) {
     throw newError('user has no position set', 400, userId)

@@ -8,7 +8,7 @@ import { newError } from '#lib/error/error'
 import getInvUriFromDoc from './get_inv_uri_from_doc.js'
 import { prefixifyInv } from './prefix.js'
 
-export default (entity, options) => {
+export default (entity, options = {}) => {
   const { _id: invId, redirect } = entity
   if (invId == null) throw newError('missing id', 500, entity)
   const invUri = prefixifyInv(invId)

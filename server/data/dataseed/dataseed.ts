@@ -10,13 +10,16 @@ import { requests_ } from '#lib/requests'
 import { forceArray } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
+import type { Isbn } from '#types/entity'
 
 const { enabled, origin } = CONFIG.dataseed
 
-const reqOptions = { timeout: 60 * 1000 }
-if (origin.startsWith('https')) reqOptions.ignoreCertificateErrors = true
+const reqOptions = {
+  timeout: 60 * 1000,
+  ignoreCertificateErrors: origin.startsWith('https'),
+}
 
-export async function getSeedsByIsbns (isbns, refresh) {
+export async function getSeedsByIsbns (isbns: Isbn | Isbn[], refresh?: boolean) {
   isbns = forceArray(isbns)
   if (!enabled) return isbns.map(emptySeed)
   isbns = isbns.join('|')

@@ -1,13 +1,14 @@
 import CONFIG from 'config'
 import { activeLanguages } from 'inventaire-i18n'
 import { isString } from 'lodash-es'
-import moment from 'moment'
+import moment, { type LongDateFormatKey } from 'moment'
 import Polyglot from 'node-polyglot'
 import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import translate from './translate.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const { autofix } = CONFIG.i18n
 
@@ -40,18 +41,18 @@ const solveLang = lang => {
   else return 'en'
 }
 
-export function i18n (lang, key, args) {
+export function i18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {
   lang = solveLang(lang)
   return translators[lang](key, args)
 }
 
-export function I18n (...args) {
-  const text = i18n.apply(null, args)
+export function I18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {
+  const text = i18n(lang, key, args)
   const firstLetter = text[0].toUpperCase()
   return firstLetter + text.slice(1)
 }
 
-export function dateI18n (lang, epochTime, format) {
+export function dateI18n (lang: WikimediaLanguageCode, epochTime: EpochTimeStamp, format?: LongDateFormatKey) {
   // set default while neutralizeing handlebars object
   if (!isString(format)) format = 'LLL'
   lang = solveLang(lang)

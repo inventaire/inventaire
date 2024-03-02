@@ -1,16 +1,14 @@
-import { isObject, set } from 'lodash-es'
+import { set } from 'lodash-es'
+import type { CouchDoc } from '#types/common'
 
-// The simplest doc update: set one or several key/values
-export function basicUpdater (attribute, value, doc) {
-  // /!\ imperfect polymorphism:
-  // Object.assign doesn't handle deep values while set does
-  if (isObject(attribute)) return Object.assign(doc, attribute)
-  else return set(doc, attribute, value)
+// The simplest doc update: set one key
+export function basicUpdater (attribute: string, value: unknown, doc: CouchDoc) {
+  return set(doc, attribute, value)
 }
 
 // In case key/values are passed in one object
 // value will passed undefined anyway
-export const BasicUpdater = (attribute, value) => basicUpdater.bind(null, attribute, value)
+export const BasicUpdater = (attribute: string, value: unknown) => basicUpdater.bind(null, attribute, value)
 
 export const wrappedUpdater = (db, id, attribute, value) => db.update(id, BasicUpdater(attribute, value))
 

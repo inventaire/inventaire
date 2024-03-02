@@ -37,6 +37,12 @@ export type CreationStrategy = 'local' | 'browserid'
 
 export type UserImg = `/img/users/${ImageHash}`
 
+type OAuthProvider = 'wikidata'
+type OAuthProviderTokens = {
+  token: string
+  token_secret: string
+}
+
 export interface User extends CouchDoc {
   type: 'user' | 'deletedUser'
   username: string
@@ -59,4 +65,5 @@ export interface User extends CouchDoc {
   snapshot?: UserDataSnapshot
   deleted?: EpochTimeStamp
   resetPassword?: EpochTimeStamp
+  oauth?: Partial<Record<OAuthProvider, OAuthProviderTokens>>
 }

@@ -10,7 +10,7 @@ export default lang => item => {
   const { worksUris, authorsUris, seriesUris, genresUris, subjectsUris, publisherUri, translatorsUris } = item
 
   const { isbn13h, isbn10h } = getIsbn(edition)
-  const title = getTitle(edition, works)
+  const title = getTitle(lang, edition, works)
   const subtitle = getFirstValue(edition, 'wdt:P1680')
   const publicationDate = getFirstValue(edition, 'wdt:P577')
   const cover = getCoverUrl(edition)
@@ -95,9 +95,9 @@ const getIsbn = edition => {
   }
 }
 
-const getTitle = (edition, works) => {
+const getTitle = (lang, edition, works) => {
   if (edition) return getFirstValue(edition, 'wdt:P1476')
-  else return getNames(works)
+  else return getNames(lang, works)
 }
 
 const getCoverUrl = edition => {

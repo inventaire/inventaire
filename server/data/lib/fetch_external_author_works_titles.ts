@@ -4,7 +4,7 @@ import { oneMonth } from '#lib/time'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 
-export default (name, endpoint, getQuery, requestOptions) => async id => {
+export default (name, endpoint, getQuery, requestOptions = {}) => async id => {
   try {
     return await cache_.get({
       key: `${name}:author-works-titles:${id}`,
@@ -17,7 +17,7 @@ export default (name, endpoint, getQuery, requestOptions) => async id => {
   }
 }
 
-const makeRequest = async (endpoint, query, requestOptions = {}) => {
+const makeRequest = async (endpoint, query, requestOptions) => {
   requestOptions.headers = { accept: 'application/sparql-results+json' }
   requestOptions.timeout = 5000
   const url = buildUrl(endpoint, { query })
