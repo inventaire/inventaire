@@ -28,7 +28,7 @@ export const log = (obj: unknown, label: string, color: string = 'cyan') => {
     if (typeof obj === 'object') {
       console.log(obj)
     } else {
-      print(obj)
+      print(obj.toString())
     }
     print(grey('-----'))
   }
