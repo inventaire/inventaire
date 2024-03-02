@@ -5,8 +5,11 @@
 // - all error objects should have a statusCode (mimicking HTTP status codes)
 //   this is already the case for errors rejected by the lib blue-cot and server/lib/requests
 
+export type ErrorContext = Record<string, unknown>
+
 export interface ContextualizedError extends Error {
-  context?: Record<string, unknown>
+  code?: string
+  context?: ErrorContext
   emitter: string
   notFound?: boolean
   statusCode?: number
@@ -15,9 +18,10 @@ export interface ContextualizedError extends Error {
   error_type?: string
   error_name?: string
   mute?: boolean
+  body?: unknown
 }
 
-export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: unknown) {
+export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: ErrorContext) {
   // numbers filters are used as HTTP codes
   // while string will be taken as a type
   if (typeof filter === 'number') {
