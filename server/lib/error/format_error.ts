@@ -10,7 +10,7 @@ export type ErrorContext = Record<string, unknown>
 export interface ContextualizedError extends Error {
   code?: string
   context?: ErrorContext
-  emitter: string
+  emitter?: string
   notFound?: boolean
   statusCode?: number
   type?: string
@@ -58,5 +58,5 @@ function getErrorEmittingLine (line) {
 }
 
 export function iscontextualizedError (err): err is ContextualizedError {
-  return typeof err?.emitter === 'string'
+  return typeof err?.emitter === 'string' || err?.context != null
 }
