@@ -2,7 +2,7 @@ import util from 'node:util'
 import CONFIG from 'config'
 import { isArguments } from 'lodash-es'
 import chalk, { red, grey } from 'tiny-chalk'
-import type { ContextualizedError } from '#lib/error/format_error'
+import { iscontextualizedError, type ContextualizedError } from '#lib/error/format_error'
 
 const { offline, verbose } = CONFIG
 // Log full objects
@@ -13,7 +13,7 @@ const countsByErrorStatusCode = {}
 
 const print = (str: string) => process.stdout.write(str + '\n')
 
-export const log = (obj: unknown, label: string, color: string = 'cyan') => {
+export const log = (obj: unknown, label?: string, color: string = 'cyan') => {
   if (!verbose) return
   if ((typeof obj === 'string') && (label == null)) {
     print(chalk[color](obj))
@@ -28,7 +28,7 @@ export const log = (obj: unknown, label: string, color: string = 'cyan') => {
     if (typeof obj === 'object') {
       console.log(obj)
     } else {
-      print(obj)
+      print(obj.toString())
     }
     print(grey('-----'))
   }
@@ -36,12 +36,14 @@ export const log = (obj: unknown, label: string, color: string = 'cyan') => {
 
 export const success = (obj: unknown, label?: string) => log(obj, label, 'green')
 export const info = (obj: unknown, label?: string) => log(obj, label, 'blue')
-export function warn (err: ContextualizedError, label?: string) {
-  const url = err.context && err.context.url
-  // Local 404 errors don't need to be logged, as they will be logged
-  // by the request logger middleware and logging the error object is of no help,
-  // everything is in the URL
-  if (err.statusCode === 404 && url && url[0] === '/') return
+export function warn (err: unknown, label?: string) {
+  if (iscontextualizedError(err)) {
+    const url = err.context && err.context.url
+    // Local 404 errors don't need to be logged, as they will be logged
+    // by the request logger middleware and logging the error object is of no help,
+    // everything is in the URL
+    if (err.statusCode === 404 && url && url[0] === '/') return
+  }
   if (err instanceof Error) {
     // shorten the stack trace
     err.stack = err.stack.split('\n').slice(0, 5).join('\n')
