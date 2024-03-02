@@ -11,6 +11,7 @@ import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import type { Url } from '#types/common'
+import type { ExternalDatabaseEntryRow } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -115,8 +116,9 @@ const formatRow = async (isbn, result, rawResult) => {
   const expressionLang = result.expressionLang?.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
   const workLabelLang = rawResult.workLabel?.['xml:lang'] || wmCodeByIso6392Code[expressionLang]
   if (workLabelLang) result.work.labelLang = workLabelLang
-  const entry = {}
-  entry.edition = { isbn }
+  const entry: ExternalDatabaseEntryRow = {
+    edition: { isbn },
+  }
   if (edition) {
     const { claims } = await parseSameasMatches({
       matches: [ edition.value, edition.matches ],
@@ -162,6 +164,7 @@ const formatRow = async (isbn, result, rawResult) => {
     entry.author = {
       uri,
       claims,
+      work,
     }
     if (author.label || author.familyName) {
       entry.author.labels = {
@@ -188,7 +191,7 @@ const getSourceId = entity => entity.claims?.['wdt:P268'] || entity.tempBnfId ||
 const addImage = async entry => {
   const bnfId = entry?.edition.claims['wdt:P268']
   if (!bnfId) return
-  const url = `https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb${bnfId}&couverture=1`
+  const url = `https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb${bnfId}&couverture=1` as Url
   const { statusCode, headers } = await requests_.head(url)
   let { 'content-length': contentLength } = headers
   if (contentLength) contentLength = parseInt(contentLength)

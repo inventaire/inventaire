@@ -2,15 +2,15 @@ import type { localPropertiesUris } from '#controllers/entities/lib/properties/p
 import type { CouchDoc, CouchUuid, ImageHash, Url } from '#types/common'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export type WdPropertyUri = `wdt:P${number}`
-export type InvPropertyUri = `invp:P${number}`
-export type PropertyUri = WdPropertyUri | InvPropertyUri
-
 export type WdEntityId = `Q${number}`
+export type WdPropertyId = `P${number}`
 export type WdEntityUri = `wd:${WdEntityId}`
+export type WdPropertyUri = `wdt:${WdPropertyId}`
+export type PropertyUri = WdPropertyUri | InvPropertyUri
 
 export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
+export type InvPropertyUri = `invp:P${number}`
 
 export type Isbn = string
 export type IsbnEntityUri = `isbn:${Isbn}`
@@ -18,7 +18,7 @@ export type IsbnEntityUri = `isbn:${Isbn}`
 export type EntityUri = WdEntityUri | InvEntityUri | IsbnEntityUri
 
 export type Label = string
-export type Labels = Record<WikimediaLanguageCode, Label>
+export type Labels = Partial<Record<WikimediaLanguageCode, Label>>
 
 export type EntityValue = WdEntityUri | InvEntityUri
 export type StringValue = string

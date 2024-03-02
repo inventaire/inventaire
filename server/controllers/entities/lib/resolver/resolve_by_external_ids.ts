@@ -4,11 +4,11 @@ import { warn } from '#lib/utils/logs'
 import { getEntityByUri } from '../get_entity_by_uri.js'
 import { resolveExternalIds } from './resolve_external_ids.js'
 
-const resolveSeedsByExternalIds = (seeds, expectedEntityType) => {
+function resolveSeedsByExternalIds (seeds, expectedEntityType) {
   return Promise.all(seeds.map(seed => resolveSeed(seed, expectedEntityType)))
 }
 
-const resolveSeed = async (seed, expectedEntityType) => {
+async function resolveSeed (seed, expectedEntityType) {
   if (seed.uri) return seed
   const uris = await resolveExternalIds(seed.claims)
   if (uris == null) return seed
@@ -41,13 +41,12 @@ const resolveSeed = async (seed, expectedEntityType) => {
   return seed
 }
 
-const resolveSectionSeedsByExternalIds = async (section, entry, expectedEntityType) => {
+async function resolveSectionSeedsByExternalIds (section, entry, expectedEntityType) {
   const seeds = entry[section]
   if (!some(seeds)) return entry
-
-  return resolveSeedsByExternalIds(seeds, expectedEntityType)
-  .then(seeds => { entry[section] = seeds })
-  .then(() => entry)
+  const resolvedSeeds = await resolveSeedsByExternalIds(seeds, expectedEntityType)
+  entry[section] = resolvedSeeds
+  return entry
 }
 
 export async function resolveEntrySeedsByExternalIds (entry) {

@@ -7,6 +7,7 @@ import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import type { Url } from '#types/common'
+import type { ExternalDatabaseEntryRow } from '#types/resolver'
 
 const wdIdByIso6393Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_3_code.json')
 
@@ -22,9 +23,8 @@ export default async isbn => {
   const url = `https://bnb.data.bl.uk/sparql?format=json&query=${getQuery(isbn)}` as Url
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
-  const { bindings: rawResults } = response.results
-  const rows = await Promise.all(simplifiedResults.map((result, i) => {
-    return formatRow(isbn, result, rawResults[i])
+  const rows = await Promise.all(simplifiedResults.map(result => {
+    return formatRow(isbn, result)
   }))
   return buildEntryFromFormattedRows(rows, getSourceId)
 }
@@ -64,7 +64,7 @@ const getQuery = isbn => {
 
 const formatRow = async (isbn, result) => {
   const { edition, author } = result
-  const entry = {}
+  const entry: ExternalDatabaseEntryRow = {}
   entry.edition = { isbn }
   if (edition) {
     const { claims } = await parseSameasMatches({
