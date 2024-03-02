@@ -1,6 +1,6 @@
 import { cloneDeep, isEqual, omit, pick } from 'lodash-es'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
-import convertAndCleanupImageUrl from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
 
 export default ({ reqUserId, batchId }) => async entry => {

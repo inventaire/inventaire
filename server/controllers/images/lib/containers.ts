@@ -52,5 +52,8 @@ export const containers = {
   assets: {},
 }
 
-export const uploadContainersNames = Object.keys(containers)
-  .filter(containerName => containers[containerName].putImage != null)
+export const uploadContainersNames = [
+  'entities',
+  'groups',
+  'users',
+] as const

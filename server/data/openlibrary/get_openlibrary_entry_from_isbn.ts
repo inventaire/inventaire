@@ -6,7 +6,7 @@ import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#types/common'
 import type { WdEntityUri } from '#types/entity'
-import type { EditionSeed, EntitySeed } from '#types/resolver'
+import type { EditionLooseSeed, EntityLooseSeed } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
@@ -52,7 +52,7 @@ export default async isbn => {
 }
 
 const getEditionSeed = (isbn, data) => {
-  const edition: EditionSeed = { isbn, claims: {} }
+  const edition: EditionLooseSeed = { isbn, claims: {} }
   edition.claims['wdt:P648'] = data.key.split('/').at(-1)
   if (data.languages) {
     const languagesUris = compact(data.languages.map(parseLanguage))
@@ -86,7 +86,7 @@ const getEntitySeedFromOlId = async ({ key }) => {
   if (type.key === '/type/redirect') {
     return getEntitySeedFromOlId({ key: location })
   }
-  const seed: EntitySeed = {
+  const seed: EntityLooseSeed = {
     labels: {},
     claims: {
       'wdt:P648': id,
