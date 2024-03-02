@@ -18,6 +18,7 @@ export type IsbnEntityUri = `isbn:${Isbn}`
 export type EntityUri = WdEntityUri | InvEntityUri | IsbnEntityUri
 
 export type Label = string
+export type Labels = Record<WikimediaLanguageCode, Label>
 
 export type EntityValue = WdEntityUri | InvEntityUri
 export type StringValue = string
@@ -32,16 +33,29 @@ export type InvClaimValue = EntityValue | StringValue | ExternalIdValue | UrlVal
 
 export type InvPropertyClaims = InvClaimValue[]
 
-export type Claims = Record<PropertyUri, InvPropertyClaims>
+export type LocalPropertyUri = typeof localPropertiesUris[number]
 
-type LocalPropertyUri = typeof localPropertiesUris[number]
+export type LocalClaims = Record<LocalPropertyUri, InvPropertyClaims>
+export type Claims = Record<PropertyUri, InvPropertyClaims>
 
 export interface InvEntity extends CouchDoc {
   type: 'entity'
-  labels: Record<WikimediaLanguageCode, Label>
-  claims: Record<LocalPropertyUri, InvPropertyClaims>
+  labels: Labels
+  claims: LocalClaims
   created: EpochTimeStamp
+  updated?: EpochTimeStamp
   version: number
 }
+
+export interface RemovedPlaceholderEntity extends Omit<InvEntity, 'type'> {
+  type: 'removed:placeholder'
+}
+
+export interface EntityRedirection extends Omit<InvEntity, 'labels' | 'claims'> {
+  redirect: EntityUri
+  removedPlaceholdersIds: InvEntityId[]
+}
+
+export type InvEntityDoc = InvEntity | RemovedPlaceholderEntity | EntityRedirection
 
 export type EntityImg = `/img/entities/${ImageHash}`
