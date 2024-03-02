@@ -2,8 +2,9 @@ import should from 'should'
 import getBnfEntryFromIsbn, { cleanupBnfTitle } from '#data/bnf/get_bnf_entry_from_isbn'
 
 describe('get_bnf_entry_from_isbn', () => {
-  it('should get an entry from a known ISBN', async () => {
+  it.only('should get an entry from a known ISBN', async () => {
     const entry = await getBnfEntryFromIsbn('978-2-207-11674-6')
+    console.log('🚀 ~ file: get_bnf_entry_from_isbn.test.ts ~ line', 7, 'it ~ ', { entry })
     entry.edition.claims['wdt:P268'].should.equal('437169336')
     entry.works[0].claims['wdt:P268'].should.equal('12482666v')
     entry.authors[0].uri.should.equal('wd:Q123080')

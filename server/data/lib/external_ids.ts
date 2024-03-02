@@ -4,9 +4,14 @@ import { propertiesValuesConstraints as properties } from '#controllers/entities
 import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
+import type { EntityUri } from '#types/entity'
+import type { LooseClaims } from '#types/resolver'
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
-export async function parseSameasMatches ({ matches, expectedEntityType }) {
+export async function parseSameasMatches ({ matches, expectedEntityType }: {
+  matches: string[] | string[][],
+  expectedEntityType: string
+  }) : Promise<{ claims: LooseClaims, uri?: EntityUri }> {
   assert_.array(matches)
   assert_.string(expectedEntityType)
 
@@ -15,8 +20,9 @@ export async function parseSameasMatches ({ matches, expectedEntityType }) {
     .map(match => match.trim().split(','))
 
   const urls = uniq(flatten(matches))
-  if (urls.length === 0) return {}
   const entryData = { claims: {} }
+
+  if (urls.length === 0) return entryData
 
   for (const url of urls) {
     const { property, value } = await getUrlData(url)

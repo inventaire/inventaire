@@ -3,7 +3,7 @@ import { identity } from 'lodash-es'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
-import resolve from './resolve.js'
+import { resolveEntry } from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
 import UpdateResolvedEntry from './update_resolved_entry.js'
 
@@ -28,7 +28,7 @@ export async function resolveUpdateAndCreate (params) {
 
     log(nextEntry, 'next entry')
 
-    return resolve(nextEntry)
+    return resolveEntry(nextEntry)
     .then(updateResolvedEntry)
     .then(createUnresolvedEntry)
     .then(addResolvedEntry)

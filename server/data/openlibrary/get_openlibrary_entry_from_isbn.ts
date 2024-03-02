@@ -5,6 +5,8 @@ import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#types/common'
+import type { WdEntityUri } from '#types/entity'
+import type { EditionSeed, EntitySeed } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
@@ -50,7 +52,7 @@ export default async isbn => {
 }
 
 const getEditionSeed = (isbn, data) => {
-  const edition = { isbn, claims: {} }
+  const edition: EditionSeed = { isbn, claims: {} }
   edition.claims['wdt:P648'] = data.key.split('/').at(-1)
   if (data.languages) {
     const languagesUris = compact(data.languages.map(parseLanguage))
@@ -78,20 +80,20 @@ const getEditionSeed = (isbn, data) => {
 
 const getEntitySeedFromOlId = async ({ key }) => {
   const id = key.split('/').at(-1)
-  const url = `https://openlibrary.org${key}.json`
+  const url = `https://openlibrary.org${key}.json` as Url
   const { name, title, type, location, remote_ids: remoteIds = {} } = await requests_.get(url)
   // Ex: https://openlibrary.org/works/OL15331214W.json redirects to /works/OL14933414W
   if (type.key === '/type/redirect') {
     return getEntitySeedFromOlId({ key: location })
   }
-  const seed = {
+  const seed: EntitySeed = {
     labels: {},
     claims: {
       'wdt:P648': id,
     },
   }
   if (name || title) seed.labels.en = name || title
-  if (remoteIds.wikidata) seed.uri = prefixifyWd(remoteIds.wikidata)
+  if (remoteIds.wikidata) seed.uri = prefixifyWd(remoteIds.wikidata) as WdEntityUri
   if (remoteIds.isni) seed.claims['wdt:P213'] = remoteIds.isni
   if (remoteIds.viaf) seed.claims['wdt:P214'] = remoteIds.viaf
   return seed
