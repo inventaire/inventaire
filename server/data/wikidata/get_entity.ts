@@ -6,6 +6,7 @@ import { newError } from '#lib/error/error'
 import { requestGrouper } from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
+import type { Url } from '#types/common'
 
 const { getEntities } = wdk
 
@@ -21,7 +22,7 @@ const requester = async ids => {
 }
 
 async function getEntitiesBatch (idsBatch) {
-  const url = getEntities({ ids: idsBatch })
+  const url = getEntities({ ids: idsBatch }) as Url
   const { entities, error } = await requests_.get(url)
   if (entities) {
     return entities

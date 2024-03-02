@@ -4,6 +4,7 @@ import dbFactory from '#db/couchdb/base'
 import { combinations, uniqByKey } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
+import type { UserId } from '#types/user'
 
 const db = await dbFactory('items')
 
@@ -13,7 +14,7 @@ export const getOwnerIdAndVisibilityKeys = reqUserId => async ownerId => {
 }
 
 // Return what the reqUserId user is allowed to see
-export async function getAuthorizedItemsByUsers (usersIds, reqUserId, options = {}) {
+export async function getAuthorizedItemsByUsers (usersIds: UserId[], reqUserId: UserId, options = {}) {
   const ownersIdsAndVisibilityKeysCombinations = await getUsersAllowedVisibilityKeys(usersIds, reqUserId)
   const view = options.withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
   return getItemsFromViewAndAllowedVisibilityKeys(view, ownersIdsAndVisibilityKeysCombinations)

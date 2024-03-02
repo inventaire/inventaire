@@ -3,12 +3,13 @@ import CONFIG from 'config'
 import { getContentLength, rm } from '#lib/fs'
 import { requests_ } from '#lib/requests'
 import { log } from '#lib/utils/logs'
+import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import getToken from './get_swift_token.js'
 
 const { publicURL } = CONFIG.mediaStorage.swift
 
-const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}`
-const relativeUrl = (container, filename) => `/img/${container}/${filename}`
+const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}` as AbsoluteUrl
+const relativeUrl = (container, filename) => `/img/${container}/${filename}` as RelativeUrl
 
 const getParams = async (container, filename) => {
   const token = await getToken()

@@ -47,7 +47,7 @@ export default {
     if (/^[0-9a-f]{40}$/.test(rest) || (container === 'assets')) {
       url = `${mediaStorageEndpoint}${container}/${rest}`
     } else if (/^\d+$/.test(rest)) {
-      url = req.query.href
+      url = req.query.hrefHttpHeaderKey
       if (!isUrl(url)) {
         return bundleError(req, res, 'invalid href query', 400, url)
       }

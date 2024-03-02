@@ -3,6 +3,7 @@ import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import { get } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
+import type { Url } from '#types/common'
 import createIndex from './create_index.js'
 import reindexOnChange from './reindex_on_change.js'
 
@@ -19,7 +20,7 @@ const ensureIndexesExist = () => {
 }
 
 const ensureIndexExists = index => {
-  const indexUrl = `${elasticOrigin}/${index}`
+  const indexUrl = `${elasticOrigin}/${index}` as Url
   return get(indexUrl)
   .catch(err => {
     if (err.statusCode === 404) return createIndex(index)

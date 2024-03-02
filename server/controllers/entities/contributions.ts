@@ -27,7 +27,7 @@ const controller = async (params, req) => {
 
   if (userId != null && !reqUserHasAdminAccess) await checkPublicContributionsStatus({ userId, reqUserId })
 
-  const patchesPage = await getPatchesPage({ userId, limit, offset, reqUserHasAdminAccess, filter })
+  const patchesPage = await getPatchesPage({ userId, limit, offset, filter })
   const { patches } = patchesPage
   if (!reqUserHasAdminAccess) await anonymizePatches({ patches, reqUserId })
 

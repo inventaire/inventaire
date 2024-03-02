@@ -1,6 +1,7 @@
 // a service to know if a cover is available
 // could actually be turned into a generalist 'image-check' service
 import { requests_ } from '#lib/requests'
+import type { Url } from '#types/common'
 import { coverByOlId } from './api.js'
 
 const keyByType = {
@@ -27,6 +28,6 @@ const checkCoverExistance = async url => {
   // The default=false flag triggers a 404 response if the cover is missing
   // instead of a 200 response with a single-pixel image
   // See https://openlibrary.org/dev/docs/api/covers
-  const { statusCode } = await requests_.head(`${url}?default=false`)
+  const { statusCode } = await requests_.head(`${url}?default=false` as Url)
   return statusCode === 200
 }

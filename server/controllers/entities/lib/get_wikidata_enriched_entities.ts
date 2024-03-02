@@ -14,6 +14,7 @@ import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
 import formatClaims from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
+import type { WdEntityId } from '#types/entity'
 import addImageData from './add_image_data.js'
 import getEntityType from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
@@ -27,7 +28,7 @@ setImmediate(importCircularDependencies)
 
 const { _id: hookUserId } = hardCodedUsers.hook
 
-export default async (ids, { refresh, dry }) => {
+export default async (ids: WdEntityId[], { refresh, dry }) => {
   const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
@@ -39,13 +40,13 @@ export default async (ids, { refresh, dry }) => {
 
 const isNotMissing = entity => entity && entity.type !== 'missing'
 
-export async function getCachedEnrichedEntity ({ wdId, refresh, dry }) {
+export async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
   const key = `wd:enriched:${wdId}`
   const fn = getEnrichedEntity.bind(null, wdId)
   return cache_.get({ key, fn, refresh, dry })
 }
 
-async function getEnrichedEntity (wdId) {
+async function getEnrichedEntity (wdId: WdEntityId) {
   let entity = await getWdEntity(wdId)
   entity = entity || { id: wdId, missing: true }
   const formattedEntity = await format(entity)

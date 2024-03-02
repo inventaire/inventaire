@@ -8,6 +8,7 @@ import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { objectPromise } from '#lib/promises'
 import { oneMonth } from '#lib/time'
 import { info, logError } from '#lib/utils/logs'
+import type { EntityUri } from '#types/entity'
 import { buildPopularityByUri } from './build_popularity_by_uri.js'
 
 const { nice } = CONFIG
@@ -17,7 +18,7 @@ const { nice } = CONFIG
 // - a popularity score being just an integer, it is extremely cheap to keep in store
 const ttl = 6 * oneMonth
 
-export async function getEntitiesPopularities ({ uris, refresh }) {
+export async function getEntitiesPopularities ({ uris, refresh }: { uris: EntityUri[], refresh?: boolean}) {
   if (uris.length === 0) return {}
   const popularityPromises = {}
   for (const uri of uris) {

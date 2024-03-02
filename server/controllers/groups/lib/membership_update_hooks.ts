@@ -9,7 +9,7 @@ export default function () {
   radio.on('group:leave', deleteGroupIfEmpty)
 }
 
-async function deleteGroupIfEmpty (groupId, userId) {
+async function deleteGroupIfEmpty (groupId) {
   try {
     const group = await db.get(groupId)
     // An admin can't leave a group if there are still members

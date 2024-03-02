@@ -6,9 +6,10 @@ import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queri
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
 import { objectPromise } from '#lib/promises'
 import { shortLang } from '#lib/utils/base'
+import type { User } from '#types/user'
 import { i18n } from '../i18n/i18n.js'
-import getLastNearbyPublicBooks from './last_nearby_books.js'
-import getLastNetworkBooks from './last_network_books.js'
+import { getLastNearbyPublicBooks } from './last_nearby_books.js'
+import { getLastNetworkBooks } from './last_network_books.js'
 
 const host = CONFIG.getPublicOrigin()
 const { contactAddress } = CONFIG
@@ -17,7 +18,7 @@ const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20
 
-export default user => {
+export default (user: User) => {
   user.lang = shortLang(user.language)
 
   return getEmailData(user)

@@ -13,7 +13,7 @@ export function initExpress () {
 
   for (const middleware of middlewares) {
     if (isArray(middleware)) {
-      app.use.apply(app, middleware)
+      app.use(...middleware)
     } else {
       app.use(middleware)
     }
@@ -41,7 +41,7 @@ export function initExpress () {
   app.disable('x-powered-by')
 
   return new Promise((resolve, reject) => {
-    app.listen(port, host, err => {
+    app.listen(port, host, (err?: Error) => {
       if (err) {
         reject(err)
       } else {

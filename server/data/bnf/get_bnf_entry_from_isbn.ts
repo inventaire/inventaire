@@ -10,6 +10,7 @@ import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import type { Url } from '#types/common'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -21,7 +22,7 @@ const headers = { accept: '*/*' }
 const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
 export default async isbn => {
-  const url = base + getQuery(isbn)
+  const url = base + getQuery(isbn) as Url
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results

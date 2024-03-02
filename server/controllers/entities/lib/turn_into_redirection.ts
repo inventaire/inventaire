@@ -4,13 +4,16 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, preventRedirectionEdit } from '#models/entity'
+import type { EntityUri, InvEntityId, InvEntityUri } from '#types/entity'
+import type { PatchContext } from '#types/patch'
+import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
 
-export default async ({ userId, fromId, toUri, previousToUri, context }) => {
+export default async ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) => {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 
-  const fromUri = `inv:${fromId}`
+  const fromUri = `inv:${fromId}` as InvEntityUri
 
   const currentFromDoc = await getEntityById(fromId)
   preventRedirectionEdit(currentFromDoc)

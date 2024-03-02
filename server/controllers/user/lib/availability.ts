@@ -5,7 +5,7 @@ import { success } from '#lib/utils/logs'
 import userValidations from '#models/validations/user'
 import isReservedWord from './is_reserved_word.js'
 
-export async function checkUsernameAvailability (username, currentUsername) {
+export async function checkUsernameAvailability (username: string, currentUsername?: string) {
   // If a currentUsername is provided
   // return true if the new username is the same but with a different case
   // (used for username update)

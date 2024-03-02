@@ -1,10 +1,10 @@
 import { uniq } from 'lodash-es'
 
 export const rolesByAccess = {
-  public: [ 'public', 'authentified', 'dataadmin', 'admin' ],
-  authentified: [ 'authentified', 'dataadmin', 'admin' ],
-  dataadmin: [ 'dataadmin', 'admin' ],
-  admin: [ 'admin' ],
+  public: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,
+  authentified: [ 'authentified', 'dataadmin', 'admin' ] as const,
+  dataadmin: [ 'dataadmin', 'admin' ] as const,
+  admin: [ 'admin' ] as const,
 }
 
 const accessByRoles = {}

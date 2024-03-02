@@ -12,7 +12,7 @@ const ok = (res, status = 200) => {
   send(res, { ok: true })
 }
 
-const Ok = (res, status) => ok.bind(null, res, status)
+const Ok = (res, status = 200) => ok.bind(null, res, status)
 
 const okWarning = (res, category, warning, status = 200) => {
   addWarning(res, `${category}: ${warning}`)

@@ -3,6 +3,9 @@ import { clone, keyBy, pick } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
 import { itemAllowsTransactions } from '#models/item'
+import type { LatLng } from '#types/common'
+import type { Item } from '#types/item'
+import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
 
 const host = CONFIG.getPublicOrigin()
@@ -25,11 +28,11 @@ export function formatData (lastItems, label, lang, highlighted) {
   }
 }
 
-export function embedUsersData (items, users, position) {
+export function embedUsersData (items: Item[], users: User[], position?: LatLng) {
   users = users.map(serializeUserData)
-  users = keyBy(users, '_id')
+  const usersByIds = keyBy(users, '_id')
   return items.map(item => {
-    const user = users[item.owner]
+    const user = usersByIds[item.owner]
     if (user) {
       item.href = `${host}/items/${item._id}`
       item.user = pick(user, requiredUserData)

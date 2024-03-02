@@ -51,6 +51,8 @@ export interface RestorePatchContext {
   restoredPatch: PatchId
 }
 
+export type PatchContext = ActionPatchContext | MergePatchContext | RedirectedClaimsContext | RevertedPatchContext | RestorePatchContext
+
 export interface Patch {
   _id: PatchId
   _rev: CouchRevId
@@ -59,5 +61,5 @@ export interface Patch {
   timestamp: EpochTimeStamp
   operations: PatchOperation[]
   batch?: BatchId
-  context?: ActionPatchContext | MergePatchContext | RedirectedClaimsContext | RevertedPatchContext | RestorePatchContext
+  context?: PatchContext
 }
