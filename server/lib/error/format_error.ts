@@ -56,3 +56,7 @@ function getErrorEmittingLine (line) {
   // identify anonymous functions
   .replace(/^:/, '(anonymous):')
 }
+
+export function iscontextualizedError (err): err is ContextualizedError {
+  return typeof err?.emitter === 'string'
+}
