@@ -96,7 +96,7 @@ export const parseBooleanString = (booleanString, defaultVal = false) => {
   else return booleanString !== 'false'
 }
 
-export function simpleDay (date) {
+export function simpleDay (date?: Date | EpochTimeStamp) {
   const dateObj = date != null ? new Date(date) : new Date()
   return dateObj.toISOString().split('T')[0]
 }

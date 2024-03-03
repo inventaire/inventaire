@@ -5,6 +5,9 @@ import { oneDay } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { simpleDay } from '#lib/utils/base'
 import { addVersionsSnapshots } from '#models/patch'
+import type { InvEntityId } from '#types/entity'
+import type { Patch } from '#types/patch'
+import type { UserId } from '#types/user'
 
 const designDocName = 'patches'
 
@@ -12,7 +15,7 @@ export const db = await dbFactory('patches', designDocName)
 
 export const getPatchById = db.get
 
-export async function getPatchesByEntityId (entityId) {
+export async function getPatchesByEntityId (entityId: InvEntityId) {
   const { rows } = await db.view(designDocName, 'byEntityId', {
     startkey: [ entityId, 0 ],
     endkey: [ entityId, maxKey ],
@@ -21,7 +24,7 @@ export async function getPatchesByEntityId (entityId) {
   return map(rows, 'doc')
 }
 
-export async function getEntityLastPatches (entityId, length = 1) {
+export async function getEntityLastPatches (entityId: InvEntityId, length: number = 1) {
   const { rows } = await db.view(designDocName, 'byEntityId', {
     startkey: [ entityId, maxKey ],
     endkey: [ entityId, 0 ],
@@ -32,17 +35,17 @@ export async function getEntityLastPatches (entityId, length = 1) {
   return map(rows, 'doc')
 }
 
-export async function getPatchesByDate ({ limit, offset }) {
+export async function getPatchesByDate ({ limit, offset }: { limit: number, offset: number }) {
   const viewRes = await db.view(designDocName, 'byDate', {
     limit,
     skip: offset,
     descending: true,
     include_docs: true,
   })
-  return formatPatchesPage({ viewRes, limit, offset })
+  return formatPatchesPage(viewRes, limit, offset)
 }
 
-export async function getPatchesByUserId ({ userId, limit, offset }) {
+export async function getPatchesByUserId ({ userId, limit, offset }: { userId: UserId, limit: number, offset: number }) {
   const [ viewRes, total ] = await Promise.all([
     db.view(designDocName, 'byUserIdAndDate', {
       startkey: [ userId, maxKey ],
@@ -58,10 +61,10 @@ export async function getPatchesByUserId ({ userId, limit, offset }) {
     getUserContributionsCount(userId),
   ])
 
-  return formatPatchesPage({ viewRes, total, limit, offset })
+  return formatPatchesPage(viewRes, limit, offset, total)
 }
 
-export async function getPatchesByUserIdAndFilter ({ userId, filter, limit, offset }) {
+export async function getPatchesByUserIdAndFilter ({ userId, filter, limit, offset }: { userId: UserId, filter: string, limit: number, offset: number }) {
   const [ viewRes, total ] = await Promise.all([
     db.view(designDocName, 'byUserIdAndFilterAndDate', {
       startkey: [ userId, filter, maxKey ],
@@ -77,18 +80,18 @@ export async function getPatchesByUserIdAndFilter ({ userId, filter, limit, offs
     getUserPropertyContributionsCount(userId, filter),
   ])
 
-  return formatPatchesPage({ viewRes, total, limit, offset })
+  return formatPatchesPage(viewRes, limit, offset, total)
 }
 
 export const getPatchesByRedirectUri = db.viewByKey.bind(null, 'byRedirectUri')
 
-export async function getPatchesWithSnapshots (entityId) {
+export async function getPatchesWithSnapshots (entityId: InvEntityId) {
   const patches = await getPatchesByEntityId(entityId)
   addVersionsSnapshots(patches)
   return patches
 }
 
-export const getGlobalContributions = async () => {
+export async function getGlobalContributions () {
   let { rows } = await db.view(designDocName, 'byUserIdAndDate', { group_level: 1 })
   rows = rows.map(formatRow)
   return sortAndFilterContributions(rows)
@@ -143,7 +146,7 @@ const formatRow = row => ({
   contributions: row.value,
 })
 
-const aggregatePeriodContributions = (counts, row) => {
+function aggregatePeriodContributions (counts, row) {
   const userId = row.key[1]
   const contributions = row.value
   if (counts[userId] == null) { counts[userId] = 0 }
@@ -151,7 +154,7 @@ const aggregatePeriodContributions = (counts, row) => {
   return counts
 }
 
-const convertToArray = counts => {
+function convertToArray (counts) {
   const data = []
   for (const userId in counts) {
     const contributions = counts[userId]
@@ -160,7 +163,7 @@ const convertToArray = counts => {
   return sortAndFilterContributions(data)
 }
 
-const sortAndFilterContributions = rows => {
+function sortAndFilterContributions (rows) {
   return rows
   .filter(noSpecialUser)
   .sort((a, b) => b.contributions - a.contributions)
@@ -170,7 +173,7 @@ const sortAndFilterContributions = rows => {
 // see server/db/couchdb/hard_coded_documents.js
 const noSpecialUser = row => !row.user.startsWith('000000000000000000000000000000')
 
-const getUserContributionsCount = userId => {
+function getUserContributionsCount (userId) {
   return getRangeLength({
     viewName: 'byUserIdAndDate',
     startkey: [ userId ],
@@ -178,7 +181,7 @@ const getUserContributionsCount = userId => {
   })
 }
 
-const getUserPropertyContributionsCount = (userId, filter) => {
+function getUserPropertyContributionsCount (userId, filter) {
   return getRangeLength({
     viewName: 'byUserIdAndFilterAndDate',
     startkey: [ userId, filter ],
@@ -186,7 +189,7 @@ const getUserPropertyContributionsCount = (userId, filter) => {
   })
 }
 
-const getRangeLength = async ({ viewName, startkey, endkey }) => {
+async function getRangeLength ({ viewName, startkey, endkey }) {
   const { rows } = await db.view(designDocName, viewName, {
     group_level: startkey.length,
     startkey,
@@ -195,9 +198,15 @@ const getRangeLength = async ({ viewName, startkey, endkey }) => {
   return rows[0] != null ? rows[0].value : 0
 }
 
-const formatPatchesPage = ({ viewRes, total, limit, offset }) => {
+interface PatchesPage {
+  patches: Patch[]
+  total: number
+  continue?: number
+}
+
+function formatPatchesPage (viewRes, limit, offset, total?: number) {
   if (total == null) total = viewRes.total_rows
-  const data = {
+  const data: PatchesPage = {
     patches: map(viewRes.rows, 'doc'),
     total,
   }
