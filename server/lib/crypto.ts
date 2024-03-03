@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { promisify } from 'node:util'
 import { newError } from '#lib/error/error'
+import type { StringifiedHashedCredentialsData } from '#types/user'
 import passwordHashing from './password_hashing.js'
 
 const generateKeyPair = promisify(crypto.generateKeyPair)
@@ -10,7 +11,7 @@ export async function hashPassword (password: string) {
   return passwordHashing.hash(password)
 }
 
-export async function verifyPassword (hash: string, password: string, tokenDaysToLive?: number) {
+export async function verifyPassword (hash: StringifiedHashedCredentialsData, password: string, tokenDaysToLive?: number) {
   if (hash == null) throw newError('missing hash', 400)
   if (tokenDaysToLive != null && passwordHashing.expired(hash, tokenDaysToLive)) {
     throw newError('token expired', 401)

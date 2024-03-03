@@ -43,6 +43,8 @@ type OAuthProviderTokens = {
   token_secret: string
 }
 
+export type StringifiedHashedCredentialsData = `{${string}}`
+
 export interface User extends CouchDoc {
   type: 'user' | 'deletedUser'
   username: string
@@ -50,7 +52,7 @@ export interface User extends CouchDoc {
   created: EpochTimeStamp
   creationStrategy: CreationStrategy
   email?: Email
-  password?: string
+  password?: string | StringifiedHashedCredentialsData
   picture?: string
   language?: string
   validEmail?: boolean
@@ -58,6 +60,7 @@ export interface User extends CouchDoc {
   settings?: UserSettings
   position?: LatLng
   summaryPeriodicity?: number
+  token?: StringifiedHashedCredentialsData
   readToken?: string
   roles?: UserRole[]
   fediversable?: boolean
