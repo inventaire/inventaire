@@ -9,7 +9,7 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
-import type { HttpHeaders, HttpMethod, Url } from '#types/common'
+import type { HighResolutionTime, HttpHeaders, HttpMethod, Url } from '#types/common'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
@@ -183,6 +183,12 @@ const basicAuthPattern = /\/\/\w+:[^@:]+@/
 
 const requestIntervalLogs = {}
 
+export interface RequestTimer {
+  reqTimerKey: string
+  requestId: `r${number}`
+  startTime: HighResolutionTime
+}
+
 export function startReqTimer (method = 'get', url, fetchOptions) {
   // Prevent logging Basic Auth credentials
   url = url.replace(basicAuthPattern, '//')
@@ -200,7 +206,7 @@ export function startReqTimer (method = 'get', url, fetchOptions) {
   const startTime = process.hrtime()
   if (logStart) process.stdout.write(`${grey(`${reqTimerKey} started`)}\n`)
   if (logOngoingAtInterval) startLoggingRequestAtInterval({ requestId, reqTimerKey, startTime })
-  return { reqTimerKey, requestId, startTime }
+  return { reqTimerKey, requestId, startTime } as RequestTimer
 }
 
 function startLoggingRequestAtInterval ({ requestId, reqTimerKey, startTime }) {
