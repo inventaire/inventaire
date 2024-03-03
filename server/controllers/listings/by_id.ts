@@ -10,7 +10,7 @@ const sanitization = {
 }
 
 const controller = async ({ id, limit, offset, reqUserId }, req) => {
-  const [ listing ] = await getListingsByIdsWithElements(id, reqUserId)
+  const [ listing ] = await getListingsByIdsWithElements(id)
   if (!listing) throw notFoundError({ id })
 
   const authorizedListings = await filterVisibleDocs([ listing ], reqUserId)

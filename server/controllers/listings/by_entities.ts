@@ -21,7 +21,7 @@ const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
   }
   // uniq here implies that a listing cannot refer several times to the same entity
   const listingsIds = uniq(map(foundElements, 'list'))
-  const foundListings = await getListingsByIdsWithElements(listingsIds, reqUserId)
+  const foundListings = await getListingsByIdsWithElements(listingsIds)
   const listings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(listings, { offset, limit })
   const listingsByUris = {}

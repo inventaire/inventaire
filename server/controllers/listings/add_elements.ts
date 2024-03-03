@@ -7,7 +7,7 @@ const sanitization = {
 }
 
 const controller = async ({ id, uris, reqUserId }) => {
-  const listing = await getListingWithElements(id, uris, reqUserId)
+  const listing = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
   validateListingOwnership(reqUserId, listing)
   return addListingElements({ listing, uris, userId: reqUserId })

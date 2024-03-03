@@ -78,7 +78,7 @@ describe('listings:remove-elements', () => {
 
   it('should remove from listing an element by its entity uris and delete the element', async () => {
     const { listing, uri, element } = await createElement({})
-    const resListing = await getListingsByIdsWithElements(listing._id, listing.user)
+    const resListing = await getListingsByIdsWithElements(listing._id)
     resListing[0].elements.length.should.equal(1)
     await authReq('post', removeElements, {
       id: listing._id,
@@ -92,7 +92,7 @@ describe('listings:remove-elements', () => {
       err.body.reason.should.equal('deleted')
     })
 
-    await getListingsByIdsWithElements(listing._id, listing.user)
+    await getListingsByIdsWithElements(listing._id)
     .then(lists => lists[0].elements.length.should.equal(0))
   })
 })
