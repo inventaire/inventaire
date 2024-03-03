@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '#lib/boolean_validations'
 import transactionsColors from '#lib/emails/activity_summary/transactions_colors'
-import templateHelpers from '#lib/emails/handlebars_helpers'
+import { imgSrc } from '#lib/emails/handlebars_helpers'
+import { i18n } from '#lib/emails/i18n/i18n'
 
 export default (item, user, lang) => {
   const { transaction, snapshot, details } = item
@@ -9,16 +10,16 @@ export default (item, user, lang) => {
 
   let imageHtml
   if (isNonEmptyString(image)) {
-    const imageSrc = templateHelpers.imgSrc(image, 300)
+    const imageSrc = imgSrc(image, 300)
     imageHtml = `<img src='${imageSrc}' alt='${title} cover'>`
   } else {
     imageHtml = ''
   }
 
   const i18nKey = `${transaction}_personalized_strong`
-  const transactionLabel = templateHelpers.i18n(lang, i18nKey, user)
+  const transactionLabel = i18n(lang, i18nKey, user)
 
-  const userProfilePic = templateHelpers.imgSrc(user.picture, 64)
+  const userProfilePic = imgSrc(user.picture, 64)
 
   const transactionColor = transactionsColors[transaction]
 
