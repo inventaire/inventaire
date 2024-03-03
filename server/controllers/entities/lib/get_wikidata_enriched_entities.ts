@@ -6,6 +6,7 @@
 
 import { partition, map, compact, omit } from 'lodash-es'
 import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks } from 'wikibase-sdk'
+import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
@@ -28,7 +29,7 @@ setImmediate(importCircularDependencies)
 
 const { _id: hookUserId } = hardCodedUsers.hook
 
-export default async (ids: WdEntityId[], { refresh, dry }) => {
+export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry }: EntitiesGetterArgs) {
   const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)

@@ -1,20 +1,22 @@
 import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
+import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
+import type { InvEntityId } from '#types/entity'
 import addRedirection from './add_redirection.js'
 import formatEntityCommon from './format_entity_common.js'
 import getEntityType from './get_entity_type.js'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
 let getEntityByUri
-const importCircularDependencies = async () => {
+async function importCircularDependencies () {
   ({ getEntityByUri } = await import('./get_entity_by_uri.js'))
 }
 setImmediate(importCircularDependencies)
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
-export default async (ids, params) => {
+export async function getInvEntitiesByIds (ids: InvEntityId, params: EntitiesGetterArgs) {
   let entities = await getEntitiesByIds(ids)
   entities = await Promise.all(entities.map(Format(params)))
   const found = entities.reduce(aggregateFoundIds, [])
@@ -37,14 +39,14 @@ const Format = params => async entity => {
   return formatEntityCommon(entity)
 }
 
-const getRedirectedEntity = (entity, params) => {
+function getRedirectedEntity (entity, params) {
   const { refresh, dry } = params
   // Passing the parameters as the entity data source might be Wikidata
   return getEntityByUri({ uri: entity.redirect, refresh, dry })
   .then(addRedirection.bind(null, prefixifyInv(entity._id)))
 }
 
-const aggregateFoundIds = (foundIds, entity) => {
+function aggregateFoundIds (foundIds, entity) {
   const { _id, redirects } = entity
   // Won't be true if the entity redirected to a Wikidata entity
   if (_id != null) foundIds.push(_id)

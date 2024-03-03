@@ -1,7 +1,8 @@
+import type { EntityUri } from '#types/entity'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 
 interface GetEntityByUriArgs {
-  uri: string
+  uri: EntityUri
   refresh?: boolean
   dry?: boolean
 }

@@ -1,6 +1,7 @@
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
+import type { EntityUri } from '#types/entity'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
@@ -19,7 +20,7 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-const controller = async params => {
+async function controller (params) {
   const { reqUserId } = params
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
@@ -44,18 +45,18 @@ const controller = async params => {
   return { ok: true }
 }
 
-const getMergeEntities = async (fromUri, toUri) => {
+async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
   const { entities, redirects } = await getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
   const fromEntity = getMergeEntity(entities, redirects, fromUri)
   const toEntity = getMergeEntity(entities, redirects, toUri)
   return { fromEntity, toEntity }
 }
 
-const getMergeEntity = (entities, redirects, uri) => {
+function getMergeEntity (entities, redirects, uri) {
   return entities[uri] || entities[redirects[uri]]
 }
 
-const validateEntities = ({ fromUri, toUri, fromEntity, toEntity }) => {
+function validateEntities ({ fromUri, toUri, fromEntity, toEntity }) {
   validateEntity(fromEntity, fromUri, 'from')
   validateEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {
@@ -63,7 +64,7 @@ const validateEntities = ({ fromUri, toUri, fromEntity, toEntity }) => {
   }
 }
 
-const validateEntity = (entity, originalUri, label) => {
+function validateEntity (entity, originalUri, label) {
   if (entity == null) {
     throw newError(`'${label}' entity not found`, 400, originalUri)
   }
@@ -72,7 +73,7 @@ const validateEntity = (entity, originalUri, label) => {
   }
 }
 
-const validateEntitiesByType = ({ fromEntity, toEntity }) => {
+function validateEntitiesByType ({ fromEntity, toEntity }) {
   const { uri: fromUri } = fromEntity
   const { uri: toUri } = toEntity
 
@@ -81,7 +82,7 @@ const validateEntitiesByType = ({ fromEntity, toEntity }) => {
     // which will not get a 'human' type
     if ((fromEntity.type !== 'human') || !(toEntity.type == null)) {
       const message = `type don't match: ${fromEntity.type} / ${toEntity.type}`
-      throw newError(message, 400, fromUri, toUri)
+      throw newError(message, 400, { fromUri, toUri })
     }
   }
 
@@ -97,7 +98,7 @@ const validateEntitiesByType = ({ fromEntity, toEntity }) => {
   }
 }
 
-const replaceIsbnUriByInvUri = (uri, invId) => {
+function replaceIsbnUriByInvUri (uri, invId) {
   const [ prefix ] = uri.split(':')
   // Prefer inv id over isbn to prepare for ./lib/merge_entities
   if (prefix === 'isbn') return `inv:${invId}`
