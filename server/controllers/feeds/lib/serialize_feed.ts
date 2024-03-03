@@ -4,13 +4,25 @@ import Rss from 'rss'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { imgSrc } from '#lib/emails/handlebars_helpers'
 import { i18n } from '#lib/emails/i18n/i18n'
+import type { ImagePath, RelativeUrl, Url } from '#types/common'
+import type { Item, ItemId } from '#types/item'
+import type { User } from '#types/user'
 import getItemDescription from './get_item_description.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const root = CONFIG.getPublicOrigin()
 const { feed: feedConfig } = CONFIG
 const oneDayInMinutes = 24 * 60
 
-export default (feedOptions, users, items, lang) => {
+interface FeedOptions {
+  title: string
+  description: string
+  queryString: string
+  pathname: RelativeUrl
+  image?: ImagePath
+}
+
+export default (feedOptions: FeedOptions, users: User[], items: Item[], lang: WikimediaLanguageCode) => {
   const { title, description, queryString, pathname } = feedOptions
   let { image } = feedOptions
 
@@ -40,13 +52,24 @@ export default (feedOptions, users, items, lang) => {
   return feed.xml()
 }
 
+interface FeedSerializedItem {
+  title: string
+  description: string
+  author: string
+  guid: ItemId
+  url: Url
+  date: EpochTimeStamp
+  lat?: number
+  long?: number
+}
+
 const serializeItem = (usersIndex, lang) => item => {
   const { owner } = item
   const user = usersIndex[owner]
   user.href = `${root}/users/${user._id}`
   item.href = `${root}/items/${item._id}`
 
-  const data = {
+  const data: FeedSerializedItem = {
     title: getItemTitle(item, user, lang),
     description: getItemDescription(item, user, lang),
     author: user.username,

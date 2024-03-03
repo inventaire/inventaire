@@ -21,5 +21,6 @@ export type Url = AbsoluteUrl | RelativeUrl
 
 export type ImageHash = string
 export type ImageContainer = typeof uploadContainersNames[number]
+export type ImagePath = `/img/${ImageContainer}/${ImageHash}`
 
 export type HighResolutionTime = [ number, number ]
