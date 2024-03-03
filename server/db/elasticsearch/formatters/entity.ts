@@ -14,12 +14,18 @@ import { isWdEntityId } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
+import type { Claims } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
+import type { Entries } from 'type-fest'
 
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
-export default async (entity, options = {}) => {
+interface EntityFormatterOptions {
+  quick?: boolean
+}
+
+export default async function (entity, options: EntityFormatterOptions = {}) {
   entity._id = getEntityId(entity)
 
   // Entities from Wikidata dump still have a type='item' set
@@ -68,7 +74,7 @@ export default async (entity, options = {}) => {
       }
     } else {
       entity.images = {
-        claims: getEntityImagesFromClaims(entity, needsSimplification),
+        claims: getEntityImagesFromClaims(entity),
       }
     }
   }
@@ -131,19 +137,19 @@ export default async (entity, options = {}) => {
   return entity
 }
 
-const getType = ({ claims, type }) => {
+function getType ({ claims, type }) {
   if (type && type !== 'entity') return type
   const wdtP31 = claims['wdt:P31']
   return getEntityType(wdtP31)
 }
 
-const dropPlural = type => {
+function dropPlural (type) {
   if (type) {
     return type.replace(/s$/, '')
   }
 }
 
-const flattenTerms = (terms, mainFieldsWords) => {
+function flattenTerms (terms, mainFieldsWords) {
   terms = Object.values(terms)
   // Required for aliases
   if (isArray(terms[0])) terms = terms.flat()
@@ -160,18 +166,18 @@ const flattenTerms = (terms, mainFieldsWords) => {
 // See: https://discuss.elastic.co/t/limit-of-total-fields-1000-in-index-has-been-exceeded-particular-jsons/222627
 const removeUnusedLangs = terms => pick(terms, activeI18nLangs)
 
-const getMainFieldsWords = ({ labels, descriptions = {}, aliases = {} }) => {
+function getMainFieldsWords ({ labels, descriptions = {}, aliases = {} }) {
   const labelsTerms = Object.values(labels)
   const descriptionsTerms = Object.values(descriptions)
   const aliasesTerms = Object.values(aliases).flat()
   const allTerms = labelsTerms.concat(descriptionsTerms, aliasesTerms)
   return chain(allTerms)
-    .flatMap(term => term.toLowerCase().split(' '))
+    .flatMap(term => term.toString().toLowerCase().split(' '))
     .uniq()
     .value()
 }
 
-const getRelationsTerms = async ({ type, claims }) => {
+async function getRelationsTerms ({ type, claims }) {
   const indexedRelations = indexedRelationsPerType[type]
   if (!indexedRelations) return ''
   const relationsUris = Object.values(pick(claims, indexedRelations)).flat()
@@ -192,7 +198,7 @@ const indexedRelationsPerType = {
 }
 
 // Not including descriptions
-const getEntityTerms = entity => {
+function getEntityTerms (entity) {
   const { labels, aliases } = entity
   // Known case: deleted Wikidata entity
   if (!labels) {
@@ -202,9 +208,9 @@ const getEntityTerms = entity => {
   return getMainFieldsWords({ labels, aliases })
 }
 
-const getFlattenedClaims = claims => {
+function getFlattenedClaims (claims) {
   const flattenedClaims = []
-  for (const [ property, propertyClaims ] of Object.entries(claims)) {
+  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
     if (!ignoredPropertiesInFlattenedClaims.has(property)) {
       for (const value of propertyClaims) {
         flattenedClaims.push(`${property}=${value}`)
@@ -217,7 +223,7 @@ const getFlattenedClaims = claims => {
 // Properties that are highly unlikely to ever be usefully queried by exact value
 const ignoredPropertiesInFlattenedClaims = new Set(imageProperties)
 
-const isRawWikidataClaims = claims => {
+function isRawWikidataClaims (claims) {
   const properties = Object.keys(claims)
   return isPropertyId(properties[0])
 }
