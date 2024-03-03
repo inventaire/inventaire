@@ -4,6 +4,7 @@ import type { UserId } from '#types/user'
 import type { EntityType } from 'wikibase-sdk'
 
 export type TaskType = string
+export type TaskState = 'merged'
 
 export interface externalSourceOccurrence {
   uri: EntityUri
@@ -13,6 +14,7 @@ export interface externalSourceOccurrence {
 
 export interface Task extends CouchDoc {
   type: TaskType
+  state?: TaskState
   suspectUri: EntityUri
   suggestionUri: EntityUri
   created: EpochTimeStamp
