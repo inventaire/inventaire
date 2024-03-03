@@ -1,4 +1,5 @@
 import type { uploadContainersNames } from '#controllers/images/lib/containers'
+import type OAuth from 'oauth-1.0a'
 
 export type CouchUuid = string
 export type CouchRevId = `${number}-${string}`
@@ -12,7 +13,7 @@ export type LatLng = [ number, number ]
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head'
 export type HttpHeaderKey = 'accept' | 'authorization' | 'cache-control' | 'content-type' | 'cookie' | 'user-agent' | `x-${string}`
-export type HttpHeaders = Partial<Record<HttpHeaderKey, string>>
+export type HttpHeaders = Partial<Record<HttpHeaderKey, string>> | OAuth.Header
 
 export type AbsoluteUrl = `http${string}`
 export type RelativeUrl = `/${string}`
