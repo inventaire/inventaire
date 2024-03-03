@@ -5,6 +5,7 @@ import { setItemsBusyFlag } from '#controllers/transactions/lib/transactions'
 import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { Item } from '#types/item'
 
 const addUsersData = async (page, reqParams) => {
   const { reqUserId, includeUsers } = reqParams
@@ -47,7 +48,21 @@ async function removeUnauthorizedShelves (items, reqUserId) {
   }
 }
 
-export function paginate (items, params) {
+export interface ItemsPageParams {
+  limit?: number
+  offset?: number
+  context?: string
+}
+
+export interface ItemsPage {
+  items: Item[]
+  total: number
+  offset?: number
+  context?: string
+  continue?: number
+}
+
+export function paginate (items: Item[], params: ItemsPageParams) {
   let { limit, offset, context } = params
   items = items.sort(byCreationDate)
   if (context != null) {
@@ -59,7 +74,7 @@ export function paginate (items, params) {
 
   if (limit != null) {
     items = items.slice(offset, last)
-    const data = { items, total, offset, context }
+    const data: ItemsPage = { items, total, offset, context }
     if (last < total) data.continue = last
     return data
   } else {

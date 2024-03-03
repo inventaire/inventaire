@@ -45,10 +45,10 @@ export const superTrim = str => str.replaceAll(/\s+/g, ' ').trim()
 
 export const KeyBy = attribute => array => keyBy(array, attribute)
 
-export function uniqByKey (collection, key) {
+export function uniqByKey<T> (collection, key) {
   assert_.array(collection)
   assert_.string(key)
-  return Object.values(keyBy(collection, key))
+  return Object.values(keyBy(collection, key)) as T[]
 }
 
 export const initCollectionsIndex = names => names.reduce(aggregateCollections, {})

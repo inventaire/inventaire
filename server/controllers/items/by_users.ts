@@ -1,4 +1,4 @@
-import getItemsByUsers from './lib/get_items_by_users.js'
+import { getItemsByUsers } from './lib/get_items_by_users.js'
 
 const sanitization = {
   users: {},
@@ -15,6 +15,8 @@ const sanitization = {
   },
 }
 
-const controller = params => getItemsByUsers(params)
+async function controller ({ users: usersIds, limit, offset, context, includeUsers, reqUserId }) {
+  return getItemsByUsers({ usersIds, limit, offset, context, includeUsers, reqUserId })
+}
 
 export default { sanitization, controller }
