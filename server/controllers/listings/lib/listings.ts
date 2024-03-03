@@ -9,6 +9,10 @@ import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
 import { createListingDoc, updateListingDocAttributes } from '#models/listing'
+import type { ListingElement } from '#types/element'
+import type { EntityUri } from '#types/entity'
+import type { Listing, ListingId, ListingWithElements } from '#types/listing'
+import type { UserId } from '#types/user'
 
 const { updatable: updateAttributes } = listingAttributes
 
@@ -18,26 +22,22 @@ export const getListingById = db.get
 export const getListingsByIds = db.byIds
 export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
 
-export async function getListingsByIdsWithElements (ids) {
+type ElementsByListing = Record<ListingId, ListingElement[]>
+
+export async function getListingsByIdsWithElements (ids: ListingId[]) {
   const listings = await getListingsByIds(ids)
   if (!isNonEmptyArray(listings)) return []
   const listingIds = map(listings, '_id')
   const elements = await getElementsByListings(listingIds)
   if (!isNonEmptyArray(listings)) return []
-  const elementsByListing = groupBy(elements, 'list')
+  const elementsByListing: ElementsByListing = groupBy(elements, 'list')
   listings.forEach(assignElementsToListing(elementsByListing))
   return listings
 }
 
 export async function createListing (params) {
   const listing = createListingDoc(params)
-  const invalidGroupId = await validateVisibilityKeys(listing.visibility, listing.creator)
-  if (invalidGroupId) {
-    throw newError('list creator is not in that group', 400, {
-      visibilityKeys: listing.visibility,
-      groupId: invalidGroupId,
-    })
-  }
+  await validateVisibilityKeys(listing.visibility, listing.creator)
   return db.postAndReturn(listing)
 }
 
@@ -54,7 +54,7 @@ export async function updateListingAttributes (params) {
 
 export const bulkDeleteListings = db.bulkDelete
 
-export async function addListingElements ({ listing, uris, userId }) {
+export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri, userId: UserId }) {
   const currentElements = listing.elements
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)
@@ -65,7 +65,7 @@ export async function addListingElements ({ listing, uris, userId }) {
   return { ok: true, createdElements }
 }
 
-export function validateListingOwnership (userId, listings) {
+export function validateListingOwnership (userId: UserId, listings: Listing[]) {
   listings = forceArray(listings)
   for (const listing of listings) {
     if (listing.creator !== userId) {
@@ -74,12 +74,12 @@ export function validateListingOwnership (userId, listings) {
   }
 }
 
-export async function getListingWithElements (listingId, userId) {
-  const listings = await getListingsByIdsWithElements(listingId, userId)
+export async function getListingWithElements (listingId: ListingId) {
+  const listings = await getListingsByIdsWithElements([ listingId ])
   return listings[0]
 }
 
-export async function deleteUserListingsAndElements (userId) {
+export async function deleteUserListingsAndElements (userId: UserId) {
   const listings = await getListingsByCreators([ userId ])
   return Promise.all([
     db.bulkDelete(listings),
@@ -87,11 +87,11 @@ export async function deleteUserListingsAndElements (userId) {
   ])
 }
 
-const assignElementsToListing = elementsByListing => listing => {
+const assignElementsToListing = (elementsByListing: ElementsByListing) => listing => {
   listing.elements = elementsByListing[listing._id] || []
 }
 
-const validateExistingEntities = async uris => {
+async function validateExistingEntities (uris: EntityUri[]) {
   const { notFound } = await getEntitiesByUris({ uris })
   if (isNonEmptyArray(notFound)) {
     throw newError('entities not found', 403, { uris: notFound })
