@@ -1,7 +1,8 @@
+import { isIsbnEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
-import type { EntityUri } from '#types/entity'
+import type { EntityUri, SerializedEntity } from '#types/entity'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
@@ -37,8 +38,8 @@ async function controller (params) {
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
   validateEntitiesByType({ fromEntity, toEntity })
 
-  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity._id)
-  toUri = replaceIsbnUriByInvUri(toUri, toEntity._id)
+  fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
+  toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
   await mergeEntities({ userId: reqUserId, fromUri, toUri })
   await emit('entity:merge', fromUri, toUri)
@@ -53,10 +54,10 @@ async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
 }
 
 function getMergeEntity (entities, redirects, uri) {
-  return entities[uri] || entities[redirects[uri]]
+  return (entities[uri] || entities[redirects[uri]]) as (SerializedEntity | undefined)
 }
 
-function validateEntities ({ fromUri, toUri, fromEntity, toEntity }) {
+function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: EntityUri, toUri: EntityUri, fromEntity: Entity, toEntity }) {
   validateEntity(fromEntity, fromUri, 'from')
   validateEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {
@@ -98,10 +99,12 @@ function validateEntitiesByType ({ fromEntity, toEntity }) {
   }
 }
 
-function replaceIsbnUriByInvUri (uri, invId) {
-  const [ prefix ] = uri.split(':')
-  // Prefer inv id over isbn to prepare for ./lib/merge_entities
-  if (prefix === 'isbn') return `inv:${invId}`
+function replaceIsbnUriByInvUri (uri, entity) {
+  if (isIsbnEntityUri(uri)) {
+    const [ prefix ] = uri.split(':')
+    // Prefer inv id over isbn to prepare for ./lib/merge_entities
+    if (prefix === 'isbn') return `inv:${entity._id}`
+  }
   return uri
 }
 
