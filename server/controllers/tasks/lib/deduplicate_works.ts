@@ -1,5 +1,5 @@
 import { isEqual, map } from 'lodash-es'
-import getInvEntitiesByIsbns from '#controllers/entities/lib/get_entities_by_isbns'
+import { getEntitiesByIsbns } from '#controllers/entities/lib/get_entities_by_isbns'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
@@ -18,7 +18,7 @@ export default async (workUri, isbn, userId) => {
   if (type !== 'work') {
     throw newError(`unsupported type: ${type}, only work is supported`, 400, { workUri, work })
   }
-  const editionsRes = await getInvEntitiesByIsbns([ isbn ])
+  const editionsRes = await getEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629']
   if (isEqual(editionWorksUris, [ workUri ])) return

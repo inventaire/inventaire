@@ -1,8 +1,8 @@
 import { compact, map, uniq } from 'lodash-es'
 import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entities/lib/entities'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { propertiesValuesConstraints, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
-import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { unprefixify } from './prefix.js'
 
 export const cachedRelationProperties = Object.keys(propertiesValuesConstraints)
@@ -29,7 +29,7 @@ export async function cacheEntityRelations (invEntityUri) {
 export async function getCachedRelations ({ valueUri, properties, formatEntity }) {
   const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
-  let entities = await getEntitiesByUris({ uris: subjectsUris, list: true, refresh: true })
+  let entities = await getEntitiesList(subjectsUris, { refresh: true })
   entities = await Promise.all(entities.map(relationIsConfirmedByPrimaryData(properties, valueUri)))
   return compact(entities).map(formatEntity)
 }
@@ -50,7 +50,7 @@ export const relationIsConfirmedByPrimaryData = (properties, valueUri) => async 
 
 async function getResolvedUris (uris) {
   if (!uris) return []
-  const entities = await getEntitiesByUris({ uris, list: true, refresh: true })
+  const entities = await getEntitiesList(uris, { refresh: true })
   return map(entities, 'uri')
 }
 
