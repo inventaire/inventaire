@@ -63,7 +63,7 @@ export function getTasksByEntitiesType (options) {
   })
 }
 
-export function getTasksBySuspectUri (suspectUri, options) {
+export function getTasksBySuspectUri (suspectUri, options = {}) {
   return getTasksBySuspectUris([ suspectUri ], options)
 }
 
