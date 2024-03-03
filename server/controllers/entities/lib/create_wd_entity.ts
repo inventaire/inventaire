@@ -1,3 +1,4 @@
+import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
 import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
@@ -6,14 +7,13 @@ import getEntityType from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import validateEntity from './validate_entity.js'
-import wdOauth from './wikidata_oauth.js'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
 export default async params => {
   const { labels, claims, user, isAlreadyValidated } = params
-  wdOauth.validate(user)
-  const credentials = wdOauth.getOauthCredentials(user)
+  validateWikidataOAuth(user)
+  const credentials = getWikidataOAuthCredentials(user)
 
   const entity = { labels, claims }
 

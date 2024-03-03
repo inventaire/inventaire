@@ -4,9 +4,11 @@ import OAuth from 'oauth-1.0a'
 import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
+import type { AuthentifiedReq, Res } from '#types/server'
+import type { UserId } from '#types/user'
 
 const root = CONFIG.getPublicOrigin()
-const createHmacSha1Hash = (baseString, key) => {
+function createHmacSha1Hash (baseString, key) {
   return crypto.createHmac('sha1', key)
   .update(baseString)
   .digest('base64')
@@ -14,7 +16,7 @@ const createHmacSha1Hash = (baseString, key) => {
 
 const { consumer_key: consumerKey, consumer_secret: consumerSecret } = CONFIG.wikidataOAuth
 // Documentation: https://github.com/ddo/oauth-1.0a#readme
-const oauth = OAuth({
+const oauth = new OAuth({
   consumer: {
     key: consumerKey,
     secret: consumerSecret,
@@ -33,7 +35,7 @@ const step2Url = `${wdBaseNice}Special:OAuth/authorize`
 const step3Url = `${wdBaseNonNice}Special:OAuth/token`
 const reqTokenSecrets = {}
 
-export default async (req, res) => {
+export default async function wikidataOauth (req: AuthentifiedReq, res: Res) {
   const { _id: reqUserId } = req.user
   const { oauth_verifier: verifier, oauth_token: reqToken, redirect } = req.query
 
@@ -51,7 +53,7 @@ export default async (req, res) => {
   }
 }
 
-const getStep1Token = redirect => {
+function getStep1Token (redirect) {
   let callback = `${root}/api/auth?action=wikidata-oauth`
   if (redirect && redirect[0] === '/') callback += `&redirect=${redirect}`
   const reqData = {
@@ -64,7 +66,7 @@ const getStep1Token = redirect => {
   return requests_.post(step1Url, { headers, parseJson: false })
 }
 
-const getStep3 = (reqUserId, verifier, reqToken) => {
+function getStep3 (reqUserId: UserId, verifier, reqToken) {
   const reqTokenSecret = reqTokenSecrets[reqUserId]
   const reqData = {
     url: step3Url,
@@ -79,13 +81,13 @@ const getStep3 = (reqUserId, verifier, reqToken) => {
   })
 }
 
-const getOauthHeaders = (reqData, tokenData) => {
+function getOauthHeaders (reqData, tokenData?: OAuth.Token) {
   reqData.method = 'POST'
   const signature = oauth.authorize(reqData, tokenData)
   return oauth.toHeader(signature)
 }
 
-const saveUserTokens = (step3Res, reqUserId) => {
+function saveUserTokens (step3Res, reqUserId: UserId) {
   const { oauth_token_secret: userTokenSecret, oauth_token: userToken } = parseQuery(step3Res)
   const data = { token: userToken, token_secret: userTokenSecret }
   return setUserOauthTokens(reqUserId, 'wikidata', data)

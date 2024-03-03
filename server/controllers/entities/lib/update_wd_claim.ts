@@ -1,4 +1,5 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
+import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -11,12 +12,11 @@ import entitiesRelationsTemporaryCache from './entities_relations_temporary_cach
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
-import wdOauth from './wikidata_oauth.js'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
 export default async (user, id, property, oldValue, newValue) => {
-  wdOauth.validate(user)
+  validateWikidataOAuth(user)
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
 
@@ -35,7 +35,7 @@ export default async (user, id, property, oldValue, newValue) => {
     throw newInvalidError('property', propertyPrefix)
   }
 
-  const credentials = wdOauth.getOauthCredentials(user)
+  const credentials = getWikidataOAuthCredentials(user)
 
   let res
 
