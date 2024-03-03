@@ -1,5 +1,6 @@
 import { flatten, pick, values } from 'lodash-es'
 import { simplifyClaim } from 'wikibase-sdk'
+import type { Claims, WdRawClaims } from '#types/entity'
 import { unprefixify } from './prefix.js'
 
 export const imageProperties = [
@@ -15,10 +16,10 @@ export const imageProperties = [
 
 export const nonPrefixedImageProperties = imageProperties.map(unprefixify)
 
-export default (claims, needsSimplification = false) => {
+export function getCommonsFilenamesFromClaims (claims: Claims | WdRawClaims, needsSimplification: boolean = false) {
   if (needsSimplification) {
     const images = flatten(values(pick(claims, nonPrefixedImageProperties)))
-    return images.map(simplifyClaim)
+    return images.map(imageClaim => simplifyClaim(imageClaim))
   } else {
     const images = flatten(values(pick(claims, imageProperties)))
     return images

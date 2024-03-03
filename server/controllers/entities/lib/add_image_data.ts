@@ -4,7 +4,7 @@ import getThumbData from '#data/commons/thumb'
 // import getEnwikiImage from '#data/wikipedia/image'
 import { objectPromise } from '#lib/promises'
 // import { logError } from '#lib/utils/logs'
-import getCommonsFilenamesFromClaims from './get_commons_filenames_from_claims.js'
+import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
 export default async entity => {
   const data = await findAnImage(entity)
