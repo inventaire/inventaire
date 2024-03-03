@@ -10,6 +10,7 @@ export type ErrorContext = Record<string, unknown>
 export interface ContextualizedError extends Error {
   code?: string
   context?: ErrorContext
+  privateContext?: ErrorContext
   emitter?: string
   notFound?: boolean
   statusCode?: number

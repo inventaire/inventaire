@@ -4,8 +4,10 @@ import { newError } from '#lib/error/error'
 import { errorHandler } from '#lib/error/error_handler'
 import { bundleError } from '#lib/error/pre_filled'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
-import { endReqTimer, startReqTimer, userAgent } from '#lib/requests'
+import { endReqTimer, startReqTimer, userAgent, type RequestTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
+import type { Url } from '#types/common'
+import type { Req, Res } from '#types/server'
 
 const { mediaStorage } = CONFIG
 
@@ -17,12 +19,16 @@ const fetchOptions = {
   },
 }
 
-export async function getResizedImage (req, res, url, dimensions) {
+interface CustomRequestTimer extends RequestTimer {
+  processingResponseStream?: boolean
+}
+
+export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?: `${number}x${number}`) {
   let [ width, height ] = dimensions ? dimensions.split('x') : [ maxSize, maxSize ];
   [ width, height ] = applyImageLimits(width, height)
 
   let response, errorCode
-  const timer = startReqTimer('get', url, fetchOptions)
+  const timer: CustomRequestTimer = startReqTimer('get', url, fetchOptions)
   try {
     // No need to call sanitizeUrl here, as the url should have been validated
     // in server/controllers/images/resize.js
@@ -55,8 +61,8 @@ export async function getResizedImage (req, res, url, dimensions) {
     const err = newError(errMessage, statusCode)
     // Do not pass the URL as error.context in the response to prevent leaking internal information
     // but still get it logged with the error
-    err.privateContext = url
-    errorHandler(req, res, err, statusCode)
+    err.privateContext = { url }
+    errorHandler(req, res, err)
   } else {
     res.header('content-type', 'image/jpeg')
     res.header('cache-control', 'immutable')
@@ -69,11 +75,11 @@ export async function getResizedImage (req, res, url, dimensions) {
 // Ignore charset instructions (known case: image/jpeg;charset=UTF-8)
 const validImageContentType = /^(image\/[\w+]+|application\/octet-stream)/
 
-const resizeFromStream = (imageStream, width, height, req, res) => {
+function resizeFromStream (imageStream: ReadableStream, width: number, height: number, req: Req, res: Res) {
   let alreadySent = false
   let transmittedData = false
 
-  const handleBufferError = buf => {
+  function handleBufferError (buf) {
     const err = new Error(buf.toString())
     if (transmittedData || alreadySent) {
       logError(err, 'image error after some data was already sent')
