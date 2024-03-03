@@ -2,7 +2,8 @@ import CONFIG from 'config'
 import { isArray, keyBy } from 'lodash-es'
 import Rss from 'rss'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import templateHelpers from '#lib/emails/handlebars_helpers'
+import { imgSrc } from '#lib/emails/handlebars_helpers'
+import { i18n } from '#lib/emails/i18n/i18n'
 import getItemDescription from './get_item_description.js'
 
 const root = CONFIG.getPublicOrigin()
@@ -14,7 +15,7 @@ export default (feedOptions, users, items, lang) => {
   let { image } = feedOptions
 
   if (image) {
-    image = templateHelpers.imgSrc(image, 300)
+    image = imgSrc(image, 300)
   } else {
     image = feedConfig.image
   }
@@ -70,7 +71,7 @@ const getItemTitle = (item, user, lang) => {
   if (isNonEmptyString(authors)) { title += ` - ${authors}` }
 
   const i18nKey = `${transaction}_personalized`
-  const transactionLabel = templateHelpers.i18n(lang, i18nKey, user)
+  const transactionLabel = i18n(lang, i18nKey, user)
   title += ` [${transactionLabel}]`
 
   return title

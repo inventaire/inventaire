@@ -1,46 +1,38 @@
-import { isArray, isNumber } from 'lodash-es'
+import { isArray } from 'lodash-es'
 import { imgUrlBuilder } from '#lib/emails/app_api'
 import { log } from '#lib/utils/logs'
-import * as i18nHelpers from './i18n/i18n.js'
 
-export default Object.assign({}, i18nHelpers, {
-  // Prevent passing more than 2 arguments
-  debug: (obj, label) => {
-    log(obj, label)
-    return JSON.stringify(obj, null, 2)
-  },
-
-  // Keep in sync with client/app/lib/handlebars_helpers/images
-  imgSrc: (path, width, height) => {
-    if (isDataUrl(path)) return path
-
-    width = getImgDimension(width, 1600)
-    width = bestImageWidth(width)
-    height = getImgDimension(height, width)
-    path = onePictureOnly(path)
-
-    if (path == null) return ''
-
-    return imgUrlBuilder(path, width, height)
-  },
-
-  stringify: obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj,
-})
-
-const onePictureOnly = arg => {
-  if (isArray(arg)) return arg[0]
-  else return arg
+// export default Object.assign({}, i18nHelpers, {
+// Prevent passing more than 2 arguments
+export function debug (obj, label) {
+  log(obj, label)
+  return JSON.stringify(obj, null, 2)
 }
 
-const getImgDimension = (dimension, defaultValue) => {
-  if (isNumber(dimension)) return dimension
-  else return defaultValue
+// Keep in sync with client/app/lib/handlebars_helpers/images
+export function imgSrc (path, width: number, height?: number) {
+  if (isDataUrl(path)) return path
+
+  width = bestImageWidth(width)
+  height = height || width
+  path = onePictureOnly(path)
+
+  if (path == null) return ''
+
+  return imgUrlBuilder(path, width, height)
+}
+
+export const stringify = obj => typeof obj === 'object' ? JSON.stringify(obj, null, 2) : obj
+
+function onePictureOnly (arg) {
+  if (isArray(arg)) return arg[0]
+  else return arg
 }
 
 const dataUrlPattern = /^data:image/
 const isDataUrl = str => dataUrlPattern.test(str)
 
-const bestImageWidth = width => {
+function bestImageWidth (width: number) {
   // under 500, it's useful to keep the freedom to get exactly 64 or 128px etc
   // while still grouping on the initially requested width
   if (width < 500) {
