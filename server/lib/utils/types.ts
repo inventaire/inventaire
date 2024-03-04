@@ -11,3 +11,8 @@ export function typeOf (obj) {
   }
   return type
 }
+
+// Source: https://www.totaltypescript.com/tips/create-your-own-objectkeys-function-using-generics-and-the-keyof-operator
+export function objectKeys <Obj> (obj: Obj): (keyof Obj)[] {
+  return Object.keys(obj) as (keyof Obj)[]
+}

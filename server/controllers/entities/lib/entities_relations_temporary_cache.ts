@@ -4,21 +4,28 @@ import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
+import type { EntityUri, PropertyUri } from '#types/entity'
+import type { AbstractIteratorOptions } from 'abstract-leveldown'
 
 const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
 
 const db = leveldbFactory('entities-relations', 'utf8')
 
+type Property = PropertyUri
+type ValueUri = EntityUri
+type SubjectUri = EntityUri
+type EntitiesRelationCacheKey = `${Property}-${ValueUri}-${SubjectUri}`
+
 // This module implements a custom ttl, rather than using level-ttl
 // to be able to trigger actions once the ttl expired
 
 export default {
-  get: async (property, valueUri) => {
+  get: async (property: PropertyUri, valueUri: EntityUri) => {
     const keys = await getKeyRange(property, valueUri)
     return keys.map(getSubject)
   },
 
-  set: async (subjectUri, property, valueUri) => {
+  set: async (subjectUri: EntityUri, property: PropertyUri, valueUri: EntityUri) => {
     const key = buildKey(subjectUri, property, valueUri)
     const expireTimeKey = buildExpireTimeKey(key)
     return db.batch([
@@ -27,7 +34,7 @@ export default {
     ])
   },
 
-  del: async (subjectUri, property, valueUri) => {
+  del: async (subjectUri: EntityUri, property: PropertyUri, valueUri: EntityUri) => {
     const key = buildKey(subjectUri, property, valueUri)
     const expireTimeKey = await db.get(key)
     return db.batch([
@@ -38,7 +45,7 @@ export default {
   },
 }
 
-const getKeyRange = (property, object) => {
+function getKeyRange (property: PropertyUri, object) {
   const keyBase = `${property}-${object}-`
   return getKeys({
     gte: keyBase,
@@ -46,7 +53,7 @@ const getKeyRange = (property, object) => {
   })
 }
 
-const getKeys = params => {
+async function getKeys (params: AbstractIteratorOptions): Promise<EntitiesRelationCacheKey[]> {
   const keys = []
   return new Promise((resolve, reject) => {
     db.createKeyStream(params)
@@ -56,21 +63,21 @@ const getKeys = params => {
   })
 }
 
-const getSubject = key => key.split('-')[2]
+const getSubject = (key: EntitiesRelationCacheKey) => key.split('-')[2]
 
-const buildKey = (subjectUri, property, valueUri) => {
-  if (!isEntityUri(subjectUri)) throw newError('invalid subject', { subjectUri })
-  if (!isPropertyUri(property)) throw newError('invalid property', { property })
-  if (!isEntityUri(valueUri)) throw newError('invalid value', { valueUri })
-  return `${property}-${valueUri}-${subjectUri}`
+function buildKey (subjectUri: EntityUri, property: PropertyUri, valueUri: EntityUri) {
+  if (!isEntityUri(subjectUri)) throw newError('invalid subject', 500, { subjectUri })
+  if (!isPropertyUri(property)) throw newError('invalid property', 500, { property })
+  if (!isEntityUri(valueUri)) throw newError('invalid value', 500, { valueUri })
+  return `${property}-${valueUri}-${subjectUri}` as EntitiesRelationCacheKey
 }
 
-const buildExpireTimeKey = key => {
+function buildExpireTimeKey (key: EntitiesRelationCacheKey) {
   const expireTime = Date.now() + ttl
   return `expire!${expireTime}!${key}`
 }
 
-const checkExpiredCache = async () => {
+async function checkExpiredCache () {
   const expiredTimeKeys = await getKeys({
     gt: 'expire!',
     lt: `expire!${Date.now()}`,
@@ -92,7 +99,7 @@ const checkExpiredCache = async () => {
   await db.batch(batch)
 }
 
-const ignoreKeyNotFound = err => {
+function ignoreKeyNotFound (err: Error) {
   if (err.name !== 'NotFoundError') throw err
 }
 
