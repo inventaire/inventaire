@@ -2,8 +2,9 @@ import CONFIG from 'config'
 import { createTransport, getTestMessageUrl } from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
 import { absolutePath } from '#lib/absolute_path'
+import { debug, imgSrc, stringify } from '#lib/emails/handlebars_helpers'
+import { i18n, I18n, dateI18n } from '#lib/emails/i18n/i18n'
 import { warn, success, logError } from '#lib/utils/logs'
-import handlebarsHelpers from './handlebars_helpers.js'
 
 const viewsPath = absolutePath('lib', 'emails/views')
 const debugMode = CONFIG.mailer.nodemailer.host === 'smtp.ethereal.email'
@@ -14,7 +15,14 @@ const options = {
     layoutsDir: `${viewsPath}/layouts/`,
     defaultLayout: 'template',
     partialsDir: `${viewsPath}/partials/`,
-    helpers: handlebarsHelpers,
+    helpers: {
+      debug,
+      imgSrc,
+      stringify,
+      i18n,
+      I18n,
+      dateI18n,
+    },
   },
   viewPath: viewsPath,
   extName: '.hbs',
