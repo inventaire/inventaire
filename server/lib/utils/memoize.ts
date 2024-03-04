@@ -13,13 +13,13 @@
 //
 // See memoize unit tests for more details
 
-export function memoize (fn) {
+export function memoize <T> (fn) {
   const cache = {}
   return (...args) => {
     args = addUndefinedArguments(args, fn.length)
     const key = args.join('|')
     if (cache[key] == null) cache[key] = fn(...args)
-    return cache[key]
+    return cache[key] as T
   }
 }
 
