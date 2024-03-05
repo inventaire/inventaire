@@ -7,12 +7,12 @@ export type WdEntityId = `Q${number}`
 export type WdPropertyId = `P${number}`
 export type WdEntityUri = `wd:${WdEntityId}`
 export type WdPropertyUri = `wdt:${WdPropertyId}`
-export type PropertyUri = WdPropertyUri | InvPropertyUri
 
 export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
 
+export type PropertyUri = WdPropertyUri | InvPropertyUri
 export type Isbn = string
 export type IsbnEntityUri = `isbn:${Isbn}`
 
