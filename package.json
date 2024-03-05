@@ -114,6 +114,7 @@
     "wikidata-lang": "^4.0.2"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin-ts": "^1.6.3",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
