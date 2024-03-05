@@ -2,7 +2,6 @@ import CONFIG from 'config'
 import { couchdbBundlesFactory } from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
-import { memoize } from '#lib/utils/memoize'
 import getDbApi from './cot_base.js'
 
 export default async function (dbBaseName: string, designDocName?: string) {
@@ -16,15 +15,20 @@ export default async function (dbBaseName: string, designDocName?: string) {
   return getHandler(dbBaseName, dbName, designDocName)
 }
 
-const getHandler = memoize((dbBaseName: string, dbName: string, designDocName: string) => {
+function getHandler (dbBaseName: string, dbName: string, designDocName: string) {
   validate(dbBaseName, designDocName)
   const db = getDbApi(dbName, designDocName)
   const bundles = couchdbBundlesFactory(db)
-  return Object.assign(db, bundles, { dbBaseName, dbName, designDocName })
-})
+  const dbInfo = { dbBaseName, dbName, designDocName }
+  return {
+    ...db,
+    ...bundles,
+    ...dbInfo,
+  }
+}
 
 // Not using error_ as that would make hard to solve cirucular dependencies
-const validate = (dbBaseName: string, designDocName: string) => {
+function validate (dbBaseName: string, designDocName: string) {
   if (!databases[dbBaseName]) {
     throw new Error(`unknown dbBaseName: ${dbBaseName}`)
   }
