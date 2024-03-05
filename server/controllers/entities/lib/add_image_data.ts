@@ -75,4 +75,4 @@ const getWorkSourceOrder = work => {
   }
 }
 
-const yearsAgo = (years:number) => (new Date().getFullYear()) - years
+const yearsAgo = (years: number) => (new Date().getFullYear()) - years
