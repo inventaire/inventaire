@@ -1,35 +1,25 @@
 import CONFIG from 'config'
-import couchInit from 'couch-init2'
-import { pick } from 'lodash-es'
-import { absolutePath } from '#lib/absolute_path'
+import { mapKeys, pick } from 'lodash-es'
+import { couchInit } from '#db/couchdb/init/couch_init'
 import { obfuscate, objLength } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { databases } from './databases.js'
 
 const dbBaseUrl = CONFIG.db.getOrigin()
-const formattedList = []
 
-const setPreloadSuffix = preload => designDocsName => preload ? `${designDocsName}_preload` : designDocsName
-const setJsExtension = filename => `${filename}.js`
+const setPreloadSuffix = preload => (_, designDocsName) => preload ? `${designDocsName}_preload` : designDocsName
 
-const designDocFolder = absolutePath('db', 'couchdb/design_docs')
-
-const init = async ({ preload }) => {
+async function init ({ preload }) {
   try {
-    // Adapt the list to couch-init2 needs
-    for (const dbName in databases) {
-      const designDocsNames = databases[dbName]
-        .map(setPreloadSuffix(preload))
-        .map(setJsExtension)
-
-      formattedList.push({
-        // Adding a suffix if needed
-        name: CONFIG.db.name(dbName),
-        designDocs: designDocsNames,
+    const formattedList = Object.entries(databases)
+      .map(([ dbName, dbDesignDocs ]) => {
+        return {
+          name: CONFIG.db.name(dbName),
+          designDocs: mapKeys(dbDesignDocs, setPreloadSuffix(preload)),
+        }
       })
-    }
 
-    const res = await couchInit(dbBaseUrl, formattedList, designDocFolder)
+    const res = await couchInit(dbBaseUrl, formattedList)
     if (objLength(res.operations) !== 0) log(res, 'couch init')
     // Work around circular dependencies
     setImmediate(afterInit)

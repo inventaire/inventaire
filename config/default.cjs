@@ -60,6 +60,9 @@ module.exports = {
     getOrigin: function () {
       return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
     },
+    getOriginSansAuth: function () {
+      return `${this.protocol}://${this.hostname}:${this.port}`
+    },
     databaseUrl: function (dbBaseName) {
       return `${this.protocol}://${this.hostname}:${this.port}/${this.name(dbBaseName)}`
     },

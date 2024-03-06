@@ -9,7 +9,7 @@ export default async function (dbBaseName: string, designDocName?: string) {
   const dbName = CONFIG.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,
   // assumes that it is the default design doc, which has the same name as the dbBaseName
-  if (databases[dbBaseName].length > 0 && designDocName == null) {
+  if (Object.keys(databases[dbBaseName]).length > 0 && designDocName == null) {
     designDocName = dbBaseName
   }
   return getHandler(dbBaseName, dbName, designDocName)
@@ -33,9 +33,7 @@ function validate (dbBaseName: string, designDocName: string) {
     throw new Error(`unknown dbBaseName: ${dbBaseName}`)
   }
 
-  const jsDesignDocName = `${designDocName}.js`
-
-  if (designDocName && !(databases[dbBaseName].includes(designDocName) || databases[dbBaseName].includes(jsDesignDocName))) {
+  if (designDocName && !(designDocName in databases[dbBaseName])) {
     throw new Error(`unknown designDocName: ${designDocName}`)
   }
 }
