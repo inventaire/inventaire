@@ -1,7 +1,8 @@
-// @ts-nocheck
-// CouchDB design docs can not be turned into TS files yet, as couch-init2 expects JS files
+import { emit } from '#db/couchdb/couchdb_views_context'
+import type { Views } from '#types/couchdb'
+import type { Notification } from '#types/notification'
 
-export default {
+export const views: Views<Notification> = {
   byUserAndTime: {
     map: doc => {
       emit([ doc.user, doc.time ], null)
@@ -12,7 +13,7 @@ export default {
       const { data } = doc
       emit(doc.user, 'user')
       if (data.user !== doc.user) emit(data.user, 'data:user')
-      if (doc.type === 'groupUpdate' || doc.type === 'userMadeAdmin') {
+      if ('group' in data) {
         emit(data.group, 'data:group')
       }
     },

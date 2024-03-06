@@ -1,5 +1,5 @@
 import { set } from 'lodash-es'
-import type { CouchDoc } from '#types/common'
+import type { CouchDoc } from '#types/couchdb'
 
 // The simplest doc update: set one key
 export function basicUpdater (attribute: string, value: unknown, doc: CouchDoc) {

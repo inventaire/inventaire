@@ -1,6 +1,7 @@
-const userDoc = (username, idLastCharacters) => ({
-  _id: `00000000000000000000000000000${idLastCharacters}`,
-  username,
+import type { SpecialUser } from '#types/user'
+
+export const specialUserDocBase = {
+  // TODO: replace with type: 'special' for consistency with the other docs in the database
   special: true,
   // Data required to avoid crashing users logic
   snapshot: {},
@@ -12,15 +13,24 @@ const userDoc = (username, idLastCharacters) => ({
       anonymize: false,
     },
   },
-})
+} as const
+
+function buildSpecialUserDoc (username, idLastCharacters) {
+  const specialUser: Omit<SpecialUser, '_rev'> = {
+    _id: `00000000000000000000000000000${idLastCharacters}`,
+    username,
+    ...specialUserDocBase,
+  }
+  return specialUser
+}
 
 export const hardCodedUsers = {
   // A fake user used to sign entities edit generated from dataseed
   // see server/data/dataseed/dataseed.js
-  seed: userDoc('seed', '000'),
+  seed: buildSpecialUserDoc('seed', '000'),
   // see server/controllers/entities/lib/update_claims_hooks
-  hook: userDoc('hook', '001'),
-  reconciler: userDoc('reconciler', '002'),
+  hook: buildSpecialUserDoc('hook', '001'),
+  reconciler: buildSpecialUserDoc('reconciler', '002'),
   // used by scripts/update_entities.js
-  updater: userDoc('updater', '003'),
+  updater: buildSpecialUserDoc('updater', '003'),
 }

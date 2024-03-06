@@ -1,4 +1,4 @@
-import type { CouchRevId } from '#types/common'
+import type { CouchDoc, CouchRevId } from '#types/couchdb'
 import type { EntityUri, InvClaimValue, InvEntityId, InvEntityUri, Label } from '#types/entity'
 import type { UserId } from '#types/user'
 
@@ -53,9 +53,8 @@ export interface RestorePatchContext {
 
 export type PatchContext = ActionPatchContext | MergePatchContext | RedirectedClaimsContext | RevertedPatchContext | RestorePatchContext
 
-export interface Patch {
+export interface Patch extends CouchDoc {
   _id: PatchId
-  _rev: CouchRevId
   type: 'patch'
   user: UserId
   timestamp: EpochTimeStamp

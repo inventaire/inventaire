@@ -1,6 +1,6 @@
 import type { itemSnapshotAttributes } from '#models/attributes/item'
 import type userAttributes from '#models/attributes/user'
-import type { CouchDoc, CouchUuid } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { Item, ItemId, ItemSnapshot, ItemTransactionMode } from '#types/item'
 import type { User, UserId } from '#types/user'
 
@@ -29,6 +29,7 @@ export interface TransactionSnapshot {
 }
 
 export interface Transaction extends CouchDoc {
+  _id: TransactionId
   item: ItemId
   owner: UserId
   requester: UserId

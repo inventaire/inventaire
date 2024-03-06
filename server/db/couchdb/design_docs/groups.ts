@@ -1,7 +1,8 @@
-// @ts-nocheck
-// CouchDB design docs can not be turned into TS files yet, as couch-init2 expects JS files
+import { emit } from '#db/couchdb/couchdb_views_context'
+import type { Views } from '#types/couchdb'
+import type { Group } from '#types/group'
 
-export default {
+export const views: Views<Group> = {
   byId: {
     map: doc => {
       emit(doc._id, null)

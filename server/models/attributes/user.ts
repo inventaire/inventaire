@@ -69,7 +69,7 @@ const userAttributes = {
     'created',
     'username',
     'stableUsername',
-  ],
+  ] as const,
 
   // Attributes to keep in documents where a stakeholder might loose
   // access to those data

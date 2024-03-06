@@ -1,5 +1,11 @@
-import type { CouchDoc, CouchUuid, ImageHash, LatLng } from '#types/common'
+import type { specialUserDocBase } from '#db/couchdb/hard_coded_documents'
+import type userAttributes from '#models/attributes/user'
+import type { ImageHash, LatLng } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
+import type { GroupId } from '#types/group'
+import type { Relation } from '#types/relation'
+import type { EmptyObject, ReadonlyDeep } from 'type-fest'
 
 export type UserId = CouchUuid
 export type Email = `${string}@${string}`
@@ -46,7 +52,8 @@ type OAuthProviderTokens = {
 export type StringifiedHashedCredentialsData = `{${string}}`
 
 export interface User extends CouchDoc {
-  type: 'user' | 'deletedUser'
+  _id: UserId
+  type: 'user'
   username: string
   stableUsername?: string
   created: EpochTimeStamp
@@ -69,4 +76,29 @@ export interface User extends CouchDoc {
   deleted?: EpochTimeStamp
   resetPassword?: EpochTimeStamp
   oauth?: Partial<Record<OAuthProvider, OAuthProviderTokens>>
+  undeliveredEmail?: number
+  lastSummary?: EpochTimeStamp
+  lastNews?: string
 }
+
+export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
+  _id: `00000000000000000000000000000${number}`
+  // TODO: replace doc.special with doc.type='special'
+  type: never
+  username: string
+}
+
+export interface DeletedUser extends Pick<User, typeof userAttributes.critical[number]> {
+  type: 'deletedUser'
+  deleted: EpochTimeStamp
+}
+
+export interface InvitedUser extends CouchDoc {
+  _id: UserId
+  type: 'invited'
+  email: Email
+  inviters: Record<UserId, EpochTimeStamp>
+  invitersGroups?: Record<GroupId, UserId>
+}
+
+export type DocInUserDb = User | InvitedUser | DeletedUser | SpecialUser | Relation

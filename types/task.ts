@@ -1,8 +1,9 @@
-import type { CouchDoc } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { EntityUri } from '#types/entity'
 import type { UserId } from '#types/user'
 import type { EntityType } from 'wikibase-sdk'
 
+export type TaskId = CouchUuid
 export type TaskType = string
 export type TaskState = 'merged'
 
@@ -13,6 +14,7 @@ export interface externalSourceOccurrence {
 }
 
 export interface Task extends CouchDoc {
+  _id: TaskId
   type: TaskType
   state?: TaskState
   suspectUri: EntityUri

@@ -1,5 +1,5 @@
 import type { itemTransactionModes } from '#models/attributes/item'
-import type { CouchDoc, CouchUuid } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { EntityImg, EntityUri } from '#types/entity'
 import type { ShelfId } from '#types/shelf'
 import type { TransactionId } from '#types/transaction'
@@ -18,6 +18,7 @@ export interface ItemHistoryEvent {
 export type ItemTransactionMode = typeof itemTransactionModes[number]
 
 export interface Item extends CouchDoc {
+  _id: ItemId
   created: EpochTimeStamp
   updated?: EpochTimeStamp
   owner: UserId

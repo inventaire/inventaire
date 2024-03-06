@@ -5,7 +5,7 @@ import { createNotificationDoc, updateNotificationDoc } from '#models/notificati
 
 const db = await dbFactory('notifications')
 
-const groupAttributeWithNotification = [
+export const groupAttributeWithNotification = [
   'name',
   'description',
   'searchable',

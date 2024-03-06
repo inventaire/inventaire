@@ -7,7 +7,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
-import type { User, CreationStrategy, Email } from '#types/user'
+import type { User, CreationStrategy, Email, DeletedUser } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
 
@@ -86,9 +86,11 @@ export async function upgradeInvitedUser (invitedDoc, username, creationStrategy
 }
 
 export function softDeleteUser (userDoc: User) {
-  const userSouvenir = pick(userDoc, userAttributes.critical)
-  userSouvenir.type = 'deletedUser'
-  userSouvenir.deleted = Date.now()
+  const userSouvenir: DeletedUser = {
+    ...pick(userDoc, userAttributes.critical),
+    type: 'deletedUser',
+    deleted: Date.now(),
+  }
   return userSouvenir
 }
 

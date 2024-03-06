@@ -31,9 +31,9 @@ function assertValidId (id) {
 
 const assertValidStatus = status => assert(statuses.includes(status))
 
-const statuses = [
+export const statuses = [
   'friends',
   'a-requested',
   'b-requested',
   'none',
-]
+] as const

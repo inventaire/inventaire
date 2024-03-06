@@ -1,5 +1,6 @@
 import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
-import type { CouchDoc, CouchUuid, ImageHash, Url } from '#types/common'
+import type { ImageHash, Url } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { OverrideProperties } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims } from 'wikibase-sdk'
 
@@ -42,6 +43,7 @@ export type Claims = Partial<Record<PropertyUri, InvPropertyClaims>>
 export type WdRawClaims = WdClaims
 
 export interface InvEntity extends CouchDoc {
+  _id: InvEntityId
   type: 'entity'
   labels: Labels
   claims: LocalClaims

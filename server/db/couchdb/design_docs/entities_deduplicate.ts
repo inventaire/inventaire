@@ -1,18 +1,21 @@
-// @ts-nocheck
-// CouchDB design docs can not be turned into TS files yet, as couch-init2 expects JS files
+import { emit } from '#db/couchdb/couchdb_views_context'
+import type { Views } from '#types/couchdb'
+import type { InvEntityDoc } from '#types/entity'
 
-export default {
+function normalize (label: string) {
+  return label
+  .trim()
+  .replace(/\s\w\.\s?/g, ' ')
+  .replace(/\s\s/g, ' ')
+  .toLowerCase()
+}
+
+export const views: Views<InvEntityDoc> = {
   findHumansHomonymes: {
     map: [
-      function normalize (label) {
-        return label
-        .trim()
-        .replace(/\s\w\.\s?/g, ' ')
-        .replace(/\s\s/g, ' ')
-        .toLowerCase()
-      },
+      normalize,
       function (doc) {
-        if (doc.type !== 'entity' || doc.redirect != null) return
+        if (doc.type !== 'entity' || 'redirect' in doc) return
 
         // Keep only humans
         if (doc.claims == null || doc.claims['wdt:P31'] == null) return

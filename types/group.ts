@@ -1,4 +1,5 @@
-import type { CouchDoc, CouchUuid, ImageHash, LatLng } from '#types/common'
+import type { ImageHash, LatLng } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { UserId } from '#types/user'
 
 export type GroupId = CouchUuid
@@ -12,7 +13,9 @@ export interface GroupMembership {
 }
 
 export interface Group extends CouchDoc {
+  _id: GroupId
   name: string
+  slug: string
   description?: string
   searchable: boolean
   open: boolean

@@ -1,7 +1,14 @@
-// @ts-nocheck
-// CouchDB design docs can not be turned into TS files yet, as couch-init2 expects JS files
+import { emit } from '#db/couchdb/couchdb_views_context'
+import type { Views } from '#types/couchdb'
+import type { Patch } from '#types/patch'
 
-export default {
+function emitEntityClaim (property, claimValue, timestamp) {
+  if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
+    emit([ claimValue, timestamp ], property)
+  }
+}
+
+export const views: Views<Patch> = {
   byEntityId: {
     map: doc => {
       const [ entityId, patchNumber ] = doc._id.split(':')
@@ -24,18 +31,14 @@ export default {
   },
   byRedirectUri: {
     map: doc => {
-      if (doc.context != null && doc.context.redirectClaims != null) {
+      if ('context' in doc && 'redirectClaims' in doc.context) {
         emit(doc.context.redirectClaims.fromUri, null)
       }
     },
   },
   byClaimValueAndDate: {
     map: [
-      function emitEntityClaim (property, claimValue, timestamp) {
-        if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
-          emit([ claimValue, timestamp ], property)
-        }
-      },
+      emitEntityClaim,
       function (doc) {
         const { timestamp } = doc
         for (const operation of doc.operations) {

@@ -1,14 +1,6 @@
 import type { uploadContainersNames } from '#controllers/images/lib/containers'
 import type OAuth from 'oauth-1.0a'
 
-export type CouchUuid = string
-export type CouchRevId = `${number}-${string}`
-
-export interface CouchDoc {
-  _id: CouchUuid
-  _rev: CouchRevId
-}
-
 export type LatLng = [ number, number ]
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head'
