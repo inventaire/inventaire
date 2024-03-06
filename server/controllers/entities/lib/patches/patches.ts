@@ -6,14 +6,14 @@ import { assert_ } from '#lib/utils/assert_types'
 import { simpleDay } from '#lib/utils/base'
 import { addVersionsSnapshots } from '#models/patch'
 import type { InvEntityId } from '#types/entity'
-import type { Patch } from '#types/patch'
+import type { Patch, PatchId } from '#types/patch'
 import type { UserId } from '#types/user'
 
 const designDocName = 'patches'
 
 export const db = await dbFactory('patches', designDocName)
 
-export const getPatchById = db.get
+export const getPatchById = (id: PatchId) => db.get(id)
 
 export async function getPatchesByEntityId (entityId: InvEntityId) {
   const { rows } = await db.view(designDocName, 'byEntityId', {

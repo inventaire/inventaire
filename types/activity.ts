@@ -1,9 +1,26 @@
 import type { CouchDoc, Url } from '#types/common'
 
+interface NameObj {
+  name: string
+}
+
+export interface UriObj {
+  uri: string
+}
+
+interface ItemsObj {
+  items: {
+    since: EpochTimeStamp
+    until: EpochTimeStamp
+  }
+}
+
+export type ObjectType = NameObj & ItemsObj & Url
+
 export interface Activity extends CouchDoc {
   type: string
-  actor: string
-  object: string
+  actor: NameObj & UriObj
+  object: ObjectType
   externalId: string
   content: string
   created: EpochTimeStamp
@@ -11,3 +28,5 @@ export interface Activity extends CouchDoc {
 }
 
 export type LocalActorUrl = Url
+
+export type ActivityId = CouchUuid

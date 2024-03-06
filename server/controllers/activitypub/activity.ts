@@ -1,12 +1,20 @@
 import { getActivityById } from '#controllers/activitypub/lib/activities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { isCouchUuid } from '#lib/boolean_validations'
-import { notFoundError, newError } from '#lib/error/error'
+import { newError, notFoundError } from '#lib/error/error'
+import type { Activity } from '#types/activity'
+import type { CouchUuid } from '#types/common'
+import type { PatchId } from '#types/patch'
+import type { Req, Res } from '#types/server'
 import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
 import { isEntityActivityId, setActivityPubContentType } from './lib/helpers.js'
 import { validateShelf, validateUser } from './lib/validations.js'
+
+interface ActivityArgs {
+  id: string,
+}
 
 const sanitization = {
   id: {
@@ -15,7 +23,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ id }, req, res) => {
+const controller = async ({ id }: ActivityArgs, req: Req, res: Res) => {
   setActivityPubContentType(res)
   if (isEntityActivityId(id)) {
     return getEntityActivity(id)
@@ -26,7 +34,7 @@ const controller = async ({ id }, req, res) => {
 
 const getEntityActivity = async id => {
   let [ , entityId, versionNumber, activityNumber ] = id.split('-')
-  const patchId = `${entityId}:${versionNumber}`
+  const patchId = `${entityId}:${versionNumber}` as PatchId
   const patch = await getPatchById(patchId)
   const activities = await getActivitiesFromPatch(patch)
   activityNumber = parseInt(activityNumber)
@@ -35,9 +43,9 @@ const getEntityActivity = async id => {
   return activity
 }
 
-const getActivity = async id => {
+const getActivity = async (id: CouchUuid) => {
   if (!isCouchUuid(id)) throw newError('invalid activity id', 400, { id })
-  const activityDoc = await getActivityById(id)
+  const activityDoc = await getActivityById(id) as Activity
   const { name } = activityDoc.actor
   if (name.startsWith('shelf-')) {
     return getShelfActivity(activityDoc, name)

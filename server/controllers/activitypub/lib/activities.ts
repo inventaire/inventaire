@@ -2,6 +2,7 @@ import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
+import type { ActivityId } from '#types/activity'
 
 const db = await dbFactory('activities')
 
@@ -9,7 +10,7 @@ const db = await dbFactory('activities')
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
-export const getActivityById = db.get
+export const getActivityById = (id: ActivityId) => db.get(id)
 export const getActivitiesByIds = db.byIds
 export const deleteActivityById = db.delete
 
