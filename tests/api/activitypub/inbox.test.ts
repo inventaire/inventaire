@@ -60,10 +60,9 @@ describe('activitypub:post:inbox', () => {
   it('should reject with an invalid activity object', async () => {
     try {
       const { username } = await createUser({ fediversable: false })
-      const actorUrl = 'invalidActorUrl'
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
-        object: actorUrl,
+        object: 'invalidActorUrl',
         url: inboxUrl,
       })
       .then(shouldNotBeCalled)

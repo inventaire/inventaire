@@ -1,14 +1,14 @@
+import { follow } from '#controllers/activitypub/follow'
 import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
 import { newError } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
-import Follow from './follow.js'
 import { verifySignature } from './lib/security.js'
 import Undo from './undo.js'
 
 const inboxActivityTypes = {
   Create: null,
   Delete: null,
-  Follow,
+  Follow: follow,
   Undo,
 }
 
