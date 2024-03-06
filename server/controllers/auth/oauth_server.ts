@@ -1,6 +1,7 @@
 import CONFIG from 'config'
 import OAuthServer from 'express-oauth-server'
 import { bundleError, bundleMissingQueryError, bundleUnauthorizedApiAccess } from '#lib/error/pre_filled'
+import type { AuthentifiedReq } from '#types/server'
 import oauthServerModel from './lib/oauth/model.js'
 import { getAcceptedScopes, allScopes } from './lib/oauth/scopes.js'
 
@@ -14,7 +15,7 @@ const oauthServer = new OAuthServer({
 const authorize = oauthServer.authorize({
   authorizationCodeLifetime: authorizationCodeLifetimeMs / 1000,
   authenticateHandler: {
-    handle: (req, res) => {
+    handle: (req: AuthentifiedReq) => {
       return req.user
     },
   },

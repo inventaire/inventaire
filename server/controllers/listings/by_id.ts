@@ -9,7 +9,8 @@ const sanitization = {
   offset: { optional: true },
 }
 
-const controller = async ({ id, limit, offset, reqUserId }, req) => {
+// TODO: actually implement pagination
+const controller = async ({ id, reqUserId }, req) => {
   const [ listing ] = await getListingsByIdsWithElements(id)
   if (!listing) throw notFoundError({ id })
 
