@@ -20,6 +20,7 @@ const findAnImage = entity => {
   return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   return objectPromise({
     wm: getThumbData(commonsFilename),

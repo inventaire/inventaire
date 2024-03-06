@@ -152,6 +152,7 @@ describe('assert_', () => {
     it("should not accept piped 's...' types if 'arguments' is passed", () => {
       const types = 'strings...';
       (function () {
+        // eslint-disable-next-line prefer-rest-params
         assert_.types(types, arguments)
       }).should.throw("types should be an array when used with 'arguments'")
     })
