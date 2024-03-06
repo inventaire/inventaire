@@ -4,30 +4,39 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
+import type { LocalActorUrl, ActivityId, UriObj } from '#types/activity'
+import type { Url } from '#types/common'
 import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const host = CONFIG.getPublicOrigin()
 
-export default async params => {
-  const { id: externalId, type } = params
-  let { actor, object } = params
-  if (!object?.startsWith(host)) throw newError(`invalid object, string should start with ${host}`, 400, { object })
-  const { name: requestedObjectName } = parseQuery(object)
+interface FollowArgs {
+  id: ActivityId,
+  type: 'Create' | 'Delete' | 'Follow' | 'Undo'
+ '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
+  actor: LocalActorUrl,
+  object: Url
+}
 
+export async function follow (params: FollowArgs) {
+  const { id: externalId, type } = params
+  const { actor: actorUrl, object: objectUrl } = params
+  if (!objectUrl?.startsWith(host)) throw newError(`invalid object, string should start with ${host}`, 400, { objectUrl })
+  const { name: requestedObjectName } = parseQuery(objectUrl)
+
+  let object
+  const actor = { uri: actorUrl } as UriObj
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)
     if (!entity) throw notFoundError({ name: requestedObjectName })
     object = { name: entity.actorName }
-    actor = { uri: actor }
   } else if (requestedObjectName.startsWith('shelf-')) {
     await validateShelf(requestedObjectName)
-    actor = { uri: actor }
     object = { name: requestedObjectName }
   } else if (isUsername(requestedObjectName)) {
     const { user } = await validateUser(requestedObjectName)
-    actor = { uri: actor }
     const { stableUsername } = user
     object = { name: stableUsername }
   } else {
