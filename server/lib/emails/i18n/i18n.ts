@@ -27,18 +27,10 @@ const warnAndFix = warning => {
   return appendToServerKeys(key)
 }
 
-activeLanguages.forEach(lang => {
-  const polyglot = (polyglots[lang] = new Polyglot({ locale: lang, warn: warnAndFix }))
-  const phrases = requireJson(`inventaire-i18n/dist/server/${lang}.json`)
-  polyglots[lang].extend(phrases)
-  translators[lang] = translate(lang, polyglot)
-})
 
 const solveLang = lang => {
   // There is only support for 2 letters languages for now
-  lang = shortLang(lang)
-  if (activeLanguages.includes(lang)) return lang
-  else return 'en'
+  return 'en'
 }
 
 export function i18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {

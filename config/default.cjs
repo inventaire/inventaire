@@ -113,7 +113,7 @@ module.exports = {
   i18n: {
     // enable the api/i18n endpoint and its i18nMissingKeys controller
     autofix: false,
-    srcFolderPath: '../inventaire-i18n/src',
+    srcFolderPath: './inventaire-i18n/src',
   },
 
   // parameters for Nodemailer
