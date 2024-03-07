@@ -16,7 +16,7 @@ describe('utils', () => {
       typeOf({ hel: 'lo' }).should.equal('object')
       typeOf(83110).should.equal('number')
       typeOf(null).should.equal('null')
-      typeOf().should.equal('undefined')
+      typeOf(undefined).should.equal('undefined')
       typeOf(false).should.equal('boolean')
       typeOf(Number('boudu')).should.equal('NaN')
       typeOf(Promise.resolve()).should.equal('promise')
