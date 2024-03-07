@@ -1,11 +1,11 @@
 import type { specialUserDocBase } from '#db/couchdb/hard_coded_documents'
 import type userAttributes from '#models/attributes/user'
-import type { ImageHash, LatLng } from '#types/common'
+import type { ImageHash, LatLng, StringifiedHashedSecretData } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
 import type { GroupId } from '#types/group'
 import type { Relation } from '#types/relation'
-import type { EmptyObject, ReadonlyDeep } from 'type-fest'
+import type { ReadonlyDeep } from 'type-fest'
 
 export type UserId = CouchUuid
 export type Email = `${string}@${string}`
@@ -49,8 +49,6 @@ type OAuthProviderTokens = {
   token_secret: string
 }
 
-export type StringifiedHashedCredentialsData = `{${string}}`
-
 export interface User extends CouchDoc {
   _id: UserId
   type: 'user'
@@ -59,7 +57,7 @@ export interface User extends CouchDoc {
   created: EpochTimeStamp
   creationStrategy: CreationStrategy
   email?: Email
-  password?: string | StringifiedHashedCredentialsData
+  password?: string | StringifiedHashedSecretData
   picture?: string
   language?: string
   validEmail?: boolean
@@ -67,7 +65,7 @@ export interface User extends CouchDoc {
   settings?: UserSettings
   position?: LatLng
   summaryPeriodicity?: number
-  token?: StringifiedHashedCredentialsData
+  token?: StringifiedHashedSecretData
   readToken?: string
   roles?: UserRole[]
   fediversable?: boolean

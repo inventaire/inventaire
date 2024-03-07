@@ -11,4 +11,4 @@ export function getAcceptedScopes ({ method, url }) {
   }
 }
 
-export const allScopes = Object.values(scopeByMethodAndRoute).map(Object.values).flat(2)
+export const allScopes = [ 'username', 'stable-username', 'email' ] as const

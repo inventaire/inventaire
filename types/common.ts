@@ -16,3 +16,7 @@ export type ImageContainer = typeof uploadContainersNames[number]
 export type ImagePath = `/img/${ImageContainer}/${ImageHash}`
 
 export type HighResolutionTime = [ number, number ]
+
+export type ISODate = string
+
+export type StringifiedHashedSecretData = `{${string}}`

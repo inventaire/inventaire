@@ -1,12 +1,13 @@
 import { omit } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
+import type { OAuthAuthorization } from '#types/oauth'
 
 const db = await dbFactory('oauth_authorizations')
 const idAttribute = 'authorizationCode'
 
 export async function getAuthorizationById (id) {
-  const doc = await db.get(id)
+  const doc = await db.get<OAuthAuthorization>(id)
   doc[idAttribute] = doc._id
   doc.expiresAt = new Date(doc.expiresAt)
   return doc
