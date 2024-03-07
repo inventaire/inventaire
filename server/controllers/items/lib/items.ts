@@ -6,6 +6,7 @@ import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { deepCompact, forceArray } from '#lib/utils/base'
 import { changeItemDocOwner, createItemDoc, updateItemDoc } from '#models/item'
+import type { Item } from '#types/item'
 import { filterPrivateAttributes } from './filter_private_attributes.js'
 import { addSnapshotToItem } from './snapshot/snapshot.js'
 import { validateItemsAsync } from './validate_item_async.js'
@@ -78,7 +79,7 @@ export async function createItems (userId, items) {
 
 export async function updateItems (userId, itemUpdateData) {
   await validateItemsAsync([ itemUpdateData ])
-  const currentItem = await db.get(itemUpdateData._id)
+  const currentItem = await db.get<Item>(itemUpdateData._id)
   let updatedItem = updateItemDoc(userId, itemUpdateData, currentItem)
   updatedItem = await db.putAndReturn(updatedItem)
   await emit('user:inventory:update', userId)
@@ -87,7 +88,7 @@ export async function updateItems (userId, itemUpdateData) {
 
 export function changeItemOwner (transacDoc) {
   const { item } = transacDoc
-  return db.get(item)
+  return db.get<Item>(item)
   .then(changeItemDocOwner.bind(null, transacDoc))
   .then(db.postAndReturn)
 }

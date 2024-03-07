@@ -6,6 +6,7 @@ import { emit } from '#lib/radio'
 import { acceptNullValue, updatable } from '#models/attributes/group'
 import { groupFormatters } from '#models/group'
 import groupValidations from '#models/validations/group'
+import type { Group } from '#types/group'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')
@@ -24,7 +25,7 @@ export default async (data, userId) => {
 
   if (groupFormatters[attribute]) value = groupFormatters[attribute](value)
 
-  const groupDoc = await db.get(groupId)
+  const groupDoc = await db.get<Group>(groupId)
   const notifData = getNotificationData(groupId, userId, groupDoc, attribute, value)
 
   const currentValue = groupDoc[attribute]

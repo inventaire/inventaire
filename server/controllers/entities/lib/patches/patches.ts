@@ -13,7 +13,7 @@ const designDocName = 'patches'
 
 export const db = await dbFactory('patches', designDocName)
 
-export const getPatchById = (id: PatchId) => db.get(id)
+export const getPatchById = (id: PatchId) => db.get<Patch>(id)
 
 export async function getPatchesByEntityId (entityId: InvEntityId) {
   const { rows } = await db.view(designDocName, 'byEntityId', {

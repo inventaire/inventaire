@@ -18,8 +18,8 @@ const { updatable: updateAttributes } = listingAttributes
 
 const db = await dbFactory('lists')
 
-export const getListingById = db.get
-export const getListingsByIds = db.byIds
+export const getListingById = db.get<Listing>
+export const getListingsByIds = db.byIds<Listing>
 export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
 
 type ElementsByListing = Record<ListingId, ListingElement[]>

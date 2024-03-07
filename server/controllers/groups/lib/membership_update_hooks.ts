@@ -2,6 +2,7 @@ import dbFactory from '#db/couchdb/base'
 import { setDeletedTrue } from '#lib/couch'
 import { emit, radio } from '#lib/radio'
 import { Log, logError } from '#lib/utils/logs'
+import type { Group } from '#types/group'
 
 const db = await dbFactory('groups')
 
@@ -11,7 +12,7 @@ export default function () {
 
 async function deleteGroupIfEmpty (groupId) {
   try {
-    const group = await db.get(groupId)
+    const group = await db.get<Group>(groupId)
     // An admin can't leave a group if there are still members
     // so, if there are no admins, there should be no members too
     if (group.admins.length === 0) {

@@ -10,6 +10,7 @@ import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { convertEntityDocToPlaceholder, recoverEntityDocFromPlaceholder } from '#models/entity'
+import type { InvEntityDoc } from '#types/entity'
 
 const db = await dbFactory('entities')
 
@@ -18,7 +19,7 @@ function PlaceholderHandler (actionName, modelFn) {
     warn(entityId, `${actionName} placeholder entity`)
     // Using db.get anticipates a possible future where db.byId filters-out
     // non type='entity' docs, thus making type='removed:placeholder' not accessible
-    const currentDoc = await db.get(entityId)
+    const currentDoc = await db.get<InvEntityDoc>(entityId)
     if (actionName === 'remove' && currentDoc.type === 'removed:placeholder') {
       warn(entityId, 'this entity is already a removed:placeholder: ignored')
       return

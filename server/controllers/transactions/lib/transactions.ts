@@ -12,7 +12,7 @@ import { createTransactionDoc, transactionIsActive, validateTransactionPossibleS
 
 const db = await dbFactory('transactions')
 
-export const getTransactionById = db.get
+export const getTransactionById = db.get<Transaction>
 export function getTransactionsByUser (userId) {
   return db.viewCustom('byUserAndItem', {
     // get all the docs with this userId
