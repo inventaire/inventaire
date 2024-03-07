@@ -68,7 +68,7 @@ export default {
   revokeAuthorizationCode: async code => {
     const { authorizationCode } = code
     const foundAuthorizationCode = await getAuthorizationById(authorizationCode).catch(catchNotFound)
-    if (foundAuthorizationCode != null) {
+    if (foundAuthorizationCode) {
       await deleteAuthorization(foundAuthorizationCode)
       return true
     } else {

@@ -90,5 +90,5 @@ const parseHit = hit => {
 }
 
 export function getIndexedDocUrl (index, id) {
-  return `${elasticOrigin}/${index}/_doc/${id}`
+  return `${elasticOrigin}/${index}/_doc/${id}` as Url
 }

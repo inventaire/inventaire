@@ -18,7 +18,7 @@ export async function checkUsernameAvailability (username: string, currentUserna
   }
 
   if (isReservedWord(username)) {
-    throw newError("reserved words can't be usernames", 400, username)
+    throw newError("reserved words can't be usernames", 400, { username })
   }
 
   return getUserByUsername(username)

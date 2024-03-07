@@ -118,7 +118,7 @@ export function updateEntityDocClaim (doc, property, oldVal, newVal) {
   let propArray = get(doc, `claims.${property}`)
 
   if (propArray && newVal != null && propArray.includes(newVal)) {
-    throw newError('claim property new value already exist', 400, [ propArray, newVal ])
+    throw newError('claim property new value already exist', 400, { propArray, newVal })
   }
 
   if (oldVal != null) {

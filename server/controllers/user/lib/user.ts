@@ -118,7 +118,7 @@ export async function setUserStableUsername (userData) {
 export async function getUsersNearby (userId: UserId, meterRange: number, strict?: boolean) {
   const { position } = await getUserById(userId)
   if (position == null) {
-    throw newError('user has no position set', 400, userId)
+    throw newError('user has no position set', 400, { userId })
   }
   const usersIds = await findNearby(position, meterRange, null, strict)
   return without(usersIds, userId)

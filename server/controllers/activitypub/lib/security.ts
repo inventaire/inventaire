@@ -7,6 +7,7 @@ import { requests_ } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
+import type { HttpHeaders } from '#types/common'
 
 const sanitize = CONFIG.activitypub.sanitizeUrls
 
@@ -66,7 +67,7 @@ export function signRequest ({ url, method, keyId, privateKey, body }) {
   // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
   // The digest is additionnal required by Mastodon
   // Source: https://github.com/mastodon/mastodon/blob/main/app/controllers/concerns/signature_verification.rb
-  const reqHeaders = { host, date }
+  const reqHeaders: HttpHeaders = { host, date }
   if (body) {
     assert_.object(body)
     reqHeaders.digest = `SHA-256=${getSha256Base64Digest(JSON.stringify(body))}`

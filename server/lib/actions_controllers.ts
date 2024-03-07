@@ -24,7 +24,7 @@ export default controllers => {
     // or as a body parameter for more flexibility
     const action = req.query.action || req.body.action || 'default'
 
-    if (action === 'default' && actionsControllersParams.default == null) {
+    if (action === 'default' && !('default' in actionsControllersParams)) {
       return bundleMissingQueryError(req, res, 'action')
     }
 

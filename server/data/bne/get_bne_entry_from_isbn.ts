@@ -9,6 +9,7 @@ import { parseIsbn } from '#lib/isbn/parse'
 import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import type { Url } from '#types/common'
 import type { ExternalDatabaseEntryRow } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')

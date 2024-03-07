@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import AbortController from 'abort-controller'
+import { AbortController } from 'abort-controller'
 import fetch from 'node-fetch'
 import { newError } from '#lib/error/error'
 import { endReqTimer, startReqTimer } from '#lib/requests'

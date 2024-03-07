@@ -138,7 +138,7 @@ export async function getPatchesCountByClaimValue (claimValue) {
     group_level: 1,
     descending: true,
   })
-  return rows[0]?.value || 0
+  return (rows[0]?.value || 0) as number
 }
 
 const formatRow = row => ({

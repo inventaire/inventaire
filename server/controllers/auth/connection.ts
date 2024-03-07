@@ -37,10 +37,15 @@ const loggedIn = (req, res) => result => {
   if (result instanceof Error) return errorHandler(req, res, result)
 
   setLoggedInCookie(res)
-  const data = { ok: true }
   // add a 'include-user-data' option to access user data directly from the login request
   // Use case: inventaire-wiki (jingo) login
   // https://github.com/inventaire/jingo/blob/635f5417b7ca5a99bad60b32c1758ccecd0e3afa/lib/auth/local-strategy.js#L26
-  if (req.query['include-user-data']) data.user = ownerSafeData(req.user)
-  res.json(data)
+  if (req.query['include-user-data']) {
+    res.json({
+      ok: true,
+      user: ownerSafeData(req.user),
+    })
+  } else {
+    res.json({ ok: true })
+  }
 }

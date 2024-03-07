@@ -50,9 +50,7 @@ export default async (req, res) => {
 const findRawImage = async (uri, images, width, height) => {
   const image = images[uri]?.claims[0]
   if (image == null) {
-    const err = notFoundError({ uri })
-    err.quiet = true
-    throw err
+    throw notFoundError({ uri })
   }
 
   const url = await replaceWikimediaFilename(image)

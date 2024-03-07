@@ -2,7 +2,7 @@
 import CONFIG from 'config'
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import type { Req } from '#types/server'
+import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 
 const { enabled, endpoint, idsite, rec } = CONFIG.piwik
@@ -53,8 +53,8 @@ export function trackActor (actorUri, actionArray) {
   track(pseudoReq, actionArray)
 }
 
-export const Track = (...args) => res => {
+export const Track = (req: Req, actionArray: string[]) => (res: Res) => {
   // Do not wait for the track action
-  track(...args)
+  track(req, actionArray)
   return res
 }

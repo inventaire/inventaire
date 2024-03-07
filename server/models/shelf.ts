@@ -33,12 +33,12 @@ export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: Updata
   assert_.object(newAttributes)
 
   if (oldShelf.owner !== userId) {
-    throw newError('wrong owner', 403, oldShelf.owner)
+    throw newError('wrong owner', 403, { owner: oldShelf.owner })
   }
 
   for (const attr of Object.keys(newAttributes)) {
     if (!(arrayIncludes(attributes.updatable, attr))) {
-      throw newError(`invalid attribute: ${attr}`, 400, oldShelf)
+      throw newError(`invalid attribute: ${attr}`, 400, { oldShelf })
     }
   }
 
@@ -50,7 +50,7 @@ export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: Updata
   }
 
   if (isEqual(updatedShelf, oldShelf)) {
-    throw newError('nothing to update', 400, newAttributes)
+    throw newError('nothing to update', 400, { newAttributes })
   }
 
   updatedShelf.updated = Date.now()

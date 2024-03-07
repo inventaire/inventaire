@@ -12,5 +12,5 @@ export default ({ claims }) => {
 
   const claimsImages = getCommonsFilenamesFromClaims(claims)
 
-  return invImageUrls.concat(claimsImages)
+  return [ ...invImageUrls, ...claimsImages ]
 }
