@@ -8,6 +8,7 @@ export interface CouchDoc {
   _rev: CouchRevId
 }
 
+export type DatabaseBaseName = string
 export type DatabaseName = string
 export type DesignDocName = string
 export type DesignDocFilePath = string

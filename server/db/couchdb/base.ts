@@ -2,6 +2,7 @@ import CONFIG from 'config'
 import { couchdbBundlesFactory } from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
+import type { DatabaseBaseName, DatabaseName, DesignDocName } from '#types/couchdb'
 import getDbApi from './cot_base.js'
 
 export default async function (dbBaseName: string, designDocName?: string) {
@@ -15,15 +16,20 @@ export default async function (dbBaseName: string, designDocName?: string) {
   return getHandler(dbBaseName, dbName, designDocName)
 }
 
+export interface DbInfo {
+  dbBaseName: DatabaseBaseName
+  dbName: DatabaseName
+  designDocName: DesignDocName
+}
+
 function getHandler (dbBaseName: string, dbName: string, designDocName: string) {
   validate(dbBaseName, designDocName)
-  const db = getDbApi(dbName, designDocName)
-  const bundles = couchdbBundlesFactory(db)
   const dbInfo = { dbBaseName, dbName, designDocName }
+  const db = { ...dbInfo, ...getDbApi(dbName, designDocName) }
+  const bundles = couchdbBundlesFactory(db)
   return {
     ...db,
     ...bundles,
-    ...dbInfo,
   }
 }
 
