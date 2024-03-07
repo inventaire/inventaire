@@ -5,8 +5,6 @@ import { obfuscate, objLength } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { databases } from './databases.js'
 
-const dbBaseUrl = CONFIG.db.getOrigin()
-
 const setPreloadSuffix = preload => (_, designDocsName) => preload ? `${designDocsName}_preload` : designDocsName
 
 async function init ({ preload }) {
@@ -18,8 +16,7 @@ async function init ({ preload }) {
           designDocs: mapKeys(dbDesignDocs, setPreloadSuffix(preload)),
         }
       })
-
-    const res = await couchInit(dbBaseUrl, formattedList)
+    const res = await couchInit(formattedList)
     if (objLength(res.operations) !== 0) log(res, 'couch init')
     // Work around circular dependencies
     setImmediate(afterInit)
@@ -36,7 +33,7 @@ async function init ({ preload }) {
 
 let _waitForCouchInit
 
-export async function waitForCouchInit (options = {}) {
+export async function waitForCouchInit (options = { preload: false }) {
   // Return the same promises to all consumers
   _waitForCouchInit = _waitForCouchInit || init(options)
   return _waitForCouchInit

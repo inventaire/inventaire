@@ -8,30 +8,10 @@
 //
 //   export NODE_ENV=production; npm run couchdb:preload-design-docs-changes
 
-import { symlink } from 'node:fs/promises'
-import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
-import { absolutePath } from '#lib/absolute_path'
 import { success } from '#lib/utils/logs'
 import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 
-const designDocFolder = absolutePath('db', 'couchdb/design_docs')
-
-const designDocsNames = Object.values(databases).flat()
-
-const createDesignDocSymbolicLink = async designDocName => {
-  try {
-    await symlink(`${designDocFolder}/${designDocName}.js`, `${designDocFolder}/${designDocName}_preload.js`)
-  } catch (err) {
-    if (err.code !== 'EEXIST') throw err
-  }
-}
-
-const createDesignDocsSymbolicLinks = async () => {
-  await Promise.all(designDocsNames.map(createDesignDocSymbolicLink))
-}
-
-await createDesignDocsSymbolicLinks()
 await waitForCouchInit({ preload: true })
 // Once here, CouchDB indexer started, this script could be terminated without stopping it
 await waitForActiveTasksToBeDone()

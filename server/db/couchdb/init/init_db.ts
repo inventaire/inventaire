@@ -1,9 +1,12 @@
+import CONFIG from 'config'
 import fetch from 'node-fetch'
 import type { DatabaseOperationsSummary } from '#types/couchdb_init'
 import { putSecurityDoc } from './put_security_doc.js'
 import { syncDesignDocs } from './sync_design_docs.js'
 
-export const InitDb = couchdbHost => async dbData => {
+const couchdbHost = CONFIG.db.getOrigin()
+
+export async function initDb (dbData) {
   const { name: dbName, designDocs } = dbData
   const dbUrl = `${couchdbHost}/${dbName}`
   const operation: DatabaseOperationsSummary = await ensureDbExistance(dbUrl)

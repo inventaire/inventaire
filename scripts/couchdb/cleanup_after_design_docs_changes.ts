@@ -13,33 +13,29 @@
 
 import CONFIG from 'config'
 import { databases } from '#db/couchdb/databases'
-import { absolutePath } from '#lib/absolute_path'
 import { requests_ } from '#lib/requests'
 import { success } from '#lib/utils/logs'
-import { shellExec } from '#scripts/scripts_utils'
+import type { Url } from '#types/common'
 import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 import getDatabasesNames from './lib/get_databases_names.js'
-
-const designDocFolder = absolutePath('db', 'couchdb/design_docs')
 
 const { suffix } = CONFIG.db
 const dbsNames = getDatabasesNames(suffix)
 const dbBaseUrl = CONFIG.db.getOrigin()
 
-const deleteDesignDocsSymbolicLinks = async () => {
-  await shellExec(`rm -f ${designDocFolder}/*_preload.js`)
-}
-
-const deleteDesignDocs = async () => {
+async function deleteDesignDocs () {
   const entries = Object.keys(databases)
-    .map(dbBaseName => databases[dbBaseName].map(designDocBaseName => [ dbBaseName, designDocBaseName ]))
+    .map(dbBaseName => {
+      return Object.keys(databases[dbBaseName])
+      .map(designDocBaseName => [ dbBaseName, designDocBaseName ])
+    })
     .flat()
   return Promise.all(entries.map(deleteDesignDoc))
 }
 
-const deleteDesignDoc = async ([ dbBaseName, designDocBaseName ]) => {
+async function deleteDesignDoc ([ dbBaseName, designDocBaseName ]) {
   const dbName = CONFIG.db.name(dbBaseName)
-  const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload`
+  const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload` as Url
   try {
     const { _rev } = await requests_.get(docUrl)
     await requests_.delete(`${docUrl}?rev=${_rev}`)
@@ -48,14 +44,11 @@ const deleteDesignDoc = async ([ dbBaseName, designDocBaseName ]) => {
   }
 }
 
-const removeDatabaseOutdatedViewIndexes = async dbName => {
-  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup`)
+async function removeDatabaseOutdatedViewIndexes (dbName) {
+  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup` as Url)
 }
 
-await Promise.all([
-  deleteDesignDocs(),
-  deleteDesignDocsSymbolicLinks(),
-])
+await deleteDesignDocs()
 await Promise.all(dbsNames.map(removeDatabaseOutdatedViewIndexes))
 await waitForActiveTasksToBeDone()
 success('done')

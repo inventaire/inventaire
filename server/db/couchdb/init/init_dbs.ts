@@ -1,12 +1,9 @@
 import { objectPromise } from '#lib/promises'
-import type { Url } from '#types/common'
 import type { DatabaseConfig, OperationsSummary } from '#types/couchdb_init'
-import { InitDb } from './init_db.js'
+import { initDb } from './init_db.js'
 import type { Entries } from 'type-fest'
 
-export async function initDbs (dbBaseUrl: Url, dbsList: DatabaseConfig[]) {
-  const initDb = InitDb(dbBaseUrl)
-
+export async function initDbs (dbsList: DatabaseConfig[]) {
   try {
     const operations = await objectPromise(dbsList.reduce(aggregateInitDb(initDb), {}))
     return { ok: true, operations: minimzeOperationsReport(operations) }
@@ -29,8 +26,7 @@ function minimzeOperationsReport (operations) {
   for (const [ dbName, { created, designDocs, securityDoc } ] of Object.entries(operations) as Entries<OperationsSummary>) {
     let dbHasOp = created
     minimized[dbName] = { created }
-    for (let [ designDocName, { created, updated } ] of Object.entries(designDocs)) {
-      designDocName = designDocName.replace(/\.js$/, '')
+    for (const [ designDocName, { created, updated } ] of Object.entries(designDocs)) {
       if (created || updated) {
         dbHasOp = true
         minimized[dbName].designDocs = minimized[dbName].designDocs || {}

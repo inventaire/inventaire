@@ -47,7 +47,7 @@ describe('couchInit', () => {
   })
 
   it('should create a missing database', async () => {
-    const { ok } = await couchInit(authHost, dbsList)
+    const { ok } = await couchInit(dbsList)
     ok.should.be.true()
     const info = await db.info()
     // Check that we have our 1 design docs
@@ -55,7 +55,7 @@ describe('couchInit', () => {
   })
 
   it('should return operations summary', async () => {
-    const { operations } = await couchInit(authHost, dbsList)
+    const { operations } = await couchInit(dbsList)
     operations.should.be.an.Object()
     const dbOps = operations[dbName]
     dbOps.should.deepEqual({
@@ -65,7 +65,7 @@ describe('couchInit', () => {
   })
 
   it('should create security documents (if not already set)', async () => {
-    await couchInit(authHost, dbsList)
+    await couchInit(dbsList)
     const securityDoc = await fetch(`${dbUrlWithAuth}/_security`).then(res => res.json())
     securityDoc.should.deepEqual({
       admins: { roles: [ '_admin' ] },
@@ -74,13 +74,13 @@ describe('couchInit', () => {
   })
 
   it('should create a secured database', async () => {
-    await couchInit(authHost, dbsList)
+    await couchInit(dbsList)
     const res = await fetch(dbUrlWithoutAuth)
     res.status.should.equal(401)
   })
 
   it('should create missing design docs', async () => {
-    await couchInit(authHost, dbsList)
+    await couchInit(dbsList)
     const designDoc = await fetch(`${dbUrlWithAuth}/_design/${someDesignDocName}`).then(res => res.json())
     designDoc._rev.split('-')[0].should.equal('1')
     delete designDoc._rev
@@ -88,14 +88,14 @@ describe('couchInit', () => {
   })
 
   it('should update an existing design docs', async () => {
-    await couchInit(authHost, dbsList)
+    await couchInit(dbsList)
     const designDoc = await fetch(`${dbUrlWithAuth}/_design/${someDesignDocName}`).then(res => res.json())
     delete designDoc.views.byExample2
     await db.put(`_design/${someDesignDocName}`, designDoc)
     const updatedDesignDoc = await db.get(`_design/${someDesignDocName}`)
     updatedDesignDoc._rev.split('-')[0].should.equal('2')
     should(updatedDesignDoc.views.byExample2).not.be.ok()
-    const { operations } = await couchInit(authHost, dbsList)
+    const { operations } = await couchInit(dbsList)
     const dbOps = operations[dbName]
     dbOps.should.deepEqual({
       created: false,
