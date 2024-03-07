@@ -70,6 +70,7 @@ const wikidataOnlyP31Values = {
     'wd:Q35760', // essay
     'wd:Q16363676', // manual
     'wd:Q11826511', // work of science
+    'wd:Q116476516', // dramatic work
   ],
   editions: [
     'wd:Q3972943', // publishing
