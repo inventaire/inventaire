@@ -46,7 +46,7 @@ export const getTasksByIds = db.byIds
 
 export function getTasksByScore (options) {
   const { limit, offset } = options
-  return db.viewCustom('byScore', {
+  return db.getDocsByViewQuery('byScore', {
     limit,
     skip: offset,
     descending: true,
@@ -56,7 +56,7 @@ export function getTasksByScore (options) {
 
 export function getTasksByEntitiesType (options) {
   const { type, limit, offset } = options
-  return db.viewCustom('byEntitiesType', {
+  return db.getDocsByViewQuery('byEntitiesType', {
     startkey: type,
     endkey: type,
     limit,
@@ -75,16 +75,16 @@ export function getTasksBySuspectUri (suspectUri: EntityUri, options: TasksQuery
 }
 
 export function getTasksBySuspectUriAndState (suspectUri: EntityUri, state: TaskState) {
-  return db.viewByKey('bySuspectUriAndState', [ suspectUri, state ])
+  return db.getDocsByViewKey('bySuspectUriAndState', [ suspectUri, state ])
 }
 
 export function getTasksBySuggestionUri (suggestionUri) {
-  return db.viewByKey('bySuggestionUriAndState', [ suggestionUri, null ])
+  return db.getDocsByViewKey('bySuggestionUriAndState', [ suggestionUri, null ])
 }
 
 export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.viewByKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
   if (index !== true) return tasks
   const getTasksBySuspectUris = groupBy(tasks, 'suspectUri')
   return completeWithEmptyArrays(getTasksBySuspectUris, suspectUris)
@@ -92,7 +92,7 @@ export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: 
 
 export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.viewByKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
   if (index !== true) return tasks
   const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
   return completeWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)

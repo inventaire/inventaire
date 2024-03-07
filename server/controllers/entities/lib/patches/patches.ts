@@ -83,7 +83,7 @@ export async function getPatchesByUserIdAndFilter ({ userId, filter, limit, offs
   return formatPatchesPage(viewRes, limit, offset, total)
 }
 
-export const getPatchesByRedirectUri = db.viewByKey.bind(null, 'byRedirectUri')
+export const getPatchesByRedirectUri = db.getDocsByViewKey.bind(null, 'byRedirectUri')
 
 export async function getPatchesWithSnapshots (entityId: InvEntityId) {
   const patches = await getPatchesByEntityId(entityId)

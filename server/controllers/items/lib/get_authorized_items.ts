@@ -70,7 +70,7 @@ const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = f
 // - deduplicate ids
 // - fetch deduplicate docs by ids
 const getItemsFromViewAndAllowedVisibilityKeys = async (view, keys) => {
-  const items = await db.viewByKeys(view, keys)
+  const items = await db.getDocsByViewKeys(view, keys)
   // Items with several visibility keys might be returned several times,
   // thus the need to deduplicate items
   return uniqByKey<Item>(items, '_id')

@@ -12,31 +12,31 @@ import { addSlug } from './slug.js'
 const db = await dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-export const getGroupById = db.viewFindOneByKey.bind(db, 'byId')
+export const getGroupById = db.findDocByViewKey.bind(db, 'byId')
 export const getGroupsByIds = db.byIds
-export const getGroupBySlug = db.viewFindOneByKey.bind(db, 'bySlug')
+export const getGroupBySlug = db.findDocByViewKey.bind(db, 'bySlug')
 
 export async function getGroupsWhereUserIsAdmin (userId) {
-  return db.viewByKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys('byRoleAndUser', [
     [ 'admins', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsAdminOrMember (userId) {
-  return db.viewByKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsInvited (userId) {
-  return db.viewByKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys('byRoleAndUser', [
     [ 'invited', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
-  return db.viewByKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
     [ 'invited', userId ],
@@ -44,7 +44,7 @@ export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
 }
 
 export async function getGroupsWhereUserHasAnyRole (userId) {
-  return db.viewByKeys('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
+  return db.getDocsByViewKeys('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
 }
 
 export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {

@@ -58,6 +58,6 @@ const getNotificationUpdate = (existingNotification, newValue) => {
 
 const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
   const key = [ groupId, attribute ]
-  const docs = await db.viewByKeys('unreadNotificationsByGroupAndAttribute', [ key ])
+  const docs = await db.getDocsByViewKeys('unreadNotificationsByGroupAndAttribute', [ key ])
   return keyBy(docs, 'user')
 }

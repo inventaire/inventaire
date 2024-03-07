@@ -8,7 +8,7 @@ export default {
   byId: db.get,
 
   byTransactionId: transactionId => {
-    return db.viewByKey('byTransactionId', transactionId)
+    return db.getDocsByViewKey('byTransactionId', transactionId)
   },
 
   addTransactionComment: (userId, message, transactionId) => {

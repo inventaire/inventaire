@@ -7,7 +7,7 @@ const db = await dbFactory('notifications')
 
 export function getNotificationsByUserId (userId) {
   assert_.string(userId)
-  return db.viewCustom('byUserAndTime', {
+  return db.getDocsByViewQuery('byUserAndTime', {
     startkey: [ userId, maxKey ],
     endkey: [ userId, minKey ],
     include_docs: true,
@@ -18,7 +18,7 @@ export function getNotificationsByUserId (userId) {
 // Make notifications accessible by the subjects they involve:
 // user, group, item etc
 export function getNotificationsBySubject (subjectId) {
-  return db.viewByKey('bySubject', subjectId)
+  return db.getDocsByViewKey('bySubject', subjectId)
 }
 
 export function createNotification (user, type, data) {
@@ -30,7 +30,7 @@ export async function updateNotificationReadStatus (userId, times) {
   assert_.string(userId)
   assert_.numbers(times)
   const keys = times.map(time => [ userId, time ])
-  const docs = await db.viewByKeys('byUserAndTime', keys)
+  const docs = await db.getDocsByViewKeys('byUserAndTime', keys)
   docs.forEach(markNotificationDocAsRead)
   return db.bulk(docs)
 }

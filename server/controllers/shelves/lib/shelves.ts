@@ -34,7 +34,7 @@ export async function getShelvesByIdsWithItems (ids, reqUserId) {
 }
 
 export function getShelvesByOwners (ownersIds) {
-  return db.viewByKeys('byOwner', ownersIds)
+  return db.getDocsByViewKeys('byOwner', ownersIds)
 }
 
 export async function updateShelfAttributes (params) {
@@ -85,7 +85,7 @@ export function validateShelfOwnership (userId, shelves) {
 }
 
 export function deleteUserShelves (userId) {
-  return db.viewByKeys('byOwner', [ userId ])
+  return db.getDocsByViewKeys('byOwner', [ userId ])
   .then(db.bulkDelete)
 }
 

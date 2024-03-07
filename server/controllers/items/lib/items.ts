@@ -15,23 +15,23 @@ const db = await dbFactory('items')
 
 export const getItemById = db.get
 export const getItemsByIds = db.byIds
-export const getItemsByOwner = ownerId => db.viewByKeys('byOwner', [ ownerId ])
-export const getItemsByOwners = ownersIds => db.viewByKeys('byOwner', ownersIds)
-export const getItemsByEntity = entityUri => db.viewByKeys('byEntity', [ entityUri ])
-export const getItemsByEntities = entitiesUris => db.viewByKeys('byEntity', entitiesUris)
+export const getItemsByOwner = ownerId => db.getDocsByViewKeys('byOwner', [ ownerId ])
+export const getItemsByOwners = ownersIds => db.getDocsByViewKeys('byOwner', ownersIds)
+export const getItemsByEntity = entityUri => db.getDocsByViewKeys('byEntity', [ entityUri ])
+export const getItemsByEntities = entitiesUris => db.getDocsByViewKeys('byEntity', entitiesUris)
 
 export function getItemsByOwnerAndEntities (ownerId, entitiesUris) {
   const keys = entitiesUris.map(uri => [ ownerId, uri ])
-  return db.viewByKeys('byOwnerAndEntity', keys)
+  return db.getDocsByViewKeys('byOwnerAndEntity', keys)
 }
 
-export const getItemsByPreviousEntity = entityUri => db.viewByKey('byPreviousEntity', entityUri)
+export const getItemsByPreviousEntity = entityUri => db.getDocsByViewKey('byPreviousEntity', entityUri)
 
 export function getPublicItemsByOwnerAndDate ({ ownerId, since, until }) {
   assert_.string(ownerId)
   assert_.number(since)
   assert_.number(until)
-  return db.viewCustom('publicByOwnerAndDate', {
+  return db.getDocsByViewQuery('publicByOwnerAndDate', {
     include_docs: true,
     startkey: [ ownerId, until ],
     endkey: [ ownerId, since ],
@@ -43,7 +43,7 @@ export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
   assert_.string(shelf)
   assert_.number(since)
   assert_.number(until)
-  return db.viewCustom('publicByShelfAndDate', {
+  return db.getDocsByViewQuery('publicByShelfAndDate', {
     include_docs: true,
     startkey: [ shelf, until ],
     endkey: [ shelf, since ],
@@ -52,7 +52,7 @@ export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
 }
 
 export const getPublicItemsByDate = (limit = 15, offset = 0, assertImage = false, reqUserId) => {
-  return db.viewCustom('publicByDate', {
+  return db.getDocsByViewQuery('publicByDate', {
     limit,
     skip: offset,
     descending: true,

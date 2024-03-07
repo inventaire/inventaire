@@ -31,9 +31,9 @@ export function getUsersAuthorizedDataByEmails (emails, reqUserId) {
   return getUsersAuthorizedData(getUsersByEmails(emails), reqUserId, 'email')
 }
 
-export const getUserByUsername = username => db.viewByKey('byUsername', username.toLowerCase())
+export const getUserByUsername = username => db.getDocsByViewKey('byUsername', username.toLowerCase())
 export function getUsersByUsernames (usernames) {
-  return db.viewByKeys('byUsername', usernames.map(toLowerCase))
+  return db.getDocsByViewKeys('byUsername', usernames.map(toLowerCase))
 }
 
 export function findUserByUsername (username) {

@@ -5,12 +5,12 @@ import { toLowerCase } from '#lib/utils/base'
 
 export function byEmail (db, email) {
   assert_.string(email)
-  return db.viewByKey('byEmail', email.toLowerCase())
+  return db.getDocsByViewKey('byEmail', email.toLowerCase())
 }
 
 export function byEmails (db, emails) {
   assert_.strings(emails)
-  return db.viewByKeys('byEmail', emails.map(toLowerCase))
+  return db.getDocsByViewKeys('byEmail', emails.map(toLowerCase))
 }
 
 export function findOneByEmail (db, email) {

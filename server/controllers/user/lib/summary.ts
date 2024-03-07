@@ -7,7 +7,7 @@ const db = await dbFactory('users')
 
 const waitingForSummary = limit => {
   // Pick users with next summary between epoch 0 and now
-  return db.viewCustom('nextSummary', {
+  return db.getDocsByViewQuery('nextSummary', {
     include_docs: true,
     limit,
     startkey: 0,

@@ -22,7 +22,7 @@ export function getInvEntitiesByIsbns (isbns) {
     .map(toIsbn13h)
     .filter(identity)
     .map(isbn => [ 'wdt:P212', isbn ])
-  return db.viewByKeys('byClaim', keys)
+  return db.getDocsByViewKeys('byClaim', keys)
 }
 
 export const getInvEntityByIsbn = isbn => getInvEntitiesByIsbns([ isbn ]).then(firstDoc)

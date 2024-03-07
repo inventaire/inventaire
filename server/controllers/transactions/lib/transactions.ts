@@ -14,7 +14,7 @@ const db = await dbFactory('transactions')
 
 export const getTransactionById = db.get<Transaction>
 export function getTransactionsByUser (userId) {
-  return db.viewCustom('byUserAndItem', {
+  return db.getDocsByViewQuery('byUserAndItem', {
     // get all the docs with this userId
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
@@ -24,7 +24,7 @@ export function getTransactionsByUser (userId) {
 
 export function getTransactionsByUserAndItem (userId, itemId) {
   assert_.strings([ userId, itemId ])
-  return db.viewByKey('byUserAndItem', [ userId, itemId ])
+  return db.getDocsByViewKey('byUserAndItem', [ userId, itemId ])
 }
 
 export async function createTransaction (itemDoc, ownerDoc, requesterDoc) {

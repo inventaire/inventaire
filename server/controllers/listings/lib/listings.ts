@@ -20,7 +20,7 @@ const db = await dbFactory('lists')
 
 export const getListingById = db.get<Listing>
 export const getListingsByIds = db.byIds<Listing>
-export const getListingsByCreators = ids => db.viewByKeys('byCreator', ids)
+export const getListingsByCreators = ids => db.getDocsByViewKeys('byCreator', ids)
 
 type ElementsByListing = Record<ListingId, ListingElement[]>
 

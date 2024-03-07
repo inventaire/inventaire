@@ -12,16 +12,16 @@ export const getElementById = db.get
 export const getElementsByIds = db.byIds
 
 export async function getElementsByEntities (uris) {
-  return db.viewByKeys('byEntities', uris)
+  return db.getDocsByViewKeys('byEntities', uris)
 }
 
 export async function getElementsByListingsAndEntity (listingsIds, entitiesUris) {
   const keys = combinations(listingsIds, entitiesUris)
-  return db.viewByKeys('byListAndEntity', keys)
+  return db.getDocsByViewKeys('byListAndEntity', keys)
 }
 
 export async function getElementsByListings (listingsIds) {
-  return db.viewByKeys('byListings', listingsIds)
+  return db.getDocsByViewKeys('byListings', listingsIds)
 }
 
 export const bulkDeleteElements = db.bulkDelete
