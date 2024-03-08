@@ -9,6 +9,7 @@ import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import shelfAttributes from '#models/attributes/shelf'
 import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
+import type { Shelf } from '#types/shelf'
 
 const { updatable } = shelfAttributes
 
@@ -20,9 +21,9 @@ export async function createShelf (newShelf) {
   return db.postAndReturn(shelf)
 }
 
-export const getShelfById = db.get
+export const getShelfById = db.get<Shelf>
 
-export const getShelvesByIds = db.byIds
+export const getShelvesByIds = db.byIds<Shelf>
 
 export async function getShelvesByIdsWithItems (ids, reqUserId) {
   const shelves = await getShelvesByIds(ids)
@@ -34,7 +35,7 @@ export async function getShelvesByIdsWithItems (ids, reqUserId) {
 }
 
 export function getShelvesByOwners (ownersIds) {
-  return db.getDocsByViewKeys('byOwner', ownersIds)
+  return db.getDocsByViewKeys<Shelf>('byOwner', ownersIds)
 }
 
 export async function updateShelfAttributes (params) {
@@ -43,7 +44,7 @@ export async function updateShelfAttributes (params) {
   if (newAttributes.visibility) {
     await validateVisibilityKeys(newAttributes.visibility, reqUserId)
   }
-  const shelf = await db.get(shelfId)
+  const shelf = await db.get<Shelf>(shelfId)
   const updatedShelf = updateShelfDocAttributes(shelf, newAttributes, reqUserId)
   return db.putAndReturn(updatedShelf)
 }
@@ -85,7 +86,7 @@ export function validateShelfOwnership (userId, shelves) {
 }
 
 export function deleteUserShelves (userId) {
-  return db.getDocsByViewKeys('byOwner', [ userId ])
+  return db.getDocsByViewKeys<Shelf>('byOwner', [ userId ])
   .then(db.bulkDelete)
 }
 

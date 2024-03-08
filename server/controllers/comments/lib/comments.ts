@@ -5,10 +5,10 @@ import { createTransactionComment } from '#models/comment'
 const db = await dbFactory('comments')
 
 export default {
-  byId: db.get,
+  byId: db.get<Comment>,
 
   byTransactionId: transactionId => {
-    return db.getDocsByViewKey('byTransactionId', transactionId)
+    return db.getDocsByViewKey<Comment>('byTransactionId', transactionId)
   },
 
   addTransactionComment: (userId, message, transactionId) => {

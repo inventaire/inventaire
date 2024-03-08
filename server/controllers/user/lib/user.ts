@@ -10,7 +10,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
-import type { User, UserId } from '#types/user'
+import type { DocWithUsernameInUserDb, User, UserId } from '#types/user'
 import { omitPrivateData } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
@@ -18,11 +18,12 @@ const db = await dbFactory('users')
 const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
 const searchUsersByDistance = searchUsersByDistanceFactory('users')
 
-export const getUserById = db.get
-export const getUsersByIds = db.byIds
-export const getUserByEmail = byEmail.bind(null, db)
-export const getUsersByEmails = byEmails.bind(null, db)
-export const findUserByEmail = findOneByEmail.bind(null, db)
+export const getUserById = db.get<User>
+export const getUsersByIds = db.byIds<User>
+
+export const findUserByEmail = email => findOneByEmail<User>(db, email)
+export const getUsersByEmail = email => byEmail<User>(db, email)
+export const getUsersByEmails = email => byEmails<User>(db, email)
 
 export function getUsersAuthorizedDataByEmails (emails, reqUserId) {
   assert_.array(emails)
@@ -31,9 +32,9 @@ export function getUsersAuthorizedDataByEmails (emails, reqUserId) {
   return getUsersAuthorizedData(getUsersByEmails(emails), reqUserId, 'email')
 }
 
-export const getUserByUsername = username => db.getDocsByViewKey('byUsername', username.toLowerCase())
+export const getUserByUsername = username => db.getDocsByViewKey<DocWithUsernameInUserDb>('byUsername', username.toLowerCase())
 export function getUsersByUsernames (usernames) {
-  return db.getDocsByViewKeys('byUsername', usernames.map(toLowerCase))
+  return db.getDocsByViewKeys<DocWithUsernameInUserDb>('byUsername', usernames.map(toLowerCase))
 }
 
 export function findUserByUsername (username) {
@@ -128,7 +129,7 @@ export const getUserByPosition = searchUsersByPosition
 
 export async function imageIsUsed (imageHash) {
   assert_.string(imageHash)
-  const { rows } = await db.view('users', 'byPicture', { key: imageHash })
+  const { rows } = await db.view<null, User>('users', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 

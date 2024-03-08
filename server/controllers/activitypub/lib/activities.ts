@@ -1,5 +1,4 @@
 import dbFactory from '#db/couchdb/base'
-import { firstDoc } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
 import type { Activity, ActivityId } from '#types/activity'
@@ -11,11 +10,11 @@ const db = await dbFactory('activities')
 // way ensures activities consistency which allows pagination based on offsets
 
 export const getActivityById = (id: ActivityId) => db.get<Activity>(id)
-export const getActivitiesByIds = db.byIds
+export const getActivitiesByIds = db.byIds<Activity>
 export const deleteActivityById = db.delete
 
 export async function getFollowActivitiesByObject (name) {
-  return db.getDocsByViewKey('followActivitiesByObject', name)
+  return db.getDocsByViewKey<Activity>('followActivitiesByObject', name)
 }
 
 export async function createActivity (newActivity) {
@@ -25,7 +24,7 @@ export async function createActivity (newActivity) {
 
 export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }) {
   assert_.string(name)
-  return db.getDocsByViewQuery('byActorNameAndDate', {
+  return db.getDocsByViewQuery<Activity>('byActorNameAndDate', {
     limit,
     skip: offset,
     startkey: [ name, Date.now() ],
@@ -47,6 +46,5 @@ export async function getActivitiesCountByName (name) {
 }
 
 export function getActivityByExternalId (externalId) {
-  return db.getDocsByViewKey('byExternalId', externalId)
-  .then(firstDoc)
+  return db.findDocByViewKey<Activity>('byExternalId', externalId)
 }

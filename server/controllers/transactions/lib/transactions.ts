@@ -9,12 +9,13 @@ import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { createTransactionDoc, transactionIsActive, validateTransactionPossibleState } from '#models/transaction'
+import type { Transaction } from '#types/transaction'
 
 const db = await dbFactory('transactions')
 
 export const getTransactionById = db.get<Transaction>
 export function getTransactionsByUser (userId) {
-  return db.getDocsByViewQuery('byUserAndItem', {
+  return db.getDocsByViewQuery<Transaction>('byUserAndItem', {
     // get all the docs with this userId
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
@@ -24,7 +25,7 @@ export function getTransactionsByUser (userId) {
 
 export function getTransactionsByUserAndItem (userId, itemId) {
   assert_.strings([ userId, itemId ])
-  return db.getDocsByViewKey('byUserAndItem', [ userId, itemId ])
+  return db.getDocsByViewKey<Transaction>('byUserAndItem', [ userId, itemId ])
 }
 
 export async function createTransaction (itemDoc, ownerDoc, requesterDoc) {

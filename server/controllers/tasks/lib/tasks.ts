@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
 import type { EntityType, EntityUri } from '#types/entity'
-import type { TaskState, TaskType } from '#types/task'
+import type { Task, TaskState, TaskType } from '#types/task'
 
 const db = await dbFactory('tasks')
 
@@ -40,13 +40,13 @@ export async function updateTask (options) {
 
 export const bulkDeleteTasks = db.bulkDelete
 
-export const getTaskById = db.get
+export const getTaskById = db.get<Task>
 
-export const getTasksByIds = db.byIds
+export const getTasksByIds = db.byIds<Task>
 
 export function getTasksByScore (options) {
   const { limit, offset } = options
-  return db.getDocsByViewQuery('byScore', {
+  return db.getDocsByViewQuery<Task>('byScore', {
     limit,
     skip: offset,
     descending: true,
@@ -56,7 +56,7 @@ export function getTasksByScore (options) {
 
 export function getTasksByEntitiesType (options) {
   const { type, limit, offset } = options
-  return db.getDocsByViewQuery('byEntitiesType', {
+  return db.getDocsByViewQuery<Task>('byEntitiesType', {
     startkey: type,
     endkey: type,
     limit,
@@ -75,16 +75,16 @@ export function getTasksBySuspectUri (suspectUri: EntityUri, options: TasksQuery
 }
 
 export function getTasksBySuspectUriAndState (suspectUri: EntityUri, state: TaskState) {
-  return db.getDocsByViewKey('bySuspectUriAndState', [ suspectUri, state ])
+  return db.getDocsByViewKey<Task>('bySuspectUriAndState', [ suspectUri, state ])
 }
 
 export function getTasksBySuggestionUri (suggestionUri) {
-  return db.getDocsByViewKey('bySuggestionUriAndState', [ suggestionUri, null ])
+  return db.getDocsByViewKey<Task>('bySuggestionUriAndState', [ suggestionUri, null ])
 }
 
 export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
   if (index !== true) return tasks
   const getTasksBySuspectUris = groupBy(tasks, 'suspectUri')
   return completeWithEmptyArrays(getTasksBySuspectUris, suspectUris)
@@ -92,7 +92,7 @@ export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: 
 
 export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
   if (index !== true) return tasks
   const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
   return completeWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)

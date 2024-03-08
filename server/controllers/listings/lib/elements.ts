@@ -4,24 +4,25 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
 import { createElementDoc, updateElementDoc } from '#models/element'
+import type { ListingElement } from '#types/element'
 
 const db = await dbFactory('elements')
 
-export const getElementById = db.get
+export const getElementById = db.get<ListingElement>
 
-export const getElementsByIds = db.byIds
+export const getElementsByIds = db.byIds<ListingElement>
 
 export async function getElementsByEntities (uris) {
-  return db.getDocsByViewKeys('byEntities', uris)
+  return db.getDocsByViewKeys<ListingElement>('byEntities', uris)
 }
 
 export async function getElementsByListingsAndEntity (listingsIds, entitiesUris) {
   const keys = combinations(listingsIds, entitiesUris)
-  return db.getDocsByViewKeys('byListAndEntity', keys)
+  return db.getDocsByViewKeys<ListingElement>('byListAndEntity', keys)
 }
 
 export async function getElementsByListings (listingsIds) {
-  return db.getDocsByViewKeys('byListings', listingsIds)
+  return db.getDocsByViewKeys<ListingElement>('byListings', listingsIds)
 }
 
 export const bulkDeleteElements = db.bulkDelete
@@ -46,7 +47,7 @@ export async function createListingElements ({ listing, uris, userId }) {
   }))
   const res = await db.bulk(elements)
   const elementsIds = map(res, 'id')
-  return db.fetch(elementsIds)
+  return db.fetch<ListingElement>(elementsIds)
 }
 
 export async function bulkUpdateElements ({ oldElements, attribute, value }) {

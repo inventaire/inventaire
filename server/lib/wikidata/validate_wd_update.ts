@@ -1,12 +1,14 @@
 import { cloneDeep, without } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import validateClaimValueSync from '#controllers/entities/lib/validate_claim_value_sync'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 
 export async function validateWdEntityUpdate ({ id, property, oldValue, newValue }) {
-  const entity = await getEntityByUri({ uri: `wd:${id}`, refresh: true })
+  const uri = prefixifyWd(id)
+  const entity = await getEntityByUri({ uri, refresh: true })
   const wdtP31Array = entity.claims['wdt:P31']
   const type = getEntityType(wdtP31Array)
   if (newValue) {

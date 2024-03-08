@@ -20,7 +20,7 @@ const db = await dbFactory('lists')
 
 export const getListingById = db.get<Listing>
 export const getListingsByIds = db.byIds<Listing>
-export const getListingsByCreators = ids => db.getDocsByViewKeys('byCreator', ids)
+export const getListingsByCreators = ids => db.getDocsByViewKeys<Listing>('byCreator', ids)
 
 type ElementsByListing = Record<ListingId, ListingElement[]>
 
@@ -47,7 +47,7 @@ export async function updateListingAttributes (params) {
   if (newAttributes.visibility) {
     await validateVisibilityKeys(newAttributes.visibility, reqUserId)
   }
-  const listing = await db.get(id)
+  const listing = await db.get<Listing>(id)
   const updatedList = updateListingDocAttributes(listing, newAttributes, reqUserId)
   return db.putAndReturn(updatedList)
 }

@@ -1,4 +1,4 @@
-import { getUserByEmail, getUserByUsername } from '#controllers/user/lib/user'
+import { getUsersByEmail, getUserByUsername } from '#controllers/user/lib/user'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { success } from '#lib/utils/logs'
@@ -30,7 +30,7 @@ export async function checkEmailAvailability (email) {
     throw newInvalidError('email', email)
   }
 
-  return getUserByEmail(email)
+  return getUsersByEmail(email)
   .then(checkAvailability.bind(null, email, 'email'))
 }
 

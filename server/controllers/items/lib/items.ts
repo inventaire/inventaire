@@ -13,25 +13,25 @@ import { validateItemsAsync } from './validate_item_async.js'
 
 const db = await dbFactory('items')
 
-export const getItemById = db.get
-export const getItemsByIds = db.byIds
-export const getItemsByOwner = ownerId => db.getDocsByViewKeys('byOwner', [ ownerId ])
-export const getItemsByOwners = ownersIds => db.getDocsByViewKeys('byOwner', ownersIds)
-export const getItemsByEntity = entityUri => db.getDocsByViewKeys('byEntity', [ entityUri ])
-export const getItemsByEntities = entitiesUris => db.getDocsByViewKeys('byEntity', entitiesUris)
+export const getItemById = db.get<Item>
+export const getItemsByIds = db.byIds<Item>
+export const getItemsByOwner = ownerId => db.getDocsByViewKeys<Item>('byOwner', [ ownerId ])
+export const getItemsByOwners = ownersIds => db.getDocsByViewKeys<Item>('byOwner', ownersIds)
+export const getItemsByEntity = entityUri => db.getDocsByViewKeys<Item>('byEntity', [ entityUri ])
+export const getItemsByEntities = entitiesUris => db.getDocsByViewKeys<Item>('byEntity', entitiesUris)
 
 export function getItemsByOwnerAndEntities (ownerId, entitiesUris) {
   const keys = entitiesUris.map(uri => [ ownerId, uri ])
-  return db.getDocsByViewKeys('byOwnerAndEntity', keys)
+  return db.getDocsByViewKeys<Item>('byOwnerAndEntity', keys)
 }
 
-export const getItemsByPreviousEntity = entityUri => db.getDocsByViewKey('byPreviousEntity', entityUri)
+export const getItemsByPreviousEntity = entityUri => db.getDocsByViewKey<Item>('byPreviousEntity', entityUri)
 
 export function getPublicItemsByOwnerAndDate ({ ownerId, since, until }) {
   assert_.string(ownerId)
   assert_.number(since)
   assert_.number(until)
-  return db.getDocsByViewQuery('publicByOwnerAndDate', {
+  return db.getDocsByViewQuery<Item>('publicByOwnerAndDate', {
     include_docs: true,
     startkey: [ ownerId, until ],
     endkey: [ ownerId, since ],
@@ -43,7 +43,7 @@ export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
   assert_.string(shelf)
   assert_.number(since)
   assert_.number(until)
-  return db.getDocsByViewQuery('publicByShelfAndDate', {
+  return db.getDocsByViewQuery<Item>('publicByShelfAndDate', {
     include_docs: true,
     startkey: [ shelf, until ],
     endkey: [ shelf, since ],
@@ -52,7 +52,7 @@ export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
 }
 
 export const getPublicItemsByDate = (limit = 15, offset = 0, assertImage = false, reqUserId) => {
-  return db.getDocsByViewQuery('publicByDate', {
+  return db.getDocsByViewQuery<Item>('publicByDate', {
     limit,
     skip: offset,
     descending: true,
@@ -70,7 +70,7 @@ export async function createItems (userId, items) {
   const itemsIds = map(res, 'id')
   const shelvesIds = deepCompact(map(items, 'shelves'))
   const [ { docs } ] = await Promise.all([
-    db.fetch(itemsIds),
+    db.fetch<Item>(itemsIds),
     emit('user:inventory:update', userId),
     emit('shelves:update', shelvesIds),
   ])

@@ -7,36 +7,37 @@ import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
 import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds } from '#models/group'
+import type { GroupId, Group } from '#types/group'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-export const getGroupById = db.findDocByViewKey.bind(db, 'byId')
-export const getGroupsByIds = db.byIds
-export const getGroupBySlug = db.findDocByViewKey.bind(db, 'bySlug')
+export const getGroupById = (id: GroupId) => db.findDocByViewKey<Group>('byId', id)
+export const getGroupsByIds = (ids: GroupId[]) => db.byIds<Group>(ids)
+export const getGroupBySlug = (id: GroupId) => db.findDocByViewKey<Group>('bySlug', id)
 
 export async function getGroupsWhereUserIsAdmin (userId) {
-  return db.getDocsByViewKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsAdminOrMember (userId) {
-  return db.getDocsByViewKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsInvited (userId) {
-  return db.getDocsByViewKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'invited', userId ],
   ])
 }
 
 export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
-  return db.getDocsByViewKeys('byRoleAndUser', [
+  return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
     [ 'invited', userId ],
@@ -44,12 +45,12 @@ export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
 }
 
 export async function getGroupsWhereUserHasAnyRole (userId) {
-  return db.getDocsByViewKeys('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
+  return db.getDocsByViewKeys<Group>('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
 }
 
 export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
   assert_.string(userId)
-  const { rows } = await db.view('groups', 'byRoleAndUser', {
+  const { rows } = await db.view<null, Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: [
       [ 'admins', userId ],
@@ -61,7 +62,7 @@ export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
 
 export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
   assert_.strings(usersIds)
-  const { rows } = await db.view('groups', 'byRoleAndUser', {
+  const { rows } = await db.view<null, Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: usersIds.flatMap(userId => {
       return [
@@ -105,7 +106,7 @@ export const getGroupsByPosition = searchGroupsByPosition
 
 export async function imageIsUsed (imageHash) {
   assert_.string(imageHash)
-  const { rows } = await db.view('groups', 'byPicture', { key: imageHash })
+  const { rows } = await db.view<null, Group>('groups', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 

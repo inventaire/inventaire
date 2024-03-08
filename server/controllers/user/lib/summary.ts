@@ -1,13 +1,14 @@
 import CONFIG from 'config'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
+import type { User } from '#types/user'
 
 const { newsKey } = CONFIG.activitySummary
 const db = await dbFactory('users')
 
 const waitingForSummary = limit => {
   // Pick users with next summary between epoch 0 and now
-  return db.getDocsByViewQuery('nextSummary', {
+  return db.getDocsByViewQuery<User>('nextSummary', {
     include_docs: true,
     limit,
     startkey: 0,

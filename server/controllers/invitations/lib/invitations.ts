@@ -6,12 +6,13 @@ import dbFactory from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, LogError, LogErrorAndRethrow } from '#lib/utils/logs'
 import Invited from '#models/invited'
+import type { InvitedUser } from '#types/user'
 
 const db = await dbFactory('users', 'invited')
 
-export const findInvitationByEmail = findOneByEmail.bind(null, db)
+export const findInvitationByEmail = email => findOneByEmail<InvitedUser>(db, email)
 
-export const getInvitationsByEmails = byEmails.bind(null, db)
+export const getInvitationsByEmails = email => byEmails<InvitedUser>(db, email)
 
 export function createUnknownInvited (inviterId, groupId, unknownEmails) {
   assert_.string(inviterId)

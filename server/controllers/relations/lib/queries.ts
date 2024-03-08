@@ -2,11 +2,12 @@ import { getUserRelations } from '#controllers/relations/lib/lists'
 import dbFactory from '#db/couchdb/base'
 import { ignoreNotFound } from '#lib/couch'
 import { createRelationDoc, getRelationDocId } from '#models/relation'
+import type { Relation } from '#types/relation'
 import userRelativeRequest from './user-relative_request.js'
 
 const db = await dbFactory('users', 'relations')
 
-const getUsersRelation = (userId, otherId) => db.get(getRelationDocId(userId, otherId))
+const getUsersRelation = (userId, otherId) => db.get<Relation>(getRelationDocId(userId, otherId))
 
 const putStatus = (userId, otherId, status) => {
   const docId = getRelationDocId(userId, otherId)

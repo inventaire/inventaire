@@ -1,4 +1,6 @@
+import type dbFactory from '#db/couchdb/base'
 import type { ViewKey, ViewName } from 'blue-cot/types/types.js'
+import type { AsyncReturnType } from 'type-fest'
 
 export type CouchUuid = string
 export type CouchRevId = `${number}-${string}`
@@ -26,3 +28,5 @@ export interface View<D> {
 }
 
 export type Views<D> = Record<ViewName, View<D>>
+
+export type DbHandler = AsyncReturnType<typeof dbFactory>
