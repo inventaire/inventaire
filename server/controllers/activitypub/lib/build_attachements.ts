@@ -23,6 +23,7 @@ const buildAttachement = (claims, attachementsList) => async prop => {
   const attachement = {
     type: 'PropertyValue',
     name: propertyLabel(prop),
+    value: null,
   }
   const attachementValue = await buildAttachementValues(claimValues, prop, attachementsList)
   if (attachementValue && isNonEmptyString(attachementValue)) {

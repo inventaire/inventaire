@@ -3,39 +3,42 @@ import { compact, map, max, min } from 'lodash-es'
 import { context } from '#controllers/activitypub/lib/helpers'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
+import type { Activity, ItemNote } from '#types/activity'
 
 const host = CONFIG.getPublicOrigin()
 const maxLinksToDisplay = 3
 
-export const createItemsNote = ({ allActivitiesItems, lang, name, actor, parentLink }) => async activityDoc => {
-  const { since, until } = activityDoc.object.items
-  // todo: pre-sorting the items per range
-  const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
+export function createItemsNote ({ allActivitiesItems, lang="en", name, actor, parentLink }: ItemNote) {
+  return async function (activityDoc: Activity) {
+    const { since, until } = activityDoc.object.items
+    // todo: pre-sorting the items per range
+    const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
 
-  if (publicRangeItems.length === 0) return
+    if (publicRangeItems.length === 0) return
 
-  const firstItems = publicRangeItems.slice(0, 3)
-  await Promise.all(firstItems.map(addSnapshotToItem))
-  const links = firstItems.map(buildLinkContentFromItem)
-  // itemsLength as in OrderedItems (not user's item)
-  const itemsLength = publicRangeItems.length
+    const firstItems = publicRangeItems.slice(0, 3)
+    await Promise.all(firstItems.map(addSnapshotToItem))
+    const links = firstItems.map(buildLinkContentFromItem)
+    // itemsLength as in OrderedItems (not user's item)
+    const itemsLength = publicRangeItems.length
 
-  const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
+    const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
 
-  const object = {
-    id,
-    type: 'Note',
-    content: buildContent({ links, name, lang, itemsLength, parentLink }),
-    published: new Date(until).toISOString(),
-    attachment: compact(firstItems.map(buildAttachement)),
-  }
-  return {
-    id: `${id}#create`,
-    '@context': context,
-    type: 'Create',
-    object,
-    actor,
-    to: 'Public',
+    const object = {
+      id,
+      type: 'Note',
+      content: buildContent({ links, name, lang, itemsLength, parentLink }),
+      published: new Date(until).toISOString(),
+      attachment: compact(firstItems.map(buildAttachement)),
+    }
+    return {
+      id: `${id}#create`,
+      '@context': context,
+      type: 'Create',
+      object,
+      actor,
+      to: 'Public',
+    }
   }
 }
 
@@ -52,6 +55,7 @@ const buildLinkContentFromItem = item => {
   const content = {
     text: item.snapshot['entity:title'],
     url: `${host}/items/${item._id}`,
+    details: null,
   }
   const { details } = item
   if (details) content.details = details
