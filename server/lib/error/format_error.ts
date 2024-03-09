@@ -20,6 +20,7 @@ export interface ContextualizedError extends Error {
   error_name?: string
   mute?: boolean
   body?: unknown
+  referer?: string
 }
 
 export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: ErrorContext) {

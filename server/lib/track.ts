@@ -12,8 +12,11 @@ const placeholderUrl = '/unknown'
 export function track (req: Req, actionArray: string[]) {
   if (!enabled) return
 
-  const { user = {}, headers = {} } = req
-  const { _id: userId, language } = user
+  const { headers = {} } = req
+  let userId, language
+  if ('user' in req) {
+    ;({ _id: userId, language } = req.user)
+  }
   const { 'user-agent': ua, 'accept-language': al } = headers
   let { referer: url } = headers
   const [ category, action, name, value ] = actionArray

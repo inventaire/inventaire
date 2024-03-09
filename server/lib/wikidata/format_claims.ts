@@ -8,7 +8,7 @@ const options = {
   entityPrefix: 'wd',
   propertyPrefix: 'wdt',
   timeConverter: 'simple-day',
-}
+} as const
 
 export default claims => {
   assert_.object(claims)

@@ -3,8 +3,15 @@ import groups from './groups.js'
 
 const { parse: isbnParser } = isbn3
 
+type IsbnData = ReturnType<typeof isbnParser> & {
+  groupPrefix?: string
+  publisherPrefix?: string
+  groupLang?: string
+  groupLangUri?: string
+}
+
 export function parseIsbn (isbn) {
-  const isbnData = isbnParser(isbn)
+  const isbnData: IsbnData = isbnParser(isbn)
 
   if (isbnData == null) {
     // Some people input an isbn 13 without EAN prefix

@@ -1,3 +1,5 @@
+import { objectEntries } from '#lib/utils/base'
+
 const encodeCharacter = character => `%${character.charCodeAt(0).toString(16)}`
 
 export const stringifyQuery = query => new URLSearchParams(query).toString()
@@ -11,7 +13,7 @@ export function fixedEncodeURIComponent (str) {
 }
 
 export function buildUrl (pathname, queryObj) {
-  const queryEntries = Object.entries(queryObj).filter(hasNonEmptyValue)
+  const queryEntries = objectEntries(queryObj).filter(hasNonEmptyValue)
   const queryString = new URLSearchParams(queryEntries)
   return queryString ? `${pathname}?${queryString}` : pathname
 }
