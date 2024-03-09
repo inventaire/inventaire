@@ -10,24 +10,28 @@ export default async (userId, fromId) => {
   const patches = await getPatchesWithSnapshots(fromId)
   const targetVersion = await findVersionBeforeRedirect(patches)
   const currentVersion = await getEntityById(fromId)
-  const toUri = currentVersion.redirect
-  const fromUri = `inv:${fromId}`
-  targetVersion._id = currentVersion._id
-  targetVersion._rev = currentVersion._rev
-  targetVersion.version = currentVersion.version
+  if ('redirect' in currentVersion) {
+    const toUri = currentVersion.redirect
+    const fromUri = `inv:${fromId}`
+    targetVersion._id = currentVersion._id
+    targetVersion._rev = currentVersion._rev
+    targetVersion.version = currentVersion.version
 
-  const updateRes = await putInvEntityUpdate({
-    userId,
-    currentDoc: currentVersion,
-    updatedDoc: targetVersion,
-  })
+    const updateRes = await putInvEntityUpdate({
+      userId,
+      currentDoc: currentVersion,
+      updatedDoc: targetVersion,
+    })
 
-  await updateItemEntity.afterRevert(fromUri, toUri)
-  await recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds)
-  await revertMergePatch(userId, fromUri, toUri)
-  await revertClaimsRedirections(userId, fromUri)
+    await updateItemEntity.afterRevert(fromUri, toUri)
+    await recoverPlaceholders(userId, currentVersion.removedPlaceholdersIds)
+    await revertMergePatch(userId, fromUri, toUri)
+    await revertClaimsRedirections(userId, fromUri)
 
-  return updateRes
+    return updateRes
+  } else {
+    throw newError('"from" entity is not a redirection', 400, { fromId })
+  }
 }
 
 const findVersionBeforeRedirect = patches => {
