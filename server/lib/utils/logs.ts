@@ -77,6 +77,10 @@ export function logError (err: ContextualizedError, label?: string) {
   errorCount++
 }
 
+export function logErrorMessage (label?: string) {
+  log(label, null, 'red')
+}
+
 const tapLogger = logger => label => obj => {
   logger(obj, label)
   return obj
