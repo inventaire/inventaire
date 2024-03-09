@@ -10,11 +10,11 @@
 import { readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import CONFIG from 'config'
-import { invert } from 'lodash-es'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomBytes } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
+import { invert } from '#lib/utils/base'
 import { warn, info, LogError } from '#lib/utils/logs'
 
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
@@ -22,8 +22,10 @@ const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 // that session should be allowed to live for cookieMaxAge time
 const keysHalfTtl = cookieMaxAge
 const keysFilePath = absolutePath('root', 'config/.sessions_keys')
-const keys = []
-const data = {}
+
+type Key = string
+const keys: Key[] = []
+const data: Record<EpochTimeStamp, Key> = {}
 
 const getKeysFromFileSync = () => {
   return readFileSync(keysFilePath)

@@ -5,6 +5,7 @@ import {
   Float as floatPattern,
 } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
+import type { Entries } from 'type-fest'
 
 export function combinations (array1, array2) {
   return array1.flatMap(key1 => {
@@ -170,3 +171,12 @@ const aggregateCollections = (index, name) => {
 // Work around the TS2345 error when using Array include method
 // https://stackoverflow.com/questions/55906553/typescript-unexpected-error-when-using-includes-with-a-typed-array/70532727#70532727
 export const arrayIncludes = (array, value) => array.some(element => element === value) != null
+
+/** Returns a new object with keys and values inverted */
+export function invert (obj: Record<string | number, string | number>) {
+  const invertedObj = {}
+  for (const [ key, value ] of Object.entries(obj) as Entries<typeof obj>) {
+    invertedObj[value] = key
+  }
+  return invertedObj
+}
