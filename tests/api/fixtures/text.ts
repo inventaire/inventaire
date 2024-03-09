@@ -4,9 +4,9 @@ import { absolutePath } from '#lib/absolute_path'
 import { getRandomString } from '#lib/utils/random_string'
 
 const getFixtureWords = filename => {
-  return readFileSync(absolutePath('tests', `api/fixtures/${filename}`))
+  return readFileSync(absolutePath('tests', `api/fixtures/${filename}.ts`))
   .toString()
-  .split('\n')
+  .split('\\\n')
 }
 const lorem = getFixtureWords('words')
 // no name should match on regex /\W/
