@@ -1,7 +1,7 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
 import { getSeedsByIsbns } from '#data/dataseed/dataseed'
-import { parseIsbn } from '#lib/isbn/parse'
+import { parseIsbn, type IsbnData } from '#lib/isbn/parse'
 
 const sanitization = {
   isbn: {},
@@ -9,7 +9,7 @@ const sanitization = {
 }
 
 const controller = async ({ isbn, refresh }) => {
-  const data = parseIsbn(isbn)
+  const data: IsbnData & { query?: string } = parseIsbn(isbn)
 
   // Not using source to pass the original input as 'source'
   // has another meaning in entities search

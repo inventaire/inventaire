@@ -3,7 +3,7 @@ import groups from './groups.js'
 
 const { parse: isbnParser } = isbn3
 
-type IsbnData = ReturnType<typeof isbnParser> & {
+export type IsbnData = ReturnType<typeof isbnParser> & {
   groupPrefix?: string
   publisherPrefix?: string
   groupLang?: string
