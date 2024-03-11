@@ -26,7 +26,7 @@ const getShortDescription = (descriptions, lang) => {
 
 const getUri = id => id[0] === 'Q' ? `wd:${id}` : `inv:${id}`
 
-const socialDocsFormatter = (labelAttr, descAttr) => (result, _source, lang) => ({
+const socialDocsFormatter = (labelAttr, descAttr) => (result, _source) => ({
   id: result._id,
   type: _source.type,
   label: _source[labelAttr],

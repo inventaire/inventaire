@@ -117,7 +117,7 @@ const fixOperation = (currentDoc, inverseOperations) => (op, index) => {
 }
 
 const operationFix = {
-  add: (currentDoc, inverseOperations, op, index) => {
+  add: (currentDoc, inverseOperations, op) => {
     const { path, value } = op
     if (isArray(value)) {
       if (value.length === 1) {

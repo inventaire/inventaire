@@ -1,3 +1,7 @@
+import { emit } from '#db/couchdb/couchdb_views_context'
+
+function double (num) { return num * 2 }
+
 export const someDesignDocView = {
   byExample: {
     map: function (doc) {
@@ -9,7 +13,7 @@ export const someDesignDocView = {
   },
   byExample2: {
     map: [
-      function double (num) { num * 2 },
+      double,
       function (doc) {
         if (doc.example) emit(doc.example, double(1))
       },

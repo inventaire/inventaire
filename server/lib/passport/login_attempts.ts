@@ -11,7 +11,7 @@ setInterval(flushFails, periodMinutes * oneMinute)
 export default {
   _fails: () => fails,
   _flushFails: flushFails,
-  recordFail: (username, label) => {
+  recordFail: username => {
     if (!fails[username]) fails[username] = 0
     return ++fails[username]
   },
