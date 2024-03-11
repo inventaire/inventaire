@@ -3,19 +3,19 @@ import { verifyPassword } from '#lib/crypto'
 import { logError } from '#lib/utils/logs'
 import loginAttempts from './login_attempts.js'
 
-export default (username, password, done) => {
+export default (username: string, password: string, done) => {
   if (loginAttempts.tooMany(username)) {
     done(null, false, { message: 'too_many_attempts' })
   }
 
   // addressing the case an email is provided instead of a username
   return findUserByUsernameOrEmail(username)
-  .catch(invalidUsernameOrPassword.bind(null, done, username, 'findOneByUsername'))
+  .catch(invalidUsernameOrPassword.bind(null, done, username))
   .then(returnIfValid.bind(null, done, password, username))
   .catch(finalError.bind(null, done))
 }
 
-const returnIfValid = (done, password, username, user) => {
+function returnIfValid (done, password, username, user) {
   // need to check user existance to avoid
   // to call invalidUsernameOrPassword a second time
   // in case findOneByUsername returned an error
@@ -24,17 +24,17 @@ const returnIfValid = (done, password, username, user) => {
   return verifyPassword(user.password, password)
   .then(valid => {
     if (valid) done(null, user)
-    else return invalidUsernameOrPassword(done, username, 'validity test')
+    else return invalidUsernameOrPassword(done, username)
   })
-  .catch(invalidUsernameOrPassword.bind(null, done, username, 'verifyUserPassword'))
+  .catch(invalidUsernameOrPassword.bind(null, done, username))
 }
 
-const invalidUsernameOrPassword = (done, username, label) => {
-  loginAttempts.recordFail(username, label)
+function invalidUsernameOrPassword (done, username) {
+  loginAttempts.recordFail(username)
   done(null, false, { message: 'invalid_username_or_password' })
 }
 
-const finalError = (done, err) => {
+function finalError (done, err) {
   logError(err, 'username/password verify err')
   done(err)
 }

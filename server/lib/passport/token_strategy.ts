@@ -24,7 +24,7 @@ function verify (req: Req, email: Email, token: string, done) {
   }
 
   return findUserByEmail(email)
-  .catch(invalidEmailOrToken.bind(null, done, email, 'findOneByEmail'))
+  .catch(invalidEmailOrToken.bind(null, done, email))
   .then(returnIfValid.bind(null, done, token, email))
   .catch(finalError.bind(null, done))
 }
@@ -41,16 +41,16 @@ async function returnIfValid (done, token: string, email: Email, user?: User) {
       await openPasswordUpdateWindow(user)
       done(null, user)
     } else {
-      invalidEmailOrToken(done, email, 'validity test')
+      invalidEmailOrToken(done, email)
     }
   } catch (err) {
-    invalidEmailOrToken(done, email, 'verifyToken', err)
+    invalidEmailOrToken(done, email, err)
   }
 }
 
-function invalidEmailOrToken (done, email, label, err?: Error) {
+function invalidEmailOrToken (done, email, err?: Error) {
   logError(err, 'invalid email or token')
-  loginAttempts.recordFail(email, label)
+  loginAttempts.recordFail(email)
   done(null, false, { message: 'invalid_username_or_token' })
 }
 
