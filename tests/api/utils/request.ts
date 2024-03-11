@@ -1,14 +1,19 @@
 import CONFIG from 'config'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
-import { requests_ } from '#lib/requests'
+import { requests_, type ReqOptions } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
+import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
+import type { User } from '#types/user'
+import type { OverrideProperties } from 'type-fest'
 
-const host = CONFIG.getPublicOrigin()
+const host: AbsoluteUrl = CONFIG.getPublicOrigin()
 
-const testServerAvailability = async () => {
+type RequestOptions = OverrideProperties<ReqOptions, { headers?: HttpHeaders }>
+
+async function testServerAvailability () {
   if (!CONFIG.waitForServer) return
 
   try {
@@ -24,7 +29,7 @@ const testServerAvailability = async () => {
 
 export const waitForTestServer = testServerAvailability()
 
-export async function rawRequest (method, url, reqParams = {}) {
+export async function rawRequest (method: HttpMethod, url: Url, reqParams: RequestOptions = {}) {
   assert_.string(method)
   assert_.string(url)
   await waitForTestServer
@@ -35,16 +40,16 @@ export async function rawRequest (method, url, reqParams = {}) {
   return requests_[method](url, reqParams)
 }
 
-export async function request (method, endpoint, body, cookie) {
+export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
   assert_.string(method)
   assert_.string(endpoint)
-  const url = endpoint.startsWith(host) ? endpoint : host + endpoint
-  const options = {
+  const url = (endpoint.startsWith(host) ? endpoint : host + endpoint) as Url
+  const options: ReqOptions = {
     headers: { cookie },
     redirect: 'error',
+    body,
   }
 
-  if (body != null) options.body = body
   await waitForTestServer
   try {
     return await requests_[method](url, options)
@@ -68,7 +73,18 @@ export async function customAuthReq (user, method, endpoint, body) {
   return request(method, endpoint, body, user.cookie)
 }
 
-export async function rawCustomAuthReq ({ user, method, url, options = {} }) {
+interface TestUser extends User {
+  cookie?: string
+}
+
+interface RawCustomAuthReqOptions {
+  user: TestUser
+  method: HttpMethod
+  url: Url
+  options: RequestOptions
+}
+
+export async function rawCustomAuthReq ({ user, method, url, options = {} }: RawCustomAuthReqOptions) {
   assert_.type('object|promise', user)
   assert_.string(method)
   assert_.string(url)

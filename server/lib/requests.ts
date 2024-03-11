@@ -17,6 +17,7 @@ import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError } from
 import { coloredElapsedTime } from './time.js'
 import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
+import type OAuth from 'oauth-1.0a'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
@@ -25,17 +26,18 @@ const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
-interface ReqOptions {
+export interface ReqOptions {
   sanitize?: boolean
   returnBodyOnly?: boolean
   parseJson?: boolean
   body?: unknown
   bodyStream?: Stream
-  headers?: HttpHeaders
+  headers?: HttpHeaders | OAuth.Header
   retryOnceOnError?: boolean
   noRetry?: boolean
   timeout?: number
   ignoreCertificateErrors?: boolean
+  redirect?: 'follow' | 'error' | 'manual'
 }
 
 async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {
