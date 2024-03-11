@@ -1,4 +1,8 @@
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   env: 'tests-integration',
 
   db: {
@@ -18,3 +22,5 @@ module.exports = {
     timeout: 10000,
   },
 }
+
+module.exports = config

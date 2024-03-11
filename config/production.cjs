@@ -2,7 +2,11 @@
 // This config file will be used if: NODE_ENV=production
 // Override locally in ./local-production.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   env: 'production',
   verbose: true,
   publicHostname: 'OVERRIDE',
@@ -43,3 +47,5 @@ module.exports = {
     useProdCachedImages: false,
   },
 }
+
+module.exports = config

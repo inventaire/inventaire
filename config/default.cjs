@@ -3,13 +3,16 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
+/** @typedef { import('../types/types.ts').Config } Config */
+
 const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
 const port = 3006
 const contactAddress = 'hello@inventaire.io'
 
-module.exports = {
+/** @type {Config} */
+const config = {
   name: 'inventaire',
   env: 'default',
   // Only http is supported: in production, TLS is delegated to Nginx
@@ -261,3 +264,5 @@ module.exports = {
 
   mapTilesAccessToken: 'youraccesstoken',
 }
+
+module.exports = config

@@ -2,7 +2,11 @@
 // This config file will be used if: NODE_ENV=tests-api NODE_APP_INSTANCE=server
 // Override locally in ./local-tests-api-server.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   autoRotateKeys: false,
   dataseed: {
     enabled: false,
@@ -26,3 +30,5 @@ module.exports = {
     minReindexationInterval: 0,
   },
 }
+
+module.exports = config

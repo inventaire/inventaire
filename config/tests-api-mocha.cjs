@@ -2,7 +2,11 @@
 // This config file will be used if: NODE_ENV=tests-api NODE_APP_INSTANCE=mocha
 // Override locally in ./local-tests-api-mocha.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   waitForServer: true,
 
   mocha: {
@@ -23,3 +27,5 @@ module.exports = {
     },
   },
 }
+
+module.exports = config

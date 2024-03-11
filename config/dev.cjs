@@ -2,7 +2,11 @@
 // This config file will be used if: NODE_ENV=dev
 // Override locally in ./local-dev.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   env: 'dev',
   dataseed: {
     enabled: true,
@@ -14,3 +18,5 @@ module.exports = {
     autofix: true,
   },
 }
+
+module.exports = config

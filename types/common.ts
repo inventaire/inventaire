@@ -9,6 +9,7 @@ export type HttpHeaders = Partial<Record<HttpHeaderKey, string>>
 export type AbsoluteUrl = `http${string}`
 export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
+export type Path = string
 
 export type ImageHash = string
 export type ImageContainer = typeof uploadContainersNames[number]
