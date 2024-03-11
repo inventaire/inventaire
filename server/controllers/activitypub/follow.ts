@@ -4,7 +4,7 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
-import type { LocalActorUrl, ActivityId, UriObj } from '#types/activity'
+import type { LocalActorUrl, ActivityId, UriObj, ActivityType } from '#types/activity'
 import type { Url } from '#types/common'
 import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
@@ -14,7 +14,7 @@ const host = CONFIG.getPublicOrigin()
 
 interface FollowArgs {
   id: ActivityId,
-  type: 'Create' | 'Delete' | 'Follow' | 'Undo'
+  type: ActivityType,
  '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
   actor: LocalActorUrl,
   object: Url

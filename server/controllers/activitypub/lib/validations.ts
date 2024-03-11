@@ -1,12 +1,11 @@
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { findUserByUsername, getUserById } from '#controllers/user/lib/user'
 import { isCouchUuid } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
-import type { SerializedEntity } from '#types/entity'
-import { getEntityUriFromActorName, getEntityActorName } from './helpers.js'
-
-interface ActorEntity extends SerializedEntity {actorName: string}
+import type { ActorEntity } from '#types/activity'
+import { getEntityUriFromActorName } from './helpers.js'
 
 export async function validateShelf (name) {
   const id = name.split('-')[1]

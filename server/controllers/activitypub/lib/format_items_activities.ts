@@ -8,7 +8,7 @@ import type { Activity, ItemNote } from '#types/activity'
 const host = CONFIG.getPublicOrigin()
 const maxLinksToDisplay = 3
 
-export function createItemsNote ({ allActivitiesItems, lang="en", name, actor, parentLink }: ItemNote) {
+export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
   return async function (activityDoc: Activity) {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range

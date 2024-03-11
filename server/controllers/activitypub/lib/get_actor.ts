@@ -1,5 +1,7 @@
 import CONFIG from 'config'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
+import type { Url } from '#types/common'
 import buildAttachements from './build_attachements.js'
 import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
@@ -11,13 +13,12 @@ const publicHost = origin.split('://')[1]
 const getShelfActor = async name => {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
-  const links = [
+  const links: ActivityLink[] = [
     {
       name: 'shelf',
       url: `${origin}/shelves/${shelf._id}`,
     },
   ]
-
   return buildActorObject({
     actorName: name,
     displayName: `${shelf.name} [${owner.username}]`,
@@ -29,8 +30,8 @@ const getShelfActor = async name => {
 const getUserActor = async username => {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
-  const links = [
-    { name: 'inventory', url: `${origin}/users/${username}` },
+  const links: ActivityLink[] = [
+    { name: 'inventory', url: `${origin}/users/${username}` as Url },
   ]
   return buildActorObject({
     actorName: stableUsername,
@@ -43,32 +44,40 @@ const getUserActor = async username => {
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
+  const { uri } = entity
   const label = defaultLabel(entity)
+  const url = entityUrl(uri)
   const links = [
-    { name: publicHost, url: entityUrl(entity.uri) },
-  ]
-
-  if (entity.uri.startsWith('wd:')) {
-    links.push({ name: 'wikidata.org', url: `https://www.wikidata.org/wiki/${unprefixify(entity.uri)}` })
+    {
+      name: publicHost,
+      url,
+    },
+  ] as ActivityLink[]
+  if (uri.startsWith('wd:')) {
+    const wdLink: ActivityLink = {
+      name: 'wikidata.org',
+      url: `https://www.wikidata.org/wiki/${unprefixify(uri)}`,
+    }
+    links.push(wdLink)
   }
-  const attachment = await buildAttachements(entity)
+  const attachments: Attachement[] = await buildAttachements(entity)
   return buildActorObject({
     actorName: entity.actorName,
     displayName: label,
     summary: entity.descriptions?.en,
     imagePath: entity.image.url,
     links,
-    attachment,
+    attachment: attachments,
   })
 }
 
-const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }) => {
+const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }: ActorParams) => {
   const { publicKey, publicKeyHash } = await getSharedKeyPair()
-  const actorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}`
+  const actorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}` as LocalActorUrl
   // Use the key hash to bust any cached version of an old key
   const keyUrl = `${actorUrl}#${publicKeyHash}`
 
-  const actor = {
+  const actor: ActorActivity = {
     '@context': [
       'https://www.w3.org/ns/activitystreams',
       'https://w3id.org/security/v1',
@@ -87,10 +96,11 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
   }
 
   if (imagePath) {
+    const url = imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`
     actor.icon = {
       mediaType: 'image/jpeg',
       type: 'Image',
-      url: imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`,
+      url,
     }
   }
 
@@ -98,12 +108,13 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     const linksAttachements = links.map(({ name, url }) => {
       const [ protocol, urlWithoutProtocol ] = url.split('://')
       const value = `<span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span>`
-      return {
+      const attachement: Attachement = {
         type: 'PropertyValue',
         name,
         url,
         value: buildLink(url, value),
       }
+      return attachement
     })
     actor.attachment = linksAttachements.concat(attachment)
   } else {

@@ -4,6 +4,7 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
+import type { Url } from '#types/common'
 
 const host = CONFIG.getPublicOrigin()
 
@@ -47,7 +48,7 @@ export function buildLink (url, text) {
   return `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank">${text}</a>`
 }
 
-export const entityUrl = uri => `${host}/entity/${uri}`
+export const entityUrl = uri => `${host}/entity/${uri}` as Url
 
 export const propertyLabel = prop => i18n('en', unprefixify(prop))
 
