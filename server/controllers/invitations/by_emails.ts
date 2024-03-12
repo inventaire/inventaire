@@ -5,22 +5,17 @@ import { getGroupById } from '#controllers/groups/lib/groups'
 import { isGroupId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
-import { responses_ } from '#lib/responses'
-import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
-import { Track } from '#lib/track'
-import { Log } from '#lib/utils/logs'
 import { userIsGroupMember } from '#models/group'
 import parseEmails from './lib/parse_emails.js'
 import { sendInvitationAndReturnData } from './lib/send_invitation_and_return_data.js'
 
-const sanitization = validateSanitization({
+const sanitization = {
   emails: {},
   message: { optional: true },
   group: { optional: true },
-})
+}
 
-export default async (req, res) => {
-  const params = sanitize(req, res, sanitization)
+export async function controller (params, req) {
   const { emails, groupId, reqUserId } = params
   let { message } = params
   const { user } = req
@@ -33,13 +28,17 @@ export default async (req, res) => {
     validateGroup(groupId, reqUserId),
   ])
 
-  return sendInvitationAndReturnData({ reqUser: user, message, group, parsedEmails, reqUserId })
-  .then(Log('invitationByEmails data'))
-  .then(responses_.Send(res))
-  .then(Track(req, [ 'invitation', 'email', null, parsedEmails.length ]))
+  const invitationByEmailsData = await sendInvitationAndReturnData({
+    reqUser: user,
+    message,
+    group,
+    parsedEmails,
+    reqUserId,
+  })
+  return invitationByEmailsData
 }
 
-const parseAndValidateEmails = async (emails, userEmail) => {
+async function parseAndValidateEmails (emails, userEmail) {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
@@ -47,7 +46,7 @@ const parseAndValidateEmails = async (emails, userEmail) => {
   return applyLimit(filteredEmails)
 }
 
-const validateGroup = async (groupId, reqUserId) => {
+async function validateGroup (groupId, reqUserId) {
   if (groupId == null) return null
 
   if (!isGroupId(groupId)) {
@@ -74,10 +73,12 @@ const validateGroup = async (groupId, reqUserId) => {
 // This is totally arbitrary but sending too many invites at a time
 // will probably end up being reported as spam
 const limit = 50
-const applyLimit = emails => {
+function applyLimit (emails) {
   if (emails.length > limit) {
     throw newError(`you can't send more than ${limit} invitations at a time`, 400)
   } else {
     return emails
   }
 }
+
+export default { sanitization, controller, track: [ 'invitation', 'email' ] }
