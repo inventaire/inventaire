@@ -1,4 +1,4 @@
-import type { CouchDoc, CouchRevId } from '#types/couchdb'
+import type { CouchDoc } from '#types/couchdb'
 import type { EntityUri, InvClaimValue, InvEntityId, InvEntityUri, Label } from '#types/entity'
 import type { UserId } from '#types/user'
 

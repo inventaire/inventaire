@@ -8,9 +8,9 @@ export type Config = ReadonlyDeep<{
   name: string
   env: 'default' | 'dev' | 'production' | 'tests' | 'tests-api' | 'tests-integration' | 'tests-unit'
   verbose: boolean
-  hostname: string,
+  hostname: string
   protocol: 'http' | 'https'
-  port: number,
+  port: number
   offline: boolean
   getLocalOrigin: () => AbsoluteUrl
   publicProtocol: 'http' | 'https'
@@ -30,12 +30,12 @@ export type Config = ReadonlyDeep<{
     baseBanTime: number
     banTimeIncreaseFactor: number
     /** Set to 4 or 6 to force the use of IPv4 or IPv6 */
-    ipFamily?: 4 | 6,
+    ipFamily?: 4 | 6
   }
   db: {
     protocol: 'http' | 'https'
     hostname: string
-    port: number,
+    port: number
     username: string
     password: string
     suffix?: string | null
@@ -80,7 +80,7 @@ export type Config = ReadonlyDeep<{
   requestsLogger: {
     // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain
     // Possible values: js, css, img, api
-    mutedDomains: string[],
+    mutedDomains: string[]
     mutedPath: RelativeUrl[]
   }
 
@@ -164,7 +164,7 @@ export type Config = ReadonlyDeep<{
   // Analytics service
   piwik: {
     enabled: boolean
-    endpoint: string,
+    endpoint: string
     idsite: number
     rec: number
   }

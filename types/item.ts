@@ -34,11 +34,11 @@ export interface Item extends CouchDoc {
 }
 
 export interface ItemSnapshot {
-  'entity:title'?: string,
-  'entity:image'?: EntityImg,
-  'entity:authors'?: string,
-  'entity:subtitle'?: string,
-  'entity:lang'?: WikimediaLanguageCode,
+  'entity:title'?: string
+  'entity:image'?: EntityImg
+  'entity:authors'?: string
+  'entity:subtitle'?: string
+  'entity:lang'?: WikimediaLanguageCode
 }
 
 export interface SerializedItem extends Item {

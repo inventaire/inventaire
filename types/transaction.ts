@@ -39,6 +39,6 @@ export interface Transaction extends CouchDoc {
   actions: TransactionAction[]
   read: {
     [key in TransactionUserRole]: boolean
-  },
+  }
   snapshot: TransactionSnapshot
 }

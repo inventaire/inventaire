@@ -23,9 +23,9 @@ export interface Group extends CouchDoc {
   position?: LatLng
   creator: UserId
   created: EpochTimeStamp
-  admins: GroupMembership[],
-  members: GroupMembership[],
-  invited: GroupMembership[],
-  declined: GroupMembership[],
-  requested: GroupMembership[],
+  admins: GroupMembership[]
+  members: GroupMembership[]
+  invited: GroupMembership[]
+  declined: GroupMembership[]
+  requested: GroupMembership[]
 }

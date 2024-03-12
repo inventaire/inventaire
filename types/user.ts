@@ -31,7 +31,7 @@ export interface UserSettings {
 export type SnapshotVisibilitySectionName = 'private' | 'network' | 'public'
 
 export interface SnapshotVisibilitySection {
-  'items:count'?: number,
+  'items:count'?: number
   'items:last-add'?: EpochTimeStamp
 }
 
