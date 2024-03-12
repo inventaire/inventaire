@@ -1,4 +1,5 @@
 import { getActivitiesByActorName, getActivitiesCountByName } from '#controllers/activitypub/lib/activities'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
@@ -48,8 +49,8 @@ const getShelfActivities = async ({ name, offset, limit }) => {
 
 const getEntityActivities = async ({ name, offset, limit }) => {
   const { entity } = await validateEntity(name)
-  if (!entity) throw notFoundError({ name })
-  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: entity.actorName } })
+  const actorName = getEntityActorName(entity.uri)
+  const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: actorName } })
   const baseOutbox = {
     '@context': context,
     id: fullOutboxUrl,

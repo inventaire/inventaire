@@ -1,4 +1,5 @@
 import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
@@ -30,8 +31,9 @@ export async function follow (params: FollowArgs) {
   const actor = { uri: actorUrl } as UriObj
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)
-    if (!entity) throw notFoundError({ name: requestedObjectName })
-    object = { name: entity.actorName }
+    // Use canonical uri
+    const actorName = getEntityActorName(entity.uri)
+    object = { name: actorName }
   } else if (requestedObjectName.startsWith('shelf-')) {
     await validateShelf(requestedObjectName)
     object = { name: requestedObjectName }

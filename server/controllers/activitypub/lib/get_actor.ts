@@ -1,3 +1,4 @@
+import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import CONFIG from '#server/config'
 import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
@@ -44,6 +45,7 @@ const getUserActor = async username => {
 
 const getEntityActor = async name => {
   const { entity } = await validateEntity(name)
+  const actorName = getEntityActorName(entity.uri)
   const { uri } = entity
   const label = defaultLabel(entity)
   const url = entityUrl(uri)
@@ -62,7 +64,7 @@ const getEntityActor = async name => {
   }
   const attachments: Attachement[] = await buildAttachements(entity)
   return buildActorObject({
-    actorName: entity.actorName,
+    actorName,
     displayName: label,
     summary: entity.descriptions?.en,
     imagePath: entity.image.url,
