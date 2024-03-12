@@ -46,6 +46,11 @@ const removeExtension = (str, extension) => {
 
 const isClaim = claim => /^(wdt:|invp:)/.test(claim)
 
+const usersRss = async username => {
+  const userId = await getUserId(username)
+  return `/api/feeds?user=${userId}`
+}
+
 const redirections = {
   json: {
     entity: (uri, section) => {
@@ -110,10 +115,6 @@ const redirections = {
   },
 
   rss: {
-    users: async username => {
-      const userId = await getUserId(username)
-      return `/api/feeds?user=${userId}`
-    },
     groups: id => {
       if (isGroupId(id)) {
         return `/api/feeds?group=${id}`
@@ -124,11 +125,11 @@ const redirections = {
       }
     },
     shelves: id => `/api/feeds?shelf=${id}`,
+    users: usersRss,
+    // Legacy
+    inventory: usersRss,
   },
 }
-
-// Legacy
-redirections.rss.inventory = redirections.rss.users
 
 const getUserId = async id => {
   if (isCouchUuid(id)) {
