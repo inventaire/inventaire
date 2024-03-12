@@ -13,7 +13,7 @@ import { isEntityActivityId, setActivityPubContentType } from './lib/helpers.js'
 import { validateShelf, validateUser } from './lib/validations.js'
 
 interface ActivityArgs {
-  id: string,
+  id: string
 }
 
 const sanitization = {

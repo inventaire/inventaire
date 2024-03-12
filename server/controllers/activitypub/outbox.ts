@@ -2,7 +2,7 @@ import { getActivitiesByActorName, getActivitiesCountByName } from '#controllers
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import { notFoundError, newError } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'

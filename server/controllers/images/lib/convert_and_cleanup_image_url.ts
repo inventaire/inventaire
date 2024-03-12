@@ -10,7 +10,7 @@ import convertImageUrl from './convert_image_url.js'
 
 const { enabled: dataseedEnabled } = config.dataseed
 
-export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer; url: Url }) {
+export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer, url: Url }) {
   assert_.string(container)
   assert_.string(url)
   const originalUrl = url

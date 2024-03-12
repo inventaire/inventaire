@@ -1,7 +1,7 @@
 import { createActivity, getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import { notFoundError, newError } from '#lib/error/error'
+import { newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'

@@ -9,7 +9,7 @@ import type { LooseClaims } from '#types/resolver'
 
 // Accepts several string arguments, either as single URLs or as a group of urls concatenated with ',' as separator
 export async function parseSameasMatches ({ matches, expectedEntityType }: {
-  matches: string[] | string[][],
+  matches: string[] | string[][]
   expectedEntityType: string
   }): Promise<{ claims: LooseClaims, uri?: EntityUri }> {
   assert_.array(matches)
