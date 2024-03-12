@@ -5,6 +5,8 @@ import { radio } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { LogError } from '#lib/utils/logs'
 import CONFIG from '#server/config'
+import type { ShelfId } from '#types/shelf'
+import type { UserId } from '#types/user'
 import { getActivitiesByActorName, createActivity } from './activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
 import formatShelfItemsActivities from './format_shelf_items_activities.js'
@@ -28,12 +30,17 @@ export function initRadioHooks () {
   radio.on('patch:created', deliverEntityActivitiesFromPatch)
 }
 
-const createDebouncedActivity = ({ userId, shelfId }) => async () => {
+interface createActivityParams {
+  userId?: UserId
+  shelfId?: ShelfId
+}
+
+const createDebouncedActivity = ({ userId, shelfId }: createActivityParams) => async () => {
   _createDebouncedActivity({ userId, shelfId })
   .catch(LogError('createDebouncedActivity error'))
 }
 
-const _createDebouncedActivity = async ({ userId, shelfId }) => {
+const _createDebouncedActivity = async ({ userId, shelfId }: createActivityParams) => {
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
