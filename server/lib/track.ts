@@ -2,6 +2,7 @@
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
+import type { LocalActorUrl } from '#types/activity'
 import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 
@@ -9,16 +10,24 @@ const { enabled, endpoint, idsite, rec } = config.piwik
 const origin = config.getPublicOrigin()
 const placeholderUrl = '/unknown'
 
-export function track (req: Req, actionArray: string[]) {
+interface PseudoReq {
+  user: { _id: LocalActorUrl }
+}
+
+export function track (req: Req | PseudoReq, actionArray: string[]) {
   if (!enabled) return
 
-  const { headers = {} } = req
   let userId, language
   if ('user' in req) {
-    ;({ _id: userId, language } = req.user)
+    ;({ _id: userId } = req.user)
+    if ('language' in req.user) {
+      ;({ language } = req.user)
+    }
   }
-  const { 'user-agent': ua, 'accept-language': al } = headers
-  let { referer: url } = headers
+  let ua, al, url
+  if ('headers' in req) {
+    ;({ 'user-agent': ua, 'accept-language': al, referer: url } = req.headers)
+  }
   const [ category, action, name, value ] = actionArray
 
   // a url is required so we use a placeholder if not provided in parameter
@@ -50,9 +59,9 @@ export function track (req: Req, actionArray: string[]) {
 }
 
 export function trackActor (actorUri, actionArray) {
-  const pseudoReq = {
+  const pseudoReq: PseudoReq = {
     user: { _id: actorUri },
-  } as Req
+  }
   track(pseudoReq, actionArray)
 }
 
