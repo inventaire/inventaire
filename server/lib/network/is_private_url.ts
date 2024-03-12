@@ -9,7 +9,7 @@ const servicesHostnames = uniq(compact([
   db.hostname,
   getHostname(elasticsearch.origin),
   getHostname(dataseed.origin),
-  getHostname(mediaStorage.swift.publicUrl),
+  getHostname(mediaStorage.swift.publicURL),
 ]))
 
 let serviceIpsSet
