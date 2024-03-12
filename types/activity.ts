@@ -1,5 +1,6 @@
 import type { CouchDoc, CouchUuid, Url } from '#types/common'
 import type { Item } from '#types/item'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo'
 

@@ -13,13 +13,16 @@ export const cachedRelationProperties = objectKeys(propertiesValuesConstraints)
 export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
   const id = unprefixify(invEntityUri)
 
-  const { claims } = await getEntityById(id)
+  const entity = await getEntityById(id)
+  if (!('claims' in entity)) return []
+  const { claims } = entity
+
   const promises = []
 
   for (const property of cachedRelationProperties) {
     if (claims[property]) {
       for (const valueUri of claims[property]) {
-        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri)
+        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri as EntityUri)
         promises.push(promise)
       }
     }

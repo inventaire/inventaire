@@ -3,7 +3,19 @@ import type { uploadContainersNames } from '#controllers/images/lib/containers'
 export type LatLng = [ number, number ]
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head'
-export type HttpHeaderKey = 'accept' | 'authorization' | 'cache-control' | 'content-type' | 'cookie' | 'user-agent' | `x-${string}`
+export type HttpHeaderKey =
+  'accept' |
+  'authorization' |
+  'cache-control' |
+  'content-type' |
+  'cookie' |
+  'date' |
+  'digest' |
+  'host' |
+  'signature' |
+  'user-agent' |
+  `x-${string}`
+
 export type HttpHeaders = Partial<Record<HttpHeaderKey, string>>
 
 export type AbsoluteUrl = `http${string}`
