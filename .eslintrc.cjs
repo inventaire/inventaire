@@ -64,5 +64,6 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [ 'error', { prefer: 'type-imports' } ],
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/member-delimiter-style': [ 'error', { multiline: { delimiter: 'none' } } ],
   },
 }
