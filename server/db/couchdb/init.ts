@@ -22,10 +22,10 @@ async function init ({ preload }) {
     setImmediate(afterInit)
   } catch (err) {
     if (err.message !== 'CouchDB name or password is incorrect') throw err
-
-    const context = pick(config.db, 'protocol', 'hostname', 'port', 'username', 'password')
+    let { password } = config.db
+    password = password.slice(0, 2) + obfuscate(password.slice(2, -1)) + password.at(-1)
+    const context = { ...pick(config.db, 'protocol', 'hostname', 'port', 'username'), password }
     // Avoid logging the password in plain text
-    context.password = context.password.slice(0, 2) + obfuscate(context.password.slice(2, -1)) + context.password.at(-1)
     console.error(err.message, context)
     return process.exit(1)
   }
