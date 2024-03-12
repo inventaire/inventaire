@@ -1,5 +1,4 @@
 import auth from './auth.js'
-import { cacheControl } from './cache.js'
 import { acceptUrlencoded, jsonBodyParser, deduplicateRequests } from './content.js'
 import requestsLogger from './requests_logger.js'
 import security from './security.js'
@@ -18,8 +17,6 @@ export default [
   jsonBodyParser,
   favicon,
   mountStaticFiles,
-
-  cacheControl,
 
   auth.cookieParser,
   auth.session,
