@@ -4,7 +4,7 @@ import type { UserId } from '#types/user'
 
 export type CommentId = CouchUuid
 
-export interface Comment extends CouchDoc {
+export interface TransactionComment extends CouchDoc {
   _id: CouchUuid
   user: UserId
   message: string
