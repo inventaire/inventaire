@@ -49,12 +49,12 @@ const getEntityActor = async name => {
   const { uri } = entity
   const label = defaultLabel(entity)
   const url = entityUrl(uri)
-  const links = [
+  const links: ActivityLink[] = [
     {
       name: publicHost,
       url,
     },
-  ] as ActivityLink[]
+  ]
   if (uri.startsWith('wd:')) {
     const wdLink: ActivityLink = {
       name: 'wikidata.org',
@@ -75,9 +75,9 @@ const getEntityActor = async name => {
 
 const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }: ActorParams) => {
   const { publicKey, publicKeyHash } = await getSharedKeyPair()
-  const actorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}` as LocalActorUrl
+  const actorUrl: LocalActorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}`
   // Use the key hash to bust any cached version of an old key
-  const keyUrl = `${actorUrl}#${publicKeyHash}`
+  const keyUrl: LocalActorUrl = `${actorUrl}#${publicKeyHash}`
 
   const actor: ActorActivity = {
     '@context': [
@@ -91,9 +91,12 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     summary,
     inbox: `${origin}/api/activitypub?action=inbox&name=${actorName}`,
     outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
+    // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
+    // shared public keys they already know
     publicKey: {
       id: keyUrl,
-      owner: `${origin}/api/activitypub?action=actor&name=${actorName}`,
+      owner: actorUrl, // must be actor.id
+      publicKeyPem: publicKey,
     },
   }
 
@@ -121,14 +124,6 @@ const buildActorObject = async ({ actorName, displayName, summary, imagePath, li
     actor.attachment = linksAttachements.concat(attachment)
   } else {
     actor.attachment = attachment
-  }
-
-  // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
-  // shared public keys they already know
-  actor.publicKey = {
-    id: keyUrl,
-    owner: actorUrl, // must be actor.id
-    publicKeyPem: publicKey,
   }
 
   return actor
