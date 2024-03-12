@@ -63,10 +63,14 @@ const getEntityActor = async name => {
     links.push(wdLink)
   }
   const attachments: Attachement[] = await buildAttachements(entity)
+  let summary
+  if ('descriptions' in entity) {
+    summary = entity.descriptions.en
+  }
   return buildActorObject({
     actorName,
     displayName: label,
-    summary: entity.descriptions?.en,
+    summary,
     imagePath: entity.image.url,
     links,
     attachment: attachments,
