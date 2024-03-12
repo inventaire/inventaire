@@ -1,12 +1,14 @@
-import { clone, keyBy, pick } from 'lodash-es'
+import { clone, keyBy } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
 import { itemAllowsTransactions } from '#models/item'
 import config from '#server/config'
-import type { LatLng } from '#types/common'
-import type { Item } from '#types/item'
+import type { LatLng, AbsoluteUrl } from '#types/common'
+import type { SerializedItem } from '#types/item'
+import type { ColorHexCode } from '#types/shelf'
 import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const host = config.getPublicOrigin()
 
@@ -14,8 +16,46 @@ export function getLastItems (limitDate, items) {
   return items.filter(item => item.created > limitDate)
 }
 
-export function formatData (lastItems, label, lang, highlighted) {
-  const more = lastItems.length - highlighted.length
+export interface ActivitySummaryItemViewModel {
+  item: SerializedItem
+  itemHref: AbsoluteUrl
+  user: User
+  distance: number
+  userHref: AbsoluteUrl
+  transactionLabel: string
+  transactionColor: ColorHexCode
+}
+
+export function getActivitySummaryItemsViewModels (items: SerializedItem[], users: User[], position?: LatLng) {
+  users = users.map(serializeUserData)
+  const usersByIds = keyBy(users, '_id')
+  return items.map(item => {
+    const user = usersByIds[item.owner]
+    const itemHref: AbsoluteUrl = `${host}/items/${item._id}`
+    let userHref: AbsoluteUrl
+    let distance, transactionLabel, transactionColor
+    if (user) {
+      if ((user.position != null) && (position != null)) {
+        distance = kmBetween(user.position, position)
+      }
+      userHref = `${host}/users/${user.username}`
+      transactionLabel = `${item.transaction}_personalized_strong`
+      transactionColor = transactionsColors[item.transaction]
+    }
+    return {
+      item,
+      itemHref,
+      user,
+      distance,
+      userHref,
+      transactionLabel,
+      transactionColor,
+    }
+  })
+}
+
+export function formatData (activitySummaryItemsViewModels: ActivitySummaryItemViewModel[], label: string, lang: WikimediaLanguageCode, highlighted) {
+  const more = activitySummaryItemsViewModels.length - highlighted.length
   return {
     display: highlighted.length > 0,
     highlighted: highlighted.map(addUserLang(lang)),
@@ -28,31 +68,10 @@ export function formatData (lastItems, label, lang, highlighted) {
   }
 }
 
-export function embedUsersData (items: Item[], users: User[], position?: LatLng) {
-  users = users.map(serializeUserData)
-  const usersByIds = keyBy(users, '_id')
-  return items.map(item => {
-    const user = usersByIds[item.owner]
-    if (user) {
-      item.href = `${host}/items/${item._id}`
-      item.user = pick(user, requiredUserData)
-      if ((user.position != null) && (position != null)) {
-        item.user.distance = kmBetween(user.position, position)
-      }
-      item.user.href = `${host}/users/${user.username}`
-      item.transactionLabel = `${item.transaction}_personalized_strong`
-      item.transactionColor = transactionsColors[item.transaction]
-    }
-    return item
-  })
-}
-
 export function getHighlightedItems (lastItems, highlightedLength) {
   if (lastItems.length <= highlightedLength) return lastItems
   return getItemsWithTransactionFirst(lastItems, highlightedLength)
 }
-
-const requiredUserData = [ 'username', 'picture' ]
 
 const getItemsWithTransactionFirst = (lastItems, highlightedLength) => {
   // create a new array as items.pop() would affect lastItems everywhere

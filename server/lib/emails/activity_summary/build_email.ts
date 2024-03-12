@@ -19,15 +19,14 @@ const { newsKey, didYouKnowKeys } = config.activitySummary
 const defaultPeriodicity = 20
 
 export default (user: User) => {
-  user.lang = shortLang(user.language)
-
   return getEmailData(user)
   .then(filterOutDuplicatedItems)
   .then(spreadEmailData(user))
 }
 
-const getEmailData = user => {
-  const { _id: userId, lang, lastSummary } = user
+function getEmailData (user: User) {
+  const { _id: userId, language, lastSummary } = user
+  const lang = shortLang(language)
   return objectPromise({
     // pending friends requests
     friendsRequests: getPendingFriendsRequestsCount(userId),
@@ -52,7 +51,7 @@ const getEmailData = user => {
 // new users nearby
 // new users in groups
 
-const filterOutDuplicatedItems = results => {
+function filterOutDuplicatedItems (results) {
   const { lastFriendsBooks, lastNearbyPublicBooks } = results
   const lastFriendsBooksIds = map(lastFriendsBooks.highlighted, '_id')
   lastNearbyPublicBooks.highlighted = lastNearbyPublicBooks.highlighted
@@ -60,7 +59,7 @@ const filterOutDuplicatedItems = results => {
   return results
 }
 
-const spreadEmailData = user => results => {
+const spreadEmailData = (user: User) => results => {
   const {
     friendsRequests,
     groupInvitations,
@@ -71,7 +70,8 @@ const spreadEmailData = user => results => {
     lastNearbyPublicBooks,
   } = results
 
-  const { email, lang } = user
+  const { email, language } = user
+  const lang = shortLang(language)
 
   const countTotal = friendsRequests +
     groupInvitations +
@@ -125,7 +125,7 @@ const counter = (count, path) => ({
   href: host + path,
 })
 
-const newsData = user => {
+function newsData (user) {
   const { lastNews } = user
   if (lastNews !== newsKey) {
     return { display: true, key: newsKey }
@@ -134,7 +134,7 @@ const newsData = user => {
   }
 }
 
-const getDidYouKnowKey = () => {
+function getDidYouKnowKey () {
   const num = sample(didYouKnowKeys)
   return `did_you_know_${num}`
 }

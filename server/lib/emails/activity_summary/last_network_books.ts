@@ -3,7 +3,7 @@ import { getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized
 import { serializeItemData } from '#controllers/items/lib/items'
 import { getUserFriendsAndGroupsCoMembers } from '#controllers/relations/lib/lists'
 import { getUsersByIds } from '#controllers/user/lib/user'
-import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers.js'
+import { getLastItems, formatData, getActivitySummaryItemsViewModels, getHighlightedItems } from './last_books_helpers.js'
 
 export async function getLastNetworkBooks (userId, lang, limitDate = 0) {
   const networkUsersIds = await getUserFriendsAndGroupsCoMembers(userId)
@@ -25,5 +25,5 @@ const extractHighlightedItems = async (lastItems, lang) => {
 const attachUsersData = async items => {
   const usersIds = uniq(items.map(property('owner')))
   const users = await getUsersByIds(usersIds)
-  return embedUsersData(items, users)
+  return getActivitySummaryItemsViewModels(items, users)
 }

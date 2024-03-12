@@ -3,7 +3,7 @@ import { serializeItemData } from '#controllers/items/lib/items'
 import { getUsersAuthorizedDataByIds, getUsersNearby } from '#controllers/user/lib/user'
 import { shortLang } from '#lib/utils/base'
 import type { User } from '#types/user'
-import { getLastItems, formatData, embedUsersData, getHighlightedItems } from './last_books_helpers.js'
+import { getLastItems, formatData, getActivitySummaryItemsViewModels, getHighlightedItems } from './last_books_helpers.js'
 
 const range = 20
 const strictRange = true
@@ -25,8 +25,8 @@ export async function getLastNearbyPublicBooks (user: User, limitDate: number = 
 
 const formatItems = ({ items, users, limitDate, position, lang }) => {
   items = items.map(serializeItemData)
-  let lastItems = getLastItems(limitDate, items)
+  const lastItems = getLastItems(limitDate, items)
   const highlighted = getHighlightedItems(lastItems, 10)
-  lastItems = embedUsersData(lastItems, users, position)
-  return formatData(lastItems, 'nearby', lang, highlighted)
+  const activitySummaryItemsViewModels = getActivitySummaryItemsViewModels(lastItems, users, position)
+  return formatData(activitySummaryItemsViewModels, 'nearby', lang, highlighted)
 }

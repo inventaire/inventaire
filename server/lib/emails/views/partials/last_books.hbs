@@ -6,37 +6,37 @@
         {{#if pictures}}
           <tr>
             <td align="center">
-              <a href="{{href}}" title="{{title}}" style="text-decoration: none"><img src="{{imgSrc pictures 200}}" alt="{{title}}"></a>
+              <a href="{{itemHref}}" title="{{item.title}}" style="text-decoration: none"><img src="{{imgSrc item.pictures 200}}" alt="{{item.title}}"></a>
             </td>
           </tr>
         {{/if}}
         <tr>
           <td>
-            <a href="{{href}}" title="{{title}}" style="text-decoration: none">
-              <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; padding-bottom:0;">{{title}}</h3>
+            <a href="{{itemHref}}" title="{{item.title}}" style="text-decoration: none">
+              <h3 style="margin: 0 auto; text-align: center; color:#2C9AB7; padding-bottom:0;">{{item.title}}</h3>
             </a>
           </td>
         </tr>
-        {{#if authors}}
-          <tr><td style="margin: 0 auto; text-align: center; color:#222222; text-decoration-color:#2C9AB7; padding-bottom: 0.5em;">{{authors}}</td></tr>
+        {{#if item.authors}}
+          <tr><td style="margin: 0 auto; text-align: center; color:#222222; text-decoration-color:#2C9AB7; padding-bottom: 0.5em;">{{item.authors}}</td></tr>
         {{/if}}
         <tr>
           <td>
             <table width="300">
               <tr>
                 <td>
-                  <a href="{{user.href}}" title="{{user.username}}">
+                  <a href="{{userHref}}" title="{{user.username}}">
                     {{! hacky aligning with the label}}
                     <img src="{{imgSrc user.picture 64}}" alt="{{user.username}}" height="64" width="64" style="margin-top: 4px;">
                   </a>
                 </td>
                 <td>
-                  <a href="{{href}}" title="{{title}}" style="color: white; text-decoration: none">
+                  <a href="{{itemHref}}" title="{{item.title}}" style="color: white; text-decoration: none">
                     {{! hacky aligning with the picture}}
                     <table bgcolor="{{transactionColor}}" height="64" width="234">
                       <tr align="center">
                         <td>
-                          {{{i18n userLang transactionLabel user}}}
+                          {{{i18n item.userLang transactionLabel user}}}
                         </td>
                       </tr>
                     </table>
@@ -47,7 +47,8 @@
           {{#if user.distance}}
             <tr align="right" bgcolor="#ffffff">
               <td>
-                <small style="color: #999999">{{i18n userLang 'km_away' user}}</small>
+                {{!-- Passing `this` to give access to `distance` --}}
+                <small style="color: #999999">{{i18n item.userLang 'km_away' this}}</small>
               </td>
             </tr>
           {{/if}}
