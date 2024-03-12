@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { bulkDeleteTasks, getTasksBySuggestionUri, getTasksBySuspectUri, getTasksBySuspectUriAndState, updateTask } from '#controllers/tasks/lib/tasks'
 import { tap, mappedArrayPromise } from '#lib/promises'
 import { radio } from '#lib/radio'
-import checkEntity from './lib/check_entity.js'
+import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 export function initTasksHooks () {
   radio.on('entity:merge', archiveObsoleteEntityUriTasks)
@@ -22,9 +22,9 @@ const deleteBySuggestionUriAndRecheckSuspects = (previousSuggestionUri, newSugge
   .then(tap(bulkDeleteTasks))
   // Re-check entities after having archived obsolete tasks so that relationScores
   // are updated once every doc is in place.
-  // No need to do anything with the newSuggestionUri as checkEntity should find it
+  // No need to do anything with the newSuggestionUri as checkHumanDuplicate should find it
   // if it is relevant
-  .then(mappedArrayPromise(task => checkEntity(task.suspectUri)))
+  .then(mappedArrayPromise(task => checkHumanDuplicate(task.suspectUri)))
 }
 
 const archiveTasks = tasks => {

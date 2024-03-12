@@ -1,12 +1,12 @@
 import { compact } from 'lodash-es'
-import checkEntity from './lib/check_entity.js'
+import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 const sanitization = {
   uris: {},
 }
 
 const controller = async ({ uris }) => {
-  const tasks = await Promise.all(uris.map(checkEntity))
+  const tasks = await Promise.all(uris.map(checkHumanDuplicate))
   return { tasks: compact(tasks.flat()) }
 }
 

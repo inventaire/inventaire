@@ -3,7 +3,7 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
-const path = require('path')
+const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
 const port = 3006
@@ -253,4 +253,8 @@ module.exports = {
   },
 
   mapTilesAccessToken: 'youraccesstoken',
+
+  tasks: {
+    minimumScoreToAutogenerate: 350,
+  },
 }

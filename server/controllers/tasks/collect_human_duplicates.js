@@ -6,7 +6,7 @@ import dbFactory from '#db/couchdb/base'
 import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
-import checkEntity from './lib/check_entity.js'
+import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 const { nice } = CONFIG
 
@@ -30,11 +30,11 @@ const addEntitiesToQueueSequentially = refresh => {
   const pagination = { offset: 0, total: 0 }
 
   const addNextBatch = async () => {
-    info(pagination, 'get entities next batch')
+    info(pagination, 'Get entities next batch')
     const uris = await getNextInvHumanUrisBatch(pagination)
     pagination.total += uris.length
     if (uris.length === 0) {
-      success(pagination.total, 'done. total entities queued:')
+      success(pagination.total, 'Done. Total entities queued:')
     } else {
       const filteredUris = await getFilteredUris(uris, refresh)
       await invTasksEntitiesQueue.pushBatch(filteredUris)
@@ -69,7 +69,7 @@ const deduplicateWorker = async (jobId, uri) => {
     // to give the priority to more urgent matters,
     // such as answering users requests
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
-    await checkEntity(uri)
+    await checkHumanDuplicate(uri)
   } catch (err) {
     // Prevent crashing the queue for non-critical errors
     // Example of 400 error: the entity has already been redirected

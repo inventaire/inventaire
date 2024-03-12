@@ -1,3 +1,4 @@
+import CONFIG from 'config'
 import { map, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
@@ -12,6 +13,8 @@ import { isNonEmptyString } from '#lib/boolean_validations'
 import { forceArray, someMatch } from '#lib/utils/base'
 import { automerge, validateAndAutomerge } from './automerge.js'
 import { findAuthorWithMatchingIsbnInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
+
+const { minimumScoreToAutogenerate } = CONFIG.tasks
 
 export default async function (entity, existingTasks) {
   const [ newSuggestionsSearchResults, suspectWorksData ] = await Promise.all([
@@ -30,7 +33,7 @@ export default async function (entity, existingTasks) {
 
   return Promise.all(suggestions.map(addOccurrencesToSuggestion(suspectWorksData)))
   .then(filterOrMergeSuggestions(entity, worksLabels))
-  .then(filterNewTasks(existingTasks))
+  .then(filterGoodEnoughNewSuggestions(existingTasks))
 }
 
 async function getAndFormatSuggestionsEntities (newSuggestionsSearchResults) {
@@ -98,9 +101,16 @@ function getExternalIdsClaims (claims) {
   return externalIdsClaims
 }
 
-const filterNewTasks = existingTasks => suggestions => {
-  const existingTasksUris = map(existingTasks, 'suggestionUri')
-  return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
+const filterGoodEnoughNewSuggestions = existingTasks => suggestions => {
+  const existingTasksSuggestionsUris = map(existingTasks, 'suggestionUri')
+  return suggestions.filter(suggestion => {
+    if (existingTasksSuggestionsUris.includes(suggestion.uri)) return false
+    // Filter only high matching score, which should greatly reduce the amount of tasks created
+    if (suggestion.lexicalScore > minimumScoreToAutogenerate) return true
+    // Keep suggestions with occurences, which should be worth looking at
+    if (suggestion.occurrences.length > 0) return true
+    return false
+  })
 }
 
 const filterSourced = suggestions => suggestions.filter(sug => sug.occurrences.length > 0)

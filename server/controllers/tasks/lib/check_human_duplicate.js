@@ -2,7 +2,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { error_ } from '#lib/error/error'
 import { info } from '#lib/utils/logs'
-import getNewTasks from './get_new_tasks.js'
+import getNewSuggestionsOrAutomerge from './get_new_suggestions_or_automerge.js'
 import updateRelationScore from './relation_score.js'
 
 const supportedTypes = [ 'human' ]
@@ -28,7 +28,7 @@ export default async uri => {
   }
 
   const existingTasks = await getExistingTasks(uri)
-  const newSuggestions = await getNewTasks(entity, existingTasks)
+  const newSuggestions = await getNewSuggestionsOrAutomerge(entity, existingTasks)
   await createTasksFromSuggestions({
     suspectUri: uri,
     type: 'deduplicate',
