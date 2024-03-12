@@ -6,7 +6,7 @@ import { middlewareErrorHandler } from '#server/middlewares/middleware_error_han
 import { routes } from './controllers/routes.js'
 import middlewares from './middlewares/middlewares.js'
 
-const { port, host, name, publicProtocol } = config
+const { port, hostname, name, publicProtocol } = config
 
 export function initExpress () {
   const app = express()
@@ -41,7 +41,7 @@ export function initExpress () {
   app.disable('x-powered-by')
 
   return new Promise((resolve, reject) => {
-    app.listen(port, host, (err?: Error) => {
+    app.listen(port, hostname, (err?: Error) => {
       if (err) {
         reject(err)
       } else {
