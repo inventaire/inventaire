@@ -1,9 +1,9 @@
-import CONFIG from 'config'
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { parseIsbn } from '#lib/isbn/parse'
 import temporarilyMemoize from '#lib/temporarily_memoize'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import { getSeedsByIsbns } from './dataseed.js'
 
 const { _id: seedUserId } = hardCodedUsers.seed

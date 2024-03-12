@@ -1,10 +1,10 @@
-import CONFIG from 'config'
 import { map } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { paginate } from '#controllers/items/lib/queries_commons'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { serializeUserData } from '#controllers/user/lib/user'
+import CONFIG from '#server/config'
 import serializeFeed from './serialize_feed.js'
 
 const { feed: feedConfig } = CONFIG

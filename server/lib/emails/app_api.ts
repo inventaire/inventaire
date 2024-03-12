@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { isAssetImg, isEntityUri, isLocalImg, isNonEmptyString } from '#lib/boolean_validations'
 import { getHashCode } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import CONFIG from '#server/config'
 
 const root = CONFIG.getPublicOrigin()
 

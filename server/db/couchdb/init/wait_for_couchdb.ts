@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { grey, yellow } from 'tiny-chalk'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 
 const couchdbHost = CONFIG.db.getOrigin()
 

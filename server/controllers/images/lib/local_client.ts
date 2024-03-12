@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { mv, rm } from '#lib/fs'
+import CONFIG from '#server/config'
 
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()

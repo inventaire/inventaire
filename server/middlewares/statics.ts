@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import express from 'express'
 import serveFavicon from 'serve-favicon'
 import { absolutePath } from '#lib/absolute_path'
+import CONFIG from '#server/config'
 import { pass } from './pass.js'
 
 export let mountStaticFiles

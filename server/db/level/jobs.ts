@@ -1,10 +1,10 @@
 import { promisify } from 'node:util'
-import CONFIG from 'config'
 import JobQueueServerAndClient from 'level-jobs'
 import JobsQueueClient from 'level-jobs/client.js'
 import { serverMode } from '#lib/server_mode'
 import { oneMinute } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import getSubDb from './get_sub_db.js'
 
 // always return an object with 'push' and 'pushBatch' function

@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { compact, uniq } from 'lodash-es'
+import CONFIG from '#server/config'
 import { dnsLookup, getHostname, getHostnameIp } from './helpers.js'
 import ipIsInPrivateIpRange from './is_in_private_ip_range.js'
 

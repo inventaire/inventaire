@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import { sendStaticJson } from '#lib/responses'
 import { assert_ } from '#lib/utils/assert_types'
+import CONFIG from '#server/config'
 
 const { piwik, spam, mapTilesAccessToken } = CONFIG
 

@@ -1,10 +1,10 @@
 // retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
-import CONFIG from 'config'
 import parseUrl from 'parseurl'
 import { bundleError } from '#lib/error/pre_filled'
 // to be used in development only
 import * as regex_ from '#lib/regex'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { local: localStorage } = CONFIG.mediaStorage
 const storageFolder = localStorage.folder()

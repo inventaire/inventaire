@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { requests_ } from '#lib/requests'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 describe('requests:sanitize', () => {

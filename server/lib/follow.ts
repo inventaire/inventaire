@@ -1,7 +1,6 @@
 // A module to listen for changes in a CouchDB database, and dispatch the change
 // event to all the subscribed followers
 import follow from 'cloudant-follow'
-import CONFIG from 'config'
 import { debounce } from 'lodash-es'
 import type { DbName } from '#db/couchdb/databases'
 import metaDbFactory from '#db/level/get_sub_db'
@@ -11,6 +10,7 @@ import { requests_ } from '#lib/requests'
 import { serverMode } from '#lib/server_mode'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 
 const metaDb = metaDbFactory('meta', 'utf8')

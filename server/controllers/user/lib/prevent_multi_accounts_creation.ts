@@ -1,8 +1,8 @@
 // Preventing several accounts to be created at the same time, given that
 // the creation process is considerably slowed when bcrypt is used to hash passwords
-import CONFIG from 'config'
 import { newError } from '#lib/error/error'
 import { normalizeString } from '#lib/utils/base'
+import CONFIG from '#server/config'
 
 const { useSlowPasswordHashFunction } = CONFIG
 

@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { difference, map } from 'lodash-es'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
@@ -6,6 +5,7 @@ import dbFactory from '#db/couchdb/base'
 import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import checkEntity from './lib/check_entity.js'
 
 const { nice } = CONFIG

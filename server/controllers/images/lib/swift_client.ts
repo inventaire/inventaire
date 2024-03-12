@@ -1,8 +1,8 @@
 import { createReadStream } from 'node:fs'
-import CONFIG from 'config'
 import { getContentLength, rm } from '#lib/fs'
 import { requests_ } from '#lib/requests'
 import { log } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import getToken from './get_swift_token.js'
 

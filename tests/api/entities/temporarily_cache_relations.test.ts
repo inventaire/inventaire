@@ -1,9 +1,9 @@
-import CONFIG from 'config'
 import 'should'
 import { identity, map } from 'lodash-es'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '../fixtures/entities.js'
 import { addClaim, merge } from '../utils/entities.js'
 import { publicReq } from '../utils/utils.js'
@@ -11,8 +11,8 @@ import { publicReq } from '../utils/utils.js'
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
 
-if (CONFIG.leveldbMemoryBackend) {
-  throw new Error(`this test requires ${CONFIG.env} config to have CONFIG.leveldbMemoryBackend=false`)
+if (config.leveldbMemoryBackend) {
+  throw new Error(`this test requires ${config.env} config to have config.leveldbMemoryBackend=false`)
 }
 
 // Due to this feature being primarily used to keep data after edits on Wikidata,

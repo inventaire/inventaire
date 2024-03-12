@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import leveldbFactory from '#db/level/get_sub_db'
 import { expired } from '#lib/time'
 import { LogError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
 const db = leveldbFactory('waiting', 'utf8')

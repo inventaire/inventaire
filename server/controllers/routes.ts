@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import activitypub from './activitypub/activitypub.js'
 import webfinger from './activitypub/webfinger.js'
 import auth from './auth/auth.js'

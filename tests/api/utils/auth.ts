@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 
 export const sessionCookieName = `${CONFIG.name}:session`
 export const sessionSignatureCookieName = `${sessionCookieName}.sig`

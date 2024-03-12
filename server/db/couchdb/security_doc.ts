@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 
 const { username } = CONFIG.db
 

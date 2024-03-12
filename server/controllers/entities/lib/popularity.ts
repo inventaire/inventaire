@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { map } from 'lodash-es'
 import { initJobQueue } from '#db/level/jobs'
 import { isEntityUri } from '#lib/boolean_validations'
@@ -8,6 +7,7 @@ import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { objectPromise } from '#lib/promises'
 import { oneMonth } from '#lib/time'
 import { info, logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { EntityUri } from '#types/entity'
 import { buildPopularityByUri } from './build_popularity_by_uri.js'
 

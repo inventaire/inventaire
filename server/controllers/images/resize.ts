@@ -1,11 +1,11 @@
 import { URL } from 'node:url'
-import CONFIG from 'config'
 import parseUrl from 'parseurl'
 import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
 import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
+import CONFIG from '#server/config'
 import { getResizedImage } from './lib/get_resized_image.js'
 
 const { env } = CONFIG

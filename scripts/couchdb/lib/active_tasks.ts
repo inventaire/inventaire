@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const dbBaseUrl = CONFIG.db.getOrigin()
 

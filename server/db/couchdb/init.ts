@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import { mapKeys, pick } from 'lodash-es'
 import { couchInit } from '#db/couchdb/init/couch_init'
 import { obfuscate, objLength } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import { databases } from './databases.js'
 
 const setPreloadSuffix = preload => (_, designDocsName) => preload ? `${designDocsName}_preload` : designDocsName

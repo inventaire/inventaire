@@ -1,8 +1,8 @@
 import util from 'node:util'
-import CONFIG from 'config'
 import { isArguments } from 'lodash-es'
 import chalk, { red, grey } from 'tiny-chalk'
 import { iscontextualizedError, type ContextualizedError } from '#lib/error/format_error'
+import CONFIG from '#server/config'
 
 const { offline, verbose } = CONFIG
 // Log full objects

@@ -1,9 +1,9 @@
-import CONFIG from 'config'
 import should from 'should'
 import { cache_ } from '#lib/cache'
 import { wait } from '#lib/promises'
 import { getHashCode } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
+import CONFIG from '#server/config'
 import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
 const { ttlCheckFrequency } = CONFIG.leveldb

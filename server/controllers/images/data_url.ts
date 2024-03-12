@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { newError } from '#lib/error/error'
@@ -6,6 +5,7 @@ import { newInvalidError } from '#lib/error/pre_filled'
 import isPrivateUrl from '#lib/network/is_private_url'
 import { endReqTimer, sanitizeUrl, startReqTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { enabled: dataseedEnabled } = CONFIG.dataseed
 

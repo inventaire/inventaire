@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { isArray } from 'lodash-es'
+import CONFIG from '#server/config'
 import { getNames } from '../snapshot/helpers.js'
 
 const host = CONFIG.getPublicOrigin()

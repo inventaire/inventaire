@@ -1,9 +1,9 @@
 import crypto from 'node:crypto'
-import CONFIG from 'config'
 import OAuth from 'oauth-1.0a'
 import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
+import CONFIG from '#server/config'
 import type { AuthentifiedReq, Res } from '#types/server'
 import type { UserId } from '#types/user'
 

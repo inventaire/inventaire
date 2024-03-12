@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import { throttle } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
+import CONFIG from '#server/config'
 import { addToBatch, postBatch } from './bulk.js'
 import deindex from './deindex.js'
 import filters from './filters.js'

@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getClient, getClientWithAuthorization } from '../utils/oauth.js'
 import { postUrlencoded } from '../utils/request.js'

@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { activeLanguages } from 'inventaire-i18n'
 import { isString } from 'lodash-es'
 import moment, { type LongDateFormatKey } from 'moment'
@@ -7,6 +6,7 @@ import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import translate from './translate.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 

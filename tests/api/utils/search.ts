@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { isArray, map } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
@@ -7,6 +6,7 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
+import CONFIG from '#server/config'
 import { customAuthReq, rawRequest } from './request.js'
 import { publicReq } from './utils.js'
 

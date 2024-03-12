@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import express from 'express'
 import { isArray } from 'lodash-es'
 import { info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import { middlewareErrorHandler } from '#server/middlewares/middleware_error_handler'
 import { routes } from './controllers/routes.js'
 import middlewares from './middlewares/middlewares.js'

@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import 'should'
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import config from '#server/config'
 import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
@@ -12,7 +12,7 @@ import { createUser } from '../fixtures/users.js'
 import { signedReq } from '../utils/activitypub.js'
 import { addItemsToShelf, getActorName } from '../utils/shelves.js'
 
-const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 200
+const debounceTime = config.activitypub.activitiesDebounceTime + 200
 
 describe('followers activity delivery', () => {
   describe('users followers', () => {

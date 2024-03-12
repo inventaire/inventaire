@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import 'should'
 import { createHuman } from '../fixtures/entities.js'
 import { getSomeGroup } from '../fixtures/groups.js'

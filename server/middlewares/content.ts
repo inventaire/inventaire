@@ -1,9 +1,9 @@
 import bodyParser from 'body-parser'
-import CONFIG from 'config'
 import parseUrl from 'parseurl'
 import { bundleError } from '#lib/error/pre_filled'
 import { getHashCode } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { deduplicateRequests: dedupRequests } = CONFIG
 const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests

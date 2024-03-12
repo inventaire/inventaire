@@ -1,5 +1,4 @@
 import crypto from 'node:crypto'
-import CONFIG from 'config'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { getSha256Base64Digest } from '#lib/crypto'
 import { newError } from '#lib/error/error'
@@ -7,6 +6,7 @@ import { requests_ } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { HttpHeaders } from '#types/common'
 
 const sanitize = CONFIG.activitypub.sanitizeUrls

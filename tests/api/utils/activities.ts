@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { getRandomBytes } from '#lib/crypto'
+import CONFIG from '#server/config'
 
 const origin = CONFIG.getPublicOrigin()
 

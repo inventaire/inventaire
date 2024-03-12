@@ -1,10 +1,10 @@
 import 'should'
-import CONFIG from 'config'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import runQuery from '#data/wikidata/run_query'
 import { someFakeUri } from '#fixtures/entities'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const { get, set, del } = entitiesRelationsTemporaryCache

@@ -1,7 +1,7 @@
 // A server-wide event bus
 import { EventEmitter } from 'node:events'
-import CONFIG from 'config'
 import { warn, logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 export const radio = new EventEmitter()
 

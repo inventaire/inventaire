@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import should from 'should'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { startGenericMockServer } from '../utils/mock_server.js'
 

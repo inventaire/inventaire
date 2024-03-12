@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { resolveEntrySeedsByExternalIds } from '#controllers/entities/lib/resolver/resolve_by_external_ids'
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
@@ -12,6 +11,7 @@ import { cache_ } from '#lib/cache'
 import { oneMonth } from '#lib/time'
 import { isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { offline } = CONFIG
 

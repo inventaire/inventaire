@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { omit, pick } from 'lodash-es'
 import { findUserByEmail } from '#controllers/user/lib/user'
 import dbFactory from '#db/couchdb/base'
@@ -8,6 +7,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
+import CONFIG from '#server/config'
 
 const { tokenDaysToLive } = CONFIG
 

@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import { isNumber } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 import { assert_ } from './utils/assert_types.js'
 

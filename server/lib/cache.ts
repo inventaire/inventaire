@@ -1,5 +1,4 @@
 import { promisify } from 'node:util'
-import CONFIG from 'config'
 import levelTtl from 'level-ttl'
 import { cacheDb } from '#db/level/get_db'
 import { isNonEmptyString } from '#lib/boolean_validations'
@@ -7,6 +6,7 @@ import { newError, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn, logError, LogError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { ttlCheckFrequency, defaultCacheTtl } = CONFIG.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: defaultCacheTtl })

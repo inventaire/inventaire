@@ -1,6 +1,6 @@
 import { Agent as HttpAgent } from 'node:http'
 import { Agent as HttpsAgent } from 'node:https'
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 
 const { ipFamily: family } = CONFIG.outgoingRequests
 

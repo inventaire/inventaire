@@ -9,13 +9,13 @@
 
 import { readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
-import CONFIG from 'config'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomBytes } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
 import { invert } from '#lib/utils/base'
 import { warn, info, LogError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
 // If a session is started at the end-of-life of a key

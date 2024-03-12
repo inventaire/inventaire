@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import fetch from 'node-fetch'
 import { newError } from '#lib/error/error'
 import { errorHandler } from '#lib/error/error_handler'
@@ -6,6 +5,7 @@ import { bundleError } from '#lib/error/pre_filled'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
 import { endReqTimer, startReqTimer, userAgent, type RequestTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 import type { Req, Res } from '#types/server'
 

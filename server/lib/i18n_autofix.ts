@@ -1,9 +1,9 @@
 import { stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import CONFIG from 'config'
 import { objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info, warn } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import { wait } from './promises.js'
 
 const { srcFolderPath } = CONFIG.i18n

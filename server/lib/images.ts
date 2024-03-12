@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
-import CONFIG from 'config'
 import gm from 'gm'
 import { sha1 } from '#lib/crypto'
+import CONFIG from '#server/config'
 
 const { maxSize } = CONFIG.mediaStorage.images
 

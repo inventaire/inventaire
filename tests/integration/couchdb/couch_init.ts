@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import fetch from 'node-fetch'
 import should from 'should'
 import { couchInit } from '#db/couchdb/init/couch_init'
 import { getStringifiedDesignDoc } from '#db/couchdb/init/sync_design_docs'
+import CONFIG from '#server/config'
 import { someDesignDocView } from '#tests/integration/couchdb/fixtures'
 
 const authHost = CONFIG.db.getOrigin()

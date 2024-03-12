@@ -1,6 +1,6 @@
 import 'should'
-import CONFIG from 'config'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
 import { updateClaim } from '../utils/entities.js'

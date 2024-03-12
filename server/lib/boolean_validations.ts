@@ -1,8 +1,8 @@
 // Keep in sync with client/app/lib/boolean_tests
-import CONFIG from 'config'
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
+import CONFIG from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { Url } from '#types/common'
 import type { InvEntityUri, IsbnEntityUri, WdEntityUri } from '#types/entity'

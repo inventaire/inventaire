@@ -1,7 +1,7 @@
 // Doc: http://developer.piwik.org/api-reference/tracking-api
-import CONFIG from 'config'
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
+import CONFIG from '#server/config'
 import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 

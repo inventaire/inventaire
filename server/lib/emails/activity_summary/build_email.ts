@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { map, sample } from 'lodash-es'
 import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#controllers/groups/lib/counts'
 import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
@@ -6,6 +5,7 @@ import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queri
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
 import { objectPromise } from '#lib/promises'
 import { shortLang } from '#lib/utils/base'
+import CONFIG from '#server/config'
 import type { User } from '#types/user'
 import { i18n } from '../i18n/i18n.js'
 import { getLastNearbyPublicBooks } from './last_nearby_books.js'

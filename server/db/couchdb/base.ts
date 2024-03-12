@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { couchdbBundlesFactory } from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
+import CONFIG from '#server/config'
 import type { DatabaseBaseName, DatabaseName, DesignDocName } from '#types/couchdb'
 import getDbApi from './cot_base.js'
 

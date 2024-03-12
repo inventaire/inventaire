@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import should from 'should'
 import { indexes } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 import { createUser } from '../fixtures/users.js'
 import { getIndexedDoc } from '../utils/search.js'
 import { deleteUser } from '../utils/users.js'

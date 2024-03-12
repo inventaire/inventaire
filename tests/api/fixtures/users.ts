@@ -1,11 +1,11 @@
 import 'should'
 import { randomBytes } from 'node:crypto'
-import CONFIG from 'config'
 import { isPlainObject, random, round } from 'lodash-es'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
+import CONFIG from '#server/config'
 import { makeFriends } from '../utils/relations.js'
 import { request, rawRequest } from '../utils/request.js'
 

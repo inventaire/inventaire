@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'

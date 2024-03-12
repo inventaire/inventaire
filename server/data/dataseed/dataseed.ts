@@ -4,12 +4,12 @@
 // while entities created internally ramp up toward getting us autonomous
 // Its place should be progressively decreased until complete removal
 
-import CONFIG from 'config'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { forceArray } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
+import CONFIG from '#server/config'
 import type { Isbn } from '#types/entity'
 
 const { enabled, origin } = CONFIG.dataseed

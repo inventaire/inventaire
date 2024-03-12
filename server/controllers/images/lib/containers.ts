@@ -1,9 +1,9 @@
-import CONFIG from 'config'
 import localClient from '#controllers/images/lib/local_client'
 import swiftClient from '#controllers/images/lib/swift_client'
 import { getHashFilename, removeExif, shrinkAndFormat } from '#lib/images'
 import { emit } from '#lib/radio'
 import { log, info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 // 'swift' or 'local'
 const { mode } = CONFIG.mediaStorage

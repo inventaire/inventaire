@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
+import CONFIG from '#server/config'
 import type { User } from '#types/user'
 
 const { newsKey } = CONFIG.activitySummary

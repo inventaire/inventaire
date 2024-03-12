@@ -2,10 +2,10 @@
 // taking care of avoiding edit conflicts on the user document when several items
 // are created/edited in a short period of time
 
-import CONFIG from 'config'
 import { debounce } from 'lodash-es'
 import { radio } from '#lib/radio'
 import { LogError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
 const { itemsCountDebounceTime: delay } = CONFIG

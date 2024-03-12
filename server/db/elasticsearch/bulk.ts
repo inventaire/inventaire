@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 import { logBulkRes } from './helpers.js'
 

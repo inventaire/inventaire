@@ -1,7 +1,7 @@
 import 'should'
-import CONFIG from 'config'
 import { createItem } from '#fixtures/items'
 import { wait } from '#lib/promises'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createShelf } from '../fixtures/shelves.js'
 import { authReq, getUser, getUserB } from '../utils/utils.js'

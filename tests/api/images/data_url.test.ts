@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { authReq } from '../utils/utils.js'

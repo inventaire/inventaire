@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { findOneWaitingForSummary } from '#controllers/user/lib/summary'
 import { oneHour } from '#lib/time'
 import { info, logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import sendActivitySummary from './send_activity_summary.js'
 
 const { maxEmailsPerHour } = CONFIG.activitySummary

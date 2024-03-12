@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import CONFIG from '#server/config'
 import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
 import type { Url } from '#types/common'
 import buildAttachements from './build_attachements.js'

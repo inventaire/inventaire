@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import cookieParser from 'cookie-parser'
 import cookieSession from 'cookie-session'
 import Keygrip from 'keygrip'
@@ -7,6 +6,7 @@ import oauthServer from '#controllers/auth/oauth_server'
 import autoRotatedKeys from '#lib/auto_rotated_keys'
 import passport_ from '#lib/passport/passport'
 import { expired } from '#lib/utils/base'
+import CONFIG from '#server/config'
 
 const { name, cookieMaxAge, publicProtocol } = CONFIG
 

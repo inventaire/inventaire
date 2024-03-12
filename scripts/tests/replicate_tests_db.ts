@@ -1,9 +1,9 @@
 #!/usr/bin/env -S node --loader ts-node/esm --no-warnings
-import CONFIG from 'config'
 import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { Log } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const dbHost = CONFIG.db.getOrigin()
 

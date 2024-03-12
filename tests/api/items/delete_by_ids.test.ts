@@ -1,13 +1,13 @@
-import CONFIG from 'config'
-import { wait } from '#lib/promises'
 import 'should'
+import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
+import config from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createItem } from '../fixtures/items.js'
 import { authReq, authReqB, getUser } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
-const debounceDelay = CONFIG.itemsCountDebounceTime + 500
+const debounceDelay = config.itemsCountDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {
   if (!authReqFn) { authReqFn = authReq }

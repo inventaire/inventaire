@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { isArray, isNumber, isPlainObject, isString, uniq } from 'lodash-es'
 import { isNonEmptyArray, isLocalActivityPubActorUrl, isLang, isCollection, isPositiveIntegerString, isStrictlyPositiveInteger, isNonEmptyString, isColorHexCode, isPatchId, isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -10,6 +9,7 @@ import { isWikimediaLanguageCode } from '#lib/wikimedia'
 import common from '#models/validations/common'
 import user from '#models/validations/user'
 import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
+import CONFIG from '#server/config'
 
 const origin = CONFIG.getPublicOrigin()
 const publicHost = origin.split('://')[1]

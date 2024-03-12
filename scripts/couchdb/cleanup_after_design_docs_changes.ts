@@ -11,10 +11,10 @@
 //
 //    export NODE_ENV=production; npm run couchdb:cleanup-after-design-docs-changes
 
-import CONFIG from 'config'
 import { databases } from '#db/couchdb/databases'
 import { requests_ } from '#lib/requests'
 import { success } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 import getDatabasesNames from './lib/get_databases_names.js'

@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import 'should'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { createShelf } from '../fixtures/shelves.js'

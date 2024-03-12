@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { newError } from '#lib/error/error'
+import CONFIG from '#server/config'
 
 const { wikidataOAuth } = CONFIG
 

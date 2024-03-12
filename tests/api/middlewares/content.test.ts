@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import 'should'
 import fetch from 'node-fetch'
+import config from '#server/config'
 
-const origin = CONFIG.getLocalOrigin()
+const origin = config.getLocalOrigin()
 
 describe('content', () => {
   describe('body-parser', () => {

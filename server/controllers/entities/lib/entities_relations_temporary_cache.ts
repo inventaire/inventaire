@@ -1,9 +1,9 @@
-import CONFIG from 'config'
 import leveldbFactory from '#db/level/get_sub_db'
 import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { EntityUri, PropertyUri } from '#types/entity'
 import type { AbstractIteratorOptions } from 'abstract-leveldown'
 

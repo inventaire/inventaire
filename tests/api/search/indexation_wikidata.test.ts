@@ -1,12 +1,12 @@
-import CONFIG from 'config'
 import 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import { getByUri } from '../utils/entities.js'
 import { getIndexedDoc, deindex, indexPlaceholder } from '../utils/search.js'
 
 const { wikidata: wikidataIndex } = indexesNamesByBaseNames
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 describe('indexation:wikidata', () => {
   it('should index a wikidata entity when refreshed', async () => {

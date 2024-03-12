@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import 'should'
 import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { sign } from '#controllers/activitypub/lib/security'
 import { generateRsaKeyPair } from '#lib/crypto'
+import config from '#server/config'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createUsername, createUser } from '../fixtures/users.js'
 import {
@@ -96,7 +96,7 @@ describe('activitypub:signed:request', () => {
       const { username, keyId } = await getSomeRemoteServerUser(emitterUser)
       const now = new Date()
       const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
-      const { publicHostname } = CONFIG
+      const { publicHostname } = config
       const reqHeaders = {
         host: publicHostname,
         date: thirtySecondsAgo,

@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import 'should'
 import papaparse from 'papaparse'
 import { createUser } from '#fixtures/users'
+import config from '#server/config'
 import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 import {
   createEdition,
@@ -17,7 +17,7 @@ import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.j
 
 const { parse } = papaparse
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 const endpoint = '/api/items?action=export&format=csv'
 const generateUrl = path => `${host}${path}`

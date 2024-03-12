@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import { absolutePath } from '#lib/absolute_path'
 import { info } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const dbFolder = absolutePath('root', 'db')
 const { suffix } = CONFIG.db

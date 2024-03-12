@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import 'should'
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
@@ -12,8 +12,8 @@ import { updateItems } from '../utils/items.js'
 import { getActorName } from '../utils/shelves.js'
 import { publicReq, getFediversableUser } from '../utils/utils.js'
 
-const origin = CONFIG.getPublicOrigin()
-const debounceTime = CONFIG.activitypub.activitiesDebounceTime + 50
+const origin = config.getPublicOrigin()
+const debounceTime = config.activitypub.activitiesDebounceTime + 50
 const endpoint = '/api/activitypub?action=outbox&name='
 
 describe('outbox', () => {

@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import should from 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import CONFIG from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createEdition,

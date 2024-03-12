@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import { keyBy, map, mapValues, property } from 'lodash-es'
+import CONFIG from '#server/config'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [

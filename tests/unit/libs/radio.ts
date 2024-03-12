@@ -1,10 +1,10 @@
-import CONFIG from 'config'
 import 'should'
 import { wait } from '#lib/promises'
 import { emit, radio } from '#lib/radio'
+import config from '#server/config'
 
 // Do not run without having set NODE_ENV
-CONFIG.env.should.startWith('tests')
+config.env.should.startWith('tests')
 
 describe('radio', () => {
   describe('emit [in test environment]', () => {

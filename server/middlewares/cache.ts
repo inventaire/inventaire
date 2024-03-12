@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import CONFIG from '#server/config'
 import { pass } from './pass.js'
 
 const { noCache } = CONFIG

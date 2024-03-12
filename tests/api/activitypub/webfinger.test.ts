@@ -1,8 +1,8 @@
-import CONFIG from 'config'
 import 'should'
 import { find } from 'lodash-es'
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
@@ -11,7 +11,7 @@ import { getActorName } from '../utils/shelves.js'
 import { updateUser } from '../utils/users.js'
 import { publicReq } from '../utils/utils.js'
 
-const publicOrigin = CONFIG.getPublicOrigin()
+const publicOrigin = config.getPublicOrigin()
 const publicHost = publicOrigin.split('://')[1]
 
 const endpoint = '/.well-known/webfinger?resource='
@@ -21,7 +21,7 @@ describe('activitypub:webfinger', () => {
     try {
       const endpoint = '/.well-known/webfinger?rezzzzzz='
       const invalidResource = 'bar.org'
-      invalidResource.should.not.equal(CONFIG.hostname)
+      invalidResource.should.not.equal(config.hostname)
       const actor = `acct:foo@${invalidResource}`
       await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
     } catch (err) {
@@ -34,7 +34,7 @@ describe('activitypub:webfinger', () => {
   it('should reject invalid host', async () => {
     try {
       const invalidResource = 'bar.org'
-      invalidResource.should.not.equal(CONFIG.hostname)
+      invalidResource.should.not.equal(config.hostname)
       const actor = `acct:foo@${invalidResource}`
       await publicReq('get', `${endpoint}${actor}`).then(shouldNotBeCalled)
     } catch (err) {

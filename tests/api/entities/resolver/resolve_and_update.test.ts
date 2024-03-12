@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import should from 'should'
 import {
   createWork,
@@ -12,6 +11,7 @@ import {
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
+import CONFIG from '#server/config'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'

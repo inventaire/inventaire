@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { getCachedEnrichedEntity } from '#controllers/entities/lib/get_wikidata_enriched_entities'
 import { initJobQueue } from '#db/level/jobs'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
@@ -7,6 +6,7 @@ import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 
 const { nice } = CONFIG
 const { minReindexationInterval } = CONFIG.elasticsearch

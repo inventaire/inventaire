@@ -1,10 +1,10 @@
 // Identity: v3
-import CONFIG from 'config'
 import { newError } from '#lib/error/error'
 // Swift: v2
 import { requests_ } from '#lib/requests'
 import { tenMinutes } from '#lib/time'
 import { logError } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import type { Url } from '#types/common'
 
 let lastToken

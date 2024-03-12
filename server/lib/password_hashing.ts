@@ -1,5 +1,5 @@
-import CONFIG from 'config'
 import credential from 'credential'
+import CONFIG from '#server/config'
 
 const { useSlowPasswordHashFunction } = CONFIG
 

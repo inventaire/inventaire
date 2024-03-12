@@ -1,7 +1,7 @@
-import CONFIG from 'config'
 import { identity } from 'lodash-es'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
+import CONFIG from '#server/config'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
 import { resolveEntry } from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'

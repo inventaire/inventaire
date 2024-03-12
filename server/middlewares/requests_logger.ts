@@ -1,6 +1,6 @@
-import CONFIG from 'config'
 import parseUrl from 'parseurl'
 import { coloredElapsedTime } from '#lib/time'
+import CONFIG from '#server/config'
 
 const host = CONFIG.getPublicOrigin()
 const { mutedDomains, mutedPath } = CONFIG.requestsLogger
