@@ -60,7 +60,7 @@ export async function getUsersAuthorizedDataByIds (ids, reqUserId) {
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
 }
 
-export async function getUsersAuthorizedData (usersDocsPromise: Promise<User[]>, reqUserId: UserId, extraAttribute?: string) {
+export async function getUsersAuthorizedData (usersDocsPromise: Promise<DocWithUsernameInUserDb[]>, reqUserId: UserId, extraAttribute?: string) {
   const [ usersDocs, networkIds ] = await Promise.all([
     usersDocsPromise,
     getNetworkIds(reqUserId),
