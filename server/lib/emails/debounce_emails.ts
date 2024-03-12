@@ -4,10 +4,11 @@ import { isObject, isString } from 'lodash-es'
 import leveldbFactory from '#db/level/get_sub_db'
 import { emptyValue } from '#db/level/utils'
 import { warn } from '#lib/utils/logs'
+import type { Transaction, TransactionId } from '#types/transaction'
 
 const db = leveldbFactory('waiting', 'utf8')
 
-export function transactionUpdate (transaction) {
+export function transactionUpdate (transaction: Transaction | TransactionId) {
   // Polymorphism: accepts transaction doc or directly the transaction _id
   let transactionId
   if (isObject(transaction)) {

@@ -1,9 +1,11 @@
+import type { TransactionEmailViewModel } from '#lib/emails/build_transaction_email'
 import { kmBetween } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
+import type { TransactionUserRole } from '#types/transaction'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
 
@@ -183,38 +185,39 @@ export default {
   },
 
   transactions: {
-    yourItemWasRequested: transaction => {
-      return transactionEmail(transaction, 'owner', 'your_item_was_requested')
+    yourItemWasRequested: (transactionEmailViewModel: TransactionEmailViewModel) => {
+      return transactionEmail(transactionEmailViewModel, 'owner', 'your_item_was_requested')
     },
 
-    updateOnYourItem: transaction => {
-      return transactionEmail(transaction, 'owner', 'update_on_your_item')
+    updateOnYourItem: (transactionEmailViewModel: TransactionEmailViewModel) => {
+      return transactionEmail(transactionEmailViewModel, 'owner', 'update_on_your_item')
     },
 
-    updateOnItemYouRequested: transaction => {
-      return transactionEmail(transaction, 'requester', 'update_on_item_you_requested')
+    updateOnItemYouRequested: (transactionEmailViewModel: TransactionEmailViewModel) => {
+      return transactionEmail(transactionEmailViewModel, 'requester', 'update_on_item_you_requested')
     },
   },
 }
 
-const transactionEmail = (transaction, role, label) => {
-  checkUserNotificationsSettings(transaction.mainUser, label)
-  const other = role === 'owner' ? 'requester' : 'owner'
-  const lang = shortLang(transaction.mainUser.language)
+const transactionEmail = (transactionEmailViewModel: TransactionEmailViewModel, role: TransactionUserRole, label: string) => {
+  const { transaction, mainUser, other, itemTitle } = transactionEmailViewModel
+  checkUserNotificationsSettings(mainUser, label)
+  const otherRole = role === 'owner' ? 'requester' : 'owner'
+  const lang = shortLang(mainUser.language)
 
   const titleContext = {
-    username: transaction[other].username,
-    title: transaction.item.title,
+    username: transactionEmailViewModel[otherRole].username,
+    title: itemTitle,
   }
   return {
-    to: transaction[role].email,
+    to: transactionEmailViewModel[role].email,
     subject: i18n(lang, `${label}_title`, titleContext),
     template: 'transaction_update',
-    context: Object.assign(transaction, {
+    context: Object.assign(transactionEmailViewModel, {
       host,
       link: `${host}/transactions/${transaction._id}`,
-      title: transaction.item.title,
-      username: transaction.other.username,
+      title: itemTitle,
+      username: other.username,
       subject: `${label}_subject`,
       button: `${label}_button`,
       lang,
