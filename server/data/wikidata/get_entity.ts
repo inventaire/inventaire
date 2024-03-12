@@ -13,12 +13,12 @@ const { getEntities } = wdk
 const requester = async ids => {
   ids = uniq(ids)
   const idsBatches = chunk(ids, 50)
-  const entitiesBatches = []
+  const entitiesBatches = {}
   for (const idsBatch of idsBatches) {
     const entitiesBatch = await getEntitiesBatch(idsBatch)
-    entitiesBatches.push(entitiesBatch)
+    Object.assign(entitiesBatches, entitiesBatch)
   }
-  return Object.assign(...entitiesBatches)
+  return entitiesBatches
 }
 
 async function getEntitiesBatch (idsBatch) {
