@@ -10,12 +10,12 @@ import { requests_ } from '#lib/requests'
 import { serverMode } from '#lib/server_mode'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 
 const metaDb = metaDbFactory('meta', 'utf8')
-const dbHost = CONFIG.db.getOrigin() as Url
-const { reset: resetFollow, delay: delayFollow } = CONFIG.db.follow
+const dbHost = config.db.getOrigin() as Url
+const { reset: resetFollow, delay: delayFollow } = config.db.follow
 
 type DatabaseSeq = `${number}-{string}`
 
@@ -29,7 +29,7 @@ setImmediate(importCircularDependencies)
 // This behaviors allows, in API tests environement, to have the tests server
 // following, while scripts being called directly by tests don't compete
 // with the server
-const freezeFollow = CONFIG.db.follow.freeze || !serverMode
+const freezeFollow = config.db.follow.freeze || !serverMode
 
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
@@ -41,7 +41,7 @@ export default async params => {
   assert_.function(onChange)
   if (reset != null) assert_.function(reset)
 
-  const dbName = CONFIG.db.name(dbBaseName)
+  const dbName = config.db.name(dbBaseName)
 
   if (freezeFollow) {
     warn(dbName, 'freezed follow')

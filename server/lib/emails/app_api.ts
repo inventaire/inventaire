@@ -1,9 +1,9 @@
 import { isAssetImg, isEntityUri, isLocalImg, isNonEmptyString } from '#lib/boolean_validations'
 import { getHashCode } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const root = CONFIG.getPublicOrigin()
+const root = config.getPublicOrigin()
 
 // Keep in sync with client/app/api/img
 export const imgUrlBuilder = (path, width = 1600, height = 1600) => {

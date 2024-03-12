@@ -3,12 +3,12 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { parseIsbn } from '#lib/isbn/parse'
 import temporarilyMemoize from '#lib/temporarily_memoize'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { getSeedsByIsbns } from './dataseed.js'
 
 const { _id: seedUserId } = hardCodedUsers.seed
 
-const { enabled: dataseedEnabled } = CONFIG.dataseed
+const { enabled: dataseedEnabled } = config.dataseed
 
 const resolverParams = {
   create: true,

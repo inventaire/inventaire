@@ -1,7 +1,7 @@
 import credential from 'credential'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { useSlowPasswordHashFunction } = CONFIG
+const { useSlowPasswordHashFunction } = config
 
 let passwordHashing
 

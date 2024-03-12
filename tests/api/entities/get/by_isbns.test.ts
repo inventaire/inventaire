@@ -45,7 +45,7 @@ describe('entities:get:by-isbns', () => {
       should(res.notFound).not.be.ok()
     })
 
-    // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+    // Requires a running dataseed service and config.dataseed.enabled=true
     xit('should autocreate from dataseed seed when autocreation is true', async () => {
       const isbnKnownByDataseed = '9783030917043'
       const uri = `isbn:${isbnKnownByDataseed}`

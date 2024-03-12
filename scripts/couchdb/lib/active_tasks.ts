@@ -1,9 +1,9 @@
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const dbBaseUrl = CONFIG.db.getOrigin()
+const dbBaseUrl = config.db.getOrigin()
 
 let count = 0
 export const waitForActiveTasksToBeDone = async () => {

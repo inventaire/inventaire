@@ -1,10 +1,10 @@
 import fetch from 'node-fetch'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { DatabaseOperationsSummary } from '#types/couchdb_init'
 import { putSecurityDoc } from './put_security_doc.js'
 import { syncDesignDocs } from './sync_design_docs.js'
 
-const couchdbHost = CONFIG.db.getOrigin()
+const couchdbHost = config.db.getOrigin()
 
 export async function initDb (dbData) {
   const { name: dbName, designDocs } = dbData

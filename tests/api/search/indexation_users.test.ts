@@ -1,13 +1,13 @@
 import should from 'should'
 import { indexes } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { createUser } from '../fixtures/users.js'
 import { getIndexedDoc } from '../utils/search.js'
 import { deleteUser } from '../utils/users.js'
 
 const { index } = indexes.users
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 describe('indexation:users', () => {
   it('should index a new user', async () => {

@@ -2,10 +2,10 @@ import { compact, map, max, min } from 'lodash-es'
 import { context } from '#controllers/activitypub/lib/helpers'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Activity, ItemNote } from '#types/activity'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 const maxLinksToDisplay = 3
 
 export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {

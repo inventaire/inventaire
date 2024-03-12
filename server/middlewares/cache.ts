@@ -1,7 +1,7 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { pass } from './pass.js'
 
-const { noCache } = CONFIG
+const { noCache } = config
 
 export let cacheControl
 

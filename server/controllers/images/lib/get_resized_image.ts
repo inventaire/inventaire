@@ -5,11 +5,11 @@ import { bundleError } from '#lib/error/pre_filled'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
 import { endReqTimer, startReqTimer, userAgent, type RequestTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import type { Req, Res } from '#types/server'
 
-const { mediaStorage } = CONFIG
+const { mediaStorage } = config
 
 const { maxSize } = mediaStorage.images
 const oneMB = 1024 ** 2

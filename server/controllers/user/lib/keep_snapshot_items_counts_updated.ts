@@ -5,10 +5,10 @@
 import { debounce } from 'lodash-es'
 import { radio } from '#lib/radio'
 import { LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import updateSnapshotItemsCounts from './update_snapshot_items_counts.js'
 
-const { itemsCountDebounceTime: delay } = CONFIG
+const { itemsCountDebounceTime: delay } = config
 
 export function keepSnapshotItemsCountsUpdated () {
   const debouncedUpdaters = {}

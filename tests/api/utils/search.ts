@@ -6,11 +6,11 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { customAuthReq, rawRequest } from './request.js'
 import { publicReq } from './utils.js'
 
-const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 const endpoint = '/api/search'
 

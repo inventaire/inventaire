@@ -112,7 +112,7 @@ describe('entities:resolve:create-unresolved', () => {
     newWorkClaimValue.should.equal(frenchLang)
   })
 
-  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  // Requires a running dataseed service and config.dataseed.enabled=true
   xit('should add an image claim from an image url to created edition', async () => {
     const { entries } = await resolveAndCreate({
       edition: {

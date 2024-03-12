@@ -4,10 +4,10 @@ import { absolutePath } from '#lib/absolute_path'
 import { debug, imgSrc, stringify } from '#lib/emails/handlebars_helpers'
 import { i18n, I18n, dateI18n } from '#lib/emails/i18n/i18n'
 import { warn, success, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
 const viewsPath = absolutePath('lib', 'emails/views')
-const debugMode = CONFIG.mailer.nodemailer.host === 'smtp.ethereal.email'
+const debugMode = config.mailer.nodemailer.host === 'smtp.ethereal.email'
 
 const options = {
   viewEngine: {
@@ -28,7 +28,7 @@ const options = {
   extName: '.hbs',
 }
 
-const { defaultFrom, nodemailer: nodemailerOptions } = CONFIG.mailer
+const { defaultFrom, nodemailer: nodemailerOptions } = config.mailer
 const defaults = { from: defaultFrom }
 
 const transporter = createTransport(nodemailerOptions, defaults)

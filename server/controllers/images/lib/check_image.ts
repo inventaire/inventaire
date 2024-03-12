@@ -4,9 +4,9 @@ import { containers } from '#controllers/images/lib/containers'
 import { imageIsUsed as userImageIsUsed } from '#controllers/user/lib/user'
 import { assert_ } from '#lib/utils/assert_types'
 import { info, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { checkDelays } = CONFIG.mediaStorage.images
+const { checkDelays } = config.mediaStorage.images
 
 export default async ({ container, hash, url, context }) => {
   if (url) [ container, hash ] = url.split('/').slice(2)

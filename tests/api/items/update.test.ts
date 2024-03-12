@@ -1,13 +1,13 @@
 import 'should'
 import { createItem } from '#fixtures/items'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createShelf } from '../fixtures/shelves.js'
 import { authReq, getUser, getUserB } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
-const debounceDelay = CONFIG.itemsCountDebounceTime + 500
+const debounceDelay = config.itemsCountDebounceTime + 500
 
 describe('items:update', () => {
   it('should reject invalid item id', async () => {

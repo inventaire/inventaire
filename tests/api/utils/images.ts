@@ -5,7 +5,7 @@ import fetch from 'node-fetch'
 import downloadImage from '#controllers/images/lib/download_image'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
 import { updateClaim } from './entities.js'
@@ -13,8 +13,8 @@ import { updateGroup } from './groups.js'
 import { updateUser } from './users.js'
 import { authReq, getUser } from './utils.js'
 
-const { mediaStorage } = CONFIG
-const host = CONFIG.getPublicOrigin()
+const { mediaStorage } = config
+const host = config.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
 

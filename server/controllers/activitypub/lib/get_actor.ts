@@ -1,6 +1,6 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
 import type { Url } from '#types/common'
 import buildAttachements from './build_attachements.js'
@@ -8,7 +8,7 @@ import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './help
 import { getSharedKeyPair } from './shared_key_pair.js'
 import { validateShelf, validateUser, validateEntity } from './validations.js'
 
-const origin = CONFIG.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
 const getShelfActor = async name => {

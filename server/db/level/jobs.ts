@@ -4,7 +4,7 @@ import JobsQueueClient from 'level-jobs/client.js'
 import { serverMode } from '#lib/server_mode'
 import { oneMinute } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import getSubDb from './get_sub_db.js'
 
 // always return an object with 'push' and 'pushBatch' function
@@ -12,7 +12,7 @@ import getSubDb from './get_sub_db.js'
 export function initJobQueue (jobName, worker, maxConcurrency) {
   const db = getSubDb(`job:${jobName}`, 'utf8')
 
-  const run = CONFIG.jobs[jobName] && CONFIG.jobs[jobName].run
+  const run = config.jobs[jobName] && config.jobs[jobName].run
   if (typeof run !== 'boolean') {
     throw new Error(`unknown job: ${jobName}`)
   }

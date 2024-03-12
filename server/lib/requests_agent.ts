@@ -1,8 +1,8 @@
 import { Agent as HttpAgent } from 'node:http'
 import { Agent as HttpsAgent } from 'node:https'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { ipFamily: family } = CONFIG.outgoingRequests
+const { ipFamily: family } = config.outgoingRequests
 
 const httpAgent = new HttpAgent({ keepAlive: true, family })
 export const httpsAgent = new HttpsAgent({ keepAlive: true, family })

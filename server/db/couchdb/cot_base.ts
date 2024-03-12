@@ -1,4 +1,4 @@
 import blueCot from 'blue-cot'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-export default blueCot(CONFIG.db)
+export default blueCot(config.db)

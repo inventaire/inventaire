@@ -3,11 +3,11 @@ import { cache_ } from '#lib/cache'
 import { wait } from '#lib/promises'
 import { getHashCode } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
 
-const { ttlCheckFrequency } = CONFIG.leveldb
-if (CONFIG.env !== 'tests-unit') throw new Error(`invalid env: ${CONFIG.env}`)
+const { ttlCheckFrequency } = config.leveldb
+if (config.env !== 'tests-unit') throw new Error(`invalid env: ${config.env}`)
 
 const hashKey = async key => getHashCode(key)
 const getSomeRandomValue = async () => getRandomString(8)

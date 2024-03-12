@@ -7,18 +7,18 @@ import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { objectPromise } from '#lib/promises'
 import { oneMonth } from '#lib/time'
 import { info, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { EntityUri } from '#types/entity'
 import { buildPopularityByUri } from './build_popularity_by_uri.js'
 
-const { nice } = CONFIG
+const { nice } = config
 // Give a longer than default life time to cached value, as:
 // - popularity freshness can be considered secondary
 // - populating a popularity score can be relatively expensive, as it might require fetching a large graph of entities
 // - a popularity score being just an integer, it is extremely cheap to keep in store
 const ttl = 6 * oneMonth
 
-export async function getEntitiesPopularities ({ uris, refresh }: { uris: EntityUri[], refresh?: boolean}) {
+export async function getEntitiesPopularities ({ uris, refresh }: { uris: EntityUri[]; refresh?: boolean}) {
   if (uris.length === 0) return {}
   const popularityPromises = {}
   for (const uri of uris) {

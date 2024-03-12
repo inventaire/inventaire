@@ -6,15 +6,15 @@ import { newError, catchNotFound } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn, logError, LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { ttlCheckFrequency, defaultCacheTtl } = CONFIG.leveldb
+const { ttlCheckFrequency, defaultCacheTtl } = config.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: defaultCacheTtl })
 const dbPut = promisify(db.put)
 const dbBatch = promisify(db.batch)
 // It's convenient in tests to have the guaranty that the cached value was saved
 // but in production, that means delaying API responses in case LevelDB writes get slow
-const alwaysWaitForSavedValue = CONFIG.env.startsWith('tests')
+const alwaysWaitForSavedValue = config.env.startsWith('tests')
 
 export const cache_ = {
   // - key: the cache key

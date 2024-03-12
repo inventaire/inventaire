@@ -3,10 +3,10 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { notFoundError } from '#lib/error/error'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { validateUser, validateShelf } from './lib/validations.js'
 
-const origin = CONFIG.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
 const sanitization = {

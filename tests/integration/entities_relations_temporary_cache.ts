@@ -4,11 +4,11 @@ import runQuery from '#data/wikidata/run_query'
 import { someFakeUri } from '#fixtures/entities'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const { get, set, del } = entitiesRelationsTemporaryCache
-const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
+const { checkFrequency, ttl } = config.entitiesRelationsTemporaryCache
 
 const property = 'wdt:P50'
 const targetEntityUri = 'wd:Q1'

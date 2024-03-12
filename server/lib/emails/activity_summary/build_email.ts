@@ -5,15 +5,15 @@ import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queri
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
 import { objectPromise } from '#lib/promises'
 import { shortLang } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { User } from '#types/user'
 import { i18n } from '../i18n/i18n.js'
 import { getLastNearbyPublicBooks } from './last_nearby_books.js'
 import { getLastNetworkBooks } from './last_network_books.js'
 
-const host = CONFIG.getPublicOrigin()
-const { contactAddress } = CONFIG
-const { newsKey, didYouKnowKeys } = CONFIG.activitySummary
+const host = config.getPublicOrigin()
+const { contactAddress } = config
+const { newsKey, didYouKnowKeys } = config.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
 const defaultPeriodicity = 20

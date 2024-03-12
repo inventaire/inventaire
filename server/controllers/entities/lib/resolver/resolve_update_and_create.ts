@@ -1,13 +1,13 @@
 import { identity } from 'lodash-es'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
 import { resolveEntry } from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
 import UpdateResolvedEntry from './update_resolved_entry.js'
 
-const { nice } = CONFIG
+const { nice } = config
 
 export async function resolveUpdateAndCreate (params) {
   params.batchId = Date.now()

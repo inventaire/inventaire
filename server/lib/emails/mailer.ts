@@ -3,10 +3,10 @@ import { initDebouncedEmailsCrawler } from '#lib/emails/debounced_emails_crawler
 import sendEmail from '#lib/emails/send_email'
 import { radio } from '#lib/radio'
 import { warn, info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import activitySummary from './activity_summary/activity_summary.js'
 
-const { initDelay, disabled } = CONFIG.mailer
+const { initDelay, disabled } = config.mailer
 
 export function initEmailServices () {
   initMailer()
@@ -48,7 +48,7 @@ const initMailerEventListeners = () => {
 }
 
 const initActivitySummary = () => {
-  if (CONFIG.activitySummary.disabled) {
+  if (config.activitySummary.disabled) {
     warn('activity summary disabled')
   } else {
     info('activity summary enabled')

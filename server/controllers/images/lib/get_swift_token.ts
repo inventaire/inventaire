@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { tenMinutes } from '#lib/time'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 
 let lastToken
@@ -12,7 +12,7 @@ let lastTokenExpirationTime = 0
 // let a 10 minutes margin before token expiration
 const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes)
 
-const { username, password, authUrl, tenantName } = CONFIG.mediaStorage.swift
+const { username, password, authUrl, tenantName } = config.mediaStorage.swift
 
 // source: https://docs.openstack.org/keystone/pike/contributor/http-api.html#i-have-a-non-python-client
 const url = `${authUrl}/v3/auth/tokens` as Url

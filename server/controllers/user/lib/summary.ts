@@ -1,9 +1,9 @@
 import dbFactory from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { User } from '#types/user'
 
-const { newsKey } = CONFIG.activitySummary
+const { newsKey } = config.activitySummary
 const db = await dbFactory('users')
 
 const waitingForSummary = limit => {

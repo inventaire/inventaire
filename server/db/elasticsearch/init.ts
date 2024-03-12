@@ -2,12 +2,12 @@ import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import { get } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import createIndex from './create_index.js'
 import reindexOnChange from './reindex_on_change.js'
 
-const { origin: elasticOrigin } = CONFIG.elasticsearch
+const { origin: elasticOrigin } = config.elasticsearch
 
 export async function waitForElasticsearchInit () {
   await waitForElastic()

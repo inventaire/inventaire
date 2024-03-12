@@ -1,13 +1,13 @@
 import should from 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { createHuman, createEdition, addSerie } from '../fixtures/entities.js'
 import { deleteByUris, merge, updateLabel } from '../utils/entities.js'
 import { getIndexedDoc } from '../utils/search.js'
 
 const { entities: entitiesIndex } = indexesNamesByBaseNames
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 describe('indexation:entities', () => {
   it('should index a new local entity', async () => {

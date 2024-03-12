@@ -3,10 +3,10 @@ import swiftClient from '#controllers/images/lib/swift_client'
 import { getHashFilename, removeExif, shrinkAndFormat } from '#lib/images'
 import { emit } from '#lib/radio'
 import { log, info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
 // 'swift' or 'local'
-const { mode } = CONFIG.mediaStorage
+const { mode } = config.mediaStorage
 
 info(`media storage: ${mode}`)
 

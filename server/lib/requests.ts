@@ -8,7 +8,7 @@ import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { HighResolutionTime, HttpHeaders, HttpMethod, Url } from '#types/common'
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
@@ -20,8 +20,8 @@ import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
 const { repository } = requireJson(absolutePath('root', 'package.json'))
-const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = CONFIG.outgoingRequests
-export const userAgent = `${CONFIG.name} (${repository.url})`
+const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
+export const userAgent = `${config.name} (${repository.url})`
 const defaultTimeout = 30 * 1000
 
 let requestCount = 0
@@ -139,7 +139,7 @@ function formatHeaders (headers) {
 }
 
 interface FetchOptions {
-  method: string,
+  method: string
   headers: Record<string, string>
   body?: unknown
   agent?: Agent | typeof getAgent

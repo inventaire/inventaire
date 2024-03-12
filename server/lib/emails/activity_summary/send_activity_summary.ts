@@ -1,10 +1,10 @@
 import { justReceivedActivitySummary } from '#controllers/user/lib/summary'
 import { sendMail } from '#lib/emails/transporter'
 import { warn, info, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import buildEmail from './build_email.js'
 
-const { disableUserUpdate } = CONFIG.activitySummary
+const { disableUserUpdate } = config.activitySummary
 
 let updateUser
 // It can be convenient in development to disable user update

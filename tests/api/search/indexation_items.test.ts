@@ -1,12 +1,12 @@
 import should from 'should'
 import { indexes } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { createItem } from '../fixtures/items.js'
 import { deleteItemsByIds, updateItems } from '../utils/items.js'
 import { getIndexedDoc } from '../utils/search.js'
 
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 const { index } = indexes.items
 
 describe('indexation:items', () => {

@@ -1,6 +1,6 @@
-import _CONFIG from 'config'
+import _config from 'config'
 import type { Config } from '#types/config'
 
-const CONFIG: Config = _CONFIG
+const config: Config = _config
 
-export default CONFIG
+export default config

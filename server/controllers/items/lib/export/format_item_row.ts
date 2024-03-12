@@ -1,8 +1,8 @@
 import { isArray } from 'lodash-es'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { getNames } from '../snapshot/helpers.js'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 export default lang => item => {
   const { _id, entity: uri, details, notes, shelfNames, created, visibility, transaction } = item

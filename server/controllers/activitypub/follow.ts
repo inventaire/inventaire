@@ -4,20 +4,20 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { LocalActorUrl, ActivityId, UriObj, ActivityType } from '#types/activity'
 import type { Url } from '#types/common'
 import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 interface FollowArgs {
-  id: ActivityId,
-  type: ActivityType,
+  id: ActivityId
+  type: ActivityType
  '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
-  actor: LocalActorUrl,
+  actor: LocalActorUrl
   object: Url
 }
 

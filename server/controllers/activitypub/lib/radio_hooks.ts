@@ -4,7 +4,7 @@ import { getUserById } from '#controllers/user/lib/user'
 import { radio } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { ShelfId } from '#types/shelf'
 import type { UserId } from '#types/user'
 import { getActivitiesByActorName, createActivity } from './activities.js'
@@ -13,7 +13,7 @@ import formatShelfItemsActivities from './format_shelf_items_activities.js'
 import formatUserItemsActivities from './format_user_items_activities.js'
 import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
-const { activitiesDebounceTime } = CONFIG.activitypub
+const { activitiesDebounceTime } = config.activitypub
 assert_.number(activitiesDebounceTime)
 const debouncedActivities = {}
 

@@ -6,7 +6,7 @@ import { info } from '#lib/utils/logs'
 
 const errorMessagePattern = /^(4|5)00/
 
-// if this route is enabled by CONFIG
+// if this route is enabled by config
 // allows the client to notify the server of i18n keys without a value
 const i18nMissingKeys = (req, res) => {
   let { missingKeys } = req.body

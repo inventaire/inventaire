@@ -3,15 +3,15 @@ import Rss from 'rss'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { imgSrc } from '#lib/emails/handlebars_helpers'
 import { i18n } from '#lib/emails/i18n/i18n'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { ImagePath, RelativeUrl, Url } from '#types/common'
 import type { Item, ItemId } from '#types/item'
 import type { User } from '#types/user'
 import getItemDescription from './get_item_description.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-const root = CONFIG.getPublicOrigin()
-const { feed: feedConfig } = CONFIG
+const root = config.getPublicOrigin()
+const { feed: feedConfig } = config
 const oneDayInMinutes = 24 * 60
 
 interface FeedOptions {

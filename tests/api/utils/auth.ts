@@ -1,6 +1,6 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-export const sessionCookieName = `${CONFIG.name}:session`
+export const sessionCookieName = `${config.name}:session`
 export const sessionSignatureCookieName = `${sessionCookieName}.sig`
 const sessionCookiePattern = new RegExp(`${sessionCookieName}=([^;]+);`)
 const sessionSignatureCookiePattern = new RegExp(`${sessionCookieName}\\.sig=([^;]+);`)

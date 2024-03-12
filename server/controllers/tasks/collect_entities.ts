@@ -5,10 +5,10 @@ import dbFactory from '#db/couchdb/base'
 import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import checkEntity from './lib/check_entity.js'
 
-const { nice } = CONFIG
+const { nice } = config
 
 const db = await dbFactory('entities')
 const batchLength = 1000

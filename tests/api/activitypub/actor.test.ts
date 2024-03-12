@@ -3,7 +3,7 @@ import { find } from 'lodash-es'
 import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activitypub/lib/helpers'
 import { propertiesDisplay } from '#controllers/activitypub/lib/properties_display'
 import { i18n } from '#lib/emails/i18n/i18n'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createHuman, createEdition } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
@@ -13,7 +13,7 @@ import { getActorName } from '../utils/shelves.js'
 import { updateUser } from '../utils/users.js'
 import { publicReq } from '../utils/utils.js'
 
-const origin = CONFIG.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
 const getAttachement = async (actorName, prop) => {

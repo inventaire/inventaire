@@ -1,9 +1,9 @@
 import fetch from 'node-fetch'
 import { grey, yellow } from 'tiny-chalk'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const couchdbHost = CONFIG.db.getOrigin()
+const couchdbHost = config.db.getOrigin()
 
 export function waitForCouchdb () {
   const testAvailability = async delay => {

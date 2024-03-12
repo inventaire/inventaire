@@ -1,11 +1,11 @@
-import CONFIG from '#server/config'
 import 'should'
+import config from '#server/config'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { rawRequest } from '../utils/request.js'
 import { getUser } from '../utils/utils.js'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 describe('rss redirections', () => {
   it('should redirect to a user feed by id', async () => {

@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import gm from 'gm'
 import { sha1 } from '#lib/crypto'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { maxSize } = CONFIG.mediaStorage.images
+const { maxSize } = config.mediaStorage.images
 
 // gm accepts either a path string or a stream
 export function shrinkAndFormatStream (data, width, height) {

@@ -1,5 +1,5 @@
 import { keyBy, map, mapValues, property } from 'lodash-es'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [
@@ -13,7 +13,7 @@ const indexesData = [
   { indexBaseName: 'lists', sync: true },
 ]
 .map(data => {
-  data.index = data.index || CONFIG.db.name(data.indexBaseName)
+  data.index = data.index || config.db.name(data.indexBaseName)
   return data
 })
 

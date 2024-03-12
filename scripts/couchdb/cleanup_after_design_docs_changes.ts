@@ -14,14 +14,14 @@
 import { databases } from '#db/couchdb/databases'
 import { requests_ } from '#lib/requests'
 import { success } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 import getDatabasesNames from './lib/get_databases_names.js'
 
-const { suffix } = CONFIG.db
+const { suffix } = config.db
 const dbsNames = getDatabasesNames(suffix)
-const dbBaseUrl = CONFIG.db.getOrigin()
+const dbBaseUrl = config.db.getOrigin()
 
 async function deleteDesignDocs () {
   const entries = Object.keys(databases)
@@ -34,7 +34,7 @@ async function deleteDesignDocs () {
 }
 
 async function deleteDesignDoc ([ dbBaseName, designDocBaseName ]) {
-  const dbName = CONFIG.db.name(dbBaseName)
+  const dbName = config.db.name(dbBaseName)
   const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload` as Url
   try {
     const { _rev } = await requests_.get(docUrl)

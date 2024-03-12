@@ -9,10 +9,10 @@ import { requests_ } from '#lib/requests'
 import { forceArray } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Isbn } from '#types/entity'
 
-const { enabled, origin } = CONFIG.dataseed
+const { enabled, origin } = config.dataseed
 
 const reqOptions = {
   timeout: 60 * 1000,

@@ -3,10 +3,10 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 interface MakeUrlArgs {
   origin?: string

@@ -4,7 +4,7 @@ import { uploadSomeImage } from '#tests/api/utils/images'
 import { authReq } from '#tests/api/utils/utils'
 
 describe('entities:resolve:create-and-enrich', () => {
-  // This tests requires to have CONFIG.dataseed.enabled = true
+  // This tests requires to have config.dataseed.enabled = true
   xit('should be off by default', async () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070368228'
@@ -18,7 +18,7 @@ describe('entities:resolve:create-and-enrich', () => {
     should(edition.claims['invp:P2']).not.be.ok()
   })
 
-  // This tests requires to have CONFIG.dataseed.enabled = true
+  // This tests requires to have config.dataseed.enabled = true
   xit('should create an edition with an image', async () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070375165'
@@ -32,7 +32,7 @@ describe('entities:resolve:create-and-enrich', () => {
     should(edition.claims['invp:P2']).be.ok()
   })
 
-  // This tests requires to have CONFIG.dataseed.enabled = true
+  // This tests requires to have config.dataseed.enabled = true
   xit('should not try to enrich an edition seed that already has an image claim', async () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070375165'

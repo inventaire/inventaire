@@ -1,8 +1,8 @@
 import { sendStaticJson } from '#lib/responses'
 import { assert_ } from '#lib/utils/assert_types'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { piwik, spam, mapTilesAccessToken } = CONFIG
+const { piwik, spam, mapTilesAccessToken } = config
 
 assert_.array(spam.suspectKeywords)
 

@@ -1,4 +1,4 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 import 'should'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { authReq } from '../utils/utils.js'
@@ -56,7 +56,7 @@ describe('images:data-url', () => {
     await authReq('get', `${endpoint}&url=${encodeURIComponent(imageUrl)}`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.context.url.should.equal(`${CONFIG.getPublicOrigin()}${imageUrl}`)
+      err.body.context.url.should.equal(`${config.getPublicOrigin()}${imageUrl}`)
     })
   })
 })

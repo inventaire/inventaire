@@ -11,7 +11,7 @@ import {
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -147,7 +147,7 @@ describe('entities:resolver:update-resolved', () => {
     should(updatedClaims['wdt:P1680']).not.be.ok()
   })
 
-  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  // Requires a running dataseed service and config.dataseed.enabled=true
   xit('should add an image claim from an image url to the updated edition', async () => {
     const { uri: editionUri, isbn } = await createEditionWithIsbn()
     const entry = {
@@ -162,9 +162,9 @@ describe('entities:resolver:update-resolved', () => {
     claims['invp:P2'][0].should.be.ok()
   })
 
-  // Requires a running dataseed service and CONFIG.dataseed.enabled=true
+  // Requires a running dataseed service and config.dataseed.enabled=true
   xit('should refuse to add an invalid image', async () => {
-    const validUrlButNotAnImage = `${CONFIG.getLocalOrigin()}/api/tests`
+    const validUrlButNotAnImage = `${config.getLocalOrigin()}/api/tests`
     const { isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {

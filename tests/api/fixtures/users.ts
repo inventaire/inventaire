@@ -5,11 +5,11 @@ import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { makeFriends } from '../utils/relations.js'
 import { request, rawRequest } from '../utils/request.js'
 
-const origin = CONFIG.getLocalOrigin()
+const origin = config.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
 
 let getUser, updateUser

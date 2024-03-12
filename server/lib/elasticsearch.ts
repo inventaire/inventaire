@@ -2,11 +2,11 @@ import { isNumber } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import { assert_ } from './utils/assert_types.js'
 
-const { origin: elasticOrigin } = CONFIG.elasticsearch
+const { origin: elasticOrigin } = config.elasticsearch
 
 export function buildSearcher (params) {
   const { dbBaseName, queryBuilder } = params

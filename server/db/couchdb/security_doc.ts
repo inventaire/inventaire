@@ -1,9 +1,9 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { username } = CONFIG.db
+const { username } = config.db
 
 if (typeof username !== 'string') {
-  throw new Error(`bad CONFIG.db.username: ${username}`)
+  throw new Error(`bad config.db.username: ${username}`)
 }
 
 export default {

@@ -2,11 +2,11 @@ import { createReadStream } from 'node:fs'
 import { getContentLength, rm } from '#lib/fs'
 import { requests_ } from '#lib/requests'
 import { log } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import getToken from './get_swift_token.js'
 
-const { publicURL } = CONFIG.mediaStorage.swift
+const { publicURL } = config.mediaStorage.swift
 
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}` as AbsoluteUrl
 const relativeUrl = (container, filename) => `/img/${container}/${filename}` as RelativeUrl

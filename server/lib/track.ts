@@ -1,12 +1,12 @@
 // Doc: http://developer.piwik.org/api-reference/tracking-api
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 
-const { enabled, endpoint, idsite, rec } = CONFIG.piwik
-const origin = CONFIG.getPublicOrigin()
+const { enabled, endpoint, idsite, rec } = config.piwik
+const origin = config.getPublicOrigin()
 const placeholderUrl = '/unknown'
 
 export function track (req: Req, actionArray: string[]) {

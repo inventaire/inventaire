@@ -6,10 +6,10 @@ import { requests_ } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { HttpHeaders } from '#types/common'
 
-const sanitize = CONFIG.activitypub.sanitizeUrls
+const sanitize = config.activitypub.sanitizeUrls
 
 export function sign (params) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params

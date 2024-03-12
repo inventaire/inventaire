@@ -4,17 +4,17 @@ import { requests_, type ReqOptions } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
 import type { User } from '#types/user'
 import type { OverrideProperties } from 'type-fest'
 
-const host: AbsoluteUrl = CONFIG.getPublicOrigin()
+const host: AbsoluteUrl = config.getPublicOrigin()
 
 type RequestOptions = OverrideProperties<ReqOptions, { headers?: HttpHeaders }>
 
 async function testServerAvailability () {
-  if (!CONFIG.waitForServer) return
+  if (!config.waitForServer) return
 
   try {
     await requests_.get(`${host}/api/tests`, { timeout: 1000 })

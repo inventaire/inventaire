@@ -6,9 +6,9 @@ import oauthServer from '#controllers/auth/oauth_server'
 import autoRotatedKeys from '#lib/auto_rotated_keys'
 import passport_ from '#lib/passport/passport'
 import { expired } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { name, cookieMaxAge, publicProtocol } = CONFIG
+const { name, cookieMaxAge, publicProtocol } = config
 
 // See https://github.com/expressjs/cookie-session/#cookie-options
 const cookieSessionParams = {

@@ -3,12 +3,12 @@ import { assert_ } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
 
-const host = CONFIG.getPublicOrigin()
-const { defaultFrom } = CONFIG.mailer
+const host = config.getPublicOrigin()
+const { defaultFrom } = config.mailer
 
 export default {
   validationEmail: (user, token) => {

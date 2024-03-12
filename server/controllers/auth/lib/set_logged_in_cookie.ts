@@ -1,6 +1,6 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { cookieMaxAge } = CONFIG
+const { cookieMaxAge } = config
 
 // Used to trigger logged in UI on the client-side
 export default res => {

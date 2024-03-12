@@ -1,11 +1,11 @@
 import leveldbFactory from '#db/level/get_sub_db'
 import { expired } from '#lib/time'
 import { LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { debouncedEmailSenderByName } from './send_debounced_email.js'
 
 const db = leveldbFactory('waiting', 'utf8')
-const { crawlPeriod, debounceDelay, disabled } = CONFIG.debouncedEmail
+const { crawlPeriod, debounceDelay, disabled } = config.debouncedEmail
 
 export function initDebouncedEmailsCrawler () {
   if (!disabled) setInterval(crawl, crawlPeriod)

@@ -1,10 +1,10 @@
 import { absolutePath } from '#lib/absolute_path'
 import { info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
 const dbFolder = absolutePath('root', 'db')
-const { suffix } = CONFIG.db
-const { inMemoryLRUCacheSize } = CONFIG.leveldb
+const { suffix } = config.db
+const { inMemoryLRUCacheSize } = config.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`
 const cacheDbPathBase = `${dbFolder}/leveldb_cache`
 const generalDbFolderPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase

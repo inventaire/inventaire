@@ -2,13 +2,13 @@ import { clone, keyBy, pick } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
 import { itemAllowsTransactions } from '#models/item'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { LatLng } from '#types/common'
 import type { Item } from '#types/item'
 import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 export function getLastItems (limitDate, items) {
   return items.filter(item => item.created > limitDate)

@@ -4,9 +4,9 @@ import { bundleError } from '#lib/error/pre_filled'
 // to be used in development only
 import * as regex_ from '#lib/regex'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { local: localStorage } = CONFIG.mediaStorage
+const { local: localStorage } = config.mediaStorage
 const storageFolder = localStorage.folder()
 
 // images urls look like /img/#{container}/#{hash}"

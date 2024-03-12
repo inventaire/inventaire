@@ -2,7 +2,7 @@
 import { isArray, isPlainObject, isString } from 'lodash-es'
 import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { Url } from '#types/common'
 import type { InvEntityUri, IsbnEntityUri, WdEntityUri } from '#types/entity'
@@ -11,7 +11,7 @@ import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
-const publicOrigin = CONFIG.getPublicOrigin()
+const publicOrigin = config.getPublicOrigin()
 
 const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
 

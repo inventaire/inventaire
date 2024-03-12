@@ -1,6 +1,6 @@
 import should from 'should'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import {
   createEdition,
@@ -13,7 +13,7 @@ import {
 import { rawRequest } from '../utils/request.js'
 import { publicReq } from '../utils/utils.js'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {

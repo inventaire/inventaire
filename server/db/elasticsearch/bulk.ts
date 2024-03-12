@@ -1,11 +1,11 @@
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import { logBulkRes } from './helpers.js'
 
-const { origin: elasticOrigin } = CONFIG.elasticsearch
+const { origin: elasticOrigin } = config.elasticsearch
 const headers = { 'content-type': 'application/x-ndjson' }
 
 export function addToBatch (batch, action, index, doc) {

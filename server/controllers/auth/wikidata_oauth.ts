@@ -3,18 +3,18 @@ import OAuth from 'oauth-1.0a'
 import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { AuthentifiedReq, Res } from '#types/server'
 import type { UserId } from '#types/user'
 
-const root = CONFIG.getPublicOrigin()
+const root = config.getPublicOrigin()
 function createHmacSha1Hash (baseString, key) {
   return crypto.createHmac('sha1', key)
   .update(baseString)
   .digest('base64')
 }
 
-const { consumer_key: consumerKey, consumer_secret: consumerSecret } = CONFIG.wikidataOAuth
+const { consumer_key: consumerKey, consumer_secret: consumerSecret } = config.wikidataOAuth
 // Documentation: https://github.com/ddo/oauth-1.0a#readme
 const oauth = new OAuth({
   consumer: {

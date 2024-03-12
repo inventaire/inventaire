@@ -1,7 +1,7 @@
 import { mv, rm } from '#lib/fs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { local: localStorage } = CONFIG.mediaStorage
+const { local: localStorage } = config.mediaStorage
 const storageFolder = localStorage.folder()
 
 const filePath = (container, filename) => `${storageFolder}/${container}/${filename}`

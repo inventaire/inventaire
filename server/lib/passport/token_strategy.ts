@@ -4,12 +4,12 @@ import { findUserByEmail } from '#controllers/user/lib/user'
 import { verifyPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Req } from '#types/server'
 import type { Email, User } from '#types/user'
 import loginAttempts from './login_attempts.js'
 
-const { tokenDaysToLive } = CONFIG
+const { tokenDaysToLive } = config
 
 // Reusing LocalStrategy but substituing username/password by email/token
 const options = {

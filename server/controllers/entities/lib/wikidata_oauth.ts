@@ -1,7 +1,7 @@
 import { newError } from '#lib/error/error'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { wikidataOAuth } = CONFIG
+const { wikidataOAuth } = config
 
 export function validateWikidataOAuth (user) {
   const userWikidataOAuth = user.oauth != null ? user.oauth.wikidata : undefined

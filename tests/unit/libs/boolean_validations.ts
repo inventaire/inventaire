@@ -1,9 +1,9 @@
 import 'should'
 import { isLocalActivityPubActorUrl } from '#lib/boolean_validations'
 import { buildUrl } from '#lib/utils/url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const host = CONFIG.getPublicOrigin()
+const host = config.getPublicOrigin()
 
 describe('boolean validations', () => {
   describe('isLocalActivityPubActorUrl', () => {

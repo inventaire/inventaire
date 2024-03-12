@@ -2,10 +2,10 @@ import mappings from '#db/elasticsearch/mappings/mappings'
 import settings from '#db/elasticsearch/settings/settings'
 import { requests_ } from '#lib/requests'
 import { warn, success } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 
-const { origin } = CONFIG.elasticsearch
+const { origin } = config.elasticsearch
 
 export default async index => {
   const url = `${origin}/${index}` as Url

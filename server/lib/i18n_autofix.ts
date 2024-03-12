@@ -3,12 +3,12 @@ import { resolve } from 'node:path'
 import { objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info, warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { wait } from './promises.js'
 
-const { srcFolderPath } = CONFIG.i18n
+const { srcFolderPath } = config.i18n
 
-const missingSrcFolderPathMessage = 'Set CONFIG.i18n.srcFolderPath in config/local-dev.cjs to automatically add missing i18n keys to your local inventaire-i18n repository'
+const missingSrcFolderPathMessage = 'Set config.i18n.srcFolderPath in config/local-dev.cjs to automatically add missing i18n keys to your local inventaire-i18n repository'
 export let appendToClientKeys = (keys: string[]) => {
   warn(keys, missingSrcFolderPathMessage)
 }

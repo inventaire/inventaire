@@ -2,9 +2,9 @@
 // the creation process is considerably slowed when bcrypt is used to hash passwords
 import { newError } from '#lib/error/error'
 import { normalizeString } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { useSlowPasswordHashFunction } = CONFIG
+const { useSlowPasswordHashFunction } = config
 
 const lockTime = useSlowPasswordHashFunction ? 60000 : 500
 const lockedUsernames = new Set()

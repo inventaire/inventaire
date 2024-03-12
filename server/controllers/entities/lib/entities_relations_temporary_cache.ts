@@ -3,11 +3,11 @@ import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { EntityUri, PropertyUri } from '#types/entity'
 import type { AbstractIteratorOptions } from 'abstract-leveldown'
 
-const { checkFrequency, ttl } = CONFIG.entitiesRelationsTemporaryCache
+const { checkFrequency, ttl } = config.entitiesRelationsTemporaryCache
 
 const db = leveldbFactory('entities-relations', 'utf8')
 

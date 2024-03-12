@@ -2,9 +2,9 @@ import util from 'node:util'
 import { isArguments } from 'lodash-es'
 import chalk, { red, grey } from 'tiny-chalk'
 import { iscontextualizedError, type ContextualizedError } from '#lib/error/format_error'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { offline, verbose } = CONFIG
+const { offline, verbose } = config
 // Log full objects
 util.inspect.defaultOptions.depth = 20
 

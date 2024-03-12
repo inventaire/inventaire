@@ -1,6 +1,6 @@
 import 'should'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
 import { updateClaim } from '../utils/entities.js'
@@ -9,7 +9,7 @@ import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../uti
 import { updateUser } from '../utils/users.js'
 import { getUser, getUserB } from '../utils/utils.js'
 
-const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = CONFIG.mediaStorage.images.checkDelays
+const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = config.mediaStorage.images.checkDelays
 
 describe('images:auto-remove', () => {
   describe('upload', () => {

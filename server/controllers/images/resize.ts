@@ -5,15 +5,15 @@ import { isUrl } from '#lib/boolean_validations'
 import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { getResizedImage } from './lib/get_resized_image.js'
 
-const { env } = CONFIG
-const { mode } = CONFIG.mediaStorage
-const mediaStorageEndpoint = CONFIG.mediaStorage[mode].internalEndpoint()
-const { offline } = CONFIG
+const { env } = config
+const { mode } = config.mediaStorage
+const mediaStorageEndpoint = config.mediaStorage[mode].internalEndpoint()
+const { offline } = config
 const containersList = Object.keys(containers)
-const { useProdCachedImages } = CONFIG.remoteImages
+const { useProdCachedImages } = config.remoteImages
 
 if (env === 'production' && useProdCachedImages) {
   throw new Error("useProdCachedImages can not be true when env is 'production'")

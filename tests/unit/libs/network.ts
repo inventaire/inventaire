@@ -2,7 +2,7 @@ import 'should'
 import os from 'node:os'
 import { getIpBinaryRepresentation } from '#lib/network/ip_binary_representation'
 import isPrivateUrl from '#lib/network/is_private_url'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
 const hostname = os.hostname()
 
@@ -41,7 +41,7 @@ describe('isPrivateUrl', () => {
   // which is already covered by rules on private networks
   // This test would need to be run with a service on a public IP
   xit('should detect internal services', async () => {
-    ;(await isPrivateUrl(CONFIG.elasticsearch.origin)).should.be.true()
+    ;(await isPrivateUrl(config.elasticsearch.origin)).should.be.true()
   })
 })
 

@@ -1,13 +1,13 @@
 import express from 'express'
 import serveFavicon from 'serve-favicon'
 import { absolutePath } from '#lib/absolute_path'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { pass } from './pass.js'
 
 export let mountStaticFiles
 export let favicon
 
-if (CONFIG.serveStaticFiles) {
+if (config.serveStaticFiles) {
   const publicPath = absolutePath('client', 'public')
   const options = {
     maxAge: 0,

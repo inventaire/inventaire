@@ -3,12 +3,12 @@ import { createShelf } from '#fixtures/shelves'
 import { randomWords } from '#fixtures/text'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import { updateShelf, deleteShelves } from '#tests/api/utils/shelves'
 import { deleteUser } from '#tests/api/utils/users'
 import { getIndexedDoc } from '../utils/search.js'
 
-const { updateDelay: elasticsearchUpdateDelay } = CONFIG.elasticsearch
+const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 const { index } = indexes.shelves
 
 describe('indexation:shelves', () => {

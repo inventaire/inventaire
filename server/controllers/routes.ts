@@ -1,11 +1,11 @@
-import CONFIG from '#server/config'
+import config from '#server/config'
 import activitypub from './activitypub/activitypub.js'
 import webfinger from './activitypub/webfinger.js'
 import auth from './auth/auth.js'
 import oauthClients from './auth/oauth_clients.js'
 import oauthServer from './auth/oauth_server.js'
 import authToken from './auth/token.js'
-import config from './config.js'
+import configEndpoint from './config.js'
 import data from './data/data.js'
 import { AddRoute } from './endpoint.js'
 import entities from './entities/entities.js'
@@ -41,7 +41,7 @@ export const routes = {}
 const addRoute = AddRoute(routes)
 
 addRoute('api/auth', auth)
-addRoute('api/config', config)
+addRoute('api/config', configEndpoint)
 addRoute('api/data', data)
 addRoute('api/entities', entities)
 addRoute('api/feedback', feedback)
@@ -69,16 +69,16 @@ addRoute('api/activitypub', activitypub)
 addRoute('img/*', resizeImages)
 addRoute('.well-known/webfinger', webfinger)
 
-if (CONFIG.i18n.autofix) {
+if (config.i18n.autofix) {
   addRoute('api/i18n', i18n)
 }
 
-if (CONFIG.mediaStorage.mode === 'local') {
+if (config.mediaStorage.mode === 'local') {
   // serve images stored on the local file system
   addRoute('local/*', localFsMediaStorage)
 }
 
-// setting CONFIG-based routes before the globs
+// setting config-based routes before the globs
 // so that they wont be overpassed by it
 Object.assign(routes, {
   api: {

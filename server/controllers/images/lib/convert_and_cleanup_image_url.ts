@@ -4,13 +4,13 @@ import { newError } from '#lib/error/error'
 import isPrivateUrl from '#lib/network/is_private_url'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { ImageContainer, Url } from '#types/common'
 import convertImageUrl from './convert_image_url.js'
 
-const { enabled: dataseedEnabled } = CONFIG.dataseed
+const { enabled: dataseedEnabled } = config.dataseed
 
-export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer, url: Url }) {
+export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer; url: Url }) {
   assert_.string(container)
   assert_.string(url)
   const originalUrl = url

@@ -11,9 +11,9 @@ import { cache_ } from '#lib/cache'
 import { oneMonth } from '#lib/time'
 import { isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { offline } = CONFIG
+const { offline } = config
 
 const authorities = {
   // bnb,

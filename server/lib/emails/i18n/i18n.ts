@@ -6,11 +6,11 @@ import { appendToServerKeys } from '#lib/i18n_autofix'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import translate from './translate.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-const { autofix } = CONFIG.i18n
+const { autofix } = config.i18n
 
 const polyglots = {}
 const translators = {}

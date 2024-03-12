@@ -5,9 +5,9 @@ import { newInvalidError } from '#lib/error/pre_filled'
 import isPrivateUrl from '#lib/network/is_private_url'
 import { endReqTimer, sanitizeUrl, startReqTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { enabled: dataseedEnabled } = CONFIG.dataseed
+const { enabled: dataseedEnabled } = config.dataseed
 
 const sanitization = {
   url: {},

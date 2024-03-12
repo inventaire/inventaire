@@ -9,12 +9,12 @@ import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { someMatch } from '#lib/utils/base'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import type { Url } from '#types/common'
 import entitiesQueryBuilder from './entities_query_builder.js'
 import socialQueryBuilder from './social_query_builder.js'
 
-const { origin: elasticOrigin } = CONFIG.elasticsearch
+const { origin: elasticOrigin } = config.elasticsearch
 
 const indexedTypesSet = new Set(indexedTypes)
 

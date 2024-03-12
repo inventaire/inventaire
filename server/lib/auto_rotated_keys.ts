@@ -3,9 +3,9 @@
 
 // There are presently no automated tests for this behavior, but manual tests can be run
 // by deleting config/.sessions_keys and/or setting cookieMaxAge to a lower value in your config/local.cjs
-// The default dev server can be started with CONFIG.autoRotateKeys=true and
-// the API tests server with CONFIG.autoRotateKeys=false
-// just make sure that both use the same CONFIG.cookieMaxAge value to avoid outdated keys errors
+// The default dev server can be started with config.autoRotateKeys=true and
+// the API tests server with config.autoRotateKeys=false
+// just make sure that both use the same config.cookieMaxAge value to avoid outdated keys errors
 
 import { readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
@@ -15,9 +15,9 @@ import { newError } from '#lib/error/error'
 import { oneDay, msToHumanTime, msToHumanAge } from '#lib/time'
 import { invert } from '#lib/utils/base'
 import { warn, info, LogError } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { cookieMaxAge, autoRotateKeys: leadingServer } = CONFIG
+const { cookieMaxAge, autoRotateKeys: leadingServer } = config
 // If a session is started at the end-of-life of a key
 // that session should be allowed to live for cookieMaxAge time
 const keysHalfTtl = cookieMaxAge
@@ -159,8 +159,8 @@ const getTimeUntilEndOfNewestKeyHalfLife = () => {
   return halfLifeTime - Date.now() + 100
 }
 
-const fixMessage = `Start a leading server (with CONFIG.autoRotateKeys=true) to fix.
-Also make sure to use the same CONFIG.cookieMaxAge value`
+const fixMessage = `Start a leading server (with config.autoRotateKeys=true) to fix.
+Also make sure to use the same config.cookieMaxAge value`
 
 const missingKeysError = () => newError(`no key found: ${fixMessage}`, 500)
 const outdatedKeysError = () => newError(`found outdated keys: ${fixMessage}`, 500, { keysStatus: getKeysStatus() })

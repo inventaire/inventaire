@@ -6,10 +6,10 @@ import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { nice } = CONFIG
-const { minReindexationInterval } = CONFIG.elasticsearch
+const { nice } = config
+const { minReindexationInterval } = config.elasticsearch
 assert_.number(minReindexationInterval)
 
 const indexName = 'wikidata'

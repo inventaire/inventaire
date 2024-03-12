@@ -3,9 +3,9 @@ import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { Log } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const dbHost = CONFIG.db.getOrigin()
+const dbHost = config.db.getOrigin()
 
 const dbUrl = dbName => `${dbHost}/${dbName}`
 const dbsBaseNames = Object.keys(databases)

@@ -1,9 +1,9 @@
 import parseUrl from 'parseurl'
 import { coloredElapsedTime } from '#lib/time'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const host = CONFIG.getPublicOrigin()
-const { mutedDomains, mutedPath } = CONFIG.requestsLogger
+const host = config.getPublicOrigin()
+const { mutedDomains, mutedPath } = config.requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1
 export default (req, res, next) => {

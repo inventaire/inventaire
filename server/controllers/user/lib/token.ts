@@ -7,9 +7,9 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { tokenDaysToLive } = CONFIG
+const { tokenDaysToLive } = config
 
 const testToken = verifyPassword
 const db = await dbFactory('users')

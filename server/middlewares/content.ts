@@ -3,10 +3,10 @@ import parseUrl from 'parseurl'
 import { bundleError } from '#lib/error/pre_filled'
 import { getHashCode } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
-import CONFIG from '#server/config'
+import config from '#server/config'
 
-const { deduplicateRequests: dedupRequests } = CONFIG
-const { logBody: logIncomingRequestsBody } = CONFIG.incomingRequests
+const { deduplicateRequests: dedupRequests } = config
+const { logBody: logIncomingRequestsBody } = config.incomingRequests
 
 const urlencodedBodyParser = bodyParser.urlencoded({ extended: false })
 

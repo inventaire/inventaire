@@ -4,10 +4,10 @@ import { getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#control
 import { paginate } from '#controllers/items/lib/queries_commons'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { serializeUserData } from '#controllers/user/lib/user'
-import CONFIG from '#server/config'
+import config from '#server/config'
 import serializeFeed from './serialize_feed.js'
 
-const { feed: feedConfig } = CONFIG
+const { feed: feedConfig } = config
 
 export default lang => async ({ reqUserId, feedOptions, users, shelves, context }) => {
   users = users.map(serializeUserData)
