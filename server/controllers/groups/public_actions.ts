@@ -1,5 +1,6 @@
 import { property } from 'lodash-es'
-import { getGroupsByPosition } from '#controllers/groups/lib/groups'
+import { getGroupById, getGroupBySlug, getGroupsByPosition } from '#controllers/groups/lib/groups'
+import { notFoundError } from '#lib/error/error'
 import getGroupPublicData from './lib/group_public_data.js'
 import { getSlug } from './lib/slug.js'
 
@@ -7,14 +8,18 @@ export default {
   byId: {
     sanitization: { id: {} },
     controller: async ({ id, reqUserId }) => {
-      return getGroupPublicData('byId', [ id ], reqUserId)
+      const group = await getGroupById(id)
+      if (!group) throw notFoundError({ id })
+      return getGroupPublicData(group, reqUserId)
     },
   },
 
   bySlug: {
     sanitization: { slug: {} },
     controller: async ({ slug, reqUserId }) => {
-      return getGroupPublicData('bySlug', [ slug ], reqUserId)
+      const group = await getGroupBySlug(slug)
+      if (!group) throw notFoundError({ slug })
+      return getGroupPublicData(group, reqUserId)
     },
   },
 
