@@ -3,6 +3,9 @@ import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import type { Outbox } from '#types/activity'
+import type { AbsoluteUrl } from '#types/common'
+import type { Req, Res } from '#types/server'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
 import formatUserItemsActivities from './lib/format_user_items_activities.js'
@@ -21,7 +24,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req, res) => {
+async function controller (params, req: Req, res: Res) {
   const { name } = params
   setActivityPubContentType(res)
   if (isEntityUri(getEntityUriFromActorName(name))) {
@@ -35,7 +38,7 @@ const controller = async (params, req, res) => {
   }
 }
 
-const getShelfActivities = async ({ name, offset, limit }) => {
+async function getShelfActivities ({ name, offset, limit }) {
   const { shelf } = await validateShelf(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name } })
   const baseOutbox = getBaseOutbox(fullOutboxUrl)
@@ -47,11 +50,11 @@ const getShelfActivities = async ({ name, offset, limit }) => {
   }
 }
 
-const getEntityActivities = async ({ name, offset, limit }) => {
+async function getEntityActivities ({ name, offset, limit }) {
   const { entity } = await validateEntity(name)
   const actorName = getEntityActorName(entity.uri)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: actorName } })
-  const baseOutbox = {
+  const baseOutbox: Outbox = {
     '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',
@@ -66,20 +69,21 @@ const getEntityActivities = async ({ name, offset, limit }) => {
   }
 }
 
-const getBaseOutbox = url => {
-  return {
+function getBaseOutbox (url: AbsoluteUrl) {
+  const outbox: Outbox = {
     '@context': context,
     id: url,
     type: 'OrderedCollection',
     first: `${url}&offset=0`,
     next: `${url}&offset=0`,
   }
+  return outbox
 }
 
-const getUserActivities = async ({ name, offset, limit }) => {
+async function getUserActivities ({ name, offset, limit }) {
   const { user } = await validateUser(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
-  const baseOutbox = {
+  const baseOutbox: Outbox = {
     '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',
@@ -98,12 +102,9 @@ const getUserActivities = async ({ name, offset, limit }) => {
   }
 }
 
-export default {
-  sanitization,
-  controller,
-}
+export default { sanitization, controller }
 
-const buildPaginatedUserOutbox = async (user, offset, limit, outbox) => {
+async function buildPaginatedUserOutbox (user, offset, limit, outbox) {
   const { id: fullOutboxUrl } = outbox
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
@@ -114,7 +115,7 @@ const buildPaginatedUserOutbox = async (user, offset, limit, outbox) => {
   return outbox
 }
 
-const buildPaginatedShelfOutbox = async (shelf, name, offset, limit, outbox) => {
+async function buildPaginatedShelfOutbox (shelf, name, offset, limit, outbox) {
   const { id: fullOutboxUrl } = outbox
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl
@@ -124,7 +125,7 @@ const buildPaginatedShelfOutbox = async (shelf, name, offset, limit, outbox) => 
   return outbox
 }
 
-const buildPaginatedEntityOutbox = async (entity, offset, limit, outbox) => {
+async function buildPaginatedEntityOutbox (entity, offset, limit, outbox) {
   const { id: fullOutboxUrl } = outbox
   outbox.type = 'OrderedCollectionPage'
   outbox.partOf = fullOutboxUrl

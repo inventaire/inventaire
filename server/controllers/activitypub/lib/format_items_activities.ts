@@ -4,6 +4,8 @@ import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
 import config from '#server/config'
 import type { Activity, ItemNote } from '#types/activity'
+import type { AbsoluteUrl, RelativeUrl } from '#types/common'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const host = config.getPublicOrigin()
 const maxLinksToDisplay = 3
@@ -51,8 +53,13 @@ export function findFullRangeFromActivities (activitiesDocs) {
 
 const itemsWithinActivityRange = (since, until) => item => item.created > since && item.created < until
 
+interface LinkContent {
+  text: string
+  url: AbsoluteUrl
+  details: null
+}
 const buildLinkContentFromItem = item => {
-  const content = {
+  const content: LinkContent = {
     text: item.snapshot['entity:title'],
     url: `${host}/items/${item._id}`,
     details: null,
@@ -62,7 +69,8 @@ const buildLinkContentFromItem = item => {
   return content
 }
 
-const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }) => {
+interface BuildContentOptions { links: LinkContent[], name: string, lang: WikimediaLanguageCode, itemsLength: number, parentLink: RelativeUrl }
+const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }: BuildContentOptions) => {
   let html = `<p>${i18n(lang, 'create_items_activity', { name })} `
   const htmlLinks = links.map(link => {
     return `<a href="${link.url}" rel="nofollow noopener noreferrer" target="_blank">${link.text}</a>`

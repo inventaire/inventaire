@@ -4,13 +4,14 @@ import { i18n } from '#lib/emails/i18n/i18n'
 import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { Context } from '#types/activity'
+import type { AbsoluteUrl, RelativeUrl, Url } from '#types/common'
 
 const host = config.getPublicOrigin()
 
 interface MakeUrlArgs {
-  origin?: string
-  endpoint?: string
+  origin?: AbsoluteUrl
+  endpoint?: RelativeUrl
   params?: {
     action?: string
     name?: string
@@ -21,7 +22,7 @@ interface MakeUrlArgs {
 export function makeUrl ({ origin, endpoint, params }: MakeUrlArgs) {
   origin = origin || host
   endpoint = endpoint || '/api/activitypub'
-  let url = `${origin}${endpoint}`
+  let url: AbsoluteUrl = `${origin}${endpoint}`
   if (params) url = `${url}?${stringifyQuery(params)}`
   return url
 }
@@ -52,7 +53,7 @@ export const entityUrl = uri => `${host}/entity/${uri}` as Url
 
 export const propertyLabel = prop => i18n('en', unprefixify(prop))
 
-export const context = [
+export const context: Context[] = [
   'https://www.w3.org/ns/activitystreams',
 ]
 

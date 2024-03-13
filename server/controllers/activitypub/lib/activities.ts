@@ -42,7 +42,7 @@ export async function getActivitiesCountByName (name) {
     endkey: [ name, Date.now() ],
     group_level: 1,
   })
-  return res.rows[0]?.value || 0
+  return (res.rows[0]?.value || 0) as number
 }
 
 export function getActivityByExternalId (externalId) {
