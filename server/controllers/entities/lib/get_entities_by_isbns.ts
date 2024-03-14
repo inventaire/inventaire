@@ -1,11 +1,17 @@
 import { difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
-import type { EntitiesByUrisResults, EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
+import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { Isbn } from '#types/entity'
+import type { EntityUri, InvEntityDoc, Isbn } from '#types/entity'
 import formatEditionEntity from './format_edition_entity.js'
+
+export interface EntitiesResults {
+  entities: InvEntityDoc[]
+  redirects: Record<EntityUri, EntityUri>
+  notFound?: EntityUri[]
+}
 
 export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGetterArgs = {}) {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
@@ -27,7 +33,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
     const results = { entities }
     return addRedirections(results, redirections)
   }
-  const results: Partial<EntitiesByUrisResults> = { entities }
+  const results: Partial<EntitiesResults> = { entities }
 
   // The cases where autocreate && refresh was already checked above
   if (autocreate && !refresh) {

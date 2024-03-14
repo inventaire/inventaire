@@ -8,7 +8,7 @@ import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
 
-// Getters take ids, return an object on the model { entities, notFound }
+// Getters take ids, return an object on the model { entities: [], notFound }
 const getters = {
   inv: getInvEntitiesByIds,
   wd: getWikidataEnrichedEntities,

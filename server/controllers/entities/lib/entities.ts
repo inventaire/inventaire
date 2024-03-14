@@ -8,7 +8,7 @@ import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
-import type { InvEntityDoc, EntityValue, PropertyUri } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri } from '#types/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -155,7 +155,7 @@ export function getAggregatedPropertiesValues (claims, properties) {
 }
 
 export function getWorksAuthorsUris (works) {
-  const uris = works.map(getWorkAuthorsUris).flat()
+  const uris: EntityUri[] = works.map(getWorkAuthorsUris).flat()
   return uniq(uris)
 }
 
