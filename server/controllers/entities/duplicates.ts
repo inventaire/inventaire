@@ -19,8 +19,11 @@ const getHomonymes = async () => {
   return rows
   // Filtering-out keys that are only ponctuation or a single letter
   // TODO: delete those erronous entities
-  .filter(row => (row.value > 1) && /\w{2,}/.test(row.key))
-  .sort((a, b) => b.value - a.value)
+  .filter(row => {
+    if (typeof row.value !== 'number') return false
+    return (row.value > 1) && /\w{2,}/.test(row.key)
+  })
+  .sort((a, b) => +b.value - +a.value)
   .slice(0, 100)
 }
 
