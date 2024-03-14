@@ -21,7 +21,11 @@ export async function getBnfSummary ({ claims, refresh }) {
     fn: async () => {
       const response = await requests_.get(url, { headers, timeout })
       const simplifiedResults = simplifySparqlResults(response)
-      return { text: simplifiedResults[0]?.summary }
+      let text
+      if (simplifiedResults.length > 0) {
+        text = simplifiedResults[0].summary
+      }
+      return { text }
     },
   })
   if (res?.text) {
