@@ -69,16 +69,18 @@ export type WikimediaCommonsFilename = string
 export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
 
 export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType }> {
+  _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
   originalLang?: WikimediaLanguageCode
   image?: {
     url: EntityImg
   }
+  redirects?: { from: InvEntityUri, to: EntityUri }
 }
 
-export interface SerializedRemovedPlaceholder extends SerializedInvEntity {
+export type SerializedRemovedPlaceholder = OverrideProperties<SerializedInvEntity, {
   _meta_type: 'removed:placeholder'
-}
+}>
 
 export type SimplifiedLanguageAliases = Term[]
 export type SimplifiedAliases = Partial<Record<WikimediaLanguageCode, SimplifiedLanguageAliases>>

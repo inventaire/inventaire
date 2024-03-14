@@ -2,7 +2,7 @@ import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
-import type { InvEntityId } from '#types/entity'
+import type { InvEntityDoc, InvEntityId, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
 import addRedirection from './add_redirection.js'
 import formatEntityCommon from './format_entity_common.js'
 import getEntityType from './get_entity_type.js'
@@ -24,19 +24,21 @@ export async function getInvEntitiesByIds (ids: InvEntityId, params: EntitiesGet
   return { entities, notFound }
 }
 
-const Format = params => async entity => {
-  if (entity.redirect != null) return getRedirectedEntity(entity, params)
+const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
+  if ('redirect' in entity) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })
-  entity.uri = uri
-  if (redirects != null) { entity.redirects = redirects }
+  const serializedEntity: SerializedInvEntity | SerializedRemovedPlaceholder = {
+    uri,
+    ...entity,
+    type: getEntityType(entity.claims['wdt:P31']),
+    redirects,
+    // Keep track of special types such as removed:placehoder
+    // to the let the search engine unindex it
+    _meta_type: entity.type !== 'entity' ? entity.type : undefined,
+  }
 
-  // Keep track of special types such as removed:placehoder
-  // to the let the search engine unindex it
-  if (entity.type !== 'entity') { entity._meta_type = entity.type }
-
-  entity.type = getEntityType(entity.claims['wdt:P31'])
-  return formatEntityCommon(entity)
+  return formatEntityCommon(serializedEntity)
 }
 
 function getRedirectedEntity (entity, params) {
