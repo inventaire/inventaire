@@ -1,6 +1,6 @@
 import should from 'should'
 import { superTrim } from '#lib/utils/base'
-import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder } from '#models/entity'
+import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createBlankEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const workDoc = () => {

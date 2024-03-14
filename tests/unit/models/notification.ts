@@ -1,6 +1,7 @@
 import 'should'
 import { someCouchUuid } from '#fixtures/general'
 import { wait } from '#lib/promises'
+import { createNotificationDoc, updateNotificationDoc } from '#models/notification'
 
 const someUserId = someCouchUuid
 const someGroupUpdateData = () => ({
