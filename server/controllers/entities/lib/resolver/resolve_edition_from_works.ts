@@ -1,6 +1,8 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
+import type { Claims } from '#types/entity'
+import type { Entries } from 'type-fest'
 
 export default async (editionSeed, worksSeeds) => {
   if (editionSeed.uri) return
@@ -33,7 +35,7 @@ const getNormalizedTitle = ({ claims }) => {
 }
 
 const editionSeedHasNoContradictingClaim = (editionSeed, edition) => {
-  for (const [ property, propertyClaims ] of Object.entries(editionSeed.claims)) {
+  for (const [ property, propertyClaims ] of Object.entries(editionSeed.claims) as Entries<Claims>) {
     if (!ignoredProperties.includes(property)) {
       for (const value of propertyClaims) {
         if (!edition.claims[property]?.includes(value)) {

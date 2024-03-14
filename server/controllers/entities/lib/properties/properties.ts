@@ -1,8 +1,9 @@
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import type { PropertyUri } from '#types/entity'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
-export const authorRelationsProperties = [
+export const authorRelationsProperties: PropertyUri[] = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P98', // editor

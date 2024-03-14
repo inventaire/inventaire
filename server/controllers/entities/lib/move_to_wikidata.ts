@@ -12,7 +12,14 @@ export default async (user, invEntityUri) => {
 
   const entity = await getEntityById(entityId).catch(rewrite404(invEntityUri))
 
-  const { labels, claims } = entity
+  let claims, labels
+  if ('labels' in entity) {
+    ;({ labels } = entity)
+  }
+  if ('claims' in entity) {
+    ;({ claims } = entity)
+  }
+
   const { uri: wdEntityUri } = await createWdEntity({ labels, claims, user, isAlreadyValidated: true })
 
   // Caching relations for some hours, as Wikidata Query Service can take some time to update,

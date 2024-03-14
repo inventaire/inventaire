@@ -32,7 +32,9 @@ export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabel
   // get Wikipedia article title from URI
   const authorEntity = await getEntityByUri({ uri: wdAuthorUri })
   // Known case: entities tagged as 'missing' or 'meta'
-  if (authorEntity.sitelinks == null) return []
+  if ('sitelinks' in authorEntity) {
+    if (authorEntity.sitelinks == null) return []
+  }
 
   try {
     const occurrences = await Promise.all([

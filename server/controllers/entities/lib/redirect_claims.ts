@@ -2,6 +2,7 @@ import { cloneDeep, keyBy, map } from 'lodash-es'
 import { getInvClaimsByClaimValue, getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { log } from '#lib/utils/logs'
+import { updateEntityDocClaim } from '#models/entity'
 
 async function _redirectClaims (userId, fromUri, toUri) {
   const results = await getInvClaimsByClaimValue(fromUri)
