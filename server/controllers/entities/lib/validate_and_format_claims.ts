@@ -3,11 +3,12 @@ import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
+import type { Claims } from '#types/entity'
 import getEntityType from './get_entity_type.js'
 import validateAndFormatClaim from './validate_and_format_claim.js'
 import validateClaimProperty from './validate_claim_property.js'
 
-export default async ({ claims, type, _id }) => {
+export default async function ({ claims, type, _id }: { claims: Claims, type?: string, _id: string }) {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)

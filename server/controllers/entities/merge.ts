@@ -57,7 +57,7 @@ function getMergeEntity (entities, redirects, uri) {
   return (entities[uri] || entities[redirects[uri]]) as (SerializedEntity | undefined)
 }
 
-function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: EntityUri, toUri: EntityUri, fromEntity: Entity, toEntity }) {
+function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity }) {
   validateEntity(fromEntity, fromUri, 'from')
   validateEntity(toEntity, toUri, 'to')
   if (fromEntity.uri === toEntity.uri) {

@@ -110,7 +110,9 @@ const getClaimGuid = async (id, propertyId, oldVal) => {
 const getQualifierHash = (claim, property, value) => {
   // @ts-expect-error simplifyPropertyQualifiers does not do pattern matching on the keepHashes option
   const qualifiers: CustomSimplifiedSnak[] = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
-  const matchingQualifiers = qualifiers.filter(qualifier => qualifier.value === value)
+  const matchingQualifiers = qualifiers.filter(qualifier => {
+    return typeof qualifier === 'object' ? qualifier.value === value : false
+  })
   if (matchingQualifiers.length !== 1) {
     throw newError('unique matching qualifier not found', 400, { claim, property, value })
   }
