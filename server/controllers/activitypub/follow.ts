@@ -16,7 +16,7 @@ const host = config.getPublicOrigin()
 interface FollowArgs {
   id: ActivityId
   type: ActivityType
- '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
+  '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
   actor: LocalActorUrl
   object: Url
 }

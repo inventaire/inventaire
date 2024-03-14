@@ -11,7 +11,7 @@ import type { LooseClaims } from '#types/resolver'
 export async function parseSameasMatches ({ matches, expectedEntityType }: {
   matches: string[] | string[][]
   expectedEntityType: string
-  }): Promise<{ claims: LooseClaims, uri?: EntityUri }> {
+}): Promise<{ claims: LooseClaims, uri?: EntityUri }> {
   assert_.array(matches)
   assert_.string(expectedEntityType)
 
