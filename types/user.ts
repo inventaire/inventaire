@@ -1,7 +1,7 @@
 import type { specialUserDocBase } from '#db/couchdb/hard_coded_documents'
 import type userAttributes from '#models/attributes/user'
 import type { ImageHash, LatLng, StringifiedHashedSecretData } from '#types/common'
-import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { CouchDoc, CouchRevId, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
 import type { GroupId } from '#types/group'
 import type { Relation } from '#types/relation'
@@ -81,9 +81,11 @@ export interface User extends CouchDoc {
 
 export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
   _id: `00000000000000000000000000000${number}`
+  _rev: CouchRevId
   // TODO: replace doc.special with doc.type='special'
   type: never
   username: string
+  stableUsername: never
 }
 
 export interface DeletedUser extends Pick<User, typeof userAttributes.critical[number]> {
@@ -100,4 +102,4 @@ export interface InvitedUser extends CouchDoc {
 }
 
 export type DocInUserDb = User | InvitedUser | DeletedUser | SpecialUser | Relation
-export type DocWithUsernameInUserDb = User | InvitedUser | DeletedUser | SpecialUser
+export type DocWithUsernameInUserDb = User | DeletedUser | SpecialUser

@@ -11,7 +11,7 @@ import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
 import type { DocWithUsernameInUserDb, User, UserId } from '#types/user'
-import { omitPrivateData } from './authorized_user_data_pickers.js'
+import { omitPrivateData, type UserExtraAttribute } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
 const db = await dbFactory('users')
@@ -60,14 +60,13 @@ export async function getUsersAuthorizedDataByIds (ids, reqUserId) {
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
 }
 
-export async function getUsersAuthorizedData (usersDocsPromise: Promise<DocWithUsernameInUserDb[]>, reqUserId: UserId, extraAttribute?: string) {
+export async function getUsersAuthorizedData (usersDocsPromise: Promise<DocWithUsernameInUserDb[]>, reqUserId: UserId, extraAttribute?: UserExtraAttribute) {
   const [ usersDocs, networkIds ] = await Promise.all([
     usersDocsPromise,
     getNetworkIds(reqUserId),
   ])
 
-  return usersDocs
-  .map(omitPrivateData(reqUserId, networkIds, extraAttribute))
+  return usersDocs.map(omitPrivateData(reqUserId, networkIds, extraAttribute))
 }
 
 export async function getUsersIndexedByIds (ids, reqUserId) {
@@ -80,10 +79,11 @@ export async function getUsersIndexByUsernames (reqUserId, usernames) {
   const usersByLowercasedUsername = {}
   const lowercasedUsernames = usernames.map(username => username.toLowerCase())
   for (const user of users) {
-    if (lowercasedUsernames.includes(user.username.toLowerCase())) {
-      usersByLowercasedUsername[user.username.toLowerCase()] = user
-    } else if (lowercasedUsernames.includes(user.stableUsername.toLowerCase())) {
-      usersByLowercasedUsername[user.stableUsername.toLowerCase()] = user
+    const { username, stableUsername } = user
+    if (lowercasedUsernames.includes(username.toLowerCase())) {
+      usersByLowercasedUsername[username.toLowerCase()] = user
+    } else if (lowercasedUsernames.includes(stableUsername.toLowerCase())) {
+      usersByLowercasedUsername[stableUsername.toLowerCase()] = user
     }
   }
   return usersByLowercasedUsername

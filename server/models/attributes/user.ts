@@ -42,13 +42,13 @@ const userAttributes = {
     // snapshot.network (unless requested by someone of the user network)
     // cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
     'snapshot',
-  ],
+  ] as const,
 
   // Attributes that need availability check before update
   concurrencial: [
     'username',
     'email',
-  ],
+  ] as const,
 
   // Attributes that can be changed with a simple validity check
   updatable: [
@@ -60,7 +60,7 @@ const userAttributes = {
     'fediversable',
     'summaryPeriodicity',
     'customProperties',
-  ],
+  ] as const,
 
   // Attributes that are kept after a user deleted her account
   critical: [
@@ -84,9 +84,9 @@ const userAttributes = {
   acceptNullValue: [
     'position',
     'picture',
-  ],
+  ] as const,
 
-  creationStrategies: [ 'local' ],
+  creationStrategies: [ 'local' ] as const,
 
   settings: {
     notifications: [
@@ -108,13 +108,13 @@ const userAttributes = {
       'your_item_was_requested',
       'update_on_your_item',
       'update_on_item_you_requested',
-    ],
+    ] as const,
     contributions: [
       'anonymize',
-    ],
+    ] as const,
   },
 
-  roles: [ 'admin', 'dataadmin' ],
+  roles: [ 'admin', 'dataadmin' ] as const,
 }
 
 export default userAttributes

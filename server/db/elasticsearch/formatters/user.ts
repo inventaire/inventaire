@@ -6,8 +6,10 @@ const { public: publicAttributes } = userAttributes
 const publicAttributesStrict = without(publicAttributes, 'snapshot')
 
 export default doc => {
-  const publicUserDoc = pick(doc, publicAttributesStrict)
-  publicUserDoc.type = 'user'
+  const publicUserDoc = {
+    type: 'user',
+    ...pick(doc, publicAttributesStrict),
+  }
   if (publicUserDoc.position != null) {
     const [ lat, lon ] = publicUserDoc.position
     publicUserDoc.position = { lat, lon }
