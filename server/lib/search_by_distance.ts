@@ -1,6 +1,7 @@
 import { buildSearcher } from '#lib/elasticsearch'
 import { distanceBetween } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
+import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
 
 export default dbBaseName => {
   const searchByDistance = buildSearcher({
@@ -19,8 +20,11 @@ export default dbBaseName => {
 // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
 const queryBuilder = ({ latLng, meterRange }) => {
   const [ lat, lon ] = latLng
-  return {
+  const searchRequest: SearchRequest = {
     query: {
+      // @ts-ignore somehow, the "should" assertion library is leaking global types
+      // defined in node_modules/should/should.d.ts, which conflict with ES types here
+      // (Using ts-ignore instead of ts-expect error, as the build doesn't find the same error)
       bool: {
         filter: {
           geo_distance: {
@@ -32,6 +36,7 @@ const queryBuilder = ({ latLng, meterRange }) => {
     },
     size: 500,
   }
+  return searchRequest
 }
 
 const getIdsSortedByDistance = (hits, centerLatLng) => {

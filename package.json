@@ -51,6 +51,7 @@
     "url": "https://github.com/inventaire/inventaire"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.12.2",
     "@types/express": "^4.17.21",
     "@types/levelup": "^5.1.5",
     "@types/lodash-es": "^4.17.12",

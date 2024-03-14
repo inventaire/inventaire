@@ -1,5 +1,7 @@
+import type { QueryDslQueryContainer, SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
+
 export default ({ search, limit: size, minScore }) => {
-  const should = [
+  const should: QueryDslQueryContainer[] = [
     // Username
     { match: { username: { query: search, boost: 5 } } },
     { match_phrase_prefix: { username: { query: search, boost: 4 } } },
@@ -14,11 +16,12 @@ export default ({ search, limit: size, minScore }) => {
     { match: { description: search } },
   ]
 
-  return {
+  const searchRequest: SearchRequest = {
     query: {
       bool: { should },
     },
     size,
     min_score: minScore,
   }
+  return searchRequest
 }

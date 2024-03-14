@@ -5,6 +5,7 @@ import { requests_ } from '#lib/requests'
 import config from '#server/config'
 import type { Url } from '#types/common'
 import { assert_ } from './utils/assert_types.js'
+import type { SearchRequest, SearchResponse } from '@elastic/elasticsearch/lib/api/types.js'
 
 const { origin: elasticOrigin } = config.elasticsearch
 
@@ -16,10 +17,10 @@ export function buildSearcher (params) {
   const url = `${elasticOrigin}/${index}/_search` as Url
 
   return async params => {
-    const body = queryBuilder(params)
+    const body: SearchRequest = queryBuilder(params)
     const { limit, offset } = params
     try {
-      const res = await requests_.post(url, { body })
+      const res: SearchResponse = await requests_.post(url, { body })
       const { hits, total } = getHitsAndTotal(res)
       let continu
       if (isNumber(limit) && isNumber(offset)) {
@@ -42,12 +43,12 @@ export function getHits (res) {
   return hits.hits
 }
 
-export function getHitsAndTotal (res) {
+export function getHitsAndTotal (res: SearchResponse) {
   checkShardError(res)
   const { hits } = res
   return {
     hits: hits.hits,
-    total: hits.total.value,
+    total: typeof hits.total === 'number' ? hits.total : hits.total.value,
   }
 }
 

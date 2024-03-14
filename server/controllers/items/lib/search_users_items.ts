@@ -1,5 +1,6 @@
 import { buildSearcher } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
+import type { QueryDslBoolQuery, QueryDslQueryContainer } from '@elastic/elasticsearch/lib/api/types.js'
 
 const textFields = [
   'snapshot.entity:title',
@@ -24,7 +25,7 @@ export const searchUsersItems = buildSearcher({
       throw newError('at least one owner is required', 500, { ownersIdsAndVisibilityKeys })
     }
 
-    const filter = [
+    const filter: QueryDslQueryContainer[] = [
       buildOwnerAndVisibilityKeysClauses(ownersIdsAndVisibilityKeys),
     ]
 
@@ -32,7 +33,7 @@ export const searchUsersItems = buildSearcher({
       filter.push({ term: { shelves: shelfId } })
     }
 
-    const should = {
+    const should: QueryDslQueryContainer = {
       multi_match: {
         type: 'cross_fields',
         analyzer: 'standard_truncated',
@@ -41,7 +42,7 @@ export const searchUsersItems = buildSearcher({
       },
     }
 
-    const query = {
+    const query: QueryDslQueryContainer = {
       bool: {
         filter,
         should,
@@ -53,16 +54,16 @@ export const searchUsersItems = buildSearcher({
 })
 
 const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
-  return {
-    bool: {
-      should: ownersIdsAndVisibilityKeys.map(buildOwnerFilterClause),
-      minimum_should_match: 1,
-    },
+  const should: QueryDslQueryContainer[] = ownersIdsAndVisibilityKeys.map(buildOwnerFilterClause)
+  const bool: QueryDslBoolQuery = {
+    should,
+    minimum_should_match: 1,
   }
+  return { bool }
 }
 
 const buildOwnerFilterClause = ([ ownerId, visibilityKeys ]) => {
-  const filter = [
+  const filter: QueryDslQueryContainer[] = [
     { term: { owner: ownerId } },
   ]
   // The 'private' keyword signify that `reqUserId === ownerId`
@@ -72,9 +73,9 @@ const buildOwnerFilterClause = ([ ownerId, visibilityKeys ]) => {
       terms: { visibility: visibilityKeys },
     })
   }
-  return {
-    bool: {
-      filter,
-    },
-  }
+  // @ts-ignore somehow, the "should" assertion library is leaking global types
+  // defined in node_modules/should/should.d.ts, which conflict with ES types here
+  // (Using ts-ignore instead of ts-expect error, as the build doesn't find the same error)
+  const bool: QueryDslBoolQuery = { filter }
+  return { bool }
 }

@@ -1,6 +1,7 @@
 import { map } from 'lodash-es'
 import { buildSearcher } from '#lib/elasticsearch'
 import { assert_ } from '#lib/utils/assert_types'
+import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
 
 export default (db, dbBaseName) => {
   const searchByPosition = buildSearcher({
@@ -18,8 +19,11 @@ export default (db, dbBaseName) => {
 
 const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
   const bboxes = splitBboxOnAntiMeridian([ minLng, minLat, maxLng, maxLat ])
-  return {
+  const searchRequest: SearchRequest = {
     query: {
+      // @ts-ignore somehow, the "should" assertion library is leaking global types
+      // defined in node_modules/should/should.d.ts, which conflict with ES types here
+      // (Using ts-ignore instead of ts-expect error, as the build doesn't find the same error)
       bool: {
         filter: {
           bool: {
@@ -30,6 +34,7 @@ const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
     },
     size: 500,
   }
+  return searchRequest
 }
 
 const splitBboxOnAntiMeridian = ([ minLng, minLat, maxLng, maxLat ]) => {
