@@ -6,6 +6,7 @@
   "include": [
     "config/**/*",
     "server/**/*",
+    "types/**/*",
     // "scripts/**/*",
     // "tests/**/*"
   ],

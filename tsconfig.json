@@ -9,8 +9,8 @@
     "moduleResolution": "nodenext",
     "baseUrl": ".",
     "rootDir": ".",
-    "allowJs": true,
-    "checkJs": true,
+    "allowJs": false,
+    "checkJs": false,
     "skipLibCheck": true,
     "incremental": true,
     "paths": {
@@ -82,7 +82,6 @@
     "./db/**/*",
     "./dist/**/*",
     "./dumps/**/*",
-    "./server/db/couchdb/design_docs/*",
     "./storage/**/*",
     "**/node_modules/*",
   ]
