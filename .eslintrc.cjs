@@ -61,6 +61,7 @@ module.exports = {
     '@stylistic/ts/type-annotation-spacing': 'error',
     '@stylistic/ts/space-infix-ops': 'error',
     '@stylistic/ts/object-curly-spacing': [ 'error', 'always' ],
+    '@typescript-eslint/keyword-spacing': 'error',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/consistent-type-imports': [ 'error', { prefer: 'type-imports' } ],
     '@typescript-eslint/no-explicit-any': 'off',
