@@ -17,7 +17,7 @@ export default async uri => {
   const entity = await getEntityByUri({ uri })
   if (entity == null) throw notFoundError({ uri })
 
-  if (entity._meta_type === 'removed:placeholder') return
+  if ('_meta_type' in entity && entity._meta_type === 'removed:placeholder') return
 
   if (entity.uri.split(':')[0] === 'wd') {
     throw newError('entity is already a redirection', 400, { uri })

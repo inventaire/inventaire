@@ -4,7 +4,7 @@ import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedIt
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { newMissingQueryError } from '#lib/error/pre_filled'
 import bundleViewData from './lib/view/bundle_view_data.js'
-import replaceEditionsByTheirWork from './lib/view/replace_editions_by_their_work.js'
+import { replaceEditionsByTheirWork } from './lib/view/replace_editions_by_their_work.js'
 
 const sanitization = {
   user: { optional: true },

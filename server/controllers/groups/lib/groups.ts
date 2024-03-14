@@ -71,7 +71,7 @@ export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
       ]
     }),
   })
-  const groupsIdsByMembersIds = {}
+  const groupsIdsByMembersIds: Record<typeof usersIds[number], GroupId[]> = {}
   usersIds.forEach(userId => { groupsIdsByMembersIds[userId] = [] })
   rows.forEach(({ id: groupId, key }) => {
     const userId = key[1]

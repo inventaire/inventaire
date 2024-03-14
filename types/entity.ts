@@ -107,6 +107,6 @@ export interface SerializedWdEntity {
   }
 }
 
-export type SerializedEntity = SerializedInvEntity | SerializedWdEntity
+export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity
 
 export type SerializedEntitiesByUris = Record<EntityUri, SerializedEntity>

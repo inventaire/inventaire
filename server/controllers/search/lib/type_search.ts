@@ -45,7 +45,7 @@ const typeSearch = async params => {
     queryIndexes = types.map(type => indexes[type])
     body = socialQueryBuilder({ search, limit, minScore })
   } else {
-    queryIndexes = entitiesIndexesPerFilter[filter]
+    queryIndexes = filter ? entitiesIndexesPerFilter[filter] : allEntitiesIndexes
     if (queryIndexes == null) throw newError('invalid filter', 500, { filter })
     body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
@@ -70,8 +70,8 @@ export default typeSearch
 const entitiesIndexesPerFilter = {
   wd: [ indexes.wikidata ],
   inv: [ indexes.entities ],
-  [undefined]: [ indexes.wikidata, indexes.entities ],
 }
+const allEntitiesIndexes = [ indexes.wikidata, indexes.entities ]
 
 const typeParameterError = (parameter, types) => {
   const context = { givenTypes: types, validTypes: indexedEntitiesTypes }

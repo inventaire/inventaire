@@ -14,7 +14,7 @@ const sanitization = {
 
 const controller = async ({ ids, withElements, reqUserId }, req, res) => {
   const getListings = withElements ? getListingsByIdsWithElements : getListingsByIds
-  const foundListings = await getListings(ids, reqUserId)
+  const foundListings = await getListings(ids)
   const foundListingsIds = map(foundListings, '_id')
   checkNotFoundListing(ids, foundListings, foundListingsIds, res)
   const authorizedListings = await filterVisibleDocs(foundListings, reqUserId)

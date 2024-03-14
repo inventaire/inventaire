@@ -1,6 +1,6 @@
 import { bulkDeleteElements } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
-import { getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { getListingWithElements, validateListingsOwnership } from '#controllers/listings/lib/listings'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { notFoundError } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
@@ -14,7 +14,7 @@ const controller = async ({ id, uris, reqUserId }, req, res) => {
   const listing = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
 
-  validateListingOwnership(reqUserId, listing)
+  validateListingsOwnership(reqUserId, [ listing ])
 
   const { foundElements: elementsToDelete, notFoundUris } = filterFoundElementsUris(listing.elements, uris)
   if (elementsToDelete.length === 0) {

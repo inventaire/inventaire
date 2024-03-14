@@ -12,6 +12,7 @@ import entitiesRelationsTemporaryCache from './entities_relations_temporary_cach
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
+import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
@@ -107,7 +108,8 @@ const getClaimGuid = async (id, propertyId, oldVal) => {
 }
 
 const getQualifierHash = (claim, property, value) => {
-  const qualifiers = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
+  // @ts-expect-error simplifyPropertyQualifiers does not do pattern matching on the keepHashes option
+  const qualifiers: CustomSimplifiedSnak[] = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
   const matchingQualifiers = qualifiers.filter(qualifier => qualifier.value === value)
   if (matchingQualifiers.length !== 1) {
     throw newError('unique matching qualifier not found', 400, { claim, property, value })

@@ -9,7 +9,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { createTransactionDoc, transactionIsActive, validateTransactionPossibleState } from '#models/transaction'
-import type { Transaction } from '#types/transaction'
+import type { Transaction, TransactionAction } from '#types/transaction'
 
 const db = await dbFactory('transactions')
 
@@ -105,7 +105,7 @@ const stateUpdater = (state, userId, transaction) => {
   const updatedReadStates = updateReadStates(userId, transaction)
   return doc => {
     doc.state = state
-    const action = { action: state, timestamp: Date.now() }
+    const action: TransactionAction = { action: state, timestamp: Date.now() }
     // keep track of the actor when it can be both
     if (actorCanBeBoth.includes(state)) {
       const role = userRole(userId, transaction)

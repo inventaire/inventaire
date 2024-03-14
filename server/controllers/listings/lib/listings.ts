@@ -32,7 +32,7 @@ export async function getListingsByIdsWithElements (ids: ListingId[]) {
   if (!isNonEmptyArray(listings)) return []
   const elementsByListing: ElementsByListing = groupBy(elements, 'list')
   listings.forEach(assignElementsToListing(elementsByListing))
-  return listings
+  return listings as ListingWithElements[]
 }
 
 export async function createListing (params) {
@@ -65,8 +65,7 @@ export async function addListingElements ({ listing, uris, userId }: { listing: 
   return { ok: true, createdElements }
 }
 
-export function validateListingOwnership (userId: UserId, listings: Listing[]) {
-  listings = forceArray(listings)
+export function validateListingsOwnership (userId: UserId, listings: Listing[]) {
   for (const listing of listings) {
     if (listing.creator !== userId) {
       throw newError('wrong user', 403, { userId, listId: listing._id })

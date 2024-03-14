@@ -28,7 +28,7 @@ export function createShelfDoc (shelf) {
   return newShelf
 }
 
-export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: UpdatableShelfAttributes, userId: UserId) {
+export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: Pick<Shelf, UpdatableShelfAttributes>, userId: UserId) {
   assert_.object(oldShelf)
   assert_.object(newAttributes)
 

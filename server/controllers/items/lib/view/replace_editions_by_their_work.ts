@@ -1,8 +1,9 @@
 import { difference, map, uniq } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { warn } from '#lib/utils/logs'
+import type { SerializedEntitiesByUris } from '#types/entity'
 
-export default entities => {
+export async function replaceEditionsByTheirWork (entities: SerializedEntitiesByUris) {
   const { works, editions } = splitEntities(entities)
   const worksUris = map(works, 'uri')
   const data = { editionsWorksUris: [], editionWorkMap: {} }
@@ -19,20 +20,18 @@ export default entities => {
   })
 }
 
-const splitEntities = entities => {
-  return Object.values(entities)
-  .reduce(splitWorksAndEditions, { works: [], editions: [] })
+function splitEntities (entities: SerializedEntitiesByUris) {
+  const entitiesByTypes = { works: [], editions: [] }
+  for (const entity of Object.values(entities)) {
+    const { type } = entity
+    if (type === 'work') entitiesByTypes.works.push(entity)
+    else if (type === 'edition') entitiesByTypes.editions.push(entity)
+    else warn(entity, 'invalid item entity type')
+  }
+  return entitiesByTypes
 }
 
-const splitWorksAndEditions = (results, entity) => {
-  const { type } = entity
-  if (type === 'work') results.works.push(entity)
-  else if (type === 'edition') results.editions.push(entity)
-  else warn(entity, 'invalid item entity type')
-  return results
-}
-
-const aggregateEditionsWorksUris = (data, edition) => {
+function aggregateEditionsWorksUris (data, edition) {
   const worksUris = edition.claims['wdt:P629']
   if (worksUris != null) {
     data.editionWorkMap[edition.uri] = worksUris

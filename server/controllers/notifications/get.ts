@@ -5,12 +5,12 @@ const sanitization = {
   offset: { optional: true },
 }
 
-const controller = params => {
-  return getNotificationsByUserId(params.reqUserId)
-  .then(paginate(params))
+async function controller (params) {
+  const notifications = await getNotificationsByUserId(params.reqUserId)
+  return paginate(notifications, params)
 }
 
-const paginate = params => notifications => {
+function paginate (notifications, params) {
   let { limit, offset } = params
   const total = notifications.length
   if (offset == null) offset = 0
@@ -18,9 +18,12 @@ const paginate = params => notifications => {
 
   if (limit != null) {
     notifications = notifications.slice(offset, last)
-    const data = { notifications, total, offset }
-    if (last < total) data.continue = last
-    return data
+    return {
+      notifications,
+      total,
+      offset,
+      continue: (last < total) ? last : undefined,
+    }
   } else {
     return { notifications, total, offset }
   }

@@ -13,13 +13,21 @@ const controller = async ({ ids, reqUserId, withItems }) => {
   const shelvesRes = await getShelvesByIdsWithItems(ids, reqUserId)
   const shelves = compact(shelvesRes)
   validateShelfOwnership(reqUserId, shelves)
-  const res = { shelves }
+  let res
   if (withItems) {
     const deletedItems = await deleteShelvesItems(shelves)
-    res.items = deletedItems
+    res = {
+      ok: true,
+      shelves,
+      items: deletedItems,
+    }
+  } else {
+    res = {
+      ok: true,
+      shelves,
+    }
   }
   await bulkDeleteShelves(shelves)
-  res.ok = true
   return res
 }
 

@@ -23,7 +23,7 @@ const validate = async entity => {
   const type = getValueType(claims)
   validateValueType(type, claims['wdt:P31'])
   validateLabels(labels, type)
-  return validateAndFormatClaims({ claims, _id })
+  return validateAndFormatClaims({ _id, type, claims })
 }
 
 const getValueType = claims => {

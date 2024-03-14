@@ -63,7 +63,7 @@ const revertMergePatch = async (userId, fromUri, toUri) => {
   const patches = await getPatchesByEntityId(toId)
 
   const mergePatch = patches.find(patch => {
-    return patch.context && patch.context.mergeFrom === fromUri
+    return 'context' in patch && 'mergeFrom' in patch.context
   })
 
   // There might be no mergePatch: that happens when the merged entity didn't bring
