@@ -1,12 +1,12 @@
-import type { ExternalDatabaseEntryRow } from '#types/resolver'
+import type { EditionLooseSeed, EntityLooseSeed, ExternalDatabaseEntryRow } from '#types/resolver'
 
 export function buildEntryFromFormattedRows (formattedRows: ExternalDatabaseEntryRow[], getSourceId) {
   if (formattedRows.length === 0) return
 
-  const editions = {}
-  const works = {}
-  const authors = {}
-  const publishers = {}
+  const editions: Record<string, EditionLooseSeed> = {}
+  const works: Record<string, EntityLooseSeed> = {}
+  const authors: Record<string, EntityLooseSeed> = {}
+  const publishers: Record<string, EntityLooseSeed> = {}
 
   for (const row of formattedRows) {
     addByExternalId(getSourceId, editions, row, 'edition')
@@ -30,7 +30,12 @@ export function buildEntryFromFormattedRows (formattedRows: ExternalDatabaseEntr
   }
 }
 
-const addByExternalId = (getSourceId, index, row, entityTypeName) => {
+function addByExternalId (
+  getSourceId: (EntityLooseSeed) => string,
+  index: Record<string, EntityLooseSeed | EditionLooseSeed>,
+  row: ExternalDatabaseEntryRow,
+  entityTypeName: 'edition' | 'work' | 'author' | 'publisher'
+) {
   const draftEntity = row[entityTypeName]
   if (!draftEntity) return
   const sourceId = getSourceId(draftEntity)
