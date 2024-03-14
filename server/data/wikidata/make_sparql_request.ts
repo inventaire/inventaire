@@ -1,4 +1,4 @@
-import { simplifySparqlResults } from 'wikibase-sdk'
+import { minimizeSimplifiedSparqlResults, simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -13,7 +13,11 @@ let ongoing = 0
 
 const { sparqlQuery } = wdk
 
-export async function makeSparqlRequest (sparql) {
+interface SparqlRequestOptions {
+  minimize?: boolean
+}
+
+export async function makeSparqlRequest (sparql, options: SparqlRequestOptions = {}) {
   const url = sparqlQuery(sparql)
 
   if (waiting > 500) {
@@ -22,7 +26,7 @@ export async function makeSparqlRequest (sparql) {
 
   const persistentRequest = async () => {
     try {
-      return await makeRequest(url)
+      return await makeRequest(url, options)
     } catch (err) {
       if (err.statusCode === 429) {
         warn(url, `${err.message}: retrying in 2s`)
@@ -37,7 +41,7 @@ export async function makeSparqlRequest (sparql) {
   return persistentRequest()
 }
 
-async function makeRequest (url) {
+async function makeRequest (url, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
 
@@ -52,8 +56,12 @@ async function makeRequest (url) {
     try {
       // Don't let a query block the queue more than 30 seconds
       const results = await requests_.get(url, { timeout: 30000 })
-      const simplifiedResults = simplifySparqlResults(results, { minimize: true })
-      return simplifiedResults
+      const simplifiedResults = simplifySparqlResults(results)
+      if (options.minimize) {
+        return minimizeSimplifiedSparqlResults(simplifiedResults)
+      } else {
+        return simplifiedResults
+      }
     } finally {
       ongoing -= 1
       logStats()

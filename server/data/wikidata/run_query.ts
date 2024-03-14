@@ -7,23 +7,34 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { radio } from '#lib/radio'
 import { info, LogErrorAndRethrow } from '#lib/utils/logs'
+import type { WdEntityId, WdPropertyId } from '#types/entity'
 import { makeSparqlRequest } from './make_sparql_request.js'
 import { queries, queriesPerProperty } from './queries/queries.js'
 
 const possibleQueries = Object.keys(queries)
 
+interface RunQueryParams {
+  query: string
+  refresh?: boolean
+  dry?: boolean
+  // Query specific params
+  qid?: WdEntityId
+  pid?: WdPropertyId
+  externalIds?: string[]
+}
+
 // Params:
 // - query: the name of the query to use from './queries/queries.js'
 // - refresh
 // - custom parameters: see the query file
-export default async params => {
+export default async (params: RunQueryParams) => {
   const { refresh, dry } = params
   let { query: queryName } = params
 
   // Converting from kebab case to snake case
   queryName = params.query = queryName.replaceAll('-', '_')
   if (!possibleQueries.includes(queryName)) {
-    throw newError('unknown query', 400, params)
+    throw newError('unknown query', 400, { params })
   }
 
   validateValues(queryName, params)
@@ -65,8 +76,9 @@ const parametersTests = {
 const runQuery = (params, key) => {
   const { query: queryName } = params
   const sparql = queries[queryName].query(params)
+  const { minimizable = false } = queries[queryName]
 
-  return makeSparqlRequest(sparql)
+  return makeSparqlRequest(sparql, { minimize: minimizable })
   .catch(LogErrorAndRethrow(key))
 }
 

@@ -32,4 +32,6 @@ export default {
 }
 LIMIT 1000`
   },
+
+  minimizable: true,
 }

@@ -14,4 +14,6 @@ export default {
 }
 ORDER BY DESC(?starting_date)`
   },
+
+  minimizable: true,
 }

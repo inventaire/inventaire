@@ -1,5 +1,5 @@
 import { compact, flatten } from 'lodash-es'
-import { simplifySparqlResults } from 'wikibase-sdk'
+import { minimizeSimplifiedSparqlResults, simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
@@ -97,8 +97,8 @@ const _wikidataReverseClaims = async (property, value) => {
   log([ property, value ], 'reverse claim')
   const url = getReverseClaims({ properties: wdProp, values: value, caseInsensitive }) as Url
   const results = await requests_.get(url)
-  return simplifySparqlResults(results)
-  .map(result => prefixifyWd(result.subject))
+  return minimizeSimplifiedSparqlResults(simplifySparqlResults(results))
+  .map(wdId => prefixifyWd(wdId))
 }
 
 const invReverseClaims = async (property, value) => {
