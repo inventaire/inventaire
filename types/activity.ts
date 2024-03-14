@@ -1,4 +1,4 @@
-import type { CouchDoc, CouchUuid, Url } from '#types/common'
+import type { CouchDoc, CouchUuid, Url, RelativeUrl, AbsoluteUrl  } from '#types/common'
 import type { Item } from '#types/item'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -40,9 +40,9 @@ export type ActivityId = CouchUuid
 
 interface Note {
   name: string
-  actor: Url
+  actor: AbsoluteUrl
   lang?: WikimediaLanguageCode
-  parentLink: Url
+  parentLink: RelativeUrl
 }
 
 export interface ItemNote extends Note {

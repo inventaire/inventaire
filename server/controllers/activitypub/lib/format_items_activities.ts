@@ -69,7 +69,14 @@ const buildLinkContentFromItem = item => {
   return content
 }
 
-interface BuildContentOptions { links: LinkContent[], name: string, lang: WikimediaLanguageCode, itemsLength: number, parentLink: RelativeUrl }
+interface BuildContentOptions {
+  links: LinkContent[]
+  name: string
+  lang: WikimediaLanguageCode
+  itemsLength: number
+  parentLink: RelativeUrl
+}
+
 const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }: BuildContentOptions) => {
   let html = `<p>${i18n(lang, 'create_items_activity', { name })} `
   const htmlLinks = links.map(link => {
