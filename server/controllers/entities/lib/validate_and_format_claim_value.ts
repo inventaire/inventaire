@@ -1,5 +1,5 @@
 import { newError } from '#lib/error/error'
-import type { EntityType, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
+import type { EntityType, EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import validateClaimValueSync from './validate_claim_value_sync.js'
 
@@ -45,7 +45,7 @@ export default async (params: Params) => {
 
   await Promise.all([
     verifyClaimConcurrency(concurrency, property, formattedValue, _id),
-    verifyClaimEntityType(entityValueTypes, formattedValue),
+    entityValueTypes != null ? verifyClaimEntityType(entityValueTypes, formattedValue as EntityUri) : null,
   ])
 
   return formattedValue
@@ -74,15 +74,11 @@ const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
-const verifyClaimEntityType = async (entityValueTypes, value) => {
-  if (entityValueTypes == null) return
-
+const verifyClaimEntityType = async (entityValueTypes?: EntityType[], value?: EntityUri) => {
   const entity = await getEntityByUri({ uri: value })
-
   if (!entity) {
     throw newError('entity not found', 400, { value })
   }
-
   if (!entityValueTypes.includes(entity.type)) {
     throw newError(`invalid claim entity type: ${entity.type}`, 400, { value })
   }

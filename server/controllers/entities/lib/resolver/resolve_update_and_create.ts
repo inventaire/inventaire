@@ -1,7 +1,9 @@
 import { identity } from 'lodash-es'
+import type { ContextualizedError } from '#lib/error/format_error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
+import type { ResolverEntry } from '#types/resolver'
 import CreateUnresolvedEntry from './create_unresolved_entry.js'
 import { resolveEntry } from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
@@ -21,7 +23,7 @@ export async function resolveUpdateAndCreate (params) {
   const createUnresolvedEntry = buildActionFn(create, CreateUnresolvedEntry, params)
   const addResolvedEntry = entry => resolvedEntries.push(entry)
 
-  const resolveNext = async () => {
+  async function resolveNext () {
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 1 })
     const nextEntry = entries.shift()
     if (nextEntry == null) return { resolvedEntries, errors }
@@ -39,12 +41,14 @@ export async function resolveUpdateAndCreate (params) {
   return resolveNext()
 }
 
-const buildActionFn = (flag, ActionFn, params) => {
+function buildActionFn (flag, ActionFn, params) {
   if (flag) return ActionFn(params)
   else return identity
 }
 
-const handleError = (strict, errors, err, entry) => {
+type EntryError = ContextualizedError & { entry: ResolverEntry }
+
+function handleError (strict: boolean, errors: EntryError[], err: EntryError, entry) {
   err.context = err.context || {}
   err.context.entry = entry
   if (strict) {
