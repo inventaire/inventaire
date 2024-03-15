@@ -81,7 +81,7 @@ const getEntitiesPopularityTotal = uris => {
 const getSimpleEntityScore = async uri => {
   const entity = await getEntityByUri({ uri })
   const claimCount = Object.values(entity.claims).flat().length
-  const sitelinksCount = Object.keys(entity.sitelinks).length
+  const sitelinksCount = 'sitelinks' in entity ? Object.keys(entity.sitelinks).length : 0
   return claimCount + sitelinksCount * 2
 }
 
