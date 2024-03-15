@@ -22,7 +22,7 @@ import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
 const importCircularDependencies = async () => {
-  const { default: indexation } = await import('#db/elasticsearch/indexation')
+  const { indexation } = await import('#db/elasticsearch/indexation')
   reindexWdEntity = indexation('wikidata')
 }
 setImmediate(importCircularDependencies)

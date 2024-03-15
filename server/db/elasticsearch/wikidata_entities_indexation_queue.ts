@@ -16,7 +16,7 @@ const indexName = 'wikidata'
 
 let reindexWdEntity
 const importCircularDependencies = async () => {
-  const { default: indexation } = await import('#db/elasticsearch/indexation')
+  const { indexation } = await import('#db/elasticsearch/indexation')
   reindexWdEntity = indexation(indexName)
 }
 setImmediate(importCircularDependencies)

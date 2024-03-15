@@ -1,18 +1,20 @@
 import { throttle } from 'lodash-es'
 import { assert_ } from '#lib/utils/assert_types'
 import config from '#server/config'
+import type { CouchDoc } from '#types/couchdb'
+import type { SerializedWdEntity } from '#types/entity'
 import { addToBatch, postBatch } from './bulk.js'
 import deindex from './deindex.js'
 import filters from './filters.js'
 import formatters from './formatters/formatters.js'
-import { indexesNamesByBaseNames } from './indexes.js'
+import { indexesNamesByBaseNames, type IndexBaseName } from './indexes.js'
 
 const { updateDelay } = config.elasticsearch
 const bulkThrottleDelay = updateDelay / 2
 
 let batch = []
 
-export default indexBaseName => {
+export function indexation (indexBaseName: IndexBaseName) {
   assert_.string(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   const format = formatters[indexBaseName]
@@ -23,7 +25,7 @@ export default indexBaseName => {
   assert_.function(shouldBeDeindexed)
   assert_.function(filter)
 
-  return async doc => {
+  return async function (doc: CouchDoc | SerializedWdEntity) {
     if (!filter(doc)) return
     if (shouldBeDeindexed(doc)) {
       addToBatch(batch, 'delete', index, doc)
