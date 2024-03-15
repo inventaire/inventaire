@@ -1,16 +1,17 @@
 import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import commonValidations from '#models/validations/common'
+import type { PropertyValueConstraints } from '#types/property'
 
 const { BoundedString } = commonValidations
 
-export const entity = {
+export const entity: PropertyValueConstraints = {
   datatype: 'entity',
   primitiveType: 'string',
   validate: EntityUri.test.bind(EntityUri),
 }
 
-export const uniqueString = {
+export const uniqueString: PropertyValueConstraints = {
   datatype: 'string',
   primitiveType: 'string',
   // Aligning max length on Wikidata's limit
@@ -20,27 +21,27 @@ export const uniqueString = {
 
 const restrictedEntityTypes = types => Object.assign({ entityValueTypes: types }, entity)
 
-export const workEntity = restrictedEntityTypes([ 'work' ])
-export const serieEntity = restrictedEntityTypes([ 'serie' ])
-export const workOrSerieEntity = restrictedEntityTypes([ 'work', 'serie' ])
-export const humanEntity = restrictedEntityTypes([ 'human' ])
-export const publisherEntity = restrictedEntityTypes([ 'publisher' ])
-export const collectionEntity = restrictedEntityTypes([ 'collection' ])
-export const movementEntity = restrictedEntityTypes([ 'movement' ])
-export const genreEntity = restrictedEntityTypes([ 'genre' ])
-export const languageEntity = restrictedEntityTypes([ 'language' ])
-export const uniqueEntity = Object.assign({}, entity, { uniqueValue: true })
+export const workEntity: PropertyValueConstraints = restrictedEntityTypes([ 'work' ])
+export const serieEntity: PropertyValueConstraints = restrictedEntityTypes([ 'serie' ])
+export const workOrSerieEntity: PropertyValueConstraints = restrictedEntityTypes([ 'work', 'serie' ])
+export const humanEntity: PropertyValueConstraints = restrictedEntityTypes([ 'human' ])
+export const publisherEntity: PropertyValueConstraints = restrictedEntityTypes([ 'publisher' ])
+export const collectionEntity: PropertyValueConstraints = restrictedEntityTypes([ 'collection' ])
+export const movementEntity: PropertyValueConstraints = restrictedEntityTypes([ 'movement' ])
+export const genreEntity: PropertyValueConstraints = restrictedEntityTypes([ 'genre' ])
+export const languageEntity: PropertyValueConstraints = restrictedEntityTypes([ 'language' ])
+export const uniqueEntity: PropertyValueConstraints = Object.assign({}, entity, { uniqueValue: true })
 
-export const concurrentString = Object.assign({}, uniqueString, { concurrency: true })
-export const concurrentExternalId = Object.assign({}, concurrentString, { datatype: 'external-id' })
+export const concurrentString: PropertyValueConstraints = Object.assign({}, uniqueString, { concurrency: true })
+export const concurrentExternalId: PropertyValueConstraints = Object.assign({}, concurrentString, { datatype: 'external-id' })
 
-export const url = {
+export const url: PropertyValueConstraints = {
   datatype: 'url',
   primitiveType: 'string',
   validate: isUrl,
 }
 
-export const uniqueSimpleDay = {
+export const uniqueSimpleDay: PropertyValueConstraints = {
   datatype: 'date',
   primitiveType: 'string',
   // See SimpleDay specifications in [inventaire-client]/test/106-regex.js
@@ -48,21 +49,21 @@ export const uniqueSimpleDay = {
   uniqueValue: true,
 }
 
-export const positiveInteger = {
+export const positiveInteger: PropertyValueConstraints = {
   datatype: 'positive-integer',
   primitiveType: 'number',
-  validate: value => Number.isInteger(value) && value > 0,
+  validate: (value: number) => Number.isInteger(value) && value > 0,
   uniqueValue: true,
 }
 
-export const positiveIntegerString = {
+export const positiveIntegerString: PropertyValueConstraints = {
   datatype: 'positive-integer-string',
   primitiveType: 'string',
   validate: isPositiveIntegerString,
   uniqueValue: true,
 }
 
-export const imageHash = {
+export const imageHash: PropertyValueConstraints = {
   datatype: 'image',
   primitiveType: 'string',
   validate: isImageHash,

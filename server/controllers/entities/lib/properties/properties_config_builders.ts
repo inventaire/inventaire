@@ -3,11 +3,12 @@ import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
 import { getPluralType } from '#lib/wikidata/aliases'
+import type { PropertyValueConstraints } from '#types/property'
 import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export function isbnProperty (num) {
-  return Object.assign({}, concurrentString, {
+  const propertyConstraints: PropertyValueConstraints = Object.assign({}, concurrentString, {
     validate: isbn => {
       if (isbn == null) return false
       const isbnData = parseIsbn(isbn)
@@ -18,6 +19,7 @@ export function isbnProperty (num) {
     format: isbn => formatIsbn(isbn, `${num}h`) || isbn,
     adminUpdateOnly: true,
   })
+  return propertyConstraints
 }
 
 // External ids regexs can be found

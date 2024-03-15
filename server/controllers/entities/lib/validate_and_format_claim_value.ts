@@ -1,4 +1,5 @@
 import { newError } from '#lib/error/error'
+import type { EntityType, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import validateClaimValueSync from './validate_claim_value_sync.js'
 
@@ -9,7 +10,17 @@ const importCircularDependencies = async () => {
 }
 setImmediate(importCircularDependencies)
 
-export default async params => {
+interface Params {
+  type: EntityType
+  property: PropertyUri
+  oldVal?: InvClaimValue
+  newVal?: InvClaimValue
+  letEmptyValuePass: boolean
+  userIsAdmin: boolean
+  _id: InvEntityId
+}
+
+export default async (params: Params) => {
   const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
   let { newVal } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
@@ -28,7 +39,7 @@ export default async params => {
   if (typeof newVal === 'string') newVal = newVal.trim().normalize()
   validateClaimValueSync(property, newVal, type)
 
-  const formattedValue = prop.format != null ? prop.format(newVal) : newVal
+  const formattedValue: InvClaimValue = prop.format != null ? prop.format(newVal) : newVal
 
   const { concurrency, entityValueTypes } = prop
 
@@ -69,10 +80,10 @@ const verifyClaimEntityType = async (entityValueTypes, value) => {
   const entity = await getEntityByUri({ uri: value })
 
   if (!entity) {
-    throw newError('entity not found', 400, value)
+    throw newError('entity not found', 400, { value })
   }
 
   if (!entityValueTypes.includes(entity.type)) {
-    throw newError(`invalid claim entity type: ${entity.type}`, 400, value)
+    throw newError(`invalid claim entity type: ${entity.type}`, 400, { value })
   }
 }

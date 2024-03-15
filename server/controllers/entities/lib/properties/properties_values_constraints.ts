@@ -19,6 +19,8 @@ import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
 } from '#lib/regex'
+import type { PropertyUri } from '#types/entity'
+import type { PropertyValueConstraints } from '#types/property'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
@@ -29,7 +31,7 @@ const extend = (base, extension) => Object.assign({}, base, extension)
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
-export const propertiesValuesConstraints = {
+export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConstraints> = {
   // image
   'invp:P2': imageHash,
   // instance of
