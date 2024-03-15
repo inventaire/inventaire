@@ -3,6 +3,7 @@
 import follow from 'cloudant-follow'
 import { debounce } from 'lodash-es'
 import type { DbName } from '#db/couchdb/databases'
+import { waitForCouchInit } from '#db/couchdb/init'
 import metaDbFactory from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -18,12 +19,6 @@ const dbHost = config.db.getOrigin() as Url
 const { reset: resetFollow, delay: delayFollow } = config.db.follow
 
 type DatabaseSeq = `${number}-{string}`
-
-let waitForCouchInit
-const importCircularDependencies = async () => {
-  ({ waitForCouchInit } = await import('#db/couchdb/init'))
-}
-setImmediate(importCircularDependencies)
 
 // Never follow in non-server mode.
 // This behaviors allows, in API tests environement, to have the tests server

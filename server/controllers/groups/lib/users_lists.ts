@@ -1,12 +1,7 @@
 import { chain } from 'lodash-es'
+import { getGroupById } from '#controllers/groups/lib/groups'
 import { assert_ } from '#lib/utils/assert_types'
 import { groupCategories } from '#models/group'
-
-let getGroupById
-const importCircularDependencies = async () => {
-  ({ getGroupById } = await import('./groups.js'))
-}
-setImmediate(importCircularDependencies)
 
 export function userIsInGroup (userId, groupId) {
   return getGroupById(groupId)

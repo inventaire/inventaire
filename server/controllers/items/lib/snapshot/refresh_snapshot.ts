@@ -2,17 +2,12 @@ import { getInvEntitiesUrisByClaims, getInvUrisByClaim } from '#controllers/enti
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
 import { getDocData } from './helpers.js'
-
-let saveSnapshotsInBatch
-const importCircularDependencies = async () => {
-  ({ saveSnapshotsInBatch } = await import('./snapshot.js'))
-}
-setImmediate(importCircularDependencies)
 
 export async function refreshSnapshotFromDoc (changedEntityDoc) {
   const [ uri, type ] = getDocData(changedEntityDoc)

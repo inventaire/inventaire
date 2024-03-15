@@ -1,15 +1,10 @@
 import { property } from 'lodash-es'
+import { getGroupById, getGroupsWhereUserHasAnyRole } from '#controllers/groups/lib/groups'
 import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { removeUserFromGroupDoc } from '#models/group'
 
 const db = await dbFactory('groups')
-
-let getGroupById, getGroupsWhereUserHasAnyRole
-const importCircularDependencies = async () => {
-  ({ getGroupById, getGroupsWhereUserHasAnyRole } = await import('./groups.js'))
-}
-setImmediate(importCircularDependencies)
 
 export async function userCanLeaveGroup (userId, groupId) {
   const group = await getGroupById(groupId)

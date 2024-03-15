@@ -1,10 +1,5 @@
+import { assert_ } from '#lib/utils/assert_types'
 import { formatContextualizedError, type ErrorContext } from './format_error.js'
-
-let assert_
-const importCircularDependencies = async () => {
-  ;({ assert_ } = await import('#lib/utils/assert_types'))
-}
-setImmediate(importCircularDependencies)
 
 // help bundling information at error instanciation
 // so that it can be catched and parsed in a standardized way

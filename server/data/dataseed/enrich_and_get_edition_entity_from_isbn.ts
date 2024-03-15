@@ -1,4 +1,7 @@
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
+import { resolveUpdateAndCreate } from '#controllers/entities/lib/resolver/resolve_update_and_create'
+import { getAuthoritiesAggregatedEntry } from '#data/dataseed/get_authorities_aggregated_entry'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { parseIsbn } from '#lib/isbn/parse'
 import temporarilyMemoize from '#lib/temporarily_memoize'
@@ -17,14 +20,6 @@ const resolverParams = {
   enrich: true,
   reqUserId: seedUserId,
 }
-
-let resolveUpdateAndCreate, getEntityByUri, getAuthoritiesAggregatedEntry
-const importCircularDependencies = async () => {
-  ;({ resolveUpdateAndCreate } = await import('#controllers/entities/lib/resolver/resolve_update_and_create'))
-  ;({ getEntityByUri } = await import('#controllers/entities/lib/get_entity_by_uri'))
-  ;({ getAuthoritiesAggregatedEntry } = await import('./get_authorities_aggregated_entry.js'))
-}
-setImmediate(importCircularDependencies)
 
 const _enrichAndGetEditionEntityFromIsbn = async isbn => {
   try {

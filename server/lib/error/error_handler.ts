@@ -1,6 +1,7 @@
 import { pick } from 'lodash-es'
 import { isAuthentifiedReq } from '#lib/boolean_validations'
 import type { ContextualizedError } from '#lib/error/format_error'
+import { responses_ } from '#lib/responses'
 import { objLength } from '#lib/utils/base'
 import { warn, logError } from '#lib/utils/logs'
 import { typeOf } from '#lib/utils/types'
@@ -9,12 +10,6 @@ import type { User } from '#types/user'
 
 const headersToKeep = [ 'user-agent', 'content-type', 'content-length', 'referer' ] as const
 const loggedUserAttributes = [ '_id', 'username' ] as const
-
-let responses_
-const importCircularDependencies = async () => {
-  ;({ responses_ } = await import('#lib/responses'))
-}
-setImmediate(importCircularDependencies)
 
 interface ErrorResponse extends ContextualizedError {
   user?: Pick<User, typeof loggedUserAttributes[number]>

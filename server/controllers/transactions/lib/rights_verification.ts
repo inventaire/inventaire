@@ -1,15 +1,10 @@
+import { checkIfItemIsBusy, getTransactionsByUserAndItem } from '#controllers/transactions/lib/transactions'
 import { newError } from '#lib/error/error'
 import { verifyRightToInteractWithItem } from '#lib/interactions'
 import { transactionIsActive } from '#models/transaction'
 import type { Item } from '#types/item'
 import type { Transaction } from '#types/transaction'
 import type { UserId } from '#types/user'
-
-let getTransactionsByUserAndItem, checkIfItemIsBusy
-const importCircularDependencies = async () => {
-  ({ getTransactionsByUserAndItem, checkIfItemIsBusy } = await import('./transactions.js'))
-}
-setImmediate(importCircularDependencies)
 
 async function verifyNoExistingTransaction (reqUserId: UserId, item: Item) {
   const transactionsDocs = await getTransactionsByUserAndItem(reqUserId, item._id)

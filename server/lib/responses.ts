@@ -1,10 +1,5 @@
+import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
-
-let assert_
-const importCircularDependencies = async () => {
-  ({ assert_ } = await import('#lib/utils/assert_types'))
-}
-setImmediate(importCircularDependencies)
 
 // returns a function triggering a standard confirmation response
 const ok = (res, status = 200) => {

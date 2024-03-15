@@ -1,17 +1,12 @@
 import { map, property, sum, uniq } from 'lodash-es'
+import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
+import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
+import { getItemsByEntity } from '#controllers/items/lib/items'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { info } from '#lib/utils/logs'
 import getSerieParts from './get_serie_parts.js'
-
-let getItemsByEntity, getEntityByUri, reverseClaims, getEntitiesPopularities, getAuthorWorks
-const importCircularDependencies = async () => {
-  ;({ getItemsByEntity } = await import('#controllers/items/lib/items'))
-  ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
-  ;({ reverseClaims } = await import('./reverse_claims.js'))
-  ;({ getEntitiesPopularities } = await import('./popularity.js'))
-  ;({ getAuthorWorks } = await import('./get_author_works.js'))
-}
-setImmediate(importCircularDependencies)
 
 export async function buildPopularityByUri (uri) {
   const entity = await getEntityByUri({ uri, dry: true })

@@ -1,13 +1,8 @@
+import { getItemsByEntity, getItemsByPreviousEntity } from '#controllers/items/lib/items'
 import dbFactory from '#db/couchdb/base'
 import { revertItemDocEntity, updateItemDocEntity } from '#models/item'
 
 const db = await dbFactory('items')
-
-let getItemsByEntity, getItemsByPreviousEntity
-const importCircularDependencies = async () => {
-  ({ getItemsByEntity, getItemsByPreviousEntity } = await import('./items.js'))
-}
-setImmediate(importCircularDependencies)
 
 const AfterFn = (viewName, modelFn) => async (fromUri, toUri) => {
   let items

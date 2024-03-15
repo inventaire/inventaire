@@ -1,11 +1,6 @@
+import { getGroupBySlug } from '#controllers/groups/lib/groups'
 import getNextSlugCandidate from './get_next_slug_candidate.js'
 import slugify from './slugify.js'
-
-let getGroupBySlug
-const importCircularDependencies = async () => {
-  ({ getGroupBySlug } = await import('./groups.js'))
-}
-setImmediate(importCircularDependencies)
 
 export const getSlug = (name, groupId) => trySlugCandidate(slugify(name), groupId)
 

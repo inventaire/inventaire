@@ -1,14 +1,9 @@
+import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { newError } from '#lib/error/error'
 import type { EntityType, EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import validateClaimValueSync from './validate_claim_value_sync.js'
-
-let getEntityByUri, getInvEntitiesByClaim
-const importCircularDependencies = async () => {
-  ;({ getEntityByUri } = await import('./get_entity_by_uri.js'))
-  ;({ getInvEntitiesByClaim } = await import('./entities.js'))
-}
-setImmediate(importCircularDependencies)
 
 interface Params {
   type: EntityType

@@ -1,17 +1,12 @@
 import { property, uniq } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
+import { getShelvesByIds } from '#controllers/shelves/lib/shelves'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { addErrorContext, newError } from '#lib/error/error'
 import { flatMapUniq, mapUniq } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 
 const allowlistedEntityTypes = new Set([ 'edition', 'work' ])
-
-let getShelvesByIds
-const importCircularDependencies = async () => {
-  ({ getShelvesByIds } = await import('#controllers/shelves/lib/shelves'))
-}
-setImmediate(importCircularDependencies)
 
 export async function validateItemsAsync (items) {
   const owners = mapUniq(items, 'owner')

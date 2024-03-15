@@ -1,18 +1,13 @@
 import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
 import type { InvEntityDoc, InvEntityId, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
 import addRedirection from './add_redirection.js'
 import formatEntityCommon from './format_entity_common.js'
 import getEntityType from './get_entity_type.js'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
-
-let getEntityByUri
-async function importCircularDependencies () {
-  ({ getEntityByUri } = await import('./get_entity_by_uri.js'))
-}
-setImmediate(importCircularDependencies)
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri

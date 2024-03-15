@@ -1,5 +1,6 @@
 import { flatten, identity, map, uniqBy } from 'lodash-es'
 import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims } from '#controllers/entities/lib/entities'
+import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import runWdQuery from '#data/wikidata/run_query'
@@ -8,12 +9,6 @@ import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
-
-let getEntitiesPopularities
-const importCircularDependencies = async () => {
-  ({ getEntitiesPopularities } = await import('./popularity.js'))
-}
-setImmediate(importCircularDependencies)
 
 const allowlistedTypesNames = [ 'series', 'works', 'articles' ]
 

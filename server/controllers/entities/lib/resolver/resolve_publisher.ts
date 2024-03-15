@@ -1,15 +1,10 @@
 import leven from 'leven'
 import { uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { parseIsbn } from '#lib/isbn/parse'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
-
-let getEntitiesList, reverseClaims
-const importCircularDependencies = async () => {
-  ;({ getEntitiesList } = await import('#controllers/entities/lib/get_entities_list'))
-  ;({ reverseClaims } = await import('#controllers/entities/lib/reverse_claims'))
-}
-setImmediate(importCircularDependencies)
 
 export async function resolvePublisher (isbn, publisherLabel) {
   const isbnData = parseIsbn(isbn)
