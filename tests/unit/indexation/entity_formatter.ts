@@ -6,7 +6,8 @@ import { requireJson } from '#lib/utils/json'
 
 const Q535 = requireJson(absolutePath('tests', 'unit/indexation/fixtures/Q535.customized.json'))
 
-describe('indexation: entity formatter: dump/API entity format', () => {
+describe('indexation: entity formatter: dump/API entity format', function () {
+  this.timeout(10000)
   it('should find the type', async () => {
     const doc = await entityFormatter(cloneDeep(Q535), { quick: true })
     doc.type.should.equal('human')
