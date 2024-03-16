@@ -3,7 +3,7 @@ import { wait } from '#lib/promises'
 import { get } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { Url, RelativeUrl, AbsoluteUrl } from '#types/common'
 import createIndex from './create_index.js'
 import reindexOnChange from './reindex_on_change.js'
 
@@ -13,6 +13,7 @@ async function _waitForElasticsearchInit () {
   await waitForElastic()
   await ensureIndexesExist()
   startCouchElasticSync()
+  await waitForElastic('/_doc/wikidata/test', { expectedStatusCode: 404 })
 }
 
 let promise
@@ -21,11 +22,11 @@ export async function waitForElasticsearchInit () {
   return promise
 }
 
-const ensureIndexesExist = () => {
+function ensureIndexesExist () {
   return Promise.all(indexesList.map(ensureIndexExists))
 }
 
-const ensureIndexExists = index => {
+function ensureIndexExists (index) {
   const indexUrl = `${elasticOrigin}/${index}` as Url
   return get(indexUrl)
   .catch(err => {
@@ -34,20 +35,25 @@ const ensureIndexExists = index => {
   })
 }
 
-const waitForElastic = async () => {
+interface WaitForElasticOptions {
+  expectedStatusCode?: number
+}
+
+async function waitForElastic (path: RelativeUrl = '/', options: WaitForElasticOptions = {}) {
   try {
-    await get(elasticOrigin, { noRetry: true })
+    const url = elasticOrigin + path as AbsoluteUrl
+    await get(url, { noRetry: true })
   } catch (err) {
     if (err.statusCode === 503 || err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
       warn(`waiting for Elasticsearch on ${elasticOrigin}`)
       await wait(500)
-      return waitForElastic()
-    } else {
+      return waitForElastic(path, options)
+    } else if (!(options.expectedStatusCode && err.statusCode === options.expectedStatusCode)) {
       throw err
     }
   }
 }
 
-const startCouchElasticSync = () => {
+function startCouchElasticSync () {
   syncIndexesList.forEach(reindexOnChange)
 }
