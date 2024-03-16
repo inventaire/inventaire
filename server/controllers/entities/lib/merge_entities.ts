@@ -43,9 +43,15 @@ const mergeInvEntities = async (userId, fromId, toId) => {
   if (fromEntityDoc._id !== fromId) {
     throw newError("'from' entity doc not found", 500)
   }
+  if (fromEntityDoc.type === 'removed:placeholder') {
+    throw newError("'from' entity doc is a removed:placeholder", 500)
+  }
 
   if (toEntityDoc._id !== toId) {
     throw newError("'to' entity doc not found", 500)
+  }
+  if (toEntityDoc.type === 'removed:placeholder') {
+    throw newError("'to' entity doc is a removed:placeholder", 500)
   }
 
   const previousToUri = getInvEntityCanonicalUri(toEntityDoc)

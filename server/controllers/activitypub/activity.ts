@@ -2,7 +2,6 @@ import { getActivityById } from '#controllers/activitypub/lib/activities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { isCouchUuid } from '#lib/boolean_validations'
 import { newError, notFoundError } from '#lib/error/error'
-import type { Activity } from '#types/activity'
 import type { CouchUuid } from '#types/couchdb'
 import type { PatchId } from '#types/patch'
 import type { Req, Res } from '#types/server'
@@ -34,7 +33,7 @@ const controller = async ({ id }: ActivityArgs, req: Req, res: Res) => {
 
 const getEntityActivity = async id => {
   let [ , entityId, versionNumber, activityNumber ] = id.split('-')
-  const patchId = `${entityId}:${versionNumber}` as PatchId
+  const patchId: PatchId = `${entityId}:${versionNumber}`
   const patch = await getPatchById(patchId)
   const activities = await getActivitiesFromPatch(patch)
   activityNumber = parseInt(activityNumber)
@@ -45,7 +44,7 @@ const getEntityActivity = async id => {
 
 const getActivity = async (id: CouchUuid) => {
   if (!isCouchUuid(id)) throw newError('invalid activity id', 400, { id })
-  const activityDoc = await getActivityById(id) as Activity
+  const activityDoc = await getActivityById(id)
   const { name } = activityDoc.actor
   if (name.startsWith('shelf-')) {
     return getShelfActivity(activityDoc, name)

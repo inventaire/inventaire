@@ -1,4 +1,5 @@
-import type { CouchDoc, CouchUuid, Url, RelativeUrl, AbsoluteUrl } from '#types/common'
+import type { Url, RelativeUrl, AbsoluteUrl } from '#types/common'
+import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { Item } from '#types/item'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 

@@ -13,7 +13,7 @@ export const getActivityById = (id: ActivityId) => db.get<Activity>(id)
 export const getActivitiesByIds = db.byIds<Activity>
 export const deleteActivityById = db.delete
 
-export async function getFollowActivitiesByObject (name) {
+export async function getFollowActivitiesByObject (name: string) {
   return db.getDocsByViewKey<Activity>('followActivitiesByObject', name)
 }
 
@@ -22,7 +22,7 @@ export async function createActivity (newActivity) {
   return db.postAndReturn(activity)
 }
 
-export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }) {
+export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }: { name: string, limit?: number, offset?: number }) {
   assert_.string(name)
   return db.getDocsByViewQuery<Activity>('byActorNameAndDate', {
     limit,
@@ -35,7 +35,7 @@ export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }
   })
 }
 
-export async function getActivitiesCountByName (name) {
+export async function getActivitiesCountByName (name: string) {
   assert_.string(name)
   const res = await db.view('activities', 'byActorNameAndDate', {
     startkey: [ name, 0 ],
@@ -45,6 +45,6 @@ export async function getActivitiesCountByName (name) {
   return (res.rows[0]?.value || 0) as number
 }
 
-export function getActivityByExternalId (externalId) {
+export function getActivityByExternalId (externalId: string) {
   return db.findDocByViewKey<Activity>('byExternalId', externalId)
 }

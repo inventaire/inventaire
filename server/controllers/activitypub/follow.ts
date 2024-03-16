@@ -5,7 +5,7 @@ import { newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { LocalActorUrl, ActivityId, UriObj, ActivityType } from '#types/activity'
+import type { LocalActorUrl, ActivityId, UriObj, ActivityType, Context } from '#types/activity'
 import type { Url } from '#types/common'
 import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
@@ -16,7 +16,7 @@ const host = config.getPublicOrigin()
 interface FollowArgs {
   id: ActivityId
   type: ActivityType
-  '@context': 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
+  '@context': Context[]
   actor: LocalActorUrl
   object: Url
 }
@@ -28,7 +28,7 @@ export async function follow (params: FollowArgs) {
   const { name: requestedObjectName } = parseQuery(objectUrl)
 
   let object
-  const actor = { uri: actorUrl } as UriObj
+  const actor: UriObj = { uri: actorUrl }
   if (isEntityUri(getEntityUriFromActorName(requestedObjectName))) {
     const { entity } = await validateEntity(requestedObjectName)
     // Use canonical uri

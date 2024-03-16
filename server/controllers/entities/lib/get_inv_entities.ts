@@ -11,7 +11,7 @@ import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
-export async function getInvEntitiesByIds (ids: InvEntityId, params: EntitiesGetterArgs) {
+export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesGetterArgs) {
   let entities = await getEntitiesByIds(ids)
   entities = await Promise.all(entities.map(Format(params)))
   const found = entities.reduce(aggregateFoundIds, [])

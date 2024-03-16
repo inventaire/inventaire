@@ -6,7 +6,7 @@ import { warn } from '#lib/utils/logs'
 import type getDbApi from './cot_base.js'
 
 export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo) {
-  const actionAndReturn = (verb, doc) => {
+  const actionAndReturn = (verb: string, doc) => {
     assert_.object(doc)
     return db[verb](doc)
     .then(updateIdAndRev.bind(null, doc))
@@ -20,7 +20,7 @@ export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo)
   }
 
   return {
-    byIds: async <D>(ids) => {
+    byIds: async <D>(ids: string[]) => {
       ids = forceArray(ids)
       const { docs } = await db.fetch<D>(ids)
       return docs

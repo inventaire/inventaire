@@ -163,7 +163,7 @@ export function beforeEntityDocSave (doc: InvEntity) {
 // 'from' and 'to' refer to the redirection process which rely on merging
 // two existing document: redirecting from an entity to another entity,
 // only the 'to' doc will survive
-export function mergeEntitiesDocs (fromEntityDoc: InvEntity, toEntityDoc: InvEntity) {
+export function mergeEntitiesDocs (fromEntityDoc: InvEntity | EntityRedirection, toEntityDoc: InvEntity | EntityRedirection) {
   preventRedirectionEdit(fromEntityDoc)
   preventRedirectionEdit(toEntityDoc)
 
@@ -225,7 +225,7 @@ export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
   return Object.assign(cloneDeep(entityDoc), { type: 'entity' })
 }
 
-export function preventRedirectionEdit (doc: InvEntityDoc) {
+export function preventRedirectionEdit (doc: InvEntityDoc): asserts doc is InvEntity {
   if ('redirect' in doc) {
     throw newError('entity edit failed: the entity is a redirection', 400, { doc })
   }
