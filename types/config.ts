@@ -1,6 +1,6 @@
 // Inspired by https://blog.goncharov.page/node-config-made-type-safe
 
-import type { AbsoluteUrl, ImagePath, Path, RelativeUrl, Url } from '#types/common'
+import type { AbsoluteUrl, ImagePath, Path, RelativeUrl } from '#types/common'
 import type { Email } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
 

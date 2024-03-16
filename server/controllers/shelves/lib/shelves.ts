@@ -7,7 +7,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
-import shelfAttributes, { type UpdatableShelfAttributes } from '#models/attributes/shelf'
+import shelfAttributes from '#models/attributes/shelf'
 import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
 import type { Shelf } from '#types/shelf'
 
