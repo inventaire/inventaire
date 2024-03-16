@@ -12,12 +12,8 @@ const servicesHostnames = uniq(compact([
   getHostname(mediaStorage.swift.publicURL),
 ]))
 
-let serviceIpsSet
-
-Promise.all(servicesHostnames.map(getHostnameIp))
-.then(servicesIps => {
-  serviceIpsSet = new Set(servicesIps)
-})
+const servicesIps = await Promise.all(servicesHostnames.map(getHostnameIp))
+const serviceIpsSet = new Set(compact(servicesIps))
 
 // It would be safer to run requests on submitted urls from an isolated process
 // but in the meantime, this mitigates risks of server-side request forgery
