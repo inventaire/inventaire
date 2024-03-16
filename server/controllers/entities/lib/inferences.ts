@@ -1,7 +1,11 @@
 import { parseIsbn } from '#lib/isbn/parse'
+import type { InvClaimValue, PropertyUri } from '#types/entity'
+
+export type InferedProperties = Record<PropertyUri, (InvClaimValue) => InvClaimValue | null>
+export type PropertyInferences = Record<PropertyUri, InferedProperties>
 
 // Inferences are property values deduced from another property
-export default {
+export const inferences: PropertyInferences = {
   'wdt:P212': {
     'wdt:P957': isbn13 => {
       const isbnData = parseIsbn(isbn13)

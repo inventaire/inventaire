@@ -53,10 +53,11 @@ export interface InvEntity extends CouchDoc {
 }
 
 export type RemovedPlaceholderEntity = OverrideProperties<InvEntity, { type: 'removed:placeholder' }>
+export type RemovedPlaceholdersIds = InvEntityId[]
 
 export interface EntityRedirection extends Omit<InvEntity, 'labels' | 'claims'> {
   redirect: EntityUri
-  removedPlaceholdersIds: InvEntityId[]
+  removedPlaceholdersIds: RemovedPlaceholdersIds
 }
 
 export type InvEntityDoc = InvEntity | RemovedPlaceholderEntity | EntityRedirection

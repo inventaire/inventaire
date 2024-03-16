@@ -24,13 +24,16 @@
 
 import { isString, cloneDeep, get, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
-import inferences from '#controllers/entities/lib/inferences'
+import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
+import type { Claims, EntityRedirection, EntityUri, InvClaimValue, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
+import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 
@@ -44,7 +47,7 @@ export function createBlankEntityDoc () {
   }
 }
 
-export function setEntityDocLabel (doc, lang, value) {
+export function setEntityDocLabel (doc: InvEntity, lang: WikimediaLanguageCode, value: Label) {
   assert_.object(doc)
   assert_.string(lang)
 
@@ -70,26 +73,26 @@ export function setEntityDocLabel (doc, lang, value) {
   return doc
 }
 
-export function setEntityDocLabels (doc, labels) {
+export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
   preventRedirectionEdit(doc)
-  for (const lang in labels) {
-    const value = labels[lang]
+  for (const [ lang, value ] of Object.entries(labels) as ObjectEntries<typeof labels>) {
     doc = setEntityDocLabel(doc, lang, value)
   }
 
   return doc
 }
 
-export function addEntityDocClaims (doc, claims) {
+type CustomInvEntity = InvEntity & { _allClaimsProps?: PropertyUri[] }
+
+export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
   preventRedirectionEdit(doc)
 
   // Pass the list of all edited properties, so that wen trying to infer property
   // values, we know which one should not be infered at the risk of creating
   // a conflict
-  doc._allClaimsProps = Object.keys(claims)
+  doc._allClaimsProps = Object.keys(claims) as PropertyUri[]
 
-  for (const property in claims) {
-    const array = claims[property]
+  for (const [ property, array ] of Object.entries(claims) as Entries<typeof claims>) {
     for (const value of array) {
       doc = createBlankEntityDocClaim(doc, property, value)
     }
@@ -100,12 +103,12 @@ export function addEntityDocClaims (doc, claims) {
   return doc
 }
 
-export function createBlankEntityDocClaim (doc, property, value) {
+export function createBlankEntityDocClaim (doc: InvEntity, property: PropertyUri, value: InvClaimValue) {
   preventRedirectionEdit(doc)
   return updateEntityDocClaim(doc, property, null, value)
 }
 
-export function updateEntityDocClaim (doc, property, oldVal, newVal) {
+export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
   const context = { doc, property, oldVal, newVal }
   preventRedirectionEdit(doc)
   if (oldVal == null && newVal == null) {
@@ -147,7 +150,7 @@ export function updateEntityDocClaim (doc, property, oldVal, newVal) {
   return updateInferredProperties(doc, property, oldVal, newVal)
 }
 
-export function beforeEntityDocSave (doc) {
+export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
   if (doc.claims != null) {
     validateRequiredPropertiesValues(doc.claims)
@@ -160,7 +163,7 @@ export function beforeEntityDocSave (doc) {
 // 'from' and 'to' refer to the redirection process which rely on merging
 // two existing document: redirecting from an entity to another entity,
 // only the 'to' doc will survive
-export function mergeEntitiesDocs (fromEntityDoc, toEntityDoc) {
+export function mergeEntitiesDocs (fromEntityDoc: InvEntity, toEntityDoc: InvEntity) {
   preventRedirectionEdit(fromEntityDoc)
   preventRedirectionEdit(toEntityDoc)
 
@@ -194,55 +197,48 @@ export function mergeEntitiesDocs (fromEntityDoc, toEntityDoc) {
   return toEntityDoc
 }
 
-export function convertEntityDocIntoARedirection (fromEntityDoc, toUri, removedPlaceholdersIds = []) {
+export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
   const [ prefix, id ] = toUri.split(':')
 
   if (prefix === 'inv' && id === fromEntityDoc._id) {
     throw newError('circular redirection', 500, { fromEntityDoc, toUri, removedPlaceholdersIds })
   }
-
-  const redirection = cloneDeep(fromEntityDoc)
-
-  redirection.redirect = toUri
-  delete redirection.labels
-  delete redirection.claims
-  // the list of placeholders entities to recover if the merge as to be reverted
-  redirection.removedPlaceholdersIds = removedPlaceholdersIds
-
+  const redirection: EntityRedirection = {
+    ...omit(fromEntityDoc, [ 'labels', 'claims' ]),
+    redirect: toUri,
+    // The list of placeholders entities to recover if the merge as to be reverted
+    removedPlaceholdersIds,
+  }
   return redirection
 }
 
-export function convertEntityDocToPlaceholder (entityDoc) {
-  if (entityDoc.redirect) {
+export function convertEntityDocToPlaceholder (entityDoc: InvEntity) {
+  if ('redirect' in entityDoc) {
     const message = "can't turn a redirection into a removed placeholder"
-    throw newError(message, 400, entityDoc)
+    throw newError(message, 400, { entityDoc })
   }
 
-  const removedDoc = cloneDeep(entityDoc)
-  removedDoc.type = 'removed:placeholder'
-  return removedDoc
+  return Object.assign(cloneDeep(entityDoc), { type: 'removed:placeholder' })
 }
 
-export function recoverEntityDocFromPlaceholder (entityDoc) {
-  const recoveredDoc = cloneDeep(entityDoc)
-  recoveredDoc.type = 'entity'
-  return recoveredDoc
+export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
+  return Object.assign(cloneDeep(entityDoc), { type: 'entity' })
 }
 
-export function preventRedirectionEdit (doc) {
-  if (doc.redirect == null) return
-  throw newError('entity edit failed: the entity is a redirection', 400, { doc })
+export function preventRedirectionEdit (doc: InvEntityDoc) {
+  if ('redirect' in doc) {
+    throw newError('entity edit failed: the entity is a redirection', 400, { doc })
+  }
 }
 
-function updateInferredProperties (doc, property, oldVal, newVal) {
+function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
   const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
-  const propInferences = omit(inferences[property], declaredProperties)
+  const propInferences: InferedProperties = omit(inferences[property], declaredProperties)
 
   const addingOrUpdatingValue = (newVal != null)
 
-  for (const inferredProperty in propInferences) {
-    const convertor = propInferences[inferredProperty]
+  for (const [ inferredProperty, convertor ] of Object.entries(propInferences) as Entries<typeof propInferences>) {
     let inferredPropertyArray = doc.claims[inferredProperty] || []
 
     if (addingOrUpdatingValue) {
@@ -279,7 +275,7 @@ function updateInferredProperties (doc, property, oldVal, newVal) {
   return doc
 }
 
-function setPossiblyEmptyPropertyArray (doc, property, propertyArray) {
+function setPossiblyEmptyPropertyArray (doc: InvEntity, property: PropertyUri, propertyArray: InvClaimValue[]) {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
     doc.claims = omit(doc.claims, property)
