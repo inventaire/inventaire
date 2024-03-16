@@ -7,6 +7,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
+import type { StringifiedHashedSecretData } from '#types/common'
 import type { User, CreationStrategy, Email, DeletedUser } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
@@ -102,7 +103,7 @@ export function updateUserDocEmail (doc, email) {
   return doc
 }
 
-export function updateUserPassword (user, newHash) {
+export function updateUserDocPassword (user: User, newHash: StringifiedHashedSecretData) {
   user.password = newHash
   user = omit(user, 'resetPassword')
   // Unlocking password-related functionalities on client-side

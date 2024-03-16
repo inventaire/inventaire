@@ -3,8 +3,11 @@ import dbFactory from '#db/couchdb/base'
 import { hashPassword, verifyPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'
+import { updateUserDocPassword } from '#models/user'
 import userValidations from '#models/validations/user'
+import type { StringifiedHashedSecretData } from '#types/common'
 import type { AuthentifiedReq } from '#types/server'
+import type { User, UserId } from '#types/user'
 
 const db = await dbFactory('users')
 
@@ -24,7 +27,7 @@ async function controller (params, req: AuthentifiedReq) {
   return { ok: true }
 }
 
-async function validatePassword ({ user, currentPassword, resetPassword }) {
+async function validatePassword ({ user, currentPassword, resetPassword }: { user: User, currentPassword: string, resetPassword: EpochTimeStamp }) {
   // classic password update
   if (currentPassword != null) {
     if (!userValidations.password(currentPassword)) {
@@ -47,21 +50,20 @@ async function validatePassword ({ user, currentPassword, resetPassword }) {
   }
 }
 
-async function verifyCurrentPassword (user, currentPassword) {
-  return verifyPassword(user.password, currentPassword)
+async function verifyCurrentPassword (user: User, currentPassword: string) {
+  return verifyPassword(user.password as StringifiedHashedSecretData, currentPassword)
 }
 
-async function updatePassword (user, newPassword) {
+async function updatePassword (user: User, newPassword: string) {
   const newHash = await hashPassword(newPassword)
-  await updateUserPassword(user._id, user, newHash)
+  await updateUserPassword(user._id, newHash)
 }
 
-function updateUserPassword (userId, user, newHash) {
-  const updateFn = updateUserPassword.bind(null, user, newHash)
-  return db.update(userId, updateFn)
+function updateUserPassword (userId: UserId, newHash: StringifiedHashedSecretData) {
+  return db.update(userId, doc => updateUserDocPassword(doc, newHash))
 }
 
-async function testOpenResetPasswordWindow (resetPassword) {
+async function testOpenResetPasswordWindow (resetPassword: EpochTimeStamp) {
   if (expired(resetPassword, oneHour)) {
     throw newError('reset password timespan experied', 400)
   }

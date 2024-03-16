@@ -58,6 +58,7 @@ export interface User extends CouchDoc {
   creationStrategy: CreationStrategy
   email?: Email
   password?: string | StringifiedHashedSecretData
+  hasPassword?: boolean
   picture?: string
   language?: string
   validEmail?: boolean
