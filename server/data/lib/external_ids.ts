@@ -67,7 +67,7 @@ const getPropertyAndIdPerHost = {
   'bnb.data.bl.uk': pathname => {
     const [ section, id ] = pathname.split('/').slice(2)
     // Validation is required to filter-out ids that look like 'GBA446176'
-    if (section === 'resource' && properties['wdt:P5199'].validate(id)) {
+    if (section === 'resource' && properties['wdt:P5199'].validate({ value: id })) {
       return { property: 'wdt:P5199', value: id }
     }
     if (section === 'person') return { property: 'wdt:P5361', value: id }

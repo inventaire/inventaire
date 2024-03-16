@@ -155,7 +155,7 @@ const validatePropertyAndValue = condition => {
   } else {
     // Some allowed properties do not have a validation function
     if (properties[property]) {
-      if (!properties[property].validate(value)) {
+      if (!properties[property].validate({ value })) {
         throw newError('invalid property value', 400, { property, value })
       }
     }

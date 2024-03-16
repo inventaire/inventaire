@@ -77,9 +77,9 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvPropertyClaims, type?: EntityType) {
+function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvPropertyClaims, entityType?: EntityType) {
   for (const value of values) {
-    if (value != null && properties[property].validate(value, type)) {
+    if (value != null && properties[property].validate({ value, entityType })) {
       if (claims[property] == null) claims[property] = []
       claims[property].push(value)
     }

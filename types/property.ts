@@ -12,13 +12,19 @@ export type PropertyDatatype =
 
 export type PrimitiveType = 'string' | 'number'
 
+export interface PropertyValidationArgs {
+  value: InvClaimValue
+  entityType?: EntityType
+}
+
 export interface PropertyValueConstraints {
   datatype: PropertyDatatype
   primitiveType: PrimitiveType
-  validate: (value: InvClaimValue) => boolean
+  validate: ({ value, entityType }: PropertyValidationArgs) => boolean
   format?: (value: InvClaimValue) => InvClaimValue
   uniqueValue?: boolean
   concurrency?: boolean
   adminUpdateOnly?: boolean
   entityValueTypes?: EntityType[]
+  typeSpecificValidation?: boolean
 }

@@ -9,7 +9,7 @@ import { concurrentString, concurrentExternalId, uniqueEntity } from './properti
 
 export function isbnProperty (num) {
   const propertyConstraints: PropertyValueConstraints = Object.assign({}, concurrentString, {
-    validate: isbn => {
+    validate: ({ value: isbn }) => {
       if (isbn == null) return false
       const isbnData = parseIsbn(isbn)
       if (isbnData == null) return false
@@ -26,14 +26,14 @@ export function isbnProperty (num) {
 // on their Wikidata property page P1793 statement
 export function externalId (regex) {
   return Object.assign({}, concurrentExternalId, {
-    validate: regex.test.bind(regex),
+    validate: ({ value }) => regex.test.bind(regex)(value),
   })
 }
 
 export function typedExternalId (regexPerType) {
   return Object.assign({}, concurrentExternalId, {
     typeSpecificValidation: true,
-    validate: (value, entityType) => {
+    validate: ({ value, entityType }) => {
       assert_.string(entityType)
       if (regexPerType[entityType] == null) {
         throw newError('unsupported type', 500, { regexPerType, entityType, value })
@@ -47,16 +47,16 @@ export function allowedPropertyValues (property) {
   const allowedValuesPerType = allowedValuesPerTypePerProperty[property]
   return Object.assign({}, uniqueEntity, {
     typeSpecificValidation: true,
-    validate: (entityUri, entityType) => {
+    validate: ({ value, entityType }) => {
       const type = getPluralType(entityType)
-      return allowedValuesPerType[type].includes(entityUri)
+      return allowedValuesPerType[type].includes(value)
     },
   })
 }
 
 export function externalIdWithFormatter ({ regex, format }) {
   return Object.assign({}, concurrentExternalId, {
-    validate: regex.test.bind(regex),
+    validate: ({ value }) => regex.test.bind(regex)(value),
     format,
   })
 }
