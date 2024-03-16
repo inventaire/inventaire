@@ -7,6 +7,15 @@ import { warn, info } from '#lib/utils/logs'
 import config from '#server/config'
 import getSubDb from './get_sub_db.js'
 
+const levelJobsOptions = {
+  maxRetries: 20,
+  backoff: {
+    randomisationFactor: 0,
+    initialDelay: 1000,
+    maxDelay: 60000,
+  },
+}
+
 // always return an object with 'push' and 'pushBatch' function
 // taking a payload and returning a promise
 export function initJobQueue (jobName, worker, maxConcurrency) {
@@ -21,7 +30,7 @@ export function initJobQueue (jobName, worker, maxConcurrency) {
   if (serverMode && run) {
     info(`${jobName} job in server & client mode`)
     const depromisifiedWorker = workerDepromisifier(worker)
-    const queue = JobQueueServerAndClient(db, depromisifiedWorker, maxConcurrency)
+    const queue = JobQueueServerAndClient(db, depromisifiedWorker, { maxConcurrency, ...levelJobsOptions })
     keepWorkerAwake(queue)
     return promisifyApi(queue)
 
