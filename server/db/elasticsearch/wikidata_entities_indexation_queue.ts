@@ -1,4 +1,5 @@
 import { getCachedEnrichedEntity } from '#controllers/entities/lib/get_wikidata_enriched_entities'
+import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { initJobQueue } from '#db/level/jobs'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
@@ -22,6 +23,7 @@ const importCircularDependencies = async () => {
 setImmediate(importCircularDependencies)
 
 async function entitiesIndexationWorker (jobId, wdId) {
+  await waitForElasticsearchInit()
   if (!reindexWdEntity) {
     warn('entitiesIndexationWorker: waiting for reindexWdEntity function to be available')
     await wait(1000)

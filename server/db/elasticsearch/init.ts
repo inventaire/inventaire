@@ -9,10 +9,16 @@ import reindexOnChange from './reindex_on_change.js'
 
 const { origin: elasticOrigin } = config.elasticsearch
 
-export async function waitForElasticsearchInit () {
+async function _waitForElasticsearchInit () {
   await waitForElastic()
   await ensureIndexesExist()
   startCouchElasticSync()
+}
+
+let promise
+export async function waitForElasticsearchInit () {
+  promise = promise || _waitForElasticsearchInit()
+  return promise
 }
 
 const ensureIndexesExist = () => {
