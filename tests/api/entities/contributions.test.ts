@@ -1,4 +1,5 @@
 import should from 'should'
+import { someRandomCouchUuid } from '#fixtures/general'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -26,7 +27,7 @@ describe('entities:contributions', () => {
   })
 
   it('should return an empty list of patch when user does not exist', async () => {
-    const id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
+    const id = someRandomCouchUuid()
     const { patches } = await adminReq('get', `${endpoint}&user=${id}`)
     patches.should.be.an.Array()
     patches.length.should.equal(0)
