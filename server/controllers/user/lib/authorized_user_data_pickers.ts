@@ -15,8 +15,10 @@ export function ownerSafeData (user: User) {
   }
   safeUserDoc.oauth = ('oauth' in user && user.oauth != null) ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
-  safeUserDoc.settings = safeUserDoc.settings || {}
-  safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
+  if (user.type !== 'deletedUser') {
+    safeUserDoc.settings = safeUserDoc.settings || {}
+    safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
+  }
   return safeUserDoc as OwnerSafeUser
 }
 
