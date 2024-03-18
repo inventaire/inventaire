@@ -6,6 +6,7 @@ import downloadImage from '#controllers/images/lib/download_image'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
+import { waitForTestServer } from '#tests/api/utils/request'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
 import { updateClaim } from './entities.js'
@@ -44,6 +45,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
   const { cookie } = await getUser()
   const form = new FormData()
   form.append('somefile', createReadStream(imageFilePath))
+  await waitForTestServer
   const res = await fetch(`${host}/api/images?action=upload&container=${container}`, {
     method: 'post',
     headers: { cookie, ...form.getHeaders() },

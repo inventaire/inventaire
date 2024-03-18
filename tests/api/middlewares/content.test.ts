@@ -1,6 +1,7 @@
 import 'should'
 import fetch from 'node-fetch'
 import config from '#server/config'
+import { waitForTestServer } from '#tests/api/utils/request'
 
 const origin = config.getLocalOrigin()
 
@@ -19,6 +20,7 @@ describe('content', () => {
     })
 
     it('should reject url encoded bodies', async () => {
+      await waitForTestServer
       const res = await fetch(`${origin}/api/tests`, {
         method: 'POST',
         body: 'bla=123',
@@ -34,6 +36,7 @@ describe('content', () => {
 })
 
 const makeRequest = async contentType => {
+  await waitForTestServer
   const res = await fetch(`${origin}/api/tests`, {
     method: 'POST',
     body: JSON.stringify({ bla: 123 }),
