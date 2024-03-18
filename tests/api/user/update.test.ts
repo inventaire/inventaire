@@ -8,7 +8,7 @@ import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getRefreshedUser, createUser, createUsername } from '../fixtures/users.js'
 import { getToken } from '../utils/oauth.js'
 import { bearerTokenReq } from '../utils/request.js'
-import { getIndexedDoc } from '../utils/search.js'
+import { getIndexedDoc, waitForIndexation, waitForReindexation } from '../utils/search.js'
 import { getUser, getUserB } from '../utils/utils.js'
 
 const { users: usersIndex } = indexesNamesByBaseNames
@@ -55,12 +55,12 @@ describe('user:update', () => {
     it('should update the position index', async () => {
       const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value })
-      await wait(1000)
-      const result = await getIndexedDoc(usersIndex, user._id)
-      result._source.position.lat.should.equal(10)
-      result._source.position.lon.should.equal(10)
+      await waitForIndexation('users', user._id)
+      const res = await getIndexedDoc(usersIndex, user._id)
+      res._source.position.lat.should.equal(10)
+      res._source.position.lon.should.equal(10)
       await customAuthReq(user, 'put', endpoint, { attribute, value: null })
-      await wait(1000)
+      await waitForReindexation(res)
       const updatedResult = await getIndexedDoc(usersIndex, user._id)
       should(updatedResult._source.position).not.be.ok()
     })

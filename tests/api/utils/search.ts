@@ -9,6 +9,7 @@ import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
 import { customAuthReq, rawRequest } from './request.js'
 import { publicReq } from './utils.js'
+import type { IndexName, VersionNumber, Id } from '@elastic/elasticsearch/lib/api/types.js'
 
 const { origin: elasticOrigin, updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
@@ -19,7 +20,11 @@ await waitForElasticsearchInit()
 // so better to wait a bit
 await wait(500)
 
-export async function getIndexedDoc (index, id, options = {}) {
+interface GetIndexedDocOptions {
+  retry?: boolean
+  attempt?: number
+}
+export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = {}) {
   assert_.string(index)
   assert_.string(id)
   if (options) assert_.object(options)
@@ -72,6 +77,25 @@ export async function waitForIndexation (indexBaseName, id) {
     warn(`waiting for ${index}/${id} indexation`)
     await wait(200)
     return waitForIndexation(indexBaseName, id)
+  }
+}
+
+interface ElasticResponse {
+  _index: IndexName
+  _id: Id
+  _version?: VersionNumber
+}
+
+export async function waitForReindexation (elasticResponse: ElasticResponse) {
+  const { _index: index, _id: id, _version: version } = elasticResponse
+  const { _version: newVersion } = await getIndexedDoc(index, id)
+  if (newVersion !== version) {
+    // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
+    await wait(elasticsearchUpdateDelay)
+  } else {
+    warn(`waiting for ${index}/${id} reindexation`)
+    await wait(200)
+    return waitForReindexation(elasticResponse)
   }
 }
 
