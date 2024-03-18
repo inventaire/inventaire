@@ -263,6 +263,8 @@ const config = {
   },
 
   mapTilesAccessToken: 'youraccesstoken',
+
+  waitFactor: 1,
 }
 
 module.exports = config

@@ -222,4 +222,6 @@ export type Config = ReadonlyDeep<{
   }
 
   mapTilesAccessToken: string
+
+  waitFactor: number
 }>

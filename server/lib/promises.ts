@@ -1,4 +1,8 @@
-export const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+import config from '#server/config'
+
+const { waitFactor } = config
+
+export const wait = ms => new Promise(resolve => setTimeout(resolve, ms * waitFactor))
 
 export async function objectPromise (obj) {
   const keys = []
