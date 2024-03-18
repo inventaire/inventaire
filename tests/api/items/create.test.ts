@@ -17,9 +17,10 @@ import { createUser, getRefreshedUser } from '../fixtures/users.js'
 import { getByUris as getEntitiesByUris } from '../utils/entities.js'
 import { authReq, getUser, getUserB } from '../utils/utils.js'
 
-const debounceDelay = config.itemsCountDebounceTime + 100
-
 const editionUriPromise = createEdition().then(({ uri }) => uri)
+
+const { longerDelay } = config.db
+const debounceDelay = config.itemsCountDebounceTime + longerDelay
 
 describe('items:create', () => {
   it('should create an item', async () => {

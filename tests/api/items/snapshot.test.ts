@@ -1,6 +1,7 @@
 import 'should'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import {
   createWork,
   createHuman,
@@ -23,6 +24,8 @@ import {
 } from '../utils/entities.js'
 import { getItem } from '../utils/items.js'
 import { authReq, getUserB } from '../utils/utils.js'
+
+const { longDelay, shortDelay } = config.db
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {
@@ -290,9 +293,9 @@ describe('items:snapshot', () => {
         addAuthor(work),
       ])
       const item = await authReq('post', '/api/items', { entity: edition.uri })
-      await wait(200)
+      await wait(shortDelay)
       await merge(author.uri, 'wd:Q2829704')
-      await wait(200)
+      await wait(longDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
     })

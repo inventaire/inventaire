@@ -29,6 +29,11 @@ const config = {
   elasticsearch: {
     minReindexationInterval: 0,
   },
+  db: {
+    shortDelay: 500,
+    longDelay: 1000,
+    longerDelay: 2000,
+  },
 }
 
 module.exports = config

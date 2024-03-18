@@ -3,6 +3,7 @@ import should from 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import config from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { getRefreshedUser, createUser, createUsername } from '../fixtures/users.js'
@@ -11,6 +12,7 @@ import { bearerTokenReq } from '../utils/request.js'
 import { getIndexedDoc } from '../utils/search.js'
 import { getUser, getUserB } from '../utils/utils.js'
 
+const { longDelay } = config.db
 const { users: usersIndex } = indexesNamesByBaseNames
 const endpoint = '/api/user'
 
@@ -55,12 +57,12 @@ describe('user:update', () => {
     it('should update the position index', async () => {
       const user = await createUser()
       await customAuthReq(user, 'put', endpoint, { attribute, value })
-      await wait(1000)
+      await wait(longDelay)
       const result = await getIndexedDoc(usersIndex, user._id)
       result._source.position.lat.should.equal(10)
       result._source.position.lon.should.equal(10)
       await customAuthReq(user, 'put', endpoint, { attribute, value: null })
-      await wait(1000)
+      await wait(longDelay)
       const updatedResult = await getIndexedDoc(usersIndex, user._id)
       should(updatedResult._source.position).not.be.ok()
     })
