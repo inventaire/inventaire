@@ -1,24 +1,25 @@
 import { pick } from 'lodash-es'
 import { getUserAccessLevels, type rolesByAccess } from '#lib/user_access_levels'
 import userAttributes from '#models/attributes/user'
-import type { DocWithUsernameInUserDb, User, UserId } from '#types/user'
+import type { DeletedUser, DocWithUsernameInUserDb, User, UserId } from '#types/user'
 
 interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
   oauth?: string[]
   accessLevels: typeof rolesByAccess['public'][number]
 }
 
-export function ownerSafeData (user: User) {
+// Including the deleted user, as after deleting, it is still possible to make a request
+// with the session cookies
+export function ownerSafeData (user: User | DeletedUser) {
+  if (user.type === 'deletedUser') return user
   const safeUserDoc: OwnerSafeUser = {
     ...pick(user, userAttributes.ownerSafe),
     accessLevels: getUserAccessLevels(user),
   }
   safeUserDoc.oauth = ('oauth' in user && user.oauth != null) ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
-  if (user.type !== 'deletedUser') {
-    safeUserDoc.settings = safeUserDoc.settings || {}
-    safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
-  }
+  safeUserDoc.settings = safeUserDoc.settings || {}
+  safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
   return safeUserDoc as OwnerSafeUser
 }
 
