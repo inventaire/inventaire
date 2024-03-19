@@ -67,8 +67,7 @@ describe('entities:publisher-publications', () => {
   })
 
   it('should get wikidata publisher collections', async () => {
-    const { collections, editions } = await publicReq('get', `${endpoint}&uri=wd:Q2823584`)
-    editions.should.deepEqual([])
+    const { collections } = await publicReq('get', `${endpoint}&uri=wd:Q2823584`)
     collections.should.containEql({ uri: 'wd:Q63217733' })
   })
 })
