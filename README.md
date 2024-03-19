@@ -78,6 +78,7 @@ curl http://localhost:9200
 ```sh
 git clone https://github.com/inventaire/inventaire.git
 cd inventaire
+npm install --global tsx
 npm install
 ```
 
@@ -115,7 +116,7 @@ npm run watch
 ```
 
 ### Installation tips
-* To use executable that are used by the project (such as `mocha`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g mocha nodemon lev2` etc.
+* To use executable that are used by the project (such as `mocha`), you can either find them in `./node_modules/.bin` or install them globally with npm: `npm install -g tsx mocha lev2` etc.
 
 ### Repositories and Branches
 
