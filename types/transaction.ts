@@ -1,5 +1,6 @@
 import type { itemSnapshotAttributes } from '#models/attributes/item'
 import type userAttributes from '#models/attributes/user'
+import type { TransactionComment } from '#types/comment'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { Item, ItemId, ItemSnapshot, ItemTransactionMode } from '#types/item'
 import type { User, UserId } from '#types/user'
@@ -16,6 +17,9 @@ export interface TransactionAction {
   timestamp: EpochTimeStamp
   actor?: TransactionUserRole
 }
+
+export type TransactionTimelineEvent = TransactionAction | TransactionComment
+export type TransactionTimeline = TransactionTimelineEvent[]
 
 export interface TransactionSnapshot {
   item: Pick<Item, typeof itemSnapshotAttributes[number]>

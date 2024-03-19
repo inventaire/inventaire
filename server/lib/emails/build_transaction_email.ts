@@ -1,4 +1,4 @@
-import { some, sortBy, union } from 'lodash-es'
+import { some, union } from 'lodash-es'
 import comments_ from '#controllers/comments/lib/comments'
 import { getItemById } from '#controllers/items/lib/items'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
@@ -17,7 +17,8 @@ type ItemPlaceholder = { snapshot?: EmptyObject }
 
 type CommentWithUser = OverrideProperties<TransactionComment, { user: User }>
 type TransactionActionWithUser = TransactionAction & { user: User }
-type TimelineWithUsers = (CommentWithUser | TransactionActionWithUser)[]
+type TransactionEventWithUser = CommentWithUser | TransactionActionWithUser
+type TimelineWithUsers = TransactionEventWithUser[]
 
 export interface TransactionEmailViewModel {
   transaction: Transaction
@@ -56,9 +57,9 @@ export default async function (transactionId: TransactionId) {
   }
   // Overriding transaction document ids by the ids' docs (owner, requester, etc.)
   // for the email ViewModel
-  const timeline = getTimeline(transaction, messages)
-  const timelineLastSequence = extractTimelineLastSequence(transaction, timeline)
-  const { other, mainUser } = aliasUsers(transaction, timeline)
+  const timeline: TimelineWithUsers = getTimelineWithUsers(transaction, messages, owner, requester)
+  const timelineLastSequence: TimelineWithUsers = extractTimelineLastSequence(timeline)
+  const { other, mainUser } = aliasUsers(timelineLastSequence, owner, requester)
   const transactionEmailViewModel: TransactionEmailViewModel = {
     transaction,
     role,
@@ -113,19 +114,21 @@ function findEmailType (transactionEmailViewModel) {
   }
 }
 
-function getTimeline (transaction: Transaction, messages: TransactionComment[]) {
-  const actions = getFormattedActions(transaction)
-  const formattedMessages = formatMessages(transaction, messages)
-  const timeline = union(actions, formattedMessages)
-  const sortedTimeline = sortBy(timeline, (ev: TransactionAction | TransactionComment) => {
-    return 'created' in ev ? ev.created : ev.timestamp
-  })
+function getTimelineWithUsers (transaction: Transaction, messages: TransactionComment[], owner: User, requester: User) {
+  const actions = getActionsWithUsers(transaction, owner, requester)
+  const messagesWithUsers = getMessagesWithUsers(messages, owner, requester)
+  const timeline: TimelineWithUsers = union(actions, messagesWithUsers)
+  const sortedTimeline: TimelineWithUsers = timeline.sort((a, b) => getTimelineEventTimestamp(a) - getTimelineEventTimestamp(b))
   return sortedTimeline
 }
 
+function getTimelineEventTimestamp (event: TransactionEventWithUser) {
+  return 'created' in event ? event.created : event.timestamp
+}
+
 // format actions and messages for ViewModels
-function getFormattedActions (transaction) {
-  const { owner, requester, actions } = transaction
+function getActionsWithUsers (transaction, owner: User, requester: User) {
+  const { actions } = transaction
   return actions.map(action => {
     // Possible keys:
     // - requested_timeline_action
@@ -140,17 +143,18 @@ function getFormattedActions (transaction) {
   })
 }
 
-function formatMessages (transaction, messages) {
-  const { owner, requester } = transaction
+function getMessagesWithUsers (messages: TransactionComment[], owner: User, requester: User) {
   return messages.map(message => {
-    message.user = ownerIsMessager(owner, message) ? owner : requester
-    return message
+    return {
+      ...message,
+      user: ownerIsMessager(owner, message) ? owner : requester,
+    }
   })
 }
 
-function extractTimelineLastSequence (transaction, timeline) {
+function extractTimelineLastSequence (timeline: TimelineWithUsers) {
   const lastSequence = []
-  const lastEvent = timeline.pop()
+  const lastEvent = timeline.at(-1)
   lastSequence.push(lastEvent)
   let sameSequence = true
   while ((timeline.length > 0) && sameSequence) {
@@ -162,22 +166,20 @@ function extractTimelineLastSequence (transaction, timeline) {
     }
   }
 
-  transaction.timeline = lastSequence
-  return transaction
+  return lastSequence
 }
 
-function aliasUsers (transaction, timeline) {
+function aliasUsers (timeline: TimelineWithUsers, owner: User, requester: User) {
   const lastEvent = timeline.at(-1)
   // deducing main and other user from the last sequence
   // as the user notified (mainUser) is necessarly the one that hasn't acted last
   return {
     other: lastEvent.user,
-    mainUser: findMainUser(transaction, lastEvent.user),
+    mainUser: findMainUser(lastEvent.user, owner, requester),
   }
 }
 
-function findMainUser (transaction, other) {
-  const { owner, requester } = transaction
+function findMainUser (other: User, owner: User, requester: User) {
   if (owner._id === other._id) {
     return requester
   } else {

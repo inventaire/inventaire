@@ -140,6 +140,12 @@ const config = {
     defaultFrom: `inventaire.io <${contactAddress}>`,
     initDelay: 10000,
   },
+  debouncedEmail: {
+    crawlPeriod: 10 * 60 * 1000,
+    debounceDelay: 30 * 60 * 1000,
+    disabled: false,
+  },
+
   contactAddress,
   activitySummary: {
     disabled: true,
@@ -151,11 +157,6 @@ const config = {
   },
   // time of validity for email validation tokens
   tokenDaysToLive: 3,
-  debouncedEmail: {
-    crawlPeriod: 10 * 60 * 1000,
-    debounceDelay: 30 * 60 * 1000,
-    disabled: false,
-  },
 
   mediaStorage: {
     images: {
