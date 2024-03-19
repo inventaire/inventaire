@@ -459,7 +459,7 @@ describe('entities:resolve:on-external-terms', () => {
 
     const works = await getWorksFromAuthorsUris([ 'wd:Q333668' ])
     const matchingWdWork = works
-      .filter(work => work.uri.should.startWith('wd'))
+      .filter(work => work.uri.startsWith('wd'))
       .find(work => Object.values(work.labels).join(' ').includes('outre-espace'))
     if (matchingWdWork) throw new Error(`This test is obsolete: the Wikidata work now exists (${matchingWdWork.uri})`)
 
