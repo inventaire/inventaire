@@ -69,7 +69,7 @@ curl -s "${couchdb_auth_host}/${database_name}/_all_docs?include_docs=true" |
   # Parse CouchDB row line to keep only the doc
   jq '.doc' -cr |
   # Pass to loading script, which expects non-suffixed database name
-  ./scripts/indexation/load.js "$database_base_name"
+  ./scripts/indexation/load.ts "$database_base_name"
 
 echo "Letting Elasticsearch a few seconds to breath, before checking indexation counts"
 sleep 2

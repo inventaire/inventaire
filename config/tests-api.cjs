@@ -2,9 +2,13 @@
 // This config file will be used if: NODE_ENV=tests-api
 // Override locally in ./local-tests-api.js
 
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
 const port = 3009
 
-module.exports = {
+/** @type {PartialDeep<Config>} */
+const config = {
   env: 'tests-api',
   protocol: 'http',
   hostname: 'localhost',
@@ -64,3 +68,5 @@ module.exports = {
     activitiesDebounceTime: 500,
   },
 }
+
+module.exports = config

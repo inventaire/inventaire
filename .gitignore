@@ -1,7 +1,7 @@
 node_modules
 logs
 npm-debug.log
-config/*local*.cjs
+config/*local*
 db/leveldb*
 client
 .lev_history
@@ -16,3 +16,5 @@ inventaire-i18n
 config/.sessions_keys
 *.ndjson
 *.logs
+*.tsbuildinfo
+dist/

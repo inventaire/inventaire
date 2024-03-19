@@ -2,7 +2,11 @@
 // This config file will be used if: NODE_ENV=tests-unit
 // Override locally in ./local-tests-unit.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   env: 'tests-unit',
   verbose: false,
   leveldb: {
@@ -10,3 +14,5 @@ module.exports = {
   },
   useSlowPasswordHashFunction: false,
 }
+
+module.exports = config

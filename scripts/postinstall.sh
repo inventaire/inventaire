@@ -2,24 +2,19 @@
 
 set -eu
 
-./scripts/check_node_version.js
+./scripts/check_node_version.ts
 
 # Make git hooks trackable (see https://stackoverflow.com/a/4457124/3324977)
 rm -rf .git/hooks
 # Symbolic link is relative to the .git directory, thus the path starting with ".."
 ln -s ../scripts/githooks .git/hooks
 
-# If the client folder already exist, assume that it's a re-install
-# and that all the following isn't needed
-[ -e client ] && exit 0
-
-npm run install-client
 npm run update-i18n
 
 mkdir -p logs run db/leveldb
 
 touch ./logs/server.log ./logs/error.log
-# Expected by scripts/actions/backup_databases.js
+# Expected by scripts/actions/backup_databases.ts
 mkdir -p ./db/couchdb/backups
 # Expected by scripts/test_api.sh
 mkdir -p run
@@ -27,10 +22,16 @@ mkdir -p run
 mkdir -p ./storage/users ./storage/groups ./storage/entities
 touch run/3006 run/3009
 
+# If the client folder already exist, assume that it's a re-install
+# and that all the following isn't needed
+[ -e client ] && exit 0
+
+npm run install-client
+
 if [ ! -f ./config/local.cjs ]; then
   # Create a local config file
   emptyConfigFile="
-  # Override settings from ./default.js in this file
+  // Override settings from ./default.cjs in this file
   module.exports = {
     db: {
       username: 'yourcouchdbusername',
@@ -47,5 +48,3 @@ fi
 
 # See https://git-scm.com/docs/git-config#Documentation/git-config.txt-blameignoreRevsFile
 git config blame.ignoreRevsFile .git-blame-ignore-revs
-
-npm run update-jsconfig

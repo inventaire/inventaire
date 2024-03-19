@@ -7,13 +7,14 @@
 
 set -eu
 
-# source: https://stackoverflow.com/a/18000433
-drop_ansi_colors(){
-  sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"
-}
+source ./scripts/scripts_utils.sh
 
 extract_mocha_results(){
   grep --extended-regexp '^  [[:digit:]]+ passing \(' --after-context 1000000 --color=never
 }
 
 drop_ansi_colors < ./logs/tests.log | extract_mocha_results > ./logs/tests_results.log
+timestamp=$(node -p 'new Date().toISOString().replace(/[:.]/g, "-")')
+tmpfile="/tmp/inventaire_tests_results.${timestamp}.log"
+cp ./logs/tests_results.log "$tmpfile"
+echo -e "\e[0;30mThose tests logs have been saved in file://$tmpfile \e[0;0m"

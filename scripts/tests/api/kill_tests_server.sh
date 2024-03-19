@@ -4,17 +4,6 @@
 export NODE_ENV=tests-api NODE_APP_INSTANCE=server
 # Use `toString` to prevent getting colored output
 server_port=$(node -p "require('config').port.toString()")
-supervisor_pid_path="./run/${server_port}-supervisor"
 
-if [[ -f "$supervisor_pid_path" ]] ;
-then
-  supervisor_pid=$(cat "$supervisor_pid_path")
-fi
-
-if [[ "$supervisor_pid" != '' ]] ;
-then
-  # Send a SIGTERM to supervisor, which should then unlink $supervisor_pid_path
-  kill "$supervisor_pid"
-else
-  echo "no test server to kill"
-fi
+# See scripts/watch
+pkill --signal INT --full "watcher_server_port_${server_port}"

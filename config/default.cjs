@@ -3,13 +3,16 @@
 // in this same folder
 // See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
 
-const path = require('path')
+/** @typedef { import('../types/types.ts').Config } Config */
+
+const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
 const port = 3006
 const contactAddress = 'hello@inventaire.io'
 
-module.exports = {
+/** @type {Config} */
+const config = {
   name: 'inventaire',
   env: 'default',
   // Only http is supported: in production, TLS is delegated to Nginx
@@ -60,6 +63,9 @@ module.exports = {
     getOrigin: function () {
       return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
     },
+    getOriginSansAuth: function () {
+      return `${this.protocol}://${this.hostname}:${this.port}`
+    },
     databaseUrl: function (dbBaseName) {
       return `${this.protocol}://${this.hostname}:${this.port}/${this.name(dbBaseName)}`
     },
@@ -109,8 +115,12 @@ module.exports = {
       '/api/reports?action=online',
     ],
   },
-  // enable the api/i18n endpoint and its i18nMissingKeys controller
-  autofixI18n: false,
+
+  i18n: {
+    // enable the api/i18n endpoint and its i18nMissingKeys controller
+    autofix: false,
+    srcFolderPath: '../inventaire-i18n/src',
+  },
 
   // parameters for Nodemailer
   mailer: {
@@ -253,4 +263,8 @@ module.exports = {
   },
 
   mapTilesAccessToken: 'youraccesstoken',
+
+  waitFactor: 1,
 }
+
+module.exports = config

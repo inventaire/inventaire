@@ -6,7 +6,11 @@
 // This config file will be used if: NODE_ENV=production NODE_APP_INSTANCE=alt
 // Override locally in ./local-production-alt.js
 
-module.exports = {
+/** @typedef { import('../types/types.ts').Config } Config */
+/** @typedef { import('type-fest').PartialDeep } PartialDeep */
+
+/** @type {PartialDeep<Config>} */
+const config = {
   port: 3007,
   db: {
     follow: {
@@ -37,3 +41,5 @@ module.exports = {
     enabled: false,
   },
 }
+
+module.exports = config

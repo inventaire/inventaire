@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "allowJs": false,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "incremental": true,
+    "paths": {
+      "#controllers/*": [
+        "./server/controllers/*.js",
+      ],
+      "#data/*": [
+        "./server/data/*.js",
+      ],
+      "#db/*": [
+        "./server/db/*.js",
+      ],
+      "#fixtures/*": [
+        "./tests/api/fixtures/*.js",
+      ],
+      "#i18nAssets/*": [
+        "./inventaire-i18n/assets/*.js",
+      ],
+      "#lib/*": [
+        "./server/lib/*.js",
+      ],
+      "#models/*": [
+        "./server/models/*.js",
+      ],
+      "#scripts/*": [
+        "./scripts/*.js",
+      ],
+      "#server/*": [
+        "./server/*.js",
+      ],
+      "#tests/*": [
+        "./tests/*.js",
+      ],
+      "#types/*": [
+        "./types/*.js",
+      ],
+      "#root/*": [
+        "./*"
+      ]
+    },
+    // Type checking flags, see https://www.typescriptlang.org/tsconfig#Type_Checking_6248
+    // "allowUnreachableCode": true,
+    // "allowUnusedLabels": true,
+    // "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noImplicitAny": true,
+    "noImplicitOverride": true,
+    // "noImplicitReturns": true,
+    // "noImplicitThis": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    // "noUncheckedIndexedAccess": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    // "strictFunctionTypes": true,
+    // "strictNullChecks": true,
+    // "strictPropertyInitialization": true,
+    // "useUnknownInCatchVariables": true,
+  },
+  "include": [
+    "server/**/*",
+    "scripts/**/*",
+    "tests/**/*",
+    "types/**/*",
+  ],
+  "exclude": [
+    "./client/**/*",
+    "./config/**/*",
+    "./db/**/*",
+    "./dist/**/*",
+    "./dumps/**/*",
+    "./storage/**/*",
+    "**/node_modules/*",
+  ]
+}
