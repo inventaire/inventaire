@@ -369,6 +369,10 @@ export const properties = {
   'wdt:P8513': {
     subjectTypes: [ 'serie' ],
   },
+  // BD Gest' series ID
+  'wdt:P8619': {
+    subjectTypes: [ 'serie' ],
+  },
   // BookBrainz series ID
   'wdt:P12048': {
     subjectTypes: [ 'serie' ],

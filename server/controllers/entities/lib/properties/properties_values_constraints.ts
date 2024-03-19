@@ -240,6 +240,8 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   'wdt:P8063': externalId(uuidPattern),
   // Goodreads work ID
   'wdt:P8383': externalId(strictlyPositiveIntegerPattern),
+  // BD Gest' series ID
+  'wdt:P8619': externalId(strictlyPositiveIntegerPattern),
   // letterer
   'wdt:P9191': humanEntity,
   // inker
