@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
+#!/usr/bin/env tsx
 import { addUserRole } from '#controllers/user/lib/user'
 import { info } from '#lib/utils/logs'
 import { createGroup, addMember, addAdmin } from '#tests/api/fixtures/groups'

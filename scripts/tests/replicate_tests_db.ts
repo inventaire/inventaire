@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
+#!/usr/bin/env tsx
 import { databases } from '#db/couchdb/databases'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'

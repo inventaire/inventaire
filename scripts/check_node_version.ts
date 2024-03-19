@@ -1,5 +1,4 @@
-#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
-
+#!/usr/bin/env tsx
 import { absolutePath } from '#lib/absolute_path'
 import { requireJson } from '#lib/utils/json'
 

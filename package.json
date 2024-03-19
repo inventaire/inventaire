@@ -33,7 +33,7 @@
     "populate-users-fixtures": "./scripts/populate_users_fixtures.ts",
     "postinstall": "./scripts/postinstall.sh",
     "replicate-tests-db": "./scripts/tests/replicate_tests_db.ts",
-    "start": "ts-node server/server.ts",
+    "start": "tsx server/server.ts",
     "start-built-server": "./scripts/typescript/start_built_server.sh",
     "start-tests-server": "./scripts/tests/api/start_tests_server.sh",
     "test": "./scripts/tests/run_tests.sh",
@@ -126,10 +126,10 @@
     "nodemon": "^3.0.1",
     "papaparse": "^5.2.0",
     "should": "^13.2.3",
-    "ts-node": "^10.9.2"
+    "tsx": "^4.7.1"
   },
   "engines": {
-    "node": "= 18"
+    "node": ">= 18"
   },
   "imports": {
     "#controllers/*": "./server/controllers/*.js",

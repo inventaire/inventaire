@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --loader ts-node/esm --no-warnings
+#!/usr/bin/env tsx
 
 // This cleanup script does several things:
 // - Delete the design docs created in CouchDB by ./preload_design_docs_changes

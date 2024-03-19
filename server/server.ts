@@ -16,6 +16,7 @@ await Promise.all([
 
 await initExpress()
 
+console.log(new Date().toLocaleTimeString())
 console.timeEnd('startup')
 
 afterStartup()

@@ -2,7 +2,7 @@
 databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys | join(" ")' -r)
 dbHost=$(node -p "require('config').db.getOrigin()")
 elasticOrigin=$(node -p "require('config').elasticsearch.origin")
-leveldbPathBase=$(ts-node ./server/lib/absolute_path.ts root db/leveldb)
+leveldbPathBase=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
 leveldbPath="${leveldbPathBase}*-tests"
 
 for db in $databases

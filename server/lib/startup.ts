@@ -7,6 +7,7 @@ export function beforeStartup () {
   initUncaughtExceptionCatcher()
 
   logErrorsCount()
+  log(`node: ${process.version}`)
   log(`pid: ${process.pid}`)
   log(`env: ${config.env}`)
   log(`local origin: ${config.getLocalOrigin()}`)

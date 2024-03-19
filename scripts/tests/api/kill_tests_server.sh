@@ -6,4 +6,4 @@ export NODE_ENV=tests-api NODE_APP_INSTANCE=server
 server_port=$(node -p "require('config').port.toString()")
 
 # See scripts/watch
-pkill --signal INT --full "nodemon_server_port_${server_port}"
+pkill --signal INT --full "watcher_server_port_${server_port}"

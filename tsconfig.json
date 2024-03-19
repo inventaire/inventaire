@@ -1,8 +1,4 @@
 {
-  "ts-node": {
-    "swc": true,
-    "esm": true
-  },
   "compilerOptions": {
     "target": "esnext",
     "module": "nodenext",

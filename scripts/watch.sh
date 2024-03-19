@@ -8,10 +8,7 @@ export FORCE_COLOR=true
 
 # Hijack the --ignore argument to declare which server port will be used
 # in order to let other process find the desired nodemon process id with `pkill --full`
-nodemon \
-  --watch server --watch config \
-  --ext js,cjs,ts,json,hbs \
-  --exec 'ts-node' \
-  --exitcrash \
-  --ignore "nodemon_server_port_${server_port}" \
+tsx watch \
+  --clear-screen=false \
+  --ignore "watcher_server_port_${server_port}" \
   server/server.ts
