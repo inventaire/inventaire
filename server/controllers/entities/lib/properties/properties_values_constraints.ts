@@ -246,10 +246,12 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   'wdt:P10836': humanEntity,
   // penciller
   'wdt:P10837': humanEntity,
-  // Babelio serial ID
-  'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
   // BookBrainz series ID
   'wdt:P12048': externalId(uuidPattern),
+  // Babelio serial ID
+  'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
+  // BookBrainz edition ID
+  'wdt:P12351': externalId(uuidPattern),
 }
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype

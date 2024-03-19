@@ -377,6 +377,10 @@ export const properties = {
   'wdt:P12319': {
     subjectTypes: [ 'serie' ],
   },
+  // BookBrainz edition ID
+  'wdt:P12351': {
+    subjectTypes: [ 'edition' ],
+  },
 }
 
 for (const property of authorRelationsProperties) {
