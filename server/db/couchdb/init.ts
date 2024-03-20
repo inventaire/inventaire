@@ -1,13 +1,20 @@
 import { mapKeys, pick } from 'lodash-es'
 import { couchInit } from '#db/couchdb/init/couch_init'
+import { waitForCouchdb } from '#db/couchdb/init/wait_for_couchdb'
+import { serverMode } from '#lib/server_mode'
 import { obfuscate, objLength } from '#lib/utils/base'
-import { log } from '#lib/utils/logs'
+import { log, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import { databases } from './databases.js'
 
 const setPreloadSuffix = preload => (_, designDocsName) => preload ? `${designDocsName}_preload` : designDocsName
 
 async function init ({ preload }) {
+  await waitForCouchdb()
+  if (!(serverMode || preload)) {
+    warn({ serverMode, preload }, 'skipped CouchDB initialization')
+    return
+  }
   try {
     const formattedList = Object.entries(databases)
       .map(([ dbName, dbDesignDocs ]) => {
