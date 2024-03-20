@@ -60,5 +60,5 @@ SELECT DISTINCT ?item {
 # 1 - get the desired ids from the Wikidata Query Service
 # 2 - get the entities JSON from the Wikidata API
 # 3 - format and load in Elasticsearch wikidata index
-wd sparql ./languages.rq | wd data | ./scripts/indexation/load.js wikidata
+wd sparql ./languages.rq | wd data | ./scripts/indexation/load.ts wikidata
 ```
