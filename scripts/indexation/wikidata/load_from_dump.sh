@@ -18,10 +18,8 @@ which jq > /dev/null || {
 
 indexed_types_ids=$(mktemp)
 
-./scripts/print_module_exports.ts server/lib/wikidata/aliases.ts typesAliases |
-  # Get uris used as P31 from indexed types
-  jq '[ .humans, .series, .works, .genres, .publishers, .collections, .movements  ] | flatten[]' -cr |
-  # Get the id, wrapped between double quotes
+./scripts/print_module_exports.ts ./server/db/elasticsearch/indexes.ts indexedEntitiesTypesAliases |
+  jq '.[]' -cr |
   sed --regexp-extended 's/wd:(Q.*)/"\1"/' > "$indexed_types_ids"
 
 # This pipeline can be done on any machine. For performance reasons,

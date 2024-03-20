@@ -1,4 +1,5 @@
-import { keyBy, map, mapValues, property } from 'lodash-es'
+import { keyBy, map, mapValues, pick, property } from 'lodash-es'
+import { typesAliases } from '#lib/wikidata/aliases'
 import config from '#server/config'
 
 // Using CouchDB database names + environment suffix as indexes names
@@ -46,3 +47,5 @@ export const socialTypes = [
 ]
 
 export const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
+
+export const indexedEntitiesTypesAliases = Object.values(pick(typesAliases, indexedEntitiesTypes)).flat()
