@@ -1,8 +1,14 @@
 import { absolutePath } from '#lib/absolute_path'
+import { newError } from '#lib/error/error'
+import { exists } from '#lib/fs'
 import { info } from '#lib/utils/logs'
 import config from '#server/config'
 
 const dbFolder = absolutePath('root', 'db')
+if (!(await exists(dbFolder))) {
+  throw newError('can not find db folder', 500, { dbFolder })
+}
+
 const { suffix } = config.db
 const { inMemoryLRUCacheSize } = config.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`

@@ -11,3 +11,12 @@ export const getContentLength = src => stat(src).then(({ size }) => size)
 export async function mkdirp (path) {
   return mkdir(path, { recursive: true })
 }
+
+export async function exists (path) {
+  try {
+    await stat(path)
+    return true
+  } catch {
+    return false
+  }
+}
