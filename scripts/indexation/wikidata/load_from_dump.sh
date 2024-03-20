@@ -31,7 +31,7 @@ curl --silent https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.
   grep --file "$indexed_types_ids" |
   # Drop end-of-line comma to produce valid ndjson
   sed 's/,$//' |
-  ndjson-apply ./scripts/indexation/wikidata/format_dump_entity.ts |
+  ndjson-apply-ts ./scripts/indexation/wikidata/format_dump_entity.ts |
   gzip --best > entities.filtered.simplified.ndjson.gz
 
 # This pipeline should ideally be done on a machine with access to

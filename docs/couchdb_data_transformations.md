@@ -63,8 +63,8 @@ Here, we use [`ndjson-apply`](https://github.com/maxlath/ndjson-apply) to apply 
 
 Write your transform function in a file:
 ```js
-// transform_users.js
-module.exports = doc => {
+// transform_users.ts
+export default function (doc) {
   doc.language = doc.language || 'en'
   delete doc.picture
   return doc
@@ -76,15 +76,15 @@ You can test the effects of your function by using `ndjson-apply` `--diff` mode:
 
 ```sh
 # Preview the transformation on all the documents
-cat ./documents.ndjson | ndjson-apply ./transform_users.js --diff
+cat ./documents.ndjson | ndjson-apply-ts ./transform_users.ts --diff
 # or just the first 100 docs
-head -n 100 ./documents.ndjson | ndjson-apply ./transform_users.js --diff
+head -n 100 ./documents.ndjson | ndjson-apply-ts ./transform_users.ts --diff
 ```
 
 When the preview gives the expected results, you're ready to transform all your documents!
 
 ```sh
-cat ./documents.ndjson | ndjson-apply ./transform_users.js > updated_documents.ndjson
+cat ./documents.ndjson | ndjson-apply-ts ./transform_users.ts > updated_documents.ndjson
 ```
 
 ### By modifying the document as text
