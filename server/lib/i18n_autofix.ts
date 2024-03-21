@@ -1,6 +1,7 @@
-import { stat } from 'node:fs/promises'
+import { readFile, stat, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { objLength } from '#lib/utils/base'
+import { isPropertyId } from 'wikibase-sdk'
+import { arrayIncludes, objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info, warn } from '#lib/utils/logs'
 import config from '#server/config'
@@ -24,42 +25,66 @@ if (autofix) {
     await stat(resolvedSrcFolderPath)
 
     const clientSourceFile = `${resolvedSrcFolderPath}/client/en.json`
+    const clientWikidataIdsFile = `${resolvedSrcFolderPath}/client/keys_translated_from_wikidata`
     const serverSourceFile = `${resolvedSrcFolderPath}/server/en.json`
+    const serverWikidataIdsFile = `${resolvedSrcFolderPath}/server/keys_translated_from_wikidata`
 
     // Using _ as the convention to identify short keys: ex: awesome_title
     // (that is, keys with an English value different than the key itself)
     // the underscore should be surrounded by letters, not spaces
     const shortKeyPattern = /^\w+_\w+$/
 
-    appendToClientKeys = keys => appendToI18nKeys(clientSourceFile, keys)
-    appendToServerKeys = key => appendToI18nKeys(serverSourceFile, [ key ])
+    appendToClientKeys = keys => appendToI18nKeys(clientSourceFile, clientWikidataIdsFile, keys)
+    appendToServerKeys = key => appendToI18nKeys(serverSourceFile, serverWikidataIdsFile, [ key ])
 
     // Don't use 'require' as it will be cached until next start
-    async function appendToI18nKeys (path, newKeys) {
+    async function appendToI18nKeys (sourceFilePath: string, wikidataIdsFilePath: string, newKeys: string[]) {
     // Add a random pause so that several calls at the same time
     // are unlickly to conflict. Sort of a debounce ersatz
       await wait(Math.trunc(Math.random() * 1000))
 
-      const keys = await readJsonFile(path)
-      const lengthBefore = objLength(keys)
+      const keys = await readJsonFile(sourceFilePath)
+      const wikidataIds = (await readFile(wikidataIdsFilePath)).toString().trim().split('\n')
+      const keysCountBefore = objLength(keys)
+      const wikidataIdsCountBefore = wikidataIds.length
       for (const key of newKeys) {
-        if (!keys[key]) {
-          keys[key] = shortKeyPattern.test(key) ? null : key
-          success(`+i18n: '${key}'`)
+        if (isPropertyId(key)) {
+          if (arrayIncludes(wikidataIds, key)) {
+            info(`i18n: already there '${key}'`)
+          } else {
+            wikidataIds.push(key)
+            success(`+i18n wikidata property: '${key}'`)
+          }
         } else {
-          info(`i18n: already there '${key}'`)
+          if (keys[key]) {
+            info(`i18n: already there '${key}'`)
+          } else {
+            keys[key] = shortKeyPattern.test(key) ? null : key
+            success(`+i18n: '${key}'`)
+          }
         }
       }
 
-      if (objLength(keys) > lengthBefore) {
+      if (objLength(keys) > keysCountBefore) {
         try {
-          await writeJsonFile(path, keys)
-          success(`i18n:updated ${path}`)
+          await writeJsonFile(sourceFilePath, keys)
+          success(`i18n:updated ${sourceFilePath}`)
         } catch (err) {
           console.log('err', err)
         }
       } else {
-        info(`i18n:not:updating ${path}: no new key`)
+        info(`i18n:not:updating ${sourceFilePath}: no new key`)
+      }
+
+      if (wikidataIds.length > wikidataIdsCountBefore) {
+        try {
+          await writeFile(wikidataIdsFilePath, wikidataIds.join('\n') + '\n')
+          success(`i18n:updated ${wikidataIdsFilePath}`)
+        } catch (err) {
+          console.log('err', err)
+        }
+      } else {
+        info(`i18n:not:updating ${wikidataIdsFilePath}: no new key`)
       }
     }
   } catch (err) {

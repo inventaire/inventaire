@@ -170,7 +170,9 @@ const aggregateCollections = (index, name) => {
 
 // Work around the TS2345 error when using Array include method
 // https://stackoverflow.com/questions/55906553/typescript-unexpected-error-when-using-includes-with-a-typed-array/70532727#70532727
-export const arrayIncludes = (array, value) => array.some(element => element === value)
+export function arrayIncludes (array: (string | number)[], value: string | number) {
+  return array.some(element => element === value)
+}
 
 export const objectEntries = obj => Object.entries(obj) as ObjectEntries<typeof obj>
 
