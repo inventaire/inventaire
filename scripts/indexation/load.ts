@@ -9,13 +9,13 @@ import formatters from '#db/elasticsearch/formatters/formatters'
 import { indexes } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import { warn, success, info, logError, LogError } from '#lib/utils/logs'
-import { logErrorAndExit } from '../scripts_utils.js'
+import { logErrorAndExit, logErrorMessageAndExit } from '../scripts_utils.js'
 
 const [ indexBaseName ] = process.argv.slice(2)
 const indexBaseNames = Object.keys(indexes)
 
 if (!indexBaseNames.includes(indexBaseName)) {
-  logErrorAndExit(`invalid index base name: ${indexBaseName} (valid indexes: ${indexBaseNames.join(', ')})`)
+  logErrorMessageAndExit(`invalid index base name: ${indexBaseName} (valid indexes: ${indexBaseNames.join(', ')})`)
 }
 
 const { index } = indexes[indexBaseName]
