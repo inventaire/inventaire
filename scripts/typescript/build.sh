@@ -9,6 +9,9 @@ rm -rf ./dist/{server,types,tsconfig.build.tsbuildinfo}
 # Use a temporay pre-dist folder to avoid rm -rf symlinks defined hereafter
 # as that could mess with currently running LevelDB operations
 tsc  --project ./tsconfig.build.json --diagnostics --outDir ./pre-dist
+# .hbs files are not copied by tsc
+# See https://github.com/microsoft/TypeScript/issues/30835
+cp -r server/lib/emails/views ./dist/server/lib/emails
 
 mv ./pre-dist/* ./dist
 rmdir ./pre-dist
