@@ -1,3 +1,4 @@
+import { isPlainObject } from 'lodash-es'
 import { createTransport, getTestMessageUrl } from 'nodemailer'
 import hbs from 'nodemailer-express-handlebars'
 import { absolutePath } from '#lib/absolute_path'
@@ -9,6 +10,14 @@ import config from '#server/config'
 const viewsPath = absolutePath('lib', 'emails/views')
 const debugMode = config.mailer.nodemailer.host === 'smtp.ethereal.email'
 
+const dropHandlebarsContext = fn => (...args) => {
+  const lastArg = args.at(-1)
+  if (isPlainObject(lastArg) && isPlainObject(lastArg.data) && isPlainObject(lastArg.hash)) {
+    args = args.slice(0, -1)
+  }
+  return fn(...args)
+}
+
 const options = {
   viewEngine: {
     extname: '.hbs',
@@ -17,11 +26,11 @@ const options = {
     partialsDir: `${viewsPath}/partials/`,
     helpers: {
       debug,
-      imgSrc,
+      imgSrc: dropHandlebarsContext(imgSrc),
       stringify,
-      i18n,
-      I18n,
-      dateI18n,
+      i18n: dropHandlebarsContext(i18n),
+      I18n: dropHandlebarsContext(I18n),
+      dateI18n: dropHandlebarsContext(dateI18n),
     },
   },
   viewPath: viewsPath,
