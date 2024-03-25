@@ -4,6 +4,7 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
 import { createElementDoc, updateElementDoc } from '#models/element'
+import { maxKey, minKey } from '#lib/couch'
 import type { ListingElement } from '#types/element'
 
 const db = await dbFactory('elements')
@@ -25,11 +26,19 @@ export async function getElementsByListings (listingsIds) {
   return db.getDocsByViewKeys<ListingElement>('byListings', listingsIds)
 }
 
+export async function getElementsByListing (listingId) {
+  return db.getDocsByViewQuery<ListingElement>('byListingAndOrdinal', {
+    startkey: [ listingId, minKey ],
+    endkey: [ listingId, maxKey ],
+    include_docs: true,
+  })
+}
+
 export const bulkDeleteElements = db.bulkDelete
 
 export async function deleteListingsElements (listings) {
-  const listingIds = map(listings, '_id')
-  const listingsElements = await getElementsByListings(listingIds)
+  const listingsIds = map(listings, '_id')
+  const listingsElements = await getElementsByListings(listingsIds)
   if (isNonEmptyArray(listingsElements)) {
     await bulkDeleteElements(listingsElements)
   }
