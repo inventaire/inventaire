@@ -18,4 +18,9 @@ export const views: Views<ListingElement> = {
       if (doc.uri != null) emit(doc.list, null)
     },
   },
+  byOrdinalAndListing: {
+    map: doc => {
+      if (doc.uri != null) emit([ doc.list, doc.ordinal ], null)
+    },
+  },
 }

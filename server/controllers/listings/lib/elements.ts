@@ -25,11 +25,19 @@ export async function getElementsByListings (listingsIds) {
   return db.getDocsByViewKeys<ListingElement>('byListings', listingsIds)
 }
 
+export async function getElementsByListing (listingId) {
+  return db.getDocsByViewQuery<ListingElement>('byOrdinalAndListing', {
+    startkey: [ listingId, 0 ],
+    endkey: [ listingId, 'a' ],
+    include_docs: true,
+  })
+}
+
 export const bulkDeleteElements = db.bulkDelete
 
 export async function deleteListingsElements (listings) {
-  const listingIds = map(listings, '_id')
-  const listingsElements = await getElementsByListings(listingIds)
+  const listingsIds = map(listings, '_id')
+  const listingsElements = await getElementsByListings(listingsIds)
   if (isNonEmptyArray(listingsElements)) {
     await bulkDeleteElements(listingsElements)
   }
