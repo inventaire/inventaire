@@ -1,27 +1,14 @@
-import { isArray } from '#lib/boolean_validations'
 import { getUser } from '#tests/api/utils/utils'
-import { authReq } from '../utils/utils.js'
 import { customAuthReq } from './request.js'
 
 const endpoint = '/api/lists?action='
-const byIds = 'by-ids'
+const byId = 'by-id'
 
-const getListingByIds = async (user, ids, params = '') => {
-  if (isArray(ids)) ids = ids.join('|')
-  let promise
-  const path = `${endpoint}${byIds}${params}&ids=${ids}`
-  if (user) {
-    promise = customAuthReq(user, 'get', path)
-  } else {
-    promise = authReq('get', path)
-  }
-  return promise
-}
-
-export async function getListingById ({ user, id, params }) {
+export async function getListingById ({ user, id }) {
   user = user || getUser()
-  const { lists } = await getListingByIds(user, id, params)
-  return lists[id]
+  const path = `${endpoint}${byId}&id=${id}`
+  const { list: listing } = await customAuthReq(user, 'get', path)
+  return listing
 }
 
 export async function getByIdWithElements ({ user, id }) {
