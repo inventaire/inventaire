@@ -4,20 +4,23 @@ import { assert_ } from '#lib/utils/assert_types'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
-const { pass, entityUri, couchUuid } = commonValidations
+const { pass, entityUri, couchUuid, nonNegativeInteger } = commonValidations
 
 const validations = {
   pass,
   uri: entityUri,
   list: couchUuid,
+  ordinal: nonNegativeInteger,
 }
 
 const attributes = {
   validAtCreation: [
     'list',
     'uri',
+    'ordinal',
   ],
   updatable: [
+    'ordinal',
     'uri',
   ],
 }
@@ -26,6 +29,7 @@ export function createElementDoc (element) {
   assert_.object(element)
   assert_.string(element.uri)
   assert_.string(element.list)
+  assert_.number(element.ordinal)
 
   const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {

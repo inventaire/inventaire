@@ -1,7 +1,5 @@
-import { groupBy, map } from 'lodash-es'
 import { paginate } from '#controllers/items/lib/queries_commons'
-import { getElementsByListings } from '#controllers/listings/lib/elements'
-import { getListingsByCreators } from '#controllers/listings/lib/listings'
+import { assignElementsToListings, getListingsByCreators } from '#controllers/listings/lib/listings'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
@@ -23,22 +21,11 @@ const controller = async ({ users, offset, limit, context, withElements, reqUser
   const allVisibleListings = await filterVisibleDocs(foundListings, reqUserId)
   const { items: authorizedListings } = paginate(allVisibleListings, { offset, limit, context })
   if (withElements && isNonEmptyArray(authorizedListings)) {
-    await assignElementsToLists(authorizedListings)
+    await assignElementsToListings(authorizedListings)
   }
   return {
     lists: authorizedListings,
   }
-}
-
-const assignElementsToLists = async authorizedListings => {
-  const authorizedListingsIds = map(authorizedListings, '_id')
-  const foundElements = await getElementsByListings(authorizedListingsIds)
-  const elementsByList = groupBy(foundElements, 'list')
-  authorizedListings.forEach(assignElementsToList(elementsByList))
-}
-
-const assignElementsToList = elementsByList => listing => {
-  listing.elements = elementsByList[listing._id] || []
 }
 
 export default { sanitization, controller }
