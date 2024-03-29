@@ -1,7 +1,8 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
 import { getSeedsByIsbns } from '#data/dataseed/dataseed'
-import { parseIsbn, type IsbnData } from '#lib/isbn/parse'
+import { parseIsbn } from '#lib/isbn/parse'
+import type { IsbnData } from '#types/common'
 
 const sanitization = {
   isbn: {},

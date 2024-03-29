@@ -1,14 +1,8 @@
 import isbn3 from 'isbn3'
+import type { IsbnData } from '#types/common'
 import groups from './groups.js'
 
 const { parse: isbnParser } = isbn3
-
-export type IsbnData = ReturnType<typeof isbnParser> & {
-  groupPrefix?: string
-  publisherPrefix?: string
-  groupLang?: string
-  groupLangUri?: string
-}
 
 export function parseIsbn (isbn) {
   const isbnData: IsbnData = isbnParser(isbn)
