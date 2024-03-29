@@ -32,3 +32,10 @@ export type HighResolutionTime = [ number, number ]
 export type ISODate = string
 
 export type StringifiedHashedSecretData = `{${string}}`
+
+export type IsbnData = ReturnType<typeof isbnParser> & {
+  groupPrefix?: string
+  publisherPrefix?: string
+  groupLang?: string
+  groupLangUri?: string
+}
