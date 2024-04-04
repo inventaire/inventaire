@@ -12,7 +12,7 @@ import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const host = config.getPublicOrigin()
 
-export function getLastItems (limitDate, items) {
+export function getLastItems (limitDate: EpochTimeStamp, items: SerializedItem[]) {
   return items.filter(item => item.created > limitDate)
 }
 
@@ -68,12 +68,12 @@ export function formatData (activitySummaryItemsViewModels: ActivitySummaryItemV
   }
 }
 
-export function getHighlightedItems (lastItems, highlightedLength) {
+export function getHighlightedItems (lastItems: SerializedItem[], highlightedLength: number) {
   if (lastItems.length <= highlightedLength) return lastItems
   return getItemsWithTransactionFirst(lastItems, highlightedLength)
 }
 
-const getItemsWithTransactionFirst = (lastItems, highlightedLength) => {
+const getItemsWithTransactionFirst = (lastItems: SerializedItem[], highlightedLength: number) => {
   // create a new array as items.pop() would affect lastItems everywhere
   const items = clone(lastItems)
   const withTransaction = []
@@ -98,7 +98,7 @@ const getItemsWithTransactionFirst = (lastItems, highlightedLength) => {
   }
 }
 
-const addUserLang = lang => item => {
+const addUserLang = (lang: WikimediaLanguageCode) => (item: SerializedItem) => {
   item.userLang = lang
   return item
 }

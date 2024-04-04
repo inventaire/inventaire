@@ -5,6 +5,7 @@ import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { track } from '#lib/track'
 import { forceArray } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
+import type { Item } from '#types/item'
 import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 export default async (req, res) => {
@@ -30,7 +31,7 @@ export default async (req, res) => {
   track(req, [ 'item', 'creation', null, items.length ])
 }
 
-const getItemsWithSnapshots = async (itemsDocs, singleItemMode) => {
+const getItemsWithSnapshots = async (itemsDocs: Item[], singleItemMode: boolean) => {
   // When only one item was sent, without being wrapped in an array
   // return the created item object, instead of an array
   if (singleItemMode) {
