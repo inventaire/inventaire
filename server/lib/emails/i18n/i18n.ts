@@ -3,6 +3,7 @@ import { isString } from 'lodash-es'
 import moment, { type LongDateFormatKey } from 'moment'
 import Polyglot from 'node-polyglot'
 import { appendToServerKeys } from '#lib/i18n_autofix'
+import { assert_ } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
@@ -43,6 +44,8 @@ const solveLang = lang => {
 
 export function i18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {
   lang = solveLang(lang)
+  assert_.string(lang)
+  assert_.string(key)
   return translators[lang](key, args)
 }
 
