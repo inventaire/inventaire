@@ -20,6 +20,7 @@ export interface ActivitySummaryItemViewModel {
   item: SerializedItem
   itemHref: AbsoluteUrl
   user: User
+  userLang?: WikimediaLanguageCode
   distance: number
   userHref: AbsoluteUrl
   transactionLabel: string
@@ -42,7 +43,7 @@ export function getActivitySummaryItemsViewModels (items: SerializedItem[], user
       transactionLabel = `${item.transaction}_personalized_strong`
       transactionColor = transactionsColors[item.transaction]
     }
-    return {
+    const itemViewModel: ActivitySummaryItemViewModel = {
       item,
       itemHref,
       user,
@@ -51,14 +52,15 @@ export function getActivitySummaryItemsViewModels (items: SerializedItem[], user
       transactionLabel,
       transactionColor,
     }
+    return itemViewModel
   })
 }
 
-export function formatData (activitySummaryItemsViewModels: ActivitySummaryItemViewModel[], label: string, lang: WikimediaLanguageCode, highlighted) {
-  const more = activitySummaryItemsViewModels.length - highlighted.length
+export function formatActivitySummaryItemsData (activitySummaryItemsViewModels: ActivitySummaryItemViewModel[], label: string, lang: WikimediaLanguageCode, lastItemsCount: number) {
+  const more = activitySummaryItemsViewModels.length - lastItemsCount
   return {
-    display: highlighted.length > 0,
-    highlighted: highlighted.map(addUserLang(lang)),
+    display: activitySummaryItemsViewModels.length > 0,
+    highlighted: activitySummaryItemsViewModels.map(addSummaryUserLang(lang)),
     title: `last_${label}_books`,
     more: {
       display: more > 0,
@@ -98,7 +100,7 @@ const getItemsWithTransactionFirst = (lastItems: SerializedItem[], highlightedLe
   }
 }
 
-const addUserLang = (lang: WikimediaLanguageCode) => (item: SerializedItem) => {
-  item.userLang = lang
-  return item
+const addSummaryUserLang = (lang: WikimediaLanguageCode) => (itemViewModel: ActivitySummaryItemViewModel) => {
+  itemViewModel.userLang = lang
+  return itemViewModel
 }
