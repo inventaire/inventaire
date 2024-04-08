@@ -69,6 +69,8 @@ export type WikimediaCommonsFilename = string
 
 export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
 
+export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
+
 export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType }> {
   _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
