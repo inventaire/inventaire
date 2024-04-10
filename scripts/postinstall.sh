@@ -2,6 +2,15 @@
 
 set -eu
 
+echo "INIT_CWD: $INIT_CWD"
+echo "pwd: $(pwd)"
+
+# If the server repository is installed as a module (i.e. to access type definitions)
+# do not run the postinstall steps
+if [ "$INIT_CWD" != "$(pwd)" ]; then
+  exit 0
+fi
+
 ./scripts/check_node_version.ts
 
 # Make git hooks trackable (see https://stackoverflow.com/a/4457124/3324977)
