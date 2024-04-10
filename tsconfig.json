@@ -45,9 +45,6 @@
       "#types/*": [
         "./types/*.js",
       ],
-      "#root/*": [
-        "./*"
-      ]
     },
     // Type checking flags, see https://www.typescriptlang.org/tsconfig#Type_Checking_6248
     "allowUnreachableCode": false,
