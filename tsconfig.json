@@ -5,6 +5,8 @@
     "moduleResolution": "nodenext",
     "baseUrl": ".",
     "rootDir": ".",
+    // Apparently required when using pnpm and such
+    "preserveSymlinks": true,
     "allowJs": false,
     "checkJs": false,
     "skipLibCheck": true,

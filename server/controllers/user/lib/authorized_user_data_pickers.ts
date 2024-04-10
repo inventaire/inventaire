@@ -3,7 +3,7 @@ import { getUserAccessLevels, type rolesByAccess } from '#lib/user_access_levels
 import userAttributes from '#models/attributes/user'
 import type { DeletedUser, DocWithUsernameInUserDb, User, UserId } from '#types/user'
 
-interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
+export interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
   oauth?: string[]
   accessLevels: typeof rolesByAccess['public'][number]
 }
