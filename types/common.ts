@@ -1,4 +1,7 @@
+import isbn3 from 'isbn3'
 import type { uploadContainersNames } from '#controllers/images/lib/containers'
+
+const { parse: isbnParser } = isbn3
 
 export type LatLng = [ number, number ]
 

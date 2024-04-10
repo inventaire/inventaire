@@ -1,4 +1,5 @@
 import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
+import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { ImageHash, Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { OverrideProperties } from 'type-fest'
