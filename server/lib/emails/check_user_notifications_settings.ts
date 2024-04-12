@@ -26,4 +26,4 @@ const checkSetting = (userId, notifications, label) => {
   }
 }
 
-const emailDisabled = context => newError('email disabled', 'email_disabled', context)
+const emailDisabled = context => newError('user email disabled', 'email_disabled', context)
