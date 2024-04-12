@@ -1,9 +1,8 @@
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
-import type { PropertyUri } from '#types/entity'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
-export const authorRelationsProperties: PropertyUri[] = [
+export const authorRelationsProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P98', // editor
@@ -12,7 +11,7 @@ export const authorRelationsProperties: PropertyUri[] = [
   'wdt:P9191', // letterer
   'wdt:P10836', // inker
   'wdt:P10837', // penciller
-]
+] as const
 
 // Default `category` = 'general'
 // Default `subjectTypes` = allLocallyEditedEntitiesTypes

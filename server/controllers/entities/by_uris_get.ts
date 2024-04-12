@@ -1,8 +1,10 @@
 import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import type { EntityUri } from '#types/entity'
 import addRelatives from './lib/add_relatives.js'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const sanitization = {
   uris: {},
@@ -15,7 +17,7 @@ const sanitization = {
       'sitelinks',
       'image',
       'popularity',
-    ],
+    ] as const,
     optional: true,
   },
   lang: {
@@ -30,12 +32,21 @@ const sanitization = {
     default: false,
   },
   relatives: {
-    allowlist: authorRelationsProperties.concat([
+    allowlist: [ ...authorRelationsProperties,
       'wdt:P179', // part of the series
       'wdt:P629', // edition or translation of
-    ]),
+    ] as const,
     optional: true,
   },
+}
+
+export interface GetEntitiesParams {
+  uris: EntityUri[]
+  attributes?: readonly (typeof sanitization.attributes.allowlist[number])[]
+  lang?: WikimediaLanguageCode
+  refresh?: boolean
+  autocreate?: boolean
+  relatives?: readonly (typeof sanitization.relatives.allowlist[number])[]
 }
 
 const controller = async ({ uris, attributes, lang, refresh, relatives, autocreate }) => {
