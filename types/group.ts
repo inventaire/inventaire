@@ -1,5 +1,6 @@
-import type { ImageHash, LatLng } from '#types/common'
+import type { LatLng } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { ImageHash } from '#types/image'
 import type { UserId } from '#types/user'
 
 export type GroupId = CouchUuid

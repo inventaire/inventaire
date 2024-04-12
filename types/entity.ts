@@ -1,7 +1,8 @@
 import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
-import type { ImageHash, Url } from '#types/common'
+import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { ImageHash } from '#types/image'
 import type { OverrideProperties } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims } from 'wikibase-sdk'
 
@@ -13,6 +14,9 @@ export type WdPropertyUri = `wdt:${WdPropertyId}`
 export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
+
+export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
+export type EntityId = WdEntityId | InvEntityId | Isbn
 
 export type PropertyUri = WdPropertyUri | InvPropertyUri
 export type Isbn = string

@@ -1,5 +1,4 @@
 import isbn3 from 'isbn3'
-import type { uploadContainersNames } from '#controllers/images/lib/containers'
 
 const { parse: isbnParser } = isbn3
 
@@ -26,10 +25,6 @@ export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
 export type Path = string
 
-export type ImageHash = string
-export type ImageContainer = typeof uploadContainersNames[number]
-export type ImagePath = `/img/${ImageContainer}/${ImageHash}`
-
 export type HighResolutionTime = [ number, number ]
 
 export type ISODate = string
@@ -42,3 +37,5 @@ export type IsbnData = ReturnType<typeof isbnParser> & {
   groupLang?: string
   groupLangUri?: string
 }
+
+export type ColorHexCode = `#${number}`
