@@ -1,4 +1,5 @@
 import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
+import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
@@ -80,8 +81,8 @@ export interface SerializedInvEntity extends OverrideProperties<InvEntity, { typ
   _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
   originalLang?: WikimediaLanguageCode
-  image?: {
-    url: EntityImg
+  image: {
+    url?: EntityImg
   }
   redirects?: { from: InvEntityUri, to: EntityUri }
 }
@@ -110,9 +111,7 @@ export interface SerializedWdEntity {
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
-  image?: {
-    url: WikimediaCommonsFilename
-  }
+  image: ReturnType<typeof getWikimediaThumbnailData>
 }
 
 export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity

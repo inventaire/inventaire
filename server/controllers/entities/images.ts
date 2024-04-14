@@ -6,7 +6,7 @@
 // Primary use case: feed Elasticsearch documents with an 'images' object
 // from which to pick the best illustration for live search results
 
-import getThumbData from '#data/commons/thumb'
+import { getWikimediaThumbnailData } from '#data/commons/thumb'
 import { imgUrlBuilder } from '#lib/emails/app_api'
 import { notFoundError, newError } from '#lib/error/error'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
@@ -61,5 +61,5 @@ const findRawImage = async (uri, images, width, height) => {
 const replaceWikimediaFilename = async image => {
   // Wikimedia file name neither start by 'http' or '/'
   if (image.startsWith('http') || image[0] === '/') return image
-  else return getThumbData(image).url
+  else return getWikimediaThumbnailData(image).url
 }

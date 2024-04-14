@@ -1,5 +1,5 @@
 import { compact, pick } from 'lodash-es'
-import getThumbData from '#data/commons/thumb'
+import { getWikimediaThumbnailData } from '#data/commons/thumb'
 // import getOpenLibraryCover from '#data/openlibrary/cover'
 // import getEnwikiImage from '#data/wikipedia/image'
 import { objectPromise } from '#lib/promises'
@@ -23,7 +23,7 @@ const findAnImage = entity => {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   return objectPromise({
-    wm: getThumbData(commonsFilename),
+    wm: getWikimediaThumbnailData(commonsFilename),
     // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
     // when queries en masse
     // TODO: re-enable with rate limiting (with `async-sema` package?)

@@ -18,3 +18,5 @@ export interface Image extends CouchDoc {
 }
 
 export type ImageDataUrl = `data:image${string}`
+
+export type WikimediaCommonsImageUrl = `https://upload.wikimedia.org/${string}`
