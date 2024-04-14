@@ -16,3 +16,5 @@ export interface Image extends CouchDoc {
   sources: Url[]
   updated: EpochTimeStamp
 }
+
+export type ImageDataUrl = `data:image${string}`
