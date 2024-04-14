@@ -43,7 +43,7 @@
         "./tests/*.js",
       ],
       "#types/*": [
-        "./types/*.js",
+        "./server/types/*.js",
       ],
     },
     // Type checking flags, see https://www.typescriptlang.org/tsconfig#Type_Checking_6248

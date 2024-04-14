@@ -140,6 +140,6 @@
     "#scripts/*": "./scripts/*.js",
     "#server/*": "./server/*.js",
     "#tests/*": "./tests/*.js",
-    "#types/*": "./types/*.js"
+    "#types/*": "./server/types/*.js"
   }
 }
