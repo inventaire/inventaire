@@ -9,7 +9,8 @@ import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import shelfAttributes from '#models/attributes/shelf'
 import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
-import type { Shelf } from '#types/shelf'
+import type { Item } from '#types/item'
+import type { Shelf, ShelfWithItems } from '#types/shelf'
 
 const { updatable } = shelfAttributes
 
@@ -98,12 +99,12 @@ const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
   return getShelvesByIdsWithItems(shelvesIds, userId)
 }
 
-const assignItemsToShelves = (shelves, items) => shelves.map(assignItemsToShelf(items))
+const assignItemsToShelves = (shelves: Shelf[], items: Item[]) => shelves.map(assignItemsToShelf(items))
 
 const assignItemsToShelf = items => shelf => {
   shelf.items = shelf.items || []
   const itemsIds = items.map(property('_id'))
   const missingItems = difference(itemsIds, shelf.items)
   shelf.items = shelf.items.concat(missingItems)
-  return shelf
+  return shelf as ShelfWithItems
 }

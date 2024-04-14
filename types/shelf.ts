@@ -1,5 +1,6 @@
 import type { ColorHexCode } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { Item } from '#types/item'
 import type { UserId } from '#types/user'
 import type { VisibilityKey } from '#types/visibility'
 
@@ -15,4 +16,8 @@ export interface Shelf extends CouchDoc {
   color: ColorHexCode
   created: EpochTimeStamp
   updated?: EpochTimeStamp
+}
+
+export interface ShelfWithItems extends Shelf {
+  items: Item[]
 }

@@ -4,6 +4,7 @@ import { getShelvesByIds, getShelvesByIdsWithItems } from '#controllers/shelves/
 import { notFoundError, unauthorizedError } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { Shelf, ShelfId } from '#types/shelf'
 
 const sanitization = {
   ids: {},
@@ -16,12 +17,12 @@ const sanitization = {
 const controller = async ({ ids, withItems, reqUserId }, req, res) => {
   const getShelves = withItems ? getShelvesByIdsWithItems : getShelvesByIds
   const foundShelves = await getShelves(ids, reqUserId)
-  const foundShelvesIds = map(foundShelves, '_id')
+  const foundShelvesIds: ShelfId[] = map(foundShelves, '_id')
   checkNotFoundShelves(ids, foundShelves, foundShelvesIds, res)
   let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
   checkUnauthorizedShelves(authorizedShelves, foundShelvesIds, req, res)
   authorizedShelves = authorizedShelves.map(filterPrivateAttributes(reqUserId))
-  const shelves = keyBy(authorizedShelves, '_id')
+  const shelves: Record<ShelfId, Shelf> = keyBy(authorizedShelves, '_id')
   return { shelves }
 }
 
@@ -45,3 +46,5 @@ const checkUnauthorizedShelves = (authorizedShelves, foundShelvesIds, req, res) 
 }
 
 export default { sanitization, controller }
+
+export type ShelvesByIdsResponse = Awaited<ReturnType<typeof controller>>
