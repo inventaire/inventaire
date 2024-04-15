@@ -74,6 +74,7 @@ export type EntityImg = `/img/entities/${ImageHash}`
 export type WikimediaCommonsFilename = string
 
 export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
+export type ExtendedEntityType = EntityType | 'article'
 
 export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
