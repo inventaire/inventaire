@@ -39,3 +39,5 @@ export type IsbnData = ReturnType<typeof isbnParser> & {
 }
 
 export type ColorHexCode = `#${number}`
+
+export type SortFunction<T> = (a: T, b: T) => number
