@@ -66,3 +66,5 @@ const controller = async ({ uris, attributes, lang, refresh, relatives, autocrea
 }
 
 export default { sanitization, controller }
+
+export type GetEntitiesByUrisResponse = Awaited<ReturnType<typeof controller>>
