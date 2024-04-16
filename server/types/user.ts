@@ -4,7 +4,7 @@ import type { LatLng, StringifiedHashedSecretData } from '#types/common'
 import type { CouchDoc, CouchRevId, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
 import type { GroupId } from '#types/group'
-import type { ImageHash } from '#types/image'
+import type { ImageHash, UserImagePath } from '#types/image'
 import type { Relation } from '#types/relation'
 import type { ReadonlyDeep } from 'type-fest'
 
@@ -62,7 +62,7 @@ export interface User extends CouchDoc {
   email?: Email
   password?: string | StringifiedHashedSecretData
   hasPassword?: boolean
-  picture?: string
+  picture?: UserImagePath
   language?: string
   validEmail?: boolean
   bio?: string
