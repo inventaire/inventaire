@@ -23,7 +23,7 @@ const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
   if ('redirect' in entity) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })
-  const serializedEntity: SerializedInvEntity | SerializedRemovedPlaceholder = {
+  const serializedEntity = {
     uri,
     ...entity,
     type: getEntityType(entity.claims['wdt:P31']),
@@ -33,7 +33,13 @@ const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
     _meta_type: entity.type !== 'entity' ? entity.type : undefined,
   }
 
-  return formatEntityCommon(serializedEntity)
+  if (serializedEntity._meta_type === 'removed:placeholder') {
+    const formatted: SerializedRemovedPlaceholder = formatEntityCommon(serializedEntity)
+    return formatted
+  } else {
+    const formatted: SerializedInvEntity = formatEntityCommon(serializedEntity)
+    return formatted
+  }
 }
 
 function getRedirectedEntity (entity, params) {

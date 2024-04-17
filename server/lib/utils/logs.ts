@@ -19,6 +19,7 @@ export const log = (obj: unknown, label?: string, color: string = 'cyan') => {
     print(chalk[color](obj))
   } else {
     // converting arguments object to array for readablilty
+    // @ts-expect-error
     if (isArguments(obj)) obj = Array.from(obj)
     if (label != null) {
       print(grey('****** ') + chalk[color](label.toString()) + grey(' ******'))

@@ -20,7 +20,7 @@ const reqOptions = {
 }
 
 export async function getSeedsByIsbns (isbns: Isbn | Isbn[], refresh?: boolean) {
-  isbns = forceArray(isbns)
+  isbns = forceArray(isbns) as Isbn[]
   if (!enabled) return isbns.map(emptySeed)
   isbns = isbns.join('|')
   const url = buildUrl(`${origin}/books`, { isbns, refresh })

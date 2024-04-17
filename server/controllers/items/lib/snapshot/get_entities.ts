@@ -36,7 +36,7 @@ function getWorksAuthorsAndSeries (works) {
   return getWorkAuthorsAndSeries(mergedWorks)
 }
 
-const workRelationsProperties = authorRelationsProperties.concat([ 'wdt:P179' ])
+const workRelationsProperties = [ ...authorRelationsProperties, 'wdt:P179' ]
 // Aggregating edition's potentially multiple works claims to fit
 // dependent functions' needs
 function mergeWorksClaims (works) {

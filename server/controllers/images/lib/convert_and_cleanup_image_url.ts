@@ -5,7 +5,8 @@ import isPrivateUrl from '#lib/network/is_private_url'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
-import type { ImageContainer, Url } from '#types/common'
+import type { ImageContainer } from '#server/types/image'
+import type { Url } from '#types/common'
 import convertImageUrl from './convert_image_url.js'
 
 const { enabled: dataseedEnabled } = config.dataseed

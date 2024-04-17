@@ -12,7 +12,7 @@ export function transactionUpdate (transaction: Transaction | TransactionId) {
   // Polymorphism: accepts transaction doc or directly the transaction _id
   let transactionId
   if (isObject(transaction)) {
-    transactionId = transaction._id
+    transactionId = (transaction as Transaction)._id
   } else if (isString(transaction)) {
     transactionId = transaction
   } else {

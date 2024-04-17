@@ -3,6 +3,8 @@ import { getInvClaimsByClaimValue, getEntitiesByIds, putInvEntityUpdate } from '
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { log } from '#lib/utils/logs'
 import { updateEntityDocClaim } from '#models/entity'
+import type { EntityUri, InvEntityDoc, InvEntityId } from '#server/types/entity'
+import type { UserId } from '#server/types/user'
 
 async function _redirectClaims (userId, fromUri, toUri) {
   const results = await getInvClaimsByClaimValue(fromUri)
@@ -13,11 +15,13 @@ async function _redirectClaims (userId, fromUri, toUri) {
   // within a same entity pointing several times to the redirected entity.
   // There is no identified case at the moment though.
   const entities = await getEntitiesByIds(entitiesToEditIds)
-  return redirectEntitiesClaims({ results, userId, fromUri, toUri, entities })
+  return redirectEntitiesClaims(results, userId, fromUri, toUri, entities)
 }
 
-const redirectEntitiesClaims = ({ results, userId, fromUri, toUri, entities }) => {
-  const entitiesIndex = keyBy(entities, '_id')
+type Results = Awaited<ReturnType<typeof getInvClaimsByClaimValue>>
+
+function redirectEntitiesClaims (results: Results, userId: UserId, fromUri: EntityUri, toUri: EntityUri, entities: InvEntityDoc[]) {
+  const entitiesIndex: Record<InvEntityId, InvEntityDoc> = keyBy(entities, '_id')
   const entitiesIndexBeforeUpdate = cloneDeep(entitiesIndex)
 
   // Apply all the redirection updates on the entities docs
