@@ -4,6 +4,7 @@ import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#server/types/common'
 import type { AuthentifiedReq, Res } from '#types/server'
 import type { UserId } from '#types/user'
 
@@ -27,12 +28,12 @@ const oauth = new OAuth({
 
 // Alternatively using the nice or the non-nice URL
 // see https://mediawiki.org/wiki/OAuth/For_Developers#Notes
-const wdHost = 'https://www.wikidata.org'
-const wdBaseNice = `${wdHost}/wiki/`
-const wdBaseNonNice = `${wdHost}/w/index.php?title=`
-const step1Url = `${wdBaseNonNice}Special:OAuth/initiate`
-const step2Url = `${wdBaseNice}Special:OAuth/authorize`
-const step3Url = `${wdBaseNonNice}Special:OAuth/token`
+const wdHost: AbsoluteUrl = 'https://www.wikidata.org'
+const wdBaseNice: AbsoluteUrl = `${wdHost}/wiki/`
+const wdBaseNonNice: AbsoluteUrl = `${wdHost}/w/index.php?title=`
+const step1Url: AbsoluteUrl = `${wdBaseNonNice}Special:OAuth/initiate`
+const step2Url: AbsoluteUrl = `${wdBaseNice}Special:OAuth/authorize`
+const step3Url: AbsoluteUrl = `${wdBaseNonNice}Special:OAuth/token`
 const reqTokenSecrets = {}
 
 export default async function wikidataOauth (req: AuthentifiedReq, res: Res) {
