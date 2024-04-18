@@ -11,6 +11,10 @@ ln -s ../scripts/githooks .git/hooks
 
 npm run update-i18n
 
+# Make the server types available to the client
+# Needs to be re-executed after changing server types
+npm run build
+
 mkdir -p logs run db/leveldb
 
 touch ./logs/server.log ./logs/error.log
