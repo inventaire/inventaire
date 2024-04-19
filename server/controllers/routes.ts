@@ -1,3 +1,4 @@
+import fakeSubmit from '#controllers/auth/fake_submit'
 import config from '#server/config'
 import activitypub from './activitypub/activitypub.js'
 import webfinger from './activitypub/webfinger.js'
@@ -59,6 +60,7 @@ addRoute('api/relations', relations)
 addRoute('api/reports', reports)
 addRoute('api/search', search)
 addRoute('api/shelves', shelves)
+addRoute('api/submit', fakeSubmit)
 addRoute('api/tasks', tasks)
 addRoute('api/tests*', tests)
 addRoute('api/token', authToken)
