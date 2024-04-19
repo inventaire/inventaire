@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
-import { paginate } from '#controllers/items/lib/queries_commons'
+import { paginateItems } from '#controllers/items/lib/queries_commons'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { serializeUserData } from '#controllers/user/lib/user'
 import config from '#server/config'
@@ -18,7 +18,7 @@ export default lang => async ({ reqUserId, feedOptions, users, shelves, context 
   } else {
     items = await getAuthorizedItemsByUsers(usersIds, reqUserId)
   }
-  const page = paginate(items, {
+  const page = paginateItems(items, {
     context,
     limit: feedConfig.limitLength,
   })

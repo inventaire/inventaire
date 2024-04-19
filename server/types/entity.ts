@@ -1,7 +1,9 @@
 import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
+import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
-import type { ImageHash, Url } from '#types/common'
+import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { ImageHash } from '#types/image'
 import type { OverrideProperties } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims } from 'wikibase-sdk'
 
@@ -13,6 +15,9 @@ export type WdPropertyUri = `wdt:${WdPropertyId}`
 export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
+
+export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
+export type EntityId = WdEntityId | InvEntityId | Isbn
 
 export type PropertyUri = WdPropertyUri | InvPropertyUri
 export type Isbn = string
@@ -69,13 +74,16 @@ export type EntityImg = `/img/entities/${ImageHash}`
 export type WikimediaCommonsFilename = string
 
 export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
+export type ExtendedEntityType = EntityType | 'article'
+
+export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
 export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType }> {
   _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
   originalLang?: WikimediaLanguageCode
-  image?: {
-    url: EntityImg
+  image: {
+    url?: EntityImg
   }
   redirects?: { from: InvEntityUri, to: EntityUri }
 }
@@ -104,9 +112,7 @@ export interface SerializedWdEntity {
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
-  image?: {
-    url: WikimediaCommonsFilename
-  }
+  image: ReturnType<typeof getWikimediaThumbnailData>
 }
 
 export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity

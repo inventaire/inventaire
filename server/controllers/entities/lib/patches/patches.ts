@@ -197,7 +197,7 @@ async function getRangeLength ({ viewName, startkey, endkey }) {
   return rows[0] != null ? rows[0].value : 0
 }
 
-interface PatchesPage {
+export interface PatchesPage {
   patches: Patch[]
   total: number
   continue?: number

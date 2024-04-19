@@ -1,9 +1,10 @@
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
-import type { PropertyUri } from '#types/entity'
+import type { ExtendedEntityType, PluralizedIndexedEntityType, PropertyUri } from '#server/types/entity'
+import type { PropertyDatatype } from '#server/types/property'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
-export const authorRelationsProperties: PropertyUri[] = [
+export const authorRelationsProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P98', // editor
@@ -12,11 +13,18 @@ export const authorRelationsProperties: PropertyUri[] = [
   'wdt:P9191', // letterer
   'wdt:P10836', // inker
   'wdt:P10837', // penciller
-]
+] as const
+
+export interface PropertyConfig {
+  subjectTypes: readonly ExtendedEntityType[]
+  datatype: PropertyDatatype
+  multivalue: boolean
+  entityValueTypes?: PluralizedIndexedEntityType[]
+}
 
 // Default `category` = 'general'
 // Default `subjectTypes` = allLocallyEditedEntitiesTypes
-export const properties = {
+export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   // cover image hash
   'invp:P2': {
     subjectTypes: [ 'edition' ],
@@ -388,7 +396,7 @@ export const properties = {
 }
 
 for (const property of authorRelationsProperties) {
-  properties[property] = {
+  _properties[property] = {
     subjectTypes: [ 'work', 'serie' ],
   }
 }
@@ -399,14 +407,14 @@ for (const type of allLocallyEditedEntitiesTypes) {
   propertiesPerType[type] = []
 }
 
-for (const [ property, { subjectTypes } ] of Object.entries(properties)) {
+for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
   for (const type of subjectTypes) {
     propertiesPerType[type]?.push(property)
   }
   const propertyValuesConstraints = propertiesValuesConstraints[property]
   if (propertyValuesConstraints) {
     const { datatype, uniqueValue, entityValueTypes } = propertyValuesConstraints
-    Object.assign(properties[property], {
+    Object.assign(_properties[property], {
       datatype,
       multivalue: !uniqueValue,
       entityValueTypes,
@@ -416,4 +424,6 @@ for (const [ property, { subjectTypes } ] of Object.entries(properties)) {
   }
 }
 
-export const localPropertiesUris = Object.keys(properties)
+export const properties = _properties as Record<PropertyUri, PropertyConfig>
+
+export const localPropertiesUris = Object.keys(_properties)

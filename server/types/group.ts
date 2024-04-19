@@ -1,5 +1,6 @@
-import type { ImageHash, LatLng } from '#types/common'
+import type { LatLng } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { ImageHash } from '#types/image'
 import type { UserId } from '#types/user'
 
 export type GroupId = CouchUuid
@@ -12,7 +13,15 @@ export interface GroupMembership {
   timestamp: EpochTimeStamp
 }
 
-export interface Group extends CouchDoc {
+export interface GroupMemberships {
+  admins: GroupMembership[]
+  members: GroupMembership[]
+  invited: GroupMembership[]
+  declined: GroupMembership[]
+  requested: GroupMembership[]
+}
+
+export type Group = CouchDoc & {
   _id: GroupId
   name: string
   slug: string
@@ -23,9 +32,6 @@ export interface Group extends CouchDoc {
   position?: LatLng
   creator: UserId
   created: EpochTimeStamp
-  admins: GroupMembership[]
-  members: GroupMembership[]
-  invited: GroupMembership[]
-  declined: GroupMembership[]
-  requested: GroupMembership[]
-}
+} & GroupMemberships
+
+export type GroupMembershipCategory = keyof GroupMemberships

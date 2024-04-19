@@ -4,6 +4,9 @@ import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authoriz
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { newMissingQueryError } from '#lib/error/pre_filled'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { GroupId } from '#types/group'
+import type { ShelfId } from '#types/shelf'
+import type { UserId } from '#types/user'
 import { searchUsersItems } from './lib/search_users_items.js'
 
 const sanitization = {
@@ -13,6 +16,15 @@ const sanitization = {
   search: {},
   limit: {},
   offset: {},
+}
+
+export interface ItemsSearchQuery {
+  user?: GroupId
+  group?: ShelfId
+  shelf?: UserId
+  search: string
+  limit?: number
+  offset?: number
 }
 
 const controller = async ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) => {

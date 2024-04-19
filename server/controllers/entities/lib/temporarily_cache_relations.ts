@@ -31,7 +31,7 @@ export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
   return Promise.all(promises)
 }
 
-export async function getCachedRelations ({ valueUri, properties, formatEntity }: { valueUri: EntityUri, properties: PropertyUri[], formatEntity }) {
+export async function getCachedRelations ({ valueUri, properties, formatEntity }: { valueUri: EntityUri, properties: readonly PropertyUri[], formatEntity }) {
   const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
   let entities = await getEntitiesList(subjectsUris, { refresh: true })
@@ -46,7 +46,7 @@ async function getSubjectsUris (valueUri, properties) {
   return uniq(subjectsUris.flat())
 }
 
-export const relationIsConfirmedByPrimaryData = (properties: PropertyUri[], valueUri: EntityUri) => async (entity: SerializedEntity) => {
+export const relationIsConfirmedByPrimaryData = (properties: readonly PropertyUri[], valueUri: EntityUri) => async (entity: SerializedEntity) => {
   const relationsUris = getAggregatedPropertiesValues(entity.claims, properties)
   // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
   const canonicalValuesUris = await getResolvedUris(relationsUris)

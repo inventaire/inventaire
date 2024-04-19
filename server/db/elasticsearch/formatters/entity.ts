@@ -14,7 +14,7 @@ import { isWdEntityId } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
-import type { Claims } from '#types/entity'
+import type { Claims, EntityUri, PropertyUri } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
 import type { Entries } from 'type-fest'
@@ -178,21 +178,22 @@ function getMainFieldsWords ({ labels, descriptions = {}, aliases = {} }) {
 }
 
 async function getRelationsTerms ({ type, claims }) {
-  const indexedRelations = indexedRelationsPerType[type]
+  const indexedRelations = indexedRelationsPerType[type] as (PropertyUri[] | undefined)
   if (!indexedRelations) return ''
-  const relationsUris = Object.values(pick(claims, indexedRelations)).flat()
+  const relationsUris = Object.values(pick(claims, indexedRelations)).flat() as EntityUri[]
   const relationsEntities = await getEntitiesList(relationsUris)
   return relationsEntities.map(getEntityTerms).flat().join(' ')
 }
 
-const worksAndSeriesProperties = authorRelationsProperties.concat([
+const worksAndSeriesProperties = [
+  ...authorRelationsProperties,
   'wdt:P179', // serie
-])
+] as const
 
 const indexedRelationsPerType = {
   collection: [
     'wdt:P123', // publisher
-  ],
+  ] as const,
   serie: worksAndSeriesProperties,
   work: worksAndSeriesProperties,
 }

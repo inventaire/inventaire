@@ -5,6 +5,8 @@
     "moduleResolution": "nodenext",
     "baseUrl": ".",
     "rootDir": ".",
+    // Apparently required when using pnpm and such
+    "preserveSymlinks": true,
     "allowJs": false,
     "checkJs": false,
     "skipLibCheck": true,
@@ -41,11 +43,8 @@
         "./tests/*.js",
       ],
       "#types/*": [
-        "./types/*.js",
+        "./server/types/*.js",
       ],
-      "#root/*": [
-        "./*"
-      ]
     },
     // Type checking flags, see https://www.typescriptlang.org/tsconfig#Type_Checking_6248
     "allowUnreachableCode": false,

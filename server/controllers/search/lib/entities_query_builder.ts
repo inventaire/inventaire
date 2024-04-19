@@ -6,8 +6,9 @@ import { isPropertyUri, isWdEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import { allowlistedProperties } from '#lib/wikidata/allowlisted_properties'
+import type { PropertyUri } from '#server/types/entity'
 
-const prefixedAllowlistedProperties = allowlistedProperties.map(prefixifyWdProperty)
+const prefixedAllowlistedProperties: PropertyUri[] = allowlistedProperties.map(prefixifyWdProperty)
 
 const allowedProperties = new Set(prefixedAllowlistedProperties)
 

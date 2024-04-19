@@ -3,7 +3,7 @@ import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { getShelvesByIds } from '#controllers/shelves/lib/shelves'
 import { setItemsBusyFlag } from '#controllers/transactions/lib/transactions'
 import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
-import { isVisibilityGroupKey } from '#lib/boolean_validations'
+import { paginate, type PageParams } from '#lib/pagination'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import type { Item } from '#types/item'
 
@@ -48,51 +48,7 @@ async function removeUnauthorizedShelves (items, reqUserId) {
   }
 }
 
-export interface ItemsPageParams {
-  limit?: number
-  offset?: number
-  context?: string
-}
-
-export interface ItemsPage {
-  items: Item[]
-  total: number
-  offset?: number
-  context?: string
-  continue?: number
-}
-
-export function paginate (items: Item[], params: ItemsPageParams) {
-  let { limit, offset, context } = params
-  items = items.sort(byCreationDate)
-  if (context != null) {
-    items = items.filter(canBeDisplayedInContext(context))
-  }
-  const total = items.length
-  if (offset == null) offset = 0
-  const last = offset + limit
-
-  if (limit != null) {
-    items = items.slice(offset, last)
-    const data: ItemsPage = { items, total, offset, context }
-    if (last < total) data.continue = last
-    return data
-  } else {
-    return { items, total, offset, context }
-  }
-}
-
-const byCreationDate = (a, b) => b.created - a.created
-
-const canBeDisplayedInContext = context => item => {
-  if (isVisibilityGroupKey(context)) {
-    const { visibility } = item
-    if (visibility.includes('public') || visibility.includes('groups') || visibility.includes(context)) {
-      return true
-    } else {
-      return false
-    }
-  } else {
-    return true
-  }
+export function paginateItems (items: Item[], params: PageParams) {
+  const { page, total, offset, context } = paginate<Item>(items, params)
+  return { items: page, total, offset, context }
 }

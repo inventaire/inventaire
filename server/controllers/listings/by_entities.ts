@@ -1,8 +1,7 @@
-import { groupBy, keyBy, map, uniq } from 'lodash-es'
-import { paginate } from '#controllers/items/lib/queries_commons'
+import { map, uniq } from 'lodash-es'
 import { getElementsByListingsAndEntity, getElementsByEntities } from '#controllers/listings/lib/elements'
+import { paginateListings } from '#controllers/listings/lib/helpers'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
-import { isNonEmptyArray, isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 
 const sanitization = {
@@ -10,9 +9,10 @@ const sanitization = {
   lists: { optional: true },
   limit: { optional: true },
   offset: { optional: true },
+  context: { optional: true },
 }
 
-const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
+async function controller ({ uris, lists, offset, limit, context, reqUserId }) {
   let foundElements
   if (lists) {
     foundElements = await getElementsByListingsAndEntity(lists, uris)
@@ -22,27 +22,13 @@ const controller = async ({ uris, lists, offset, limit, reqUserId }) => {
   // uniq here implies that a listing cannot refer several times to the same entity
   const listingsIds = uniq(map(foundElements, 'list'))
   const foundListings = await getListingsByIdsWithElements(listingsIds)
-  const listings = await filterVisibleDocs(foundListings, reqUserId)
-  const { items: authorizedListings } = paginate(listings, { offset, limit })
-  const listingsByUris = {}
-  const elementsByUris = groupBy(foundElements, 'uri')
-  uris.forEach(assignListingsByUris(authorizedListings, elementsByUris, listingsByUris))
+  const authorizedListings = await filterVisibleDocs(foundListings, reqUserId)
+  const { listings, total, continue: continu } = paginateListings(authorizedListings, { offset, limit, context })
   return {
-    lists: listingsByUris,
+    lists: listings,
+    total,
+    continue: continu,
   }
 }
 
 export default { sanitization, controller }
-
-const assignListingsByUris = (listings, elementsByUris, listingsByUris) => uri => {
-  const listingsElements = elementsByUris[uri]
-  if (!isNonEmptyArray(listingsElements)) {
-    listingsByUris[uri] = []
-    return
-  }
-  const listingsByIds = keyBy(listings, '_id')
-  if (isNonEmptyPlainObject(listingsByIds)) {
-    listingsByUris[uri] = Object.values(listingsByIds)
-  }
-  return listingsByUris
-}

@@ -1,9 +1,13 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "./dist",
     "checkJs": false,
     "noEmitOnError": false,
+    // Allows the client repo to refer to this tsconfig in "references"
+    "composite": true,
+    "declaration": true,
   },
   "include": [
     "config/**/*",

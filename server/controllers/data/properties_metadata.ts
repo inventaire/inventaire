@@ -15,3 +15,9 @@ const stringifiedProperties = JSON.stringify({ properties })
 export function propertiesMetadata (req, res) {
   sendStaticJson(res, stringifiedProperties)
 }
+
+export type PropertiesMetadata = typeof properties
+
+export interface PropertiesMetadataResponse {
+  properties: typeof properties
+}

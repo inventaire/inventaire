@@ -39,6 +39,8 @@ export interface ItemSnapshot {
   'entity:authors'?: string
   'entity:subtitle'?: string
   'entity:lang'?: WikimediaLanguageCode
+  'entity:series'?: string
+  'entity:ordinal'?: string
 }
 
 export interface SerializedItem extends Item {

@@ -4,18 +4,25 @@ import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
 import config from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
-import type { Url } from '#types/common'
-import type { InvEntityUri, IsbnEntityUri, WdEntityUri } from '#types/entity'
+import type { ColorHexCode, Url } from '#types/common'
+import type { CouchUuid } from '#types/couchdb'
+import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri } from '#types/entity'
+import type { AssetImagePath, EntityImagePath, GroupImagePath, ImageHash, ImagePath, UserImagePath } from '#types/image'
+import type { PatchId } from '#types/patch'
 import type { AuthentifiedReq } from '#types/server'
+import type { Email, Username } from '#types/user'
 import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = config.getPublicOrigin()
 
-const bindedTest = regexName => regex_[regexName].test.bind(regex_[regexName])
+function bindedTest <T> (regexName) {
+  return function (str): str is T {
+    return regex_[regexName].test(str)
+  }
+}
 
-export const isCouchUuid = regex_.CouchUuid.test.bind(regex_.CouchUuid)
 export const isNonEmptyString = str => typeof str === 'string' && str.length > 0
 
 export function isUrl (url): url is Url {
@@ -30,13 +37,14 @@ export function isUrl (url): url is Url {
   return true
 }
 
-export const isColorHexCode = bindedTest('ColorHexCode')
-export const isImageHash = bindedTest('ImageHash')
-export const isAssetImg = bindedTest('AssetImg')
-export const isEntityImg = bindedTest('EntityImg')
-export const isGroupImg = bindedTest('GroupImg')
-export const isLocalImg = bindedTest('LocalImg')
-export const isUserImg = bindedTest('UserImg')
+export const isCouchUuid = bindedTest<CouchUuid>('CouchUuid')
+export const isColorHexCode = bindedTest<ColorHexCode>('ColorHexCode')
+export const isImageHash = bindedTest<ImageHash>('ImageHash')
+export const isAssetImg = bindedTest<AssetImagePath>('AssetImg')
+export const isEntityImg = bindedTest<EntityImagePath>('EntityImg')
+export const isGroupImg = bindedTest<GroupImagePath>('GroupImg')
+export const isLocalImg = bindedTest<ImagePath>('LocalImg')
+export const isUserImg = bindedTest<UserImagePath>('UserImg')
 export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
 export const isWdEntityId = isWikidataItemId
@@ -60,15 +68,15 @@ export function isWdEntityUri (uri): uri is WdEntityUri {
 }
 
 export const isEntityId = id => isWikidataItemId(id) || isInvEntityId(id)
-export const isEmail = bindedTest('Email')
+export const isEmail = bindedTest<Email>('Email')
 export const isUserId = isCouchUuid
 export const isTransactionId = isCouchUuid
 export const isGroupId = isCouchUuid
 export const isItemId = isCouchUuid
-export const isUsername = bindedTest('Username')
-export const isEntityUri = bindedTest('EntityUri')
-export const isPatchId = bindedTest('PatchId')
-export const isPropertyUri = bindedTest('PropertyUri')
+export const isUsername = bindedTest<Username>('Username')
+export const isEntityUri = bindedTest<EntityUri>('EntityUri')
+export const isPatchId = bindedTest<PatchId>('PatchId')
+export const isPropertyUri = bindedTest<PropertyUri>('PropertyUri')
 export function isExtendedEntityUri (uri) {
   const [ prefix, id ] = uri.split(':')
   // Accept alias URIs.
