@@ -39,7 +39,7 @@ const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId)
 
 export function createBlankEntityDoc () {
   return {
-    type: 'entity',
+    type: 'entity' as const,
     labels: {},
     claims: {},
     created: Date.now(),

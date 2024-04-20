@@ -1,26 +1,31 @@
 import should from 'should'
 import { superTrim } from '#lib/utils/base'
 import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createBlankEntityDocClaim, updateEntityDocClaim } from '#models/entity'
+import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
+import type { EntityRedirection, InvEntity } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 
 const workDoc = () => {
-  const doc = createBlankEntityDoc()
-  doc._id = '12345678900987654321123456789012'
-  doc._rev = '5-12345678900987654321123456789012'
+  const doc: InvEntity = Object.assign(createBlankEntityDoc(), {
+    _id: '12345678900987654321123456789012' as CouchUuid,
+    _rev: '5-12345678900987654321123456789012' as CouchRevId,
+    created: Date.now(),
+    updated: Date.now(),
+  })
   doc.claims['wdt:P31'] = [ 'wd:Q47461344' ]
   doc.claims['wdt:P50'] = [ 'wd:Q535', 'wd:Q1541' ]
-  doc.created = Date.now()
-  doc.updated = Date.now()
   return doc
 }
 
 const editionDoc = () => {
-  const doc = createBlankEntityDoc()
-  doc._id = '22345678900987654321123456789012'
+  const doc = Object.assign(createBlankEntityDoc(), {
+    _id: '22345678900987654321123456789012' as CouchUuid,
+    _rev: '5-12345678900987654321123456789012' as CouchRevId,
+    created: Date.now(),
+    updated: Date.now(),
+  })
   doc.claims['wdt:P31'] = [ 'wd:Q3331189' ]
   doc.claims['wdt:P629'] = [ 'wd:Q53592' ]
-  doc.created = Date.now()
-  doc.updated = Date.now()
   return doc
 }
 
@@ -208,6 +213,7 @@ describe('entity model', () => {
 
       it('should throw if an invalid lang is passed', () => {
         const entityDoc = workDoc()
+        // @ts-expect-error
         const updater = () => setEntityDocLabel(entityDoc, 'zz', 'hello')
         updater.should.throw()
       })
@@ -326,7 +332,15 @@ describe('entity model', () => {
       })
 
       it('should refuse to merge redirections', () => {
-        const redirection = { redirect: 'wd:Q1' }
+        const redirection: EntityRedirection = {
+          _id: '22345678900987654321123456789012' as CouchUuid,
+          _rev: '5-12345678900987654321123456789012' as CouchRevId,
+          type: 'entity',
+          created: Date.now(),
+          version: 5,
+          redirect: 'wd:Q1',
+          removedPlaceholdersIds: [],
+        }
         const entity = workDoc();
         (() => mergeEntitiesDocs(redirection, entity))
         .should.throw('entity edit failed: the entity is a redirection');
@@ -344,7 +358,9 @@ describe('entity model', () => {
         redirection._id.should.equal(fromEntityDoc._id)
         redirection._rev.should.equal(fromEntityDoc._rev)
         redirection.redirect.should.equal(toUri)
+        // @ts-expect-error
         should(redirection.claims).not.be.ok()
+        // @ts-expect-error
         should(redirection.labels).not.be.ok()
         redirection.created.should.equal(fromEntityDoc.created)
       })
@@ -353,6 +369,7 @@ describe('entity model', () => {
         const fromEntityDoc = workDoc()
         const toUri = 'wd:Q3209796'
         const redirection = convertEntityDocIntoARedirection(fromEntityDoc, toUri)
+        // @ts-expect-error
         should(redirection === fromEntityDoc).not.be.true()
       })
     })
