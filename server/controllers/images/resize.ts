@@ -91,4 +91,7 @@ const trustedRemoteHosts = new Set([
   'commons.wikimedia.org',
   'upload.wikimedia.org',
   'covers.openlibrary.org',
+  // Assets such as https://inventaire.io/public/images/inventaire-books.jpg are currently served as remote images
+  // TODO: move to /img/assets instead
+  'inventaire.io',
 ])
