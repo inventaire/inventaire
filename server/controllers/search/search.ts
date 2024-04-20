@@ -7,6 +7,9 @@ import { addWarning } from '#lib/responses'
 import { someMatch } from '#lib/utils/base'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import { userIsGroupMember } from '#models/group'
+import type { IndexedTypes } from '#server/types/search'
+import type { Req, Res, Sanitized } from '#server/types/server'
+import type { UserId } from '#server/types/user'
 import normalizeResult from './lib/normalize_result.js'
 import typeSearch from './lib/type_search.js'
 
@@ -37,7 +40,19 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req, res) => {
+export interface SearchParams {
+  search: string
+  lang?: string
+  types?: IndexedTypes
+  limit?: number
+  offset?: number
+  filter?: 'wd' | 'inv'
+  exact?: boolean
+  'min-score'?: number
+  claim?: string
+}
+
+async function controller (params: Sanitized<SearchParams>, req: Req, res: Res) {
   const { types, search, claim } = params
   if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
     throw newMissingError('query', 'search or claim')
@@ -52,7 +67,7 @@ const controller = async (params, req, res) => {
   }
 }
 
-const socialSearch = async (params, res) => {
+async function socialSearch (params: Sanitized<SearchParams>, res: Res) {
   const { search, lang, limit, offset, reqUserId } = params
 
   if (!(isNonEmptyString(search))) {
@@ -77,7 +92,7 @@ const socialSearch = async (params, res) => {
   return { results }
 }
 
-const entitiesSearch = async params => {
+async function entitiesSearch (params: Sanitized<SearchParams>) {
   const { search, lang, limit, offset, claim } = params
 
   if (!(isNonEmptyString(search) || isNonEmptyString(claim))) {
@@ -93,7 +108,7 @@ const entitiesSearch = async params => {
   }
 }
 
-const isSearchable = reqUserId => result => {
+const isSearchable = (reqUserId: UserId) => result => {
   const source = result._source
   if (source.type === 'user') {
     return source.deleted !== true
@@ -109,7 +124,7 @@ const isSearchable = reqUserId => result => {
 
 const typesWithVisibility = [ 'shelf', 'list' ]
 
-const removeUnauthorizedDocs = async (results, reqUserId) => {
+async function removeUnauthorizedDocs (results, reqUserId) {
   const docsRequiringAuthorization = results
     .filter(result => typesWithVisibility.includes(result._source.type))
     .map(({ _id, _source }) => ({ _id, ..._source }))
