@@ -37,15 +37,15 @@ export const indexedEntitiesTypes = [
   'genres',
   'movements',
   'languages',
-]
+] as const
 
 export const socialTypes = [
   'users',
   'groups',
   'shelves',
   'lists',
-]
+] as const
 
-export const indexedTypes = indexedEntitiesTypes.concat(socialTypes)
+export const indexedTypes = [ ...indexedEntitiesTypes, ...socialTypes ]
 
 export const indexedEntitiesTypesAliases = Object.values(pick(typesAliases, indexedEntitiesTypes)).flat()
