@@ -6,6 +6,7 @@ import downloadImage from '#controllers/images/lib/download_image'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
+import type { ImageContainer } from '#server/types/image'
 import { waitForTestServer } from '#tests/api/utils/request'
 import { createEdition } from '../fixtures/entities.js'
 import { createGroup } from '../fixtures/groups.js'
@@ -38,7 +39,7 @@ export async function importSomeImage ({ container }) {
   })
 }
 
-export async function uploadSomeImage ({ container, imageFilePath, preventAutoRemove = false }) {
+export async function uploadSomeImage ({ container, imageFilePath, preventAutoRemove = false }: { container: ImageContainer, imageFilePath?: string, preventAutoRemove?: boolean }) {
   imageFilePath = imageFilePath || `/tmp/${getRandomString(10)}.jpg`
   const imageUrl = someImageUrl()
   await downloadImage(imageUrl, imageFilePath)
