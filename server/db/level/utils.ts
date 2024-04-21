@@ -7,7 +7,7 @@ export const formatBatchOps = ops => forceArray(ops).map(setDefaultType)
 // Useful when the key alone stores all the data that needs to be stored
 export const emptyValue = ''
 
-const setDefaultType = operation => {
+function setDefaultType (operation) {
   operation.type = operation.type || 'put'
   return operation
 }

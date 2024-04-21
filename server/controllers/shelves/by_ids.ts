@@ -14,7 +14,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ ids, withItems, reqUserId }, req, res) => {
+async function controller ({ ids, withItems, reqUserId }, req, res) {
   const getShelves = withItems ? getShelvesByIdsWithItems : getShelvesByIds
   const foundShelves = await getShelves(ids, reqUserId)
   const foundShelvesIds: ShelfId[] = map(foundShelves, '_id')
@@ -26,7 +26,7 @@ const controller = async ({ ids, withItems, reqUserId }, req, res) => {
   return { shelves }
 }
 
-const checkNotFoundShelves = (ids, foundShelves, foundShelvesIds, res) => {
+function checkNotFoundShelves (ids, foundShelves, foundShelvesIds, res) {
   if (foundShelves.length === 0) throw notFoundError({ ids })
   if (foundShelves.length !== ids.length) {
     const notFoundShelvesIds = difference(ids, foundShelvesIds)
@@ -34,7 +34,7 @@ const checkNotFoundShelves = (ids, foundShelves, foundShelvesIds, res) => {
   }
 }
 
-const checkUnauthorizedShelves = (authorizedShelves, foundShelvesIds, req, res) => {
+function checkUnauthorizedShelves (authorizedShelves, foundShelvesIds, req, res) {
   if (authorizedShelves.length === 0) {
     throw unauthorizedError(req, 'unauthorized shelves access', { ids: foundShelvesIds })
   }

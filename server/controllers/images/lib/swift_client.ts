@@ -11,7 +11,7 @@ const { publicURL } = config.mediaStorage.swift
 const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}` as AbsoluteUrl
 const relativeUrl = (container, filename) => `/img/${container}/${filename}` as RelativeUrl
 
-const getParams = async (container, filename) => {
+async function getParams (container, filename) {
   const token = await getToken()
   return {
     url: absoluteUrl(container, filename),

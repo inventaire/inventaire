@@ -6,7 +6,7 @@ import userValidations from '#models/validations/user'
 
 const options = { passReqToCallback: true }
 
-const verify = (req, username, password, done) => {
+function verify (req, username, password, done) {
   const { email } = req.body
   const language = findLanguage(req)
   return createUser(username, email, 'local', language, password)
@@ -23,7 +23,7 @@ const verify = (req, username, password, done) => {
   .catch(done)
 }
 
-const findLanguage = req => {
+function findLanguage (req) {
   const lang = getLangFromHeaders(req.headers)
   if (userValidations.language(lang)) return lang
 }

@@ -32,7 +32,7 @@ const extensionPatterns = {
   rss: /\.rss$/,
 }
 
-const parseReqUrl = (req, extension) => {
+function parseReqUrl (req, extension) {
   const { pathname } = parseUrl(req)
   let [ domain, id, section ] = pathname.split('/').slice(1)
   if (section) section = removeExtension(section, extension)
@@ -40,13 +40,13 @@ const parseReqUrl = (req, extension) => {
   return { domain, id, section }
 }
 
-const removeExtension = (str, extension) => {
+function removeExtension (str, extension) {
   return str.replace(extensionPatterns[extension], '')
 }
 
 const isClaim = claim => /^(wdt:|invp:)/.test(claim)
 
-const usersRss = async username => {
+async function usersRss (username) {
   const userId = await getUserId(username)
   return `/api/feeds?user=${userId}`
 }
@@ -131,7 +131,7 @@ const redirections = {
   },
 }
 
-const getUserId = async id => {
+async function getUserId (id) {
   if (isCouchUuid(id)) {
     return id
   } else {
@@ -140,7 +140,7 @@ const getUserId = async id => {
   }
 }
 
-const getGroupId = async id => {
+async function getGroupId (id) {
   if (isCouchUuid(id)) {
     return id
   } else {

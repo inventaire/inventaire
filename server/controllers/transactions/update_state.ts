@@ -20,14 +20,14 @@ async function controller (params, req) {
 
 export default { sanitization, controller }
 
-const updateState = async ({ transactionId, state, reqUserId }) => {
+async function updateState ({ transactionId, state, reqUserId }) {
   const transaction = await getTransactionById(transactionId)
   validateRights(transaction, state, reqUserId)
   await checkForConcurrentTransactions(transaction, state)
   return updateTransactionState(transaction, state, reqUserId)
 }
 
-const validateRights = (transaction, state, reqUserId) => {
+function validateRights (transaction, state, reqUserId) {
   const { actor } = transactionStates[state]
   validateRightsFunctionByAllowedActor[actor](reqUserId, transaction)
 }
@@ -38,7 +38,7 @@ const validateRightsFunctionByAllowedActor = {
   both: verifyRightToInteractWithTransaction,
 }
 
-const checkForConcurrentTransactions = async (transaction, requestedState) => {
+async function checkForConcurrentTransactions (transaction, requestedState) {
   if (requestedState === 'accepted') {
     // No need to check that the transaction holding the item busy is not the updated transaction
     // as the requested state is 'accepted', which, to be valid, needs to be done on a transaction

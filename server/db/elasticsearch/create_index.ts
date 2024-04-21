@@ -7,7 +7,7 @@ import type { Url } from '#types/common'
 
 const { origin } = config.elasticsearch
 
-export default async index => {
+export default async function (index) {
   const url = `${origin}/${index}` as Url
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]
@@ -20,7 +20,7 @@ export default async index => {
   }
 }
 
-const ignoreAlreadyExisting = (url, err) => {
+function ignoreAlreadyExisting (url, err) {
   if (err.body && ignoredErrorTypes.includes(err.body.error.type)) {
     return warn(url, 'database already exist')
   } else {

@@ -10,7 +10,7 @@ import type { EditionLooseSeed, EntityLooseSeed } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 
-export default async isbn => {
+export default async function (isbn) {
   const normalizedIsbn = normalizeIsbn(isbn)
   const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json` as Url
   let data
@@ -51,7 +51,7 @@ export default async isbn => {
   return entry
 }
 
-const getEditionSeed = (isbn, data) => {
+function getEditionSeed (isbn, data) {
   const edition: EditionLooseSeed = { isbn, claims: {} }
   edition.claims['wdt:P648'] = data.key.split('/').at(-1)
   if (data.languages) {
@@ -78,7 +78,7 @@ const getEditionSeed = (isbn, data) => {
   return edition
 }
 
-const getEntitySeedFromOlId = async ({ key }) => {
+async function getEntitySeedFromOlId ({ key }) {
   const id = key.split('/').at(-1)
   const url = `https://openlibrary.org${key}.json` as Url
   const { name, title, type, location, remote_ids: remoteIds = {} } = await requests_.get(url)
@@ -99,7 +99,7 @@ const getEntitySeedFromOlId = async ({ key }) => {
   return seed
 }
 
-const getPublisherSeed = label => {
+function getPublisherSeed (label) {
   return {
     labels: {
       en: label,
@@ -107,7 +107,7 @@ const getPublisherSeed = label => {
   }
 }
 
-const parseSimpleDay = dateString => {
+function parseSimpleDay (dateString) {
   // The date might look like '1993' or 'Dec 25, 2017'
   // Forcing the time zone avoids getting the previous day
   // Ex: running `new Date('Dec 25, 2017')` on a CET machine returns `2017-12-24T23:00:00.000Z`
@@ -122,7 +122,7 @@ const parseSimpleDay = dateString => {
 
 const yearPattern = /^\d{4}$/
 
-const parseLanguage = language => {
+function parseLanguage (language) {
   const lang = language.key.split('/').at(-1)
   if (wdIdByIso6392Code[lang]) return prefixifyWd(wdIdByIso6392Code[lang])
 }

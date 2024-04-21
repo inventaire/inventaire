@@ -6,7 +6,7 @@ const sanitization = {
   name: {},
 }
 
-const controller = async (params, req, res) => {
+async function controller (params, req, res) {
   const { name } = params
   const { accept = '' } = req.headers
   // TODO: detect cases where text/html is preceded by application/json

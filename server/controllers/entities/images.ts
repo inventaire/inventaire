@@ -29,7 +29,7 @@ const sanitization = validateSanitization({
   },
 })
 
-export default async (req, res) => {
+export default async function (req, res) {
   const { uris, refresh, redirect, width, height } = sanitize(req, res, sanitization)
   if (redirect) {
     if (uris.length !== 1) {
@@ -47,7 +47,7 @@ export default async (req, res) => {
   }
 }
 
-const findRawImage = async (uri, images, width, height) => {
+async function findRawImage (uri, images, width, height) {
   const image = images[uri]?.claims[0]
   if (image == null) {
     throw notFoundError({ uri })
@@ -58,7 +58,7 @@ const findRawImage = async (uri, images, width, height) => {
   return imgUrlBuilder(url, width, height)
 }
 
-const replaceWikimediaFilename = async image => {
+async function replaceWikimediaFilename (image) {
   // Wikimedia file name neither start by 'http' or '/'
   if (image.startsWith('http') || image[0] === '/') return image
   else return getWikimediaThumbnailData(image).url

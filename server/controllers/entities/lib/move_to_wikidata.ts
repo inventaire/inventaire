@@ -5,7 +5,7 @@ import mergeEntities from './merge_entities.js'
 import { unprefixify } from './prefix.js'
 import { cacheEntityRelations } from './temporarily_cache_relations.js'
 
-export default async (user, invEntityUri) => {
+export default async function (user, invEntityUri) {
   const { _id: reqUserId } = user
 
   const entityId = unprefixify(invEntityUri)

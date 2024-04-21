@@ -38,7 +38,7 @@ const body = {
   },
 }
 
-export default async () => {
+export default async function () {
   if (lastToken && !tokenExpired()) return lastToken
 
   return requests_.post(url, { body, headers: reqHeaders, returnBodyOnly: false })
@@ -52,7 +52,7 @@ export default async () => {
   })
 }
 
-const parseIdentificationRes = ({ body, headers }) => {
+function parseIdentificationRes ({ body, headers }) {
   const newToken = headers['x-subject-token']
   if (!newToken) throw newError('swift token not found', 500, { headers })
 

@@ -17,13 +17,13 @@ const sanitization = {
   },
 }
 
-const controller = async ({ assertImage, lang, limit, reqUserId }) => {
+async function controller ({ assertImage, lang, limit, reqUserId }) {
   let items = await getPublicItemsByDate(itemsQueryLimit, offset, assertImage, reqUserId)
   items = selectRecentItems(items, lang, limit)
   return bundleOwnersToItems(items, reqUserId)
 }
 
-const selectRecentItems = (items, lang, limit) => {
+function selectRecentItems (items, lang, limit) {
   const recentItems = []
   const discardedItems = []
   const itemsCountByOwner = {}

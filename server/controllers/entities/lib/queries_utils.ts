@@ -14,7 +14,7 @@ export const sortByOrdinalOrDate = (a, b) => getPartScore(a) - getPartScore(b)
 export const sortByScore = (a, b) => b.score - a.score
 
 const earliestDate = -10e10
-const getPartScore = obj => {
+function getPartScore (obj) {
   const { date, ordinal, subparts } = obj
   // Push parts with subparts up if they don't have a date or ordinal of their own
   if ((subparts > 0) && (date == null) && (ordinal == null)) return earliestDate - subparts
@@ -30,7 +30,7 @@ const getPartScore = obj => {
 const lastYearTime = new Date('2100').getTime()
 
 const lastOrdinal = 1000
-const ordinalNum = ordinal => {
+function ordinalNum (ordinal) {
   if (isPositiveIntegerString(ordinal)) {
     return parseInt(ordinal)
   } else {
@@ -40,6 +40,6 @@ const ordinalNum = ordinal => {
   }
 }
 
-const getStringNumericRepresentation = ordinal => {
+function getStringNumericRepresentation (ordinal) {
   return parseInt(Buffer.from(ordinal).toString('hex'), 16)
 }

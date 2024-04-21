@@ -4,7 +4,7 @@ const sanitization = {
   item: {},
 }
 
-const controller = async ({ itemId, reqUserId }) => {
+async function controller ({ itemId, reqUserId }) {
   const transactions = await getTransactionsByUserAndItem(reqUserId, itemId)
   return { transactions }
 }

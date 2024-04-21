@@ -9,7 +9,7 @@ import isValidImageContentType from './is_valid_image_content_type.js'
 
 const oneMB = Math.pow(1024, 2)
 
-export default async (url, path) => {
+export default async function (url, path) {
   url = encodeURL(url)
   const controller = new AbortController()
   let res, errorCode
@@ -34,7 +34,7 @@ export default async (url, path) => {
   }
 }
 
-const validateResponse = (response, controller, url, path) => {
+function validateResponse (response, controller, url, path) {
   let { status: statusCode, statusText } = response
   let { 'content-type': contentType, 'content-length': contentLength } = response.headers.raw()
   contentType = contentType.join(';')

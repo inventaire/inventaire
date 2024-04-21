@@ -12,7 +12,7 @@ export function getIpBinaryRepresentation (ip) {
 
 const getIpv4Parts = address => address.split('.').map(part => parseInt(part, 10))
 
-const getIpv6Parts = address => {
+function getIpv6Parts (address) {
   const defineParts = address.split(':').filter(part => part !== '')
   const missingPartsCount = 8 - defineParts.length
   const missingParts = new Array(missingPartsCount).fill('0').join(':')

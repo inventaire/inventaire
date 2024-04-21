@@ -51,7 +51,7 @@ export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
   })
 }
 
-export const getPublicItemsByDate = (limit = 15, offset = 0, assertImage = false, reqUserId) => {
+export function getPublicItemsByDate (limit = 15, offset = 0, assertImage = false, reqUserId) {
   return db.getDocsByViewQuery<Item>('publicByDate', {
     limit,
     skip: offset,
@@ -116,7 +116,7 @@ export async function updateItemsShelves (action, shelvesIds, userId, itemsIds) 
 export const itemsBulkUpdate = db.bulk
 export const itemsBulkDelete = db.bulkDelete
 
-const validateOwnership = (userId, items) => {
+function validateOwnership (userId, items) {
   items = forceArray(items)
   for (const item of items) {
     if (item.owner !== userId) {

@@ -4,12 +4,12 @@ export default {
   minimizable: true,
 }
 
-const buildQuery = externalIds => {
+function buildQuery (externalIds) {
   const body = buildBody(externalIds)
   return `SELECT DISTINCT ?item WHERE { ${body} }`
 }
 
-const buildBody = externalIds => {
+function buildBody (externalIds) {
   if (externalIds.length === 1) return buildTriple(externalIds[0])
 
   const unions = externalIds

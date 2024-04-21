@@ -7,7 +7,7 @@ export default authorUris => {
   .then(flatten)
 }
 
-const getWorksFromAuthorsUri = async authorUri => {
+async function getWorksFromAuthorsUri (authorUri) {
   const { works } = await getAuthorWorks({ uri: authorUri })
   const uris = map(works, 'uri')
   // Get full-fledged entity, as getAuthorWorks returns an entity without labels

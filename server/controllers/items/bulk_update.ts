@@ -7,7 +7,7 @@ const sanitization = {
   value: {},
 }
 
-const controller = async params => {
+async function controller (params) {
   info(params, 'bulk update')
   await bulkItemsUpdate(params)
   return { ok: true }

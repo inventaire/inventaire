@@ -6,7 +6,7 @@ import { warn } from '#lib/utils/logs'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import { updateItemDoc } from '#models/item'
 
-export const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) => {
+export async function bulkItemsUpdate ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) {
   const itemUpdateData = { [attribute]: value }
   const currentItems = await getItemsByIds(ids)
   const formattedItems = currentItems.map(currentItem => updateItemDoc(reqUserId, itemUpdateData, currentItem))
@@ -34,7 +34,7 @@ export const bulkItemsUpdate = async ({ reqUserId, ids, attribute, value, attemp
 const hasError = ({ error }) => error != null
 const getId = ({ id }) => id
 
-const validateValue = async ({ attribute, value, reqUserId }) => {
+async function validateValue ({ attribute, value, reqUserId }) {
   if (attribute === 'visibility') {
     await validateVisibilityKeys(value, reqUserId)
   } else if (attribute === 'shelves') {

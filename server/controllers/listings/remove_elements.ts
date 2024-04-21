@@ -10,7 +10,7 @@ const sanitization = {
   uris: {},
 }
 
-const controller = async ({ id, uris, reqUserId }, req, res) => {
+async function controller ({ id, uris, reqUserId }, req, res) {
   const listing = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
 

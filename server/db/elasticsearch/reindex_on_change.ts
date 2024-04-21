@@ -10,7 +10,7 @@ export default indexBaseName => {
   })
 }
 
-const reindex = indexBaseName => {
+function reindex (indexBaseName) {
   const indexFn = indexation(indexBaseName)
   return ({ doc }) => indexFn(doc)
 }

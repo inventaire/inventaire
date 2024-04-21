@@ -58,7 +58,7 @@ interface LinkContent {
   url: AbsoluteUrl
   details: null
 }
-const buildLinkContentFromItem = item => {
+function buildLinkContentFromItem (item) {
   const content: LinkContent = {
     text: item.snapshot['entity:title'],
     url: `${host}/items/${item._id}`,
@@ -77,7 +77,7 @@ interface BuildContentOptions {
   parentLink: RelativeUrl
 }
 
-const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }: BuildContentOptions) => {
+function buildContent ({ links, name, lang = 'en', itemsLength, parentLink }: BuildContentOptions) {
   let html = `<p>${i18n(lang, 'create_items_activity', { name })} `
   const htmlLinks = links.map(link => {
     return `<a href="${link.url}" rel="nofollow noopener noreferrer" target="_blank">${link.text}</a>`
@@ -96,7 +96,7 @@ const buildContent = ({ links, name, lang = 'en', itemsLength, parentLink }: Bui
   return html
 }
 
-const buildAttachement = item => {
+function buildAttachement (item) {
   const imageUrl = item.snapshot['entity:image']
   if (!imageUrl) return
   return {

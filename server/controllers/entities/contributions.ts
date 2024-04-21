@@ -17,7 +17,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { userId, limit, offset, filter, reqUserId } = params
   const reqUserHasAdminAccess = hasAdminAccess(req.user)
 
@@ -34,7 +34,7 @@ const controller = async (params, req) => {
   return patchesPage
 }
 
-const getPatchesPage = async ({ userId, limit, offset, filter }) => {
+async function getPatchesPage ({ userId, limit, offset, filter }) {
   if (userId != null) {
     if (filter != null) {
       return getPatchesByUserIdAndFilter({ userId, filter, limit, offset })
@@ -46,7 +46,7 @@ const getPatchesPage = async ({ userId, limit, offset, filter }) => {
   }
 }
 
-const checkPublicContributionsStatus = async ({ userId, reqUserId }) => {
+async function checkPublicContributionsStatus ({ userId, reqUserId }) {
   if (userId === reqUserId) return
   const user = await getUserById(userId)
   if (userShouldBeAnonymized(user)) {

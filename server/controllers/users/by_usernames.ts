@@ -4,7 +4,7 @@ const sanitization = {
   usernames: {},
 }
 
-const controller = async ({ usernames, reqUserId }) => {
+async function controller ({ usernames, reqUserId }) {
   const users = await getUsersIndexByUsernames(reqUserId, usernames)
   return { users }
 }

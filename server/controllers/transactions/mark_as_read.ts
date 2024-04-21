@@ -6,7 +6,7 @@ const sanitization = {
   id: {},
 }
 
-const controller = async ({ id, reqUserId }) => {
+async function controller ({ id, reqUserId }) {
   const transaction = await getTransactionById(id)
   verifyRightToInteractWithTransaction(reqUserId, transaction)
   await markTransactionAsRead(reqUserId, transaction)

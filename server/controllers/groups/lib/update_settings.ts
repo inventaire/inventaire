@@ -11,7 +11,7 @@ import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')
 
-export default async (data, userId) => {
+export default async function (data, userId) {
   const { group: groupId, attribute } = data
   let { value } = data
 
@@ -44,7 +44,7 @@ export default async (data, userId) => {
   return { hooksUpdates }
 }
 
-const applyEditHooks = async (attribute, groupDoc) => {
+async function applyEditHooks (attribute, groupDoc) {
   if (attribute === 'name') {
     return updateSlug(groupDoc)
   } else {
@@ -52,7 +52,7 @@ const applyEditHooks = async (attribute, groupDoc) => {
   }
 }
 
-const updateSlug = async groupDoc => {
+async function updateSlug (groupDoc) {
   const updatedDoc = await addSlug(groupDoc)
   return {
     updatedDoc,
@@ -69,7 +69,7 @@ const getNotificationData = (groupId, userId, groupDoc, attribute, value) => ({
   previousValue: groupDoc[attribute],
 })
 
-const getUsersToNotify = groupDoc => {
+function getUsersToNotify (groupDoc) {
   return chain(groupDoc)
   .pick('admins', 'members')
   .values()

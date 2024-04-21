@@ -4,7 +4,7 @@ const sanitization = {
   range: {},
 }
 
-const controller = async ({ reqUserId, range }) => {
+async function controller ({ reqUserId, range }) {
   const usersIds = await getUsersNearby(reqUserId, range)
   const users = await getUsersAuthorizedDataByIds(usersIds, reqUserId)
   return { users }

@@ -50,7 +50,7 @@ export function getGroupRequestedUsersIds (group) {
   return getUsersIdsByAgregatedCategories(group, [ 'requested' ])
 }
 
-const getUsersIdsByAgregatedCategories = (group, categories) => {
+function getUsersIdsByAgregatedCategories (group, categories) {
   assert_.array(categories)
   return chain(group)
   .pick(categories)

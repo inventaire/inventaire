@@ -8,7 +8,7 @@ const errorMessagePattern = /^(4|5)00/
 
 // if this route is enabled by config
 // allows the client to notify the server of i18n keys without a value
-const i18nMissingKeys = (req, res) => {
+function i18nMissingKeys (req, res) {
   let { missingKeys } = req.body
 
   if (missingKeys == null) {
@@ -26,7 +26,7 @@ const i18nMissingKeys = (req, res) => {
   responses_.ok(res)
 }
 
-const looksLikeAKey = key => {
+function looksLikeAKey (key) {
   if (!key) return false
   // Filtering out keys longer than 500 characters
   if (key.length > 500) return false

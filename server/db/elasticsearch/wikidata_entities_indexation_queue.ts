@@ -16,7 +16,7 @@ assert_.number(minReindexationInterval)
 const indexName = 'wikidata'
 
 let reindexWdEntity
-const importCircularDependencies = async () => {
+async function importCircularDependencies () {
   const { indexation } = await import('#db/elasticsearch/indexation')
   reindexWdEntity = indexation(indexName)
 }

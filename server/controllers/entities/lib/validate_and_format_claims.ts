@@ -23,7 +23,7 @@ export default async function ({ claims, type, _id }: { claims: Claims, type?: s
   return claims
 }
 
-const validatePropertiesClaims = (claims, type, _id) => {
+function validatePropertiesClaims (claims, type, _id) {
   const properties = Object.keys(claims)
   return Promise.all(properties.map(validatePropertyClaims(claims, type, _id)))
 }

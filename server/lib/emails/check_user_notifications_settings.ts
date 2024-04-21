@@ -16,7 +16,7 @@ export default (user, notificationLabel) => {
   checkSetting(_id, notifications, notificationLabel)
 }
 
-const checkSetting = (userId, notifications, label) => {
+function checkSetting (userId, notifications, label) {
   // settings might be undefined, defaulting to true (activated)
   if (notifications[label] === false) {
     throw emailDisabled({

@@ -83,7 +83,7 @@ export function formatError (err) {
   throw err
 }
 
-const parseHit = hit => {
+function parseHit (hit) {
   const { _source: data, _id, _score } = hit
   data._id = _id
   data._score = _score

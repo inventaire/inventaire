@@ -199,7 +199,7 @@ export default {
   },
 }
 
-const transactionEmail = (transactionEmailViewModel: TransactionEmailViewModel, role: TransactionUserRole, label: string) => {
+function transactionEmail (transactionEmailViewModel: TransactionEmailViewModel, role: TransactionUserRole, label: string) {
   const { transaction, mainUser, other, itemTitle } = transactionEmailViewModel
   checkUserNotificationsSettings(mainUser, label)
   const otherRole = role === 'owner' ? 'requester' : 'owner'
@@ -226,7 +226,7 @@ const transactionEmail = (transactionEmailViewModel: TransactionEmailViewModel, 
   }
 }
 
-const validateOptions = options => {
+function validateOptions (options) {
   const { user1, user2 } = options
   assert_.objects([ user1, user2 ])
   if (user1.email == null) throw new Error('missing user1 email')
@@ -234,6 +234,6 @@ const validateOptions = options => {
   return [ user1, user2 ]
 }
 
-const buildTokenUrl = (action, email, token) => {
+function buildTokenUrl (action, email, token) {
   return buildUrl(`${host}/api/token`, { action, email, token })
 }

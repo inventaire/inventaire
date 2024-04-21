@@ -10,7 +10,7 @@ export async function addSlug (group) {
   return group
 }
 
-const trySlugCandidate = (slug, groupId) => {
+function trySlugCandidate (slug, groupId) {
   return getGroupBySlug(slug)
   .then(group => {
     // A group was found with that slug

@@ -6,7 +6,7 @@ import config from '#server/config'
 const root = config.getPublicOrigin()
 
 // Keep in sync with client/app/api/img
-export const imgUrlBuilder = (path, width = 1600, height = 1600) => {
+export function imgUrlBuilder (path, width = 1600, height = 1600) {
   if (!isNonEmptyString(path)) return
 
   if (path.startsWith('/ipfs/')) {

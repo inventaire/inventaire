@@ -4,7 +4,7 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { newError } from '#lib/error/error'
 
-export default async item => {
+export default async function (item) {
   const { entity: uri } = item
   const entity = await getEntityByUri({ uri })
   if (!entity) throw newError('entity not found', 500, { item: item._id, uri })
@@ -58,7 +58,7 @@ export default async item => {
   return item
 }
 
-const aggregateWorksRelationsUris = (works, relationsUrisGetter) => {
+function aggregateWorksRelationsUris (works, relationsUrisGetter) {
   return uniq(works.map(relationsUrisGetter).flat())
 }
 

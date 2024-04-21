@@ -7,7 +7,7 @@ const cpusCount = cpus().length
 const checkIntervalBase = 10000
 const maxCheckInterval = 5 * oneMinute
 
-const getCPUsAverageLoad = () => {
+function getCPUsAverageLoad () {
   const [ lastMinuteAverageLoad ] = loadavg()
   return lastMinuteAverageLoad / cpusCount
 }

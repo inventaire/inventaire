@@ -12,12 +12,12 @@ export function initSideEffects () {
   radio.on('transaction:update', applySideEffects)
 }
 
-const applySideEffects = (transacDoc, newState) => {
+function applySideEffects (transacDoc, newState) {
   log({ transacDoc, newState }, 'applySideEffects')
   return sideEffects[newState](transacDoc, newState)
 }
 
-const changeOwnerIfOneWay = transacDoc => {
+function changeOwnerIfOneWay (transacDoc) {
   if (transactionIsOneWay(transacDoc)) {
     log({ transacDoc }, 'changeOwner')
     return changeItemOwner(transacDoc)

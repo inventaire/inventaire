@@ -6,7 +6,7 @@ import config from '#server/config'
 const couchdbHost = config.db.getOrigin()
 
 export function waitForCouchdb () {
-  const testAvailability = async delay => {
+  async function testAvailability (delay) {
     await wait(delay)
 
     try {
@@ -27,7 +27,7 @@ export function waitForCouchdb () {
   return testAvailability(0)
 }
 
-const obfuscateLogin = dbBaseUrl => {
+function obfuscateLogin (dbBaseUrl) {
   return dbBaseUrl
   .replace(/(https?):\/\/(\w+):([^@]+)@/, '$1://$2:*************@')
 }

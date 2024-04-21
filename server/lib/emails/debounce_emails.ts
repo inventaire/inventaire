@@ -25,7 +25,7 @@ export function transactionUpdate (transaction: Transaction | TransactionId) {
 
 // Delete and repost with new time to wait
 // as long as updates are arriving fast (i.e. in a 30 minutes timespan)
-const addToWaitingList = (domain, id) => {
+function addToWaitingList (domain, id) {
   return db.createKeyStream({
     gt: `${domain}:${id}:0`,
     lt: `${domain}:${id}::`,
@@ -35,7 +35,7 @@ const addToWaitingList = (domain, id) => {
   .on('end', createNewWaiter.bind(null, domain, id))
 }
 
-const createNewWaiter = (domain, id) => {
+function createNewWaiter (domain, id) {
   const key = `${domain}:${id}:${Date.now()}`
   return db.put(key, emptyValue)
 }

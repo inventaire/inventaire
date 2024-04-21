@@ -1,7 +1,7 @@
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { getUserById } from '#controllers/user/lib/user'
 
-export default async (shelfId, reqUserId) => {
+export default async function (shelfId, reqUserId) {
   const shelf = await getShelfById(shelfId)
   const user = await getUserById(shelf.owner)
 

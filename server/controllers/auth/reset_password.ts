@@ -6,7 +6,7 @@ const sanitization = {
   email: {},
 }
 
-const controller = async ({ email }) => {
+async function controller ({ email }) {
   const user = await findUserByEmail(email)
     .catch(catchEmailNotFoundErr(email))
 

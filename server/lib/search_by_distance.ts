@@ -18,7 +18,7 @@ export default dbBaseName => {
 }
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
-const queryBuilder = ({ latLng, meterRange }) => {
+function queryBuilder ({ latLng, meterRange }) {
   const [ lat, lon ] = latLng
   const searchRequest: SearchRequest = {
     query: {
@@ -39,7 +39,7 @@ const queryBuilder = ({ latLng, meterRange }) => {
   return searchRequest
 }
 
-const getIdsSortedByDistance = (hits, centerLatLng) => {
+function getIdsSortedByDistance (hits, centerLatLng) {
   return hits
   .map(addDistance(centerLatLng))
   .sort((a, b) => a.distance - b.distance)

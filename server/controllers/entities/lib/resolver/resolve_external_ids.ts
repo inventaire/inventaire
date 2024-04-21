@@ -30,17 +30,17 @@ export async function resolveExternalIds (claims, resolveOnWikidata = true) {
   .then(uniq)
 }
 
-const wdQuery = async externalIds => {
+async function wdQuery (externalIds) {
   const results = await runWdQuery({ query: 'resolve-external-ids', externalIds })
   return results.map(prefixifyWd)
 }
 
-const invQuery = externalIds => {
+function invQuery (externalIds) {
   return Promise.all(externalIds.map(invByClaim))
   .then(flatten)
 }
 
-const invByClaim = async ([ prop, value ]) => {
+async function invByClaim ([ prop, value ]) {
   const entities = await getInvEntitiesByClaim(prop, value, true, true)
   return entities.map(getInvEntityCanonicalUri)
 }

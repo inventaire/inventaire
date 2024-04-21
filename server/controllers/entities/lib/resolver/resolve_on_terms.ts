@@ -11,7 +11,7 @@ import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
 // - if seeds terms match entities terms
 // - if no other entity matches those terms
 
-export default async entry => {
+export default async function (entry) {
   const { authors, works } = entry
   if ((authors.length === 0) || (works.length === 0)) return entry
 
@@ -29,7 +29,7 @@ const searchAuthorAndResolve = works => async author => {
   }
 }
 
-const searchAuthorsBySeedAuthorTerms = terms => {
+function searchAuthorsBySeedAuthorTerms (terms) {
   return Promise.all(terms.map(searchUrisByAuthorTerm))
   .then(flatten)
   .then(uniq)
@@ -37,7 +37,7 @@ const searchAuthorsBySeedAuthorTerms = terms => {
 
 const types = [ 'humans' ]
 
-const searchUrisByAuthorTerm = async term => {
+async function searchUrisByAuthorTerm (term) {
   const { hits } = await typeSearch({ types, search: term, exact: true })
   return hits
   // Exact match on normalized author terms
@@ -46,7 +46,7 @@ const searchUrisByAuthorTerm = async term => {
   .filter(identity)
 }
 
-const resolveWorksAndAuthor = async (works, author, foundAuthorsUris) => {
+async function resolveWorksAndAuthor (works, author, foundAuthorsUris) {
   await Promise.all(works.map(getWorkAndResolve(author, foundAuthorsUris)))
 }
 
@@ -57,7 +57,7 @@ const getWorkAndResolve = (authorSeed, foundAuthorsUris) => async work => {
   resolveWorkAndAuthor(foundAuthorsUris, authorSeed, work, workTerms, foundAuthorsWorks)
 }
 
-const resolveWorkAndAuthor = (foundAuthorsUris, authorSeed, workSeed, workTerms, foundAuthorsWorks) => {
+function resolveWorkAndAuthor (foundAuthorsUris, authorSeed, workSeed, workTerms, foundAuthorsWorks) {
   const matchingSearchedWorks = foundAuthorsWorks.filter(isMatchingWork(workTerms))
   // Several foundAuthorsWorks could match authors homonyms/duplicates
   if (matchingSearchedWorks.length !== 1) return
@@ -74,7 +74,7 @@ const isMatchingWork = workTerms => searchedWork => {
   return someMatch(workTerms, searchedWorkTerms)
 }
 
-const resolveAuthorFromExternalWorksTerms = async (authorSeed, worksSeeds, foundAuthorsUris) => {
+async function resolveAuthorFromExternalWorksTerms (authorSeed, worksSeeds, foundAuthorsUris) {
   const worksLabels = uniq(worksSeeds.flatMap(getLabels))
   const worksLabelsLangs = uniq(worksSeeds.flatMap(getLabelsLangs))
   const authorsUrisWithOccurrences = await Promise.all(foundAuthorsUris.map(getOccurrences(worksLabels, worksLabelsLangs)))

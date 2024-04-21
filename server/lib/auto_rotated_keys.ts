@@ -27,7 +27,7 @@ type Key = string
 const keys: Key[] = []
 const data: Record<EpochTimeStamp, Key> = {}
 
-const getKeysFromFileSync = () => {
+function getKeysFromFileSync () {
   return readFileSync(keysFilePath)
   .toString()
   .split('\n')
@@ -40,7 +40,7 @@ const getKeysFromFileSync = () => {
 }
 
 // Use sync operations to make sure we recovered existing keys before the server starts
-const recoverKeysFromFile = () => {
+function recoverKeysFromFile () {
   try {
     getKeysFromFileSync().forEach(recoverKey)
   } catch (err) {
@@ -48,7 +48,7 @@ const recoverKeysFromFile = () => {
   }
 }
 
-const getKeysStatus = () => {
+function getKeysStatus () {
   return Object.keys(data).map(timestampStr => {
     const timestamp = parseInt(timestampStr)
     return {
@@ -59,7 +59,7 @@ const getKeysStatus = () => {
   })
 }
 
-const updateKeysFromFile = () => {
+function updateKeysFromFile () {
   info('update keys from file')
   try {
     getKeysFromFileSync().forEach(updateKey)
@@ -70,19 +70,19 @@ const updateKeysFromFile = () => {
   }
 }
 
-const recoverKey = ({ timestamp, key }) => {
+function recoverKey ({ timestamp, key }) {
   keys.push(key)
   data[timestamp] = key
 }
 
-const updateKey = ({ timestamp, key }) => {
+function updateKey ({ timestamp, key }) {
   if (!keys.includes(key)) {
     keys.unshift(key)
     data[timestamp] = key
   }
 }
 
-const generateNewKey = () => {
+function generateNewKey () {
   info('generating new key')
   const newKey = getRandomBytes(64, 'base64')
   keys.unshift(newKey)
@@ -93,7 +93,7 @@ const generateNewKey = () => {
   setTimeout(checkState, nextCheck)
 }
 
-const cleanupKeysInMemory = () => {
+function cleanupKeysInMemory () {
   keys.sort(newestFirstFromKeys)
   // Keep maximum 2 keys at the same time
   // The more keys, the worst performance gets for worst-cases
@@ -101,7 +101,7 @@ const cleanupKeysInMemory = () => {
   if (keys.length > 2) keys.splice(2, 10)
 }
 
-const saveKeysToDisk = () => {
+function saveKeysToDisk () {
   info('saving keys')
   const file = Object.keys(data)
     .sort(newestFirst)
@@ -115,12 +115,12 @@ const saveKeysToDisk = () => {
 }
 
 const newestFirst = (a, b) => b - a
-const newestFirstFromKeys = (keyA, keyB) => {
+function newestFirstFromKeys (keyA, keyB) {
   const timestampByKey = invert(data)
   return timestampByKey[keyB] - timestampByKey[keyA]
 }
 
-const checkState = () => {
+function checkState () {
   const role = leadingServer ? 'leading' : 'following'
   if (leadingServer) {
     info(`Checking keys state as ${role} instance`)
@@ -151,7 +151,7 @@ const checkState = () => {
   }
 }
 
-const getTimeUntilEndOfNewestKeyHalfLife = () => {
+function getTimeUntilEndOfNewestKeyHalfLife () {
   const newestKeyTimestampStr = Object.keys(data).sort(newestFirst)[0]
   if (!newestKeyTimestampStr) return
   const newestKeyTimestamp = parseInt(newestKeyTimestampStr)

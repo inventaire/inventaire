@@ -31,7 +31,7 @@ export const tap = fn => async res => {
 export const mappedArrayPromise = fn => array => Promise.all(array.map(fn))
 
 // Source: http://bluebirdjs.com/docs/api/deferred-migration.html
-export const defer = () => {
+export function defer () {
   // Initialized in the defer function scope
   let resolveFn, rejectFn
 

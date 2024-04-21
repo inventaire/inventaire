@@ -1,4 +1,4 @@
-export default async doc => {
+export default async function (doc) {
   doc.type = 'list'
   return doc
 }

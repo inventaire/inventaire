@@ -33,7 +33,7 @@ const aggregateOwnersWorks = editionWorkMap => (index, item) => {
   return index
 }
 
-const getItemsIdsByDate = items => {
+function getItemsIdsByDate (items) {
   return items
   .sort(sortByCreationDate)
   .map(getId)

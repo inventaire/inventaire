@@ -12,7 +12,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { container } = params
 
   const { putImage } = containers[container]
@@ -25,7 +25,7 @@ const controller = async (params, req) => {
   .then(Log('uploaded images'))
 }
 
-const getFilesFromFormData = formData => {
+function getFilesFromFormData (formData) {
   const { files } = formData
 
   if (!isNonEmptyPlainObject(files)) {
@@ -40,14 +40,14 @@ const getFilesFromFormData = formData => {
   return Object.values(files)
 }
 
-const validateFile = file => {
+function validateFile (file) {
   const { type } = file
   if (type !== 'image/jpeg') {
     throw newError('only jpeg are accepted', 400, file)
   }
 }
 
-const indexUrlById = collection => {
+function indexUrlById (collection) {
   const index = {}
   collection.forEach(({ id, url }) => {
     index[id] = url

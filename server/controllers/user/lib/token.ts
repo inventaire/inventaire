@@ -53,7 +53,7 @@ export function openPasswordUpdateWindow (user) {
   })
 }
 
-const updateIfValidToken = (token, user) => {
+function updateIfValidToken (token, user) {
   const { emailValidation, _id } = user
   if (emailValidation == null) {
     throw noEmailValidationFound(token, _id)
@@ -63,11 +63,11 @@ const updateIfValidToken = (token, user) => {
   .then(updateValidEmail.bind(null, _id))
 }
 
-const noEmailValidationFound = (token, key) => {
+function noEmailValidationFound (token, key) {
   return newError('no email validation token found', 401, { token, key })
 }
 
-const updateValidEmail = (_id, valid) => {
+function updateValidEmail (_id, valid) {
   if (valid) {
     return db.update(_id, emailIsValid)
   } else {
@@ -75,12 +75,12 @@ const updateValidEmail = (_id, valid) => {
   }
 }
 
-const emailIsValid = user => {
+function emailIsValid (user) {
   user.validEmail = true
   return omit(user, 'emailValidation')
 }
 
-const getTokenData = () => {
+function getTokenData () {
   const token = getRandomString(tokenLength)
   return hashPassword(token)
   .then(tokenHash => [ token, tokenHash ])

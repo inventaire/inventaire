@@ -3,12 +3,12 @@ import { newError } from '#lib/error/error'
 
 const sanitization = {}
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   await sendEmailValidation(req.user)
   return { ok: true }
 }
 
-const sendEmailValidation = async user => {
+async function sendEmailValidation (user) {
   const { creationStrategy, validEmail } = user
   if (creationStrategy !== 'local') {
     throw newError('wrong authentification creationStrategy', 400)

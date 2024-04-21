@@ -4,7 +4,7 @@
 import { chain, pick } from 'lodash-es'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 
-const addRelatives = (results, relatives, refresh) => {
+function addRelatives (results, relatives, refresh) {
   const { entities } = results
 
   const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
@@ -24,7 +24,7 @@ const addRelatives = (results, relatives, refresh) => {
   })
 }
 
-const getAdditionalEntitiesUris = (entities, relatives) => {
+function getAdditionalEntitiesUris (entities, relatives) {
   return chain(entities)
   .values()
   .map(getEntityRelativesUris(relatives))

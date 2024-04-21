@@ -10,7 +10,7 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { group: groupId, reqUserId } = params
   log(params, 'update group settings')
 

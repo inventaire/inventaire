@@ -12,7 +12,7 @@ const sanitization = validateSanitization({
   },
 })
 
-export default async (req, res) => {
+export default async function (req, res) {
   const { reqUserId } = sanitize(req, res, sanitization)
   const { language } = req.user
   let responseText = csvHeaderRow + '\n'
@@ -22,17 +22,17 @@ export default async (req, res) => {
   responses_.sendText(res, responseText)
 }
 
-const addEntitiesAndShelfData = async item => {
+async function addEntitiesAndShelfData (item) {
   item = await addEntitiesData(item)
   const shelves = await getShelvesByIds(item.shelves)
   item.shelfNames = shelves.map(shelf => shelf.name)
   return item
 }
 
-const buildItemsRowsSequentially = async (items, responseText, lang) => {
+async function buildItemsRowsSequentially (items, responseText, lang) {
   const formatItemRow = FormatItemRow(lang)
 
-  const sendNextBatch = async () => {
+  async function sendNextBatch () {
     if (items.length === 0) return responseText.trim()
 
     // Using batches of 10 items to reduce stress on entities APIs

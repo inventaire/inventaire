@@ -14,7 +14,7 @@ const sanitization = {
   'new-value': { optional: true },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   let { id, uri, property, oldValue, newValue } = params
   let prefix
   log(params, 'update claim input')

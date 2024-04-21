@@ -6,13 +6,13 @@ import { objectPromise } from '#lib/promises'
 // import { logError } from '#lib/utils/logs'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
-export default async entity => {
+export default async function (entity) {
   const data = await findAnImage(entity)
   entity.image = data
   return entity
 }
 
-const findAnImage = entity => {
+function findAnImage (entity) {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki?.title
   const { claims } = entity
@@ -21,7 +21,7 @@ const findAnImage = entity => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
+function pickBestPic (entity, commonsFilename, enwikiTitle, openLibraryId) {
   return objectPromise({
     wm: getWikimediaThumbnailData(commonsFilename),
     // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
@@ -38,7 +38,7 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
   })
 }
 
-// const getSourcePromise = (sourceName, fn, ...args) => {
+// function getSourcePromise (sourceName, fn, ...args) {
 //   if (args[0] == null) return null
 
 //   return fn.apply(null, args)
@@ -50,7 +50,7 @@ const pickBestPic = (entity, commonsFilename, enwikiTitle, openLibraryId) => {
 //   })
 // }
 
-const getPicSourceOrder = entity => {
+function getPicSourceOrder (entity) {
   const { type } = entity
   // Commons pictures are prefered to Wikipedia and Open Library
   // to get access to photo credits
@@ -65,7 +65,7 @@ const getPicSourceOrder = entity => {
 // likely to be in the public domain and have a good image set in Wikidata
 // while querying images from English Wikipedia articles
 // can give quite random results
-const getWorkSourceOrder = work => {
+function getWorkSourceOrder (work) {
   const { claims } = work
   const publicationDateClaim = claims['wdt:P577'] && claims['wdt:P577'][0]
   const publicationYear = publicationDateClaim && publicationDateClaim.split('-')[0]

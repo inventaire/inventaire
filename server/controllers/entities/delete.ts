@@ -9,7 +9,7 @@ const sanitization = {
   uris: {},
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { user } = req
   let uris = uniq(params.uris)
   validateUris(uris)
@@ -19,14 +19,14 @@ const controller = async (params, req) => {
   return { ok: true }
 }
 
-const validateUris = uris => {
+function validateUris (uris) {
   for (const uri of uris) {
     // Wikidata entities can't be delete
     if (isWdEntityUri(uri)) throw newInvalidError('uri', uri)
   }
 }
 
-const replaceIsbnUrisByInvUris = async uris => {
+async function replaceIsbnUrisByInvUris (uris) {
   const invUris = uris.filter(isInvEntityUri)
   const isbnUris = uris.filter(isIsbnEntityUri)
   if (isbnUris.length === 0) return invUris
@@ -35,7 +35,7 @@ const replaceIsbnUrisByInvUris = async uris => {
   return invUris.concat(substitutedUris)
 }
 
-const getInvUrisFromIsbnUris = async uris => {
+async function getInvUrisFromIsbnUris (uris) {
   const isbns = uris.map(uri => uri.split(':')[1])
   const entities = await getInvEntitiesByIsbns(isbns)
   return entities.map(entity => `inv:${entity._id}`)

@@ -4,7 +4,7 @@ import { emit } from '#lib/radio'
 import { revertPatch } from '#models/patch'
 import validateEntity from './validate_entity.js'
 
-export default async (patchId, userId) => {
+export default async function (patchId, userId) {
   const entityId = patchId.split(':')[0]
   const restoredPatchIdNum = parseInt(patchId.split(':')[1])
   const currentDoc = await getEntityById(entityId)

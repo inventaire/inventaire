@@ -42,7 +42,7 @@ export function getAuthorWorks (params) {
 }
 
 // # WD
-const getWdAuthorWorks = async (qid, params) => {
+async function getWdAuthorWorks (qid, params) {
   const { refresh, dry } = params
   let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
   results = results.map(formatWdEntity).filter(identity)
@@ -54,7 +54,7 @@ const getWdAuthorWorks = async (qid, params) => {
   return uniqBy(results, 'uri')
 }
 
-const formatWdEntity = result => {
+function formatWdEntity (result) {
   let { work: wdId, type: typeWdId, date, serie } = result
   const typeUri = `wd:${typeWdId}`
   const typeName = getPluralTypeByTypeUri(typeUri)
@@ -67,13 +67,13 @@ const formatWdEntity = result => {
 }
 
 // # INV
-const getInvAuthorWorks = async uri => {
+async function getInvAuthorWorks (uri) {
   const authorClaims = authorRelationsProperties.map(property => [ property, uri ])
   const { rows } = await getInvEntitiesByClaims({ claims: authorClaims, includeDocs: true })
   return rows.map(formatInvEntity).filter(identity)
 }
 
-const formatInvEntity = row => {
+function formatInvEntity (row) {
   const typeUri = row.value
   const typeName = getPluralTypeByTypeUri(typeUri)
   if (!allowlistedTypesNames.includes(typeName)) return
@@ -86,7 +86,7 @@ const formatInvEntity = row => {
 }
 
 // # COMMONS
-const getPopularityScores = results => {
+function getPopularityScores (results) {
   const uris = map(results, 'uri')
   return getEntitiesPopularities({ uris })
 }
@@ -103,7 +103,7 @@ const spreadByType = (worksByTypes, rows) => scores => {
 }
 
 // TODO: prevent a work with several wdt:P577 values to appear several times
-const sortTypesByScore = worksByTypes => {
+function sortTypesByScore (worksByTypes) {
   for (const name in worksByTypes) {
     const results = worksByTypes[name]
     worksByTypes[name] = results.sort(sortByScore)
@@ -111,7 +111,7 @@ const sortTypesByScore = worksByTypes => {
   return worksByTypes
 }
 
-const formatEntity = entity => {
+function formatEntity (entity) {
   return {
     uri: entity.uri,
     date: getFirstPropertyClaim(entity, 'wdt:P577'),

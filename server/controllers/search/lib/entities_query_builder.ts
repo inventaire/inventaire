@@ -59,7 +59,7 @@ export default params => {
   }
 }
 
-const matchEntities = (search, userLang, exact, safe) => {
+function matchEntities (search, userLang, exact, safe) {
   const shoulds = []
   if (search == null) return shoulds
 
@@ -93,7 +93,7 @@ const matchEntities = (search, userLang, exact, safe) => {
   return shoulds
 }
 
-const exactMatchEntitiesFields = userLang => {
+function exactMatchEntitiesFields (userLang) {
   const fields = [
     'fullLabels.*^2',
     'fullAliases.*',
@@ -107,7 +107,7 @@ const exactMatchEntitiesFields = userLang => {
   return fields
 }
 
-const autoCompleteEntitiesFields = userLang => {
+function autoCompleteEntitiesFields (userLang) {
   const fields = [
     'labels.*^2',
     'aliases.*',
@@ -126,7 +126,7 @@ const autoCompleteEntitiesFields = userLang => {
   return fields
 }
 
-const getClaimFilters = claimParameter => {
+function getClaimFilters (claimParameter) {
   return claimParameter
   .split(' ')
   .map(andCondition => {
@@ -140,7 +140,7 @@ const getClaimFilters = claimParameter => {
   })
 }
 
-const validatePropertyAndValue = condition => {
+function validatePropertyAndValue (condition) {
   const [ property, value ] = condition.split('=')
   if (!isPropertyUri(property)) {
     throw newError('invalid property', 400, { property })

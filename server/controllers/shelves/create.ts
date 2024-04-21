@@ -9,14 +9,14 @@ const sanitization = {
   items: { optional: true },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { items: itemsIds, reqUserId } = params
   const shelf = await formatNewShelf(params)
   if (itemsIds) await addItemsToShelves([ shelf._id ], itemsIds, reqUserId)
   return { shelf }
 }
 
-const formatNewShelf = params => {
+function formatNewShelf (params) {
   const { name, description, visibility, color, reqUserId: owner } = params
   const shelfData: Partial<Shelf> = {
     name,

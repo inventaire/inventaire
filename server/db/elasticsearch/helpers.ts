@@ -34,7 +34,7 @@ export function logBulkRes (res, label) {
   log(globalStatus, label, color)
 }
 
-const getLoggerColor = globalStatus => {
+function getLoggerColor (globalStatus) {
   const totalSuccesses = aggregateAttribute(globalStatus, 'success')
   const totalErrors = aggregateAttribute(globalStatus, 'errors')
   if (totalSuccesses > 0 && totalErrors > 0) return 'yellow'
@@ -42,7 +42,7 @@ const getLoggerColor = globalStatus => {
   return 'red'
 }
 
-const aggregateAttribute = (globalStatus, attribute) => {
+function aggregateAttribute (globalStatus, attribute) {
   return Object.values(globalStatus)
   .map(obj => obj[attribute])
   .reduce(sum, 0)

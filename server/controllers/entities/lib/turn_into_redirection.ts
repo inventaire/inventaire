@@ -9,7 +9,7 @@ import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
 
-export default async ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) => {
+export default async function ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 
@@ -33,7 +33,7 @@ export default async ({ userId, fromId, toUri, previousToUri, context }: { userI
 // into a redirection: this entity now don't have anymore reason to be and is quite
 // probably a duplicate of an existing entity referenced by the redirection
 // destination entity.
-const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirection) => {
+async function removeObsoletePlaceholderEntities (userId, entityDocBeforeRedirection) {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
   log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
@@ -41,7 +41,7 @@ const removeObsoletePlaceholderEntities = async (userId, entityDocBeforeRedirect
   return compact(removedIds)
 }
 
-const getEntityUrisToCheck = claims => {
+function getEntityUrisToCheck (claims) {
   return chain(claims)
   .pick(propertiesToCheckForPlaceholderDeletion)
   .values()

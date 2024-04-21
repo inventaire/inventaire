@@ -9,12 +9,12 @@ const db = await dbFactory('users', 'relations')
 
 const getUsersRelation = (userId, otherId) => db.get<Relation>(getRelationDocId(userId, otherId))
 
-const putStatus = (userId, otherId, status) => {
+function putStatus (userId, otherId, status) {
   const docId = getRelationDocId(userId, otherId)
   return db.update(docId, updateStatus.bind(null, docId, status), { createIfMissing: true })
 }
 
-const updateStatus = (docId, status, doc) => {
+function updateStatus (docId, status, doc) {
   // if doc doesnt exist, blue-cot with createIfMissing=true creates one: { _id: doc._id }
   // thus the need to test doc.status instead
   if (doc && doc.status) {

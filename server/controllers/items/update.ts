@@ -8,7 +8,7 @@ import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
 
 // This controller doesn't use sanitization
 // as the item doc is passed unwrapped in the body
-export default async (req, res) => {
+export default async function (req, res) {
   const { body: item } = req
   const { _id, entity } = item
 

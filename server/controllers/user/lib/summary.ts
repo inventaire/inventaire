@@ -6,7 +6,7 @@ import type { User } from '#types/user'
 const { newsKey } = config.activitySummary
 const db = await dbFactory('users')
 
-const waitingForSummary = limit => {
+function waitingForSummary (limit) {
   // Pick users with next summary between epoch 0 and now
   return db.getDocsByViewQuery<User>('nextSummary', {
     include_docs: true,
@@ -16,7 +16,7 @@ const waitingForSummary = limit => {
   })
 }
 
-export const findOneWaitingForSummary = () => {
+export function findOneWaitingForSummary () {
   return waitingForSummary(1)
   .then(firstDoc)
 }

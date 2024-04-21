@@ -9,7 +9,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ period }) => {
+async function controller ({ period }) {
   if (period != null) {
     return getContributionsFromLastDay(period)
   } else {

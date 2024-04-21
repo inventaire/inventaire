@@ -11,20 +11,20 @@ export function requestGrouper (params) {
   let keys = []
   let groupedPromise = defer()
   let timeout
-  const reset = () => {
+  function reset () {
     keys = []
     groupedPromise = defer()
     timeout = null
   }
 
-  const getGroupedRequestPromise = () => {
+  function getGroupedRequestPromise () {
     // If no timeout was set, it's the first request so it triggers the timeout
     // Every next request within this time will be grouped in the same grouped request
     if (!timeout) timeout = setTimeout(doGroupedRequest, delay)
     return groupedPromise.promise
   }
 
-  const doGroupedRequest = async () => {
+  async function doGroupedRequest () {
     const batch = keys
     const batchPromise = groupedPromise
     reset()

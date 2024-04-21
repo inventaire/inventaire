@@ -8,7 +8,7 @@ const sanitization = {
   color: { optional: true },
 }
 
-const controller = async params => {
+async function controller (params) {
   const shelf = await updateShelfAttributes(params)
   return { shelf }
 }

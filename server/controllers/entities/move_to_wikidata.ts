@@ -4,7 +4,7 @@ const sanitization = {
   uri: {},
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   return moveToWikidata(req.user, params.uri)
 }
 

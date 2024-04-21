@@ -7,13 +7,13 @@ const sanitization = {
   uris: {},
 }
 
-const controller = async ({ uris }) => {
+async function controller ({ uris }) {
   await refreshSequentially(uris)
   return { ok: true }
 }
 
-const refreshSequentially = async uris => {
-  const refreshNext = async () => {
+async function refreshSequentially (uris) {
+  async function refreshNext () {
     const nextUri = uris.pop()
 
     if (nextUri == null) return

@@ -60,12 +60,12 @@ export const cache_ = {
   },
 }
 
-const checkCache = async key => {
+async function checkCache (key) {
   return db.get(key)
   .catch(catchNotFound)
 }
 
-const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryFallbackValue, ttl) => {
+function requestOnlyIfNeeded (key, cachedValue, fn, dry, dryFallbackValue, ttl) {
   if (cachedValue != null) {
     // info(`from cache: ${key}`)
     return JSON.parse(cachedValue)
@@ -79,14 +79,14 @@ const requestOnlyIfNeeded = (key, cachedValue, fn, dry, dryFallbackValue, ttl) =
   return populate(key, fn, ttl)
 }
 
-const populate = async (key, fn, ttl) => {
+async function populate (key, fn, ttl) {
   const res = await fn()
   // info(`from remote data source: ${key}`)
   await putValue(key, res, { ttl, waitWrite: false })
   return res
 }
 
-const putValue = async (key, value, { ttl, waitWrite = true }) => {
+async function putValue (key, value, { ttl, waitWrite = true }) {
   // undefined can not be stringified
   if (value === undefined) value = null
   // Run JSON.stringify/JSON.parse rather than using level valueEncoding=json option

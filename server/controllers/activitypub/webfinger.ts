@@ -13,7 +13,7 @@ const sanitization = {
   resource: {},
 }
 
-const controller = async ({ resource }) => {
+async function controller ({ resource }) {
   const name = getActorName(resource)
   if (isEntityUri(getEntityUriFromActorName(name))) {
     const entity = await getEntityByUri({ uri: getEntityUriFromActorName(name) })
@@ -36,12 +36,12 @@ export default {
   }),
 }
 
-const getActorName = resource => {
+function getActorName (resource) {
   const actorWithHost = resource.slice(5)
   return actorWithHost.split('@')[0]
 }
 
-const formatWebfinger = name => {
+function formatWebfinger (name) {
   const actorUrl = makeUrl({ params: { action: 'actor', name } })
 
   return {

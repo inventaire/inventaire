@@ -17,7 +17,7 @@ export async function resolvePublisher (isbn, publisherLabel) {
   if (matchingPublishers.length === 1) return matchingPublishers[0].uri
 }
 
-const getMatchingPublishers = (publisherLabel, isbnPrefixPublishers) => {
+function getMatchingPublishers (publisherLabel, isbnPrefixPublishers) {
   return isbnPrefixPublishers
   .map(getPublisherClosestTerm(publisherLabel))
   .filter(publisher => publisher.distance <= maximumNameDistance)
@@ -32,7 +32,7 @@ const getPublisherClosestTerm = publisherLabel => entity => {
   }
 }
 
-const getClosestTerm = ({ labels, aliases = {} }, publisherLabel) => {
+function getClosestTerm ({ labels, aliases = {} }, publisherLabel) {
   const allAliases = Object.values(aliases).flat()
   const terms = Object.values(labels).concat(allAliases)
   return uniq(terms)

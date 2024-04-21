@@ -91,7 +91,7 @@ export function deleteUserShelves (userId) {
   .then(db.bulkDelete)
 }
 
-const updateShelvesItems = async (action, shelvesIds, userId, itemsIds) => {
+async function updateShelvesItems (action, shelvesIds, userId, itemsIds) {
   const shelves = await getShelvesByIds(shelvesIds)
   validateShelfOwnership(userId, shelves)
   await updateItemsShelves(action, shelvesIds, userId, itemsIds)

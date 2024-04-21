@@ -3,7 +3,7 @@ import { getUsersByIds } from '#controllers/user/lib/user'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { getAllGroupDocMembersIds } from '#models/group'
 
-export default async (groupId, reqUserId) => {
+export default async function (groupId, reqUserId) {
   const group = await getGroupById(groupId)
   const membersIds = getAllGroupDocMembersIds(group)
   const users = await getUsersByIds(membersIds)

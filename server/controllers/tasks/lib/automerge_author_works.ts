@@ -15,7 +15,7 @@ export default authorUri => {
   .then(automergeWorks(authorUri))
 }
 
-const getAuthorWorksByDomain = authorUri => {
+function getAuthorWorksByDomain (authorUri) {
   return getAuthorWorks({ uri: authorUri })
   .then(({ works }) => works)
   .then(works => {
@@ -24,14 +24,14 @@ const getAuthorWorksByDomain = authorUri => {
   })
 }
 
-const findMergeableWorks = works => {
+function findMergeableWorks (works) {
   let { wd: wdWorks, inv: invWorks } = works
     .reduce(spreadWorksPerDomain, { wd: [], inv: [] })
   invWorks = invWorks.filter(isntSeriePart)
   return getPossibleWorksMerge(wdWorks, invWorks)
 }
 
-const spreadWorksPerDomain = (lists, work) => {
+function spreadWorksPerDomain (lists, work) {
   const prefix = work.uri.split(':')[0]
   lists[prefix].push(work)
   return lists
@@ -39,13 +39,13 @@ const spreadWorksPerDomain = (lists, work) => {
 
 const isntSeriePart = work => work.claims['wdt:P179'] == null
 
-const getPossibleWorksMerge = (wdWorks, invWorks) => {
+function getPossibleWorksMerge (wdWorks, invWorks) {
   wdWorks = wdWorks.map(addNormalizedTerms)
   invWorks = invWorks.map(addNormalizedTerms)
   return compact(invWorks.map(findPossibleMerge(wdWorks)))
 }
 
-const addNormalizedTerms = work => {
+function addNormalizedTerms (work) {
   work.terms = getEntityNormalizedTerms(work)
   return work
 }
@@ -62,7 +62,7 @@ const automergeWorks = authorUri => mergeableCouples => {
 
   log(mergeableCouples, `automerging works from author ${authorUri}`)
 
-  const mergeNext = () => {
+  function mergeNext () {
     const nextCouple = mergeableCouples.pop()
     if (nextCouple == null) return
     const [ fromUri, toUri ] = nextCouple

@@ -9,7 +9,7 @@ const sanitization = {
   langs: { type: 'wikimedia', optional: true },
 }
 
-const controller = async ({ uri, refresh, langs }) => {
+async function controller ({ uri, refresh, langs }) {
   const entity = await getEntityByUri({ uri, refresh })
   const { claims } = entity
   const sitelinks = 'sitelinks' in entity ? entity.sitelinks : {}

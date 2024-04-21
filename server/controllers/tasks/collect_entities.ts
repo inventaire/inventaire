@@ -17,7 +17,7 @@ const sanitization = {
   refresh: { optional: true },
 }
 
-const controller = async ({ refresh }) => {
+async function controller ({ refresh }) {
   addEntitiesToQueueSequentially(refresh)
   .catch(LogError('addEntitiesToQueueSequentially err'))
 
@@ -26,10 +26,10 @@ const controller = async ({ refresh }) => {
   return { ok: true }
 }
 
-const addEntitiesToQueueSequentially = refresh => {
+function addEntitiesToQueueSequentially (refresh) {
   const pagination = { offset: 0, total: 0 }
 
-  const addNextBatch = async () => {
+  async function addNextBatch () {
     info(pagination, 'get entities next batch')
     const uris = await getNextInvHumanUrisBatch(pagination)
     pagination.total += uris.length
@@ -45,7 +45,7 @@ const addEntitiesToQueueSequentially = refresh => {
   return addNextBatch()
 }
 
-const getNextInvHumanUrisBatch = async pagination => {
+async function getNextInvHumanUrisBatch (pagination) {
   const { offset } = pagination
   const { rows } = await db.view('entities', 'byClaim', {
     key: [ 'wdt:P31', 'wd:Q5' ],
@@ -56,14 +56,14 @@ const getNextInvHumanUrisBatch = async pagination => {
   return getUris(rows)
 }
 
-const getFilteredUris = async (uris, refresh) => {
+async function getFilteredUris (uris, refresh) {
   if (refresh) return uris
   else return filterNotAlreadySuspectEntities(uris)
 }
 
 const getUris = rows => map(rows, 'id').map(prefixifyInv)
 
-const deduplicateWorker = async (jobId, uri) => {
+async function deduplicateWorker (jobId, uri) {
   try {
     // Run the worker when the CPUs activity is below 50% load
     // to give the priority to more urgent matters,
@@ -79,7 +79,7 @@ const deduplicateWorker = async (jobId, uri) => {
   }
 }
 
-const filterNotAlreadySuspectEntities = async uris => {
+async function filterNotAlreadySuspectEntities (uris) {
   const { rows } = await getTasksBySuspectUris(uris, { includeArchived: true })
   const alreadyCheckedUris = map(rows, 'suspectUri')
   return difference(uris, alreadyCheckedUris)

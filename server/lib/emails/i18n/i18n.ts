@@ -16,7 +16,7 @@ const { autofix } = config.i18n
 const polyglots = {}
 const translators = {}
 
-const warnAndFix = warning => {
+function warnAndFix (warning) {
   if (!/Missing\stranslation/.test(warning)) {
     return warn(warning)
   }
@@ -35,7 +35,7 @@ activeLanguages.forEach(lang => {
   translators[lang] = translate(lang, polyglot)
 })
 
-const solveLang = lang => {
+function solveLang (lang) {
   // There is only support for 2 letters languages for now
   lang = shortLang(lang)
   if (activeLanguages.includes(lang)) return lang

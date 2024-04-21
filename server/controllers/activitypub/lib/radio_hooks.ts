@@ -40,7 +40,7 @@ const createDebouncedActivity = ({ userId, shelfId }: createActivityParams) => a
   .catch(LogError('createDebouncedActivity error'))
 }
 
-const _createDebouncedActivity = async ({ userId, shelfId }: createActivityParams) => {
+async function _createDebouncedActivity ({ userId, shelfId }: createActivityParams) {
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
@@ -79,7 +79,7 @@ const _createDebouncedActivity = async ({ userId, shelfId }: createActivityParam
   return postActivityToActorFollowersInboxes({ activity, actorName: name })
 }
 
-const debounceActivities = async shelfId => {
+async function debounceActivities (shelfId) {
   if (!debouncedActivities[shelfId]) {
     debouncedActivities[shelfId] = debounce(createDebouncedActivity({ shelfId }), activitiesDebounceTime)
   }

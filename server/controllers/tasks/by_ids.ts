@@ -4,7 +4,7 @@ const sanitization = {
   ids: {},
 }
 
-const controller = async ({ ids }) => {
+async function controller ({ ids }) {
   const tasks = await getTasksByIds(ids)
   return { tasks }
 }

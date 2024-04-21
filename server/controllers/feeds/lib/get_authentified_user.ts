@@ -1,7 +1,7 @@
 import { getUserById } from '#controllers/user/lib/user'
 import { newInvalidError } from '#lib/error/pre_filled'
 
-export default async (requester, readToken) => {
+export default async function (requester, readToken) {
   if (requester == null) return null
 
   return getUserById(requester)

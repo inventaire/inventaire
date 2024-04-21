@@ -4,7 +4,7 @@ import { isNonEmptyString } from '#lib/boolean_validations'
 import { catchNotFound, newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 
-export default async params => {
+export default async function (params) {
   let { actor, object } = params
 
   if (isPlainObject(object)) object = object.id

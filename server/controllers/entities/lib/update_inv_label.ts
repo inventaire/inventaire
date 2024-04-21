@@ -4,7 +4,7 @@ import { newInvalidError } from '#lib/error/pre_filled'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import updateLabel from './update_label.js'
 
-const updateInvLabel = async (user, id, lang, value) => {
+async function updateInvLabel (user, id, lang, value) {
   const { _id: reqUserId } = user
 
   if (!isInvEntityId(id)) throw newInvalidError('id', id)

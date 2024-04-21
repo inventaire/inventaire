@@ -103,7 +103,7 @@ export function removeUserFromGroupDoc (group, userId) {
 
 const byTimestamp = (a, b) => a.timestamp - b.timestamp
 
-const withoutUser = (memberships, userId) => {
+function withoutUser (memberships, userId) {
   return memberships.filter(memberData => memberData.user !== userId)
 }
 
@@ -115,7 +115,7 @@ const createMembership = (userId, invitorId) => ({
 })
 
 // moving membership object from previousCategory to newCategory
-const moveMembership = (userId, group, previousCategory, newCategory) => {
+function moveMembership (userId, group, previousCategory, newCategory) {
   const membership = findMembership(userId, group, previousCategory, true)
   group[previousCategory] = without(group[previousCategory], membership)
   // Let the possibility to just destroy the membership
@@ -124,7 +124,7 @@ const moveMembership = (userId, group, previousCategory, newCategory) => {
   return group
 }
 
-const findMembership = (userId, group, previousCategory, wanted) => {
+function findMembership (userId, group, previousCategory, wanted) {
   const membership = find(group[previousCategory], { user: userId })
   if (wanted) {
     // expect to find a membership
@@ -161,7 +161,7 @@ export const groupCategories = {
   users: [ 'admins', 'members', 'invited', 'requested' ],
 }
 
-export const getAllGroupDocMembersIds = group => {
+export function getAllGroupDocMembersIds (group) {
   assert_.object(group)
   const adminsIds = map(group.admins, 'user')
   const membersIds = map(group.members, 'user')

@@ -14,7 +14,7 @@ const dbKey = config.port
 
 const banData = {}
 
-const restoreBanData = () => {
+function restoreBanData () {
   db.get(dbKey)
   .then(restoreNonExpiredBans)
   .catch(err => {
@@ -23,7 +23,7 @@ const restoreBanData = () => {
   })
 }
 
-const restoreNonExpiredBans = data => {
+function restoreNonExpiredBans (data) {
   const now = Date.now()
   Object.keys(data).forEach(host => {
     const hostData = data[host]
@@ -64,7 +64,7 @@ export function declareHostError (host) {
   lazyBackup()
 }
 
-const backup = () => {
+function backup () {
   db.put(dbKey, banData)
   // .then(() => success('hosts bans data backup'))
   .catch(LogError('hosts bans data backup err'))

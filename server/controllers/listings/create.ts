@@ -9,12 +9,12 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const listing = await formatNewListing(params)
   return { list: listing }
 }
 
-const formatNewListing = params => {
+function formatNewListing (params) {
   const { name, description, visibility, reqUserId: creator } = params
   const listingData = {
     name,

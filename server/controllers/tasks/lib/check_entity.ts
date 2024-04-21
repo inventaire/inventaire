@@ -7,7 +7,7 @@ import updateRelationScore from './relation_score.js'
 
 const supportedTypes = [ 'human' ]
 
-export default async uri => {
+export default async function (uri) {
   info(`check entity: ${uri}`)
 
   if (uri.split(':')[0] !== 'inv') {

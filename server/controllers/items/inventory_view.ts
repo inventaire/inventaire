@@ -13,20 +13,20 @@ const sanitization = {
   'without-shelf': { optional: true, generic: 'boolean' },
 }
 
-const controller = async params => {
+async function controller (params) {
   validateUserOrGroup(params)
   const items = await getItems(params)
   const entitiesData = await getItemsEntitiesData(items)
   return bundleViewData(items, entitiesData)
 }
 
-const validateUserOrGroup = params => {
+function validateUserOrGroup (params) {
   if (!(params.user || params.group || params.shelf)) {
     throw newMissingQueryError('user|group|shelf')
   }
 }
 
-const getItems = async params => {
+async function getItems (params) {
   const { user: userId, group: groupId, shelf: shelfId, reqUserId, 'without-shelf': withoutShelf } = params
   if (userId) {
     return getAuthorizedItemsByUsers([ userId ], reqUserId, { withoutShelf })
@@ -38,7 +38,7 @@ const getItems = async params => {
   }
 }
 
-const getItemsEntitiesData = items => {
+function getItemsEntitiesData (items) {
   const uris = uniq(map(items, 'entity'))
   return getEntitiesByUris({ uris })
   .then(({ entities }) => entities)

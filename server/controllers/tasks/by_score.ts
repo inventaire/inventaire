@@ -9,7 +9,7 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const tasks = await getTasksByScore(params)
   return { tasks }
 }

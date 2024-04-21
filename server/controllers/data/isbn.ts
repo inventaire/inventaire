@@ -9,7 +9,7 @@ const sanitization = {
   refresh: { optional: true },
 }
 
-const controller = async ({ isbn, refresh }) => {
+async function controller ({ isbn, refresh }) {
   const data: IsbnData & { query?: string } = parseIsbn(isbn)
 
   // Not using source to pass the original input as 'source'

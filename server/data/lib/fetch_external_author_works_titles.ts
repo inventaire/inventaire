@@ -17,7 +17,7 @@ export default (name, endpoint, getQuery, requestOptions = {}) => async id => {
   }
 }
 
-const makeRequest = async (endpoint, query, requestOptions) => {
+async function makeRequest (endpoint, query, requestOptions) {
   requestOptions.headers = { accept: 'application/sparql-results+json' }
   requestOptions.timeout = 5000
   const url = buildUrl(endpoint, { query })

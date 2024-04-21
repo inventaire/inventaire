@@ -1,6 +1,6 @@
 import { getUserById } from '#controllers/user/lib/user'
 
-export default async (userId, reqUserId) => {
+export default async function (userId, reqUserId) {
   const user = await getUserById(userId)
   return {
     users: [ user ],

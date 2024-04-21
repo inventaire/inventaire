@@ -5,7 +5,7 @@ const sanitization = {
   ids: {},
 }
 
-const controller = async ({ ids }) => {
+async function controller ({ ids }) {
   let clients = await getOauthClientsByIds(ids)
   clients = clients.map(omitPrivateData)
   return {

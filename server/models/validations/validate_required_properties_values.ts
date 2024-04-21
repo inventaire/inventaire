@@ -34,14 +34,14 @@ const validateControlledPropertiesClaimsPerType = {
   },
 }
 
-const assertPropertyHasValue = (claims, property, entityLabel, propertyLabel) => {
+function assertPropertyHasValue (claims, property, entityLabel, propertyLabel) {
   if (!(claims[property] && claims[property][0] != null)) {
     const message = `${entityLabel} should have ${propertyLabel} (${property})`
     throw newError(message, 400, claims)
   }
 }
 
-const validateUniqueValue = (property, propertyClaims) => {
+function validateUniqueValue (property, propertyClaims) {
   const { uniqueValue } = properties[property]
   if (uniqueValue && propertyClaims != null && propertyClaims.length > 1) {
     throw newError('this property accepts only one value', 400, { property, propertyClaims })

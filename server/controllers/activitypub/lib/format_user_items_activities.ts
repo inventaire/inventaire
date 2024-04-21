@@ -5,7 +5,7 @@ import type { RelativeUrl, AbsoluteUrl } from '#types/common'
 import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
 import { makeUrl } from './helpers.js'
 
-export default async (activitiesDocs, user) => {
+export default async function (activitiesDocs, user) {
   if (!isNonEmptyArray(activitiesDocs)) return []
   const { stableUsername: name } = user
   const actor: AbsoluteUrl = makeUrl({ params: { action: 'actor', name } })

@@ -14,7 +14,7 @@ export function beforeStartup () {
   log(`public origin: ${config.getPublicOrigin()}`)
 }
 
-const initUncaughtExceptionCatcher = () => {
+function initUncaughtExceptionCatcher () {
   process.on('uncaughtException', err => {
     console.error(red('uncaughtException'), err)
   })

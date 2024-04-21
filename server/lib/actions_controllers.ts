@@ -37,7 +37,7 @@ export default controllers => {
 
 const accessLevels = Object.keys(rolesByAccess)
 
-const getActionsControllersParams = controllers => {
+function getActionsControllersParams (controllers) {
   validateObject(controllers, accessLevels, 'object')
 
   const controllerKeys = Object.keys(controllers)
@@ -53,7 +53,7 @@ const getActionsControllersParams = controllers => {
   return actionsControllersParams
 }
 
-const getActionControllerParams = (access, actionData) => {
+function getActionControllerParams (access, actionData) {
   let controller, sanitization, track
   if (actionData.sanitization) {
     ({ controller, sanitization, track } = actionData)

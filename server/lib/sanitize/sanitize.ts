@@ -47,7 +47,7 @@ export function sanitize (req, res, configs) {
 
 const optionsNames = new Set([ 'nonJsonBody' ])
 
-const sanitizeParameter = (input, name, config, place, res) => {
+function sanitizeParameter (input, name, config, place, res) {
   const parameter = getParameterFunctions(name, config.generic)
 
   if (parameter.drop) {
@@ -78,7 +78,7 @@ const sanitizeParameter = (input, name, config, place, res) => {
   renameParameter(input, name, parameter.rename)
 }
 
-const getParameterFunctions = (name, generic) => {
+function getParameterFunctions (name, generic) {
   let parameter
   if (generic) {
     parameter = generics[generic]
@@ -101,7 +101,7 @@ export function validateSanitization (configs) {
   return configs
 }
 
-const validateSanitizationParameter = (name, config) => {
+function validateSanitizationParameter (name, config) {
   const { generic } = config
   const parameter = getParameterFunctions(name, generic)
   if (parameter == null) {
@@ -115,7 +115,7 @@ const validateSanitizationParameter = (name, config) => {
 
 const prefixedParameterPattern = /^(old|new|current)-/
 
-const getPlace = (method, configs) => {
+function getPlace (method, configs) {
   let place = 'query'
   if (method === 'POST' || method === 'PUT') {
     if (!configs.nonJsonBody) place = 'body'
@@ -123,14 +123,14 @@ const getPlace = (method, configs) => {
   return place
 }
 
-const removeUnexpectedParameter = (input, name, configs, res) => {
+function removeUnexpectedParameter (input, name, configs, res) {
   if (configs[name] == null) {
     addWarning(res, `unexpected parameter: ${name}`)
     delete input[name]
   }
 }
 
-const format = (input, name, formatFn, config) => {
+function format (input, name, formatFn, config) {
   if (!formatFn) return
   try {
     input[name] = formatFn(input[name], name, config)
@@ -141,7 +141,7 @@ const format = (input, name, formatFn, config) => {
   }
 }
 
-const applyDefaultValue = (input, name, config, parameter) => {
+function applyDefaultValue (input, name, config, parameter) {
   // Accept 'null' as a default value
   if (config.default !== undefined) {
     input[name] = cloneDeep(config.default)
@@ -150,13 +150,13 @@ const applyDefaultValue = (input, name, config, parameter) => {
   }
 }
 
-const obfuscateSecret = (parameter, err) => {
+function obfuscateSecret (parameter, err) {
   if (parameter.secret && typeof err.context.value === 'string') {
     err.context.value = obfuscate(err.context.value)
   }
 }
 
-const enforceBoundaries = (input, name, config, parameter, res) => {
+function enforceBoundaries (input, name, config, parameter, res) {
   const min = config.min || parameter.min
   const max = config.max || parameter.max
   if (min != null && input[name] < min) {
@@ -166,12 +166,12 @@ const enforceBoundaries = (input, name, config, parameter, res) => {
   }
 }
 
-const enforceBoundary = (input, name, boundary, res, position) => {
+function enforceBoundary (input, name, boundary, res, position) {
   input[name] = boundary
   addWarning(res, `${name} can't be ${position} ${boundary}`)
 }
 
-const renameParameter = (input, name, renameFn) => {
+function renameParameter (input, name, renameFn) {
   if (renameFn == null) return
   const aliasedName = renameFn(name)
   input[aliasedName] = input[name]

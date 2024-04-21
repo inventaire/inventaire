@@ -74,7 +74,7 @@ export function getHighlightedItems (lastItems: SerializedItem[], highlightedLen
   return getItemsWithTransactionFirst(lastItems, highlightedLength)
 }
 
-const getItemsWithTransactionFirst = (lastItems: SerializedItem[], highlightedLength: number) => {
+function getItemsWithTransactionFirst (lastItems: SerializedItem[], highlightedLength: number) {
   // create a new array as items.pop() would affect lastItems everywhere
   const items = clone(lastItems)
   const withTransaction = []

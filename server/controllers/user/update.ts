@@ -21,7 +21,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { attribute, value } = params
   const { user } = req
   await update(user, attribute, value)
@@ -30,7 +30,7 @@ const controller = async (params, req) => {
 
 // This function update the document and should thus
 // rather be in the User model, but async checks make it a bit hard
-const update = async (user, attribute, value) => {
+async function update (user, attribute, value) {
   if (value == null && !acceptNullValue.includes(attribute)) {
     throw newMissingBodyError('value')
   }
@@ -75,7 +75,7 @@ const update = async (user, attribute, value) => {
   throw newError('forbidden update', 403, { attribute, value })
 }
 
-const updateAttribute = async (user, attribute, value) => {
+async function updateAttribute (user, attribute, value) {
   if (attribute === 'email') {
     return updateEmail(user, value)
   } else {

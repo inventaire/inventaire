@@ -7,7 +7,7 @@ const sanitization = {
   value: {},
 }
 
-const controller = async ({ id, attribute, value }) => {
+async function controller ({ id, attribute, value }) {
   await updateTask({
     ids: [ id ],
     attribute,

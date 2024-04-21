@@ -7,7 +7,7 @@ const sanitization = {
   name: { optional: true },
 }
 
-const controller = async params => {
+async function controller (params) {
   const listing = await updateListingAttributes(params)
   return { list: listing }
 }

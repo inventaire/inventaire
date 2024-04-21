@@ -24,7 +24,7 @@ export async function makeSparqlRequest (sparql, options: SparqlRequestOptions =
     throw newError('too many requests in queue', 500, { sparql })
   }
 
-  const persistentRequest = async () => {
+  async function persistentRequest () {
     try {
       return await makeRequest(url, options)
     } catch (err) {
@@ -45,7 +45,7 @@ async function makeRequest (url, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
 
-  const makePatientRequest = async () => {
+  async function makePatientRequest () {
     if (ongoing >= maxConcurrency) {
       await wait(100)
       return makePatientRequest()
@@ -71,7 +71,7 @@ async function makeRequest (url, options: SparqlRequestOptions = {}) {
   return makePatientRequest()
 }
 
-const logStats = () => {
+function logStats () {
   if (waiting > 0) {
     info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
   }

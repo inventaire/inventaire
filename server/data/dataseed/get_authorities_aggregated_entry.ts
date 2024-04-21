@@ -43,7 +43,7 @@ const wrap = isbn => async name => {
   }
 }
 
-const sortAndAggregateEntries = async (isbn, entries) => {
+async function sortAndAggregateEntries (isbn, entries) {
   entries = entries.filter(isNotEmpty)
   if (entries.length === 0) return
   if (entries.length === 1) return entries[0]
@@ -68,7 +68,7 @@ const sortAndAggregateEntries = async (isbn, entries) => {
   return bestEntry
 }
 
-const getEntryResolutionScore = entry => {
+function getEntryResolutionScore (entry) {
   let score = 0
   if (entry.edition?.claims) score += objLength(entry.edition.claims)
   entry.works?.forEach(work => {

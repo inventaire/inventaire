@@ -57,7 +57,7 @@ export async function stopInvitationEmails (email) {
 }
 
 const emailNotification = false
-const convertFriendInvitations = (invitersIds, newUserId) => {
+function convertFriendInvitations (invitersIds, newUserId) {
   return invitersIds
   .map(inviterId => {
     return makeRequest(inviterId, newUserId, emailNotification)
@@ -66,7 +66,7 @@ const convertFriendInvitations = (invitersIds, newUserId) => {
   })
 }
 
-const convertGroupsInvitations = (invitersGroups, newUserId) => {
+function convertGroupsInvitations (invitersGroups, newUserId) {
   return Object.keys(invitersGroups)
   .map(groupId => {
     const inviterId = invitersGroups[groupId]

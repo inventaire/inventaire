@@ -80,7 +80,7 @@ export default {
 async function sendSequentially (emails, label) {
   const totalEmails = emails.length
 
-  const sendNext = async () => {
+  async function sendNext () {
     const nextEmail = emails.pop()
     if (!nextEmail) return
     info(`[${label} email] sending ${totalEmails - emails.length}/${totalEmails}`)

@@ -12,7 +12,7 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const uris = await reverseClaims(params)
   return { uris }
 }

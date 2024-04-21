@@ -29,7 +29,7 @@ export default (entity, options = {}) => {
   return formatResult(uri, redirectsObj, options)
 }
 
-const formatResult = (uri, redirectsObj, options) => {
+function formatResult (uri, redirectsObj, options) {
   if (options && options.includeRedirection) return [ uri, redirectsObj ]
   else return uri
 }

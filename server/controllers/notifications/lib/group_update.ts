@@ -12,7 +12,7 @@ export const groupAttributeWithNotification = [
   'open',
 ]
 
-export default async data => {
+export default async function (data) {
   try {
     const { attribute } = data
     if (!groupAttributeWithNotification.includes(attribute)) return
@@ -32,7 +32,7 @@ const getNotificationUpdateOrCreation = (data, existingNotificationsByUsers) => 
   else return getNewNotification(userToNotify, data)
 }
 
-const getNewNotification = (userToNotify, data) => {
+function getNewNotification (userToNotify, data) {
   const { groupId, actorId, attribute, previousValue, newValue } = data
   return createNotificationDoc({
     user: userToNotify,
@@ -47,7 +47,7 @@ const getNewNotification = (userToNotify, data) => {
   })
 }
 
-const getNotificationUpdate = (existingNotification, newValue) => {
+function getNotificationUpdate (existingNotification, newValue) {
   if (existingNotification.data.previousValue === newValue) {
     existingNotification._deleted = true
   } else {
@@ -56,7 +56,7 @@ const getNotificationUpdate = (existingNotification, newValue) => {
   return updateNotificationDoc(existingNotification)
 }
 
-const getUnreadGroupNotificationsByUsers = async ({ groupId, attribute }) => {
+async function getUnreadGroupNotificationsByUsers ({ groupId, attribute }) {
   const key = [ groupId, attribute ]
   const docs = await db.getDocsByViewKeys<Notification>('unreadNotificationsByGroupAndAttribute', [ key ])
   return keyBy(docs, 'user')

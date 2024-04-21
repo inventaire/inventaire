@@ -125,7 +125,7 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
   })
 }
 
-const getAuthorWorksData = async authorId => {
+async function getAuthorWorksData (authorId) {
   const works = await getInvEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
   // works = [
   //   { labels: { fr: 'Matiere et Memoire'} },
@@ -139,7 +139,7 @@ const getAuthorWorksData = async authorId => {
 
 const getLangs = work => Object.keys(work.labels)
 
-const searchEntityDuplicatesSuggestions = async entity => {
+async function searchEntityDuplicatesSuggestions (entity) {
   const name = Object.values(entity.labels)[0]
   if (!isNonEmptyString(name)) return []
 

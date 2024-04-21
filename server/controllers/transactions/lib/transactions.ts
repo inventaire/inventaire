@@ -95,13 +95,13 @@ export async function setItemsBusyFlag (items) {
 
 const mayBeBusy = item => item.transaction !== 'inventorying'
 
-const getBusyItems = async itemsIds => {
+async function getBusyItems (itemsIds) {
   if (itemsIds.length === 0) return []
   const { rows } = await db.viewKeys('transactions', 'byBusyItem', itemsIds, { include_docs: false })
   return rows
 }
 
-const stateUpdater = (state, userId, transaction) => {
+function stateUpdater (state, userId, transaction) {
   const updatedReadStates = updateReadStates(userId, transaction)
   return doc => {
     doc.state = state
@@ -119,14 +119,14 @@ const stateUpdater = (state, userId, transaction) => {
 
 const actorCanBeBoth = [ 'cancelled' ]
 
-const updateReadStates = (userId, transaction) => {
+function updateReadStates (userId, transaction) {
   const role = userRole(userId, transaction)
   if (role === 'owner') return { owner: true, requester: false }
   else if (role === 'requester') return { owner: false, requester: true }
   else throw newError('updateReadStates err', 500, { userId, transaction })
 }
 
-const userRole = (userId, transaction) => {
+function userRole (userId, transaction) {
   const { owner, requester } = transaction
   if (userId === owner) return 'owner'
   else if (userId === requester) return 'requester'

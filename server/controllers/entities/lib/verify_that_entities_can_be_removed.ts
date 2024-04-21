@@ -18,7 +18,7 @@ export default uris => {
 
 const entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
 
-const entityIsntUsedMuch = async uri => {
+async function entityIsntUsedMuch (uri) {
   const claims = await getInvClaimsByClaimValue(uri)
 
   claims.forEach(claim => { claim.entity = prefixifyInv(claim.entity) })
@@ -36,19 +36,19 @@ const entityIsntUsedMuch = async uri => {
   }
 }
 
-const entitiesItemsChecks = async uris => {
+async function entitiesItemsChecks (uris) {
   const allUris = await getAllUris(uris)
   return Promise.all(allUris.map(entityIsntUsedByAnyItem))
 }
 
-const getAllUris = async uris => {
+async function getAllUris (uris) {
   const { redirects } = await getEntitiesByUris({ uris })
   if (redirects == null) return uris
   const missingCanonicalUris = Object.values(redirects)
   return uris.concat(missingCanonicalUris)
 }
 
-const entityIsntUsedByAnyItem = async uri => {
+async function entityIsntUsedByAnyItem (uri) {
   const items = await getItemsByEntity(uri)
   if (items.length > 0) {
     throw newError("entities that are used by an item can't be removed", 403, { uri })

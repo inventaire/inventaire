@@ -12,7 +12,7 @@ export default data => {
 let onlineUsers = {}
 let last
 
-const updateOnlineUsers = () => {
+function updateOnlineUsers () {
   const length = objLength(onlineUsers)
   const loggedUsers = sumValues(onlineUsers)
   const report = `logged in ${loggedUsers} / total ${length}`
@@ -23,7 +23,7 @@ const updateOnlineUsers = () => {
   onlineUsers = {}
 }
 
-const getFingerPrint = (...args) => {
+function getFingerPrint (...args) {
   const str = JSON.stringify(args)
   return md5(str)
 }

@@ -36,7 +36,7 @@ export default (edition, oldTitle) => {
   .catch(LogError('hook update err'))
 }
 
-const fetchLangConsensusTitle = async (workUri, editionLang) => {
+async function fetchLangConsensusTitle (workUri, editionLang) {
   const editions = await getInvEntitiesByClaim('wdt:P629', workUri, true, true)
 
   const titles = editions

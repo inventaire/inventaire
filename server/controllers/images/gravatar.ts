@@ -5,7 +5,7 @@ import { md5 } from '#lib/crypto'
 
 const sanitization = {}
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { email } = req.user
   const url = await getGravatarUrl(email)
   return { url }
@@ -20,7 +20,7 @@ const baseUrl = 'https://www.gravatar.com/avatar/'
 const queryString = '?d=404&s=500'
 
 // See https://fr.gravatar.com/site/implement/hash/
-const getHash = email => {
+function getHash (email) {
   email = email.trim().toLowerCase()
   return md5(email)
 }

@@ -33,7 +33,7 @@ export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: 
   }
 }
 
-const mergeInvEntities = async (userId, fromId, toId) => {
+async function mergeInvEntities (userId, fromId, toId) {
   assert_.strings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs

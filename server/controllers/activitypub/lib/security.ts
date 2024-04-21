@@ -86,7 +86,7 @@ export function signRequest ({ url, method, keyId, privateKey, body }) {
 
 // 'date' must be a UTC string
 // 'method' must be lowercased
-const buildSignatureString = params => {
+function buildSignatureString (params) {
   const { reqHeaders, signedHeadersNames, pathname } = params
   let { method } = params
   method = method.toLowerCase()
@@ -106,7 +106,7 @@ const buildSignatureString = params => {
   return signatureString
 }
 
-const fetchActorPublicKey = async actorUrl => {
+async function fetchActorPublicKey (actorUrl) {
   const actor = await requests_.get(actorUrl, { sanitize })
   assert_.object(actor)
   const { publicKey } = actor
@@ -133,7 +133,7 @@ interface Signature {
   headers: string
 }
 
-const parseSignature = signature => {
+function parseSignature (signature) {
   const signatureParts = signature.split('",')
   const signatureObj = {}
   for (const part of signatureParts) {

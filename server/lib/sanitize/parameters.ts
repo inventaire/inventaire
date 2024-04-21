@@ -26,7 +26,7 @@ const validations = {
   visibility: isVisibilityKeyArray,
 }
 
-const parseNumberString = value => {
+function parseNumberString (value) {
   if (isNumber(value)) return value
   const parsedValue = parseFloat(value)
   if (isNaN(parsedValue)) return value
@@ -108,7 +108,7 @@ const arrayOrSeparatedString = separator => value => {
   else return value
 }
 
-const formatStringArrayElement = str => {
+function formatStringArrayElement (str) {
   if (typeof str === 'string') return normalizeString(str)
   // Let the 'validate' function reject non-string values
   else return str

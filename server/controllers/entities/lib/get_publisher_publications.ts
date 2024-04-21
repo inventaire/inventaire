@@ -3,7 +3,7 @@ import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 
-export default async ({ uri, refresh, dry }) => {
+export default async function ({ uri, refresh, dry }) {
   const [ wdCollections, invPublications ] = await Promise.all([
     getWdPublisherCollections(uri, refresh, dry),
     getInvPublisherCollections(uri),
@@ -15,7 +15,7 @@ export default async ({ uri, refresh, dry }) => {
   }
 }
 
-const getInvPublisherCollections = async uri => {
+async function getInvPublisherCollections (uri) {
   const docs = await getInvEntitiesByClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []
@@ -40,7 +40,7 @@ const format = doc => ({
 
 const isEdition = publication => publication.claims['wdt:P31'][0] === 'wd:Q3331189'
 
-const getPublicationDate = doc => {
+function getPublicationDate (doc) {
   const date = doc.claims['wdt:P577'] && doc.claims['wdt:P577'][0]
   if (date) return new Date(date).getTime()
   // If no publication date can be found, we can fallback on the document creation date,
@@ -49,7 +49,7 @@ const getPublicationDate = doc => {
   else return doc.created
 }
 
-const getWdPublisherCollections = async (uri, refresh, dry) => {
+async function getWdPublisherCollections (uri, refresh, dry) {
   const [ prefix, qid ] = uri.split(':')
   if (prefix !== 'wd') return []
   const ids = await runWdQuery({ query: 'publisher-collections', qid, refresh, dry })

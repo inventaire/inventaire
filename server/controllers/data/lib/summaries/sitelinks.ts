@@ -6,7 +6,7 @@ export function getWikipediaSitelinksData (sitelinks) {
   return Object.entries(sitelinks).map(getWikipediaSummaryData)
 }
 
-const getWikipediaSummaryData = ([ key, { title, badges } ]) => {
+function getWikipediaSummaryData ([ key, { title, badges } ]) {
   try {
     if (badges.includes(redirectionBadge)) return
     const { lang, project } = getSitelinkData(key)

@@ -10,7 +10,7 @@ import validateEntity from './validate_entity.js'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
-export default async params => {
+export default async function (params) {
   const { labels, claims, user, isAlreadyValidated } = params
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
@@ -36,11 +36,11 @@ export default async params => {
   })
 }
 
-const validate = async (entity, isAlreadyValidated) => {
+async function validate (entity, isAlreadyValidated) {
   if (!isAlreadyValidated) return validateEntity(entity)
 }
 
-const validateWikidataCompliance = entity => {
+function validateWikidataCompliance (entity) {
   const { claims } = entity
   if (claims == null) throw newError('invalid entity', 400, entity)
 
@@ -63,7 +63,7 @@ const validateWikidataCompliance = entity => {
   return entity
 }
 
-const format = entity => {
+function format (entity) {
   const { claims } = entity
   entity.claims = Object.keys(claims).reduce(unprefixifyClaims(claims), {})
   // Relocate qualifier properties after unprefixifying,

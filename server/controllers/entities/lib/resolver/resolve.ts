@@ -20,6 +20,6 @@ export async function resolveEntry (entry: ResolverEntry) {
   return entry
 }
 
-const addResolvedFlag = seed => {
+function addResolvedFlag (seed) {
   seed.resolved = (seed.uri != null)
 }

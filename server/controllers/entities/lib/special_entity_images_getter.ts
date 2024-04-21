@@ -38,7 +38,7 @@ export default {
   },
 }
 
-const getWorkImagesFromEditions = (workUri, images, limitPerLang) => {
+function getWorkImagesFromEditions (workUri, images, limitPerLang) {
   return getInvEntitiesByClaim('wdt:P629', workUri, true, true)
   .then(addEditionsImages(images, limitPerLang))
 }
@@ -60,11 +60,11 @@ function getEditionImagePreferrability (edition) {
   return -numberOfWorks
 }
 
-const getOneWorkImagePerLang = workUri => {
+function getOneWorkImagePerLang (workUri) {
   return getWorkImagesFromEditions(workUri, {}, 1)
 }
 
-const aggregateWorkImages = (images, workImages) => {
+function aggregateWorkImages (images, workImages) {
   for (const [ key, values ] of Object.entries(workImages)) {
     // Ignore work claims images
     if (isLang(key)) addImage(images, key, 6, values[0])
@@ -72,7 +72,7 @@ const aggregateWorkImages = (images, workImages) => {
   return images
 }
 
-const addImage = (images, lang, limitPerLang, image) => {
+function addImage (images, lang, limitPerLang, image) {
   if (!images[lang]) { images[lang] = [] }
   if (images[lang].length >= limitPerLang) return
   // Prevent duplicates that could be caused by multi-works editions

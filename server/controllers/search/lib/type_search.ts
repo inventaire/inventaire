@@ -18,7 +18,7 @@ const { origin: elasticOrigin } = config.elasticsearch
 
 const indexedTypesSet = new Set(indexedTypes)
 
-const typeSearch = async params => {
+async function typeSearch (params) {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
   assert_.array(types)
   for (const type of types) {
@@ -73,7 +73,7 @@ const entitiesIndexesPerFilter = {
 }
 const allEntitiesIndexes = [ indexes.wikidata, indexes.entities ]
 
-const typeParameterError = (parameter, types) => {
+function typeParameterError (parameter, types) {
   const context = { givenTypes: types, validTypes: indexedEntitiesTypes }
   throw newError(`${parameter} search is restricted to entity types`, 400, context)
 }

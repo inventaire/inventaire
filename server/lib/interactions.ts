@@ -22,6 +22,6 @@ export async function verifyRightToInteractWithItem ({ reqUserId, item, ownerAll
   return someMatch(visibility, allowedVisibilityKeys)
 }
 
-const forbidden = (userId, item) => {
+function forbidden (userId, item) {
   return newError('not allowed with this item', 403, { userId, item })
 }

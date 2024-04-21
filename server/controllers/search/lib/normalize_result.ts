@@ -19,7 +19,7 @@ const entityFormatter = (result, _source, lang) => ({
   _popularity: _source.popularity,
 })
 
-const getShortDescription = (descriptions, lang) => {
+function getShortDescription (descriptions, lang) {
   const { value } = getBestLangValue(lang, null, descriptions)
   if (value) return value.slice(0, 200)
 }
@@ -35,7 +35,7 @@ const socialDocsFormatter = (labelAttr, descAttr) => (result, _source) => ({
   _score: result._score,
 })
 
-const pluralizeType = singularType => {
+function pluralizeType (singularType) {
   if (singularType === 'shelf') return 'shelves'
   return `${singularType}s`
 }

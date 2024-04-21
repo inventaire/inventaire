@@ -13,7 +13,7 @@ export function initEmailServices () {
   initActivitySummary()
 }
 
-const initMailer = () => {
+function initMailer () {
   if (disabled) {
     warn('mailer disabled')
   } else {
@@ -24,7 +24,7 @@ const initMailer = () => {
   }
 }
 
-const initMailerEventListeners = () => {
+function initMailerEventListeners () {
   radio.on('validation:email', sendEmail.validationEmail)
   radio.on('reset:password:email', sendEmail.resetPassword)
   radio.on('notify:friend:request:accepted', sendEmail.friendAcceptedRequest)
@@ -47,7 +47,7 @@ const initMailerEventListeners = () => {
   info('mailer events listeners ready!')
 }
 
-const initActivitySummary = () => {
+function initActivitySummary () {
   if (config.activitySummary.disabled) {
     warn('activity summary disabled')
   } else {

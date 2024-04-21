@@ -9,7 +9,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ ids, reqUserId, withItems }) => {
+async function controller ({ ids, reqUserId, withItems }) {
   const shelvesRes = await getShelvesByIdsWithItems(ids, reqUserId)
   const shelves = compact(shelvesRes)
   validateShelfOwnership(reqUserId, shelves)

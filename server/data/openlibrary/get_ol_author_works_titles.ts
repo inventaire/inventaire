@@ -15,7 +15,7 @@ export default olId => {
   })
 }
 
-const getAuthorWorksTitles = async olId => {
+async function getAuthorWorksTitles (olId) {
   info(olId, 'olId')
   const url = `${base}?author=${olId}` as Url
   const { docs } = await requests_.get(url, { headers })

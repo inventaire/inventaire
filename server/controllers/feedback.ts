@@ -42,7 +42,7 @@ export default {
 }
 
 const cache = {}
-const isNewAutomaticReport = subject => {
+function isNewAutomaticReport (subject) {
   const isNew = (cache[subject] == null)
   cache[subject] = true
   return isNew

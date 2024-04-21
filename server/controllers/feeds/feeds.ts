@@ -30,14 +30,14 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req, res) => {
+async function controller (params, req, res) {
   const headersLang = getLangFromHeaders(req.headers)
   const xml = await getFeed(headersLang, params)
   res.header('content-type', 'application/rss+xml')
   res.send(xml)
 }
 
-const getFeed = async (headersLang, params) => {
+async function getFeed (headersLang, params) {
   const { userId, groupId, shelfId, requesterId, token } = params
   // Guess the lang from the query string or from the request headers
   // that might be passed by the feeds aggregator
@@ -63,7 +63,7 @@ const getFeed = async (headersLang, params) => {
   .then(generateFeedFromFeedData(lang))
 }
 
-const getFeedData = ({ userId, groupId, shelfId, reqUserId }) => {
+function getFeedData ({ userId, groupId, shelfId, reqUserId }) {
   if (userId) return userFeedData(userId, reqUserId)
   else if (groupId) return groupFeedData(groupId, reqUserId)
   else if (shelfId) return shelfFeedData(shelfId, reqUserId)

@@ -8,7 +8,7 @@ import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
 
 const db = await dbFactory('users')
 
-export default async (username, email, creationStrategy, language, password) => {
+export default async function (username, email, creationStrategy, language, password) {
   preventMultiAccountsCreation(username)
 
   return checkUsernameAvailability(username)
@@ -29,7 +29,7 @@ export default async (username, email, creationStrategy, language, password) => 
   .then(postCreation)
 }
 
-const postCreation = user => {
+function postCreation (user) {
   return Promise.all([
     // can be parallelized without risk of conflict as
     // convertInvitations doesnt edit the user document

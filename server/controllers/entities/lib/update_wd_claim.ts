@@ -16,7 +16,7 @@ import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
-export default async (user, id, property, oldValue, newValue) => {
+export default async function (user, id, property, oldValue, newValue) {
   validateWikidataOAuth(user)
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
@@ -61,7 +61,7 @@ export default async (user, id, property, oldValue, newValue) => {
   return res
 }
 
-const updateClaim = async ({ id, propertyId, newValue, oldValue, credentials }) => {
+async function updateClaim ({ id, propertyId, newValue, oldValue, credentials }) {
   if (newValue) {
     if (oldValue) {
       return wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials })
@@ -74,7 +74,7 @@ const updateClaim = async ({ id, propertyId, newValue, oldValue, credentials }) 
   }
 }
 
-const updateRelocatedClaim = async params => {
+async function updateRelocatedClaim (params) {
   const { id, propertyId, newValue, oldValue, credentials } = params
   const { claimProperty, noClaimErrorMessage, tooManyClaimsErrorMessage } = qualifierProperties[propertyId]
   const propertyClaims = await getPropertyClaims(id, claimProperty)
@@ -94,12 +94,12 @@ const updateRelocatedClaim = async params => {
   }
 }
 
-const getPropertyClaims = async (id, propertyId) => {
+async function getPropertyClaims (id, propertyId) {
   const entity = await getWdEntity(id)
   return entity.claims[propertyId]
 }
 
-const getClaimGuid = async (id, propertyId, oldVal) => {
+async function getClaimGuid (id, propertyId, oldVal) {
   const propClaims = await getPropertyClaims(id, propertyId)
   const simplifyPropClaims = simplifyPropertyClaims(propClaims)
   const oldValIndex = simplifyPropClaims.indexOf(oldVal)
@@ -107,7 +107,7 @@ const getClaimGuid = async (id, propertyId, oldVal) => {
   return targetClaim.id
 }
 
-const getQualifierHash = (claim, property, value) => {
+function getQualifierHash (claim, property, value) {
   // @ts-expect-error simplifyPropertyQualifiers does not do pattern matching on the keepHashes option
   const qualifiers: CustomSimplifiedSnak[] = simplifyPropertyQualifiers(claim.qualifiers[property], { keepHashes: true })
   const matchingQualifiers = qualifiers.filter(qualifier => {

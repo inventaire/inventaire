@@ -81,7 +81,7 @@ export default {
   },
 }
 
-const parseReq = req => {
+function parseReq (req) {
   let { pathname } = parseUrl(req)
   pathname = pathname.replace('/img/', '')
   return pathname.split('/')

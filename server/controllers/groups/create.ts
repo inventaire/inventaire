@@ -14,7 +14,7 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { name, description, position, open, reqUserId } = params
   let { searchable } = params
 

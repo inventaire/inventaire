@@ -4,7 +4,7 @@ const attemptsLimit = 10
 const periodMinutes = 5
 
 let fails = {}
-const flushFails = () => { fails = {} }
+function flushFails () { fails = {} }
 
 setInterval(flushFails, periodMinutes * oneMinute)
 

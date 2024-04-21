@@ -22,7 +22,7 @@ const timeout = 10000
 const headers = { accept: '*/*' }
 const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
-export default async isbn => {
+export default async function (isbn) {
   const url = base + getQuery(isbn) as Url
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
@@ -36,7 +36,7 @@ export default async isbn => {
   return entry
 }
 
-const getQuery = isbn => {
+function getQuery (isbn) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10h, isbn13h, isbn13 } = isbnData
@@ -111,7 +111,7 @@ GROUP BY ?edition ?editionTitle ?editionPublicationDate ?work ?workLabel ?workPu
   return fixedEncodeURIComponent(query)
 }
 
-const formatRow = async (isbn, result, rawResult) => {
+async function formatRow (isbn, result, rawResult) {
   const { edition, work, author, publisherLabel, translators, postfaceAuthors, prefaceAuthors } = result
   const expressionLang = result.expressionLang?.replace('http://id.loc.gov/vocabulary/iso639-2/', '')
   const workLabelLang = rawResult.workLabel?.['xml:lang'] || wmCodeByIso6392Code[expressionLang]
@@ -188,7 +188,7 @@ const formatRow = async (isbn, result, rawResult) => {
 
 const getSourceId = entity => entity.claims?.['wdt:P268'] || entity.tempBnfId || entity.labels?.fr
 
-const addImage = async entry => {
+async function addImage (entry) {
   const bnfId = entry?.edition.claims['wdt:P268']
   if (!bnfId) return
   const url = `https://catalogue.bnf.fr/couverture?appName=NE&idArk=ark:/12148/cb${bnfId}&couverture=1` as Url

@@ -69,7 +69,7 @@ export default lang => item => {
   ].map(formatField).join(',')
 }
 
-const formatField = text => {
+function formatField (text) {
   if (!text) return ''
   if (isArray(text)) text = text.join(',')
   if (text.includes('"')) {
@@ -87,7 +87,7 @@ const formatField = text => {
 
 const getWorkSeriesOrdinals = work => work.claims['wdt:P1545']
 
-const getIsbn = edition => {
+function getIsbn (edition) {
   if (!edition) return {}
   return {
     isbn13h: getFirstValue(edition, 'wdt:P212'),
@@ -95,30 +95,30 @@ const getIsbn = edition => {
   }
 }
 
-const getTitle = (lang, edition, works) => {
+function getTitle (lang, edition, works) {
   if (edition) return getFirstValue(edition, 'wdt:P1476')
   else return getNames(lang, works)
 }
 
-const getCoverUrl = edition => {
+function getCoverUrl (edition) {
   const coverPath = getFirstValue(edition, 'invp:P2')
   if (coverPath) return generateUrl(`/img/entities/${coverPath}`)
 }
 
-const getFirstValue = (entity, property) => {
+function getFirstValue (entity, property) {
   if (!entity) return
   const propertyClaims = entity.claims[property]
   if (propertyClaims != null) return propertyClaims[0]
 }
 
-const generateUrl = path => {
+function generateUrl (path) {
   if (path != null) return `${host}${path}`
 }
 
-const generateEntityUrl = uri => {
+function generateEntityUrl (uri) {
   if (uri != null) return generateUrl(`/entity/${uri}`)
 }
 
-const generateEntitiesUrls = uris => {
+function generateEntitiesUrls (uris) {
   if (uris && uris.length > 0) return uris.map(generateEntityUrl).join(',')
 }

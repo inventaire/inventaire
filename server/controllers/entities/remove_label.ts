@@ -6,7 +6,7 @@ const sanitization = {
   lang: {},
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { uri, lang } = params
 
   const [ prefix, id ] = uri.split(':')

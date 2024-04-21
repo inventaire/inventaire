@@ -26,7 +26,7 @@ const updateEntityFromSeed = (reqUserId, batchId) => async seed => {
   await updateClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
 }
 
-const getEntity = (prefix, entityId) => {
+function getEntity (prefix, entityId) {
   if (prefix === 'isbn') {
     return getInvEntityByIsbn(entityId)
   } else {
@@ -34,7 +34,7 @@ const getEntity = (prefix, entityId) => {
   }
 }
 
-const updateClaims = async (entity, seedClaims, imageUrl, reqUserId, batchId) => {
+async function updateClaims (entity, seedClaims, imageUrl, reqUserId, batchId) {
   // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity = cloneDeep(entity)
@@ -71,7 +71,7 @@ function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }) {
   }
 }
 
-const addImageClaim = async (entity, imageUrl, newClaims) => {
+async function addImageClaim (entity, imageUrl, newClaims) {
   if (!imageUrl) return
   const imageClaims = entity.claims['invp:P2']
   if (imageClaims) return
@@ -79,7 +79,7 @@ const addImageClaim = async (entity, imageUrl, newClaims) => {
   if (imageHash) newClaims['invp:P2'] = [ imageHash ]
 }
 
-const updateDatePrecision = (entity, updatedEntity, seedClaims) => {
+function updateDatePrecision (entity, updatedEntity, seedClaims) {
   const seedDateClaims = pick(seedClaims, simpleDayProperties)
   Object.keys(seedDateClaims).forEach(prop => {
     const seedDate = seedDateClaims[prop][0]

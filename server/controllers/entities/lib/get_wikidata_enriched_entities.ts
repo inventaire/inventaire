@@ -21,7 +21,7 @@ import getEntityType from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
-const importCircularDependencies = async () => {
+async function importCircularDependencies () {
   const { indexation } = await import('#db/elasticsearch/indexation')
   reindexWdEntity = indexation('wikidata')
 }
@@ -55,7 +55,7 @@ async function getEnrichedEntity (wdId: WdEntityId) {
   return formattedEntity
 }
 
-const format = async entity => {
+async function format (entity) {
   if (entity.missing != null) return formatEmpty('missing', entity)
 
   const { P31 } = entity.claims
@@ -80,7 +80,7 @@ const format = async entity => {
 
 const simplifyClaimsOptions = { entityPrefix: 'wd' }
 
-const formatValidEntity = async entity => {
+async function formatValidEntity (entity) {
   const { id: wdId } = entity
   entity.uri = `wd:${wdId}`
   entity.labels = simplifyLabels(entity.labels)
@@ -105,7 +105,7 @@ const formatValidEntity = async entity => {
   return addImageData(entity)
 }
 
-const formatAndPropagateRedirection = async entity => {
+async function formatAndPropagateRedirection (entity) {
   if (entity.redirects != null) {
     const { from, to } = entity.redirects
     entity.redirects = {
@@ -130,7 +130,7 @@ const formatEmpty = (type, entity) => ({
   type,
 })
 
-const omitUndesiredPropertiesPerType = (type, claims) => {
+function omitUndesiredPropertiesPerType (type, claims) {
   const propertiesToOmit = undesiredPropertiesPerType[type]
   if (propertiesToOmit) {
     return omit(claims, propertiesToOmit)

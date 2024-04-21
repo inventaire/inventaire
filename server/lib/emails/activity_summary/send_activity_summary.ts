@@ -15,7 +15,7 @@ if (disableUserUpdate) {
   updateUser = justReceivedActivitySummary
 }
 
-export default async user => {
+export default async function (user) {
   if (user == null) return info('no user waiting for summary')
 
   const userId = user._id

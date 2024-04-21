@@ -13,7 +13,7 @@ const sanitization = validateSanitization({
   },
 })
 
-const confirmEmailValidity = async (req, res) => {
+async function confirmEmailValidity (req, res) {
   assertGetReq(req)
   const { email, token } = sanitize(req, res, sanitization)
   try {
@@ -28,7 +28,7 @@ const confirmEmailValidity = async (req, res) => {
 // reset password =
 //    => start a session with email/token instead of username/pw
 //    => redirect to the reset-password page
-const allowPasswordReset = (req, res) => {
+function allowPasswordReset (req, res) {
   assertGetReq(req)
   sanitize(req, res, sanitization)
   passport_.authenticate.resetPassword(req, res, Redirect(res))

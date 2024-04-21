@@ -63,7 +63,7 @@ export function deduplicateRequests (req, res, next) {
 
 const headersHash = req => getHashCode(JSON.stringify(req.headers))
 
-const temporaryLock = (key, data) => {
+function temporaryLock (key, data) {
   requestsCache[key] = data
   // Unlock after 2 secondes
   const unlock = () => { requestsCache[key] = null }

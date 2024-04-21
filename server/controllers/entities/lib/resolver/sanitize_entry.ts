@@ -44,7 +44,7 @@ export default entry => {
   return entry
 }
 
-const sanitizeEdition = edition => {
+function sanitizeEdition (edition) {
   sanitizeSeed(edition, 'edition')
 
   const rawIsbn = getIsbn(edition)
@@ -57,14 +57,14 @@ const sanitizeEdition = edition => {
 
 const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
 
-const getIsbn = edition => {
+function getIsbn (edition) {
   const { isbn, claims } = edition
   if (isbn) return isbn
   const isbnClaims = claims['wdt:P212'] || claims['wdt:P957']
   if (isbnClaims) return isbnClaims[0]
 }
 
-const createWorkSeedFromEdition = edition => {
+function createWorkSeedFromEdition (edition) {
   const { claims } = edition
   const title = claims?.['wdt:P1476'] ? forceArray(claims['wdt:P1476'])[0] : null
   if (title == null) return

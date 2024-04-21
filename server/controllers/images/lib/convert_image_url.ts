@@ -9,7 +9,7 @@ const db = await dbFactory('images')
 
 export default ({ url: sourceImageUrl, container }) => importAndAddImage(container, sourceImageUrl)
 
-const importAndAddImage = async (container, sourceImageUrl) => {
+async function importAndAddImage (container, sourceImageUrl) {
   const { url } = await importImage(container, sourceImageUrl)
   const hash = url.split('/').at(-1)
 
@@ -22,7 +22,7 @@ const importAndAddImage = async (container, sourceImageUrl) => {
   return { url, hash }
 }
 
-const saveImageSource = async (sourceImageUrl, imageHash) => {
+async function saveImageSource (sourceImageUrl, imageHash) {
   await db.update(imageHash, doc => {
     doc.sources = doc.sources || []
     doc.sources.push(sourceImageUrl)

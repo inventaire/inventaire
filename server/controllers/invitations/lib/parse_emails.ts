@@ -31,7 +31,7 @@ export default emails => {
 }
 
 // providing to 'email-addresses' known limitations
-const prepareEmails = emails => {
+function prepareEmails (emails) {
   return emails.trim()
   // Replace line breaks, tabs, semi-colons by a comma
   .replace(/([\t\n;])/g, ',')

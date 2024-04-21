@@ -92,7 +92,7 @@ export function pickOne (obj) {
   if (key != null) return obj[key]
 }
 
-export const parseBooleanString = (booleanString, defaultVal = false) => {
+export function parseBooleanString (booleanString, defaultVal = false) {
   if (defaultVal === false) return booleanString === 'true'
   else return booleanString !== 'false'
 }
@@ -163,7 +163,7 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   return newObj
 }
 
-const aggregateCollections = (index, name) => {
+function aggregateCollections (index, name) {
   index[name] = []
   return index
 }

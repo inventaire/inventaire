@@ -47,7 +47,7 @@ export function indexation (indexBaseName: IndexBaseName) {
   }
 }
 
-const postAndReset = () => {
+function postAndReset () {
   postBatch(batch)
   batch = []
 }

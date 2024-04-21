@@ -4,7 +4,7 @@ import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import type { Claims } from '#types/entity'
 import type { Entries } from 'type-fest'
 
-export default async (editionSeed, worksSeeds) => {
+export default async function (editionSeed, worksSeeds) {
   if (editionSeed.uri) return
   // Only edition seeds with no known isbns can be resolved this way
   if (editionSeed.isbn) return
@@ -29,12 +29,12 @@ const isMatchingEdition = (editionSeed, editionSeedTitle) => edition => {
   return titlesMatch && claimsDoNotContradict
 }
 
-const getNormalizedTitle = ({ claims }) => {
+function getNormalizedTitle ({ claims }) {
   const title = claims['wdt:P1476']?.[0]
   if (title) return normalizeTitle(title)
 }
 
-const editionSeedHasNoContradictingClaim = (editionSeed, edition) => {
+function editionSeedHasNoContradictingClaim (editionSeed, edition) {
   for (const [ property, propertyClaims ] of Object.entries(editionSeed.claims) as Entries<Claims>) {
     if (!ignoredProperties.includes(property)) {
       for (const value of propertyClaims) {

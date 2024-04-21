@@ -11,7 +11,7 @@ import { validateShelf, validateUser, validateEntity } from './validations.js'
 const origin = config.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
-const getShelfActor = async name => {
+async function getShelfActor (name) {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
   const links: ActivityLink[] = [
@@ -28,7 +28,7 @@ const getShelfActor = async name => {
   })
 }
 
-const getUserActor = async username => {
+async function getUserActor (username) {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links: ActivityLink[] = [
@@ -43,7 +43,7 @@ const getUserActor = async username => {
   })
 }
 
-const getEntityActor = async name => {
+async function getEntityActor (name) {
   const { entity } = await validateEntity(name)
   const actorName = getEntityActorName(entity.uri)
   const { uri } = entity
@@ -77,7 +77,7 @@ const getEntityActor = async name => {
   })
 }
 
-const buildActorObject = async ({ actorName, displayName, summary, imagePath, links, attachment = [] }: ActorParams) => {
+async function buildActorObject ({ actorName, displayName, summary, imagePath, links, attachment = [] }: ActorParams) {
   const { publicKey, publicKeyHash } = await getSharedKeyPair()
   const actorUrl: LocalActorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}`
   // Use the key hash to bust any cached version of an old key

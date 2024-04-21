@@ -23,7 +23,7 @@ const fullText = {
 }
 
 type PropertiesKeys = WikimediaLanguageCode | 'fromclaims'
-const getTermsProperties = datatype => {
+function getTermsProperties (datatype) {
   const properties: Partial<Record<PropertiesKeys, string>> = {}
   activeI18nLangs.forEach(lang => {
     properties[lang] = datatype

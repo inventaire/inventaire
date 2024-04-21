@@ -27,7 +27,7 @@ function filterMatchedTitles (sugWork, suspectWorksLabels) {
   return intersection(suspectWorksLabels, sugWorkTerms)
 }
 
-const getSuggestionWorks = res => {
+function getSuggestionWorks (res) {
   const uris = res.works.map(property('uri'))
   return getEntitiesList(uris)
 }

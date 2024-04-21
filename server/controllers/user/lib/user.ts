@@ -139,7 +139,7 @@ export function serializeUserData (user) {
   return user
 }
 
-const findNearby = async (latLng, meterRange, iterations = 0, strict = false) => {
+async function findNearby (latLng, meterRange, iterations = 0, strict = false) {
   const usersIds = await searchUsersByDistance(latLng, meterRange)
   // Try to get the 10 closest (11 minus the main user)
   // If strict, don't increase the range, just return what was found;

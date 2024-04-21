@@ -176,7 +176,7 @@ function getFromPatchPath (obj, path) {
   return get(obj, key)
 }
 
-const getEntityHistoryBase = () => {
+function getEntityHistoryBase () {
   const entityBase = createBlankEntityDoc()
   return pick(entityBase, versioned)
 }

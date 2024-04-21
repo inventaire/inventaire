@@ -14,7 +14,7 @@ export async function simultaneousRequest (userId, otherId) {
   return res
 }
 
-export const makeRequest = async (inviterId, recipientId, notify = true) => {
+export async function makeRequest (inviterId, recipientId, notify = true) {
   const res = await putRequestedStatus(inviterId, recipientId)
   // Use notify=false to avoid emails when a new user is created with waiting
   // email invitations, which are then converted into requests

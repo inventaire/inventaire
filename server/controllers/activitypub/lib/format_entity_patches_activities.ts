@@ -21,7 +21,7 @@ const activityText = {
 
 const hasActivityText = ({ value: property }) => activityText[property] != null
 
-const formatEntityPatchActivity = async (row, rowIndex) => {
+async function formatEntityPatchActivity (row, rowIndex) {
   const { id: patchId, key, value: property } = row
   const [ objectUri, timestamp ] = key
   const subjectUri = prefixifyInv(patchId.split(':')[0])
@@ -52,7 +52,7 @@ const formatEntityPatchActivity = async (row, rowIndex) => {
   }
 }
 
-const getLabel = entity => {
+function getLabel (entity) {
   const label = getBestLangValue('en', entity.originalLang, entity.labels).value
   if (label) return label
   else return entity.claims['wdt:P1476']?.[0]

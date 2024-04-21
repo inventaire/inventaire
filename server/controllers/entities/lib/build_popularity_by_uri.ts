@@ -24,7 +24,7 @@ export async function buildPopularityByUri (uri) {
   return addBonusPoints(uri, score)
 }
 
-const getItemsCount = async uri => {
+async function getItemsCount (uri) {
   const items = await getItemsByEntity(uri)
   const owners = map(items, 'owner')
   // Count the owners so that no more than one item per user is counted
@@ -45,7 +45,7 @@ const getEditionsScores = property => uri => {
 const getWorkEditionsScores = getEditionsScores('wdt:P629')
 const getPublisherScore = getEditionsScores('wdt:P123')
 
-const getPartsScores = uri => {
+function getPartsScores (uri) {
   return getSerieParts({ uri, dry: true })
   .then(res => {
     const partsUris = res.parts.map(getUri)
@@ -53,7 +53,7 @@ const getPartsScores = uri => {
   })
 }
 
-const getAuthorWorksScores = uri => {
+function getAuthorWorksScores (uri) {
   return getAuthorWorks({ uri, dry: true })
   .then(res => {
     const worksUris = res.works.map(getUri)
@@ -66,14 +66,14 @@ const getAuthorWorksScores = uri => {
 
 const getUri = property('uri')
 
-const getEntitiesPopularityTotal = uris => {
+function getEntitiesPopularityTotal (uris) {
   return getEntitiesPopularities({ uris, refresh: true })
   .then(Object.values)
   // Total = sum of all popularities + number of subentities
   .then(results => sum(results) + results.length)
 }
 
-const getSimpleEntityScore = async uri => {
+async function getSimpleEntityScore (uri) {
   const entity = await getEntityByUri({ uri })
   const claimCount = Object.values(entity.claims).flat().length
   const sitelinksCount = 'sitelinks' in entity ? Object.keys(entity.sitelinks).length : 0
@@ -94,7 +94,7 @@ const popularityGettersByType = {
 
 // Wikidata entities get a bonus as being on Wikidata is already kind of a proof of a certain
 // level of popularity
-const addBonusPoints = (uri, score) => {
+function addBonusPoints (uri, score) {
   if (isWdEntityUri(uri)) return score + 2
   else return score
 }

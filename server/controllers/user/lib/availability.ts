@@ -39,7 +39,7 @@ export const availability_ = {
   email: checkEmailAvailability,
 }
 
-const checkAvailability = (value, label, docs) => {
+function checkAvailability (value, label, docs) {
   if (docs.length !== 0) {
     throw newError(`this ${label} is already used`, 400, value)
   }

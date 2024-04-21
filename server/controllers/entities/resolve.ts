@@ -46,7 +46,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   req.setTimeout(oneDay)
   const { resolvedEntries, errors } = await resolveUpdateAndCreate(params)
   if (params.strict) {
@@ -59,7 +59,7 @@ const controller = async (params, req) => {
   }
 }
 
-const formatError = err => {
+function formatError (err) {
   const { message, entry, context } = err
   if (context === entry) return { message, entry }
   else return { message, context, entry }

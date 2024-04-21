@@ -29,7 +29,7 @@ const freezeFollow = config.db.follow.freeze || !serverMode
 // filter and an onChange functions register, indexed per dbBaseNames
 const followers = {}
 
-export default async params => {
+export default async function (params) {
   const { dbBaseName, filter, onChange, reset } = params
   assert_.string(dbBaseName)
   assert_.function(filter)
@@ -62,7 +62,7 @@ export default async params => {
   }
 }
 
-const getLastSeq = async dbName => {
+async function getLastSeq (dbName) {
   if (resetFollow) return
   const key = buildKey(dbName)
   return metaDb.get(key).catch(catchNotFound)
@@ -105,11 +105,11 @@ const initFollow = async (dbName: DbName, reset: () => Promise<void>, lastSeq: D
 // but it seems that seq prefixes remain incremental integers
 const getSeqPrefixNumber = seq => seq ? parseInt(seq.split('-')[0]) : 0
 
-const resetIfNeeded = async (lastSeq, reset) => {
+async function resetIfNeeded (lastSeq, reset) {
   if (reset != null && lastSeq == null) return reset()
 }
 
-const startFollowingDb = params => {
+function startFollowingDb (params) {
   const { dbName, dbUrl, lastSeq, setLastSeq } = params
   const dbFollowers = followers[dbName]
 
@@ -131,12 +131,12 @@ const startFollowingDb = params => {
   })
 }
 
-const SetLastSeq = (dbName: DbName) => {
+function SetLastSeq (dbName: DbName) {
   const key = buildKey(dbName)
   // Creating a closure on dbName to underline that
   // this function shouldn't be shared between databases
   // as it could miss updates due to the debouncer
-  const setLastSeq = async seq => {
+  async function setLastSeq (seq) {
     try {
       if (seq != null) await metaDb.put(key, seq)
       else await metaDb.del(key)
@@ -151,7 +151,7 @@ const SetLastSeq = (dbName: DbName) => {
 
 const buildKey = (dbName: DbName) => `${dbName}-last-seq`
 
-const getDbLastSeq = async (dbUrl: Url) => {
+async function getDbLastSeq (dbUrl: Url) {
   const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`)
   return lastSeq as DatabaseSeq
 }

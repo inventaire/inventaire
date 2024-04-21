@@ -19,7 +19,7 @@ const headers = {
   accept: 'application/sparql-results+json',
 }
 
-export default async isbn => {
+export default async function (isbn) {
   const url = `https://bnb.data.bl.uk/sparql?format=json&query=${getQuery(isbn)}` as Url
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
@@ -31,7 +31,7 @@ export default async isbn => {
 
 const getSourceId = entity => entity.claims?.['wdt:P5199'] || entity.claims?.['wdt:P5361']
 
-const getQuery = isbn => {
+function getQuery (isbn) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10, isbn13 } = isbnData
@@ -62,7 +62,7 @@ const getQuery = isbn => {
   return fixedEncodeURIComponent(query)
 }
 
-const formatRow = async (isbn, result) => {
+async function formatRow (isbn, result) {
   const { edition, author } = result
   const entry: ExternalDatabaseEntryRow = {}
   entry.edition = { isbn }

@@ -55,7 +55,7 @@ export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabel
   }
 }
 
-const getWikipediaOccurrences = async (authorEntity, worksLabels, worksLabelsLangs) => {
+async function getWikipediaOccurrences (authorEntity, worksLabels, worksLabelsLangs) {
   const articles = await getMostRelevantWikipediaArticles(authorEntity, worksLabelsLangs)
   return Promise.all(articles.map(createOccurrencesFromUnstructuredArticle(worksLabels)))
 }

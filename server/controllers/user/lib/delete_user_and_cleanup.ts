@@ -7,7 +7,7 @@ import { deleteUserShelves } from '#controllers/shelves/lib/shelves'
 import { cancelAllActiveTransactions } from '#controllers/transactions/lib/transactions'
 import { softDeleteById } from '#controllers/user/lib/delete'
 
-export default async userId => {
+export default async function (userId) {
   const res = await softDeleteById(userId)
   await Promise.all([
     deleteUserRelations(userId),

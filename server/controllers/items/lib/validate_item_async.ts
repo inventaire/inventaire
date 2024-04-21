@@ -28,7 +28,7 @@ export async function validateItemsAsync (items) {
   })
 }
 
-const validateEntities = async items => {
+async function validateEntities (items) {
   const uris = mapUniq(items, 'entity')
   const { entities, redirects, notFound } = await getEntitiesByUris({ uris })
   if (notFound?.length > 0) {
@@ -40,7 +40,7 @@ const validateEntities = async items => {
   Object.values(entities).forEach(validateEntityType)
 }
 
-const validateEntityType = entity => {
+function validateEntityType (entity) {
   const { type } = entity
   if (!allowlistedEntityTypes.has(type)) {
     throw newError('invalid entity type', 400, { type })
@@ -52,7 +52,7 @@ export async function validateShelves (userId, shelvesIds) {
   validateShelvesOwnership(userId, shelves)
 }
 
-const validateShelvesOwnership = (userId, shelves) => {
+function validateShelvesOwnership (userId, shelves) {
   if (isNonEmptyArray(shelves)) {
     const shelvesOwners = shelves.map(property('owner'))
     const allShelvesBelongToUser = uniq(shelvesOwners)[0] === userId

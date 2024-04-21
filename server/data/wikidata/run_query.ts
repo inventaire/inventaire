@@ -27,7 +27,7 @@ interface RunQueryParams {
 // - query: the name of the query to use from './queries/queries.js'
 // - refresh
 // - custom parameters: see the query file
-export default async (params: RunQueryParams) => {
+export default async function (params: RunQueryParams) {
   const { refresh, dry } = params
   let { query: queryName } = params
 
@@ -45,7 +45,7 @@ export default async (params: RunQueryParams) => {
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-const validateValues = (queryName, params) => {
+function validateValues (queryName, params) {
   // Every type of query should specify which parameters it needs
   // with keys matching parametersTests keys
   for (const k of queries[queryName].parameters) {
@@ -56,7 +56,7 @@ const validateValues = (queryName, params) => {
   }
 }
 
-const buildKey = (queryName, params) => {
+function buildKey (queryName, params) {
   // Building the cache key
   let key = `wdQuery:${queryName}`
   for (const k of queries[queryName].parameters) {
@@ -73,7 +73,7 @@ const parametersTests = {
   pid: isPropertyId,
 }
 
-const runQuery = (params, key) => {
+function runQuery (params, key) {
   const { query: queryName } = params
   const sparql = queries[queryName].query(params)
   const { minimizable = false } = queries[queryName]
@@ -88,7 +88,7 @@ radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch
   await cache_.batchDelete(keys)
 })
 
-const getQueriesKeys = ({ property, valueUri }) => {
+function getQueriesKeys ({ property, valueUri }) {
   const queriesToInvalidate = (queriesPerProperty[property] || [])
     // Add queries that should be invalidated for any property
     .concat(queriesPerProperty['*'])

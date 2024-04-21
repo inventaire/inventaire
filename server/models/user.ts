@@ -71,7 +71,7 @@ export async function createUserDoc (username: string, email: Email, creationStr
   return user
 }
 
-const hashUserPassword = async user => {
+async function hashUserPassword (user) {
   const { password } = user
   if (password != null) {
     const hash = await hashPassword(password)

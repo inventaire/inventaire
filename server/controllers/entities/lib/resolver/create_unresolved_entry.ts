@@ -20,16 +20,16 @@ export default ({ reqUserId, batchId, enrich }) => async entry => {
   return entry
 }
 
-const createAuthors = (entry, reqUserId, batchId) => {
+function createAuthors (entry, reqUserId, batchId) {
   const { authors } = entry
   return Promise.all(authors.map(createAuthor(reqUserId, batchId)))
 }
 
-const createWorks = (entry, reqUserId, batchId) => {
+function createWorks (entry, reqUserId, batchId) {
   const { works, authors } = entry
   return Promise.all(works.map(createWork(reqUserId, batchId, authors)))
 }
 
-const addNotCreatedFlag = seed => {
+function addNotCreatedFlag (seed) {
   seed.created = false
 }

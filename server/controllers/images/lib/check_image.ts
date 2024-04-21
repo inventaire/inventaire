@@ -8,7 +8,7 @@ import config from '#server/config'
 
 const { checkDelays } = config.mediaStorage.images
 
-export default async ({ container, hash, url, context }) => {
+export default async function ({ container, hash, url, context }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
   assert_.string(container)
   assert_.string(hash)
@@ -19,7 +19,7 @@ export default async ({ container, hash, url, context }) => {
   setTimeout(checkImage.bind(null, container, hash), delay)
 }
 
-const checkImage = async (container, hash) => {
+async function checkImage (container, hash) {
   try {
     const isUsed = await checkImagePerContainer[container](hash)
     if (!isUsed) {

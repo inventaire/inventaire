@@ -21,7 +21,7 @@ const isPlainText = (req: Req) => req.headers['content-type'] === 'text/plain'
 // Overpassing the bodyParser middleware
 // as it handles json only
 // cf http://stackoverflow.com/questions/22143105/node-js-express-express-json-and-express-urlencoded-with-form-submit
-const rawBody = (req: Req, res: Res) => {
+function rawBody (req: Req, res: Res) {
   let body = ''
   req.on('data', chunk => { body += chunk })
   req.on('end', () => {

@@ -6,14 +6,14 @@ import { bundleMissingBodyError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { logError, warn } from '#lib/utils/logs'
 
-const cspReport = (req, res) => {
+function cspReport (req, res) {
   const report = req.body['csp-report'] || req.body
   const err = buildError('csp report', report, req)
   logError(err, 'csp report')
   responses_.ok(res)
 }
 
-const errorReport = (req, res) => {
+function errorReport (req, res) {
   const { error: errData } = req.body
 
   if (errData == null) {
@@ -35,7 +35,7 @@ const errorReport = (req, res) => {
   responses_.ok(res)
 }
 
-const buildError = (message, errData, req) => {
+function buildError (message, errData, req) {
   const statusCode = errData.statusCode || 500
   const err = newError(message, statusCode, errData)
   // Do not add an emitter stack on client reports as it makes it be confused
@@ -51,7 +51,7 @@ const buildError = (message, errData, req) => {
 
 // Faking an error object for the needs of server/lib/utils/open_issue.js
 // Define the stack first to stringify only what was reported
-const getErrStack = err => {
+function getErrStack (err) {
   let { message, stack } = err
   stack = err.stack || JSON.stringify(err, null, 2)
   // Adding the message at the top of the stack trace

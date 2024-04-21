@@ -15,7 +15,7 @@ const sanitization = {
   },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { userId, uris, reqUserId } = params
   const foundItems = await getItemsByOwnerAndEntities(userId, uris)
   const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)

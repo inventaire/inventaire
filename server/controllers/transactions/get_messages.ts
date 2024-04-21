@@ -4,7 +4,7 @@ const sanitization = {
   transaction: {},
 }
 
-const controller = async ({ transactionId }) => {
+async function controller ({ transactionId }) {
   const messages = await comments_.byTransactionId(transactionId)
   return { messages }
 }

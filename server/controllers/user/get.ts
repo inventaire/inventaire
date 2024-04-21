@@ -2,7 +2,7 @@ import { pick } from 'lodash-es'
 import { setUserStableUsername } from '#controllers/user/lib/user'
 import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
-const controller = async (params, req, res) => {
+async function controller (params, req, res) {
   // The logged in user as its document set on req.user by passport.js
   const userData = ownerSafeData(req.user)
 
@@ -21,7 +21,7 @@ const controller = async (params, req, res) => {
   }
 }
 
-const getAllowedAttributes = scopeNames => {
+function getAllowedAttributes (scopeNames) {
   return scopeNames.map(scopeName => attributesByScope[scopeName])
 }
 

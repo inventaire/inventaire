@@ -7,7 +7,7 @@ import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { newError, notFoundError } from '#lib/error/error'
 
-export default async (workUri, isbn, userId) => {
+export default async function (workUri, isbn, userId) {
   const work = await getEntityByUri({ uri: workUri })
   if (work == null) throw notFoundError({ workUri })
 
@@ -38,7 +38,7 @@ export default async (workUri, isbn, userId) => {
   })
 }
 
-const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
+async function getSuggestionsOrAutomerge (work, editionWorks, userId) {
   const workLabels = Object.values(work.labels)
   for (const editionWork of editionWorks) {
     const editionWorkLabels = Object.values(editionWork.labels)
@@ -52,7 +52,7 @@ const getSuggestionsOrAutomerge = async (work, editionWorks, userId) => {
 
 const getExistingTasks = uri => getTasksBySuspectUris([ uri ])
 
-const filterNewTasks = (existingTasks, suggestions) => {
+function filterNewTasks (existingTasks, suggestions) {
   const existingTasksUris = map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }

@@ -4,13 +4,13 @@ import { isWdEntityId } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
 import { makeSparqlRequest } from './make_sparql_request.js'
 
-export default async isbn => {
+export default async function (isbn) {
   const sparql = getQuery(isbn)
   const rows = await makeSparqlRequest(sparql)
   return buildEntryFromFormattedRows(rows, isbn)
 }
 
-const getQuery = isbn => {
+function getQuery (isbn) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn13h, isbn13, isbn10h, isbn10, groupLang } = isbnData
@@ -34,7 +34,7 @@ const getQuery = isbn => {
   }`
 }
 
-const buildEntryFromFormattedRows = (rows, isbn) => {
+function buildEntryFromFormattedRows (rows, isbn) {
   // TODO: deal with more complex cases
   if (rows.length !== 1) return
   const row = rows[0]

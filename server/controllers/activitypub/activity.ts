@@ -22,7 +22,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ id }: ActivityArgs, req: Req, res: Res) => {
+async function controller ({ id }: ActivityArgs, req: Req, res: Res) {
   setActivityPubContentType(res)
   if (isEntityActivityId(id)) {
     return getEntityActivity(id)
@@ -31,7 +31,7 @@ const controller = async ({ id }: ActivityArgs, req: Req, res: Res) => {
   }
 }
 
-const getEntityActivity = async id => {
+async function getEntityActivity (id) {
   let [ , entityId, versionNumber, activityNumber ] = id.split('-')
   const patchId: PatchId = `${entityId}:${versionNumber}`
   const patch = await getPatchById(patchId)
@@ -42,7 +42,7 @@ const getEntityActivity = async id => {
   return activity
 }
 
-const getActivity = async (id: CouchUuid) => {
+async function getActivity (id: CouchUuid) {
   if (!isCouchUuid(id)) throw newError('invalid activity id', 400, { id })
   const activityDoc = await getActivityById(id)
   const { name } = activityDoc.actor
@@ -53,13 +53,13 @@ const getActivity = async (id: CouchUuid) => {
   }
 }
 
-const getUserActivity = async (activityDoc, name) => {
+async function getUserActivity (activityDoc, name) {
   const { user } = await validateUser(name)
   const [ activity ] = await formatUserItemsActivities([ activityDoc ], user)
   return activity
 }
 
-const getShelfActivity = async (activityDoc, name) => {
+async function getShelfActivity (activityDoc, name) {
   const { shelf } = await validateShelf(name)
   const [ activity ] = await formatShelfItemsActivities([ activityDoc ], shelf._id, name)
   return activity

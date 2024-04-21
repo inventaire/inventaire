@@ -8,7 +8,7 @@ export default res => {
   return relations
 }
 
-const spreadRelation = (relations, row) => {
+function spreadRelation (relations, row) {
   // view key looks like userId:relationType
   const type = row.key[1]
   const id = row.value

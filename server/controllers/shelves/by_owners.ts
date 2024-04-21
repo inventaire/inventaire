@@ -10,7 +10,7 @@ const sanitization = {
   offset: { optional: true },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { reqUserId, owners } = params
   const foundShelves = await getShelvesByOwners(owners)
   let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)

@@ -12,7 +12,7 @@ const viewProperties = {
   'wdt:P921': 'subject',
 }
 
-const addToTree = (tree, entity) => {
+function addToTree (tree, entity) {
   const { uri, claims } = entity
 
   if (claims == null) {

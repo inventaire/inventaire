@@ -6,7 +6,7 @@ const sanitization = {
   offset: {},
 }
 
-const controller = async ({ limit, offset }) => {
+async function controller ({ limit, offset }) {
   const users = await getUsersByCreationDate({ limit, offset })
   return {
     users: users.map(omitPrivateData()),

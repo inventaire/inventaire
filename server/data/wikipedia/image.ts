@@ -7,7 +7,7 @@ import type { Url } from '#types/common'
 const wpBase = 'https://en.wikipedia.org/w/api.php'
 const apiBase = `${wpBase}?action=query&prop=pageimages&format=json&titles=`
 
-export default async title => {
+export default async function (title) {
   title = fixedEncodeURIComponent(title)
   const url = `${apiBase}${title}` as Url
 
@@ -28,7 +28,7 @@ export default async title => {
 
 // using the thumb fully built URL instead of build the URL
 // from the filename md5 hash, making it less hazardous
-const parseThumbUrl = url => {
+function parseThumbUrl (url) {
   return url
   // Removing the last part
   .split('/')

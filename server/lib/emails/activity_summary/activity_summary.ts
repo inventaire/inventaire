@@ -12,7 +12,7 @@ export default function () {
   setInterval(sendOneUserSummary, emailsInterval)
 }
 
-const sendOneUserSummary = async () => {
+async function sendOneUserSummary () {
   try {
     const user = await findOneWaitingForSummary()
     await sendActivitySummary(user)

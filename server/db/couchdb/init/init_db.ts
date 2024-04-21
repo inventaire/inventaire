@@ -22,7 +22,7 @@ export async function initDb (dbData) {
   return operation
 }
 
-const ensureDbExistance = async dbUrl => {
+async function ensureDbExistance (dbUrl) {
   const res = await fetch(dbUrl)
   if (res.status === 200) {
     return { created: false }
@@ -34,7 +34,7 @@ const ensureDbExistance = async dbUrl => {
   }
 }
 
-const create = async dbUrl => {
+async function create (dbUrl) {
   const res = await fetch(dbUrl, { method: 'PUT' })
   if (res.status !== 201) throw new Error(`${res.status}: ${res.statusText}`)
 }

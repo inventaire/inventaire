@@ -5,7 +5,7 @@ import type { Url } from '#types/common'
 
 const { getEntitiesFromSitelinks } = wdk
 
-export default async ({ site, title }) => {
+export default async function ({ site, title }) {
   const url = getEntitiesFromSitelinks({ sites: site, titles: title, props: 'info' }) as Url
   const { entities } = await requests_.get(url)
   const id = Object.keys(entities)[0]

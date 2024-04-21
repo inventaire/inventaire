@@ -9,12 +9,12 @@ import dbFactory from '#db/couchdb/base'
 const designDocName = 'entities_deduplicate'
 const db = await dbFactory('entities', designDocName)
 
-const controller = async () => {
+async function controller () {
   const names = await getHomonymes()
   return { names }
 }
 
-const getHomonymes = async () => {
+async function getHomonymes () {
   const { rows } = await db.view(designDocName, 'findHumansHomonymes', { group_level: 1 })
   return rows
   // Filtering-out keys that are only ponctuation or a single letter

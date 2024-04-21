@@ -17,7 +17,7 @@ export default (db, dbBaseName) => {
   }
 }
 
-const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
+function queryBuilder ([ minLng, minLat, maxLng, maxLat ]) {
   const bboxes = splitBboxOnAntiMeridian([ minLng, minLat, maxLng, maxLat ])
   const searchRequest: SearchRequest = {
     query: {
@@ -37,7 +37,7 @@ const queryBuilder = ([ minLng, minLat, maxLng, maxLat ]) => {
   return searchRequest
 }
 
-const splitBboxOnAntiMeridian = ([ minLng, minLat, maxLng, maxLat ]) => {
+function splitBboxOnAntiMeridian ([ minLng, minLat, maxLng, maxLat ]) {
   if (minLng < -180 && maxLng > -180) {
     return [
       [ -180, minLat, maxLng, maxLat ],
@@ -56,13 +56,13 @@ const splitBboxOnAntiMeridian = ([ minLng, minLat, maxLng, maxLat ]) => {
   }
 }
 
-const normalizeLongitude = lng => {
+function normalizeLongitude (lng) {
   if (lng < -180) return lng + 360
   if (lng > 180) return lng - 360
   return lng
 }
 
-const buildGeoBoundingBoxClause = ([ minLng, minLat, maxLng, maxLat ]) => {
+function buildGeoBoundingBoxClause ([ minLng, minLat, maxLng, maxLat ]) {
   const topLeft = { lat: maxLat, lon: minLng }
   const bottomRight = { lat: minLat, lon: maxLng }
   return {

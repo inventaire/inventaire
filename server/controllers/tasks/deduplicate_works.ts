@@ -5,7 +5,7 @@ const sanitization = {
   isbn: {},
 }
 
-const controller = async ({ uri, isbn, reqUserId }) => {
+async function controller ({ uri, isbn, reqUserId }) {
   const tasks = await deduplicateWork(uri, isbn, reqUserId)
   return {
     tasks: (tasks || []).flat(),

@@ -2,14 +2,14 @@ import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 
 // returns a function triggering a standard confirmation response
-const ok = (res, status = 200) => {
+function ok (res, status = 200) {
   res.status(status)
   send(res, { ok: true })
 }
 
 const Ok = (res, status = 200) => ok.bind(null, res, status)
 
-const okWarning = (res, category, warning, status = 200) => {
+function okWarning (res, category, warning, status = 200) {
   addWarning(res, `${category}: ${warning}`)
   res.status(status)
   send(res, { ok: true })
@@ -61,6 +61,6 @@ export const responses_ = {
   wrap,
 }
 
-const setWarnings = (res, data) => {
+function setWarnings (res, data) {
   if (res.warnings) data.warnings = res.warnings
 }

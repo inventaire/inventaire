@@ -5,7 +5,7 @@ const sanitization = {
   search: {},
 }
 
-const controller = async ({ search }) => {
+async function controller ({ search }) {
   const { hits: users } = await searchByText({ search })
   return { users }
 }

@@ -15,7 +15,7 @@ interface Params {
   _id: InvEntityId
 }
 
-export default async (params: Params) => {
+export default async function (params: Params) {
   const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
   let { newVal } = params
   // letEmptyValuePass to let it be interpreted as a claim deletion
@@ -48,7 +48,7 @@ export default async (params: Params) => {
 
 // For properties that don't tolerate having several entities
 // sharing the same value
-const verifyClaimConcurrency = async (concurrency, property, value, _id) => {
+async function verifyClaimConcurrency (concurrency, property, value, _id) {
   if (!concurrency) return
 
   let { rows } = await getInvEntitiesByClaim(property, value)
@@ -69,7 +69,7 @@ const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
-const verifyClaimEntityType = async (entityValueTypes?: EntityType[], value?: EntityUri) => {
+async function verifyClaimEntityType (entityValueTypes?: EntityType[], value?: EntityUri) {
   const entity = await getEntityByUri({ uri: value })
   if (!entity) {
     throw newError('entity not found', 400, { value })

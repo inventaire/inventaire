@@ -2,13 +2,13 @@ import { isArguments, isArray, times } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { typeOf } from './types.js'
 
-const assertType = (type, obj) => {
+function assertType (type, obj) {
   const trueType = typeOf(obj)
   if (type.split('|').includes(trueType)) return obj
   else throw newError(`TypeError: expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj })
 }
 
-const assertTypes = (types, args) => {
+function assertTypes (types, args) {
   if (isArguments(args)) {
     args = Array.from(args)
     if (!isArray(types)) {
@@ -29,7 +29,7 @@ const assertTypes = (types, args) => {
   return args.map((arg, i) => assertType(types[i], arg))
 }
 
-const stringify = value => {
+function stringify (value) {
   if (typeof value !== 'object') return value
 
   const json = JSON.stringify(value)
@@ -41,7 +41,7 @@ const stringify = value => {
 // ex: types = 'numbers...'
 // Or even 'numbers...|strings...' to be translated as several 'number|string'
 // => types = ['number', 'number', ... (args.length times)]
-const parseTypes = (types, args) => {
+function parseTypes (types, args) {
   if (typeof types !== 'string' || types.match('s...') == null) return types
   const multiTypes = types.split('s...').join('')
   return times(args.length, () => multiTypes)

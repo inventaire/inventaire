@@ -12,7 +12,7 @@ export default function () {
   // This seems to be required to avoid getting a 401 from CouchDB,
   // especially when CouchDB just started
   // Known case: when starting CouchDB and the server together with docker-compose
-  const sequentialUpdate = () => {
+  function sequentialUpdate () {
     const nextUser = users.shift()
     if (nextUser == null) return
 
@@ -23,7 +23,7 @@ export default function () {
   return sequentialUpdate()
 }
 
-const updateDoc = async (db, doc) => {
+async function updateDoc (db, doc) {
   const { _id: id } = doc
   try {
     const currentDoc = await db.get(id)

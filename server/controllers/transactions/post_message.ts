@@ -8,7 +8,7 @@ const sanitization = {
   message: {},
 }
 
-const controller = async ({ transactionId, message, reqUserId }) => {
+async function controller ({ transactionId, message, reqUserId }) {
   const transaction = await getTransactionById(transactionId)
   verifyRightToInteractWithTransaction(reqUserId, transaction)
   await comments_.addTransactionComment(reqUserId, message, transactionId)

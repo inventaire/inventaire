@@ -2,7 +2,7 @@ import { map, uniq } from 'lodash-es'
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { userShouldBeAnonymized } from '#models/user'
 
-export default async ({ patches, reqUserId }) => {
+export default async function ({ patches, reqUserId }) {
   const usersIds = uniq(map(patches, 'user'))
   const users = await getUsersByIds(usersIds)
   const deanonymizedUsersIds = getDeanonymizedUsersIds(users)
@@ -13,7 +13,7 @@ export default async ({ patches, reqUserId }) => {
   })
 }
 
-const getDeanonymizedUsersIds = users => {
+function getDeanonymizedUsersIds (users) {
   const deanonymizedUsersIds = []
   for (const user of users) {
     if (!userShouldBeAnonymized(user)) deanonymizedUsersIds.push(user._id)
@@ -21,6 +21,6 @@ const getDeanonymizedUsersIds = users => {
   return new Set(deanonymizedUsersIds)
 }
 
-const anonymizePatch = patch => {
+function anonymizePatch (patch) {
   delete patch.user
 }

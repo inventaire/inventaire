@@ -9,7 +9,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ lang, title }) => {
+async function controller ({ lang, title }) {
   lang = normalizeWikimediaLang(lang)
   if (isInvalidTitle(title)) {
     throw newError('invalid title', 400, { title })

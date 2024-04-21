@@ -13,7 +13,7 @@ export function getParsedUsersIndexedByIds (user1Id, user2Id) {
   .catch(LogError('getParsedUsersIndexedByIds err'))
 }
 
-const parseUsersData = (user1Id, user2Id, usersData) => {
+function parseUsersData (user1Id, user2Id, usersData) {
   usersData = keyBy(usersData, '_id')
   const user1 = usersData[user1Id]
   const user2 = usersData[user2Id]

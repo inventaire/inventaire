@@ -5,7 +5,7 @@ const sanitization = {
   ids: {},
 }
 
-const controller = async ({ ids, reqUserId }) => {
+async function controller ({ ids, reqUserId }) {
   const listings = await getListingsByIds(ids)
   validateListingsOwnership(reqUserId, listings)
   const [ deletedElements ] = await Promise.all([

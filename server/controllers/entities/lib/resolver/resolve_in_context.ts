@@ -6,7 +6,7 @@ import resolveWorksFromEdition from './resolve_works_from_edition.js'
 
 // Resolve a work(or author) seed when the author(or work) seed is already resolved
 
-export default async entry => {
+export default async function (entry) {
   const { authors, works, edition } = entry
 
   if (!some(works)) return entry

@@ -7,7 +7,7 @@ const sanitization = {
   from: {},
 }
 
-const controller = async params => {
+async function controller (params) {
   const { from: fromUri, reqUserId } = params
   const [ fromPrefix, fromId ] = fromUri.split(':')
 

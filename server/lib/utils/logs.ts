@@ -13,7 +13,7 @@ const countsByErrorStatusCode = {}
 
 const print = (str: string) => process.stdout.write(str + '\n')
 
-export const log = (obj: unknown, label?: string, color: string = 'cyan') => {
+export function log (obj: unknown, label?: string, color: string = 'cyan') {
   if (!verbose) return
   if ((typeof obj === 'string') && (label == null)) {
     print(chalk[color](obj))
@@ -90,7 +90,7 @@ const tapLogger = logger => label => obj => {
 export const Log = tapLogger(log)
 export const LogError = tapLogger(logError)
 
-const errorRethrow = (err: ContextualizedError, label?: string) => {
+function errorRethrow (err: ContextualizedError, label?: string) {
   logError(err, label)
   throw err
 }
@@ -100,7 +100,7 @@ export const LogErrorAndRethrow = tapLogger(errorRethrow)
 // logs the errors total if there was an error
 // in the last 5 seconds
 // -> just a convenience for debugging
-export const logErrorsCount = () => {
+export function logErrorsCount () {
   let prev = 0
   const counter = () => {
     if (errorCount !== prev) {

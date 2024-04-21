@@ -6,7 +6,7 @@ import { setEntityDocLabel } from '#models/entity'
 import getEntityType from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
 
-export default async (lang, value, userId, currentDoc) => {
+export default async function (lang, value, userId, currentDoc) {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = cloneDeep(currentDoc)
@@ -16,7 +16,7 @@ export default async (lang, value, userId, currentDoc) => {
   return docAfterUpdate
 }
 
-const checkEntityTypeCanHaveLabel = currentDoc => {
+function checkEntityTypeCanHaveLabel (currentDoc) {
   const type = getEntityType(currentDoc.claims['wdt:P31'])
 
   if (typeWithoutLabels.has(type)) {

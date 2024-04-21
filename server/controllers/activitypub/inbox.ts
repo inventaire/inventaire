@@ -47,7 +47,7 @@ const sanitization = {
   url: { generic: 'ignore' },
 }
 
-const controller = async (params, req, res) => {
+async function controller (params, req, res) {
   setActivityPubContentType(res)
   const { type } = params
   if (inboxActivityTypes[type] != null) {

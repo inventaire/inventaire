@@ -110,7 +110,7 @@ export async function imageIsUsed (imageHash) {
   return rows.length > 0
 }
 
-const getCoMembersIds = (groups, userId) => {
+function getCoMembersIds (groups, userId) {
   const usersIds = getAllGroupsMembersIds(groups)
   // Deduplicate and remove the user own id from the list
   return uniq(without(usersIds, userId))

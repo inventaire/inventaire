@@ -24,7 +24,7 @@ export function getHashFilename (path) {
   .then(sha1)
 }
 
-export const shrinkAndFormat = (path, width = maxSize, height = maxSize) => {
+export function shrinkAndFormat (path, width = maxSize, height = maxSize) {
   return new Promise((resolve, reject) => shrinkAndFormatStream(path, width, height)
   .write(path, returnPath(path, resolve, reject)))
 }
@@ -43,7 +43,7 @@ export function getUrlFromImageHash (container, filename) {
   if (filename) return `/img/${container}/${filename}`
 }
 
-const applyLimit = (dimension = maxSize) => {
+function applyLimit (dimension = maxSize) {
   dimension = Number(dimension)
   return dimension > maxSize ? maxSize : dimension
 }

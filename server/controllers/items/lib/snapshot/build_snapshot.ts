@@ -44,7 +44,7 @@ export default {
   },
 }
 
-const buildOperation = params => {
+function buildOperation (params) {
   const { entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array(works)
   if (!isNonEmptyString(title)) {
@@ -80,7 +80,7 @@ const buildOperation = params => {
   return { key: uri, value: snapshot }
 }
 
-const setOrdinal = (snapshot, works) => {
+function setOrdinal (snapshot, works) {
   if (works.length === 1) {
     const work = works[0]
     const { claims } = work

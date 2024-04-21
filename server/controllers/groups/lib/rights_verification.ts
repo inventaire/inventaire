@@ -3,7 +3,7 @@ import { userIsInAdmins, userIsInGroup, userIsInRequested } from '#controllers/g
 import { newError } from '#lib/error/error'
 import { getInvitedUser } from './groups.js'
 
-const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
+function validateJoinRequestHandlingRights (reqUserId, groupId, requesterId) {
   return Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInRequested(requesterId, groupId),
@@ -18,7 +18,7 @@ const validateJoinRequestHandlingRights = (reqUserId, groupId, requesterId) => {
   })
 }
 
-const validateAdminRights = (reqUserId, groupId) => {
+function validateAdminRights (reqUserId, groupId) {
   return userIsInAdmins(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
@@ -27,7 +27,7 @@ const validateAdminRights = (reqUserId, groupId) => {
   })
 }
 
-const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
+function validateAdminRightsWithoutAdminsConflict (reqUserId, groupId, targetId) {
   Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInAdmins(targetId, groupId),
@@ -42,7 +42,7 @@ const validateAdminRightsWithoutAdminsConflict = (reqUserId, groupId, targetId) 
   })
 }
 
-const validateUserRightToLeave = (reqUserId, groupId) => {
+function validateUserRightToLeave (reqUserId, groupId) {
   return Promise.all([
     userIsInGroup(reqUserId, groupId),
     userCanLeaveGroup(reqUserId, groupId),
@@ -58,7 +58,7 @@ const validateUserRightToLeave = (reqUserId, groupId) => {
   })
 }
 
-const validateRequest = (reqUserId, groupId) => {
+function validateRequest (reqUserId, groupId) {
   return userIsInGroup(reqUserId, groupId)
   .then(bool => {
     if (bool) {
@@ -67,7 +67,7 @@ const validateRequest = (reqUserId, groupId) => {
   })
 }
 
-const validateCancelRequest = (reqUserId, groupId) => {
+function validateCancelRequest (reqUserId, groupId) {
   return userIsInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {

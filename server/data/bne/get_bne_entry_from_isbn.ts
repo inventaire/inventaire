@@ -22,7 +22,7 @@ const headers = {
   accept: 'application/sparql-results+json',
 }
 
-export default async isbn => {
+export default async function (isbn) {
   const url = `https://datos.bne.es/sparql?timeout=${timeout}&format=json&query=${getQuery(isbn)}` as Url
   const response = await requests_.get(url, { headers, timeout })
   let simplifiedResults = simplifySparqlResults(response)
@@ -36,7 +36,7 @@ export default async isbn => {
 
 const getSourceId = entity => entity.claims?.['wdt:P905']
 
-const getQuery = isbn => {
+function getQuery (isbn) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { isbn10, isbn13, isbn10h, isbn13h } = isbnData
@@ -74,7 +74,7 @@ const getQuery = isbn => {
   return fixedEncodeURIComponent(query)
 }
 
-const formatRow = async (isbn, result) => {
+async function formatRow (isbn, result) {
   const { edition, author, publisherLabel } = result
   const entry: ExternalDatabaseEntryRow = {}
   entry.edition = { isbn }
@@ -123,7 +123,7 @@ const formatRow = async (isbn, result) => {
 
 const yearPattern = /([12]\d{3})/
 
-const regroupSameAsMatches = simplifiedResults => {
+function regroupSameAsMatches (simplifiedResults) {
   const authorsMatches = {}
   simplifiedResults.forEach(({ author }) => {
     if (author?.match) {

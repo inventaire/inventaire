@@ -19,14 +19,14 @@ export default entry => {
   })
 }
 
-const resolveByIsbn = async isbn => {
+async function resolveByIsbn (isbn) {
   if (isbn == null) return
   // Resolve directly on the database to avoid making undersired requests to dataseed
   const edition = await getInvEntityByIsbn(isbn)
   if (edition != null) return getInvEntityCanonicalUri(edition)
 }
 
-const pickUriFromResolversResponses = ([ uriFoundByIsbn, urisFoundByExternalIds ]) => {
+function pickUriFromResolversResponses ([ uriFoundByIsbn, urisFoundByExternalIds ]) {
   // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
   if (uriFoundByIsbn) return uriFoundByIsbn
   if (urisFoundByExternalIds && urisFoundByExternalIds.length === 1) {

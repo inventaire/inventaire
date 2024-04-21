@@ -15,7 +15,7 @@ export default entity => {
   .catch(addErrorContext(entity))
 }
 
-const validate = async entity => {
+async function validate (entity) {
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
@@ -26,7 +26,7 @@ const validate = async entity => {
   return validateAndFormatClaims({ _id, type, claims })
 }
 
-const getValueType = claims => {
+function getValueType (claims) {
   const wdtP31 = claims['wdt:P31']
   if (!isNonEmptyArray(wdtP31)) {
     throw newError("wdt:P31 array can't be empty", 400, wdtP31)
@@ -34,7 +34,7 @@ const getValueType = claims => {
   return getEntityType(wdtP31)
 }
 
-const validateValueType = (type, wdtP31) => {
+function validateValueType (type, wdtP31) {
   if (type == null) {
     throw newError("wdt:P31 value isn't a known value", 400, wdtP31)
   }
@@ -44,7 +44,7 @@ const validateValueType = (type, wdtP31) => {
   }
 }
 
-const validateLabels = (labels, type) => {
+function validateLabels (labels, type) {
   if (typeWithoutLabels.has(type)) {
     if (isNonEmptyPlainObject(labels)) {
       throw newError(`${type}s can't have labels`, 400, { type, labels })

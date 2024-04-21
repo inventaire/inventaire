@@ -10,7 +10,7 @@ const sanitization = {
   message: {},
 }
 
-const controller = async ({ item, message, reqUserId }) => {
+async function controller ({ item, message, reqUserId }) {
   log([ item, message ], 'item request')
   const itemDoc = await getItemById(item)
   await verifyRightToRequest(reqUserId, itemDoc)

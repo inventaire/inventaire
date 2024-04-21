@@ -27,7 +27,7 @@ export interface ItemsSearchQuery {
   offset?: number
 }
 
-const controller = async ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) => {
+async function controller ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) {
   if (!(userId || groupId || shelfId)) {
     throw newMissingQueryError('user|group|shelf')
   }
@@ -50,7 +50,7 @@ const controller = async ({ reqUserId, userId, groupId, shelfId, search, limit, 
   }
 }
 
-const getUsersIds = async ({ userId, groupId, shelfId, reqUserId }) => {
+async function getUsersIds ({ userId, groupId, shelfId, reqUserId }) {
   if (groupId) {
     return getGroupMembersIds(groupId)
   } else if (shelfId) {
@@ -62,7 +62,7 @@ const getUsersIds = async ({ userId, groupId, shelfId, reqUserId }) => {
   }
 }
 
-const getAuthorizedShelf = async (shelfId, reqUserId) => {
+async function getAuthorizedShelf (shelfId, reqUserId) {
   const shelf = await getShelfById(shelfId)
   const res = await filterVisibleDocs([ shelf ], reqUserId)
   return res[0]

@@ -34,7 +34,7 @@ export async function parseSameasMatches ({ matches, expectedEntityType }: {
   return entryData
 }
 
-const setFoundValue = async (entryData, property, value, expectedEntityType) => {
+async function setFoundValue (entryData, property, value, expectedEntityType) {
   if (property !== 'uri') {
     entryData.claims[property] = value
     return
@@ -50,7 +50,7 @@ const setFoundValue = async (entryData, property, value, expectedEntityType) => 
   entryData.uri = uri
 }
 
-const getUrlData = async url => {
+async function getUrlData (url) {
   const { host, pathname } = new URL(url)
   let urlData
   if (wikipediaOrDbpediaHostPattern.test(host)) {
@@ -90,7 +90,7 @@ const getPropertyAndIdPerHost = {
 
 getPropertyAndIdPerHost['isni-url.oclc.nl'] = getPropertyAndIdPerHost['isni.org']
 
-const getPropertyAndIdFromWikipediaOrDbpedia = async (host, pathname) => {
+async function getPropertyAndIdFromWikipediaOrDbpedia (host, pathname) {
   const lang = host.split('.')[0]
   const title = pathname.split('/')[2]
   const id = await getEntityIdBySitelink({ site: `${lang}wiki`, title })

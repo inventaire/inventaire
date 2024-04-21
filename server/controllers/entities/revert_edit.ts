@@ -4,7 +4,7 @@ const sanitization = {
   patch: {},
 }
 
-const controller = async ({ patchId, reqUserId }) => {
+async function controller ({ patchId, reqUserId }) {
   await revertFromPatchId(patchId, reqUserId)
   return { ok: true }
 }

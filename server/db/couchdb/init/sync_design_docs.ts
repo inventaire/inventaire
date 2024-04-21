@@ -54,7 +54,7 @@ function stringifyViewFunction (view, fnName) {
   }
 }
 
-const stringifyFunction = fn => {
+function stringifyFunction (fn) {
   return fn
   .toString()
   .trim()

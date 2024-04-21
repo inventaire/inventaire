@@ -7,7 +7,7 @@ import { paginate, type PageParams } from '#lib/pagination'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import type { Item } from '#types/item'
 
-const addUsersData = async (page, reqParams) => {
+async function addUsersData (page, reqParams) {
   const { reqUserId, includeUsers } = reqParams
   if (includeUsers === false) return page
 

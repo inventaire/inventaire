@@ -34,7 +34,7 @@ export default params => {
   .catch(LogErrorAndRethrow('get serie parts err'))
 }
 
-const getWdSerieParts = async (qid, refresh, dry) => {
+async function getWdSerieParts (qid, refresh, dry) {
   const results = await runWdQuery({ query: 'serie-parts', qid, refresh, dry })
   return results.map(result => ({
     uri: prefixifyWd(result.part),
@@ -47,7 +47,7 @@ const getWdSerieParts = async (qid, refresh, dry) => {
 
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
-const getInvSerieParts = async uri => {
+async function getInvSerieParts (uri) {
   const docs = await getInvEntitiesByClaim('wdt:P179', uri, true, true)
   return docs.map(format)
 }

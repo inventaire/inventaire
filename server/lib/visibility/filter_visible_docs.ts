@@ -38,7 +38,7 @@ const belongToRequester = reqUserId => doc => {
   if (doc.creator) return doc.creator === reqUserId
 }
 
-const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
+async function getMinimalRequiredUserNetworkData (docs, reqUserId) {
   const allVisibilityKeys = uniq(map(docs, 'visibility').flat())
 
   const needToFetchFriends = allVisibilityKeys.some(keyRequiresFriendsIds)
@@ -62,7 +62,7 @@ const getMinimalRequiredUserNetworkData = async (docs, reqUserId) => {
   return Promise.all([ friendsIdsPromise, groupsPromise, coGroupsMembersIdsPromise ])
 }
 
-const getGroupsMembersIdsSets = groups => {
+function getGroupsMembersIdsSets (groups) {
   const groupsMembersIdsSets = {}
   for (const group of groups) {
     groupsMembersIdsSets[group._id] = new Set(getAllGroupMembersIds(group))

@@ -23,7 +23,7 @@ export function memoize <T> (fn) {
   }
 }
 
-const addUndefinedArguments = (args, fnLength) => {
+function addUndefinedArguments (args, fnLength) {
   const missingArgs = fnLength - args.length
   // Due Function.length counting arguments before the first argument
   // with a defautl value, functions with default values called with those default

@@ -10,7 +10,7 @@ const sanitization = {
   value: { type: 'string' },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   let { uri, id, value, lang } = params
 
   const prefix = getPrefix(uri, id)
@@ -28,7 +28,7 @@ const controller = async (params, req) => {
   return { ok: true }
 }
 
-const getPrefix = (uri, id) => {
+function getPrefix (uri, id) {
   if (uri) return uri.split(':')[0]
   if (id) return 'inv'
 }

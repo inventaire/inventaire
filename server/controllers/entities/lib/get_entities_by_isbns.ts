@@ -55,7 +55,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
 
 const getIsbn13h = entity => entity.claims['wdt:P212'][0]
 
-const getRedirections = isbns => {
+function getRedirections (isbns) {
   // isbns list, redirections object
   const accumulator = [ [], {} ]
   return isbns.reduce(aggregateIsbnRedirections, accumulator)
@@ -63,7 +63,7 @@ const getRedirections = isbns => {
 
 // Redirection mechanism is coupled with the way
 // ./get_entities_by_uris 'mergeResponses' parses redirections
-const aggregateIsbnRedirections = (accumulator, rawIsbn) => {
+function aggregateIsbnRedirections (accumulator, rawIsbn) {
   const { isbn13: uriIsbn, isbn13h: claimIsbn } = parseIsbn(rawIsbn)
   const rawUri = `isbn:${rawIsbn}`
   const uri = `isbn:${uriIsbn}`
@@ -72,7 +72,7 @@ const aggregateIsbnRedirections = (accumulator, rawIsbn) => {
   return accumulator
 }
 
-const addRedirections = (results, redirections) => {
+function addRedirections (results, redirections) {
   results.entities = results.entities.map(entity => {
     const { uri } = entity
     const redirects = redirections[uri]

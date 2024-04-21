@@ -7,7 +7,7 @@ const sanitization = {
   ids: {},
 }
 
-const controller = async ({ ids, reqUserId }) => {
+async function controller ({ ids, reqUserId }) {
   await getItemsByIds(ids)
   .then(compact)
   .then(verifyOwnership(reqUserId))

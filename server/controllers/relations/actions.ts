@@ -19,7 +19,7 @@ export default action => ({
   track: [ 'relation', action ],
 })
 
-const solveNewRelation = async (action, othersId, reqUserId) => {
+async function solveNewRelation (action, othersId, reqUserId) {
   if (reqUserId === othersId) {
     throw newError('cant create relation between identical ids', 400, { action, othersId, reqUserId })
   }

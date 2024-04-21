@@ -21,7 +21,7 @@ const resolverParams = {
   reqUserId: seedUserId,
 }
 
-const _enrichAndGetEditionEntityFromIsbn = async isbn => {
+async function _enrichAndGetEditionEntityFromIsbn (isbn) {
   try {
     const entry = await getAuthoritiesAggregatedEntry(isbn)
     if (entry) {
@@ -48,7 +48,7 @@ export const enrichAndGetEditionEntityFromIsbn = temporarilyMemoize({
   ttlAfterFunctionCallReturned: 2000,
 })
 
-const enrichAndGetEditionEntityFromEntry = async entry => {
+async function enrichAndGetEditionEntityFromEntry (entry) {
   const { resolvedEntries } = await resolveUpdateAndCreate({ entries: [ entry ], ...resolverParams })
   const [ resolvedEntry ] = resolvedEntries
   if (resolvedEntry) {
@@ -57,7 +57,7 @@ const enrichAndGetEditionEntityFromEntry = async entry => {
   }
 }
 
-const buildEntry = async seed => {
+async function buildEntry (seed) {
   const { title, authors, image, publisher, publicationDate, isbn } = seed
   const isbnData = parseIsbn(isbn)
   const lang = isbnData.groupLang || 'en'

@@ -15,7 +15,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ limit, offset, assertImage, reqUserId }) => {
+async function controller ({ limit, offset, assertImage, reqUserId }) {
   const items = await getPublicItemsByDate(limit, offset, assertImage, reqUserId)
   return bundleOwnersToItems(items, reqUserId)
 }

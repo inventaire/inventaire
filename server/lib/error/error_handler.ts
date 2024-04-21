@@ -63,7 +63,7 @@ export function errorHandler (req: Req, res: Res, err: ErrorResponse) {
   })
 }
 
-const emptyContext = context => {
+function emptyContext (context) {
   if (context == null) return true
   const type = typeOf(context)
   if (type === 'array' || type === 'string') return context.length === 0

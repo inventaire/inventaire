@@ -8,7 +8,7 @@ import parseRelations from './parse_relations.js'
 
 const db = await dbFactory('users', 'relations')
 
-const getAllUserRelations = (userId, includeDocs = false) => {
+function getAllUserRelations (userId, includeDocs = false) {
   return db.view<UserId, Relation>('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],

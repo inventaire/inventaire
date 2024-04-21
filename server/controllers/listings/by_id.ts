@@ -10,7 +10,7 @@ const sanitization = {
 }
 
 // TODO: actually implement pagination
-const controller = async ({ id, reqUserId }, req) => {
+async function controller ({ id, reqUserId }, req) {
   const [ listing ] = await getListingsByIdsWithElements(id)
   if (!listing) throw notFoundError({ id })
 

@@ -44,7 +44,7 @@ export function initJobQueue (jobName, worker, maxConcurrency) {
   }
 }
 
-const promisifyApi = queue => {
+function promisifyApi (queue) {
   // Binding context, see https://nodejs.org/api/util.html#util_util_promisify_original
   queue.push = promisify(queue.push).bind(queue)
   queue.pushBatch = promisify(queue.pushBatch).bind(queue)

@@ -10,7 +10,7 @@ import type { Url } from '#types/common'
 
 const { getEntities } = wdk
 
-const requester = async ids => {
+async function requester (ids) {
   ids = uniq(ids)
   const idsBatches = chunk(ids, 50)
   const entitiesBatches = {}

@@ -12,7 +12,7 @@ const sanitization = {
   },
 }
 
-const controller = async ({ ids, withElements, reqUserId }, req, res) => {
+async function controller ({ ids, withElements, reqUserId }, req, res) {
   const getListings = withElements ? getListingsByIdsWithElements : getListingsByIds
   const foundListings = await getListings(ids)
   const foundListingsIds = map(foundListings, '_id')
@@ -23,7 +23,7 @@ const controller = async ({ ids, withElements, reqUserId }, req, res) => {
   return { lists: listings }
 }
 
-const checkNotFoundListing = (ids, foundListings, foundListingsIds, res) => {
+function checkNotFoundListing (ids, foundListings, foundListingsIds, res) {
   if (foundListings.length === 0) throw notFoundError({ ids })
   if (foundListings.length !== ids.length) {
     const notFoundListingsIds = difference(ids, foundListingsIds)
@@ -31,7 +31,7 @@ const checkNotFoundListing = (ids, foundListings, foundListingsIds, res) => {
   }
 }
 
-const checkUnauthorizedListings = (ids, authorizedListings, foundListingsIds, req, res) => {
+function checkUnauthorizedListings (ids, authorizedListings, foundListingsIds, req, res) {
   if (authorizedListings.length === 0) {
     throw unauthorizedError(req, 'unauthorized listings access', { ids: foundListingsIds })
   }

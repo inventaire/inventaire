@@ -4,7 +4,7 @@ import type { RelativeUrl, AbsoluteUrl } from '#types/common'
 import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
 import { makeUrl } from './helpers.js'
 
-export default async (activitiesDocs, shelfId, name) => {
+export default async function (activitiesDocs, shelfId, name) {
   if (activitiesDocs.length === 0) return
   const actor: AbsoluteUrl = makeUrl({ params: { action: 'actor', name } })
   const parentLink: RelativeUrl = `/shelves/${shelfId}`

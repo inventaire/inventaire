@@ -5,7 +5,7 @@ export function createTransactionComment (userId, message, transactionId) {
   return createComment(userId, message, 'transaction', transactionId)
 }
 
-const createComment = (userId, message, key, value) => {
+function createComment (userId, message, key, value) {
   commenntValidations.pass('userId', userId)
   commenntValidations.pass('message', message)
 

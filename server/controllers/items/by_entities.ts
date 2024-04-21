@@ -9,7 +9,7 @@ const sanitization = {
   offset: { optional: true },
 }
 
-const controller = async params => {
+async function controller (params) {
   const { uris, reqUserId } = params
   const foundItems = await getItemsByEntities(uris)
   const authorizedItems = await filterVisibleDocs(foundItems, reqUserId)

@@ -3,7 +3,7 @@ import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
 import type { Group } from '#types/group'
 import type { UserId } from '#types/user'
 
-export default async (group: Group, reqUserId: UserId) => {
+export default async function (group: Group, reqUserId: UserId) {
   const usersIds = getAllGroupMembersIds(group)
   const users = await getUsersAuthorizedDataByIds(usersIds, reqUserId)
   return { group, users }

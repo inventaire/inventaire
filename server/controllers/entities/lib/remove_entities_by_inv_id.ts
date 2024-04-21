@@ -11,7 +11,7 @@ export default (user, uris) => {
   // Removing sequentially to avoid edit conflicts if entities or items
   // are concerned by several of the deleted entities.
   // This makes it a potentially slow operation, which is OK, as it's an admin task
-  const removeNext = async () => {
+  async function removeNext () {
     const uri = uris.pop()
     if (uri == null) return
 
@@ -28,13 +28,13 @@ export default (user, uris) => {
   return removeNext()
 }
 
-const deleteUriValueClaims = async (user, uri) => {
+async function deleteUriValueClaims (user, uri) {
   const claimsData = await getInvClaimsByClaimValue(uri)
   return removeClaimsSequentially(user, uri, claimsData)
 }
 
-const removeClaimsSequentially = (user, uri, claimsData) => {
-  const removeNextClaim = async () => {
+function removeClaimsSequentially (user, uri, claimsData) {
+  async function removeNextClaim () {
     const claimData = claimsData.pop()
     if (claimData == null) return
     warn(claimData, `removing claims with value: ${uri}`)
@@ -46,7 +46,7 @@ const removeClaimsSequentially = (user, uri, claimsData) => {
   return removeNextClaim()
 }
 
-const removeClaim = (user, uri, claimData) => {
+function removeClaim (user, uri, claimData) {
   const { entity: id, property } = claimData
   return updateInvClaim(user, id, property, uri, null)
 }

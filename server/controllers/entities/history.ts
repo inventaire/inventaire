@@ -7,7 +7,7 @@ const sanitization = {
   id: {},
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { id, reqUserId } = params
   const patches = await getPatchesWithSnapshots(id)
   if (!hasAdminAccess(req.user)) await anonymizePatches({ patches, reqUserId })

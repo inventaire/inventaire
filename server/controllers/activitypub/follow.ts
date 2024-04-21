@@ -56,7 +56,7 @@ export async function follow (params: FollowArgs) {
   return { ok: true }
 }
 
-const sendAcceptActivity = async (followActivity, actor, object) => {
+async function sendAcceptActivity (followActivity, actor, object) {
   const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
   const activity = {
     '@context': context,
@@ -74,7 +74,7 @@ const sendAcceptActivity = async (followActivity, actor, object) => {
   })
 }
 
-const getExistingFollowActivity = async (actor, name) => {
+async function getExistingFollowActivity (actor, name) {
   const followActivities = await getFollowActivitiesByObject(name)
   return followActivities.find(activity => activity.actor.uri === actor.uri)
 }

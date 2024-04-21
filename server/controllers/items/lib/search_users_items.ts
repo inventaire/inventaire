@@ -53,7 +53,7 @@ export const searchUsersItems = buildSearcher({
   },
 })
 
-const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
+function buildOwnerAndVisibilityKeysClauses (ownersIdsAndVisibilityKeys) {
   const should: QueryDslQueryContainer[] = ownersIdsAndVisibilityKeys.map(buildOwnerFilterClause)
   const bool: QueryDslBoolQuery = {
     should,
@@ -62,7 +62,7 @@ const buildOwnerAndVisibilityKeysClauses = ownersIdsAndVisibilityKeys => {
   return { bool }
 }
 
-const buildOwnerFilterClause = ([ ownerId, visibilityKeys ]) => {
+function buildOwnerFilterClause ([ ownerId, visibilityKeys ]) {
   const filter: QueryDslQueryContainer[] = [
     { term: { owner: ownerId } },
   ]

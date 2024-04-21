@@ -5,7 +5,7 @@ const sanitization = {
   uris: {},
 }
 
-const controller = async ({ uris }) => {
+async function controller ({ uris }) {
   const tasks = await Promise.all(uris.map(checkEntity))
   return { tasks: compact(tasks.flat()) }
 }

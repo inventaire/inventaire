@@ -14,7 +14,7 @@ export default (seed, type) => {
   validateImage(seed, type)
 }
 
-const validateLabels = (seed, type) => {
+function validateLabels (seed, type) {
   const { labels } = seed
   if (!isPlainObject(labels)) {
     throw newError('invalid labels', 400, { seed, type })
@@ -32,7 +32,7 @@ const validateLabels = (seed, type) => {
   }
 }
 
-const validateAndFormatClaims = (seed, type) => {
+function validateAndFormatClaims (seed, type) {
   const { claims } = seed
   if (!isPlainObject(claims)) {
     throw newError('invalid claims', 400, { seed })
@@ -51,7 +51,7 @@ const validateAndFormatPropertyClaims = (claims, type) => prop => {
     })
 }
 
-const validateImage = (seed, type) => {
+function validateImage (seed, type) {
   if (seed.image != null) {
     if (type === 'edition') {
       if (!isUrl(seed.image)) {

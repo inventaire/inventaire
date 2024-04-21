@@ -22,7 +22,7 @@ export async function getActivitiesFromPatch (patch) {
 }
 
 // Mimick server/db/couchdb/design_docs/patches.json byClaimValueAndDate
-const byClaimValueAndDate = doc => {
+function byClaimValueAndDate (doc) {
   const { _id: id, timestamp } = doc
   const rows = []
   for (const operation of doc.operations) {
@@ -47,7 +47,7 @@ const byClaimValueAndDate = doc => {
   return rows
 }
 
-const addRow = (rows, id, property, claimValue, timestamp) => {
+function addRow (rows, id, property, claimValue, timestamp) {
   if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
     rows.push({ id, key: [ claimValue, timestamp ], value: property })
   }

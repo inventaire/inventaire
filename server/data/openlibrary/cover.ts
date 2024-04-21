@@ -10,7 +10,7 @@ const keyByType = {
   edition: 'b',
 }
 
-export default async (openLibraryId, entityType) => {
+export default async function (openLibraryId, entityType) {
   if (!openLibraryId) return null
 
   const type = keyByType[entityType]
@@ -24,7 +24,7 @@ export default async (openLibraryId, entityType) => {
   else return {}
 }
 
-const checkCoverExistance = async url => {
+async function checkCoverExistance (url) {
   // The default=false flag triggers a 404 response if the cover is missing
   // instead of a 200 response with a single-pixel image
   // See https://openlibrary.org/dev/docs/api/covers

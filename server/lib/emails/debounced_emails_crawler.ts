@@ -13,13 +13,13 @@ export function initDebouncedEmailsCrawler () {
 
 // key structure: sendEmailFunctionName:id:time
 
-const crawl = () => {
+function crawl () {
   return db.createReadStream()
   .on('data', onData)
   .on('error', LogError('crawl err'))
 }
 
-const onData = data => {
+function onData (data) {
   const { key } = data
   const [ emailName, id, time ] = key.split(':')
 

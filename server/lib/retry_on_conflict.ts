@@ -6,7 +6,7 @@ export function retryOnConflict (params) {
   let { updateFn, maxAttempts } = params
   if (!maxAttempts) maxAttempts = 10
   return (...args) => {
-    const run = attemptsCount => {
+    function run (attemptsCount) {
       if (attemptsCount > maxAttempts) {
         throw newError('maximum attempt reached', 400, { updateFn, maxAttempts, args })
       }
@@ -34,7 +34,7 @@ export function retryOnConflict (params) {
   }
 }
 
-const runAfterDelay = async (run, attemptsCount) => {
+async function runAfterDelay (run, attemptsCount) {
   const delay = (attemptsCount * 100) + Math.trunc(Math.random() * 100)
   await wait(delay)
   return run(attemptsCount)

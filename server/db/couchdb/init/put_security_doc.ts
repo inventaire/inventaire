@@ -25,7 +25,7 @@ export async function putSecurityDoc (dbUrl, dbName) {
 // to 'username'
 const parseUsername = dbUrl => dbUrl.split('://')[1].split(':')[0]
 
-const securityDoc = username => {
+function securityDoc (username) {
   if (!username || username.length === 0) {
     throw new Error('could not find username from db url')
   }

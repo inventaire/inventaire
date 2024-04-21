@@ -13,7 +13,7 @@ export async function validateVisibilityKeys (visibilityKeys, ownerId) {
 
 const hasGroupKeys = visibility => visibility.some(isVisibilityGroupKey)
 
-const validateGroupKeys = (visibilityKeys, userGroupsIds) => {
+function validateGroupKeys (visibilityKeys, userGroupsIds) {
   visibilityKeys
   .filter(isVisibilityGroupKey)
   .forEach(validateGroupKey(userGroupsIds, visibilityKeys))

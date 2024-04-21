@@ -16,7 +16,7 @@ const sanitization = {
   },
 }
 
-const controller = async (params, req) => {
+async function controller (params, req) {
   const { prefix, labels, claims, reqUserId } = params
   const createFn = creators[prefix]
   params = { labels, claims }

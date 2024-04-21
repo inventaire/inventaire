@@ -3,7 +3,7 @@ import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
 import { userIsInAdmins, userIsInGroup, userIsInGroupOrRequested, userIsInRequested } from '#controllers/groups/lib/users_lists'
 import { newError } from '#lib/error/error'
 
-const validateRequestDecision = (reqUserId, groupId, requesterId) => {
+function validateRequestDecision (reqUserId, groupId, requesterId) {
   return Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInRequested(requesterId, groupId),
@@ -18,7 +18,7 @@ const validateRequestDecision = (reqUserId, groupId, requesterId) => {
   })
 }
 
-const validateInvite = (reqUserId, groupId, invitedUserId) => {
+function validateInvite (reqUserId, groupId, invitedUserId) {
   return userIsInGroup(reqUserId, groupId)
   .then(invitorInGroup => {
     if (!invitorInGroup) {
@@ -28,7 +28,7 @@ const validateInvite = (reqUserId, groupId, invitedUserId) => {
   })
 }
 
-const validateAdmin = (reqUserId, groupId) => {
+function validateAdmin (reqUserId, groupId) {
   return userIsInAdmins(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
@@ -37,7 +37,7 @@ const validateAdmin = (reqUserId, groupId) => {
   })
 }
 
-const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
+function validateAdminWithoutAdminsConflict (reqUserId, groupId, targetId) {
   return Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInAdmins(targetId, groupId),
@@ -52,7 +52,7 @@ const validateAdminWithoutAdminsConflict = (reqUserId, groupId, targetId) => {
   })
 }
 
-const validateLeaving = (reqUserId, groupId) => {
+function validateLeaving (reqUserId, groupId) {
   return Promise.all([
     userIsInGroup(reqUserId, groupId),
     userCanLeaveGroup(reqUserId, groupId),
@@ -68,7 +68,7 @@ const validateLeaving = (reqUserId, groupId) => {
   })
 }
 
-const validateRequest = (reqUserId, groupId) => {
+function validateRequest (reqUserId, groupId) {
   return userIsInGroupOrRequested(reqUserId, groupId)
   .then(bool => {
     if (bool) {
@@ -77,7 +77,7 @@ const validateRequest = (reqUserId, groupId) => {
   })
 }
 
-const validateCancelRequest = (reqUserId, groupId) => {
+function validateCancelRequest (reqUserId, groupId) {
   return userIsInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {

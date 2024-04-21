@@ -19,7 +19,7 @@ export default username => {
   }
 }
 
-const lockTemporarily = canonicalUsername => {
+function lockTemporarily (canonicalUsername) {
   lockedUsernames.add(canonicalUsername)
   setTimeout(() => lockedUsernames.delete(canonicalUsername), lockTime)
 }

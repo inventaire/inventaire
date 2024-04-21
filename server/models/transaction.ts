@@ -92,7 +92,7 @@ const snapshotData = (itemDoc, ownerDoc, requesterDoc) => ({
   requester: pick(requesterDoc, userSnapshotAttributes),
 })
 
-const getEntitySnapshotFromItemSnapshot = itemSnapshot => {
+function getEntitySnapshotFromItemSnapshot (itemSnapshot) {
   const entitySnapshot: TransactionSnapshot['entity'] = {}
   if (itemSnapshot['entity:title'] != null) { entitySnapshot.title = itemSnapshot['entity:title'] }
   if (itemSnapshot['entity:image'] != null) { entitySnapshot.image = itemSnapshot['entity:image'] }
@@ -100,7 +100,7 @@ const getEntitySnapshotFromItemSnapshot = itemSnapshot => {
   return entitySnapshot
 }
 
-const getNextActionsList = transactionName => {
+function getNextActionsList (transactionName) {
   if (transactionName === 'lending') {
     return transactionNextActionsWithReturn
   } else {
@@ -108,7 +108,7 @@ const getNextActionsList = transactionName => {
   }
 }
 
-const findNextActions = transacData => {
+function findNextActions (transacData) {
   const { name, state, mainUserIsOwner } = transacData
   const nextActions = getNextActionsList(name)
   const role = mainUserIsOwner ? 'owner' : 'requester'

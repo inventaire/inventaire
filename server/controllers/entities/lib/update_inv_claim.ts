@@ -10,7 +10,7 @@ import inferredClaimUpdates from './inferred_claim_updates.js'
 import validateAndFormatClaim from './validate_and_format_claim.js'
 import validateClaimProperty from './validate_claim_property.js'
 
-const updateInvClaim = async (user, id, property, oldVal, newVal) => {
+async function updateInvClaim (user, id, property, oldVal, newVal) {
   assert_.object(user)
   const { _id: userId, admin: userIsAdmin } = user
   let currentDoc
@@ -41,7 +41,7 @@ const updateInvClaim = async (user, id, property, oldVal, newVal) => {
   }
 }
 
-const updateClaim = async params => {
+async function updateClaim (params) {
   const { property, oldVal, userId, currentDoc } = params
   params.letEmptyValuePass = true
   const formattedNewVal = await validateAndFormatClaim(params)

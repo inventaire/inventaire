@@ -8,7 +8,7 @@ import { propertiesDisplay } from './properties_display.js'
 
 const typesWithAttachements = Object.keys(propertiesDisplay)
 
-export default async entity => {
+export default async function (entity) {
   const { claims, type } = entity
   if (!typesWithAttachements.includes(type)) return
 
@@ -33,13 +33,13 @@ const buildAttachement = (claims, attachementsList) => async prop => {
   }
 }
 
-const buildAttachementValues = async (claimValues, prop, attachementsList) => {
+async function buildAttachementValues (claimValues, prop, attachementsList) {
   const claimType = attachementsList[prop]
   const attachementValues = await Promise.all(claimValues.map(buildAttachementValue(claimType, prop)))
   return compact(attachementValues).join(', ') || null
 }
 
-const buildEntity = async ({ claimValue, claimType }) => {
+async function buildEntity ({ claimValue, claimType }) {
   let attachementValue
   const isWdUri = claimValue && claimValue.startsWith('wd:')
   if (isWdUri) {
@@ -51,14 +51,14 @@ const buildEntity = async ({ claimValue, claimType }) => {
   if (attachementValue) return attachementValue
 }
 
-const buildLinkWrapper = args => {
+function buildLinkWrapper (args) {
   const { claimValue, text } = args
   return buildLink(claimValue, text)
 }
 // only year for now
 const buildTime = ({ claimValue }) => parseInt(claimValue.split('-')[0])
 
-const buildPlatform = ({ claimValue, prop }) => {
+function buildPlatform ({ claimValue, prop }) {
   const plateformProp = platforms[prop]
   if (!plateformProp) return
   const { url, text } = plateformProp

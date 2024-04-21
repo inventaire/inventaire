@@ -14,7 +14,7 @@ export default userId => {
   .catch(LogError('user updateSnapshotItemsCounts err'))
 }
 
-const getItemsCounts = items => {
+function getItemsCounts (items) {
   const counts = {
     private: { 'items:count': 0 },
     network: { 'items:count': 0 },

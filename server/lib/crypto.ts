@@ -46,7 +46,7 @@ export function getSha256Base64Digest (input) {
 
 export const getRandomBytes = (length, encoding) => crypto.randomBytes(length).toString(encoding)
 
-export const generateRsaKeyPair = async () => {
+export async function generateRsaKeyPair () {
   // from https://github.com/dariusk/express-activitypub/blob/master/routes/admin.js#L50
   return generateKeyPair('rsa', {
     modulusLength: 4096,

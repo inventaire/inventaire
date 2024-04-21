@@ -42,14 +42,14 @@ export async function getAuthorizedItemsByShelves (shelves, reqUserId) {
   return getItemsFromViewAndAllowedVisibilityKeys('byShelfAndVisibilityKey', keys)
 }
 
-const getUsersAllowedVisibilityKeys = async (usersIds, reqUserId) => {
+async function getUsersAllowedVisibilityKeys (usersIds, reqUserId) {
   const ownersIdsAndVisibilityKeys = await Promise.all(usersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
   return ownersIdsAndVisibilityKeys.flatMap(([ ownerId, allowedVisibilityKeys ]) => {
     return combinations([ ownerId ], allowedVisibilityKeys)
   })
 }
 
-const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
+async function getShelvesAllowedVisibilityKeys (shelves, reqUserId) {
   const ownersIds = uniq(map(shelves, 'owner'))
   const ownersIdsAndVisibilityKeys = await Promise.all(ownersIds.map(getOwnerIdAndVisibilityKeys(reqUserId)))
   const allowedVisibilityKeysByOwner = Object.fromEntries(ownersIdsAndVisibilityKeys)
@@ -59,7 +59,7 @@ const getShelvesAllowedVisibilityKeys = async (shelves, reqUserId) => {
   })
 }
 
-const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) => {
+async function getUsersItems ({ usersIds, allowedVisibilityKeys, withoutShelf = false }) {
   const view = withoutShelf ? 'byOwnerAndVisibilityKeyWithoutShelf' : 'byOwnerAndVisibilityKey'
   const keys = combinations(usersIds, allowedVisibilityKeys)
   return getItemsFromViewAndAllowedVisibilityKeys(view, keys)
@@ -69,7 +69,7 @@ const getUsersItems = async ({ usersIds, allowedVisibilityKeys, withoutShelf = f
 // - do not include_docs in the first request
 // - deduplicate ids
 // - fetch deduplicate docs by ids
-const getItemsFromViewAndAllowedVisibilityKeys = async (view, keys) => {
+async function getItemsFromViewAndAllowedVisibilityKeys (view, keys) {
   const items = await db.getDocsByViewKeys<Item>(view, keys)
   // Items with several visibility keys might be returned several times,
   // thus the need to deduplicate items

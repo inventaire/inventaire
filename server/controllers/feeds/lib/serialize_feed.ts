@@ -88,7 +88,7 @@ const serializeItem = (usersIndex, lang) => item => {
   return data
 }
 
-const getItemTitle = (item, user, lang) => {
+function getItemTitle (item, user, lang) {
   const { transaction, snapshot } = item
   let title = snapshot['entity:title']
   const authors = snapshot['entity:authors']

@@ -3,7 +3,7 @@ import { getNetworkIds } from '#controllers/user/lib/relations_status'
 
 const sanitization = {}
 
-const controller = async ({ reqUserId }) => {
+async function controller ({ reqUserId }) {
   const [ relations, networkIds ] = await Promise.all([
     getUserRelations(reqUserId),
     getNetworkIds(reqUserId),

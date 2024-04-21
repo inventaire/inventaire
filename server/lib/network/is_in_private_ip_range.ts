@@ -10,7 +10,7 @@ export default resolvedIp => {
   })
 }
 
-const binaryPrefix = range => {
+function binaryPrefix (range) {
   const [ ip, mask ] = range.split('/')
   const binary = getIpBinaryRepresentation(ip)
   return binary.slice(0, parseInt(mask))

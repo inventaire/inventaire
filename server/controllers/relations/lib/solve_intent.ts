@@ -38,7 +38,7 @@ export default actions => {
   }
 }
 
-const doNothing = (status, method, userId, otherId) => {
+function doNothing (status, method, userId, otherId) {
   warn(`Status mismatch: got status '${status}' \
   at ${method} for relation ${userId}, ${otherId}. \
   (it happens but it shouldn't be to often). \

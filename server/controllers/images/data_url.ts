@@ -14,7 +14,7 @@ const sanitization = {
 }
 
 // Get an image data-url from a URL
-const controller = async ({ url }) => {
+async function controller ({ url }) {
   try {
     const dataUrl = await getImageDataUrl(url)
     return { 'data-url': dataUrl }
@@ -30,7 +30,7 @@ const headers = {
   accept: 'image/*',
 }
 
-const getImageDataUrl = async url => {
+async function getImageDataUrl (url) {
   if (await isPrivateUrl(url)) {
     throw newInvalidError('url', url)
   }

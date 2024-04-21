@@ -13,7 +13,7 @@ const baseDoc = email => ({
   inviters: {},
 })
 
-const addInviter = (inviterId, groupId, doc) => {
+function addInviter (inviterId, groupId, doc) {
   // The doc shouldn't be updated if the inviter already did invited
   // but in the undesired case it happens, keep the first timestamp
   if (!doc.inviters[inviterId]) doc.inviters[inviterId] = Date.now()

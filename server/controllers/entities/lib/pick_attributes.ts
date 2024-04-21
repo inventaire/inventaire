@@ -39,7 +39,7 @@ export function pickLanguages (entities, lang) {
   return formattedEntities
 }
 
-const pickAttributesLanguages = (lang, originalLang, formattedEntity) => {
+function pickAttributesLanguages (lang, originalLang, formattedEntity) {
   if (formattedEntity.labels) {
     formattedEntity.labels = pickLanguage(lang, originalLang, formattedEntity.labels)
   }
@@ -51,7 +51,7 @@ const pickAttributesLanguages = (lang, originalLang, formattedEntity) => {
   }
 }
 
-const pickLanguage = (lang, originalLang, data) => {
+function pickLanguage (lang, originalLang, data) {
   const { lang: pickedLang, value } = getBestLangValue(lang, originalLang, data)
   return {
     [pickedLang]: value,
