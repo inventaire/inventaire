@@ -1,6 +1,6 @@
 import { createEdition, createWork, createAuthor } from './create_entity_from_seed.js'
 
-export default ({ reqUserId, batchId, enrich }) => async entry => {
+export async function createUnresolvedEntry (entry, { reqUserId, batchId, enrich }) {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works

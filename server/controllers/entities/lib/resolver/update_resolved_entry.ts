@@ -3,7 +3,7 @@ import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
 
-export default ({ reqUserId, batchId }) => async entry => {
+export async function updateResolvedEntry (entry, { reqUserId, batchId }) {
   const { edition, works, authors } = entry
 
   const allResolvedSeeds = [ edition ].concat(works, authors).filter(hasUri)

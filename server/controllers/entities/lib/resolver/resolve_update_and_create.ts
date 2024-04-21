@@ -1,13 +1,12 @@
-import { identity } from 'lodash-es'
+import { createUnresolvedEntry } from '#controllers/entities/lib/resolver/create_unresolved_entry'
+import { updateResolvedEntry } from '#controllers/entities/lib/resolver/update_resolved_entry'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ResolverEntry } from '#types/resolver'
-import CreateUnresolvedEntry from './create_unresolved_entry.js'
 import { resolveEntry } from './resolve.js'
 import sanitizeEntry from './sanitize_entry.js'
-import UpdateResolvedEntry from './update_resolved_entry.js'
 
 const { nice } = config
 
@@ -19,31 +18,24 @@ export async function resolveUpdateAndCreate (params) {
   const resolvedEntries = []
   if (entries.length === 0) return { resolvedEntries, errors }
 
-  const updateResolvedEntry = buildActionFn(update, UpdateResolvedEntry, params)
-  const createUnresolvedEntry = buildActionFn(create, CreateUnresolvedEntry, params)
-  const addResolvedEntry = entry => resolvedEntries.push(entry)
-
   async function resolveNext () {
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 1 })
     const nextEntry = entries.shift()
     if (nextEntry == null) return { resolvedEntries, errors }
 
     log(nextEntry, 'next entry')
-
-    return resolveEntry(nextEntry)
-    .then(updateResolvedEntry)
-    .then(createUnresolvedEntry)
-    .then(addResolvedEntry)
-    .catch(err => handleError(strict, errors, err, nextEntry))
-    .then(resolveNext)
+    try {
+      await resolveEntry(nextEntry)
+      if (update) await updateResolvedEntry(nextEntry, params)
+      if (create) await createUnresolvedEntry(nextEntry, params)
+      resolvedEntries.push(nextEntry)
+    } catch (err) {
+      handleError(strict, errors, err, nextEntry)
+    }
+    return resolveNext()
   }
 
   return resolveNext()
-}
-
-function buildActionFn (flag, ActionFn, params) {
-  if (flag) return ActionFn(params)
-  else return identity
 }
 
 type EntryError = ContextualizedError & { entry: ResolverEntry }
