@@ -1,5 +1,5 @@
-import inv from './lib/create_inv_entity.js'
-import wd from './lib/create_wd_entity.js'
+import { createInvEntity } from './lib/create_inv_entity.js'
+import { createWdEntity } from './lib/create_wd_entity.js'
 import { getEntityByUri } from './lib/get_entity_by_uri.js'
 
 const sanitization = {
@@ -31,8 +31,8 @@ async function controller (params, req) {
 }
 
 const creators = {
-  inv,
-  wd,
+  inv: createInvEntity,
+  wd: createWdEntity,
 }
 
 export default {

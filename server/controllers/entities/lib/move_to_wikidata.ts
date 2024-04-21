@@ -1,6 +1,6 @@
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
-import createWdEntity from './create_wd_entity.js'
+import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
 import { unprefixify } from './prefix.js'
 import { cacheEntityRelations } from './temporarily_cache_relations.js'

@@ -4,7 +4,7 @@ import { createBlankEntityDoc } from '#models/entity'
 import { prefixifyInv } from './prefix.js'
 import validateEntity from './validate_entity.js'
 
-export default async function (params) {
+export async function createInvEntity (params) {
   const { labels, claims, userId, batchId } = params
   log(params, 'inv entity creation')
 

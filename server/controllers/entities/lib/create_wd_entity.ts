@@ -10,7 +10,7 @@ import validateEntity from './validate_entity.js'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
 
-export default async function (params) {
+export async function createWdEntity (params) {
   const { labels, claims, user, isAlreadyValidated } = params
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)

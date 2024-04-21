@@ -8,7 +8,7 @@ import type { Claims, EntityType, InvPropertyClaims, PropertyUri } from '#types/
 import type { BatchId } from '#types/patch'
 import type { EditionSeed, EntitySeed } from '#types/resolver'
 import type { UserId } from '#types/user'
-import createInvEntity from '../create_inv_entity.js'
+import { createInvEntity } from '../create_inv_entity.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 
 export const createAuthor = (userId: UserId, batchId: BatchId) => (author: EntitySeed) => {
