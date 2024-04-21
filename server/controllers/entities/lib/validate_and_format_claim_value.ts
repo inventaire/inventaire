@@ -38,10 +38,17 @@ export default async function (params: Params) {
 
   const { concurrency, entityValueTypes } = prop
 
-  await Promise.all([
-    verifyClaimConcurrency(concurrency, property, formattedValue, _id),
-    entityValueTypes != null ? verifyClaimEntityType(entityValueTypes, formattedValue as EntityUri) : null,
-  ])
+  try {
+    await Promise.all([
+      verifyClaimConcurrency(concurrency, property, formattedValue, _id),
+      entityValueTypes != null ? verifyClaimEntityType(entityValueTypes, formattedValue as EntityUri) : null,
+    ])
+  } catch (err) {
+    const invalidClaimValueError = newError('invalid claim value', 400, { property, value: newVal })
+    err.name = 'InvalidClaimValueError'
+    invalidClaimValueError.cause = err
+    throw invalidClaimValueError
+  }
 
   return formattedValue
 }
@@ -69,7 +76,7 @@ const isntCurrentlyValidatedEntity = _id => row => row.id !== _id
 
 // For claims that have an entity URI as value
 // check that the target entity is of the expected type
-async function verifyClaimEntityType (entityValueTypes?: EntityType[], value?: EntityUri) {
+async function verifyClaimEntityType (entityValueTypes: EntityType[], value: EntityUri) {
   const entity = await getEntityByUri({ uri: value })
   if (!entity) {
     throw newError('entity not found', 400, { value })
