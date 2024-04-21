@@ -1,4 +1,3 @@
-
 import 'should'
 import solveIntentFactory from '#controllers/relations/lib/solve_intent'
 import { makeSpy } from '#tests/unit/utils'

@@ -1,4 +1,3 @@
-
 import 'should'
 import { memoize } from '#lib/utils/memoize'
 

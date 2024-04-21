@@ -1,4 +1,3 @@
-
 import 'should'
 import slugify from '#controllers/groups/lib/slugify'
 

@@ -1,4 +1,3 @@
-
 import should from 'should'
 import { newError } from '#lib/error/error'
 

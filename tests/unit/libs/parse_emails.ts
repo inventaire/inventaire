@@ -1,4 +1,3 @@
-
 import 'should'
 import parseEmails from '#controllers/invitations/lib/parse_emails'
 

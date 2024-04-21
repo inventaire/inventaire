@@ -1,4 +1,3 @@
-
 import 'should'
 import getNextSlugCandidate from '#controllers/groups/lib/get_next_slug_candidate'
 

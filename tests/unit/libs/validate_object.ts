@@ -1,4 +1,3 @@
-
 import 'should'
 import validateObject from '#lib/validate_object'
 
