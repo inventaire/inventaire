@@ -1,6 +1,7 @@
 import { chain, compact, map } from 'lodash-es'
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getImageByIsbn } from '#data/dataseed/dataseed'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
 import type { Claims, EntityType, InvPropertyClaims, PropertyUri } from '#types/entity'
@@ -9,23 +10,19 @@ import type { EditionSeed, EntitySeed } from '#types/resolver'
 import type { UserId } from '#types/user'
 import createInvEntity from '../create_inv_entity.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
-import type { Entries } from 'type-fest'
 
 export const createAuthor = (userId: UserId, batchId: BatchId) => (author: EntitySeed) => {
   if (author.uri != null) return author
-  const claims = {}
-
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q5' ], 'human')
-  return createEntityFromSeed({ type: 'human', seed: author, claims, userId, batchId })
+  addClaimIfValid(author.claims, 'wdt:P31', [ 'wd:Q5' ], 'human')
+  return createEntityFromSeed({ seed: author, userId, batchId })
 }
 
 export const createWork = (userId: UserId, batchId: BatchId, authors: EntitySeed[]) => (work: EntitySeed) => {
   if (work.uri != null) return work
   const authorsUris = compact(map(authors, 'uri'))
-  const claims = {}
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q47461344' ], 'work')
-  addClaimIfValid(claims, 'wdt:P50', authorsUris)
-  return createEntityFromSeed({ type: 'work', seed: work, claims, userId, batchId })
+  addClaimIfValid(work.claims, 'wdt:P31', [ 'wd:Q47461344' ], 'work')
+  addClaimIfValid(work.claims, 'wdt:P50', authorsUris)
+  return createEntityFromSeed({ seed: work, userId, batchId })
 }
 
 export async function createEdition (edition: EditionSeed, works: EntitySeed[], userId: UserId, batchId: BatchId, enrich?: boolean) {
@@ -34,20 +31,21 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
   const { isbn } = edition
   let { image: imageUrl } = edition
   const worksUris = compact(map(works, 'uri'))
-  const claims = {}
 
-  addClaimIfValid(claims, 'wdt:P31', [ 'wd:Q3331189' ], 'edition')
-  addClaimIfValid(claims, 'wdt:P629', worksUris)
+  addClaimIfValid(edition.claims, 'wdt:P31', [ 'wd:Q3331189' ], 'edition')
+  addClaimIfValid(edition.claims, 'wdt:P629', worksUris)
 
   if (isbn != null) {
     const hyphenatedIsbn = toIsbn13h(isbn)
-    addClaimIfValid(claims, 'wdt:P212', [ hyphenatedIsbn ])
+    addClaimIfValid(edition.claims, 'wdt:P212', [ hyphenatedIsbn ])
   }
 
   const titleClaims = edition.claims['wdt:P1476']
   if (titleClaims == null || titleClaims.length !== 1) {
     const title = buildBestEditionTitle(edition, works)
-    edition.claims['wdt:P1476'] = [ title ]
+    if (isNonEmptyString(title)) {
+      edition.claims['wdt:P1476'] = [ title ]
+    }
   }
   if (edition.claims['wdt:P1476']?.[0] && !edition.claims['wdt:P1680']) {
     extractSubtitleFromTitle(edition.claims)
@@ -69,10 +67,10 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
 
   if (imageUrl) {
     const { hash: imageHash } = await convertAndCleanupImageUrl({ url: imageUrl, container: 'entities' })
-    if (imageHash) claims['invp:P2'] = [ imageHash ]
+    if (imageHash) edition.claims['invp:P2'] = [ imageHash ]
   }
 
-  return createEntityFromSeed({ type: 'edition', seed: edition, claims, userId, batchId })
+  return createEntityFromSeed({ seed: edition, userId, batchId })
 }
 
 // An entity type is required only for properties with validation functions requiring a type
@@ -86,10 +84,10 @@ function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvProp
   }
 }
 
-async function createEntityFromSeed ({ type, seed, claims, userId, batchId }: { type: EntityType, seed: EntitySeed, claims: Claims, userId: UserId, batchId: BatchId }) {
+async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySeed, userId: UserId, batchId: BatchId }) {
   const entity = await createInvEntity({
     labels: seed.labels,
-    claims: addSeedClaims(claims, seed.claims, type),
+    claims: seed.claims,
     userId,
     batchId,
   })
@@ -100,13 +98,6 @@ async function createEntityFromSeed ({ type, seed, claims, userId, batchId }: { 
   // would be overriden by the created timestamp
   seed.labels = entity.labels
   seed.claims = entity.claims
-}
-
-function addSeedClaims (claims: Claims, seedClaims: Claims, type: EntityType) {
-  for (const [ property, values ] of (Object.entries(seedClaims) as Entries<Claims>)) {
-    addClaimIfValid(claims, property, values, type)
-  }
-  return claims
 }
 
 function buildBestEditionTitle (edition, works) {
