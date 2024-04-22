@@ -38,9 +38,18 @@ export type PositiveIntegerValue = number
 export type PositiveIntegerStringValue = `${number}`
 export type ImageValue = ImageHash
 
-export type InvClaimValue = EntityValue | StringValue | ExternalIdValue | UrlValue | DateValue | PositiveIntegerValue | PositiveIntegerStringValue | ImageValue
+export type InvSnakValue = EntityValue | StringValue | ExternalIdValue | UrlValue | DateValue | PositiveIntegerValue | PositiveIntegerStringValue | ImageValue
+export type InvClaimValue = InvSnakValue
 
-export type InvPropertyClaims = InvClaimValue[]
+export type Reference = Record<PropertyUri, InvSnakValue[]>
+
+export interface InvClaim {
+  value: InvClaimValue
+  references?: Reference[]
+}
+
+export type InvSimplePropertyClaims = InvClaimValue[]
+export type InvPropertyClaims = (InvClaim | InvClaimValue)[]
 
 export type LocalPropertyUri = typeof localPropertiesUris[number]
 

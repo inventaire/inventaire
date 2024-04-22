@@ -5,13 +5,17 @@ import { formatAuthorName } from '#data/commons/format_author_name'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { parseSameasMatches } from '#data/lib/external_ids'
 import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
+import { isNonEmptyString } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
 import { requests_ } from '#lib/requests'
+import { forceArray, simpleDay } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
+import { objectKeys } from '#lib/utils/types'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import type { Url } from '#types/common'
-import type { ExternalDatabaseEntryRow } from '#types/resolver'
+import type { InvClaimValue, Reference } from '#server/types/entity'
+import type { AbsoluteUrl, Url } from '#types/common'
+import type { EntityLooseSeed, ExternalDatabaseEntryRow, ResolverEntry } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -20,10 +24,10 @@ const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_6
 const timeout = 10000
 
 const headers = { accept: '*/*' }
-const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
+const base: AbsoluteUrl = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
-export default async function (isbn) {
-  const url = base + getQuery(isbn) as Url
+export default async function (isbn: string) {
+  const url: AbsoluteUrl = `${base}${getQuery(isbn)}`
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results
@@ -33,6 +37,7 @@ export default async function (isbn) {
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
   await setEditionPublisherClaim(entry)
   await addImage(entry)
+  addClaimReference(entry)
   return entry
 }
 
@@ -215,4 +220,31 @@ export function cleanupBnfTitle (title) {
   // '"some title"' => 'some title'
   .replace(/^"([^"]+)"$/, '$1')
   .trim()
+}
+
+function addClaimReference (entry: ResolverEntry) {
+  if (!entry) return
+  addReferenceToSeedClaims(entry.edition)
+  entry.works.forEach(work => addReferenceToSeedClaims(work))
+  entry.authors.forEach(author => addReferenceToSeedClaims(author))
+}
+
+function addReferenceToSeedClaims (seed: EntityLooseSeed) {
+  if (!seed.claims) return
+  const { claims } = seed
+  const bnfId = claims['wdt:P268']
+  if (!isNonEmptyString(bnfId)) return
+  const referenceUrl = `https://catalogue.bnf.fr/ark:/12148/cb${bnfId}`
+  const reference: Reference = {
+    'wdt:P854': [ referenceUrl ],
+    'wdt:P813': [ simpleDay() ],
+  }
+  for (const property of objectKeys(claims)) {
+    claims[property] = forceArray(claims[property]).map((claim: InvClaimValue) => {
+      return {
+        value: claim,
+        references: [ reference ],
+      }
+    })
+  }
 }
