@@ -4,7 +4,7 @@ import { info } from '#lib/utils/logs'
 import config from '#server/config'
 import { middlewareErrorHandler } from '#server/middlewares/middleware_error_handler'
 import { routes } from './controllers/routes.js'
-import middlewares from './middlewares/middlewares.js'
+import { middlewares } from './middlewares/middlewares.js'
 
 const { port, hostname, name, publicProtocol } = config
 
@@ -13,7 +13,8 @@ export function initExpress () {
 
   for (const middleware of middlewares) {
     if (isArray(middleware)) {
-      app.use(...middleware)
+      const [ path, middlewareFn ] = middleware
+      app.use(path, middlewareFn)
     } else {
       app.use(middleware)
     }
