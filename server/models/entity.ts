@@ -94,7 +94,7 @@ export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
 
   for (const [ property, array ] of Object.entries(claims) as Entries<typeof claims>) {
     for (const value of array) {
-      doc = createBlankEntityDocClaim(doc, property, value)
+      doc = createEntityDocClaim(doc, property, value)
     }
   }
 
@@ -103,7 +103,7 @@ export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
   return doc
 }
 
-export function createBlankEntityDocClaim (doc: InvEntity, property: PropertyUri, value: InvClaimValue) {
+export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, value: InvClaimValue) {
   preventRedirectionEdit(doc)
   return updateEntityDocClaim(doc, property, null, value)
 }

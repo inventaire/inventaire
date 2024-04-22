@@ -1,6 +1,6 @@
 import should from 'should'
 import { superTrim } from '#lib/utils/base'
-import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createBlankEntityDocClaim, updateEntityDocClaim } from '#models/entity'
+import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
 import type { EntityRedirection, InvEntity } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils'
@@ -51,32 +51,32 @@ describe('entity model', () => {
 
   describe('create claim', () => {
     it('should add a claim value', () => {
-      const doc = createBlankEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
+      const doc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
       doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
     })
 
     it('should return a doc with the new value for an existing property', () => {
       const entityDoc = workDoc()
       const lengthBefore = entityDoc.claims['wdt:P50'].length
-      const updatedDoc = createBlankEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q42')
+      const updatedDoc = createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q42')
       updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
-      const updatedDoc2 = createBlankEntityDocClaim(entityDoc, 'wdt:P135', 'wd:Q53121')
+      const updatedDoc2 = createEntityDocClaim(entityDoc, 'wdt:P135', 'wd:Q53121')
       updatedDoc2.claims['wdt:P135'][0].should.equal('wd:Q53121')
     })
 
     it('should return a doc with the new value for a new property', () => {
-      const updatedDoc = createBlankEntityDocClaim(workDoc(), 'wdt:P135', 'wd:Q53121')
+      const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P135', 'wd:Q53121')
       updatedDoc.claims['wdt:P135'][0].should.equal('wd:Q53121')
     })
 
     it('should return a doc with the new value added last', () => {
-      const updatedDoc = createBlankEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
+      const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
       updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
     })
 
     it('should throw if the new value already exist', () => {
       const entityDoc = workDoc()
-      const updater = () => createBlankEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1541')
+      const updater = () => createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1541')
       updater.should.throw()
     })
   })
@@ -292,7 +292,7 @@ describe('entity model', () => {
       it('should transfer claims', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createBlankEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
+        createEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
         mergeEntitiesDocs(entityA, entityB)
         entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3' ])
       })
@@ -300,8 +300,8 @@ describe('entity model', () => {
       it('should add new claims on already used property', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createBlankEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
-        createBlankEntityDocClaim(entityB, 'wdt:P921', 'wd:Q1')
+        createEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
+        createEntityDocClaim(entityB, 'wdt:P921', 'wd:Q1')
         mergeEntitiesDocs(entityA, entityB)
         entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q1', 'wd:Q3' ])
       })
@@ -317,8 +317,8 @@ describe('entity model', () => {
       it('should not create duplicated claims', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createBlankEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
-        createBlankEntityDocClaim(entityB, 'wdt:P921', 'wd:Q3')
+        createEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
+        createEntityDocClaim(entityB, 'wdt:P921', 'wd:Q3')
         mergeEntitiesDocs(entityA, entityB)
         entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3' ])
       })
@@ -326,8 +326,8 @@ describe('entity model', () => {
       it('should keep the target claim in case of claim uniqueness restrictions', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createBlankEntityDocClaim(entityA, 'wdt:P648', 'OL123456W')
-        createBlankEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
+        createEntityDocClaim(entityA, 'wdt:P648', 'OL123456W')
+        createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
         mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
       })
 
