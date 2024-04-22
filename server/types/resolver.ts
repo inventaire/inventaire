@@ -1,8 +1,8 @@
 import type { Url } from '#types/common'
-import type { Claims, EntityUri, InvClaimValue, Isbn, Labels, LocalPropertyUri } from '#types/entity'
+import type { Claims, EntityUri, InvClaim, Isbn, Labels, LocalPropertyUri } from '#types/entity'
 
-export type LooseClaimsValues = InvClaimValue[] | InvClaimValue
-export type LooseClaims = Record<LocalPropertyUri, LooseClaimsValues>
+export type LooseClaim = InvClaim[] | InvClaim
+export type LooseClaims = Record<LocalPropertyUri, LooseClaim>
 
 export interface EntitySeed {
   uri?: EntityUri
