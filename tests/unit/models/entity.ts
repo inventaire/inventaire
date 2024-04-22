@@ -1,4 +1,5 @@
 import should from 'should'
+import { someReference } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
@@ -50,34 +51,73 @@ describe('entity model', () => {
   })
 
   describe('create claim', () => {
-    it('should add a claim value', () => {
-      const doc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
-      doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
+    describe('simple claim value', () => {
+      it('should add a claim value', () => {
+        const doc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
+        doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
+      })
+
+      it('should return a doc with the new value for an existing property', () => {
+        const entityDoc = workDoc()
+        const lengthBefore = entityDoc.claims['wdt:P50'].length
+        const updatedDoc = createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q42')
+        updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
+        const updatedDoc2 = createEntityDocClaim(entityDoc, 'wdt:P135', 'wd:Q53121')
+        updatedDoc2.claims['wdt:P135'][0].should.equal('wd:Q53121')
+      })
+
+      it('should return a doc with the new value for a new property', () => {
+        const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P135', 'wd:Q53121')
+        updatedDoc.claims['wdt:P135'][0].should.equal('wd:Q53121')
+      })
+
+      it('should return a doc with the new value added last', () => {
+        const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
+        updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
+      })
+
+      it('should throw if the new value already exist', () => {
+        const entityDoc = workDoc()
+        const updater = () => createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1541')
+        updater.should.throw()
+      })
     })
 
-    it('should return a doc with the new value for an existing property', () => {
-      const entityDoc = workDoc()
-      const lengthBefore = entityDoc.claims['wdt:P50'].length
-      const updatedDoc = createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q42')
-      updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
-      const updatedDoc2 = createEntityDocClaim(entityDoc, 'wdt:P135', 'wd:Q53121')
-      updatedDoc2.claims['wdt:P135'][0].should.equal('wd:Q53121')
-    })
+    describe('claim object', () => {
+      it('should add a claim value', () => {
+        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        const doc = createEntityDocClaim(workDoc(), 'wdt:P50', claimObject)
+        doc.claims['wdt:P50'].at(-1).should.deepEqual(claimObject)
+      })
 
-    it('should return a doc with the new value for a new property', () => {
-      const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P135', 'wd:Q53121')
-      updatedDoc.claims['wdt:P135'][0].should.equal('wd:Q53121')
-    })
+      it('should return a doc with the new value for an existing property', () => {
+        const entityDoc = workDoc()
+        const lengthBefore = entityDoc.claims['wdt:P50'].length
+        const updatedDoc = createEntityDocClaim(entityDoc, 'wdt:P50', { value: 'wd:Q42', references: [ someReference ] })
+        updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
+        const claimObject = { value: 'wd:Q53121', references: [ someReference ] }
+        const updatedDoc2 = createEntityDocClaim(entityDoc, 'wdt:P135', claimObject)
+        updatedDoc2.claims['wdt:P135'][0].should.deepEqual(claimObject)
+      })
 
-    it('should return a doc with the new value added last', () => {
-      const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q42')
-      updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
-    })
+      it('should return a doc with the new value for a new property', () => {
+        const claimObject = { value: 'wd:Q53121', references: [ someReference ] }
+        const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P135', claimObject)
+        updatedDoc.claims['wdt:P135'][0].should.deepEqual(claimObject)
+      })
 
-    it('should throw if the new value already exist', () => {
-      const entityDoc = workDoc()
-      const updater = () => createEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1541')
-      updater.should.throw()
+      it('should return a doc with the new value added last', () => {
+        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        const updatedDoc = createEntityDocClaim(workDoc(), 'wdt:P50', claimObject)
+        updatedDoc.claims['wdt:P50'].at(-1).should.deepEqual(claimObject)
+      })
+
+      it('should throw if the new value already exist', () => {
+        const claimObject = { value: 'wd:Q1541', references: [ someReference ] }
+        const entityDoc = workDoc()
+        const updater = () => createEntityDocClaim(entityDoc, 'wdt:P50', claimObject)
+        updater.should.throw()
+      })
     })
   })
 
