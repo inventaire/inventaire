@@ -1,5 +1,4 @@
-// Keep in sync with client/app/lib/boolean_tests
-import { isArray, isPlainObject, isString } from 'lodash-es'
+import { isPlainObject, isString } from 'lodash-es'
 import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
 import config from '#server/config'
@@ -100,6 +99,8 @@ export function isSimpleDay (str) {
   return isValidDate && regex_.SimpleDay.test(str)
 }
 
+// Using a custom implementation of isArray, rather than lodash version, to get better types
+export const isArray = (array: unknown): array is unknown[] => array instanceof Array
 export const isNonEmptyArray = array => isArray(array) && (array.length > 0)
 export const isNonEmptyPlainObject = obj => isPlainObject(obj) && (Object.keys(obj).length > 0)
 export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)

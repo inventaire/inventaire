@@ -1,5 +1,5 @@
-import { get, isArray } from 'lodash-es'
-import { isLang, isPropertyUri } from '#lib/boolean_validations'
+import { get } from 'lodash-es'
+import { isArray, isLang, isPropertyUri } from '#lib/boolean_validations'
 import userAttributes from '../attributes/user.js'
 import commonValidations from './common.js'
 

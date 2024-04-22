@@ -1,4 +1,5 @@
-import { isArray, isPlainObject } from 'lodash-es'
+import { isPlainObject } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'

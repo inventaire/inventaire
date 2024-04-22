@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import config from '#server/config'
 import { getNames } from '../snapshot/helpers.js'
 

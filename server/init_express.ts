@@ -1,5 +1,5 @@
 import express from 'express'
-import { isArray } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import { info } from '#lib/utils/logs'
 import config from '#server/config'
 import { middlewareErrorHandler } from '#server/middlewares/middleware_error_handler'

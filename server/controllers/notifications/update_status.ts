@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import { responses_ } from '#lib/responses'
 import { updateNotificationReadStatus } from './lib/notifications.js'
 

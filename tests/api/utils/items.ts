@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import { forceArray } from '#lib/utils/base'
 import { customAuthReq } from '#tests/api/utils/request'
 import { authReq, getUser } from './utils.js'

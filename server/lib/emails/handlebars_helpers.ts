@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es'
+import { isArray } from '#lib/boolean_validations'
 import { imgUrlBuilder } from '#lib/emails/app_api'
 import { log } from '#lib/utils/logs'
 
