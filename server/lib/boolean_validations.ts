@@ -22,7 +22,7 @@ function bindedTest <T> (regexName) {
   }
 }
 
-export const isNonEmptyString = str => typeof str === 'string' && str.length > 0
+export const isNonEmptyString = (str: unknown) => typeof str === 'string' && str.length > 0
 
 export function isUrl (url): url is Url {
   try {
