@@ -3,7 +3,7 @@ import type { DatabaseConfig, OperationsSummary } from '#types/couchdb_init'
 import { initDb } from './init_db.js'
 import type { Entries } from 'type-fest'
 
-export async function initDbs (dbsList: DatabaseConfig[]) {
+export async function initCouchDbs (dbsList: DatabaseConfig[]) {
   try {
     const operations = await objectPromise(dbsList.reduce(aggregateInitDb(initDb), {}))
     return { ok: true, operations: minimzeOperationsReport(operations) }

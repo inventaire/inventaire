@@ -1,5 +1,5 @@
 import { mapKeys, pick } from 'lodash-es'
-import { couchInit } from '#db/couchdb/init/couch_init'
+import { initCouchDbs } from '#db/couchdb/init/init_couch_dbs'
 import { waitForCouchdb } from '#db/couchdb/init/wait_for_couchdb'
 import { serverMode } from '#lib/server_mode'
 import { obfuscate, objLength } from '#lib/utils/base'
@@ -23,7 +23,7 @@ async function init ({ preload }) {
           designDocs: mapKeys(dbDesignDocs, setPreloadSuffix(preload)),
         }
       })
-    const res = await couchInit(formattedList)
+    const res = await initCouchDbs(formattedList)
     if (objLength(res.operations) !== 0) log(res, 'couch init')
     // Work around circular dependencies
     setImmediate(afterInit)
