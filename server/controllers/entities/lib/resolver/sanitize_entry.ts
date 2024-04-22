@@ -4,7 +4,9 @@ import { newError } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import sanitizeSeed from './sanitize_seed.js'
+import { getClaimValue } from '#models/entity'
+import type { ResolverEntry } from '#server/types/resolver'
+import { sanitizeSeed } from './sanitize_seed.js'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
@@ -12,11 +14,12 @@ const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_i
 // Format : if edition is a list, force pick the first edition
 // Warn : when a property is unknown
 
-export default entry => {
+export function sanitizeEntry (entry: ResolverEntry) {
   let { edition } = entry
 
   if (isArray(edition)) {
     if (edition.length > 1) throw newError('multiple editions not supported', 400, { edition })
+    // @ts-expect-error
     else edition = entry.edition = edition[0]
   }
 
@@ -24,7 +27,9 @@ export default entry => {
     throw newError('missing edition in entry', 400, { entry })
   }
 
+  // @ts-expect-error
   if (isPlainObject(entry.works)) entry.works = [ entry.works ]
+  // @ts-expect-error
   if (isPlainObject(entry.authors)) entry.authors = [ entry.authors ]
 
   entry.works = entry.works || []
@@ -67,7 +72,9 @@ function getIsbn (edition) {
 
 function createWorkSeedFromEdition (edition) {
   const { claims } = edition
-  const title = claims?.['wdt:P1476'] ? forceArray(claims['wdt:P1476'])[0] : null
+  const titleClaim = claims?.['wdt:P1476'] ? forceArray(claims['wdt:P1476'])[0] : null
+  if (titleClaim == null) return
+  const title = getClaimValue(titleClaim)
   if (title == null) return
   const langClaim = claims['wdt:P407'] && forceArray(claims['wdt:P407'])[0]
   const langWdId = langClaim ? langClaim.split(':')[1] : null

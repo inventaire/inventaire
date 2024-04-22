@@ -2,7 +2,7 @@ import { cloneDeep, without } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import validateClaimValueSync from '#controllers/entities/lib/validate_claim_value_sync'
+import { validateClaimValueSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 

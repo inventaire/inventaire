@@ -1,12 +1,12 @@
 import { compact, isPlainObject } from 'lodash-es'
+import { formatClaim } from '#controllers/entities/lib/format_claim'
+import { validateClaimSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isLang, isNonEmptyString, isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { forceArray } from '#lib/utils/base'
-import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 import { validateProperty } from '../properties/validations.js'
-import validateClaimValueSync from '../validate_claim_value_sync.js'
 
-export default (seed, type) => {
+export function sanitizeSeed (seed, type) {
   seed.labels = seed.labels || {}
   seed.claims = seed.claims || {}
   validateLabels(seed, type)
@@ -41,13 +41,12 @@ function validateAndFormatClaims (seed, type) {
   Object.keys(claims).forEach(validateAndFormatPropertyClaims(claims, type))
 }
 
-const validateAndFormatPropertyClaims = (claims, type) => prop => {
-  validateProperty(prop)
-  const { format } = properties[prop]
-  claims[prop] = compact(forceArray(claims[prop]))
-    .map(value => {
-      validateClaimValueSync(prop, value, type)
-      return format ? format(value) : value
+const validateAndFormatPropertyClaims = (claims, type) => property => {
+  validateProperty(property)
+  claims[property] = compact(forceArray(claims[property]))
+    .map(claim => {
+      validateClaimSync(property, claim, type)
+      return formatClaim(property, claim)
     })
 }
 

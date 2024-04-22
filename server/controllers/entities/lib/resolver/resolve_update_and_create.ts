@@ -6,7 +6,7 @@ import { log } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ResolverEntry } from '#types/resolver'
 import { resolveEntry } from './resolve.js'
-import sanitizeEntry from './sanitize_entry.js'
+import { sanitizeEntry } from './sanitize_entry.js'
 
 const { nice } = config
 

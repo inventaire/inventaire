@@ -43,13 +43,14 @@ export type InvClaimValue = InvSnakValue
 
 export type Reference = Record<PropertyUri, InvSnakValue[]>
 
-export interface InvClaim {
+export interface InvClaimObject {
   value: InvClaimValue
   references?: Reference[]
 }
 
 export type InvSimplePropertyClaims = InvClaimValue[]
-export type InvPropertyClaims = (InvClaim | InvClaimValue)[]
+export type InvClaim = InvClaimObject | InvClaimValue
+export type InvPropertyClaims = InvClaim[]
 
 export type LocalPropertyUri = typeof localPropertiesUris[number]
 

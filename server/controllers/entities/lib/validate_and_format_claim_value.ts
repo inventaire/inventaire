@@ -3,7 +3,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { newError } from '#lib/error/error'
 import type { EntityType, EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
-import validateClaimValueSync from './validate_claim_value_sync.js'
+import { validateClaimValueSync } from './validate_claim_sync.js'
 
 interface Params {
   type: EntityType

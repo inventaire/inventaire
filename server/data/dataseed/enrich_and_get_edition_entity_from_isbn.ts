@@ -21,7 +21,7 @@ const resolverParams = {
   reqUserId: seedUserId,
 }
 
-async function _enrichAndGetEditionEntityFromIsbn (isbn) {
+async function _enrichAndGetEditionEntityFromIsbn (isbn: string) {
   try {
     const entry = await getAuthoritiesAggregatedEntry(isbn)
     if (entry) {

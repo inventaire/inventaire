@@ -30,7 +30,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimValue, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvClaimValue, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
@@ -296,8 +296,12 @@ function deleteLabel (doc, lang) {
   delete doc.labels[lang]
 }
 
-export function getClaimValue (claim: InvClaim | InvClaimValue) {
-  if (typeof claim === 'object' && 'value' in claim) {
+export function isClaimObject (claim: InvClaim): claim is InvClaimObject {
+  return typeof claim === 'object' && 'value' in claim
+}
+
+export function getClaimValue (claim: InvClaim) {
+  if (isClaimObject(claim)) {
     return claim.value
   } else {
     return claim
