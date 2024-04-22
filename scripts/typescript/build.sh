@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu
 
+mkdir -p ./dist
+
 # Compiling the project rather than JIT transpiling with ts-node
 # to speed-up the server restart time
 
