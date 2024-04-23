@@ -1,5 +1,5 @@
 import should from 'should'
-import { someReference } from '#fixtures/entities'
+import { someReference, someReferenceB } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
@@ -501,25 +501,39 @@ describe('entity model', () => {
         const entityA = workDoc()
         const entityB = workDoc()
         createEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
+        const claimObject = { value: 'wd:Q9896', references: [ someReference ] }
+        createEntityDocClaim(entityA, 'wdt:P921', claimObject)
         mergeEntitiesDocs(entityA, entityB)
-        entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3' ])
+        entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3', claimObject ])
       })
 
       it('should add new claims on already used property', () => {
         const entityA = workDoc()
         const entityB = workDoc()
         createEntityDocClaim(entityA, 'wdt:P921', 'wd:Q3')
+        const claimObject = { value: 'wd:Q9896', references: [ someReference ] }
+        createEntityDocClaim(entityA, 'wdt:P921', claimObject)
         createEntityDocClaim(entityB, 'wdt:P921', 'wd:Q1')
         mergeEntitiesDocs(entityA, entityB)
-        entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q1', 'wd:Q3' ])
+        entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q1', 'wd:Q3', claimObject ])
       })
 
       it('should not add new claims on already used property linking to potential placeholders', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        entityB.claims['wdt:P50'] = [ 'wd:Q1' ]
+        entityA.claims['wdt:P50'] = [ 'wd:Q1' ]
+        entityB.claims['wdt:P50'] = [ 'wd:Q2' ]
         mergeEntitiesDocs(entityA, entityB)
-        entityB.claims['wdt:P50'].should.deepEqual([ 'wd:Q1' ])
+        entityB.claims['wdt:P50'].should.deepEqual([ 'wd:Q2' ])
+      })
+
+      it('should merge claim references', () => {
+        const entityA = workDoc()
+        const entityB = workDoc()
+        createEntityDocClaim(entityA, 'wdt:P921', { value: 'wd:Q9896', references: [ someReference ] })
+        createEntityDocClaim(entityB, 'wdt:P921', { value: 'wd:Q9896', references: [ someReferenceB ] })
+        mergeEntitiesDocs(entityA, entityB)
+        entityB.claims['wdt:P921'].should.deepEqual([ { value: 'wd:Q9896', references: [ someReferenceB, someReference ] } ])
       })
 
       it('should not create duplicated claims', () => {
@@ -531,12 +545,13 @@ describe('entity model', () => {
         entityB.claims['wdt:P921'].should.deepEqual([ 'wd:Q3' ])
       })
 
-      it('should keep the target claim in case of claim uniqueness restrictions', () => {
+      it('should not create duplicated claims, but transfer references', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createEntityDocClaim(entityA, 'wdt:P648', 'OL123456W')
-        createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
-        mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
+        createEntityDocClaim(entityA, 'wdt:P921', { value: 'wd:Q9896', references: [ someReference ] })
+        createEntityDocClaim(entityB, 'wdt:P921', 'wd:Q9896')
+        mergeEntitiesDocs(entityA, entityB)
+        entityB.claims['wdt:P921'].should.deepEqual([ { value: 'wd:Q9896', references: [ someReference ] } ])
       })
 
       it('should refuse to merge redirections', () => {
@@ -554,6 +569,34 @@ describe('entity model', () => {
         .should.throw('entity edit failed: the entity is a redirection');
         (() => mergeEntitiesDocs(entity, redirection))
         .should.throw('entity edit failed: the entity is a redirection')
+      })
+
+      describe('simple claim value', () => {
+        it('should keep the target claim in case of claim uniqueness restrictions', () => {
+          const entityA = workDoc()
+          const entityB = workDoc()
+          createEntityDocClaim(entityA, 'wdt:P648', 'OL123456W')
+          createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
+          mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
+        })
+      })
+
+      describe('claim object', () => {
+        it('should keep the target claim in case of claim uniqueness restrictions (claim object to simple claim)', () => {
+          const entityA = workDoc()
+          const entityB = workDoc()
+          createEntityDocClaim(entityA, 'wdt:P648', { value: 'OL123456W', references: [ someReference ] })
+          createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
+          mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
+        })
+
+        it('should keep the target claim in case of claim uniqueness restrictions (simple claim to claim object )', () => {
+          const entityA = workDoc()
+          const entityB = workDoc()
+          createEntityDocClaim(entityA, 'wdt:P648', 'OL123457W')
+          createEntityDocClaim(entityB, 'wdt:P648', { value: 'OL123456W', references: [ someReference ] })
+          mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ { value: 'OL123456W', references: [ someReference ] } ])
+        })
       })
     })
 

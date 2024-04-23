@@ -28,9 +28,9 @@ import { inferences, type InferedProperties } from '#controllers/entities/lib/in
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { superTrim } from '#lib/utils/base'
+import { sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
@@ -173,34 +173,42 @@ export function mergeEntitiesDocs (fromEntityDoc: InvEntity | EntityRedirection,
   preventRedirectionEdit(fromEntityDoc)
   preventRedirectionEdit(toEntityDoc)
 
-  for (const lang in fromEntityDoc.labels) {
-    const value = fromEntityDoc.labels[lang]
-    if (toEntityDoc.labels[lang] == null) {
-      toEntityDoc.labels[lang] = value
-    }
+  for (const [ lang, value ] of Object.entries(fromEntityDoc.labels)) {
+    toEntityDoc.labels[lang] ??= value
   }
 
-  for (const property in fromEntityDoc.claims) {
-    const values = fromEntityDoc.claims[property]
-    if (toEntityDoc.claims[property] == null) { toEntityDoc.claims[property] = [] }
-    for (const value of values) {
-      if (!toEntityDoc.claims[property].includes(value)) {
-        if (toEntityDoc.claims[property].length > 0) {
-          if (properties[property].uniqueValue) {
-            warn(value, `${property} can have only one value: ignoring merged entity value`)
-          } else if (properties[property].hasPlaceholders) {
-            warn(value, `${property} values may be placeholders: ignoring merged entity value`)
-          } else {
-            toEntityDoc.claims[property].push(value)
-          }
+  mergeClaims(fromEntityDoc.claims, toEntityDoc.claims)
+
+  return toEntityDoc
+}
+
+function mergeClaims (fromClaims: Claims, toClaims: Claims) {
+  for (const [ property, fromPropertyClaims ] of Object.entries(fromClaims) as Entries<typeof fromClaims>) {
+    const toPropertyClaims = toClaims[property] ??= []
+    mergePropertyClaims(property, fromPropertyClaims, toPropertyClaims)
+  }
+}
+
+function mergePropertyClaims (property: PropertyUri, fromPropertyClaims: InvPropertyClaims, toPropertyClaims: InvPropertyClaims) {
+  for (const claim of fromPropertyClaims) {
+    const matchingClaim = findClaimByValue(toPropertyClaims, claim)
+    if (matchingClaim) {
+      const matchingClaimIndex = toPropertyClaims.indexOf(matchingClaim)
+      toPropertyClaims[matchingClaimIndex] = mergeClaimReferences(claim, matchingClaim)
+    } else {
+      if (toPropertyClaims.length > 0) {
+        if (properties[property].uniqueValue) {
+          warn(claim, `${property} can have only one value: ignoring merged entity claim`)
+        } else if (properties[property].hasPlaceholders) {
+          warn(claim, `${property} values may be placeholders: ignoring merged entity claim`)
         } else {
-          toEntityDoc.claims[property].push(value)
+          toPropertyClaims.push(claim)
         }
+      } else {
+        toPropertyClaims.push(claim)
       }
     }
   }
-
-  return toEntityDoc
 }
 
 export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
@@ -314,7 +322,7 @@ export function getClaimValue (claim: InvClaim) {
   }
 }
 
-export function setClaimValue (claim: InvClaim, value: InvClaimValue) {
+function setClaimValue (claim: InvClaim, value: InvClaimValue) {
   if (isClaimObject(claim)) {
     claim.value = value
     return claim
@@ -323,6 +331,31 @@ export function setClaimValue (claim: InvClaim, value: InvClaimValue) {
   }
 }
 
-export function getClaimIndex (claimsArray, claim) {
+function getClaimIndex (claimsArray: InvPropertyClaims, claim: InvClaim) {
   return claimsArray.map(getClaimValue).indexOf(getClaimValue(claim))
+}
+
+function findClaimByValue (claimsArray: InvPropertyClaims, claim: InvClaim) {
+  return claimsArray.find(c => getClaimValue(c) === getClaimValue(claim))
+}
+
+function mergeClaimReferences (fromClaim: InvClaim, toClaim: InvClaim) {
+  if (isClaimObject(fromClaim)) {
+    if (isClaimObject(toClaim)) {
+      for (const ref of fromClaim.references) {
+        if (!includesReference(toClaim.references, ref)) {
+          toClaim.references.push(ref)
+        }
+      }
+      return toClaim
+    } else {
+      return { value: toClaim, references: fromClaim.references }
+    }
+  } else {
+    return toClaim
+  }
+}
+
+function includesReference (references: Reference[], reference: Reference) {
+  return references.find(ref => sameObjects(ref, reference))
 }

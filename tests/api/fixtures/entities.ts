@@ -223,3 +223,8 @@ export const someReference = {
   'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb437169336' ],
   'wdt:P813': [ '2024-04-23' ],
 }
+
+export const someReferenceB = {
+  'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb11908111q' ],
+  'wdt:P813': [ '2024-04-24' ],
+}

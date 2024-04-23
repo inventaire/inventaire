@@ -27,4 +27,5 @@ export interface PropertyValueConstraints {
   adminUpdateOnly?: boolean
   entityValueTypes?: EntityType[]
   typeSpecificValidation?: boolean
+  hasPlaceholders?: boolean
 }
