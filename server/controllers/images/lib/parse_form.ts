@@ -14,7 +14,7 @@ export interface ParsedForm {
 // to start consuming the form request stream, to avoid getting hanging requests
 // See https://github.com/node-formidable/formidable/issues/959
 export async function parseFormMiddleware (req, res, next) {
-  if (!req.headers['content-type'].startsWith('multipart/form-data')) return next()
+  if (!req.headers['content-type']?.startsWith('multipart/form-data')) return next()
 
   try {
     const form = formidable({ uploadDir })
