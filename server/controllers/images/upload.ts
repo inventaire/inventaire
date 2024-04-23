@@ -45,8 +45,8 @@ function getFilesFromFormData (formData) {
 }
 
 function validateFile (file) {
-  const { type } = file
-  if (type !== 'image/jpeg') {
+  const { mimetype } = file
+  if (mimetype !== 'image/jpeg') {
     throw newError('only jpeg are accepted', 400, file)
   }
 }
