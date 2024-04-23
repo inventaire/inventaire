@@ -123,54 +123,123 @@ describe('entity model', () => {
 
   describe('update claim', () => {
     describe('create claim', () => {
-      it('should not throw if not passed an old value', () => {
-        const updater = () => updateEntityDocClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
-        updater.should.not.throw()
-      })
+      describe('simple claim value', () => {
+        it('should not throw if not passed an old value', () => {
+          const updater = () => updateEntityDocClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
+          updater.should.not.throw()
+        })
 
-      it('should return a doc with the new value for an existing property', () => {
-        const entityDoc = workDoc()
-        const lengthBefore = entityDoc.claims['wdt:P50'].length
-        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', null, 'wd:Q42')
-        updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
-        const updatedDoc2 = updateEntityDocClaim(entityDoc, 'wdt:P135', null, 'wd:Q53121')
-        updatedDoc2.claims['wdt:P135'][0].should.equal('wd:Q53121')
-      })
+        it('should return a doc with the new value for an existing property', () => {
+          const entityDoc = workDoc()
+          const lengthBefore = entityDoc.claims['wdt:P50'].length
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', null, 'wd:Q42')
+          updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
+          const updatedDoc2 = updateEntityDocClaim(entityDoc, 'wdt:P135', null, 'wd:Q53121')
+          updatedDoc2.claims['wdt:P135'][0].should.equal('wd:Q53121')
+        })
 
-      it('should return a doc with the new value for a new property', () => {
-        const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P135', null, 'wd:Q53121')
-        updatedDoc.claims['wdt:P135'][0].should.equal('wd:Q53121')
-      })
+        it('should return a doc with the new value for a new property', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P135', null, 'wd:Q53121')
+          updatedDoc.claims['wdt:P135'][0].should.equal('wd:Q53121')
+        })
 
-      it('should return a doc with the new value added last', () => {
-        const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
-        updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
-      })
+        it('should return a doc with the new value added last', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', null, 'wd:Q42')
+          updatedDoc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
+        })
 
-      it('should throw if the new value already exist', () => {
-        const entityDoc = workDoc()
-        const updater = () => updateEntityDocClaim(entityDoc, 'wdt:P50', null, 'wd:Q1541')
-        updater.should.throw()
-      })
+        it('should throw if the new value already exist', () => {
+          const entityDoc = workDoc()
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', null, 'wd:Q1541')
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property new value already exist')
+          }
+        })
 
-      it('should add inferred properties value', () => {
-        const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-2-7073-0152-9')
-        entityDoc.claims['wdt:P957'][0].should.equal('2-7073-0152-3')
-        entityDoc.claims['wdt:P407'][0].should.equal('wd:Q150')
-      })
+        it('should add inferred properties value', () => {
+          const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-2-7073-0152-9')
+          entityDoc.claims['wdt:P957'][0].should.equal('2-7073-0152-3')
+          entityDoc.claims['wdt:P407'][0].should.equal('wd:Q150')
+        })
 
-      it('should add no inferred properties value when none is found', () => {
-        // the invalid isbn would have been rejected upfront but here allows
+        it('should add no inferred properties value when none is found', () => {
+        // the invalid isbn would have been rejected upstream but here allows
         // to tests cases where inferred properties convertors will fail to find a value
-        const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-invalid isbn')
-        should(entityDoc.claims['wdt:P957']).not.be.ok()
-        should(entityDoc.claims['wdt:P407']).not.be.ok()
-      })
-    })
+          const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-invalid isbn')
+          should(entityDoc.claims['wdt:P957']).not.be.ok()
+          should(entityDoc.claims['wdt:P407']).not.be.ok()
+        })
 
-    it('should trim values', () => {
-      const updatedDoc = updateEntityDocClaim(editionDoc(), 'wdt:P1476', null, nonTrimmedString)
-      updatedDoc.claims['wdt:P1476'][0].should.equal('foo bar')
+        it('should trim values', () => {
+          const updatedDoc = updateEntityDocClaim(editionDoc(), 'wdt:P1476', null, nonTrimmedString)
+          updatedDoc.claims['wdt:P1476'][0].should.equal('foo bar')
+        })
+      })
+
+      describe('claim object', () => {
+        it('should not throw if not passed an old value', () => {
+          const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+          const updater = () => updateEntityDocClaim(workDoc(), 'wdt:P50', null, claimObject)
+          updater.should.not.throw()
+        })
+
+        it('should return a doc with the new value for an existing property', () => {
+          const entityDoc = workDoc()
+          const lengthBefore = entityDoc.claims['wdt:P50'].length
+          const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', null, claimObject)
+          updatedDoc.claims['wdt:P50'].length.should.equal(lengthBefore + 1)
+          const claimObject2 = { value: 'wd:Q53121', references: [ someReference ] }
+          const updatedDoc2 = updateEntityDocClaim(entityDoc, 'wdt:P135', null, claimObject2)
+          updatedDoc2.claims['wdt:P135'][0].should.deepEqual(claimObject2)
+        })
+
+        it('should return a doc with the new value for a new property', () => {
+          const claimObject = { value: 'wd:Q53121', references: [ someReference ] }
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P135', null, claimObject)
+          updatedDoc.claims['wdt:P135'][0].should.deepEqual(claimObject)
+        })
+
+        it('should return a doc with the new value added last', () => {
+          const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', null, claimObject)
+          updatedDoc.claims['wdt:P50'].at(-1).should.deepEqual(claimObject)
+        })
+
+        it('should throw if the new value already exist', () => {
+          const entityDoc = workDoc()
+          const claimObject = { value: 'wd:Q1541', references: [ someReference ] }
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', null, claimObject)
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property new value already exist')
+          }
+        })
+
+        it('should add inferred properties value', () => {
+          const claimObject = { value: '978-2-7073-0152-9', references: [ someReference ] }
+          const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, claimObject)
+          entityDoc.claims['wdt:P957'][0].should.equal('2-7073-0152-3')
+          entityDoc.claims['wdt:P407'][0].should.equal('wd:Q150')
+        })
+
+        it('should add no inferred properties value when none is found', () => {
+          // the invalid isbn would have been rejected upstream but here allows
+          // to tests cases where inferred properties convertors will fail to find a value
+          const claimObject = { value: '978-invalid isbn', references: [ someReference ] }
+          const entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, claimObject)
+          should(entityDoc.claims['wdt:P957']).not.be.ok()
+          should(entityDoc.claims['wdt:P407']).not.be.ok()
+        })
+
+        it('should trim values', () => {
+          const updatedDoc = updateEntityDocClaim(editionDoc(), 'wdt:P1476', null, { value: nonTrimmedString, references: [ someReference ] })
+          updatedDoc.claims['wdt:P1476'][0].should.deepEqual({ value: 'foo bar', references: [ someReference ] })
+        })
+      })
     })
 
     describe('update existing claim', () => {
