@@ -15,6 +15,7 @@ const workDoc = () => {
   })
   doc.claims['wdt:P31'] = [ 'wd:Q47461344' ]
   doc.claims['wdt:P50'] = [ 'wd:Q535', 'wd:Q1541' ]
+  doc.claims['wdt:P144'] = [ { value: 'wd:Q150827', references: [ someReference ] }, 'wd:Q29478' ]
   return doc
 }
 
@@ -343,28 +344,65 @@ describe('entity model', () => {
     })
 
     describe('delete claim', () => {
-      it('should return with the claim value removed if passed an undefined new value', () => {
-        const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q535', null)
-        updatedDoc.claims['wdt:P50'].length.should.equal(1)
+      describe('simple claim value', () => {
+        it('should return with the claim value removed if passed an undefined new value', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q535', null)
+          updatedDoc.claims['wdt:P50'].length.should.equal(1)
+        })
+
+        it('should remove the property array if empty', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q535', null)
+          const updatedDoc2 = updateEntityDocClaim(updatedDoc, 'wdt:P50', 'wd:Q1541', null)
+          should(updatedDoc2.claims['wdt:P50']).not.be.ok()
+        })
+
+        it("should throw if the old value doesn't exist", () => {
+          const entityDoc = workDoc()
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1', null)
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property value not found')
+          }
+        })
+
+        it('should remove inferred properties value', () => {
+          let entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-2-7073-0152-9')
+          entityDoc = updateEntityDocClaim(entityDoc, 'wdt:P212', '978-2-7073-0152-9', null)
+          should(entityDoc.claims['wdt:P957']).not.be.ok()
+          should(entityDoc.claims['wdt:P407']).not.be.ok()
+        })
       })
 
-      it('should remove the property array if empty', () => {
-        const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P50', 'wd:Q535', null)
-        const updatedDoc2 = updateEntityDocClaim(updatedDoc, 'wdt:P50', 'wd:Q1541', null)
-        should(updatedDoc2.claims['wdt:P50']).not.be.ok()
-      })
+      describe('claim object', () => {
+        it('should return with the claim value removed if passed an undefined new value', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P144', 'wd:Q150827', null)
+          updatedDoc.claims['wdt:P144'].length.should.equal(1)
+        })
 
-      it("should throw if the old value doesn't exist", () => {
-        const entityDoc = workDoc()
-        const updater = () => updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1', null)
-        updater.should.throw()
-      })
+        it('should remove the property array if empty', () => {
+          const updatedDoc = updateEntityDocClaim(workDoc(), 'wdt:P144', 'wd:Q29478', null)
+          const updatedDoc2 = updateEntityDocClaim(updatedDoc, 'wdt:P144', 'wd:Q150827', null)
+          should(updatedDoc2.claims['wdt:P144']).not.be.ok()
+        })
 
-      it('should remove inferred properties value', () => {
-        let entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, '978-2-7073-0152-9')
-        entityDoc = updateEntityDocClaim(entityDoc, 'wdt:P212', '978-2-7073-0152-9', null)
-        should(entityDoc.claims['wdt:P957']).not.be.ok()
-        should(entityDoc.claims['wdt:P407']).not.be.ok()
+        it("should throw if the old value doesn't exist", () => {
+          const entityDoc = workDoc()
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P144', { value: 'wd:Q1', references: [ someReference ] }, null)
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property value not found')
+          }
+        })
+
+        it('should remove inferred properties value', () => {
+          const claimObject = { value: '978-2-7073-0152-9', references: [ someReference ] }
+          let entityDoc = updateEntityDocClaim(workDoc(), 'wdt:P212', null, claimObject)
+          entityDoc = updateEntityDocClaim(entityDoc, 'wdt:P212', '978-2-7073-0152-9', null)
+          should(entityDoc.claims['wdt:P957']).not.be.ok()
+          should(entityDoc.claims['wdt:P407']).not.be.ok()
+        })
       })
     })
 
