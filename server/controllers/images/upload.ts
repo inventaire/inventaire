@@ -19,7 +19,6 @@ async function controller (params, req: FormReq) {
   const { putImage } = containers[container]
 
   const files = getFilesFromFormData(req.form)
-  if (container === 'users') files.forEach(validateFile)
 
   return Promise.all(files.map(putImage))
   .then(indexUrlById)
@@ -42,13 +41,6 @@ function getFilesFromFormData (formData) {
     file.path = file.pathname
     return file
   })
-}
-
-function validateFile (file) {
-  const { mimetype } = file
-  if (mimetype !== 'image/jpeg') {
-    throw newError('only jpeg are accepted', 400, file)
-  }
 }
 
 function indexUrlById (collection) {
