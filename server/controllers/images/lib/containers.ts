@@ -2,6 +2,7 @@ import localClient from '#controllers/images/lib/local_client'
 import swiftClient from '#controllers/images/lib/swift_client'
 import { getHashFilename, removeExif, shrinkAndFormat } from '#lib/images'
 import { emit } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
 import { log, info } from '#lib/utils/logs'
 import config from '#server/config'
 
@@ -20,7 +21,9 @@ if (mode === 'swift') {
 const { putImage, deleteImage } = client
 
 const transformAndPutImage = (container, fn) => async fileData => {
-  const { id = 0, path } = fileData
+  const { id = 0 } = fileData
+  const path = fileData.path || fileData.filepath
+  assert_.string(path)
   await fn(path)
   const filename = await getHashFilename(path)
   const url = await putImage(container, path, filename)

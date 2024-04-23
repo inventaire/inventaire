@@ -1,8 +1,9 @@
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
+import type { FormReq } from '#server/types/server'
 import { containers, uploadContainersNames } from './lib/containers.js'
-import parseForm from './lib/parse_form.js'
 
 const sanitization = {
   nonJsonBody: true,
@@ -12,12 +13,12 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
+async function controller (params, req: FormReq) {
   const { container } = params
 
   const { putImage } = containers[container]
 
-  const files = await parseForm(req).then(getFilesFromFormData)
+  const files = getFilesFromFormData(req.form)
   if (container === 'users') files.forEach(validateFile)
 
   return Promise.all(files.map(putImage))
@@ -32,12 +33,15 @@ function getFilesFromFormData (formData) {
     throw newError('no file provided', 400, formData)
   }
 
-  for (const key in files) {
-    const file = files[key]
+  return Object.entries(files).map(([ key, fileArray ]) => {
+    assert_.array(fileArray)
+    const file = fileArray[0]
+    assert_.string(file.filepath)
     file.id = key
-  }
-
-  return Object.values(files)
+    // This somehow does not have any effect: the "path" attribute is undefined when we reach transformAndPutImage
+    file.path = file.pathname
+    return file
+  })
 }
 
 function validateFile (file) {

@@ -73,7 +73,7 @@
     "express": "^4.16.3",
     "express-oauth-server": "^2.0.0",
     "fold-to-ascii": "^5.0.0",
-    "formidable": "^1.0.17",
+    "formidable": "^3.5.1",
     "gm": "^1.23.1",
     "inventaire-i18n": "github:inventaire/inventaire-i18n",
     "isbn-groups": "^2.0.1",

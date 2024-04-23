@@ -1,15 +1,28 @@
 import { tmpdir } from 'node:os'
-import formidable from 'formidable'
+import formidable, { type Fields, type Files } from 'formidable'
 import { mkdirp } from '#lib/fs'
 
-const { IncomingForm } = formidable
 const uploadDir = `${tmpdir()}/formidable`
 await mkdirp(uploadDir)
 
-export default req => new Promise((resolve, reject) => {
-  const form = new IncomingForm({ uploadDir })
-  return form.parse(req, (err, fields, files) => {
-    if (err) reject(err)
-    else resolve({ fields, files })
-  })
-})
+export interface ParsedForm {
+  fields: Fields
+  files: Files
+}
+
+// Parse forms in an early middleware to not let the time to any other middleware
+// to start consuming the form request stream, to avoid getting hanging requests
+// See https://github.com/node-formidable/formidable/issues/959
+export async function parseFormMiddleware (req, res, next) {
+  if (!req.headers['content-type'].startsWith('multipart/form-data')) return next()
+
+  try {
+    const form = formidable({ uploadDir })
+    const [ fields, files ] = await form.parse(req)
+    const reqForm: ParsedForm = { fields, files }
+    req.form = reqForm
+    next()
+  } catch (err) {
+    next(err)
+  }
+}

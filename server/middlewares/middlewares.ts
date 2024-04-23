@@ -1,3 +1,4 @@
+import { parseFormMiddleware } from '#controllers/images/lib/parse_form'
 import auth from './auth.js'
 import { acceptUrlencoded, jsonBodyParser, deduplicateRequests } from './content.js'
 import requestsLogger from './requests_logger.js'
@@ -10,6 +11,8 @@ export default [
   requestsLogger,
 
   security.setCorsPolicy,
+
+  [ '/api/images', parseFormMiddleware ],
 
   // server/controllers/auth/fake_submit.ts relies on the possibility
   // to submit a url encoded form data, so it needs to have the body-parser ready for it
