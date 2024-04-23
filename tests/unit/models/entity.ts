@@ -243,41 +243,102 @@ describe('entity model', () => {
     })
 
     describe('update existing claim', () => {
-      it('should return with the claim value updated', () => {
-        const entityDoc = workDoc()
-        entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
-        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q42')
-        updatedDoc.claims['wdt:P50'][0].should.equal('wd:Q42')
+      describe('simple claim value', () => {
+        it('should return with the claim value updated', () => {
+          const entityDoc = workDoc()
+          entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q42')
+          updatedDoc.claims['wdt:P50'][0].should.equal('wd:Q42')
+        })
+
+        it("should throw if the old value doesn't exist", () => {
+          const entityDoc = workDoc()
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1', 'wd:Q42')
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property value not found')
+          }
+        })
+
+        it('should throw if the new value already exist', () => {
+          const entityDoc = workDoc()
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q1541')
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property new value already exist')
+          }
+        })
+
+        it('should allow to update a claim despite formatting issues that were previously accepted', () => {
+          const entityDoc = editionDoc()
+          const badlyFormattedTitle = 'too  many  spaces'
+          const newTitle = 'some title'
+          entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, newTitle)
+          updatedDoc.claims['wdt:P1476'].should.deepEqual([ newTitle ])
+        })
+
+        it('should allow to fix formatting issues that were previously accepted', () => {
+          const entityDoc = editionDoc()
+          const badlyFormattedTitle = 'too  many  spaces'
+          const fixedTitle = superTrim(badlyFormattedTitle)
+          entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, fixedTitle)
+          updatedDoc.claims['wdt:P1476'].should.deepEqual([ fixedTitle ])
+        })
       })
 
-      it("should throw if the old value doesn't exist", () => {
-        const entityDoc = workDoc()
-        const updater = () => updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1', 'wd:Q42')
-        updater.should.throw()
-      })
+      describe('claim object', () => {
+        it('should return with the claim value updated', () => {
+          const entityDoc = workDoc()
+          entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
+          const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', claimObject)
+          updatedDoc.claims['wdt:P50'][0].should.equal(claimObject)
+        })
 
-      it('should throw if the new value already exist', () => {
-        const entityDoc = workDoc()
-        const updater = () => updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', 'wd:Q1541')
-        updater.should.throw()
-      })
+        it("should throw if the old value doesn't exist", () => {
+          const entityDoc = workDoc()
+          const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q1', claimObject)
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property value not found')
+          }
+        })
 
-      it('should allow to update a claim despite formatting issues that were previously accepted', () => {
-        const entityDoc = editionDoc()
-        const badlyFormattedTitle = 'too  many  spaces'
-        const newTitle = 'some title'
-        entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
-        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, newTitle)
-        updatedDoc.claims['wdt:P1476'].should.deepEqual([ newTitle ])
-      })
+        it('should throw if the new value already exist', () => {
+          const entityDoc = workDoc()
+          const claimObject = { value: 'wd:Q1541', references: [ someReference ] }
+          try {
+            const res = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', claimObject)
+            shouldNotBeCalled(res)
+          } catch (err) {
+            err.message.should.equal('claim property new value already exist')
+          }
+        })
 
-      it('should allow to fix formatting issues that were previously accepted', () => {
-        const entityDoc = editionDoc()
-        const badlyFormattedTitle = 'too  many  spaces'
-        const fixedTitle = superTrim(badlyFormattedTitle)
-        entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
-        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, fixedTitle)
-        updatedDoc.claims['wdt:P1476'].should.deepEqual([ fixedTitle ])
+        it('should allow to update a claim despite formatting issues that were previously accepted', () => {
+          const entityDoc = editionDoc()
+          const badlyFormattedTitle = 'too  many  spaces'
+          entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+          const claimObject = { value: 'some title', references: [ someReference ] }
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, claimObject)
+          updatedDoc.claims['wdt:P1476'].should.deepEqual([ claimObject ])
+        })
+
+        it('should allow to fix formatting issues that were previously accepted', () => {
+          const entityDoc = editionDoc()
+          const badlyFormattedTitle = 'too  many  spaces'
+          const fixedTitle = superTrim(badlyFormattedTitle)
+          const claimObject = { value: fixedTitle, references: [ someReference ] }
+          entityDoc.claims['wdt:P1476'] = [ badlyFormattedTitle ]
+          const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P1476', badlyFormattedTitle, claimObject)
+          updatedDoc.claims['wdt:P1476'].should.deepEqual([ claimObject ])
+        })
       })
     })
 
