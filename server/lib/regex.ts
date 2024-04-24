@@ -12,7 +12,7 @@ export const GroupImg = /^\/img\/groups\/[0-9a-f]{40}$/
 export const ImageHash = /^[0-9a-f]{40}$/
 export const Integer = /^-?\d+$/
 // Accepting second level languages (like es-AR)
-export const Lang = /^\w{2}(-\w{2})?$/
+export const Lang = /^\w{2,3}(-\w{2})?$/
 export const LocalImg = /^\/img\/(users|groups|entities)\/[0-9a-f]{40}$/
 export const PatchId = /^[0-9a-f]{32}:[1-9]\d{0,3}$/
 export const PositiveInteger = /^\d+$/

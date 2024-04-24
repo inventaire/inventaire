@@ -6,7 +6,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 const sanitization = {
   uri: {},
   refresh: { optional: true },
-  langs: { type: 'wikimedia', optional: true },
+  langs: { optional: true },
 }
 
 async function controller ({ uri, refresh, langs }) {
