@@ -18,18 +18,19 @@ interface Params {
 export default async function (params: Params) {
   const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
   let { newVal } = params
-  // letEmptyValuePass to let it be interpreted as a claim deletion
-  if (letEmptyValuePass && newVal == null) return null
 
   const prop = properties[property]
 
   // If no old value is passed, it's a claim creation, not an update
   const updatingValue = (oldVal != null)
 
-  // Ex: a user can freely set a wdt:P31 value, but only an admin can change it
+  // Ex: a user can freely set a wdt:P212 value, but only an admin can change it
   if (updatingValue && prop.adminUpdateOnly && !userIsAdmin) {
     throw newError("updating property requires admin's rights", 403, { property, newVal })
   }
+
+  // letEmptyValuePass to let it be interpreted as a claim deletion
+  if (letEmptyValuePass && newVal == null) return null
 
   if (typeof newVal === 'string') newVal = newVal.trim().normalize()
   validateClaimValueSync(property, newVal, type)

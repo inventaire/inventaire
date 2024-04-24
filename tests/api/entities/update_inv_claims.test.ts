@@ -1,10 +1,13 @@
 import should from 'should'
+import type { EntityUri } from '#server/types/entity'
+import { getDataadminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId } from '../fixtures/entities.js'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '../fixtures/entities.js'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
 describe('entities:update-claims:inv', () => {
   it('should reject without uri', async () => {
+    // @ts-expect-error
     await updateClaim({ property: 'wdt:P123' })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -14,6 +17,7 @@ describe('entities:update-claims:inv', () => {
   })
 
   it('should reject without property', async () => {
+    // @ts-expect-error
     await updateClaim({ uri: someFakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -36,6 +40,7 @@ describe('entities:update-claims:inv', () => {
     const uri = 'invalidprefix:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const property = 'wdt:P1104'
     const oldValue = '1312'
+    // @ts-expect-error
     await updateClaim({ uri, property, oldValue })
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -220,6 +225,26 @@ describe('entities:update-claims:inv', () => {
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal("wdt:P31 array can't be empty")
+    })
+  })
+
+  it('should accept a dataadmin editing an adminUpdateOnly property', async () => {
+    const edition = await createEditionWithIsbn()
+    const oldValue = edition.claims['wdt:P957'][0]
+    const uri: EntityUri = `inv:${edition._id}`
+    const res = await updateClaim({ uri, property: 'wdt:P957', oldValue, newValue: null, user: getDataadminUser() })
+    res.ok.should.be.true()
+  })
+
+  it('should reject a non-admin editing an adminUpdateOnly property', async () => {
+    const edition = await createEditionWithIsbn()
+    const oldValue = edition.claims['wdt:P957'][0]
+    const uri: EntityUri = `inv:${edition._id}`
+    await updateClaim({ uri, property: 'wdt:P957', oldValue, newValue: null })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      err.body.status_verbose.should.equal("updating property requires admin's rights")
     })
   })
 

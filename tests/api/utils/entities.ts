@@ -1,5 +1,5 @@
 import { difference, filter, map, property } from 'lodash-es'
-import type { GetEntitiesParams } from '#controllers/entities/by_uris_get'
+import type { GetEntitiesByUrisResponse, GetEntitiesParams } from '#controllers/entities/by_uris_get'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
@@ -23,7 +23,7 @@ export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh
     relatives,
     refresh,
   })
-  return publicReq('get', url)
+  return publicReq('get', url) as Promise<GetEntitiesByUrisResponse>
 }
 
 export async function getByUri (uri: EntityUri, refresh?: boolean) {
@@ -39,7 +39,7 @@ export async function getEntitiesAttributesByUris ({ uris, attributes, relatives
     refresh,
     relatives: relatives ? forceArray(relatives).join('|') : undefined,
   }
-  const { entities } = await publicReq('get', buildUrl('/api/entities', query))
+  const { entities } = (await publicReq('get', buildUrl('/api/entities', query))) as GetEntitiesByUrisResponse
   return entities
 }
 
