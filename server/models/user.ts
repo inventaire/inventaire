@@ -8,7 +8,7 @@ import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import type { StringifiedHashedSecretData } from '#types/common'
-import type { User, CreationStrategy, Email, DeletedUser } from '#types/user'
+import type { User, CreationStrategy, Email, DeletedUser, UserRole, DocWithUsernameInUserDb } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
 
@@ -71,7 +71,7 @@ export async function createUserDoc (username: string, email: Email, creationStr
   return user
 }
 
-async function hashUserPassword (user) {
+async function hashUserPassword (user: Partial<User>) {
   const { password } = user
   if (password != null) {
     const hash = await hashPassword(password)
@@ -115,7 +115,7 @@ export function updateUserDocPassword (user: User, newHash: StringifiedHashedSec
   return user
 }
 
-export const setUserDocOauthTokens = (provider, data) => user => {
+export const setUserDocOauthTokens = (provider, data) => (user: User) => {
   assert_.string(provider)
   assert_.object(data)
   assert_.string(data.token)
@@ -125,7 +125,7 @@ export const setUserDocOauthTokens = (provider, data) => user => {
   return user
 }
 
-export const updateUserItemsCounts = itemsCounts => user => {
+export const updateUserItemsCounts = itemsCounts => (user: DocWithUsernameInUserDb) => {
   // This function is used by db.update and should thus always return a user doc
   // even if unmodified
   if (user.type === 'deletedUser') return user
@@ -136,7 +136,7 @@ export const updateUserItemsCounts = itemsCounts => user => {
   return user
 }
 
-export const addUserDocRole = role => user => {
+export const addUserDocRole = (role: UserRole) => (user: User) => {
   if (!userAttributes.roles.includes(role)) {
     throw newError('unknown role', 400)
   }
@@ -148,7 +148,7 @@ export const addUserDocRole = role => user => {
   return user
 }
 
-export const removeUserDocRole = role => user => {
+export const removeUserDocRole = (role: UserRole) => (user: User) => {
   if (!userAttributes.roles.includes(role)) {
     throw newError('unknown role', 400)
   }
@@ -159,12 +159,12 @@ export const removeUserDocRole = role => user => {
 
 // We need a stable username for services that use the username as unique user id
 // such as wiki.inventaire.io (https://github.com/inventaire/inventaire-mediawiki)
-export function setUserDocStableUsername (user) {
+export function setUserDocStableUsername (user: User) {
   user.stableUsername = user.stableUsername || user.username
   return user
 }
 
-export function userShouldBeAnonymized (user) {
+export function userShouldBeAnonymized (user: User) {
   const userSetting = get(user, 'settings.contributions.anonymize')
   return userSetting !== false
 }

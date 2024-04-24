@@ -10,7 +10,8 @@ import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
-import type { DocWithUsernameInUserDb, User, UserId } from '#types/user'
+import type { ImageHash } from '#server/types/image'
+import type { DocWithUsernameInUserDb, Email, User, UserId, UserRole, Username } from '#types/user'
 import { omitPrivateData, type UserExtraAttribute } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
@@ -21,23 +22,26 @@ const searchUsersByDistance = searchUsersByDistanceFactory('users')
 export const getUserById = db.get<User>
 export const getUsersByIds = db.byIds<User>
 
-export const findUserByEmail = email => findOneByEmail<User>(db, email)
-export const getUsersByEmail = email => byEmail<User>(db, email)
-export const getUsersByEmails = email => byEmails<User>(db, email)
+export const findUserByEmail = (email: Email) => findOneByEmail<User>(db, email)
+export const getUsersByEmail = (email: Email) => byEmail<User>(db, email)
+export const getUsersByEmails = (emails: Email[]) => byEmails<User>(db, emails)
 
-export function getUsersAuthorizedDataByEmails (emails, reqUserId) {
+export function getUsersAuthorizedDataByEmails (emails: Email[], reqUserId: UserId) {
   assert_.array(emails)
   // Keeping the email is required to map the users returned
   // with the initial input
   return getUsersAuthorizedData(getUsersByEmails(emails), reqUserId, 'email')
 }
 
-export const getUserByUsername = username => db.getDocsByViewKey<DocWithUsernameInUserDb>('byUsername', username.toLowerCase())
+export function getUserByUsername (username: Username) {
+  return db.getDocsByViewKey<DocWithUsernameInUserDb>('byUsername', username.toLowerCase())
+}
+
 export function getUsersByUsernames (usernames) {
   return db.getDocsByViewKeys<DocWithUsernameInUserDb>('byUsername', usernames.map(toLowerCase))
 }
 
-export function findUserByUsername (username) {
+export function findUserByUsername (username: Username) {
   return getUserByUsername(username)
   .then(firstDoc)
   .then(user => {
@@ -46,7 +50,7 @@ export function findUserByUsername (username) {
   })
 }
 
-export function findUserByUsernameOrEmail (str) {
+export function findUserByUsernameOrEmail (str: Username | Email) {
   if (userValidations.email(str)) {
     return findUserByEmail(str)
   } else {
@@ -54,7 +58,7 @@ export function findUserByUsernameOrEmail (str) {
   }
 }
 
-export async function getUsersAuthorizedDataByIds (ids, reqUserId) {
+export async function getUsersAuthorizedDataByIds (ids: UserId[], reqUserId: UserId) {
   assert_.array(ids)
   if (ids.length === 0) return []
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
@@ -74,7 +78,7 @@ export async function getUsersIndexedByIds (ids, reqUserId) {
   return keyBy(users, '_id')
 }
 
-export async function getUsersIndexByUsernames (reqUserId, usernames) {
+export async function getUsersIndexByUsernames (reqUserId: UserId, usernames: Username[]) {
   const users = await getUsersAuthorizedData(getUsersByUsernames(usernames), reqUserId)
   const usersByLowercasedUsername = {}
   const lowercasedUsernames = usernames.map(username => username.toLowerCase())
@@ -89,7 +93,7 @@ export async function getUsersIndexByUsernames (reqUserId, usernames) {
   return usersByLowercasedUsername
 }
 
-export async function incrementUndeliveredMailCounter (email) {
+export async function incrementUndeliveredMailCounter (email: Email) {
   const doc = await findUserByEmail(email)
   const { _id } = doc
   return db.update(_id, doc => {
@@ -99,11 +103,11 @@ export async function incrementUndeliveredMailCounter (email) {
   })
 }
 
-export const addUserRole = (userId, role) => db.update(userId, addUserDocRole(role))
+export const addUserRole = (userId: UserId, role: UserRole) => db.update(userId, addUserDocRole(role))
 
-export const removeUserRole = (userId, role) => db.update(userId, removeUserDocRole(role))
+export const removeUserRole = (userId: UserId, role: UserRole) => db.update(userId, removeUserDocRole(role))
 
-export function setUserOauthTokens (userId, provider, data) {
+export function setUserOauthTokens (userId: UserId, provider, data) {
   return db.update(userId, setUserDocOauthTokens(provider, data))
 }
 
@@ -127,7 +131,7 @@ export async function getUsersNearby (userId: UserId, meterRange: number, strict
 
 export const getUserByPosition = searchUsersByPosition
 
-export async function imageIsUsed (imageHash) {
+export async function imageIsUsed (imageHash: ImageHash) {
   assert_.string(imageHash)
   const { rows } = await db.view<null, User>('users', 'byPicture', { key: imageHash })
   return rows.length > 0
