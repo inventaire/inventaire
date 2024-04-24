@@ -13,7 +13,7 @@ const validations = {
   ordinal: nonNegativeInteger,
 }
 
-const attributes = {
+export const attributes = {
   validAtCreation: [
     'list',
     'uri',
@@ -22,6 +22,10 @@ const attributes = {
   updatable: [
     'ordinal',
     'uri',
+  ],
+  // attributes which can directly be updated through an API endpoint
+  apiUpdatable: [
+    'comment',
   ],
 }
 

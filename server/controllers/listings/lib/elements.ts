@@ -72,6 +72,11 @@ export async function createListingElements ({ listing, uris, userId }) {
   return db.fetch<ListingElement>(elementsIds)
 }
 
+export async function updateElementDocAttributes (element, newAttributes) {
+  const updatedShelf = updateElementDoc(newAttributes, element)
+  return db.putAndReturn(updatedShelf)
+}
+
 export async function bulkUpdateElements ({ oldElements, attribute, value }) {
   const elementUpdateData = { [attribute]: value }
   const newElements = oldElements.map(oldElement => updateElementDoc(elementUpdateData, oldElement))
