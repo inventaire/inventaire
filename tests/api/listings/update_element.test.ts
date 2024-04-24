@@ -1,4 +1,4 @@
-import should from 'should'
+import { sentence } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
@@ -46,7 +46,7 @@ describe('element:update', () => {
       const element = listing.elements[0]
       await authReq('post', endpoint, {
         id: element._id,
-        ordinal: 0,
+        comment: sentence(),
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -54,6 +54,22 @@ describe('element:update', () => {
       err.body.status_verbose.should.equal('wrong user')
       err.statusCode.should.equal(403)
     }
+  })
+
+  it('should create and update element attribute', async () => {
+    const { element } = await createElement()
+    const comment = sentence()
+    const createdRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const comment2 = sentence()
+    createdRes.comment.should.equal(comment)
+    const updatedRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment: comment2,
+    })
+    updatedRes.comment.should.equal(comment2)
   })
 })
 
@@ -90,6 +106,7 @@ describe('element:update:ordinal', () => {
     const { listing } = await createListingWithElements()
     const { elements } = listing
     const [ elementA, elementB, elementC ] = elements
+    const oldOrdinal = elementC.ordinal
     const updatedElement = await authReq('post', endpoint, {
       id: elementC._id,
       ordinal: 2,

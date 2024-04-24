@@ -28,6 +28,10 @@ export const attributes = {
     'ordinal',
     'comment',
   ],
+  // attributes which can directly be updated through an API endpoint
+  apiUpdatable: [
+    'comment',
+  ],
 }
 
 export function createElementDoc (element) {
