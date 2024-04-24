@@ -1,45 +1,49 @@
-import { difference, filter, isArray, map, property } from 'lodash-es'
+import { difference, filter, map, property } from 'lodash-es'
+import type { GetEntitiesParams } from '#controllers/entities/by_uris_get'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import type { EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#server/types/entity'
+import type { PatchId } from '#server/types/patch'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
 import { getIndexedDoc } from './search.js'
 import { publicReq, authReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export function getByUris (uris, relatives, refresh) {
+export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
   uris = forceArray(uris)
   assert_.strings(uris)
-  uris = uris.join('|')
   const url = buildUrl('/api/entities', {
     action: 'by-uris',
-    uris,
+    uris: forceArray(uris).join('|'),
     relatives,
     refresh,
   })
   return publicReq('get', url)
 }
 
-export async function getByUri (uri, refresh) {
-  const res = await getByUris(uri, null, refresh)
+export async function getByUri (uri: EntityUri, refresh?: boolean) {
+  const res = await getByUris([ uri ], null, refresh)
   return Object.values(res.entities)[0]
 }
 
-export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }) {
+export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }: Pick<GetEntitiesParams, 'uris' | 'attributes' | 'relatives' | 'refresh'>) {
   const query = {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
     attributes: forceArray(attributes).join('|'),
     refresh,
+    relatives: relatives ? forceArray(relatives).join('|') : undefined,
   }
-  if (relatives) query.relatives = forceArray(relatives).join('|')
   const { entities } = await publicReq('get', buildUrl('/api/entities', query))
   return entities
 }
 
-export const findOrIndexEntities = async (uris, index = 'wikidata') => {
+export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata') {
   const ids = map(uris, unprefixify)
   const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))
   const entitiesFound = filter(results, property('found'))
@@ -54,25 +58,25 @@ export const findOrIndexEntities = async (uris, index = 'wikidata') => {
 
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
-export function deleteByUris (uris) {
+export function deleteByUris (uris: EntityUri[]) {
   uris = forceArray(uris)
   assert_.strings(uris)
   if (uris.length === 0) return
   return authReq('post', '/api/entities?action=delete', { uris })
 }
 
-export async function getReverseClaims (property, value) {
+export async function getReverseClaims (property: PropertyUri, value: InvClaimValue) {
   const url = buildUrl('/api/entities', { action: 'reverse-claims', property, value })
   const { uris } = await publicReq('get', url)
   return uris
 }
 
-export async function deleteByExternalId (property, externalId) {
+export async function deleteByExternalId (property: PropertyUri, externalId: string) {
   const uris = await getReverseClaims(property, externalId)
   return deleteByUris(uris)
 }
 
-export const merge = (fromUri, toUri, options = {}) => {
+export function merge (fromUri: PropertyUri, toUri: PropertyUri, options: { user?: AwaitableUserWithCookie } = {}) {
   assert_.string(fromUri)
   assert_.string(toUri)
   fromUri = normalizeUri(fromUri)
@@ -81,31 +85,38 @@ export const merge = (fromUri, toUri, options = {}) => {
   return customAuthReq(user, 'put', '/api/entities?action=merge', { from: fromUri, to: toUri })
 }
 
-export function revertMerge (fromUri) {
+export function revertMerge (fromUri: EntityUri) {
   assert_.string(fromUri)
   fromUri = normalizeUri(fromUri)
   return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
 }
 
-export function getHistory (entityId) {
+export function getHistory (entityId: InvEntityId) {
   entityId = entityId.replace('inv:', '')
   return adminReq('get', `/api/entities?action=history&id=${entityId}`)
   .then(({ patches }) => patches)
 }
 
-export function updateLabel ({ uri, lang, value, user }) {
+export function updateLabel ({ uri, lang, value, user }: { uri: EntityUri, lang: WikimediaLanguageCode, value: string, user?: AwaitableUserWithCookie }) {
   user = user || getUser()
   uri = normalizeUri(uri)
   return customAuthReq(user, 'put', '/api/entities?action=update-label', { uri, lang, value })
 }
 
-export function removeLabel ({ uri, lang, user }) {
+export function removeLabel ({ uri, lang, user }: { uri: EntityUri, lang: WikimediaLanguageCode, user?: AwaitableUserWithCookie }) {
   user = user || getUser()
   uri = normalizeUri(uri)
   return customAuthReq(user, 'put', '/api/entities?action=remove-label', { uri, lang })
 }
 
-export function updateClaim ({ uri, property, oldValue, newValue, user }) {
+interface UpdateClaimParams {
+  uri: EntityUri
+  property: PropertyUri
+  oldValue?: InvClaimValue
+  newValue?: InvClaimValue
+  user?: AwaitableUserWithCookie
+}
+export function updateClaim ({ uri, property, oldValue, newValue, user }: UpdateClaimParams) {
   uri = normalizeUri(uri)
   user = user || getUser()
   const body = { uri, property }
@@ -114,25 +125,28 @@ export function updateClaim ({ uri, property, oldValue, newValue, user }) {
   return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
 }
 
-export function addClaim ({ user, uri, property, value }) {
+export function addClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {
   return updateClaim({ user, uri, property, newValue: value })
 }
 
-export function removeClaim ({ user, uri, property, value }) {
+export function removeClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['oldValue'] }) {
   return updateClaim({ user, uri, property, oldValue: value })
 }
 
-export function getRefreshedPopularityByUris (uris) {
-  if (isArray(uris)) { uris = uris.join('|') }
-  return publicReq('get', `/api/entities?action=popularity&uris=${uris}&refresh=true`)
+export function getRefreshedPopularityByUris (uris: EntityUri[]) {
+  return publicReq('get', buildUrl('/api/entities', {
+    action: 'popularity',
+    uris: uris.join('|'),
+    refresh: true,
+  }))
 }
 
-export function getRefreshedPopularityByUri (uri) {
-  return getRefreshedPopularityByUris(uri)
-  .then(res => res.scores[uri])
+export async function getRefreshedPopularityByUri (uri: EntityUri) {
+  const { scores } = await getRefreshedPopularityByUris([ uri ])
+  return scores[uri]
 }
 
-export async function revertEdit ({ patchId, user }) {
+export async function revertEdit ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
   assert_.string(patchId)
   user = user || getUser()
   return customAuthReq(user, 'put', '/api/entities?action=revert-edit', {
@@ -140,7 +154,7 @@ export async function revertEdit ({ patchId, user }) {
   })
 }
 
-export async function restoreVersion ({ patchId, user }) {
+export async function restoreVersion ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
   assert_.string(patchId)
   user = user || getUser()
   return customAuthReq(user, 'put', '/api/entities?action=restore-version', {

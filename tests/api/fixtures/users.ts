@@ -6,6 +6,7 @@ import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
+import type { User } from '#types/user'
 import { makeFriends } from '../utils/relations.js'
 import { request, rawRequest } from '../utils/request.js'
 
@@ -38,7 +39,7 @@ export function signup (email) {
   })
 }
 
-async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }) {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }: { customData: Partial<User>, mayReuseExistingUser?: boolean, role?: string }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -67,11 +68,17 @@ export function createUser (customData = {}) {
   return _getOrCreateUser({ customData, mayReuseExistingUser: false })
 }
 
-export async function getUserWithCookie (cookie) {
+export interface UserWithCookie extends User {
+  cookie: string
+}
+
+export type AwaitableUserWithCookie = UserWithCookie | Promise<UserWithCookie>
+
+export async function getUserWithCookie (cookie: string) {
   const user = await request('get', '/api/user', null, cookie)
   user.cookie = cookie
   assert_.string(user.cookie)
-  return user
+  return user as UserWithCookie
 }
 
 export async function getRefreshedUser (user) {
