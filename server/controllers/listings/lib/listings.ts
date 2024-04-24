@@ -60,11 +60,15 @@ export async function addListingElements ({ listing, uris, userId }: { listing: 
   return res
 }
 
+export function validateListingOwnership (userId: UserId, listing: Listing) {
+  if (listing.creator !== userId) {
+    throw newError('wrong user', 403, { userId, listId: listing._id })
+  }
+}
+
 export function validateListingsOwnership (userId: UserId, listings: Listing[]) {
   for (const listing of listings) {
-    if (listing.creator !== userId) {
-      throw newError('wrong user', 403, { userId, listId: listing._id })
-    }
+    validateListingOwnership(userId, listing)
   }
 }
 
