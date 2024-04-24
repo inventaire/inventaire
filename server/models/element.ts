@@ -5,13 +5,15 @@ import { findNewOrdinal } from '#lib/utils/lexicographic_ordinal'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
-const { pass, entityUri, couchUuid, boundedString } = commonValidations
+const { pass, entityUri, couchUuid, BoundedString, boundedString } = commonValidations
 
 const validations = {
   pass,
   uri: entityUri,
   list: couchUuid,
   ordinal: str => boundedString(str, 1, 1000),
+  comment: BoundedString(0, 5000),
+
 }
 
 export const attributes = {
@@ -19,10 +21,12 @@ export const attributes = {
     'list',
     'uri',
     'ordinal',
+    'comment',
   ],
   updatable: [
-    'ordinal',
     'uri',
+    'ordinal',
+    'comment',
   ],
 }
 
