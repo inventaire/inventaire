@@ -271,6 +271,7 @@ export default {
     },
     validate: isColorHexCode,
   },
+  comment: nonEmptyString,
   context: {
     validate: value => {
       if (!isVisibilityKey(value)) {
