@@ -18,3 +18,4 @@ config/.sessions_keys
 *.logs
 *.tsbuildinfo
 dist/
+.eslintcache
