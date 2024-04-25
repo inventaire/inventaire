@@ -40,7 +40,7 @@ describe('images:upload', () => {
     await authReq('post', `${endpoint}&container=entities`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.startWith('no file provided')
+      err.body.status_verbose.should.startWith('missing form data')
     })
   })
 
@@ -48,7 +48,7 @@ describe('images:upload', () => {
     await authReq('post', `${endpoint}&container=users`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.startWith('no file provided')
+      err.body.status_verbose.should.startWith('missing form data')
     })
   })
 
@@ -56,7 +56,7 @@ describe('images:upload', () => {
     await authReq('post', `${endpoint}&container=groups`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.startWith('no file provided')
+      err.body.status_verbose.should.startWith('missing form data')
     })
   })
 

@@ -18,6 +18,8 @@ async function controller (params, req: FormReq) {
 
   const { putImage } = containers[container]
 
+  if (!req.form) throw newError('missing form data', 400)
+
   const files = getFilesFromFormData(req.form)
 
   return Promise.all(files.map(putImage))
