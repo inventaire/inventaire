@@ -3,7 +3,6 @@ import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uri
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
-import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import type { EntityUri, InvEntityDoc, PropertyUri, SerializedEntity } from '#server/types/entity'
 import buildSnapshot from './build_snapshot.js'
@@ -44,7 +43,7 @@ const getSnapshotsByType = {
     const work = await getEntityByUri({ uri })
     const [ authors, series ] = await getWorkAuthorsAndSeries(work)
     const snapshots = await Promise.all([
-      getWorkSnapshot(uri, work, authors, series),
+      getWorkSnapshot(work, authors, series),
       getEditionsSnapshots(uri, [ work ], authors, series),
     ])
     return snapshots.flat()
@@ -56,20 +55,11 @@ const getSnapshotsByType = {
 
 const refreshTypes = Object.keys(getSnapshotsByType)
 
-function getWorkSnapshot (uri: EntityUri, work: SerializedEntity, authors: SerializedEntity[], series: SerializedEntity[]) {
-  assert_.string(uri)
-  assert_.object(work)
-  assert_.array(authors)
-  assert_.array(series)
+function getWorkSnapshot (work: SerializedEntity, authors: SerializedEntity[], series: SerializedEntity[]) {
   return buildSnapshot.work(work, authors, series)
 }
 
 async function getEditionsSnapshots (uri: EntityUri, works: SerializedEntity[], authors: SerializedEntity[], series: SerializedEntity[]) {
-  assert_.string(uri)
-  assert_.array(works)
-  assert_.array(authors)
-  assert_.array(series)
-
   const uris = await getInvUrisByClaim('wdt:P629', uri)
   const res = await getEntitiesByUris({ uris })
   const editions = Object.values(res.entities)
@@ -79,11 +69,5 @@ async function getEditionsSnapshots (uri: EntityUri, works: SerializedEntity[], 
 }
 
 function getEditionSnapshot ([ edition, works, authors, series ]: [ SerializedEntity, SerializedEntity[], SerializedEntity[], SerializedEntity[] ]) {
-  assert_.object(edition)
-  assert_.array(works)
-  assert_.array(authors)
-  assert_.array(series)
-  // Expects a formatted edition
-  assert_.string(edition.uri)
   return buildSnapshot.edition(edition, works, authors, series)
 }
