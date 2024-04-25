@@ -47,10 +47,10 @@ describe('items:recent-public', () => {
   })
 
   it('should reject invalid lang', async () => {
-    await publicReq('get', `${recentPublicUrl}&lang=bla`)
+    await publicReq('get', `${recentPublicUrl}&lang=blablabla`)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid lang: bla')
+      err.body.status_verbose.should.equal('invalid lang: blablabla')
     })
   })
 })
