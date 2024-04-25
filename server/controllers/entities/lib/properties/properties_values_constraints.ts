@@ -224,6 +224,8 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   'wdt:P5331': externalId(strictlyPositiveIntegerPattern),
   // British Library system number
   'wdt:P5199': externalId(/^\d{9}$/),
+  // NooSFere author ID
+  'wdt:P5570': externalId(strictlyPositiveIntegerPattern),
   // NooSFere book ID
   'wdt:P5571': externalId(strictlyPositiveIntegerPattern),
   // colorist

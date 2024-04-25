@@ -349,6 +349,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P5491': {
     subjectTypes: [ 'human' ],
   },
+  // NooSFere author ID
+  'wdt:P5570': {
+    subjectTypes: [ 'human' ],
+  },
   // NooSFere book ID
   'wdt:P5571': {
     subjectTypes: [ 'edition' ],
