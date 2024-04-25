@@ -3,52 +3,64 @@ import { newError } from '#lib/error/error'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import itemValidations from '#models/validations/item'
+import type { EntityImg, InvClaimValue, SerializedEntity } from '#server/types/entity'
+import type { ItemSnapshot } from '#server/types/item'
 import { getNames, aggregateClaims } from './helpers.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const { snapshotValidations } = itemValidations
 
 export default {
-  edition: (edition, works, authors, series) => {
+  edition: (edition: SerializedEntity, works: SerializedEntity[], authors: SerializedEntity[], series: SerializedEntity[]) => {
     const lang = edition.originalLang || 'en'
     const { claims } = edition
-    let title = claims['wdt:P1476'] && claims['wdt:P1476'][0]
+    let title = claims['wdt:P1476']?.[0]
     // Wikidata editions might not have a wdt:P1476 value
     title = title || getBestLangValue(lang, null, edition.labels).value
     return buildOperation({
-      type: 'edition',
       entity: edition,
       works,
       title,
-      subtitle: claims['wdt:P1680'] && claims['wdt:P1680'][0],
+      subtitle: claims['wdt:P1680']?.[0],
       lang,
-      image: edition.image && edition.image.url,
+      image: edition.image?.url,
       authors,
       series,
     })
   },
 
-  work: (work, authors, series) => {
+  work: (work: SerializedEntity, authors: SerializedEntity[], series: SerializedEntity[]) => {
     const { originalLang: lang } = work
     const { claims } = work
     const works = [ work ]
     return buildOperation({
-      type: 'work',
       entity: work,
       works,
       title: getBestLangValue(lang, null, work.labels).value,
       lang,
-      image: claims['wdt:P18'] && claims['wdt:P18'][0],
+      image: claims['wdt:P18']?.[0],
       authors,
       series,
     })
   },
 }
 
-function buildOperation (params) {
+interface BuildOperationParams {
+  entity: SerializedEntity
+  works: SerializedEntity[]
+  title: string
+  subtitle?: string
+  lang: WikimediaLanguageCode
+  image?: SerializedEntity['image']['url']
+  authors: SerializedEntity[]
+  series: SerializedEntity[]
+}
+
+function buildOperation (params: BuildOperationParams) {
   const { entity, works, title, subtitle, lang, image, authors, series } = params
   assert_.array(works)
   if (!isNonEmptyString(title)) {
-    throw newError('no title found', 400, entity)
+    throw newError('no title found', 400, { entity })
   }
 
   const snapshot = {
@@ -80,7 +92,7 @@ function buildOperation (params) {
   return { key: uri, value: snapshot }
 }
 
-function setOrdinal (snapshot, works) {
+function setOrdinal (snapshot: ItemSnapshot, works: SerializedEntity[]) {
   if (works.length === 1) {
     const work = works[0]
     const { claims } = work

@@ -22,7 +22,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import type { EntityUri } from '#types/entity'
-import type { SerializedItem } from '#types/item'
+import type { ItemSnapshot, SerializedItem } from '#types/item'
 
 const db = leveldbFactory('snapshot', 'json')
 
@@ -42,7 +42,11 @@ export async function addSnapshotToItem (item: SerializedItem) {
   return item
 }
 
-export const saveSnapshotsInBatch = ops => db.batch(formatBatchOps(ops))
+export interface SnapshotOperation {
+  key: EntityUri
+  value: ItemSnapshot
+}
+export const saveSnapshotsInBatch = (ops: SnapshotOperation[]) => db.batch(formatBatchOps(ops))
 
 async function getSnapshot (uri: EntityUri, preventLoop?: boolean) {
   // Setting a timeout as it happened in the past that leveldb would hang without responding.
