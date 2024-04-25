@@ -23,6 +23,7 @@ import {
 } from '../utils/entities.js'
 import { getItem } from '../utils/items.js'
 import { authReq, getUserB } from '../utils/utils.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {
@@ -232,7 +233,7 @@ describe('items:snapshot', () => {
       const human = await createHuman()
       const work = await createWorkWithAuthor(human)
       const edition = await createEditionFromWorks(work)
-      const humanLabelLang = Object.keys(human.labels)[0]
+      const humanLabelLang = Object.keys(human.labels)[0] as WikimediaLanguageCode
       const originalLabel = human.labels[humanLabelLang]
       await updateLabel({ user: getUserB(), uri: human.uri, lang: humanLabelLang, value: 'foo' })
       const item = await authReq('post', '/api/items', { entity: edition.uri })
@@ -247,7 +248,7 @@ describe('items:snapshot', () => {
       const human = await createHuman()
       const work = await createWorkWithAuthor(human)
       const edition = await createEditionFromWorks(work)
-      const humanLabelLang = Object.keys(human.labels)[0]
+      const humanLabelLang = Object.keys(human.labels)[0] as WikimediaLanguageCode
       const originalLabel = human.labels[humanLabelLang]
       await updateLabel({ user: getUserB(), uri: human.uri, lang: humanLabelLang, value: 'foo' })
       const item = await authReq('post', '/api/items', { entity: edition.uri })

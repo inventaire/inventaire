@@ -1,8 +1,10 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
 import { isString, map, sampleSize } from 'lodash-es'
+import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
+import type { Claims, EntityUri, Labels, PropertyUri, SerializedEntity } from '#server/types/entity'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getByUri, addClaim } from '../utils/entities.js'
 import { authReq, getUser } from '../utils/utils.js'
@@ -12,7 +14,16 @@ const wdIdByWmLanguageCode = requireJson('wikidata-lang/mappings/wd_id_by_wm_cod
 
 export const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
 
-export const createEntity = (P31, options = {}) => (params = {}) => {
+interface CreateEntityOptions {
+  canHaveLabels?: boolean
+  defaultClaims?: Claims
+}
+interface CreateEntityParams {
+  labels?: Labels
+  claims?: Claims
+  user?: AwaitableUserWithCookie
+}
+export const createEntity = (P31: EntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
   let labels
@@ -89,7 +100,7 @@ export function createEditionFromWorks (...works) {
   return createEdition(params)
 }
 
-export async function createWorkWithAuthor (human, label) {
+export async function createWorkWithAuthor (human?: SerializedEntity, label?: string) {
   const { work } = await createWorkWithSpecificRoleAuthor({ human, label, roleProperty: 'wdt:P50' })
   return work
 }
@@ -183,7 +194,7 @@ export function sameFirstNameLabel (label) {
   return labelNames.join(' ')
 }
 
-const addEntityClaim = (createFn, property) => async (subjectEntity, objectEntity) => {
+const addEntityClaim = (createFn, property: PropertyUri) => async (subjectEntity, objectEntity?) => {
   const subjectUri = isString(subjectEntity) ? subjectEntity : subjectEntity.uri
   let objectUri, entity
   if (objectEntity) {
