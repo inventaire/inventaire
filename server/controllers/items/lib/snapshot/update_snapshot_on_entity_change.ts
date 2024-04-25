@@ -1,4 +1,4 @@
-import { refreshSnapshotFromDoc, refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
+import { refreshSnapshotFromEntity, refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import { radio } from '#lib/radio'
 
 // Items keep some data about their related entities, and those entities graphs
@@ -19,12 +19,13 @@ import { radio } from '#lib/radio'
 // https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
 export function updateSnapshotOnEntityChange () {
-  radio.on('entity:update:label', refreshSnapshotFromDoc)
-  radio.on('entity:update:claim', refreshSnapshotFromDoc)
-  radio.on('entity:revert:edit', refreshSnapshotFromDoc)
-  radio.on('entity:restore:version', refreshSnapshotFromDoc)
+  radio.on('entity:update:label', refreshSnapshotFromEntity)
+  radio.on('entity:update:claim', refreshSnapshotFromEntity)
+  radio.on('entity:revert:edit', refreshSnapshotFromEntity)
+  radio.on('entity:restore:version', refreshSnapshotFromEntity)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
   radio.on('entity:revert:merge', refreshSnapshotFromUri)
+  radio.on('wikidata:entity:refreshed', refreshSnapshotFromEntity)
 }
 
 // Using the toUri as its the URI the items are using now

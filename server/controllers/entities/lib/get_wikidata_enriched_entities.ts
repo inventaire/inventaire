@@ -52,6 +52,9 @@ async function getEnrichedEntity (wdId: WdEntityId) {
   entity = entity || { id: wdId, missing: true }
   const formattedEntity = await format(entity)
   addWdEntityToIndexationQueue(wdId)
+  // Do not await for this emit, as the listeners might call getEntitiesByUris
+  // which would trigger a hanging loop
+  emit('wikidata:entity:refreshed', formattedEntity)
   return formattedEntity
 }
 

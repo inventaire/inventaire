@@ -7,22 +7,21 @@ import { info } from '#lib/utils/logs'
 import type { EntityUri, InvEntityDoc, PropertyUri, SerializedEntity } from '#server/types/entity'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
-import { getDocData } from './helpers.js'
+import { getEntityUriAndType } from './helpers.js'
 
-export async function refreshSnapshotFromDoc (changedEntityDoc: InvEntityDoc | SerializedEntity) {
-  const [ uri, type ] = getDocData(changedEntityDoc)
+export async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity) {
+  const { uri, type } = getEntityUriAndType(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
-  const label = `${uri} items snapshot refresh`
-
-  info(`${label}: starting`)
+  info(`items snapshot refresh: start  ${uri}`)
   const ops = await getSnapshotsByType[type](uri)
+  info(`items snapshot refresh: saving ${uri}`)
   return saveSnapshotsInBatch(ops)
 }
 
 export async function refreshSnapshotFromUri (changedEntityUri: EntityUri) {
   return getEntityByUri({ uri: changedEntityUri })
-  .then(refreshSnapshotFromDoc)
+  .then(refreshSnapshotFromEntity)
 }
 
 const multiWorkRefresh = (relationProperties: readonly PropertyUri[]) => async (uri: EntityUri) => {

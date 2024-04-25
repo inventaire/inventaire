@@ -5,17 +5,21 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
+import type { InvEntityDoc, SerializedEntity } from '#server/types/entity'
 
-export function getDocData (updatedDoc) {
-  let { uri, type } = updatedDoc
-  // Case when a formatted entity doc is passed
-  if (uri) return [ uri, type ]
+export function getEntityUriAndType (entity: InvEntityDoc | SerializedEntity) {
+  // Case when a serialized entity is passed
+  if ('uri' in entity) {
+    const { uri, type } = entity
+    return { uri, type }
+  }
 
   // Case when a raw entity doc is passed,
   // which can only be an inv entity doc
-  uri = getInvEntityCanonicalUri(updatedDoc)
-  type = getEntityType(updatedDoc.claims['wdt:P31'])
-  return [ uri, type ]
+  const uri = getInvEntityCanonicalUri(entity)
+  let type
+  if ('claims' in entity) type = getEntityType(entity.claims['wdt:P31'])
+  return { uri, type }
 }
 
 export function getNames (preferedLang, entities) {

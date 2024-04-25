@@ -1,6 +1,8 @@
 import 'should'
+import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
 import {
   createWork,
   createHuman,
@@ -20,6 +22,7 @@ import {
   updateClaim,
   restoreVersion,
   revertEdit,
+  getByUri,
 } from '../utils/entities.js'
 import { getItem } from '../utils/items.js'
 import { authReq, getUserB } from '../utils/utils.js'
@@ -272,8 +275,7 @@ describe('items:snapshot', () => {
       updatedItem.snapshot['entity:title'].should.equal(editionTitle)
     })
 
-    it('should be updated when its remote work entity changes', async () => {
-      // Simulating a change on the Wikidata work by merging an inv work into it
+    it('should be updated when its remote work entity is target for a merge', async () => {
       const workEntity = await createWork()
       const editionEntity = await createEditionFromWorks(workEntity)
       const item = await authReq('post', '/api/items', { entity: editionEntity.uri })
@@ -283,8 +285,7 @@ describe('items:snapshot', () => {
       updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
     })
 
-    it('should be updated when its remote author entity changes', async () => {
-      // Simulating a change on the Wikidata author by merging an inv author into it
+    it('should be updated when its remote author entity is target for a merge', async () => {
       const work = await createWork()
       const [ edition, author ] = await Promise.all([
         createEdition({ work }),
@@ -297,5 +298,44 @@ describe('items:snapshot', () => {
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
     })
+
+    it('should be updated when its remote work entity is refreshed', async () => {
+      const workUri = 'wd:Q93132245'
+      const work = await getByUri(workUri)
+      const edition = await createEdition({ work })
+      const item = await authReq('post', '/api/items', { entity: edition.uri })
+      const title = item.snapshot['entity:title']
+      const alteredTitle = getRandomString(10)
+      const alteredSnapshot = { ...item.snapshot, 'entity:title': alteredTitle }
+      await saveSnapshotsInBatch([ { key: edition.uri, value: alteredSnapshot } ])
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:title'].should.equal(alteredTitle)
+      await getByUri(workUri, true)
+      // The response doesn't wait for the snapshot refresh to be done to return
+      await wait(2000)
+      const reupdatedItem = await getItem(item)
+      reupdatedItem.snapshot['entity:title'].should.equal(title)
+    })
+
+    it('should be updated when its remote author entity is refreshed', async () => {
+      const authorUri = 'wd:Q47091793'
+      const author = await getByUri(authorUri)
+      const work = await createWorkWithAuthor(author)
+      const edition = await createEdition({ work })
+      const item = await authReq('post', '/api/items', { entity: edition.uri })
+      const title = item.snapshot['entity:title']
+      const alteredTitle = getRandomString(10)
+      const alteredSnapshot = { ...item.snapshot, 'entity:title': alteredTitle }
+      await saveSnapshotsInBatch([ { key: edition.uri, value: alteredSnapshot } ])
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:title'].should.equal(alteredTitle)
+      await getByUri(authorUri, true)
+      // The response doesn't wait for the snapshot refresh to be done to return
+      await wait(2000)
+      const reupdatedItem = await getItem(item)
+      reupdatedItem.snapshot['entity:title'].should.equal(title)
+    })
+
+    // TODO: add series tests
   })
 })
