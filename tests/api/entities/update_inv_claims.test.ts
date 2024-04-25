@@ -1,6 +1,6 @@
 import should from 'should'
 import type { EntityUri } from '#server/types/entity'
-import { getDataadminUser } from '#tests/api/utils/utils'
+import { getAdminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils'
 import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '../fixtures/entities.js'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
@@ -232,7 +232,7 @@ describe('entities:update-claims:inv', () => {
     const edition = await createEditionWithIsbn()
     const oldValue = edition.claims['wdt:P957'][0]
     const uri: EntityUri = `inv:${edition._id}`
-    const res = await updateClaim({ uri, property: 'wdt:P957', oldValue, newValue: null, user: getDataadminUser() })
+    const res = await updateClaim({ uri, property: 'wdt:P957', oldValue, newValue: null, user: getAdminUser() })
     res.ok.should.be.true()
   })
 
