@@ -76,7 +76,7 @@ export async function deleteByExternalId (property: PropertyUri, externalId: str
   return deleteByUris(uris)
 }
 
-export function merge (fromUri: PropertyUri, toUri: PropertyUri, options: { user?: AwaitableUserWithCookie } = {}) {
+export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie } = {}) {
   assert_.string(fromUri)
   assert_.string(toUri)
   fromUri = normalizeUri(fromUri)
