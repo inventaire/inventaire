@@ -3,7 +3,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { validateProperty } from './properties/validations.js'
 
-export default (type, property) => {
+export function validateClaimProperty (type, property) {
   assert_.strings([ type, property ])
 
   validateProperty(property)

@@ -15,7 +15,7 @@ interface Params {
   _id: InvEntityId
 }
 
-export default async function (params: Params) {
+export async function validateAndFormatClaimValue (params: Params) {
   const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
   let { newVal } = params
 

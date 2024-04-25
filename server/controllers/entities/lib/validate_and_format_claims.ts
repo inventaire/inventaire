@@ -5,8 +5,8 @@ import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
 import type { Claims } from '#types/entity'
 import getEntityType from './get_entity_type.js'
-import validateAndFormatClaim from './validate_and_format_claim.js'
-import validateClaimProperty from './validate_claim_property.js'
+import { validateAndFormatClaim } from './validate_and_format_claim.js'
+import { validateClaimProperty } from './validate_claim_property.js'
 
 export default async function ({ claims, type, _id }: { claims: Claims, type?: string, _id: string }) {
   const wdtP31 = claims['wdt:P31']

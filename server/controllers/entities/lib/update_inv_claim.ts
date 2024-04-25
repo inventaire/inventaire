@@ -7,8 +7,8 @@ import { assert_ } from '#lib/utils/assert_types'
 import { updateEntityDocClaim } from '#models/entity'
 import getEntityType from './get_entity_type.js'
 import inferredClaimUpdates from './inferred_claim_updates.js'
-import validateAndFormatClaim from './validate_and_format_claim.js'
-import validateClaimProperty from './validate_claim_property.js'
+import { validateAndFormatClaim } from './validate_and_format_claim.js'
+import { validateClaimProperty } from './validate_claim_property.js'
 
 async function updateInvClaim (user, id, property, oldVal, newVal) {
   assert_.object(user)
