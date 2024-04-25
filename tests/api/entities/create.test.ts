@@ -245,7 +245,7 @@ describe('entities:create', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('this property value is already used')
+      err.body.status_verbose.should.equal('invalid claim value: this property value is already used')
     })
   })
 

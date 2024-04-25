@@ -62,7 +62,7 @@ describe('entities:editions:create', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('invalid claim entity type: serie')
+      err.body.status_verbose.should.equal('invalid claim value: invalid claim entity type: serie')
     })
   })
 })

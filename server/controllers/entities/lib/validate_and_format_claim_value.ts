@@ -45,7 +45,7 @@ export default async function (params: Params) {
       entityValueTypes != null ? verifyClaimEntityType(entityValueTypes, formattedValue as EntityUri) : null,
     ])
   } catch (err) {
-    const invalidClaimValueError = newError('invalid claim value', 400, { property, value: newVal })
+    const invalidClaimValueError = newError(`invalid claim value: ${err.message}`, 400, { property, value: newVal })
     err.name = 'InvalidClaimValueError'
     invalidClaimValueError.cause = err
     throw invalidClaimValueError

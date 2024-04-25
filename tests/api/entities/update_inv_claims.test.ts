@@ -66,7 +66,7 @@ describe('entities:update-claims:inv', () => {
     await updateClaim({ uri: work.uri, property: 'wdt:P50', oldValue: null, newValue: fakeUri })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('entity not found')
+      err.body.status_verbose.should.equal('invalid claim value: entity not found')
       err.statusCode.should.equal(400)
     })
   })
@@ -268,7 +268,7 @@ describe('entities:update-claims:inv', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('this property value is already used')
+      err.body.status_verbose.should.equal('invalid claim value: this property value is already used')
     })
   })
 
