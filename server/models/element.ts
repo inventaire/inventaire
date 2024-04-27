@@ -69,10 +69,10 @@ export function updateElementDoc (newAttributes, oldElement, listingElements?) {
     if (attribute === 'ordinal') {
       newVal = findNewOrdinal(oldElement, listingElements, newAttributes[attribute])
     } else {
-      newVal = newAttributes[attribute]
+      newVal = newAttributes[attribute] || defaultValues[attribute]?.()
       validations.pass(attribute, newVal)
     }
-    if (newVal) {
+    if (newVal !== undefined) {
       newElement[attribute] = newVal
     }
   }
@@ -84,4 +84,10 @@ export function updateElementDoc (newAttributes, oldElement, listingElements?) {
   const now = Date.now()
   newElement.updated = now
   return newElement
+}
+
+const defaultValues = {
+  comment: () => '',
+  // prevent newAttributes[attribute] to return a falsy 0 value
+  ordinal: () => 0,
 }
