@@ -1,6 +1,6 @@
 import { sentence } from '#fixtures/text'
 import { wait } from '#lib/promises'
-import { getByIdWithElements } from '#tests/api/utils/listings'
+import { getByIdWithElements, getListingById } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListingWithElements, createElement, createElement } from '../fixtures/listings.js'
@@ -73,6 +73,23 @@ describe('element:update', () => {
     })
     updatedRes.comment.should.equal(comment2)
   })
+
+  it.only('should be able to remove a comment', async () => {
+    const { listing, element } = await createElement()
+    const comment = sentence()
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const updatedElementListing = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing.elements[0].comment.should.equal(comment)
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment: null,
+    })
+    const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing2.elements[0].comment.should.equal('')
+  })
 })
 
 describe('element:update:ordinal', () => {
@@ -113,7 +130,7 @@ describe('element:update:ordinal', () => {
       id: elementC._id,
       ordinal: 2,
     })
-    const {ordinal:updatedOrdinal} = updatedElement
+    const { ordinal: updatedOrdinal } = updatedElement
     updatedElement.ordinal.should.not.equal(oldOrdinal)
     const { elements: updatedElements } = await getByIdWithElements({ id: listing._id })
     updatedElements[0].ordinal.should.equal(elementA.ordinal)
