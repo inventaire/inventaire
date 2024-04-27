@@ -20,6 +20,7 @@ export const PropertyUri = /^(wdt|invp):P\d+$/
 // A year can't start by a 0
 export const Sha1 = /^[0-9a-f]{40}$/
 export const SimpleDay = /^-?([1-9]{1}[0-9]{0,3}|0)(-\d{2})?(-\d{2})?$/
+export const SignedInteger = /^-?[1-9]\d*$/
 export const StrictlyPositiveInteger = /^[1-9]\d*$/
 export const UserImg = /^\/img\/users\/[0-9a-f]{40}$/
 // all 1 letter strings are reserved for the application

@@ -18,6 +18,7 @@
 import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
+  SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
 import type { PropertyUri } from '#types/entity'
 import type { PropertyValueConstraints } from '#types/property'
@@ -225,9 +226,13 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   // British Library system number
   'wdt:P5199': externalId(/^\d{9}$/),
   // NooSFere author ID
-  'wdt:P5570': externalId(strictlyPositiveIntegerPattern),
+  'wdt:P5570': externalId(signedIntegerPattern),
   // NooSFere book ID
   'wdt:P5571': externalId(strictlyPositiveIntegerPattern),
+  // NooSFere series ID
+  'wdt:P5792': externalId(strictlyPositiveIntegerPattern),
+  // NooSFere edition ID
+  'wdt:P6901': externalId(signedIntegerPattern),
   // colorist
   'wdt:P6338': humanEntity,
   // Goodreads series ID

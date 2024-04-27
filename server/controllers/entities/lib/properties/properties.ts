@@ -355,6 +355,14 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   },
   // NooSFere book ID
   'wdt:P5571': {
+    subjectTypes: [ 'work' ],
+  },
+  // NooSFere series ID
+  'wdt:P5792': {
+    subjectTypes: [ 'serie' ],
+  },
+  // NooSFere edition ID
+  'wdt:P6901': {
     subjectTypes: [ 'edition' ],
   },
   // Goodreads series ID
