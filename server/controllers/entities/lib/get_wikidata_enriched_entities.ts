@@ -43,18 +43,22 @@ const isNotMissing = entity => entity && entity.type !== 'missing'
 
 export async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
   const key = `wd:enriched:${wdId}`
-  const fn = getEnrichedEntity.bind(null, wdId)
+  const fn = getEnrichedEntity.bind(null, wdId, refresh)
   return cache_.get({ key, fn, refresh, dry })
 }
 
-async function getEnrichedEntity (wdId: WdEntityId) {
+async function getEnrichedEntity (wdId: WdEntityId, refresh: boolean) {
   let entity = await getWdEntity(wdId)
   entity = entity || { id: wdId, missing: true }
   const formattedEntity = await format(entity)
   addWdEntityToIndexationQueue(wdId)
-  // Do not await for this emit, as the listeners might call getEntitiesByUris
-  // which would trigger a hanging loop
-  emit('wikidata:entity:refreshed', formattedEntity)
+  // Restrict 'wikidata:entity:refreshed' event to explict refresh request
+  // to avoid triggering snowballing item snapshot refreshes
+  if (refresh) {
+    // Do not await for this emit, as the listeners might call getEntitiesByUris
+    // which would trigger a hanging loop
+    emit('wikidata:entity:refreshed', formattedEntity)
+  }
   return formattedEntity
 }
 
