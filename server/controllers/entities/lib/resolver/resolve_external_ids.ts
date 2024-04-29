@@ -3,19 +3,21 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { forceArray } from '#lib/utils/base'
+import { getClaimValue } from '#models/entity'
+import type { Claims } from '#server/types/entity'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
+import type { Entries } from 'type-fest'
 
-export async function resolveExternalIds (claims, resolveOnWikidata = true) {
+export async function resolveExternalIds (claims: Claims, resolveOnWikidata = true) {
   const externalIds = []
 
-  for (const prop in claims) {
-    const values = claims[prop]
-    const { datatype, format } = properties[prop]
+  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+    const { datatype, format } = properties[property]
     if (datatype === 'external-id') {
-      forceArray(values).forEach(value => {
+      forceArray(propertyClaims).map(getClaimValue).forEach(value => {
         if (format) value = format(value)
-        externalIds.push([ prop, value ])
+        externalIds.push([ property, value ])
       })
     }
   }
