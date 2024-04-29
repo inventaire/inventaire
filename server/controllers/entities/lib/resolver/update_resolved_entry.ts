@@ -1,6 +1,7 @@
 import { cloneDeep, isEqual, omit, pick } from 'lodash-es'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { addEntityDocClaims } from '#models/entity'
 import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
 
 export async function updateResolvedEntry (entry, { reqUserId, batchId }) {
@@ -41,9 +42,7 @@ async function updateClaims (entity, seedClaims, imageUrl, reqUserId, batchId) {
   dropLikelyBadSubtitle({ updatedEntity, seedClaims })
   const newClaims = omit(seedClaims, Object.keys(entity.claims))
   await addImageClaim(entity, imageUrl, newClaims)
-  Object.keys(newClaims).forEach(prop => {
-    updatedEntity.claims[prop] = newClaims[prop]
-  })
+  addEntityDocClaims(updatedEntity, newClaims)
   updateDatePrecision(entity, updatedEntity, seedClaims)
   if (isEqual(updatedEntity, entity)) return
   await putInvEntityUpdate({
