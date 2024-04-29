@@ -441,5 +441,3 @@ for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
 }
 
 export const properties = _properties as Record<PropertyUri, PropertyConfig>
-
-export const localPropertiesUris = Object.keys(_properties)
