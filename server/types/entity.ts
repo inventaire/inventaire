@@ -48,14 +48,15 @@ export interface InvClaimObject {
   references: Reference[]
 }
 
-export type InvSimplePropertyClaims = InvClaimValue[]
 export type InvClaim = InvClaimObject | InvClaimValue
 export type InvPropertyClaims = InvClaim[]
+export type InvSimplifiedPropertyClaims = InvClaimValue[]
 
 export type LocalPropertyUri = typeof localPropertiesUris[number]
 
 export type LocalClaims = Partial<Record<LocalPropertyUri, InvPropertyClaims>>
 export type Claims = Partial<Record<PropertyUri, InvPropertyClaims>>
+export type SimplifiedClaims = Record<PropertyUri, InvSimplifiedPropertyClaims>
 export type WdRawClaims = WdClaims
 
 export interface InvEntity extends CouchDoc {
@@ -88,7 +89,7 @@ export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' |
 
 export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
-export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType }> {
+export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType, claims: SimplifiedClaims }> {
   _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
   originalLang?: WikimediaLanguageCode

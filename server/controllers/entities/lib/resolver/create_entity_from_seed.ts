@@ -4,7 +4,7 @@ import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError, warn } from '#lib/utils/logs'
-import type { Claims, EntityType, InvPropertyClaims, InvSimplePropertyClaims, PropertyUri } from '#types/entity'
+import type { Claims, EntityType, InvPropertyClaims, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
 import type { BatchId } from '#types/patch'
 import type { EditionSeed, EntitySeed } from '#types/resolver'
 import type { UserId } from '#types/user'
@@ -75,7 +75,7 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvSimplePropertyClaims, entityType?: EntityType) {
+function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvSimplifiedPropertyClaims, entityType?: EntityType) {
   for (const value of values) {
     if (value != null && properties[property].validate({ value, entityType })) {
       if (claims[property] == null) claims[property] = []
