@@ -20,25 +20,21 @@ import {
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
-import type { PropertyUri } from '#types/entity'
-import type { PropertyValueConstraints } from '#types/property'
+import type { ClaimValueTypeByDatatype } from '#server/types/entity'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
 
-// Make sure to not mutate the base, while letting the last word to the extension
-const extend = (base, extension) => Object.assign({}, base, extension)
-
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
-export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConstraints> = {
+export const propertiesValuesConstraints = {
   // image
   'invp:P2': imageHash,
   // instance of
   'wdt:P31': allowedPropertyValues('wdt:P31'),
   // author
-  'wdt:P50': extend(humanEntity, { hasPlaceholders: true }),
+  'wdt:P50': { ...humanEntity, hasPlaceholders: true } as const,
   // scenarist
   'wdt:P58': humanEntity,
   // editor
@@ -202,7 +198,7 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   // GoodReads book ID
   'wdt:P2969': externalId(strictlyPositiveIntegerPattern),
   // ISBN publisher prefix
-  'wdt:P3035': extend(externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/), { uniqueValue: false }),
+  'wdt:P3035': { ...externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/), uniqueValue: false } as const,
   // Czech National Bibliography book ID
   'wdt:P3184': externalId(/^cnb[0-9]{9}$/),
   // Babelio author ID
@@ -263,6 +259,8 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   'wdt:P12351': externalId(uuidPattern),
   // NooSFere publisher ID
   'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
-}
+} as const
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
+
+export type PropertiesValuesConstraints = typeof propertiesValuesConstraints

@@ -1,8 +1,10 @@
 import type { Url } from '#types/common'
-import type { Claims, EntityUri, InvClaim, Isbn, Labels, LocalPropertyUri } from '#types/entity'
+import type { ClaimByProperty, ClaimValueByProperty, Claims, EntityUri, InvClaim, Isbn, Labels } from '#types/entity'
 
 export type LooseClaim = InvClaim[] | InvClaim
-export type LooseClaims = Record<LocalPropertyUri, LooseClaim>
+export type LooseClaims = Partial<{
+  [Property in keyof ClaimValueByProperty]: ClaimByProperty[Property] | ClaimByProperty[Property][]
+}>
 
 export interface EntitySeed {
   uri?: EntityUri

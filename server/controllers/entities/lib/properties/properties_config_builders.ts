@@ -3,12 +3,12 @@ import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
 import { getPluralType } from '#lib/wikidata/aliases'
-import type { PropertyValueConstraints } from '#types/property'
 import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export function isbnProperty (num) {
-  const propertyConstraints: PropertyValueConstraints = Object.assign({}, concurrentString, {
+  return {
+    ...concurrentString,
     validate: ({ value: isbn }) => {
       if (isbn == null) return false
       const isbnData = parseIsbn(isbn)
@@ -18,20 +18,21 @@ export function isbnProperty (num) {
     uniqueValue: true,
     format: isbn => formatIsbn(isbn, `${num}h`) || isbn,
     adminUpdateOnly: true,
-  })
-  return propertyConstraints
+  } as const
 }
 
 // External ids regexs can be found
 // on their Wikidata property page P1793 statement
 export function externalId (regex) {
-  return Object.assign({}, concurrentExternalId, {
+  return {
+    ...concurrentExternalId,
     validate: ({ value }) => regex.test.bind(regex)(value),
-  })
+  } as const
 }
 
 export function typedExternalId (regexPerType) {
-  return Object.assign({}, concurrentExternalId, {
+  return {
+    ...concurrentExternalId,
     typeSpecificValidation: true,
     validate: ({ value, entityType }) => {
       assert_.string(entityType)
@@ -40,23 +41,25 @@ export function typedExternalId (regexPerType) {
       }
       return regexPerType[entityType].test(value)
     },
-  })
+  } as const
 }
 
 export function allowedPropertyValues (property) {
   const allowedValuesPerType = allowedValuesPerTypePerProperty[property]
-  return Object.assign({}, uniqueEntity, {
+  return {
+    ...uniqueEntity,
     typeSpecificValidation: true,
     validate: ({ value, entityType }) => {
       const type = getPluralType(entityType)
       return allowedValuesPerType[type].includes(value)
     },
-  })
+  } as const
 }
 
 export function externalIdWithFormatter ({ regex, format }) {
-  return Object.assign({}, concurrentExternalId, {
+  return {
+    ...concurrentExternalId,
     validate: ({ value }) => regex.test.bind(regex)(value),
     format,
-  })
+  } as const
 }

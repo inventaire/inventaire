@@ -1,10 +1,11 @@
-import type { allLocallyEditedEntitiesTypes, localPropertiesUris } from '#controllers/entities/lib/properties/properties'
+import type { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
+import type { PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { ImageHash } from '#types/image'
-import type { OverrideProperties } from 'type-fest'
+import type { OverrideProperties, Writable } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims } from 'wikibase-sdk'
 
 export type WdEntityId = `Q${number}`
@@ -48,22 +49,48 @@ export interface InvClaimObject {
   references: Reference[]
 }
 
+export interface ClaimValueTypeByDatatype {
+  'entity': EntityValue
+  'string': StringValue
+  'external-id': ExternalIdValue
+  'url': UrlValue
+  'date': DateValue
+  'positive-integer': PositiveIntegerValue
+  'positive-integer-string': PositiveIntegerStringValue
+  'image': ImageValue
+}
+
+export type ClaimValueByProperty = {
+  [Property in keyof Writable<PropertiesValuesConstraints>]: ClaimValueTypeByDatatype[PropertiesValuesConstraints[Property]['datatype']]
+}
+export type ClaimObjectByProperty = {
+  [Property in keyof Writable<PropertiesValuesConstraints>]: {
+    value: ClaimValueTypeByDatatype[PropertiesValuesConstraints[Property]['datatype']]
+    references: Reference[]
+  }
+}
+export type ClaimByProperty = {
+  [Property in keyof Writable<PropertiesValuesConstraints>]: ClaimValueByProperty[Property] | ClaimObjectByProperty[Property]
+}
+
 export type InvClaim = InvClaimObject | InvClaimValue
 export type InvPropertyClaims = InvClaim[]
 export type InvSimplifiedPropertyClaims = InvClaimValue[]
 
-export type LocalPropertyUri = typeof localPropertiesUris[number]
+export type Claims = Partial<{
+  [Property in keyof ClaimValueByProperty]: ClaimByProperty[Property][]
+}>
+export type SimplifiedClaims = Partial<{
+  [Property in keyof ClaimValueByProperty]: ClaimValueByProperty[Property][]
+}>
 
-export type LocalClaims = Partial<Record<LocalPropertyUri, InvPropertyClaims>>
-export type Claims = Partial<Record<PropertyUri, InvPropertyClaims>>
-export type SimplifiedClaims = Record<PropertyUri, InvSimplifiedPropertyClaims>
 export type WdRawClaims = WdClaims
 
 export interface InvEntity extends CouchDoc {
   _id: InvEntityId
   type: 'entity'
   labels: Labels
-  claims: LocalClaims
+  claims: Claims
   created: EpochTimeStamp
   updated?: EpochTimeStamp
   version: number
@@ -119,7 +146,7 @@ export interface SerializedWdEntity {
   labels: Labels
   aliases: SimplifiedAliases
   descriptions: SimplifiedDescriptions
-  claims: Claims
+  claims: SimplifiedClaims
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
