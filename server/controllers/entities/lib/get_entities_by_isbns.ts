@@ -4,11 +4,12 @@ import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { EntityUri, InvEntityDoc, Isbn } from '#types/entity'
+import { getClaimValue } from '#models/entity'
+import type { EntityUri, InvEntity, Isbn, SerializedEntity } from '#types/entity'
 import formatEditionEntity from './format_edition_entity.js'
 
 export interface EntitiesResults {
-  entities: InvEntityDoc[]
+  entities: SerializedEntity[]
   redirects: Record<EntityUri, EntityUri>
   notFound?: EntityUri[]
 }
@@ -23,17 +24,17 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
     // Likely because getAuthoritiesAggregatedEntry didn't find anything
     await Promise.all(isbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
   }
-  let entities = await getInvEntitiesByIsbns(isbns)
+  const entities = await getInvEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = difference(isbns, foundIsbns)
 
-  entities = entities.map(formatEditionEntity)
+  const serializedEntities = entities.map(formatEditionEntity)
 
   if (missingIsbns.length === 0) {
-    const results = { entities }
+    const results = { entities: serializedEntities }
     return addRedirections(results, redirections)
   }
-  const results: Partial<EntitiesResults> = { entities }
+  const results: Partial<EntitiesResults> = { entities: serializedEntities }
 
   // The cases where autocreate && refresh was already checked above
   if (autocreate && !refresh) {
@@ -44,7 +45,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
       if (resolvedEdition.notFound) notFound.push(prefixifyIsbn(resolvedEdition.isbn))
       else newEntities.push(resolvedEdition)
     }
-    results.entities = entities.concat(newEntities)
+    results.entities = serializedEntities.concat(newEntities)
     if (notFound.length > 0) results.notFound = notFound
   } else {
     results.notFound = missingIsbns.map(prefixifyIsbn)
@@ -53,7 +54,9 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   return addRedirections(results, redirections)
 }
 
-const getIsbn13h = entity => entity.claims['wdt:P212'][0]
+function getIsbn13h (entity: InvEntity) {
+  return getClaimValue(entity.claims['wdt:P212'][0])
+}
 
 function getRedirections (isbns) {
   // isbns list, redirections object

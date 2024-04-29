@@ -3,6 +3,7 @@ import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
+import { simplifyInvClaims } from '#models/entity'
 import type { InvEntityDoc, InvEntityId, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
 import addRedirection from './add_redirection.js'
 import formatEntityCommon from './format_entity_common.js'
@@ -23,10 +24,14 @@ const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
   if ('redirect' in entity) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })
+
+  const simplifiedClaims = simplifyInvClaims(entity.claims)
+
   const serializedEntity = {
     uri,
     ...entity,
-    type: getEntityType(entity.claims['wdt:P31']),
+    type: getEntityType(simplifiedClaims['wdt:P31']),
+    claims: simplifiedClaims,
     redirects,
     // Keep track of special types such as removed:placehoder
     // to the let the search engine unindex it

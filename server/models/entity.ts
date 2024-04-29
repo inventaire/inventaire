@@ -358,3 +358,11 @@ function mergeClaimReferences (fromClaim: InvClaim, toClaim: InvClaim) {
 function includesReference (references: Reference[], reference: Reference) {
   return references.find(ref => sameObjects(ref, reference))
 }
+
+export function simplifyInvClaims (claims: Claims) {
+  const simplifiedClaims = {}
+  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+    simplifiedClaims[property] = propertyClaims.map(getClaimValue)
+  }
+  return simplifiedClaims
+}
