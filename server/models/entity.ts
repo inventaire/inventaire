@@ -84,17 +84,17 @@ export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
 
 type CustomInvEntity = InvEntity & { _allClaimsProps?: PropertyUri[] }
 
-export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
+export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
   preventRedirectionEdit(doc)
 
-  // Pass the list of all edited properties, so that wen trying to infer property
-  // values, we know which one should not be infered at the risk of creating
+  // Pass the list of all edited properties, so that when trying to infer property
+  // values, we know which one should not be inferred at the risk of creating
   // a conflict
-  doc._allClaimsProps = Object.keys(claims) as PropertyUri[]
+  doc._allClaimsProps = Object.keys(newClaims) as PropertyUri[]
 
-  for (const [ property, array ] of Object.entries(claims) as Entries<typeof claims>) {
-    for (const value of array) {
-      doc = createEntityDocClaim(doc, property, value)
+  for (const [ property, propertyClaims ] of Object.entries(newClaims) as Entries<typeof newClaims>) {
+    for (const claim of propertyClaims) {
+      doc = createEntityDocClaim(doc, property, claim)
     }
   }
 
