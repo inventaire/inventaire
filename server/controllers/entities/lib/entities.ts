@@ -8,7 +8,7 @@ import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity } from '#types/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -23,7 +23,7 @@ export function getInvEntitiesByIsbns (isbns) {
     .map(toIsbn13h)
     .filter(identity)
     .map(isbn => [ 'wdt:P212', isbn ])
-  return db.getDocsByViewKeys<InvEntityDoc>('byClaim', keys)
+  return db.getDocsByViewKeys<InvEntity>('byClaim', keys)
 }
 
 export const getInvEntityByIsbn = isbn => getInvEntitiesByIsbns([ isbn ]).then(firstDoc)
@@ -31,7 +31,7 @@ export const getInvEntityByIsbn = isbn => getInvEntitiesByIsbns([ isbn ]).then(f
 export async function getInvEntitiesByClaim (property, value, includeDocs = false, parseDoc = false) {
   validateProperty(property)
 
-  const res = await db.view<EntityValue, InvEntityDoc>('entities', 'byClaim', {
+  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
     key: [ property, value ],
     include_docs: includeDocs,
   })
@@ -43,7 +43,7 @@ export async function getInvEntitiesByClaim (property, value, includeDocs = fals
 export async function getInvEntitiesByClaims ({ claims, includeDocs = false, parseDoc = false }) {
   claims.forEach(([ property ]) => validateProperty(property))
 
-  const res = await db.view<EntityValue, InvEntityDoc>('entities', 'byClaim', {
+  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
     keys: claims,
     include_docs: includeDocs,
   })
@@ -67,7 +67,7 @@ export async function getInvEntitiesUrisByClaims (properties, value) {
 }
 
 export async function getInvClaimsByClaimValue (value) {
-  const { rows } = await db.view<PropertyUri, InvEntityDoc>('entities', 'byClaimValue', {
+  const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
   })
@@ -78,7 +78,7 @@ export async function getInvClaimsByClaimValue (value) {
 }
 
 export async function getInvEntitiesClaimValueCount (value) {
-  const { rows } = await db.view<PropertyUri, InvEntityDoc>('entities', 'byClaimValue', {
+  const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
   })
