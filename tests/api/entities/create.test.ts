@@ -196,7 +196,7 @@ describe('entities:create', () => {
     })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid property value array')
+      err.body.status_verbose.should.equal('invalid property claim array')
       err.statusCode.should.equal(400)
     })
   })

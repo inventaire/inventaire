@@ -322,10 +322,9 @@ export function getClaimValue (claim: InvClaim) {
   }
 }
 
-function setClaimValue (claim: InvClaim, value: InvClaimValue) {
+export function setClaimValue (claim: InvClaim, value: InvClaimValue) {
   if (isClaimObject(claim)) {
-    claim.value = value
-    return claim
+    return { ...claim, value }
   } else {
     return value
   }
