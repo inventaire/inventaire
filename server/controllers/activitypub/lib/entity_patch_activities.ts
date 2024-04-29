@@ -21,7 +21,7 @@ export async function getActivitiesFromPatch (patch) {
   return formatEntityPatchesActivities(rows)
 }
 
-// Mimick server/db/couchdb/design_docs/patches.json byClaimValueAndDate
+// Mimick server/db/couchdb/design_docs/patches.ts byClaimValueAndDate
 function byClaimValueAndDate (doc) {
   const { _id: id, timestamp } = doc
   const rows = []
@@ -47,8 +47,9 @@ function byClaimValueAndDate (doc) {
   return rows
 }
 
-function addRow (rows, id, property, claimValue, timestamp) {
-  if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
-    rows.push({ id, key: [ claimValue, timestamp ], value: property })
+function addRow (rows, id, property, claim, timestamp) {
+  const value = typeof claim === 'object' ? claim.value : claim
+  if (typeof value === 'string' && (value.startsWith('wd:') || value.startsWith('inv:'))) {
+    rows.push({ id, key: [ value, timestamp ], value: property })
   }
 }
