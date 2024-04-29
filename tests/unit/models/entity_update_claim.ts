@@ -1,6 +1,6 @@
 // TODO: Updating claim object value to direct claim value should get rid of the reference
 import should from 'should'
-import { someReference } from '#fixtures/entities'
+import { someReference, someReferenceB } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { createBlankEntityDoc, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
@@ -217,12 +217,30 @@ describe('entity model: update claim', () => {
     })
 
     describe('claim object', () => {
-      it('should return with the claim value updated', () => {
+      it('should return with the claim value updated: simple claim to claim object', () => {
         const entityDoc = workDoc()
         entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
         const claimObject = { value: 'wd:Q42', references: [ someReference ] }
         const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', claimObject)
         updatedDoc.claims['wdt:P50'][0].should.equal(claimObject)
+      })
+
+      it('should return with the claim value updated: claim object to simple claim', () => {
+        const entityDoc = workDoc()
+        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        entityDoc.claims['wdt:P50'] = [ claimObject ]
+        const claimValue = 'wd:Q181659'
+        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', claimObject.value, claimValue)
+        updatedDoc.claims['wdt:P50'][0].should.equal(claimValue)
+      })
+
+      it('should return with the claim value updated: claim object to claim object', () => {
+        const entityDoc = workDoc()
+        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        entityDoc.claims['wdt:P50'] = [ claimObject ]
+        const claimObject2 = { value: 'wd:Q181659', references: [ someReferenceB ] }
+        const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', claimObject.value, claimObject2)
+        updatedDoc.claims['wdt:P50'][0].should.deepEqual(claimObject2)
       })
 
       it("should throw if the old value doesn't exist", () => {
