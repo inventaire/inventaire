@@ -76,6 +76,7 @@ export type ClaimByProperty = {
 export type InvClaim = InvClaimObject | InvClaimValue
 export type InvPropertyClaims = InvClaim[]
 export type InvSimplifiedPropertyClaims = InvClaimValue[]
+export type InvExpandedPropertyClaims = InvClaimObject[]
 
 export type Claims = Partial<{
   [Property in keyof ClaimValueByProperty]: ClaimByProperty[Property][]

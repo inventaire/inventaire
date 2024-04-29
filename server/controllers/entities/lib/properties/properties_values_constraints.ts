@@ -20,7 +20,6 @@ import {
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
-import type { ClaimValueTypeByDatatype } from '#server/types/entity'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs

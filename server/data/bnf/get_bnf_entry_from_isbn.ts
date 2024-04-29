@@ -11,11 +11,11 @@ import { requests_ } from '#lib/requests'
 import { forceArray, simpleDay } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
-import { objectKeys } from '#lib/utils/types'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import type { InvClaimValue, Reference } from '#server/types/entity'
+import type { InvExpandedPropertyClaims, InvSimplifiedPropertyClaims, Reference } from '#server/types/entity'
 import type { AbsoluteUrl, Url } from '#types/common'
-import type { EntityLooseSeed, ExternalDatabaseEntryRow, ResolverEntry } from '#types/resolver'
+import type { EntityLooseSeed, ExternalDatabaseEntryRow, LooseClaims, ResolverEntry } from '#types/resolver'
+import type { Entries } from 'type-fest'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -239,12 +239,15 @@ function addReferenceToSeedClaims (seed: EntityLooseSeed) {
     'wdt:P854': [ referenceUrl ],
     'wdt:P813': [ simpleDay() ],
   }
-  for (const property of objectKeys(claims)) {
-    claims[property] = forceArray(claims[property]).map((claim: InvClaimValue) => {
+  for (const [ property, propertyLooseClaims ] of Object.entries(claims) as Entries<LooseClaims>) {
+    const propertyClaimsValues: InvSimplifiedPropertyClaims = forceArray(propertyLooseClaims)
+    const propertyClaimsObjects = propertyClaimsValues.map(claim => {
       return {
         value: claim,
         references: [ reference ],
       }
     })
+    // @ts-expect-error
+    claims[property] = propertyClaimsObjects as InvExpandedPropertyClaims
   }
 }
