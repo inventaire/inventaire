@@ -1,7 +1,6 @@
 import { get } from 'lodash-es'
 import should from 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
-import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils'

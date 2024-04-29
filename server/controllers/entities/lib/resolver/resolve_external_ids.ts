@@ -13,8 +13,10 @@ export async function resolveExternalIds (claims: Claims, resolveOnWikidata = tr
   const externalIds = []
 
   for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
-    const { datatype, format } = properties[property]
-    if (datatype === 'external-id') {
+    const propertyConstraints = properties[property]
+    if (propertyConstraints.datatype === 'external-id') {
+      let format
+      if ('format' in propertyConstraints) format = propertyConstraints.format
       forceArray(propertyClaims).map(getClaimValue).forEach(value => {
         if (format) value = format(value)
         externalIds.push([ property, value ])
