@@ -1,5 +1,5 @@
 import should from 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
 import { authReq, authReqB } from '../utils/utils.js'
 

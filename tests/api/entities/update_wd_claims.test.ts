@@ -1,6 +1,6 @@
 import 'should'
 import { validateP31Update } from '#lib/wikidata/validate_wd_update'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('entities:update-claims:wd', () => {
   describe('validateP31Update', () => {

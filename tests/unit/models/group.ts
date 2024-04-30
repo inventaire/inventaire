@@ -1,7 +1,7 @@
 import 'should'
 import { wait } from '#lib/promises'
 import { createGroupDoc, groupMembershipActions, removeUserFromGroupDoc } from '#models/group'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'

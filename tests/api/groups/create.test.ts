@@ -1,6 +1,6 @@
 import 'should'
 import slugify from '#controllers/groups/lib/slugify'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { groupName } from '../fixtures/groups.js'
 import { authReq } from '../utils/utils.js'
 

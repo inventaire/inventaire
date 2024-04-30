@@ -1,6 +1,6 @@
 import should from 'should'
 import { addUserDocRole, createUserDoc, removeUserDocRole, softDeleteUser, updateUserDocEmail, updateUserItemsCounts } from '#models/user'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const someUsername = 'rocky4'
 const someEmail = 'hi@validemail.org'

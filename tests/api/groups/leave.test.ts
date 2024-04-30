@@ -1,7 +1,7 @@
 import 'should'
 import { getGroup, leaveGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createGroup, createGroupAndMember } from '../fixtures/groups.js'
 import { authReq, authReqC, getUser } from '../utils/utils.js'
 

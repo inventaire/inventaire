@@ -4,7 +4,7 @@ import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
 import { createBlankEntityDoc } from '#models/entity'
 import { addVersionsSnapshots, createPatchDoc, revertPatch } from '#models/patch'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const validDocId = '12345678900987654321123456789012'
 const userId = validDocId
