@@ -1,4 +1,7 @@
 import { oneDay } from '#lib/time'
+import type { ResolverEntry } from '#server/types/resolver'
+import type { AuthentifiedReq } from '#server/types/server'
+import type { UserId } from '#server/types/user'
 import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create.js'
 
 // Entry example:
@@ -46,7 +49,16 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
+export interface ResolverParams {
+  entries: ResolverEntry[]
+  create?: boolean
+  update?: boolean
+  enrich?: boolean
+  strict?: boolean
+  reqUserId?: UserId
+}
+
+async function controller (params: ResolverParams, req: AuthentifiedReq) {
   req.setTimeout(oneDay)
   const { resolvedEntries, errors } = await resolveUpdateAndCreate(params)
   if (params.strict) {

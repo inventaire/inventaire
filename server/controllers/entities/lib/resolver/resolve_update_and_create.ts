@@ -1,21 +1,27 @@
 import { createUnresolvedEntry } from '#controllers/entities/lib/resolver/create_unresolved_entry'
 import { updateResolvedEntry } from '#controllers/entities/lib/resolver/update_resolved_entry'
+import type { ResolverParams } from '#controllers/entities/resolve'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
-import type { ResolverEntry } from '#types/resolver'
+import type { BatchId } from '#server/types/patch'
+import type { ResolverEntry, SanitizedResolverEntry } from '#types/resolver'
 import { resolveEntry } from './resolve.js'
 import { sanitizeEntry } from './sanitize_entry.js'
 
 const { nice } = config
 
-export async function resolveUpdateAndCreate (params) {
-  params.batchId = Date.now()
+export interface ResolverBatchParams extends ResolverParams {
+  batchId?: BatchId
+}
+
+export async function resolveUpdateAndCreate (params: ResolverBatchParams) {
+  params.batchId = Date.now() as BatchId
   const { create, update, strict } = params
   const { entries, errors } = sanitizeEntries(params.entries, strict)
 
-  const resolvedEntries = []
+  const resolvedEntries: SanitizedResolverEntry[] = []
   if (entries.length === 0) return { resolvedEntries, errors }
 
   async function resolveNext () {
@@ -51,14 +57,14 @@ function handleError (strict: boolean, errors: EntryError[], err: EntryError, en
   }
 }
 
-export function sanitizeEntries (entries, strict) {
-  const errors = []
-  const sanitizedEntries = []
+export function sanitizeEntries (entries: unknown[], strict: boolean) {
+  const errors: EntryError[] = []
+  const sanitizedEntries: SanitizedResolverEntry[] = []
   entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))
   return { entries: sanitizedEntries, errors }
 }
 
-const sanitizeEntryAndDispatch = (sanitizedEntries, errors, strict) => entry => {
+const sanitizeEntryAndDispatch = (sanitizedEntries: SanitizedResolverEntry[], errors: EntryError[], strict: boolean) => (entry: ResolverEntry) => {
   try {
     sanitizedEntries.push(sanitizeEntry(entry))
   } catch (err) {

@@ -5,7 +5,7 @@ import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { getClaimValue } from '#models/entity'
-import type { ResolverEntry } from '#server/types/resolver'
+import type { ResolverEntry, SanitizedResolverEntry } from '#server/types/resolver'
 import { sanitizeSeed } from './sanitize_seed.js'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
@@ -47,7 +47,7 @@ export function sanitizeEntry (entry: ResolverEntry) {
   sanitizeEdition(entry.edition)
   sanitizeCollection(entry.authors, 'human')
   sanitizeCollection(entry.works, 'work')
-  return entry
+  return entry as SanitizedResolverEntry
 }
 
 function sanitizeEdition (edition) {

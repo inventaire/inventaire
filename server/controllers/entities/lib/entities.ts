@@ -1,14 +1,14 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import dbFactory from '#db/couchdb/base'
-import { firstDoc, mapDoc } from '#lib/couch'
+import { mapDoc } from '#lib/couch'
 import { newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue } from '#types/entity'
 import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -18,7 +18,7 @@ const db = await dbFactory('entities')
 export const getEntityById = db.get<InvEntityDoc>
 export const getEntitiesByIds = db.byIds<InvEntityDoc>
 
-export function getInvEntitiesByIsbns (isbns) {
+export function getInvEntitiesByIsbns (isbns: Isbn[]) {
   const keys = isbns
     .map(toIsbn13h)
     .filter(identity)
@@ -26,9 +26,12 @@ export function getInvEntitiesByIsbns (isbns) {
   return db.getDocsByViewKeys<InvEntity>('byClaim', keys)
 }
 
-export const getInvEntityByIsbn = isbn => getInvEntitiesByIsbns([ isbn ]).then(firstDoc)
+export async function getInvEntityByIsbn (isbn: Isbn) {
+  const docs = await getInvEntitiesByIsbns([ isbn ])
+  return docs[0]
+}
 
-export async function getInvEntitiesByClaim (property, value, includeDocs = false, parseDoc = false) {
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs = false, parseDoc = false) {
   validateProperty(property)
 
   const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {

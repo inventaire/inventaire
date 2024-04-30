@@ -27,6 +27,6 @@ export const resolveSeed = (seed, expectedEntityType) => entities => {
   return seed
 }
 
-export function normalizeTitle (title) {
+export function normalizeTitle (title?: string) {
   if (title) return ASCIIFolder.foldMaintaining(normalizeString(title)).toLowerCase()
 }

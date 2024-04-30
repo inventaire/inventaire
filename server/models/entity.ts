@@ -30,7 +30,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
@@ -365,4 +365,15 @@ export function simplifyInvClaims (claims: Claims) {
     simplifiedClaims[property] = propertyClaims.map(getClaimValue)
   }
   return simplifiedClaims
+}
+
+// TODO: find a way to actually detect the claim value type from the property
+// With this implementation, a type assertion is still needed, ex:
+//   getFirstClaimValue(claims, 'wdt:P1476') as string
+export function getFirstClaimValue (claims: Claims, property: keyof ClaimValueByProperty) {
+  if (claims[property]?.[0]) {
+    const firstClaim = claims[property][0]
+    const value = getClaimValue(firstClaim)
+    return value as ClaimValueByProperty[typeof property]
+  }
 }
