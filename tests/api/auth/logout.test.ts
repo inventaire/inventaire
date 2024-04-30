@@ -1,6 +1,6 @@
 import 'should'
 import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { parseSessionCookies, parseBase64EncodedJson } from '../utils/auth.js'
 import { rawRequest } from '../utils/request.js'
 import { getUser } from '../utils/utils.js'

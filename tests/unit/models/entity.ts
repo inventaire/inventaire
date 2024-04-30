@@ -1,22 +1,10 @@
 import should from 'should'
 import { someReference, someReferenceB } from '#fixtures/entities'
-import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
+import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { EntityRedirection, InvEntity } from '#server/types/entity'
-import { shouldNotBeCalled } from '#tests/unit/utils'
-
-const workDoc = () => {
-  const doc: InvEntity = Object.assign(createBlankEntityDoc(), {
-    _id: '12345678900987654321123456789012' as CouchUuid,
-    _rev: '5-12345678900987654321123456789012' as CouchRevId,
-    created: Date.now(),
-    updated: Date.now(),
-  })
-  doc.claims['wdt:P31'] = [ 'wd:Q47461344' ]
-  doc.claims['wdt:P50'] = [ 'wd:Q535', 'wd:Q1541' ]
-  doc.claims['wdt:P144'] = [ { value: 'wd:Q150827', references: [ someReference ] }, 'wd:Q29478' ]
-  return doc
-}
+import type { EntityRedirection } from '#server/types/entity'
+import { workDoc } from '#tests/unit/utils/entity'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const nonTrimmedString = `
       foo

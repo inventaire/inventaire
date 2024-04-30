@@ -4,7 +4,7 @@ import { wait } from '#lib/promises'
 import { getHashCode } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
-import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
+import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const { ttlCheckFrequency } = config.leveldb
 if (config.env !== 'tests-unit') throw new Error(`invalid env: ${config.env}`)

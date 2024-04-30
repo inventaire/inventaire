@@ -1,6 +1,6 @@
 import should from 'should'
 import { objectPromise, tap, wait, mappedArrayPromise } from '#lib/promises'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('promises utils', () => {
   describe('objectPromise', () => {

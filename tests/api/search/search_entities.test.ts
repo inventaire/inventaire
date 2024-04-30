@@ -3,7 +3,7 @@ import { map, uniq } from 'lodash-es'
 import elasticsearchSettings from '#db/elasticsearch/settings/settings'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createWork,
   createHuman,

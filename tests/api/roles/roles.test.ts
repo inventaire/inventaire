@@ -1,6 +1,6 @@
 import 'should'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createWork } from '../fixtures/entities.js'
 import {
   publicReq,

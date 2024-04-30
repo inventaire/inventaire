@@ -1,7 +1,7 @@
 import should from 'should'
 import type { EntityUri } from '#server/types/entity'
 import { getAdminUser } from '#tests/api/utils/utils'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '../fixtures/entities.js'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 

@@ -3,7 +3,7 @@ import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helper
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
-import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
 import { createItem } from '../fixtures/items.js'
 import { createShelf } from '../fixtures/shelves.js'

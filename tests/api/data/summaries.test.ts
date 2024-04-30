@@ -3,7 +3,7 @@ import { createWork, createEdition, createHuman } from '#fixtures/entities'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { getByUri } from '#tests/api/utils/entities'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=summaries'

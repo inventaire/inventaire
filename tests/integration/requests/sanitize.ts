@@ -1,6 +1,6 @@
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('requests:sanitize', () => {
   it('should reject private URLs', async () => {

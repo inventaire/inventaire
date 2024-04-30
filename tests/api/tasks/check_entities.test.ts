@@ -1,6 +1,6 @@
 import 'should'
 import { map, uniq } from 'lodash-es'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createHuman, createWork } from '../fixtures/entities.js'
 import { findOrIndexEntities, deleteByUris } from '../utils/entities.js'
 import { checkEntities, getBySuspectUri } from '../utils/tasks.js'

@@ -4,7 +4,7 @@ import { makeUrl, getEntityActorName, propertyLabel } from '#controllers/activit
 import { propertiesDisplay } from '#controllers/activitypub/lib/properties_display'
 import { i18n } from '#lib/emails/i18n/i18n'
 import config from '#server/config'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createHuman, createEdition } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, createUsername } from '../fixtures/users.js'

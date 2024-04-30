@@ -11,7 +11,7 @@ import {
   getUser,
   getUserB,
 } from '#tests/api/utils/utils'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
 import { deleteUser, updateUser } from '../utils/users.js'
 
