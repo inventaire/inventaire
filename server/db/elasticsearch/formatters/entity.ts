@@ -14,6 +14,7 @@ import { isWdEntityId } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
+import { simplifyInvClaims } from '#models/entity'
 import type { Claims, EntityUri, PropertyUri } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
@@ -33,8 +34,12 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
 
   let { claims, type } = entity
 
-  if (claims != null && isRawWikidataClaims(claims)) {
-    claims = formatClaims(claims)
+  if (claims != null) {
+    if (isRawWikidataClaims(claims)) {
+      claims = formatClaims(claims)
+    } else {
+      claims = simplifyInvClaims(claims)
+    }
   }
 
   if (type === 'languages') claims = pick(claims, languagesCodesProperties)
@@ -49,13 +54,13 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
   // See https://github.com/inventaire/inventaire/pull/294
   if (!indexedEntitiesTypesSet.has(entity.type)) return
 
-  let needsSimplification = false
+  let needsTermsSimplification = false
   const isWikidataEntity = isWdEntityId(entity._id)
 
   if (isWikidataEntity) {
     // Only Wikidata entities imported from a dump need to be simplified
     // Wikidata entities with a URI come from the Inventaire API, and are thus already simplified
-    needsSimplification = entity.uri == null
+    needsTermsSimplification = entity.uri == null
     entity.uri = 'wd:' + entity._id
   } else {
     entity.uri = 'inv:' + entity._id
@@ -82,7 +87,7 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
   // If passed an already formatted entity
   delete entity.image
 
-  if (needsSimplification) {
+  if (needsTermsSimplification) {
     entity.labels = simplifyLabels(entity.labels)
     entity.descriptions = simplifyDescriptions(entity.descriptions)
     entity.aliases = simplifyAliases(entity.aliases)
