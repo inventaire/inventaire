@@ -17,12 +17,13 @@ export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
 
-export type PropertyUri = WdPropertyUri | InvPropertyUri
 export type Isbn = string
 export type IsbnEntityUri = `isbn:${Isbn}`
 
 export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
 export type EntityId = WdEntityId | InvEntityId | Isbn
+
+export type PropertyUri = WdPropertyUri | InvPropertyUri
 
 export type EntityUri = WdEntityUri | InvEntityUri | IsbnEntityUri
 
@@ -49,6 +50,11 @@ export interface InvClaimObject {
   references: Reference[]
 }
 
+export interface DatatypedInvClaimObject <T> {
+  value: T
+  references: Reference[]
+}
+
 export interface ClaimValueTypeByDatatype {
   'entity': EntityValue
   'string': StringValue
@@ -71,6 +77,9 @@ export type ClaimObjectByProperty = {
 }
 export type ClaimByProperty = {
   [Property in keyof Writable<PropertiesValuesConstraints>]: ClaimValueByProperty[Property] | ClaimObjectByProperty[Property]
+}
+export type ClaimByDatatype = {
+  [Datatype in keyof ClaimValueTypeByDatatype]: ClaimValueTypeByDatatype[Datatype] | DatatypedInvClaimObject<ClaimValueTypeByDatatype[Datatype]>
 }
 
 export type InvClaim = InvClaimObject | InvClaimValue
