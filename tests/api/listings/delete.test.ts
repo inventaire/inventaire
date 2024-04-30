@@ -1,4 +1,4 @@
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { authReq, authReqB } from '../utils/utils.js'
 

@@ -5,7 +5,7 @@ import { BasicUpdater } from '#lib/doc_updates'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=update-password'

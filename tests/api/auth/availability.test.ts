@@ -1,6 +1,6 @@
 import 'should'
 import { wait } from '#lib/promises'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
 import { publicReq } from '../utils/utils.js'
 

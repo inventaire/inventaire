@@ -1,6 +1,6 @@
 import 'should'
 import { makeUrl } from '#controllers/activitypub/lib/helpers'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
 import { signedReq, createActivity } from '../utils/activitypub.js'
 

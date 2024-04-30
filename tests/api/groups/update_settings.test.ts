@@ -1,6 +1,6 @@
 import should from 'should'
 import slugify from '#controllers/groups/lib/slugify'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { getSomeGroup, createGroup, createGroupWithAMember } from '../fixtures/groups.js'
 import { importSomeImage } from '../utils/images.js'
 import { getNotifications } from '../utils/notifications.js'

@@ -1,5 +1,5 @@
 import 'should'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createEdition, createCollection } from '../../fixtures/entities.js'
 import { addClaim, removeClaim } from '../../utils/entities.js'
 

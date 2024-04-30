@@ -2,7 +2,7 @@ import should from 'should'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { startGenericMockServer } from '../utils/mock_server.js'
 
 const { baseBanTime, banTimeIncreaseFactor } = config.outgoingRequests

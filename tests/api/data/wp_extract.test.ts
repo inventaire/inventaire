@@ -1,6 +1,6 @@
 import 'should'
 import { getRandomString } from '#lib/utils/random_string'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=wp-extract'

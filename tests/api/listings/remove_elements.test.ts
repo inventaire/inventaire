@@ -1,7 +1,7 @@
 import { getElementById } from '#controllers/listings/lib/elements'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
 import { getUserB } from '#tests/api/utils/utils'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'
 

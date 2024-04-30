@@ -1,6 +1,6 @@
 import 'should'
 import { getGroup } from '#tests/api/utils/groups'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { getSomeGroup } from '../fixtures/groups.js'
 import { authReq, authReqB, authReqC, getUserC } from '../utils/utils.js'
 

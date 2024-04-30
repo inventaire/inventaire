@@ -1,6 +1,6 @@
 import 'should'
 import { isImageHash } from '#lib/boolean_validations'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { uploadSomeImage } from '../utils/images.js'
 import { authReq } from '../utils/utils.js'
 
