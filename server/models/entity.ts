@@ -334,7 +334,7 @@ function getClaimIndex (claimsArray: InvPropertyClaims, claim: InvClaim) {
   return claimsArray.map(getClaimValue).indexOf(getClaimValue(claim))
 }
 
-function findClaimByValue (claimsArray: InvPropertyClaims, claim: InvClaim) {
+export function findClaimByValue (claimsArray: InvPropertyClaims, claim: InvClaim) {
   return claimsArray.find(c => getClaimValue(c) === getClaimValue(claim))
 }
 
