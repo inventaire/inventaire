@@ -34,7 +34,7 @@ const isMatchingEdition = (editionSeed: EditionSeed, editionSeedTitle: string) =
 function getNormalizedTitle (edition: InvEntity | EditionSeed) {
   const { claims } = edition
   if (!claims) return
-  const title = getFirstClaimValue(claims, 'wdt:P1476') as string
+  const title = getFirstClaimValue(claims, 'wdt:P1476')
   if (title) return normalizeTitle(title)
 }
 
