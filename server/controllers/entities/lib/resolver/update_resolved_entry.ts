@@ -64,9 +64,9 @@ async function updateClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl:
 }
 
 function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }: { updatedEntity: InvEntity, seedClaims: Claims }) {
-  const oldTitle = getFirstClaimValue(updatedEntity.claims, 'wdt:P1476') as string
-  const newTitle = getFirstClaimValue(seedClaims, 'wdt:P1476') as string
-  const newSubtitle = getFirstClaimValue(seedClaims, 'wdt:P1680') as string
+  const oldTitle = getFirstClaimValue(updatedEntity.claims, 'wdt:P1476')
+  const newTitle = getFirstClaimValue(seedClaims, 'wdt:P1476')
+  const newSubtitle = getFirstClaimValue(seedClaims, 'wdt:P1680')
   if (oldTitle && newSubtitle) {
     if (normalizeTitle(newTitle) === normalizeTitle(oldTitle)) {
       if (normalizeTitle(newSubtitle).includes(normalizeTitle(oldTitle))) {
