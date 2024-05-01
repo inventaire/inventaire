@@ -8,14 +8,13 @@ import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
 import { requests_ } from '#lib/requests'
-import { forceArray, simpleDay } from '#lib/utils/base'
+import { forceArray, objectEntries, simpleDay } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import type { InvExpandedPropertyClaims, InvSimplifiedPropertyClaims, Reference } from '#server/types/entity'
 import type { AbsoluteUrl, Url } from '#types/common'
-import type { EntityLooseSeed, ExternalDatabaseEntryRow, LooseClaims, ResolverEntry } from '#types/resolver'
-import type { Entries } from 'type-fest'
+import type { EntityLooseSeed, ExternalDatabaseEntryRow, ResolverEntry } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -239,7 +238,7 @@ function addReferenceToSeedClaims (seed: EntityLooseSeed) {
     'wdt:P854': [ referenceUrl ],
     'wdt:P813': [ simpleDay() ],
   }
-  for (const [ property, propertyLooseClaims ] of Object.entries(claims) as Entries<LooseClaims>) {
+  for (const [ property, propertyLooseClaims ] of objectEntries(claims)) {
     const propertyClaimsValues: InvSimplifiedPropertyClaims = forceArray(propertyLooseClaims)
     const propertyClaimsObjects = propertyClaimsValues.map(claim => {
       return {

@@ -2,17 +2,16 @@ import { flatten, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
-import { forceArray } from '#lib/utils/base'
+import { forceArray, objectEntries } from '#lib/utils/base'
 import { getClaimValue } from '#models/entity'
 import type { Claims } from '#server/types/entity'
 import getInvEntityCanonicalUri from '../get_inv_entity_canonical_uri.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
-import type { Entries } from 'type-fest'
 
 export async function resolveExternalIds (claims: Claims, resolveOnWikidata = true) {
   const externalIds = []
 
-  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
     const propertyConstraints = properties[property]
     if (propertyConstraints.datatype === 'external-id') {
       let format
