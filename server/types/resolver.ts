@@ -19,6 +19,8 @@ export interface EditionSeed extends BaseSeed {
   image?: Url
 }
 
+export type WorkSeed = BaseSeed
+export type AuthorSeed = BaseSeed
 export type EntitySeed = BaseSeed | EditionSeed
 
 export interface BaseLooseSeed {

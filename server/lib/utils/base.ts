@@ -174,7 +174,9 @@ export function arrayIncludes (array: readonly (string | number)[], value: strin
   return array.some(element => element === value)
 }
 
-export const objectEntries = obj => Object.entries(obj) as ObjectEntries<typeof obj>
+export function objectEntries <Obj> (obj: Obj) {
+  return Object.entries(obj) as ObjectEntries<Obj>
+}
 
 /** Returns a new object with keys and values inverted */
 export function invert (obj: Record<string | number, string | number>) {
