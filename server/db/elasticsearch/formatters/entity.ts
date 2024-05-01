@@ -11,14 +11,14 @@ import { authorRelationsProperties } from '#controllers/entities/lib/properties/
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import { isWdEntityId } from '#lib/boolean_validations'
+import { objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import formatClaims from '#lib/wikidata/format_claims'
 import { simplifyInvClaims } from '#models/entity'
-import type { Claims, EntityUri, PropertyUri } from '#types/entity'
+import type { Claims, EntityUri, PropertyUri, WdRawClaims } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
-import type { Entries } from 'type-fest'
 
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
@@ -214,9 +214,9 @@ function getEntityTerms (entity) {
   return getMainFieldsWords({ labels, aliases })
 }
 
-function getFlattenedClaims (claims) {
+function getFlattenedClaims (claims: Claims) {
   const flattenedClaims = []
-  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
     if (!ignoredPropertiesInFlattenedClaims.has(property)) {
       for (const value of propertyClaims) {
         flattenedClaims.push(`${property}=${value}`)
@@ -229,7 +229,7 @@ function getFlattenedClaims (claims) {
 // Properties that are highly unlikely to ever be usefully queried by exact value
 const ignoredPropertiesInFlattenedClaims = new Set(imageProperties)
 
-function isRawWikidataClaims (claims) {
+function isRawWikidataClaims (claims: Claims | WdRawClaims) {
   const properties = Object.keys(claims)
   return isPropertyId(properties[0])
 }
