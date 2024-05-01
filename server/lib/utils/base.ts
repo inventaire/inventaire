@@ -181,7 +181,7 @@ export function objectEntries <Obj> (obj: Obj) {
 /** Returns a new object with keys and values inverted */
 export function invert (obj: Record<string | number, string | number>) {
   const invertedObj = {}
-  for (const [ key, value ] of Object.entries(obj) as ObjectEntries<typeof obj>) {
+  for (const [ key, value ] of objectEntries(obj)) {
     invertedObj[value] = key
   }
   return invertedObj

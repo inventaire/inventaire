@@ -28,11 +28,10 @@ import { inferences, type InferedProperties } from '#controllers/entities/lib/in
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { sameObjects, superTrim } from '#lib/utils/base'
+import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
 import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
-import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
@@ -75,7 +74,7 @@ export function setEntityDocLabel (doc: InvEntity, lang: WikimediaLanguageCode, 
 
 export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
   preventRedirectionEdit(doc)
-  for (const [ lang, value ] of Object.entries(labels) as ObjectEntries<typeof labels>) {
+  for (const [ lang, value ] of objectEntries(labels)) {
     doc = setEntityDocLabel(doc, lang, value)
   }
 
@@ -92,7 +91,7 @@ export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
   // a conflict
   doc._allClaimsProps = Object.keys(newClaims) as PropertyUri[]
 
-  for (const [ property, propertyClaims ] of Object.entries(newClaims) as Entries<typeof newClaims>) {
+  for (const [ property, propertyClaims ] of objectEntries(newClaims)) {
     for (const claim of propertyClaims) {
       doc = createEntityDocClaim(doc, property, claim)
     }
@@ -183,7 +182,7 @@ export function mergeEntitiesDocs (fromEntityDoc: InvEntity | EntityRedirection,
 }
 
 function mergeClaims (fromClaims: Claims, toClaims: Claims) {
-  for (const [ property, fromPropertyClaims ] of Object.entries(fromClaims) as Entries<typeof fromClaims>) {
+  for (const [ property, fromPropertyClaims ] of objectEntries(fromClaims)) {
     const toPropertyClaims = toClaims[property] ??= []
     mergePropertyClaims(property, fromPropertyClaims, toPropertyClaims)
   }
@@ -252,7 +251,7 @@ function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, 
 
   const addingOrUpdatingValue = (newVal != null)
 
-  for (const [ inferredProperty, convertor ] of Object.entries(propInferences) as Entries<typeof propInferences>) {
+  for (const [ inferredProperty, convertor ] of objectEntries(propInferences)) {
     let inferredPropertyArray = doc.claims[inferredProperty] || []
 
     if (addingOrUpdatingValue) {
@@ -369,7 +368,7 @@ function includesReference (references: Reference[], reference: Reference) {
 
 export function simplifyInvClaims (claims: Claims) {
   const simplifiedClaims = {}
-  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
     simplifiedClaims[property] = propertyClaims.map(getClaimValue)
   }
   return simplifiedClaims
