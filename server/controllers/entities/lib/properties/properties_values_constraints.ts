@@ -20,6 +20,8 @@ import {
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
+import type { PropertyUri } from '#server/types/entity'
+import type { PropertyValueConstraints } from '#server/types/property'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
@@ -258,7 +260,7 @@ export const propertiesValuesConstraints = {
   'wdt:P12351': externalId(uuidPattern),
   // NooSFere publisher ID
   'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
-} as const
+} as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
 
