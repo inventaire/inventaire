@@ -4,6 +4,7 @@ import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { warn, info } from '#lib/utils/logs'
+import type { AbsoluteUrl, Url } from '#server/types/common'
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -17,8 +18,8 @@ interface SparqlRequestOptions {
   minimize?: boolean
 }
 
-export async function makeSparqlRequest (sparql, options: SparqlRequestOptions = {}) {
-  const url = sparqlQuery(sparql)
+export async function makeSparqlRequest (sparql: string, options: SparqlRequestOptions = {}) {
+  const url = sparqlQuery(sparql) as AbsoluteUrl
 
   if (waiting > 500) {
     throw newError('too many requests in queue', 500, { sparql })
@@ -41,7 +42,7 @@ export async function makeSparqlRequest (sparql, options: SparqlRequestOptions =
   return persistentRequest()
 }
 
-async function makeRequest (url, options: SparqlRequestOptions = {}) {
+async function makeRequest (url: Url, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
 
