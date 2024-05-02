@@ -6,7 +6,7 @@ import { getPluralType } from '#lib/wikidata/aliases'
 import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
-export function isbnProperty (num) {
+export function isbnProperty (num: 10 | 13) {
   return {
     ...concurrentString,
     validate: ({ value: isbn }) => {
@@ -16,7 +16,7 @@ export function isbnProperty (num) {
       return isbn === isbnData[`isbn${num}h`]
     },
     uniqueValue: true,
-    format: isbn => formatIsbn(isbn, `${num}h`) || isbn,
+    format: (isbn: string) => formatIsbn(isbn, `${num}h`) || isbn,
     adminUpdateOnly: true,
   } as const
 }
