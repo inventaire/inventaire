@@ -18,10 +18,11 @@ export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
 
 export type Isbn = string
-export type IsbnEntityUri = `isbn:${Isbn}`
+export type NormalizedIsbn = `${number}`
+export type IsbnEntityUri = `isbn:${NormalizedIsbn}`
 
 export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
-export type EntityId = WdEntityId | InvEntityId | Isbn
+export type EntityId = WdEntityId | InvEntityId | NormalizedIsbn
 
 export type PropertyUri = WdPropertyUri | InvPropertyUri
 
