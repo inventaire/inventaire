@@ -2,7 +2,7 @@
 // Keep in sync with get_wikidata_enriched_entities formatting
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import { setTermsFromClaims } from './entities.js'
-import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
+import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 
 export default entity => {
   entity.originalLang = getOriginalLang(entity.claims)

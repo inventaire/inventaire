@@ -30,7 +30,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedProperty } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -374,8 +374,14 @@ export function simplifyInvClaims (claims: Claims) {
   return simplifiedClaims
 }
 
-export function getFirstClaimValue <C extends Claims, P extends keyof ClaimValueByProperty> (claims: C, property: P) {
-  if (claims[property]?.[0]) {
+export function getPropertyClaimsValues <C extends Claims, P extends TypedProperty> (claims: C, property: P) {
+  if (claims?.[property]) {
+    return claims[property].map(claim => getTypedClaimValue(claim, property))
+  }
+}
+
+export function getFirstClaimValue <C extends Claims, P extends TypedProperty> (claims: C, property: P) {
+  if (claims?.[property]?.[0]) {
     const firstClaim = claims[property][0] as ClaimValueByProperty[P]
     return getTypedClaimValue(firstClaim, property)
   }
