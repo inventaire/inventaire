@@ -8,10 +8,12 @@ import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue } from '#types/entity'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import type { ImageHash } from '#server/types/image'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity } from '#types/entity'
+import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
+import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 
 const db = await dbFactory('entities')
 
@@ -31,6 +33,9 @@ export async function getInvEntityByIsbn (isbn: Isbn) {
   return docs[0]
 }
 
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: false, parseDoc?: false): Promise<DocumentViewResponse<EntityValue, undefined>>
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: true, parseDoc?: false): Promise<DocumentViewResponse<EntityValue, InvEntity>>
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: true, parseDoc?: true): Promise<InvEntity[]>
 export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs = false, parseDoc = false) {
   validateProperty(property)
 
@@ -43,33 +48,30 @@ export async function getInvEntitiesByClaim (property: PropertyUri, value: InvCl
   else return res
 }
 
-export async function getInvEntitiesByClaims ({ claims, includeDocs = false, parseDoc = false }) {
-  claims.forEach(([ property ]) => validateProperty(property))
+export type ClaimPropertyValueTuple = [ PropertyUri, InvClaimValue ]
 
+export async function getInvEntitiesByClaims (claims: ClaimPropertyValueTuple[]) {
+  claims.forEach(([ property ]) => validateProperty(property))
   const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
     keys: claims,
-    include_docs: includeDocs,
+    include_docs: true,
   })
-
-  if (parseDoc) return mapDoc(res)
-  else return res
+  return res
 }
 
-export async function getInvUrisByClaim (property, value) {
+export async function getInvUrisByClaim (property: PropertyUri, value: InvClaimValue) {
   const entities = await getInvEntitiesByClaim(property, value, true, true)
   return entities.map(getInvEntityCanonicalUri)
 }
 
-export async function getInvEntitiesUrisByClaims (properties, value) {
-  const entities = await getInvEntitiesByClaims({
-    claims: properties.map(property => [ property, value ]),
-    includeDocs: true,
-    parseDoc: true,
-  })
+export async function getInvEntitiesUrisByClaims (properties: PropertyUri[], value: InvClaimValue) {
+  const claims: ClaimPropertyValueTuple[] = properties.map(property => [ property, value ])
+  const res = await getInvEntitiesByClaims(claims)
+  const entities = mapDoc(res)
   return entities.map(getInvEntityCanonicalUri)
 }
 
-export async function getInvClaimsByClaimValue (value) {
+export async function getInvClaimsByClaimValue (value: InvClaimValue) {
   const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
@@ -80,7 +82,7 @@ export async function getInvClaimsByClaimValue (value) {
   }))
 }
 
-export async function getInvEntitiesClaimValueCount (value) {
+export async function getInvEntitiesClaimValueCount (value: InvClaimValue) {
   const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
@@ -128,7 +130,7 @@ export const getUrlFromEntityImageHash = getUrlFromImageHash.bind(null, 'entitie
 
 export const uniqByUri = entities => uniqBy(entities, getUri)
 
-export async function imageIsUsed (imageHash) {
+export async function imageIsUsed (imageHash: ImageHash) {
   assert_.string(imageHash)
   const { rows } = await getInvEntitiesByClaim('invp:P2', imageHash)
   return rows.length > 0
@@ -140,7 +142,7 @@ export function getFirstPropertyClaim (entity, property) {
   if (entity.claims?.[property] != null) return entity.claims[property][0]
 }
 
-export function setTermsFromClaims (entity) {
+export function setTermsFromClaims (entity: SerializedEntity) {
   const title = getFirstPropertyClaim(entity, 'wdt:P1476')
   const subtitle = getFirstPropertyClaim(entity, 'wdt:P1680')
   if (title) {
