@@ -1,5 +1,5 @@
 import { flatten, identity, map, uniqBy } from 'lodash-es'
-import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims } from '#controllers/entities/lib/entities'
+import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims, type ClaimPropertyValueTuple } from '#controllers/entities/lib/entities'
 import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
@@ -7,6 +7,7 @@ import runWdQuery from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
+import type { EntityUri } from '#server/types/entity'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
@@ -67,9 +68,9 @@ function formatWdEntity (result) {
 }
 
 // # INV
-async function getInvAuthorWorks (uri) {
-  const authorClaims = authorRelationsProperties.map(property => [ property, uri ])
-  const { rows } = await getInvEntitiesByClaims({ claims: authorClaims, includeDocs: true })
+async function getInvAuthorWorks (uri: EntityUri) {
+  const authorClaims = authorRelationsProperties.map(property => [ property, uri ]) satisfies ClaimPropertyValueTuple[]
+  const { rows } = await getInvEntitiesByClaims(authorClaims)
   return rows.map(formatInvEntity).filter(identity)
 }
 
