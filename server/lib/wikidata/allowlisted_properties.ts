@@ -10,10 +10,12 @@ import { nonPrefixedImageProperties } from '#controllers/entities/lib/get_common
 import { nonPrefixedLanguagesCodesProperties } from '#controllers/entities/lib/languages'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { objectKeys } from '#lib/utils/types'
+import type { WdPropertyId } from '#server/types/entity'
 
-const editedProperties = Object.keys(propertiesValuesConstraints)
+const editedProperties = objectKeys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))
-  .map(unprefixify)
+  .map(unprefixify) as WdPropertyId[]
 
 // Properties used to avoid false positives in duplicates detection
 const relationsProperties = [
@@ -27,7 +29,7 @@ const relationsProperties = [
   'P3373', // sibling
   'P3448', // stepparent
   'P8810', // parent
-]
+] as const satisfies WdPropertyId[]
 
 // Properties that can not be edited from Inventaire, but that might
 // still be displayed or used in some way
@@ -57,6 +59,10 @@ const otherNonEditedProperties = [
   'P2860', // cite
   'P2959', // permanent duplicated item
   'P4258', // Gallica ID
-]
+] as const satisfies WdPropertyId[]
 
-export const allowlistedProperties = editedProperties.concat(otherNonEditedProperties, relationsProperties, nonPrefixedLanguagesCodesProperties, nonPrefixedImageProperties)
+export const extraWdProperties = [ ...otherNonEditedProperties, ...relationsProperties, ...nonPrefixedLanguagesCodesProperties, ...nonPrefixedImageProperties ] as const
+export const allowlistedProperties = [ ...editedProperties, ...extraWdProperties ] as const
+
+export type ExtraWdPropertyId = typeof extraWdProperties[number]
+export type ExtraWdPropertyUri = `wdt:${ExtraWdPropertyId}`

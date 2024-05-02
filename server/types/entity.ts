@@ -2,11 +2,12 @@ import type { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/pr
 import type { PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
+import type { ExtraWdPropertyUri } from '#lib/wikidata/allowlisted_properties'
 import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { ImageHash } from '#types/image'
 import type { OverrideProperties, Writable } from 'type-fest'
-import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims } from 'wikibase-sdk'
+import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims, GetSitelinkUrlOptions } from 'wikibase-sdk'
 
 export type WdEntityId = `Q${number}`
 export type WdPropertyId = `P${number}`
@@ -149,7 +150,14 @@ export interface SimplifiedSitelink {
   title: string
   badges?: SitelinkBadges
 }
-export type SimplifiedSitelinks = Partial<Record<WikimediaLanguageCode, SimplifiedSitelink>>
+
+export type SitelinkKey = GetSitelinkUrlOptions['site']
+export type SimplifiedSitelinks = Partial<Record<SitelinkKey, SimplifiedSitelink>>
+
+export type ExtraWdSnakValue = WikimediaCommonsFilename
+export type ExtraWdSimplifiedClaims = Record<ExtraWdPropertyUri, (InvSnakValue | ExtraWdSnakValue)[]>
+
+export type SimplifiedClaimsIncludingWdExtra = SimplifiedClaims & ExtraWdSimplifiedClaims
 
 export interface SerializedWdEntity {
   uri: WdEntityUri
@@ -157,7 +165,7 @@ export interface SerializedWdEntity {
   labels: Labels
   aliases: SimplifiedAliases
   descriptions: SimplifiedDescriptions
-  claims: SimplifiedClaims
+  claims: SimplifiedClaimsIncludingWdExtra
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
