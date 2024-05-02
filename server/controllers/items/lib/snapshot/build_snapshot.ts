@@ -96,7 +96,7 @@ function setOrdinal (snapshot: ItemSnapshot, works: SerializedEntity[]) {
   if (works.length === 1) {
     const work = works[0]
     const { claims } = work
-    const ordinal = claims['wdt:P1545'] && claims['wdt:P1545'][0]
+    const ordinal = claims['wdt:P1545']?.[0]
     if (ordinal != null) snapshot['entity:ordinal'] = ordinal
   } else {
     const series = aggregateClaims(works, 'wdt:P179')

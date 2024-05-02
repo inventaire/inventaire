@@ -1,5 +1,5 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
-import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import { objectEntries } from '#lib/utils/base'
 import { findClaimByValue, getClaimValue, getFirstClaimValue } from '#models/entity'

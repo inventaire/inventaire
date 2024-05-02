@@ -4,24 +4,26 @@ import { getWikimediaThumbnailData } from '#data/commons/thumb'
 // import getEnwikiImage from '#data/wikipedia/image'
 import { objectPromise } from '#lib/promises'
 // import { logError } from '#lib/utils/logs'
+import { getFirstClaimValue } from '#models/entity'
+import type { SerializedWdEntity, WikimediaCommonsFilename } from '#server/types/entity'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
-export default async function (entity) {
+export async function addImageData (entity: SerializedWdEntity) {
   const data = await findAnImage(entity)
   entity.image = data
   return entity
 }
 
-function findAnImage (entity) {
+function findAnImage (entity: SerializedWdEntity) {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki?.title
   const { claims } = entity
-  const openLibraryId = claims['wdt:P648'] && claims['wdt:P648'][0]
+  const openLibraryId = getFirstClaimValue(claims, 'wdt:P648')
   return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function pickBestPic (entity, commonsFilename, enwikiTitle, openLibraryId) {
+function pickBestPic (entity: SerializedWdEntity, commonsFilename: WikimediaCommonsFilename, enwikiTitle?: string, openLibraryId?: string) {
   return objectPromise({
     wm: getWikimediaThumbnailData(commonsFilename),
     // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
@@ -50,7 +52,7 @@ function pickBestPic (entity, commonsFilename, enwikiTitle, openLibraryId) {
 //   })
 // }
 
-function getPicSourceOrder (entity) {
+function getPicSourceOrder (entity: SerializedWdEntity) {
   const { type } = entity
   // Commons pictures are prefered to Wikipedia and Open Library
   // to get access to photo credits
@@ -65,9 +67,9 @@ function getPicSourceOrder (entity) {
 // likely to be in the public domain and have a good image set in Wikidata
 // while querying images from English Wikipedia articles
 // can give quite random results
-function getWorkSourceOrder (work) {
+function getWorkSourceOrder (work: SerializedWdEntity) {
   const { claims } = work
-  const publicationDateClaim = claims['wdt:P577'] && claims['wdt:P577'][0]
+  const publicationDateClaim = claims['wdt:P577']?.[0]
   const publicationYear = publicationDateClaim && publicationDateClaim.split('-')[0]
   if ((publicationYear != null) && (parseInt(publicationYear) < yearsAgo(70))) {
     return [ 'ol', 'wm', 'wp' ]

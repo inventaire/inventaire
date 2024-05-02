@@ -108,7 +108,7 @@ const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'w
 
 const doDatesAgree = (seedDate, currentDate) => seedDate.startsWith(currentDate)
 
-const isMorePreciseDate = (date1, date2) => dateParts(date1).length > dateParts(date2).length
+const isMorePreciseDate = (date1: ClaimByDatatype['date'], date2: ClaimByDatatype['date']) => dateParts(date1).length > dateParts(date2).length
 
 function dateParts (simpleDayClaim: ClaimByDatatype['date']) {
   const value = getClaimValue(simpleDayClaim) as string
