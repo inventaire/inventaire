@@ -31,7 +31,15 @@ export type EntityUri = WdEntityUri | InvEntityUri | IsbnEntityUri
 
 export type Term = string
 export type Label = Term
-export type Labels = Partial<Record<WikimediaLanguageCode, Label>>
+export type SingleValueTerms = Partial<Record<WikimediaLanguageCode, Term>>
+export type SingleValueTermsFromClaims = { fromclaims?: Term }
+export type SingleValueTermsWithInferredValues = Partial<Record<WikimediaLanguageCode | 'fromclaims', Term>>
+export type Labels = SingleValueTerms
+export type LabelsAndInferredLabels = SingleValueTermsWithInferredValues
+export type Descriptions = SingleValueTerms
+export type DescriptionsAndInferredDescriptions = SingleValueTermsWithInferredValues
+export type LabelsFromClaims = SingleValueTermsFromClaims
+export type DescriptionsFromClaims = SingleValueTermsFromClaims
 
 export type EntityValue = WdEntityUri | InvEntityUri
 export type StringValue = string
@@ -131,7 +139,11 @@ export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' |
 
 export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
-export interface SerializedInvEntity extends OverrideProperties<InvEntity, { type?: EntityType, claims: SimplifiedClaims }> {
+export interface SerializedInvEntity extends OverrideProperties<InvEntity, {
+  type?: EntityType
+  claims: SimplifiedClaims
+  labels: LabelsAndInferredLabels
+}> {
   _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
   originalLang?: WikimediaLanguageCode
@@ -139,6 +151,7 @@ export interface SerializedInvEntity extends OverrideProperties<InvEntity, { typ
     url?: EntityImg
   }
   redirects?: { from: InvEntityUri, to: EntityUri }
+  descriptions?: DescriptionsFromClaims
 }
 
 export type SerializedRemovedPlaceholder = OverrideProperties<SerializedInvEntity, {
@@ -165,9 +178,9 @@ export type SimplifiedClaimsIncludingWdExtra = SimplifiedClaims & ExtraWdSimplif
 export interface SerializedWdEntity {
   uri: WdEntityUri
   type?: EntityType
-  labels: Labels
+  labels: LabelsAndInferredLabels
   aliases: SimplifiedAliases
-  descriptions: SimplifiedDescriptions
+  descriptions: DescriptionsAndInferredDescriptions
   claims: SimplifiedClaimsIncludingWdExtra
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
