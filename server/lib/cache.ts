@@ -24,10 +24,7 @@ export const cache_ = {
   // - dryFallbackValue: the value to return when no cached value can be found, to keep responses
   //   type consistent
   // - ttl: customize how long the cached data should be kept before being deleted
-  get: async params => {
-    const { key, fn, refresh, dryFallbackValue, ttl = defaultCacheTtl } = params
-    let { dry } = params
-
+  get: async <T> ({ key, fn, refresh, dry, dryFallbackValue, ttl = defaultCacheTtl }: { key: string, fn: () => Promise<T>, refresh?: boolean, dry?: boolean, dryFallbackValue?: T, ttl?: number }) => {
     if (refresh) {
       dry = false
     }
