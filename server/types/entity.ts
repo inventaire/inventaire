@@ -81,8 +81,11 @@ export type ClaimByProperty = {
   [Property in keyof Writable<PropertiesValuesConstraints>]: ClaimValueByProperty[Property] | ClaimObjectByProperty[Property]
 }
 export type ClaimByDatatype = {
-  [Datatype in keyof ClaimValueTypeByDatatype]: ClaimValueTypeByDatatype[Datatype] | DatatypedInvClaimObject<ClaimValueTypeByDatatype[Datatype]>
+  [Datatype in keyof ClaimValueTypeByDatatype]: ClaimValueTypeByDatatype[Datatype] |
+  DatatypedInvClaimObject<ClaimValueTypeByDatatype[Datatype]>
 }
+
+export type TypedProperty = keyof ClaimValueByProperty
 
 export type InvClaim = InvClaimObject | InvClaimValue
 export type InvPropertyClaims = InvClaim[]

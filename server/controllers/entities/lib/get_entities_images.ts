@@ -1,6 +1,6 @@
 import { objectPromise } from '#lib/promises'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
-import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
+import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import specialEntityImagesGetter from './special_entity_images_getter.js'
 
 export default async function (uris, refresh) {

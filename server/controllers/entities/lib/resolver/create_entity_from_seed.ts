@@ -4,7 +4,8 @@ import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError, warn } from '#lib/utils/logs'
-import type { Claims, EntityType, InvPropertyClaims, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
+import { getFirstClaimValue } from '#models/entity'
+import type { Claims, EntityType, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
 import type { BatchId } from '#types/patch'
 import type { EditionSeed, EntitySeed } from '#types/resolver'
 import type { UserId } from '#types/user'
@@ -47,14 +48,14 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
       edition.claims['wdt:P1476'] = [ title ]
     }
   }
-  if (edition.claims['wdt:P1476']?.[0] && !edition.claims['wdt:P1680']) {
+  if (getFirstClaimValue(edition.claims, 'wdt:P1476') && !getFirstClaimValue(edition.claims, 'wdt:P1680')) {
     extractSubtitleFromTitle(edition.claims)
   }
 
   // garantee that an edition shall not have label
   edition.labels = {}
 
-  if (!imageUrl && !edition.claims['invp:P2']?.[0] && enrich === true && isbn != null) {
+  if (!imageUrl && !getFirstClaimValue(edition.claims, 'invp:P2') && enrich === true && isbn != null) {
     try {
       const { url } = await getImageByIsbn(isbn)
       imageUrl = url
@@ -116,8 +117,8 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
 }
 
 function buildBestEditionTitle (edition, works) {
-  const editionTitleClaims = edition.claims['wdt:P1476']
-  if (editionTitleClaims) return editionTitleClaims[0]
+  const editionTitleClaim = getFirstClaimValue(edition.claims, 'wdt:P1476')
+  if (editionTitleClaim) return editionTitleClaim
   else return guessEditionTitleFromWorksLabels(works)
 }
 
@@ -132,7 +133,7 @@ function guessEditionTitleFromWorksLabels (works) {
 }
 
 function extractSubtitleFromTitle (claims) {
-  let title = claims['wdt:P1476'][0]
+  let title = getFirstClaimValue(claims, 'wdt:P1476')
   let subtitle
   if (title.length > 10 && title.split(subtitleSeparator).length === 2) {
     [ title, subtitle ] = title.split(subtitleSeparator)

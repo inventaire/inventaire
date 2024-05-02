@@ -3,7 +3,7 @@ import { isPropertyId, simplifyAliases, simplifyDescriptions, simplifyLabels } f
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
 import { imageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
-import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
+import { getEntityImagesFromClaims } from '#controllers/entities/lib/get_entity_images_from_claims'
 import getEntityType from '#controllers/entities/lib/get_entity_type'
 import { languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
@@ -14,9 +14,9 @@ import { isWdEntityId } from '#lib/boolean_validations'
 import { objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
-import formatClaims from '#lib/wikidata/format_claims'
+import { formatClaims } from '#lib/wikidata/format_claims'
 import { simplifyInvClaims } from '#models/entity'
-import type { Claims, EntityUri, PropertyUri, WdRawClaims } from '#types/entity'
+import type { Claims, EntityUri, PropertyUri, SerializedEntity, WdRawClaims } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
 
@@ -214,9 +214,10 @@ function getEntityTerms (entity) {
   return getMainFieldsWords({ labels, aliases })
 }
 
-function getFlattenedClaims (claims: Claims) {
+function getFlattenedClaims (claims: SerializedEntity['claims']) {
   const flattenedClaims = []
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
+    // @ts-expect-error TS2345
     if (!ignoredPropertiesInFlattenedClaims.has(property)) {
       for (const value of propertyClaims) {
         flattenedClaims.push(`${property}=${value}`)

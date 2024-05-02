@@ -12,7 +12,7 @@ export default async function (item) {
   let works
   if (entity.type === 'edition') {
     item.edition = entity
-    item.publisherUri = entity.claims['wdt:P123'] && entity.claims['wdt:P123'][0]
+    item.publisherUri = entity.claims['wdt:P123']?.[0]
     if (item.publisherUri) {
       item.publisher = await getEntityByUri({ uri: item.publisherUri })
     }
@@ -20,7 +20,7 @@ export default async function (item) {
     if (item.translatorsUris) {
       item.translators = await getEntitiesList(item.translatorsUris)
     }
-    item.editionLangUri = entity.claims['wdt:P407'] && entity.claims['wdt:P407'][0]
+    item.editionLangUri = entity.claims['wdt:P407']?.[0]
     if (item.editionLangUri) {
       item.editionLang = await getEntityByUri({ uri: item.editionLangUri })
     }

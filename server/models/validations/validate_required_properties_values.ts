@@ -35,7 +35,7 @@ const validateControlledPropertiesClaimsPerType = {
 }
 
 function assertPropertyHasValue (claims, property, entityLabel, propertyLabel) {
-  if (!(claims[property] && claims[property][0] != null)) {
+  if (claims[property]?.[0] == null) {
     const message = `${entityLabel} should have ${propertyLabel} (${property})`
     throw newError(message, 400, claims)
   }

@@ -8,7 +8,7 @@ import type { InvEntityDoc, InvEntityId, SerializedInvEntity, SerializedRemovedP
 import addRedirection from './add_redirection.js'
 import formatEntityCommon from './format_entity_common.js'
 import getEntityType from './get_entity_type.js'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
@@ -23,7 +23,7 @@ export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesG
 const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
   if ('redirect' in entity) return getRedirectedEntity(entity, params)
 
-  const [ uri, redirects ] = getInvEntityCanonicalUri(entity, { includeRedirection: true })
+  const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
 
   const simplifiedClaims = simplifyInvClaims(entity.claims)
 

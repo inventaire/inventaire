@@ -4,9 +4,9 @@ import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import { getClaimValue } from '#models/entity'
+import { getClaimValue, getFirstClaimValue } from '#models/entity'
 import type { EntityUri, InvEntity, Isbn, SerializedEntity } from '#types/entity'
-import formatEditionEntity from './format_edition_entity.js'
+import { formatEditionEntity } from './format_edition_entity.js'
 
 export interface EntitiesResults {
   entities: SerializedEntity[]
@@ -55,7 +55,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
 }
 
 function getIsbn13h (entity: InvEntity) {
-  return getClaimValue(entity.claims['wdt:P212'][0])
+  return getFirstClaimValue(entity.claims, 'wdt:P212')
 }
 
 function getRedirections (isbns) {

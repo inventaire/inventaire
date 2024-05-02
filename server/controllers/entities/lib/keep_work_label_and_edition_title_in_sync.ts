@@ -4,6 +4,7 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
+import { getFirstClaimValue } from '#models/entity'
 import updateLabel from './update_label.js'
 
 const { _id: hookUserId } = hardCodedUsers.hook
@@ -41,7 +42,7 @@ async function fetchLangConsensusTitle (workUri, editionLang) {
 
   const titles = editions
     .filter(edition => getOriginalLang(edition.claims) === editionLang)
-    .map(edition => edition.claims['wdt:P1476'][0])
+    .map(edition => getFirstClaimValue(edition.claims, 'wdt:P1476'))
 
   const differentTitles = uniq(titles)
   if (differentTitles.length === 1) {
