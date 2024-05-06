@@ -1,8 +1,39 @@
+import { validateSnakValueSync } from '#controllers/entities/lib/validate_claim_sync'
+import { isNonEmptyPlainObject } from '#lib/boolean_validations'
+import { newError } from '#lib/error/error'
+import { objectEntries } from '#lib/utils/base'
+import { isClaimObject } from '#models/entity'
+import type { InvClaimObject } from '#server/types/entity'
 import { validateProperty } from './properties/validations.js'
 import { validateAndFormatClaimValue, type ValidateAndFormatClaimValueParams } from './validate_and_format_claim_value.js'
 
 export async function validateAndFormatClaim (params: ValidateAndFormatClaimValueParams) {
-  const { property } = params
+  const { property, newClaim } = params
   validateProperty(property)
+  if (newClaim != null && isClaimObject(newClaim)) {
+    validateReferences(newClaim)
+  }
   return validateAndFormatClaimValue(params)
+}
+
+function validateReferences (claim: InvClaimObject) {
+  const { references } = claim
+  if (!references) return
+  if (!(references instanceof Array)) {
+    throw newError('invalid reference array', 400, { claim, references })
+  }
+  references.forEach(ref => validateReference(ref, claim))
+}
+
+function validateReference (reference: unknown, claim: InvClaimObject) {
+  if (!isNonEmptyPlainObject(reference)) {
+    throw newError('invalid reference', 400, { reference, claim })
+  }
+  for (const [ property, values ] of objectEntries(reference)) {
+    validateProperty(property)
+    if (!(values instanceof Array)) throw newError('invalid snak values array', 400, { property, values })
+    for (const value of values) {
+      validateSnakValueSync(property, value)
+    }
+  }
 }

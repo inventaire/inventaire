@@ -112,8 +112,12 @@ export const propertiesValuesConstraints = {
   'wdt:P675': externalId(/^[\w-]{12}$/),
   // influenced by
   'wdt:P737': humanEntity,
+  // retrieved
+  'wdt:P813': uniqueSimpleDay,
   // narrative set in
   'wdt:P840': entity,
+  // reference URL
+  'wdt:P854': url,
   // official website
   'wdt:P856': url,
   // SELIBR ID
