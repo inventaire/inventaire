@@ -32,6 +32,7 @@ export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?
   try {
     // No need to call sanitizeUrl here, as the url should have been validated
     // in server/controllers/images/resize.js
+    // TODO: add timeout
     response = await fetch(url, fetchOptions)
     timer.processingResponseStream = true
   } catch (err) {
