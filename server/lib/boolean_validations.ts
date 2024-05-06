@@ -102,7 +102,9 @@ export function isSimpleDay (str) {
 // Using a custom implementation of isArray, rather than lodash version, to get better types
 export const isArray = (array: unknown): array is unknown[] => array instanceof Array
 export const isNonEmptyArray = array => isArray(array) && (array.length > 0)
-export const isNonEmptyPlainObject = obj => isPlainObject(obj) && (Object.keys(obj).length > 0)
+export function isNonEmptyPlainObject (obj): obj is Record<string | number, unknown> {
+  return isPlainObject(obj) && (Object.keys(obj).length > 0)
+}
 export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)
 export const isStrictlyPositiveInteger = num => Number.isInteger(num) && num > 0
 export const isExtendedUrl = str => isUrl(str) || isLocalImg(str)
