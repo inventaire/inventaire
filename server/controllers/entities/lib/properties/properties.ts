@@ -1,5 +1,5 @@
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
-import type { ExtendedEntityType, PluralizedIndexedEntityType, PropertyUri } from '#server/types/entity'
+import type { ExtendedEntityType, PropertyUri } from '#server/types/entity'
 import type { PropertyDatatype } from '#server/types/property'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
@@ -19,7 +19,7 @@ export interface PropertyConfig {
   subjectTypes: readonly ExtendedEntityType[]
   datatype: PropertyDatatype
   multivalue: boolean
-  entityValueTypes?: PluralizedIndexedEntityType[]
+  entityValueTypes?: ExtendedEntityType[]
 }
 
 // Default `category` = 'general'
