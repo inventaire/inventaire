@@ -1,7 +1,7 @@
 import { validateSnakValueSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { objectEntries } from '#lib/utils/base'
+import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { isClaimObject } from '#models/entity'
 import type { InvClaimObject } from '#server/types/entity'
 import { validateProperty } from './properties/validations.js'
@@ -31,9 +31,19 @@ function validateReference (reference: unknown, claim: InvClaimObject) {
   }
   for (const [ property, values ] of objectEntries(reference)) {
     validateProperty(property)
-    if (!(values instanceof Array)) throw newError('invalid snak values array', 400, { property, values })
+    if (!(arrayIncludes(allowlistedReferenceProperties, property))) {
+      throw newError("This property isn't allowed in reference snaks", 400, { property, allowlistedReferenceProperties })
+    }
+    if (!(values instanceof Array)) {
+      throw newError('invalid snak values array', 400, { property, values })
+    }
     for (const value of values) {
       validateSnakValueSync(property, value)
     }
   }
 }
+
+const allowlistedReferenceProperties = [
+  'wdt:P813', // retrieved
+  'wdt:P854', // reference URL
+] as const
