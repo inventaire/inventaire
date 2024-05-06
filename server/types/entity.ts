@@ -139,22 +139,36 @@ export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' |
 
 export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
+export interface RedirectFromTo {
+  from: EntityUri
+  to: EntityUri
+}
+
 export interface SerializedInvEntity extends OverrideProperties<InvEntity, {
   type?: EntityType
   claims: SimplifiedClaims
   labels: LabelsAndInferredLabels
 }> {
-  _meta_type: 'entity'
   uri: InvEntityUri | IsbnEntityUri
+  _meta_type?: 'entity'
   originalLang?: WikimediaLanguageCode
   image: {
     url?: EntityImg
   }
-  redirects?: { from: InvEntityUri, to: EntityUri }
+  redirects?: RedirectFromTo
   descriptions?: DescriptionsFromClaims
+  popularity?: number
 }
 
-export type SerializedRemovedPlaceholder = OverrideProperties<SerializedInvEntity, {
+export type SerializedInvPrefixedInvEntity = OverrideProperties<SerializedInvEntity, {
+  uri: InvEntityUri
+}>
+
+export type SerializedIsbnEntity = OverrideProperties<SerializedInvEntity, {
+  uri: IsbnEntityUri
+}>
+
+export type SerializedRemovedPlaceholder = OverrideProperties<SerializedInvPrefixedInvEntity, {
   _meta_type: 'removed:placeholder'
 }>
 
@@ -186,8 +200,9 @@ export interface SerializedWdEntity {
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
   image: ReturnType<typeof getWikimediaThumbnailData>
+  popularity?: number
 }
 
 export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity
 
-export type SerializedEntitiesByUris = Record<EntityUri, SerializedEntity>
+export type SerializedEntitiesByUris = Record<WdEntityUri, SerializedWdEntity> & Record<IsbnEntityUri, SerializedIsbnEntity> & Record<InvEntityUri, SerializedInvPrefixedInvEntity | SerializedRemovedPlaceholder>

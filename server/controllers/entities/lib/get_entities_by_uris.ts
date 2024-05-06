@@ -3,41 +3,45 @@ import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
-import type { EntityUri, SerializedEntitiesByUris } from '#types/entity'
+import { arrayIncludes, objectEntries } from '#lib/utils/base'
+import { objectKeys } from '#lib/utils/types'
+import type { EntityId, EntityUri, EntityUriPrefix, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
 import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
+import type { Split } from 'type-fest'
 
-// Getters take ids, return an object on the model { entities: [], notFound }
-const getters = {
-  inv: getInvEntitiesByIds,
-  wd: getWikidataEnrichedEntities,
-  isbn: getEntitiesByIsbns,
-}
+const validators = {
+  inv: isInvEntityId,
+  wd: isWdEntityId,
+  isbn: isValidIsbn,
+} as const
 
-const prefixes = Object.keys(getters)
+const prefixes = objectKeys(validators)
 
-export interface EntitiesGetterArgs {
+export interface EntitiesGetterParams {
   refresh?: boolean
   dry?: boolean
   autocreate?: boolean
 }
 
-export interface GetEntitiesByUrisArgs extends EntitiesGetterArgs {
+export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
   uris: EntityUri[]
 }
 
-export async function getEntitiesByUris (params: GetEntitiesByUrisArgs) {
+type Domains = Partial<Record<EntityUriPrefix, EntityId[]>>
+
+export async function getEntitiesByUris (params: GetEntitiesByUrisParams) {
   const { uris } = params
   assert_.array(uris)
-  const domains = {}
+  const domains: Domains = {}
 
   // validate per URI to be able to return a precise error message
   for (const uri of uris) {
     let errMessage
-    const [ prefix, id ] = uri.split(':')
+    const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
 
-    if (!prefixes.includes(prefix)) {
+    if (!arrayIncludes(prefixes, prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
       throw newError(errMessage, 400, { uri })
     }
@@ -47,7 +51,7 @@ export async function getEntitiesByUris (params: GetEntitiesByUrisArgs) {
       throw newError(errMessage, 400, { uri })
     }
 
-    if (!domains[prefix]) { domains[prefix] = [] }
+    domains[prefix] ??= []
     domains[prefix].push(id)
   }
 
@@ -55,15 +59,13 @@ export async function getEntitiesByUris (params: GetEntitiesByUrisArgs) {
   return formatRichResults(results)
 }
 
-function getDomainsPromises (domains, params) {
-  const promises = []
-
-  for (const prefix in domains) {
-    const ids = domains[prefix]
-    promises.push(getters[prefix](ids, params))
-  }
-
-  return Promise.all(promises)
+function getDomainsPromises (domains: Domains, params: EntitiesGetterParams) {
+  return Promise.all(objectEntries(domains).map(([ prefix, ids ]) => {
+    if (prefix === 'wd') return getWikidataEnrichedEntities(ids as WdEntityId[], params)
+    if (prefix === 'inv') return getInvEntitiesByIds(ids as InvEntityId[], params)
+    if (prefix === 'isbn') return getEntitiesByIsbns(ids as Isbn[], params)
+    throw newError('unsupported prefix', 500, { prefix, ids })
+  }))
 }
 
 export interface EntitiesByUrisResults {
@@ -72,15 +74,15 @@ export interface EntitiesByUrisResults {
   notFound?: EntityUri[]
 }
 
-function formatRichResults (results) {
-  const response: EntitiesByUrisResults = {
+function formatRichResults (results: Awaited<ReturnType<typeof getDomainsPromises>>) {
+  const response = {
     // entities are a array until they are indexed by uri hereafter
     entities: {},
     // collect redirections at the response root to let the possibility
     // to the client to alias entities
     redirects: {},
     notFound: [],
-  }
+  } as EntitiesByUrisResults
 
   let entitiesList = []
 
@@ -109,10 +111,4 @@ function formatRichResults (results) {
   if (response.notFound.length === 0) delete response.notFound
 
   return response
-}
-
-const validators = {
-  inv: isInvEntityId,
-  wd: isWdEntityId,
-  isbn: isValidIsbn,
 }

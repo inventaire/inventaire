@@ -36,12 +36,12 @@ describe('entities:get:by-uris:attributes', () => {
 
   it('should get relatives attributes', async () => {
     const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
-    let entities = await getEntitiesAttributesByUris({
+    const entitiesByUris = await getEntitiesAttributesByUris({
       uris: editionUri,
       attributes: [ 'info', 'labels' ],
       relatives: [ 'wdt:P50', 'wdt:P179', 'wdt:P629' ],
     })
-    entities = Object.values(entities)
+    const entities = Object.values(entitiesByUris)
     const edition = entities.find(entity => entity.type === 'edition')
     const work = entities.find(entity => entity.type === 'work')
     const serie = entities.find(entity => entity.type === 'serie')
