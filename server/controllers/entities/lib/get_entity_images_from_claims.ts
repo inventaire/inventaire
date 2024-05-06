@@ -1,9 +1,11 @@
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { getFirstClaimValue } from '#models/entity'
-import type { SimplifiedClaimsIncludingWdExtra } from '#server/types/entity'
+import type { SerializedEntity } from '#server/types/entity'
 import { getUrlFromEntityImageHash } from './entities.js'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
-export function getEntityImagesFromClaims ({ claims }: { claims: SimplifiedClaimsIncludingWdExtra }) {
+export function getEntityImagesFromClaims (entity: SerializedEntity) {
+  const { uri, claims } = entity
   // Test claims existance to prevent crash when used on meta entities
   // for which entities claims were deleted
   if (claims == null) return []
@@ -12,7 +14,7 @@ export function getEntityImagesFromClaims ({ claims }: { claims: SimplifiedClaim
   const invImageUrl = getUrlFromEntityImageHash(imageHash)
   const invImageUrls = invImageUrl ? [ invImageUrl ] : []
 
-  const claimsImages = getCommonsFilenamesFromClaims(claims)
+  const claimsImages = isWdEntityUri(uri) ? getCommonsFilenamesFromClaims(claims) : []
 
   return [ ...invImageUrls, ...claimsImages ]
 }

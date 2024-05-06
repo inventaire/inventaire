@@ -1,26 +1,25 @@
 import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
-import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
+import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
 import { simplifyInvClaims } from '#models/entity'
-import type { InvEntityDoc, InvEntityId, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
-import addRedirection from './add_redirection.js'
-import formatEntityCommon from './format_entity_common.js'
-import getEntityType from './get_entity_type.js'
+import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
+import { formatEntityCommon } from './format_entity_common.js'
+import { getEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
 
 // Hypothesis: there is no need to look for Wikidata data here
 // as inv entities with an associated Wikidata entity use the Wikidata uri
-export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesGetterArgs) {
-  let entities = await getEntitiesByIds(ids)
-  entities = await Promise.all(entities.map(Format(params)))
-  const found = entities.reduce(aggregateFoundIds, [])
-  const notFound = difference(ids, found).map(prefixifyInv)
-  return { entities, notFound }
+export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesGetterParams) {
+  const entities = await getEntitiesByIds(ids)
+  const serializedEntities = await Promise.all(entities.map(entity => format(entity, params)))
+  const found: InvEntityId[] = serializedEntities.reduce(aggregateFoundIds, [])
+  const notFound: InvEntityUri[] = difference(ids, found).map(prefixifyInv)
+  return { entities: serializedEntities, notFound }
 }
 
-const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
+async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   if ('redirect' in entity) return getRedirectedEntity(entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
@@ -39,19 +38,22 @@ const Format = (params: EntitiesGetterArgs) => async (entity: InvEntityDoc) => {
   }
 
   if (serializedEntity._meta_type === 'removed:placeholder') {
-    const formatted: SerializedRemovedPlaceholder = formatEntityCommon(serializedEntity)
-    return formatted
+    formatEntityCommon(serializedEntity)
+    return serializedEntity as SerializedRemovedPlaceholder
   } else {
-    const formatted: SerializedInvEntity = formatEntityCommon(serializedEntity)
-    return formatted
+    formatEntityCommon(serializedEntity)
+    // @ts-expect-error
+    return serializedEntity as SerializedInvEntity
   }
 }
 
-function getRedirectedEntity (entity, params) {
+async function getRedirectedEntity (entity: EntityRedirection, params: EntitiesGetterParams): Promise<SerializedEntity> {
   const { refresh, dry } = params
+  const fromUri = prefixifyInv(entity._id)
   // Passing the parameters as the entity data source might be Wikidata
-  return getEntityByUri({ uri: entity.redirect, refresh, dry })
-  .then(addRedirection.bind(null, prefixifyInv(entity._id)))
+  const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: entity.redirect, refresh, dry })
+  redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
+  return redirectionTargetEntity
 }
 
 function aggregateFoundIds (foundIds, entity) {
