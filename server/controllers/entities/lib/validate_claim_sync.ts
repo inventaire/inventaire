@@ -6,7 +6,7 @@ import type { EntityType, InvClaim, InvClaimValue, PropertyUri } from '#types/en
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateValueType } from './properties/validations.js'
 
-export function validateClaimValueSync (property: PropertyUri, value: InvClaimValue, entityType: EntityType) {
+export function validateSnakValueSync (property: PropertyUri, value: InvClaimValue, entityType?: EntityType) {
   if (!validateValueType(property, value)) {
     const expected = properties[property].primitiveType
     const actual = typeOf(value)
@@ -34,6 +34,10 @@ export function validateClaimValueSync (property: PropertyUri, value: InvClaimVa
       }
     }
   }
+}
+
+export function validateClaimValueSync (property: PropertyUri, value: InvClaimValue, entityType: EntityType) {
+  validateSnakValueSync(property, value, entityType)
 }
 
 export function validateClaimSync (property: PropertyUri, claim: InvClaim, entityType: EntityType) {
