@@ -351,6 +351,22 @@ describe('entities:create', () => {
       }
     })
 
+    it('should reject an empty reference object', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ {} ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid reference')
+      }
+    })
+
     it('should reject an invalid reference object', async () => {
       try {
         const res = await authReq('post', endpoint, {
@@ -373,12 +389,29 @@ describe('entities:create', () => {
           labels: { fr: randomLabel() },
           claims: {
             'wdt:P31': [ 'wd:Q47461344' ],
-            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { 'wdt:P854': 'not a url' } ] } ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { 'wdt:P854': [ 'not a url' ] } ] } ],
           },
         })
         shouldNotBeCalled(res)
       } catch (err) {
         err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid property value')
+      }
+    })
+
+    it('should reject non-allowed reference properties', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { ...someReference, 'wdt:P1104': [ 123 ] } ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("This property isn't allowed in reference snaks")
       }
     })
   })
