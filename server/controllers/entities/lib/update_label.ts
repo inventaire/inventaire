@@ -3,7 +3,7 @@ import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { setEntityDocLabel } from '#models/entity'
-import getEntityType from './get_entity_type.js'
+import { getEntityType } from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
 
 export default async function (lang, value, userId, currentDoc) {

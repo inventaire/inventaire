@@ -1,5 +1,8 @@
-import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { allowedValuesPerTypePerProperty } from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
 import { newError } from '#lib/error/error'
+import { objectEntries } from '#lib/utils/base'
+import { objectKeys } from '#lib/utils/types'
+import type { ExtendedEntityType, WdEntityUri } from '#server/types/entity'
 
 const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 
@@ -147,26 +150,27 @@ const wikidataOnlyP31Values = {
   ],
 } as const
 
-export const typesAliases = {}
+type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
 
-for (const [ type, wdTypeValues ] of Object.entries(wikidataOnlyP31Values)) {
+export const typesAliases = {} as Record<PluralizedEntityType, WdEntityUri[]>
+
+for (const [ type, wdTypeValues ] of objectEntries(wikidataOnlyP31Values)) {
   const invTypeValues = invP31Values[type] || []
-  typesAliases[type] = wdTypeValues.concat(invTypeValues)
+  typesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
 }
 
-export const types = {}
+export const types: Record<WdEntityUri, ExtendedEntityType> = {}
 
-for (let type in typesAliases) {
+for (const [ type, typeIds ] of objectEntries(typesAliases)) {
   // Drop the plural form, including when deriving from English uses,
   // notably: series => serie
-  const typeIds = typesAliases[type]
-  type = type.replace(/s$/, '')
+  const singularType = type.replace(/s$/, '') as ExtendedEntityType
   for (const id of typeIds) {
-    types[id] = type
+    types[id] = singularType
   }
 }
 
-export const typesNames = Object.keys(typesAliases)
+export const typesNames = objectKeys(typesAliases)
 
 export function getPluralType (singularType) {
   const pluralizedType = singularType + 's'
