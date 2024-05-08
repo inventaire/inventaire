@@ -16,12 +16,12 @@ export type InvEntityId = CouchUuid
 export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
 
-export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
-export type EntityId = WdEntityId | InvEntityId | Isbn
-
 export type PropertyUri = WdPropertyUri | InvPropertyUri
 export type Isbn = string
 export type IsbnEntityUri = `isbn:${Isbn}`
+
+export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
+export type EntityId = WdEntityId | InvEntityId | Isbn
 
 export type EntityUri = WdEntityUri | InvEntityUri | IsbnEntityUri
 
