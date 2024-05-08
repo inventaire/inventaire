@@ -7,7 +7,7 @@ import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
+import { addEntityDocClaims, beforeEntityDocSave, getClaimValue, setEntityDocLabels } from '#models/entity'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
@@ -156,7 +156,7 @@ export function setTermsFromClaims (entity: SerializedEntity) {
 }
 
 export function getAggregatedPropertiesValues (claims, properties) {
-  return uniq(Object.values(pick(claims, properties)).flat())
+  return uniq(Object.values(pick(claims, properties)).flat().map(getClaimValue))
 }
 
 export function getWorksAuthorsUris (works) {

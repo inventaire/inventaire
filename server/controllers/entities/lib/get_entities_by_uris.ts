@@ -5,11 +5,11 @@ import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { objectKeys } from '#lib/utils/types'
-import type { EntityId, EntityUri, EntityUriPrefix, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
+import type { EntityId, EntityUri, EntityUriPrefix, ExtendedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
 import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
-import type { Split } from 'type-fest'
+import type { OverrideProperties, Split } from 'type-fest'
 
 const validators = {
   inv: isInvEntityId,
@@ -23,6 +23,7 @@ export interface EntitiesGetterParams {
   refresh?: boolean
   dry?: boolean
   autocreate?: boolean
+  includeReferences?: boolean
 }
 
 export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
@@ -31,8 +32,16 @@ export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
 
 type Domains = Partial<Record<EntityUriPrefix, EntityId[]>>
 
+export interface EntitiesByUrisResults {
+  entities: SerializedEntitiesByUris
+  redirects: Record<EntityUri, EntityUri>
+  notFound?: EntityUri[]
+}
+
+export type ExtendedEntitiesByUrisResults = OverrideProperties<EntitiesByUrisResults, { entities: ExtendedSerializedEntitiesByUris }>
+
 export async function getEntitiesByUris (params: GetEntitiesByUrisParams) {
-  const { uris } = params
+  const { uris, includeReferences } = params
   assert_.array(uris)
   const domains: Domains = {}
 
@@ -56,7 +65,13 @@ export async function getEntitiesByUris (params: GetEntitiesByUrisParams) {
   }
 
   const results = await getDomainsPromises(domains, params)
-  return formatRichResults(results)
+  const response = formatRichResults(results, { includeReferences })
+  if (includeReferences) {
+    // @ts-expect-error
+    return response as ExtendedEntitiesByUrisResults
+  } else {
+    return response as EntitiesByUrisResults
+  }
 }
 
 function getDomainsPromises (domains: Domains, params: EntitiesGetterParams) {
@@ -68,13 +83,9 @@ function getDomainsPromises (domains: Domains, params: EntitiesGetterParams) {
   }))
 }
 
-export interface EntitiesByUrisResults {
-  entities: SerializedEntitiesByUris
-  redirects: Record<EntityUri, EntityUri>
-  notFound?: EntityUri[]
-}
+type DomainsResults = Awaited<ReturnType<typeof getDomainsPromises>>
 
-function formatRichResults (results: Awaited<ReturnType<typeof getDomainsPromises>>) {
+function formatRichResults (results: DomainsResults, { includeReferences = false }) {
   const response = {
     // entities are a array until they are indexed by uri hereafter
     entities: {},
@@ -82,7 +93,7 @@ function formatRichResults (results: Awaited<ReturnType<typeof getDomainsPromise
     // to the client to alias entities
     redirects: {},
     notFound: [],
-  } as EntitiesByUrisResults
+  } as (typeof includeReferences extends true ? ExtendedEntitiesByUrisResults : EntitiesByUrisResults)
 
   let entitiesList = []
 

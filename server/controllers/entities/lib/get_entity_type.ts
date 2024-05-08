@@ -1,12 +1,16 @@
 import { types } from '#lib/wikidata/aliases'
-import type { ExtendedEntityType } from '#server/types/entity'
+import { getClaimValue } from '#models/entity'
+import type { ExtendedEntityType, InvPropertyClaims } from '#server/types/entity'
+import type { SimplifiedPropertyClaims } from 'wikibase-sdk'
 
 // Takes an entity wdt:P31 (instance of) claims array
 // Returns a entity type string: work, edition, article, human, genre
-export function getEntityType (wdtP31Array): ExtendedEntityType | undefined {
-  if (wdtP31Array == null) return
+export function getEntityType (wdtP31Claims: InvPropertyClaims | SimplifiedPropertyClaims): ExtendedEntityType | undefined {
+  if (wdtP31Claims == null) return
 
-  for (const value of wdtP31Array) {
+  const wdtP31Values = wdtP31Claims.map(getClaimValue)
+
+  for (const value of wdtP31Values) {
     const type = types[value]
     // return as soon as we get a type
     if (type) return type

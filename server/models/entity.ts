@@ -30,7 +30,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedProperty } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedPropertyUri, ExtendedClaims, SimplifiedClaims } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -366,23 +366,37 @@ function includesReference (references: Reference[], reference: Reference) {
   return references.find(ref => sameObjects(ref, reference))
 }
 
-export function simplifyInvClaims (claims: Claims) {
+// The option is named 'keepReferences' rather than 'includeReferences' to make
+// the function options compatible with wikibase-sdk simplifyClaims options
+export function simplifyInvClaims (claims: Claims, { keepReferences = false } = {}) {
   const simplifiedClaims = {}
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
-    simplifiedClaims[property] = propertyClaims.map(getClaimValue)
+    if (keepReferences) {
+      simplifiedClaims[property] = propertyClaims.map(getClaimObjectFromClaim)
+    } else {
+      simplifiedClaims[property] = propertyClaims.map(getClaimValue)
+    }
   }
   return simplifiedClaims
 }
 
-export function getPropertyClaimsValues <C extends Claims, P extends TypedProperty> (claims: C, property: P) {
+export function getPropertyClaimsValues <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
   if (claims?.[property]) {
     return claims[property].map(claim => getTypedClaimValue(claim, property))
   }
 }
 
-export function getFirstClaimValue <C extends Claims, P extends TypedProperty> (claims: C, property: P) {
+export function getFirstClaimValue <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
   if (claims?.[property]?.[0]) {
     const firstClaim = claims[property][0] as ClaimValueByProperty[P]
     return getTypedClaimValue(firstClaim, property)
+  }
+}
+
+export function getClaimObjectFromClaim (claim: InvClaim) {
+  if (isClaimObject(claim)) {
+    return claim
+  } else {
+    return { value: claim }
   }
 }

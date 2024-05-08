@@ -3,12 +3,12 @@ import { getFirstClaimValue, simplifyInvClaims } from '#models/entity'
 import type { InvEntity, IsbnEntityUri } from '#server/types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
 
-export function formatEditionEntity (entity: InvEntity) {
+export function formatEditionEntity (entity: InvEntity, { includeReferences = false }) {
   const isbn = getFirstClaimValue(entity.claims, 'wdt:P212')
   return formatEntityCommon({
     ...entity,
     uri: `isbn:${normalizeIsbn(isbn)}` as IsbnEntityUri,
     type: 'edition',
-    claims: simplifyInvClaims(entity.claims),
+    claims: simplifyInvClaims(entity.claims, { keepReferences: includeReferences }),
   })
 }

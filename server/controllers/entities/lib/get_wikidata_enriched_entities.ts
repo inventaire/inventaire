@@ -13,9 +13,11 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
+import { objectEntries } from '#lib/utils/base'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import type { ExtendedEntityType, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
+import { getClaimObjectFromClaim } from '#models/entity'
+import type { ExtendedEntityType, ExtendedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
 import { getEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
@@ -29,13 +31,21 @@ setImmediate(importCircularDependencies)
 
 const { _id: hookUserId } = hardCodedUsers.hook
 
-export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry }: EntitiesGetterParams) {
+export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry, includeReferences }: EntitiesGetterParams) {
   const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
-  return {
-    entities: foundEntities as SerializedWdEntity[],
-    notFound: map(notFoundEntities, 'uri') as WdEntityUri[],
+  const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
+  if (includeReferences) {
+    return {
+      entities: foundEntities.map(extendClaims) as ExtendedSerializedWdEntity[],
+      notFound,
+    }
+  } else {
+    return {
+      entities: foundEntities as SerializedWdEntity[],
+      notFound,
+    }
   }
 }
 
@@ -153,3 +163,10 @@ function omitUndesiredPropertiesPerType (type: ExtendedEntityType, claims: Claim
 const undesiredPropertiesPerType = {
   work: [ 'P212', 'P957' ],
 } as const
+
+function extendClaims (entity) {
+  for (const [ property, propertyClaims ] of objectEntries(entity.claims)) {
+    entity.claims[property] = propertyClaims.map(getClaimObjectFromClaim)
+  }
+  return entity
+}
