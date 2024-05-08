@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'

@@ -1,4 +1,4 @@
-import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'

@@ -3,7 +3,7 @@ import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
 import { getPluralType } from '#lib/wikidata/aliases'
-import allowedValuesPerTypePerProperty from './allowed_values_per_type_per_property.js'
+import { allowedValuesPerTypePerProperty } from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export function isbnProperty (num: 10 | 13) {
