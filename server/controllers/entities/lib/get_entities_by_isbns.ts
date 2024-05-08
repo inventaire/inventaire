@@ -29,7 +29,8 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = difference(isbns, foundIsbns)
 
-  const serializedEntities = entities.map(formatEditionEntity)
+  const { includeReferences } = params
+  const serializedEntities = entities.map(entity => formatEditionEntity(entity, { includeReferences }))
 
   const results = { entities: serializedEntities, notFound: [] as IsbnEntityUri[] }
   if (missingIsbns.length === 0) {

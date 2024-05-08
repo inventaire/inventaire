@@ -14,6 +14,7 @@ const sanitization = {
       'labels',
       'descriptions',
       'claims',
+      'references',
       'sitelinks',
       'image',
       'popularity',
@@ -50,7 +51,8 @@ export interface GetEntitiesParams {
 }
 
 async function controller ({ uris, attributes, lang, refresh, relatives, autocreate }: GetEntitiesParams) {
-  let results = await getEntitiesByUris({ uris, refresh, autocreate })
+  const includeReferences = attributes?.includes('references')
+  let results = await getEntitiesByUris({ uris, refresh, autocreate, includeReferences })
   if (relatives) results = await addRelatives(results, relatives, refresh)
   if (attributes) {
     results.entities = pickAttributes(results.entities, attributes)

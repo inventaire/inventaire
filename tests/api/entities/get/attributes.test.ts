@@ -1,11 +1,13 @@
 import should from 'should'
+import { objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import type { ExtendedSerializedEntity } from '#server/types/entity'
 import {
   createEditionWithWorkAuthorAndSerie,
   createWorkWithAuthor,
   createWorkWithSpecificRoleAuthor,
 } from '#tests/api/fixtures/entities'
-import { getEntitiesAttributesByUris } from '#tests/api/utils/entities'
+import { getEntitiesAttributesByUris, getEntityAttributesByUri } from '#tests/api/utils/entities'
 import { publicReq } from '#tests/api/utils/utils'
 
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -90,5 +92,22 @@ describe('entities:get:by-uris:attributes', () => {
     const { entities } = await publicReq('get', url)
     entities[work.uri].should.be.ok()
     entities[human.uri].should.be.ok()
+  })
+
+  it('should get extended claims when requesting references', async () => {
+    const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+    // @ts-expect-error TS doesn't seem to detect the present of 'references' in attributes
+    const entity = await getEntityAttributesByUri({
+      uri: editionUri,
+      attributes: [ 'claims', 'references' ],
+    }) as ExtendedSerializedEntity
+    const allPropertyClaims = objectValues(entity.claims)
+    allPropertyClaims.length.should.be.above(3)
+    for (const propertyClaims of objectValues(entity.claims)) {
+      for (const claim of propertyClaims) {
+        claim.should.be.an.Object()
+        claim.value.should.be.ok()
+      }
+    }
   })
 })
