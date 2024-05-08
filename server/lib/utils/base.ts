@@ -178,6 +178,10 @@ export function objectEntries <Obj> (obj: Obj) {
   return Object.entries(obj) as ObjectEntries<Obj>
 }
 
+export function objectValues <Obj> (obj: Obj) {
+  return Object.values(obj) as Obj[keyof Obj][]
+}
+
 /** Returns a new object with keys and values inverted */
 export function invert (obj: Record<string | number, string | number>) {
   const invertedObj = {}

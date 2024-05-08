@@ -24,7 +24,7 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
 
   const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
 
-  const simplifiedClaims = simplifyInvClaims(entity.claims)
+  const simplifiedClaims = simplifyInvClaims(entity.claims, { keepReferences: params.includeReferences })
 
   const serializedEntity = {
     uri,
