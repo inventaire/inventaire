@@ -17,7 +17,7 @@ import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import type { ExtendedEntityType, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
-import getEntityType from './get_entity_type.js'
+import { getEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity

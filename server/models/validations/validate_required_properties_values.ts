@@ -1,4 +1,4 @@
-import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 import type { Claims, PropertyUri } from '#types/entity'
