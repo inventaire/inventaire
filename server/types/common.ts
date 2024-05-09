@@ -41,3 +41,8 @@ export type IsbnData = ReturnType<typeof isbnParser> & {
 export type ColorHexCode = `#${number}`
 
 export type SortFunction<T> = (a: T, b: T) => number
+
+// Source: https://stackoverflow.com/questions/69850324/omit-never-types-in-typescript#answer-69852402
+export type OmitNever<T> = {
+  [K in keyof T as T[K] extends never ? never : K]: T[K]
+}
