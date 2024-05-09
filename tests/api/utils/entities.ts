@@ -32,7 +32,7 @@ export async function getByUri (uri: EntityUri, refresh?: boolean) {
 }
 
 export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }: Pick<GetEntitiesParams, 'uris' | 'attributes' | 'relatives' | 'refresh'>) {
-  const extendedClaims = attributes?.includes('references')
+  const extendedClaims = attributes.includes('references')
   const query = {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
@@ -41,7 +41,11 @@ export async function getEntitiesAttributesByUris ({ uris, attributes, relatives
     relatives: relatives ? forceArray(relatives).join('|') : undefined,
   }
   const { entities } = await publicReq('get', buildUrl('/api/entities', query))
-  return entities as (typeof extendedClaims extends true ? ExtendedSerializedEntitiesByUris : SerializedEntitiesByUris)
+  if (extendedClaims) {
+    return entities as ExtendedSerializedEntitiesByUris
+  } else {
+    return entities as SerializedEntitiesByUris
+  }
 }
 
 export async function getEntityAttributesByUri ({ uri, attributes }: { uri: EntityUri, attributes: GetEntitiesParams['attributes'] }) {

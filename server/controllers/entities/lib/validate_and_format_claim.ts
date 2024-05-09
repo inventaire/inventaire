@@ -11,21 +11,21 @@ export async function validateAndFormatClaim (params: ValidateAndFormatClaimValu
   const { property, newClaim } = params
   validateProperty(property)
   if (newClaim != null && isClaimObject(newClaim)) {
-    validateReferences(newClaim)
+    validateAndFormatReferences(newClaim)
   }
   return validateAndFormatClaimValue(params)
 }
 
-function validateReferences (claim: InvClaimObject) {
+function validateAndFormatReferences (claim: InvClaimObject) {
   const { references } = claim
   if (!references) return
   if (!(references instanceof Array)) {
     throw newError('invalid reference array', 400, { claim, references })
   }
-  references.forEach(ref => validateReference(ref, claim))
+  references.forEach(ref => validateAndFormatReference(ref, claim))
 }
 
-function validateReference (reference: unknown, claim: InvClaimObject) {
+function validateAndFormatReference (reference: unknown, claim: InvClaimObject) {
   if (!isNonEmptyPlainObject(reference)) {
     throw newError('invalid reference', 400, { reference, claim })
   }
@@ -37,9 +37,7 @@ function validateReference (reference: unknown, claim: InvClaimObject) {
     if (!(values instanceof Array)) {
       throw newError('invalid snak values array', 400, { property, values })
     }
-    for (const value of values) {
-      validateSnakValueSync(property, value)
-    }
+    reference[property] = values.map(value => validateSnakValueSync(property, value))
   }
 }
 
