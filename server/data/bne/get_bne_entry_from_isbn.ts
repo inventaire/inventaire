@@ -1,6 +1,7 @@
 import { simplifySparqlResults } from 'wikibase-sdk'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { formatAuthorName } from '#data/commons/format_author_name'
+import { addClaimsReferences } from '#data/lib/add_claims_references'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { parseSameasMatches } from '#data/lib/external_ids'
 import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
@@ -31,6 +32,7 @@ export default async function (isbn) {
   const rows = await Promise.all(simplifiedResults.map(result => formatRow(isbn, result)))
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
   await setEditionPublisherClaim(entry)
+  addClaimsReferences(entry, 'wdt:P950')
   return entry
 }
 

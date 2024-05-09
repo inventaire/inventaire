@@ -2,19 +2,17 @@ import { simplifySparqlResults } from 'wikibase-sdk'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { setEditionContributors } from '#data/bnf/helpers'
 import { formatAuthorName } from '#data/commons/format_author_name'
+import { addClaimsReferences } from '#data/lib/add_claims_references'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { parseSameasMatches } from '#data/lib/external_ids'
 import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
-import { isNonEmptyString } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
 import { requests_ } from '#lib/requests'
-import { forceArray, objectEntries, simpleDay } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import type { InvExpandedPropertyClaims, InvSimplifiedPropertyClaims, Reference } from '#server/types/entity'
 import type { AbsoluteUrl, Url } from '#types/common'
-import type { EntityLooseSeed, ExternalDatabaseEntryRow, ResolverEntry } from '#types/resolver'
+import type { ExternalDatabaseEntryRow } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
 const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_639_2_code.json')
@@ -36,7 +34,7 @@ export default async function (isbn: string) {
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
   await setEditionPublisherClaim(entry)
   await addImage(entry)
-  addClaimReference(entry)
+  addClaimsReferences(entry, 'wdt:P268')
   return entry
 }
 
@@ -219,34 +217,4 @@ export function cleanupBnfTitle (title) {
   // '"some title"' => 'some title'
   .replace(/^"([^"]+)"$/, '$1')
   .trim()
-}
-
-function addClaimReference (entry: ResolverEntry) {
-  if (!entry) return
-  addReferenceToSeedClaims(entry.edition)
-  entry.works.forEach(work => addReferenceToSeedClaims(work))
-  entry.authors.forEach(author => addReferenceToSeedClaims(author))
-}
-
-function addReferenceToSeedClaims (seed: EntityLooseSeed) {
-  if (!seed.claims) return
-  const { claims } = seed
-  const bnfId = claims['wdt:P268']
-  if (!isNonEmptyString(bnfId)) return
-  const referenceUrl = `https://catalogue.bnf.fr/ark:/12148/cb${bnfId}`
-  const reference: Reference = {
-    'wdt:P854': [ referenceUrl ],
-    'wdt:P813': [ simpleDay() ],
-  }
-  for (const [ property, propertyLooseClaims ] of objectEntries(claims)) {
-    const propertyClaimsValues: InvSimplifiedPropertyClaims = forceArray(propertyLooseClaims)
-    const propertyClaimsObjects = propertyClaimsValues.map(claim => {
-      return {
-        value: claim,
-        references: [ reference ],
-      }
-    })
-    // @ts-expect-error
-    claims[property] = propertyClaimsObjects as InvExpandedPropertyClaims
-  }
 }

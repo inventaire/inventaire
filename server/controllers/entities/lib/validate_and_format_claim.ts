@@ -41,7 +41,7 @@ function validateAndFormatReference (reference: unknown, claim: InvClaimObject) 
   }
 }
 
-const allowlistedReferenceProperties = [
+export const allowlistedReferenceProperties = [
   'wdt:P813', // retrieved
   'wdt:P854', // reference URL
 ] as const

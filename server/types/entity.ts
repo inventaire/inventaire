@@ -1,5 +1,6 @@
 import type { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
 import type { PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import type { allowlistedReferenceProperties } from '#controllers/entities/lib/validate_and_format_claim'
 import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { ExtraWdPropertyUri } from '#lib/wikidata/allowlisted_properties'
@@ -53,18 +54,6 @@ export type ImageValue = ImageHash
 export type InvSnakValue = EntityValue | StringValue | ExternalIdValue | UrlValue | DateValue | PositiveIntegerValue | PositiveIntegerStringValue | ImageValue
 export type InvClaimValue = InvSnakValue
 
-export type Reference = Record<PropertyUri, InvSnakValue[]>
-
-export interface InvClaimObject {
-  value: InvClaimValue
-  references: Reference[]
-}
-
-export interface DatatypedInvClaimObject <T> {
-  value: T
-  references: Reference[]
-}
-
 export interface ClaimValueTypeByDatatype {
   'entity': EntityValue
   'string': StringValue
@@ -79,6 +68,20 @@ export interface ClaimValueTypeByDatatype {
 export type ClaimValueByProperty = {
   [Property in keyof Writable<PropertiesValuesConstraints>]: ClaimValueTypeByDatatype[PropertiesValuesConstraints[Property]['datatype']]
 }
+
+export type ReferenceProperty = typeof allowlistedReferenceProperties[number]
+export type Reference = Record<ReferenceProperty, ClaimValueByProperty[ReferenceProperty][]>
+
+export interface InvClaimObject {
+  value: InvClaimValue
+  references: Reference[]
+}
+
+export interface DatatypedInvClaimObject <T> {
+  value: T
+  references: Reference[]
+}
+
 export type ClaimObjectByProperty = {
   [Property in keyof Writable<PropertiesValuesConstraints>]: {
     value: ClaimValueTypeByDatatype[PropertiesValuesConstraints[Property]['datatype']]
