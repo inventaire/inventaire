@@ -26,11 +26,12 @@ import { isString, cloneDeep, get, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedPropertyUri, ExtendedClaims, SimplifiedClaims } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedPropertyUri } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -102,28 +103,32 @@ export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
   return doc
 }
 
-export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, value: InvClaim) {
+export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, claim: InvClaim) {
   preventRedirectionEdit(doc)
-  return updateEntityDocClaim(doc, property, null, value)
+  return updateEntityDocClaim(doc, property, null, claim)
 }
 
-export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim) {
-  const context = { doc, property, oldVal, newVal }
+export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim) {
+  const context = { doc, property, oldClaim, newClaim }
   preventRedirectionEdit(doc)
-  if (oldVal == null && newVal == null) {
+  if (oldClaim == null && newClaim == null) {
     throw newError('missing old or new value', 400, context)
   }
 
-  if (isString(getClaimValue(oldVal))) oldVal = setClaimValue(oldVal, superTrim(getClaimValue(oldVal)))
-  if (isString(getClaimValue(newVal))) newVal = setClaimValue(newVal, superTrim(getClaimValue(newVal)))
+  if (isString(getClaimValue(oldClaim))) oldClaim = setClaimValue(oldClaim, superTrim(getClaimValue(oldClaim)))
+  if (isString(getClaimValue(newClaim))) newClaim = setClaimValue(newClaim, superTrim(getClaimValue(newClaim)))
 
   let propArray = get(doc, `claims.${property}`)
 
-  if (propArray && newVal != null && propArray.map(getClaimValue).includes(getClaimValue(newVal))) {
-    throw newError('claim property new value already exist', 400, { propArray, newVal })
+  if (propArray && newClaim != null && propArray.map(getClaimValue).includes(getClaimValue(newClaim))) {
+    throw newError('claim property new value already exist', 400, { propArray, newClaim })
   }
 
-  if (oldVal != null) {
+  if (isClaimObject(newClaim)) {
+    newClaim = minimizeClaimObject(newClaim)
+  }
+
+  if (oldClaim != null) {
     if (propArray != null) {
       propArray = propArray.map(claim => {
         if (isString(claim)) {
@@ -133,13 +138,13 @@ export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, old
         }
       })
     }
-    if (propArray == null || !propArray.map(getClaimValue).includes(getClaimValue(oldVal))) {
+    if (propArray == null || !propArray.map(getClaimValue).includes(getClaimValue(oldClaim))) {
       throw newError('claim property value not found', 400, context)
     }
 
-    const oldValIndex = getClaimIndex(propArray, oldVal)
-    if (newVal != null) {
-      doc.claims[property][oldValIndex] = newVal
+    const oldValIndex = getClaimIndex(propArray, oldClaim)
+    if (newClaim != null) {
+      doc.claims[property][oldValIndex] = newClaim
     } else {
       // if the new value is null, it plays the role of a removeClaim
       propArray.splice(oldValIndex, 1)
@@ -149,10 +154,18 @@ export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, old
   } else {
     // if the old value is null, it plays the role of a createClaim
     doc.claims[property] ??= []
-    doc.claims[property].push(newVal)
+    doc.claims[property].push(newClaim)
   }
 
-  return updateInferredProperties(doc, property, oldVal, newVal)
+  return updateInferredProperties(doc, property, oldClaim, newClaim)
+}
+
+function minimizeClaimObject (claim: InvClaimObject) {
+  if (isNonEmptyArray(claim.references)) {
+    return claim
+  } else {
+    return claim.value
+  }
 }
 
 export function beforeEntityDocSave (doc: InvEntity) {

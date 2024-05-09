@@ -4,7 +4,7 @@ import { someReference, someReferenceB } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { createBlankEntityDoc, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { EntityUri, InvEntity, InvPropertyClaims, WdEntityUri } from '#server/types/entity'
+import type { EntityUri, InvEntity, WdEntityUri } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const workDoc = () => {
@@ -106,6 +106,19 @@ describe('entity model: update claim', () => {
         const claimObject = { value: 'wd:Q42', references: [ someReference ] }
         const doc = createEntityDocClaim(workDoc(), 'wdt:P50', claimObject)
         doc.claims['wdt:P50'].at(-1).should.deepEqual(claimObject)
+      })
+
+      it('should simplify the claim object when there is only a value', () => {
+        const claimObject = { value: 'wd:Q42' as EntityUri }
+        // @ts-expect-error
+        const doc = createEntityDocClaim(workDoc(), 'wdt:P50', claimObject)
+        doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
+      })
+
+      it('should simplify the claim object when the reference array is empty', () => {
+        const claimObject = { value: 'wd:Q42' as EntityUri, references: [] }
+        const doc = createEntityDocClaim(workDoc(), 'wdt:P50', claimObject)
+        doc.claims['wdt:P50'].at(-1).should.equal('wd:Q42')
       })
 
       it('should return a doc with the new value for an existing property', () => {
