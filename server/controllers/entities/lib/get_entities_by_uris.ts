@@ -40,7 +40,15 @@ export interface EntitiesByUrisResults {
 
 export type ExtendedEntitiesByUrisResults = OverrideProperties<EntitiesByUrisResults, { entities: ExtendedSerializedEntitiesByUris }>
 
-export async function getEntitiesByUris (params: GetEntitiesByUrisParams) {
+// Using functions with forced type output as TS can't deduce the type of `entities` from the `includeReferences` flag
+export async function getEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
+  return getPossiblyExtendedEntitiesByUris({ ...params, includeReferences: false }) as Promise<EntitiesByUrisResults>
+}
+export async function getExtendedEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
+  return getPossiblyExtendedEntitiesByUris({ ...params, includeReferences: true }) as Promise<ExtendedEntitiesByUrisResults>
+}
+
+export async function getPossiblyExtendedEntitiesByUris (params: GetEntitiesByUrisParams) {
   const { uris, includeReferences } = params
   assert_.array(uris)
   const domains: Domains = {}
