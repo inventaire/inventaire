@@ -3,6 +3,7 @@ import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entit
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { propertiesValuesConstraints, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { objectKeys } from '#lib/utils/types'
+import { getClaimValue } from '#models/entity'
 import type { EntityUri, InvEntityUri, PropertyUri, SerializedEntity } from '#types/entity'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { unprefixify } from './prefix.js'
@@ -21,8 +22,9 @@ export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
 
   for (const property of cachedRelationProperties) {
     if (claims[property]) {
-      for (const valueUri of claims[property]) {
-        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri as EntityUri)
+      for (const claim of claims[property]) {
+        const valueUri = getClaimValue(claim) as EntityUri
+        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri)
         promises.push(promise)
       }
     }
