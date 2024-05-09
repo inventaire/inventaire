@@ -4,7 +4,7 @@ import { someReference, someReferenceB } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { createBlankEntityDoc, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
 import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { InvEntity } from '#server/types/entity'
+import type { EntityUri, InvEntity, InvPropertyClaims, WdEntityUri } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const workDoc = () => {
@@ -15,8 +15,8 @@ const workDoc = () => {
     created: Date.now(),
     updated: Date.now(),
   }
-  doc.claims['wdt:P31'] = [ 'wd:Q47461344' ]
-  doc.claims['wdt:P50'] = [ 'wd:Q535', 'wd:Q1541' ]
+  doc.claims['wdt:P31'] = [ 'wd:Q47461344' as WdEntityUri ]
+  doc.claims['wdt:P50'] = [ 'wd:Q535' as WdEntityUri, 'wd:Q1541' as WdEntityUri ]
   doc.claims['wdt:P144'] = [ { value: 'wd:Q150827', references: [ someReference ] }, 'wd:Q29478' ]
   return doc
 }
@@ -29,8 +29,8 @@ const editionDoc = () => {
     created: Date.now(),
     updated: Date.now(),
   }
-  doc.claims['wdt:P31'] = [ 'wd:Q3331189' ]
-  doc.claims['wdt:P629'] = [ 'wd:Q53592' ]
+  doc.claims['wdt:P31'] = [ 'wd:Q3331189' as WdEntityUri ]
+  doc.claims['wdt:P629'] = [ 'wd:Q53592' as WdEntityUri ]
   return doc
 }
 
@@ -224,21 +224,21 @@ describe('entity model: update claim', () => {
         entityDoc.claims['wdt:P50'][0].should.equal('wd:Q535')
         const claimObject = { value: 'wd:Q42', references: [ someReference ] }
         const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', 'wd:Q535', claimObject)
-        updatedDoc.claims['wdt:P50'][0].should.equal(claimObject)
+        updatedDoc.claims['wdt:P50'][0].should.deepEqual(claimObject)
       })
 
       it('should return with the claim value updated: claim object to simple claim', () => {
         const entityDoc = workDoc()
-        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        const claimObject = { value: 'wd:Q42' as WdEntityUri, references: [ someReference ] }
         entityDoc.claims['wdt:P50'] = [ claimObject ]
         const claimValue = 'wd:Q181659'
         const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', claimObject.value, claimValue)
-        updatedDoc.claims['wdt:P50'][0].should.equal(claimValue)
+        updatedDoc.claims['wdt:P50'][0].should.deepEqual(claimValue)
       })
 
       it('should return with the claim value updated: claim object to claim object', () => {
         const entityDoc = workDoc()
-        const claimObject = { value: 'wd:Q42', references: [ someReference ] }
+        const claimObject = { value: 'wd:Q42' as WdEntityUri, references: [ someReference ] }
         entityDoc.claims['wdt:P50'] = [ claimObject ]
         const claimObject2 = { value: 'wd:Q181659', references: [ someReferenceB ] }
         const updatedDoc = updateEntityDocClaim(entityDoc, 'wdt:P50', claimObject.value, claimObject2)
