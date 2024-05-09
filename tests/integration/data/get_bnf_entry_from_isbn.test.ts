@@ -5,33 +5,21 @@ import { simpleDay } from '#lib/utils/base'
 describe('get_bnf_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {
     const entry = await getBnfEntryFromIsbn('978-2-207-11674-6')
-    entry.edition.claims['wdt:P268'][0].should.deepEqual({
-      value: '437169336',
+    entry.edition.claims['wdt:P577'][0].should.deepEqual({
+      value: '2013',
       references: [
         {
-          'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb437169336' ],
+          'wdt:P268': [ '437169336' ],
           'wdt:P813': [ simpleDay() ],
         },
       ],
     })
     entry.works[0].claims['wdt:P268'][0].should.deepEqual({
       value: '12482666v',
-      references: [
-        {
-          'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb12482666v' ],
-          'wdt:P813': [ simpleDay() ],
-        },
-      ],
     })
     entry.authors[0].uri.should.equal('wd:Q123080')
     entry.authors[0].claims['wdt:P268'][0].should.deepEqual({
       value: '11895739q',
-      references: [
-        {
-          'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb11895739q' ],
-          'wdt:P813': [ simpleDay() ],
-        },
-      ],
     })
   })
 
@@ -56,7 +44,7 @@ describe('get_bnf_entry_from_isbn', () => {
       value: "La nuit du papillon d'or",
       references: [
         {
-          'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb424992450' ],
+          'wdt:P268': [ '424992450' ],
           'wdt:P813': [ simpleDay() ],
         },
       ],
@@ -75,7 +63,7 @@ describe('get_bnf_entry_from_isbn', () => {
       value: 'wd:Q17628988',
       references: [
         {
-          'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb469671618' ],
+          'wdt:P268': [ '469671618' ],
           'wdt:P813': [ simpleDay() ],
         },
       ],

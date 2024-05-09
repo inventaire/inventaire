@@ -20,6 +20,8 @@ import {
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
+import { objectKeys } from '#lib/utils/types'
+import type { OmitNever } from '#server/types/common'
 import type { PropertyUri } from '#server/types/entity'
 import type { PropertyValueConstraints } from '#server/types/property'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
@@ -269,3 +271,13 @@ export const propertiesValuesConstraints = {
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
 
 export type PropertiesValuesConstraints = typeof propertiesValuesConstraints
+
+type ExternalIdPropertiesValuesConstraints = OmitNever<{
+  [P in keyof PropertiesValuesConstraints]: PropertiesValuesConstraints[P] & { datatype: 'external-id' }
+}>
+
+export type ExternalIdProperty = keyof ExternalIdPropertiesValuesConstraints
+
+export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
+  return propertiesValuesConstraints[property].datatype === 'external-id'
+}) as ExternalIdProperty[]

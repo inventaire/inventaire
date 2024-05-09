@@ -1,3 +1,4 @@
+import { externalIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { validateSnakValueSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -44,4 +45,5 @@ function validateAndFormatReference (reference: unknown, claim: InvClaimObject) 
 export const allowlistedReferenceProperties = [
   'wdt:P813', // retrieved
   'wdt:P854', // reference URL
+  ...externalIdsProperties,
 ] as const
