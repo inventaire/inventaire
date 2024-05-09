@@ -1,4 +1,5 @@
 import 'should'
+import { someReference } from '#fixtures/entities'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -12,7 +13,7 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            P1545: [ '1' ],
+            P1545: [ { value: '1' } ],
           },
         })
         shouldNotBeCalled()
@@ -24,7 +25,7 @@ describe('wikidata data model converter', () => {
     it('should not throw when several series are set but no ordinal', () => {
       relocateQualifierProperties({
         claims: {
-          P179: [ 'Q1', 'Q2' ],
+          P179: [ { value: 'Q1' }, { value: 'Q2' } ],
         },
       })
     })
@@ -33,8 +34,8 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            P179: [ 'Q1', 'Q2' ],
-            P1545: [ '1' ],
+            P179: [ { value: 'Q1' }, { value: 'Q2' } ],
+            P1545: [ { value: '1' } ],
           },
         })
         shouldNotBeCalled()
@@ -47,8 +48,8 @@ describe('wikidata data model converter', () => {
       try {
         relocateQualifierProperties({
           claims: {
-            P179: [ 'Q1' ],
-            P1545: [ '1', '2' ],
+            P179: [ { value: 'Q1' } ],
+            P1545: [ { value: '1' }, { value: '2' } ],
           },
         })
         shouldNotBeCalled()
@@ -59,18 +60,22 @@ describe('wikidata data model converter', () => {
 
     it('should move a serie ordinal as qualifier of a claim', () => {
       const claims = {
-        P179: [ 'Q1' ],
-        P1545: [ '1' ],
+        P179: [ { value: 'Q1', references: [ someReference ] } ],
+        P1545: [ { value: '1' } ],
       }
       relocateQualifierProperties({ claims })
       claims.should.deepEqual({
-        P179: {
-          value: 'Q1',
-          qualifiers: {
-            P1545: '1',
+        P179: [
+          {
+            value: 'Q1',
+            references: [ someReference ],
+            qualifiers: {
+              P1545: [ '1' ],
+            },
           },
-        },
-      })
+        ],
+      }
+      )
     })
   })
 })
