@@ -3,7 +3,7 @@ import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uri
 import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { newMissingQueryError } from '#lib/error/pre_filled'
-import bundleViewData from './lib/view/bundle_view_data.js'
+import { bundleViewData } from './lib/view/bundle_view_data.js'
 import { replaceEditionsByTheirWork } from './lib/view/replace_editions_by_their_work.js'
 
 const sanitization = {
@@ -38,11 +38,10 @@ async function getItems (params) {
   }
 }
 
-function getItemsEntitiesData (items) {
+async function getItemsEntitiesData (items) {
   const uris = uniq(map(items, 'entity'))
-  return getEntitiesByUris({ uris })
-  .then(({ entities }) => entities)
-  .then(replaceEditionsByTheirWork)
+  const { entities } = await getEntitiesByUris({ uris })
+  return replaceEditionsByTheirWork(entities)
 }
 
 export default { sanitization, controller }

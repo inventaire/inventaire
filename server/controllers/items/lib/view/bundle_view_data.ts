@@ -1,7 +1,8 @@
 import { property } from 'lodash-es'
-import buildInvertedClaimTree from './build_inverted_claim_tree.js'
+import type { Item } from '#server/types/item'
+import { buildInvertedClaimTree } from './build_inverted_claim_tree.js'
 
-export default (items, entitiesData) => {
+export function bundleViewData (items: Item[], entitiesData) {
   const { works, editionWorkMap } = entitiesData
   const worksTree = buildInvertedClaimTree(works)
   const workUriItemsMap = items.reduce(buildWorkUriItemsMap(editionWorkMap), {})

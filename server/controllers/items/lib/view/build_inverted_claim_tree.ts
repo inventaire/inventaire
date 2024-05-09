@@ -37,4 +37,6 @@ function addToTree (tree, entity) {
   return tree
 }
 
-export default entities => entities.reduce(addToTree, base())
+export function buildInvertedClaimTree (entities) {
+  return entities.reduce(addToTree, base())
+}
