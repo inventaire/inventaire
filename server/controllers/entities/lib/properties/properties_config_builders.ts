@@ -1,3 +1,4 @@
+import { trim } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
@@ -26,6 +27,7 @@ export function isbnProperty (num: 10 | 13) {
 export function externalId (regex) {
   return {
     ...concurrentExternalId,
+    format: trim,
     validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
 }
@@ -34,6 +36,7 @@ export function typedExternalId (regexPerType) {
   return {
     ...concurrentExternalId,
     typeSpecificValidation: true,
+    format: trim,
     validate: ({ value, entityType }) => {
       assert_.string(entityType)
       if (regexPerType[entityType] == null) {
@@ -49,6 +52,7 @@ export function allowedPropertyValues (property) {
   return {
     ...uniqueEntity,
     typeSpecificValidation: true,
+    format: trim,
     validate: ({ value, entityType }) => {
       const type = getPluralType(entityType)
       return allowedValuesPerType[type].includes(value)
@@ -59,7 +63,7 @@ export function allowedPropertyValues (property) {
 export function externalIdWithFormatter ({ regex, format }) {
   return {
     ...concurrentExternalId,
-    validate: ({ value }) => regex.test.bind(regex)(value),
     format,
+    validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
 }

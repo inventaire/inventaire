@@ -1,3 +1,4 @@
+import { trim } from 'lodash-es'
 import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import { boundedString } from '#models/validations/common'
@@ -5,12 +6,14 @@ import { boundedString } from '#models/validations/common'
 export const entity = {
   datatype: 'entity',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => EntityUri.test(value),
 } as const
 
 export const uniqueString = {
   datatype: 'string',
   primitiveType: 'string',
+  format: trim,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
   uniqueValue: true,
@@ -33,12 +36,14 @@ export const concurrentExternalId = { ...concurrentString, datatype: 'external-i
 export const url = {
   datatype: 'url',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isUrl(value),
 } as const
 
 export const uniqueSimpleDay = {
   datatype: 'date',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isSimpleDay(value),
   uniqueValue: true,
 } as const
@@ -53,6 +58,7 @@ export const positiveInteger = {
 export const positiveIntegerString = {
   datatype: 'positive-integer-string',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isPositiveIntegerString(value),
   uniqueValue: true,
 } as const
@@ -60,6 +66,7 @@ export const positiveIntegerString = {
 export const imageHash = {
   datatype: 'image',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isImageHash(value),
   uniqueValue: true,
 } as const

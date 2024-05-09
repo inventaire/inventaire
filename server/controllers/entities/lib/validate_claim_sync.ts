@@ -34,6 +34,8 @@ export function validateSnakValueSync (property: PropertyUri, value: InvClaimVal
       }
     }
   }
+
+  return value
 }
 
 export function validateClaimValueSync (property: PropertyUri, value: InvClaimValue, entityType: ExtendedEntityType) {

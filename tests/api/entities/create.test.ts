@@ -1,5 +1,6 @@
 import should from 'should'
 import { getSomeUsername } from '#fixtures/text'
+import { getEntityAttributesByUri } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createEditionWithIsbn, randomLabel, someOpenLibraryId, someReference } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
@@ -413,6 +414,20 @@ describe('entities:create', () => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal("This property isn't allowed in reference snaks")
       }
+    })
+
+    it('should format reference snak values', async () => {
+      const referenceUrl = 'http://foo.bar  '
+      const res = await authReq('post', endpoint, {
+        labels: { fr: randomLabel() },
+        claims: {
+          'wdt:P31': [ 'wd:Q47461344' ],
+          'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { 'wdt:P854': [ referenceUrl ] } ] } ],
+        },
+      })
+      const entity = await getEntityAttributesByUri({ uri: res.uri, attributes: [ 'claims', 'references' ] as const })
+      // @ts-expect-error
+      entity.claims['wdt:P648'][0].references[0]['wdt:P854'][0].should.equal(referenceUrl.trim())
     })
   })
 })

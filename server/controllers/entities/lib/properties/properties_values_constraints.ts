@@ -76,7 +76,7 @@ export const propertiesValuesConstraints = {
   // BNF id
   'wdt:P268': externalIdWithFormatter({
     regex: /^\d{8}[0-9bcdfghjkmnpqrstvwxz]$/,
-    format: id => id.replace(/^cb/, ''),
+    format: id => id.replace(/^cb/, '').trim(),
   }),
   // SUDOC authorities ID
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
