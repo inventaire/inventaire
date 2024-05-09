@@ -20,13 +20,13 @@ export function validateSnakValueSync (property: PropertyUri, value: InvClaimVal
     value = format(value)
   }
 
-  if (typeSpecificValidation) {
+  if (typeSpecificValidation && entityType) {
     if (!validate({ value, entityType })) {
       const message = `invalid property value for entity type "${entityType}"`
       throw newError(message, 400, { entityType, property, value })
     }
   } else {
-    if (!validate({ value, entityType })) {
+    if (!validate({ value })) {
       if (datatype === 'entity' && isEntityId(value)) {
         throw newError('invalid property value: missing entity uri prefix', 400, { property, value })
       } else {
