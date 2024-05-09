@@ -1,24 +1,30 @@
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
+import { extendInvClaims } from '#models/entity'
+import type { InvEntityUri } from '#server/types/entity'
+import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
 import { unprefixify } from './prefix.js'
 import { cacheEntityRelations } from './temporarily_cache_relations.js'
 
-export default async function (user, invEntityUri) {
+export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEntityUri) {
   const { _id: reqUserId } = user
 
   const entityId = unprefixify(invEntityUri)
 
   const entity = await getEntityById(entityId).catch(rewrite404(invEntityUri))
 
+  if ('redirection' in entity) {
+    throw newError('A redirection can not be moved to Wikidata', 400, { invEntityUri, entity })
+  }
+  if (entity.type === 'removed:placeholder') {
+    throw newError('A removed placeholder can not be moved to Wikidata', 400, { invEntityUri, entity })
+  }
+
   let claims, labels
-  if ('labels' in entity) {
-    ;({ labels } = entity)
-  }
-  if ('claims' in entity) {
-    ;({ claims } = entity)
-  }
+  if ('labels' in entity) labels = entity.labels
+  if ('claims' in entity) claims = extendInvClaims(entity.claims)
 
   const { uri: wdEntityUri } = await createWdEntity({ labels, claims, user, isAlreadyValidated: true })
 

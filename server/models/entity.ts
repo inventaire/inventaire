@@ -380,6 +380,10 @@ export function simplifyInvClaims (claims: Claims, { keepReferences = false } = 
   return simplifiedClaims
 }
 
+export function extendInvClaims (claims: Claims) {
+  return simplifyInvClaims(claims, { keepReferences: true })
+}
+
 export function getPropertyClaimsValues <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
   if (claims?.[property]) {
     return claims[property].map(claim => getTypedClaimValue(claim, property))

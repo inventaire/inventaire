@@ -1,5 +1,7 @@
 import { simplifyQualifier } from 'wikibase-sdk'
+import type { UnprefixedClaims } from '#controllers/entities/lib/create_wd_entity'
 import { newError } from '#lib/error/error'
+import type { ClaimValueByProperty } from '#server/types/entity'
 
 export function flattenQualifierProperties (simplifiedClaims, rawClaims) {
   if (simplifiedClaims['wdt:P179']?.length === 1) {
@@ -11,7 +13,7 @@ export function flattenQualifierProperties (simplifiedClaims, rawClaims) {
   }
 }
 
-export function relocateQualifierProperties (invEntity) {
+export function relocateQualifierProperties (invEntity: { claims: UnprefixedClaims }) {
   const { claims } = invEntity
   const series = claims.P179
   const seriesOrdinals = claims.P1545
@@ -30,12 +32,10 @@ export function relocateQualifierProperties (invEntity) {
     throw newError('can not import several serie ordinals', 400, invEntity)
   }
 
-  // Using wikibase-edit compact notation
-  claims.P179 = {
-    value: series[0],
-    qualifiers: {
-      P1545: seriesOrdinals[0],
-    },
+  const seriesClaim = series[0]
+  const seriesOrdinal = seriesOrdinals[0].value as ClaimValueByProperty['wdt:P1545']
+  seriesClaim.qualifiers = {
+    P1545: [ seriesOrdinal ],
   }
 
   delete claims.P1545
