@@ -70,7 +70,7 @@ export type ClaimValueByProperty = {
 }
 
 export type ReferenceProperty = typeof allowlistedReferenceProperties[number]
-export type Reference = Record<ReferenceProperty, ClaimValueByProperty[ReferenceProperty][]>
+export type Reference = Partial<Record<ReferenceProperty, ClaimValueByProperty[ReferenceProperty][]>>
 
 export interface InvClaimObject {
   value: InvClaimValue

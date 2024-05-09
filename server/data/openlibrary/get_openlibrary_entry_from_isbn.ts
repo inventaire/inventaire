@@ -1,5 +1,6 @@
 import { compact } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { addClaimsReferences } from '#data/lib/add_claims_references'
 import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
@@ -48,6 +49,7 @@ export default async function (isbn) {
     publishers,
   }
   await setEditionPublisherClaim(entry)
+  addClaimsReferences(entry, 'wdt:P648')
   return entry
 }
 

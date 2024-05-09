@@ -5,12 +5,12 @@ import { simpleDay } from '#lib/utils/base'
 describe('get_bne_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {
     const reference = {
-      'wdt:P854': [ 'https://datos.bne.es/resource/bimo0000048798' ],
+      'wdt:P950': [ 'bimo0000048798' ],
       'wdt:P813': [ simpleDay() ],
     }
     const entry = await getBneEntryFromIsbn('978-84-261-2328-2')
     entry.edition.claims['wdt:P950'].should.deepEqual([
-      { value: 'bimo0000048798', references: [ reference ] },
+      { value: 'bimo0000048798' },
     ])
     entry.edition.claims['wdt:P1476'].should.deepEqual([
       { value: 'O templo do sol', references: [ reference ] },
@@ -34,12 +34,12 @@ describe('get_bne_entry_from_isbn', () => {
   it('should resolve same as matches', async () => {
     const entry = await getBneEntryFromIsbn('84-218-1182-7')
     const reference = {
-      'wdt:P854': [ 'https://datos.bne.es/resource/XX887342' ],
+      'wdt:P950': [ 'XX887342' ],
       'wdt:P813': [ simpleDay() ],
     }
     entry.authors[0].uri.should.equal('wd:Q309945')
     entry.authors[0].claims['wdt:P950'].should.deepEqual([
-      { value: 'XX887342', references: [ reference ] },
+      { value: 'XX887342' },
     ])
     entry.authors[0].claims['wdt:P269'].should.deepEqual([
       { value: '027069427', references: [ reference ] },
