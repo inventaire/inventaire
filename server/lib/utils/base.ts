@@ -111,7 +111,7 @@ export function forceArray (keys) {
 
 // Iterates on an object, with the passed function: fn(key, value)
 // Expected returned value: [ newKey, newValue ]
-export function mapKeysValues (obj, fn) {
+export function mapKeysValues <T> (obj: T, fn: ((key: keyof T, value: T[keyof T]) => [ string, unknown ])) {
   return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
 }
 
