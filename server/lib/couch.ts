@@ -1,7 +1,5 @@
 import { BasicUpdater } from '#lib/doc_updates'
-import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
-
-export type UnknownDocumentViewResponse = DocumentViewResponse<unknown, unknown>
+import type { UnknownDocumentViewResponse } from '#server/types/couchdb'
 
 export function mapDoc <R extends UnknownDocumentViewResponse> (res: R) {
   return res.rows.map(row => row.doc)
