@@ -3,18 +3,20 @@ import { formatClaim } from '#controllers/entities/lib/format_claim'
 import { validateClaimSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isLang, isNonEmptyString, isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { forceArray } from '#lib/utils/base'
+import { forceArray, objectEntries } from '#lib/utils/base'
+import type { EntityType, InvClaim } from '#server/types/entity'
+import type { EditionLooseSeed, EntityLooseSeed } from '#server/types/resolver'
 import { validateProperty } from '../properties/validations.js'
 
-export function sanitizeSeed (seed, type) {
+export function sanitizeSeed (seed: EntityLooseSeed, type: EntityType) {
   seed.labels = seed.labels || {}
   seed.claims = seed.claims || {}
   validateLabels(seed, type)
   validateAndFormatClaims(seed, type)
-  validateImage(seed, type)
+  if ('image' in seed) validateImage(seed, type)
 }
 
-function validateLabels (seed, type) {
+function validateLabels (seed: EntityLooseSeed, type: EntityType) {
   const { labels } = seed
   if (!isPlainObject(labels)) {
     throw newError('invalid labels', 400, { seed, type })
@@ -32,25 +34,24 @@ function validateLabels (seed, type) {
   }
 }
 
-function validateAndFormatClaims (seed, type) {
+function validateAndFormatClaims (seed: EntityLooseSeed, type) {
   const { claims } = seed
   if (!isPlainObject(claims)) {
     throw newError('invalid claims', 400, { seed })
   }
 
-  Object.keys(claims).forEach(validateAndFormatPropertyClaims(claims, type))
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
+    validateProperty(property)
+    // @ts-ignore In some environment, this produces the error "Expression produces a union type that is too complex to represent.ts(2590)"
+    claims[property] = compact(forceArray(propertyClaims))
+      .map((claim: InvClaim) => {
+        validateClaimSync(property, claim, type)
+        return formatClaim(property, claim)
+      })
+  }
 }
 
-const validateAndFormatPropertyClaims = (claims, type) => property => {
-  validateProperty(property)
-  claims[property] = compact(forceArray(claims[property]))
-    .map(claim => {
-      validateClaimSync(property, claim, type)
-      return formatClaim(property, claim)
-    })
-}
-
-function validateImage (seed, type) {
+function validateImage (seed: EditionLooseSeed, type: EntityType) {
   if (seed.image != null) {
     if (type === 'edition') {
       if (!isUrl(seed.image)) {

@@ -12,7 +12,7 @@ import { oneMonth } from '#lib/time'
 import { forceArray, isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { EntityLooseSeed, ResolverEntry } from '#server/types/resolver'
+import type { EntityLooseSeed, LooseClaims, ResolverEntry } from '#server/types/resolver'
 
 const { offline } = config
 
@@ -109,7 +109,7 @@ const parseEntry = (entry: ResolverEntry, bestEntry: ResolverEntry) => (entryKey
   addSeedClaimsToBestEntrySeedClaims(seed.claims, bestEntrySeed.claims)
 }
 
-function addSeedClaimsToBestEntrySeedClaims (seedClaims, bestEntrySeedClaims) {
+function addSeedClaimsToBestEntrySeedClaims (seedClaims: LooseClaims, bestEntrySeedClaims: LooseClaims) {
   for (const property of Object.keys(seedClaims)) {
     bestEntrySeedClaims[property] ??= seedClaims[property]
   }
