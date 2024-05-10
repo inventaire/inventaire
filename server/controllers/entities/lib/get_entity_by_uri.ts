@@ -1,5 +1,5 @@
 import type { EntityUri } from '#types/entity'
-import { getEntitiesByUris, getExtendedEntitiesByUris, type EntitiesGetterParams } from './get_entities_by_uris.js'
+import { getEntitiesByUris, getExpandedEntitiesByUris, type EntitiesGetterParams } from './get_entities_by_uris.js'
 
 type GetEntityByUriArgs = Omit<EntitiesGetterParams, 'uris' | 'includeReferences'> & { uri: EntityUri }
 
@@ -11,8 +11,8 @@ export async function getEntityByUri ({ uri, refresh, dry }: GetEntityByUriArgs)
   return Object.values(entities)[0]
 }
 
-export async function getExtendedEntityByUri ({ uri, refresh, dry }: GetEntityByUriArgs) {
+export async function getExpandedEntityByUri ({ uri, refresh, dry }: GetEntityByUriArgs) {
   const uris = [ uri ]
-  const { entities } = await getExtendedEntitiesByUris({ uris, refresh, dry })
+  const { entities } = await getExpandedEntitiesByUris({ uris, refresh, dry })
   return Object.values(entities)[0]
 }

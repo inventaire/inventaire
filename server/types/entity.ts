@@ -109,7 +109,7 @@ export type Claims = Partial<{
 export type SimplifiedClaims = Partial<{
   [Property in keyof ClaimValueByProperty]: ClaimValueByProperty[Property][]
 }>
-export type ExtendedClaims = Partial<{
+export type ExpandedClaims = Partial<{
   [Property in keyof ClaimValueByProperty]: ClaimObjectByProperty[Property][]
 }>
 
@@ -192,10 +192,10 @@ export type SimplifiedSitelinks = Partial<Record<SitelinkKey, SimplifiedSitelink
 
 export type ExtraWdSnakValue = WikimediaCommonsFilename
 export type ExtraWdSimplifiedClaims = Record<ExtraWdPropertyUri, (InvSnakValue | ExtraWdSnakValue)[]>
-export type ExtraWdExtendedClaims = Record<ExtraWdPropertyUri, ({ value: InvSnakValue | ExtraWdSnakValue })[]>
+export type ExtraWdExpandedClaims = Record<ExtraWdPropertyUri, ({ value: InvSnakValue | ExtraWdSnakValue })[]>
 
 export type SimplifiedClaimsIncludingWdExtra = SimplifiedClaims & ExtraWdSimplifiedClaims
-export type ExtendedClaimsIncludingWdExtra = ExtendedClaims & ExtraWdExtendedClaims
+export type ExpandedClaimsIncludingWdExtra = ExpandedClaims & ExtraWdExpandedClaims
 
 export interface SerializedWdEntity {
   uri: WdEntityUri
@@ -215,11 +215,11 @@ export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholde
 
 export type SerializedEntitiesByUris = Record<WdEntityUri, SerializedWdEntity> & Record<IsbnEntityUri, SerializedIsbnEntity> & Record<InvEntityUri, SerializedInvPrefixedInvEntity | SerializedRemovedPlaceholder>
 
-export type ExtendedSerializedWdEntity = OverrideProperties<SerializedWdEntity, { claims: ExtendedClaimsIncludingWdExtra }>
-export type ExtendedSerializedIsbnEntity = OverrideProperties<SerializedIsbnEntity, { claims: ExtendedClaims }>
-export type ExtendedSerializedInvPrefixedInvEntity = OverrideProperties<SerializedInvPrefixedInvEntity, { claims: ExtendedClaims }>
-export type ExtendedSerializedRemovedPlaceholder = OverrideProperties<SerializedRemovedPlaceholder, { claims: ExtendedClaims }>
+export type ExpandedSerializedWdEntity = OverrideProperties<SerializedWdEntity, { claims: ExpandedClaimsIncludingWdExtra }>
+export type ExpandedSerializedIsbnEntity = OverrideProperties<SerializedIsbnEntity, { claims: ExpandedClaims }>
+export type ExpandedSerializedInvPrefixedInvEntity = OverrideProperties<SerializedInvPrefixedInvEntity, { claims: ExpandedClaims }>
+export type ExpandedSerializedRemovedPlaceholder = OverrideProperties<SerializedRemovedPlaceholder, { claims: ExpandedClaims }>
 
-export type ExtendedSerializedEntitiesByUris = Record<WdEntityUri, ExtendedSerializedWdEntity> & Record<IsbnEntityUri, ExtendedSerializedIsbnEntity> & Record<InvEntityUri, ExtendedSerializedInvPrefixedInvEntity | ExtendedSerializedRemovedPlaceholder>
+export type ExpandedSerializedEntitiesByUris = Record<WdEntityUri, ExpandedSerializedWdEntity> & Record<IsbnEntityUri, ExpandedSerializedIsbnEntity> & Record<InvEntityUri, ExpandedSerializedInvPrefixedInvEntity | ExpandedSerializedRemovedPlaceholder>
 
-export type ExtendedSerializedEntity = ExtendedSerializedWdEntity | ExtendedSerializedIsbnEntity | ExtendedSerializedInvPrefixedInvEntity | ExtendedSerializedRemovedPlaceholder
+export type ExpandedSerializedEntity = ExpandedSerializedWdEntity | ExpandedSerializedIsbnEntity | ExpandedSerializedInvPrefixedInvEntity | ExpandedSerializedRemovedPlaceholder

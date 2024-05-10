@@ -5,7 +5,7 @@ import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { getClaimValue } from '#models/entity'
-import type { DatatypedInvClaimObject, EntityUri, EntityValue, ExtendedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, WdEntityId, WdPropertyId } from '#server/types/entity'
+import type { DatatypedInvClaimObject, EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, WdEntityId, WdPropertyId } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { getEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
@@ -17,14 +17,14 @@ const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collect
 
 interface CreateWdEntityParams {
   labels: Labels
-  claims: ExtendedClaims
+  claims: ExpandedClaims
   user: User
   isAlreadyValidated: boolean
 }
 
 interface EntityDraft {
   labels: Labels
-  claims: ExtendedClaims
+  claims: ExpandedClaims
 }
 
 type UnprefixedClaimValue = Omit<InvSnakValue, EntityValue> | WdEntityId
