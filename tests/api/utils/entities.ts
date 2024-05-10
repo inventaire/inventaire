@@ -6,7 +6,7 @@ import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
-import type { EntityUri, ExtendedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
+import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
 import type { PatchId } from '#server/types/patch'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
@@ -32,7 +32,7 @@ export async function getByUri (uri: EntityUri, refresh?: boolean) {
 }
 
 export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }: Pick<GetEntitiesParams, 'uris' | 'attributes' | 'relatives' | 'refresh'>) {
-  const extendedClaims = attributes.includes('references')
+  const expandedClaims = attributes.includes('references')
   const query = {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
@@ -41,8 +41,8 @@ export async function getEntitiesAttributesByUris ({ uris, attributes, relatives
     relatives: relatives ? forceArray(relatives).join('|') : undefined,
   }
   const { entities } = await publicReq('get', buildUrl('/api/entities', query))
-  if (extendedClaims) {
-    return entities as ExtendedSerializedEntitiesByUris
+  if (expandedClaims) {
+    return entities as ExpandedSerializedEntitiesByUris
   } else {
     return entities as SerializedEntitiesByUris
   }
