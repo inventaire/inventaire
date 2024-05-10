@@ -80,8 +80,8 @@ async function deduplicateWorker (jobId, uri) {
 }
 
 async function filterNotAlreadySuspectEntities (uris) {
-  const { rows } = await getTasksBySuspectUris(uris, { includeArchived: true })
-  const alreadyCheckedUris = map(rows, 'suspectUri')
+  const tasks = await getTasksBySuspectUris(uris, { includeArchived: true })
+  const alreadyCheckedUris = map(tasks, 'suspectUri')
   return difference(uris, alreadyCheckedUris)
 }
 
