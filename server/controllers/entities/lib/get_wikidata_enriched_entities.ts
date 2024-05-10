@@ -17,7 +17,7 @@ import { objectEntries } from '#lib/utils/base'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import { getClaimObjectFromClaim } from '#models/entity'
-import type { ExtendedEntityType, ExtendedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
+import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
 import { getEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
@@ -38,7 +38,7 @@ export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh,
   const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
   if (includeReferences) {
     return {
-      entities: foundEntities.map(extendClaims) as ExtendedSerializedWdEntity[],
+      entities: foundEntities.map(expandClaims) as ExpandedSerializedWdEntity[],
       notFound,
     }
   } else {
@@ -164,7 +164,7 @@ const undesiredPropertiesPerType = {
   work: [ 'P212', 'P957' ],
 } as const
 
-function extendClaims (entity) {
+function expandClaims (entity) {
   for (const [ property, propertyClaims ] of objectEntries(entity.claims)) {
     entity.claims[property] = propertyClaims.map(getClaimObjectFromClaim)
   }

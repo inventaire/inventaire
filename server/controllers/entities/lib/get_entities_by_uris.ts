@@ -5,7 +5,7 @@ import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { objectKeys } from '#lib/utils/types'
-import type { EntityId, EntityUri, EntityUriPrefix, ExtendedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
+import type { EntityId, EntityUri, EntityUriPrefix, ExpandedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
 import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
@@ -38,17 +38,17 @@ export interface EntitiesByUrisResults {
   notFound?: EntityUri[]
 }
 
-export type ExtendedEntitiesByUrisResults = OverrideProperties<EntitiesByUrisResults, { entities: ExtendedSerializedEntitiesByUris }>
+export type ExpandedEntitiesByUrisResults = OverrideProperties<EntitiesByUrisResults, { entities: ExpandedSerializedEntitiesByUris }>
 
 // Using functions with forced type output as TS can't deduce the type of `entities` from the `includeReferences` flag
 export async function getEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
-  return getPossiblyExtendedEntitiesByUris({ ...params, includeReferences: false }) as Promise<EntitiesByUrisResults>
+  return getPossiblyExpandedEntitiesByUris({ ...params, includeReferences: false }) as Promise<EntitiesByUrisResults>
 }
-export async function getExtendedEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
-  return getPossiblyExtendedEntitiesByUris({ ...params, includeReferences: true }) as Promise<ExtendedEntitiesByUrisResults>
+export async function getExpandedEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
+  return getPossiblyExpandedEntitiesByUris({ ...params, includeReferences: true }) as Promise<ExpandedEntitiesByUrisResults>
 }
 
-export async function getPossiblyExtendedEntitiesByUris (params: GetEntitiesByUrisParams) {
+export async function getPossiblyExpandedEntitiesByUris (params: GetEntitiesByUrisParams) {
   const { uris, includeReferences } = params
   assert_.array(uris)
   const domains: Domains = {}
@@ -76,7 +76,7 @@ export async function getPossiblyExtendedEntitiesByUris (params: GetEntitiesByUr
   const response = formatRichResults(results, { includeReferences })
   if (includeReferences) {
     // @ts-expect-error
-    return response as ExtendedEntitiesByUrisResults
+    return response as ExpandedEntitiesByUrisResults
   } else {
     return response as EntitiesByUrisResults
   }
@@ -101,7 +101,7 @@ function formatRichResults (results: DomainsResults, { includeReferences = false
     // to the client to alias entities
     redirects: {},
     notFound: [],
-  } as (typeof includeReferences extends true ? ExtendedEntitiesByUrisResults : EntitiesByUrisResults)
+  } as (typeof includeReferences extends true ? ExpandedEntitiesByUrisResults : EntitiesByUrisResults)
 
   let entitiesList = []
 

@@ -77,7 +77,7 @@ export const isUsername = bindedTest<Username>('Username')
 export const isEntityUri = bindedTest<EntityUri>('EntityUri')
 export const isPatchId = bindedTest<PatchId>('PatchId')
 export const isPropertyUri = bindedTest<PropertyUri>('PropertyUri')
-export function isExtendedEntityUri (uri) {
+export function isExpandedEntityUri (uri) {
   const [ prefix, id ] = uri.split(':')
   // Accept alias URIs.
   // Ex: twitter:Bouletcorp -> wd:Q1524522

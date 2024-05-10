@@ -1,5 +1,5 @@
 import 'should'
-import { getEntityByUri, getExtendedEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri, getExpandedEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { wait } from '#lib/promises'
 import { simpleDay } from '#lib/utils/base'
@@ -12,7 +12,7 @@ describe('get resolved seed', () => {
     // Expect only BNF to return a seed. If that's not the case, you can find new candidates with
     // https://query.inventaire.io/#SELECT%20%2a%20%7B%0A%20%20%3Fitem%20wdt%3AP268%20%3FbnfId%20.%0A%20%20%3Fitem%20wdt%3AP629%20%3Fwork%20.%0A%20%20FILTER%20NOT%20EXISTS%20%7B%20%3Fwork%20wdt%3AP31%20%3Ftype%20%7D%20.%0A%20%20%3Fitem%20wdt%3AP212%20%3Fisbn%20.%0A%20%20%3Fitem%20wdt%3AP577%20%3Fdate%20.%0A%7D%0AORDER%20BY%20%3Fdate
     const { uri } = await enrichAndGetEditionEntityFromIsbn('978-0-316-76953-2')
-    const edition = await getExtendedEntityByUri({ uri })
+    const edition = await getExpandedEntityByUri({ uri })
     const reference = {
       'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb37461803r' ],
       'wdt:P813': [ simpleDay() ],
