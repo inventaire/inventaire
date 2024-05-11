@@ -33,4 +33,4 @@ export type Views<D> = Record<ViewName, View<D>>
 export type DbHandler = AsyncReturnType<typeof dbFactory>
 
 export type UnknownDocumentViewResponse = DocumentViewResponse<unknown, unknown>
-export type ViewRow = UnknownDocumentViewResponse['rows'][number]
+export type ViewRow<V, D> = DocumentViewResponse<V, D>['rows'][number]
