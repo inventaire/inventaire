@@ -4,8 +4,9 @@ import { newError } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import { getClaimValue } from '#models/entity'
-import type { ResolverEntry, SanitizedResolverEntry } from '#server/types/resolver'
+import { getClaimValue, getFirstClaimValue } from '#models/entity'
+import type { EntityType, Isbn } from '#server/types/entity'
+import type { EditionLooseSeed, EntityLooseSeed, ResolverEntry, SanitizedResolverEntry } from '#server/types/resolver'
 import { sanitizeSeed } from './sanitize_seed.js'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
@@ -50,7 +51,7 @@ export function sanitizeEntry (entry: ResolverEntry) {
   return entry as SanitizedResolverEntry
 }
 
-function sanitizeEdition (edition) {
+function sanitizeEdition (edition: EditionLooseSeed) {
   sanitizeSeed(edition, 'edition')
 
   const rawIsbn = getIsbn(edition)
@@ -61,23 +62,28 @@ function sanitizeEdition (edition) {
   }
 }
 
-const sanitizeCollection = (seeds, type) => seeds.forEach(seed => sanitizeSeed(seed, type))
+const sanitizeCollection = (seeds: EntityLooseSeed[], type: EntityType) => {
+  return seeds.forEach(seed => sanitizeSeed(seed, type))
+}
 
-function getIsbn (edition) {
+function getIsbn (edition: EditionLooseSeed) {
   const { isbn, claims } = edition
   if (isbn) return isbn
   const isbnClaims = claims['wdt:P212'] || claims['wdt:P957']
-  if (isbnClaims) return isbnClaims[0]
+  if (isbnClaims) {
+    const isbnClaim = forceArray(isbnClaims)[0]
+    return getClaimValue(isbnClaim) as Isbn
+  }
 }
 
-function createWorkSeedFromEdition (edition) {
+function createWorkSeedFromEdition (edition: EditionLooseSeed) {
   const { claims } = edition
   const titleClaim = claims?.['wdt:P1476'] ? forceArray(claims['wdt:P1476'])[0] : null
   if (titleClaim == null) return
   const title = getClaimValue(titleClaim)
   if (title == null) return
   const langClaim = claims['wdt:P407'] && forceArray(claims['wdt:P407'])[0]
-  const langWdId = langClaim ? langClaim.split(':')[1] : null
+  const langWdId = langClaim ? (getClaimValue(langClaim) as string).split(':')[1] : null
   const lang = wmLanguageCodeByWdId[langWdId] || guessLangFromIsbn(edition.isbn) || 'en'
   return {
     labels: {
