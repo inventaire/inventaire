@@ -115,8 +115,12 @@ function parseSimpleDay (dateString) {
   // Do not return invalid dates
   if (date.toJSON() != null) {
     const day = date.toISOString().split('T')[0]
-    if (dateString.match(yearPattern)) return day.split('-')[0]
-    else return day
+    if (dateString.match(yearPattern)) {
+      return day.split('-')[0]
+    } else {
+      // If the day is January 1st, assume that it's the month and day are actually unknown
+      return day.replace('-01-01', '')
+    }
   }
 }
 
