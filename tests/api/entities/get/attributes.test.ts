@@ -98,8 +98,9 @@ describe('entities:get:by-uris:attributes', () => {
     const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
     const entity = await getEntityAttributesByUri({
       uri: editionUri,
-      attributes: [ 'claims', 'references' ],
+      attributes: [ 'labels', 'claims', 'references' ],
     }) as ExpandedSerializedEntity
+    entity.labels.fromclaims.should.be.a.String()
     const allPropertyClaims = objectValues(entity.claims)
     allPropertyClaims.length.should.be.above(3)
     for (const propertyClaims of objectValues(entity.claims)) {

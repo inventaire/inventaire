@@ -7,7 +7,7 @@ import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import { addEntityDocClaims, beforeEntityDocSave, getClaimValue, setEntityDocLabels } from '#models/entity'
+import { addEntityDocClaims, beforeEntityDocSave, getClaimValue, getFirstClaimValue, setEntityDocLabels } from '#models/entity'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
@@ -138,13 +138,9 @@ export async function imageIsUsed (imageHash: ImageHash) {
 
 const getUri = entity => entity.uri
 
-export function getFirstPropertyClaim (entity, property) {
-  if (entity.claims?.[property] != null) return entity.claims[property][0]
-}
-
 export function setTermsFromClaims (entity: SerializedEntity) {
-  const title = getFirstPropertyClaim(entity, 'wdt:P1476')
-  const subtitle = getFirstPropertyClaim(entity, 'wdt:P1680')
+  const title = getFirstClaimValue(entity.claims, 'wdt:P1476')
+  const subtitle = getFirstClaimValue(entity.claims, 'wdt:P1680')
   if (title) {
     entity.labels = entity.labels || {}
     entity.labels.fromclaims = title
