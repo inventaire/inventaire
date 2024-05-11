@@ -1,5 +1,5 @@
 import { flatten } from 'lodash-es'
-import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -66,7 +66,7 @@ function formatInvEntity ({ _id, claims }: InvEntity) {
 function formatSerializedEntity (entity: SerializedEntity) {
   return {
     uri: entity.uri,
-    date: getFirstPropertyClaim(entity, 'wdt:P577'),
-    ordinal: getFirstPropertyClaim(entity, 'wdt:P1545'),
+    date: getFirstClaimValue(entity.claims, 'wdt:P577'),
+    ordinal: getFirstClaimValue(entity.claims, 'wdt:P1545'),
   }
 }
