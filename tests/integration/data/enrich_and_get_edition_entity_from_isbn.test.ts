@@ -11,19 +11,13 @@ describe('get resolved seed', () => {
   it('should get an edition entity when only one authority returns a seed', async () => {
     // Expect only BNF to return a seed. If that's not the case, you can find new candidates with
     // https://query.inventaire.io/#SELECT%20%2a%20%7B%0A%20%20%3Fitem%20wdt%3AP268%20%3FbnfId%20.%0A%20%20%3Fitem%20wdt%3AP629%20%3Fwork%20.%0A%20%20FILTER%20NOT%20EXISTS%20%7B%20%3Fwork%20wdt%3AP31%20%3Ftype%20%7D%20.%0A%20%20%3Fitem%20wdt%3AP212%20%3Fisbn%20.%0A%20%20%3Fitem%20wdt%3AP577%20%3Fdate%20.%0A%7D%0AORDER%20BY%20%3Fdate
-    const { uri } = await enrichAndGetEditionEntityFromIsbn('978-0-316-76953-2')
+    const { uri } = await enrichAndGetEditionEntityFromIsbn('978-2-245-00322-0')
     const edition = await getExpandedEntityByUri({ uri })
-    const reference = {
-      'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb37461803r' ],
-      'wdt:P813': [ simpleDay() ],
-    }
-    edition.claims['wdt:P629'].should.deepEqual([ { value: 'wd:Q183883' } ])
-    edition.claims['wdt:P268'].should.deepEqual([
-      {
-        value: '37461803r',
-        references: [ reference ],
-      },
-    ])
+    edition.claims['wdt:P629'].should.deepEqual([ { value: 'wd:Q1217816' } ])
+    edition.claims['wdt:P268'].should.deepEqual([ { value: '34577092d' } ])
+    const reference = { 'wdt:P268': [ '34577092d' ], 'wdt:P813': [ simpleDay() ] }
+    edition.claims['wdt:P577'].should.deepEqual([ { value: '1975', references: [ reference ] } ])
+    edition.claims['wdt:P655'].should.deepEqual([ { value: 'wd:Q3587936', references: [ reference ] } ])
   })
 
   it('should get an edition entity when multiple authorities return a seed', async () => {
