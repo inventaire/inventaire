@@ -4,7 +4,7 @@ import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError, warn } from '#lib/utils/logs'
-import { getFirstClaimValue } from '#models/entity'
+import { findClaimByValue, getFirstClaimValue } from '#models/entity'
 import type { Claims, EntityType, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
 import type { BatchId } from '#types/patch'
 import type { EditionSeed, EntitySeed } from '#types/resolver'
@@ -97,9 +97,10 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
   } catch (err) {
     if (err.name === 'InvalidClaimValueError' || err.cause?.name === 'InvalidClaimValueError') {
       const { property, value } = err.context
-      if (seed.claims[property].includes(value)) {
+      const invalidClaim = findClaimByValue(seed.claims[property], value)
+      if (invalidClaim) {
         warn(err, 'InvalidClaimValueError: removing invalid claim')
-        seed.claims[property] = without(seed.claims[property], value)
+        seed.claims[property] = seed.claims[property].filter(claim => claim !== invalidClaim)
         return createEntityFromSeed({ seed, userId, batchId })
       } else {
         logError(err, 'invalid claim not found, cant recover seed')
