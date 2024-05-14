@@ -6,8 +6,8 @@ import { assert_ } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
+import type { BearerToken } from '#server/types/oauth'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
-import type { User } from '#types/user'
 import type { OverrideProperties } from 'type-fest'
 
 const host: AbsoluteUrl = config.getPublicOrigin()
@@ -78,7 +78,7 @@ interface RawCustomAuthReqOptions {
   user: AwaitableUserWithCookie
   method: HttpMethod
   url: Url
-  options: RequestOptions
+  options?: RequestOptions
 }
 
 export async function rawCustomAuthReq ({ user, method, url, options = {} }: RawCustomAuthReqOptions) {
@@ -91,7 +91,7 @@ export async function rawCustomAuthReq ({ user, method, url, options = {} }: Raw
   return rawRequest(method, url, options)
 }
 
-export function postUrlencoded (url, body) {
+export function postUrlencoded (url: Url, body: unknown) {
   return rawRequest('post', url, {
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
@@ -101,7 +101,7 @@ export function postUrlencoded (url, body) {
   })
 }
 
-export function bearerTokenReq (token, method, endpoint, body) {
+export function bearerTokenReq (token: BearerToken, method: HttpMethod, endpoint: Url, body?: unknown) {
   assert_.object(token)
   assert_.string(token.access_token)
   return rawRequest(method, endpoint, {

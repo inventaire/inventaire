@@ -165,7 +165,7 @@ export type Config = ReadonlyDeep<{
   // Analytics service
   piwik: {
     enabled: boolean
-    endpoint: string
+    endpoint: AbsoluteUrl
     idsite: number
     rec: number
   }

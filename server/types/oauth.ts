@@ -41,3 +41,11 @@ export interface OAuthToken extends CouchDoc {
   userId: UserId
   clientId: OAuthClientId
 }
+
+export interface BearerToken {
+  access_token: string
+  token_type: 'Bearer'
+  expires_in: number
+  refresh_token: string
+  scope: OAuthScope[]
+}

@@ -1,8 +1,10 @@
 import dbFactory from '#db/couchdb/base'
+import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { sha1, hashPassword, getRandomBytes } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { buildUrl, parseQuery } from '#lib/utils/url'
+import type { OAuthScope } from '#server/types/oauth'
 import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request.js'
 import { getUser } from './utils.js'
 
@@ -41,7 +43,7 @@ export async function getClient (params = {}) {
   })
 }
 
-export async function getClientWithAuthorization (params = {}) {
+export async function getClientWithAuthorization (params: { user?: AwaitableUserWithCookie, scope?: OAuthScope[] } = {}) {
   const {
     scope = [ 'username' ],
     user = getUser(),
@@ -58,7 +60,7 @@ export async function getClientWithAuthorization (params = {}) {
   return Object.assign(authorizationData, client)
 }
 
-export async function getToken ({ user, scope }) {
+export async function getToken ({ user, scope }: { user?: AwaitableUserWithCookie, scope?: OAuthScope[] }) {
   const { _id: clientId, testsPseudoSecret, code, redirectUris } = await getClientWithAuthorization({ user, scope })
   const { body } = await postUrlencoded('/api/oauth/token', {
     client_id: clientId,
