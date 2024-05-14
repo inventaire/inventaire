@@ -1,3 +1,4 @@
+import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_, type ReqOptions } from '#lib/requests'
@@ -64,7 +65,7 @@ export async function request (method: HttpMethod, endpoint: Url, body?: unknown
   }
 }
 
-export async function customAuthReq (user, method, endpoint, body) {
+export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown) {
   assert_.type('object|promise', user)
   assert_.string(method)
   assert_.string(endpoint)
@@ -73,12 +74,8 @@ export async function customAuthReq (user, method, endpoint, body) {
   return request(method, endpoint, body, user.cookie)
 }
 
-interface TestUser extends User {
-  cookie?: string
-}
-
 interface RawCustomAuthReqOptions {
-  user: TestUser
+  user: AwaitableUserWithCookie
   method: HttpMethod
   url: Url
   options: RequestOptions
