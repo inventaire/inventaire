@@ -304,7 +304,7 @@ describe('search:entities', () => {
     })
 
     it('should find a work by its serie name', async () => {
-      const label = randomWords(20)
+      const label = getRandomString(15)
       const serie = await createSerie({ labels: { en: label } })
       const work = await createWorkWithSerie(serie)
       await waitForIndexation('entities', work._id)
