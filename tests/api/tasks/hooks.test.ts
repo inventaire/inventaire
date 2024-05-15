@@ -5,6 +5,8 @@ import { createTask } from '../fixtures/tasks.js'
 import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities.js'
 import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks.js'
 
+const hookDelay = 300
+
 describe('tasks:hooks', () => {
   describe('entity merge', () => {
     before(async () => {
@@ -23,7 +25,7 @@ describe('tasks:hooks', () => {
       const task = tasks[0]
       const anotherTask = tasks[1]
       await merge(task.suspectUri, task.suggestionUri)
-      await wait(100)
+      await wait(hookDelay)
       const [ updatedTask ] = await getByIds(anotherTask._id)
       updatedTask.state.should.equal('merged')
     })
@@ -36,7 +38,7 @@ describe('tasks:hooks', () => {
       }
       const task = await createTask(taskParams)
       await merge(suspect.uri, suggestion.uri)
-      await wait(100)
+      await wait(hookDelay)
       const [ updatedTask ] = await getByIds(task.id)
       updatedTask.state.should.equal('merged')
     })
@@ -51,7 +53,7 @@ describe('tasks:hooks', () => {
       const otherTask = tasks[1]
       const { relationScore: taskRelationScore } = taskToUpdate
       await update(taskToUpdate._id, 'state', 'dismissed')
-      await wait(100)
+      await wait(hookDelay)
       const [ updatedTask ] = await getByIds(otherTask._id)
       updatedTask.relationScore.should.not.equal(taskRelationScore)
     })
@@ -62,7 +64,7 @@ describe('tasks:hooks', () => {
       const { uri } = await createHuman({ labels: { en: 'Fred Vargas' } })
       const [ task ] = await checkEntities(uri)
       await merge(task.suspectUri, task.suggestionUri)
-      await wait(500)
+      await wait(hookDelay)
       const [ refreshedTask ] = await getByIds(task._id)
       refreshedTask.state.should.equal('merged')
       await revertMerge(refreshedTask.suspectUri)
