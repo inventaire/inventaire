@@ -3,18 +3,12 @@ import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/
 import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
 import { getUserFriends } from '#controllers/relations/lib/lists'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
-import type { Item } from '#types/item'
-import type { Listing } from '#types/listing'
-import type { Shelf } from '#types/shelf'
+import type { VisibilityKey } from '#server/types/visibility'
 import type { UserId } from '#types/user'
 
-type DocWithVisibility = Item | Listing | Shelf
+type DocWithVisibility = { visibility: VisibilityKey[] }
 
-// Using a function overload to preserve the output type, but a more succint syntax might exist(?)
-export async function filterVisibleDocs (docs: Item[], reqUserId: UserId): Promise<Item[]>
-export async function filterVisibleDocs (docs: Listing[], reqUserId: UserId): Promise<Listing[]>
-export async function filterVisibleDocs (docs: Shelf[], reqUserId: UserId): Promise<Shelf[]>
-export async function filterVisibleDocs (docs: DocWithVisibility[], reqUserId: UserId): Promise<DocWithVisibility[]> {
+export async function filterVisibleDocs <T extends DocWithVisibility> (docs: T[], reqUserId: UserId): Promise<T[]> {
   if (!reqUserId) return docs.filter(isPublic)
 
   // Optimizing for the case where all requested docs belong to the requester
