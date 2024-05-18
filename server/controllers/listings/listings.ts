@@ -7,7 +7,6 @@ import byIds from './by_ids.js'
 import create from './create.js'
 import deleteByIds from './delete_by_ids.js'
 import removeElements from './remove_elements.js'
-import reorder from './reorder.js'
 import update from './update.js'
 import updateElement from './update_element.js'
 
@@ -26,7 +25,6 @@ export default {
       'add-elements': addElements,
       delete: deleteByIds,
       'remove-elements': removeElements,
-      reorder,
       'update-element': updateElement,
     },
   }),

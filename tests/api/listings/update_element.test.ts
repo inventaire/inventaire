@@ -1,5 +1,5 @@
 import 'should'
-import { sentence } from '#fixtures/text'
+import { getListingById } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListingWithElements, createElement, createElement } from '../fixtures/listings.js'
@@ -35,18 +35,18 @@ describe('element:update', () => {
       })
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.body.status_verbose.should.equal('invalid')
+      err.body.status_verbose.should.equal('nothing to update')
       err.statusCode.should.equal(400)
     }
   })
 
-  it('should reject adding a comment to an element of a listing from another creator', async () => {
+  it('should reject updating an element of a listing from another creator', async () => {
     try {
       const { listing } = await createListingWithElements(getUserB())
       const element = listing.elements[0]
       await authReq('post', endpoint, {
         id: element._id,
-        comment: sentence(),
+        ordinal: 0,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -55,20 +55,32 @@ describe('element:update', () => {
       err.statusCode.should.equal(403)
     }
   })
+})
 
-  it('should create and update element attribute', async () => {
-    const { element } = await createElement()
-    const comment = sentence()
-    const createdRes = await authReq('put', endpoint, {
-      id: element._id,
-      comment,
+describe('element:update:ordinal', () => {
+  it('should not update same ordinal', async () => {
+    const { element } = await createElement({})
+    try {
+      await authReq('post', endpoint, {
+        id: element._id,
+        ordinal: element.ordinal,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('nothing to update')
+      err.statusCode.should.equal(400)
+    }
+  })
+
+  it('should update ordinal', async () => {
+    const { listing } = await createListingWithElements()
+    const { elements } = listing
+    const [ firstElement, secondElement ] = elements
+    await authReq('post', endpoint, {
+      id: secondElement._id,
+      ordinal: firstElement.ordinal,
     })
-    const comment2 = sentence()
-    createdRes.comment.should.equal(comment)
-    const updatedRes = await authReq('put', endpoint, {
-      id: element._id,
-      comment: comment2,
-    })
-    updatedRes.comment.should.equal(comment2)
+    await getListingById({ id: listing._id })
   })
 })
