@@ -9,6 +9,7 @@ import type { Listing } from '#types/listing'
 const sanitization = {
   id: {},
   comment: { optional: true },
+  ordinal: { optional: true },
 }
 
 const controller = async params => {
@@ -20,8 +21,7 @@ const controller = async params => {
 
   if (!element) throw notFoundError({ elementId: id })
 
-  // Do not use updatable to not allow to update ordinal attribute
-  const newAttributes = pick(params, attributes.apiUpdatable)
+  const newAttributes = pick(params, attributes.updatable)
   return updateElementDocAttributes(element, newAttributes)
 }
 

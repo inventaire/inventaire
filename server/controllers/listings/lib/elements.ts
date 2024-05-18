@@ -50,15 +50,8 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  let { elements } = listing
+  const { elements } = listing
 
-  if (isNonEmptyArray(elements)) {
-    // Legacy reasons: some elements may not have ordinal
-    if (areSomeWithoutOrdinal(elements)) {
-      await updateOrdinal(elements)
-      elements = await getElementsByListing(listingId)
-    }
-  }
   const elementsToCreate = uris.map(uri => {
     const ordinal = highestOrdinal(elements) + 1
     return createElementDoc({
