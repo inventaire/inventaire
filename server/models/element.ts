@@ -1,4 +1,4 @@
-import { clone } from 'lodash-es'
+import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import type { ListingElement } from '#types/element'
@@ -22,10 +22,6 @@ export const attributes = {
   updatable: [
     'ordinal',
     'uri',
-  ],
-  // attributes which can directly be updated through an API endpoint
-  apiUpdatable: [
-    'comment',
   ],
 }
 
@@ -65,6 +61,10 @@ export function updateElementDoc (newAttributes, oldElement) {
 
     validations.pass(attribute, newVal)
     newElement[attribute] = newVal
+  }
+
+  if (isEqual(newElement, oldElement)) {
+    throw newError('nothing to update', 400, { oldElement })
   }
 
   const now = Date.now()
