@@ -3,7 +3,7 @@ import { newError } from '#lib/error/error'
 // Characters sorted by charcater code (which is what JS and CouchDB views use to compare strings)
 // '¤' is just here to play the role of the last character in the list
 // but the last character of this list is never returned as part of an ordinal
-const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz¤'
+export const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz¤'
 const firstCharacter = characters[0]
 const lastCharacter = characters.slice(-1)[0]
 const middleCharacter = findMiddleCharacterBetween(firstCharacter, lastCharacter)

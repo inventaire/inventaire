@@ -307,7 +307,7 @@ export default {
   object: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: allowlistedStrings,
-  ordinal: positiveInteger,
+  ordinal: nonEmptyString,
   owners: couchUuids,
   password: {
     secret: true,
