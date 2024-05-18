@@ -79,7 +79,7 @@ function reorderAndUpdateDocs ({ updateDocFn, newOrderedKeys, currentDocs, attri
     if (currentDoc[indexKey] === undefined || currentDoc[indexKey] !== i) {
       const newAttributes = {}
       newAttributes[indexKey] = i
-      docsToUpdate.push(updateDocFn(newAttributes, currentDoc))
+      docsToUpdate.push(updateDocFn(newAttributes, currentDoc, currentDocs))
     }
   }
   return docsToUpdate

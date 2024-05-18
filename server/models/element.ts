@@ -4,13 +4,13 @@ import { assert_ } from '#lib/utils/assert_types'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
-const { pass, entityUri, couchUuid, nonNegativeInteger } = commonValidations
+const { pass, entityUri, couchUuid, boundedString } = commonValidations
 
 const validations = {
   pass,
   uri: entityUri,
   list: couchUuid,
-  ordinal: nonNegativeInteger,
+  ordinal: str => boundedString(str, 1, 100)
 }
 
 export const attributes = {
@@ -29,7 +29,7 @@ export function createElementDoc (element) {
   assert_.object(element)
   assert_.string(element.uri)
   assert_.string(element.list)
-  assert_.number(element.ordinal)
+  assert_.string(element.ordinal)
 
   const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {
@@ -48,7 +48,6 @@ export function createElementDoc (element) {
 export function updateElementDoc (newAttributes, oldElement) {
   assert_.object(newAttributes)
   assert_.object(oldElement)
-
   const newElement = clone(oldElement)
 
   const passedAttributes = Object.keys(newAttributes)
