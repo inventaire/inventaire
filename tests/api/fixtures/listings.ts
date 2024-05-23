@@ -24,10 +24,11 @@ export const createListing = async (userPromise, listingData = {}) => {
 export async function createListingWithElements (userPromise) {
   userPromise = userPromise || getUser()
   const { listing, user } = await createListing(userPromise)
-  const { uri: uri2 } = await createElement({ listing }, userPromise)
   const { uri } = await createElement({ listing }, userPromise)
+  const { uri: uri2 } = await createElement({ listing }, userPromise)
+  const { uri: uri3 } = await createElement({ listing }, userPromise)
   const updatedListing = await getByIdWithElements({ user, id: listing._id })
-  return { listing: updatedListing, user, uris: [ uri, uri2 ] }
+  return { listing: updatedListing, user, uris: [ uri, uri2, uri3 ] }
 }
 
 export const createElement = async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
