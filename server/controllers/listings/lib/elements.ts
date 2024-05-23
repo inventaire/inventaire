@@ -1,9 +1,9 @@
-import { map, maxBy } from 'lodash-es'
+import { map } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
-import { findNextLastOrdinal } from '#lib/utils/lexicographic_ordinal'
+import { nextHighestOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { createElementDoc, updateElementDoc } from '#models/element'
 import type { ListingElement } from '#types/element'
 
@@ -58,8 +58,7 @@ export async function createListingElements ({ listing, uris, userId }) {
       list: listingId,
       uri,
       ordinal,
-    },
-    elements)
+    })
   })
   const res = await db.bulk(elementsToCreate)
   const elementsIds = map(res, 'id')
@@ -78,10 +77,3 @@ export async function bulkUpdateElements ({ oldElements, attribute, value }) {
 }
 
 const elementsBulkUpdate = db.bulk
-
-function nextHighestOrdinal (elements: ListingElement[]) {
-  if (elements.length === 0) return '0'
-
-  const highestOrdinalElement = maxBy(elements, 'ordinal')
-  return findNextLastOrdinal(highestOrdinalElement.ordinal)
-}

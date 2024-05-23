@@ -1,5 +1,5 @@
 import 'should'
-import { getListingById } from '#tests/api/utils/listings'
+import { getListingById,getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
 import { createListingWithElements, createElement, createElement } from '../fixtures/listings.js'
@@ -63,7 +63,7 @@ describe('element:update:ordinal', () => {
     try {
       await authReq('post', endpoint, {
         id: element._id,
-        ordinal: element.ordinal,
+        ordinal: 0,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -75,12 +75,57 @@ describe('element:update:ordinal', () => {
 
   it('should update ordinal', async () => {
     const { listing } = await createListingWithElements()
+
     const { elements } = listing
-    const [ firstElement, secondElement ] = elements
+    const [ elementA, elementB, elementC ] = elements
     await authReq('post', endpoint, {
-      id: secondElement._id,
-      ordinal: firstElement.ordinal,
+      id: elementC._id,
+      ordinal: 1,
     })
-    await getListingById({ id: listing._id })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0].ordinal.should.equal(elementA.ordinal)
+    res.elements[1].ordinal.should.equal('1V')
+    res.elements[2].ordinal.should.equal(elementB.ordinal)
+  })
+
+  it('should move element down', async () => {
+    const { listing } = await createListingWithElements()
+    const { elements } = listing
+    const [ elementA, elementB ] = elements
+    await authReq('post', endpoint, {
+      id: elementA._id,
+      ordinal: 1,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(elementB._id)
+    res.elements[1]._id.should.equal(elementA._id)
+  })
+
+  it('should move element up', async () => {
+    const { listing } = await createListingWithElements()
+    const { elements } = listing
+    const [ elementA, elementB, elementC ] = elements
+    await authReq('post', endpoint, {
+      id: elementC._id,
+      ordinal: 1,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(elementA._id)
+    res.elements[1]._id.should.equal(elementC._id)
+    res.elements[2]._id.should.equal(elementB._id)
+  })
+
+  it('should move element as first in list', async () => {
+    const { listing } = await createListingWithElements()
+    const { elements } = listing
+    const [ elementA, elementB, elementC ] = elements
+    await authReq('post', endpoint, {
+      id: elementC._id,
+      ordinal: 0,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(elementC._id)
+    res.elements[1]._id.should.equal(elementA._id)
+    res.elements[2]._id.should.equal(elementB._id)
   })
 })
