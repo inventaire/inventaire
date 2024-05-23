@@ -1,6 +1,7 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { findNewOrdinal } from '#lib/utils/lexicographic_ordinal'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
@@ -10,7 +11,7 @@ const validations = {
   pass,
   uri: entityUri,
   list: couchUuid,
-  ordinal: str => boundedString(str, 1, 100)
+  ordinal: str => boundedString(str, 1, 1000),
 }
 
 export const attributes = {
@@ -45,7 +46,7 @@ export function createElementDoc (element) {
   return newElement
 }
 
-export function updateElementDoc (newAttributes, oldElement) {
+export function updateElementDoc (newAttributes, oldElement, listingElements?) {
   assert_.object(newAttributes)
   assert_.object(oldElement)
   const newElement = clone(oldElement)
@@ -56,10 +57,16 @@ export function updateElementDoc (newAttributes, oldElement) {
     if (!attributes.updatable.includes(attribute)) {
       throw newError('invalid attribute', 400, { attribute, oldElement })
     }
-    const newVal = newAttributes[attribute]
-
-    validations.pass(attribute, newVal)
-    newElement[attribute] = newVal
+    let newVal
+    if (attribute === 'ordinal') {
+      newVal = findNewOrdinal(oldElement, listingElements, newAttributes[attribute])
+    } else {
+      newVal = newAttributes[attribute]
+      validations.pass(attribute, newVal)
+    }
+    if (newVal) {
+      newElement[attribute] = newVal
+    }
   }
 
   if (isEqual(newElement, oldElement)) {
