@@ -1,8 +1,8 @@
 import 'should'
-import { getListingById,getByIdWithElements } from '#tests/api/utils/listings'
+import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
-import { createListingWithElements, createElement, createElement } from '../fixtures/listings.js'
+import { createListingWithElements } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=update-element'
@@ -59,7 +59,7 @@ describe('element:update', () => {
 
 describe('element:update:ordinal', () => {
   it('should not update same ordinal', async () => {
-    const { element } = await createElement({})
+    const { element } = await createElement()
     try {
       await authReq('post', endpoint, {
         id: element._id,
