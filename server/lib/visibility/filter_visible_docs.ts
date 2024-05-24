@@ -3,10 +3,12 @@ import { getGroupsByIds, getUserGroupsCoMembers } from '#controllers/groups/lib/
 import { getAllGroupMembersIds } from '#controllers/groups/lib/users_lists'
 import { getUserFriends } from '#controllers/relations/lib/lists'
 import { isVisibilityGroupKey } from '#lib/boolean_validations'
-import type { VisibilityKey } from '#server/types/visibility'
+import type { Item } from '#types/item'
+import type { Listing } from '#types/listing'
+import type { Shelf } from '#types/shelf'
 import type { UserId } from '#types/user'
 
-type DocWithVisibility = { visibility: VisibilityKey[] }
+type DocWithVisibility = Item | Listing | Shelf
 
 export async function filterVisibleDocs <T extends DocWithVisibility> (docs: T[], reqUserId: UserId): Promise<T[]> {
   if (!reqUserId) return docs.filter(isPublic)
