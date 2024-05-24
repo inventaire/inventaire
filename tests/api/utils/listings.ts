@@ -1,18 +1,26 @@
+import type { AwaitableUserWithCookie } from '#fixtures/users'
+import type { RelativeUrl } from '#server/types/common'
+import type { ListingId } from '#server/types/listing'
 import { getUser } from '#tests/api/utils/utils'
 import { customAuthReq } from './request.js'
 
 const endpoint = '/api/lists?action='
 const byId = 'by-id'
 
-export async function getListingById ({ user, id }) {
+interface GetListingByIdParams {
+  user?: AwaitableUserWithCookie
+  id: ListingId
+}
+
+export async function getListingById ({ user, id }: GetListingByIdParams) {
   user = user || getUser()
-  const path = `${endpoint}${byId}&id=${id}`
+  const path: RelativeUrl = `${endpoint}${byId}&id=${id}`
   const { list: listing } = await customAuthReq(user, 'get', path)
   return listing
 }
 
-export async function getByIdWithElements ({ user, id }) {
-  return getListingById({ user, id, params: '&with-elements=true' })
+export async function getByIdWithElements ({ user, id }: GetListingByIdParams) {
+  return getListingById({ user, id })
 }
 
 export async function addElements (user, { id, uris }) {

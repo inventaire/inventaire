@@ -1,4 +1,8 @@
 import { randomWords } from '#fixtures/text'
+import type { AwaitableUserWithCookie } from '#fixtures/users'
+import type { EntityUri } from '#server/types/entity'
+import type { Listing } from '#server/types/listing'
+import type { VisibilityKey } from '#server/types/visibility'
 import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '../utils/utils.js'
@@ -11,7 +15,7 @@ export const listingDescription = () => {
   return randomWords(3, ' listing')
 }
 
-export const createListing = async (userPromise, listingData = {}) => {
+export const createListing = async (userPromise: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) => {
   userPromise = userPromise || getUser()
   listingData.name = listingData.name || listingName()
   listingData.visibility = listingData.visibility || [ 'public' ]
@@ -21,7 +25,7 @@ export const createListing = async (userPromise, listingData = {}) => {
   return { listing, user }
 }
 
-export async function createListingWithElements (userPromise) {
+export async function createListingWithElements (userPromise?: AwaitableUserWithCookie) {
   userPromise = userPromise || getUser()
   const { listing, user } = await createListing(userPromise)
   const { uri } = await createElement({ listing }, userPromise)
@@ -31,7 +35,7 @@ export async function createListingWithElements (userPromise) {
   return { listing: updatedListing, user, uris: [ uri, uri2, uri3 ] }
 }
 
-export const createElement = async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
+export const createElement = async ({ visibility = [ 'public' ], uri, listing }: { visibility?: VisibilityKey[], uri?: EntityUri, listing?: Listing }, userPromise?: AwaitableUserWithCookie) => {
   userPromise = userPromise || getUser()
   if (!listing) {
     const fixtureListing = await createListing(userPromise, { visibility })
