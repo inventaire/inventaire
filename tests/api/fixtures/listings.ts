@@ -15,7 +15,7 @@ export const listingDescription = () => {
   return randomWords(3, ' listing')
 }
 
-export const createListing = async (userPromise: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) => {
+export const createListing = async (userPromise?: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) => {
   userPromise = userPromise || getUser()
   listingData.name = listingData.name || listingName()
   listingData.visibility = listingData.visibility || [ 'public' ]
