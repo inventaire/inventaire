@@ -18,11 +18,12 @@ const controller = async params => {
 
   if (!element) throw notFoundError({ elementId: id })
 
-  let listing: Listing, elements: ListingElement[]
-  if (ordinal || ordinal === 0) {
+  let listing: Listing
+  let elements: ListingElement[]
+  if (ordinal != null) {
     const [ listingWithElements ] = await getListingsByIdsWithElements([ element.list ])
-    validateListingOwnership(reqUserId, listingWithElements);
-    ({ elements } = listingWithElements)
+    validateListingOwnership(reqUserId, listingWithElements)
+    ;({ elements } = listingWithElements)
   } else {
     listing = await getListingById(element.list)
     validateListingOwnership(reqUserId, listing)
