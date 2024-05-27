@@ -49,7 +49,7 @@ export interface GetEntitiesParams {
   relatives?: readonly (typeof sanitization.relatives.allowlist[number])[]
 }
 
-async function controller ({ uris, attributes, lang, refresh, relatives, autocreate }) {
+async function controller ({ uris, attributes, lang, refresh, relatives, autocreate }: GetEntitiesParams) {
   let results = await getEntitiesByUris({ uris, refresh, autocreate })
   if (relatives) results = await addRelatives(results, relatives, refresh)
   if (attributes) {
