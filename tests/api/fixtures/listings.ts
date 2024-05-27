@@ -25,14 +25,17 @@ export const createListing = async (userPromise?: AwaitableUserWithCookie, listi
   return { listing, user }
 }
 
-export async function createListingWithElements (userPromise?: AwaitableUserWithCookie) {
+export async function createListingWithElements (userPromise?: AwaitableUserWithCookie, numberOfElements = 3) {
   userPromise = userPromise || getUser()
   const { listing, user } = await createListing(userPromise)
-  const { uri } = await createElement({ listing }, userPromise)
-  const { uri: uri2 } = await createElement({ listing }, userPromise)
-  const { uri: uri3 } = await createElement({ listing }, userPromise)
+  const uris = []
+  let i = 0
+  while (i++ < numberOfElements) {
+    const { uri } = await createElement({ listing }, userPromise)
+    uris.push(uri)
+  }
   const updatedListing = await getByIdWithElements({ user, id: listing._id })
-  return { listing: updatedListing, user, uris: [ uri, uri2, uri3 ] }
+  return { listing: updatedListing, user, uris }
 }
 
 export const createElement = async ({ visibility = [ 'public' ], uri, listing }: { visibility?: VisibilityKey[], uri?: EntityUri, listing?: Listing }, userPromise?: AwaitableUserWithCookie) => {

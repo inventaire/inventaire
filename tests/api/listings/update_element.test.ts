@@ -1,4 +1,5 @@
-import 'should'
+import should from 'should'
+import { wait } from '#lib/promises'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -73,23 +74,24 @@ describe('element:update:ordinal', () => {
     }
   })
 
-  it('should update ordinal', async () => {
+  it('should update ordinal and return updated element', async () => {
     const { listing } = await createListingWithElements()
-
     const { elements } = listing
     const [ elementA, elementB, elementC ] = elements
-    await authReq('post', endpoint, {
+    const updatedElement = await authReq('post', endpoint, {
       id: elementC._id,
       ordinal: 1,
     })
-    const res = await getByIdWithElements({ id: listing._id })
-    res.elements[0].ordinal.should.equal(elementA.ordinal)
-    res.elements[1].ordinal.should.equal('1V')
-    res.elements[2].ordinal.should.equal(elementB.ordinal)
+    const updatedOrdinal = '1V'
+    updatedElement.ordinal.should.equal(updatedOrdinal)
+    const { elements: updatedElements } = await getByIdWithElements({ id: listing._id })
+    updatedElements[0].ordinal.should.equal(elementA.ordinal)
+    updatedElements[1].ordinal.should.equal(updatedOrdinal)
+    updatedElements[2].ordinal.should.equal(elementB.ordinal)
   })
 
   it('should move element down', async () => {
-    const { listing } = await createListingWithElements()
+    const { listing } = await createListingWithElements(null, 3)
     const { elements } = listing
     const [ elementA, elementB ] = elements
     await authReq('post', endpoint, {
@@ -115,7 +117,7 @@ describe('element:update:ordinal', () => {
     res.elements[2]._id.should.equal(elementB._id)
   })
 
-  it('should move element as first in list', async () => {
+  it('should move element first', async () => {
     const { listing } = await createListingWithElements()
     const { elements } = listing
     const [ elementA, elementB, elementC ] = elements
@@ -127,5 +129,47 @@ describe('element:update:ordinal', () => {
     res.elements[0]._id.should.equal(elementC._id)
     res.elements[1]._id.should.equal(elementA._id)
     res.elements[2]._id.should.equal(elementB._id)
+  })
+
+  it('should move element deep in the list', async () => {
+    const { listing } = await createListingWithElements(null, 20)
+    const { elements } = listing
+    const element1 = elements[0]
+    const element18 = elements[17]
+    const element19 = elements[18]
+    await authReq('post', endpoint, {
+      id: element1._id,
+      ordinal: 17,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    const updatedElement = res.elements.find(element => element._id === element1._id)
+    should(updatedElement.ordinal > element18.ordinal).be.true()
+    should(updatedElement.ordinal < element19.ordinal).be.true()
+  })
+
+  xit('should support fast edit', async () => {
+    // This is an ideal test. So far, the client should do the job
+    // and debounce requests accordigly to not update elements too fast
+    // But clients are not able to debounce request with slow connection to the server, to do that, this test should pass
+    const { listing } = await createListingWithElements(null, 20)
+    const { elements } = listing
+    elements.length.should.equal(20)
+    const element1 = elements[0]
+    const element2 = elements[1]
+    const element3 = elements[2]
+    const element20 = elements[19]
+    await Promise.all([
+      authReq('post', endpoint, { id: element1._id, ordinal: 20 }),
+      wait(10).then(() => authReq('post', endpoint, { id: element2._id, ordinal: 20 })),
+      wait(20).then(() => authReq('post', endpoint, { id: element3._id, ordinal: 20 })),
+    ])
+    const res = await getByIdWithElements({ id: listing._id })
+    const updatedElement1 = res.elements.find(element => element._id === element1._id)
+    const updatedElement2 = res.elements.find(element => element._id === element1._id)
+    const updatedElement3 = res.elements.find(element => element._id === element1._id)
+    // The generated ordinals might be the same, but they should all be above the initially last ordinal
+    should(updatedElement1.ordinal > element20.ordinal).be.true()
+    should(updatedElement2.ordinal > element20.ordinal).be.true()
+    should(updatedElement3.ordinal > element20.ordinal).be.true()
   })
 })
