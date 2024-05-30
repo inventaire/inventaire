@@ -1,9 +1,11 @@
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+
 export default {
-  parameters: [ 'pid', 'qid' ],
+  parameters: [ 'pid', 'qid' ] as const,
 
-  relationProperties: [ '*' ],
+  relationProperties: [ '*' ] as const,
 
-  query: params => {
+  query: (params: SparqlQueryParams) => {
     const { pid, qid } = params
     return `SELECT DISTINCT ?item WHERE {
   ?item wdt:${pid} wd:${qid} .

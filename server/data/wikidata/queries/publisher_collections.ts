@@ -1,11 +1,13 @@
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+
 const relationProperty = 'wdt:P123'
 
 export default {
-  parameters: [ 'qid' ],
+  parameters: [ 'qid' ] as const,
 
-  relationProperties: [ relationProperty ],
+  relationProperties: [ relationProperty ] as const,
 
-  query: ({ qid: publisherId }) => {
+  query: ({ qid: publisherId }: SparqlQueryParams) => {
     return `SELECT ?collection WHERE {
   VALUES (?collection_type) { (wd:Q20655472) (wd:Q1700470) (wd:Q2668072) } .
   ?collection wdt:P31 ?collection_type .
