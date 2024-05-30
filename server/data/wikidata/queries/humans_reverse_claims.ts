@@ -1,4 +1,8 @@
+import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+import { typesAliases } from '#lib/wikidata/aliases'
+
+const { works: worksP31Values } = typesAliases
 
 export default {
   parameters: [ 'pid', 'qid' ] as const,
@@ -11,20 +15,10 @@ export default {
   ?item wdt:${pid} wd:${qid} .
   ?item wdt:P31 wd:Q5 .
 
-  # Keep only humans that are known for at least one work
-  ?work wdt:P50 ?item .
-  # book
-  { ?work wdt:P31 wd:Q571 . }
-  # written work
-  UNION { ?item wdt:P31 wd:Q47461344 . }
-  # literary work
-  UNION { ?work wdt:P31 wd:Q7725634 . }
-  # comic book album
-  UNION { ?work wdt:P31 wd:Q2831984 . }
-  # comic book
-  UNION { ?work wdt:P31 wd:Q1004 . }
-  # manga
-  UNION { ?work wdt:P31 wd:Q8274 . }
+  # Keep only humans that are known for at least one contribution to a work or edition
+  ?work ${authorRelationsProperties.join('|')} ?item .
+  VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
+  ?work wdt:P31 ?work_type .
 }
 LIMIT 1000`
   },
