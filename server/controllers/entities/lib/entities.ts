@@ -1,5 +1,5 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import dbFactory from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
 import { newError } from '#lib/error/error'
@@ -161,5 +161,5 @@ export function getWorksAuthorsUris (works) {
 }
 
 function getWorkAuthorsUris (work) {
-  return Object.values(pick(work.claims, authorRelationsProperties)).flat()
+  return Object.values(pick(work.claims, workAuthorRelationsProperties)).flat()
 }

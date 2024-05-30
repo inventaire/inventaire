@@ -1,9 +1,9 @@
 import { chain } from 'lodash-es'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 
 export default work => {
   return chain(work.claims)
-  .pick(authorRelationsProperties)
+  .pick(workAuthorRelationsProperties)
   .values()
   .flatten()
   .uniq()
