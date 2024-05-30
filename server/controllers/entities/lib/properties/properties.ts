@@ -15,6 +15,17 @@ export const workAuthorRelationsProperties = [
   'wdt:P10837', // penciller
 ] as const satisfies PropertyUri[]
 
+export const editionAuthorRelationsProperties = [
+  'wdt:P655', // translator
+  'wdt:P2679', // author of foreword
+  'wdt:P2680', // author of afterword
+] as const satisfies PropertyUri[]
+
+export const authorRelationsProperties = [
+  ...workAuthorRelationsProperties,
+  ...editionAuthorRelationsProperties,
+] as const
+
 export interface PropertyConfig {
   subjectTypes: readonly ExtendedEntityType[]
   datatype: PropertyDatatype
@@ -140,10 +151,6 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   // Open Library ID
   'wdt:P648': {
     subjectTypes: [ 'work', 'serie', 'human', 'edition' ],
-  },
-  // translator
-  'wdt:P655': {
-    subjectTypes: [ 'edition' ],
   },
   // Google Books ID
   'wdt:P675': {
@@ -301,14 +308,6 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P2675': {
     subjectTypes: [ 'work', 'serie' ],
   },
-  // author of foreword
-  'wdt:P2679': {
-    subjectTypes: [ 'edition' ],
-  },
-  // author of afterword
-  'wdt:P2680': {
-    subjectTypes: [ 'edition' ],
-  },
   // GoodReads author ID
   'wdt:P2963': {
     subjectTypes: [ 'human' ],
@@ -439,9 +438,15 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   },
 }
 
-for (const property of authorRelationsProperties) {
+for (const property of workAuthorRelationsProperties) {
   _properties[property] = {
     subjectTypes: [ 'work', 'serie' ],
+  }
+}
+
+for (const property of editionAuthorRelationsProperties) {
+  _properties[property] = {
+    subjectTypes: [ 'edition' ],
   }
 }
 
