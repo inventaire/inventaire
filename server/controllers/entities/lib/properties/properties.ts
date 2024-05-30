@@ -4,7 +4,7 @@ import type { PropertyDatatype } from '#server/types/property'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
-export const authorRelationsProperties = [
+export const workAuthorRelationsProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P98', // editor
