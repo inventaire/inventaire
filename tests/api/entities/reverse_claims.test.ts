@@ -25,4 +25,11 @@ describe('entities:reverse-claims', () => {
     const res = await publicReq('get', buildReverseClaimsUrl('wdt:P3035', '978-2-505'))
     res.uris.should.be.an.Array()
   })
+
+  describe('work editions (wdt:P629)', () => {
+    it('should find wikidata edition entities', async () => {
+      const { uris } = await publicReq('get', buildReverseClaimsUrl('wdt:P629', 'wd:Q6911'))
+      uris.should.containEql('wd:Q14624815')
+    })
+  })
 })

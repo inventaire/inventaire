@@ -29,14 +29,6 @@ const denylistedProperties = [
   'wdt:P407',
 ]
 
-const localOnlyProperties = [
-  // Avoid getting editions from Wikidata
-  // as those are quarantined https://github.com/inventaire/inventaire/issues/182
-  'wdt:P629',
-  'wdt:P123',
-  'wdt:P195',
-]
-
 interface ReverseClaimsParams {
   property?: WdPropertyUri
   value?: InvSnakValue
@@ -53,16 +45,11 @@ export async function reverseClaims (params: ReverseClaimsParams) {
     throw newError('denylisted property', 400, { property })
   }
 
-  const promises = []
-
-  if (!localOnlyProperties.includes(property)) {
-    promises.push(requestWikidataReverseClaims(property, value, refresh, dry))
-    promises.push(getReverseClaimsFromCachedRelations(property, value))
-  }
-
-  promises.push(invReverseClaims(property, value))
-
-  return Promise.all(promises)
+  return Promise.all([
+    requestWikidataReverseClaims(property, value, refresh, dry),
+    getReverseClaimsFromCachedRelations(property, value),
+    invReverseClaims(property, value),
+  ])
   .then(flatten)
   .then(compact)
   .then(uris => {
@@ -146,6 +133,8 @@ const typeTailoredQuery = {
   'wdt:P195': 'editions',
   // language of work
   'wdt:P407': 'works',
+  // edition or translation of
+  'wdt:P629': 'editions',
   // translator
   'wdt:P655': 'editions',
   // characters
