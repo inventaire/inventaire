@@ -12,7 +12,7 @@ import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import type { WdPropertyUri } from '#server/types/entity'
+import type { EntityUri, InvSnakValue, WdEntityId, WdPropertyUri } from '#server/types/entity'
 import type { Url } from '#types/common'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
@@ -37,7 +37,15 @@ const localOnlyProperties = [
   'wdt:P195',
 ]
 
-export async function reverseClaims (params) {
+interface ReverseClaimsParams {
+  property?: WdPropertyUri
+  value?: InvSnakValue
+  refresh?: boolean
+  sort?: boolean
+  dry?: boolean
+}
+
+export async function reverseClaims (params: ReverseClaimsParams) {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
@@ -65,7 +73,7 @@ export async function reverseClaims (params) {
   })
 }
 
-function requestWikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
+function requestWikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
   if (isEntityUri(value)) {
     const [ prefix, id ] = value.split(':')
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
@@ -75,24 +83,24 @@ function requestWikidataReverseClaims (property: WdPropertyUri, value, refresh, 
   }
 }
 
-async function wikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
+async function wikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
   const type = typeTailoredQuery[property]
   if (type != null) {
     const pid = unprefixify(property)
-    const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value, refresh, dry })
+    const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value as WdEntityId, refresh, dry })
     return results.map(prefixifyWd)
   } else {
     return generalWikidataReverseClaims(property, value, refresh, dry)
   }
 }
 
-function generalWikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
+function generalWikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
   const key = `wd:reverse-claim:${property}:${value}`
   const fn = _wikidataReverseClaims.bind(null, property, value)
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-async function _wikidataReverseClaims (property: WdPropertyUri, value) {
+async function _wikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue) {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   log([ property, value ], 'reverse claim')
@@ -102,7 +110,7 @@ async function _wikidataReverseClaims (property: WdPropertyUri, value) {
   .map(wdId => prefixifyWd(wdId))
 }
 
-async function invReverseClaims (property: WdPropertyUri, value) {
+async function invReverseClaims (property: WdPropertyUri, value: InvSnakValue) {
   try {
     const entities = await getInvEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
@@ -152,10 +160,10 @@ const typeTailoredQuery = {
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
 
-async function getReverseClaimsFromCachedRelations (property: WdPropertyUri, value) {
+async function getReverseClaimsFromCachedRelations (property: WdPropertyUri, value: InvSnakValue) {
   if (getPropertyDatatype(property) === 'entity') {
     return getCachedRelations({
-      valueUri: value,
+      valueUri: value as EntityUri,
       properties: [ property ],
       formatEntity: entity => entity.uri,
     })
