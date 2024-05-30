@@ -1,12 +1,14 @@
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+
 export default {
-  parameters: [ 'qid' ],
+  parameters: [ 'qid' ] as const,
 
   relationProperties: [
     'wdt:P179',
     'wdt:P361',
-  ],
+  ] as const,
 
-  query: params => {
+  query: (params: SparqlQueryParams) => {
     const { qid: serieQid } = params
 
     return `SELECT ?part ?date ?ordinal (COUNT(?subpart) AS ?subparts) ?superpart WHERE {

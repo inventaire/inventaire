@@ -1,6 +1,10 @@
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+
 export default {
-  parameters: [ 'externalIds' ],
-  query: params => buildQuery(params.externalIds),
+  parameters: [ 'externalIds' ] as const,
+  query: (params: SparqlQueryParams) => {
+    return buildQuery(params.externalIds)
+  },
   minimizable: true,
 }
 

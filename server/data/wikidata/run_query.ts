@@ -7,20 +7,15 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { radio } from '#lib/radio'
 import { info, LogErrorAndRethrow } from '#lib/utils/logs'
-import type { WdEntityId, WdPropertyId } from '#types/entity'
 import { makeSparqlRequest } from './make_sparql_request.js'
-import { queries, queriesPerProperty } from './queries/queries.js'
+import { queries, queriesPerProperty, type SparqlQueryParams } from './queries/queries.js'
 
 const possibleQueries = Object.keys(queries)
 
-interface RunQueryParams {
+export type RunQueryParams = SparqlQueryParams & {
   query: string
   refresh?: boolean
   dry?: boolean
-  // Query specific params
-  qid?: WdEntityId
-  pid?: WdPropertyId
-  externalIds?: string[]
 }
 
 // Params:
