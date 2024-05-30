@@ -2,7 +2,7 @@ import config from '#server/config'
 import { getInvEntitiesUrisByClaims, getInvUrisByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { debounceByKey } from '#lib/debounce_by_key'
 import { info } from '#lib/utils/logs'
@@ -59,7 +59,7 @@ const getSnapshotsByType = {
     return snapshots.flat()
   },
 
-  human: multiWorkRefresh(authorRelationsProperties),
+  human: multiWorkRefresh(workAuthorRelationsProperties),
   serie: multiWorkRefresh([ 'wdt:P179' ]),
 }
 
