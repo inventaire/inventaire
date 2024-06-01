@@ -22,7 +22,7 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-import { isString, cloneDeep, get, without, omit } from 'lodash-es'
+import { isString, cloneDeep, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
@@ -118,7 +118,7 @@ export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, old
   if (isString(getClaimValue(oldClaim))) oldClaim = setClaimValue(oldClaim, superTrim(getClaimValue(oldClaim)))
   if (isString(getClaimValue(newClaim))) newClaim = setClaimValue(newClaim, superTrim(getClaimValue(newClaim)))
 
-  let propArray = get(doc, `claims.${property}`)
+  let propArray = doc.claims?.[property]
 
   if (propArray && newClaim != null && propArray.map(getClaimValue).includes(getClaimValue(newClaim))) {
     throw newError('claim property new value already exist', 400, { propArray, newClaim })

@@ -49,7 +49,7 @@ async function getSubjectsUris (valueUri, properties) {
 }
 
 export const relationIsConfirmedByPrimaryData = (properties: readonly PropertyUri[], valueUri: EntityUri) => async (entity: SerializedEntity) => {
-  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties)
+  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties) as EntityUri[]
   // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
   const canonicalValuesUris = await getResolvedUris(relationsUris)
   if (canonicalValuesUris.includes(valueUri)) return entity

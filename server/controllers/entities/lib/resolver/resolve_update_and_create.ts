@@ -57,7 +57,7 @@ function handleError (strict: boolean, errors: EntryError[], err: EntryError, en
   }
 }
 
-export function sanitizeEntries (entries: unknown[], strict: boolean) {
+export function sanitizeEntries (entries: ResolverEntry[], strict: boolean) {
   const errors: EntryError[] = []
   const sanitizedEntries: SanitizedResolverEntry[] = []
   entries.forEach(sanitizeEntryAndDispatch(sanitizedEntries, errors, strict))
