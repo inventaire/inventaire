@@ -6,8 +6,10 @@
 
 import { partition, map, compact, omit } from 'lodash-es'
 import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks, type Claims, type Item as WdEntity } from 'wikibase-sdk'
+import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
+import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
-import { getClaimObjectFromClaim } from '#controllers/entities/lib/inv_claims_utils'
+import { getClaimObjectFromClaim, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
@@ -15,9 +17,10 @@ import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entitie
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
 import { objectEntries } from '#lib/utils/base'
+import { warn } from '#lib/utils/logs'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
+import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri, InvEntity } from '#types/entity'
 import { addImageData } from './add_image_data.js'
 import { getEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
@@ -32,7 +35,7 @@ setImmediate(importCircularDependencies)
 const { _id: hookUserId } = hardCodedUsers.hook
 
 export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry, includeReferences }: EntitiesGetterParams) {
-  const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
+  const entities = await Promise.all(ids.map(wdId => getAggregatedWdEntityLayers({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
   const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
@@ -51,7 +54,31 @@ export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh,
 
 const isNotMissing = entity => entity && entity.type !== 'missing'
 
-export async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
+export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
+  const [ remoteEntity, localEntityLayer ] = await Promise.all([
+    getCachedEnrichedEntity({ wdId, refresh, dry }),
+    getWdEntityLocalLayer(wdId),
+  ])
+  // Known case: when dry=true and getting a cache miss
+  if (!remoteEntity) return
+  if (localEntityLayer) {
+    if ('claims' in remoteEntity) {
+      Object.assign(remoteEntity.claims, simplifyInvClaims(localEntityLayer.claims))
+      runPostLayerAggregationFormatting(remoteEntity, localEntityLayer)
+    } else {
+      warn(localEntityLayer, 'local layer is linked to an invalid remote entity')
+    }
+  }
+  return remoteEntity
+}
+
+function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, localEntityLayer: InvEntity) {
+  if (localEntityLayer.claims['invp:P2'] != null) {
+    setEntityImageFromImageHashClaims(remoteEntity)
+  }
+}
+
+async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
   const key = `wd:enriched:${wdId}`
   const fn = getEnrichedEntity.bind(null, wdId, refresh)
   return cache_.get({ key, fn, refresh, dry })
