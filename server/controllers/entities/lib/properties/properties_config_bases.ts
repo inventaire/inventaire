@@ -1,5 +1,5 @@
 import { trim } from 'lodash-es'
-import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl } from '#lib/boolean_validations'
+import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl, isWdEntityUri } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import { boundedString } from '#models/validations/common'
 
@@ -8,6 +8,13 @@ export const entity = {
   primitiveType: 'string',
   format: trim,
   validate: ({ value }: { value: string }) => EntityUri.test(value),
+} as const
+
+export const remoteEntity = {
+  datatype: 'entity',
+  primitiveType: 'string',
+  format: trim,
+  validate: ({ value }: { value: string }) => isWdEntityUri(value),
 } as const
 
 export const uniqueString = {
