@@ -3,10 +3,11 @@ import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uri
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { assert_ } from '#lib/utils/assert_types'
+import type { EntityUri } from '#types/entity'
 import { aggregateClaims } from './helpers.js'
 
 const getRelativeEntities = relationProperties => async entity => {
-  const uris = getAggregatedPropertiesValues(entity.claims, relationProperties)
+  const uris = getAggregatedPropertiesValues(entity.claims, relationProperties) as EntityUri[]
   if (uris == null || uris.length === 0) return []
   const { entities } = await getEntitiesByUris({ uris })
   return Object.values(entities)

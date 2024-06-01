@@ -6,20 +6,22 @@ import { objectPromise } from '#lib/promises'
 // import { logError } from '#lib/utils/logs'
 import { getFirstClaimValue } from '#models/entity'
 import type { SerializedWdEntity, WikimediaCommonsFilename } from '#server/types/entity'
+import type { ImageData } from '#server/types/image'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
 export async function addImageData (entity: SerializedWdEntity) {
-  const data = await findAnImage(entity)
+  const data: ImageData = await findAnImage(entity)
   entity.image = data
   return entity
 }
 
-function findAnImage (entity: SerializedWdEntity) {
+async function findAnImage (entity: SerializedWdEntity) {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki?.title
   const { claims } = entity
   const openLibraryId = getFirstClaimValue(claims, 'wdt:P648')
-  return pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
+  const bestPicData = await pickBestPic(entity, commonsFilename, enwikiTitle, openLibraryId)
+  if (bestPicData) return bestPicData
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
