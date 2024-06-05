@@ -27,4 +27,5 @@ export const UserImg = /^\/img\/users\/[0-9a-f]{40}$/
 // all 1 letter strings are reserved for the application
 export const Username = /^[\p{Letter}\p{Number}_]{2,20}$/u
 export const Uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+export const WdEntityId = /^Q[1-9]\d*$/
 export const WdPropertyUri = /^wdt:P[1-9]\d*$/

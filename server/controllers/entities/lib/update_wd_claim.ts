@@ -1,13 +1,16 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
-import { isInvEntityUri } from '#lib/boolean_validations'
+import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
+import { arrayIncludes } from '#lib/utils/base'
 import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
+import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
+import type { User } from '#server/types/user'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
@@ -16,7 +19,7 @@ import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
-export default async function (user, id, property, oldValue, newValue) {
+export default async function (user: User, id: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
   validateWikidataOAuth(user)
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
@@ -26,8 +29,8 @@ export default async function (user, id, property, oldValue, newValue) {
       throw newError("wikidata entities can't link to inventaire entities", 400)
     }
 
-    if (oldValue) oldValue = unprefixify(oldValue)
-    if (newValue) newValue = unprefixify(newValue)
+    if (isEntityUri(oldValue)) oldValue = unprefixify(oldValue)
+    if (isEntityUri(newValue)) newValue = unprefixify(newValue)
   }
 
   const [ propertyPrefix, propertyId ] = property.split(':')
@@ -46,13 +49,13 @@ export default async function (user, id, property, oldValue, newValue) {
     res = await updateClaim({ id, propertyId, newValue, oldValue, credentials })
   }
 
-  if (cachedRelationProperties.includes(property)) {
+  if (arrayIncludes(cachedRelationProperties, property)) {
     const uri = prefixifyWd(id)
-    if (newValue != null) {
+    if (newValue != null && isWdEntityId(newValue)) {
       entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
       .catch(LogError('entitiesRelationsTemporaryCache.set err'))
     }
-    if (oldValue != null) {
+    if (oldValue != null && isWdEntityId(oldValue)) {
       entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
       .catch(LogError('entitiesRelationsTemporaryCache.del err'))
     }
