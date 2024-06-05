@@ -45,19 +45,19 @@ export async function reverseClaims (params: ReverseClaimsParams) {
     throw newError('denylisted property', 400, { property })
   }
 
-  return Promise.all([
+  const foundUris = await Promise.all([
     requestWikidataReverseClaims(property, value, refresh, dry),
     getReverseClaimsFromCachedRelations(property, value),
     invReverseClaims(property, value),
   ])
-  .then(flatten)
-  .then(compact)
-  .then(uris => {
-    if (!sort) return uris
+  const uris = compact(flatten(foundUris)) as EntityUri[]
 
-    return getEntitiesPopularities({ uris })
-    .then(scores => uris.sort(sortByScore(scores)))
-  })
+  if (sort) {
+    const scores = await getEntitiesPopularities({ uris })
+    return uris.sort(sortByScore(scores))
+  } else {
+    return uris
+  }
 }
 
 function requestWikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
