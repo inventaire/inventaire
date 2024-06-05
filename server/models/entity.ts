@@ -1,26 +1,13 @@
-// DATA MODEL
-// _id: CouchDB uuid
-// claims: an object with properties and their associated statements
-// labels: an object with labels in different languages
-
-// labels?
-// descriptions?
-// aliases?
-// sitelinks? qid?
-
-// use Wikidata data model as reference:
-// https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
+// Entities are equivalent to what Wikidata calls Items
+// The data model stays close to Wikidata/Wikibase data model https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
 
 // Used prefixes:
-// Entities:
+// Entities (what Wikidata calls Items):
 //   PREFIX wd: <http://www.wikidata.org/entity/>
 //   PREFIX inv: <https://inventaire.io/entity/>
 // Properties:
 //   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 //   PREFIX invp: <https://inventaire.io/property/>
-
-// Inventaire properties:
-// invp:P2: Image Hash
 
 import { isString, cloneDeep, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'

@@ -36,7 +36,7 @@ export interface PropertyConfig {
 // Default `category` = 'general'
 // Default `subjectTypes` = allLocallyEditedEntitiesTypes
 export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
-  // cover image hash
+  // image hash
   'invp:P2': {
     subjectTypes: [ 'edition' ],
   },
