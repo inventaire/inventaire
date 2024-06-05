@@ -2,9 +2,9 @@ import { difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
-import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
+import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity } from '#types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
 import { getEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
@@ -21,6 +21,9 @@ export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesG
 
 async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   if ('redirect' in entity) return getRedirectedEntity(entity, params)
+
+  const remoteEntityUri = getFirstClaimValue(entity.claims, 'invp:P1')
+  if (remoteEntityUri && entity.type === 'entity') return redirectToRemoteEntity(entity, remoteEntityUri, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
 
@@ -47,11 +50,19 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   }
 }
 
-async function getRedirectedEntity (entity: EntityRedirection, params: EntitiesGetterParams): Promise<SerializedEntity> {
+async function getRedirectedEntity (entity: EntityRedirection, params: EntitiesGetterParams) {
   const { refresh, dry } = params
   const fromUri = prefixifyInv(entity._id)
   // Passing the parameters as the entity data source might be Wikidata
   const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: entity.redirect, refresh, dry })
+  redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
+  return redirectionTargetEntity
+}
+
+async function redirectToRemoteEntity (entity: InvEntity, remoteEntityUri: EntityUri, params: EntitiesGetterParams) {
+  const { refresh, dry } = params
+  const fromUri = prefixifyInv(entity._id)
+  const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: remoteEntityUri, refresh, dry })
   redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
   return redirectionTargetEntity
 }
