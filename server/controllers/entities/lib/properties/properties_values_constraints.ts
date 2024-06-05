@@ -34,7 +34,7 @@ const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 export const propertiesValuesConstraints = {
   // same as remote entity
   'invp:P1': remoteEntity,
-  // image
+  // image hash
   'invp:P2': imageHash,
   // instance of
   'wdt:P31': allowedPropertyValues('wdt:P31'),
