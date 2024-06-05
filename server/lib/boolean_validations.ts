@@ -5,7 +5,7 @@ import config from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { ColorHexCode, Url } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
-import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri, InvPropertyUri, WdPropertyUri } from '#types/entity'
+import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri, InvPropertyUri, WdPropertyUri, WdEntityId } from '#types/entity'
 import type { AssetImagePath, EntityImagePath, GroupImagePath, ImageHash, ImagePath, UserImagePath } from '#types/image'
 import type { PatchId } from '#types/patch'
 import type { AuthentifiedReq } from '#types/server'
@@ -18,8 +18,8 @@ const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = config.getPublicOrigin()
 
 function bindedTest <T extends string> (regexName: keyof typeof regex_) {
-  return function (str: string): str is T {
-    return regex_[regexName].test(str)
+  return function (str: unknown): str is T {
+    return typeof str === 'string' && regex_[regexName].test(str)
   }
 }
 
@@ -47,7 +47,7 @@ export const isLocalImg = bindedTest<ImagePath>('LocalImg')
 export const isUserImg = bindedTest<UserImagePath>('UserImg')
 export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
-export const isWdEntityId = isWikidataItemId
+export const isWdEntityId = bindedTest<WdEntityId>('WdEntityId')
 
 export function isInvEntityUri (uri): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
