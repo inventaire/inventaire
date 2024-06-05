@@ -4,7 +4,7 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
-import { forceArray } from '#lib/utils/base'
+import { forceArray, objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
 import type { PatchId } from '#server/types/patch'
@@ -28,7 +28,7 @@ export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh
 
 export async function getByUri (uri: EntityUri, refresh?: boolean) {
   const res = await getByUris([ uri ], null, refresh)
-  return Object.values(res.entities)[0]
+  return objectValues(res.entities)[0]
 }
 
 export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }: Pick<GetEntitiesParams, 'uris' | 'attributes' | 'relatives' | 'refresh'>) {
