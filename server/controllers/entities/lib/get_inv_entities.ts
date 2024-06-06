@@ -3,8 +3,10 @@ import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
+import { isWdEntityUri } from '#lib/boolean_validations'
+import { newError } from '#lib/error/error'
 import { getFirstClaimValue, simplifyInvClaims } from '#models/entity'
-import type { EntityRedirection, EntityUri, InvEntity, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
+import type { EntityRedirection, EntityType, EntityUri, InvEntity, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder } from '#types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
 import { getEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
@@ -27,12 +29,15 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
 
   const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
 
+  // Narrowing down uri type: remote entity uris will have returned with redirectToRemoteEntity
+  if (isWdEntityUri(uri)) throw newError('unexpected remote uri', 500, { entity, uri })
+
   const simplifiedClaims = simplifyInvClaims(entity.claims, { keepReferences: params.includeReferences })
 
   const serializedEntity = {
     uri,
     ...entity,
-    type: getEntityType(simplifiedClaims['wdt:P31']),
+    type: getEntityType(simplifiedClaims['wdt:P31']) as EntityType,
     claims: simplifiedClaims,
     redirects,
     // Keep track of special types such as removed:placehoder
@@ -41,12 +46,11 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   }
 
   if (serializedEntity._meta_type === 'removed:placeholder') {
-    formatEntityCommon(serializedEntity)
-    return serializedEntity as SerializedRemovedPlaceholder
-  } else {
-    formatEntityCommon(serializedEntity)
     // @ts-expect-error
-    return serializedEntity as SerializedInvEntity
+    return formatEntityCommon(serializedEntity) as SerializedRemovedPlaceholder
+  } else {
+    // @ts-expect-error
+    return formatEntityCommon(serializedEntity) as SerializedInvEntity
   }
 }
 
