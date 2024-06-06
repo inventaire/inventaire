@@ -210,6 +210,9 @@ export interface SerializedWdEntity {
   redirects?: WdItem['redirects']
   image: ReturnType<typeof getWikimediaThumbnailData>
   popularity?: number
+  _indexationTime?: EpochTimeStamp
+  _id?: WdEntityId
+  lastrevid?: number
 }
 
 export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity

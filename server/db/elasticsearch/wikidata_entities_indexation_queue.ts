@@ -41,7 +41,7 @@ async function entitiesIndexationWorker (jobId, wdId) {
       const indexedEntity = await getIndexedEntity(wdId)
       const indexationTime = indexedEntity?._indexationTime
       const entityWasRecentlyIndexed = indexationTime && ((Date.now() - indexationTime) < minReindexationInterval)
-      if (entityWasRecentlyIndexed && indexedEntity.lastrevid === formattedEntity.lastrevid) {
+      if (entityWasRecentlyIndexed && 'lastrevid' in formattedEntity && indexedEntity.lastrevid === formattedEntity.lastrevid) {
         info(`wd entity indexation worker skipped (too recently reindexed): ${wdId}`)
       } else {
         formattedEntity._indexationTime = Date.now()
