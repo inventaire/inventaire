@@ -28,19 +28,22 @@ const authoritiesNames = Object.keys(authorities)
 
 export async function getAuthoritiesAggregatedEntry (isbn: string) {
   if (offline) return
-  const entries: ResolverEntry[] = await Promise.all(authoritiesNames.map(wrap(isbn)))
+  const maybeEntries = await Promise.all(authoritiesNames.map(wrap(isbn)))
+  const entries = maybeEntries.filter<ResolverEntry>(isNotEmpty)
   return sortAndAggregateEntries(isbn, entries)
 }
 
-const wrap = (isbn: string) => async (name: string) => {
-  try {
-    return await cache_.get({
-      key: `seed:${name}:${isbn}`,
-      fn: () => authorities[name](isbn),
-      ttl: oneMonth,
-    })
-  } catch (err) {
-    logError(err, `${name} entry error`)
+function wrap (isbn: string) {
+  return async function (name: string): Promise<ResolverEntry | void> {
+    try {
+      return await cache_.get({
+        key: `seed:${name}:${isbn}`,
+        fn: () => authorities[name](isbn),
+        ttl: oneMonth,
+      })
+    } catch (err) {
+      logError(err, `${name} entry error`)
+    }
   }
 }
 
