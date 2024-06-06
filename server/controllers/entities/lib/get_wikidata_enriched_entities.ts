@@ -167,17 +167,18 @@ async function formatAndPropagateRedirection (entity) {
   }
 }
 
-interface EmptyWdEntity {
+interface SerializedEmptyWdEntity {
   id: WdEntityId
   uri: WdEntityUri
   type: 'meta' | 'missing'
+  // The following attributes might be set by indexation functions
   _indexationTime?: EpochTimeStamp
   _id?: WdEntityId
   lastrevid?: number
 }
 
 // Keeping just enough data to filter-out while not cluttering the cache
-function formatEmpty (type: 'meta' | 'missing', entity: WdEntity): EmptyWdEntity {
+function formatEmpty (type: 'meta' | 'missing', entity: WdEntity): SerializedEmptyWdEntity {
   return {
     id: entity.id,
     uri: `wd:${entity.id}`,
