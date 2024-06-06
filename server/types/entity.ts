@@ -20,7 +20,8 @@ export type InvEntityUri = `inv:${InvEntityId}`
 export type InvPropertyUri = `invp:P${number}`
 
 export type Isbn = string
-export type NormalizedIsbn = `${number}`
+// In most case `${number}` would be more accurate, but an ISBN can end with X
+export type NormalizedIsbn = string
 export type IsbnEntityUri = `isbn:${NormalizedIsbn}`
 
 export type EntityUriPrefix = 'wd' | 'inv' | 'isbn'
@@ -151,6 +152,10 @@ export interface RedirectFromTo {
   to: EntityUri
 }
 
+export interface LocalImageInfo {
+  url?: EntityImg
+}
+
 export interface SerializedInvEntity extends OverrideProperties<InvEntity, {
   type?: EntityType
   claims: SimplifiedClaims
@@ -159,9 +164,7 @@ export interface SerializedInvEntity extends OverrideProperties<InvEntity, {
   uri: InvEntityUri | IsbnEntityUri
   _meta_type?: 'entity'
   originalLang?: WikimediaLanguageCode
-  image: {
-    url?: EntityImg
-  }
+  image: LocalImageInfo
   redirects?: RedirectFromTo
   descriptions?: DescriptionsFromClaims
   popularity?: number
@@ -198,6 +201,8 @@ export type ExtraWdExpandedClaims = Record<ExtraWdPropertyUri, ({ value: InvSnak
 export type SimplifiedClaimsIncludingWdExtra = SimplifiedClaims & ExtraWdSimplifiedClaims
 export type ExpandedClaimsIncludingWdExtra = ExpandedClaims & ExtraWdExpandedClaims
 
+export type WikimediaImageInfo = ReturnType<typeof getWikimediaThumbnailData>
+
 export interface SerializedWdEntity {
   uri: WdEntityUri
   type?: EntityType
@@ -208,7 +213,7 @@ export interface SerializedWdEntity {
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
   redirects?: WdItem['redirects']
-  image: ReturnType<typeof getWikimediaThumbnailData>
+  image: WikimediaImageInfo | LocalImageInfo
   popularity?: number
   _indexationTime?: EpochTimeStamp
   _id?: WdEntityId
