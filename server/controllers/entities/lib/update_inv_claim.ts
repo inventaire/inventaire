@@ -69,4 +69,4 @@ async function updateClaim (params: UpdateClaimParams) {
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 
-export default retryOnConflict({ updateFn: updateInvClaim })
+export default retryOnConflict(updateInvClaim)

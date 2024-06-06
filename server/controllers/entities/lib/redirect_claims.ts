@@ -6,7 +6,7 @@ import { updateEntityDocClaim } from '#models/entity'
 import type { EntityUri, InvEntityDoc, InvEntityId } from '#server/types/entity'
 import type { UserId } from '#server/types/user'
 
-async function _redirectClaims (userId, fromUri, toUri) {
+async function _redirectClaims (userId: UserId, fromUri: EntityUri, toUri: EntityUri) {
   const results = await getInvClaimsByClaimValue(fromUri)
   const entitiesToEditIds = map(results, 'entity')
   log(entitiesToEditIds, 'entitiesToEditIds')
@@ -20,7 +20,7 @@ async function _redirectClaims (userId, fromUri, toUri) {
 
 type Results = Awaited<ReturnType<typeof getInvClaimsByClaimValue>>
 
-function redirectEntitiesClaims (results: Results, userId: UserId, fromUri: EntityUri, toUri: EntityUri, entities: InvEntityDoc[]) {
+async function redirectEntitiesClaims (results: Results, userId: UserId, fromUri: EntityUri, toUri: EntityUri, entities: InvEntityDoc[]) {
   const entitiesIndex: Record<InvEntityId, InvEntityDoc> = keyBy(entities, '_id')
   const entitiesIndexBeforeUpdate = cloneDeep(entitiesIndex)
 
@@ -35,7 +35,7 @@ function redirectEntitiesClaims (results: Results, userId: UserId, fromUri: Enti
     return putInvEntityUpdate({ userId, currentDoc, updatedDoc, context })
   })
 
-  return Promise.all(updatesPromises)
+  await Promise.all(updatesPromises)
 }
 
 const applyRedirections = (entitiesIndex, fromUri, toUri) => result => {
@@ -54,4 +54,4 @@ const applyRedirections = (entitiesIndex, fromUri, toUri) => result => {
   entitiesIndex[entity] = updateEntityDocClaim(doc, property, fromUri, newVal)
 }
 
-export const redirectClaims = retryOnConflict({ updateFn: _redirectClaims })
+export const redirectClaims = retryOnConflict(_redirectClaims)
