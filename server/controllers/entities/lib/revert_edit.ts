@@ -21,4 +21,4 @@ export async function revertFromPatchId (patchId, userId) {
   return revertFromPatchDoc(patch, userId)
 }
 
-export const revertFromPatchDoc = retryOnConflict({ updateFn: _revertFromPatchDoc })
+export const revertFromPatchDoc = retryOnConflict(_revertFromPatchDoc)

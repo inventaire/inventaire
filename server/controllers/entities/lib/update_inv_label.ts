@@ -13,4 +13,4 @@ async function updateInvLabel (user, id, lang, value) {
   return updateLabel(lang, value, reqUserId, entity)
 }
 
-export default retryOnConflict({ updateFn: updateInvLabel })
+export default retryOnConflict(updateInvLabel)
