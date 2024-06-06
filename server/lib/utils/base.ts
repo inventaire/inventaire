@@ -141,7 +141,9 @@ export function flatMapUniq (collection, key) {
 // Decode first, so that any pre-encoded character isn't re-encoded
 export const encodeURL = url => encodeURI(decodeURI(url))
 
-export const isNotEmpty = value => value != null
+export function isNotEmpty <T> (value: T): value is (Exclude<T, undefined | null | void>) {
+  return value != null
+}
 
 export const normalizeString = str => str.trim().normalize()
 
