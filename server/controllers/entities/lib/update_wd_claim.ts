@@ -1,4 +1,5 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
+import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
@@ -19,7 +20,9 @@ import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
-export default async function (user: User, id: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
+export async function updateWdClaim (user: User, id: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
+  if (isInvPropertyUri(property)) return updateWdEntityLocalClaims(user, id, property, oldValue, newValue)
+
   validateWikidataOAuth(user)
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })

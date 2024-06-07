@@ -157,12 +157,16 @@ function minimizeClaimObject (claim: InvClaimObject) {
 
 export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
-  if (doc.claims != null) {
+  if (doc.claims != null && !isLocalEntityLayer(doc)) {
     validateRequiredPropertiesValues(doc.claims)
   }
   doc.updated = Date.now()
   doc.version++
   return doc
+}
+
+export function isLocalEntityLayer (doc: InvEntity) {
+  return doc.claims['invp:P1']?.[0] != null
 }
 
 // 'from' and 'to' refer to the redirection process which rely on merging

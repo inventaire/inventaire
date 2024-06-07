@@ -1,22 +1,23 @@
 import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getEntityType } from '#controllers/entities/lib/get_entity_type'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { assert_ } from '#lib/utils/assert_types'
-import { updateEntityDocClaim } from '#models/entity'
+import { getFirstClaimValue, isLocalEntityLayer, updateEntityDocClaim } from '#models/entity'
 import type { ExtendedEntityType, InvClaimValue, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
 import type { User, UserId } from '#server/types/user'
 import inferredClaimUpdates from './inferred_claim_updates.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
-async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
+async function _updateInvClaim (user: User, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
   assert_.object(user)
   const { _id: userId, roles } = user
   const userIsAdmin = roles?.includes('admin')
-  let currentDoc
+  let currentDoc: InvEntityDoc
   try {
     currentDoc = await getEntityById(id)
   } catch (err) {
@@ -27,12 +28,19 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
     }
   }
   // Known cases: entities turned into redirections or removed:placeholders
-  if (currentDoc.claims == null) {
+  if (!('claims' in currentDoc) || currentDoc.type !== 'entity') {
     const context = { id, property, oldVal, newVal }
     throw newError('this entity is obsolete', 400, context)
   }
-  const type = getEntityType(currentDoc.claims['wdt:P31'])
-  validateClaimProperty(type, property)
+  let type
+  if (isLocalEntityLayer(currentDoc)) {
+    const remoteUri = getFirstClaimValue(currentDoc.claims, 'invp:P1')
+    const remoteEntity = await getEntityByUri({ uri: remoteUri })
+    type = remoteEntity.type
+  } else {
+    type = getEntityType(currentDoc.claims['wdt:P31'])
+    validateClaimProperty(type, property)
+  }
   const updatedDoc = await updateClaim({ _id: id, type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })
 
   await inferredClaimUpdates(updatedDoc, property, oldVal)
@@ -70,4 +78,4 @@ async function updateClaim (params: UpdateClaimParams) {
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 
-export default retryOnConflict(updateInvClaim)
+export const updateInvClaim = retryOnConflict(_updateInvClaim)
