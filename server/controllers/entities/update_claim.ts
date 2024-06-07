@@ -3,8 +3,8 @@ import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
 import { log } from '#lib/utils/logs'
 // TODO: accept ISBN URIs
-import inv from './lib/update_inv_claim.js'
-import wd from './lib/update_wd_claim.js'
+import { updateInvClaim } from './lib/update_inv_claim.js'
+import { updateWdClaim } from './lib/update_wd_claim.js'
 
 const sanitization = {
   id: { optional: true },
@@ -42,8 +42,8 @@ async function controller (params, req) {
 const parseEmptyValue = value => value === '' ? null : value
 
 const updaters = {
-  inv,
-  wd,
+  inv: updateInvClaim,
+  wd: updateWdClaim,
 }
 
 export default { sanitization, controller }

@@ -44,7 +44,7 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: Reque
 export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
   assert_.string(method)
   assert_.string(endpoint)
-  const url = (endpoint.startsWith(host) ? endpoint : host + endpoint) as Url
+  const url = (endpoint.startsWith('/') ? host + endpoint : endpoint) as Url
   const options: ReqOptions = {
     headers: { cookie },
     redirect: 'error',

@@ -1,7 +1,8 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
-import { isString, map, sampleSize } from 'lodash-es'
+import { map, sampleSize } from 'lodash-es'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
+import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
@@ -17,6 +18,10 @@ import type { WikimediaLanguageCode } from 'wikibase-sdk'
 const wdIdByWmLanguageCode = requireJson('wikidata-lang/mappings/wd_id_by_wm_code.json')
 
 export const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+
+export function someRandomImageHash () {
+  return sha1(Math.random().toString())
+}
 
 interface CreateEntityOptions {
   canHaveLabels?: boolean
