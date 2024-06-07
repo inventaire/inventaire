@@ -2,6 +2,7 @@ import { isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { objectKeys, typeOf } from '#lib/utils/types'
 import type { PropertyUri } from '#server/types/entity'
+import type { InvClaimValue } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties_values_constraints.js'
 
 const allowlist = objectKeys(properties)
@@ -18,6 +19,6 @@ export function validateProperty (property): asserts property is keyof typeof pr
   }
 }
 
-export function validateValueType (property: PropertyUri, value: unknown) {
+export function validateValueType (property: PropertyUri, value: InvClaimValue) {
   return typeOf(value) === properties[property].primitiveType
 }
