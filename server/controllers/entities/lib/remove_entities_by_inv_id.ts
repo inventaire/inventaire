@@ -3,7 +3,7 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
-import updateInvClaim from './update_inv_claim.js'
+import { updateInvClaim } from './update_inv_claim.js'
 
 export default (user, uris) => {
   const reqUserId = user._id

@@ -160,7 +160,9 @@ export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
   if (doc.claims != null) {
     removeEmptyClaimArrays(doc.claims)
-    validateRequiredPropertiesValues(doc.claims)
+    if (!isLocalEntityLayer(doc)) {
+      validateRequiredPropertiesValues(doc.claims)
+    }
   }
   doc.updated = Date.now()
   doc.version++
@@ -171,6 +173,10 @@ function removeEmptyClaimArrays (claims: Claims) {
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
     if (propertyClaims.length === 0) delete claims[property]
   }
+}
+
+export function isLocalEntityLayer (doc: InvEntity) {
+  return doc.claims['invp:P1']?.[0] != null
 }
 
 // 'from' and 'to' refer to the redirection process which rely on merging

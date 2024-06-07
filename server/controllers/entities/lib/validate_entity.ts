@@ -3,6 +3,7 @@ import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/b
 import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
+import { isLocalEntityLayer } from '#models/entity'
 import { getEntityType } from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
 import validateAndFormatClaims from './validate_and_format_claims.js'
@@ -16,6 +17,8 @@ export default entity => {
 }
 
 async function validate (entity) {
+  if (isLocalEntityLayer(entity)) return
+
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
