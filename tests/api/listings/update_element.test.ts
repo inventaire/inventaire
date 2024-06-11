@@ -74,6 +74,19 @@ describe('element:update:ordinal', () => {
     }
   })
 
+  it('should update element ordinal to the last position when resquested ordinal is above listing elements size', async () => {
+    const elementsLength = 4
+    const { listing } = await createListingWithElements(null, elementsLength)
+    const { elements } = listing
+    const element = elements[0]
+    await authReq('post', endpoint, {
+      id: element._id,
+      ordinal: elementsLength + 2,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[elementsLength - 1]._id.should.equal(element._id)
+  })
+
   it('should update ordinal and return updated element', async () => {
     const { listing } = await createListingWithElements()
     const { elements } = listing
