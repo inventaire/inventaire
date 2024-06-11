@@ -3,7 +3,7 @@ import {
   createWorkWithAuthor,
 } from '#tests/api/fixtures/entities'
 import { getByUris } from '#tests/api/utils/entities'
-import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils'
+import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const workWithAuthorPromise = createWorkWithAuthor()
 

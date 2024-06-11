@@ -1,6 +1,6 @@
 import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { getByUri, updateLabel } from '../utils/entities.js'
 import { authReq } from '../utils/utils.js'

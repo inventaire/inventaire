@@ -7,7 +7,7 @@ import { mergeEntitiesDocs } from '#models/entity'
 import type { EntityUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import turnIntoRedirection from './turn_into_redirection.js'
 
 export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) => {

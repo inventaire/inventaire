@@ -1,7 +1,7 @@
 import { createWork } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { getListingById } from '#tests/api/utils/listings'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { merge } from '../utils/entities.js'
 import { publicReq, getUserB } from '../utils/utils.js'
 

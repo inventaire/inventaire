@@ -3,7 +3,7 @@ import { getFollowActivitiesByObject } from '#controllers/activitypub/lib/activi
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser } from '../fixtures/users.js'

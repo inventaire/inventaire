@@ -111,7 +111,7 @@ export function forceArray (keys) {
 
 // Iterates on an object, with the passed function: fn(key, value)
 // Expected returned value: [ newKey, newValue ]
-export function mapKeysValues (obj, fn) {
+export function mapKeysValues <T> (obj: T, fn: ((key: keyof T, value: T[keyof T]) => [ string, unknown ])) {
   return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
 }
 
@@ -174,12 +174,18 @@ export function arrayIncludes (array: readonly (string | number)[], value: strin
   return array.some(element => element === value)
 }
 
-export const objectEntries = obj => Object.entries(obj) as ObjectEntries<typeof obj>
+export function objectEntries <Obj> (obj: Obj) {
+  return Object.entries(obj) as ObjectEntries<Obj>
+}
+
+export function objectValues <Obj> (obj: Obj) {
+  return Object.values(obj) as Obj[keyof Obj][]
+}
 
 /** Returns a new object with keys and values inverted */
 export function invert (obj: Record<string | number, string | number>) {
   const invertedObj = {}
-  for (const [ key, value ] of Object.entries(obj) as ObjectEntries<typeof obj>) {
+  for (const [ key, value ] of objectEntries(obj)) {
     invertedObj[value] = key
   }
   return invertedObj

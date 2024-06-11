@@ -2,7 +2,7 @@ import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { EntityUri } from '#types/entity'
 import addRelatives from './lib/add_relatives.js'
-import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
+import { getPossiblyExpandedEntitiesByUris } from './lib/get_entities_by_uris.js'
 import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -14,6 +14,7 @@ const sanitization = {
       'labels',
       'descriptions',
       'claims',
+      'references',
       'sitelinks',
       'image',
       'popularity',
@@ -50,7 +51,8 @@ export interface GetEntitiesParams {
 }
 
 async function controller ({ uris, attributes, lang, refresh, relatives, autocreate }: GetEntitiesParams) {
-  let results = await getEntitiesByUris({ uris, refresh, autocreate })
+  const includeReferences = attributes?.includes('references')
+  let results = await getPossiblyExpandedEntitiesByUris({ uris, refresh, autocreate, includeReferences })
   if (relatives) results = await addRelatives(results, relatives, refresh)
   if (attributes) {
     results.entities = pickAttributes(results.entities, attributes)

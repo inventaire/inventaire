@@ -14,7 +14,7 @@ import { forceArray } from '#lib/utils/base'
 import config from '#server/config'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const resolveAndUpdate = entries => {
   entries = forceArray(entries)

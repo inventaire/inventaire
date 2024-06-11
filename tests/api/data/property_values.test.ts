@@ -1,5 +1,5 @@
 import 'should'
-import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { allowedValuesPerTypePerProperty } from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
 import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=property-values'

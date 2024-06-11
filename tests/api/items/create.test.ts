@@ -3,7 +3,7 @@ import { createGroup } from '#fixtures/groups'
 import { wait } from '#lib/promises'
 import config from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import {
   createEditionWithIsbn,
   createEdition,

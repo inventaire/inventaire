@@ -1,11 +1,13 @@
 import should from 'should'
+import { objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import type { ExpandedSerializedEntity } from '#server/types/entity'
 import {
   createEditionWithWorkAuthorAndSerie,
   createWorkWithAuthor,
   createWorkWithSpecificRoleAuthor,
 } from '#tests/api/fixtures/entities'
-import { getEntitiesAttributesByUris } from '#tests/api/utils/entities'
+import { getEntitiesAttributesByUris, getEntityAttributesByUri } from '#tests/api/utils/entities'
 import { publicReq } from '#tests/api/utils/utils'
 
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -36,12 +38,12 @@ describe('entities:get:by-uris:attributes', () => {
 
   it('should get relatives attributes', async () => {
     const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
-    let entities = await getEntitiesAttributesByUris({
+    const entitiesByUris = await getEntitiesAttributesByUris({
       uris: editionUri,
       attributes: [ 'info', 'labels' ],
       relatives: [ 'wdt:P50', 'wdt:P179', 'wdt:P629' ],
     })
-    entities = Object.values(entities)
+    const entities = Object.values(entitiesByUris)
     const edition = entities.find(entity => entity.type === 'edition')
     const work = entities.find(entity => entity.type === 'work')
     const serie = entities.find(entity => entity.type === 'serie')
@@ -90,5 +92,22 @@ describe('entities:get:by-uris:attributes', () => {
     const { entities } = await publicReq('get', url)
     entities[work.uri].should.be.ok()
     entities[human.uri].should.be.ok()
+  })
+
+  it('should get expanded claims when requesting references', async () => {
+    const { uri: editionUri } = await createEditionWithWorkAuthorAndSerie()
+    const entity = await getEntityAttributesByUri({
+      uri: editionUri,
+      attributes: [ 'labels', 'claims', 'references' ],
+    }) as ExpandedSerializedEntity
+    entity.labels.fromclaims.should.be.a.String()
+    const allPropertyClaims = objectValues(entity.claims)
+    allPropertyClaims.length.should.be.above(3)
+    for (const propertyClaims of objectValues(entity.claims)) {
+      for (const claim of propertyClaims) {
+        claim.should.be.an.Object()
+        claim.value.should.be.ok()
+      }
+    }
   })
 })

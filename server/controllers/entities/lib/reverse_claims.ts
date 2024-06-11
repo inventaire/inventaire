@@ -12,8 +12,9 @@ import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
+import type { WdPropertyUri } from '#server/types/entity'
 import type { Url } from '#types/common'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
 const { getReverseClaims } = wdk
@@ -64,7 +65,7 @@ export async function reverseClaims (params) {
   })
 }
 
-function requestWikidataReverseClaims (property, value, refresh, dry) {
+function requestWikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
   if (isEntityUri(value)) {
     const [ prefix, id ] = value.split(':')
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
@@ -74,10 +75,10 @@ function requestWikidataReverseClaims (property, value, refresh, dry) {
   }
 }
 
-async function wikidataReverseClaims (property, value, refresh, dry) {
+async function wikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
   const type = typeTailoredQuery[property]
   if (type != null) {
-    const pid = property.split(':')[1]
+    const pid = unprefixify(property)
     const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value, refresh, dry })
     return results.map(prefixifyWd)
   } else {
@@ -85,13 +86,13 @@ async function wikidataReverseClaims (property, value, refresh, dry) {
   }
 }
 
-function generalWikidataReverseClaims (property, value, refresh, dry) {
+function generalWikidataReverseClaims (property: WdPropertyUri, value, refresh, dry) {
   const key = `wd:reverse-claim:${property}:${value}`
   const fn = _wikidataReverseClaims.bind(null, property, value)
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
 
-async function _wikidataReverseClaims (property, value) {
+async function _wikidataReverseClaims (property: WdPropertyUri, value) {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   log([ property, value ], 'reverse claim')
@@ -101,7 +102,7 @@ async function _wikidataReverseClaims (property, value) {
   .map(wdId => prefixifyWd(wdId))
 }
 
-async function invReverseClaims (property, value) {
+async function invReverseClaims (property: WdPropertyUri, value) {
   try {
     const entities = await getInvEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
@@ -151,7 +152,7 @@ const typeTailoredQuery = {
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
 
-async function getReverseClaimsFromCachedRelations (property, value) {
+async function getReverseClaimsFromCachedRelations (property: WdPropertyUri, value) {
   if (getPropertyDatatype(property) === 'entity') {
     return getCachedRelations({
       valueUri: value,

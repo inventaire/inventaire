@@ -2,6 +2,7 @@ import { simplifySparqlResults } from 'wikibase-sdk'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { setEditionContributors } from '#data/bnf/helpers'
 import { formatAuthorName } from '#data/commons/format_author_name'
+import { addClaimsReferences } from '#data/lib/add_claims_references'
 import { buildEntryFromFormattedRows } from '#data/lib/build_entry_from_formatted_rows'
 import { parseSameasMatches } from '#data/lib/external_ids'
 import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
@@ -10,7 +11,7 @@ import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl, Url } from '#types/common'
 import type { ExternalDatabaseEntryRow } from '#types/resolver'
 
 const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2_code.json')
@@ -20,10 +21,10 @@ const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_6
 const timeout = 10000
 
 const headers = { accept: '*/*' }
-const base = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
+const base: AbsoluteUrl = `https://data.bnf.fr/sparql?default-graph-uri=&format=json&timeout=${timeout}&query=`
 
-export default async function (isbn) {
-  const url = base + getQuery(isbn) as Url
+export default async function (isbn: string) {
+  const url: AbsoluteUrl = `${base}${getQuery(isbn)}`
   const response = await requests_.get(url, { headers, timeout })
   const simplifiedResults = simplifySparqlResults(response)
   const { bindings: rawResults } = response.results
@@ -33,6 +34,7 @@ export default async function (isbn) {
   const entry = buildEntryFromFormattedRows(rows, getSourceId)
   await setEditionPublisherClaim(entry)
   await addImage(entry)
+  addClaimsReferences(entry, 'wdt:P268')
   return entry
 }
 

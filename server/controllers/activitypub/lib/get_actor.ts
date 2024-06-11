@@ -64,7 +64,7 @@ async function getEntityActor (name) {
   }
   const attachments: Attachement[] = await buildAttachements(entity)
   let summary
-  if ('descriptions' in entity) {
+  if ('descriptions' in entity && 'en' in entity.descriptions) {
     summary = entity.descriptions.en
   }
   return buildActorObject({

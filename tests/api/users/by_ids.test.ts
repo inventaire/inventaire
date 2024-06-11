@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { getTwoFriends } from '../fixtures/users.js'
 import { deleteUser } from '../utils/users.js'
 import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'

@@ -1,4 +1,4 @@
-export default {
+export const allowedValuesPerTypePerProperty = {
   'wdt:P31': {
     collections: [
       'wd:Q20655472', // editorial collection
@@ -44,4 +44,4 @@ export default {
       'wd:Q106833', // audiobook
     ],
   },
-}
+} as const

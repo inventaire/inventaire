@@ -1,11 +1,17 @@
 import { BasicUpdater } from '#lib/doc_updates'
+import type { UnknownDocumentViewResponse } from '#server/types/couchdb'
 
-const mapResult = (res, type) => res.rows.map(row => row[type])
+export function mapDoc <R extends UnknownDocumentViewResponse> (res: R) {
+  return res.rows.map(row => row.doc)
+}
 
-export const mapDoc = res => mapResult(res, 'doc')
-export const mapValue = res => res.rows.map(row => row.value)
+export function mapValue <R extends UnknownDocumentViewResponse> (res: R) {
+  return res.rows.map(row => row.value)
+}
 
-export const firstDoc = docs => docs != null ? docs[0] : null
+export function firstDoc (docs) {
+  return docs != null ? docs[0] : null
+}
 
 export function joinOrderedIds (idA, idB) {
   if (idA < idB) return `${idA}:${idB}`
@@ -19,7 +25,9 @@ export function ignoreNotFound (err) {
 // See "The three ways to remove a document from CouchDB" http://n.exts.ch/2012/11/baleting
 export const setDeletedTrue = BasicUpdater('_deleted', true)
 
-export const setDocsDeletedTrue = docs => docs.map(setDeletedTrue)
+export function setDocsDeletedTrue (docs) {
+  return docs.map(setDeletedTrue)
+}
 
 export const minKey = null
 

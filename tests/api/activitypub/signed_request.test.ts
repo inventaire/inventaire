@@ -3,7 +3,7 @@ import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { sign } from '#controllers/activitypub/lib/security'
 import { generateRsaKeyPair } from '#lib/crypto'
 import config from '#server/config'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createUsername, createUser } from '../fixtures/users.js'
 import {
   signedReq,

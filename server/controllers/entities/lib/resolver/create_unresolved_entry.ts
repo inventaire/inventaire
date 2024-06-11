@@ -1,6 +1,10 @@
+import type { ResolverBatchParams } from '#controllers/entities/lib/resolver/resolve_update_and_create'
+import type { BatchId } from '#server/types/patch'
+import type { EntitySeed, SanitizedResolverEntry } from '#server/types/resolver'
+import type { UserId } from '#server/types/user'
 import { createEdition, createWork, createAuthor } from './create_entity_from_seed.js'
 
-export async function createUnresolvedEntry (entry, { reqUserId, batchId, enrich }) {
+export async function createUnresolvedEntry (entry: SanitizedResolverEntry, { reqUserId, batchId, enrich }: ResolverBatchParams) {
   const { edition, works, authors } = entry
 
   // If the edition has been resolved but not its associated works
@@ -20,16 +24,16 @@ export async function createUnresolvedEntry (entry, { reqUserId, batchId, enrich
   return entry
 }
 
-function createAuthors (entry, reqUserId, batchId) {
+function createAuthors (entry: SanitizedResolverEntry, reqUserId: UserId, batchId: BatchId) {
   const { authors } = entry
   return Promise.all(authors.map(createAuthor(reqUserId, batchId)))
 }
 
-function createWorks (entry, reqUserId, batchId) {
+function createWorks (entry: SanitizedResolverEntry, reqUserId: UserId, batchId: BatchId) {
   const { works, authors } = entry
   return Promise.all(works.map(createWork(reqUserId, batchId, authors)))
 }
 
-function addNotCreatedFlag (seed) {
+function addNotCreatedFlag (seed: EntitySeed) {
   seed.created = false
 }
