@@ -64,7 +64,7 @@ describe('element:update:ordinal', () => {
     try {
       await authReq('post', endpoint, {
         id: element._id,
-        ordinal: 0,
+        ordinal: 1,
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -93,7 +93,7 @@ describe('element:update:ordinal', () => {
     const [ elementA, elementB, elementC ] = elements
     const updatedElement = await authReq('post', endpoint, {
       id: elementC._id,
-      ordinal: 1,
+      ordinal: 2,
     })
     const updatedOrdinal = '1V'
     updatedElement.ordinal.should.equal(updatedOrdinal)
@@ -109,7 +109,7 @@ describe('element:update:ordinal', () => {
     const [ elementA, elementB ] = elements
     await authReq('post', endpoint, {
       id: elementA._id,
-      ordinal: 1,
+      ordinal: 2,
     })
     const res = await getByIdWithElements({ id: listing._id })
     res.elements[0]._id.should.equal(elementB._id)
@@ -122,7 +122,7 @@ describe('element:update:ordinal', () => {
     const [ elementA, elementB, elementC ] = elements
     await authReq('post', endpoint, {
       id: elementC._id,
-      ordinal: 1,
+      ordinal: 2,
     })
     const res = await getByIdWithElements({ id: listing._id })
     res.elements[0]._id.should.equal(elementA._id)
@@ -136,7 +136,7 @@ describe('element:update:ordinal', () => {
     const [ elementA, elementB, elementC ] = elements
     await authReq('post', endpoint, {
       id: elementC._id,
-      ordinal: 0,
+      ordinal: 1,
     })
     const res = await getByIdWithElements({ id: listing._id })
     res.elements[0]._id.should.equal(elementC._id)
@@ -152,7 +152,7 @@ describe('element:update:ordinal', () => {
     const element19 = elements[18]
     await authReq('post', endpoint, {
       id: element1._id,
-      ordinal: 17,
+      ordinal: 18,
     })
     const res = await getByIdWithElements({ id: listing._id })
     const updatedElement = res.elements.find(element => element._id === element1._id)
