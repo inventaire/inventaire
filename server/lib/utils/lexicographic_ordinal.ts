@@ -2,7 +2,12 @@ import { maxBy } from 'lodash-es'
 import { characters, findOrdinalBetween } from '#lib/find_ordinal'
 import type { ListingElement } from '#types/element'
 
-export function findNewOrdinal (element, list, newOrdinal) {
+export function findNewOrdinal (element, list, inclusiveOrdinal) {
+  // Format from a more human readable "inclusive" order (starting by 1, 2, 3)
+  // to more bot readable "exclusive" order (starting by 0, 1, 2)
+  // see http://kilby.stanford.edu/~rvg/ordinal.html
+  let newOrdinal = inclusiveOrdinal - 1
+
   // Place element in last position if newOrdinal is too high
   if (list.length < newOrdinal) newOrdinal = list.length - 1
   if (list[newOrdinal]._id === element._id) return
