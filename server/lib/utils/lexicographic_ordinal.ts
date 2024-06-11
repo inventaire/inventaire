@@ -3,6 +3,8 @@ import { characters, findOrdinalBetween } from '#lib/find_ordinal'
 import type { ListingElement } from '#types/element'
 
 export function findNewOrdinal (element, list, newOrdinal) {
+  // Place element in last position if newOrdinal is too high
+  if (list.length < newOrdinal) newOrdinal = list.length - 1
   if (list[newOrdinal]._id === element._id) return
   removeElementIfNecessary(element, list, newOrdinal)
   return findNewLexicographicOrdinal(newOrdinal, list)
@@ -27,7 +29,13 @@ function findNewLexicographicOrdinal (newOrdinal, currentElements) {
     precedentElementIndex = newOrdinal - 1
     beforeOrdinal = currentElements[precedentElementIndex].ordinal
   }
-  const afterOrdinal = currentElements[newOrdinal].ordinal
+  const afterElement = currentElements[newOrdinal]
+  let afterOrdinal
+  if (!afterElement) {
+    afterOrdinal = nextHighestOrdinal(currentElements)
+  } else {
+    afterOrdinal = afterElement.ordinal
+  }
   const lexicographicOrdinal = findOrdinalBetween(beforeOrdinal, afterOrdinal)
   if (currentElements[precedentElementIndex].ordinal !== lexicographicOrdinal) {
     return lexicographicOrdinal
