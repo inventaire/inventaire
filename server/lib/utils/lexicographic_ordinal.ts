@@ -6,7 +6,7 @@ export function findNewOrdinal (element, list, inclusiveOrdinal) {
   // Format from a more human readable "inclusive" order (starting by 1, 2, 3)
   // to more bot readable "exclusive" order (starting by 0, 1, 2)
   // see http://kilby.stanford.edu/~rvg/ordinal.html
-  const newOrdinal = inclusiveOrdinal - 1
+  let newOrdinal = inclusiveOrdinal - 1
 
   // Place element in last position if newOrdinal is too high
   if (list.length < newOrdinal) newOrdinal = list.length - 1
