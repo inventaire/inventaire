@@ -1,4 +1,4 @@
-import { groupBy, map, pick, difference } from 'lodash-es'
+import { groupBy, map, pick, difference, sortBy } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { createListingElements, deleteListingsElements, getElementsByListing, getElementsByListings } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
@@ -115,5 +115,6 @@ export async function assignElementsToListings (listings) {
 }
 
 const assignElementsToListing = (elementsByListing: ElementsByListing) => listing => {
-  listing.elements = elementsByListing[listing._id] || []
+  const sortedElements = sortBy(elementsByListing[listing._id], 'ordinal')
+  listing.elements = sortedElements || []
 }
