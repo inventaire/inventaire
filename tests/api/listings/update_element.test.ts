@@ -74,7 +74,7 @@ describe('element:update:ordinal', () => {
     }
   })
 
-  it('should update element ordinal to the last position when resquested ordinal is above listing elements size', async () => {
+  it('should update element ordinal to the last position when requested ordinal is above listing elements size', async () => {
     const elementsLength = 4
     const { listing } = await createListingWithElements(null, elementsLength)
     const { elements } = listing
@@ -114,6 +114,25 @@ describe('element:update:ordinal', () => {
     const res = await getByIdWithElements({ id: listing._id })
     res.elements[0]._id.should.equal(elementB._id)
     res.elements[1]._id.should.equal(elementA._id)
+  })
+
+  it('should move element down then precedent element down again', async () => {
+    const { listing } = await createListingWithElements(null, 2)
+    const { elements } = listing
+    const [ elementA, elementB ] = elements
+    await authReq('post', endpoint, {
+      id: elementA._id,
+      ordinal: 2,
+    })
+    await getByIdWithElements({ id: listing._id })
+    await wait(10)
+    await authReq('post', endpoint, {
+      id: elementB._id,
+      ordinal: 2,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(elementA._id)
+    res.elements[1]._id.should.equal(elementB._id)
   })
 
   it('should move element up', async () => {
