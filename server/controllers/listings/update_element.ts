@@ -1,6 +1,6 @@
 import { pick } from 'lodash-es'
 import { getElementById, updateElementDocAttributes } from '#controllers/listings/lib/elements'
-import { getListingById, getListingsByIdsWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { getListingById, getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
 import { notFoundError } from '#lib/error/error'
 import { attributes } from '#models/element'
 import type { ListingElement } from '#types/element'
@@ -21,7 +21,7 @@ const controller = async params => {
   let listing: Listing
   let elements: ListingElement[]
   if (ordinal != null) {
-    const [ listingWithElements ] = await getListingsByIdsWithElements([ element.list ])
+    const listingWithElements = await getListingWithElements(element.list)
     validateListingOwnership(reqUserId, listingWithElements)
     ;({ elements } = listingWithElements)
   } else {
