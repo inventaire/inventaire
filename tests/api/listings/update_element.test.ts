@@ -95,7 +95,7 @@ describe('element:update:ordinal', () => {
       id: elementC._id,
       ordinal: 2,
     })
-    const updatedOrdinal = '1V'
+    const updatedOrdinal = '1i'
     updatedElement.ordinal.should.equal(updatedOrdinal)
     const { elements: updatedElements } = await getByIdWithElements({ id: listing._id })
     updatedElements[0].ordinal.should.equal(elementA.ordinal)
