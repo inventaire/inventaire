@@ -4,7 +4,7 @@ import 'should'
 
 const validDocId = '12345678900987654321123456789012'
 const validUri = 'inv:12345678900987654321123456789012'
-const validOrdinal = 0
+const validOrdinal = '1'
 
 const validListing = {
   uri: validUri,
