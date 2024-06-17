@@ -22,8 +22,8 @@ describe('findOrdinalBetween', () => {
   it('should find an ordinal between two random ordinals', () => {
     let i = 0
     while (i++ < 100) {
-      let ordinalA = getRandomString(10).replace(/[_]]g/, '')
-      let ordinalB = getRandomString(10).replace(/[_]]g/, '')
+      let ordinalA = getRandomString(10).replace(/[_]]g/, '').toLowerCase()
+      let ordinalB = getRandomString(10).replace(/[_]]g/, '').toLowerCase()
       if (ordinalA > ordinalB) [ ordinalA, ordinalB ] = [ ordinalB, ordinalA ]
       const ordinalC = findOrdinalBetween(ordinalA, ordinalB)
       should(ordinalC > ordinalA).be.true()
