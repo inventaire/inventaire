@@ -1,6 +1,7 @@
 import { getInvClaimsByClaimValue } from '#controllers/entities/lib/entities'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { newError } from '#lib/error/error'
+import { info } from '#lib/utils/logs'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { prefixifyInv } from './prefix.js'
 
@@ -51,6 +52,7 @@ async function getAllUris (uris) {
 async function entityIsntUsedByAnyItem (uri) {
   const items = await getItemsByEntity(uri)
   if (items.length > 0) {
+    info({ uri, items }, 'items blocking an entity deletion')
     throw newError("entities that are used by an item can't be removed", 403, { uri })
   }
 }
