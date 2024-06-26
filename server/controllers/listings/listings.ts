@@ -1,6 +1,7 @@
 import ActionsControllers from '#lib/actions_controllers'
 import addElements from './add_elements.js'
 import byCreators from './by_creators.js'
+import byElementId from './by_element_id.js'
 import byEntities from './by_entities.js'
 import byId from './by_id.js'
 import byIds from './by_ids.js'
@@ -14,6 +15,7 @@ export default {
   get: ActionsControllers({
     public: {
       'by-id': byId,
+      'by-element-id': byElementId,
       'by-ids': byIds,
       'by-entities': byEntities,
       'by-creators': byCreators,
