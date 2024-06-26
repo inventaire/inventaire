@@ -46,6 +46,7 @@ export function updateListingDocAttributes (oldListing, newAttributes, creatorId
   if (isEqual(updatedListing, oldListing)) {
     throw newError('nothing to update', 400, newAttributes)
   }
+
   updatedListing.updated = Date.now()
   return updatedListing
 }

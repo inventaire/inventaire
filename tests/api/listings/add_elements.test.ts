@@ -54,8 +54,13 @@ describe('listings:add-elements', () => {
       id: listing._id,
       uris: [ uri ],
     })
+    const { uri: uri2 } = await createEdition()
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: [ uri2 ],
+    })
     const updatedListing = await getByIdWithElements({ id: listing._id })
-    updatedListing.elements[0].uri.should.equal(uri)
+    updatedListing.elements[1].ordinal.should.equal('2')
   })
 
   it('should not add twice an element already in listing', async () => {
