@@ -1,5 +1,5 @@
 import { map, uniq } from 'lodash-es'
-import { createEdition, someFakeUri, createHuman } from '#fixtures/entities'
+import { createEdition, someFakeUri, createHuman, createSerie} from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
@@ -131,5 +131,16 @@ describe('listings:add-elements', () => {
     })
     const updatedListing = await getByIdWithElements({ id: listing._id })
     updatedListing.elements.length.should.equal(0)
+  })
+
+  it('should add a serie to a work listing', async () => {
+    const { listing } = await createListing()
+    const { uri } = await createSerie()
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: [ uri ],
+    })
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements.length.should.equal(1)
   })
 })
