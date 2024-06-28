@@ -1,7 +1,10 @@
 import { createListing } from '#controllers/listings/lib/listings'
 import { checkSpamContent } from '#controllers/user/lib/spam'
+import listingAttributes from '#models/attributes/listing'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq } from '#types/server'
+
+const { type: listingTypes } = listingAttributes
 
 const sanitization = {
   name: {},
@@ -11,7 +14,7 @@ const sanitization = {
     default: [],
   },
   type: {
-    allowlist: [ 'work' ],
+    allowlist: listingTypes,
     optional: true,
     default: 'work',
   },
@@ -24,12 +27,13 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
 }
 
 function formatNewListing (params) {
-  const { name, description, visibility, reqUserId: creator } = params
+  const { name, description, visibility, type, reqUserId: creator } = params
   const listingData = {
     name,
     description,
     visibility,
     creator,
+    type,
   }
   return createListing(listingData)
 }
