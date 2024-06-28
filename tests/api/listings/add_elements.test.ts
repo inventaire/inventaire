@@ -1,5 +1,5 @@
 import { map, uniq } from 'lodash-es'
-import { createEdition, someFakeUri } from '#fixtures/entities'
+import { createEdition, someFakeUri, createHuman } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
@@ -32,7 +32,7 @@ describe('listings:add-elements', () => {
     }
   })
 
-  it('should reject creating an element with an unknown entity', async () => {
+  it('should reject adding an element with an unknown entity', async () => {
     const { listing } = await createListing()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
@@ -114,5 +114,22 @@ describe('listings:add-elements', () => {
     const { elements } = await getByIdWithElements({ id: listing._id })
     const ordinals = map(elements, 'ordinal')
     uniq(ordinals).length.should.equal(uris.length)
+  })
+
+  it('should reject adding an element with a different entity type', async () => {
+    const { listing } = await createListing()
+    listing.type.should.equal('work')
+    const { uri } = await createHuman()
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: [ uri ],
+    })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(403)
+      err.body.status_verbose.should.startWith('cannot add this entity type to this list')
+    })
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements.length.should.equal(0)
   })
 })

@@ -52,7 +52,7 @@ export const bulkDeleteListings = db.bulkDelete
 export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri[], userId: UserId }) {
   const currentElements = listing.elements || []
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
-  await validateExistingEntities(notFoundUris)
+  await validateEntitiesCanBeAdded(notFoundUris, listing.type)
   const { docs: createdElements } = await createListingElements({ uris: notFoundUris, listing, userId })
   const res = { ok: true, createdElements }
   if (isNonEmptyArray(foundElements)) {
@@ -100,8 +100,13 @@ export async function deleteUserListingsAndElements (userId: UserId) {
   ])
 }
 
-async function validateExistingEntities (uris: EntityUri[]) {
-  const { notFound } = await getEntitiesByUris({ uris })
+async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType) {
+  const { notFound, entities } = await getEntitiesByUris({ uris })
+  const wrongTypeEntity = Object.values(entities).find(entity => entity.type !== listingType)
+  if (wrongTypeEntity !== undefined) {
+    const { uri, type } = wrongTypeEntity
+    throw newError('cannot add this entity type to this list', 403, { listingType, entityType: type, uri })
+  }
   if (isNonEmptyArray(notFound)) {
     throw newError('entities not found', 403, { uris: notFound })
   }
