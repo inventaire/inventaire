@@ -10,8 +10,10 @@ export default {
     'creator',
     'type',
   ]),
-  type: [ 'work', 'serie' ],
+  type: [ 'work', 'author', 'publisher' ],
   entityTypesByListingType: {
     work: [ 'work', 'serie' ],
+    author: [ 'human' ],
+    publisher: [ 'publisher' ],
   },
 }

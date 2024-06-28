@@ -76,5 +76,13 @@ describe('listings:create', () => {
       const { list: listing } = await authReq('post', endpoint, { name: listingName() })
       listing.type.should.equal('work')
     })
+
+    it('should create listing with author type', async () => {
+      const { list: listing } = await authReq('post', endpoint, {
+        name: listingName(),
+        type: 'author',
+      })
+      listing.type.should.equal('author')
+    })
   })
 })
