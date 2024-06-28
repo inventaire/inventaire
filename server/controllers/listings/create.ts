@@ -10,6 +10,11 @@ const sanitization = {
     optional: true,
     default: [],
   },
+  type: {
+    allowlist: [ 'work' ],
+    optional: true,
+    default: 'work',
+  },
 }
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
