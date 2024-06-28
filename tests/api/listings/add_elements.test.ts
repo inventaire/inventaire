@@ -1,4 +1,4 @@
-import { createHuman } from '#fixtures/entities'
+import { createHuman, createSerie } from '#fixtures/entities'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
@@ -110,5 +110,16 @@ describe('listings:add-elements', () => {
     })
     const updatedListing = await getByIdWithElements({ id: listing._id })
     updatedListing.elements.length.should.equal(0)
+  })
+
+  it('should add a serie to a work listing', async () => {
+    const { listing } = await createListing()
+    const { uri } = await createSerie()
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: [ uri ],
+    })
+    const updatedListing = await getByIdWithElements({ id: listing._id })
+    updatedListing.elements.length.should.equal(1)
   })
 })
