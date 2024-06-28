@@ -7,6 +7,7 @@ export type ListingId = CouchUuid
 
 export interface Listing extends CouchDoc {
   _id: ListingId
+  type: string
   name: string
   description?: string
   creator: UserId

@@ -1,4 +1,7 @@
 import { createListing } from '#controllers/listings/lib/listings'
+import listingAttributes from '#models/attributes/listing'
+
+const { type: listingTypes } = listingAttributes
 
 const sanitization = {
   name: {},
@@ -6,6 +9,9 @@ const sanitization = {
   visibility: {
     optional: true,
     default: [],
+  },
+  type: {
+    allowlist: listingTypes,
   },
 }
 
@@ -15,12 +21,13 @@ async function controller (params) {
 }
 
 function formatNewListing (params) {
-  const { name, description, visibility, reqUserId: creator } = params
+  const { name, description, visibility, type, reqUserId: creator } = params
   const listingData = {
     name,
     description,
     visibility,
     creator,
+    type,
   }
   return createListing(listingData)
 }
