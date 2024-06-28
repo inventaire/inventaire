@@ -14,7 +14,7 @@ import type { EntityUri } from '#types/entity'
 import type { Listing, ListingId, ListingWithElements } from '#types/listing'
 import type { UserId } from '#types/user'
 
-const { updatable: updateAttributes } = listingAttributes
+const { updatable: updateAttributes, entityTypesByListingType } = listingAttributes
 
 const db = await dbFactory('lists')
 
@@ -102,7 +102,10 @@ export async function deleteUserListingsAndElements (userId: UserId) {
 
 async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType) {
   const { notFound, entities } = await getEntitiesByUris({ uris })
-  const wrongTypeEntity = Object.values(entities).find(entity => entity.type !== listingType)
+  const allowlistedEntityTypes = entityTypesByListingType[listingType]
+  const wrongTypeEntity = Object.values(entities).find(entity => {
+    return !allowlistedEntityTypes.includes(entity.type)
+  })
   if (wrongTypeEntity !== undefined) {
     const { uri, type } = wrongTypeEntity
     throw newError('cannot add this entity type to this list', 403, { listingType, entityType: type, uri })

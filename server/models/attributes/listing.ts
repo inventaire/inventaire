@@ -10,5 +10,8 @@ export default {
     'creator',
     'type',
   ]),
-  type: [ 'work' ],
+  type: [ 'work', 'serie' ],
+  entityTypesByListingType: {
+    work: [ 'work', 'serie' ],
+  },
 }
