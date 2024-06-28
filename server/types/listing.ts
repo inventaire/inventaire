@@ -6,7 +6,7 @@ import type { VisibilityKey } from '#types/visibility'
 
 export type ListingId = CouchUuid
 
-export type ListingType = keyof typeof listingAttributes.type
+export type ListingType = typeof listingAttributes.type[number]
 
 export interface Listing extends CouchDoc {
   _id: ListingId
