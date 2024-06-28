@@ -10,6 +10,7 @@ export function createListingDoc (listing) {
   assert_.string(listing.creator)
   assert_.string(listing.name)
 
+  listing.type ??= 'work'
   const newListing: Partial<Listing> = {}
   Object.keys(listing).forEach(key => {
     const value = listing[key] || defaultValues[key]

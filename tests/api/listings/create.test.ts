@@ -29,14 +29,14 @@ describe('listings:create', () => {
     }
   })
 
-  it('should default to private visibility', async () => {
-    const name = listingName()
-    const { list: listing } = await authReq('post', endpoint, { name })
-    listing.visibility.should.deepEqual([])
-    listing.name.should.equal(name)
-  })
-
   describe('visibility', () => {
+    it('should default to private visibility', async () => {
+      const name = listingName()
+      const { list: listing } = await authReq('post', endpoint, { name })
+      listing.visibility.should.deepEqual([])
+      listing.name.should.equal(name)
+    })
+
     it('should create a listing with friends-only visibility', async () => {
       const visibility = [ 'friends' ]
       const { list: listing } = await authReq('post', endpoint, { name: listingName(), visibility })
@@ -68,6 +68,13 @@ describe('listings:create', () => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('user is not in that group')
       })
+    })
+  })
+
+  describe('entities type', () => {
+    it('should default to work type', async () => {
+      const { list: listing } = await authReq('post', endpoint, { name: listingName() })
+      listing.type.should.equal('work')
     })
   })
 })
