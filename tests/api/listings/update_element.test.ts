@@ -74,7 +74,7 @@ describe('element:update', () => {
     updatedRes.comment.should.equal(comment2)
   })
 
-  it.only('should be able to remove a comment', async () => {
+  it('should be able to remove a comment', async () => {
     const { listing, element } = await createElement()
     const comment = sentence()
     await authReq('post', endpoint, {
