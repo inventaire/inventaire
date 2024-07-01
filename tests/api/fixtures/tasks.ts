@@ -1,6 +1,5 @@
-import { map } from 'lodash-es'
 import { createTasksInBulk } from '#controllers/tasks/lib/tasks'
-import { checkEntities } from '../utils/tasks.js'
+import { getByIds } from '../utils/tasks.js'
 import { createHuman, createWork } from './entities.js'
 
 const promises = {}
@@ -21,8 +20,10 @@ export function createSomeTasks (humanLabel) {
 
 export async function createTask (params) {
   const taskDoc = await createTaskDoc(params)
-  return createTasks([ taskDoc ])
+  const taskRes = await createTasks([ taskDoc ])
   .then(tasks => tasks[0])
+  const tasks = await getByIds(taskRes.id)
+  return tasks[0]
 }
 
 const createTaskDoc = async (params = {}) => {

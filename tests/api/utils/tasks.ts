@@ -1,7 +1,7 @@
 import { forceArray } from '#lib/utils/base'
 import { publicReq, adminReq } from './utils.js'
 
-const endpoint = '/api/tasks?action='
+export const endpoint = '/api/tasks?action='
 
 export function getByIds (ids) {
   ids = forceArray(ids).join('|')
@@ -9,9 +9,9 @@ export function getByIds (ids) {
   .then(({ tasks }) => tasks)
 }
 
-export function getBySuspectUris (uris) {
+export function getBySuspectUris (uris, type = 'deduplicate') {
   uris = forceArray(uris).join('|')
-  return publicReq('get', `${endpoint}by-suspect-uris&uris=${uris}`)
+  return publicReq('get', `${endpoint}by-uris&uris=${uris}&type=${type}`)
   .then(({ tasks }) => tasks)
 }
 
@@ -20,9 +20,9 @@ export function getBySuspectUri (uri) {
   .then(obj => obj[uri])
 }
 
-export function getBySuggestionUris (uris) {
+export function getBySuggestionUris (uris, type = 'deduplicate') {
   uris = forceArray(uris).join('|')
-  return publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}`)
+  return publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}&type=${type}`)
   .then(({ tasks }) => tasks)
 }
 
@@ -36,8 +36,8 @@ export const getByScore = (options = {}) => {
 }
 
 export const getByEntitiesType = (options = {}) => {
-  const { type, limit, offset } = options
-  let url = `${endpoint}by-entities-type&type=${type}`
+  const { type, entitiesType, limit, offset } = options
+  let url = `${endpoint}by-entities-type&type=${type}&entities-type=${entitiesType}`
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
   return publicReq('get', url)
@@ -50,7 +50,7 @@ export function update (id, attribute, value) {
 
 export function checkEntities (uris) {
   uris = forceArray(uris)
-  return adminReq('post', `${endpoint}check-entities`, { uris })
+  return adminReq('post', `${endpoint}check-human-duplicates`, { uris })
   .then(() => getBySuspectUris(uris))
   .then(getTasksBySuspectUris => Object.values(getTasksBySuspectUris).flat())
 }
