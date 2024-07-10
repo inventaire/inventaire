@@ -9,10 +9,12 @@ import {
   createItemFromEntityUri,
   createWorkWithAuthor,
   someFakeUri,
+  getSomeRemoteEditionWithALocalLayer,
 } from '../fixtures/entities.js'
 import { getByUris, merge, getHistory, addClaim } from '../utils/entities.js'
 import { getItemsByIds } from '../utils/items.js'
 import { authReq, dataadminReq } from '../utils/utils.js'
+import type { InvEntityUri } from '#server/types/entity'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {
@@ -272,5 +274,37 @@ describe('entities:merge', () => {
     ])
     editionA.uri.should.startWith('isbn')
     await merge(`inv:${editionA._id}`, editionB.uri)
+  })
+
+  describe('local entity layer', () => {
+    it('should reject merging a local entity layer', async () => {
+      const entity = await getSomeRemoteEditionWithALocalLayer()
+      const { invId } = entity
+      const invUri: InvEntityUri = `inv:${invId}`
+      const edition = await createEdition()
+      await merge(invUri, edition.uri)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("'from' uri refers to a local entity layer")
+      })
+    })
+
+    it('should reject merging into a local entity layer', async () => {
+      const entity = await getSomeRemoteEditionWithALocalLayer()
+      const { invId } = entity
+      const invUri: InvEntityUri = `inv:${invId}`
+      const edition = await createEdition()
+      await merge(edition.uri, invUri)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("'to' uri refers to a local entity layer")
+      })
+    })
+
+    // Claim transfer are actually just cherry-picked claim copies done in the client
+    // it('should transfer local claims to target local entity layer')
+    // it('should transfer merged remote entity local claims to target entity local layer')
   })
 })

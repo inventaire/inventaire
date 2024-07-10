@@ -66,12 +66,16 @@ function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: 
   }
 }
 
-function validateEntity (entity, originalUri, label) {
+function validateEntity (entity: SerializedEntity, originalUri: EntityUri, label: string) {
   if (entity == null) {
-    throw newError(`'${label}' entity not found`, 400, originalUri)
+    throw newError(`'${label}' entity not found`, 400, { originalUri })
   }
   if (entity.uri !== originalUri && `inv:${entity._id}` !== originalUri) {
-    throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
+    if ('invId' in entity) {
+      throw newError(`'${label}' uri refers to a local entity layer`, 400, { entity, originalUri })
+    } else {
+      throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
+    }
   }
 }
 
