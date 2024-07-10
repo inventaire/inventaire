@@ -20,7 +20,7 @@ export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh
   const url = buildUrl('/api/entities', {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
-    relatives,
+    relatives: relatives ? forceArray(relatives).join('|') : undefined,
     refresh,
   })
   return publicReq('get', url) as Promise<GetEntitiesByUrisResponse>
