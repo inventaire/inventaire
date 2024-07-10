@@ -1,12 +1,15 @@
 import should from 'should'
+import { isCouchUuid } from '#lib/boolean_validations'
 import {
   createEdition,
   createEditionWithIsbn,
   createHuman,
   createWorkWithAuthor,
+  getSomeWdEditionUri,
   someFakeUri,
+  someRandomImageHash,
 } from '#tests/api/fixtures/entities'
-import { getByUris, merge } from '#tests/api/utils/entities'
+import { addClaim, getByUri, getByUris, merge } from '#tests/api/utils/entities'
 import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -103,5 +106,17 @@ describe('entities:get:by-uris', () => {
     const entity = entities[uri]
     entity.labels.fromclaims.should.equal(claims['wdt:P1476'][0])
     entity.descriptions.fromclaims.should.equal(claims['wdt:P1680'][0])
+  })
+
+  it('should get a remote entity with its local layer', async () => {
+    const uri = await getSomeWdEditionUri()
+    const imageHash = someRandomImageHash()
+    await addClaim({ uri, property: 'invp:P2', value: imageHash })
+    const entity = await getByUri(uri)
+    entity.uri.should.equal(uri)
+    entity.claims['invp:P1'].should.deepEqual([ uri ])
+    entity.claims['invp:P2'].should.deepEqual([ imageHash ])
+    // @ts-expect-error
+    should(isCouchUuid(entity.invId)).be.true()
   })
 })
