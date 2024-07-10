@@ -1,5 +1,6 @@
 import should from 'should'
 import { isCouchUuid } from '#lib/boolean_validations'
+import type { ExpandedSerializedWdEntity } from '#server/types/entity'
 import {
   createEdition,
   createEditionWithIsbn,
@@ -112,11 +113,10 @@ describe('entities:get:by-uris', () => {
     const uri = await getSomeWdEditionUri()
     const imageHash = someRandomImageHash()
     await addClaim({ uri, property: 'invp:P2', value: imageHash })
-    const entity = await getByUri(uri)
+    const entity = (await getByUri(uri) as ExpandedSerializedWdEntity)
     entity.uri.should.equal(uri)
     entity.claims['invp:P1'].should.deepEqual([ uri ])
     entity.claims['invp:P2'].should.deepEqual([ imageHash ])
-    // @ts-expect-error
     should(isCouchUuid(entity.invId)).be.true()
   })
 })
