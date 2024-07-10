@@ -217,6 +217,7 @@ export interface SerializedWdEntity {
   popularity?: number
   _indexationTime?: EpochTimeStamp
   _id?: WdEntityId
+  invId?: InvEntityId
   lastrevid?: number
 }
 

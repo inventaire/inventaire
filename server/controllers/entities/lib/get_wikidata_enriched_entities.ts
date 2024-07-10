@@ -73,6 +73,7 @@ export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdI
 }
 
 function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, localEntityLayer: InvEntity) {
+  remoteEntity.invId = localEntityLayer._id
   if (localEntityLayer.claims['invp:P2'] != null) {
     setEntityImageFromImageHashClaims(remoteEntity)
   }
