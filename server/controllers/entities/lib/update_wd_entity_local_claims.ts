@@ -7,6 +7,9 @@ import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entit
 import type { User } from '#server/types/user'
 
 export async function updateWdEntityLocalClaims (user: User, wdId: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
+  if (property === 'invp:P1') {
+    throw newError('entity local layer linking property (invp:P1) can not be updated', 400, { wdId, property, oldValue, newValue })
+  }
   const localEntityLayer = await getWdEntityLocalLayer(wdId)
   const wdUri = prefixifyWd(wdId)
   if (localEntityLayer) {

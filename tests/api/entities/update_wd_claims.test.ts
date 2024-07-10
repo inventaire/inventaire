@@ -77,5 +77,27 @@ describe('entities:update-claims:wd', () => {
       const updatedEdition = await getByUri(uri)
       should(updatedEdition.claims['invp:P2']).not.be.ok()
     })
+
+    it('should reject inv:P1 updates (with no layer existing)', async () => {
+      const uri = await getSomeWdEditionUri()
+      await addClaim({ uri, property: 'invp:P1', value: 'wd:Q1' })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('entity local layer linking property (invp:P1) can not be updated')
+      })
+    })
+
+    it('should reject inv:P1 updates (with an existing layer)', async () => {
+      const uri = await getSomeWdEditionUri()
+      const imageHash = someRandomImageHash()
+      await addClaim({ uri, property: 'invp:P2', value: imageHash })
+      await updateClaim({ uri, property: 'invp:P1', oldValue: uri, newValue: 'wd:Q1' })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('entity local layer linking property (invp:P1) can not be updated')
+      })
+    })
   })
 })
