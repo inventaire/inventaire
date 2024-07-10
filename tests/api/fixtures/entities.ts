@@ -1,15 +1,18 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
-import { map, sampleSize } from 'lodash-es'
+import { map, random, sampleSize } from 'lodash-es'
+import wdk from 'wikibase-sdk/wikidata.org'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
 import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { Claims, EntityType, EntityUri, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityUri } from '#server/types/entity'
+import type { Url } from '#server/types/common'
+import type { Claims, EntityType, EntityUri, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
-import { customAuthReq } from '#tests/api/utils/request'
+import { customAuthReq, request } from '#tests/api/utils/request'
 import { getByUri, addClaim } from '../utils/entities.js'
 import { authReq, getUser } from '../utils/utils.js'
 import { firstName, humanName, randomWords } from './text.js'
@@ -251,4 +254,18 @@ export const someReference = {
 export const someReferenceB = {
   'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb11908111q' ],
   'wdt:P813': [ '2024-04-24' ],
+}
+
+const { cirrusSearchPages, parse } = wdk
+
+export async function getSomeWdEditionUri () {
+  const url = cirrusSearchPages({
+    haswbstatement: [ 'P31=Q3331189', 'P629' ],
+    limit: 1,
+    offset: random(0, 10000),
+    prop: [],
+  }) as Url
+  const res = await request('get', url)
+  const id = parse.pagesTitles(res)[0] as WdEntityId
+  return prefixifyWd(id)
 }
