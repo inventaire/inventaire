@@ -15,6 +15,7 @@ describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {
     const invalidUri = 'bla'
     try {
+      // @ts-expect-error
       await getByUris(invalidUri)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -27,6 +28,7 @@ describe('entities:get:by-uris', () => {
   it('should reject uri with wrong prefix', async () => {
     const invalidUri = 'foo:Q535'
     try {
+      // @ts-expect-error
       await getByUris(invalidUri)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -43,19 +45,19 @@ describe('entities:get:by-uris', () => {
   })
 
   it('should return inventaire uris not found', async () => {
-    const { notFound } = await getByUris(someFakeUri)
+    const { notFound } = await getByUris([ someFakeUri ])
     notFound.should.deepEqual([ someFakeUri ])
   })
 
   it('should return isbn uris not found', async () => {
     const someMissingIsbn = 'isbn:9789871453023'
-    const { notFound } = await getByUris(someMissingIsbn)
+    const { notFound } = await getByUris([ someMissingIsbn ])
     notFound.should.deepEqual([ someMissingIsbn ])
   })
 
   it('should return wikidata uris not found', async () => {
     const nonExistingUri = 'wd:Q5359999999999999'
-    const { notFound } = await getByUris(nonExistingUri, null, true)
+    const { notFound } = await getByUris([ nonExistingUri ], null, true)
     notFound.should.deepEqual([ nonExistingUri ])
   })
 
@@ -82,7 +84,7 @@ describe('entities:get:by-uris', () => {
 
   it('should accept wikidata uri', async () => {
     const validWdUri = 'wd:Q2300248'
-    const { entities } = await getByUris(validWdUri)
+    const { entities } = await getByUris([ validWdUri ])
     const entity = entities[validWdUri]
     entity.uri.should.equal(validWdUri)
   })
