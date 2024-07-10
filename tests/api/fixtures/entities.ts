@@ -9,7 +9,7 @@ import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#server/types/common'
-import type { Claims, EntityType, EntityUri, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
 import { customAuthReq, request } from '#tests/api/utils/request'
@@ -268,4 +268,12 @@ export async function getSomeWdEditionUri () {
   const res = await request('get', url)
   const id = parse.pagesTitles(res)[0] as WdEntityId
   return prefixifyWd(id)
+}
+
+export async function getSomeRemoteEditionWithALocalLayer () {
+  const uri = await getSomeWdEditionUri()
+  const imageHash = someRandomImageHash()
+  await addClaim({ uri, property: 'invp:P2', value: imageHash })
+  const updatedEdition = await getByUri(uri)
+  return updatedEdition as ExpandedSerializedWdEntity
 }
