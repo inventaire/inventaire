@@ -54,7 +54,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.12.2",
     "@types/express": "^4.17.21",
-    "@types/express-serve-static-core": "^4.19.0",
+    "@types/express-serve-static-core": "^4.19.5",
     "@types/levelup": "^5.1.5",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.10.1",
@@ -106,8 +106,8 @@
     "through": "^2.3.8",
     "tiny-chalk": "^3.0.2",
     "turtle-validator": "^1.0.2",
-    "type-fest": "^4.10.3",
-    "typescript": "^5.3.3",
+    "type-fest": "^4.21.0",
+    "typescript": "^5.5.3",
     "wikibase-edit": "^5.3.2",
     "wikibase-sdk": "^10.0.2",
     "wikidata-lang": "^4.0.2"
@@ -115,8 +115,8 @@
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "^1.6.3",
     "@types/mocha": "^10.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -127,7 +127,7 @@
     "mocha": "^10.3.0",
     "papaparse": "^5.2.0",
     "should": "^13.2.3",
-    "tsx": "^4.7.1"
+    "tsx": "^4.16.2"
   },
   "engines": {
     "node": ">= 18"
