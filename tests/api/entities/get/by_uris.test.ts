@@ -1,11 +1,12 @@
 import should from 'should'
 import { isCouchUuid } from '#lib/boolean_validations'
-import type { ExpandedSerializedWdEntity } from '#server/types/entity'
+import type { ExpandedSerializedWdEntity, InvEntityUri } from '#server/types/entity'
 import {
   createEdition,
   createEditionWithIsbn,
   createHuman,
   createWorkWithAuthor,
+  getSomeRemoteEditionWithALocalLayer,
   getSomeWdEditionUri,
   someFakeUri,
   someRandomImageHash,
@@ -118,5 +119,13 @@ describe('entities:get:by-uris', () => {
     entity.claims['invp:P1'].should.deepEqual([ uri ])
     entity.claims['invp:P2'].should.deepEqual([ imageHash ])
     should(isCouchUuid(entity.invId)).be.true()
+  })
+
+  it('should redirect a local layer uri to the remote entity', async () => {
+    const { uri, invId } = await getSomeRemoteEditionWithALocalLayer()
+    const invUri: InvEntityUri = `inv:${invId}`
+    const res = await getByUris([ invUri ])
+    res.entities[uri].claims.should.be.an.Object()
+    res.redirects[invUri].should.equal(uri)
   })
 })
