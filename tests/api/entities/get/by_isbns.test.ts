@@ -3,7 +3,7 @@ import {
   createEditionWithIsbn,
   generateIsbn13,
 } from '#tests/api/fixtures/entities'
-import { deleteByUris, getByUris } from '#tests/api/utils/entities'
+import { deleteByUris, getByUri, getByUris } from '#tests/api/utils/entities'
 import { authReq, publicReq } from '#tests/api/utils/utils'
 
 describe('entities:get:by-isbns', () => {

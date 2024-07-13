@@ -76,6 +76,14 @@ describe('entities:get:by-uris', () => {
     notFound.should.containEql(nonExistingUriB)
   })
 
+  it('should use isbn uris as canonical uris for wikidata editions with isbns', async () => {
+    const wdUri = 'wd:Q116194196'
+    const isbnUri = 'isbn:9780375759239'
+    const { entities, redirects } = await getByUris([ wdUri ], null, true)
+    entities[isbnUri].uri.should.equal(isbnUri)
+    redirects[wdUri].should.equal(isbnUri)
+  })
+
   it('should return redirected uris', async () => {
     const [ humanA, humanB ] = await Promise.all([ createHuman(), createHuman() ])
     await merge(humanA.uri, humanB.uri)

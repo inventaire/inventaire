@@ -148,7 +148,8 @@ export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' |
 export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
 export interface RedirectFromTo {
-  from: EntityUri
+  // 'from' is usually an EntityUri, but can also be `isbn:${nonNormalizedIsbn}`
+  from: string
   to: EntityUri
 }
 
@@ -204,7 +205,7 @@ export type ExpandedClaimsIncludingWdExtra = ExpandedClaims & ExtraWdExpandedCla
 export type WikimediaImageInfo = ReturnType<typeof getWikimediaThumbnailData>
 
 export interface SerializedWdEntity {
-  uri: WdEntityUri
+  uri: WdEntityUri | IsbnEntityUri
   type?: EntityType
   labels: LabelsAndInferredLabels
   aliases: SimplifiedAliases

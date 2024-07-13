@@ -18,7 +18,7 @@ interface SparqlRequestOptions {
   minimize?: boolean
 }
 
-export async function makeSparqlRequest (sparql: string, options: SparqlRequestOptions = {}) {
+export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRequestOptions = {}): Promise<Row[]> {
   const url = sparqlQuery(sparql) as AbsoluteUrl
 
   if (waiting > 500) {
@@ -27,7 +27,7 @@ export async function makeSparqlRequest (sparql: string, options: SparqlRequestO
 
   async function persistentRequest () {
     try {
-      return await makeRequest(url, options)
+      return await makeRequest<Row>(url, options)
     } catch (err) {
       if (err.statusCode === 429) {
         warn(url, `${err.message}: retrying in 2s`)
@@ -42,7 +42,7 @@ export async function makeSparqlRequest (sparql: string, options: SparqlRequestO
   return persistentRequest()
 }
 
-async function makeRequest (url: Url, options: SparqlRequestOptions = {}) {
+async function makeRequest <Row> (url: Url, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
 
@@ -59,9 +59,9 @@ async function makeRequest (url: Url, options: SparqlRequestOptions = {}) {
       const results = await requests_.get(url, { timeout: 30000 })
       const simplifiedResults = simplifySparqlResults(results)
       if (options.minimize) {
-        return minimizeSimplifiedSparqlResults(simplifiedResults)
+        return minimizeSimplifiedSparqlResults(simplifiedResults) as Row[]
       } else {
-        return simplifiedResults
+        return simplifiedResults as Row[]
       }
     } finally {
       ongoing -= 1
