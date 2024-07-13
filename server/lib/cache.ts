@@ -12,6 +12,7 @@ const { ttlCheckFrequency, defaultCacheTtl } = config.leveldb
 const db = levelTtl(cacheDb, { checkFrequency: ttlCheckFrequency, defaultTTL: defaultCacheTtl })
 const dbPut = promisify(db.put)
 const dbBatch = promisify(db.batch)
+const dbGetMany = promisify(db.getMany.bind(db))
 // It's convenient in tests to have the guaranty that the cached value was saved
 // but in production, that means delaying API responses in case LevelDB writes get slow
 const alwaysWaitForSavedValue = config.env.startsWith('tests')
@@ -45,10 +46,19 @@ export const cache_ = {
     }
   },
 
+  dryGetMany: async (keys: string[]) => {
+    return dbGetMany(keys)
+  },
+
   put: async (key, value, ttl = defaultCacheTtl) => {
     if (!isNonEmptyString(key)) throw newError('invalid key', 500)
     if (value == null) throw newError('missing value', 500)
     return putValue(key, value, { ttl })
+  },
+
+  batchPut: async (entries: [ string, string ][]) => {
+    const batch = entries.map(([ key, value ]) => ({ type: 'put', key, value }))
+    return dbBatch(batch)
   },
 
   batchDelete: keys => {

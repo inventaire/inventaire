@@ -9,13 +9,16 @@ import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyProperty
 import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
 import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
-import { getClaimObjectFromClaim, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { getIsbnUriFromClaims } from '#controllers/entities/lib/get_inv_uri_from_doc'
+import { getClaimObjectFromClaim, getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { formatClaims } from '#lib/wikidata/format_claims'
@@ -126,14 +129,15 @@ async function format (entity) {
 const simplifyClaimsOptions = { entityPrefix: 'wd' }
 
 async function formatValidEntity (entity) {
-  const { id: wdId } = entity
-  entity.uri = `wd:${wdId}`
   entity.labels = simplifyLabels(entity.labels)
   entity.aliases = simplifyAliases(entity.aliases)
   entity.descriptions = simplifyDescriptions(entity.descriptions)
   entity.sitelinks = simplifySitelinks(entity.sitelinks, { keepBadges: true })
   entity.claims = formatClaims(entity.claims)
   entity.originalLang = getOriginalLang(entity.claims)
+
+  // Run after formatting claims
+  setCanonicalUri(entity)
 
   await formatAndPropagateRedirection(entity)
 
@@ -150,8 +154,24 @@ async function formatValidEntity (entity) {
   return addImageData(entity)
 }
 
+function setCanonicalUri (entity) {
+  const { id: wdId } = entity
+  const wdUri = `wd:${wdId}`
+  const isbnUri = getIsbnUriFromClaims(entity.claims)
+  // When available, prefer the ISBN to the Wikidata id, as Wikidata editions are more likely to be disurpted
+  // Ex: A Wikidata edition might be turned into a work, while an inventory item would still want
+  // to hold a reference to the edition entity
+  if (isbnUri) {
+    entity.uri = isbnUri
+    entity.claims['invp:P1'] = [ wdUri ]
+  } else {
+    entity.uri = wdUri
+  }
+}
+
 async function formatAndPropagateRedirection (entity) {
   if (entity.redirects != null) {
+    // Wikidata internal redirection
     const { from, to } = entity.redirects
     entity.redirects = {
       from: prefixifyWd(from),
@@ -165,6 +185,11 @@ async function formatAndPropagateRedirection (entity) {
     propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
     reindexWdEntity({ _id: unprefixify(entity.redirects.from), redirect: true })
     await emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
+  } else if (!isWdEntityUri(entity.uri)) {
+    // Canonical uri redirection
+    const wdUri = getFirstClaimValue(entity.claims, 'invp:P1')
+    assert_.string(wdUri)
+    entity.redirects = { from: wdUri, to: entity.uri }
   }
 }
 
