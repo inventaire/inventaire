@@ -1,5 +1,6 @@
 import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
+import type { InvEntityUri } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createWork,
@@ -14,7 +15,6 @@ import {
 import { getByUris, merge, getHistory, addClaim } from '../utils/entities.js'
 import { getItemsByIds } from '../utils/items.js'
 import { authReq, dataadminReq } from '../utils/utils.js'
-import type { InvEntityUri } from '#server/types/entity'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {

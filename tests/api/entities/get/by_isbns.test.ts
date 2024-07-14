@@ -1,4 +1,6 @@
 import should from 'should'
+import { toIsbn13 } from '#lib/isbn/isbn'
+import type { IsbnEntityUri } from '#server/types/entity'
 import {
   createEditionWithIsbn,
   generateIsbn13,
@@ -13,6 +15,46 @@ describe('entities:get:by-isbns', () => {
     res.entities[uri].should.be.an.Object()
     res.entities[uri].uri.should.equal(uri)
     should(res.notFound).not.be.ok()
+  })
+
+  describe('wikidata editions', () => {
+    it('should find Wikidata edition entities by its isbn uri', async () => {
+      const wdUri = 'wd:Q116194196'
+      const isbnUri = 'isbn:9780375759239'
+      const entity = await getByUri(isbnUri)
+      entity.uri.should.equal(isbnUri)
+      entity.claims['invp:P1'].should.deepEqual([ wdUri ])
+    })
+
+    it('should find Wikidata edition entities by its wd uri', async () => {
+      const wdUri = 'wd:Q116194196'
+      const isbnUri = 'isbn:9780375759239'
+      const res = await getByUris([ wdUri ])
+      res.redirects[wdUri].should.equal(isbnUri)
+      res.entities[isbnUri].should.be.an.Object()
+    })
+
+    it('should find Wikidata edition with only an ISBN 10 by their ISBN 10 uri', async () => {
+      const wdUri = 'wd:Q47224089'
+      const isbn10 = '0890092672'
+      const isbn10Uri = `isbn:${isbn10}`
+      const isbn13Uri = `isbn:${toIsbn13(isbn10)}`
+      const res = await getByUris([ isbn10Uri ])
+      const entity = res.entities[isbn13Uri]
+      entity.uri.should.equal(isbn13Uri)
+      entity.claims['invp:P1'].should.deepEqual([ wdUri ])
+      res.redirects[isbn10Uri].should.equal(isbn13Uri)
+    })
+
+    it('should find Wikidata edition with only an ISBN 10 by their ISBN 13 uri', async () => {
+      const wdUri = 'wd:Q47224089'
+      const isbn10 = '0890092672'
+      const isbn13Uri: IsbnEntityUri = `isbn:${toIsbn13(isbn10)}`
+      const res = await getByUris([ isbn13Uri ])
+      const entity = res.entities[isbn13Uri]
+      entity.uri.should.equal(isbn13Uri)
+      entity.claims['invp:P1'].should.deepEqual([ wdUri ])
+    })
   })
 
   describe('autocreate', () => {

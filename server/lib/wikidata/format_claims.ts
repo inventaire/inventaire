@@ -16,7 +16,7 @@ export function formatClaims (claims: WdClaims) {
   assert_.object(claims)
   const allowlistedClaims = pick(claims, allowlistedProperties)
   const simplifiedClaims: Partial<SimplifiedClaimsIncludingWdExtra> = simplifyClaims(allowlistedClaims, options)
-  setInferredClaims(claims)
+  setInferredClaims(simplifiedClaims)
 
   flattenQualifierProperties(simplifiedClaims, allowlistedClaims)
 
