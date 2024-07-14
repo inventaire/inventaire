@@ -6,7 +6,7 @@ import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { assert_ } from '#lib/utils/assert_types'
 import { updateEntityDocClaim } from '#models/entity'
-import type { ExtendedEntityType, InvClaimValue, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
+import type { ExtendedEntityType, InvClaimValue, InvEntity, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
 import type { User, UserId } from '#server/types/user'
 import inferredClaimUpdates from './inferred_claim_updates.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
@@ -16,7 +16,7 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
   assert_.object(user)
   const { _id: userId, roles } = user
   const userIsAdmin = roles?.includes('admin')
-  let currentDoc
+  let currentDoc: InvEntityDoc
   try {
     currentDoc = await getEntityById(id)
   } catch (err) {
@@ -26,8 +26,7 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
       throw err
     }
   }
-  // Known cases: entities turned into redirections or removed:placeholders
-  if (currentDoc.claims == null) {
+  if ('redirect' in currentDoc || currentDoc.type === 'removed:placeholder') {
     const context = { id, property, oldVal, newVal }
     throw newError('this entity is obsolete', 400, context)
   }
@@ -51,7 +50,7 @@ interface UpdateClaimParams {
   oldVal: InvClaimValue
   newVal: InvClaimValue
   userId: UserId
-  currentDoc: InvEntityDoc
+  currentDoc: InvEntity
   userIsAdmin: boolean
 }
 

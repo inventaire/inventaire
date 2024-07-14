@@ -4,7 +4,7 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, getClaimValue, preventRedirectionEdit } from '#models/entity'
-import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri } from '#types/entity'
+import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
@@ -42,6 +42,7 @@ async function removeObsoletePlaceholderEntities (userId: UserId, entityDocBefor
 }
 
 function getEntityUrisToCheck (claims: Claims): EntityUri[] {
+  // @ts-expect-error TS2322: Type 'boolean[]' is not assignable to type 'EntityUri[]'  ??
   return chain(claims)
   .pick(propertiesToCheckForPlaceholderDeletion)
   .values()
@@ -52,10 +53,10 @@ function getEntityUrisToCheck (claims: Claims): EntityUri[] {
   .value()
 }
 
-const propertiesToCheckForPlaceholderDeletion = [
+const propertiesToCheckForPlaceholderDeletion: PropertyUri[] = [
   // author
   'wdt:P50',
-]
+] as const
 
 const deleteIfIsolated = (userId: UserId, fromId: InvEntityId) => async (entityUri: EntityUri) => {
   const [ prefix, entityId ] = entityUri.split(':')
