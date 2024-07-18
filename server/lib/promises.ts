@@ -1,8 +1,9 @@
+import { setTimeout } from 'node:timers/promises'
 import config from '#server/config'
 
 const { waitFactor } = config
 
-export const wait = ms => new Promise(resolve => setTimeout(resolve, ms * waitFactor))
+export const wait = ms => setTimeout(ms * waitFactor)
 
 export async function objectPromise (obj) {
   const keys = []
