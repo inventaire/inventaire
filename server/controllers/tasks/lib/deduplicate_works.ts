@@ -6,6 +6,7 @@ import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { newError, notFoundError } from '#lib/error/error'
+import type { EntityUri } from '#server/types/entity'
 
 export default async function (workUri, isbn, userId) {
   const work = await getEntityByUri({ uri: workUri })
@@ -20,7 +21,7 @@ export default async function (workUri, isbn, userId) {
   }
   const editionsRes = await getEntitiesByIsbns([ isbn ])
   const edition = editionsRes.entities[0]
-  const editionWorksUris = edition.claims['wdt:P629']
+  const editionWorksUris = edition.claims['wdt:P629'] as EntityUri[]
   if (isEqual(editionWorksUris, [ workUri ])) return
 
   const editionWorks = await getEntitiesList(editionWorksUris)
