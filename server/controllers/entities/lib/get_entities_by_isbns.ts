@@ -55,7 +55,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
       if (resolvedEdition.notFound) notFound.push(prefixifyIsbn(resolvedEdition.isbn))
       else newEntities.push(resolvedEdition)
     }
-    results.entities = serializedEntities.concat(newEntities)
+    results.entities = [ ...serializedEntities, ...newEntities ]
     if (notFound.length > 0) results.notFound = notFound
   } else {
     results.notFound = missingIsbns.map(prefixifyIsbn)
