@@ -17,7 +17,7 @@ import { propertiesValuesConstraints as properties } from '#controllers/entities
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
+import { objectEntries, objectFromEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
 import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
@@ -175,7 +175,8 @@ function removeEmptyClaimArrays (claims: Claims) {
   }
 }
 
-export function isLocalEntityLayer (doc: InvEntity) {
+export function isLocalEntityLayer (doc: InvEntityDoc) {
+  if ('redirect' in doc) return false
   return doc.claims['invp:P1']?.[0] != null
 }
 
@@ -245,6 +246,21 @@ function includesReference (references: Reference[], reference: Reference) {
   return references.find(ref => sameObjects(ref, reference))
 }
 
+export function convertEntityDocIntoALocalLayer (localEntity: InvEntity, remoteEntityUri: WdEntityUri) {
+  return {
+    ...localEntity,
+    labels: {},
+    claims: {
+      'invp:P1': [ remoteEntityUri ],
+      ...pickLocalClaims(localEntity.claims),
+    },
+  }
+}
+
+function pickLocalClaims (claims: Claims) {
+  return objectFromEntries(objectEntries(claims).filter(([ property ]) => isInvPropertyUri(property))) as Claims
+}
+
 export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
   const [ prefix, id ] = toUri.split(':')
 
@@ -276,6 +292,12 @@ export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
 export function preventRedirectionEdit (doc: InvEntityDoc): asserts doc is InvEntity {
   if ('redirect' in doc) {
     throw newError('entity edit failed: the entity is a redirection', 400, { doc })
+  }
+}
+
+export function preventLocalLayerEdit (doc: InvEntityDoc) {
+  if (isLocalEntityLayer(doc)) {
+    throw newError('entity edit failed: the entity is a local entity layer', 400, { doc })
   }
 }
 
