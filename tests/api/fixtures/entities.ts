@@ -260,7 +260,15 @@ const { cirrusSearchPages, parse } = wdk
 
 export async function getSomeWdEditionUri () {
   const url = cirrusSearchPages({
-    haswbstatement: [ 'P31=Q3331189', 'P629' ],
+    haswbstatement: [
+      // Editions
+      'P31=Q3331189',
+      // with an associated work
+      'P629',
+      // but no ISBN, to avoid getting an entity with an isbn uri as canonical uri
+      '-P212',
+      '-P957',
+    ],
     limit: 1,
     offset: random(0, 10000),
     prop: [],

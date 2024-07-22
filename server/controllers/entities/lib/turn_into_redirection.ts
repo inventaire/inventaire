@@ -1,16 +1,17 @@
 import { chain, compact } from 'lodash-es'
-import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate, wdEntityHasALocalLayer } from '#controllers/entities/lib/entities'
+import { getClaimValue, hasLocalClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import { convertEntityDocIntoARedirection, preventRedirectionEdit } from '#models/entity'
+import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit } from '#models/entity'
 import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
 
-export default async function ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) {
+export async function turnIntoRedirectionOrLocalLayer ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) {
   assert_.strings([ userId, fromId, toUri ])
   if (previousToUri != null) assert_.string(previousToUri)
 
@@ -18,9 +19,15 @@ export default async function ({ userId, fromId, toUri, previousToUri, context }
 
   const currentFromDoc = await getEntityById(fromId)
   preventRedirectionEdit(currentFromDoc)
-  // If an author has no more links to it, remove it
-  const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
-  const updatedFromDoc = convertEntityDocIntoARedirection(currentFromDoc, toUri, removedIds)
+  preventLocalLayerEdit(currentFromDoc)
+  let updatedFromDoc
+  if (isWdEntityUri(toUri) && hasLocalClaims(currentFromDoc) && !(await wdEntityHasALocalLayer(toUri))) {
+    updatedFromDoc = convertEntityDocIntoALocalLayer(currentFromDoc, toUri)
+  } else {
+    // If an author has no more links to it, remove it
+    const removedIds = await removeObsoletePlaceholderEntities(userId, currentFromDoc)
+    updatedFromDoc = convertEntityDocIntoARedirection(currentFromDoc, toUri, removedIds)
+  }
   await putInvEntityUpdate({
     userId,
     currentDoc: currentFromDoc,

@@ -2,11 +2,12 @@ import should from 'should'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import type { IsbnEntityUri } from '#server/types/entity'
 import {
+  createEdition,
   createEditionWithIsbn,
   generateIsbn13,
 } from '#tests/api/fixtures/entities'
-import { deleteByUris, getByUri, getByUris } from '#tests/api/utils/entities'
-import { authReq, publicReq } from '#tests/api/utils/utils'
+import { addClaim, deleteByUris, getByUri, getByUris } from '#tests/api/utils/entities'
+import { authReq, getAdminUser, publicReq } from '#tests/api/utils/utils'
 
 describe('entities:get:by-isbns', () => {
   it('should return existing edition', async () => {
