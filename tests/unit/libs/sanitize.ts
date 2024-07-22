@@ -141,7 +141,6 @@ describe('sanitize', () => {
         sanitize(req, res, configs)
         shouldNotBeCalled()
       } catch (err) {
-        console.log('046-sanitize.js', 144, err)
         err.message.should.startWith('invalid attributes')
       }
     })
