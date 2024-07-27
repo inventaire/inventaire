@@ -45,8 +45,9 @@ describe('entities:get:by-uris', () => {
 
   it('should accept inventaire uri', async () => {
     const work = await workWithAuthorPromise
-    const res = await getByUris(work.uri)
-    res.entities[work.uri].should.be.an.Object()
+    const { entities } = await getByUris(work.uri)
+    entities[work.uri].should.be.an.Object()
+    entities[work.uri].invId.should.be.ok()
   })
 
   it('should return inventaire uris not found', async () => {
@@ -126,6 +127,7 @@ describe('entities:get:by-uris', () => {
     entity.uri.should.equal(uri)
     entity.claims['invp:P1'].should.deepEqual([ uri ])
     entity.claims['invp:P2'].should.deepEqual([ imageHash ])
+    entity.wdId.should.equal(uri.split(':')[1])
     should(isCouchUuid(entity.invId)).be.true()
   })
 

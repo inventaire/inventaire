@@ -72,6 +72,7 @@ export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdI
       warn(localEntityLayer, 'local layer is linked to an invalid remote entity')
     }
   }
+  remoteEntity.wdId = wdId
   return remoteEntity
 }
 
@@ -197,6 +198,7 @@ interface SerializedEmptyWdEntity {
   id: WdEntityId
   uri: WdEntityUri
   type: 'meta' | 'missing'
+  wdId?: WdEntityId
   // The following attributes might be set by indexation functions
   _indexationTime?: EpochTimeStamp
   _id?: WdEntityId
