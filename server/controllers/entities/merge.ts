@@ -70,12 +70,11 @@ function validateEntity (entity: SerializedEntity, originalUri: EntityUri, label
   if (entity == null) {
     throw newError(`'${label}' entity not found`, 400, { originalUri })
   }
+  if (isInvEntityUri(originalUri) && 'wdId' in entity) {
+    throw newError(`'${label}' uri refers to a local entity layer`, 400, { entity, originalUri })
+  }
   if (entity.uri !== originalUri && `inv:${entity.invId}` !== originalUri) {
-    if ('wdId' in entity && isInvEntityUri(originalUri)) {
-      throw newError(`'${label}' uri refers to a local entity layer`, 400, { entity, originalUri })
-    } else {
-      throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
-    }
+    throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
   }
 }
 
