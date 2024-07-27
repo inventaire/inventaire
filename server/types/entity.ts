@@ -163,6 +163,7 @@ export interface SerializedInvEntity extends OverrideProperties<InvEntity, {
   labels: LabelsAndInferredLabels
 }> {
   uri: InvEntityUri | IsbnEntityUri
+  invId: InvEntityId
   _meta_type?: 'entity'
   originalLang?: WikimediaLanguageCode
   image: LocalImageInfo
@@ -206,6 +207,8 @@ export type WikimediaImageInfo = ReturnType<typeof getWikimediaThumbnailData>
 
 export interface SerializedWdEntity {
   uri: WdEntityUri | IsbnEntityUri
+  wdId: WdEntityId
+  invId?: InvEntityId
   type?: EntityType
   labels: LabelsAndInferredLabels
   aliases: SimplifiedAliases
@@ -216,9 +219,9 @@ export interface SerializedWdEntity {
   redirects?: WdItem['redirects']
   image: WikimediaImageInfo | LocalImageInfo
   popularity?: number
-  _indexationTime?: EpochTimeStamp
+  // The following attributes might be set by indexation functions
   _id?: WdEntityId
-  invId?: InvEntityId
+  _indexationTime?: EpochTimeStamp
   lastrevid?: number
 }
 

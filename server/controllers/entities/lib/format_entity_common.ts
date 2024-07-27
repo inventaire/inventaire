@@ -6,7 +6,7 @@ import type { SerializedInvEntity, SerializedEntity, LocalImageInfo, SerializedR
 import { getUrlFromEntityImageHash, setTermsFromClaims } from './entities.js'
 import type { SetOptional } from 'type-fest'
 
-export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | SerializedRemovedPlaceholder, 'image'>) {
+export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | SerializedRemovedPlaceholder, 'image' | 'invId'>) {
   entity.originalLang = getOriginalLang(entity.claims)
 
   setEntityImageFromImageHashClaims(entity)
@@ -16,10 +16,11 @@ export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | Se
     setTermsFromClaims(entity)
   }
 
+  entity.invId = entity._id
   return entity as (SerializedInvEntity | SerializedRemovedPlaceholder)
 }
 
-export function setEntityImageFromImageHashClaims (entity: SetOptional<SerializedEntity, 'image'>) {
+export function setEntityImageFromImageHashClaims (entity: SetOptional<SerializedEntity, 'image' | 'invId'>) {
   // Matching Wikidata entities format for images
   // Here we are missing license, credits, and author attributes
   const imageHash = getFirstClaimValue(entity.claims, 'invp:P2')
