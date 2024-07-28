@@ -2,6 +2,7 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getClaimValue, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
+import { arrayIncludes } from '#lib/utils/base'
 import type { EntityType, EntityUri, ExtendedEntityType, InvClaim, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateClaimValueSync } from './validate_claim_sync.js'
@@ -84,7 +85,7 @@ async function verifyClaimEntityType (entityValueTypes: EntityType[], value: Ent
   if (!entity) {
     throw newError('entity not found', 400, { value })
   }
-  if (!entityValueTypes.includes(entity.type)) {
+  if (!arrayIncludes(entityValueTypes, entity.type)) {
     throw newError(`invalid claim entity type: ${entity.type}`, 400, { value })
   }
 }
