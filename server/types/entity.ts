@@ -209,7 +209,7 @@ export interface SerializedWdEntity {
   uri: WdEntityUri | IsbnEntityUri
   wdId: WdEntityId
   invId?: InvEntityId
-  type?: EntityType
+  type?: ExtendedEntityType
   labels: LabelsAndInferredLabels
   aliases: SimplifiedAliases
   descriptions: DescriptionsAndInferredDescriptions

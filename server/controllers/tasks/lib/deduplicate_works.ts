@@ -34,7 +34,7 @@ export default async function (workUri, isbn, userId) {
   return createTasksFromSuggestions({
     suspectUri: workUri,
     type: 'deduplicate',
-    entitiesType: work.type,
+    entitiesType: type,
     suggestions: newSuggestions,
   })
 }

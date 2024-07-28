@@ -1,11 +1,12 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
 import { notFoundError, newError } from '#lib/error/error'
+import { arrayIncludes } from '#lib/utils/base'
 import { info } from '#lib/utils/logs'
 import getNewSuggestionsOrAutomerge from './get_new_suggestions_or_automerge.js'
 import updateRelationScore from './relation_score.js'
 
-const supportedTypes = [ 'human' ]
+const supportedTypes = [ 'human' ] as const
 
 export default async function (uri) {
   info(`check entity: ${uri}`)
@@ -23,7 +24,7 @@ export default async function (uri) {
     throw newError('entity is already a redirection', 400, { uri })
   }
   const { type } = entity
-  if (!supportedTypes.includes(type)) {
+  if (!arrayIncludes(supportedTypes, type)) {
     throw newError(`unsupported type: ${type}`, 400, { uri, supportedTypes })
   }
 
@@ -32,7 +33,7 @@ export default async function (uri) {
   await createTasksFromSuggestions({
     suspectUri: uri,
     type: 'deduplicate',
-    entitiesType: entity.type,
+    entitiesType: type,
     suggestions: newSuggestions,
   })
 
