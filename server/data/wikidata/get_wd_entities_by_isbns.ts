@@ -97,7 +97,10 @@ function getQuery (isbnsData: ParsedIsbnData[]) {
     ?edition wdt:P957 ?isbn10h .
   }
   ?edition wdt:P31 wd:Q3331189 .
-  FILTER EXISTS { ?edition wdt:P629 ?work . }
+  FILTER EXISTS {
+    ?edition wdt:P629 ?work .
+    ?edition wdt:P1476 ?title .
+  }
 }
 GROUP BY ?edition`
 }
