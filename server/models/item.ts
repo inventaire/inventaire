@@ -3,6 +3,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
+import { objectKeys } from '#lib/utils/types'
 import type { Item } from '#types/item'
 import type { UserId } from '#types/user'
 import itemAttributes, { type UpdatableItemAttributes } from './attributes/item.js'
@@ -52,7 +53,7 @@ export function updateItemDoc (userId: UserId, newAttributes: NewAttributes, old
 
   newAttributes = omit(newAttributes, itemAttributes.notUpdatable)
 
-  const passedAttributes = Object.keys(newAttributes)
+  const passedAttributes = objectKeys(newAttributes)
 
   for (const attr of passedAttributes) {
     if (!arrayIncludes(itemAttributes.updatable, attr)) {
@@ -60,7 +61,7 @@ export function updateItemDoc (userId: UserId, newAttributes: NewAttributes, old
     }
     const newVal = newAttributes[attr]
     itemValidations.pass(attr, newVal)
-    // @ts-expect-error
+    // @ts-expect-error TS2322 "Type 'string' is not assignable to type 'never'" ?!?
     newItem[attr] = newVal
   }
 
