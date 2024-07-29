@@ -261,6 +261,8 @@ export const propertiesValuesConstraints: Record<PropertyUri, PropertyValueConst
   'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
   // BookBrainz edition ID
   'wdt:P12351': externalId(uuidPattern),
+  // NooSFere publisher ID
+  'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
 }
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
