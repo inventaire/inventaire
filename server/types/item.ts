@@ -28,7 +28,6 @@ export interface Item extends CouchDoc {
   visibility: VisibilityKey[]
   details?: string
   notes?: string
-  pictures?: string[]
   history?: ItemHistoryEvent[]
   previousEntity?: EntityUri[]
 }
