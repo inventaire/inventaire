@@ -8,7 +8,10 @@ import { cache_ } from '#lib/cache'
 import { normalizeIsbn, toIsbn13 } from '#lib/isbn/isbn'
 import { isNotEmpty, objectFromEntries } from '#lib/utils/base'
 import { LogError } from '#lib/utils/logs'
+import { typesAliases } from '#lib/wikidata/aliases'
 import type { NormalizedIsbn, WdEntityId } from '#server/types/entity'
+
+const { works: worksP31Values } = typesAliases
 
 const notFoundValue = '0'
 type CachedWdIdValue = WdEntityId | typeof notFoundValue
@@ -88,6 +91,7 @@ function getWdIdAndIsbn (row: Row) {
 function getQuery (isbnsData: ParsedIsbnData[]) {
   const isbn13hs = map(isbnsData, 'isbn13h')
   const isbn10hs = map(isbnsData, 'isbn10h')
+  // Filter-out entities that getEntityType might consider either a work or an edition
   return `SELECT ?edition (GROUP_CONCAT(?isbn13h;separator="|") AS ?isbn13hs) (GROUP_CONCAT(?isbn10h;separator="|") AS ?isbn10hs) WHERE {
   {
     VALUES (?isbn13h) { ${isbn13hs.map(isbn => `("${isbn}")`).join(' ')} }
@@ -100,6 +104,10 @@ function getQuery (isbnsData: ParsedIsbnData[]) {
   FILTER EXISTS {
     ?edition wdt:P629 ?work .
     ?edition wdt:P1476 ?title .
+  }
+  FILTER NOT EXISTS {
+    VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
+    ?edition wdt:P31 ?work_type
   }
 }
 GROUP BY ?edition`
