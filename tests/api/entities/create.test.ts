@@ -412,7 +412,7 @@ describe('entities:create', () => {
         shouldNotBeCalled(res)
       } catch (err) {
         err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal("This property isn't allowed in reference snaks")
+        err.body.status_verbose.should.equal("This property isn't allowed in a reference")
       }
     })
 
