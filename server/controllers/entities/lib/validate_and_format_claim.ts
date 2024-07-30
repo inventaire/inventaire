@@ -21,7 +21,7 @@ function validateAndFormatReferences (claim: InvClaimObject) {
   const { references } = claim
   if (!references) return
   if (!(references instanceof Array)) {
-    throw newError('invalid reference array', 400, { claim, references })
+    throw newError('invalid references value, should be an array', 400, { claim, references })
   }
   references.forEach(ref => validateAndFormatReference(ref, claim))
 }
