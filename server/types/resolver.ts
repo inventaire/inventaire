@@ -2,6 +2,10 @@ import type { Url } from '#types/common'
 import type { ClaimByProperty, ClaimValueByProperty, Claims, EntityUri, InvClaim, Isbn, Labels } from '#types/entity'
 
 export type LooseClaim = InvClaim[] | InvClaim
+/**
+ * LooseClaims is an input-tolerant type: for each property,
+ * they accept either an array of claims (strict mode) or a single claim (loose mode)
+ */
 export type LooseClaims = Partial<{
   [Property in keyof ClaimValueByProperty]: ClaimByProperty[Property] | ClaimByProperty[Property][]
 }>
