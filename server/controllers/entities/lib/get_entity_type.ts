@@ -1,5 +1,5 @@
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { types } from '#lib/wikidata/aliases'
-import { getClaimValue } from '#models/entity'
 import type { ExtendedEntityType, InvPropertyClaims } from '#server/types/entity'
 import type { SimplifiedPropertyClaims } from 'wikibase-sdk'
 

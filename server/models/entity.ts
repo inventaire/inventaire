@@ -25,13 +25,14 @@
 import { isString, cloneDeep, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
+import { findClaimByValue, getClaimIndex, getClaimValue, isClaimObject, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvClaimValue, InvPropertyClaims, Reference, ClaimValueByProperty, InvSnakValue, TypedPropertyUri } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -223,6 +224,27 @@ function mergePropertyClaims (property: PropertyUri, fromPropertyClaims: InvProp
   }
 }
 
+function mergeClaimReferences (fromClaim: InvClaim, toClaim: InvClaim) {
+  if (isClaimObject(fromClaim)) {
+    if (isClaimObject(toClaim)) {
+      for (const ref of fromClaim.references) {
+        if (!includesReference(toClaim.references, ref)) {
+          toClaim.references.push(ref)
+        }
+      }
+      return toClaim
+    } else {
+      return { value: toClaim, references: fromClaim.references }
+    }
+  } else {
+    return toClaim
+  }
+}
+
+function includesReference (references: Reference[], reference: Reference) {
+  return references.find(ref => sameObjects(ref, reference))
+}
+
 export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
   const [ prefix, id ] = toUri.split(':')
 
@@ -320,100 +342,4 @@ function deleteLabel (doc, lang) {
   }
 
   delete doc.labels[lang]
-}
-
-export function isClaimObject (claim: InvClaim): claim is InvClaimObject {
-  return typeof claim === 'object' && claim !== null && 'value' in claim
-}
-
-export function getClaimValue (claim: InvClaim) {
-  if (isClaimObject(claim)) {
-    return claim.value
-  } else {
-    return claim
-  }
-}
-
-export function getTypedClaimValue <C extends InvClaim, P extends keyof ClaimValueByProperty> (claim: C, property: P) {
-  if (isClaimObject(claim)) {
-    return claim.value as ClaimValueByProperty[typeof property]
-  } else if (claim != null) {
-    return (claim as InvSnakValue) as ClaimValueByProperty[typeof property]
-  }
-}
-
-export function setClaimValue (claim: InvClaim, value: InvClaimValue) {
-  if (isClaimObject(claim)) {
-    return { ...claim, value }
-  } else {
-    return value
-  }
-}
-
-function getClaimIndex (claimsArray: InvPropertyClaims, claim: InvClaim) {
-  return claimsArray.map(getClaimValue).indexOf(getClaimValue(claim))
-}
-
-export function findClaimByValue (claimsArray: InvPropertyClaims, claim: InvClaim) {
-  return claimsArray.find(c => getClaimValue(c) === getClaimValue(claim))
-}
-
-function mergeClaimReferences (fromClaim: InvClaim, toClaim: InvClaim) {
-  if (isClaimObject(fromClaim)) {
-    if (isClaimObject(toClaim)) {
-      for (const ref of fromClaim.references) {
-        if (!includesReference(toClaim.references, ref)) {
-          toClaim.references.push(ref)
-        }
-      }
-      return toClaim
-    } else {
-      return { value: toClaim, references: fromClaim.references }
-    }
-  } else {
-    return toClaim
-  }
-}
-
-function includesReference (references: Reference[], reference: Reference) {
-  return references.find(ref => sameObjects(ref, reference))
-}
-
-// The option is named 'keepReferences' rather than 'includeReferences' to make
-// the function options compatible with wikibase-sdk simplifyClaims options
-export function simplifyInvClaims (claims: Claims, { keepReferences = false } = {}) {
-  const simplifiedClaims = {}
-  for (const [ property, propertyClaims ] of objectEntries(claims)) {
-    if (keepReferences) {
-      simplifiedClaims[property] = propertyClaims.map(getClaimObjectFromClaim)
-    } else {
-      simplifiedClaims[property] = propertyClaims.map(getClaimValue)
-    }
-  }
-  return simplifiedClaims
-}
-
-export function extendInvClaims (claims: Claims) {
-  return simplifyInvClaims(claims, { keepReferences: true })
-}
-
-export function getPropertyClaimsValues <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
-  if (claims?.[property]) {
-    return claims[property].map(claim => getTypedClaimValue(claim, property))
-  }
-}
-
-export function getFirstClaimValue <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
-  if (claims?.[property]?.[0]) {
-    const firstClaim = claims[property][0] as ClaimValueByProperty[P]
-    return getTypedClaimValue(firstClaim, property)
-  }
-}
-
-export function getClaimObjectFromClaim (claim: InvClaim) {
-  if (isClaimObject(claim)) {
-    return claim
-  } else {
-    return { value: claim }
-  }
 }

@@ -1,6 +1,6 @@
 import { getEntityById } from '#controllers/entities/lib/entities'
+import { extendInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
-import { extendInvClaims } from '#models/entity'
 import type { InvEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'

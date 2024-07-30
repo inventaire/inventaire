@@ -1,9 +1,9 @@
 import { pick } from 'lodash-es'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { objLength } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { objectKeys } from '#lib/utils/types'
-import { getClaimValue } from '#models/entity'
 import type { Claims, PropertyUri, WdEntityUri } from '#server/types/entity'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')

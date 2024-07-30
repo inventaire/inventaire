@@ -1,7 +1,7 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getClaimValue, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
-import { getClaimValue, setClaimValue } from '#models/entity'
 import type { EntityType, EntityUri, ExtendedEntityType, InvClaim, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateClaimValueSync } from './validate_claim_sync.js'
