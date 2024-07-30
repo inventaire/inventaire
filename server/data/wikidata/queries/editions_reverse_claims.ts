@@ -10,12 +10,20 @@ export default {
 
   query: (params: SparqlQueryParams) => {
     const { pid, qid } = params
-    return `SELECT DISTINCT ?item WHERE {
-  ?item wdt:${pid} wd:${qid} .
-  ?item wdt:P31 wd:Q3331189 .
-  # Filter-out entities tagged as both work and edition
-  VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
-  FILTER NOT EXISTS { ?item wdt:P31 ?work_type }
+    let existFilter = ''
+    // Only include editions that are properly shaped
+    // that is, that have at least an associated work and a title
+    if (pid !== 'P629') existFilter += '?edition wdt:P629 ?work . '
+    if (pid !== 'P1476') existFilter += '?edition wdt:P1476 ?title . '
+    // Filter-out entities that getEntityType might consider either a work or an edition
+    return `SELECT DISTINCT ?edition WHERE {
+  ?edition wdt:${pid} wd:${qid} .
+  ?edition wdt:P31 wd:Q3331189 .
+  FILTER NOT EXISTS {
+    VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
+    ?edition wdt:P31 ?work_type
+  }
+  FILTER EXISTS { ${existFilter} }
 }
 LIMIT 1000`
   },

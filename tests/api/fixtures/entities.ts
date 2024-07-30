@@ -1,19 +1,20 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
-import { map, random, sampleSize } from 'lodash-es'
+import { attempt, map, random, sampleSize } from 'lodash-es'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
 import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
-import { forceArray } from '#lib/utils/base'
+import { assert_ } from '#lib/utils/assert_types'
+import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#server/types/common'
 import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
 import { customAuthReq, request } from '#tests/api/utils/request'
-import { getByUri, addClaim } from '../utils/entities.js'
+import { getByUri, addClaim, getByUris } from '../utils/entities.js'
 import { authReq, getUser } from '../utils/utils.js'
 import { firstName, humanName, randomWords } from './text.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
@@ -258,7 +259,8 @@ export const someReferenceB = {
 
 const { cirrusSearchPages, parse } = wdk
 
-export async function getSomeWdEditionUri () {
+export async function getSomeWdEdition (attempt = 0) {
+  if (++attempt > 20) throw new Error('can not find a valid wd edition')
   const url = cirrusSearchPages({
     haswbstatement: [
       // Editions
@@ -268,14 +270,26 @@ export async function getSomeWdEditionUri () {
       // but no ISBN, to avoid getting an entity with an isbn uri as canonical uri
       '-P212',
       '-P957',
+      // Ideally, the edition should have a title, but monolignual text are unfortunately not indexed
+      // see https://phabricator.wikimedia.org/T247242
+      // A SPARQL request would not have this limitation; but would loose the randomization given by the random offset
+      // 'P1476',
     ],
-    limit: 1,
+    limit: 10,
     offset: random(0, 10000),
     prop: [],
   }) as Url
   const res = await request('get', url)
-  const id = parse.pagesTitles(res)[0] as WdEntityId
-  return prefixifyWd(id)
+  const uris = parse.pagesTitles(res).map(prefixifyWd)
+  const { entities } = await getByUris(uris)
+  const edition = objectValues(entities).find(entity => entity.type === 'edition')
+  if (edition) return edition
+  else return getSomeWdEdition(attempt)
+}
+
+export async function getSomeWdEditionUri () {
+  const edition = await getSomeWdEdition()
+  return edition.uri
 }
 
 export async function getSomeRemoteEditionWithALocalLayer () {
