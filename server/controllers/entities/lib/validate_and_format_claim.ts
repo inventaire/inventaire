@@ -1,6 +1,6 @@
 import { isClaimObject } from '#controllers/entities/lib/inv_claims_utils'
 import { externalIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { validateSnakValueSync } from '#controllers/entities/lib/validate_claim_sync'
+import { validateAndFormatSnakValueSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
@@ -38,7 +38,7 @@ function validateAndFormatReference (reference: unknown, claim: InvClaimObject) 
     if (!(values instanceof Array)) {
       throw newError('invalid snak values array', 400, { property, values })
     }
-    reference[property] = values.map(value => validateSnakValueSync(property, value))
+    reference[property] = values.map(value => validateAndFormatSnakValueSync(property, value))
   }
 }
 
