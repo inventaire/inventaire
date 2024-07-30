@@ -33,7 +33,7 @@ function validateAndFormatReference (reference: unknown, claim: InvClaimObject) 
   for (const [ property, values ] of objectEntries(reference)) {
     validateProperty(property)
     if (!(arrayIncludes(allowlistedReferenceProperties, property))) {
-      throw newError("This property isn't allowed in reference snaks", 400, { property, allowlistedReferenceProperties })
+      throw newError("This property isn't allowed in a reference", 400, { property, allowlistedReferenceProperties })
     }
     if (!(values instanceof Array)) {
       throw newError('invalid snak values array', 400, { property, values })
