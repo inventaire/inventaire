@@ -1,5 +1,5 @@
+import { isClaimObject } from '#controllers/entities/lib/inv_claims_utils'
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { isClaimObject } from '#models/entity'
 import type { InvClaim, PropertyUri } from '#server/types/entity'
 
 export function formatClaim (property: PropertyUri, claim: InvClaim) {

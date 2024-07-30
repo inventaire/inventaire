@@ -1,7 +1,7 @@
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
-import { getClaimValue } from '#models/entity'
 import type { ExtendedEntityType, InvClaim, InvClaimValue, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateValueType } from './properties/validations.js'

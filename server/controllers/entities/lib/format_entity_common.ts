@@ -1,7 +1,7 @@
 // Gathering entity formatting steps common to all the consumers
 // Keep in sync with get_wikidata_enriched_entities formatting
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import { getFirstClaimValue } from '#models/entity'
 import type { SerializedInvEntity } from '#server/types/entity'
 import { getUrlFromEntityImageHash, setTermsFromClaims } from './entities.js'
 

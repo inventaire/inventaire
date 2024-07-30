@@ -1,10 +1,10 @@
 import { difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import { getFirstClaimValue } from '#models/entity'
 import type { EntityUri, InvEntity, Isbn, IsbnEntityUri, RedirectFromTo, SerializedEntity } from '#types/entity'
 import { formatEditionEntity } from './format_edition_entity.js'
 

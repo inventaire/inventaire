@@ -1,10 +1,10 @@
 import { uniq } from 'lodash-es'
 import { getInvEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import { getFirstClaimValue } from '#models/entity'
 import updateLabel from './update_label.js'
 
 const { _id: hookUserId } = hardCodedUsers.hook

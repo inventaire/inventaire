@@ -1,5 +1,5 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isWdEntityUri } from '#lib/boolean_validations'
-import { getFirstClaimValue } from '#models/entity'
 import type { SerializedEntity } from '#server/types/entity'
 import { getUrlFromEntityImageHash } from './entities.js'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'

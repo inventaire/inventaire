@@ -1,8 +1,8 @@
 import { map } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isLang } from '#lib/boolean_validations'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import { getFirstClaimValue } from '#models/entity'
 import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
 
