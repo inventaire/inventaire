@@ -175,7 +175,7 @@ function removeEmptyClaimArrays (claims: Claims) {
   }
 }
 
-export function isLocalEntityLayer (doc: InvEntityDoc) {
+export function isLocalEntityLayer (doc: InvEntityDoc | Pick<InvEntity, 'claims'>) {
   if ('redirect' in doc) return false
   return doc.claims['invp:P1']?.[0] != null
 }

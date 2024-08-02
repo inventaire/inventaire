@@ -5,7 +5,7 @@ import type { InvEntity } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
 import type { UserId } from '#server/types/user'
 import { prefixifyInv } from './prefix.js'
-import validateEntity from './validate_entity.js'
+import { validateInvEntity } from './validate_entity.js'
 
 interface CreateInvEntityParams {
   labels?: InvEntity['labels']
@@ -18,7 +18,7 @@ export async function createInvEntity (params: CreateInvEntityParams) {
   const { labels = {}, claims, userId, batchId } = params
   log(params, 'inv entity creation')
 
-  await validateEntity({ labels, claims })
+  await validateInvEntity({ labels, claims })
 
   const blankEntityDoc = createBlankEntityDoc()
 

@@ -450,15 +450,15 @@ for (const property of editionAuthorRelationsProperties) {
   }
 }
 
-export const propertiesPerType = {}
+export const _propertiesPerType = {}
 
 for (const type of allLocallyEditedEntitiesTypes) {
-  propertiesPerType[type] = []
+  _propertiesPerType[type] = []
 }
 
 for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
   for (const type of subjectTypes) {
-    propertiesPerType[type]?.push(property)
+    _propertiesPerType[type]?.push(property)
   }
   const propertyValuesConstraints = propertiesValuesConstraints[property]
   if (propertyValuesConstraints) {
@@ -472,5 +472,7 @@ for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
     throw new Error(`missing property values constraints: ${property}`)
   }
 }
+
+export const propertiesPerType = _propertiesPerType as Record<typeof allLocallyEditedEntitiesTypes[number], PropertyUri>
 
 export const properties = _properties as Record<PropertyUri, PropertyConfig>

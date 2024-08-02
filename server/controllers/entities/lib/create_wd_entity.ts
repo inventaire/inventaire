@@ -10,7 +10,7 @@ import type { User } from '#server/types/user'
 import { getEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
-import validateEntity from './validate_entity.js'
+import { validateInvEntity } from './validate_entity.js'
 import type { SimplifiedQualifiers } from 'wikibase-sdk'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
@@ -57,7 +57,7 @@ export async function createWdEntity (params: CreateWdEntityParams) {
 }
 
 async function validate (entity, isAlreadyValidated) {
-  if (!isAlreadyValidated) return validateEntity(entity)
+  if (!isAlreadyValidated) return validateInvEntity(entity)
 }
 
 function validateWikidataCompliance (entity: EntityDraft) {
