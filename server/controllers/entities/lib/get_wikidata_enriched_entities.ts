@@ -5,7 +5,7 @@
 //   such as ISBNs defined on work entities
 
 import { partition, map, compact, omit } from 'lodash-es'
-import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks, type Claims, type PropertyId, type Item as RawWdEntity } from 'wikibase-sdk'
+import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Claims, type PropertyId, type Item as RawWdEntity } from 'wikibase-sdk'
 import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
 import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
@@ -25,7 +25,7 @@ import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri, InvEntity, SimplifiedSitelinks, EntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
-import { getEntityType } from './get_entity_type.js'
+import { getEntityType, getStrictEntityType, getWdEntityStrictEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
@@ -112,9 +112,8 @@ async function format (entity: RawWdEntity | MissingWdEntity) {
   const { P31 } = entity.claims
   let type
   if (P31) {
-    const simplifiedP31 = simplifyPropertyClaims(P31, simplifyClaimsOptions) as WdEntityId[]
     // /!\ This is a different type (edition, work, etc) than Wikibase entity type (item, property, etc)
-    type = getEntityType(simplifiedP31)
+    type = getWdEntityStrictEntityType(entity)
   }
 
   entity.claims = omitUndesiredPropertiesPerType(type, entity.claims)
@@ -125,8 +124,6 @@ async function format (entity: RawWdEntity | MissingWdEntity) {
     return formatValidEntity(entity, type)
   }
 }
-
-const simplifyClaimsOptions = { entityPrefix: 'wd' }
 
 async function formatValidEntity (entity: RawWdEntity, type: ExtendedEntityType) {
   const formattedClaims = formatClaims(entity.claims)
