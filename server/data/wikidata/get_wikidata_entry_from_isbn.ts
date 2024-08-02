@@ -1,4 +1,4 @@
-import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { parseIsbn } from '#lib/isbn/parse'
@@ -41,7 +41,7 @@ function buildEntryFromFormattedRows (rows, isbn) {
   const { item, type, title, work } = row
   const itemUri = prefixifyWd(item.value)
   const itemTypeUri = prefixifyWd(type)
-  const itemType = getEntityType([ itemTypeUri ])
+  const itemType = getInvEntityType([ itemTypeUri ])
 
   // "SERVICE wikibase:label" defaults to the item id
   // when it doesn't find the desired label

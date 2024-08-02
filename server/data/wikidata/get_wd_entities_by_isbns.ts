@@ -91,7 +91,6 @@ function getWdIdAndIsbn (row: Row) {
 function getQuery (isbnsData: ParsedIsbnData[]) {
   const isbn13hs = map(isbnsData, 'isbn13h')
   const isbn10hs = map(isbnsData, 'isbn10h')
-  // Filter-out entities that getEntityType might consider either a work or an edition
   return `SELECT ?edition (GROUP_CONCAT(?isbn13h;separator="|") AS ?isbn13hs) (GROUP_CONCAT(?isbn10h;separator="|") AS ?isbn10hs) WHERE {
   {
     VALUES (?isbn13h) { ${isbn13hs.map(isbn => `("${isbn}")`).join(' ')} }
@@ -102,13 +101,18 @@ function getQuery (isbnsData: ParsedIsbnData[]) {
   }
   ?edition wdt:P31 wd:Q3331189 .
   FILTER EXISTS {
+    # (1)
     ?edition wdt:P629 ?work .
     ?edition wdt:P1476 ?title .
   }
   FILTER NOT EXISTS {
+    # (2)
     VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
     ?edition wdt:P31 ?work_type
   }
 }
 GROUP BY ?edition`
 }
+
+// (1) Filter-out entities that getStrictEntityType will not identify as edition due to the absence of an associated work or a title
+// (2) Filter-out entities that getStrictEntityType will not identify as edition due to the type ambiguity
