@@ -2,7 +2,7 @@ import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/ent
 import { getPatchesByEntityId } from '#controllers/entities/lib/patches/patches'
 import { emit } from '#lib/radio'
 import { revertPatch } from '#models/patch'
-import validateEntity from './validate_entity.js'
+import { validateInvEntity } from './validate_entity.js'
 
 export default async function (patchId, userId) {
   const entityId = patchId.split(':')[0]
@@ -19,7 +19,7 @@ export default async function (patchId, userId) {
     updatedDoc = revertPatch(updatedDoc, patchToRevert)
   }
 
-  await validateEntity(updatedDoc)
+  await validateInvEntity(updatedDoc)
   const context = { restoredPatch: patchId }
   const docAfterUpdate = await putInvEntityUpdate({ userId, currentDoc, updatedDoc, context })
   await emit('entity:restore:version', updatedDoc)

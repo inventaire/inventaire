@@ -3,12 +3,12 @@ import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
-import type { Claims, ExtendedEntityType, InvEntityId, PropertyUri } from '#types/entity'
+import type { Claims, EntityType, InvEntityId, PropertyUri } from '#types/entity'
 import { getEntityType } from './get_entity_type.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
-export default async function ({ claims, type, _id }: { claims: Claims, type?: ExtendedEntityType, _id: string }) {
+export async function validateAndFormatInvClaims ({ claims, type, _id }: { claims: Claims, type?: EntityType, _id: string }) {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getEntityType(wdtP31) : type
   assert_.string(type)
@@ -23,12 +23,12 @@ export default async function ({ claims, type, _id }: { claims: Claims, type?: E
   return claims
 }
 
-function validatePropertiesClaims (claims: Claims, type: ExtendedEntityType, _id: InvEntityId) {
+function validatePropertiesClaims (claims: Claims, type: EntityType, _id: InvEntityId) {
   const properties = Object.keys(claims)
   return Promise.all(properties.map(validatePropertyClaims(claims, type, _id)))
 }
 
-const validatePropertyClaims = (claims: Claims, type: ExtendedEntityType, _id: InvEntityId) => async (property: PropertyUri) => {
+const validatePropertyClaims = (claims: Claims, type: EntityType, _id: InvEntityId) => async (property: PropertyUri) => {
   const propertyClaims = claims[property]
 
   if (!isArray(propertyClaims)) {
