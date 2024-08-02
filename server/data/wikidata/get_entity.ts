@@ -6,11 +6,13 @@ import { newError } from '#lib/error/error'
 import { requestGrouper } from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
+import type { WdEntityId } from '#server/types/entity'
 import type { Url } from '#types/common'
+import type { Item as RawWdEntity } from 'wikibase-sdk'
 
 const { getEntities } = wdk
 
-async function requester (ids) {
+async function requester (ids: WdEntityId[]) {
   ids = uniq(ids)
   const idsBatches = chunk(ids, 50)
   const entitiesBatches = {}
@@ -21,7 +23,7 @@ async function requester (ids) {
   return entitiesBatches
 }
 
-async function getEntitiesBatch (idsBatch) {
+async function getEntitiesBatch (idsBatch: WdEntityId[]) {
   const url = getEntities({ ids: idsBatch }) as Url
   const { entities, error } = await requests_.get(url)
   if (entities) {
@@ -42,4 +44,4 @@ async function getEntitiesBatch (idsBatch) {
 // Expose a single requester
 // Taking a Wikidata Id
 // Returning the corresponding entity object
-export const getWdEntity = requestGrouper({ requester, delay: 500 })
+export const getWdEntity = requestGrouper<WdEntityId, RawWdEntity>({ requester, delay: 500 })
