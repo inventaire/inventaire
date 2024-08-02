@@ -2,51 +2,56 @@ import { createTasksInBulk } from '#controllers/tasks/lib/tasks'
 import { getByIds } from '../utils/tasks.js'
 import { createHuman, createWork } from './entities.js'
 
-const promises = {}
-
-export function createSomeTasks (humanLabel) {
-  if (promises[humanLabel] != null) return promises[humanLabel]
-
-  const human = { labels: { en: humanLabel } }
-
-  promises[humanLabel] = Promise.all([ createHuman(human), createHuman(human) ])
-    .then(humans => {
-      return checkEntities(map(humans, 'uri'))
-      .then(tasks => ({ tasks, humans }))
-    })
-
-  return promises[humanLabel]
-}
-
 export async function createTask (params) {
-  const taskDoc = await createTaskDoc(params)
-  const taskRes = await createTasks([ taskDoc ])
-  .then(tasks => tasks[0])
-  const tasks = await getByIds(taskRes.id)
-  return tasks[0]
+  let taskDoc = await createTaskBase(params)
+  if (taskDoc.entitiesType && taskDoc.entitiesType === 'work') {
+    taskDoc = await createWorkTaskDoc(params)
+  } else {
+    taskDoc = await createHumanTaskDoc(params)
+  }
+  const [ taskRes ] = await createTasks([ taskDoc ])
+  const [ task ] = await getByIds(taskRes.id)
+  return task
 }
 
-const createTaskDoc = async (params = {}) => {
-  let suspect = {}
-  let suggestionUri = ''
-  if (!params.suspectUri) {
-    if (params.entitiesType && params.entitiesType === 'work') {
-      suspect = await createWork()
-      suggestionUri = 'wd:Q104889737'
-    } else {
-      suspect = await createHuman()
-      suggestionUri = 'wd:Q205739'
-    }
+const createWorkTaskDoc = async (params = {}) => {
+  const taskDoc = await createTaskBase(params)
+  taskDoc.suggestionUri = params.suggestionUri || 'wd:Q104889737'
+  const userId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+  taskDoc.reporter = userId
+  const isbn = '978-1-59184-233-0'
+  taskDoc.clue = isbn
+  return taskDoc
+}
+
+async function assignSuspectUri (taskDoc, params) {
+  if (params.suspectUri) {
+    taskDoc.suspectUri = params.suspectUri
+  } else if (params.entitiesType === 'work') {
+    const suspect = await createWork()
+    taskDoc.suspectUri = suspect.uri
+  } else {
+    const suspect = await createHuman()
+    taskDoc.suspectUri = suspect.uri
   }
-  return {
+}
+
+async function createHumanTaskDoc (params = {}) {
+  const taskDoc = await createTaskBase(params)
+  taskDoc.suggestionUri = params.suggestionUri || 'wd:Q205739'
+  taskDoc.lexicalScore = 12.01775
+  taskDoc.relationScore = 0.1
+  taskDoc.externalSourcesOccurrences = []
+  return taskDoc
+}
+
+async function createTaskBase (params = {}) {
+  const taskDoc = {
     type: params.type || 'deduplicate',
     entitiesType: params.entitiesType || 'human',
-    suspectUri: params.suspectUri || suspect.uri,
-    suggestionUri: params.suggestionUri || suggestionUri,
-    lexicalScore: 12.01775,
-    relationScore: 0.1,
-    externalSourcesOccurrences: [],
   }
+  await assignSuspectUri(taskDoc, params)
+  return taskDoc
 }
 
 const createTasks = taskDocs => {
