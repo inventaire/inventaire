@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -38,7 +38,7 @@ async function _updateInvClaim (user: User, id: InvEntityId, property: PropertyU
     const remoteEntity = await getEntityByUri({ uri: remoteUri })
     type = remoteEntity.type
   } else {
-    type = getEntityType(currentDoc.claims['wdt:P31'])
+    type = getInvEntityType(currentDoc.claims['wdt:P31'])
     validateClaimProperty(type, property)
   }
   const updatedDoc = await updateClaim({ _id: id, type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })

@@ -5,7 +5,7 @@ import { Lang } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
 import { isLocalEntityLayer } from '#models/entity'
 import type { Claims, EntityType, InvEntity, Labels, WdEntityUri } from '#server/types/entity'
-import { getEntityType } from './get_entity_type.js'
+import { getInvEntityType } from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
 import { validateAndFormatInvClaims } from './validate_and_format_claims.js'
 import type { SetOptional } from 'type-fest'
@@ -41,7 +41,7 @@ function getValueType (claims: Claims) {
   if (!isNonEmptyArray(wdtP31)) {
     throw newError("wdt:P31 array can't be empty", 400, { wdtP31 })
   }
-  return getEntityType(wdtP31)
+  return getInvEntityType(wdtP31)
 }
 
 function validateValueType (type: EntityType, wdtP31: WdEntityUri[]) {

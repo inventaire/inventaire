@@ -141,7 +141,10 @@ describe('entities:create', () => {
   it('should reject multiple values for a property that take one', async () => {
     await authReq('post', endpoint, {
       labels: { fr: randomLabel() },
-      claims: { 'wdt:P31': [ 'wd:Q47461344', 'wd:Q8274' ] },
+      claims: {
+        'wdt:P31': [ 'wd:Q5' ],
+        'wdt:P569': [ '1950-04', '1950-05' ],
+      },
     })
     .then(shouldNotBeCalled)
     .catch(err => {

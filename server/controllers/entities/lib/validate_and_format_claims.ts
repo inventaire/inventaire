@@ -4,13 +4,13 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { typeOf } from '#lib/utils/types'
 import type { Claims, EntityType, InvEntityId, PropertyUri } from '#types/entity'
-import { getEntityType } from './get_entity_type.js'
+import { getInvEntityType } from './get_entity_type.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
 export async function validateAndFormatInvClaims ({ claims, type, _id }: { claims: Claims, type?: EntityType, _id: string }) {
   const wdtP31 = claims['wdt:P31']
-  type = wdtP31 ? getEntityType(wdtP31) : type
+  type = wdtP31 ? getInvEntityType(wdtP31) : type
   assert_.string(type)
 
   if (!isNonEmptyPlainObject(claims)) {

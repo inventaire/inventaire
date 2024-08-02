@@ -12,7 +12,7 @@ describe('entities:update-claims:wd', () => {
         shouldNotBeCalled()
       } catch (err) {
         err.statusCode.should.equal(400)
-        err.message.should.containEql("wdt:P31 array can't be empty")
+        err.message.should.containEql('invalid inv entity wdt:P31 claim array')
       }
     })
 
@@ -25,7 +25,7 @@ describe('entities:update-claims:wd', () => {
         shouldNotBeCalled()
       } catch (err) {
         err.statusCode.should.equal(400)
-        err.message.should.containEql("This edit would change the entity's type")
+        err.message.should.containEql('invalid inv entity wdt:P31 claim array')
       }
     })
   })

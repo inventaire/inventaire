@@ -25,7 +25,7 @@ import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri, InvEntity, SimplifiedSitelinks, EntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
-import { getEntityType, getStrictEntityType, getWdEntityStrictEntityType } from './get_entity_type.js'
+import { getWdEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
@@ -113,7 +113,7 @@ async function format (entity: RawWdEntity | MissingWdEntity) {
   let type
   if (P31) {
     // /!\ This is a different type (edition, work, etc) than Wikibase entity type (item, property, etc)
-    type = getWdEntityStrictEntityType(entity)
+    type = getWdEntityType(entity)
   }
 
   entity.claims = omitUndesiredPropertiesPerType(type, entity.claims)

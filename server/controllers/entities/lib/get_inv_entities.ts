@@ -8,7 +8,7 @@ import { isWdEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity, EntityType } from '#types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
-import { getEntityType } from './get_entity_type.js'
+import { getInvEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
 
 // Hypothesis: there is no need to look for Wikidata data here
@@ -37,7 +37,7 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   const serializedEntity = {
     uri,
     ...entity,
-    type: getEntityType(simplifiedClaims['wdt:P31']) as EntityType,
+    type: getInvEntityType(simplifiedClaims['wdt:P31']),
     claims: simplifiedClaims,
     redirects,
     // Keep track of special types such as removed:placehoder
