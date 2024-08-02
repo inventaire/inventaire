@@ -8,7 +8,7 @@ import type { Url } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { ImageHash } from '#types/image'
 import type { OverrideProperties, Writable } from 'type-fest'
-import type { WikimediaLanguageCode, SitelinkBadges, Item as WdItem, Claims as WdClaims, GetSitelinkUrlOptions } from 'wikibase-sdk'
+import type { WikimediaLanguageCode, SitelinkBadges, Claims as WdClaims, GetSitelinkUrlOptions } from 'wikibase-sdk'
 
 export type WdEntityId = `Q${number}`
 export type WdPropertyId = `P${number}`
@@ -213,10 +213,13 @@ export interface SerializedWdEntity {
   labels: LabelsAndInferredLabels
   aliases: SimplifiedAliases
   descriptions: DescriptionsAndInferredDescriptions
-  claims: SimplifiedClaimsIncludingWdExtra
+  claims: Partial<SimplifiedClaimsIncludingWdExtra>
   sitelinks: SimplifiedSitelinks
   originalLang?: WikimediaLanguageCode
-  redirects?: WdItem['redirects']
+  redirects?: {
+    from: WdEntityUri
+    to: WdEntityUri | IsbnEntityUri
+  }
   image: WikimediaImageInfo | LocalImageInfo
   popularity?: number
   // The following attributes might be set by indexation functions

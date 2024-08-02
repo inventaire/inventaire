@@ -5,7 +5,7 @@ import { assert_ } from '#lib/utils/assert_types'
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time
 // but the requests can't be merged upstream to keep cache per-entity
-export function requestGrouper (params) {
+export function requestGrouper <K, T> (params) {
   const { delay, requester } = params
 
   let keys = []
@@ -39,7 +39,7 @@ export function requestGrouper (params) {
   // This is the request grouped only interface:
   // make a request for a single piece, get the result for this single piece.
   // The request grouper abstract all the rest, namely the request grouping
-  return async key => {
+  return async function (key: K) {
     assert_.string(key)
     keys.push(key)
 
@@ -47,6 +47,6 @@ export function requestGrouper (params) {
     const keyResult = groupedResults?.[key]
     // Prevent several consumers requesting the same object
     // as it could create conflicts
-    return cloneDeep(keyResult)
+    return cloneDeep(keyResult) as T
   }
 }
