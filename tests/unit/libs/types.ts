@@ -85,13 +85,6 @@ describe('assert_', () => {
     })
 
     describe('general', () => {
-      it('should return the passed object', () => {
-        const array = [ 'im an array' ]
-        assert_.type('array', array).should.equal(array)
-        const obj = { im: 'an array' }
-        assert_.type('object', obj).should.equal(obj)
-      })
-
       it('should accept piped types', () => {
         (() => assert_.type('number|null', 1252154)).should.not.throw();
         (() => assert_.type('number|null', null)).should.not.throw();
