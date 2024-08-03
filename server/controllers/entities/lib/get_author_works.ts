@@ -65,7 +65,7 @@ function formatWdEntity (result) {
   if (!allowlistedTypesNames.includes(typeName)) return
 
   date = getSimpleDayDate(date)
-  serie = prefixifyWd(serie)
+  if (serie) serie = prefixifyWd(serie)
   return { type: typeName, uri: `wd:${wdId}`, date, serie }
 }
 
