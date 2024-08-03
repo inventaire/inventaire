@@ -1,4 +1,4 @@
-import restoreVersion from './lib/restore_version.js'
+import { restoreVersion } from './lib/restore_version.js'
 
 const sanitization = {
   patch: {},
