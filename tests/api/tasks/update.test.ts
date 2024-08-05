@@ -8,7 +8,7 @@ describe('tasks:update', () => {
   it('should update a task', async () => {
     const suspect = await createHuman()
     const task = await createTask({ suspectUri: suspect.uri })
-    const { ok } = await update(task.id, 'state', 'dismissed')
+    const { ok } = await update(task._id, 'state', 'dismissed')
     ok.should.be.true()
   })
 

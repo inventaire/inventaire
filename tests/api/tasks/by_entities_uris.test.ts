@@ -1,59 +1,13 @@
 import 'should'
+import { publicReq } from '#tests/api/utils/utils'
 import { createHuman, someFakeUri } from '../fixtures/entities.js'
 import { createTask } from '../fixtures/tasks.js'
 import {
-  getByScore,
+  endpoint,
   getBySuspectUris,
   getBySuggestionUris,
-  getByEntitiesType,
   update,
 } from '../utils/tasks.js'
-
-// Tests dependency: having a populated Elasticsearch wikidata index
-describe('tasks:byScore', () => {
-  it('should return 10 or less tasks by default', async () => {
-    await createTask()
-    const tasks = await getByScore()
-    tasks.length.should.be.belowOrEqual(10)
-    tasks.length.should.be.aboveOrEqual(1)
-  })
-
-  it('should return a limited array of tasks', async () => {
-    await createTask()
-    const tasks = await getByScore({ limit: 1 })
-    tasks.length.should.equal(1)
-  })
-
-  it('should take an offset parameter', async () => {
-    await createTask()
-    const tasksA = await getByScore()
-    const tasksB = await getByScore({ offset: 1 })
-    tasksA[1].should.deepEqual(tasksB[0])
-  })
-})
-
-describe('tasks:byEntitiesType', () => {
-  const entitiesType = 'work'
-
-  it('should return tasks with a specific entitiesType', async () => {
-    await createTask({ entitiesType })
-    const tasks = await getByEntitiesType({ type: entitiesType })
-    tasks[0].entitiesType.should.equal(entitiesType)
-  })
-
-  it('should return a limited array of tasks', async () => {
-    await createTask({ entitiesType })
-    const tasks = await getByEntitiesType({ type: entitiesType, limit: 1 })
-    tasks.length.should.equal(1)
-  })
-
-  it('should take an offset parameter', async () => {
-    await createTask({ entitiesType })
-    const tasksA = await getByEntitiesType({ type: entitiesType })
-    const tasksB = await getByEntitiesType({ type: entitiesType, offset: 1 })
-    tasksA[1].should.deepEqual(tasksB[0])
-  })
-})
 
 describe('tasks:bySuspectUris', () => {
   it('should return an array of tasks', async () => {
@@ -67,11 +21,19 @@ describe('tasks:bySuspectUris', () => {
     tasks[uri][0].should.be.an.Object()
   })
 
+  it('should return an array of tasks when passed an empty type', async () => {
+    const suspect = await createHuman()
+    await createTask({ suspectUri: suspect.uri })
+    const { uri } = suspect
+    const { tasks } = await publicReq('get', `${endpoint}by-uris&uris=${uri}`)
+    tasks[uri][0].should.be.an.Object()
+  })
+
   it('should not return archived tasks', async () => {
     const suspect = await createHuman()
     const { uri } = suspect
     const task = await createTask({ uri })
-    await update(task.id, 'state', 'dismissed')
+    await update(task._id, 'state', 'dismissed')
     const tasks = await getBySuspectUris(uri)
     tasks[uri].length.should.equal(0)
   })

@@ -1,6 +1,7 @@
 import { groupBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { mappedArrayPromise } from '#lib/promises'
+import { combinations } from '#lib/utils/base'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
 import type { EntityType, EntityUri } from '#types/entity'
 import type { Task, TaskState, TaskType } from '#types/task'
@@ -55,10 +56,12 @@ export function getTasksByScore (options) {
 }
 
 export function getTasksByEntitiesType (options) {
-  const { type, limit, offset } = options
-  return db.getDocsByViewQuery<Task>('byEntitiesType', {
-    startkey: type,
-    endkey: type,
+  // Only tasks with a key `reporter` will be requested.
+  // To query tasks without, see getTasksByScore
+  const { type, entitiesType, limit, offset } = options
+  return db.getDocsByViewQuery<Task>('byTypeAndEntitiesType', {
+    startkey: [ type, entitiesType ],
+    endkey: [ type, entitiesType ],
     limit,
     skip: offset,
     include_docs: true,
@@ -82,20 +85,29 @@ export function getTasksBySuggestionUri (suggestionUri) {
   return db.getDocsByViewKey<Task>('bySuggestionUriAndState', [ suggestionUri, null ])
 }
 
-export async function getTasksBySuspectUris (suspectUris: EntityUri[], options: TasksQueryOptions = {}) {
-  const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(suspectUris, includeArchived))
-  if (index !== true) return tasks
-  const getTasksBySuspectUris = groupBy(tasks, 'suspectUri')
-  return completeWithEmptyArrays(getTasksBySuspectUris, suspectUris)
+export async function getTasksBySuspectUrisAndType (uris: EntityUri[], types: string[]) {
+  const keys = combinations(uris, types)
+  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndType', keys)
+  return indexByTasksKey(tasks, 'suspectUri', uris)
 }
 
-export async function getTasksBySuggestionUris (suggestionUris: EntityUri[], options: TasksQueryOptions = {}) {
+export async function getTasksBySuspectUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
-  const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(suggestionUris, includeArchived))
+  const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(uris, includeArchived))
   if (index !== true) return tasks
-  const getTasksBySuggestionUris = groupBy(tasks, 'suggestionUri')
-  return completeWithEmptyArrays(getTasksBySuggestionUris, suggestionUris)
+  return indexByTasksKey(tasks, 'suspectUri', uris)
+}
+
+export async function getTasksBySuggestionUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
+  const { index, includeArchived } = options
+  const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(uris, includeArchived))
+  if (index !== true) return tasks
+  return indexByTasksKey(tasks, 'suggestionUri', uris)
+}
+
+function indexByTasksKey (tasks, key, tasksUris) {
+  const tasksBySuspectUris = groupBy(tasks, key)
+  return fillWithEmptyArrays(tasksBySuspectUris, tasksUris)
 }
 
 function getKeys (uris: EntityUri[], includeArchived?: boolean) {
@@ -108,7 +120,7 @@ function getKeys (uris: EntityUri[], includeArchived?: boolean) {
 
 const buildKey = state => uri => [ uri, state ]
 
-function completeWithEmptyArrays (getTasksByUris, uris: EntityUri[]) {
+function fillWithEmptyArrays (getTasksByUris, uris: EntityUri[]) {
   for (const uri of uris) {
     if (getTasksByUris[uri] == null) getTasksByUris[uri] = []
   }
