@@ -271,6 +271,7 @@ export default {
     },
     validate: isColorHexCode,
   },
+  comment: nonEmptyString,
   context: {
     validate: value => {
       if (!isVisibilityKey(value)) {
@@ -305,6 +306,7 @@ export default {
   object: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
   options: allowlistedStrings,
+  ordinal: positiveInteger,
   owners: couchUuids,
   password: {
     secret: true,
