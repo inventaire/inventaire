@@ -1,7 +1,7 @@
 import 'should'
 import preventMultiAccountsCreation from '#controllers/user/lib/prevent_multi_accounts_creation'
 import { wait } from '#lib/promises'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const errorMessage = 'an account is already in the process of being created with this username'
 

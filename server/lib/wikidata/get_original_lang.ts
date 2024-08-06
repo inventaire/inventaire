@@ -1,16 +1,19 @@
 import { pick } from 'lodash-es'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import { objLength, pickOne } from '#lib/utils/base'
+import { objLength } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
+import { objectKeys } from '#lib/utils/types'
+import type { Claims, PropertyUri, WdEntityUri } from '#server/types/entity'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
-export default claims => {
+export default (claims: Claims) => {
   const langPropertiesClaims = pick(claims, langProperties)
   if (objLength(langPropertiesClaims) === 0) return
 
-  const someLangPropertyClaims = pickOne(langPropertiesClaims)
-  const originalLangUri = someLangPropertyClaims[0]
+  const property = objectKeys(langPropertiesClaims)[0] as PropertyUri
+  const originalLangUri = getClaimValue(claims[property][0]) as WdEntityUri
   if (originalLangUri != null) {
     const wdId = unprefixify(originalLangUri)
     return wmLanguageCodeByWdId[wdId]

@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { assert_ } from '#lib/utils/assert_types'
 import { updateEntityDocClaim } from '#models/entity'
-import type { InvClaimValue, InvEntityId, PropertyUri } from '#server/types/entity'
-import type { User } from '#server/types/user'
-import getEntityType from './get_entity_type.js'
+import type { ExtendedEntityType, InvClaimValue, InvEntity, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
+import type { User, UserId } from '#server/types/user'
 import inferredClaimUpdates from './inferred_claim_updates.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
@@ -16,7 +16,7 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
   assert_.object(user)
   const { _id: userId, roles } = user
   const userIsAdmin = roles?.includes('admin')
-  let currentDoc
+  let currentDoc: InvEntityDoc
   try {
     currentDoc = await getEntityById(id)
   } catch (err) {
@@ -26,14 +26,13 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
       throw err
     }
   }
-  // Known cases: entities turned into redirections or removed:placeholders
-  if (currentDoc.claims == null) {
+  if ('redirect' in currentDoc || currentDoc.type === 'removed:placeholder') {
     const context = { id, property, oldVal, newVal }
     throw newError('this entity is obsolete', 400, context)
   }
   const type = getEntityType(currentDoc.claims['wdt:P31'])
   validateClaimProperty(type, property)
-  const updatedDoc = await updateClaim({ type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })
+  const updatedDoc = await updateClaim({ _id: id, type, property, oldVal, newVal, userId, currentDoc, userIsAdmin })
 
   await inferredClaimUpdates(updatedDoc, property, oldVal)
 
@@ -44,11 +43,29 @@ async function updateInvClaim (user: User, id: InvEntityId, property: PropertyUr
   }
 }
 
-async function updateClaim (params) {
-  const { property, oldVal, userId, currentDoc } = params
-  params.letEmptyValuePass = true
-  const formattedNewVal = await validateAndFormatClaim(params)
-  const updatedDoc = updateEntityDocClaim(cloneDeep(currentDoc), property, oldVal, formattedNewVal)
+interface UpdateClaimParams {
+  _id: InvEntityId
+  type: ExtendedEntityType
+  property: PropertyUri
+  oldVal: InvClaimValue
+  newVal: InvClaimValue
+  userId: UserId
+  currentDoc: InvEntity
+  userIsAdmin: boolean
+}
+
+async function updateClaim (params: UpdateClaimParams) {
+  const { _id, type, property, oldVal, newVal, userId, currentDoc, userIsAdmin } = params
+  const formattedNewClaim = await validateAndFormatClaim({
+    _id,
+    type,
+    property,
+    oldClaim: oldVal,
+    newClaim: newVal,
+    userIsAdmin,
+    letEmptyValuePass: true,
+  })
+  const updatedDoc = updateEntityDocClaim(cloneDeep(currentDoc), property, oldVal, formattedNewClaim)
   return putInvEntityUpdate({ userId, currentDoc, updatedDoc })
 }
 

@@ -1,27 +1,21 @@
 import { flatten, pick, values } from 'lodash-es'
-import { simplifyClaim } from 'wikibase-sdk'
-import type { Claims, WdRawClaims } from '#types/entity'
-import { unprefixify } from './prefix.js'
+import type { SerializedEntity, WikimediaCommonsFilename } from '#types/entity'
+import { prefixifyWdProperty } from './prefix.js'
 
-export const imageProperties = [
+export const nonPrefixedImageProperties = [
   // image
-  'wdt:P18',
+  'P18',
   // logo image
-  'wdt:P154',
+  'P154',
   // collage image
-  'wdt:P2716',
+  'P2716',
   // related image
-  'wdt:P6802',
-]
+  'P6802',
+] as const
 
-export const nonPrefixedImageProperties = imageProperties.map(unprefixify)
+export const imageProperties = nonPrefixedImageProperties.map(prefixifyWdProperty)
 
-export function getCommonsFilenamesFromClaims (claims: Claims | WdRawClaims, needsSimplification: boolean = false) {
-  if (needsSimplification) {
-    const images = flatten(values(pick(claims, nonPrefixedImageProperties)))
-    return images.map(imageClaim => simplifyClaim(imageClaim))
-  } else {
-    const images = flatten(values(pick(claims, imageProperties)))
-    return images
-  }
+export function getCommonsFilenamesFromClaims (claims: SerializedEntity['claims']) {
+  const imageClaims = flatten(values(pick(claims, imageProperties)))
+  return imageClaims as WikimediaCommonsFilename[]
 }

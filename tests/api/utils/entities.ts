@@ -6,7 +6,7 @@ import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
-import type { EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#server/types/entity'
+import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
 import type { PatchId } from '#server/types/patch'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
@@ -32,6 +32,7 @@ export async function getByUri (uri: EntityUri, refresh?: boolean) {
 }
 
 export async function getEntitiesAttributesByUris ({ uris, attributes, relatives, refresh }: Pick<GetEntitiesParams, 'uris' | 'attributes' | 'relatives' | 'refresh'>) {
+  const expandedClaims = attributes.includes('references')
   const query = {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
@@ -39,8 +40,17 @@ export async function getEntitiesAttributesByUris ({ uris, attributes, relatives
     refresh,
     relatives: relatives ? forceArray(relatives).join('|') : undefined,
   }
-  const { entities } = (await publicReq('get', buildUrl('/api/entities', query))) as GetEntitiesByUrisResponse
-  return entities
+  const { entities } = await publicReq('get', buildUrl('/api/entities', query))
+  if (expandedClaims) {
+    return entities as ExpandedSerializedEntitiesByUris
+  } else {
+    return entities as SerializedEntitiesByUris
+  }
+}
+
+export async function getEntityAttributesByUri ({ uri, attributes }: { uri: EntityUri, attributes: GetEntitiesParams['attributes'] }) {
+  const entities = await getEntitiesAttributesByUris({ uris: [ uri ], attributes })
+  return entities[uri]
 }
 
 export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata') {

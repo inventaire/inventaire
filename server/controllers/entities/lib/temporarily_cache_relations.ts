@@ -1,6 +1,7 @@
 import { compact, map, uniq } from 'lodash-es'
 import { getAggregatedPropertiesValues, getEntityById } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { propertiesValuesConstraints, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { objectKeys } from '#lib/utils/types'
 import type { EntityUri, InvEntityUri, PropertyUri, SerializedEntity } from '#types/entity'
@@ -21,8 +22,9 @@ export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
 
   for (const property of cachedRelationProperties) {
     if (claims[property]) {
-      for (const valueUri of claims[property]) {
-        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri as EntityUri)
+      for (const claim of claims[property]) {
+        const valueUri = getClaimValue(claim) as EntityUri
+        const promise = entitiesRelationsTemporaryCache.set(invEntityUri, property, valueUri)
         promises.push(promise)
       }
     }
@@ -47,7 +49,7 @@ async function getSubjectsUris (valueUri, properties) {
 }
 
 export const relationIsConfirmedByPrimaryData = (properties: readonly PropertyUri[], valueUri: EntityUri) => async (entity: SerializedEntity) => {
-  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties)
+  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties) as EntityUri[]
   // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
   const canonicalValuesUris = await getResolvedUris(relationsUris)
   if (canonicalValuesUris.includes(valueUri)) return entity

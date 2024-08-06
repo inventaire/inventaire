@@ -1,7 +1,10 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
-import getInvEntityCanonicalUri from './get_inv_entity_canonical_uri.js'
+import type { InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
+import type { Split } from 'type-fest'
 
 export default async function ({ uri, refresh, dry }) {
   const [ wdCollections, invPublications ] = await Promise.all([
@@ -10,7 +13,7 @@ export default async function ({ uri, refresh, dry }) {
   ])
 
   return {
-    collections: wdCollections.concat(invPublications.collections),
+    collections: [ ...wdCollections, ...invPublications.collections ],
     editions: invPublications.editions,
   }
 }
@@ -33,15 +36,15 @@ async function getInvPublisherCollections (uri) {
 
 const byPublicationDate = (a, b) => getPublicationDate(a) - getPublicationDate(b)
 
-const format = doc => ({
+const format = (doc: InvEntity) => ({
   uri: getInvEntityCanonicalUri(doc),
-  collection: doc.claims['wdt:P195'] && doc.claims['wdt:P195'][0],
+  collection: getFirstClaimValue(doc.claims, 'wdt:P195'),
 })
 
-const isEdition = publication => publication.claims['wdt:P31'][0] === 'wd:Q3331189'
+const isEdition = publication => getFirstClaimValue(publication.claims, 'wdt:P31') === 'wd:Q3331189'
 
 function getPublicationDate (doc) {
-  const date = doc.claims['wdt:P577'] && doc.claims['wdt:P577'][0]
+  const date = getFirstClaimValue(doc.claims, 'wdt:P577')
   if (date) return new Date(date).getTime()
   // If no publication date can be found, we can fallback on the document creation date,
   // as the edition can't have been published much later than its associated entity was created
@@ -49,9 +52,9 @@ function getPublicationDate (doc) {
   else return doc.created
 }
 
-async function getWdPublisherCollections (uri, refresh, dry) {
-  const [ prefix, qid ] = uri.split(':')
+async function getWdPublisherCollections (uri: WdEntityUri, refresh: boolean, dry: boolean) {
+  const [ prefix, qid ] = uri.split(':') as Split<WdEntityUri, ':'>
   if (prefix !== 'wd') return []
-  const ids = await runWdQuery({ query: 'publisher-collections', qid, refresh, dry })
+  const ids: WdEntityId[] = await runWdQuery({ query: 'publisher-collections', qid, refresh, dry })
   return ids.map(id => ({ uri: prefixifyWd(id) }))
 }

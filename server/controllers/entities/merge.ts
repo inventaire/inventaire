@@ -1,3 +1,4 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isIsbnEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -91,8 +92,8 @@ function validateEntitiesByType ({ fromEntity, toEntity }) {
   // where the uniqueness check failed because two entities with the same ISBN
   // were created at about the same time. Other cases should be rejected.
   if (fromEntity.type === 'edition') {
-    const fromEntityIsbn = fromEntity.claims['wdt:P212'] != null ? fromEntity.claims['wdt:P212'][0] : undefined
-    const toEntityIsbn = toEntity.claims['wdt:P212'] != null ? toEntity.claims['wdt:P212'][0] : undefined
+    const fromEntityIsbn = getFirstClaimValue(fromEntity.claims, 'wdt:P212')
+    const toEntityIsbn = getFirstClaimValue(toEntity.claims, 'wdt:P212')
     if ((fromEntityIsbn != null) && (toEntityIsbn != null) && (fromEntityIsbn !== toEntityIsbn)) {
       throw newError("can't merge editions with different ISBNs", 400, { fromUri, toUri })
     }

@@ -24,7 +24,7 @@ export async function refreshSnapshotFromUri (changedEntityUri: EntityUri) {
   .then(refreshSnapshotFromEntity)
 }
 
-const multiWorkRefresh = (relationProperties: readonly PropertyUri[]) => async (uri: EntityUri) => {
+const multiWorkRefresh = (relationProperties: PropertyUri[]) => async (uri: EntityUri) => {
   const uris = await getInvEntitiesUrisByClaims(relationProperties, uri)
   const snapshots = await Promise.all(uris.map(getSnapshotsByType.work))
   return snapshots.flat()

@@ -1,8 +1,9 @@
 import { map } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isLang } from '#lib/boolean_validations'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import getEntityImagesFromClaims from './get_entity_images_from_claims.js'
+import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
 
 export default {
@@ -48,7 +49,7 @@ const addEditionsImages = (images, limitPerLang = 3) => editions => {
   for (const edition of editions) {
     const { claims } = edition
     const lang = getOriginalLang(claims)
-    const image = claims['invp:P2'] && claims['invp:P2'][0]
+    const image = getFirstClaimValue(claims, 'invp:P2')
     if (lang && image) addImage(images, lang, limitPerLang, image)
   }
   return images

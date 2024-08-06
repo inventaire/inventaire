@@ -1,6 +1,6 @@
 import { chain } from 'lodash-es'
-import getEntityType from '#controllers/entities/lib/get_entity_type'
-import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import getBestLangValue from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'

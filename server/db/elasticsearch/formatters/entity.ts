@@ -3,21 +3,22 @@ import { isPropertyId, simplifyAliases, simplifyDescriptions, simplifyLabels } f
 import { setTermsFromClaims } from '#controllers/entities/lib/entities'
 import { imageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
-import getEntityImagesFromClaims from '#controllers/entities/lib/get_entity_images_from_claims'
-import getEntityType from '#controllers/entities/lib/get_entity_type'
+import { getEntityImagesFromClaims } from '#controllers/entities/lib/get_entity_images_from_claims'
+import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import { isWdEntityId } from '#lib/boolean_validations'
+import { objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { getSingularTypes } from '#lib/wikidata/aliases'
-import formatClaims from '#lib/wikidata/format_claims'
-import type { Claims, EntityUri, PropertyUri } from '#types/entity'
+import { formatClaims } from '#lib/wikidata/format_claims'
+import type { Claims, EntityUri, PropertyUri, SerializedEntity, WdRawClaims } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
 import { getEntityId } from './entity_helpers.js'
-import type { Entries } from 'type-fest'
 
 const indexedEntitiesTypesSet = new Set(getSingularTypes(indexedEntitiesTypes))
 
@@ -33,8 +34,12 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
 
   let { claims, type } = entity
 
-  if (claims != null && isRawWikidataClaims(claims)) {
-    claims = formatClaims(claims)
+  if (claims != null) {
+    if (isRawWikidataClaims(claims)) {
+      claims = formatClaims(claims)
+    } else {
+      claims = simplifyInvClaims(claims)
+    }
   }
 
   if (type === 'languages') claims = pick(claims, languagesCodesProperties)
@@ -49,13 +54,13 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
   // See https://github.com/inventaire/inventaire/pull/294
   if (!indexedEntitiesTypesSet.has(entity.type)) return
 
-  let needsSimplification = false
+  let needsTermsSimplification = false
   const isWikidataEntity = isWdEntityId(entity._id)
 
   if (isWikidataEntity) {
     // Only Wikidata entities imported from a dump need to be simplified
     // Wikidata entities with a URI come from the Inventaire API, and are thus already simplified
-    needsSimplification = entity.uri == null
+    needsTermsSimplification = entity.uri == null
     entity.uri = 'wd:' + entity._id
   } else {
     entity.uri = 'inv:' + entity._id
@@ -82,7 +87,7 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
   // If passed an already formatted entity
   delete entity.image
 
-  if (needsSimplification) {
+  if (needsTermsSimplification) {
     entity.labels = simplifyLabels(entity.labels)
     entity.descriptions = simplifyDescriptions(entity.descriptions)
     entity.aliases = simplifyAliases(entity.aliases)
@@ -209,9 +214,10 @@ function getEntityTerms (entity) {
   return getMainFieldsWords({ labels, aliases })
 }
 
-function getFlattenedClaims (claims) {
+function getFlattenedClaims (claims: SerializedEntity['claims']) {
   const flattenedClaims = []
-  for (const [ property, propertyClaims ] of Object.entries(claims) as Entries<Claims>) {
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
+    // @ts-expect-error TS2345
     if (!ignoredPropertiesInFlattenedClaims.has(property)) {
       for (const value of propertyClaims) {
         flattenedClaims.push(`${property}=${value}`)
@@ -224,7 +230,7 @@ function getFlattenedClaims (claims) {
 // Properties that are highly unlikely to ever be usefully queried by exact value
 const ignoredPropertiesInFlattenedClaims = new Set(imageProperties)
 
-function isRawWikidataClaims (claims) {
+function isRawWikidataClaims (claims: Claims | WdRawClaims) {
   const properties = Object.keys(claims)
   return isPropertyId(properties[0])
 }

@@ -1,5 +1,6 @@
 import { uniq } from 'lodash-es'
 import { getInvEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
@@ -41,7 +42,7 @@ async function fetchLangConsensusTitle (workUri, editionLang) {
 
   const titles = editions
     .filter(edition => getOriginalLang(edition.claims) === editionLang)
-    .map(edition => edition.claims['wdt:P1476'][0])
+    .map(edition => getFirstClaimValue(edition.claims, 'wdt:P1476'))
 
   const differentTitles = uniq(titles)
   if (differentTitles.length === 1) {

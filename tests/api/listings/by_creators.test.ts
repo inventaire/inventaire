@@ -4,7 +4,7 @@ import { createGroupWithAMember, createGroup, addMember } from '#fixtures/groups
 import { getTwoFriends, createUser } from '#fixtures/users'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createListing, createElement } from '../fixtures/listings.js'
 import { publicReq, authReq, getUserB } from '../utils/utils.js'
 

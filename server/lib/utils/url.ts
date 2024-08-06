@@ -13,8 +13,9 @@ export function fixedEncodeURIComponent (str: string) {
   return encodeURIComponent(str).replace(/[!'()*]/g, encodeCharacter)
 }
 
-export function buildUrl <T extends Url> (pathname: T, queryObj: Record<string, unknown>) {
+export function buildUrl <T extends Url> (pathname: T, queryObj: Record<string, string | number | boolean>) {
   const queryEntries = objectEntries(queryObj).filter(hasNonEmptyValue)
+  // @ts-expect-error number and boolean values are actually accepted and will be stringified
   const queryString = new URLSearchParams(queryEntries)
   return (queryString ? `${pathname}?${queryString}` : pathname) as T
 }

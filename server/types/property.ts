@@ -1,4 +1,4 @@
-import type { EntityType, InvClaimValue } from '#types/entity'
+import type { EntityType, ExtendedEntityType, InvClaimValue } from '#types/entity'
 
 export type PropertyDatatype =
   'entity' |
@@ -25,6 +25,7 @@ export interface PropertyValueConstraints {
   uniqueValue?: boolean
   concurrency?: boolean
   adminUpdateOnly?: boolean
-  entityValueTypes?: EntityType[]
+  entityValueTypes?: Readonly<ExtendedEntityType[]>
   typeSpecificValidation?: boolean
+  hasPlaceholders?: boolean
 }

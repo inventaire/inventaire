@@ -1,10 +1,11 @@
 import { chain, compact } from 'lodash-es'
 import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, preventRedirectionEdit } from '#models/entity'
-import type { EntityUri, InvEntityId, InvEntityUri } from '#types/entity'
+import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
@@ -33,7 +34,7 @@ export default async function ({ userId, fromId, toUri, previousToUri, context }
 // into a redirection: this entity now don't have anymore reason to be and is quite
 // probably a duplicate of an existing entity referenced by the redirection
 // destination entity.
-async function removeObsoletePlaceholderEntities (userId, entityDocBeforeRedirection) {
+async function removeObsoletePlaceholderEntities (userId: UserId, entityDocBeforeRedirection: InvEntity) {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
   log(entityUrisToCheck, 'entityUrisToCheck')
   const fromId = entityDocBeforeRedirection._id
@@ -41,22 +42,24 @@ async function removeObsoletePlaceholderEntities (userId, entityDocBeforeRedirec
   return compact(removedIds)
 }
 
-function getEntityUrisToCheck (claims) {
+function getEntityUrisToCheck (claims: Claims): EntityUri[] {
+  // @ts-expect-error TS2322: Type 'boolean[]' is not assignable to type 'EntityUri[]'  ??
   return chain(claims)
   .pick(propertiesToCheckForPlaceholderDeletion)
   .values()
   // Merge properties arrays
   .flatten()
+  .map(getClaimValue)
   .uniq()
   .value()
 }
 
-const propertiesToCheckForPlaceholderDeletion = [
+const propertiesToCheckForPlaceholderDeletion: PropertyUri[] = [
   // author
   'wdt:P50',
-]
+] as const
 
-const deleteIfIsolated = (userId, fromId) => async entityUri => {
+const deleteIfIsolated = (userId: UserId, fromId: InvEntityId) => async (entityUri: EntityUri) => {
   const [ prefix, entityId ] = entityUri.split(':')
   // Ignore wd or isbn entities
   if (prefix !== 'inv') return

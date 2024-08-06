@@ -1,7 +1,7 @@
 import { objectPromise } from '#lib/promises'
+import { objectEntries } from '#lib/utils/base'
 import type { DatabaseConfig, OperationsSummary } from '#types/couchdb_init'
 import { initDb } from './init_db.js'
-import type { Entries } from 'type-fest'
 
 export async function initCouchDbs (dbsList: DatabaseConfig[]) {
   try {
@@ -21,9 +21,9 @@ const aggregateInitDb = initDb => (index, dbData) => {
   return index
 }
 
-function minimzeOperationsReport (operations) {
+function minimzeOperationsReport (operations: OperationsSummary) {
   const minimized: OperationsSummary = {}
-  for (const [ dbName, { created, designDocs, securityDoc } ] of Object.entries(operations) as Entries<OperationsSummary>) {
+  for (const [ dbName, { created, designDocs, securityDoc } ] of objectEntries(operations)) {
     let dbHasOp = created
     minimized[dbName] = { created }
     for (const [ designDocName, { created, updated } ] of Object.entries(designDocs)) {

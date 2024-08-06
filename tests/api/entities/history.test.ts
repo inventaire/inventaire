@@ -1,7 +1,7 @@
 import should from 'should'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createHuman } from '../fixtures/entities.js'
 import { deleteByUris } from '../utils/entities.js'
 import {

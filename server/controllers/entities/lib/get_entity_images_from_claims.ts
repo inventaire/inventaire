@@ -1,16 +1,20 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { isWdEntityUri } from '#lib/boolean_validations'
+import type { SerializedEntity } from '#server/types/entity'
 import { getUrlFromEntityImageHash } from './entities.js'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
 
-export default ({ claims }) => {
+export function getEntityImagesFromClaims (entity: SerializedEntity) {
+  const { uri, claims } = entity
   // Test claims existance to prevent crash when used on meta entities
   // for which entities claims were deleted
   if (claims == null) return []
 
-  const imageHash = claims['invp:P2'] && claims['invp:P2'][0]
+  const imageHash = getFirstClaimValue(claims, 'invp:P2')
   const invImageUrl = getUrlFromEntityImageHash(imageHash)
   const invImageUrls = invImageUrl ? [ invImageUrl ] : []
 
-  const claimsImages = getCommonsFilenamesFromClaims(claims)
+  const claimsImages = isWdEntityUri(uri) ? getCommonsFilenamesFromClaims(claims) : []
 
   return [ ...invImageUrls, ...claimsImages ]
 }

@@ -6,9 +6,12 @@ export const views: Views<InvEntityDoc> = {
   byClaim: {
     map: doc => {
       if (doc.type === 'entity' && !('redirect' in doc)) {
+        const P31Claim = doc.claims['wdt:P31'][0]
+        const P31Value = typeof P31Claim === 'object' ? P31Claim.value : P31Claim
         for (const property in doc.claims) {
-          for (const value of doc.claims[property]) {
-            emit([ property, value ], doc.claims['wdt:P31'][0])
+          for (const claim of doc.claims[property]) {
+            const value = typeof claim === 'object' ? claim.value : claim
+            emit([ property, value ], P31Value)
           }
         }
       }
@@ -18,7 +21,8 @@ export const views: Views<InvEntityDoc> = {
     map: doc => {
       if (doc.type === 'entity' && !('redirect' in doc)) {
         for (const property in doc.claims) {
-          for (const value of doc.claims[property]) {
+          for (const claim of doc.claims[property]) {
+            const value = typeof claim === 'object' ? claim.value : claim
             emit(value, property)
           }
         }

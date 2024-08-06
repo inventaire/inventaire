@@ -2,7 +2,7 @@ import 'should'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import { deleteUser } from '#tests/api/utils/users'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createUser, createUsername } from '../fixtures/users.js'
 import { publicReq } from '../utils/utils.js'
 

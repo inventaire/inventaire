@@ -1,19 +1,21 @@
 import { difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
-import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
+import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { EntityUri, InvEntityDoc, Isbn } from '#types/entity'
-import formatEditionEntity from './format_edition_entity.js'
+import type { EntityUri, InvEntity, Isbn, IsbnEntityUri, RedirectFromTo, SerializedEntity } from '#types/entity'
+import { formatEditionEntity } from './format_edition_entity.js'
+
+export type Redirect = Record<EntityUri, EntityUri>
 
 export interface EntitiesResults {
-  entities: InvEntityDoc[]
-  redirects: Record<EntityUri, EntityUri>
-  notFound?: EntityUri[]
+  entities: SerializedEntity[]
+  notFound?: IsbnEntityUri[]
 }
 
-export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGetterArgs = {}) {
+export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGetterParams = {}) {
   const [ isbns, redirections ] = getRedirections(rawIsbns)
   const { autocreate, refresh } = params
   if (autocreate && refresh) {
@@ -23,17 +25,18 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
     // Likely because getAuthoritiesAggregatedEntry didn't find anything
     await Promise.all(isbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
   }
-  let entities = await getInvEntitiesByIsbns(isbns)
+  const entities = await getInvEntitiesByIsbns(isbns)
   const foundIsbns = entities.map(getIsbn13h)
   const missingIsbns = difference(isbns, foundIsbns)
 
-  entities = entities.map(formatEditionEntity)
+  const { includeReferences } = params
+  const serializedEntities = entities.map(entity => formatEditionEntity(entity, { includeReferences }))
 
+  const results = { entities: serializedEntities, notFound: [] as IsbnEntityUri[] }
   if (missingIsbns.length === 0) {
-    const results = { entities }
-    return addRedirections(results, redirections)
+    setEntitiesRedirections(results, redirections)
+    return results
   }
-  const results: Partial<EntitiesResults> = { entities }
 
   // The cases where autocreate && refresh was already checked above
   if (autocreate && !refresh) {
@@ -44,41 +47,43 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
       if (resolvedEdition.notFound) notFound.push(prefixifyIsbn(resolvedEdition.isbn))
       else newEntities.push(resolvedEdition)
     }
-    results.entities = entities.concat(newEntities)
+    results.entities = serializedEntities.concat(newEntities)
     if (notFound.length > 0) results.notFound = notFound
   } else {
     results.notFound = missingIsbns.map(prefixifyIsbn)
   }
 
-  return addRedirections(results, redirections)
+  setEntitiesRedirections(results, redirections)
+  return results
 }
 
-const getIsbn13h = entity => entity.claims['wdt:P212'][0]
-
-function getRedirections (isbns) {
-  // isbns list, redirections object
-  const accumulator = [ [], {} ]
-  return isbns.reduce(aggregateIsbnRedirections, accumulator)
+function getIsbn13h (entity: InvEntity) {
+  return getFirstClaimValue(entity.claims, 'wdt:P212')
 }
+
+type RedirectionsByUris = Record<EntityUri, RedirectFromTo>
 
 // Redirection mechanism is coupled with the way
 // ./get_entities_by_uris 'mergeResponses' parses redirections
-function aggregateIsbnRedirections (accumulator, rawIsbn) {
-  const { isbn13: uriIsbn, isbn13h: claimIsbn } = parseIsbn(rawIsbn)
-  const rawUri = `isbn:${rawIsbn}`
-  const uri = `isbn:${uriIsbn}`
-  accumulator[0].push(claimIsbn)
-  if (rawUri !== uri) { accumulator[1][uri] = { from: rawUri, to: uri } }
-  return accumulator
+function getRedirections (isbns: string[]) {
+  const isbns13h: string[] = []
+  const redirections: RedirectionsByUris = {}
+  for (const rawIsbn of isbns) {
+    const { isbn13: uriIsbn, isbn13h: claimIsbn } = parseIsbn(rawIsbn)
+    const rawUri = `isbn:${rawIsbn}`
+    const uri = `isbn:${uriIsbn}`
+    isbns13h.push(claimIsbn)
+    if (rawUri !== uri) {
+      redirections[uri] = { from: rawUri, to: uri }
+    }
+  }
+  return [ isbns13h, redirections ] satisfies [ string[], RedirectionsByUris ]
 }
 
-function addRedirections (results, redirections) {
-  results.entities = results.entities.map(entity => {
+function setEntitiesRedirections (results: EntitiesResults, redirections: RedirectionsByUris) {
+  for (const entity of results.entities) {
     const { uri } = entity
     const redirects = redirections[uri]
-    if (redirects != null) { entity.redirects = redirects }
-    return entity
-  })
-
-  return results
+    if (redirects != null) entity.redirects = redirects
+  }
 }

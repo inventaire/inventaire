@@ -1,7 +1,7 @@
 import should from 'should'
 import { createHuman } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { getByUri, removeLabel } from '../utils/entities.js'
 
 describe('entities:remove-labels', () => {
