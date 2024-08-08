@@ -1,50 +1,60 @@
-import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
+import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
-import { getEntityType } from './get_entity_type.js'
+import { isLocalEntityLayer } from '#models/entity'
+import type { Claims, EntityType, InvEntity, Labels, WdEntityUri } from '#server/types/entity'
+import { getInvEntityType } from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
-import validateAndFormatClaims from './validate_and_format_claims.js'
+import { validateAndFormatInvClaims } from './validate_and_format_claims.js'
+import type { SetOptional } from 'type-fest'
 
-const allowlistedTypes = Object.keys(propertiesPerType)
+const allowlistedTypes = allLocallyEditedEntitiesTypes
+type ValidatableEntity = SetOptional<Pick<InvEntity, '_id' | 'labels' | 'claims'>, '_id'>
 
 // Can be used to validate both entities being created or existing entities
-export default entity => {
-  return validate(entity)
-  .catch(addErrorContext(entity))
+export async function validateInvEntity (entity: ValidatableEntity) {
+  try {
+    return await validate(entity)
+  } catch (err) {
+    if (err.context == null) err.context = { entity }
+    throw err
+  }
 }
 
-async function validate (entity) {
+async function validate (entity: ValidatableEntity) {
+  if (isLocalEntityLayer(entity)) return
+
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
 
   const type = getValueType(claims)
-  validateValueType(type, claims['wdt:P31'])
+  validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
   validateLabels(labels, type)
-  return validateAndFormatClaims({ _id, type, claims })
+  return validateAndFormatInvClaims({ _id, type, claims })
 }
 
-function getValueType (claims) {
+function getValueType (claims: Claims) {
   const wdtP31 = claims['wdt:P31']
   if (!isNonEmptyArray(wdtP31)) {
-    throw newError("wdt:P31 array can't be empty", 400, wdtP31)
+    throw newError("wdt:P31 array can't be empty", 400, { wdtP31 })
   }
-  return getEntityType(wdtP31)
+  return getInvEntityType(wdtP31)
 }
 
-function validateValueType (type, wdtP31) {
+function validateValueType (type: EntityType, wdtP31: WdEntityUri[]) {
   if (type == null) {
-    throw newError("wdt:P31 value isn't a known value", 400, wdtP31)
+    throw newError("wdt:P31 value isn't a known value", 400, { wdtP31 })
   }
 
   if (!allowlistedTypes.includes(type)) {
-    throw newError("wdt:P31 value isn't a allowlisted value", 400, wdtP31)
+    throw newError("wdt:P31 value isn't a allowlisted value", 400, { wdtP31 })
   }
 }
 
-function validateLabels (labels, type) {
+function validateLabels (labels: Labels, type: EntityType) {
   if (typeWithoutLabels.has(type)) {
     if (isNonEmptyPlainObject(labels)) {
       throw newError(`${type}s can't have labels`, 400, { type, labels })
@@ -65,9 +75,4 @@ function validateLabels (labels, type) {
       }
     }
   }
-}
-
-const addErrorContext = entity => err => {
-  if (err.context == null) err.context = { entity }
-  throw err
 }

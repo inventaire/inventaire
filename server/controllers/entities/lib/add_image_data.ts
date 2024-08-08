@@ -8,14 +8,16 @@ import { objectPromise } from '#lib/promises'
 import type { SerializedWdEntity, WikimediaCommonsFilename } from '#server/types/entity'
 import type { ImageData } from '#server/types/image'
 import { getCommonsFilenamesFromClaims } from './get_commons_filenames_from_claims.js'
+import type { SetOptional } from 'type-fest'
 
-export async function addImageData (entity: SerializedWdEntity) {
+type SerializedWdEntityPreImage = SetOptional<SerializedWdEntity, 'image'>
+export async function addImageData (entity: SerializedWdEntityPreImage) {
   const data: ImageData = await findAnImage(entity)
   entity.image = data
   return entity
 }
 
-async function findAnImage (entity: SerializedWdEntity) {
+async function findAnImage (entity: SerializedWdEntityPreImage) {
   const commonsFilename = getCommonsFilenamesFromClaims(entity.claims)[0]
   const enwikiTitle = entity.sitelinks.enwiki?.title
   const { claims } = entity
@@ -25,7 +27,7 @@ async function findAnImage (entity: SerializedWdEntity) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function pickBestPic (entity: SerializedWdEntity, commonsFilename: WikimediaCommonsFilename, enwikiTitle?: string, openLibraryId?: string) {
+function pickBestPic (entity: SerializedWdEntityPreImage, commonsFilename: WikimediaCommonsFilename, enwikiTitle?: string, openLibraryId?: string) {
   return objectPromise({
     wm: getWikimediaThumbnailData(commonsFilename),
     // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
@@ -54,7 +56,7 @@ function pickBestPic (entity: SerializedWdEntity, commonsFilename: WikimediaComm
 //   })
 // }
 
-function getPicSourceOrder (entity: SerializedWdEntity) {
+function getPicSourceOrder (entity: SerializedWdEntityPreImage) {
   const { type } = entity
   // Commons pictures are prefered to Wikipedia and Open Library
   // to get access to photo credits
@@ -69,7 +71,7 @@ function getPicSourceOrder (entity: SerializedWdEntity) {
 // likely to be in the public domain and have a good image set in Wikidata
 // while querying images from English Wikipedia articles
 // can give quite random results
-function getWorkSourceOrder (work: SerializedWdEntity) {
+function getWorkSourceOrder (work: SerializedWdEntityPreImage) {
   const { claims } = work
   const publicationDateClaim = claims['wdt:P577']?.[0]
   const publicationYear = publicationDateClaim && publicationDateClaim.split('-')[0]

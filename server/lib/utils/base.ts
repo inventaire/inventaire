@@ -141,7 +141,9 @@ export function flatMapUniq (collection, key) {
 // Decode first, so that any pre-encoded character isn't re-encoded
 export const encodeURL = url => encodeURI(decodeURI(url))
 
-export const isNotEmpty = value => value != null
+export function isNotEmpty <T> (value: T): value is (Exclude<T, undefined | null | void>) {
+  return value != null
+}
 
 export const normalizeString = str => str.trim().normalize()
 
@@ -170,12 +172,16 @@ function aggregateCollections (index, name) {
 
 // Work around the TS2345 error when using Array include method
 // https://stackoverflow.com/questions/55906553/typescript-unexpected-error-when-using-includes-with-a-typed-array/70532727#70532727
-export function arrayIncludes (array: readonly (string | number)[], value: string | number) {
+export function arrayIncludes <T extends (string | number)> (array: readonly (T)[], value: string | number): value is T {
   return array.some(element => element === value)
 }
 
 export function objectEntries <Obj> (obj: Obj) {
   return Object.entries(obj) as ObjectEntries<Obj>
+}
+
+export function objectFromEntries <K extends string, V> (entries: [ K, V ][]) {
+  return Object.fromEntries(entries) as Record<K, V>
 }
 
 export function objectValues <Obj> (obj: Obj) {
