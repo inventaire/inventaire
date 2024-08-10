@@ -1,10 +1,11 @@
-import { chain, compact, map, without } from 'lodash-es'
+import { chain, compact, map } from 'lodash-es'
+import { findClaimByValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { logError, warn } from '#lib/utils/logs'
-import type { Claims, EntityType, InvPropertyClaims, PropertyUri } from '#types/entity'
+import type { Claims, EntityType, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
 import type { BatchId } from '#types/patch'
 import type { EditionSeed, EntitySeed } from '#types/resolver'
 import type { UserId } from '#types/user'
@@ -47,14 +48,14 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
       edition.claims['wdt:P1476'] = [ title ]
     }
   }
-  if (edition.claims['wdt:P1476']?.[0] && !edition.claims['wdt:P1680']) {
+  if (getFirstClaimValue(edition.claims, 'wdt:P1476') && !getFirstClaimValue(edition.claims, 'wdt:P1680')) {
     extractSubtitleFromTitle(edition.claims)
   }
 
   // garantee that an edition shall not have label
   edition.labels = {}
 
-  if (!imageUrl && !edition.claims['invp:P2']?.[0] && enrich === true && isbn != null) {
+  if (!imageUrl && !getFirstClaimValue(edition.claims, 'invp:P2') && enrich === true && isbn != null) {
     try {
       const { url } = await getImageByIsbn(isbn)
       imageUrl = url
@@ -75,7 +76,7 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
 
 // An entity type is required only for properties with validation functions requiring a type
 // Ex: typedExternalId properties
-function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvPropertyClaims, entityType?: EntityType) {
+function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvSimplifiedPropertyClaims, entityType?: EntityType) {
   for (const value of values) {
     if (value != null && properties[property].validate({ value, entityType })) {
       if (claims[property] == null) claims[property] = []
@@ -96,9 +97,10 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
   } catch (err) {
     if (err.name === 'InvalidClaimValueError' || err.cause?.name === 'InvalidClaimValueError') {
       const { property, value } = err.context
-      if (seed.claims[property].includes(value)) {
+      const invalidClaim = findClaimByValue(seed.claims[property], value)
+      if (invalidClaim) {
         warn(err, 'InvalidClaimValueError: removing invalid claim')
-        seed.claims[property] = without(seed.claims[property], value)
+        seed.claims[property] = seed.claims[property].filter(claim => claim !== invalidClaim)
         return createEntityFromSeed({ seed, userId, batchId })
       } else {
         logError(err, 'invalid claim not found, cant recover seed')
@@ -116,8 +118,8 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
 }
 
 function buildBestEditionTitle (edition, works) {
-  const editionTitleClaims = edition.claims['wdt:P1476']
-  if (editionTitleClaims) return editionTitleClaims[0]
+  const editionTitleClaim = getFirstClaimValue(edition.claims, 'wdt:P1476')
+  if (editionTitleClaim) return editionTitleClaim
   else return guessEditionTitleFromWorksLabels(works)
 }
 
@@ -132,7 +134,7 @@ function guessEditionTitleFromWorksLabels (works) {
 }
 
 function extractSubtitleFromTitle (claims) {
-  let title = claims['wdt:P1476'][0]
+  let title = getFirstClaimValue(claims, 'wdt:P1476')
   let subtitle
   if (title.length > 10 && title.split(subtitleSeparator).length === 2) {
     [ title, subtitle ] = title.split(subtitleSeparator)

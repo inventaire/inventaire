@@ -12,6 +12,7 @@ import type { AuthentifiedReq } from '#types/server'
 import type { Email, Username } from '#types/user'
 import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
+import type { Split } from 'type-fest'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = config.getPublicOrigin()
@@ -22,7 +23,7 @@ function bindedTest <T> (regexName) {
   }
 }
 
-export const isNonEmptyString = str => typeof str === 'string' && str.length > 0
+export const isNonEmptyString = (str: unknown) => typeof str === 'string' && str.length > 0
 
 export function isUrl (url): url is Url {
   try {
@@ -50,19 +51,19 @@ export const isWdEntityId = isWikidataItemId
 
 export function isInvEntityUri (uri): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri && uri.split(':')
+  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'inv') && isCouchUuid(id)
 }
 
 export function isIsbnEntityUri (uri): uri is IsbnEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri && uri.split(':')
+  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'isbn') && isNormalizedIsbn(id)
 }
 
 export function isWdEntityUri (uri): uri is WdEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri && uri.split(':')
+  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'wd') && isWikidataItemId(id)
 }
 
@@ -76,7 +77,7 @@ export const isUsername = bindedTest<Username>('Username')
 export const isEntityUri = bindedTest<EntityUri>('EntityUri')
 export const isPatchId = bindedTest<PatchId>('PatchId')
 export const isPropertyUri = bindedTest<PropertyUri>('PropertyUri')
-export function isExtendedEntityUri (uri) {
+export function isExpandedEntityUri (uri) {
   const [ prefix, id ] = uri.split(':')
   // Accept alias URIs.
   // Ex: twitter:Bouletcorp -> wd:Q1524522
@@ -102,7 +103,9 @@ export function isSimpleDay (str) {
 // Using a custom implementation of isArray, rather than lodash version, to get better types
 export const isArray = (array: unknown): array is unknown[] => array instanceof Array
 export const isNonEmptyArray = array => isArray(array) && (array.length > 0)
-export const isNonEmptyPlainObject = obj => isPlainObject(obj) && (Object.keys(obj).length > 0)
+export function isNonEmptyPlainObject (obj): obj is Record<string | number, unknown> {
+  return isPlainObject(obj) && (Object.keys(obj).length > 0)
+}
 export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)
 export const isStrictlyPositiveInteger = num => Number.isInteger(num) && num > 0
 export const isExtendedUrl = str => isUrl(str) || isLocalImg(str)

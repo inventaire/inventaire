@@ -1,13 +1,26 @@
 import should from 'should'
 import getBnfEntryFromIsbn, { cleanupBnfTitle } from '#data/bnf/get_bnf_entry_from_isbn'
+import { simpleDay } from '#lib/utils/base'
 
 describe('get_bnf_entry_from_isbn', () => {
   it('should get an entry from a known ISBN', async () => {
     const entry = await getBnfEntryFromIsbn('978-2-207-11674-6')
-    entry.edition.claims['wdt:P268'].should.equal('437169336')
-    entry.works[0].claims['wdt:P268'].should.equal('12482666v')
+    entry.edition.claims['wdt:P577'][0].should.deepEqual({
+      value: '2013',
+      references: [
+        {
+          'wdt:P268': [ '437169336' ],
+          'wdt:P813': [ simpleDay() ],
+        },
+      ],
+    })
+    entry.works[0].claims['wdt:P268'][0].should.deepEqual({
+      value: '12482666v',
+    })
     entry.authors[0].uri.should.equal('wd:Q123080')
-    entry.authors[0].claims['wdt:P268'].should.equal('11895739q')
+    entry.authors[0].claims['wdt:P268'][0].should.deepEqual({
+      value: '11895739q',
+    })
   })
 
   it('should not get an entry from an unknown ISBN', async () => {
@@ -27,18 +40,34 @@ describe('get_bnf_entry_from_isbn', () => {
 
   it('should cleanup the title', async () => {
     const entry = await getBnfEntryFromIsbn('9782848051031')
-    entry.edition.claims['wdt:P1476'].should.equal("La nuit du papillon d'or")
+    entry.edition.claims['wdt:P1476'][0].should.deepEqual({
+      value: "La nuit du papillon d'or",
+      references: [
+        {
+          'wdt:P268': [ '424992450' ],
+          'wdt:P813': [ simpleDay() ],
+        },
+      ],
+    })
   })
 
   it('should handle authors with only a family name', async () => {
     const entry = await getBnfEntryFromIsbn('9782723480451')
-    const author = entry.authors.find(author => author.claims['wdt:P268'] === '16545057v')
+    const author = entry.authors.find(author => author.claims['wdt:P268']?.[0].value === '16545057v')
     author.labels.fr.should.equal('Juzhen')
   })
 
   it('should include resolvable edition contributors', async () => {
     const entry = await getBnfEntryFromIsbn('978-2-7555-0824-6')
-    entry.edition.claims['wdt:P2679'][0].should.equal('wd:Q17628988')
+    entry.edition.claims['wdt:P2679'][0].should.deepEqual({
+      value: 'wd:Q17628988',
+      references: [
+        {
+          'wdt:P268': [ '469671618' ],
+          'wdt:P813': [ simpleDay() ],
+        },
+      ],
+    })
   })
 })
 

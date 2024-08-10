@@ -3,41 +3,62 @@ import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
-import type { EntityUri, SerializedEntitiesByUris } from '#types/entity'
+import { arrayIncludes, objectEntries } from '#lib/utils/base'
+import { objectKeys } from '#lib/utils/types'
+import type { EntityId, EntityUri, EntityUriPrefix, ExpandedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
 import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
+import type { OverrideProperties, Split } from 'type-fest'
 
-// Getters take ids, return an object on the model { entities: [], notFound }
-const getters = {
-  inv: getInvEntitiesByIds,
-  wd: getWikidataEnrichedEntities,
-  isbn: getEntitiesByIsbns,
-}
+const validators = {
+  inv: isInvEntityId,
+  wd: isWdEntityId,
+  isbn: isValidIsbn,
+} as const
 
-const prefixes = Object.keys(getters)
+const prefixes = objectKeys(validators)
 
-export interface EntitiesGetterArgs {
+export interface EntitiesGetterParams {
   refresh?: boolean
   dry?: boolean
   autocreate?: boolean
+  includeReferences?: boolean
 }
 
-export interface GetEntitiesByUrisArgs extends EntitiesGetterArgs {
+export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
   uris: EntityUri[]
 }
 
-export async function getEntitiesByUris (params: GetEntitiesByUrisArgs) {
-  const { uris } = params
+type Domains = Partial<Record<EntityUriPrefix, EntityId[]>>
+
+export interface EntitiesByUrisResults {
+  entities: SerializedEntitiesByUris
+  redirects: Record<EntityUri, EntityUri>
+  notFound?: EntityUri[]
+}
+
+export type ExpandedEntitiesByUrisResults = OverrideProperties<EntitiesByUrisResults, { entities: ExpandedSerializedEntitiesByUris }>
+
+// Using functions with forced type output as TS can't deduce the type of `entities` from the `includeReferences` flag
+export async function getEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
+  return getPossiblyExpandedEntitiesByUris({ ...params, includeReferences: false }) as Promise<EntitiesByUrisResults>
+}
+export async function getExpandedEntitiesByUris (params: Omit<GetEntitiesByUrisParams, 'includeReferences'>) {
+  return getPossiblyExpandedEntitiesByUris({ ...params, includeReferences: true }) as Promise<ExpandedEntitiesByUrisResults>
+}
+
+export async function getPossiblyExpandedEntitiesByUris (params: GetEntitiesByUrisParams) {
+  const { uris, includeReferences } = params
   assert_.array(uris)
-  const domains = {}
+  const domains: Domains = {}
 
   // validate per URI to be able to return a precise error message
   for (const uri of uris) {
     let errMessage
-    const [ prefix, id ] = uri.split(':')
+    const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
 
-    if (!prefixes.includes(prefix)) {
+    if (!arrayIncludes(prefixes, prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
       throw newError(errMessage, 400, { uri })
     }
@@ -47,40 +68,40 @@ export async function getEntitiesByUris (params: GetEntitiesByUrisArgs) {
       throw newError(errMessage, 400, { uri })
     }
 
-    if (!domains[prefix]) { domains[prefix] = [] }
+    domains[prefix] ??= []
     domains[prefix].push(id)
   }
 
   const results = await getDomainsPromises(domains, params)
-  return formatRichResults(results)
-}
-
-function getDomainsPromises (domains, params) {
-  const promises = []
-
-  for (const prefix in domains) {
-    const ids = domains[prefix]
-    promises.push(getters[prefix](ids, params))
+  const response = formatRichResults(results, { includeReferences })
+  if (includeReferences) {
+    // @ts-expect-error
+    return response as ExpandedEntitiesByUrisResults
+  } else {
+    return response as EntitiesByUrisResults
   }
-
-  return Promise.all(promises)
 }
 
-export interface EntitiesByUrisResults {
-  entities: SerializedEntitiesByUris
-  redirects: Record<EntityUri, EntityUri>
-  notFound?: EntityUri[]
+function getDomainsPromises (domains: Domains, params: EntitiesGetterParams) {
+  return Promise.all(objectEntries(domains).map(([ prefix, ids ]) => {
+    if (prefix === 'wd') return getWikidataEnrichedEntities(ids as WdEntityId[], params)
+    if (prefix === 'inv') return getInvEntitiesByIds(ids as InvEntityId[], params)
+    if (prefix === 'isbn') return getEntitiesByIsbns(ids as Isbn[], params)
+    throw newError('unsupported prefix', 500, { prefix, ids })
+  }))
 }
 
-function formatRichResults (results) {
-  const response: EntitiesByUrisResults = {
+type DomainsResults = Awaited<ReturnType<typeof getDomainsPromises>>
+
+function formatRichResults (results: DomainsResults, { includeReferences = false }) {
+  const response = {
     // entities are a array until they are indexed by uri hereafter
     entities: {},
     // collect redirections at the response root to let the possibility
     // to the client to alias entities
     redirects: {},
     notFound: [],
-  }
+  } as (typeof includeReferences extends true ? ExpandedEntitiesByUrisResults : EntitiesByUrisResults)
 
   let entitiesList = []
 
@@ -109,10 +130,4 @@ function formatRichResults (results) {
   if (response.notFound.length === 0) delete response.notFound
 
   return response
-}
-
-const validators = {
-  inv: isInvEntityId,
-  wd: isWdEntityId,
-  isbn: isValidIsbn,
 }

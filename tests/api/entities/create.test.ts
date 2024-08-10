@@ -1,7 +1,8 @@
 import should from 'should'
 import { getSomeUsername } from '#fixtures/text'
-import { shouldNotBeCalled } from '#tests/unit/utils'
-import { createEditionWithIsbn, randomLabel, someOpenLibraryId } from '../fixtures/entities.js'
+import { getEntityAttributesByUri } from '#tests/api/utils/entities'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import { createEditionWithIsbn, randomLabel, someOpenLibraryId, someReference } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=create'
@@ -196,7 +197,7 @@ describe('entities:create', () => {
     })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid property value array')
+      err.body.status_verbose.should.equal('invalid property claim array')
       err.statusCode.should.equal(400)
     })
   })
@@ -305,6 +306,128 @@ describe('entities:create', () => {
       // as test env cannot have any wd tokens
       err.body.status_verbose.should.equal('missing wikidata oauth tokens')
       err.statusCode.should.equal(400)
+    })
+  })
+
+  describe('references', () => {
+    it('should accept references', async () => {
+      await authReq('post', endpoint, {
+        labels: { fr: randomLabel() },
+        claims: {
+          'wdt:P31': [ 'wd:Q47461344' ],
+          'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ someReference ] } ],
+        },
+      })
+    })
+
+    it('should reject an invalid reference array', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: someReference } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid references value, should be an array')
+      }
+    })
+
+    it('should reject an invalid reference', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ 123 ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid reference')
+      }
+    })
+
+    it('should reject an empty reference object', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ {} ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid reference')
+      }
+    })
+
+    it('should reject an invalid reference object', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { foo: 123 } ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid property')
+      }
+    })
+
+    it('should reject an invalid reference snak', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { 'wdt:P854': [ 'not a url' ] } ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal('invalid property value')
+      }
+    })
+
+    it('should reject non-allowed reference properties', async () => {
+      try {
+        const res = await authReq('post', endpoint, {
+          labels: { fr: randomLabel() },
+          claims: {
+            'wdt:P31': [ 'wd:Q47461344' ],
+            'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { ...someReference, 'wdt:P1104': [ 123 ] } ] } ],
+          },
+        })
+        shouldNotBeCalled(res)
+      } catch (err) {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("This property isn't allowed in a reference")
+      }
+    })
+
+    it('should format reference snak values', async () => {
+      const referenceUrl = 'http://foo.bar  '
+      const res = await authReq('post', endpoint, {
+        labels: { fr: randomLabel() },
+        claims: {
+          'wdt:P31': [ 'wd:Q47461344' ],
+          'wdt:P648': [ { value: someOpenLibraryId('work'), references: [ { 'wdt:P854': [ referenceUrl ] } ] } ],
+        },
+      })
+      const entity = await getEntityAttributesByUri({ uri: res.uri, attributes: [ 'claims', 'references' ] as const })
+      // @ts-expect-error
+      entity.claims['wdt:P648'][0].references[0]['wdt:P854'][0].should.equal(referenceUrl.trim())
     })
   })
 })

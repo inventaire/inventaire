@@ -1,7 +1,7 @@
 import 'should'
 import { getHashCode } from '#lib/utils/base'
 import type { RelativeUrl } from '#server/types/common'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { uploadSomeImage } from '../utils/images.js'
 import { rawRequest } from '../utils/request.js'
 

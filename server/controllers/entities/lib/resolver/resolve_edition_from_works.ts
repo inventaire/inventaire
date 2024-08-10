@@ -1,10 +1,12 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
-import getInvEntityCanonicalUri from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { findClaimByValue, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
-import type { Claims } from '#types/entity'
-import type { Entries } from 'type-fest'
+import { objectEntries } from '#lib/utils/base'
+import type { EditionSeed, WorkSeed } from '#server/types/resolver'
+import type { InvEntity } from '#types/entity'
 
-export default async function (editionSeed, worksSeeds) {
+export default async function (editionSeed: EditionSeed, worksSeeds: WorkSeed[]) {
   if (editionSeed.uri) return
   // Only edition seeds with no known isbns can be resolved this way
   if (editionSeed.isbn) return
@@ -22,23 +24,29 @@ export default async function (editionSeed, worksSeeds) {
   }
 }
 
-const isMatchingEdition = (editionSeed, editionSeedTitle) => edition => {
+const isMatchingEdition = (editionSeed: EditionSeed, editionSeedTitle: string) => (edition: InvEntity) => {
   const title = getNormalizedTitle(edition)
   const titlesMatch = editionSeedTitle.includes(title) || title.includes(editionSeedTitle)
   const claimsDoNotContradict = editionSeedHasNoContradictingClaim(editionSeed, edition)
   return titlesMatch && claimsDoNotContradict
 }
 
-function getNormalizedTitle ({ claims }) {
-  const title = claims['wdt:P1476']?.[0]
+function getNormalizedTitle (edition: InvEntity | EditionSeed) {
+  const { claims } = edition
+  if (!claims) return
+  const title = getFirstClaimValue(claims, 'wdt:P1476')
   if (title) return normalizeTitle(title)
 }
 
-function editionSeedHasNoContradictingClaim (editionSeed, edition) {
-  for (const [ property, propertyClaims ] of Object.entries(editionSeed.claims) as Entries<Claims>) {
+function editionSeedHasNoContradictingClaim (editionSeed: EditionSeed, edition: InvEntity) {
+  for (const [ property, propertyClaims ] of objectEntries(editionSeed.claims)) {
     if (!ignoredProperties.includes(property)) {
-      for (const value of propertyClaims) {
-        if (!edition.claims[property]?.includes(value)) {
+      for (const claim of propertyClaims) {
+        if (edition.claims[property]) {
+          const value = getClaimValue(claim)
+          const matchingClaim = findClaimByValue(edition.claims[property], value)
+          if (!matchingClaim) return false
+        } else {
           return false
         }
       }

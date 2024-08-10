@@ -10,10 +10,11 @@ describe('get_wikidata_entry_from_isbn', () => {
   })
 
   it('should get an entry from a known ISBN: ISBN statement on a work', async () => {
-    // Assuming the existance of the triple: wd:Q482418 wdt:P212 "978-2-8004-1508-6"
-    const entry = await getWikidataEntryFromIsbn('978-2-8004-1508-6')
-    entry.edition.claims['wdt:P1476'].should.equal('An Economic Theory of Democracy')
-    entry.works[0].uri.should.equal('wd:Q482418')
+    // Assuming the existance of the triple: ?work wdt:P212 ?isbn
+    // New test cases can be found with this query https://w.wiki/AsyJ
+    const entry = await getWikidataEntryFromIsbn('978-2-02-009336-1')
+    entry.edition.claims['wdt:P1476'].should.equal('Adventures in the Alaskan Skin Trade')
+    entry.works[0].uri.should.equal('wd:Q2873488')
   })
 
   it('should not get an entry from an unknown ISBN', async () => {

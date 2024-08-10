@@ -6,12 +6,13 @@ import bne from '#data/bne/get_bne_entry_from_isbn'
 import bnf from '#data/bnf/get_bnf_entry_from_isbn'
 import openlibrary from '#data/openlibrary/get_openlibrary_entry_from_isbn'
 import wikidata from '#data/wikidata/get_wikidata_entry_from_isbn'
-import { isNonEmptyArray } from '#lib/boolean_validations'
+import { isArray } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { oneMonth } from '#lib/time'
-import { isNotEmpty, objLength } from '#lib/utils/base'
+import { forceArray, isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { EntityLooseSeed, LooseClaims, ResolverEntry } from '#server/types/resolver'
 
 const { offline } = config
 
@@ -25,13 +26,13 @@ const authorities = {
 
 const authoritiesNames = Object.keys(authorities)
 
-export async function getAuthoritiesAggregatedEntry (isbn) {
+export async function getAuthoritiesAggregatedEntry (isbn: string) {
   if (offline) return
-  const entries = await Promise.all(authoritiesNames.map(wrap(isbn)))
+  const entries: ResolverEntry[] = await Promise.all(authoritiesNames.map(wrap(isbn)))
   return sortAndAggregateEntries(isbn, entries)
 }
 
-const wrap = isbn => async name => {
+const wrap = (isbn: string) => async (name: string) => {
   try {
     return await cache_.get({
       key: `seed:${name}:${isbn}`,
@@ -43,7 +44,7 @@ const wrap = isbn => async name => {
   }
 }
 
-async function sortAndAggregateEntries (isbn, entries) {
+async function sortAndAggregateEntries (isbn: string, entries: ResolverEntry[]) {
   entries = entries.filter(isNotEmpty)
   if (entries.length === 0) return
   if (entries.length === 1) return entries[0]
@@ -68,7 +69,7 @@ async function sortAndAggregateEntries (isbn, entries) {
   return bestEntry
 }
 
-function getEntryResolutionScore (entry) {
+function getEntryResolutionScore (entry: ResolverEntry) {
   let score = 0
   if (entry.edition?.claims) score += objLength(entry.edition.claims)
   entry.works?.forEach(work => {
@@ -84,36 +85,32 @@ function getEntryResolutionScore (entry) {
 
 const byScore = (a, b) => b.score - a.score
 
-const parseEntry = (entry, bestEntry) => entryKey => {
-  let entryValue = entry[entryKey]
-  let bestEntryValue = bestEntry[entryKey]
+const parseEntry = (entry: ResolverEntry, bestEntry: ResolverEntry) => (entryKey: keyof ResolverEntry) => {
+  const seeds = entry[entryKey]
+  const bestEntrySeeds = bestEntry[entryKey]
 
   // Multiple authors or works must be ignored
-  if (isNonEmptyArray(bestEntryValue) && bestEntryValue.length > 1) return
-  if (isNonEmptyArray(entryValue) && entryValue.length > 1) return
+  if (isArray(bestEntrySeeds) && bestEntrySeeds.length > 1) return
+  if (isArray(seeds) && seeds.length > 1) return
 
-  if (entryKey !== 'edition') {
-    entryValue = entryValue[0]
-    if (bestEntryValue) bestEntryValue = bestEntryValue[0]
-  }
+  const seed: EntityLooseSeed = forceArray(seeds)[0]
+  const bestEntrySeed: EntityLooseSeed = forceArray(bestEntrySeeds)[0]
 
-  if (!entryValue?.claims) return
+  if (!seed?.claims) return
 
-  if (!bestEntryValue) {
+  if (!bestEntrySeed) {
+    // @ts-expect-error
     bestEntry[entryKey] = entry[entryKey]
     return
   }
 
-  bestEntryValue.claims = bestEntryValue.claims || {}
+  bestEntrySeed.claims ??= {}
 
-  const entryClaims = entryValue.claims
-  const bestEntryClaims = bestEntryValue.claims
-  const claimsKeys = Object.keys(entryClaims)
-  claimsKeys.forEach(addClaimToBestEntry(entryClaims, bestEntryClaims))
+  addSeedClaimsToBestEntrySeedClaims(seed.claims, bestEntrySeed.claims)
 }
 
-const addClaimToBestEntry = (subentryClaims, bestSubentryClaims) => claimKey => {
-  if (!bestSubentryClaims[claimKey]) {
-    bestSubentryClaims[claimKey] = subentryClaims[claimKey]
+function addSeedClaimsToBestEntrySeedClaims (seedClaims: LooseClaims, bestEntrySeedClaims: LooseClaims) {
+  for (const property of Object.keys(seedClaims)) {
+    bestEntrySeedClaims[property] ??= seedClaims[property]
   }
 }

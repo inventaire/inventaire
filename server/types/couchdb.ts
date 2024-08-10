@@ -1,4 +1,5 @@
 import type dbFactory from '#db/couchdb/base'
+import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 import type { ViewKey, ViewName } from 'blue-cot/types/types.js'
 import type { AsyncReturnType } from 'type-fest'
 
@@ -30,3 +31,6 @@ export interface View<D> {
 export type Views<D> = Record<ViewName, View<D>>
 
 export type DbHandler = AsyncReturnType<typeof dbFactory>
+
+export type UnknownDocumentViewResponse = DocumentViewResponse<unknown, unknown>
+export type ViewRow<V, D> = DocumentViewResponse<V, D>['rows'][number]

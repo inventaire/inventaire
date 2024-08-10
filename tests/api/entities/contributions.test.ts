@@ -3,7 +3,7 @@ import { someRandomCouchUuid } from '#fixtures/general'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createWork } from '../fixtures/entities.js'
 import { updateClaim, updateLabel } from '../utils/entities.js'
 import {

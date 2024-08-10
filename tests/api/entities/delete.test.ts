@@ -1,6 +1,6 @@
 import should from 'should'
 import { wait } from '#lib/promises'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createHuman,
   createWork,

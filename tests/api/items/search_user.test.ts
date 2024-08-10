@@ -6,7 +6,7 @@ import { createUser } from '#fixtures/users'
 import { buildUrl } from '#lib/utils/url'
 import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createItem,
   createItemWithEditionAndWork,

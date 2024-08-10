@@ -9,7 +9,7 @@ import {
   getUserGetter,
   authReqB,
 } from '#tests/api/utils/utils'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
 import { createItem, createItems } from '../fixtures/items.js'
 import { createShelfWithItem } from '../fixtures/shelves.js'

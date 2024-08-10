@@ -1,23 +1,25 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getClaimValue, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
-import type { EntityType, EntityUri, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
+import type { EntityType, EntityUri, ExtendedEntityType, InvClaim, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
-import validateClaimValueSync from './validate_claim_value_sync.js'
+import { validateClaimValueSync } from './validate_claim_sync.js'
 
-interface Params {
-  type: EntityType
+export interface ValidateAndFormatClaimValueParams {
+  type: ExtendedEntityType
   property: PropertyUri
-  oldVal?: InvClaimValue
-  newVal?: InvClaimValue
+  oldClaim?: InvClaim
+  newClaim?: InvClaim
   letEmptyValuePass: boolean
-  userIsAdmin: boolean
+  userIsAdmin?: boolean
   _id: InvEntityId
 }
 
-export async function validateAndFormatClaimValue (params: Params) {
-  const { type, property, oldVal, letEmptyValuePass, userIsAdmin, _id } = params
-  let { newVal } = params
+export async function validateAndFormatClaimValue (params: ValidateAndFormatClaimValueParams) {
+  const { type, property, oldClaim, newClaim, letEmptyValuePass, userIsAdmin, _id } = params
+  const oldVal = getClaimValue(oldClaim)
+  let newVal = getClaimValue(newClaim)
 
   const prop = properties[property]
 
@@ -51,7 +53,7 @@ export async function validateAndFormatClaimValue (params: Params) {
     throw invalidClaimValueError
   }
 
-  return formattedValue
+  return setClaimValue(newClaim, formattedValue)
 }
 
 // For properties that don't tolerate having several entities

@@ -5,7 +5,7 @@ import { someFakeUri } from '#fixtures/entities'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const { get, set, del } = entitiesRelationsTemporaryCache
 const { checkFrequency, ttl } = config.entitiesRelationsTemporaryCache

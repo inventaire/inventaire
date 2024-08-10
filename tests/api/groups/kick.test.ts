@@ -2,7 +2,7 @@ import 'should'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getGroup } from '#tests/api/utils/groups'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { getSomeGroup, addMember } from '../fixtures/groups.js'
 import { authReq, getUserGetter } from '../utils/utils.js'
 

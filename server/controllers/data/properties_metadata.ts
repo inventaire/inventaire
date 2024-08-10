@@ -1,4 +1,4 @@
-import allowedValuesPerTypePerProperty from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
+import { allowedValuesPerTypePerProperty } from '#controllers/entities/lib/properties/allowed_values_per_type_per_property'
 import { properties } from '#controllers/entities/lib/properties/properties'
 import { sendStaticJson } from '#lib/responses'
 

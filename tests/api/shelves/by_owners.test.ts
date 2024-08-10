@@ -1,7 +1,7 @@
 import should from 'should'
 import { createGroupWithAMember, getSomeGroupWithAMember } from '#fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createShelf } from '../fixtures/shelves.js'
 import { createUser, getTwoFriends } from '../fixtures/users.js'
 import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'

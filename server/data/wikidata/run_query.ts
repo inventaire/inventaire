@@ -73,7 +73,7 @@ const parametersTests = {
   pid: isPropertyId,
 }
 
-function runQuery (params, key) {
+function runQuery (params: RunQueryParams, key: string) {
   const { query: queryName } = params
   const sparql = queries[queryName].query(params)
   const { minimizable = false } = queries[queryName]

@@ -1,5 +1,5 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createWork } from '../fixtures/entities.js'
 import { authReq } from '../utils/utils.js'
 

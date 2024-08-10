@@ -1,6 +1,6 @@
 import { getSomeGroupWithAMember } from '#fixtures/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createListing } from '../fixtures/listings.js'
 import { createUser, getTwoFriends } from '../fixtures/users.js'
 import { makeFriends } from '../utils/relations.js'

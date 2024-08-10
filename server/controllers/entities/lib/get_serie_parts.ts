@@ -1,8 +1,10 @@
 import { flatten } from 'lodash-es'
-import { getInvEntitiesByClaim, getFirstPropertyClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, uniqByUri } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
+import type { EntityUri, InvEntity, SerializedEntity, WdEntityId } from '#server/types/entity'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
@@ -20,7 +22,7 @@ export default params => {
     promises.push(getCachedRelations({
       valueUri: uri,
       properties: [ 'wdt:P179' ],
-      formatEntity,
+      formatEntity: formatSerializedEntity,
     }))
   }
 
@@ -34,7 +36,7 @@ export default params => {
   .catch(LogErrorAndRethrow('get serie parts err'))
 }
 
-async function getWdSerieParts (qid, refresh, dry) {
+async function getWdSerieParts (qid: WdEntityId, refresh: boolean, dry: boolean) {
   const results = await runWdQuery({ query: 'serie-parts', qid, refresh, dry })
   return results.map(result => ({
     uri: prefixifyWd(result.part),
@@ -47,20 +49,24 @@ async function getWdSerieParts (qid, refresh, dry) {
 
 // Querying only for 'serie' (wdt:P179) and not 'part of' (wdt:P361)
 // as we use only wdt:P179 internally
-async function getInvSerieParts (uri) {
+async function getInvSerieParts (uri: EntityUri) {
   const docs = await getInvEntitiesByClaim('wdt:P179', uri, true, true)
-  return docs.map(format)
+  return docs.map(formatInvEntity)
 }
 
-const format = ({ _id, claims }) => ({
-  uri: `inv:${_id}`,
-  date: claims['wdt:P577'] && claims['wdt:P577'][0],
-  ordinal: claims['wdt:P1545'] && claims['wdt:P1545'][0],
-  subparts: 0,
-})
+function formatInvEntity ({ _id, claims }: InvEntity) {
+  return {
+    uri: `inv:${_id}`,
+    date: getFirstClaimValue(claims, 'wdt:P577'),
+    ordinal: getFirstClaimValue(claims, 'wdt:P1545'),
+    subparts: 0,
+  }
+}
 
-const formatEntity = entity => ({
-  uri: entity.uri,
-  date: getFirstPropertyClaim(entity, 'wdt:P577'),
-  ordinal: getFirstPropertyClaim(entity, 'wdt:P1545'),
-})
+function formatSerializedEntity (entity: SerializedEntity) {
+  return {
+    uri: entity.uri,
+    date: getFirstClaimValue(entity.claims, 'wdt:P577'),
+    ordinal: getFirstClaimValue(entity.claims, 'wdt:P1545'),
+  }
+}

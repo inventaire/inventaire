@@ -1,7 +1,7 @@
 import 'should'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createUserEmail } from '../fixtures/users.js'
 import { rawRequest } from '../utils/request.js'
 import { publicReq } from '../utils/utils.js'

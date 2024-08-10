@@ -1,4 +1,4 @@
-export function typeOf (obj) {
+export function typeOf (obj: unknown) {
   // just handling what differes from typeof
   const type = typeof obj
   if (type === 'object') {

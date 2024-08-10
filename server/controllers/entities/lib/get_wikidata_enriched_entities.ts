@@ -5,19 +5,21 @@
 //   such as ISBNs defined on work entities
 
 import { partition, map, compact, omit } from 'lodash-es'
-import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks } from 'wikibase-sdk'
-import type { EntitiesGetterArgs } from '#controllers/entities/lib/get_entities_by_uris'
+import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks, type Claims, type Item as WdEntity } from 'wikibase-sdk'
+import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
+import { getClaimObjectFromClaim } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
-import formatClaims from '#lib/wikidata/format_claims'
+import { objectEntries } from '#lib/utils/base'
+import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import type { WdEntityId } from '#types/entity'
-import addImageData from './add_image_data.js'
-import getEntityType from './get_entity_type.js'
+import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
+import { addImageData } from './add_image_data.js'
+import { getEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
@@ -29,13 +31,21 @@ setImmediate(importCircularDependencies)
 
 const { _id: hookUserId } = hardCodedUsers.hook
 
-export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry }: EntitiesGetterArgs) {
+export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry, includeReferences }: EntitiesGetterParams) {
   const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
-  return {
-    entities: foundEntities,
-    notFound: map(notFoundEntities, 'uri'),
+  const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
+  if (includeReferences) {
+    return {
+      entities: foundEntities.map(expandClaims) as ExpandedSerializedWdEntity[],
+      notFound,
+    }
+  } else {
+    return {
+      entities: foundEntities as SerializedWdEntity[],
+      notFound,
+    }
   }
 }
 
@@ -131,13 +141,15 @@ async function formatAndPropagateRedirection (entity) {
 }
 
 // Keeping just enough data to filter-out while not cluttering the cache
-const formatEmpty = (type, entity) => ({
-  id: entity.id,
-  uri: `wd:${entity.id}`,
-  type,
-})
+function formatEmpty (type: 'meta' | 'missing', entity: WdEntity) {
+  return {
+    id: entity.id,
+    uri: `wd:${entity.id}`,
+    type,
+  }
+}
 
-function omitUndesiredPropertiesPerType (type, claims) {
+function omitUndesiredPropertiesPerType (type: ExtendedEntityType, claims: Claims) {
   const propertiesToOmit = undesiredPropertiesPerType[type]
   if (propertiesToOmit) {
     return omit(claims, propertiesToOmit)
@@ -150,4 +162,11 @@ function omitUndesiredPropertiesPerType (type, claims) {
 // should be the responsability of edition entities
 const undesiredPropertiesPerType = {
   work: [ 'P212', 'P957' ],
+} as const
+
+function expandClaims (entity) {
+  for (const [ property, propertyClaims ] of objectEntries(entity.claims)) {
+    entity.claims[property] = propertyClaims.map(getClaimObjectFromClaim)
+  }
+  return entity
 }

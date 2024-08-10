@@ -3,6 +3,7 @@ import gm from 'gm'
 import { sha1 } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'
 import config from '#server/config'
+import type { ImageContainer, ImagePath } from '#server/types/image'
 
 const { maxSize } = config.mediaStorage.images
 
@@ -43,8 +44,8 @@ export function removeExif (path: string) {
 
 export const applyImageLimits = (width, height) => [ applyLimit(width), applyLimit(height) ]
 
-export function getUrlFromImageHash (container, filename) {
-  if (filename) return `/img/${container}/${filename}`
+export function getUrlFromImageHash (container: ImageContainer, filename: string) {
+  if (filename) return `/img/${container}/${filename}` as ImagePath
 }
 
 function applyLimit (dimension = maxSize) {

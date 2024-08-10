@@ -1,7 +1,7 @@
 import 'should'
 import { sample } from 'lodash-es'
 import { authReqB, authReqC } from '#tests/api/utils/utils'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
 import { getItem } from '../utils/items.js'
 import { updateTransaction } from '../utils/transactions.js'

@@ -1,6 +1,6 @@
 import 'should'
 import solveIntentFactory from '#controllers/relations/lib/solve_intent'
-import { makeSpy } from '#tests/unit/utils'
+import { makeSpy } from '#tests/unit/utils/utils'
 
 let spies = {}
 

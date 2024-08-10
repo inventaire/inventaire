@@ -11,7 +11,7 @@ import {
 import { humanName } from '#fixtures/text'
 import { getByUri, getByUris, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const resolveAndCreate = entry => authReq('post', '/api/entities?action=resolve', {
   entries: [ entry ],

@@ -2,9 +2,10 @@ import { emit } from '#db/couchdb/couchdb_views_context'
 import type { Views } from '#types/couchdb'
 import type { Patch } from '#types/patch'
 
-function emitEntityClaim (property, claimValue, timestamp) {
-  if (typeof claimValue === 'string' && (claimValue.startsWith('wd:') || claimValue.startsWith('inv:'))) {
-    emit([ claimValue, timestamp ], property)
+function emitEntityClaim (property, claim, timestamp) {
+  const value = typeof claim === 'object' ? claim.value : claim
+  if (typeof value === 'string' && (value.startsWith('wd:') || value.startsWith('inv:'))) {
+    emit([ value, timestamp ], property)
   }
 }
 

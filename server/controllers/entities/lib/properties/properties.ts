@@ -13,7 +13,7 @@ export const authorRelationsProperties = [
   'wdt:P9191', // letterer
   'wdt:P10836', // inker
   'wdt:P10837', // penciller
-] as const
+] as const satisfies PropertyUri[]
 
 export interface PropertyConfig {
   subjectTypes: readonly ExtendedEntityType[]
@@ -441,5 +441,3 @@ for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
 }
 
 export const properties = _properties as Record<PropertyUri, PropertyConfig>
-
-export const localPropertiesUris = Object.keys(_properties)

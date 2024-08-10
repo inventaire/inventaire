@@ -1,7 +1,7 @@
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { listingName } from '../fixtures/listings.js'
 import { authReq } from '../utils/utils.js'
 

@@ -1,11 +1,12 @@
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { typeOf } from '#lib/utils/types'
-import type { EntityType, InvClaimValue } from '#types/entity'
+import type { ExtendedEntityType, InvClaim, InvClaimValue, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { validateValueType } from './properties/validations.js'
 
-export default (property, value: InvClaimValue, entityType: EntityType) => {
+export function validateAndFormatSnakValueSync (property: PropertyUri, value: InvClaimValue, entityType?: ExtendedEntityType) {
   if (!validateValueType(property, value)) {
     const expected = properties[property].primitiveType
     const actual = typeOf(value)
@@ -19,13 +20,13 @@ export default (property, value: InvClaimValue, entityType: EntityType) => {
     value = format(value)
   }
 
-  if (typeSpecificValidation) {
+  if (typeSpecificValidation && entityType) {
     if (!validate({ value, entityType })) {
       const message = `invalid property value for entity type "${entityType}"`
       throw newError(message, 400, { entityType, property, value })
     }
   } else {
-    if (!validate({ value, entityType })) {
+    if (!validate({ value })) {
       if (datatype === 'entity' && isEntityId(value)) {
         throw newError('invalid property value: missing entity uri prefix', 400, { property, value })
       } else {
@@ -33,4 +34,15 @@ export default (property, value: InvClaimValue, entityType: EntityType) => {
       }
     }
   }
+
+  return value
+}
+
+export function validateClaimValueSync (property: PropertyUri, value: InvClaimValue, entityType: ExtendedEntityType) {
+  validateAndFormatSnakValueSync(property, value, entityType)
+}
+
+export function validateClaimSync (property: PropertyUri, claim: InvClaim, entityType: ExtendedEntityType) {
+  const value = getClaimValue(claim)
+  validateClaimValueSync(property, value, entityType)
 }

@@ -19,7 +19,9 @@ export const views: Views<InvEntityDoc> = {
 
         // Keep only humans
         if (doc.claims == null || doc.claims['wdt:P31'] == null) return
-        if (doc.claims['wdt:P31'][0] !== 'wd:Q5') return
+        const P31Claim = doc.claims['wdt:P31'][0]
+        const P31Value = typeof P31Claim === 'object' ? P31Claim.value : P31Claim
+        if (P31Value !== 'wd:Q5') return
 
         if (doc.labels != null && doc.claims != null) {
           const labelsSet = new Set(Object.values(doc.labels).map(normalize))

@@ -1,5 +1,6 @@
 import { flatten, identity, map, uniqBy } from 'lodash-es'
-import { getFirstPropertyClaim, uniqByUri, getInvEntitiesByClaims } from '#controllers/entities/lib/entities'
+import { uniqByUri, getInvEntitiesByClaims, type ClaimPropertyValueTuple } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
@@ -7,6 +8,8 @@ import runWdQuery from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
+import type { ViewRow } from '#server/types/couchdb'
+import type { EntityUri, EntityValue, InvEntity } from '#server/types/entity'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
@@ -67,20 +70,20 @@ function formatWdEntity (result) {
 }
 
 // # INV
-async function getInvAuthorWorks (uri) {
-  const authorClaims = authorRelationsProperties.map(property => [ property, uri ])
-  const { rows } = await getInvEntitiesByClaims({ claims: authorClaims, includeDocs: true })
+async function getInvAuthorWorks (uri: EntityUri) {
+  const authorClaims = authorRelationsProperties.map(property => [ property, uri ]) satisfies ClaimPropertyValueTuple[]
+  const { rows } = await getInvEntitiesByClaims(authorClaims)
   return rows.map(formatInvEntity).filter(identity)
 }
 
-function formatInvEntity (row) {
+function formatInvEntity (row: ViewRow<EntityValue, InvEntity>) {
   const typeUri = row.value
   const typeName = getPluralTypeByTypeUri(typeUri)
   if (!allowlistedTypesNames.includes(typeName)) return
   return {
     uri: `inv:${row.id}`,
-    date: getFirstPropertyClaim(row.doc, 'wdt:P577'),
-    serie: getFirstPropertyClaim(row.doc, 'wdt:P179'),
+    date: getFirstClaimValue(row.doc.claims, 'wdt:P577'),
+    serie: getFirstClaimValue(row.doc.claims, 'wdt:P179'),
     type: typeName,
   }
 }
@@ -114,8 +117,8 @@ function sortTypesByScore (worksByTypes) {
 function formatEntity (entity) {
   return {
     uri: entity.uri,
-    date: getFirstPropertyClaim(entity, 'wdt:P577'),
-    serie: getFirstPropertyClaim(entity, 'wdt:P179'),
+    date: getFirstClaimValue(entity.claims, 'wdt:P577'),
+    serie: getFirstClaimValue(entity.claims, 'wdt:P179'),
     type: getPluralType(entity.type),
   }
 }

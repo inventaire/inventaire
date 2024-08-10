@@ -2,7 +2,7 @@ import 'should'
 import dbFactory from '#db/couchdb/base'
 import { BasicUpdater } from '#lib/doc_updates'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { createUserEmail } from '../fixtures/users.js'
 import { getUserGetter } from '../utils/utils.js'
 

@@ -1,68 +1,72 @@
+import { trim } from 'lodash-es'
 import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import { boundedString } from '#models/validations/common'
-import type { PropertyValueConstraints } from '#types/property'
 
-export const entity: PropertyValueConstraints = {
+export const entity = {
   datatype: 'entity',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => EntityUri.test(value),
-}
+} as const
 
-export const uniqueString: PropertyValueConstraints = {
+export const uniqueString = {
   datatype: 'string',
   primitiveType: 'string',
+  format: trim,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
   uniqueValue: true,
-}
+} as const
 
-const restrictedEntityTypes = types => Object.assign({ entityValueTypes: types }, entity)
+export const workEntity = { ...entity, entityValueTypes: [ 'work' ] } as const
+export const serieEntity = { ...entity, entityValueTypes: [ 'serie' ] } as const
+export const workOrSerieEntity = { ...entity, entityValueTypes: [ 'work', 'serie' ] } as const
+export const humanEntity = { ...entity, entityValueTypes: [ 'human' ] } as const
+export const publisherEntity = { ...entity, entityValueTypes: [ 'publisher' ] } as const
+export const collectionEntity = { ...entity, entityValueTypes: [ 'collection' ] } as const
+export const movementEntity = { ...entity, entityValueTypes: [ 'movement' ] } as const
+export const genreEntity = { ...entity, entityValueTypes: [ 'genre' ] } as const
+export const languageEntity = { ...entity, entityValueTypes: [ 'language' ] } as const
+export const uniqueEntity = { ...entity, uniqueValue: true } as const
 
-export const workEntity: PropertyValueConstraints = restrictedEntityTypes([ 'work' ])
-export const serieEntity: PropertyValueConstraints = restrictedEntityTypes([ 'serie' ])
-export const workOrSerieEntity: PropertyValueConstraints = restrictedEntityTypes([ 'work', 'serie' ])
-export const humanEntity: PropertyValueConstraints = restrictedEntityTypes([ 'human' ])
-export const publisherEntity: PropertyValueConstraints = restrictedEntityTypes([ 'publisher' ])
-export const collectionEntity: PropertyValueConstraints = restrictedEntityTypes([ 'collection' ])
-export const movementEntity: PropertyValueConstraints = restrictedEntityTypes([ 'movement' ])
-export const genreEntity: PropertyValueConstraints = restrictedEntityTypes([ 'genre' ])
-export const languageEntity: PropertyValueConstraints = restrictedEntityTypes([ 'language' ])
-export const uniqueEntity: PropertyValueConstraints = Object.assign({}, entity, { uniqueValue: true })
+export const concurrentString = { ...uniqueString, concurrency: true } as const
+export const concurrentExternalId = { ...concurrentString, datatype: 'external-id' } as const
 
-export const concurrentString: PropertyValueConstraints = Object.assign({}, uniqueString, { concurrency: true })
-export const concurrentExternalId: PropertyValueConstraints = Object.assign({}, concurrentString, { datatype: 'external-id' })
-
-export const url: PropertyValueConstraints = {
+export const url = {
   datatype: 'url',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isUrl(value),
-}
+} as const
 
-export const uniqueSimpleDay: PropertyValueConstraints = {
+export const uniqueSimpleDay = {
   datatype: 'date',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isSimpleDay(value),
   uniqueValue: true,
-}
+} as const
 
-export const positiveInteger: PropertyValueConstraints = {
+export const positiveInteger = {
   datatype: 'positive-integer',
   primitiveType: 'number',
   validate: ({ value }: { value: number }) => Number.isInteger(value) && value > 0,
   uniqueValue: true,
-}
+} as const
 
-export const positiveIntegerString: PropertyValueConstraints = {
+export const positiveIntegerString = {
   datatype: 'positive-integer-string',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isPositiveIntegerString(value),
   uniqueValue: true,
-}
+} as const
 
-export const imageHash: PropertyValueConstraints = {
+export const imageHash = {
   datatype: 'image',
   primitiveType: 'string',
+  format: trim,
   validate: ({ value }: { value: string }) => isImageHash(value),
   uniqueValue: true,
-}
+} as const

@@ -1,5 +1,5 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/unit/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import { publicReq, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/auth?action=reset-password'

@@ -4,7 +4,7 @@ import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { Claims, EntityUri, Labels, PropertyUri, SerializedEntity } from '#server/types/entity'
+import type { Claims, EntityUri, Labels, PropertyUri } from '#server/types/entity'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getByUri, addClaim } from '../utils/entities.js'
 import { authReq, getUser } from '../utils/utils.js'
@@ -100,12 +100,12 @@ export function createEditionFromWorks (...works) {
   return createEdition(params)
 }
 
-export async function createWorkWithAuthor (human?: SerializedEntity, label?: string) {
+export async function createWorkWithAuthor (human?: { uri: EntityUri }, label?: string) {
   const { work } = await createWorkWithSpecificRoleAuthor({ human, label, roleProperty: 'wdt:P50' })
   return work
 }
 
-export async function createWorkWithSpecificRoleAuthor ({ human, label, roleProperty }) {
+export async function createWorkWithSpecificRoleAuthor ({ human, label, roleProperty }: { human?: { uri: EntityUri }, label?: string, roleProperty: PropertyUri }) {
   label = label || randomLabel()
   human = await (human || createHuman())
   const work = await authReq('post', '/api/entities?action=create', {
@@ -217,4 +217,14 @@ const openLibraryTypeLetters = {
   edition: 'M',
   work: 'W',
   human: 'A',
+}
+
+export const someReference = {
+  'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb437169336' ],
+  'wdt:P813': [ '2024-04-23' ],
+}
+
+export const someReferenceB = {
+  'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb11908111q' ],
+  'wdt:P813': [ '2024-04-24' ],
 }

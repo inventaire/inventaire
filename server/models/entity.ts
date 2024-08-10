@@ -22,17 +22,18 @@
 // Inventaire properties:
 // invp:P2: Image Hash
 
-import { isString, cloneDeep, get, without, omit } from 'lodash-es'
+import { isString, cloneDeep, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
+import { findClaimByValue, getClaimIndex, getClaimValue, isClaimObject, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { superTrim } from '#lib/utils/base'
+import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaimValue, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
-import type { Entries, ObjectEntries } from 'type-fest/source/entries.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
@@ -75,7 +76,7 @@ export function setEntityDocLabel (doc: InvEntity, lang: WikimediaLanguageCode, 
 
 export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
   preventRedirectionEdit(doc)
-  for (const [ lang, value ] of Object.entries(labels) as ObjectEntries<typeof labels>) {
+  for (const [ lang, value ] of objectEntries(labels)) {
     doc = setEntityDocLabel(doc, lang, value)
   }
 
@@ -84,17 +85,17 @@ export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
 
 type CustomInvEntity = InvEntity & { _allClaimsProps?: PropertyUri[] }
 
-export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
+export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
   preventRedirectionEdit(doc)
 
-  // Pass the list of all edited properties, so that wen trying to infer property
-  // values, we know which one should not be infered at the risk of creating
+  // Pass the list of all edited properties, so that when trying to infer property
+  // values, we know which one should not be inferred at the risk of creating
   // a conflict
-  doc._allClaimsProps = Object.keys(claims) as PropertyUri[]
+  doc._allClaimsProps = Object.keys(newClaims) as PropertyUri[]
 
-  for (const [ property, array ] of Object.entries(claims) as Entries<typeof claims>) {
-    for (const value of array) {
-      doc = createEntityDocClaim(doc, property, value)
+  for (const [ property, propertyClaims ] of objectEntries(newClaims)) {
+    for (const claim of propertyClaims) {
+      doc = createEntityDocClaim(doc, property, claim)
     }
   }
 
@@ -103,51 +104,69 @@ export function addEntityDocClaims (doc: CustomInvEntity, claims: Claims) {
   return doc
 }
 
-export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, value: InvClaimValue) {
+export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, claim: InvClaim) {
   preventRedirectionEdit(doc)
-  return updateEntityDocClaim(doc, property, null, value)
+  return updateEntityDocClaim(doc, property, null, claim)
 }
 
-export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
-  const context = { doc, property, oldVal, newVal }
+export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim) {
+  const context = { doc, property, oldClaim, newClaim }
   preventRedirectionEdit(doc)
-  if (oldVal == null && newVal == null) {
+  if (oldClaim == null && newClaim == null) {
     throw newError('missing old or new value', 400, context)
   }
 
-  if (isString(oldVal)) oldVal = superTrim(oldVal)
-  if (isString(newVal)) newVal = superTrim(newVal)
+  if (isString(getClaimValue(oldClaim))) oldClaim = setClaimValue(oldClaim, superTrim(getClaimValue(oldClaim)))
+  if (isString(getClaimValue(newClaim))) newClaim = setClaimValue(newClaim, superTrim(getClaimValue(newClaim)))
 
-  let propArray = get(doc, `claims.${property}`)
+  let propArray = doc.claims?.[property]
 
-  if (propArray && newVal != null && propArray.includes(newVal)) {
-    throw newError('claim property new value already exist', 400, { propArray, newVal })
+  if (propArray && newClaim != null && propArray.map(getClaimValue).includes(getClaimValue(newClaim))) {
+    throw newError('claim property new value already exist', 400, { propArray, newClaim })
   }
 
-  if (oldVal != null) {
+  if (isClaimObject(newClaim)) {
+    newClaim = minimizeClaimObject(newClaim)
+  }
+
+  if (oldClaim != null) {
     if (propArray != null) {
-      propArray = propArray.map(value => isString(value) ? superTrim(value) : value)
+      propArray = propArray.map(claim => {
+        if (isString(claim)) {
+          return setClaimValue(claim, superTrim(getClaimValue(claim)))
+        } else {
+          return claim
+        }
+      })
     }
-    if (propArray == null || !propArray.includes(oldVal)) {
+    if (propArray == null || !propArray.map(getClaimValue).includes(getClaimValue(oldClaim))) {
       throw newError('claim property value not found', 400, context)
     }
 
-    if (newVal != null) {
-      const oldValIndex = propArray.indexOf(oldVal)
-      doc.claims[property][oldValIndex] = newVal
+    const oldValIndex = getClaimIndex(propArray, oldClaim)
+    if (newClaim != null) {
+      doc.claims[property][oldValIndex] = newClaim
     } else {
       // if the new value is null, it plays the role of a removeClaim
-      propArray = without(propArray, oldVal)
+      propArray.splice(oldValIndex, 1)
 
       setPossiblyEmptyPropertyArray(doc, property, propArray)
     }
   } else {
     // if the old value is null, it plays the role of a createClaim
-    if (!doc.claims[property]) doc.claims[property] = []
-    doc.claims[property].push(newVal)
+    doc.claims[property] ??= []
+    doc.claims[property].push(newClaim)
   }
 
-  return updateInferredProperties(doc, property, oldVal, newVal)
+  return updateInferredProperties(doc, property, oldClaim, newClaim)
+}
+
+function minimizeClaimObject (claim: InvClaimObject) {
+  if (isNonEmptyArray(claim.references)) {
+    return claim
+  } else {
+    return claim.value
+  }
 }
 
 export function beforeEntityDocSave (doc: InvEntity) {
@@ -167,34 +186,63 @@ export function mergeEntitiesDocs (fromEntityDoc: InvEntity | EntityRedirection,
   preventRedirectionEdit(fromEntityDoc)
   preventRedirectionEdit(toEntityDoc)
 
-  for (const lang in fromEntityDoc.labels) {
-    const value = fromEntityDoc.labels[lang]
-    if (toEntityDoc.labels[lang] == null) {
-      toEntityDoc.labels[lang] = value
-    }
+  for (const [ lang, value ] of Object.entries(fromEntityDoc.labels)) {
+    toEntityDoc.labels[lang] ??= value
   }
 
-  for (const property in fromEntityDoc.claims) {
-    const values = fromEntityDoc.claims[property]
-    if (toEntityDoc.claims[property] == null) { toEntityDoc.claims[property] = [] }
-    for (const value of values) {
-      if (!toEntityDoc.claims[property].includes(value)) {
-        if (toEntityDoc.claims[property].length > 0) {
-          if (properties[property].uniqueValue) {
-            warn(value, `${property} can have only one value: ignoring merged entity value`)
-          } else if (properties[property].hasPlaceholders) {
-            warn(value, `${property} values may be placeholders: ignoring merged entity value`)
-          } else {
-            toEntityDoc.claims[property].push(value)
-          }
+  mergeClaims(fromEntityDoc.claims, toEntityDoc.claims)
+
+  return toEntityDoc
+}
+
+function mergeClaims (fromClaims: Claims, toClaims: Claims) {
+  for (const [ property, fromPropertyClaims ] of objectEntries(fromClaims)) {
+    const toPropertyClaims = toClaims[property] ??= []
+    mergePropertyClaims(property, fromPropertyClaims, toPropertyClaims)
+  }
+}
+
+function mergePropertyClaims (property: PropertyUri, fromPropertyClaims: InvPropertyClaims, toPropertyClaims: InvPropertyClaims) {
+  for (const claim of fromPropertyClaims) {
+    const matchingClaim = findClaimByValue(toPropertyClaims, claim)
+    if (matchingClaim) {
+      const matchingClaimIndex = toPropertyClaims.indexOf(matchingClaim)
+      toPropertyClaims[matchingClaimIndex] = mergeClaimReferences(claim, matchingClaim)
+    } else {
+      if (toPropertyClaims.length > 0) {
+        if (properties[property].uniqueValue) {
+          warn(claim, `${property} can have only one value: ignoring merged entity claim`)
+        } else if (properties[property].hasPlaceholders) {
+          warn(claim, `${property} values may be placeholders: ignoring merged entity claim`)
         } else {
-          toEntityDoc.claims[property].push(value)
+          toPropertyClaims.push(claim)
         }
+      } else {
+        toPropertyClaims.push(claim)
       }
     }
   }
+}
 
-  return toEntityDoc
+function mergeClaimReferences (fromClaim: InvClaim, toClaim: InvClaim) {
+  if (isClaimObject(fromClaim)) {
+    if (isClaimObject(toClaim)) {
+      for (const ref of fromClaim.references) {
+        if (!includesReference(toClaim.references, ref)) {
+          toClaim.references.push(ref)
+        }
+      }
+      return toClaim
+    } else {
+      return { value: toClaim, references: fromClaim.references }
+    }
+  } else {
+    return toClaim
+  }
+}
+
+function includesReference (references: Reference[], reference: Reference) {
+  return references.find(ref => sameObjects(ref, reference))
 }
 
 export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
@@ -231,18 +279,18 @@ export function preventRedirectionEdit (doc: InvEntityDoc): asserts doc is InvEn
   }
 }
 
-function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
+function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim) {
   const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
   const propInferences: InferedProperties = omit(inferences[property], declaredProperties)
 
   const addingOrUpdatingValue = (newVal != null)
 
-  for (const [ inferredProperty, convertor ] of Object.entries(propInferences) as Entries<typeof propInferences>) {
+  for (const [ inferredProperty, convertor ] of objectEntries(propInferences)) {
     let inferredPropertyArray = doc.claims[inferredProperty] || []
 
     if (addingOrUpdatingValue) {
-      const inferredValue = convertor(newVal)
+      const inferredValue = convertor(getClaimValue(newVal))
       // Known case of missing infered value:
       // ISBN-13 with a 979 prefix will not have an ISBN-10
       if (inferredValue != null) {
@@ -262,7 +310,7 @@ function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, 
       //   value: "claim value",
       //   inferredFrom: 'claim id'
       // }
-      const inferredValue = convertor(oldVal)
+      const inferredValue = convertor(getClaimValue(oldVal))
       if (inferredPropertyArray.includes(inferredValue)) {
         inferredPropertyArray = without(inferredPropertyArray, inferredValue)
         log(inferredValue, `removed inferred ${inferredProperty} from ${property}`)
@@ -275,7 +323,7 @@ function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, 
   return doc
 }
 
-function setPossiblyEmptyPropertyArray (doc: InvEntity, property: PropertyUri, propertyArray: InvClaimValue[]) {
+function setPossiblyEmptyPropertyArray (doc: InvEntity, property: PropertyUri, propertyArray: InvClaim[]) {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
     doc.claims = omit(doc.claims, property)

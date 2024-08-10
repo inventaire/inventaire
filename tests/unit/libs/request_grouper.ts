@@ -4,7 +4,7 @@ import { wait } from '#lib/promises'
 import { requestGrouper } from '#lib/request_grouper'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils'
+import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const MockRequester = (spy = noop) => async ids => {
   spy()

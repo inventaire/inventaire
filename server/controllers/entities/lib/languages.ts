@@ -1,4 +1,5 @@
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
+import type { WdPropertyId } from '#server/types/entity'
 
 export const nonPrefixedLanguagesCodesProperties = [
   'P218', // ISO 639-1 code
@@ -8,7 +9,7 @@ export const nonPrefixedLanguagesCodesProperties = [
   'P424', // Wikimedia language code
   'P1798', // ISO 639-5 code
   'P9753', // Wikidata language code
-]
+] as const satisfies WdPropertyId[]
 
 export const languagesCodesProperties = nonPrefixedLanguagesCodesProperties.map(prefixifyWdProperty)
 
