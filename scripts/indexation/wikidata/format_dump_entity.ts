@@ -1,5 +1,5 @@
 import { simplifyAliases, simplifyDescriptions, simplifyLabels } from 'wikibase-sdk'
-import formatClaims from '#lib/wikidata/format_claims'
+import { formatClaims } from '#lib/wikidata/format_claims'
 
 export default entity => {
   entity.uri = `wd:${entity.id}`
