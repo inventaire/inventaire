@@ -6,4 +6,4 @@ else
   files_to_lint="$@"
 fi
 
-eslint --fix $files_to_lint
+eslint --config .eslintrc.cli.cjs --fix $files_to_lint
