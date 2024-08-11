@@ -1,5 +1,4 @@
-import { getInvEntityByIsbn } from '#controllers/entities/lib/entities'
-import { getInvEntityCanonicalUri } from '../get_inv_entity_canonical_uri.js'
+import { getEntitiesByIsbns } from '#controllers/entities/lib/get_entities_by_isbns'
 import { resolveExternalIds } from './resolve_external_ids.js'
 // Do not try to resolve edition on Wikidata while Wikidata editions are in quarantine
 // cf https://github.com/inventaire/inventaire/issues/182
@@ -21,9 +20,8 @@ export default entry => {
 
 async function resolveByIsbn (isbn) {
   if (isbn == null) return
-  // Resolve directly on the database to avoid making undersired requests to dataseed
-  const edition = await getInvEntityByIsbn(isbn)
-  if (edition != null) return getInvEntityCanonicalUri(edition)
+  const { entities } = await getEntitiesByIsbns([ isbn ], { autocreate: false, refresh: false })
+  if (entities.length === 1) return entities[0].uri
 }
 
 function pickUriFromResolversResponses ([ uriFoundByIsbn, urisFoundByExternalIds ]) {
