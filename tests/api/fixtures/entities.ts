@@ -1,16 +1,15 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
-import { attempt, map, random, sampleSize } from 'lodash-es'
+import { map, random, sampleSize } from 'lodash-es'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
 import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
-import { assert_ } from '#lib/utils/assert_types'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#server/types/common'
-import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityUri } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
 import { customAuthReq, request } from '#tests/api/utils/request'
@@ -298,4 +297,22 @@ export async function getSomeRemoteEditionWithALocalLayer () {
   await addClaim({ uri, property: 'invp:P2', value: imageHash })
   const updatedEdition = await getByUri(uri)
   return updatedEdition as ExpandedSerializedWdEntity
+}
+
+interface ExistsOrCreateParams {
+  claims: Claims
+  createFn: (params: { claims: Claims }) => Promise<SerializedEntity>
+}
+export async function existsOrCreate ({ claims, createFn = createWork }: ExistsOrCreateParams) {
+  try {
+    const entity = await createFn({ claims })
+    return entity
+  } catch (err) {
+    if (err.body.status_verbose === 'invalid claim value: this property value is already used') {
+      const existingEntityUri = err.body.context.entity
+      return getByUri(existingEntityUri)
+    } else {
+      throw err
+    }
+  }
 }

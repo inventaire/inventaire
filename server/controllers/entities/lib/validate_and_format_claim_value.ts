@@ -2,6 +2,7 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getClaimValue, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
+import type { ErrorContext } from '#lib/error/format_error'
 import { arrayIncludes } from '#lib/utils/base'
 import type { EntityType, EntityUri, ExtendedEntityType, InvClaim, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
@@ -48,7 +49,11 @@ export async function validateAndFormatClaimValue (params: ValidateAndFormatClai
       entityValueTypes != null ? verifyClaimEntityType(entityValueTypes, formattedValue as EntityUri) : null,
     ])
   } catch (err) {
-    const invalidClaimValueError = newError(`invalid claim value: ${err.message}`, 400, { property, value: newVal })
+    // Pass-on cause error context
+    // Known use: required by tests relying on knowning the entity matching that concurrent claim
+    const context: ErrorContext = 'context' in err ? err.context : {}
+    Object.assign(context, { property, value: newVal })
+    const invalidClaimValueError = newError(`invalid claim value: ${err.message}`, 400, context)
     err.name = 'InvalidClaimValueError'
     invalidClaimValueError.cause = err
     throw invalidClaimValueError

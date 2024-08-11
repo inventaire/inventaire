@@ -1,13 +1,14 @@
 import should from 'should'
 import { toIsbn13 } from '#lib/isbn/isbn'
-import type { IsbnEntityUri } from '#server/types/entity'
+import type { InvEntityUri, IsbnEntityUri } from '#server/types/entity'
 import {
-  createEdition,
   createEditionWithIsbn,
+  existsOrCreate,
   generateIsbn13,
+  createEdition,
 } from '#tests/api/fixtures/entities'
-import { addClaim, deleteByUris, getByUri, getByUris } from '#tests/api/utils/entities'
-import { authReq, getAdminUser, publicReq } from '#tests/api/utils/utils'
+import { deleteByUris, getByUri, getByUris } from '#tests/api/utils/entities'
+import { authReq, publicReq } from '#tests/api/utils/utils'
 
 describe('entities:get:by-isbns', () => {
   it('should return existing edition', async () => {
@@ -55,6 +56,24 @@ describe('entities:get:by-isbns', () => {
       const entity = res.entities[isbn13Uri]
       entity.uri.should.equal(isbn13Uri)
       entity.claims['invp:P1'].should.deepEqual([ wdUri ])
+    })
+
+    it('should leave priority to local edition entities', async () => {
+      // Case found with this request https://w.wiki/AtT2
+      // const wdUri = 'wd:Q124502194'
+      const isbn13h = '978-0-330-50857-5'
+      const isbnUri = `isbn:${isbn13h.replaceAll('-', '')}` as InvEntityUri
+      const localEdition = await existsOrCreate({
+        claims: {
+          'wdt:P212': [ isbn13h ],
+        },
+        createFn: createEdition,
+      })
+      const entity = await getByUri(isbnUri)
+      // @ts-expect-error
+      should(entity.wdId).not.be.ok()
+      should(entity.claims['invp:P1']).not.be.ok()
+      should(entity.invId).equal(localEdition._id)
     })
   })
 

@@ -21,45 +21,43 @@ export interface EntitiesResults {
 export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGetterParams = {}) {
   const { isbns13h: isbns, redirections, parsedIsbnsData } = getIsbnsData(rawIsbns)
   const { autocreate, refresh } = params
-  const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(parsedIsbnsData, params)
-  const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
-  const remainingIsbns = difference(isbns, foundWdIsbns)
+
+  let invEntities = await getInvEntitiesByIsbns(isbns)
+  const foundInvIsbns = invEntities.map(getIsbn13h)
+  const missingLocalIsbns = difference(isbns, foundInvIsbns)
+
   if (autocreate && refresh) {
     // Enrich editions that can be, but let getInvEntitiesByIsbns get the results
     // as enrichAndGetEditionEntityFromIsbn might return { isbn, notFound: true }
     // even if the local database has an existing entity with that ISBN.
     // Likely because getAuthoritiesAggregatedEntry didn't find anything
-    await Promise.all(remainingIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
+    await Promise.all(foundInvIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
+    invEntities = await getInvEntitiesByIsbns(foundInvIsbns)
   }
-  const invEntities = await getInvEntitiesByIsbns(remainingIsbns)
-  const foundInvIsbns = invEntities.map(getIsbn13h)
-  const missingIsbns = difference(isbns, foundInvIsbns)
 
-  const { includeReferences } = params
-  const serializedInvEntities = invEntities.map(entity => formatEditionEntity(entity, { includeReferences }))
-
-  const serializedEntities = [ ...serializedWdEntities, ...serializedInvEntities ]
-
-  const results = { entities: serializedEntities, notFound: [] as IsbnEntityUri[] }
-  if (missingIsbns.length === 0) {
-    setEntitiesRedirections(results, redirections)
-    return results
-  }
+  const remainingParsedIsbnsData = parsedIsbnsData.filter(({ isbn13h }) => missingLocalIsbns.includes(isbn13h))
+  const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(remainingParsedIsbnsData, params)
+  const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
+  const remainingMissingIsbns = difference(missingLocalIsbns, foundWdIsbns)
 
   // The cases where autocreate && refresh was already checked above
-  if (autocreate && !refresh) {
-    const resolvedEditions = await Promise.all(missingIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
+  let notFound: IsbnEntityUri[] = []
+  if (autocreate && !refresh && remainingMissingIsbns.length > 0) {
+    const resolvedEditions = await Promise.all(remainingMissingIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
     const newEntities = []
-    const notFound = []
     for (const resolvedEdition of resolvedEditions) {
       if (resolvedEdition.notFound) notFound.push(prefixifyIsbn(resolvedEdition.isbn))
       else newEntities.push(resolvedEdition)
     }
-    results.entities = [ ...serializedEntities, ...newEntities ]
-    if (notFound.length > 0) results.notFound = notFound
+    invEntities = [ ...invEntities, ...newEntities ]
   } else {
-    results.notFound = missingIsbns.map(prefixifyIsbn)
+    notFound = remainingMissingIsbns.map(prefixifyIsbn)
   }
+
+  const { includeReferences } = params
+  const serializedInvEntities = invEntities.map(entity => formatEditionEntity(entity, { includeReferences }))
+  const serializedEntities = [ ...serializedWdEntities, ...serializedInvEntities ]
+  const results = { entities: serializedEntities, notFound }
 
   setEntitiesRedirections(results, redirections)
   return results
