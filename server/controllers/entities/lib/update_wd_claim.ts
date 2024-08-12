@@ -10,7 +10,7 @@ import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
 import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
-import { getPropertyDatatype } from './properties/properties_values_constraints.js'
+import { getPropertyDatatype, propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
 import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
@@ -20,6 +20,9 @@ export default async function (user, id, property, oldValue, newValue) {
   validateWikidataOAuth(user)
 
   await validateWdEntityUpdate({ id, property, oldValue, newValue })
+
+  const prop = properties[property]
+  newValue = prop.format != null ? prop.format(newValue) : newValue
 
   if ((getPropertyDatatype(property) === 'entity')) {
     if (isInvEntityUri(newValue)) {
