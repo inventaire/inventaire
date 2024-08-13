@@ -1,3 +1,4 @@
+import { map, uniq } from 'lodash-es'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
@@ -61,6 +62,28 @@ describe('listings:add-elements', () => {
     })
     const updatedListing = await getByIdWithElements({ id: listing._id })
     updatedListing.elements[1].ordinal.should.equal('2')
+  })
+
+  it('should give different ordinals to multiple elements created at the same time', async () => {
+    const { listing } = await createListing()
+    const editions = await Promise.all([
+      createEdition(),
+      createEdition(),
+      createEdition(),
+      createEdition(),
+    ])
+    const uris = map(editions, 'uri')
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: uris.slice(0, 2),
+    })
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: uris.slice(2, 4),
+    })
+    const { elements } = await getByIdWithElements({ id: listing._id })
+    const ordinals = map(elements, 'ordinal')
+    uniq(ordinals).length.should.equal(uris.length)
   })
 
   it('should not add twice an element already in listing', async () => {
