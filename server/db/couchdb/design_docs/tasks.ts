@@ -3,6 +3,13 @@ import type { Views } from '#types/couchdb'
 import type { Task } from '#types/task'
 
 export const views: Views<Task> = {
+  bySuspectUriAndType: {
+    map: doc => {
+      if (!doc.state) {
+        emit([ doc.suspectUri, doc.type ], null)
+      }
+    },
+  },
   bySuspectUriAndState: {
     map: doc => {
       emit([ doc.suspectUri, doc.state ], null)
@@ -21,10 +28,11 @@ export const views: Views<Task> = {
       }
     },
   },
-  byEntitiesType: {
+  byTypeAndEntitiesType: {
     map: doc => {
-      if (!doc.state) {
-        emit(doc.entitiesType, null)
+      // filter reporter to not get bot generated tasks
+      if (!doc.state && doc.reporter) {
+        emit([ doc.type, doc.entitiesType ], null)
       }
     },
   },
