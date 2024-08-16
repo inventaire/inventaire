@@ -5,6 +5,7 @@ import { arrayIncludes, objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info, warn } from '#lib/utils/logs'
 import config from '#server/config'
+import type { WdPropertyId } from '#server/types/entity'
 import { wait } from './promises.js'
 
 const { autofix, srcFolderPath } = config.i18n
@@ -44,7 +45,7 @@ if (autofix) {
       await wait(Math.trunc(Math.random() * 1000))
 
       const keys = await readJsonFile(sourceFilePath)
-      const wikidataIds = (await readFile(wikidataIdsFilePath)).toString().trim().split('\n')
+      const wikidataIds = (await readFile(wikidataIdsFilePath)).toString().trim().split('\n') as WdPropertyId[]
       const keysCountBefore = objLength(keys)
       const wikidataIdsCountBefore = wikidataIds.length
       for (const key of newKeys) {

@@ -60,6 +60,7 @@ export function updateItemDoc (userId: UserId, newAttributes: NewAttributes, old
     }
     const newVal = newAttributes[attr]
     itemValidations.pass(attr, newVal)
+    // @ts-expect-error
     newItem[attr] = newVal
   }
 
