@@ -238,6 +238,8 @@ export const propertiesValuesConstraints = {
   'wdt:P6901': externalId(signedIntegerPattern),
   // colorist
   'wdt:P6338': humanEntity,
+  // LinkedIn personal profile ID
+  'wdt:P6634': externalId(/^[\p{Letter}0-9\-&_'’.]+$/u),
   // Goodreads series ID
   'wdt:P6947': externalId(strictlyPositiveIntegerPattern),
   // Librarything author ID
@@ -258,12 +260,16 @@ export const propertiesValuesConstraints = {
   'wdt:P10836': humanEntity,
   // penciller
   'wdt:P10837': humanEntity,
+  // Threads username
+  'wdt:P11892': externalId(/^_{0,2}[a-z\d]+((\.|_{1,4}|\._)[a-z\d]+)*_{0,2}$/),
   // BookBrainz series ID
   'wdt:P12048': externalId(uuidPattern),
   // Babelio serial ID
   'wdt:P12319': externalId(strictlyPositiveIntegerPattern),
   // BookBrainz edition ID
   'wdt:P12351': externalId(uuidPattern),
+  // Bluesky username
+  'wdt:P12361': externalId(/^[\w-]+$/),
   // NooSFere publisher ID
   'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
 } as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>

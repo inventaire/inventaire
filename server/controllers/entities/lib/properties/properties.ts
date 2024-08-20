@@ -365,6 +365,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P6901': {
     subjectTypes: [ 'edition' ],
   },
+  // LinkedIn personal profile ID
+  'wdt:P6634': {
+    subjectTypes: [ 'human' ],
+  },
   // Goodreads series ID
   'wdt:P6947': {
     subjectTypes: [ 'serie' ],
@@ -393,6 +397,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P8619': {
     subjectTypes: [ 'serie' ],
   },
+  // Threads username
+  'wdt:P11892': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
+  },
   // BookBrainz series ID
   'wdt:P12048': {
     subjectTypes: [ 'serie' ],
@@ -404,6 +412,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   // BookBrainz edition ID
   'wdt:P12351': {
     subjectTypes: [ 'edition' ],
+  },
+  // Bluesky username
+  'wdt:P12361': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
   },
   // NooSFere publisher ID
   'wdt:P12852': {
