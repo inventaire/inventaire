@@ -209,9 +209,25 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P1182': {
     subjectTypes: [ 'edition' ],
   },
+  // ISFDB author ID
+  'wdt:P1233': {
+    subjectTypes: [ 'human' ],
+  },
+  // ISFDB publication ID
+  'wdt:P1234': {
+    subjectTypes: [ 'edition' ],
+  },
+  // ISFDB series ID
+  'wdt:P1235': {
+    subjectTypes: [ 'serie' ],
+  },
+  // ISFDB publisher ID
+  'wdt:P1239': {
+    subjectTypes: [ 'publisher' ],
+  },
   // ISFDB title ID
   'wdt:P1274': {
-    subjectTypes: [ 'edition' ],
+    subjectTypes: [ 'work' ],
   },
   // DNB editions
   'wdt:P1292': {

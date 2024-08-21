@@ -152,6 +152,14 @@ export const propertiesValuesConstraints = {
   'wdt:P1144': externalId(/^[a-z]{0,3}\d{6,10}$/),
   // LIBRIS editions
   'wdt:P1182': externalId(strictlyPositiveIntegerPattern),
+  // ISFDB author ID
+  'wdt:P1233': externalId(/^[1-9]\d{0,5}$/),
+  // ISFDB publication ID
+  'wdt:P1234': externalId(/^[1-9]\d*$/),
+  // ISFDB series ID
+  'wdt:P1235': externalId(/^[1-9]\d{0,4}$/),
+  // ISFDB publisher ID
+  'wdt:P1239': externalId(/^[1-9]\d{0,4}$/),
   // ISFDB title ID
   'wdt:P1274': externalId(/^[1-9]\d{0,6}$/),
   // DNB editions
