@@ -1,4 +1,5 @@
 import dbFactory from '#db/couchdb/base'
+import { logError } from '#lib/utils/logs'
 import { createPatchDoc, getPatchDiff, revertPatch } from '#models/patch'
 import { getEntityLastPatches } from './patches.js'
 
@@ -9,18 +10,23 @@ export default async function (params) {
   const { currentDoc, updatedDoc, userId } = params
   const newPatchDoc = createPatchDoc(params)
 
-  if (entityHasPreviousVersions(currentDoc)) {
-    const [ previousPatchDoc ] = await getEntityLastPatches(currentDoc._id)
-    if (lastPatchWasFromSameUser(previousPatchDoc, userId)) {
-      const aggregatedOperations = getAggregatedOperations(currentDoc, updatedDoc, previousPatchDoc)
-      if (isNotSpecialPatch(previousPatchDoc)) {
-        if (aggregatedOperationsAreEmpty(aggregatedOperations)) {
-          return deletePatch(previousPatchDoc)
-        } else if (aggregatedOperationsAreShorter(aggregatedOperations, previousPatchDoc, newPatchDoc)) {
-          return updatePreviousPatch(aggregatedOperations, previousPatchDoc)
+  try {
+    if (entityHasPreviousVersions(currentDoc)) {
+      const [ previousPatchDoc ] = await getEntityLastPatches(currentDoc._id)
+      if (lastPatchWasFromSameUser(previousPatchDoc, userId)) {
+        const aggregatedOperations = getAggregatedOperations(currentDoc, updatedDoc, previousPatchDoc)
+        if (isNotSpecialPatch(previousPatchDoc)) {
+          if (aggregatedOperationsAreEmpty(aggregatedOperations)) {
+            return deletePatch(previousPatchDoc)
+          } else if (aggregatedOperationsAreShorter(aggregatedOperations, previousPatchDoc, newPatchDoc)) {
+            return updatePreviousPatch(aggregatedOperations, previousPatchDoc)
+          }
         }
       }
     }
+  } catch (err) {
+    err.context ??= params
+    logError(err, 'Patch update or deletion failed. Falling back to normal patch')
   }
 
   return db.postAndReturn(newPatchDoc)
