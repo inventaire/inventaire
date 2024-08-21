@@ -41,7 +41,7 @@ export default async function (isbn) {
       works[0].claims['wdt:P1085'] = data.identifiers.librarything[0]
     }
   }
-  const publishers = data.publishers.map(getPublisherSeed)
+  const publishers = data.publishers?.map(getPublisherSeed) || []
   const entry = {
     edition,
     works,
