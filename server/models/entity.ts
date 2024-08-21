@@ -172,11 +172,18 @@ function minimizeClaimObject (claim: InvClaimObject) {
 export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
   if (doc.claims != null) {
+    removeEmptyClaimArrays(doc.claims)
     validateRequiredPropertiesValues(doc.claims)
   }
   doc.updated = Date.now()
   doc.version++
   return doc
+}
+
+function removeEmptyClaimArrays (claims: Claims) {
+  for (const [ property, propertyClaims ] of objectEntries(claims)) {
+    if (propertyClaims.length === 0) delete claims[property]
+  }
 }
 
 // 'from' and 'to' refer to the redirection process which rely on merging

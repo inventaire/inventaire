@@ -285,5 +285,12 @@ describe('entity model', () => {
       beforeEntityDocSave(entityDoc)
       entityDoc.version.should.equal(versionBefore + 1)
     })
+
+    it('should remove empty claim arrays', () => {
+      const entityDoc = workDoc()
+      entityDoc.claims['wdt:P110'] = []
+      beforeEntityDocSave(entityDoc)
+      should(entityDoc.claims['wdt:P110']).not.be.ok()
+    })
   })
 })
