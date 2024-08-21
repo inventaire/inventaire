@@ -42,10 +42,13 @@ export function findClaimByValue (claimsArray: InvPropertyClaims, claim: InvClai
 export function simplifyInvClaims (claims: Claims, { keepReferences = false } = {}) {
   const simplifiedClaims = {}
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
-    if (keepReferences) {
-      simplifiedClaims[property] = propertyClaims.map(getClaimObjectFromClaim)
-    } else {
-      simplifiedClaims[property] = propertyClaims.map(getClaimValue)
+    // For some yet unidentified reason, some empty claim arrays keep sneaking in the local entities database
+    if (propertyClaims.length > 0) {
+      if (keepReferences) {
+        simplifiedClaims[property] = propertyClaims.map(getClaimObjectFromClaim)
+      } else {
+        simplifiedClaims[property] = propertyClaims.map(getClaimValue)
+      }
     }
   }
   return simplifiedClaims
