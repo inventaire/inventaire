@@ -339,6 +339,33 @@ describe('entities:resolver:update-resolved', () => {
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
   })
+
+  it('should ignore empty claim arrays', async () => {
+    const entityDate = '2020'
+    const goodReadsId = someGoodReadsId()
+    const entry = {
+      edition: {
+        isbn: generateIsbn13(),
+      },
+      authors: [
+        {
+          claims: {
+            'wdt:P2963': [ goodReadsId ],
+            'wdt:P569': [],
+            'wdt:P570': [],
+          },
+        },
+      ],
+    }
+    const human = await createHuman()
+    await addClaim({ uri: human.uri, property: 'wdt:P2963', value: goodReadsId })
+    await addClaim({ uri: human.uri, property: 'wdt:P569', value: entityDate })
+    const { entries } = await resolveAndUpdate(entry)
+    const authorUri = entries[0].authors[0].uri
+    const { claims } = await getByUri(authorUri)
+    claims['wdt:P569'].should.containEql(entityDate)
+    should(claims['wdt:P570']).not.be.ok()
+  })
 })
 
 const someEntryWithAGoodReadsWorkId = () => ({

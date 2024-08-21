@@ -199,6 +199,32 @@ describe('entities:resolve:create-unresolved', () => {
     work.labels[dutchLangCode].should.equal(title)
   })
 
+  it('should create a work entity from the edition seed', async () => {
+    const title = randomLabel()
+    const { entries } = await resolveAndCreate({
+      edition: {
+        isbn: generateIsbn13(),
+        claims: {
+          'wdt:P1476': [ title ],
+          'wdt:P407': [ 'wd:Q7411' ],
+          'wdt:P1104': [],
+        },
+      },
+      works: [
+        {
+          labels: { nl: title },
+          claims: {
+            'wdt:P110': [],
+          },
+        },
+      ],
+    })
+    const edition = entries[0].edition
+    const work = entries[0].works[0]
+    should(edition.claims['wdt:P1104']).not.be.ok()
+    should(work.claims['wdt:P110']).not.be.ok()
+  })
+
   it('should not create works without labels', async () => {
     const title = randomLabel()
     try {
