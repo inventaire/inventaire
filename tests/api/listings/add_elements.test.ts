@@ -1,3 +1,4 @@
+import { map, uniq } from 'lodash-es'
 import { createEdition, someFakeUri } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { getByIdWithElements } from '#tests/api/utils/listings'
@@ -91,5 +92,27 @@ describe('listings:add-elements', () => {
       err.body.status_verbose.should.startWith('wrong user')
       err.statusCode.should.equal(403)
     }
+  })
+
+  it('should give different ordinals to multiple elements created at the same time', async () => {
+    const { listing } = await createListing()
+    const editions = await Promise.all([
+      createEdition(),
+      createEdition(),
+      createEdition(),
+      createEdition(),
+    ])
+    const uris = map(editions, 'uri')
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: uris.slice(0, 2),
+    })
+    await authReq('post', `${endpoint}add-elements`, {
+      id: listing._id,
+      uris: uris.slice(2, 4),
+    })
+    const { elements } = await getByIdWithElements({ id: listing._id })
+    const ordinals = map(elements, 'ordinal')
+    uniq(ordinals).length.should.equal(uris.length)
   })
 })

@@ -53,13 +53,15 @@ export async function createListingElements ({ listing, uris, userId }) {
   }
   const { elements } = listing
 
-  const elementsToCreate = uris.map(uri => {
-    const ordinal = nextHighestOrdinal(elements)
-    return createElementDoc({
+  const elementsToCreate = []
+  uris.forEach(uri => {
+    const ordinal = nextHighestOrdinal([...elements, ...elementsToCreate])
+    const newDoc = createElementDoc({
       list: listingId,
       uri,
       ordinal,
     })
+    elementsToCreate.push(newDoc)
   })
   const res = await db.bulk(elementsToCreate)
   const elementsIds = map(res, 'id')
