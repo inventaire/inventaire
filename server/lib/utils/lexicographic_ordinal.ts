@@ -2,29 +2,29 @@ import { maxBy } from 'lodash-es'
 import { characters, findOrdinalBetween } from '#lib/find_ordinal'
 import type { ListingElement } from '#types/element'
 
-export function findNewOrdinal (element, list, inclusiveOrdinal) {
+export function findNewOrdinal (element: ListingElement, elements: ListingElement[], inclusiveOrdinal: number) {
   // Format from a more human readable "inclusive" order (starting by 1, 2, 3)
   // to more bot readable "exclusive" order (starting by 0, 1, 2)
   // see http://kilby.stanford.edu/~rvg/ordinal.html
   let newOrdinal = inclusiveOrdinal - 1
 
   // Place element in last position if newOrdinal is too high
-  if (list.length < newOrdinal) newOrdinal = list.length - 1
-  if (list[newOrdinal]._id === element._id) return
-  removeElementIfNecessary(element, list, newOrdinal)
-  return findNewLexicographicOrdinal(newOrdinal, list)
+  if (elements.length < newOrdinal) newOrdinal = elements.length - 1
+  if (elements[newOrdinal]._id === element._id) return
+  removeElementIfNecessary(element, elements, newOrdinal)
+  return findNewLexicographicOrdinal(newOrdinal, elements)
 }
 
-function removeElementIfNecessary (element, list, newOrdinal) {
+function removeElementIfNecessary (element: ListingElement, elements: ListingElement[], newOrdinal) {
   // A make-it-fast implementation: find index from a subset of element,
-  // as element must be removed only if its being moved up in the list
+  // as element must be removed only if its being moved up in the listing
   // hence only if element is between first element and newOrdinal element
-  const listSubset = list.slice(0, newOrdinal)
-  const index = listSubset.findIndex(el => el._id === element._id)
-  if (index !== -1) list.splice(index, 1)
+  const listingSubset = elements.slice(0, newOrdinal)
+  const index = listingSubset.findIndex(el => el._id === element._id)
+  if (index !== -1) elements.splice(index, 1)
 }
 
-function findNewLexicographicOrdinal (newOrdinal, currentElements) {
+function findNewLexicographicOrdinal (newOrdinal: number, currentElements: ListingElement[]) {
   let precedentElementIndex, beforeOrdinal
   if (newOrdinal === 0) {
     precedentElementIndex = 0
