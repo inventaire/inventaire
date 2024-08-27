@@ -5,7 +5,7 @@ import { mapKeysValues, objectEntries } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
-import type { DatatypedInvClaimObject, EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, WdEntityId, WdPropertyId } from '#server/types/entity'
+import type { Claims, DatatypedInvClaimObject, EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { getEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
@@ -97,16 +97,29 @@ function format (entity: EntityDraft) {
 }
 
 function unprefixifyClaims (property: PropertyUri, propertyClaims: InvExpandedPropertyClaims) {
-  if (getPropertyDatatype(property) === 'entity') {
-    return propertyClaims.map(unprefixifyClaimObject)
-  } else {
-    return propertyClaims
-  }
+  return propertyClaims.map(claim => {
+    const { value, references = [] } = claim
+    const unprefixedValue = (getPropertyDatatype(property) === 'entity') ? unprefixify(value as WdEntityUri) : value
+    return {
+      value: unprefixedValue,
+      references: references.map(unprefixifyReference),
+    }
+  })
 }
 
-function unprefixifyClaimObject (claimObject: DatatypedInvClaimObject<EntityValue>) {
-  return {
-    ...claimObject,
-    value: unprefixify(claimObject.value),
+function unprefixifyReference (reference: Reference) {
+  return mapKeysValues(reference, (property, propertyValues) => {
+    return [
+      unprefixify(property),
+      unprefixifySnakValues(property, propertyValues),
+    ]
+  })
+}
+
+function unprefixifySnakValues (property: ReferenceProperty, propertyValues: ReferencePropertySnaks) {
+  if (getPropertyDatatype(property) === 'entity') {
+    return propertyValues.map(unprefixify)
+  } else {
+    return propertyValues
   }
 }
