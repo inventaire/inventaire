@@ -95,6 +95,7 @@ const wikidataOnlyP31Values = {
     'wd:Q28468127', // target audience for manga
     'wd:Q13136', // reference work
     'wd:Q108368282', // literary genre by form
+    'wd:Q108317211', // novel genre
   ],
   publishers: [
     'wd:Q1320047', // book publishing company
