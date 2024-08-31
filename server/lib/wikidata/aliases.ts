@@ -79,6 +79,7 @@ const wikidataOnlyP31Values = {
   ],
   editions: [
     'wd:Q3972943', // publishing
+    'wd:Q57933693', // book edition
   ],
   articles: [
     'wd:Q191067', // article
