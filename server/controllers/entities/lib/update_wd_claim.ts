@@ -25,7 +25,7 @@ export async function updateWdClaim (user: User, id: WdEntityId, property: Prope
 
   validateWikidataOAuth(user)
 
-  await validateWdEntityUpdate({ id, property, oldValue, newValue })
+  await validateWdEntityUpdate(id, property, oldValue, newValue)
 
   const prop = properties[property]
   newValue = prop.format != null ? prop.format(newValue) : newValue

@@ -1,6 +1,7 @@
 import should from 'should'
 import { getSomeWdEditionUri, someRandomImageHash } from '#fixtures/entities'
 import { validateP31Update } from '#lib/wikidata/validate_wd_update'
+import type { SimplifiedClaims } from '#server/types/entity'
 import { addClaim, getByUri, removeClaim, updateClaim } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -8,7 +9,8 @@ describe('entities:update-claims:wd', () => {
   describe('validateP31Update', () => {
     it('should reject removing the last typing P31', () => {
       try {
-        validateP31Update({ wdtP31Array: [ 'wd:Q5' ], oldValue: 'wd:Q5', newValue: null })
+        const claims = { 'wdt:P31': [ 'wd:Q5' ] } satisfies SimplifiedClaims
+        validateP31Update(claims, 'wd:Q5', null)
         shouldNotBeCalled()
       } catch (err) {
         err.statusCode.should.equal(400)
@@ -21,7 +23,8 @@ describe('entities:update-claims:wd', () => {
 
     it('should reject changing type by removing an extra value', () => {
       try {
-        validateP31Update({ wdtP31Array: [ 'wd:Q3331189', 'wd:Q47461344' ], oldValue: 'wd:Q3331189', newValue: null })
+        const claims = { 'wdt:P31': [ 'wd:Q3331189', 'wd:Q47461344' ] } satisfies SimplifiedClaims
+        validateP31Update(claims, 'wd:Q3331189', null)
         shouldNotBeCalled()
       } catch (err) {
         err.statusCode.should.equal(400)

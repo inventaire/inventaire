@@ -1,38 +1,41 @@
-import { cloneDeep, without } from 'lodash-es'
+import { cloneDeep, indexOf, without } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getStrictEntityType } from '#controllers/entities/lib/get_entity_type'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { validateClaimValueSync } from '#controllers/entities/lib/validate_claim_sync'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { arrayIncludes } from '#lib/utils/base'
+import type { EntityValue, ExtendedEntityType, InvClaimValue, SimplifiedClaims, WdEntityId, WdPropertyUri } from '#server/types/entity'
 
-export async function validateWdEntityUpdate ({ id, property, oldValue, newValue }) {
+export async function validateWdEntityUpdate (id: WdEntityId, property: WdPropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
   const uri = prefixifyWd(id)
   const entity = await getEntityByUri({ uri, refresh: true })
   const wdtP31Array = entity.claims['wdt:P31']
-  const type = getInvEntityType(wdtP31Array)
+  const type = getStrictEntityType(entity.claims, uri)
   if (newValue) {
     validateClaimValueSync(property, newValue, type)
   }
 
-  if (property !== 'wdt:P31') return
-  // Let wikibase-edit reject the update
-  if (!isNonEmptyArray(wdtP31Array) || !wdtP31Array.includes(oldValue)) return
-
-  validateP31Update({ wdtP31Array: entity.claims['wdt:P31'], oldValue, newValue })
+  if (property === 'wdt:P31') {
+    // Let wikibase-edit reject the update
+    if (!isNonEmptyArray(wdtP31Array) || !arrayIncludes(wdtP31Array, oldValue)) return
+    validateP31Update(entity.claims, oldValue, newValue as EntityValue, type)
+  }
 }
 
-export function validateP31Update ({ wdtP31Array, oldValue, newValue }) {
-  let postUpdateWdtP31Array = cloneDeep(wdtP31Array)
-  const typeBeforeUpdate = getInvEntityType(wdtP31Array)
-  const valueIndex = wdtP31Array.indexOf(oldValue)
+export function validateP31Update (claims: SimplifiedClaims, oldValue: EntityValue, newValue: EntityValue, typeBeforeUpdate?: ExtendedEntityType) {
+  const wdtP31Array = claims['wdt:P31']
+  let postUpdateClaims = cloneDeep(claims)
+  const valueIndex = indexOf(wdtP31Array, oldValue)
   if (newValue) {
-    postUpdateWdtP31Array[valueIndex] = newValue
+    postUpdateClaims['wdt:P31'][valueIndex] = newValue
   } else {
-    postUpdateWdtP31Array = without(postUpdateWdtP31Array, oldValue)
+    postUpdateClaims['wdt:P31'] = without(postUpdateClaims['wdt:P31'], oldValue)
   }
-  const typeAfterUpdate = getInvEntityType(postUpdateWdtP31Array)
-  if (postUpdateWdtP31Array.length === 0) {
+  const typeAfterUpdate = getStrictEntityType(postUpdateClaims)
+  const postUpdateWdtP31Array = postUpdateClaims['wdt:P31']
+  if (postUpdateClaims['wdt:P31'].length === 0) {
     throw newError("wdt:P31 array can't be empty", 400, { wdtP31Array, postUpdateWdtP31Array, oldValue, newValue })
   }
   if (typeBeforeUpdate !== typeAfterUpdate) {
