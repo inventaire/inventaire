@@ -30,7 +30,6 @@ export const allowedValuesPerTypePerProperty = {
       'wd:Q49084', // short story / conte
       'wd:Q8274', // manga
       'wd:Q562214', // manhwa
-      'wd:Q747381', // light novel
     ],
   },
 

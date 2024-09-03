@@ -76,6 +76,7 @@ const wikidataOnlyP31Values = {
     'wd:Q116476516', // dramatic work
     'wd:Q11825892', // young adult novel
     'wd:Q8275050', // children's book
+    'wd:Q747381', // light novel
   ],
   editions: [
     'wd:Q3972943', // publishing
