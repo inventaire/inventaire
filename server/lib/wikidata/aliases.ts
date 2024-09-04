@@ -17,6 +17,7 @@ const wikidataOnlyP31Values = {
     'wd:Q16017119', // collective pseudonym
     'wd:Q1400264', // artist collective
     'wd:Q334471', // manga artist group
+    'wd:Q1690980', // group of authors
   ],
   series: [
     'wd:Q3297186', // limited series
