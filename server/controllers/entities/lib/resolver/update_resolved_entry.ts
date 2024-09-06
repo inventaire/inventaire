@@ -92,9 +92,9 @@ async function addImageClaim (entity: InvEntity, imageUrl: Url | undefined, newC
 function updateDatePrecision (entity: InvEntity, updatedEntity: InvEntity, seedClaims: Claims) {
   const seedDateClaims = pick(seedClaims, simpleDayProperties) as Pick<Claims, typeof simpleDayProperties[number]>
   for (const property of objectKeys(seedDateClaims)) {
-    const seedDate = seedDateClaims[property][0]
+    const seedDate = getFirstClaimValue(seedDateClaims, property)
     if (!seedDate) return
-    const currentDate = entity.claims[property]?.[0]
+    const currentDate = getFirstClaimValue(entity.claims, property)
     if (currentDate) {
       if (isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
         updatedEntity.claims[property] = seedDateClaims[property]
@@ -107,7 +107,7 @@ function updateDatePrecision (entity: InvEntity, updatedEntity: InvEntity, seedC
 
 const simpleDayProperties = [ 'wdt:P569', 'wdt:P570', 'wdt:P571', 'wdt:P576', 'wdt:P577' ] as const
 
-const doDatesAgree = (seedDate, currentDate) => seedDate.startsWith(currentDate)
+const doDatesAgree = (seedDate: string, currentDate: string) => seedDate.startsWith(currentDate)
 
 const isMorePreciseDate = (date1: ClaimByDatatype['date'], date2: ClaimByDatatype['date']) => dateParts(date1).length > dateParts(date2).length
 
