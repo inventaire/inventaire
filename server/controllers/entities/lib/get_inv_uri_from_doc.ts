@@ -25,7 +25,7 @@ export function getInvUriFromDoc (entity: InvEntity | RemovedPlaceholderEntity) 
 
 export function getIsbnUriFromClaims (claims: Claims) {
   // Do not give an isbn uri to malformed edition entities (ie, editions without an associated work or a title)
-  if (!claims['wdt:P629']?.[0] || !claims['wdt:P1476']?.[0]) return
+  if (!getFirstClaimValue(claims, 'wdt:P629') || !getFirstClaimValue(claims, 'wdt:P1476')) return
 
   const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
   // By internal convention, ISBN URIs are without hyphen

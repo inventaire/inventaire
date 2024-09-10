@@ -73,7 +73,7 @@ function getPicSourceOrder (entity: SerializedWdEntityPreImage) {
 // can give quite random results
 function getWorkSourceOrder (work: SerializedWdEntityPreImage) {
   const { claims } = work
-  const publicationDateClaim = claims['wdt:P577']?.[0]
+  const publicationDateClaim = getFirstClaimValue(claims, 'wdt:P577')
   const publicationYear = publicationDateClaim && publicationDateClaim.split('-')[0]
   if ((publicationYear != null) && (parseInt(publicationYear) < yearsAgo(70))) {
     return [ 'ol', 'wm', 'wp' ]

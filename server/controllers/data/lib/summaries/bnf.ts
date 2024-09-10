@@ -1,4 +1,5 @@
 import { simplifySparqlResults } from 'wikibase-sdk'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { cache_ } from '#lib/cache'
 import { requests_ } from '#lib/requests'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
@@ -8,7 +9,7 @@ const timeout = 10 * 1000
 const property = 'wdt:P268'
 
 export async function getBnfSummary ({ claims, refresh }) {
-  const id = claims[property]?.[0]
+  const id = getFirstClaimValue(claims, property)
   if (!id) return
   const sparql = `SELECT * {
     <http://data.bnf.fr/ark:/12148/cb${id}#about> <http://purl.org/dc/terms/abstract> ?summary .

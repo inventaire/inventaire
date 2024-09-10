@@ -1,4 +1,5 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isInvEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
@@ -55,7 +56,7 @@ const updaters = {
 
 async function getAltUri (uri: IsbnEntityUri) {
   const entity = await getEntityByUri({ uri })
-  const wdUri = entity.claims['invp:P1']?.[0]
+  const wdUri = getFirstClaimValue(entity.claims, 'invp:P1')
   if (wdUri) return wdUri
   if ('_id' in entity) {
     const { _id } = entity
