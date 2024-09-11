@@ -1,4 +1,3 @@
-import CONFIG from 'config'
 import { map, uniq } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
@@ -11,10 +10,11 @@ import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normal
 import typeSearch from '#controllers/search/lib/type_search'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { forceArray, someMatch } from '#lib/utils/base'
+import config from '#server/config'
 import { automerge, validateAndAutomerge } from './automerge.js'
 import { findAuthorWithMatchingIsbnInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
 
-const { minimumScoreToAutogenerate } = CONFIG.tasks
+const { minimumScoreToAutogenerate } = config.tasks
 
 export default async function (entity, existingTasks) {
   const [ newSuggestionsSearchResults, suspectWorksData ] = await Promise.all([

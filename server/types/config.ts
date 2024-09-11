@@ -224,5 +224,9 @@ export type Config = ReadonlyDeep<{
 
   mapTilesAccessToken: string
 
+  tasks: {
+    minimumScoreToAutogenerate: number
+  }
+
   waitFactor: number
 }>
