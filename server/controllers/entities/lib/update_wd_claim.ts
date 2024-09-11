@@ -1,14 +1,16 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
-import { LogError } from '#lib/utils/logs'
+import { logError, LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
-import entitiesRelationsTemporaryCache from './entities_relations_temporary_cache.js'
+import type { EntityUri } from '#server/types/entity'
+import entitiesRelationsTemporaryCache, { triggerSubjectEntityCacheRefresh } from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype, propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
 import { cachedRelationProperties } from './temporarily_cache_relations.js'
@@ -49,8 +51,9 @@ export default async function (user, id, property, oldValue, newValue) {
     res = await updateClaim({ id, propertyId, newValue, oldValue, credentials })
   }
 
+  const uri = prefixifyWd(id)
+
   if (cachedRelationProperties.includes(property)) {
-    const uri = prefixifyWd(id)
     if (newValue != null) {
       entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
       .catch(LogError('entitiesRelationsTemporaryCache.set err'))
@@ -60,6 +63,8 @@ export default async function (user, id, property, oldValue, newValue) {
       .catch(LogError('entitiesRelationsTemporaryCache.del err'))
     }
   }
+
+  triggerSubjectEntityCacheRefresh(uri)
 
   return res
 }

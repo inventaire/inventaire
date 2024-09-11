@@ -1,5 +1,7 @@
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import leveldbFactory from '#db/level/get_sub_db'
 import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
+import { debounceByKey } from '#lib/debounce_by_key'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { info } from '#lib/utils/logs'
@@ -104,3 +106,9 @@ function ignoreKeyNotFound (err: Error) {
 }
 
 setInterval(checkExpiredCache, checkFrequency)
+
+async function _triggerSubjectEntityCacheRefresh (uri: EntityUri) {
+  await getEntityByUri({ uri, refresh: true })
+}
+
+export const triggerSubjectEntityCacheRefresh = debounceByKey(_triggerSubjectEntityCacheRefresh, 2000)
