@@ -7,11 +7,13 @@ leveldbPath="${leveldbPathBase}*-tests"
 
 echo "Delete databases: $databases"
 
-echo -n "Continue? y/N "
-read response
-if [ "$response" != 'y' ] ; then
-  echo 'Stopped by user'
-  exit 1
+if [ "$INV_DELETE_TESTS_DATABASES" != "1" ] ; then
+  echo -n "Continue? y/N "
+  read response
+  if [ "$response" != 'y' ] ; then
+    echo 'Stopped by user'
+    exit 1
+  fi
 fi
 
 for db in $databases
