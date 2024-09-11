@@ -7,7 +7,7 @@ import { createShelf } from '../fixtures/shelves.js'
 import { authReq, getUser, getUserB } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
-const debounceDelay = config.itemsCountDebounceTime + 500
+const debounceDelay = config.snapshotsDebounceTime + 500
 
 describe('items:update', () => {
   it('should reject invalid item id', async () => {

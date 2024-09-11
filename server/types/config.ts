@@ -187,7 +187,7 @@ export type Config = ReadonlyDeep<{
     consumer_secret: string
   }
 
-  itemsCountDebounceTime: number
+  snapshotsDebounceTime: number
 
   jobs: {
     'inv:deduplicate': {

@@ -1,15 +1,19 @@
+import config from '#server/config'
 import { getInvEntitiesUrisByClaims, getInvUrisByClaim } from '#controllers/entities/lib/entities'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
+import { debounceByKey } from '#lib/debounce_by_key'
 import { info } from '#lib/utils/logs'
 import type { EntityUri, InvEntityDoc, PropertyUri, SerializedEntity } from '#server/types/entity'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
 import { getEntityUriAndType } from './helpers.js'
 
-export async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity) {
+const { snapshotsDebounceTime } = config
+
+async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity) {
   const { uri, type } = getEntityUriAndType(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
@@ -20,8 +24,15 @@ export async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc 
 }
 
 export async function refreshSnapshotFromUri (changedEntityUri: EntityUri) {
-  return getEntityByUri({ uri: changedEntityUri })
-  .then(refreshSnapshotFromEntity)
+  const entity = await getEntityByUri({ uri: changedEntityUri })
+  return refreshSnapshotFromEntity(entity)
+}
+
+export const lazyRefreshSnapshotFromUri = debounceByKey(refreshSnapshotFromUri, snapshotsDebounceTime)
+
+export function lazyRefreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity) {
+  const { uri } = getEntityUriAndType(changedEntityDoc)
+  lazyRefreshSnapshotFromUri(uri)
 }
 
 const multiWorkRefresh = (relationProperties: PropertyUri[]) => async (uri: EntityUri) => {

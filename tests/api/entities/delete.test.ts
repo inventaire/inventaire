@@ -1,5 +1,6 @@
 import should from 'should'
 import { wait } from '#lib/promises'
+import config from '#server/config'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createHuman,
@@ -11,6 +12,8 @@ import {
 import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
 import { getItemById } from '../utils/items.js'
 import { authReq } from '../utils/utils.js'
+
+const debounceDelay = config.snapshotsDebounceTime + 100
 
 describe('entities:delete', () => {
   it('should reject without uris', async () => {
@@ -130,7 +133,7 @@ describe('entities:delete', () => {
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris(author.uri)
-    await wait(100)
+    await wait(debounceDelay)
     const updatedItem = await getItemById(item._id)
     updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
     should(updatedItem.snapshot['entity:authors']).not.be.ok()

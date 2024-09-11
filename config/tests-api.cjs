@@ -57,7 +57,7 @@ const config = {
     disabled: true,
   },
 
-  itemsCountDebounceTime: 500,
+  snapshotsDebounceTime: 500,
 
   oauthServer: {
     authorizationCodeLifetimeMs: 1000,

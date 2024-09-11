@@ -224,7 +224,7 @@ const config = {
     consumer_secret: 'your-consumer-secret',
   },
 
-  itemsCountDebounceTime: 5000,
+  snapshotsDebounceTime: 5000,
 
   jobs: {
     'inv:deduplicate': {

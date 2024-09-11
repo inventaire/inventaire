@@ -1,32 +1,35 @@
-import 'should'
+import config from '#server/config'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import 'should'
 import {
-  createWork,
-  createHuman,
   addAuthor,
   addSerie,
   createEdition,
   createEditionFromWorks,
+  createEditionWithWorkAndAuthor,
+  createHuman,
+  createWork,
   createWorkWithAuthor,
   someImageHash,
-  createEditionWithWorkAndAuthor,
 } from '../fixtures/entities.js'
 import {
+  getByUri,
   getByUris,
   merge,
-  revertMerge,
-  updateLabel,
-  updateClaim,
   restoreVersion,
   revertEdit,
-  getByUri,
+  revertMerge,
+  updateClaim,
+  updateLabel,
 } from '../utils/entities.js'
 import { getItem } from '../utils/items.js'
 import { authReq, getUserB } from '../utils/utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
+
+const debounceDelay = config.snapshotsDebounceTime + 100
 
 describe('items:snapshot', () => {
   it("should snapshot the item's work series names", async () => {
@@ -44,13 +47,12 @@ describe('items:snapshot', () => {
       authReq('post', '/api/items', { entity: workEntity.uri }),
       addSerie(workEntity),
     ])
-    await wait(100)
     await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', newValue: '5' })
-    await wait(100)
+    await wait(debounceDelay)
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:ordinal'].should.equal('5')
     await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', oldValue: '5', newValue: '6' })
-    await wait(100)
+    await wait(debounceDelay)
     const reupdatedItem = await getItem(item)
     reupdatedItem.snapshot['entity:ordinal'].should.equal('6')
   })
@@ -109,7 +111,7 @@ describe('items:snapshot', () => {
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle.split('$$')[0]}$$${new Date().toISOString()}`
       await updateClaim({ uri: entityId, property: 'wdt:P1476', oldValue: currentTitle, newValue: updatedTitle })
-      await wait(100)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
     })
@@ -120,7 +122,7 @@ describe('items:snapshot', () => {
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle} ${new Date().toISOString()}`
       await updateLabel({ uri: entityId, lang: 'en', value: updatedTitle })
-      await wait(100)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
     })
@@ -128,15 +130,14 @@ describe('items:snapshot', () => {
     it('should be updated when its local serie entity title changes', async () => {
       const workEntity = await createWork()
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
-      await wait(200)
       const serieEntity = await addSerie(workEntity)
-      await wait(200)
+      await wait(debounceDelay)
       const title = Object.values(serieEntity.labels)[0]
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:series'].should.equal(title)
       const updatedTitle = `${title}-updated`
       await updateLabel({ uri: serieEntity._id, lang: 'en', value: updatedTitle })
-      await wait(200)
+      await wait(debounceDelay)
       const reupdatedItem = await getItem(item)
       reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
     })
@@ -148,10 +149,9 @@ describe('items:snapshot', () => {
       const workEntity = Object.values(entities)[0]
       const authorUri = workEntity.claims['wdt:P50'][0]
       const item = await authReq('post', '/api/items', { entity: edition.uri })
-      await wait(200)
       const updateAuthorName = humanName()
       await updateLabel({ uri: authorUri, lang: 'en', value: updateAuthorName })
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
     })
@@ -162,7 +162,7 @@ describe('items:snapshot', () => {
       const updateAuthorName = humanName()
       const uri = workEntity.claims['wdt:P50'][0]
       await updateLabel({ uri, lang: 'en', value: updateAuthorName })
-      await wait(100)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
     })
@@ -189,9 +189,8 @@ describe('items:snapshot', () => {
         authReq('post', '/api/items', { entity: editionEntity.uri }),
         addAuthor(workEntityB),
       ])
-      await wait(200)
       await merge(workEntityA.uri, workEntityB.uri)
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       const authorName = Object.values(addedAuthor.labels)[0]
       updatedItem.snapshot['entity:authors'].should.equal(authorName)
@@ -204,9 +203,8 @@ describe('items:snapshot', () => {
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
-      await wait(200)
       await merge(authorEntityA.uri, authorEntityB.uri)
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       const updatedAuthors = authorEntityB.labels.en
       updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
@@ -219,14 +217,13 @@ describe('items:snapshot', () => {
       ])
       const workEntity = await createWorkWithAuthor(authorEntityA)
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
-      await wait(200)
       await merge(authorEntityA.uri, authorEntityB.uri)
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       const updatedAuthors = authorEntityB.labels.en
       updatedItem.snapshot['entity:authors'].should.equal(updatedAuthors)
       await revertMerge(authorEntityA.uri)
-      await wait(200)
+      await wait(debounceDelay)
       const reupdatedItem = await getItem(updatedItem)
       const oldAuthors = authorEntityA.labels.en
       reupdatedItem.snapshot['entity:authors'].should.equal(oldAuthors)
@@ -242,7 +239,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
       await restoreVersion({ patchId: `${human._id}:2` })
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
     })
@@ -257,7 +254,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
       await revertEdit({ patchId: `${human._id}:3` })
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
     })
@@ -268,7 +265,7 @@ describe('items:snapshot', () => {
         createEditionFromWorks(workEntityA),
         authReq('post', '/api/items', { entity: workEntityA.uri }),
       ])
-      await wait(100)
+      await wait(debounceDelay)
       item.entity = editionEntity.uri
       const updatedItem = await authReq('put', '/api/items', item)
       const editionTitle = editionEntity.claims['wdt:P1476'][0]
@@ -279,8 +276,9 @@ describe('items:snapshot', () => {
       const workEntity = await createWork()
       const editionEntity = await createEditionFromWorks(workEntity)
       const item = await authReq('post', '/api/items', { entity: editionEntity.uri })
-      await merge(workEntity.uri, 'wd:Q3209796')
       await wait(100)
+      await merge(workEntity.uri, 'wd:Q3209796')
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
     })
@@ -292,9 +290,8 @@ describe('items:snapshot', () => {
         addAuthor(work),
       ])
       const item = await authReq('post', '/api/items', { entity: edition.uri })
-      await wait(200)
       await merge(author.uri, 'wd:Q2829704')
-      await wait(200)
+      await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal('Alain Damasio')
     })

@@ -7,7 +7,7 @@ import { createItem } from '../fixtures/items.js'
 import { authReq, authReqB, getUser } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
-const debounceDelay = config.itemsCountDebounceTime + 500
+const debounceDelay = config.snapshotsDebounceTime + 500
 
 const deleteByIds = (ids, authReqFn) => {
   if (!authReqFn) { authReqFn = authReq }

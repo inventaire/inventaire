@@ -3,10 +3,11 @@ import dbFactory from '#db/couchdb/base'
 import { info, LogError } from '#lib/utils/logs'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import { updateUserItemsCounts } from '#models/user'
+import type { UserId } from '#server/types/user'
 
 const db = await dbFactory('users')
 
-export default userId => {
+export function updateSnapshotItemsCounts (userId: UserId) {
   return getItemsByOwner(userId)
   .then(getItemsCounts)
   .then(itemsCounts => db.update(userId, updateUserItemsCounts(itemsCounts)))

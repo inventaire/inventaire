@@ -1,4 +1,4 @@
-import { refreshSnapshotFromEntity, refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
+import { lazyRefreshSnapshotFromEntity, lazyRefreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import { radio } from '#lib/radio'
 
 // Items keep some data about their related entities, and those entities graphs
@@ -19,14 +19,14 @@ import { radio } from '#lib/radio'
 // https://www.wikidata.org/w/api.php?action=help&modules=query%2Brecentchanges
 
 export function updateSnapshotOnEntityChange () {
-  radio.on('entity:update:label', refreshSnapshotFromEntity)
-  radio.on('entity:update:claim', refreshSnapshotFromEntity)
-  radio.on('entity:revert:edit', refreshSnapshotFromEntity)
-  radio.on('entity:restore:version', refreshSnapshotFromEntity)
+  radio.on('entity:update:label', lazyRefreshSnapshotFromEntity)
+  radio.on('entity:update:claim', lazyRefreshSnapshotFromEntity)
+  radio.on('entity:revert:edit', lazyRefreshSnapshotFromEntity)
+  radio.on('entity:restore:version', lazyRefreshSnapshotFromEntity)
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
-  radio.on('entity:revert:merge', refreshSnapshotFromUri)
-  radio.on('wikidata:entity:refreshed', refreshSnapshotFromEntity)
+  radio.on('entity:revert:merge', lazyRefreshSnapshotFromUri)
+  radio.on('wikidata:entity:refreshed', lazyRefreshSnapshotFromEntity)
 }
 
 // Using the toUri as its the URI the items are using now
-const updateSnapshotOnEntityMerge = (fromUri, toUri) => refreshSnapshotFromUri(toUri)
+const updateSnapshotOnEntityMerge = (fromUri, toUri) => lazyRefreshSnapshotFromUri(toUri)
