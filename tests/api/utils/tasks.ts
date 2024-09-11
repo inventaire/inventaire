@@ -1,56 +1,57 @@
+import { values } from 'lodash-es'
 import { forceArray } from '#lib/utils/base'
 import { publicReq, adminReq } from './utils.js'
 
 export const endpoint = '/api/tasks?action='
 
-export function getByIds (ids) {
+export async function getByIds (ids) {
   ids = forceArray(ids).join('|')
-  return publicReq('get', `${endpoint}by-ids&ids=${ids}`)
-  .then(({ tasks }) => tasks)
+  const { tasks } = await publicReq('get', `${endpoint}by-ids&ids=${ids}`)
+  return tasks
 }
 
-export function getBySuspectUris (uris, type = 'deduplicate') {
+export async function getBySuspectUris (uris, type = 'deduplicate') {
   uris = forceArray(uris).join('|')
-  return publicReq('get', `${endpoint}by-uris&uris=${uris}&type=${type}`)
-  .then(({ tasks }) => tasks)
+  const { tasks } = await publicReq('get', `${endpoint}by-uris&uris=${uris}&type=${type}`)
+  return tasks
 }
 
-export function getBySuspectUri (uri) {
-  return getBySuspectUris(uri)
-  .then(obj => obj[uri])
+export async function getBySuspectUri (uri) {
+  const obj = await getBySuspectUris(uri)
+  return obj[uri]
 }
 
-export function getBySuggestionUris (uris, type = 'deduplicate') {
+export async function getBySuggestionUris (uris, type = 'deduplicate') {
   uris = forceArray(uris).join('|')
-  return publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}&type=${type}`)
-  .then(({ tasks }) => tasks)
+  const { tasks } = await publicReq('get', `${endpoint}by-suggestion-uris&uris=${uris}&type=${type}`)
+  return tasks
 }
 
-export const getByScore = (options = {}) => {
+export async function getByScore (options = {}) {
   let url = `${endpoint}by-score`
   const { limit, offset } = options
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
-  return publicReq('get', url)
-  .then(({ tasks }) => tasks)
+  const { tasks } = await publicReq('get', url)
+  return tasks
 }
 
-export const getByEntitiesType = (options = {}) => {
+export async function getByEntitiesType (options = {}) {
   const { type, entitiesType, limit, offset } = options
   let url = `${endpoint}by-entities-type&type=${type}&entities-type=${entitiesType}`
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
-  return publicReq('get', url)
-  .then(({ tasks }) => tasks)
+  const { tasks } = await publicReq('get', url)
+  return tasks
 }
 
 export function update (id, attribute, value) {
   return adminReq('put', `${endpoint}update`, { id, attribute, value })
 }
 
-export function checkEntities (uris) {
+export async function checkEntities (uris) {
   uris = forceArray(uris)
-  return adminReq('post', `${endpoint}check-human-duplicates`, { uris })
-  .then(() => getBySuspectUris(uris))
-  .then(getTasksBySuspectUris => Object.values(getTasksBySuspectUris).flat())
+  await adminReq('post', `${endpoint}check-human-duplicates`, { uris })
+  const getTasksBySuspectUris = await getBySuspectUris(uris)
+  return values(getTasksBySuspectUris).flat()
 }
