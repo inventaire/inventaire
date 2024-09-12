@@ -1,38 +1,25 @@
-// DATA MODEL
-// _id: CouchDB uuid
-// claims: an object with properties and their associated statements
-// labels: an object with labels in different languages
-
-// labels?
-// descriptions?
-// aliases?
-// sitelinks? qid?
-
-// use Wikidata data model as reference:
-// https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
+// Entities are equivalent to what Wikidata calls Items
+// The data model stays close to Wikidata/Wikibase data model https://www.mediawiki.org/wiki/Wikibase/DataModel/JSON
 
 // Used prefixes:
-// Entities:
+// Entities (what Wikidata calls Items):
 //   PREFIX wd: <http://www.wikidata.org/entity/>
 //   PREFIX inv: <https://inventaire.io/entity/>
 // Properties:
 //   PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 //   PREFIX invp: <https://inventaire.io/property/>
 
-// Inventaire properties:
-// invp:P2: Image Hash
-
 import { isString, cloneDeep, without, omit } from 'lodash-es'
 import wikimediaLanguageCodesByWdId from 'wikidata-lang/indexes/by_wm_code.js'
 import { inferences, type InferedProperties } from '#controllers/entities/lib/inferences'
 import { findClaimByValue, getClaimIndex, getClaimValue, isClaimObject, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { isNonEmptyArray } from '#lib/boolean_validations'
+import { isInvPropertyUri, isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import { objectEntries, sameObjects, superTrim } from '#lib/utils/base'
+import { objectEntries, objectFromEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference } from '#types/entity'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference, WdEntityUri } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -173,7 +160,9 @@ export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
   if (doc.claims != null) {
     removeEmptyClaimArrays(doc.claims)
-    validateRequiredPropertiesValues(doc.claims)
+    if (!isLocalEntityLayer(doc)) {
+      validateRequiredPropertiesValues(doc.claims)
+    }
   }
   doc.updated = Date.now()
   doc.version++
@@ -184,6 +173,11 @@ function removeEmptyClaimArrays (claims: Claims) {
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
     if (propertyClaims.length === 0) delete claims[property]
   }
+}
+
+export function isLocalEntityLayer (doc: InvEntityDoc | Pick<InvEntity, 'claims'>) {
+  if ('redirect' in doc) return false
+  return doc.claims['invp:P1']?.[0] != null
 }
 
 // 'from' and 'to' refer to the redirection process which rely on merging
@@ -252,6 +246,21 @@ function includesReference (references: Reference[], reference: Reference) {
   return references.find(ref => sameObjects(ref, reference))
 }
 
+export function convertEntityDocIntoALocalLayer (localEntity: InvEntity, remoteEntityUri: WdEntityUri) {
+  return {
+    ...localEntity,
+    labels: {},
+    claims: {
+      'invp:P1': [ remoteEntityUri ],
+      ...pickLocalClaims(localEntity.claims),
+    },
+  }
+}
+
+function pickLocalClaims (claims: Claims) {
+  return objectFromEntries(objectEntries(claims).filter(([ property ]) => isInvPropertyUri(property))) as Claims
+}
+
 export function convertEntityDocIntoARedirection (fromEntityDoc: InvEntity, toUri: EntityUri, removedPlaceholdersIds: RemovedPlaceholdersIds = []) {
   const [ prefix, id ] = toUri.split(':')
 
@@ -283,6 +292,12 @@ export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
 export function preventRedirectionEdit (doc: InvEntityDoc): asserts doc is InvEntity {
   if ('redirect' in doc) {
     throw newError('entity edit failed: the entity is a redirection', 400, { doc })
+  }
+}
+
+export function preventLocalLayerEdit (doc: InvEntityDoc) {
+  if (isLocalEntityLayer(doc)) {
+    throw newError('entity edit failed: the entity is a local entity layer', 400, { doc })
   }
 }
 

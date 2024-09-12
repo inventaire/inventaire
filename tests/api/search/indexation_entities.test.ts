@@ -1,4 +1,5 @@
 import should from 'should'
+import { unprefixify } from '#controllers/entities/lib/prefix'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import config from '#server/config'
@@ -27,11 +28,11 @@ describe('indexation:entities', () => {
     // to the edition data
     const { claims } = await createEdition({ lang })
     const editionImageHash = claims['invp:P2'][0]
-    const workId = claims['wdt:P629'][0].split(':')[1]
+    const workUri = claims['wdt:P629'][0]
     // Trigger a reindexation
-    await updateLabel({ uri: workId, lang: 'es', value: 'foo' })
+    await updateLabel({ uri: workUri, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
-    const result = await getIndexedDoc(entitiesIndex, workId)
+    const result = await getIndexedDoc(entitiesIndex, unprefixify(workUri))
     result._source.images[lang][0].should.equal(editionImageHash)
   })
 
@@ -43,8 +44,8 @@ describe('indexation:entities', () => {
     // to the edition data
     const { claims } = await createEdition({ lang })
     const editionImageHash = claims['invp:P2'][0]
-    const workUi = claims['wdt:P629'][0].split(':')[1]
-    const { _id: serieId } = await addSerie(workUi)
+    const workUri = claims['wdt:P629'][0]
+    const { _id: serieId } = await addSerie(workUri)
     // Trigger a reindexation
     await updateLabel({ uri: serieId, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)

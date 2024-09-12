@@ -4,7 +4,7 @@ import type { PropertyDatatype } from '#server/types/property'
 
 export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
-export const authorRelationsProperties = [
+export const workAuthorRelationsProperties = [
   'wdt:P50', // author
   'wdt:P58', // scenarist
   'wdt:P98', // editor
@@ -14,6 +14,17 @@ export const authorRelationsProperties = [
   'wdt:P10836', // inker
   'wdt:P10837', // penciller
 ] as const satisfies PropertyUri[]
+
+export const editionAuthorRelationsProperties = [
+  'wdt:P655', // translator
+  'wdt:P2679', // author of foreword
+  'wdt:P2680', // author of afterword
+] as const satisfies PropertyUri[]
+
+export const authorRelationsProperties = [
+  ...workAuthorRelationsProperties,
+  ...editionAuthorRelationsProperties,
+] as const
 
 export interface PropertyConfig {
   subjectTypes: readonly ExtendedEntityType[]
@@ -25,7 +36,7 @@ export interface PropertyConfig {
 // Default `category` = 'general'
 // Default `subjectTypes` = allLocallyEditedEntitiesTypes
 export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
-  // cover image hash
+  // image hash
   'invp:P2': {
     subjectTypes: [ 'edition' ],
   },
@@ -140,10 +151,6 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   // Open Library ID
   'wdt:P648': {
     subjectTypes: [ 'work', 'serie', 'human', 'edition' ],
-  },
-  // translator
-  'wdt:P655': {
-    subjectTypes: [ 'edition' ],
   },
   // Google Books ID
   'wdt:P675': {
@@ -301,14 +308,6 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P2675': {
     subjectTypes: [ 'work', 'serie' ],
   },
-  // author of foreword
-  'wdt:P2679': {
-    subjectTypes: [ 'edition' ],
-  },
-  // author of afterword
-  'wdt:P2680': {
-    subjectTypes: [ 'edition' ],
-  },
   // GoodReads author ID
   'wdt:P2963': {
     subjectTypes: [ 'human' ],
@@ -439,21 +438,27 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   },
 }
 
-for (const property of authorRelationsProperties) {
+for (const property of workAuthorRelationsProperties) {
   _properties[property] = {
     subjectTypes: [ 'work', 'serie' ],
   }
 }
 
-export const propertiesPerType = {}
+for (const property of editionAuthorRelationsProperties) {
+  _properties[property] = {
+    subjectTypes: [ 'edition' ],
+  }
+}
+
+export const _propertiesPerType = {}
 
 for (const type of allLocallyEditedEntitiesTypes) {
-  propertiesPerType[type] = []
+  _propertiesPerType[type] = []
 }
 
 for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
   for (const type of subjectTypes) {
-    propertiesPerType[type]?.push(property)
+    _propertiesPerType[type]?.push(property)
   }
   const propertyValuesConstraints = propertiesValuesConstraints[property]
   if (propertyValuesConstraints) {
@@ -467,5 +472,7 @@ for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
     throw new Error(`missing property values constraints: ${property}`)
   }
 }
+
+export const propertiesPerType = _propertiesPerType as Record<typeof allLocallyEditedEntitiesTypes[number], PropertyUri>
 
 export const properties = _properties as Record<PropertyUri, PropertyConfig>

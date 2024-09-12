@@ -5,21 +5,27 @@
 //   such as ISBNs defined on work entities
 
 import { partition, map, compact, omit } from 'lodash-es'
-import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifyPropertyClaims, simplifySitelinks, type Claims, type Item as WdEntity } from 'wikibase-sdk'
+import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Claims, type PropertyId, type Item as RawWdEntity } from 'wikibase-sdk'
+import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
+import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
-import { getClaimObjectFromClaim } from '#controllers/entities/lib/inv_claims_utils'
+import { getIsbnUriFromClaims } from '#controllers/entities/lib/get_inv_uri_from_doc'
+import { getClaimObjectFromClaim, getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
+import { isWdEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
+import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries } from '#lib/utils/base'
+import { warn } from '#lib/utils/logs'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
-import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri } from '#types/entity'
+import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri, InvEntity, SimplifiedSitelinks, EntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
-import { getEntityType } from './get_entity_type.js'
+import { getWdEntityType } from './get_entity_type.js'
 import propagateRedirection from './propagate_redirection.js'
 
 let reindexWdEntity
@@ -32,7 +38,7 @@ setImmediate(importCircularDependencies)
 const { _id: hookUserId } = hardCodedUsers.hook
 
 export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry, includeReferences }: EntitiesGetterParams) {
-  const entities = await Promise.all(ids.map(wdId => getCachedEnrichedEntity({ wdId, refresh, dry })))
+  const entities = await Promise.all(ids.map(wdId => getAggregatedWdEntityLayers({ wdId, refresh, dry })))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
   const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
@@ -51,16 +57,44 @@ export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh,
 
 const isNotMissing = entity => entity && entity.type !== 'missing'
 
-export async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
+export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
+  const [ remoteEntity, localEntityLayer ] = await Promise.all([
+    getCachedEnrichedEntity({ wdId, refresh, dry }),
+    getWdEntityLocalLayer(wdId),
+  ])
+  // Known case: when dry=true and getting a cache miss
+  if (!remoteEntity) return
+  if (localEntityLayer) {
+    if ('claims' in remoteEntity) {
+      Object.assign(remoteEntity.claims, simplifyInvClaims(localEntityLayer.claims))
+      runPostLayerAggregationFormatting(remoteEntity, localEntityLayer)
+    } else {
+      warn(localEntityLayer, 'local layer is linked to an invalid remote entity')
+    }
+  }
+  remoteEntity.wdId = wdId
+  return remoteEntity
+}
+
+function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, localEntityLayer: InvEntity) {
+  remoteEntity.invId = localEntityLayer._id
+  if (localEntityLayer.claims['invp:P2'] != null) {
+    setEntityImageFromImageHashClaims(remoteEntity)
+  }
+}
+
+async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
   const key = `wd:enriched:${wdId}`
   const fn = getEnrichedEntity.bind(null, wdId, refresh)
   return cache_.get({ key, fn, refresh, dry })
 }
 
+type MissingWdEntity = { id: WdEntityId, missing: true }
+
 async function getEnrichedEntity (wdId: WdEntityId, refresh: boolean) {
-  let entity = await getWdEntity(wdId)
-  entity = entity || { id: wdId, missing: true }
-  const formattedEntity = await format(entity)
+  const entity = await getWdEntity(wdId)
+  const preFormatWdEntity = entity || ({ id: wdId, missing: true } as MissingWdEntity)
+  const formattedEntity = await format(preFormatWdEntity)
   addWdEntityToIndexationQueue(wdId)
   // Restrict 'wikidata:entity:refreshed' event to explict refresh request
   // to avoid triggering snowballing item snapshot refreshes
@@ -72,60 +106,64 @@ async function getEnrichedEntity (wdId: WdEntityId, refresh: boolean) {
   return formattedEntity
 }
 
-async function format (entity) {
-  if (entity.missing != null) return formatEmpty('missing', entity)
+async function format (entity: RawWdEntity | MissingWdEntity) {
+  if ('missing' in entity) return formatEmpty('missing', entity)
 
   const { P31 } = entity.claims
+  let type
   if (P31) {
-    const simplifiedP31 = simplifyPropertyClaims(P31, simplifyClaimsOptions)
-    entity.type = getEntityType(simplifiedP31)
-  } else {
-    // Make sure to override the type as Wikidata entities have a type with
-    // another role in Wikibase, and we need this absence of known type to
-    // filter-out entities that aren't in our focus (i.e. not works, author, etc)
-    entity.type = null
+    // /!\ This is a different type (edition, work, etc) than Wikibase entity type (item, property, etc)
+    type = getWdEntityType(entity)
   }
 
-  entity.claims = omitUndesiredPropertiesPerType(entity.type, entity.claims)
+  entity.claims = omitUndesiredPropertiesPerType(type, entity.claims)
 
-  if (entity.type === 'meta') {
+  if (type === 'meta') {
     return formatEmpty('meta', entity)
   } else {
-    return formatValidEntity(entity)
+    return formatValidEntity(entity, type)
   }
 }
 
-const simplifyClaimsOptions = { entityPrefix: 'wd' }
-
-async function formatValidEntity (entity) {
+async function formatValidEntity (entity: RawWdEntity, type: ExtendedEntityType) {
+  const formattedClaims = formatClaims(entity.claims)
   const { id: wdId } = entity
-  entity.uri = `wd:${wdId}`
-  entity.labels = simplifyLabels(entity.labels)
-  entity.aliases = simplifyAliases(entity.aliases)
-  entity.descriptions = simplifyDescriptions(entity.descriptions)
-  entity.sitelinks = simplifySitelinks(entity.sitelinks, { keepBadges: true })
-  entity.claims = formatClaims(entity.claims)
-  entity.originalLang = getOriginalLang(entity.claims)
+  const wdUri = `wd:${wdId}` as WdEntityUri
+  const isbnUri = getIsbnUriFromClaims(formattedClaims)
+  // When available, prefer the ISBN to the Wikidata id, as Wikidata editions are more likely to be disurpted
+  // Ex: A Wikidata edition might be turned into a work, while an inventory item would still want
+  // to hold a reference to the edition entity
+  let uri: EntityUri
+  if (isbnUri) {
+    uri = isbnUri
+    formattedClaims['invp:P1'] = [ wdUri ]
+  } else {
+    uri = wdUri
+  }
+  const serializedEntity: Omit<SerializedWdEntity, 'image'> = {
+    uri,
+    wdId,
+    type,
+    labels: simplifyLabels(entity.labels),
+    aliases: simplifyAliases(entity.aliases),
+    descriptions: simplifyDescriptions(entity.descriptions),
+    sitelinks: simplifySitelinks(entity.sitelinks, { keepBadges: true }) as SimplifiedSitelinks,
+    claims: formattedClaims,
+    originalLang: getOriginalLang(formattedClaims),
+    // Required by server/db/elasticsearch/wikidata_entities_indexation_queue.js
+    lastrevid: entity.lastrevid,
+  }
 
-  await formatAndPropagateRedirection(entity)
-
-  // Deleting unnecessary attributes
-  delete entity.id
-  delete entity.title
-  delete entity.pageid
-  delete entity.ns
-  delete entity.modified
-
-  // Not deleting entity.lastrevid as it is used
-  // by server/db/elasticsearch/wikidata_entities_indexation_queue.js
-
-  return addImageData(entity)
+  await formatAndPropagateRedirection(entity, serializedEntity as SerializedWdEntity)
+  await addImageData(serializedEntity)
+  return serializedEntity as SerializedWdEntity
 }
 
-async function formatAndPropagateRedirection (entity) {
+async function formatAndPropagateRedirection (entity: RawWdEntity, serializedEntity: SerializedWdEntity) {
   if (entity.redirects != null) {
+    // Wikidata internal redirection
     const { from, to } = entity.redirects
-    entity.redirects = {
+    serializedEntity.redirects = {
       from: prefixifyWd(from),
       to: prefixifyWd(to),
     }
@@ -134,14 +172,30 @@ async function formatAndPropagateRedirection (entity) {
     // if there is a redirection we are not aware of, and propagate it:
     // if the redirected entity is used in Inventaire claims, redirect claims
     // to their new entity
-    propagateRedirection(hookUserId, entity.redirects.from, entity.redirects.to)
-    reindexWdEntity({ _id: unprefixify(entity.redirects.from), redirect: true })
-    await emit('wikidata:entity:redirect', entity.redirects.from, entity.redirects.to)
+    propagateRedirection(hookUserId, serializedEntity.redirects.from, serializedEntity.redirects.to)
+    reindexWdEntity({ _id: unprefixify(serializedEntity.redirects.from), redirect: true })
+    await emit('wikidata:entity:redirect', serializedEntity.redirects.from, serializedEntity.redirects.to)
+  } else if (!isWdEntityUri(serializedEntity.uri)) {
+    // Canonical uri redirection
+    const wdUri = getFirstClaimValue(serializedEntity.claims, 'invp:P1') as WdEntityUri
+    assert_.string(wdUri)
+    serializedEntity.redirects = { from: wdUri, to: serializedEntity.uri }
   }
 }
 
+interface SerializedEmptyWdEntity {
+  id: WdEntityId
+  uri: WdEntityUri
+  type: 'meta' | 'missing'
+  wdId?: WdEntityId
+  // The following attributes might be set by indexation functions
+  _indexationTime?: EpochTimeStamp
+  _id?: WdEntityId
+  lastrevid?: number
+}
+
 // Keeping just enough data to filter-out while not cluttering the cache
-function formatEmpty (type: 'meta' | 'missing', entity: WdEntity) {
+function formatEmpty (type: 'meta' | 'missing', entity: RawWdEntity | MissingWdEntity): SerializedEmptyWdEntity {
   return {
     id: entity.id,
     uri: `wd:${entity.id}`,
@@ -152,7 +206,7 @@ function formatEmpty (type: 'meta' | 'missing', entity: WdEntity) {
 function omitUndesiredPropertiesPerType (type: ExtendedEntityType, claims: Claims) {
   const propertiesToOmit = undesiredPropertiesPerType[type]
   if (propertiesToOmit) {
-    return omit(claims, propertiesToOmit)
+    return omit(claims, propertiesToOmit as PropertyId[])
   } else {
     return claims
   }

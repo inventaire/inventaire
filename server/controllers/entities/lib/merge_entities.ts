@@ -8,7 +8,7 @@ import type { EntityUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
-import turnIntoRedirection from './turn_into_redirection.js'
+import { turnIntoRedirectionOrLocalLayer } from './turn_into_redirection.js'
 
 export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) => {
   let [ fromPrefix, fromId ] = fromUri.split(':')
@@ -24,8 +24,8 @@ export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: 
   }
 
   if (toPrefix === 'wd') {
-    // no merge to do for Wikidata entities, simply creating a redirection
-    return turnIntoRedirection({ userId, fromId, toUri, context })
+    // no merge to do for Wikidata entities, simply creating a redirection or a local layer
+    return turnIntoRedirectionOrLocalLayer({ userId, fromId, toUri, context })
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
@@ -75,5 +75,5 @@ async function mergeInvEntities (userId, fromId, toId) {
   // Refresh the URI in case an ISBN was transfered and the URI changed
   const toUri = getInvEntityCanonicalUri(toEntityDocAfterMerge)
 
-  return turnIntoRedirection({ userId, fromId, toUri, previousToUri })
+  return turnIntoRedirectionOrLocalLayer({ userId, fromId, toUri, previousToUri })
 }

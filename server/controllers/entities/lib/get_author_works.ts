@@ -3,7 +3,7 @@ import { uniqByUri, getInvEntitiesByClaims, type ClaimPropertyValueTuple } from 
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import runWdQuery from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
@@ -30,7 +30,7 @@ export function getAuthorWorks (params) {
   promises.push(getInvAuthorWorks(uri))
 
   promises.push(getCachedRelations({
-    properties: authorRelationsProperties,
+    properties: workAuthorRelationsProperties,
     valueUri: uri,
     formatEntity,
   }))
@@ -65,13 +65,13 @@ function formatWdEntity (result) {
   if (!allowlistedTypesNames.includes(typeName)) return
 
   date = getSimpleDayDate(date)
-  serie = prefixifyWd(serie)
+  if (serie) serie = prefixifyWd(serie)
   return { type: typeName, uri: `wd:${wdId}`, date, serie }
 }
 
 // # INV
 async function getInvAuthorWorks (uri: EntityUri) {
-  const authorClaims = authorRelationsProperties.map(property => [ property, uri ]) satisfies ClaimPropertyValueTuple[]
+  const authorClaims = workAuthorRelationsProperties.map(property => [ property, uri ]) satisfies ClaimPropertyValueTuple[]
   const { rows } = await getInvEntitiesByClaims(authorClaims)
   return rows.map(formatInvEntity).filter(identity)
 }

@@ -160,6 +160,14 @@ describe('entities:update-claims:inv', () => {
     })
   })
 
+  it('should accept an update from an isbn uri', async () => {
+    const edition = await createEditionWithIsbn()
+    const { uri } = edition
+    uri.should.startWith('isbn:')
+    const res = await updateClaim({ uri, property: 'wdt:P437', newValue: 'wd:Q128093' })
+    res.ok.should.be.true()
+  })
+
   it('should accept rapid updates on the same entity', async () => {
     const authorsUris = [ 'wd:Q192214', 'wd:Q206685' ]
     const work = await createWork()

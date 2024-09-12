@@ -6,9 +6,6 @@ const updatable = [
   'shelves',
   // Use case for making entity updatable: change from a work entity to an edition entity
   'entity',
-
-  // TODO: remove (unused)
-  'pictures',
 ] as const
 
 export type UpdatableItemAttributes = typeof updatable[number]
@@ -16,7 +13,6 @@ export type UpdatableItemAttributes = typeof updatable[number]
 const validAtCreation = [
   'entity',
   'transaction',
-  'pictures',
   'visibility',
   'details',
   'notes',

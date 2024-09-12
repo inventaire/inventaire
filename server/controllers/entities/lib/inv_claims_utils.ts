@@ -1,5 +1,7 @@
+import { isInvPropertyUri } from '#lib/boolean_validations'
 import { objectEntries } from '#lib/utils/base'
-import type { Claims, InvClaim, InvClaimObject, InvClaimValue, InvPropertyClaims, ClaimValueByProperty, InvSnakValue, TypedPropertyUri } from '#types/entity'
+import { objectKeys } from '#lib/utils/types'
+import type { Claims, InvClaim, InvClaimObject, InvClaimValue, InvPropertyClaims, ClaimValueByProperty, InvSnakValue, TypedPropertyUri, InvEntity, SimplifiedClaims, ExpandedClaims } from '#types/entity'
 
 export function isClaimObject (claim: InvClaim): claim is InvClaimObject {
   return typeof claim === 'object' && claim !== null && 'value' in claim
@@ -64,7 +66,7 @@ export function getPropertyClaimsValues <C extends Claims, P extends TypedProper
   }
 }
 
-export function getFirstClaimValue <C extends Claims, P extends TypedPropertyUri> (claims: C, property: P) {
+export function getFirstClaimValue <C extends (Claims | SimplifiedClaims | ExpandedClaims), P extends TypedPropertyUri> (claims: C, property: P) {
   if (claims?.[property]?.[0]) {
     const firstClaim = claims[property][0] as ClaimValueByProperty[P]
     return getTypedClaimValue(firstClaim, property)
@@ -77,4 +79,9 @@ export function getClaimObjectFromClaim (claim: InvClaim) {
   } else {
     return { value: claim }
   }
+}
+
+export function hasLocalClaims (doc: InvEntity) {
+  const { claims } = doc
+  return objectKeys(claims).some(isInvPropertyUri)
 }

@@ -24,7 +24,7 @@ import { objectKeys } from '#lib/utils/types'
 import type { OmitNever } from '#server/types/common'
 import type { PropertyUri } from '#server/types/entity'
 import type { PropertyValueConstraints } from '#server/types/property'
-import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
@@ -32,7 +32,9 @@ import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, exter
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
 export const propertiesValuesConstraints = {
-  // image
+  // same as remote entity
+  'invp:P1': remoteEntity,
+  // image hash
   'invp:P2': imageHash,
   // instance of
   'wdt:P31': allowedPropertyValues('wdt:P31'),

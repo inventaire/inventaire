@@ -13,7 +13,7 @@ which jq > /dev/null || {
 # - LevelDB popularities should have been transfered
 
 # Index Wikidata entities from dump
-# This implementation reflects the current state of the getEntityType function (server/controllers/entities/lib/get_entity_type.js)
+# This implementation reflects the current state of the getWdEntityType function (server/controllers/entities/lib/get_entity_type.js)
 # which only lets in entities that have a P31 value identified in server/lib/wikidata/aliases
 
 indexed_types_ids=$(mktemp)

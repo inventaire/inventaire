@@ -2,6 +2,7 @@ import { uniq } from 'lodash-es'
 import { getWorksAuthorsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
 
 export default async function (item) {
@@ -12,7 +13,7 @@ export default async function (item) {
   let works
   if (entity.type === 'edition') {
     item.edition = entity
-    item.publisherUri = entity.claims['wdt:P123']?.[0]
+    item.publisherUri = getFirstClaimValue(entity.claims, 'wdt:P123')
     if (item.publisherUri) {
       item.publisher = await getEntityByUri({ uri: item.publisherUri })
     }
@@ -20,7 +21,7 @@ export default async function (item) {
     if (item.translatorsUris) {
       item.translators = await getEntitiesList(item.translatorsUris)
     }
-    item.editionLangUri = entity.claims['wdt:P407']?.[0]
+    item.editionLangUri = getFirstClaimValue(entity.claims, 'wdt:P407')
     if (item.editionLangUri) {
       item.editionLang = await getEntityByUri({ uri: item.editionLangUri })
     }

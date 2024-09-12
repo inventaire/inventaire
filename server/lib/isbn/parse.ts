@@ -4,7 +4,7 @@ import groups from './groups.js'
 
 const { parse: isbnParser } = isbn3
 
-export function parseIsbn (isbn) {
+export function parseIsbn (isbn: string) {
   const isbnData: IsbnData = isbnParser(isbn)
 
   if (isbnData == null) {

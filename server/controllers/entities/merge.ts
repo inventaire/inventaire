@@ -1,5 +1,5 @@
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isIsbnEntityUri } from '#lib/boolean_validations'
+import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
@@ -66,11 +66,14 @@ function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: 
   }
 }
 
-function validateEntity (entity, originalUri, label) {
+function validateEntity (entity: SerializedEntity, originalUri: EntityUri, label: string) {
   if (entity == null) {
-    throw newError(`'${label}' entity not found`, 400, originalUri)
+    throw newError(`'${label}' entity not found`, 400, { originalUri })
   }
-  if (entity.uri !== originalUri && `inv:${entity._id}` !== originalUri) {
+  if (isInvEntityUri(originalUri) && 'wdId' in entity) {
+    throw newError(`'${label}' uri refers to a local entity layer`, 400, { entity, originalUri })
+  }
+  if (entity.uri !== originalUri && `inv:${entity.invId}` !== originalUri) {
     throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
   }
 }

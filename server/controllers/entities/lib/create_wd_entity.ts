@@ -5,12 +5,12 @@ import { mapKeysValues, objectEntries } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
-import type { Claims, DatatypedInvClaimObject, EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId } from '#server/types/entity'
+import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId } from '#server/types/entity'
 import type { User } from '#server/types/user'
-import { getEntityType } from './get_entity_type.js'
+import { getInvEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
-import validateEntity from './validate_entity.js'
+import { validateInvEntity } from './validate_entity.js'
 import type { SimplifiedQualifiers } from 'wikibase-sdk'
 
 const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
@@ -57,14 +57,14 @@ export async function createWdEntity (params: CreateWdEntityParams) {
 }
 
 async function validate (entity, isAlreadyValidated) {
-  if (!isAlreadyValidated) return validateEntity(entity)
+  if (!isAlreadyValidated) return validateInvEntity(entity)
 }
 
 function validateWikidataCompliance (entity: EntityDraft) {
   const { claims } = entity
   if (claims == null) throw newError('invalid entity', 400, { entity })
 
-  const entityType = getEntityType(claims['wdt:P31'])
+  const entityType = getInvEntityType(claims['wdt:P31'])
   if (!allowlistedEntityTypes.includes(entityType)) {
     throw newError('invalid entity type', 400, { entityType, entity })
   }

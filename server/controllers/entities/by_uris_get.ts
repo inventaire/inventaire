@@ -1,5 +1,5 @@
 import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { EntityUri } from '#types/entity'
 import addRelatives from './lib/add_relatives.js'
 import { getPossiblyExpandedEntitiesByUris } from './lib/get_entities_by_uris.js'
@@ -33,7 +33,8 @@ const sanitization = {
     default: false,
   },
   relatives: {
-    allowlist: [ ...authorRelationsProperties,
+    allowlist: [
+      ...workAuthorRelationsProperties,
       'wdt:P179', // part of the series
       'wdt:P629', // edition or translation of
     ] as const,

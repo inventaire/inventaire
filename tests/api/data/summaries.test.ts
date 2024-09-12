@@ -1,5 +1,5 @@
 import should from 'should'
-import { createWork, createEdition, createHuman } from '#fixtures/entities'
+import { createEdition, createHuman, existsOrCreate } from '#fixtures/entities'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { getByUri } from '#tests/api/utils/entities'
@@ -218,17 +218,3 @@ describe('summaries', () => {
     dsbwikiSitelinkData.should.be.ok()
   })
 })
-
-const existsOrCreate = async ({ claims, createFn = createWork }) => {
-  try {
-    const entity = await createFn({ claims })
-    return entity
-  } catch (err) {
-    if (err.body.status_verbose === 'this property value is already used') {
-      const existingEntityUri = err.body.context.entity
-      return getByUri(existingEntityUri)
-    } else {
-      throw err
-    }
-  }
-}

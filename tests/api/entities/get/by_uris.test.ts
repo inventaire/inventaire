@@ -1,12 +1,17 @@
 import should from 'should'
+import { isCouchUuid } from '#lib/boolean_validations'
+import type { ExpandedSerializedWdEntity, InvEntityUri } from '#server/types/entity'
 import {
   createEdition,
   createEditionWithIsbn,
   createHuman,
   createWorkWithAuthor,
+  getSomeRemoteEditionWithALocalLayer,
+  getSomeWdEditionUri,
   someFakeUri,
+  someRandomImageHash,
 } from '#tests/api/fixtures/entities'
-import { getByUris, merge } from '#tests/api/utils/entities'
+import { addClaim, getByUri, getByUris, merge } from '#tests/api/utils/entities'
 import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const workWithAuthorPromise = createWorkWithAuthor()
@@ -15,6 +20,7 @@ describe('entities:get:by-uris', () => {
   it('should reject invalid uri', async () => {
     const invalidUri = 'bla'
     try {
+      // @ts-expect-error
       await getByUris(invalidUri)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -27,6 +33,7 @@ describe('entities:get:by-uris', () => {
   it('should reject uri with wrong prefix', async () => {
     const invalidUri = 'foo:Q535'
     try {
+      // @ts-expect-error
       await getByUris(invalidUri)
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -38,24 +45,25 @@ describe('entities:get:by-uris', () => {
 
   it('should accept inventaire uri', async () => {
     const work = await workWithAuthorPromise
-    const res = await getByUris(work.uri)
-    res.entities[work.uri].should.be.an.Object()
+    const { entities } = await getByUris(work.uri)
+    entities[work.uri].should.be.an.Object()
+    entities[work.uri].invId.should.be.ok()
   })
 
   it('should return inventaire uris not found', async () => {
-    const { notFound } = await getByUris(someFakeUri)
+    const { notFound } = await getByUris([ someFakeUri ])
     notFound.should.deepEqual([ someFakeUri ])
   })
 
   it('should return isbn uris not found', async () => {
     const someMissingIsbn = 'isbn:9789871453023'
-    const { notFound } = await getByUris(someMissingIsbn)
+    const { notFound } = await getByUris([ someMissingIsbn ])
     notFound.should.deepEqual([ someMissingIsbn ])
   })
 
   it('should return wikidata uris not found', async () => {
     const nonExistingUri = 'wd:Q5359999999999999'
-    const { notFound } = await getByUris(nonExistingUri, null, true)
+    const { notFound } = await getByUris([ nonExistingUri ], null, true)
     notFound.should.deepEqual([ nonExistingUri ])
   })
 
@@ -67,6 +75,14 @@ describe('entities:get:by-uris', () => {
     entities[existingUri].uri.should.equal(existingUri)
     notFound.should.containEql(nonExistingUriA)
     notFound.should.containEql(nonExistingUriB)
+  })
+
+  it('should use isbn uris as canonical uris for wikidata editions with isbns', async () => {
+    const wdUri = 'wd:Q116194196'
+    const isbnUri = 'isbn:9780375759239'
+    const { entities, redirects } = await getByUris([ wdUri ], null, true)
+    entities[isbnUri].uri.should.equal(isbnUri)
+    redirects[wdUri].should.equal(isbnUri)
   })
 
   it('should return redirected uris', async () => {
@@ -82,7 +98,7 @@ describe('entities:get:by-uris', () => {
 
   it('should accept wikidata uri', async () => {
     const validWdUri = 'wd:Q2300248'
-    const { entities } = await getByUris(validWdUri)
+    const { entities } = await getByUris([ validWdUri ])
     const entity = entities[validWdUri]
     entity.uri.should.equal(validWdUri)
   })
@@ -101,5 +117,25 @@ describe('entities:get:by-uris', () => {
     const entity = entities[uri]
     entity.labels.fromclaims.should.equal(claims['wdt:P1476'][0])
     entity.descriptions.fromclaims.should.equal(claims['wdt:P1680'][0])
+  })
+
+  it('should get a remote entity with its local layer', async () => {
+    const uri = await getSomeWdEditionUri()
+    const imageHash = someRandomImageHash()
+    await addClaim({ uri, property: 'invp:P2', value: imageHash })
+    const entity = (await getByUri(uri) as ExpandedSerializedWdEntity)
+    entity.uri.should.equal(uri)
+    entity.claims['invp:P1'].should.deepEqual([ uri ])
+    entity.claims['invp:P2'].should.deepEqual([ imageHash ])
+    entity.wdId.should.equal(uri.split(':')[1])
+    should(isCouchUuid(entity.invId)).be.true()
+  })
+
+  it('should redirect a local layer uri to the remote entity', async () => {
+    const { uri, invId } = await getSomeRemoteEditionWithALocalLayer()
+    const invUri: InvEntityUri = `inv:${invId}`
+    const res = await getByUris([ invUri ])
+    res.entities[uri].claims.should.be.an.Object()
+    res.redirects[invUri].should.equal(uri)
   })
 })

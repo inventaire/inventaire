@@ -2,7 +2,7 @@ import should from 'should'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createHuman } from '../fixtures/entities.js'
+import { createHuman, getSomeRemoteEditionWithALocalLayer } from '../fixtures/entities.js'
 import { deleteByUris } from '../utils/entities.js'
 import {
   adminReq,
@@ -15,11 +15,11 @@ import {
 const endpoint = '/api/entities?action=history'
 
 describe('entities:history', () => {
-  it('should reject without uri', async () => {
+  it('should reject without an id or uri', async () => {
     await publicReq('get', endpoint)
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('missing parameter in query: id')
+      err.body.status_verbose.should.equal('either a uri or an id is required')
     })
   })
 
@@ -100,5 +100,22 @@ describe('entities:history', () => {
     const { patches } = await customAuthReq(user, 'get', `${endpoint}&id=${human._id}`)
     should(patches[0].user).not.be.ok()
     patches[1].user.should.equal(user._id)
+  })
+
+  it('should return local entity layer patches', async () => {
+    const entity = await getSomeRemoteEditionWithALocalLayer()
+    const { invId } = entity
+    const { patches } = await publicReq('get', `${endpoint}&id=${invId}`)
+    patches.length.should.equal(1)
+    patches[0].snapshot.claims['invp:P1'].should.deepEqual(entity.claims['invp:P1'])
+    patches[0].snapshot.claims['invp:P2'].should.deepEqual(entity.claims['invp:P2'])
+  })
+
+  it('should return local entity layer patches from wd uri', async () => {
+    const entity = await getSomeRemoteEditionWithALocalLayer()
+    const { patches } = await publicReq('get', `${endpoint}&uri=${entity.uri}`)
+    patches.length.should.equal(1)
+    patches[0].snapshot.claims['invp:P1'].should.deepEqual(entity.claims['invp:P1'])
+    patches[0].snapshot.claims['invp:P2'].should.deepEqual(entity.claims['invp:P2'])
   })
 })

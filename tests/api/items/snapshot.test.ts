@@ -1,8 +1,8 @@
-import config from '#server/config'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
+import config from '#server/config'
 import 'should'
 import {
   addAuthor,

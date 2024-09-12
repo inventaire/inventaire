@@ -1,5 +1,6 @@
 import should from 'should'
 import { getRandomString } from '#lib/utils/random_string'
+import type { InvEntityUri } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createWork,
@@ -9,8 +10,11 @@ import {
   createItemFromEntityUri,
   createWorkWithAuthor,
   someFakeUri,
+  getSomeRemoteEditionWithALocalLayer,
+  someRandomImageHash,
+  getSomeWdEditionUri,
 } from '../fixtures/entities.js'
-import { getByUris, merge, getHistory, addClaim } from '../utils/entities.js'
+import { getByUris, merge, getHistory, addClaim, getByUri } from '../utils/entities.js'
 import { getItemsByIds } from '../utils/items.js'
 import { authReq, dataadminReq } from '../utils/utils.js'
 
@@ -272,5 +276,66 @@ describe('entities:merge', () => {
     ])
     editionA.uri.should.startWith('isbn')
     await merge(`inv:${editionA._id}`, editionB.uri)
+  })
+
+  describe('local entity layer', () => {
+    it('should turn a merged local entity into a local entity layer if there is none', async () => {
+      const imageHash = someRandomImageHash()
+      const edition = await createEdition({ image: imageHash })
+      const uri = await getSomeWdEditionUri()
+      await merge(edition.uri, uri)
+      const updatedEdition = await getByUri(uri)
+      updatedEdition.claims['invp:P1'].should.deepEqual([ uri ])
+      updatedEdition.claims['invp:P2'].should.deepEqual([ imageHash ])
+      let invId
+      if ('invId' in updatedEdition) invId = updatedEdition.invId
+      invId.should.equal(edition._id)
+    })
+
+    it('should turn a merged local entity into a redirection if there is already a local layer', async () => {
+      const imageHashA = someRandomImageHash()
+      const imageHashB = someRandomImageHash()
+      const [ uri, editionA, editionB ] = await Promise.all([
+        getSomeWdEditionUri(),
+        createEdition({ image: imageHashA }),
+        createEdition({ image: imageHashB }),
+      ])
+      await merge(editionA.uri, uri)
+      await merge(editionB.uri, uri)
+      const { entities, redirects } = await getByUris([ editionB.uri ])
+      redirects[editionB.uri].should.equal(uri)
+      entities[uri].invId.should.equal(editionA._id)
+      entities[uri].claims['invp:P2'].should.deepEqual([ imageHashA ])
+    })
+
+    it('should reject merging a local entity layer', async () => {
+      const entity = await getSomeRemoteEditionWithALocalLayer()
+      const { invId } = entity
+      const invUri: InvEntityUri = `inv:${invId}`
+      const edition = await createEdition()
+      await merge(invUri, edition.uri)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("'from' uri refers to a local entity layer")
+      })
+    })
+
+    it('should reject merging into a local entity layer', async () => {
+      const entity = await getSomeRemoteEditionWithALocalLayer()
+      const { invId } = entity
+      const invUri: InvEntityUri = `inv:${invId}`
+      const edition = await createEdition()
+      await merge(edition.uri, invUri)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("'to' uri refers to a local entity layer")
+      })
+    })
+
+    // Claim transfer are actually just cherry-picked claim copies done in the client
+    // it('should transfer local claims to target local entity layer')
+    // it('should transfer merged remote entity local claims to target entity local layer')
   })
 })

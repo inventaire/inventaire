@@ -5,7 +5,7 @@ import config from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { ColorHexCode, Url } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
-import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri } from '#types/entity'
+import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri, InvPropertyUri, WdPropertyUri, WdEntityId } from '#types/entity'
 import type { AssetImagePath, EntityImagePath, GroupImagePath, ImageHash, ImagePath, UserImagePath } from '#types/image'
 import type { PatchId } from '#types/patch'
 import type { AuthentifiedReq } from '#types/server'
@@ -17,9 +17,9 @@ import type { Split } from 'type-fest'
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = config.getPublicOrigin()
 
-function bindedTest <T> (regexName) {
-  return function (str): str is T {
-    return regex_[regexName].test(str)
+function bindedTest <T extends string> (regexName: keyof typeof regex_) {
+  return function (str: unknown): str is T {
+    return typeof str === 'string' && regex_[regexName].test(str)
   }
 }
 
@@ -47,7 +47,7 @@ export const isLocalImg = bindedTest<ImagePath>('LocalImg')
 export const isUserImg = bindedTest<UserImagePath>('UserImg')
 export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
-export const isWdEntityId = isWikidataItemId
+export const isWdEntityId = bindedTest<WdEntityId>('WdEntityId')
 
 export function isInvEntityUri (uri): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
@@ -77,6 +77,8 @@ export const isUsername = bindedTest<Username>('Username')
 export const isEntityUri = bindedTest<EntityUri>('EntityUri')
 export const isPatchId = bindedTest<PatchId>('PatchId')
 export const isPropertyUri = bindedTest<PropertyUri>('PropertyUri')
+export const isInvPropertyUri = bindedTest<InvPropertyUri>('InvPropertyUri')
+export const isWdPropertyUri = bindedTest<WdPropertyUri>('WdPropertyUri')
 export function isExpandedEntityUri (uri) {
   const [ prefix, id ] = uri.split(':')
   // Accept alias URIs.

@@ -1,4 +1,4 @@
-import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { newError } from '#lib/error/error'
 import type { Claims, PropertyUri } from '#types/entity'
@@ -8,7 +8,7 @@ export function validateRequiredPropertiesValues (claims: Claims, checkedPropert
     throw newError("wdt:P31 array can't be empty", 400, { claims })
   }
 
-  const type = getEntityType(claims['wdt:P31'])
+  const type = getInvEntityType(claims['wdt:P31'])
   if (validateControlledPropertiesClaimsPerType[type]) {
     validateControlledPropertiesClaimsPerType[type](claims)
   }

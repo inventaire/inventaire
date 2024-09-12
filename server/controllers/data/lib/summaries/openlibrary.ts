@@ -1,3 +1,4 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { cache_ } from '#lib/cache'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
@@ -8,8 +9,8 @@ const wmCodeByIso6392Code = requireJson('wikidata-lang/mappings/wm_code_by_iso_6
 const timeout = 10 * 1000
 
 export async function getOpenLibrarySummary ({ claims, refresh }) {
-  const id = claims['wdt:P648']?.[0]
-  const isbn13h = claims['wdt:P212']?.[0]
+  const id = getFirstClaimValue(claims, 'wdt:P648')
+  const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
   let link, url, property, key, cacheKey, claim
   if (id) {
     const lastLetter = id.slice(-1)[0]

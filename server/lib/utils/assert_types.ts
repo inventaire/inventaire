@@ -2,13 +2,14 @@ import { isArguments, isArray, times } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { typeOf } from './types.js'
 
-function assertType (type, obj) {
+function assertType (type: string, obj: unknown) {
   const trueType = typeOf(obj)
-  if (type.split('|').includes(trueType)) return obj
-  else throw newError(`TypeError: expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj })
+  if (!type.split('|').includes(trueType)) {
+    throw newError(`TypeError: expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj })
+  }
 }
 
-function assertTypes (types, args) {
+function assertTypes (types: string | string[], args: unknown[]) {
   if (isArguments(args)) {
     args = Array.from(args)
     if (!isArray(types)) {
@@ -26,7 +27,7 @@ function assertTypes (types, args) {
     throw newError("arguments and types length don't match", 500, { args, types })
   }
 
-  return args.map((arg, i) => assertType(types[i], arg))
+  args.forEach((arg, i) => assertType(types[i], arg))
 }
 
 function stringify (value) {
@@ -47,20 +48,46 @@ function parseTypes (types, args) {
   return times(args.length, () => multiTypes)
 }
 
-export const assert_ = {
+// Avoid triggering TS2775 in consuùùers by using an explicit type annotation
+// See https://stackoverflow.com/a/72689922/3324977
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const assert_: Record<string, Function> = {
   type: assertType,
   types: assertTypes,
 
-  string: assertType.bind(null, 'string'),
-  number: assertType.bind(null, 'number'),
-  boolean: assertType.bind(null, 'boolean'),
-  array: assertType.bind(null, 'array'),
-  object: assertType.bind(null, 'object'),
-  function: assertType.bind(null, 'function'),
-  promise: assertType.bind(null, 'promise'),
+  string (str: unknown): asserts str is string {
+    assertType('string', str)
+  },
+  number (num: unknown): asserts num is number {
+    assertType('number', num)
+  },
+  boolean (bool: unknown): asserts bool is boolean {
+    assertType('boolean', bool)
+  },
+  array (arr: unknown): asserts arr is Array<unknown> {
+    assertType('array', arr)
+  },
+  object (obj: unknown): asserts obj is Record<string, unknown> {
+    assertType('object', obj)
+  },
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  function (fn: unknown): asserts fn is Function {
+    assertType('function', fn)
+  },
+  promise (promise: unknown): asserts promise is Promise<unknown> {
+    assertType('promise', promise)
+  },
 
-  strings: assertTypes.bind(null, 'strings...'),
-  numbers: assertTypes.bind(null, 'numbers...'),
-  arrays: assertTypes.bind(null, 'arrays...'),
-  objects: assertTypes.bind(null, 'objects...'),
+  strings (strings: unknown[]): asserts strings is string[] {
+    assertTypes('strings...', strings)
+  },
+  numbers (numbers: unknown[]): asserts numbers is number[] {
+    assertTypes('numbers...', numbers)
+  },
+  arrays (arrays: unknown[]): asserts arrays is Array<unknown>[] {
+    assertTypes('arrays...', arrays)
+  },
+  objects (objects: unknown[]): asserts objects is Record<string, unknown>[] {
+    assertTypes('objects...', objects)
+  },
 }

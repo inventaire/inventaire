@@ -1,19 +1,35 @@
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+import { typesAliases } from '#lib/wikidata/aliases'
+
+const { works: worksP31Values } = typesAliases
+
 export default {
-  parameters: [ 'pid', 'qid' ],
+  parameters: [ 'pid', 'qid' ] as const,
 
-  relationProperties: [ '*' ],
+  relationProperties: [ '*' ] as const,
 
-  query: params => {
+  query: (params: SparqlQueryParams) => {
     const { pid, qid } = params
-    return `SELECT DISTINCT ?item WHERE {
-  ?item wdt:${pid} wd:${qid} .
-  ?item wdt:P31 wd:Q3331189 .
-  # Filter-out entities tagged as both work and edition
-  FILTER NOT EXISTS { ?item wdt:P31 wd:Q571 }
-  FILTER NOT EXISTS { ?item wdt:P31 wd:Q47461344 }
+    let existFilter = ''
+    // Only include editions that are properly shaped
+    // that is, that have at least an associated work and a title
+    if (pid !== 'P629') existFilter += '?edition wdt:P629 ?work . '
+    if (pid !== 'P1476') existFilter += '?edition wdt:P1476 ?title . '
+    // Filter-out entities that getInvEntityType might consider either a work or an edition
+    return `SELECT DISTINCT ?edition WHERE {
+  ?edition wdt:${pid} wd:${qid} .
+  ?edition wdt:P31 wd:Q3331189 .
+  FILTER NOT EXISTS {
+    # (1)
+    VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }
+    ?edition wdt:P31 ?work_type
+  }
+  FILTER EXISTS { ${existFilter} }
 }
 LIMIT 1000`
   },
 
   minimizable: true,
 }
+
+// (1) Filter-out entities that getStrictEntityType will not identify as edition due to the type ambiguity

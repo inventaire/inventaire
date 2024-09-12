@@ -1,3 +1,4 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import getBestLangValue from '#lib/get_best_lang_value'
@@ -14,14 +15,14 @@ export default {
   edition: (edition: SerializedEntity, works: SerializedEntity[], authors: SerializedEntity[], series: SerializedEntity[]) => {
     const lang = edition.originalLang || 'en'
     const { claims } = edition
-    let title = claims['wdt:P1476']?.[0]
+    let title = getFirstClaimValue(claims, 'wdt:P1476')
     // Wikidata editions might not have a wdt:P1476 value
     title = title || getBestLangValue(lang, null, edition.labels).value
     return buildOperation({
       entity: edition,
       works,
       title,
-      subtitle: claims['wdt:P1680']?.[0],
+      subtitle: getFirstClaimValue(claims, 'wdt:P1680'),
       lang,
       image: edition.image?.url,
       authors,
@@ -96,7 +97,7 @@ function setOrdinal (snapshot: ItemSnapshot, works: SerializedEntity[]) {
   if (works.length === 1) {
     const work = works[0]
     const { claims } = work
-    const ordinal = claims['wdt:P1545']?.[0]
+    const ordinal = getFirstClaimValue(claims, 'wdt:P1545')
     if (ordinal != null) snapshot['entity:ordinal'] = ordinal
   } else {
     const series = aggregateClaims(works, 'wdt:P179')

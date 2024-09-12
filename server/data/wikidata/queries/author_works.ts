@@ -1,14 +1,15 @@
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 
 export default {
-  parameters: [ 'qid' ],
+  parameters: [ 'qid' ] as const,
 
-  relationProperties: authorRelationsProperties,
+  relationProperties: workAuthorRelationsProperties,
 
-  query: params => {
+  query: (params: SparqlQueryParams) => {
     const { qid: authorQid } = params
     return `SELECT ?work ?type ?date ?serie WHERE {
-  ?work ${authorRelationsProperties.join('|')} wd:${authorQid} .
+  ?work ${workAuthorRelationsProperties.join('|')} wd:${authorQid} .
   ?work wdt:P31 ?type .
   FILTER NOT EXISTS { ?work wdt:P31 wd:Q3331189 }
   OPTIONAL { ?work wdt:P577 ?date . }

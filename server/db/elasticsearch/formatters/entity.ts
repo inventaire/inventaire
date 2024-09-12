@@ -4,11 +4,11 @@ import { setTermsFromClaims } from '#controllers/entities/lib/entities'
 import { imageProperties } from '#controllers/entities/lib/get_commons_filenames_from_claims'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityImagesFromClaims } from '#controllers/entities/lib/get_entity_images_from_claims'
-import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { getEntityPopularity } from '#controllers/entities/lib/popularity'
-import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import specialEntityImagesGetter from '#controllers/entities/lib/special_entity_images_getter'
 import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import { isWdEntityId } from '#lib/boolean_validations'
@@ -145,7 +145,7 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
 function getType ({ claims, type }) {
   if (type && type !== 'entity') return type
   const wdtP31 = claims['wdt:P31']
-  return getEntityType(wdtP31)
+  return getInvEntityType(wdtP31)
 }
 
 function dropPlural (type) {
@@ -191,7 +191,7 @@ async function getRelationsTerms ({ type, claims }) {
 }
 
 const worksAndSeriesProperties = [
-  ...authorRelationsProperties,
+  ...workAuthorRelationsProperties,
   'wdt:P179', // serie
 ] as const
 

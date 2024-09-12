@@ -1,15 +1,17 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
-import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
-import { isInvEntityUri } from '#lib/boolean_validations'
+import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
-import { logError, LogError } from '#lib/utils/logs'
+import { arrayIncludes } from '#lib/utils/base'
+import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
-import type { EntityUri } from '#server/types/entity'
+import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
+import type { User } from '#server/types/user'
 import entitiesRelationsTemporaryCache, { triggerSubjectEntityCacheRefresh } from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype, propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
@@ -18,10 +20,12 @@ import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 // /!\ There are no automatic tests for this function as it modifies Wikidata
 
-export default async function (user, id, property, oldValue, newValue) {
+export async function updateWdClaim (user: User, id: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
+  if (isInvPropertyUri(property)) return updateWdEntityLocalClaims(user, id, property, oldValue, newValue)
+
   validateWikidataOAuth(user)
 
-  await validateWdEntityUpdate({ id, property, oldValue, newValue })
+  await validateWdEntityUpdate(id, property, oldValue, newValue)
 
   const prop = properties[property]
   newValue = prop.format != null ? prop.format(newValue) : newValue
@@ -31,8 +35,8 @@ export default async function (user, id, property, oldValue, newValue) {
       throw newError("wikidata entities can't link to inventaire entities", 400)
     }
 
-    if (oldValue) oldValue = unprefixify(oldValue)
-    if (newValue) newValue = unprefixify(newValue)
+    if (isEntityUri(oldValue)) oldValue = unprefixify(oldValue)
+    if (isEntityUri(newValue)) newValue = unprefixify(newValue)
   }
 
   const [ propertyPrefix, propertyId ] = property.split(':')
@@ -53,12 +57,13 @@ export default async function (user, id, property, oldValue, newValue) {
 
   const uri = prefixifyWd(id)
 
-  if (cachedRelationProperties.includes(property)) {
-    if (newValue != null) {
+  if (arrayIncludes(cachedRelationProperties, property)) {
+    const uri = prefixifyWd(id)
+    if (newValue != null && isWdEntityId(newValue)) {
       entitiesRelationsTemporaryCache.set(uri, property, prefixifyWd(newValue))
       .catch(LogError('entitiesRelationsTemporaryCache.set err'))
     }
-    if (oldValue != null) {
+    if (oldValue != null && isWdEntityId(oldValue)) {
       entitiesRelationsTemporaryCache.del(uri, property, prefixifyWd(oldValue))
       .catch(LogError('entitiesRelationsTemporaryCache.del err'))
     }

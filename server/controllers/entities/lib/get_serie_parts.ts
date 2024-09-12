@@ -43,7 +43,7 @@ async function getWdSerieParts (qid: WdEntityId, refresh: boolean, dry: boolean)
     date: getSimpleDayDate(result.date),
     ordinal: result.ordinal,
     subparts: result.subparts,
-    superpart: prefixifyWd(result.superpart),
+    superpart: result.superpart ? prefixifyWd(result.superpart) : undefined,
   }))
 }
 

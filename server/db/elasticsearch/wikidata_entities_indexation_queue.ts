@@ -1,4 +1,4 @@
-import { getCachedEnrichedEntity } from '#controllers/entities/lib/get_wikidata_enriched_entities'
+import { getAggregatedWdEntityLayers } from '#controllers/entities/lib/get_wikidata_enriched_entities'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { initJobQueue } from '#db/level/jobs'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
@@ -36,12 +36,12 @@ async function entitiesIndexationWorker (jobId, wdId) {
     // such as answering users requests
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
     info(`wd entity indexation worker running: ${wdId}`)
-    const formattedEntity = await getCachedEnrichedEntity({ wdId, dry: true })
+    const formattedEntity = await getAggregatedWdEntityLayers({ wdId, dry: true })
     if (formattedEntity) {
       const indexedEntity = await getIndexedEntity(wdId)
       const indexationTime = indexedEntity?._indexationTime
       const entityWasRecentlyIndexed = indexationTime && ((Date.now() - indexationTime) < minReindexationInterval)
-      if (entityWasRecentlyIndexed && indexedEntity.lastrevid === formattedEntity.lastrevid) {
+      if (entityWasRecentlyIndexed && 'lastrevid' in formattedEntity && indexedEntity.lastrevid === formattedEntity.lastrevid) {
         info(`wd entity indexation worker skipped (too recently reindexed): ${wdId}`)
       } else {
         formattedEntity._indexationTime = Date.now()

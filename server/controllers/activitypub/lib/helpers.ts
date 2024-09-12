@@ -1,3 +1,4 @@
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { i18n } from '#lib/emails/i18n/i18n'
@@ -41,7 +42,7 @@ export function getActorTypeFromName (name) {
   else throw notFoundError({ name })
 }
 
-export const defaultLabel = entity => entity.labels.en || Object.values(entity.labels)[0] || entity.claims['wdt:P1476']?.[0]
+export const defaultLabel = entity => entity.labels.en || Object.values(entity.labels)[0] || getFirstClaimValue(entity.claims, 'wdt:P1476')
 
 export function buildLink (url, text) {
   if (!text) text = url.split('://')[1]

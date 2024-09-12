@@ -1,18 +1,30 @@
 import calculateCheckDigit from 'isbn3/lib/calculate_check_digit.js'
-import { isString, map, sampleSize } from 'lodash-es'
+import { map, random, sampleSize } from 'lodash-es'
+import wdk from 'wikibase-sdk/wikidata.org'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
+import { isEntityUri } from '#lib/boolean_validations'
+import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
-import { forceArray } from '#lib/utils/base'
+import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { Claims, EntityUri, Labels, PropertyUri } from '#server/types/entity'
-import { customAuthReq } from '#tests/api/utils/request'
-import { getByUri, addClaim } from '../utils/entities.js'
+import type { Url } from '#server/types/common'
+import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityUri } from '#server/types/entity'
+import type { ImageHash } from '#server/types/image'
+import type { Item } from '#server/types/item'
+import { customAuthReq, request } from '#tests/api/utils/request'
+import { getByUri, addClaim, getByUris } from '../utils/entities.js'
 import { authReq, getUser } from '../utils/utils.js'
 import { firstName, humanName, randomWords } from './text.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wdIdByWmLanguageCode = requireJson('wikidata-lang/mappings/wd_id_by_wm_code.json')
 
 export const someImageHash = 'aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd'
+
+export function someRandomImageHash () {
+  return sha1(Math.random().toString())
+}
 
 interface CreateEntityOptions {
   canHaveLabels?: boolean
@@ -23,7 +35,7 @@ interface CreateEntityParams {
   claims?: Claims
   user?: AwaitableUserWithCookie
 }
-export const createEntity = (P31: EntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
+export const createEntity = (P31: WdEntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
   let labels
@@ -51,7 +63,17 @@ export const createCollection = createEntity('wd:Q20655472', {
 
 export const randomLabel = randomWords
 
-export const createEdition = async (params = {}) => {
+interface CreateEditionParams {
+  works?: SerializedEntity[]
+  work?: SerializedEntity
+  title?: string
+  claims?: Claims
+  publisher?: WdEntityUri | InvEntityUri
+  publicationDate?: string
+  image?: ImageHash
+  lang?: WikimediaLanguageCode
+}
+export async function createEdition (params: CreateEditionParams = {}) {
   const { work } = params
   let { works, title, claims, publisher, publicationDate, image } = params
   publisher = publisher || 'wd:Q1799264'
@@ -75,7 +97,12 @@ export const createEdition = async (params = {}) => {
   return authReq('post', '/api/entities?action=create', { claims: editionClaims })
 }
 
-export const createEditionWithIsbn = async (params = {}) => {
+interface CreateEditionWithIsbnParams {
+  claims?: Claims
+  publisher?: WdEntityUri | InvEntityUri
+  publicationDate?: string
+}
+export async function createEditionWithIsbn (params: CreateEditionWithIsbnParams = {}) {
   const { publisher, publicationDate, claims } = params
   const work = await createWork()
   const isbn13h = generateIsbn13h()
@@ -118,7 +145,7 @@ export async function createWorkWithSpecificRoleAuthor ({ human, label, roleProp
   return { work, human }
 }
 
-export async function createSerieWithAuthor (params) {
+export async function createSerieWithAuthor (params: CreateEntityParams & { human?: SerializedEntity }) {
   let { human } = params
   human = await (human || createHuman())
   const serie = await createSerie(params)
@@ -126,58 +153,58 @@ export async function createSerieWithAuthor (params) {
   return serie
 }
 
-export const createEditionFromWorkWithAuthor = async () => {
+export async function createEditionFromWorkWithAuthor () {
   const work = await createWorkWithAuthor()
   return createEditionFromWorks(work)
 }
 
-export async function createWorkWithSerie (serie) {
+export async function createWorkWithSerie (serie: SerializedEntity) {
   const work = await createWork()
   await addSerie(work, serie)
   // Get a refreshed version of the work
   return getByUri(work.uri)
 }
 
-export const createWorkWithAuthorAndSerie = async () => {
+export async function createWorkWithAuthorAndSerie () {
   const work = await createWorkWithAuthor()
   await addSerie(work)
   // Get a refreshed version of the work
   return getByUri(work.uri)
 }
 
-export const createEditionWithWorkAndAuthor = async () => {
+export async function createEditionWithWorkAndAuthor () {
   const work = await createWorkWithAuthor()
   return createEdition({ work })
 }
 
-export const createEditionWithWorkAuthorAndSerie = async () => {
+export async function createEditionWithWorkAuthorAndSerie () {
   const work = await createWorkWithAuthorAndSerie()
   return createEdition({ work })
 }
 
-export const createItemFromEntityUri = ({ user, uri, item = {} }) => {
+export function createItemFromEntityUri ({ user, uri, item = {} }: { user?: AwaitableUserWithCookie, uri: EntityUri, item?: Partial<Item> }) {
   user = user || getUser()
-  return customAuthReq(user, 'post', '/api/items', Object.assign({}, item, { entity: uri }))
+  return customAuthReq(user, 'post', '/api/items', { ...item, entity: uri })
 }
 
 export const someFakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 
 export const someBnfId = () => `1${Math.random().toString().slice(2, 9)}p`
 
-export const someOpenLibraryId = (type = 'human') => {
+export function someOpenLibraryId (type: EntityType = 'human') {
   const numbers = Math.random().toString().slice(2, 6)
   const typeLetter = openLibraryTypeLetters[type]
   return `OL999${numbers}${typeLetter}`
 }
 
-export const someGoodReadsId = () => {
+export function someGoodReadsId () {
   const numbers = Math.random().toString().slice(2, 7)
   return `100000000${numbers}`
 }
 
 export const someLibraryThingsWorkId = () => `999${Math.random().toString().slice(2, 7)}`
 
-export const generateIsbn13 = () => {
+export function generateIsbn13 () {
   const isbnWithoutChecksum = `978${sampleSize('0123456789'.split(''), 9).join('')}`
   const checksum = calculateCheckDigit(isbnWithoutChecksum)
   const isbn = `${isbnWithoutChecksum}${checksum}`
@@ -187,18 +214,18 @@ export const generateIsbn13 = () => {
 
 export const generateIsbn13h = () => toIsbn13h(generateIsbn13())
 
-export function sameFirstNameLabel (label) {
+export function sameFirstNameLabel (label: string) {
   const newLastName = firstName()
   const labelNames = label.split(' ')
   labelNames[1] = newLastName
   return labelNames.join(' ')
 }
 
-const addEntityClaim = (createFn, property: PropertyUri) => async (subjectEntity, objectEntity?) => {
-  const subjectUri = isString(subjectEntity) ? subjectEntity : subjectEntity.uri
+const addEntityClaim = (createFn, property: PropertyUri) => async (subjectEntity: SerializedEntity | EntityUri, objectEntity?: SerializedEntity | EntityUri) => {
+  const subjectUri = isEntityUri(subjectEntity) ? subjectEntity : subjectEntity.uri
   let objectUri, entity
   if (objectEntity) {
-    objectUri = isString(objectEntity) ? objectEntity : objectEntity.uri
+    objectUri = isEntityUri(objectEntity) ? objectEntity : objectEntity.uri
     entity = getByUri(objectUri)
   } else {
     entity = await createFn()
@@ -227,4 +254,65 @@ export const someReference = {
 export const someReferenceB = {
   'wdt:P854': [ 'https://catalogue.bnf.fr/ark:/12148/cb11908111q' ],
   'wdt:P813': [ '2024-04-24' ],
+}
+
+const { cirrusSearchPages, parse } = wdk
+
+export async function getSomeWdEdition (attempt = 0) {
+  if (++attempt > 20) throw new Error('can not find a valid wd edition')
+  const url = cirrusSearchPages({
+    haswbstatement: [
+      // Editions
+      'P31=Q3331189',
+      // with an associated work
+      'P629',
+      // but no ISBN, to avoid getting an entity with an isbn uri as canonical uri
+      '-P212',
+      '-P957',
+      // Ideally, the edition should have a title, but monolignual text are unfortunately not indexed
+      // see https://phabricator.wikimedia.org/T247242
+      // A SPARQL request would not have this limitation; but would loose the randomization given by the random offset
+      // 'P1476',
+    ],
+    limit: 10,
+    offset: random(0, 10000),
+    prop: [],
+  }) as Url
+  const res = await request('get', url)
+  const uris = parse.pagesTitles(res).map(prefixifyWd)
+  const { entities } = await getByUris(uris)
+  const edition = objectValues(entities).find(entity => entity.type === 'edition')
+  if (edition) return edition
+  else return getSomeWdEdition(attempt)
+}
+
+export async function getSomeWdEditionUri () {
+  const edition = await getSomeWdEdition()
+  return edition.uri
+}
+
+export async function getSomeRemoteEditionWithALocalLayer () {
+  const uri = await getSomeWdEditionUri()
+  const imageHash = someRandomImageHash()
+  await addClaim({ uri, property: 'invp:P2', value: imageHash })
+  const updatedEdition = await getByUri(uri)
+  return updatedEdition as ExpandedSerializedWdEntity
+}
+
+interface ExistsOrCreateParams {
+  claims: Claims
+  createFn: (params: { claims: Claims }) => Promise<SerializedEntity>
+}
+export async function existsOrCreate ({ claims, createFn = createWork }: ExistsOrCreateParams) {
+  try {
+    const entity = await createFn({ claims })
+    return entity
+  } catch (err) {
+    if (err.body.status_verbose === 'invalid claim value: this property value is already used') {
+      const existingEntityUri = err.body.context.entity
+      return getByUri(existingEntityUri)
+    } else {
+      throw err
+    }
+  }
 }

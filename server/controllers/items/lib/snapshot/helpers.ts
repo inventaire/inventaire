@@ -1,5 +1,5 @@
 import { chain } from 'lodash-es'
-import { getEntityType } from '#controllers/entities/lib/get_entity_type'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import getBestLangValue from '#lib/get_best_lang_value'
@@ -18,7 +18,7 @@ export function getEntityUriAndType (entity: InvEntityDoc | SerializedEntity) {
   // which can only be an inv entity doc
   const uri = getInvEntityCanonicalUri(entity)
   let type
-  if ('claims' in entity) type = getEntityType(entity.claims['wdt:P31'])
+  if ('claims' in entity) type = getInvEntityType(entity.claims['wdt:P31'])
   return { uri, type }
 }
 
