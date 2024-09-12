@@ -1,7 +1,7 @@
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
-import { mapKeysValues, objectEntries } from '#lib/utils/base'
+import { arrayIncludes, mapKeysValues, objectEntries } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
@@ -47,7 +47,7 @@ export async function createWdEntity (params: CreateWdEntityParams) {
 
   log(entity, 'wd entity creation')
 
-  await validate(entity, isAlreadyValidated)
+  if (!isAlreadyValidated) await validateInvEntity(entity)
   validateWikidataCompliance(entity)
   const formattedEntity = format(entity)
   const res = await wdEdit.entity.create(formattedEntity, { credentials })
@@ -59,16 +59,12 @@ export async function createWdEntity (params: CreateWdEntityParams) {
   return createdEntity
 }
 
-async function validate (entity, isAlreadyValidated) {
-  if (!isAlreadyValidated) return validateInvEntity(entity)
-}
-
 function validateWikidataCompliance (entity: EntityDraft) {
   const { claims } = entity
   if (claims == null) throw newError('invalid entity', 400, { entity })
 
   const entityType = getInvEntityType(claims['wdt:P31'])
-  if (!allowlistedEntityTypes.includes(entityType)) {
+  if (!arrayIncludes(allowlistedEntityTypes, entityType)) {
     throw newError('invalid entity type', 400, { entityType, entity })
   }
 
