@@ -6,7 +6,7 @@ import { getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity, EntityType } from '#types/entity'
+import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity } from '#types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
 import { getInvEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'

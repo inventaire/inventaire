@@ -26,7 +26,7 @@ export async function validateWdEntityUpdate (id: WdEntityId, property: WdProper
 
 export function validateP31Update (claims: SimplifiedClaims, oldValue: EntityValue, newValue: EntityValue, typeBeforeUpdate?: ExtendedEntityType) {
   const wdtP31Array = claims['wdt:P31']
-  let postUpdateClaims = cloneDeep(claims)
+  const postUpdateClaims = cloneDeep(claims)
   const valueIndex = indexOf(wdtP31Array, oldValue)
   if (newValue) {
     postUpdateClaims['wdt:P31'][valueIndex] = newValue
