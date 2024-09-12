@@ -1,3 +1,4 @@
+import { localProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isInvPropertyUri } from '#lib/boolean_validations'
 import { objectEntries } from '#lib/utils/base'
 import { objectKeys } from '#lib/utils/types'
@@ -82,6 +83,8 @@ export function getClaimObjectFromClaim (claim: InvClaim) {
 }
 
 export function hasLocalClaims (doc: InvEntity) {
-  const { claims } = doc
-  return objectKeys(claims).some(isInvPropertyUri)
+  for (const property of localProperties) {
+    if (doc.claims[property] != null) return true
+  }
+  return false
 }

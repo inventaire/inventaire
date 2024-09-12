@@ -31,11 +31,17 @@ import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, exter
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
-export const propertiesValuesConstraints = {
+const localPropertiesValuesConstraints = {
   // same as remote entity
   'invp:P1': remoteEntity,
   // image hash
   'invp:P2': imageHash,
+} as const
+
+export const localProperties = objectKeys(localPropertiesValuesConstraints)
+
+export const propertiesValuesConstraints = {
+  ...localPropertiesValuesConstraints,
   // instance of
   'wdt:P31': allowedPropertyValues('wdt:P31'),
   // author
