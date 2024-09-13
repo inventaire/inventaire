@@ -1,7 +1,6 @@
 import 'should'
+import { createWork } from '#fixtures/entities'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createWork } from '../fixtures/entities.js'
 import {
   publicReq,
   authReq,
@@ -11,7 +10,8 @@ import {
   getUserB,
   getAdminUser,
   getDataadminUser,
-} from '../utils/utils.js'
+} from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
 describe('roles:public', () => {
   it('should not access an unauthorized endpoint', async () => {

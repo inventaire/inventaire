@@ -1,9 +1,9 @@
 import 'should'
 import { map } from 'lodash-es'
+import { createHuman, createWorkWithAuthor } from '#fixtures/entities'
+import { getByUris } from '#tests/api/utils/entities'
+import { search, waitForIndexation } from '#tests/api/utils/search'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createHuman, createWorkWithAuthor } from '../fixtures/entities.js'
-import { getByUris } from '../utils/entities.js'
-import { search, waitForIndexation } from '../utils/search.js'
 
 const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
 const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925' ]

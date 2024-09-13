@@ -1,17 +1,17 @@
 import 'should'
 import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { sign } from '#controllers/activitypub/lib/security'
+import { createUsername, createUser } from '#fixtures/users'
 import { generateRsaKeyPair } from '#lib/crypto'
 import config from '#server/config'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createUsername, createUser } from '../fixtures/users.js'
 import {
   signedReq,
   createActivity,
   getSomeRemoteServerUser,
   createRemoteActivityPubServerUser,
-} from '../utils/activitypub.js'
-import { rawRequest } from '../utils/request.js'
+} from '#tests/api/utils/activitypub'
+import { rawRequest } from '#tests/api/utils/request'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
 const endpoint = '/api/activitypub'
 

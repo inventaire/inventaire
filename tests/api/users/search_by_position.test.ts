@@ -1,12 +1,12 @@
 import { map } from 'lodash-es'
 import should from 'should'
+import { createUser, getRandomLatitude, getRandomPosition } from '#fixtures/users'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { publicReq, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createUser, getRandomLatitude, getRandomPosition } from '../fixtures/users.js'
-import { makeFriends } from '../utils/relations.js'
-import { waitForIndexation } from '../utils/search.js'
-import { publicReq, getUser } from '../utils/utils.js'
 
 const position = getRandomPosition()
 const [ lat, lng ] = position

@@ -1,9 +1,9 @@
 import should from 'should'
+import { createHuman } from '#fixtures/entities'
+import { createTask } from '#fixtures/tasks'
 import { wait } from '#lib/promises'
-import { createHuman } from '../fixtures/entities.js'
-import { createTask } from '../fixtures/tasks.js'
-import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '../utils/entities.js'
-import { getByIds, getBySuspectUri, update, checkEntities } from '../utils/tasks.js'
+import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '#tests/api/utils/entities'
+import { getByIds, getBySuspectUri, update, checkEntities } from '#tests/api/utils/tasks'
 
 const hookDelay = 300
 

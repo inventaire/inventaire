@@ -1,7 +1,7 @@
 import { sample } from 'lodash-es'
 import { sentence } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser } from '../utils/utils.js'
+import { getUser } from '#tests/api/utils/utils'
 import {
   createEdition,
   createEditionWithWorkAndAuthor,

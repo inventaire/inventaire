@@ -1,10 +1,9 @@
 import 'should'
 import { map } from 'lodash-es'
-import { createUser } from '#fixtures/users'
+import { createItem } from '#fixtures/items'
+import { createUser, getRandomPosition } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { createItem } from '../fixtures/items.js'
-import { getRandomPosition } from '../fixtures/users.js'
-import { waitForIndexation } from '../utils/search.js'
+import { waitForIndexation } from '#tests/api/utils/search'
 
 const positionUser1 = getRandomPosition()
 const positionUser2 = [

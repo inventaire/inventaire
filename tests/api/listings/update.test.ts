@@ -1,10 +1,10 @@
 import { someCouchUuid } from '#fixtures/general'
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { createListing, listingName, listingDescription } from '#fixtures/listings'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, authReqB, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createListing, listingName, listingDescription } from '../fixtures/listings.js'
-import { authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/lists'
 

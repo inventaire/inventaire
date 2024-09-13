@@ -1,10 +1,10 @@
 import 'should'
+import { createHuman } from '#fixtures/entities'
+import { getSomeGroup } from '#fixtures/groups'
+import { createItem } from '#fixtures/items'
+import { createUser } from '#fixtures/users'
 import config from '#server/config'
-import { createHuman } from '../fixtures/entities.js'
-import { getSomeGroup } from '../fixtures/groups.js'
-import { createItem } from '../fixtures/items.js'
-import { createUser } from '../fixtures/users.js'
-import { rawRequest } from '../utils/request.js'
+import { rawRequest } from '#tests/api/utils/request'
 
 const host = config.getPublicOrigin()
 const someEntityPromise = createHuman()

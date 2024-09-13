@@ -1,10 +1,12 @@
 import { map } from 'lodash-es'
 import should from 'should'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { createUser, createUsername, getTwoFriends } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { toLowerCase } from '#lib/utils/base'
 import { getRandomString } from '#lib/utils/random_string'
 import { customAuthReq } from '#tests/api/utils/request'
+import { deleteUser, updateUser } from '#tests/api/utils/users'
 import {
   publicReq,
   authReq,
@@ -12,8 +14,6 @@ import {
   getUserB,
 } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createUser, createUsername, getTwoFriends } from '../fixtures/users.js'
-import { deleteUser, updateUser } from '../utils/users.js'
 
 const specialUsersNames = Object.keys(hardCodedUsers)
 

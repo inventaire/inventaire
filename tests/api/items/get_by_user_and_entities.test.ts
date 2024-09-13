@@ -1,11 +1,11 @@
 import { map } from 'lodash-es'
 import should from 'should'
+import { getSomeGroup, addMember } from '#fixtures/groups'
+import { createItem, createItemWithEditionAndWork } from '#fixtures/items'
 import { humanName } from '#fixtures/text'
+import { getTwoFriends } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser, authReq, publicReq, getUserGetter } from '#tests/api/utils/utils'
-import { getSomeGroup, addMember } from '../fixtures/groups.js'
-import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
-import { getTwoFriends } from '../fixtures/users.js'
 
 const userPromise = getUserGetter(humanName())()
 

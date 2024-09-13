@@ -3,8 +3,8 @@ import { createEdition, createHuman, existsOrCreate } from '#fixtures/entities'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { getByUri } from '#tests/api/utils/entities'
+import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/data?action=summaries'
 

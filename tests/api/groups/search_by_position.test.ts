@@ -1,11 +1,11 @@
 import { map } from 'lodash-es'
 import should from 'should'
+import { createGroup } from '#fixtures/groups'
+import { getRandomPosition } from '#fixtures/users'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
+import { waitForIndexation } from '#tests/api/utils/search'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createGroup } from '../fixtures/groups.js'
-import { getRandomPosition } from '../fixtures/users.js'
-import { waitForIndexation } from '../utils/search.js'
 
 const endpoint = '/api/groups?action=search-by-position'
 

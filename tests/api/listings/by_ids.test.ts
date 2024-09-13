@@ -1,9 +1,9 @@
 import { map } from 'lodash-es'
 import { someCouchUuid } from '#fixtures/general'
+import { createListing, createElement } from '#fixtures/listings'
 import { getListingById, getByIdWithElements } from '#tests/api/utils/listings'
+import { publicReq, authReqB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createListing, createElement } from '../fixtures/listings.js'
-import { publicReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-ids'
 

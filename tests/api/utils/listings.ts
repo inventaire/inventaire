@@ -1,6 +1,5 @@
 import { isArray } from '#lib/boolean_validations'
-import { getUser } from '#tests/api/utils/utils'
-import { authReq } from '../utils/utils.js'
+import { getUser, authReq } from '#tests/api/utils/utils'
 import { customAuthReq } from './request.js'
 
 const endpoint = '/api/lists?action='

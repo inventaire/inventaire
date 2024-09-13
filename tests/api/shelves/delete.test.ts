@@ -1,7 +1,7 @@
 import should from 'should'
+import { createShelf, createShelfWithItem } from '#fixtures/shelves'
+import { authReq, authReqB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createShelf, createShelfWithItem } from '../fixtures/shelves.js'
-import { authReq, authReqB } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=delete'
 

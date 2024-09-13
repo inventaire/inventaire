@@ -1,7 +1,4 @@
 import should from 'should'
-import { getRandomString } from '#lib/utils/random_string'
-import type { InvEntityUri } from '#server/types/entity'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createWork,
   createHuman,
@@ -13,10 +10,13 @@ import {
   getSomeRemoteEditionWithALocalLayer,
   someRandomImageHash,
   getSomeWdEditionUri,
-} from '../fixtures/entities.js'
-import { getByUris, merge, getHistory, addClaim, getByUri } from '../utils/entities.js'
-import { getItemsByIds } from '../utils/items.js'
-import { authReq, dataadminReq } from '../utils/utils.js'
+} from '#fixtures/entities'
+import { getRandomString } from '#lib/utils/random_string'
+import type { InvEntityUri } from '#server/types/entity'
+import { getByUris, merge, getHistory, addClaim, getByUri } from '#tests/api/utils/entities'
+import { getItemsByIds } from '#tests/api/utils/items'
+import { authReq, dataadminReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {

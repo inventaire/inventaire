@@ -1,21 +1,21 @@
 import 'should'
-import { createGroup } from '#fixtures/groups'
-import { wait } from '#lib/promises'
-import config from '#server/config'
-import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import {
   createEditionWithIsbn,
   createEdition,
   createWorkWithAuthor,
   createHuman,
   createEditionWithWorkAndAuthor,
-} from '../fixtures/entities.js'
-import { createItem } from '../fixtures/items.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { createUser, getRefreshedUser } from '../fixtures/users.js'
-import { getByUris as getEntitiesByUris } from '../utils/entities.js'
-import { authReq, getUser, getUserB } from '../utils/utils.js'
+} from '#fixtures/entities'
+import { createGroup } from '#fixtures/groups'
+import { createItem } from '#fixtures/items'
+import { createShelf } from '#fixtures/shelves'
+import { createUser, getRefreshedUser } from '#fixtures/users'
+import { wait } from '#lib/promises'
+import config from '#server/config'
+import { getByUris as getEntitiesByUris } from '#tests/api/utils/entities'
+import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, getUser, getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
 const debounceDelay = config.snapshotsDebounceTime + 100
 

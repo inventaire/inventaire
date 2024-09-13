@@ -1,13 +1,13 @@
 import 'should'
+import { createEdition } from '#fixtures/entities'
+import { createGroup } from '#fixtures/groups'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { createEdition } from '../fixtures/entities.js'
-import { createGroup } from '../fixtures/groups.js'
-import { updateClaim } from '../utils/entities.js'
-import { leaveGroup, updateGroup } from '../utils/groups.js'
-import { importSomeImage, uploadSomeImage, localContainerHasImage } from '../utils/images.js'
-import { updateUser } from '../utils/users.js'
-import { getUser, getUserB } from '../utils/utils.js'
+import { updateClaim } from '#tests/api/utils/entities'
+import { leaveGroup, updateGroup } from '#tests/api/utils/groups'
+import { importSomeImage, uploadSomeImage, localContainerHasImage } from '#tests/api/utils/images'
+import { updateUser } from '#tests/api/utils/users'
+import { getUser, getUserB } from '#tests/api/utils/utils'
 
 const { upload: postUploadCheckDelay, update: postUpdateCheckDelay } = config.mediaStorage.images.checkDelays
 

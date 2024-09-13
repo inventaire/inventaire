@@ -1,10 +1,10 @@
 import 'should'
+import { getSomeGroup, addMember } from '#fixtures/groups'
 import { humanName } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getGroup } from '#tests/api/utils/groups'
+import { authReq, getUserGetter } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getSomeGroup, addMember } from '../fixtures/groups.js'
-import { authReq, getUserGetter } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=kick'
 const userPromise = getUserGetter(humanName())()

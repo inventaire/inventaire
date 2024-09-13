@@ -1,6 +1,6 @@
 import should from 'should'
-import { getClient } from '../utils/oauth.js'
-import { publicReq } from '../utils/utils.js'
+import { getClient } from '#tests/api/utils/oauth'
+import { publicReq } from '#tests/api/utils/utils'
 
 const endpoint = '/api/oauth/clients?action=by-ids'
 

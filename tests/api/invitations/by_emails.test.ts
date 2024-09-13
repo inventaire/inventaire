@@ -1,12 +1,12 @@
 import 'should'
+import { getSomeGroup, getSomeGroupWithAMember } from '#fixtures/groups'
+import { createUser, signup } from '#fixtures/users'
 import { getRandomString } from '#lib/utils/random_string'
 import { getGroup } from '#tests/api/utils/groups'
 import { getRelationStatus } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, authReqB, authReqC, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getSomeGroup, getSomeGroupWithAMember } from '../fixtures/groups.js'
-import { createUser, signup } from '../fixtures/users.js'
-import { authReq, authReqB, authReqC, getUser } from '../utils/utils.js'
 
 const randomEmail = () => `a${getRandomString(4).toLowerCase()}@foo.org`
 const endpoint = '/api/invitations?action=by-emails'
@@ -107,7 +107,7 @@ describe('invitations:by-emails', () => {
 
     it('should accept non-user admin requests to invite to a group', async () => {
       const group = await getSomeGroup()
-      // User B is a member (see ../fixtures/groups.js)
+      // User B is a member (see #fixtures/groups)
       const { emails } = await authReqB('post', endpoint, {
         emails: 'a@foo.org',
         group: group._id,

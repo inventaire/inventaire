@@ -1,10 +1,10 @@
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { createItem } from '#fixtures/items'
+import { shelfName } from '#fixtures/shelves'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
+import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createItem } from '../fixtures/items.js'
-import { shelfName } from '../fixtures/shelves.js'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=create'
 

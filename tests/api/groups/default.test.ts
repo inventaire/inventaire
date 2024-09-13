@@ -1,8 +1,8 @@
 import { map } from 'lodash-es'
 import should from 'should'
+import { getSomeGroup } from '#fixtures/groups'
+import { authReq, publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getSomeGroup } from '../fixtures/groups.js'
-import { authReq, publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups'
 

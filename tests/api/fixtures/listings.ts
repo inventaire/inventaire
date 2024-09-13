@@ -1,7 +1,7 @@
 import { randomWords } from '#fixtures/text'
 import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser } from '../utils/utils.js'
+import { getUser } from '#tests/api/utils/utils'
 import { createWork } from './entities.js'
 
 const endpoint = '/api/lists?action='

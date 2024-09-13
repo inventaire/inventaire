@@ -1,10 +1,10 @@
 import should from 'should'
 import { indexes } from '#db/elasticsearch/indexes'
+import { createItem } from '#fixtures/items'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { createItem } from '../fixtures/items.js'
-import { deleteItemsByIds, updateItems } from '../utils/items.js'
-import { getIndexedDoc } from '../utils/search.js'
+import { deleteItemsByIds, updateItems } from '#tests/api/utils/items'
+import { getIndexedDoc } from '#tests/api/utils/search'
 
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 const { index } = indexes.items

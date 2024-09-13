@@ -1,10 +1,10 @@
 import 'should'
 import { map } from 'lodash-es'
+import { getSomeGroup, addMember } from '#fixtures/groups'
 import { humanName } from '#fixtures/text'
 import { getGroup } from '#tests/api/utils/groups'
+import { authReq, authReqB, getUserGetter } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getSomeGroup, addMember } from '../fixtures/groups.js'
-import { authReq, authReqB, getUserGetter } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=make-admin'
 

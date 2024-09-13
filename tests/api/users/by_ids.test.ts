@@ -1,10 +1,9 @@
 import { map } from 'lodash-es'
-import { createUser } from '#fixtures/users'
+import { createUser, getTwoFriends } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
+import { deleteUser } from '#tests/api/utils/users'
+import { publicReq, authReq, getUser, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { getTwoFriends } from '../fixtures/users.js'
-import { deleteUser } from '../utils/users.js'
-import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/users?action=by-ids'
 

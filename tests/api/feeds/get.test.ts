@@ -1,10 +1,10 @@
 import 'should'
+import { getSomeGroup, createGroup } from '#fixtures/groups'
+import { createItem, createItems } from '#fixtures/items'
+import { createShelf, createShelfWithItems } from '#fixtures/shelves'
 import { createUser } from '#fixtures/users'
-import { getSomeGroup, createGroup } from '../fixtures/groups.js'
-import { createItem, createItems } from '../fixtures/items.js'
-import { createShelf, createShelfWithItems } from '../fixtures/shelves.js'
-import { rawRequest } from '../utils/request.js'
-import { getUser } from '../utils/utils.js'
+import { rawRequest } from '#tests/api/utils/request'
+import { getUser } from '#tests/api/utils/utils'
 
 describe('feeds:get', () => {
   describe('user', () => {

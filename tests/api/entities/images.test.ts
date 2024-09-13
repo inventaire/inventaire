@@ -1,7 +1,4 @@
 import should from 'should'
-import { fixedEncodeURIComponent } from '#lib/utils/url'
-import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createEdition,
   createEditionWithIsbn,
@@ -9,9 +6,12 @@ import {
   createSerie,
   createWork,
   someImageHash,
-} from '../fixtures/entities.js'
-import { rawRequest } from '../utils/request.js'
-import { publicReq } from '../utils/utils.js'
+} from '#fixtures/entities'
+import { fixedEncodeURIComponent } from '#lib/utils/url'
+import config from '#server/config'
+import { rawRequest } from '#tests/api/utils/request'
+import { publicReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const host = config.getPublicOrigin()
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')

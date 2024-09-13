@@ -1,9 +1,9 @@
 import should from 'should'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '#fixtures/entities'
 import type { EntityUri } from '#server/types/entity'
+import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '../fixtures/entities.js'
-import { getByUri, addClaim, updateClaim, removeClaim, merge } from '../utils/entities.js'
 
 describe('entities:update-claims:inv', () => {
   it('should reject without uri', async () => {

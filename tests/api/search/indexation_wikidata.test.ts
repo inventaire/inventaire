@@ -2,8 +2,8 @@ import 'should'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { getByUri } from '../utils/entities.js'
-import { getIndexedDoc, deindex, indexPlaceholder } from '../utils/search.js'
+import { getByUri } from '#tests/api/utils/entities'
+import { getIndexedDoc, deindex, indexPlaceholder } from '#tests/api/utils/search'
 
 const { wikidata: wikidataIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch

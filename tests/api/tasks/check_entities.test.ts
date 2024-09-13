@@ -1,9 +1,9 @@
 import 'should'
 import { map, uniq } from 'lodash-es'
+import { createHuman, createWork } from '#fixtures/entities'
+import { findOrIndexEntities, deleteByUris } from '#tests/api/utils/entities'
+import { checkEntities, getBySuspectUri } from '#tests/api/utils/tasks'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createHuman, createWork } from '../fixtures/entities.js'
-import { findOrIndexEntities, deleteByUris } from '../utils/entities.js'
-import { checkEntities, getBySuspectUri } from '../utils/tasks.js'
 
 describe('tasks:check-entities', () => {
   before(async () => {

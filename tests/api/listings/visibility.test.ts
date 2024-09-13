@@ -1,10 +1,10 @@
 import { getSomeGroupWithAMember } from '#fixtures/groups'
+import { createListing } from '#fixtures/listings'
+import { createUser, getTwoFriends } from '#fixtures/users'
+import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
+import { publicReq, authReq, authReqB, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createListing } from '../fixtures/listings.js'
-import { createUser, getTwoFriends } from '../fixtures/users.js'
-import { makeFriends } from '../utils/relations.js'
-import { publicReq, authReq, authReqB, getUser } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-ids'
 

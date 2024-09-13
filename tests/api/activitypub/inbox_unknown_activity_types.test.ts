@@ -1,9 +1,9 @@
 import 'should'
 import { makeUrl } from '#controllers/activitypub/lib/helpers'
+import { createUser } from '#fixtures/users'
+import { createRemoteActivityPubServerUser, signedReq } from '#tests/api/utils/activitypub'
+import { rawRequest } from '#tests/api/utils/request'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createUser } from '../fixtures/users.js'
-import { createRemoteActivityPubServerUser, signedReq } from '../utils/activitypub.js'
-import { rawRequest } from '../utils/request.js'
 
 describe('activitypub:inbox:unknown_types', () => {
   it('should reject signed unknown activity type requests', async () => {

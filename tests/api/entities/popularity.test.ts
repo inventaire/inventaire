@@ -1,13 +1,13 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createEdition,
   createWork,
   createItemFromEntityUri,
   createSerie,
   createHuman,
-} from '../fixtures/entities.js'
-import { addClaim, getRefreshedPopularityByUri } from '../utils/entities.js'
+} from '#fixtures/entities'
+import { addClaim, getRefreshedPopularityByUri } from '#tests/api/utils/entities'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('entities:popularity', () => {
   describe('edition', () => {

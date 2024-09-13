@@ -1,8 +1,8 @@
 import should from 'should'
+import { createWork, createEditionWithIsbn } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
+import { getByUri, updateLabel, revertEdit, getHistory, addClaim } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createWork, createEditionWithIsbn } from '../fixtures/entities.js'
-import { getByUri, updateLabel, revertEdit, getHistory, addClaim } from '../utils/entities.js'
 
 describe('entities:revert-edit', () => {
   it('should revert a label update', async () => {

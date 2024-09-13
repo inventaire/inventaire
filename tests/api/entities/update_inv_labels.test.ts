@@ -1,9 +1,9 @@
 import should from 'should'
+import { createHuman } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
+import { getByUri, updateLabel } from '#tests/api/utils/entities'
+import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createHuman } from '../fixtures/entities.js'
-import { getByUri, updateLabel } from '../utils/entities.js'
-import { authReq } from '../utils/utils.js'
 
 const humanPromise = createHuman()
 

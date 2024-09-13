@@ -1,6 +1,6 @@
 import { oneDay } from '#lib/time'
 import { simpleDay } from '#lib/utils/base'
-import { adminReq } from '../utils/utils.js'
+import { adminReq } from '#tests/api/utils/utils'
 
 const endpoint = '/api/entities?action=contributions-count'
 

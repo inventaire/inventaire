@@ -1,7 +1,7 @@
 import 'should'
 import { map } from 'lodash-es'
+import { createTransaction } from '#fixtures/transactions'
 import { authReq, authReqC } from '#tests/api/utils/utils'
-import { createTransaction } from '../fixtures/transactions.js'
 
 describe('transactions:get', () => {
   it('should get user transactions', async () => {

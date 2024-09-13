@@ -1,8 +1,8 @@
 import { getRandomString } from '#lib/utils/random_string'
 import { parseQuery } from '#lib/utils/url'
+import { getClient } from '#tests/api/utils/oauth'
+import { publicReq, authReq, rawAuthReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getClient } from '../utils/oauth.js'
-import { publicReq, authReq, rawAuthReq } from '../utils/utils.js'
 
 const endpoint = '/api/oauth/authorize'
 

@@ -1,16 +1,16 @@
 import 'should'
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { createHuman, createWork, addAuthor } from '#fixtures/entities'
+import { createItem } from '#fixtures/items'
+import { createShelf } from '#fixtures/shelves'
+import { randomWords } from '#fixtures/text'
+import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
+import { signedReq } from '#tests/api/utils/activitypub'
+import { addItemsToShelf, getActorName } from '#tests/api/utils/shelves'
 import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createHuman, createWork, addAuthor } from '../fixtures/entities.js'
-import { createItem } from '../fixtures/items.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { randomWords } from '../fixtures/text.js'
-import { createUser } from '../fixtures/users.js'
-import { signedReq } from '../utils/activitypub.js'
-import { addItemsToShelf, getActorName } from '../utils/shelves.js'
 
 const debounceTime = config.activitypub.activitiesDebounceTime + 200
 

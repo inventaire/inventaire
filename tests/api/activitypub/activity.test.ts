@@ -1,13 +1,13 @@
 import 'should'
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { createWork, createHuman, addAuthor } from '#fixtures/entities'
+import { createItem } from '#fixtures/items'
+import { createShelfWithItem } from '#fixtures/shelves'
+import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { createWork, createHuman, addAuthor } from '../fixtures/entities.js'
-import { createItem } from '../fixtures/items.js'
-import { createShelfWithItem } from '../fixtures/shelves.js'
-import { createUser } from '../fixtures/users.js'
-import { getActorName } from '../utils/shelves.js'
-import { publicReq, getFediversableUser } from '../utils/utils.js'
+import { getActorName } from '#tests/api/utils/shelves'
+import { publicReq, getFediversableUser } from '#tests/api/utils/utils'
 
 const debounceTime = config.activitypub.activitiesDebounceTime + 50
 

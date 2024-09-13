@@ -1,13 +1,13 @@
 import 'should'
-import { publicReq } from '#tests/api/utils/utils'
-import { createHuman, someFakeUri } from '../fixtures/entities.js'
-import { createTask } from '../fixtures/tasks.js'
+import { createHuman, someFakeUri } from '#fixtures/entities'
+import { createTask } from '#fixtures/tasks'
 import {
   endpoint,
   getBySuspectUris,
   getBySuggestionUris,
   update,
-} from '../utils/tasks.js'
+} from '#tests/api/utils/tasks'
+import { publicReq } from '#tests/api/utils/utils'
 
 describe('tasks:bySuspectUris', () => {
   it('should return an array of tasks', async () => {

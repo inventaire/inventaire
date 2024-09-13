@@ -1,8 +1,8 @@
 import { map } from 'lodash-es'
 import should from 'should'
 import { someFakeUri } from '#fixtures/entities'
-import { createElement } from '../fixtures/listings.js'
-import { publicReq, authReq, getUser, getUserB } from '../utils/utils.js'
+import { createElement } from '#fixtures/listings'
+import { publicReq, authReq, getUser, getUserB } from '#tests/api/utils/utils'
 
 const endpoint = '/api/lists?action=by-entities'
 

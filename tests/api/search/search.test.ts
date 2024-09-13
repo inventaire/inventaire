@@ -1,15 +1,14 @@
 import 'should'
 import { map } from 'lodash-es'
-import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
+import { getSomeGroupWithAMember, createGroupAndMember, createGroup, createGroupWithAMember } from '#fixtures/groups'
 import { createListing } from '#fixtures/listings'
 import { createShelf } from '#fixtures/shelves'
 import { createUser } from '#fixtures/users'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { makeFriends } from '#tests/api/utils/relations'
+import { search, waitForIndexation, firstNWords, customAuthSearch } from '#tests/api/utils/search'
+import { publicReq, getUser, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createGroup, createGroupWithAMember } from '../fixtures/groups.js'
-import { search, waitForIndexation, firstNWords, customAuthSearch } from '../utils/search.js'
-import { publicReq, getUser, getUserB } from '../utils/utils.js'
 
 describe('search:global', () => {
   describe('parameters', () => {

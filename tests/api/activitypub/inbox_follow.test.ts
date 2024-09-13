@@ -1,14 +1,14 @@
 import 'should'
 import { getFollowActivitiesByObject } from '#controllers/activitypub/lib/activities'
 import { getEntityActorName, makeUrl } from '#controllers/activitypub/lib/helpers'
+import { createHuman } from '#fixtures/entities'
+import { createShelf } from '#fixtures/shelves'
+import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import { signedReq, createRemoteActivityPubServerUser } from '#tests/api/utils/activitypub'
+import { getActorName } from '#tests/api/utils/shelves'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createHuman } from '../fixtures/entities.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { createUser } from '../fixtures/users.js'
-import { signedReq, createRemoteActivityPubServerUser } from '../utils/activitypub.js'
-import { getActorName } from '../utils/shelves.js'
 
 describe('activitypub:inbox:Follow', () => {
   describe('users', () => {

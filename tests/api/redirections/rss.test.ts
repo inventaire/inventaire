@@ -1,9 +1,9 @@
 import 'should'
+import { getSomeGroup } from '#fixtures/groups'
+import { createShelf } from '#fixtures/shelves'
 import config from '#server/config'
-import { getSomeGroup } from '../fixtures/groups.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { rawRequest } from '../utils/request.js'
-import { getUser } from '../utils/utils.js'
+import { rawRequest } from '#tests/api/utils/request'
+import { getUser } from '#tests/api/utils/utils'
 
 const host = config.getPublicOrigin()
 

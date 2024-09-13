@@ -1,9 +1,9 @@
 import { createWork } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
+import { merge } from '#tests/api/utils/entities'
 import { getListingById } from '#tests/api/utils/listings'
+import { publicReq, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { merge } from '../utils/entities.js'
-import { publicReq, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-id'
 

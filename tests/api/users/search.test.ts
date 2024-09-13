@@ -1,11 +1,10 @@
 import { map } from 'lodash-es'
 import should from 'should'
 import { randomWords } from '#fixtures/text'
-import { createUser } from '#fixtures/users'
+import { createUser, getOrCreateUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getOrCreateUser } from '../fixtures/users.js'
-import { waitForIndexation } from '../utils/search.js'
-import { publicReq, getUser, getUserB } from '../utils/utils.js'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { publicReq, getUser, getUserB } from '#tests/api/utils/utils'
 
 describe('users:search', () => {
   it('should find a user', async () => {

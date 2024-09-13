@@ -1,8 +1,8 @@
 import { map } from 'lodash-es'
 import { randomWords } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
-import { addItemsToShelf } from '../utils/shelves.js'
-import { getUser } from '../utils/utils.js'
+import { addItemsToShelf } from '#tests/api/utils/shelves'
+import { getUser } from '#tests/api/utils/utils'
 import { createItem } from './items.js'
 
 export const shelfName = () => randomWords(3, ' shelf')

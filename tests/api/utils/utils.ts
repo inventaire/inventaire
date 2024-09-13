@@ -1,5 +1,5 @@
 import 'should'
-import { getOrCreateUser, getRefreshedUser } from '../fixtures/users.js'
+import { getOrCreateUser, getRefreshedUser } from '#fixtures/users'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 
 const userPromises = {}

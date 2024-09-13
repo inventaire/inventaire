@@ -3,9 +3,9 @@ import ASCIIFolder from 'fold-to-ascii'
 import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
-import { generateIsbn13, createHuman, createWorkWithAuthor, randomLabel, createEdition } from '../fixtures/entities.js'
-import { getByUris, findOrIndexEntities, deleteByUris } from '../utils/entities.js'
-import { checkEntities } from '../utils/tasks.js'
+import { generateIsbn13, createHuman, createWorkWithAuthor, randomLabel, createEdition } from '#fixtures/entities'
+import { getByUris, findOrIndexEntities, deleteByUris } from '#tests/api/utils/entities'
+import { checkEntities } from '#tests/api/utils/tasks'
 
 describe('tasks:automerge', () => {
   before(async () => {

@@ -9,12 +9,26 @@ import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import type { Url } from '#server/types/common'
-import type { Claims, EntityType, EntityUri, ExpandedSerializedWdEntity, InvEntityUri, Labels, PropertyUri, SerializedEntity, WdEntityUri } from '#server/types/entity'
+import type {
+  Claims,
+  EntityType,
+  EntityUri,
+  ExpandedSerializedWdEntity,
+  InvEntityUri,
+  Labels,
+  PropertyUri,
+  SerializedEntity,
+  WdEntityUri,
+  Claims,
+  EntityUri,
+  Labels,
+  PropertyUri,
+} from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
+import { getByUri, addClaim, getByUris } from '#tests/api/utils/entities'
 import { customAuthReq, request } from '#tests/api/utils/request'
-import { getByUri, addClaim, getByUris } from '../utils/entities.js'
-import { authReq, getUser } from '../utils/utils.js'
+import { authReq, getUser } from '#tests/api/utils/utils'
 import { firstName, humanName, randomWords } from './text.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 

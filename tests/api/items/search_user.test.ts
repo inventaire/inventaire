@@ -2,21 +2,20 @@ import { map } from 'lodash-es'
 import should from 'should'
 import { createEdition } from '#fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
-import { createUser } from '#fixtures/users'
-import { buildUrl } from '#lib/utils/url'
-import { makeFriends } from '#tests/api/utils/relations'
-import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createItem,
   createItemWithEditionAndWork,
   createItemWithAuthor,
   createItemWithAuthorAndSerie,
   createItems,
-} from '../fixtures/items.js'
-import { getTwoFriends } from '../fixtures/users.js'
-import { waitForIndexation, firstNWords } from '../utils/search.js'
-import { getUser, publicReq } from '../utils/utils.js'
+} from '#fixtures/items'
+import { createUser, getTwoFriends } from '#fixtures/users'
+import { buildUrl } from '#lib/utils/url'
+import { makeFriends } from '#tests/api/utils/relations'
+import { customAuthReq } from '#tests/api/utils/request'
+import { waitForIndexation, firstNWords } from '#tests/api/utils/search'
+import { getUser, publicReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const search = (reqUser, { user, search, limit, offset }) => {
   const url = buildUrl('/api/items', {

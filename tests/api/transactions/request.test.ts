@@ -1,4 +1,8 @@
 import 'should'
+import { createEditionFromWorkWithAuthor } from '#fixtures/entities'
+import { createItem } from '#fixtures/items'
+import { createTransaction } from '#fixtures/transactions'
+import { updateTransaction } from '#tests/api/utils/transactions'
 import {
   authReq,
   authReqB,
@@ -6,10 +10,6 @@ import {
   getUser,
 } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createEditionFromWorkWithAuthor } from '../fixtures/entities.js'
-import { createItem } from '../fixtures/items.js'
-import { createTransaction } from '../fixtures/transactions.js'
-import { updateTransaction } from '../utils/transactions.js'
 
 const endpoint = '/api/transactions?action=request'
 

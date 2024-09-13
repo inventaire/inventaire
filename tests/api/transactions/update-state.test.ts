@@ -1,11 +1,10 @@
 import 'should'
 import { sample } from 'lodash-es'
-import { authReqB, authReqC } from '#tests/api/utils/utils'
+import { createTransaction, getSomeTransaction } from '#fixtures/transactions'
+import { getItem } from '#tests/api/utils/items'
+import { updateTransaction } from '#tests/api/utils/transactions'
+import { authReqB, authReqC, getUserC } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createTransaction, getSomeTransaction } from '../fixtures/transactions.js'
-import { getItem } from '../utils/items.js'
-import { updateTransaction } from '../utils/transactions.js'
-import { getUserC } from '../utils/utils.js'
 
 const endpoint = '/api/transactions?action=update-state'
 

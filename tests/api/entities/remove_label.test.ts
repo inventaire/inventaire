@@ -1,8 +1,8 @@
 import should from 'should'
 import { createHuman } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
+import { getByUri, removeLabel } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getByUri, removeLabel } from '../utils/entities.js'
 
 describe('entities:remove-labels', () => {
   it('should remove a label', async () => {

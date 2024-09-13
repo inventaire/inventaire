@@ -1,7 +1,7 @@
 import 'should'
 import slugify from '#controllers/groups/lib/slugify'
+import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=slug'
 

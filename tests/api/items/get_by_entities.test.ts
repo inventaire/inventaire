@@ -1,7 +1,7 @@
 import 'should'
 import { map, uniq } from 'lodash-es'
+import { createItem, createItemWithEditionAndWork } from '#fixtures/items'
 import { publicReq } from '#tests/api/utils/utils'
-import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
 
 describe('items:get-by-entities', () => {
   it('should get an item by its entity uri', async () => {

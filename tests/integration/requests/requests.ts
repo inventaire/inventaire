@@ -1,6 +1,6 @@
 import 'should'
 import { requests_ } from '#lib/requests'
-import { startGenericMockServer } from '../utils/mock_server.js'
+import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 
 const startMockServer = async () => {
   const { port, host, origin } = await startGenericMockServer(app => {

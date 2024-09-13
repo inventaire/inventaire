@@ -1,11 +1,11 @@
 import 'should'
 import { map, uniq } from 'lodash-es'
+import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '#fixtures/entities'
 import { wait } from '#lib/promises'
+import { getByUris, getByUri, merge } from '#tests/api/utils/entities'
+import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { authReq, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '../fixtures/entities.js'
-import { getByUris, getByUri, merge } from '../utils/entities.js'
-import { getBySuspectUri } from '../utils/tasks.js'
 
 const endpoint = '/api/tasks?action=deduplicate-works'
 

@@ -1,8 +1,8 @@
 import 'should'
+import { createTask } from '#fixtures/tasks'
+import { getByEntitiesType } from '#tests/api/utils/tasks'
+import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createTask } from '../fixtures/tasks.js'
-import { getByEntitiesType } from '../utils/tasks.js'
-import { publicReq } from '../utils/utils.js'
 
 describe('tasks:byEntitiesType', () => {
   const entitiesType = 'work'

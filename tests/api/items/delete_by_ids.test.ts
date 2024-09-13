@@ -1,10 +1,10 @@
 import 'should'
+import { createItem } from '#fixtures/items'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
 import config from '#server/config'
+import { authReq, authReqB, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createItem } from '../fixtures/items.js'
-import { authReq, authReqB, getUser } from '../utils/utils.js'
 import { CountChange } from './helpers.js'
 
 const debounceDelay = config.snapshotsDebounceTime + 500

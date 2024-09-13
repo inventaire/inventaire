@@ -1,8 +1,5 @@
 import 'should'
 import papaparse from 'papaparse'
-import { createUser } from '#fixtures/users'
-import config from '#server/config'
-import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 import {
   createEdition,
   createWork,
@@ -10,10 +7,13 @@ import {
   createEditionWithWorkAuthorAndSerie,
   addTranslator,
   someImageHash,
-} from '../fixtures/entities.js'
-import { createItem } from '../fixtures/items.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { getByUri, addClaim, parseLabel, updateLabel } from '../utils/entities.js'
+} from '#fixtures/entities'
+import { createItem } from '#fixtures/items'
+import { createShelf } from '#fixtures/shelves'
+import { createUser } from '#fixtures/users'
+import config from '#server/config'
+import { getByUri, addClaim, parseLabel, updateLabel } from '#tests/api/utils/entities'
+import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 
 const { parse } = papaparse
 

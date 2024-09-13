@@ -1,8 +1,8 @@
 import 'should'
+import { getSomeGroup } from '#fixtures/groups'
 import { getGroup } from '#tests/api/utils/groups'
+import { authReq, authReqB, authReqC, getUserC } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { getSomeGroup } from '../fixtures/groups.js'
-import { authReq, authReqB, authReqC, getUserC } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=decline'
 

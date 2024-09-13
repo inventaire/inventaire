@@ -1,7 +1,7 @@
 import 'should'
 import { isImageHash, isEntityImg, isUserImg, isGroupImg } from '#lib/boolean_validations'
+import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/images?action=convert-url'
 

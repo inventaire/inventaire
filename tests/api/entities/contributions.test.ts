@@ -1,17 +1,17 @@
 import should from 'should'
+import { createWork } from '#fixtures/entities'
 import { someRandomCouchUuid } from '#fixtures/general'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
+import { updateClaim, updateLabel } from '#tests/api/utils/entities'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createWork } from '../fixtures/entities.js'
-import { updateClaim, updateLabel } from '../utils/entities.js'
 import {
   adminReq,
   getUser,
   authReq,
   getDeanonymizedUser,
-} from '../utils/utils.js'
+} from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const endpoint = '/api/entities?action=contributions'
 

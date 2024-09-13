@@ -1,5 +1,5 @@
 import should from 'should'
-import { rawRequest } from '../utils/request.js'
+import { rawRequest } from '#tests/api/utils/request'
 
 describe('CORS', () => {
   describe('OPTIONS', () => {

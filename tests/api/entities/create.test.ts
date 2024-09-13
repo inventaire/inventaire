@@ -1,9 +1,9 @@
 import should from 'should'
+import { createEditionWithIsbn, randomLabel, someOpenLibraryId, someReference } from '#fixtures/entities'
 import { getSomeUsername } from '#fixtures/text'
 import { getEntityAttributesByUri } from '#tests/api/utils/entities'
+import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createEditionWithIsbn, randomLabel, someOpenLibraryId, someReference } from '../fixtures/entities.js'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=create'
 

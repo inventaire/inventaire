@@ -1,9 +1,9 @@
 import 'should'
 import { some } from 'lodash-es'
+import { populate } from '#fixtures/populate'
 import { expired } from '#lib/time'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { populate } from '../fixtures/populate.js'
 
 const recentPublicUrl = '/api/items?action=recent-public'
 

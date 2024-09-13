@@ -4,9 +4,9 @@ import { randomWords } from '#fixtures/text'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import config from '#server/config'
+import { getIndexedDoc } from '#tests/api/utils/search'
 import { updateShelf, deleteShelves } from '#tests/api/utils/shelves'
 import { deleteUser } from '#tests/api/utils/users'
-import { getIndexedDoc } from '../utils/search.js'
 
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 const { index } = indexes.shelves

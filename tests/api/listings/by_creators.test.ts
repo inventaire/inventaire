@@ -1,12 +1,12 @@
 import { map } from 'lodash-es'
 import should from 'should'
 import { createGroupWithAMember, createGroup, addMember } from '#fixtures/groups'
+import { createListing, createElement } from '#fixtures/listings'
 import { getTwoFriends, createUser } from '#fixtures/users'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
 import { customAuthReq } from '#tests/api/utils/request'
+import { publicReq, authReq, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createListing, createElement } from '../fixtures/listings.js'
-import { publicReq, authReq, getUserB } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=by-creators'
 

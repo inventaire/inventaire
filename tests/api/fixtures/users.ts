@@ -6,17 +6,17 @@ import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
+import { makeFriends } from '#tests/api/utils/relations'
+import { request, rawRequest } from '#tests/api/utils/request'
 import type { User } from '#types/user'
-import { makeFriends } from '../utils/relations.js'
-import { request, rawRequest } from '../utils/request.js'
 
 const origin = config.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
 
 let getUser, updateUser
 const importCircularDependencies = async () => {
-  ;({ getUser } = await import('../utils/utils.js'))
-  ;({ updateUser } = await import('../utils/users.js'))
+  ;({ getUser } = await import('#tests/api/utils/utils'))
+  ;({ updateUser } = await import('#tests/api/utils/users'))
 }
 setImmediate(importCircularDependencies)
 

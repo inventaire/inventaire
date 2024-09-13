@@ -1,13 +1,13 @@
 import 'should'
 import dbFactory from '#db/couchdb/base'
+import { createUserEmail } from '#fixtures/users'
 import { BasicUpdater } from '#lib/doc_updates'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
+import { rawRequest } from '#tests/api/utils/request'
+import { getUserGetter, publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createUserEmail } from '../fixtures/users.js'
-import { rawRequest } from '../utils/request.js'
-import { getUserGetter, publicReq } from '../utils/utils.js'
 
 const host = config.getPublicOrigin()
 const db = await dbFactory('users')

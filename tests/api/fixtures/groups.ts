@@ -3,7 +3,7 @@ import { randomWords } from '#fixtures/text'
 import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser, getUserB } from '../utils/utils.js'
+import { getUser, getUserB } from '#tests/api/utils/utils'
 
 export const endpointBase = '/api/groups'
 

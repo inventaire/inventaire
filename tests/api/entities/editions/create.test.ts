@@ -1,7 +1,7 @@
 import 'should'
+import { createWork, createSerie, randomLabel, generateIsbn13h } from '#fixtures/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createWork, createSerie, randomLabel, generateIsbn13h } from '../../fixtures/entities.js'
 
 const workEntityPromise = createWork()
 

@@ -1,6 +1,6 @@
 import 'should'
-import { createTask } from '../fixtures/tasks.js'
-import { getByScore } from '../utils/tasks.js'
+import { createTask } from '#fixtures/tasks'
+import { getByScore } from '#tests/api/utils/tasks'
 
 // Tests dependency: having a populated Elasticsearch wikidata index
 describe('tasks:byScore', () => {

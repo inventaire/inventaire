@@ -1,8 +1,7 @@
-import { getUserB } from '#tests/api/utils/utils'
+import { createItem } from '#fixtures/items'
+import { createShelf } from '#fixtures/shelves'
+import { getUserB, authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createItem } from '../fixtures/items.js'
-import { createShelf } from '../fixtures/shelves.js'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/shelves?action=add-items'
 const shelfPromise = createShelf()

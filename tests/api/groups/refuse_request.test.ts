@@ -1,10 +1,10 @@
 import 'should'
+import { createGroup } from '#fixtures/groups'
 import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
+import { authReq, authReqC } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createGroup } from '../fixtures/groups.js'
-import { authReq, authReqC } from '../utils/utils.js'
 
 const endpoint = '/api/groups?action=refuse-request'
 

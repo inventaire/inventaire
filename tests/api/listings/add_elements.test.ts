@@ -1,9 +1,8 @@
+import { createEdition, someFakeUri } from '#fixtures/entities'
+import { createListing, createElement } from '#fixtures/listings'
 import { getByIdWithElements } from '#tests/api/utils/listings'
-import { getUserB } from '#tests/api/utils/utils'
+import { getUserB, authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createEdition, someFakeUri } from '../fixtures/entities.js'
-import { createListing, createElement } from '../fixtures/listings.js'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action='
 

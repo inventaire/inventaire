@@ -1,9 +1,9 @@
 import 'should'
 import automergeAuthorWorks from '#controllers/tasks/lib/automerge_author_works'
+import { createHuman, createWorkWithAuthor, addSerie } from '#fixtures/entities'
 import { wait } from '#lib/promises'
-import { createHuman, createWorkWithAuthor, addSerie } from '../fixtures/entities.js'
-import { getByUris, findOrIndexEntities } from '../utils/entities.js'
-import { checkEntities } from '../utils/tasks.js'
+import { getByUris, findOrIndexEntities } from '#tests/api/utils/entities'
+import { checkEntities } from '#tests/api/utils/tasks'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {

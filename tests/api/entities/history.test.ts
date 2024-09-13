@@ -1,16 +1,16 @@
 import should from 'should'
+import { createHuman, getSomeRemoteEditionWithALocalLayer } from '#fixtures/entities'
 import { createUser } from '#fixtures/users'
+import { deleteByUris } from '#tests/api/utils/entities'
 import { customAuthReq } from '#tests/api/utils/request'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createHuman, getSomeRemoteEditionWithALocalLayer } from '../fixtures/entities.js'
-import { deleteByUris } from '../utils/entities.js'
 import {
   adminReq,
   dataadminReq,
   publicReq,
   getDeanonymizedUser,
   authReqB,
-} from '../utils/utils.js'
+} from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const endpoint = '/api/entities?action=history'
 

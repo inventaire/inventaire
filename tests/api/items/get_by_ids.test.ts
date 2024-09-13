@@ -1,5 +1,8 @@
 import { map } from 'lodash-es'
 import should from 'should'
+import { getSomeGroup, addMember } from '#fixtures/groups'
+import { createItem, createItems } from '#fixtures/items'
+import { createShelfWithItem } from '#fixtures/shelves'
 import { humanName } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import {
@@ -10,9 +13,6 @@ import {
   authReqB,
 } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { getSomeGroup, addMember } from '../fixtures/groups.js'
-import { createItem, createItems } from '../fixtures/items.js'
-import { createShelfWithItem } from '../fixtures/shelves.js'
 
 const endpoint = '/api/items?action=by-ids'
 const userPromise = getUserGetter(humanName())()

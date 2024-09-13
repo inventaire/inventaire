@@ -1,9 +1,9 @@
 import { createGroupWithAMember, getSomeGroup } from '#fixtures/groups'
+import { listingName } from '#fixtures/listings'
 import { createUser } from '#fixtures/users'
 import { customAuthReq } from '#tests/api/utils/request'
+import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { listingName } from '../fixtures/listings.js'
-import { authReq } from '../utils/utils.js'
 
 const endpoint = '/api/lists?action=create'
 

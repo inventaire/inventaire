@@ -1,7 +1,7 @@
 import 'should'
+import { createWorkWithAuthor, createHuman, createWorkWithSpecificRoleAuthor } from '#fixtures/entities'
+import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { createWorkWithAuthor, createHuman, createWorkWithSpecificRoleAuthor } from '../fixtures/entities.js'
-import { publicReq } from '../utils/utils.js'
 
 const endpoint = '/api/entities?action=author-works'
 

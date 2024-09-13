@@ -1,8 +1,7 @@
 import 'should'
-import { createWork } from '#fixtures/entities'
-import { createEdition } from '../../fixtures/entities.js'
-import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '../../utils/entities.js'
-import { getUser as getUserA, getUserB } from '../../utils/utils.js'
+import { createWork, createEdition } from '#fixtures/entities'
+import { updateClaim, getHistory, updateLabel, removeClaim, revertEdit } from '#tests/api/utils/entities'
+import { getUser as getUserA, getUserB } from '#tests/api/utils/utils'
 
 describe('patch correction', () => {
   describe('rewrite', () => {

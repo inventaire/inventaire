@@ -1,9 +1,4 @@
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
-import { humanName } from '#fixtures/text'
-import { wait } from '#lib/promises'
-import { getRandomString } from '#lib/utils/random_string'
-import config from '#server/config'
-import 'should'
 import {
   addAuthor,
   addSerie,
@@ -14,7 +9,13 @@ import {
   createWork,
   createWorkWithAuthor,
   someImageHash,
-} from '../fixtures/entities.js'
+  createEditionWithWorkAndAuthor,
+} from '#fixtures/entities'
+import { humanName, humanName } from '#fixtures/text'
+import { wait } from '#lib/promises'
+import { getRandomString } from '#lib/utils/random_string'
+import config from '#server/config'
+import 'should'
 import {
   getByUri,
   getByUris,
@@ -24,9 +25,10 @@ import {
   revertMerge,
   updateClaim,
   updateLabel,
-} from '../utils/entities.js'
-import { getItem } from '../utils/items.js'
-import { authReq, getUserB } from '../utils/utils.js'
+  getByUri,
+} from '#tests/api/utils/entities'
+import { getItem } from '#tests/api/utils/items'
+import { authReq, getUserB } from '#tests/api/utils/utils'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const debounceDelay = config.snapshotsDebounceTime + 100

@@ -1,10 +1,9 @@
 import 'should'
 import { createUser } from '#fixtures/users'
-import { customAuthReq } from '#tests/api/utils/request'
-import { getToken } from '../utils/oauth.js'
-import { bearerTokenReq } from '../utils/request.js'
-import { deleteUser, updateUser } from '../utils/users.js'
-import { getUser, dataadminReq, adminReq, authReq } from '../utils/utils.js'
+import { getToken } from '#tests/api/utils/oauth'
+import { customAuthReq, bearerTokenReq } from '#tests/api/utils/request'
+import { deleteUser, updateUser } from '#tests/api/utils/users'
+import { getUser, dataadminReq, adminReq, authReq } from '#tests/api/utils/utils'
 
 const endpoint = '/api/user'
 

@@ -1,11 +1,11 @@
 import should from 'should'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { createHuman, createEdition, addSerie } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { createHuman, createEdition, addSerie } from '../fixtures/entities.js'
-import { deleteByUris, merge, updateLabel } from '../utils/entities.js'
-import { getIndexedDoc } from '../utils/search.js'
+import { deleteByUris, merge, updateLabel } from '#tests/api/utils/entities'
+import { getIndexedDoc } from '#tests/api/utils/search'
 
 const { entities: entitiesIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch

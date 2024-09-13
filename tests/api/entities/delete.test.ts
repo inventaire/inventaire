@@ -1,17 +1,17 @@
 import should from 'should'
-import { wait } from '#lib/promises'
-import config from '#server/config'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   createHuman,
   createWork,
   createWorkWithAuthor,
   createEdition,
   createEditionWithIsbn,
-} from '../fixtures/entities.js'
-import { getByUri, getByUris, deleteByUris } from '../utils/entities.js'
-import { getItemById } from '../utils/items.js'
-import { authReq } from '../utils/utils.js'
+} from '#fixtures/entities'
+import { wait } from '#lib/promises'
+import config from '#server/config'
+import { getByUri, getByUris, deleteByUris } from '#tests/api/utils/entities'
+import { getItemById } from '#tests/api/utils/items'
+import { authReq } from '#tests/api/utils/utils'
+import { shouldNotBeCalled, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const debounceDelay = config.snapshotsDebounceTime + 100
 

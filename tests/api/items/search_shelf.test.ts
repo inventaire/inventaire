@@ -1,10 +1,10 @@
 import { map } from 'lodash-es'
+import { createItem } from '#fixtures/items'
 import { createShelf, createShelfWithItem } from '#fixtures/shelves'
 import { buildUrl } from '#lib/utils/url'
 import { customAuthReq } from '#tests/api/utils/request'
-import { createItem } from '../fixtures/items.js'
-import { waitForIndexation } from '../utils/search.js'
-import { getUser, publicReq } from '../utils/utils.js'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { getUser, publicReq } from '#tests/api/utils/utils'
 
 const search = (reqUser, { shelf, search }) => {
   const url = buildUrl('/api/items', {

@@ -1,5 +1,5 @@
 import { createTasksInBulk } from '#controllers/tasks/lib/tasks'
-import { getByIds } from '../utils/tasks.js'
+import { getByIds } from '#tests/api/utils/tasks'
 import { createHuman, createWork } from './entities.js'
 
 export async function createTask (params) {

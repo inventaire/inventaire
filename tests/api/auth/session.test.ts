@@ -1,13 +1,13 @@
 import 'should'
-import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import {
   buildSessionCookies,
   parseSessionCookies,
   buildBase64EncodedJson,
   parseBase64EncodedJson,
-} from '../utils/auth.js'
-import { rawRequest } from '../utils/request.js'
-import { getUser, getUserB } from '../utils/utils.js'
+} from '#tests/api/utils/auth'
+import { rawRequest } from '#tests/api/utils/request'
+import { getUser, getUserB } from '#tests/api/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('auth:session', () => {
   it('should give access to restricted resources', async () => {

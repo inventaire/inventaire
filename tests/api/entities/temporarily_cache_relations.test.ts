@@ -2,11 +2,11 @@ import 'should'
 import { identity, map } from 'lodash-es'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
+import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '../fixtures/entities.js'
-import { addClaim, merge } from '../utils/entities.js'
-import { publicReq } from '../utils/utils.js'
+import { addClaim, merge } from '#tests/api/utils/entities'
+import { publicReq } from '#tests/api/utils/utils'
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases

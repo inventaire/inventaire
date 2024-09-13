@@ -2,12 +2,12 @@ import { map } from 'lodash-es'
 import should from 'should'
 import { createEdition } from '#fixtures/entities'
 import { getSomeGroupWithAMember, createGroupAndMember } from '#fixtures/groups'
+import { createItem, createItemWithEditionAndWork } from '#fixtures/items'
 import { buildUrl } from '#lib/utils/url'
 import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
-import { createItem, createItemWithEditionAndWork } from '../fixtures/items.js'
-import { waitForIndexation } from '../utils/search.js'
-import { publicReq } from '../utils/utils.js'
+import { waitForIndexation } from '#tests/api/utils/search'
+import { publicReq } from '#tests/api/utils/utils'
 
 const search = (reqUser, { group, search }) => {
   const url = buildUrl('/api/items', {
