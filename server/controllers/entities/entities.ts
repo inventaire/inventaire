@@ -60,9 +60,9 @@ export default {
       'revert-edit': revertEdit,
       'restore-version': restoreVersion,
       'move-to-wikidata': moveToWikidata,
+      merge,
     },
     dataadmin: {
-      merge,
       'revert-merge': revertMerge,
     },
   }),
