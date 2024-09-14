@@ -1,7 +1,7 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { typesAliases } from '#lib/wikidata/aliases'
 
-const { works: worksP31Values } = typesAliases
+const { works: worksP31Values, editions: editionsP31Values } = typesAliases
 
 export default {
   parameters: [ 'pid', 'qid' ] as const,
@@ -18,7 +18,8 @@ export default {
     // Filter-out entities that getInvEntityType might consider either a work or an edition
     return `SELECT DISTINCT ?edition WHERE {
   ?edition wdt:${pid} wd:${qid} .
-  ?edition wdt:P31 wd:Q3331189 .
+  VALUES (?edition_type) { ${editionsP31Values.map(uri => `(${uri})`).join(' ')} }
+  ?edition wdt:P31 ?edition_type .
   FILTER NOT EXISTS {
     # (1)
     VALUES (?work_type) { ${worksP31Values.map(uri => `(${uri})`).join(' ')} }

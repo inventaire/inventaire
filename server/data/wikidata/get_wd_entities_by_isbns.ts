@@ -11,7 +11,7 @@ import { LogError } from '#lib/utils/logs'
 import { typesAliases } from '#lib/wikidata/aliases'
 import type { NormalizedIsbn, WdEntityId } from '#server/types/entity'
 
-const { works: worksP31Values } = typesAliases
+const { works: worksP31Values, editions: editionsP31Values } = typesAliases
 
 const notFoundValue = '0'
 type CachedWdIdValue = WdEntityId | typeof notFoundValue
@@ -99,7 +99,8 @@ function getQuery (isbnsData: ParsedIsbnData[]) {
     VALUES (?isbn10h) { ${isbn10hs.map(isbn => `("${isbn}")`).join(' ')} }
     ?edition wdt:P957 ?isbn10h .
   }
-  ?edition wdt:P31 wd:Q3331189 .
+  VALUES (?edition_type) { ${editionsP31Values.map(uri => `(${uri})`).join(' ')} }
+  ?edition wdt:P31 ?edition_type .
   FILTER EXISTS {
     # (1)
     ?edition wdt:P629 ?work .
