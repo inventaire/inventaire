@@ -17,10 +17,14 @@ export async function validateAndAutomerge (suspectUri, suggestion) {
   return automerge(suspectUri, suggestionUri)
 }
 
-export async function automerge (suspectUri, suggestionUri) {
+export async function automerge (suspectUri, suggestionUri, userId = reconcilerUserId) {
   log({ suspectUri, suggestionUri }, 'automerging')
 
-  await mergeEntities({ userId: reconcilerUserId, fromUri: suspectUri, toUri: suggestionUri })
+  await mergeEntities({
+    userId,
+    fromUri: suspectUri,
+    toUri: suggestionUri,
+  })
   // Give the time to CouchDB to update its views so that the works
   // of the merged author are correctly found
   await wait(100)
