@@ -98,6 +98,10 @@ export async function getTasksBySuspectUris (uris: EntityUri[], options: TasksQu
   return indexByTasksKey(tasks, 'suspectUri', uris)
 }
 
+export function getExistingTasks (uri: EntityUri) {
+  return getTasksBySuspectUris([ uri ])
+}
+
 export async function getTasksBySuggestionUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
   const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(uris, includeArchived))

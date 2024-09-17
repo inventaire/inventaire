@@ -23,8 +23,7 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-async function controller (params) {
-  const { reqUserId } = params
+async function controller (params, req) {
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
 
@@ -34,7 +33,9 @@ async function controller (params) {
     throw newError(message, 400, params)
   }
 
-  log({ merge: params, user: reqUserId }, 'entity merge request')
+  const { user } = req
+  const { _id: userId } = user
+  log({ merge: params, user: userId }, 'entity merge request')
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
@@ -43,7 +44,7 @@ async function controller (params) {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
-  await mergeEntities({ userId: reqUserId, fromUri, toUri })
+  await mergeEntities({ userId, fromUri, toUri })
   await emit('entity:merge', fromUri, toUri)
   return { ok: true }
 }
