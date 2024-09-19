@@ -1,4 +1,8 @@
 import { randomWords } from '#fixtures/text'
+import type { AwaitableUserWithCookie } from '#fixtures/users'
+import type { EntityUri } from '#server/types/entity'
+import type { Listing } from '#server/types/listing'
+import type { VisibilityKey } from '#server/types/visibility'
 import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '#tests/api/utils/utils'
@@ -11,7 +15,7 @@ export const listingDescription = () => {
   return randomWords(3, ' listing')
 }
 
-export const createListing = async (userPromise, listingData = {}) => {
+export const createListing = async (userPromise?: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) => {
   userPromise = userPromise || getUser()
   listingData.name = listingData.name || listingName()
   listingData.visibility = listingData.visibility || [ 'public' ]
@@ -21,16 +25,20 @@ export const createListing = async (userPromise, listingData = {}) => {
   return { listing, user }
 }
 
-export async function createListingWithElements (userPromise) {
+export async function createListingWithElements (userPromise?: AwaitableUserWithCookie, numberOfElements = 3) {
   userPromise = userPromise || getUser()
   const { listing, user } = await createListing(userPromise)
-  const { uri: uri2 } = await createElement({ listing }, userPromise)
-  const { uri } = await createElement({ listing }, userPromise)
+  const uris = []
+  let i = 0
+  while (i++ < numberOfElements) {
+    const { uri } = await createElement({ listing }, userPromise)
+    uris.push(uri)
+  }
   const updatedListing = await getByIdWithElements({ user, id: listing._id })
-  return { listing: updatedListing, user, uris: [ uri, uri2 ] }
+  return { listing: updatedListing, user, uris }
 }
 
-export const createElement = async ({ visibility = [ 'public' ], uri, listing }, userPromise) => {
+export const createElement = async ({ visibility = [ 'public' ], uri, listing }: { visibility?: VisibilityKey[], uri?: EntityUri, listing?: Listing }, userPromise?: AwaitableUserWithCookie) => {
   userPromise = userPromise || getUser()
   if (!listing) {
     const fixtureListing = await createListing(userPromise, { visibility })
@@ -49,4 +57,15 @@ export const createElement = async ({ visibility = [ 'public' ], uri, listing },
     listing,
     uri,
   }
+}
+
+export const removeElement = async ({ uri, listing }, userPromise) => {
+  userPromise = userPromise || getUser()
+  const user = await userPromise
+  const removeElements = '/api/lists?action=remove-elements'
+
+  return customAuthReq(user, 'post', removeElements, {
+    id: listing._id,
+    uris: [ uri ],
+  })
 }

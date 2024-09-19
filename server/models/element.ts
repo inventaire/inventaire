@@ -1,23 +1,27 @@
-import { clone } from 'lodash-es'
+import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { findNewOrdinal } from '#lib/utils/lexicographic_ordinal'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
 
-const { pass, entityUri, couchUuid } = commonValidations
+const { pass, entityUri, couchUuid, boundedString } = commonValidations
 
 const validations = {
   pass,
   uri: entityUri,
   list: couchUuid,
+  ordinal: str => boundedString(str, 1, 1000),
 }
 
-const attributes = {
+export const attributes = {
   validAtCreation: [
     'list',
     'uri',
+    'ordinal',
   ],
   updatable: [
+    'ordinal',
     'uri',
   ],
 }
@@ -26,6 +30,7 @@ export function createElementDoc (element) {
   assert_.object(element)
   assert_.string(element.uri)
   assert_.string(element.list)
+  assert_.string(element.ordinal)
 
   const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {
@@ -41,10 +46,9 @@ export function createElementDoc (element) {
   return newElement
 }
 
-export function updateElementDoc (newAttributes, oldElement) {
+export function updateElementDoc (newAttributes, oldElement, listingElements?) {
   assert_.object(newAttributes)
   assert_.object(oldElement)
-
   const newElement = clone(oldElement)
 
   const passedAttributes = Object.keys(newAttributes)
@@ -53,10 +57,20 @@ export function updateElementDoc (newAttributes, oldElement) {
     if (!attributes.updatable.includes(attribute)) {
       throw newError('invalid attribute', 400, { attribute, oldElement })
     }
-    const newVal = newAttributes[attribute]
+    let newVal
+    if (attribute === 'ordinal') {
+      newVal = findNewOrdinal(oldElement, listingElements, newAttributes[attribute])
+    } else {
+      newVal = newAttributes[attribute]
+      validations.pass(attribute, newVal)
+    }
+    if (newVal) {
+      newElement[attribute] = newVal
+    }
+  }
 
-    validations.pass(attribute, newVal)
-    newElement[attribute] = newVal
+  if (isEqual(newElement, oldElement)) {
+    throw newError('nothing to update', 400, { oldElement })
   }
 
   const now = Date.now()

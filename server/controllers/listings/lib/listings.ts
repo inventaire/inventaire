@@ -1,6 +1,6 @@
-import { groupBy, map, pick } from 'lodash-es'
+import { groupBy, map, pick, difference, sortBy } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
-import { getElementsByListings, createListingElements, deleteListingsElements } from '#controllers/listings/lib/elements'
+import { createListingElements, deleteListingsElements, getElementsByListing, getElementsByListings } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
@@ -25,12 +25,7 @@ type ElementsByListing = Record<ListingId, ListingElement[]>
 
 export async function getListingsByIdsWithElements (ids: ListingId[]) {
   const listings = await getListingsByIds(ids)
-  if (!isNonEmptyArray(listings)) return []
-  const listingIds = map(listings, '_id')
-  const elements = await getElementsByListings(listingIds)
-  if (!isNonEmptyArray(listings)) return []
-  const elementsByListing: ElementsByListing = groupBy(elements, 'list')
-  listings.forEach(assignElementsToListing(elementsByListing))
+  await assignElementsToListings(listings)
   return listings as ListingWithElements[]
 }
 
@@ -54,27 +49,46 @@ export async function updateListingAttributes (params) {
 export const bulkDeleteListings = db.bulkDelete
 
 export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri, userId: UserId }) {
-  const currentElements = listing.elements
+  const currentElements = listing.elements || []
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)
   const { docs: createdElements } = await createListingElements({ uris: notFoundUris, listing, userId })
+  const res = { ok: true, createdElements }
   if (isNonEmptyArray(foundElements)) {
-    return { ok: true, alreadyInList: foundElements, createdElements }
+    return Object.assign(res, { alreadyInList: foundElements })
   }
-  return { ok: true, createdElements }
+  return res
+}
+
+export function validateListingOwnership (userId: UserId, listing: Listing) {
+  if (listing.creator !== userId) {
+    throw newError('wrong user', 403, { userId, listId: listing._id })
+  }
 }
 
 export function validateListingsOwnership (userId: UserId, listings: Listing[]) {
   for (const listing of listings) {
-    if (listing.creator !== userId) {
-      throw newError('wrong user', 403, { userId, listId: listing._id })
-    }
+    validateListingOwnership(userId, listing)
+  }
+}
+
+export const validateElementsUrisInListing = (uris, listingElements) => {
+  if (listingElements.length === 0) return true
+  const listingElementsUris = map(listingElements, 'uri')
+  // truncate array to allow more performant validation on elements subset
+  listingElementsUris.length = uris.length
+  const urisNotInListing = difference(listingElementsUris, uris)
+  if (urisNotInListing.length > 0) {
+    throw newError('some elements are not in the list', 400, { uris: urisNotInListing })
   }
 }
 
 export async function getListingWithElements (listingId: ListingId) {
-  const listings = await getListingsByIdsWithElements([ listingId ])
-  return listings[0]
+  const listing: Listing = await getListingById(listingId)
+  if (!listing) return
+  const elements = await getElementsByListing(listingId)
+  const listingWithElements: ListingWithElements = Object.assign(listing, { elements })
+  return listingWithElements
 }
 
 export async function deleteUserListingsAndElements (userId: UserId) {
@@ -85,13 +99,22 @@ export async function deleteUserListingsAndElements (userId: UserId) {
   ])
 }
 
-const assignElementsToListing = (elementsByListing: ElementsByListing) => listing => {
-  listing.elements = elementsByListing[listing._id] || []
-}
-
 async function validateExistingEntities (uris: EntityUri[]) {
   const { notFound } = await getEntitiesByUris({ uris })
   if (isNonEmptyArray(notFound)) {
     throw newError('entities not found', 403, { uris: notFound })
   }
+}
+
+export async function assignElementsToListings (listings) {
+  const listingsIds = map(listings, '_id')
+  const elements = await getElementsByListings(listingsIds)
+  const elementsByListing: ElementsByListing = groupBy(elements, 'list')
+  listings.forEach(assignElementsToListing(elementsByListing))
+  return listings as ListingWithElements
+}
+
+const assignElementsToListing = (elementsByListing: ElementsByListing) => listing => {
+  const sortedElements = sortBy(elementsByListing[listing._id], 'ordinal')
+  listing.elements = sortedElements || []
 }

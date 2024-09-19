@@ -1,8 +1,10 @@
 import { map } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
+import { maxKey, minKey } from '#lib/couch'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
+import { nextHighestOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { createElementDoc, updateElementDoc } from '#models/element'
 import type { ListingElement } from '#types/element'
 
@@ -25,11 +27,19 @@ export async function getElementsByListings (listingsIds) {
   return db.getDocsByViewKeys<ListingElement>('byListings', listingsIds)
 }
 
+export async function getElementsByListing (listingId) {
+  return db.getDocsByViewQuery<ListingElement>('byListingAndOrdinal', {
+    startkey: [ listingId, minKey ],
+    endkey: [ listingId, maxKey ],
+    include_docs: true,
+  })
+}
+
 export const bulkDeleteElements = db.bulkDelete
 
 export async function deleteListingsElements (listings) {
-  const listingIds = map(listings, '_id')
-  const listingsElements = await getElementsByListings(listingIds)
+  const listingsIds = map(listings, '_id')
+  const listingsElements = await getElementsByListings(listingsIds)
   if (isNonEmptyArray(listingsElements)) {
     await bulkDeleteElements(listingsElements)
   }
@@ -41,13 +51,26 @@ export async function createListingElements ({ listing, uris, userId }) {
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
   }
-  const elements = uris.map(uri => createElementDoc({
-    list: listingId,
-    uri,
-  }))
-  const res = await db.bulk(elements)
+  const { elements } = listing
+
+  const elementsToCreate = []
+  uris.forEach(uri => {
+    const ordinal = nextHighestOrdinal([ ...elements, ...elementsToCreate ])
+    const newDoc = createElementDoc({
+      list: listingId,
+      uri,
+      ordinal,
+    })
+    elementsToCreate.push(newDoc)
+  })
+  const res = await db.bulk(elementsToCreate)
   const elementsIds = map(res, 'id')
   return db.fetch<ListingElement>(elementsIds)
+}
+
+export async function updateElementDocAttributes (element, newAttributes, listingElements) {
+  const updatedElement = updateElementDoc(newAttributes, element, listingElements)
+  return db.putAndReturn(updatedElement)
 }
 
 export async function bulkUpdateElements ({ oldElements, attribute, value }) {

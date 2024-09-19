@@ -1,7 +1,5 @@
 import { localProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { isInvPropertyUri } from '#lib/boolean_validations'
 import { objectEntries } from '#lib/utils/base'
-import { objectKeys } from '#lib/utils/types'
 import type { Claims, InvClaim, InvClaimObject, InvClaimValue, InvPropertyClaims, ClaimValueByProperty, InvSnakValue, TypedPropertyUri, InvEntity, SimplifiedClaims, ExpandedClaims } from '#types/entity'
 
 export function isClaimObject (claim: InvClaim): claim is InvClaimObject {
