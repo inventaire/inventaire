@@ -5,7 +5,9 @@ import { newError } from '#lib/error/error'
 // but is never returned as part of an ordinal.
 // Do not use uppercase as CouchDB compare letters without regard to case
 // see https://docs.couchdb.org/en/stable/ddocs/views/collation.html
-export const characters = '0123456789abcdefghijklmnopqrstuvwxyz¤'
+// Those characters (minus "¤") correspond to the figures in base-36 numbers:
+// that caracteristic is used by findNextLastOrdinal
+const characters = '0123456789abcdefghijklmnopqrstuvwxyz¤'
 
 const firstCharacter = characters[0]
 const lastCharacter = characters.slice(-1)[0]

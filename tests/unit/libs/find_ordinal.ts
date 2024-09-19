@@ -51,7 +51,7 @@ describe('findNextLastOrdinal', () => {
     let previousOrdinal = '0'
     let newOrdinal
     let i = 0
-    while (i++ < 1000) {
+    while (i++ < 10000) {
       newOrdinal = findNextLastOrdinal(previousOrdinal)
       should(newOrdinal > previousOrdinal).be.true()
       previousOrdinal = newOrdinal
