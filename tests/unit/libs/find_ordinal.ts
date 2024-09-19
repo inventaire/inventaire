@@ -1,5 +1,7 @@
 import should from 'should'
 import { findOrdinalBetween } from '#lib/find_ordinal'
+import { wait } from '#lib/promises'
+import { findNextLastOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { getRandomString } from '#lib/utils/random_string'
 
 describe('findOrdinalBetween', () => {
@@ -40,6 +42,19 @@ describe('findOrdinalBetween', () => {
       should(ordinalC > ordinalA).be.true()
       should(ordinalC < ordinalB).be.true()
       ordinalA = ordinalC
+    }
+  })
+})
+
+describe('findNextLastOrdinal', () => {
+  it('should find an ordinal above the one passed', async () => {
+    let previousOrdinal = '0'
+    let newOrdinal
+    let i = 0
+    while (i++ < 1000) {
+      newOrdinal = findNextLastOrdinal(previousOrdinal)
+      should(newOrdinal > previousOrdinal).be.true()
+      previousOrdinal = newOrdinal
     }
   })
 })
