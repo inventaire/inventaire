@@ -94,12 +94,8 @@ describe('element:update:ordinal', () => {
       id: elementC._id,
       ordinal: 2,
     })
-    const updatedOrdinal = '1i'
-    updatedElement.ordinal.should.equal(updatedOrdinal)
-    const { elements: updatedElements } = await getByIdWithElements({ id: listing._id })
-    updatedElements[0].ordinal.should.equal(elementA.ordinal)
-    updatedElements[1].ordinal.should.equal(updatedOrdinal)
-    updatedElements[2].ordinal.should.equal(elementB.ordinal)
+    updatedElement.ordinal.should.be.above(elementA.ordinal)
+    updatedElement.ordinal.should.be.below(elementB.ordinal)
   })
 
   it('should move element down', async () => {

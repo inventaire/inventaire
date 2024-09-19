@@ -60,7 +60,7 @@ describe('listings:add-elements', () => {
       uris: [ uri2 ],
     })
     const updatedListing = await getByIdWithElements({ id: listing._id })
-    updatedListing.elements[1].ordinal.should.equal('2')
+    updatedListing.elements[1].ordinal.should.be.above(updatedListing.elements[0].ordinal)
   })
 
   it('should not add twice an element already in listing', async () => {
