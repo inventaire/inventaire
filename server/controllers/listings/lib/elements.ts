@@ -1,11 +1,11 @@
 import { map } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
+import { maxKey, minKey } from '#lib/couch'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
 import { nextHighestOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { createElementDoc, updateElementDoc } from '#models/element'
-import { maxKey, minKey } from '#lib/couch'
 import type { ListingElement } from '#types/element'
 
 const db = await dbFactory('elements')
@@ -55,7 +55,7 @@ export async function createListingElements ({ listing, uris, userId }) {
 
   const elementsToCreate = []
   uris.forEach(uri => {
-    const ordinal = nextHighestOrdinal([...elements, ...elementsToCreate])
+    const ordinal = nextHighestOrdinal([ ...elements, ...elementsToCreate ])
     const newDoc = createElementDoc({
       list: listingId,
       uri,

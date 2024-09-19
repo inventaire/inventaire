@@ -1,6 +1,5 @@
 import should from 'should'
 import { findOrdinalBetween } from '#lib/find_ordinal'
-import { wait } from '#lib/promises'
 import { findNextLastOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { getRandomString } from '#lib/utils/random_string'
 
