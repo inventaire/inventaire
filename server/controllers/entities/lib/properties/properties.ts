@@ -360,6 +360,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P5331': {
     subjectTypes: [ 'work', 'serie' ],
   },
+  // Cairn author ID
+  'wdt:P4369': {
+    subjectTypes: [ 'human' ],
+  },
   // BNB person ID
   'wdt:P5361': {
     subjectTypes: [ 'human' ],

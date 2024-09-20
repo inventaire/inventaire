@@ -232,12 +232,14 @@ export const propertiesValuesConstraints = {
   'wdt:P3631': externalId(positiveIntegerPattern),
   // Mastodon address
   'wdt:P4033': externalId(/^\w+@[a-z0-9.-]+[a-z0-9]+$/),
-  // Theses.fr person ID
-  'wdt:P4285': externalId(positiveIntegerPattern),
   // MyAnimeList people ID
   'wdt:P4084': externalId(positiveIntegerPattern),
   // MyAnimeList manga ID
   'wdt:P4087': externalId(positiveIntegerPattern),
+  // Theses.fr person ID
+  'wdt:P4285': externalId(positiveIntegerPattern),
+  // Cairn author ID
+  'wdt:P4369': externalId(/[1-9]\d{0,5}/),
   // BNB person ID
   'wdt:P5361': externalId(/^[^ ?.=]{2,80}$/),
   // BD Gest' author ID
