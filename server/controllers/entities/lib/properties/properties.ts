@@ -440,6 +440,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P12852': {
     subjectTypes: [ 'publisher' ],
   },
+  // NooSFere editorial collection ID
+  'wdt:P13004': {
+    subjectTypes: [ 'collection' ],
+  },
 }
 
 for (const property of workAuthorRelationsProperties) {

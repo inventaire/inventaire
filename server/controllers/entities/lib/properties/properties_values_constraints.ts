@@ -290,6 +290,8 @@ export const propertiesValuesConstraints = {
   'wdt:P12361': externalId(/^[\w-]+$/),
   // NooSFere publisher ID
   'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
+  // NooSFere editorial collection ID
+  'wdt:P13004': externalId(signedIntegerPattern),
 } as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
