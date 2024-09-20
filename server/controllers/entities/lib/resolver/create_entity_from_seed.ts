@@ -4,6 +4,7 @@ import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_c
 import { getImageByIsbn } from '#data/dataseed/dataseed'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { toIsbn13h } from '#lib/isbn/isbn'
+import { arrayIncludes } from '#lib/utils/base'
 import { logError, warn } from '#lib/utils/logs'
 import type { Claims, EntityType, InvSimplifiedPropertyClaims, PropertyUri } from '#types/entity'
 import type { BatchId } from '#types/patch'
@@ -79,8 +80,10 @@ export async function createEdition (edition: EditionSeed, works: EntitySeed[], 
 function addClaimIfValid (claims: Claims, property: PropertyUri, values: InvSimplifiedPropertyClaims, entityType?: EntityType) {
   for (const value of values) {
     if (value != null && properties[property].validate({ value, entityType })) {
-      if (claims[property] == null) claims[property] = []
-      claims[property].push(value)
+      claims[property] ??= []
+      if (!arrayIncludes(claims[property], value)) {
+        claims[property].push(value)
+      }
     }
   }
 }
