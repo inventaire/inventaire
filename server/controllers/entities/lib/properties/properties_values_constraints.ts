@@ -184,6 +184,8 @@ export const propertiesValuesConstraints = {
   // to stay consistent with Wikidata and let the door open to custom ordinals
   // later (ex: roman numbers, letters, etc.)
   'wdt:P1545': positiveIntegerString,
+  // official blog URL
+  'wdt:P1581': url,
   // subtitle
   'wdt:P1680': uniqueString,
   // HathiTrust ID

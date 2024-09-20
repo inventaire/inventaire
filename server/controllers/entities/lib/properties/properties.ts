@@ -256,6 +256,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P1545': {
     subjectTypes: [ 'work', 'serie' ],
   },
+  // official blog URL
+  'wdt:P1581': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
+  },
   // subtitle
   'wdt:P1680': {
     subjectTypes: [ 'edition', 'collection' ],
