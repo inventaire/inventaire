@@ -1,6 +1,6 @@
-import should from 'should'
+import { sentence } from '#fixtures/text'
 import { wait } from '#lib/promises'
-import { getByIdWithElements } from '#tests/api/utils/listings'
+import { getListingById, getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import { createListingWithElements } from '../fixtures/listings.js'
@@ -46,7 +46,7 @@ describe('element:update', () => {
       const element = listing.elements[0]
       await authReq('post', endpoint, {
         id: element._id,
-        ordinal: 0,
+        comment: sentence(),
       })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -54,6 +54,39 @@ describe('element:update', () => {
       err.body.status_verbose.should.equal('wrong user')
       err.statusCode.should.equal(403)
     }
+  })
+
+  it('should create and update element attribute', async () => {
+    const { element } = await createElement()
+    const comment = sentence()
+    const createdRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const comment2 = sentence()
+    createdRes.comment.should.equal(comment)
+    const updatedRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment: comment2,
+    })
+    updatedRes.comment.should.equal(comment2)
+  })
+
+  it('should be able to remove a comment', async () => {
+    const { listing, element } = await createElement()
+    const comment = sentence()
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const updatedElementListing = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing.elements[0].comment.should.equal(comment)
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment: null,
+    })
+    const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing2.elements[0].comment.should.equal('')
   })
 })
 

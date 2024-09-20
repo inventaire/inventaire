@@ -10,5 +10,6 @@ export interface ListingElement extends CouchDoc {
   list: ListingId
   uri: EntityUri
   ordinal: string
+  comment?: string
   created: EpochTimeStamp
 }
