@@ -7,11 +7,11 @@ import { newError } from '#lib/error/error'
 // see https://docs.couchdb.org/en/stable/ddocs/views/collation.html
 // Those characters (minus "¤") correspond to the figures in base-36 numbers:
 // that caracteristic is used by findNextLastOrdinal
-const characters = '0123456789abcdefghijklmnopqrstuvwxyz¤'
+export const characters = '0123456789abcdefghijklmnopqrstuvwxyz¤'
 
 const firstCharacter = characters[0]
-const lastCharacter = characters.slice(-1)[0]
-const middleCharacter = findMiddleCharacterBetween(firstCharacter, lastCharacter)
+export const lastCharacter = characters.slice(-1)[0]
+export const middleCharacter = findMiddleCharacterBetween(firstCharacter, lastCharacter)
 
 export function findOrdinalBetween (ordinalA, ordinalB) {
   if (ordinalA > ordinalB) {

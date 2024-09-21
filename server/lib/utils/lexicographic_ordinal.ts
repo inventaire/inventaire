@@ -1,5 +1,5 @@
 import { maxBy } from 'lodash-es'
-import { findOrdinalBetween } from '#lib/find_ordinal'
+import { findOrdinalBetween, characters, lastCharacter, middleCharacter } from '#lib/find_ordinal'
 import type { ListingElement } from '#types/element'
 
 export function findNewOrdinal (element: ListingElement, elements: ListingElement[], inclusiveOrdinal: number) {
@@ -59,18 +59,14 @@ export function nextHighestOrdinal (elements: ListingElement[]) {
 }
 
 export function findNextLastOrdinal (lexicographicOrdinal = '') {
-  if (lexicographicOrdinal.length < 4) {
-    return lexicographicOrdinal + '1'
+  if (!lexicographicOrdinal) return '1'
+  const ordinalPrefix = lexicographicOrdinal.slice(0, -1)
+  const ordinalLastChar = lexicographicOrdinal.slice(-1)
+  const ordinalIndex = characters.indexOf(ordinalLastChar)
+  const nextOrdinalSuffix = characters[ordinalIndex + 1]
+  if (nextOrdinalSuffix === lastCharacter) {
+    return lexicographicOrdinal.concat(middleCharacter)
   } else {
-    // Uses the correspondance between the lexicographic ordinals characters
-    // and the base-36 figures to find the next lexicographic ordinals
-    // that doesn't requires increasing the ordinals length
-    const nextOrdinal = parseInt(lexicographicOrdinal, 36) + 1
-    const nextOrdinalStr = nextOrdinal.toString(36)
-    if (nextOrdinalStr.length > lexicographicOrdinal.length) {
-      return lexicographicOrdinal + '1'
-    } else {
-      return nextOrdinalStr
-    }
+    return ordinalPrefix.concat(nextOrdinalSuffix)
   }
 }
