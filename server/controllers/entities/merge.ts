@@ -3,6 +3,7 @@ import { mergeOrCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
@@ -44,8 +45,16 @@ async function controller (params, req) {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
-  await mergeEntities({ userId, fromUri, toUri })
-  await emit('entity:merge', fromUri, toUri)
+  if (hasDataadminAccess(user)) {
+    await mergeEntities({ userId, fromUri, toUri })
+    await emit('entity:merge', fromUri, toUri)
+  } else {
+    await mergeOrCreateTasks({
+      toEntities: [ toEntity ],
+      fromEntity,
+      userId,
+    })
+  }
   return { ok: true }
 }
 
