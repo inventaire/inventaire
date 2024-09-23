@@ -3,7 +3,6 @@ import { createTasksFromSuggestions, getExistingTasks } from '#controllers/tasks
 import { notFoundError, newError } from '#lib/error/error'
 import { arrayIncludes } from '#lib/utils/base'
 import { info } from '#lib/utils/logs'
-import type { EntityUri } from '#types/entity'
 import getNewSuggestionsOrAutomerge from './get_new_suggestions_or_automerge.js'
 import updateRelationScore from './relation_score.js'
 

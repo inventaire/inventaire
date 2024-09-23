@@ -8,10 +8,16 @@ import type { UserId } from '#types/user'
 
 export async function mergeOrCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
   const suggestions = await getSuggestionsOrAutomerge(fromEntity, toEntities, userId)
-  if (suggestions.length === 0) return
-  const existingTasks = await getExistingTasks(fromEntity.uri)
-  let newSuggestions = await filterNewTasks(existingTasks, suggestions)
-  newSuggestions = map(newSuggestions, addToSuggestion(userId, clue))
+  let newSuggestions = []
+  if (userId) {
+    newSuggestions = map(toEntities, addToSuggestion(userId, clue))
+  } else {
+    if (suggestions.length === 0) return
+    const existingTasks = await getExistingTasks(fromEntity.uri)
+    newSuggestions = await filterNewTasks(existingTasks, suggestions)
+    newSuggestions = map(newSuggestions, addToSuggestion(userId, clue))
+  }
+
   return createTasksFromSuggestions({
     suspectUri: fromEntity.uri,
     type: 'deduplicate',
