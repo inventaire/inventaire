@@ -8,7 +8,7 @@ set -euo pipefail
 
 entities_db_authentified_url="$1"
 
-folder=$(node ./server/lib/absolute_path.js root dumps/inv)
+folder=$(tsx ./server/lib/absolute_path.ts root dumps/inv)
 today=$(date -I)
 today_folder="${folder}/${today}"
 
