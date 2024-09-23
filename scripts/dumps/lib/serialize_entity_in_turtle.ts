@@ -1,5 +1,6 @@
 import { identity, padStart } from 'lodash-es'
 import { yellow } from 'tiny-chalk'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { superTrim } from '#lib/utils/base'
 
@@ -34,7 +35,8 @@ export default entity => {
 
   for (const property in entity.claims) {
     statementsCount += 1
-    const propClaims = entity.claims[property]
+    // TODO: serialize references
+    const propClaims = entity.claims[property].map(getClaimValue)
     const datatype = getPropertyDatatype(property)
     if (datatype) {
       const formatter = datatypePropClaimsFormatter[datatype]
