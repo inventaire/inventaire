@@ -1,4 +1,5 @@
 import { round } from 'lodash-es'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import taskValidations from './validations/task.js'
 
@@ -22,8 +23,11 @@ export function createTaskDoc (newTask) {
   validateAndAssign(task, 'entitiesType', entitiesType)
   validateAndAssign(task, 'lexicalScore', lexicalScore)
   validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
-  validateAndAssign(task, 'reporter', reporter)
   validateAndAssign(task, 'clue', clue)
+  if (reporter) {
+    taskValidations.pass('reporter', reporter)
+    assignArrayOrConcatValue(task, 'reporters', reporter)
+  }
   return task
 }
 
@@ -36,9 +40,13 @@ export function updateTaskDoc (task, attribute, value) {
   taskValidations.pass('attribute', attribute)
   taskValidations.pass(attribute, value)
 
-  const now = Date.now()
+  if (attribute === 'reporter') {
+    assignArrayOrConcatValue(task, 'reporters', value)
+  } else {
+    task[attribute] = value
+  }
 
-  task[attribute] = value
+  const now = Date.now()
   task.updated = now
   return task
 }
@@ -47,5 +55,14 @@ function validateAndAssign (task, name, attribute) {
   if (attribute) {
     taskValidations.pass(name, attribute)
     task[name] = attribute
+  }
+}
+
+function assignArrayOrConcatValue (task, attribute, value) {
+  const currentAttribute = task[attribute]
+  if (currentAttribute && isNonEmptyArray(currentAttribute)) {
+    task[attribute] = currentAttribute.concat(value)
+  } else {
+    task[attribute] = [ value ]
   }
 }
