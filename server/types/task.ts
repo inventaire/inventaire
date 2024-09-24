@@ -24,6 +24,6 @@ export interface Task extends CouchDoc {
   relationScore?: number
   entitiesType: EntityType
   externalSourcesOccurrences?: externalSourceOccurrence[]
-  reporter?: UserId
+  reporters?: UserId[]
   clue?: string
 }
