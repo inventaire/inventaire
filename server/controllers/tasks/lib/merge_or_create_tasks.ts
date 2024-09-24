@@ -1,12 +1,12 @@
 import { map } from 'lodash-es'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
-import { getExistingTasks, createTasksFromSuggestions } from '#controllers/tasks/lib/tasks'
+import { updateTask, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityType } from '#types/entity'
 import type { UserId } from '#types/user'
 
-export async function mergeOrCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
+export async function mergeOrCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
   const suggestions = await getSuggestionsOrAutomerge(fromEntity, toEntities, userId)
   let newSuggestions = []
   if (userId) {
@@ -51,4 +51,23 @@ const addToSuggestion = (userId, clue) => suggestion => {
   suggestion.reporter = userId
   suggestion.clue = clue
   return suggestion
+}
+
+export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, fromEntity, toEntity, userId) {
+  const fromUriTasks = await getTasksBySuspectUri(fromUri, { index: false })
+  const existingTask = fromUriTasks.find(task => task.suggestionUri === toUri)
+  if (existingTask) {
+    return updateTask({
+      ids: [ existingTask._id ],
+      attribute: 'reporter',
+      newValue: userId,
+    })
+  } else {
+    return mergeOrCreateTasks({
+      entitiesType,
+      toEntities: [ toEntity ],
+      fromEntity,
+      userId,
+    })
+  }
 }

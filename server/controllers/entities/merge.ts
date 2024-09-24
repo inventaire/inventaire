@@ -1,6 +1,7 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -40,7 +41,7 @@ async function controller (params, req) {
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
-  validateEntitiesByType({ fromEntity, toEntity })
+  const entitiesType = validateEntitiesByType({ fromEntity, toEntity })
 
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
@@ -49,11 +50,7 @@ async function controller (params, req) {
     await mergeEntities({ userId, fromUri, toUri })
     await emit('entity:merge', fromUri, toUri)
   } else {
-    await mergeOrCreateTasks({
-      toEntities: [ toEntity ],
-      fromEntity,
-      userId,
-    })
+    await mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
   }
   return { ok: true }
 }
@@ -114,6 +111,8 @@ function validateEntitiesByType ({ fromEntity, toEntity }) {
       throw newError("can't merge editions with different ISBNs", 400, { fromUri, toUri })
     }
   }
+
+  return fromEntity.type
 }
 
 function replaceIsbnUriByInvUri (uri, entity) {

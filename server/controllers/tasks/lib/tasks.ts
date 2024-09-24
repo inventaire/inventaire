@@ -94,7 +94,7 @@ export async function getTasksBySuspectUrisAndType (uris: EntityUri[], types: st
 export async function getTasksBySuspectUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
   const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(uris, includeArchived))
-  if (index !== true) return tasks
+  if (index !== true) return tasks || []
   return indexByTasksKey(tasks, 'suspectUri', uris)
 }
 
