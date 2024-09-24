@@ -4,7 +4,6 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { emit } from '#lib/radio'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
@@ -48,7 +47,6 @@ async function controller (params, req) {
 
   if (hasDataadminAccess(user)) {
     await mergeEntities({ userId, fromUri, toUri })
-    await emit('entity:merge', fromUri, toUri)
   } else {
     await mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
   }
