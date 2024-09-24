@@ -6,4 +6,6 @@ export default {
   state: [ undefined, 'merged', 'dismissed' ],
 
   relationScore: [],
+
+  reporter: [],
 }
