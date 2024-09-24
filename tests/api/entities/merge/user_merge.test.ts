@@ -1,3 +1,4 @@
+import { createTask } from '#fixtures/tasks'
 import { createHuman, createWorkWithAuthor, randomLabel, createHuman } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
@@ -46,5 +47,30 @@ describe('entities:merge', () => {
     tasks.length.should.aboveOrEqual(1)
     const user = await getUser()
     tasks[0].reporter.should.equal(user._id)
+  })
+
+  it('should update existing task when no works labels match', async () => {
+    const humanLabel = randomLabel()
+    const workLabel = randomLabel()
+    const workLabel2 = randomLabel()
+    const human = await createHuman({ labels: { en: humanLabel } })
+    const human2 = await createHuman({ labels: { en: humanLabel } })
+    await Promise.all([
+      createWorkWithAuthor(human, workLabel),
+      createWorkWithAuthor(human2, workLabel2),
+    ])
+    await createTask({
+      entitiesType: 'human',
+      suspectUri: human.uri,
+      suggestionUri: human2.uri,
+    })
+    const tasks = await getBySuspectUri(human.uri)
+    should(tasks[0].reporter).not.be.ok()
+
+    await userMerge(human.uri, human2.uri)
+    const tasks2 = await getBySuspectUri(human.uri)
+    tasks2.length.should.equal(1)
+    const user = await getUser()
+    tasks2[0].reporter.should.equal(user._id)
   })
 })
