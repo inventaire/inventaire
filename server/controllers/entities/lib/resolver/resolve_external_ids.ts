@@ -3,19 +3,21 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import runWdQuery from '#data/wikidata/run_query'
-import { forceArray, objectEntries } from '#lib/utils/base'
-import type { Claims } from '#server/types/entity'
+import { forceArray, getOptionalValue, objectEntries } from '#lib/utils/base'
+import type { Claims, EntityUri } from '#server/types/entity'
+import type { PropertyValueConstraints } from '#server/types/property'
 import { getInvEntityCanonicalUri } from '../get_inv_entity_canonical_uri.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 
-export async function resolveExternalIds (claims: Claims, resolveOnWikidata = true) {
+export async function resolveExternalIds (claims: Claims, resolveOnWikidata = true, resolveLocally = true) {
   const externalIds = []
 
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
-    const propertyConstraints = properties[property]
-    if (propertyConstraints.datatype === 'external-id') {
-      let format
-      if ('format' in propertyConstraints) format = propertyConstraints.format
+    const propertyConstraints = properties[property] as PropertyValueConstraints
+    const concurrency = getOptionalValue(propertyConstraints, 'concurrency')
+    // Checks for external ids and identifiers typed as concurrent strings such as ISBNs
+    if (concurrency) {
+      const format = getOptionalValue(propertyConstraints, 'format')
       forceArray(propertyClaims).map(getClaimValue).forEach(value => {
         if (format) value = format(value)
         externalIds.push([ property, value ])
@@ -25,8 +27,9 @@ export async function resolveExternalIds (claims: Claims, resolveOnWikidata = tr
 
   if (externalIds.length === 0) return
 
-  const requests = [ invQuery(externalIds) ]
-  if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }
+  const requests = []
+  if (resolveLocally) requests.push(invQuery(externalIds))
+  if (resolveOnWikidata) requests.push(wdQuery(externalIds))
 
   const results = await Promise.all(requests)
   return uniq(flatten(results)) as EntityUri[]

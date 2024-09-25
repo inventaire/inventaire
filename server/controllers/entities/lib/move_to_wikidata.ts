@@ -1,6 +1,7 @@
 import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { InvEntityUri } from '#server/types/entity'
@@ -27,6 +28,11 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   let claims, labels
   if ('labels' in entity) labels = entity.labels
   if ('claims' in entity) claims = expandInvClaims(entity.claims)
+
+  const conflictingWdEntities = await resolveExternalIds(claims, true, false)
+  if (conflictingWdEntities?.length > 0) {
+    throw newError('Can not move to Wikidata: some Wikidata entities share the same identifiers', 400, { conflictingWdEntities })
+  }
 
   // Local claims will be preserved in a local layer during merge
   const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
