@@ -28,9 +28,8 @@ export async function resolveExternalIds (claims: Claims, resolveOnWikidata = tr
   const requests = [ invQuery(externalIds) ]
   if (resolveOnWikidata) { requests.push(wdQuery(externalIds)) }
 
-  return Promise.all(requests)
-  .then(flatten)
-  .then(uniq)
+  const results = await Promise.all(requests)
+  return uniq(flatten(results)) as EntityUri[]
 }
 
 async function wdQuery (externalIds) {
@@ -38,9 +37,9 @@ async function wdQuery (externalIds) {
   return results.map(prefixifyWd)
 }
 
-function invQuery (externalIds) {
-  return Promise.all(externalIds.map(invByClaim))
-  .then(flatten)
+async function invQuery (externalIds) {
+  const results = await Promise.all(externalIds.map(invByClaim))
+  return flatten(results)
 }
 
 async function invByClaim ([ prop, value ]) {
