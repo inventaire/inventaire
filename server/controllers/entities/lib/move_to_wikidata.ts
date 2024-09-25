@@ -1,5 +1,7 @@
+import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
-import { extendInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { InvEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
@@ -24,9 +26,16 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
 
   let claims, labels
   if ('labels' in entity) labels = entity.labels
-  if ('claims' in entity) claims = extendInvClaims(entity.claims)
+  if ('claims' in entity) claims = expandInvClaims(entity.claims)
 
-  const { uri: wdEntityUri } = await createWdEntity({ labels, claims, user, isAlreadyValidated: true })
+  // Local claims will be preserved in a local layer during merge
+  const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
+  const { uri: wdEntityUri } = await createWdEntity({
+    labels,
+    claims: claimsWithoutLocalClaims,
+    user,
+    isAlreadyValidated: true,
+  })
 
   // Caching relations for some hours, as Wikidata Query Service can take some time to update,
   // at the very minimum some minutes, during which the data contributor might be confused
