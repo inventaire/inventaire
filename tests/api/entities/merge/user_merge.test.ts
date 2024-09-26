@@ -1,6 +1,6 @@
 import should from 'should'
 import { createTask } from '#fixtures/tasks'
-import { createHuman, createWorkWithAuthor, randomLabel, createHuman } from '#tests/api/fixtures/entities'
+import { createHuman, createWorkWithAuthor, randomLabel } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { publicReq, getUser } from '#tests/api/utils/utils'
@@ -10,7 +10,7 @@ async function userMerge (fromUri, toUri) {
   return merge(fromUri, toUri, { user: getUser() })
 }
 
-describe('entities:merge', () => {
+describe('entities:merge:as:user', () => {
   it('should reject not logged requests', async () => {
     await publicReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)

@@ -1,4 +1,5 @@
 import { map } from 'lodash-es'
+import { getAuthorWorksData } from '#controllers/entities/lib/entities'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { updateTask, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
@@ -6,43 +7,20 @@ import type { SerializedEntity } from '#server/types/entity'
 import type { EntityType } from '#types/entity'
 import type { UserId } from '#types/user'
 
-export async function mergeOrCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
-  const suggestions = await getSuggestionsOrAutomerge(fromEntity, toEntities, userId)
-  let newSuggestions = []
-  if (userId) {
-    newSuggestions = map(toEntities, addToSuggestion(userId, clue))
-  } else {
-    if (suggestions.length === 0) return
-    const existingTasks = await getExistingTasks(fromEntity.uri)
-    newSuggestions = await filterNewTasks(existingTasks, suggestions)
-    newSuggestions = map(newSuggestions, addToSuggestion(userId, clue))
-  }
+export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
+  const existingTasks = await getExistingTasks(fromEntity.uri)
+  let newSuggestions = filterNewSuggestions(existingTasks, toEntities)
+  const serializedSuggestions = map(newSuggestions, addToSuggestion(userId, clue))
 
   return createTasksFromSuggestions({
     suspectUri: fromEntity.uri,
     type: 'deduplicate',
     entitiesType,
-    suggestions: newSuggestions,
+    suggestions: serializedSuggestions,
   })
 }
 
-async function getSuggestionsOrAutomerge (fromEntity, toEntities, userId) {
-  const workLabels = Object.values(fromEntity.labels)
-  for (const toEntity of toEntities) {
-    const toEntityLabels = Object.values(toEntity.labels)
-    if (haveExactMatch(workLabels, toEntityLabels)) {
-      await mergeEntities({
-        userId,
-        fromUri: fromEntity.uri,
-        toUri: toEntity.uri,
-      })
-      return [] // no suggestions
-    }
-  }
-  return toEntities
-}
-
-function filterNewTasks (existingTasks, suggestions) {
+function filterNewSuggestions (existingTasks, suggestions) {
   const existingTasksUris = map(existingTasks, 'suggestionUri')
   return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
 }
@@ -56,6 +34,11 @@ const addToSuggestion = (userId, clue) => suggestion => {
 export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, fromEntity, toEntity, userId) {
   const fromUriTasks = await getTasksBySuspectUri(fromUri, { index: false })
   const existingTask = fromUriTasks.find(task => task.suggestionUri === toUri)
+
+  if (entitiesType === 'human') {
+    const isMerged = await mergeIfWorksLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
+    if (isMerged) return
+  }
   if (existingTask) {
     return updateTask({
       ids: [ existingTask._id ],
@@ -63,11 +46,30 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
       newValue: userId,
     })
   } else {
-    return mergeOrCreateTasks({
+    return getSuggestionsAndCreateTasks({
       entitiesType,
       toEntities: [ toEntity ],
       fromEntity,
       userId,
     })
   }
+}
+
+export async function mergeIfWorksLabelsMatch (fromUri, toUri, fromEntity, toEntity, userId) {
+  const [ fromEntityWorksData, toEntityWorksData ] = await Promise.all([
+    getAuthorWorksData(fromEntity._id),
+    getAuthorWorksData(toEntity._id),
+  ])
+  const { labels: fromEntityWorksLabels } = fromEntityWorksData
+  const { labels: toEntityWorksLabels } = toEntityWorksData
+
+  if (haveExactMatch(fromEntityWorksLabels, toEntityWorksLabels)) {
+    await mergeEntities({
+      userId,
+      fromUri,
+      toUri,
+    })
+    .then(() => { return true })
+  }
+  return false
 }
