@@ -485,6 +485,6 @@ for (const [ property, { subjectTypes } ] of Object.entries(_properties)) {
   }
 }
 
-export const propertiesPerType = _propertiesPerType as Record<typeof allLocallyEditedEntitiesTypes[number], PropertyUri>
+export const propertiesPerType = _propertiesPerType as Record<typeof allLocallyEditedEntitiesTypes[number], PropertyUri[]>
 
 export const properties = _properties as Record<PropertyUri, PropertyConfig>

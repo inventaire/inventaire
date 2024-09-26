@@ -36,7 +36,7 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
 
   if (claims != null) {
     if (isRawWikidataClaims(claims)) {
-      claims = formatClaims(claims)
+      claims = formatClaims(claims, type)
     } else {
       claims = simplifyInvClaims(claims)
     }

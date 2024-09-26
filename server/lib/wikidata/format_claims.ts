@@ -2,8 +2,8 @@ import { pick } from 'lodash-es'
 import { simplifyClaims, type Claims as WdClaims } from 'wikibase-sdk'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
-import type { SimplifiedClaimsIncludingWdExtra } from '#server/types/entity'
-import { allowlistedProperties } from './allowlisted_properties.js'
+import type { ExtendedEntityType, SimplifiedClaimsIncludingWdExtra } from '#server/types/entity'
+import { allowlistedProperties, allowlistedPropertiesPerType } from './allowlisted_properties.js'
 import { flattenQualifierProperties } from './data_model_adapter.js'
 
 const options = {
@@ -12,9 +12,10 @@ const options = {
   timeConverter: 'simple-day',
 } as const
 
-export function formatClaims (claims: WdClaims) {
+export function formatClaims (claims: WdClaims, type?: ExtendedEntityType) {
   assert_.object(claims)
-  const allowlistedClaims = pick(claims, allowlistedProperties)
+  const pickedProperties = allowlistedPropertiesPerType[type] || allowlistedProperties
+  const allowlistedClaims = pick(claims, pickedProperties)
   const simplifiedClaims: Partial<SimplifiedClaimsIncludingWdExtra> = simplifyClaims(allowlistedClaims, options)
   setInferredClaims(simplifiedClaims)
 

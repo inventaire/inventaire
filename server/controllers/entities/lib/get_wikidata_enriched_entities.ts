@@ -116,8 +116,6 @@ async function format (entity: RawWdEntity | MissingWdEntity) {
     type = getWdEntityType(entity)
   }
 
-  entity.claims = omitUndesiredPropertiesPerType(type, entity.claims)
-
   if (type === 'meta') {
     return formatEmpty('meta', entity)
   } else {
@@ -126,7 +124,7 @@ async function format (entity: RawWdEntity | MissingWdEntity) {
 }
 
 async function formatValidEntity (entity: RawWdEntity, type: ExtendedEntityType) {
-  const formattedClaims = formatClaims(entity.claims)
+  const formattedClaims = formatClaims(entity.claims, type)
   const { id: wdId } = entity
   const wdUri = `wd:${wdId}` as WdEntityUri
   const isbnUri = getIsbnUriFromClaims(formattedClaims)
@@ -202,21 +200,6 @@ function formatEmpty (type: 'meta' | 'missing', entity: RawWdEntity | MissingWdE
     type,
   }
 }
-
-function omitUndesiredPropertiesPerType (type: ExtendedEntityType, claims: Claims) {
-  const propertiesToOmit = undesiredPropertiesPerType[type]
-  if (propertiesToOmit) {
-    return omit(claims, propertiesToOmit as PropertyId[])
-  } else {
-    return claims
-  }
-}
-
-// Ignoring ISBN data set on work entities, as those
-// should be the responsability of edition entities
-const undesiredPropertiesPerType = {
-  work: [ 'P212', 'P957' ],
-} as const
 
 function expandClaims (entity) {
   for (const [ property, propertyClaims ] of objectEntries(entity.claims)) {
