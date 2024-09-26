@@ -224,6 +224,8 @@ export const propertiesValuesConstraints = {
   'wdt:P2969': externalId(strictlyPositiveIntegerPattern),
   // ISBN publisher prefix
   'wdt:P3035': { ...externalId(/^97(8|9)-\d{1,5}-\d{2,7}$/), uniqueValue: false } as const,
+  // Runeberg book ID
+  'wdt:P3155': externalId(/^[a-z0-9/.-]+$/),
   // Czech National Bibliography book ID
   'wdt:P3184': externalId(/^cnb[0-9]{9}$/),
   // Babelio author ID

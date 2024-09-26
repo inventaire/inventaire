@@ -324,6 +324,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P3035': {
     subjectTypes: [ 'publisher' ],
   },
+  // Runeberg book ID
+  'wdt:P3155': {
+    subjectTypes: [ 'edition' ],
+  },
   // Czech National Bibliography book ID
   'wdt:P3184': {
     subjectTypes: [ 'edition' ],
