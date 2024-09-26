@@ -112,6 +112,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P349': {
     subjectTypes: [ 'human' ],
   },
+  // DOI
+  'wdt:P356': {
+    subjectTypes: [ 'edition' ],
+  },
   // language
   'wdt:P407': {
     subjectTypes: [ 'work', 'serie', 'edition' ],

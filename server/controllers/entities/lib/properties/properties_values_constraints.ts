@@ -92,6 +92,8 @@ export const propertiesValuesConstraints = {
   'wdt:P269': externalId(/^\d{8}[\dX]$/),
   // NDL Authority ID
   'wdt:P349': externalId(/^(a1|s)?[0-9]?\d{8}$/),
+  // DOI
+  'wdt:P356': externalId(/^10.\d{4,9}\/[^\s]+$/),
   // language of work
   'wdt:P407': languageEntity,
   // distribution format

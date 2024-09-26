@@ -54,7 +54,6 @@ const commonOtherNonEditedProperties = [
   'P155', // follow
   'P156', // is follow by
   'P166', // award received
-  'P356', // DOI
   'P361', // part of
   'P724', // Internet Archive ID
   'P953', // full text available at
