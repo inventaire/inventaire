@@ -6,7 +6,8 @@ import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getSuggestionsAndCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { newError, notFoundError } from '#lib/error/error'
-import type { EntityUri } from '#server/types/entity'
+import type { SerializedEntity, EntityUri } from '#server/types/entity'
+import type { UserId } from '#types/user'
 
 export default async function (workUri, isbn, userId) {
   const work = await getEntityByUri({ uri: workUri })
@@ -36,7 +37,7 @@ export default async function (workUri, isbn, userId) {
   })
 }
 
-export async function mergeIfLabelsMatch (fromEntity, toEntities, userId) {
+export async function mergeIfLabelsMatch (fromEntity: SerializedEntity, toEntities: SerializedEntity[], userId: UserId) {
   const fromEntityLabels = Object.values(fromEntity.labels)
   for (const toEntity of toEntities) {
     const toEntityLabels = Object.values(toEntity.labels)

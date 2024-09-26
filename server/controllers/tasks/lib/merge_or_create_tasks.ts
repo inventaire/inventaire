@@ -4,25 +4,26 @@ import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { updateTask, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import type { SerializedEntity } from '#server/types/entity'
-import type { EntityType } from '#types/entity'
+import type { EntityUri, EntityType } from '#types/entity'
+import type { Task, Suggestion } from '#types/task'
 import type { UserId } from '#types/user'
 
 export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
-  const existingTasks = await getExistingTasks(fromEntity.uri)
-  let newSuggestions = filterNewSuggestions(existingTasks, toEntities)
-  const serializedSuggestions = map(newSuggestions, addToSuggestion(userId, clue))
+  const existingTasks: Task[] = await getExistingTasks(fromEntity.uri)
+  let newToEntities: SerializedEntity[] = filterNewSuggestionEntities(toEntities, existingTasks)
+  const suggestions: Suggestion[] = map(newToEntities, addToSuggestion(userId, clue))
 
   return createTasksFromSuggestions({
     suspectUri: fromEntity.uri,
     type: 'deduplicate',
     entitiesType,
-    suggestions: serializedSuggestions,
+    suggestions,
   })
 }
 
-function filterNewSuggestions (existingTasks, suggestions) {
+function filterNewSuggestionEntities (entities, existingTasks) {
   const existingTasksUris = map(existingTasks, 'suggestionUri')
-  return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
+  return entities.filter(entity => !existingTasksUris.includes(entity.uri))
 }
 
 const addToSuggestion = (userId, clue) => suggestion => {
@@ -55,7 +56,7 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
   }
 }
 
-export async function mergeIfWorksLabelsMatch (fromUri, toUri, fromEntity, toEntity, userId) {
+export async function mergeIfWorksLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
   const [ fromEntityWorksData, toEntityWorksData ] = await Promise.all([
     getAuthorWorksData(fromEntity._id),
     getAuthorWorksData(toEntity._id),
