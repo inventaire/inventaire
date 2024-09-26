@@ -2,7 +2,9 @@ import { isEqual } from 'lodash-es'
 import { getEntitiesByIsbns } from '#controllers/entities/lib/get_entities_by_isbns'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { mergeOrCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks'
+import { haveExactMatch } from '#controllers/entities/lib/labels_match'
+import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { getSuggestionsAndCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { newError, notFoundError } from '#lib/error/error'
 import type { EntityUri } from '#server/types/entity'
 
@@ -22,11 +24,30 @@ export default async function (workUri, isbn, userId) {
   const editionWorksUris = edition.claims['wdt:P629'] as EntityUri[]
   if (isEqual(editionWorksUris, [ workUri ])) return
   const editionWorks = await getEntitiesList(editionWorksUris)
-  return mergeOrCreateTasks({
+  const toEntities = await mergeIfLabelsMatch(work, editionWorks, userId)
+  if (toEntities.length === 0) return
+
+  return getSuggestionsAndCreateTasks({
     entitiesType: type,
-    toEntities: editionWorks,
+    toEntities,
     fromEntity: work,
     userId,
     clue: isbn,
   })
+}
+
+export async function mergeIfLabelsMatch (fromEntity, toEntities, userId) {
+  const fromEntityLabels = Object.values(fromEntity.labels)
+  for (const toEntity of toEntities) {
+    const toEntityLabels = Object.values(toEntity.labels)
+    if (haveExactMatch(fromEntityLabels, toEntityLabels)) {
+      await mergeEntities({
+        userId,
+        fromUri: fromEntity.uri,
+        toUri: toEntity.uri,
+      })
+      return [] // no suggestions
+    }
+  }
+  return toEntities
 }
