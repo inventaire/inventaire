@@ -56,10 +56,8 @@ const commonOtherNonEditedProperties = [
   'P166', // award received
   'P356', // DOI
   'P361', // part of
-  'P349', // NDL of Japan Auth ID
   'P724', // Internet Archive ID
   'P953', // full text available at
-  'P906', // SELIBR ID (Swedish)
   'P1433', // published in
   'P2034', // Project Gutenberg ebook ID
   'P2093', // author name string
