@@ -46,11 +46,10 @@ async function controller (params, req) {
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
   if (hasDataadminAccess(user)) {
-    await mergeEntities({ userId, fromUri, toUri })
+    return mergeEntities({ userId, fromUri, toUri })
   } else {
-    await mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
+    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
   }
-  return { ok: true }
 }
 
 async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
