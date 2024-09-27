@@ -43,11 +43,13 @@ describe('entities:merge:as:user', () => {
       createWorkWithAuthor(human, workLabel),
       createWorkWithAuthor(human2, workLabel2),
     ])
-    await userMerge(human.uri, human2.uri)
+    const res = await userMerge(human.uri, human2.uri)
     const tasks = await getBySuspectUri(human.uri)
     tasks.length.should.aboveOrEqual(1)
     const user = await getUser()
-    tasks[0].reporters.should.deepEqual([ user._id ])
+    const task = tasks[0]
+    task.reporters.should.deepEqual([ user._id ])
+    res.taskId.should.equal(task._id)
   })
 
   it('should update existing task when no works labels match', async () => {
@@ -86,17 +88,18 @@ describe('entities:merge:as:user', () => {
       createWorkWithAuthor(human2, workLabel2),
     ])
     const firstReporterId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await createTask({
+    const task = await createTask({
       entitiesType: 'human',
       suspectUri: human.uri,
       suggestionUri: human2.uri,
       reporter: firstReporterId,
     })
 
-    await userMerge(human.uri, human2.uri)
+    const res = await userMerge(human.uri, human2.uri)
     const tasks2 = await getBySuspectUri(human.uri)
     tasks2.length.should.equal(1)
     const user = await getUser()
     tasks2[0].reporters.should.deepEqual([ firstReporterId, user._id ])
+    res.taskId.should.equal(task._id)
   })
 })

@@ -40,19 +40,24 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
     const isMerged = await mergeIfWorksLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
     if (isMerged) return
   }
+  let taskRes
   if (existingTask) {
-    return updateTasks({
+    [ taskRes ] = await updateTasks({
       ids: [ existingTask._id ],
       attribute: 'reporter',
       newValue: userId,
     })
   } else {
-    return getSuggestionsAndCreateTasks({
+    [ taskRes ] = await getSuggestionsAndCreateTasks({
       entitiesType,
       toEntities: [ toEntity ],
       fromEntity,
       userId,
     })
+  }
+  return {
+    ok: true,
+    taskId: taskRes.id,
   }
 }
 
