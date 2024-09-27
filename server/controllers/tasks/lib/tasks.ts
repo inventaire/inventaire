@@ -30,7 +30,7 @@ export async function createTasksInBulk (tasksDocs) {
   return db.bulk(tasks)
 }
 
-export async function updateTask ({ ids, attribute, newValue }) {
+export async function updateTasks ({ ids, attribute, newValue }) {
   if (ids.length === 0) return []
 
   return getTasksByIds(ids)
