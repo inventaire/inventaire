@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { getAuthorWorksData } from '#controllers/entities/lib/entities'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
-import { updateTask, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
+import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri, EntityType } from '#types/entity'
 import type { Task, Suggestion } from '#types/task'
@@ -41,7 +41,7 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
     if (isMerged) return
   }
   if (existingTask) {
-    return updateTask({
+    return updateTasks({
       ids: [ existingTask._id ],
       attribute: 'reporter',
       newValue: userId,
