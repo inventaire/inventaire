@@ -1,10 +1,11 @@
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_create_tasks'
+import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
+import type { Task, TaskId } from '#types/task'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
@@ -45,11 +46,10 @@ async function controller (params, req) {
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
   if (hasDataadminAccess(user)) {
-    await mergeEntities({ userId, fromUri, toUri })
+    return mergeEntities({ userId, fromUri, toUri })
   } else {
-    await mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
+    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
   }
-  return { ok: true }
 }
 
 async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
