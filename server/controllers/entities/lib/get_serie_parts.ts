@@ -2,7 +2,7 @@ import { flatten } from 'lodash-es'
 import { getInvEntitiesByClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import runWdQuery from '#data/wikidata/run_query'
+import { runWdQuery } from '#data/wikidata/run_query'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 import type { EntityUri, InvEntity, SerializedEntity, WdEntityId } from '#server/types/entity'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
@@ -37,7 +37,7 @@ export default params => {
 }
 
 async function getWdSerieParts (qid: WdEntityId, refresh: boolean, dry: boolean) {
-  const results = await runWdQuery({ query: 'serie-parts', qid, refresh, dry })
+  const results = await runWdQuery({ query: 'serie_parts', qid, refresh, dry })
   return results.map(result => ({
     uri: prefixifyWd(result.part),
     date: getSimpleDayDate(result.date),

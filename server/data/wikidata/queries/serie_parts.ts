@@ -1,5 +1,6 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { typesAliases } from '#lib/wikidata/aliases'
+import type { DateValue, WdEntityId } from '#server/types/entity'
 
 const { works: worksP31Values } = typesAliases
 
@@ -48,4 +49,16 @@ export default {
 }
 GROUP BY ?part ?date ?ordinal ?superpart`
   },
+
+  minimizable: false,
 }
+
+interface SeriePart {
+  part: WdEntityId
+  date?: DateValue
+  ordinal?: string
+  subparts?: number
+  superpart?: WdEntityId
+}
+
+export type SerieParts = SeriePart[]

@@ -4,7 +4,8 @@ import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
-import runWdQuery from '#data/wikidata/run_query'
+import type { AuthorWork } from '#data/wikidata/queries/author_works'
+import { runWdQuery } from '#data/wikidata/run_query'
 import { initCollectionsIndex } from '#lib/utils/base'
 import { LogErrorAndRethrow } from '#lib/utils/logs'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
@@ -47,26 +48,29 @@ export function getAuthorWorks (params) {
 // # WD
 async function getWdAuthorWorks (qid, params) {
   const { refresh, dry } = params
-  let results = await runWdQuery({ query: 'author-works', qid, refresh, dry })
-  results = results.map(formatWdEntity).filter(identity)
+  const results = await runWdQuery({ query: 'author_works', qid, refresh, dry })
+  const formattedResults = results.map(formatWdEntity).filter(identity)
   // Known case of duplicate: when an entity has two P31 values that both
   // resolve to the same allowlisted type
   // ex: Q23701761 → P31 → Q571/Q17518461
   // Deduplicate after formatting so that if an entity has one valid P31
   // and an invalid one, it still gets one
-  return uniqBy(results, 'uri')
+  return uniqBy(formattedResults, 'uri')
 }
 
-function formatWdEntity (result) {
+function formatWdEntity (result: AuthorWork) {
   let { work: wdId, type: typeWdId, date, serie } = result
   const typeUri = `wd:${typeWdId}`
   const typeName = getPluralTypeByTypeUri(typeUri)
 
   if (!allowlistedTypesNames.includes(typeName)) return
 
-  date = getSimpleDayDate(date)
-  if (serie) serie = prefixifyWd(serie)
-  return { type: typeName, uri: `wd:${wdId}`, date, serie }
+  return {
+    type: typeName,
+    uri: `wd:${wdId}`,
+    date: getSimpleDayDate(date),
+    serie: serie ? prefixifyWd(serie) : undefined,
+  }
 }
 
 // # INV

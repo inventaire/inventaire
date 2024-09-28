@@ -10,7 +10,7 @@ export async function resolveEdition (entry: SanitizedResolverEntry) {
 
   return Promise.all([
     resolveByIsbn(isbn),
-    resolveExternalIds(claims, resolveOnWikidata),
+    resolveExternalIds(claims, { resolveOnWikidata }),
   ])
   .then(pickUriFromResolversResponses)
   .then(uri => {
