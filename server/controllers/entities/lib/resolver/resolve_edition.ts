@@ -1,10 +1,11 @@
 import { getEntitiesByIsbns } from '#controllers/entities/lib/get_entities_by_isbns'
+import type { SanitizedResolverEntry } from '#server/types/resolver'
 import { resolveExternalIds } from './resolve_external_ids.js'
 // Do not try to resolve edition on Wikidata while Wikidata editions are in quarantine
 // cf https://github.com/inventaire/inventaire/issues/182
 const resolveOnWikidata = false
 
-export default entry => {
+export async function resolveEdition (entry: SanitizedResolverEntry) {
   const { isbn, claims } = entry.edition
 
   return Promise.all([
