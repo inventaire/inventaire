@@ -6,7 +6,7 @@ import { getByScore } from '#tests/api/utils/tasks'
 describe('tasks:byScore', () => {
   it('should return 10 or less tasks by default', async () => {
     await createTask()
-    const tasks = await getByScore()
+    const tasks = await getByScore({})
     tasks.length.should.be.belowOrEqual(10)
     tasks.length.should.be.aboveOrEqual(1)
   })
@@ -19,7 +19,7 @@ describe('tasks:byScore', () => {
 
   it('should take an offset parameter', async () => {
     await createTask()
-    const tasksA = await getByScore()
+    const tasksA = await getByScore({})
     const tasksB = await getByScore({ offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
   })
