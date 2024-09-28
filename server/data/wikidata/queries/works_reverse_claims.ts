@@ -1,5 +1,6 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { typesAliases } from '#lib/wikidata/aliases'
+import type { WdEntityId } from '#server/types/entity'
 
 const { works: worksP31Values, series: seriesP31Values } = typesAliases
 const worksOrSeriesP31Values = [ ...worksP31Values, ...seriesP31Values ]
@@ -23,3 +24,5 @@ LIMIT 1000`
 
   minimizable: true,
 }
+
+export type ReverseClaimsWorks = WdEntityId[]
