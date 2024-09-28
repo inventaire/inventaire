@@ -9,7 +9,7 @@ import type { PropertyValueConstraints } from '#server/types/property'
 import { getInvEntityCanonicalUri } from '../get_inv_entity_canonical_uri.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
 
-export async function resolveExternalIds (claims: Claims, resolveOnWikidata = true, resolveLocally = true) {
+export async function resolveExternalIds (claims: Claims, { resolveOnWikidata = true, resolveLocally = true, refresh = false }) {
   const externalIds = []
 
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
@@ -29,14 +29,14 @@ export async function resolveExternalIds (claims: Claims, resolveOnWikidata = tr
 
   const requests = []
   if (resolveLocally) requests.push(invQuery(externalIds))
-  if (resolveOnWikidata) requests.push(wdQuery(externalIds))
+  if (resolveOnWikidata) requests.push(wdQuery(externalIds, refresh))
 
   const results = await Promise.all(requests)
   return uniq(flatten(results)) as EntityUri[]
 }
 
-async function wdQuery (externalIds) {
-  const results = await runWdQuery({ query: 'resolve-external-ids', externalIds })
+async function wdQuery (externalIds: string[], refresh: boolean) {
+  const results = await runWdQuery({ query: 'resolve-external-ids', externalIds, refresh })
   return results.map(prefixifyWd)
 }
 
