@@ -1,6 +1,7 @@
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { typesAliases } from '#lib/wikidata/aliases'
+import type { WdEntityId } from '#server/types/entity'
 
 const { works: worksP31Values } = typesAliases
 
@@ -25,3 +26,5 @@ LIMIT 1000`
 
   minimizable: true,
 }
+
+export type ReverseClaimsHumans = WdEntityId[]

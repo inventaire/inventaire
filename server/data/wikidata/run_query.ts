@@ -6,14 +6,18 @@ import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { radio } from '#lib/radio'
+import { arrayIncludes } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
+import { objectKeys } from '#lib/utils/types'
 import { makeSparqlRequest } from './make_sparql_request.js'
-import { queries, queriesPerProperty, type SparqlQueryParams } from './queries/queries.js'
+import { queries, queriesPerProperty, type QueryReturnTypeByQueryName, type SparqlQueryParams } from './queries/queries.js'
 
-const possibleQueries = Object.keys(queries)
+const possibleQueries = objectKeys(queries)
 
-export type RunQueryParams = SparqlQueryParams & {
-  query: string
+type QueryName = keyof QueryReturnTypeByQueryName
+
+export type RunQueryParams <QN extends QueryName> = SparqlQueryParams & {
+  query: QN
   refresh?: boolean
   dry?: boolean
 }
@@ -22,13 +26,10 @@ export type RunQueryParams = SparqlQueryParams & {
 // - query: the name of the query to use from './queries/queries.js'
 // - refresh
 // - custom parameters: see the query file
-export default async function (params: RunQueryParams) {
-  const { refresh, dry } = params
-  let { query: queryName } = params
+export async function runWdQuery <QN extends QueryName> (params: RunQueryParams<QN>) {
+  const { refresh, dry, query: queryName } = params
 
-  // Converting from kebab case to snake case
-  queryName = params.query = queryName.replaceAll('-', '_')
-  if (!possibleQueries.includes(queryName)) {
+  if (!arrayIncludes(possibleQueries, queryName)) {
     throw newError('unknown query', 400, { params })
   }
 
@@ -36,8 +37,15 @@ export default async function (params: RunQueryParams) {
 
   const key = buildKey(queryName, params)
 
-  const fn = runQuery.bind(null, params, key)
-  return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
+  type RT = QueryReturnTypeByQueryName[QN]
+
+  return cache_.get<RT>({
+    key,
+    fn: () => makeQuery<QN, RT>(params, key),
+    refresh,
+    dry,
+    dryFallbackValue: [] as RT,
+  })
 }
 
 function validateValues (queryName, params) {
@@ -68,13 +76,14 @@ const parametersTests = {
   pid: isPropertyId,
 }
 
-async function runQuery (params: RunQueryParams, key: string) {
+async function makeQuery <QN extends QueryName, RT extends QueryReturnTypeByQueryName[QN]> (params: RunQueryParams<QN>, key: string) {
   const { query: queryName } = params
   const sparql = queries[queryName].query(params)
   const { minimizable = false } = queries[queryName]
 
   try {
-    return await makeSparqlRequest(sparql, { minimize: minimizable })
+    const results = await makeSparqlRequest(sparql, { minimize: minimizable })
+    return results as RT
   } catch (err) {
     logError(err, `${key} query error`)
     throw err

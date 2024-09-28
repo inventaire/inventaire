@@ -1,4 +1,5 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+import type { WdEntityId } from '#server/types/entity'
 
 const relationProperty = 'wdt:P123'
 
@@ -19,3 +20,5 @@ ORDER BY DESC(?starting_date)`
 
   minimizable: true,
 }
+
+export type PublisherCollections = WdEntityId[]

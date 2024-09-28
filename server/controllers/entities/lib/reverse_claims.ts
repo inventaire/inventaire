@@ -5,7 +5,7 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
-import runWdQuery from '#data/wikidata/run_query'
+import { runWdQuery } from '#data/wikidata/run_query'
 import { isEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
@@ -71,8 +71,9 @@ function requestWikidataReverseClaims (property: WdPropertyUri, value: InvSnakVa
 }
 
 async function wikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
-  const type = typeTailoredQuery[property]
-  if (type != null) {
+  if (property in typeTailoredQuery) {
+    // TODO: Find the proper way to get property type to be narrowed down to typeTailoredQuery keys without needing a type assertion
+    const type = typeTailoredQuery[property as keyof typeof typeTailoredQuery]
     const pid = unprefixify(property)
     const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value as WdEntityId, refresh, dry })
     return results.map(prefixifyWd)
@@ -145,7 +146,7 @@ const typeTailoredQuery = {
   'wdt:P921': 'works',
   // inspired by
   'wdt:P941': 'works',
-}
+} as const
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
 

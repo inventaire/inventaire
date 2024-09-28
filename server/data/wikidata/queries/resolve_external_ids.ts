@@ -1,14 +1,15 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
 
 export default {
-  parameters: [ 'externalIds' ] as const,
+  parameters: [ 'propertyValuePairs' ] as const,
   query: (params: SparqlQueryParams) => {
-    return buildQuery(params.externalIds)
+    return buildQuery(params.propertyValuePairs)
   },
   minimizable: true,
 }
 
-function buildQuery (externalIds) {
+function buildQuery (externalIds: [ PropertyUri, InvClaimValue ][]) {
   const body = buildBody(externalIds)
   return `SELECT DISTINCT ?item WHERE { ${body} }`
 }
@@ -24,3 +25,5 @@ function buildBody (externalIds) {
 }
 
 const buildTriple = ([ prop, value ]) => `?item ${prop} '${value}'`
+
+export type ResolvedExternalIdsSubjects = WdEntityId[]

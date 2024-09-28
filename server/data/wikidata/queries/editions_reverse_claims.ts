@@ -1,5 +1,6 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { typesAliases } from '#lib/wikidata/aliases'
+import type { WdEntityId } from '#server/types/entity'
 
 const { works: worksP31Values, editions: editionsP31Values } = typesAliases
 
@@ -34,3 +35,5 @@ LIMIT 1000`
 }
 
 // (1) Filter-out entities that getStrictEntityType will not identify as edition due to the type ambiguity
+
+export type ReverseClaimsEditions = WdEntityId[]
