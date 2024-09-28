@@ -6,7 +6,7 @@ import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { radio } from '#lib/radio'
-import { info, LogErrorAndRethrow } from '#lib/utils/logs'
+import { info, logError } from '#lib/utils/logs'
 import { makeSparqlRequest } from './make_sparql_request.js'
 import { queries, queriesPerProperty, type SparqlQueryParams } from './queries/queries.js'
 
@@ -68,13 +68,17 @@ const parametersTests = {
   pid: isPropertyId,
 }
 
-function runQuery (params: RunQueryParams, key: string) {
+async function runQuery (params: RunQueryParams, key: string) {
   const { query: queryName } = params
   const sparql = queries[queryName].query(params)
   const { minimizable = false } = queries[queryName]
 
-  return makeSparqlRequest(sparql, { minimize: minimizable })
-  .catch(LogErrorAndRethrow(key))
+  try {
+    return await makeSparqlRequest(sparql, { minimize: minimizable })
+  } catch (err) {
+    logError(err, `${key} query error`)
+    throw err
+  }
 }
 
 radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch => {
