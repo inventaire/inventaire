@@ -29,7 +29,11 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   if ('labels' in entity) labels = entity.labels
   if ('claims' in entity) claims = expandInvClaims(entity.claims)
 
-  const conflictingWdEntities = await resolveExternalIds(claims, true, false)
+  const conflictingWdEntities = await resolveExternalIds(claims, {
+    resolveOnWikidata: true,
+    resolveLocally: false,
+    refresh: true,
+  })
   if (conflictingWdEntities?.length > 0) {
     throw newError('Can not move to Wikidata: some Wikidata entities share the same identifiers', 400, { conflictingWdEntities })
   }
