@@ -3,7 +3,7 @@ import authorWorks, { type AuthorWorks } from './author_works.js'
 import editionsReverseClaims, { type ReverseClaimsEditions } from './editions_reverse_claims.js'
 import humansReverseClaims, { type ReverseClaimsHumans } from './humans_reverse_claims.js'
 import publisherCollections, { type PublisherCollections } from './publisher_collections.js'
-import resolveExternalIds, { type ResolvedExternalIdsSubjects } from './resolve_external_ids.js'
+import resolveExternalIds, { type ResolvedExternalIdsTriples } from './resolve_external_ids.js'
 import serieParts, { type SerieParts } from './serie_parts.js'
 import worksReverseClaims, { type ReverseClaimsWorks } from './works_reverse_claims.js'
 
@@ -52,5 +52,5 @@ export interface QueryReturnTypeByQueryName {
   editions_reverse_claims: ReverseClaimsEditions
   works_reverse_claims: ReverseClaimsWorks
   humans_reverse_claims: ReverseClaimsHumans
-  resolve_external_ids: ResolvedExternalIdsSubjects
+  resolve_external_ids: ResolvedExternalIdsTriples
 }

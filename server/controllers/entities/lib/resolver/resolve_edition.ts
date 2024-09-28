@@ -8,27 +8,26 @@ const resolveOnWikidata = false
 export async function resolveEdition (entry: SanitizedResolverEntry) {
   const { isbn, claims } = entry.edition
 
-  return Promise.all([
+  const [
+    uriFoundByIsbn,
+    resultsFoundByExternalIds,
+  ] = await Promise.all([
     resolveByIsbn(isbn),
     resolveExternalIds(claims, { resolveOnWikidata }),
   ])
-  .then(pickUriFromResolversResponses)
-  .then(uri => {
-    if (uri != null) { entry.edition.uri = uri }
-    return entry
-  })
+  // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
+  let uri
+  if (uriFoundByIsbn) {
+    uri = uriFoundByIsbn
+  } else if (resultsFoundByExternalIds && resultsFoundByExternalIds.length === 1) {
+    uri = resultsFoundByExternalIds[0].subject
+  }
+  if (uri != null) entry.edition.uri = uri
+  return entry
 }
 
 async function resolveByIsbn (isbn) {
   if (isbn == null) return
   const { entities } = await getEntitiesByIsbns([ isbn ], { autocreate: false, refresh: false })
   if (entities.length === 1) return entities[0].uri
-}
-
-function pickUriFromResolversResponses ([ uriFoundByIsbn, urisFoundByExternalIds ]) {
-  // TODO: handle possible conflict between uriFoundByIsbn and urisFoundByExternalIds
-  if (uriFoundByIsbn) return uriFoundByIsbn
-  if (urisFoundByExternalIds && urisFoundByExternalIds.length === 1) {
-    return urisFoundByExternalIds[0]
-  }
 }

@@ -1,11 +1,12 @@
-import { flatten, uniq } from 'lodash-es'
+import { flatten, uniqBy } from 'lodash-es'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { prefixifyWd, prefixifyWdProperty } from '#controllers/entities/lib/prefix'
 import type { PropertyValuePair } from '#data/wikidata/queries/queries'
+import type { ResolvedExternalIdTriple } from '#data/wikidata/queries/resolve_external_ids'
 import { runWdQuery } from '#data/wikidata/run_query'
 import { forceArray, getOptionalValue, objectEntries } from '#lib/utils/base'
-import type { Claims, EntityUri } from '#server/types/entity'
+import type { Claims, EntityUri, PropertyUri } from '#server/types/entity'
 import type { PropertyValueConstraints } from '#server/types/property'
 import { getInvEntityCanonicalUri } from '../get_inv_entity_canonical_uri.js'
 import { propertiesValuesConstraints as properties } from '../properties/properties_values_constraints.js'
@@ -16,7 +17,13 @@ interface ResolveExternalIdsOptions {
   refresh?: boolean
 }
 
-export async function resolveExternalIds (claims: Claims, options?: ResolveExternalIdsOptions) {
+interface FormattedResult {
+  subject: EntityUri
+  property: PropertyUri
+  value: string
+}
+
+export async function resolveExternalIds (claims: Claims, options: ResolveExternalIdsOptions = {}) {
   const { resolveOnWikidata = true, resolveLocally = true, refresh = false } = options
   const propertyValuePairs: PropertyValuePair[] = []
 
@@ -40,12 +47,21 @@ export async function resolveExternalIds (claims: Claims, options?: ResolveExter
   if (resolveOnWikidata) requests.push(wdQuery(propertyValuePairs, refresh))
 
   const results = await Promise.all(requests)
-  return uniq(flatten(results)) as EntityUri[]
+  return uniqBy(flatten(results), 'subject') as FormattedResult[]
 }
 
 async function wdQuery (propertyValuePairs: PropertyValuePair[], refresh: boolean) {
   const results = await runWdQuery({ query: 'resolve_external_ids', propertyValuePairs, refresh })
-  return results.map(prefixifyWd)
+  return results.map(prefixifyResult)
+}
+
+function prefixifyResult (result: ResolvedExternalIdTriple) {
+  const { subject, property, value } = result
+  return {
+    subject: prefixifyWd(subject),
+    property: prefixifyWdProperty(property),
+    value,
+  }
 }
 
 async function invQuery (propertyValuePairs: PropertyValuePair[]) {
@@ -53,7 +69,13 @@ async function invQuery (propertyValuePairs: PropertyValuePair[]) {
   return flatten(results)
 }
 
-async function invByClaim ([ prop, value ]: PropertyValuePair) {
-  const entities = await getInvEntitiesByClaim(prop, value, true, true)
-  return entities.map(getInvEntityCanonicalUri)
+async function invByClaim ([ property, value ]: PropertyValuePair) {
+  const entities = await getInvEntitiesByClaim(property, value, true, true)
+  return entities.map(uri => {
+    return {
+      subject: getInvEntityCanonicalUri(uri),
+      property,
+      value,
+    }
+  })
 }
