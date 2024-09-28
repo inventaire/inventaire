@@ -1,4 +1,4 @@
-import { some } from 'lodash-es'
+import { map, some } from 'lodash-es'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { warn } from '#lib/utils/logs'
 import { getEntityByUri } from '../get_entity_by_uri.js'
@@ -10,7 +10,8 @@ function resolveSeedsByExternalIds (seeds, expectedEntityType) {
 
 async function resolveSeed (seed, expectedEntityType) {
   if (seed.uri) return seed
-  const uris = await resolveExternalIds(seed.claims)
+  const results = await resolveExternalIds(seed.claims)
+  const uris = map(results, 'subject')
   if (uris == null) return seed
   let uri
   if (uris.length === 1) {
