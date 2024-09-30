@@ -1,4 +1,5 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
@@ -198,3 +199,9 @@ export async function getAuthorWorksData (authorId) {
 }
 
 const getLangs = work => Object.keys(work.labels)
+
+export async function getAuthorsFromWorksUris (workUris) {
+  const works = await getEntitiesList(workUris)
+  const authorsUris = getWorksAuthorsUris(works)
+  return getEntitiesList(authorsUris)
+}
