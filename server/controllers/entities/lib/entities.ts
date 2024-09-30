@@ -212,3 +212,9 @@ export async function getAuthorWorksData (authorId) {
 }
 
 const getLangs = work => Object.keys(work.labels)
+
+export async function getAuthorsFromWorksUris (workUris) {
+  const works = await getEntitiesList(workUris)
+  const authorsUris = getWorksAuthorsUris(works)
+  return getEntitiesList(authorsUris)
+}

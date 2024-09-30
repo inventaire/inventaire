@@ -1,7 +1,8 @@
-import { map } from 'lodash-es'
-import { getAuthorWorksData } from '#controllers/entities/lib/entities'
+import { map, uniq } from 'lodash-es'
+import { getAuthorsFromWorksUris, getAuthorWorksData } from '#controllers/entities/lib/entities'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri, EntityType } from '#types/entity'
@@ -40,6 +41,10 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
     const isMerged = await mergeIfWorksLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
     if (isMerged) return
   }
+  if (entitiesType === 'work') {
+    const isMerged = await mergeIfAuthorsLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
+    if (isMerged) return
+  }
   let taskRes
   if (existingTask) {
     [ taskRes ] = await updateTasks({
@@ -69,7 +74,22 @@ export async function mergeIfWorksLabelsMatch (fromUri: EntityUri, toUri: Entity
   const { labels: fromEntityWorksLabels } = fromEntityWorksData
   const { labels: toEntityWorksLabels } = toEntityWorksData
 
-  if (haveExactMatch(fromEntityWorksLabels, toEntityWorksLabels)) {
+  return mergeIfExactMatch(fromEntityWorksLabels, toEntityWorksLabels, userId, fromUri, toUri)
+}
+
+export async function mergeIfAuthorsLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
+  const [ fromEntityAuthors, toEntityAuthors ] = await Promise.all([
+    getAuthorsFromWorksUris([ fromEntity.uri ]),
+    getAuthorsFromWorksUris([ toEntity.uri ]),
+  ])
+  const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
+  const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
+
+  return mergeIfExactMatch(fromLabels, toLabels, userId, fromUri, toUri)
+}
+
+async function mergeIfExactMatch (labels, labels2, userId, fromUri, toUri) {
+  if (haveExactMatch(labels, labels2)) {
     await mergeEntities({
       userId,
       fromUri,
