@@ -61,6 +61,7 @@ function validateAndAssign (task, name, attribute) {
 function assignArrayOrConcatValue (task, attribute, value) {
   const currentAttribute = task[attribute]
   if (currentAttribute && isNonEmptyArray(currentAttribute)) {
+    if (currentAttribute.includes(value)) return
     task[attribute] = currentAttribute.concat(value)
   } else {
     task[attribute] = [ value ]

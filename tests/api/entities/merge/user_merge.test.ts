@@ -81,11 +81,14 @@ describe('entities:merge:as:user', () => {
     const humanLabel = randomLabel()
     const workLabel = randomLabel()
     const workLabel2 = randomLabel()
+    const workLabel3 = randomLabel()
     const human = await createHuman({ labels: { en: humanLabel } })
     const human2 = await createHuman({ labels: { en: humanLabel } })
+    const human3 = await createHuman({ labels: { en: humanLabel } })
     await Promise.all([
       createWorkWithAuthor(human, workLabel),
       createWorkWithAuthor(human2, workLabel2),
+      createWorkWithAuthor(human3, workLabel3),
     ])
     const firstReporterId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
     const task = await createTask({
@@ -99,7 +102,14 @@ describe('entities:merge:as:user', () => {
     const tasks2 = await getBySuspectUri(human.uri)
     tasks2.length.should.equal(1)
     const user = await getUser()
+    tasks2[0].reporters.length.should.equal(2)
     tasks2[0].reporters.should.deepEqual([ firstReporterId, user._id ])
     res.taskId.should.equal(task._id)
+
+    // should not add an existing userId
+    await userMerge(human.uri, human2.uri)
+    const tasks3 = await getBySuspectUri(human.uri)
+    tasks3.length.should.equal(1)
+    tasks3[0].reporters.length.should.equal(2)
   })
 })
