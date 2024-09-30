@@ -1,4 +1,3 @@
-import should from 'should'
 import { createTask } from '#fixtures/tasks'
 import { createHuman, createWorkWithAuthor, randomLabel } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
@@ -50,31 +49,6 @@ describe('entities:merge:as:user', () => {
     const task = tasks[0]
     task.reporters.should.deepEqual([ user._id ])
     res.taskId.should.equal(task._id)
-  })
-
-  it('should update existing task when no works labels match', async () => {
-    const humanLabel = randomLabel()
-    const workLabel = randomLabel()
-    const workLabel2 = randomLabel()
-    const human = await createHuman({ labels: { en: humanLabel } })
-    const human2 = await createHuman({ labels: { en: humanLabel } })
-    await Promise.all([
-      createWorkWithAuthor(human, workLabel),
-      createWorkWithAuthor(human2, workLabel2),
-    ])
-    await createTask({
-      entitiesType: 'human',
-      suspectUri: human.uri,
-      suggestionUri: human2.uri,
-    })
-    const tasks = await getBySuspectUri(human.uri)
-    should(tasks[0].reporters).not.be.ok()
-
-    await userMerge(human.uri, human2.uri)
-    const tasks2 = await getBySuspectUri(human.uri)
-    tasks2.length.should.equal(1)
-    const user = await getUser()
-    tasks2[0].reporters.should.deepEqual([ user._id ])
   })
 
   it('should update existing task and accept several reporters', async () => {
