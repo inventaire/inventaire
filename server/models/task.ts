@@ -1,5 +1,4 @@
 import { round } from 'lodash-es'
-import { isNonEmptyArray } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import taskValidations from './validations/task.js'
 
@@ -59,10 +58,8 @@ function validateAndAssign (task, name, attribute) {
 }
 
 function assignArrayOrConcatValue (task, attribute, value) {
-  const currentAttribute = task[attribute]
-  if (currentAttribute && isNonEmptyArray(currentAttribute)) {
-    task[attribute] = currentAttribute.concat(value)
-  } else {
-    task[attribute] = [ value ]
+  task[attribute] ??= []
+  if (!task[attribute].includes(value)) {
+    task[attribute].push(value)
   }
 }
