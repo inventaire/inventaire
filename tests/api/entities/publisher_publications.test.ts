@@ -46,17 +46,17 @@ describe('entities:publisher-publications', () => {
   })
 
   it('should sort publication by publication date', async () => {
-    const { uri: publisher } = await createPublisher()
+    const { uri: publisherUri } = await createPublisher()
     const [ editionA, editionB, editionC ] = await Promise.all([
-      createEdition({ publisher, publicationDate: '2019' }),
-      createEdition({ publisher, publicationDate: '2018-11-12' }),
+      createEdition({ publisher: publisherUri, publicationDate: '2019' }),
+      createEdition({ publisher: publisherUri, publicationDate: '2018-11-12' }),
       // Create an edition with an ISBN to be able to set the publication date
-      createEditionWithIsbn({ publisher, publicationDate: null }),
+      createEditionWithIsbn({ publisher: publisherUri, publicationDate: null }),
     ])
     // Creating at least some milliseconds later
-    const editionD = await createEditionWithIsbn({ publisher, publicationDate: null })
-    const editionE = await createEdition({ publisher, publicationDate: '2017-05' })
-    const { editions } = await publicReq('get', `${endpoint}&uri=${publisher}`)
+    const editionD = await createEditionWithIsbn({ publisher: publisherUri, publicationDate: null })
+    const editionE = await createEdition({ publisher: publisherUri, publicationDate: '2017-05' })
+    const { editions } = await publicReq('get', `${endpoint}&uri=${publisherUri}`)
     editions.should.deepEqual([
       { uri: editionE.uri },
       { uri: editionB.uri },

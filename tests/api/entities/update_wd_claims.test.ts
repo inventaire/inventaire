@@ -61,7 +61,7 @@ describe('entities:update-claims:wd', () => {
       should(updatedEdition.claims['invp:P2']).not.be.ok()
     })
 
-    it('should reject inv:P1 updates (with no layer existing)', async () => {
+    it('should reject invp:P1 updates (with no layer existing)', async () => {
       const uri = await getSomeWdEditionUri()
       await addClaim({ uri, property: 'invp:P1', value: 'wd:Q1' })
       .then(shouldNotBeCalled)
@@ -71,7 +71,7 @@ describe('entities:update-claims:wd', () => {
       })
     })
 
-    it('should reject inv:P1 updates (with an existing layer)', async () => {
+    it('should reject invp:P1 updates (with an existing layer)', async () => {
       const uri = await getSomeWdEditionUri()
       const imageHash = someRandomImageHash()
       await addClaim({ uri, property: 'invp:P2', value: imageHash })
