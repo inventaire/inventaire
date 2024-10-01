@@ -54,7 +54,7 @@ export function typedExternalId (regexPerType: Partial<Record<EntityType, RegExp
   } as const
 }
 
-export function allowedPropertyValues (property) {
+export function allowedPropertyValues (property: keyof typeof allowedValuesPerTypePerProperty) {
   const allowedValuesPerType = allowedValuesPerTypePerProperty[property]
   return {
     ...uniqueEntity,

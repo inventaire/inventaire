@@ -270,6 +270,8 @@ export const propertiesValuesConstraints = {
   'wdt:P7400': externalId(/^[^\s/]+$/),
   // BookBrainz work ID
   'wdt:P7823': externalId(uuidPattern),
+  // form of creative work
+  'wdt:P7937': allowedPropertyValues('wdt:P7937'),
   // LibraryThing series ID
   'wdt:P8513': externalId(/^[1-9]\d{0,7}$/),
   // BookBrainz publisher ID

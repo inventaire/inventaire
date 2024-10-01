@@ -412,6 +412,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P7823': {
     subjectTypes: [ 'work' ],
   },
+  // form of creative work
+  'wdt:P7937': {
+    subjectTypes: [ 'work' ],
+  },
   // BookBrainz publisher ID
   'wdt:P8063': {
     subjectTypes: [ 'publisher' ],
