@@ -2,14 +2,14 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import type { InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { InvEntity, WdEntityId, WdEntityUri, InvEntityUri, EntityUri } from '#server/types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import type { Split } from 'type-fest'
 
-export default async function ({ uri, refresh, dry }) {
+export default async function ({ uri, refresh, dry }: { uri: EntityUri, refresh?: boolean, dry?: boolean }) {
   const [ wdCollections, invPublications ] = await Promise.all([
-    getWdPublisherCollections(uri, refresh, dry),
-    getInvPublisherCollections(uri),
+    getWdPublisherCollections(uri as WdEntityUri, refresh, dry),
+    getInvPublisherCollections(uri as InvEntityUri),
   ])
 
   return {
@@ -18,7 +18,7 @@ export default async function ({ uri, refresh, dry }) {
   }
 }
 
-async function getInvPublisherCollections (uri) {
+async function getInvPublisherCollections (uri: InvEntityUri) {
   const docs = await getInvEntitiesByClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []

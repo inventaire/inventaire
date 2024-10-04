@@ -5,7 +5,6 @@ import { newError } from '#lib/error/error'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
-import type { Task, TaskId } from '#types/task'
 import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
