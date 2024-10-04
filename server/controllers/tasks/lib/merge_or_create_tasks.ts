@@ -74,7 +74,12 @@ export async function mergeIfWorksLabelsMatch (fromUri: EntityUri, toUri: Entity
   const { labels: fromEntityWorksLabels } = fromEntityWorksData
   const { labels: toEntityWorksLabels } = toEntityWorksData
 
-  return mergeIfExactMatch(fromEntityWorksLabels, toEntityWorksLabels, userId, fromUri, toUri)
+  return validateAndMergeEntities({
+    validation: haveExactMatch(fromEntityWorksLabels, toEntityWorksLabels),
+    userId,
+    fromUri,
+    toUri,
+  })
 }
 
 export async function mergeIfAuthorsLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
@@ -85,17 +90,18 @@ export async function mergeIfAuthorsLabelsMatch (fromUri: EntityUri, toUri: Enti
   const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
   const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
 
-  return mergeIfExactMatch(fromLabels, toLabels, userId, fromUri, toUri)
+  return validateAndMergeEntities({
+    validation: haveExactMatch(fromLabels, toLabels),
+    userId,
+    fromUri,
+    toUri,
+  })
 }
 
-async function mergeIfExactMatch (labels, labels2, userId, fromUri, toUri) {
-  if (haveExactMatch(labels, labels2)) {
-    await mergeEntities({
-      userId,
-      fromUri,
-      toUri,
-    })
-    .then(() => { return true })
+async function validateAndMergeEntities ({ validation, userId, fromUri, toUri }) {
+  if (validation) {
+    await mergeEntities({ userId, fromUri, toUri })
+    .then(() => { return { ok: true } })
   }
   return false
 }
