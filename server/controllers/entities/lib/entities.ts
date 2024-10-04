@@ -218,3 +218,13 @@ export async function getAuthorsFromWorksUris (workUris) {
   const authorsUris = getWorksAuthorsUris(works)
   return getEntitiesList(authorsUris)
 }
+
+export async function getPublishersFromPublicationsUris (publicationUris) {
+  const publications = await getEntitiesList(publicationUris)
+  const publishersUris = uniq(publications.flatMap(getPublishersUris))
+  return getEntitiesList(publishersUris)
+}
+
+function getPublishersUris (publication) {
+  return publication.claims['wdt:P123']
+}

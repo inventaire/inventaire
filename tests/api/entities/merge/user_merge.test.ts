@@ -1,4 +1,4 @@
-import { createEdition, createPublisher, randomLabel, createEditionWithIsbn } from '#fixtures/entities'
+import { createCollection, createEdition, createPublisher, randomLabel, createEditionWithIsbn } from '#fixtures/entities'
 import { createTask } from '#fixtures/tasks'
 import 'should'
 import { createHuman, createWorkWithAuthor, addPublisher } from '#tests/api/fixtures/entities'
@@ -30,6 +30,7 @@ describe('entities:merge:as:user', () => {
         createWorkWithAuthor(human2, workLabel),
         createWorkWithAuthor(human, workLabel),
       ])
+
       await userMerge(human.uri, human2.uri)
       const { entities } = await getByUris(human.uri)
       entities[human2.uri].should.be.ok()
@@ -45,6 +46,7 @@ describe('entities:merge:as:user', () => {
         createWorkWithAuthor(human, workLabel),
         createWorkWithAuthor(human2, workLabel2),
       ])
+
       const res = await userMerge(human.uri, human2.uri)
       const tasks = await getBySuspectUri(human.uri)
       tasks.length.should.aboveOrEqual(1)
@@ -78,6 +80,7 @@ describe('entities:merge:as:user', () => {
       const res = await userMerge(human.uri, human2.uri)
       const tasks2 = await getBySuspectUri(human.uri)
       tasks2.length.should.equal(1)
+
       const user = await getUser()
       tasks2[0].reporters.length.should.equal(2)
       tasks2[0].reporters.should.deepEqual([ firstReporterId, user._id ])
@@ -102,6 +105,7 @@ describe('entities:merge:as:user', () => {
         createWorkWithAuthor(human2, workLabel),
         createWorkWithAuthor(human, workLabel2),
       ])
+
       await userMerge(work1.uri, work2.uri)
       const { entities } = await getByUris(work1.uri)
       should(entities[work2.uri]).be.ok()
@@ -118,6 +122,7 @@ describe('entities:merge:as:user', () => {
         createWorkWithAuthor(human, workLabel),
         createWorkWithAuthor(human2, workLabel2),
       ])
+
       await userMerge(work1.uri, work2.uri)
       const tasks = await getBySuspectUri(work1.uri)
       tasks.length.should.aboveOrEqual(1)
@@ -137,6 +142,7 @@ describe('entities:merge:as:user', () => {
       ])
       await addPublisher(edition, publisher1)
       await addPublisher(edition2, publisher2)
+
       await userMerge(publisher1.uri, publisher2.uri)
       const tasks = await getBySuspectUri(publisher1.uri)
       tasks.length.should.aboveOrEqual(1)
@@ -152,6 +158,7 @@ describe('entities:merge:as:user', () => {
       ])
       await addPublisher(edition, publisher1)
       await addPublisher(edition, publisher2)
+
       await userMerge(publisher1.uri, publisher2.uri)
       const { entities } = await getByUris(publisher1.uri)
       should(entities[publisher2.uri]).be.ok()
@@ -170,9 +177,45 @@ describe('entities:merge:as:user', () => {
       edition.isbn.should.startWith(edition2.isbn.slice(0, 8))
       await addPublisher(edition, publisher1)
       await addPublisher(edition2, publisher2)
+
       await userMerge(publisher1.uri, publisher2.uri)
       const { entities } = await getByUris(publisher1.uri)
       should(entities[publisher2.uri]).be.ok()
+    })
+  })
+
+  describe('collections', () => {
+    it('should merge if publishers labels match', async () => {
+      const label = randomLabel()
+      const [ publisher1, publisher2 ] = await Promise.all([
+        createPublisher({ labels: { en: label } }),
+        createPublisher({ labels: { en: label } }),
+      ])
+      const [ collection1, collection2 ] = await Promise.all([
+        createCollection({ claims: { 'wdt:P123': [ publisher1.uri ] } }),
+        createCollection({ claims: { 'wdt:P123': [ publisher2.uri ] } }),
+      ])
+
+      await userMerge(collection1.uri, collection2.uri)
+      const { entities } = await getByUris(collection1.uri)
+      should(entities[collection2.uri]).be.ok()
+    })
+
+    it('should create a task when no publishers labels match', async () => {
+      const label1 = randomLabel()
+      const label2 = randomLabel()
+      const [ publisher1, publisher2 ] = await Promise.all([
+        createPublisher({ labels: { en: label1 } }),
+        createPublisher({ labels: { en: label2 } }),
+      ])
+      const [ collection1, collection2 ] = await Promise.all([
+        createCollection({ claims: { 'wdt:P123': [ publisher1.uri ] } }),
+        createCollection({ claims: { 'wdt:P123': [ publisher2.uri ] } }),
+      ])
+
+      await userMerge(collection1.uri, collection2.uri)
+      const tasks = await getBySuspectUri(collection1.uri)
+      tasks.length.should.aboveOrEqual(1)
     })
   })
 })
