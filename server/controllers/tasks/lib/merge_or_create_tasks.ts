@@ -1,5 +1,5 @@
 import { map, uniq } from 'lodash-es'
-import { getAuthorsFromWorksUris, getAuthorWorksData } from '#controllers/entities/lib/entities'
+import { getAuthorsFromWorksUris, getAuthorWorksData, getPublishersFromPublicationsUris } from '#controllers/entities/lib/entities'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
@@ -43,6 +43,10 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
   }
   if (entitiesType === 'work') {
     const isMerged = await mergeIfAuthorsLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
+    if (isMerged) return
+  }
+  if (entitiesType === 'collection') {
+    const isMerged = await mergeIfPublishersLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
     if (isMerged) return
   }
   let taskRes
@@ -89,6 +93,22 @@ export async function mergeIfAuthorsLabelsMatch (fromUri: EntityUri, toUri: Enti
   ])
   const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
   const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
+
+  return validateAndMergeEntities({
+    validation: haveExactMatch(fromLabels, toLabels),
+    userId,
+    fromUri,
+    toUri,
+  })
+}
+
+export async function mergeIfPublishersLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
+  const [ fromPublishers, toPublishers ] = await Promise.all([
+    getPublishersFromPublicationsUris([ fromEntity.uri ]),
+    getPublishersFromPublicationsUris([ toEntity.uri ]),
+  ])
+  const fromLabels = uniq(fromPublishers.flatMap(getEntityNormalizedTerms))
+  const toLabels = uniq(toPublishers.flatMap(getEntityNormalizedTerms))
 
   return validateAndMergeEntities({
     validation: haveExactMatch(fromLabels, toLabels),
