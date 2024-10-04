@@ -1,6 +1,7 @@
+import { createEdition, createPublisher, randomLabel, createEditionWithIsbn } from '#fixtures/entities'
 import { createTask } from '#fixtures/tasks'
 import 'should'
-import { createHuman, createWorkWithAuthor, randomLabel } from '#tests/api/fixtures/entities'
+import { createHuman, createWorkWithAuthor, addPublisher } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { publicReq, getUser } from '#tests/api/utils/utils'
@@ -20,7 +21,7 @@ describe('entities:merge:as:user', () => {
   })
 
   describe('authors', () => {
-    it('should merge when inv works labels match', async () => {
+    it('should merge when works labels match', async () => {
       const humanLabel = randomLabel()
       const workLabel = randomLabel()
       const human = await createHuman({ labels: { en: humanLabel } })
@@ -120,6 +121,58 @@ describe('entities:merge:as:user', () => {
       await userMerge(work1.uri, work2.uri)
       const tasks = await getBySuspectUri(work1.uri)
       tasks.length.should.aboveOrEqual(1)
+    })
+  })
+
+  describe('publishers', () => {
+    // Conservative path for this first implementation,
+    // this may automerge later, if too many task happen to be created
+    it('should create a task even if publishers labels match', async () => {
+      const label = randomLabel()
+      const [ edition, edition2, publisher1, publisher2 ] = await Promise.all([
+        createEdition(),
+        createEdition(),
+        createPublisher({ labels: { en: label } }),
+        createPublisher({ labels: { en: label } }),
+      ])
+      await addPublisher(edition, publisher1)
+      await addPublisher(edition2, publisher2)
+      await userMerge(publisher1.uri, publisher2.uri)
+      const tasks = await getBySuspectUri(publisher1.uri)
+      tasks.length.should.aboveOrEqual(1)
+    })
+
+    // This is likely to happen so rarely,
+    // that implementing it does not seem worthy.
+    xit('should merge if publishers have a publication in common but their labels do not match', async () => {
+      const [ edition, publisher1, publisher2 ] = await Promise.all([
+        createEdition(),
+        createPublisher(),
+        createPublisher(),
+      ])
+      await addPublisher(edition, publisher1)
+      await addPublisher(edition, publisher2)
+      await userMerge(publisher1.uri, publisher2.uri)
+      const { entities } = await getByUris(publisher1.uri)
+      should(entities[publisher2.uri]).be.ok()
+    })
+
+    // This requires to fetch every editions of the 2 publishers
+    // which could be intensive (fetching the data but also comparing editions (ie. 2 publishers with 1000 editions each is on million comparisons)
+    // It seems reasonnable to not merge if a publisher is already linked to the other (ie. one have bought the other)
+    xit('should merge if publishers respectively have an edition which have an isbn prefix in common', async () => {
+      const [ edition, edition2, publisher1, publisher2 ] = await Promise.all([
+        createEditionWithIsbn(),
+        createEditionWithIsbn(),
+        createPublisher(),
+        createPublisher(),
+      ])
+      edition.isbn.should.startWith(edition2.isbn.slice(0, 8))
+      await addPublisher(edition, publisher1)
+      await addPublisher(edition2, publisher2)
+      await userMerge(publisher1.uri, publisher2.uri)
+      const { entities } = await getByUris(publisher1.uri)
+      should(entities[publisher2.uri]).be.ok()
     })
   })
 })

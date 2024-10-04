@@ -1,7 +1,7 @@
 export default {
   type: [ 'deduplicate' ],
 
-  entitiesType: [ 'work', 'human' ],
+  entitiesType: [ 'work', 'human', 'publisher' ],
 
   state: [ undefined, 'merged', 'dismissed' ],
 
