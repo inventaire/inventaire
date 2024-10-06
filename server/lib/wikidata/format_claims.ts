@@ -10,6 +10,8 @@ const options = {
   entityPrefix: 'wd',
   propertyPrefix: 'wdt',
   timeConverter: 'simple-day',
+  // Drop time snaks at century-precision and below
+  minTimePrecision: 9,
 } as const
 
 export function formatClaims (claims: WdClaims, type?: ExtendedEntityType) {
