@@ -3,7 +3,7 @@ set -eu
 
 mkdir -p ./dist
 
-# Compiling the project rather than JIT transpiling with ts-node
+# Compiling the project rather than JIT transpiling with tsx
 # to speed-up the server restart time
 
 rm -rf ./dist/server
