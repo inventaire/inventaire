@@ -1,5 +1,5 @@
 import { uniq } from 'lodash-es'
-import type { User } from '#server/types/user'
+import type { SpecialUser, User } from '#server/types/user'
 
 export const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,
@@ -20,7 +20,7 @@ for (const access in rolesByAccess) {
   }
 }
 
-export function getUserAccessLevels (user: User): AccessLevel[] {
+export function getUserAccessLevels (user: User | SpecialUser): AccessLevel[] {
   if (!user) return []
   const { roles: userRoles } = user
   if (!userRoles || userRoles.length === 0) return []

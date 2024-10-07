@@ -217,12 +217,23 @@ const config = {
 
   deduplicateRequests: true,
 
+  // Keys for users OAuth
   // Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
   // Request tokens at
   // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
   wikidataOAuth: {
     consumer_key: 'your-consumer-key',
     consumer_secret: 'your-consumer-secret',
+  },
+
+  // Keys for server own OAuth, used to let the server perform automated edits on Wikidata
+  // Request tokens at
+  // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose?wpownerOnly=1
+  botAccountWikidataOAuth: {
+    consumer_key: 'your-consumer-key',
+    consumer_secret: 'your-consumer-secret',
+    token: 'your-access-key',
+    token_secret: 'your-access-secret',
   },
 
   snapshotsDebounceTime: 5000,

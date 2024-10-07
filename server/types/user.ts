@@ -45,10 +45,16 @@ export type CreationStrategy = 'local' | 'browserid'
 export type UserImg = `/img/users/${ImageHash}`
 
 type OAuthProvider = 'wikidata'
-type OAuthProviderTokens = {
+
+export interface OAuthConsumer {
+  consumer_key: string
+  consumer_secret: string
+}
+export interface OAuthProviderTokens {
   token: string
   token_secret: string
 }
+export type OwnerOnlyOAuthConsumer = OAuthConsumer & OAuthProviderTokens
 
 export interface AbuseReport {
   type: string
@@ -94,8 +100,10 @@ export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
   _rev: CouchRevId
   // TODO: replace doc.special with doc.type='special'
   type: never
+  special: true
   username: string
   stableUsername: never
+  roles: never
 }
 
 export interface DeletedUser extends Pick<User, typeof userAttributes.critical[number]> {

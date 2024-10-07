@@ -10,12 +10,12 @@ import { getUserAccessLevels, type AccessLevel } from '#lib/user_access_levels'
 import { assert_ } from '#lib/utils/assert_types'
 import { isLocalEntityLayer, updateEntityDocClaim } from '#models/entity'
 import type { ExtendedEntityType, InvClaimValue, InvEntity, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
-import type { User, UserId } from '#server/types/user'
+import type { SpecialUser, User, UserId } from '#server/types/user'
 import inferredClaimUpdates from './inferred_claim_updates.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
-async function _updateInvClaim (user: User, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
+async function _updateInvClaim (user: User | SpecialUser, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
   assert_.object(user)
   const { _id: userId } = user
   const userAccessLevels = getUserAccessLevels(user)

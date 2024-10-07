@@ -1,16 +1,20 @@
 import { cloneDeep, isEqual, omit, pick } from 'lodash-es'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import type { ResolverBatchParams } from '#controllers/entities/lib/resolver/resolve_update_and_create'
+import { addWdClaims } from '#controllers/entities/lib/update_wd_claim'
+import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
+import { getUserById } from '#controllers/user/lib/user'
 import { objectKeys } from '#lib/utils/types'
 import { addEntityDocClaims } from '#models/entity'
 import type { AbsoluteUrl } from '#server/types/common'
-import type { ClaimByDatatype, Claims, EntityId, EntityUriPrefix, InvEntity, InvEntityDoc, InvEntityId, Isbn } from '#server/types/entity'
+import type { ClaimByDatatype, Claims, InvEntity, InvEntityDoc, SerializedWdEntity } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
 import type { EntitySeed, ResolverEntry } from '#server/types/resolver'
 import type { UserId } from '#server/types/user'
-import { getInvEntityByIsbn, getEntityById, putInvEntityUpdate } from '../entities.js'
+import { getEntityById, putInvEntityUpdate } from '../entities.js'
 
 export async function updateResolvedEntry (entry: ResolverEntry, { reqUserId, batchId }: ResolverBatchParams) {
   const { edition, works, authors } = entry
@@ -28,31 +32,26 @@ const updateEntityFromSeed = (reqUserId: UserId, batchId: BatchId) => async (see
   const imageUrl = 'image' in seed ? seed.image : undefined
   if (!uri) return
 
-  const [ prefix, entityId ] = uri.split(':') as [ EntityUriPrefix, EntityId ]
-  // Do not try to update Wikidata for the moment
-  if (prefix === 'wd') return
-
-  const entity = await getEntity(prefix, entityId)
-  await updateClaims(entity, seedClaims, imageUrl, reqUserId, batchId)
-}
-
-function getEntity (prefix: EntityUriPrefix, entityId: InvEntityId | Isbn) {
-  if (prefix === 'isbn') {
-    return getInvEntityByIsbn(entityId)
+  const entity = await getEntityByUri({ uri, refresh: true })
+  if ('wdId' in entity) {
+    await updateWdClaims(entity, seedClaims, imageUrl, reqUserId)
   } else {
-    return getEntityById(entityId)
+    const { invId } = entity
+    const entityDoc = await getEntityById(invId)
+    await updateInvClaims(entityDoc, seedClaims, imageUrl, reqUserId, batchId)
   }
 }
 
-async function updateClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId, batchId: BatchId) {
+async function updateInvClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId, batchId: BatchId) {
   if (!('claims' in entity)) return
   if (entity.type !== 'entity') return
   // Do not update if property already exists (except if date is more precise)
   // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity: InvEntity = cloneDeep(entity)
   dropLikelyBadSubtitle({ updatedEntity, seedClaims })
-  const newClaims: Claims = omit(seedClaims, Object.keys(entity.claims))
-  await addImageClaim(entity, imageUrl, newClaims)
+  const newClaims: Claims = omit(seedClaims, objectKeys(entity.claims))
+  const imageHash = await getImageHash(entity, imageUrl)
+  if (imageHash) newClaims['invp:P2'] = [ imageHash ]
   addEntityDocClaims(updatedEntity, newClaims)
   updateDatePrecision(entity, updatedEntity, seedClaims)
   if (isEqual(updatedEntity, entity)) return
@@ -62,6 +61,15 @@ async function updateClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl:
     updatedDoc: updatedEntity,
     batchId,
   })
+}
+
+async function updateWdClaims (entity: SerializedWdEntity, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId) {
+  const user = await getUserById(reqUserId)
+  const newClaims: Claims = omit(seedClaims, objectKeys(entity.claims))
+  const id = entity.wdId
+  await addWdClaims(id, newClaims, user)
+  const imageHash = await getImageHash(entity, imageUrl)
+  if (imageHash) await updateWdEntityLocalClaims(user, id, 'invp:P2', null, imageHash)
 }
 
 function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }: { updatedEntity: InvEntity, seedClaims: Claims }) {
@@ -81,12 +89,12 @@ function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }: { updatedEntity: 
   }
 }
 
-async function addImageClaim (entity: InvEntity, imageUrl: AbsoluteUrl | undefined, newClaims: Claims) {
+async function getImageHash (entity: InvEntity | SerializedWdEntity, imageUrl: AbsoluteUrl | undefined) {
   if (!imageUrl) return
-  const imageClaims = entity.claims['invp:P2']
-  if (imageClaims) return
+  const existingImageClaim = getFirstClaimValue(entity.claims, 'invp:P2')
+  if (existingImageClaim) return
   const { hash: imageHash } = await convertAndCleanupImageUrl({ url: imageUrl, container: 'entities' })
-  if (imageHash) newClaims['invp:P2'] = [ imageHash ]
+  return imageHash
 }
 
 function updateDatePrecision (entity: InvEntity, updatedEntity: InvEntity, seedClaims: Claims) {
