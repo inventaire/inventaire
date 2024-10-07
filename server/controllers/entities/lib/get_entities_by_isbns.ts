@@ -1,4 +1,4 @@
-import { difference } from 'lodash-es'
+import { chunk, difference } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
@@ -22,18 +22,19 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   const { isbns13h: isbns, redirections, parsedIsbnsData } = getIsbnsData(rawIsbns)
   const { autocreate, refresh } = params
 
-  let invEntities = await getInvEntitiesByIsbns(isbns)
-  const foundInvIsbns = invEntities.map(getIsbn13h)
-  const missingLocalIsbns = difference(isbns, foundInvIsbns)
-
   if (autocreate && refresh) {
-    // Enrich editions that can be, but let getInvEntitiesByIsbns get the results
+    // Enrich editions that can be, but let getInvEntitiesByIsbns and getWdEntitiesByIsbns get the results
     // as enrichAndGetEditionEntityFromIsbn might return { isbn, notFound: true }
     // even if the local database has an existing entity with that ISBN.
     // Likely because getAuthoritiesAggregatedEntry didn't find anything
-    await Promise.all(foundInvIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
-    invEntities = await getInvEntitiesByIsbns(foundInvIsbns)
+    for (const isbnBatch of chunk(isbns, 5)) {
+      await Promise.all(isbnBatch.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
+    }
   }
+
+  let invEntities = await getInvEntitiesByIsbns(isbns)
+  const foundInvIsbns = invEntities.map(getIsbn13h)
+  const missingLocalIsbns = difference(isbns, foundInvIsbns)
 
   const remainingParsedIsbnsData = parsedIsbnsData.filter(({ isbn13h }) => missingLocalIsbns.includes(isbn13h))
   const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(remainingParsedIsbnsData, params)
