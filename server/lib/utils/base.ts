@@ -199,6 +199,14 @@ export function invert (obj: Record<string | number, string | number>) {
   return invertedObj
 }
 
+/**
+ * Gets the value for an attribute from an object of type where that attribute is optional
+ *   type Foo {
+ *     a?: value
+ *   }
+ *   getOptionalValue(foo, 'a')
+ * But not from a union type where that attribute does not exist. In that case, set the attribute to 'never' where it is always missing
+ */
 export function getOptionalValue <T extends object, K extends keyof T> (obj: T, attribute: K) {
   if (attribute in obj) return obj[attribute]
 }

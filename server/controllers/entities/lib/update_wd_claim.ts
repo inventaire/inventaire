@@ -1,6 +1,7 @@
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getUserById } from '#controllers/user/lib/user'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -10,8 +11,8 @@ import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
-import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
-import type { User } from '#server/types/user'
+import type { Claims, InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
+import type { SpecialUser, User, UserId } from '#server/types/user'
 import entitiesRelationsTemporaryCache, { triggerSubjectEntityCacheRefresh } from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype, propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
@@ -130,4 +131,17 @@ function getQualifierHash (claim, property, value) {
     throw newError('unique matching qualifier not found', 400, { claim, property, value })
   }
   return matchingQualifiers[0].hash
+}
+
+export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | SpecialUser) {
+  validateWikidataOAuth(user)
+  const credentials = getWikidataOAuthCredentials(user)
+  return wdEdit.entity.edit({
+    id,
+    claims,
+    // See https://github.com/maxlath/wikibase-edit/blob/main/docs/how_to.md#reconciliation-modes
+    reconciliation: {
+      mode: 'skip-on-any-value',
+    },
+  }, { credentials })
 }
