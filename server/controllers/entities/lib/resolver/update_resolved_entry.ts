@@ -45,15 +45,12 @@ const updateEntityFromSeed = (reqUserId: UserId, batchId: BatchId) => async (see
 async function updateInvClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId, batchId: BatchId) {
   if (!('claims' in entity)) return
   if (entity.type !== 'entity') return
-  // Do not update if property already exists (except if date is more precise)
-  // Known cases: avoid updating authors who are actually edition translators
   const updatedEntity: InvEntity = cloneDeep(entity)
-  dropLikelyBadSubtitle({ updatedEntity, seedClaims })
-  const newClaims: Claims = omit(seedClaims, objectKeys(entity.claims))
   const imageHash = await getImageHash(entity, imageUrl)
-  if (imageHash) newClaims['invp:P2'] = [ imageHash ]
-  addEntityDocClaims(updatedEntity, newClaims)
-  updateDatePrecision(entity, updatedEntity, seedClaims)
+  if (imageHash) seedClaims['invp:P2'] = [ imageHash ]
+  updateDatePrecision(updatedEntity, seedClaims)
+  seedClaims = filterUpdatableClaims(seedClaims, updatedEntity.claims)
+  addEntityDocClaims(updatedEntity, seedClaims)
   if (isEqual(updatedEntity, entity)) return
   await putInvEntityUpdate({
     userId: reqUserId,
@@ -65,15 +62,23 @@ async function updateInvClaims (entity: InvEntityDoc, seedClaims: Claims, imageU
 
 async function updateWdClaims (entity: SerializedWdEntity, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId) {
   const user = await getUserById(reqUserId)
-  const newClaims: Claims = omit(seedClaims, objectKeys(entity.claims))
+  const filteredSeedClaims = filterUpdatableClaims(seedClaims, entity.claims)
   const id = entity.wdId
-  await addWdClaims(id, newClaims, user)
+  await addWdClaims(id, filteredSeedClaims, user)
   const imageHash = await getImageHash(entity, imageUrl)
   if (imageHash) await updateWdEntityLocalClaims(user, id, 'invp:P2', null, imageHash)
 }
 
-function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }: { updatedEntity: InvEntity, seedClaims: Claims }) {
-  const oldTitle = getFirstClaimValue(updatedEntity.claims, 'wdt:P1476')
+function filterUpdatableClaims (seedClaims: Claims, currentClaims: Claims) {
+  // Do not update if property already exists (except if date is more precise, as handled by updateDatePrecision)
+  // Known cases: avoid updating authors who are actually edition translators
+  const newClaims = omit(seedClaims, objectKeys(currentClaims))
+  dropLikelyBadSubtitle(currentClaims, newClaims)
+  return newClaims
+}
+
+function dropLikelyBadSubtitle (currentClaims: Claims, seedClaims: Claims) {
+  const oldTitle = getFirstClaimValue(currentClaims, 'wdt:P1476')
   const newTitle = getFirstClaimValue(seedClaims, 'wdt:P1476')
   const newSubtitle = getFirstClaimValue(seedClaims, 'wdt:P1680')
   if (oldTitle && newSubtitle) {
@@ -97,12 +102,12 @@ async function getImageHash (entity: InvEntity | SerializedWdEntity, imageUrl: A
   return imageHash
 }
 
-function updateDatePrecision (entity: InvEntity, updatedEntity: InvEntity, seedClaims: Claims) {
-  const seedDateClaims = pick(seedClaims, simpleDayProperties) as Pick<Claims, typeof simpleDayProperties[number]>
+function updateDatePrecision (updatedEntity: InvEntity, seedClaims: Claims) {
+  const seedDateClaims = pick(seedClaims, simpleDayProperties) satisfies Pick<Claims, typeof simpleDayProperties[number]>
   for (const property of objectKeys(seedDateClaims)) {
     const seedDate = getFirstClaimValue(seedDateClaims, property)
     if (!seedDate) return
-    const currentDate = getFirstClaimValue(entity.claims, property)
+    const currentDate = getFirstClaimValue(updatedEntity.claims, property)
     if (currentDate) {
       if (isMorePreciseDate(seedDate, currentDate) && doDatesAgree(seedDate, currentDate)) {
         updatedEntity.claims[property] = seedDateClaims[property]
