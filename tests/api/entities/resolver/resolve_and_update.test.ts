@@ -256,18 +256,15 @@ describe('entities:resolver:update-resolved', () => {
         claims: { 'wdt:P577': entryDate },
       },
     }
-    const { version } = await getByUri(uri)
-    const preResolvedEntityVersion = version
-
     await resolveAndUpdate(entry)
     await wait(10)
-    const { version: postResolvedVersion } = await getByUri(uri)
-    postResolvedVersion.should.equal(preResolvedEntityVersion)
+    const { claims: udpatedClaims } = await getByUri(uri)
+    udpatedClaims['wdt:P577'].should.deepEqual([ entityDate ])
   })
 
   it('should update if entry date is more precise than entity date', async () => {
-    const entryDate = '2020-01-01'
     const entityDate = '2020'
+    const entryDate = '2020-01-01'
     const { uri, isbn } = await createEditionWithIsbn({ publicationDate: entityDate })
     const entry = {
       edition: {
@@ -275,13 +272,10 @@ describe('entities:resolver:update-resolved', () => {
         claims: { 'wdt:P577': entryDate },
       },
     }
-    const { version } = await getByUri(uri)
-    const preResolvedEntityVersion = version
-
     await resolveAndUpdate(entry)
     await wait(10)
-    const { version: postResolvedVersion } = await getByUri(uri)
-    postResolvedVersion.should.equal(preResolvedEntityVersion + 1)
+    const { claims: udpatedClaims } = await getByUri(uri)
+    udpatedClaims['wdt:P577'].should.deepEqual([ entryDate ])
   })
 
   it('should update if is an entry date and no current date', async () => {
