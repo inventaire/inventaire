@@ -13,23 +13,22 @@ export function flattenQualifierProperties (simplifiedClaims, rawClaims) {
   }
 }
 
-export function relocateQualifierProperties (invEntity: { claims: UnprefixedClaims }) {
-  const { claims } = invEntity
+export function relocateQualifierProperties (claims: UnprefixedClaims) {
   const series = claims.P179
   const seriesOrdinals = claims.P1545
 
   if (!seriesOrdinals) return
 
   if (!series) {
-    throw newError('a serie ordinal can not be move to Wikidata without a serie', 400, invEntity)
+    throw newError('a serie ordinal can not be move to Wikidata without a serie', 400, { claims })
   }
 
   if (series.length !== 1) {
-    throw newError('a serie ordinal can not be set on several serie claims', 400, invEntity)
+    throw newError('a serie ordinal can not be set on several serie claims', 400, { claims })
   }
 
   if (seriesOrdinals.length !== 1) {
-    throw newError('can not import several serie ordinals', 400, invEntity)
+    throw newError('can not import several serie ordinals', 400, { claims })
   }
 
   const seriesClaim = series[0]
