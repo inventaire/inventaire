@@ -63,7 +63,6 @@ export const allowedValuesPerTypePerProperty = {
       'wd:Q5292',
       'wd:Q49084',
       'wd:Q472808',
-      'wd:Q43334491',
       'wd:Q5185279',
       'wd:Q149537',
       'wd:Q642946',
