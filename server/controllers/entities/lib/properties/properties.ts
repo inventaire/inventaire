@@ -118,7 +118,7 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   },
   // language
   'wdt:P407': {
-    subjectTypes: [ 'work', 'serie', 'edition' ],
+    subjectTypes: [ 'work', 'serie', 'edition', 'collection' ],
   },
   // distribution format
   'wdt:P437': {
