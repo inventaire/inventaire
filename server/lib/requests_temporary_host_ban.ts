@@ -4,6 +4,7 @@ import { newError } from '#lib/error/error'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { Host } from '#server/types/common'
 
 const db = leveldbFactory('hosts-bans', 'json')
 const { baseBanTime, banTimeIncreaseFactor } = config.outgoingRequests
@@ -12,7 +13,19 @@ const { baseBanTime, banTimeIncreaseFactor } = config.outgoingRequests
 // TODO: share ban data among instances
 const dbKey = config.port
 
-const banData = {}
+interface BannedHost {
+  banTime: number
+  expire: EpochTimeStamp
+}
+
+type BannedData = Record<Host, BannedHost>
+
+const banData: BannedData = {
+  // 'openlibrary.org': {
+  //   banTime: 600_000,
+  //   expire: Date.now() + 600_000,
+  // },
+}
 
 function restoreBanData () {
   db.get(dbKey)
@@ -23,7 +36,7 @@ function restoreBanData () {
   })
 }
 
-function restoreNonExpiredBans (data) {
+function restoreNonExpiredBans (data: BannedData) {
   const now = Date.now()
   Object.keys(data).forEach(host => {
     const hostData = data[host]
@@ -32,19 +45,19 @@ function restoreNonExpiredBans (data) {
   if (Object.keys(banData).length > 0) success(banData, 'hosts bans data restored')
 }
 
-export function assertHostIsNotTemporarilyBanned (host) {
+export function assertHostIsNotTemporarilyBanned (host: Host) {
   const hostBanData = banData[host]
   if (hostBanData != null && Date.now() < hostBanData.expire) {
     throw newError(`temporary ban: ${host}`, 500, { host, hostBanData })
   }
 }
 
-export function resetBanData (host) {
+export function resetBanData (host: Host) {
   delete banData[host]
   lazyBackup()
 }
 
-export function declareHostError (host) {
+export function declareHostError (host: Host) {
   // Never ban local services
   if (host.startsWith('localhost')) return
 
@@ -56,13 +69,18 @@ export function declareHostError (host) {
     if (Date.now() < hostBanData.expire) return
     // This host persists to timeout: renew and increase ban time
     hostBanData.banTime *= banTimeIncreaseFactor
+    hostBanData.expire = getExpireTime(hostBanData.banTime)
   } else {
-    hostBanData = banData[host] = { banTime: baseBanTime }
+    hostBanData = banData[host] = {
+      banTime: baseBanTime,
+      expire: getExpireTime(baseBanTime),
+    }
   }
 
-  hostBanData.expire = Date.now() + hostBanData.banTime
   lazyBackup()
 }
+
+const getExpireTime = (banTime: number) => Date.now() + banTime
 
 function backup () {
   db.put(dbKey, banData)

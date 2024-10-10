@@ -23,6 +23,7 @@ export type HttpHeaders = Partial<Record<HttpHeaderKey, string>>
 export type AbsoluteUrl = `http${string}`
 export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
+export type Host = string
 export type Path = string
 
 export type HighResolutionTime = [ number, number ]
