@@ -16,7 +16,7 @@ import type { InvEntityUri } from '#server/types/entity'
 import { getByUris, merge, getHistory, addClaim, getByUri } from '#tests/api/utils/entities'
 import { getItemsByIds } from '#tests/api/utils/items'
 import { authReq, dataadminReq } from '#tests/api/utils/utils'
-import { shouldNotBeCalled, shouldNotBeCalled } from '#tests/unit/utils/utils'
+import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('entities:merge', () => {
   it('should require dataadmin rights', async () => {
@@ -331,6 +331,17 @@ describe('entities:merge', () => {
       .catch(err => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal("'to' uri refers to a local entity layer")
+      })
+    })
+
+    it('should reject merging into a missing remote entity', async () => {
+      const human = await createHuman()
+      const wdHumanUri = 'wd:Q104211857'
+      await merge(human.uri, wdHumanUri)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("'to' entity not found")
       })
     })
 

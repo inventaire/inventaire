@@ -4,7 +4,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { debounceByKey } from '#lib/debounce_by_key'
-import { info } from '#lib/utils/logs'
+import { info, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { EntityUri, InvEntityDoc, PropertyUri, SerializedEntity } from '#server/types/entity'
 import buildSnapshot from './build_snapshot.js'
@@ -25,7 +25,11 @@ async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | Seria
 
 export async function refreshSnapshotFromUri (changedEntityUri: EntityUri) {
   const entity = await getEntityByUri({ uri: changedEntityUri })
-  return refreshSnapshotFromEntity(entity)
+  if (entity) {
+    return refreshSnapshotFromEntity(entity)
+  } else {
+    warn({ changedEntityUri }, 'cannot refresh snapshot: entity not found')
+  }
 }
 
 export const lazyRefreshSnapshotFromUri = debounceByKey(refreshSnapshotFromUri, snapshotsDebounceTime)
