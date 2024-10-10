@@ -6,6 +6,7 @@ import { getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib
 import { prefixifyInv, unprefixify } from '#controllers/entities/lib/prefix'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { warn } from '#lib/utils/logs'
 import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity } from '#types/entity'
 import { formatEntityCommon } from './format_entity_common.js'
 import { getInvEntityType } from './get_entity_type.js'
@@ -23,10 +24,10 @@ export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesG
 }
 
 async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
-  if ('redirect' in entity) return getRedirectedEntity(entity, params)
+  if ('redirect' in entity) return getRemoteEntity(entity.redirect, entity, params)
 
   const remoteEntityUri = getFirstClaimValue(entity.claims, 'invp:P1')
-  if (remoteEntityUri && entity.type === 'entity') return redirectToRemoteEntity(entity, remoteEntityUri, params)
+  if (remoteEntityUri && entity.type === 'entity') return getRemoteEntity(remoteEntityUri, entity, params)
 
   const [ uri, redirects ] = getInvEntityCanonicalUriAndRedirection(entity)
 
@@ -55,25 +56,17 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
   }
 }
 
-async function getRedirectedEntity (entity: EntityRedirection, params: EntitiesGetterParams) {
+async function getRemoteEntity (remoteEntityUri: EntityUri, entity: InvEntity | EntityRedirection, params: EntitiesGetterParams) {
   const { refresh, dry } = params
   const fromUri = prefixifyInv(entity._id)
-  // Passing the parameters as the entity data source might be Wikidata
-  const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: entity.redirect, refresh, dry })
-  // Case where the redirection redirects to a deleted remote entity
-  if (redirectionTargetEntity == null) return
-  redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
-  return redirectionTargetEntity
-}
-
-async function redirectToRemoteEntity (entity: InvEntity, remoteEntityUri: EntityUri, params: EntitiesGetterParams) {
-  const { refresh, dry } = params
-  const fromUri = prefixifyInv(entity._id)
-  const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: remoteEntityUri, refresh, dry })
-  // Case where the redirection redirects to a deleted remote entity
-  if (redirectionTargetEntity == null) return
-  redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
-  return redirectionTargetEntity
+  const remoteEntity: SerializedEntity = await getEntityByUri({ uri: remoteEntityUri, refresh, dry })
+  if (remoteEntity) {
+    remoteEntity.redirects = { from: fromUri, to: remoteEntity.uri }
+    return remoteEntity
+  } else {
+    // Case where the remote entity has been deleted
+    warn({ entity, remoteEntityUri }, 'cannot get remote entity: remote entity missing')
+  }
 }
 
 function aggregateFoundIds (foundIds, entity) {
