@@ -86,13 +86,18 @@ describe('entities:get:by-uris', () => {
   })
 
   it('should return redirected uris', async () => {
-    const [ humanA, humanB ] = await Promise.all([ createHuman(), createHuman() ])
-    await merge(humanA.uri, humanB.uri)
-    const { entities, notFound, redirects } = await getByUris(humanA.uri)
-    Object.keys(entities).length.should.equal(1)
-    entities[humanB.uri].should.be.an.Object()
+    const [ humanA, humanB, humanC ] = await Promise.all([ createHuman(), createHuman(), createHuman() ])
+    const wdHumanUri = 'wd:Q1345582'
+    await Promise.all([
+      merge(humanA.uri, humanB.uri),
+      merge(humanC.uri, wdHumanUri),
+    ])
+    const { entities, notFound, redirects } = await getByUris([ humanA.uri, humanC.uri ])
+    Object.keys(entities).length.should.equal(2)
     entities[humanB.uri].uri.should.equal(humanB.uri)
+    entities[wdHumanUri].uri.should.equal(wdHumanUri)
     redirects[humanA.uri].should.equal(humanB.uri)
+    redirects[humanC.uri].should.equal(wdHumanUri)
     should(notFound).not.be.ok()
   })
 
