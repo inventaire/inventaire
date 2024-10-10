@@ -1,4 +1,4 @@
-import { difference } from 'lodash-es'
+import { compact, difference } from 'lodash-es'
 import { getEntitiesByIds } from '#controllers/entities/lib/entities'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
@@ -16,9 +16,10 @@ import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonic
 export async function getInvEntitiesByIds (ids: InvEntityId[], params: EntitiesGetterParams) {
   const entities = await getEntitiesByIds(ids)
   const serializedEntities = await Promise.all(entities.map(entity => format(entity, params)))
-  const found: InvEntityId[] = serializedEntities.reduce(aggregateFoundIds, [])
+  const foundEntities = compact(serializedEntities)
+  const found: InvEntityId[] = foundEntities.reduce(aggregateFoundIds, [])
   const notFound: InvEntityUri[] = difference(ids, found).map(prefixifyInv)
-  return { entities: serializedEntities, notFound }
+  return { entities: foundEntities, notFound }
 }
 
 async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
@@ -59,6 +60,8 @@ async function getRedirectedEntity (entity: EntityRedirection, params: EntitiesG
   const fromUri = prefixifyInv(entity._id)
   // Passing the parameters as the entity data source might be Wikidata
   const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: entity.redirect, refresh, dry })
+  // Case where the redirection redirects to a deleted remote entity
+  if (redirectionTargetEntity == null) return
   redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
   return redirectionTargetEntity
 }
@@ -67,6 +70,8 @@ async function redirectToRemoteEntity (entity: InvEntity, remoteEntityUri: Entit
   const { refresh, dry } = params
   const fromUri = prefixifyInv(entity._id)
   const redirectionTargetEntity: SerializedEntity = await getEntityByUri({ uri: remoteEntityUri, refresh, dry })
+  // Case where the redirection redirects to a deleted remote entity
+  if (redirectionTargetEntity == null) return
   redirectionTargetEntity.redirects = { from: fromUri, to: redirectionTargetEntity.uri }
   return redirectionTargetEntity
 }
