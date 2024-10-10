@@ -19,6 +19,7 @@ const db = await dbFactory('users')
 const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
 const searchUsersByDistance = searchUsersByDistanceFactory('users')
 
+// TODO: include SpecialUser in possibly returned type
 export const getUserById = db.get<User>
 export const getUsersByIds = db.byIds<User>
 

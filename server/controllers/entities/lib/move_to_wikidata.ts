@@ -1,8 +1,7 @@
-import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
-import { isInvPropertyUri } from '#lib/boolean_validations'
+import { omitLocalClaims } from '#controllers/entities/lib/update_wd_claim'
 import { newError } from '#lib/error/error'
 import type { InvEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
@@ -39,7 +38,7 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   }
 
   // Local claims will be preserved in a local layer
-  const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
+  const claimsWithoutLocalClaims = omitLocalClaims(claims)
   const { uri: wdEntityUri } = await createWdEntity({
     labels,
     claims: claimsWithoutLocalClaims,

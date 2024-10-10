@@ -83,7 +83,14 @@ function validateWikidataCompliance (entity: EntityDraft) {
 }
 
 function format (entity: EntityDraft) {
-  entity.claims = mapKeysValues(entity.claims, (property, propertyClaims) => {
+  return {
+    ...entity,
+    claims: formatClaimsForWikidata(entity.claims),
+  }
+}
+
+export function formatClaimsForWikidata (claims: ExpandedClaims) {
+  const wdFormattedClaims = mapKeysValues(claims, (property, propertyClaims) => {
     return [
       unprefixify(property),
       unprefixifyClaims(property, propertyClaims),
@@ -91,9 +98,9 @@ function format (entity: EntityDraft) {
   }) as UnprefixedClaims
   // Relocate qualifier properties after unprefixifying,
   // as the unprefixifyClaims function doesn't handle qualifiers
-  relocateQualifierProperties(entity)
-  reshapeMonolingualTextClaims(entity)
-  return entity
+  relocateQualifierProperties(wdFormattedClaims)
+  reshapeMonolingualTextClaims(wdFormattedClaims)
+  return wdFormattedClaims
 }
 
 function unprefixifyClaims (property: PropertyUri, propertyClaims: InvExpandedPropertyClaims) {
@@ -129,12 +136,11 @@ const monolingualProperties = [
   'wdt:P1680',
 ] as const satisfies PropertyUri[]
 
-function reshapeMonolingualTextClaims (entity: EntityDraft) {
-  const { claims } = entity
+function reshapeMonolingualTextClaims (claims: ExpandedClaims) {
   if (!monolingualProperties.find(property => claims[property])) return
   const languageUri = getFirstClaimValue(claims, 'wdt:P407') as WdEntityUri
   if (!languageUri) {
-    throw newError('monolingual text claims can not be reshaped in absence of a language claim', 400, { entity })
+    throw newError('monolingual text claims can not be reshaped in absence of a language claim', 400, { claims })
   }
   const langWdId = unprefixify(languageUri)
   const languageCode = wmLanguageCodeByWdId[langWdId] as WikimediaLanguageCode
