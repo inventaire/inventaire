@@ -34,12 +34,20 @@ describe('entities:resolve', () => {
     }
   })
 
-  it('should resolve an edition entry from an ISBN', async () => {
+  it('should resolve an edition entry from a local ISBN', async () => {
     const { uri, isbn } = await createEditionWithIsbn()
     const entry = { edition: { isbn } }
     const { entries } = await resolve(entry)
     entries[0].should.be.an.Object()
     entries[0].edition.uri.should.equal(uri)
+  })
+
+  it('should resolve an edition entry from an external id found on a remote entity', async () => {
+    // Expect to find wdt:P648=OL22934376M on wd:Q116194196, with canonical uri=isbn:9780375759239
+    const entry = { edition: { claims: { 'wdt:P648': 'OL22934376M' } } }
+    const { entries } = await resolve(entry)
+    entries[0].should.be.an.Object()
+    entries[0].edition.uri.should.equal('isbn:9780375759239')
   })
 
   it('should resolve an edition from a known edition external id', async () => {
