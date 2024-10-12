@@ -33,22 +33,67 @@ const addToSuggestion = (userId, clue) => suggestion => {
   return suggestion
 }
 
+interface LabelsMatchMergeParams {
+  fromUri: EntityUri
+  toUri: EntityUri
+  fromEntity: SerializedEntity
+  toEntity: SerializedEntity
+  userId: UserId
+}
+const mergeIfLabelsMatchByType = {
+  work: async function ({ fromUri, toUri, fromEntity, toEntity, userId }: LabelsMatchMergeParams) {
+    const [ fromEntityAuthors, toEntityAuthors ] = await Promise.all([
+      getAuthorsFromWorksUris([ fromEntity.uri ]),
+      getAuthorsFromWorksUris([ toEntity.uri ]),
+    ])
+    const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
+    const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
+
+    return validateAndMergeEntities({
+      validation: haveExactMatch(fromLabels, toLabels),
+      userId,
+      fromUri,
+      toUri,
+    })
+  },
+  collection: async function ({ fromUri, toUri, fromEntity, toEntity, userId }: LabelsMatchMergeParams) {
+    const [ fromPublishers, toPublishers ] = await Promise.all([
+      getPublishersFromPublicationsUris([ fromEntity.uri ]),
+      getPublishersFromPublicationsUris([ toEntity.uri ]),
+    ])
+    const fromLabels = uniq(fromPublishers.flatMap(getEntityNormalizedTerms))
+    const toLabels = uniq(toPublishers.flatMap(getEntityNormalizedTerms))
+    return validateAndMergeEntities({
+      validation: haveExactMatch(fromLabels, toLabels),
+      userId,
+      fromUri,
+      toUri,
+    })
+  },
+  human: async function ({ fromUri, toUri, fromEntity, toEntity, userId }: LabelsMatchMergeParams) {
+    const [ fromEntityWorksData, toEntityWorksData ] = await Promise.all([
+      getAuthorWorksData(fromEntity._id),
+      getAuthorWorksData(toEntity._id),
+    ])
+    const { labels: fromEntityWorksLabels } = fromEntityWorksData
+    const { labels: toEntityWorksLabels } = toEntityWorksData
+    return validateAndMergeEntities({
+      validation: haveExactMatch(fromEntityWorksLabels, toEntityWorksLabels),
+      userId,
+      fromUri,
+      toUri,
+    })
+  },
+}
+
 export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, fromEntity, toEntity, userId) {
+  const mergeIfLabelsMatch = mergeIfLabelsMatchByType[entitiesType]
+  if (mergeIfLabelsMatch) {
+    const isMerged = await mergeIfLabelsMatch({ fromUri, toUri, fromEntity, toEntity, userId })
+    if (isMerged) return isMerged
+  }
   const fromUriTasks = await getTasksBySuspectUri(fromUri, { index: false })
   const existingTask = fromUriTasks.find(task => task.suggestionUri === toUri)
-
-  if (entitiesType === 'human') {
-    const isMerged = await mergeIfWorksLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
-    if (isMerged) return
-  }
-  if (entitiesType === 'work') {
-    const isMerged = await mergeIfAuthorsLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
-    if (isMerged) return
-  }
-  if (entitiesType === 'collection') {
-    const isMerged = await mergeIfPublishersLabelsMatch(fromUri, toUri, fromEntity, toEntity, userId)
-    if (isMerged) return
-  }
   let taskRes
   if (existingTask) {
     [ taskRes ] = await updateTasks({
@@ -70,58 +115,8 @@ export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, f
   }
 }
 
-export async function mergeIfWorksLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
-  const [ fromEntityWorksData, toEntityWorksData ] = await Promise.all([
-    getAuthorWorksData(fromEntity._id),
-    getAuthorWorksData(toEntity._id),
-  ])
-  const { labels: fromEntityWorksLabels } = fromEntityWorksData
-  const { labels: toEntityWorksLabels } = toEntityWorksData
-
-  return validateAndMergeEntities({
-    validation: haveExactMatch(fromEntityWorksLabels, toEntityWorksLabels),
-    userId,
-    fromUri,
-    toUri,
-  })
-}
-
-export async function mergeIfAuthorsLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
-  const [ fromEntityAuthors, toEntityAuthors ] = await Promise.all([
-    getAuthorsFromWorksUris([ fromEntity.uri ]),
-    getAuthorsFromWorksUris([ toEntity.uri ]),
-  ])
-  const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
-  const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
-
-  return validateAndMergeEntities({
-    validation: haveExactMatch(fromLabels, toLabels),
-    userId,
-    fromUri,
-    toUri,
-  })
-}
-
-export async function mergeIfPublishersLabelsMatch (fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
-  const [ fromPublishers, toPublishers ] = await Promise.all([
-    getPublishersFromPublicationsUris([ fromEntity.uri ]),
-    getPublishersFromPublicationsUris([ toEntity.uri ]),
-  ])
-  const fromLabels = uniq(fromPublishers.flatMap(getEntityNormalizedTerms))
-  const toLabels = uniq(toPublishers.flatMap(getEntityNormalizedTerms))
-
-  return validateAndMergeEntities({
-    validation: haveExactMatch(fromLabels, toLabels),
-    userId,
-    fromUri,
-    toUri,
-  })
-}
-
 async function validateAndMergeEntities ({ validation, userId, fromUri, toUri }) {
-  if (validation) {
-    await mergeEntities({ userId, fromUri, toUri })
-    .then(() => { return { ok: true } })
-  }
-  return false
+  if (!validation) { return false }
+  await mergeEntities({ userId, fromUri, toUri })
+  return { ok: true }
 }
