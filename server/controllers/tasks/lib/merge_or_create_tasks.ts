@@ -1,4 +1,5 @@
 import { map, uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getAuthorsFromWorksUris, getAuthorWorksData, getPublishersFromPublicationsUris } from '#controllers/entities/lib/entities'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
@@ -84,6 +85,25 @@ const mergeIfLabelsMatchByType = {
       toUri,
     })
   },
+  edition: async function ({ fromUri, toUri, fromEntity, toEntity, userId }: LabelsMatchMergeParams) {
+    const [ fromEditionWorks, toEditionWorks ] = await Promise.all([
+      getEditionWorks(fromEntity),
+      getEditionWorks(toEntity),
+    ])
+    const fromLabels = uniq(fromEditionWorks.flatMap(getEntityNormalizedTerms))
+    const toLabels = uniq(toEditionWorks.flatMap(getEntityNormalizedTerms))
+    return validateAndMergeEntities({
+      validation: haveExactMatch(fromLabels, toLabels),
+      userId,
+      fromUri,
+      toUri,
+    })
+  },
+}
+
+async function getEditionWorks (edition) {
+  const worksUris = edition.claims['wdt:P629'] as EntityUri[]
+  return getEntitiesList(worksUris)
 }
 
 export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, fromEntity, toEntity, userId) {

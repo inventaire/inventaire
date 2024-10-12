@@ -1,7 +1,16 @@
-import { createCollection, createEdition, createPublisher, randomLabel, createEditionWithIsbn } from '#fixtures/entities'
 import { createTask } from '#fixtures/tasks'
 import 'should'
-import { createHuman, createWorkWithAuthor, addPublisher } from '#tests/api/fixtures/entities'
+import {
+  createCollection,
+  createEdition,
+  createPublisher,
+  randomLabel,
+  createEditionWithIsbn,
+  createHuman,
+  createWorkWithAuthor,
+  createWork,
+  addPublisher,
+} from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { publicReq, getUser } from '#tests/api/utils/utils'
@@ -217,6 +226,36 @@ describe('entities:merge:as:user', () => {
 
       await userMerge(collection1.uri, collection2.uri)
       const tasks = await getBySuspectUri(collection1.uri)
+      tasks.length.should.aboveOrEqual(1)
+    })
+  })
+
+  describe('editions', () => {
+    it('should merge if works labels match', async () => {
+      const label = randomLabel()
+      const [ work1, work2 ] = await Promise.all([
+        createWork({ labels: { it: label } }),
+        createWork({ labels: { it: label } }),
+      ])
+
+      const [ edition, edition2 ] = await Promise.all([
+        createEdition({ work: work1 }),
+        createEdition({ work: work2 }),
+      ])
+
+      await userMerge(edition.uri, edition2.uri)
+      const { entities } = await getByUris(edition.uri)
+      should(entities[edition2.uri]).be.ok()
+    })
+
+    it('should create a task when no work labels match', async () => {
+      const [ edition, edition2 ] = await Promise.all([
+        createEdition(),
+        createEdition(),
+      ])
+
+      await userMerge(edition.uri, edition2.uri)
+      const tasks = await getBySuspectUri(edition.uri)
       tasks.length.should.aboveOrEqual(1)
     })
   })
