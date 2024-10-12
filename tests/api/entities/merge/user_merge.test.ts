@@ -34,6 +34,8 @@ describe('entities:merge:as:user', () => {
       await userMerge(human.uri, human2.uri)
       const { entities } = await getByUris(human.uri)
       entities[human2.uri].should.be.ok()
+      const tasks = await getBySuspectUri(human.uri)
+      tasks.length.should.equal(0)
     })
 
     it('should create a task when no works labels match', async () => {
