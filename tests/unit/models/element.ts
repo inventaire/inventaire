@@ -5,11 +5,13 @@ import 'should'
 const validDocId = '12345678900987654321123456789012'
 const validUri = 'inv:12345678900987654321123456789012'
 const validOrdinal = '1'
+const validComment = 'foo'
 
 const validListing = {
   uri: validUri,
   list: validDocId,
   ordinal: validOrdinal,
+  comment: validComment,
 }
 
 describe('element model', () => {
@@ -19,6 +21,7 @@ describe('element model', () => {
       element.list.should.equal(validDocId)
       element.uri.should.equal(validUri)
       element.ordinal.should.equal(validOrdinal)
+      element.comment.should.equal(validComment)
       element.created.should.be.a.Number()
     })
 
