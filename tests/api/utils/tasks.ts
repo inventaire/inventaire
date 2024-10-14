@@ -1,5 +1,6 @@
 import { values } from 'lodash-es'
 import { forceArray } from '#lib/utils/base'
+import type { EntityType } from '#server/types/entity'
 import type { Url } from '#types/common'
 import { publicReq, adminReq } from './utils.js'
 
@@ -36,7 +37,7 @@ export async function getByScore ({ limit, offset }: { limit?: number, offset?: 
   return tasks
 }
 
-export async function getByEntitiesType ({ type, entitiesType, limit, offset }) {
+export async function getByEntitiesType ({ type, entitiesType, limit, offset }: { type: any, entitiesType: EntityType, limit?: number, offset?: number }) {
   let url: Url = `${endpoint}by-entities-type&type=${type}&entities-type=${entitiesType}`
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
