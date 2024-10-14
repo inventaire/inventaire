@@ -138,6 +138,20 @@ describe('entities:merge:as:user', () => {
       const tasks = await getBySuspectUri(work1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
+
+    it('should merge if authors have the same URI and works labels match', async () => {
+      const humanLabel = randomLabel()
+      const workLabel = randomLabel()
+      const human = await createHuman({ labels: { en: humanLabel } })
+      const [ work1, work2 ] = await Promise.all([
+        createWorkWithAuthor(human, workLabel),
+        createWorkWithAuthor(human, workLabel),
+      ])
+
+      await userMerge(work1.uri, work2.uri)
+      const { entities } = await getByUris(work1.uri)
+      should(entities[work2.uri]).be.ok()
+    })
   })
 
   describe('publishers', () => {

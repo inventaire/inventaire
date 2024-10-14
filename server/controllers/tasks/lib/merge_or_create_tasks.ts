@@ -1,10 +1,11 @@
 import { map, uniq } from 'lodash-es'
-import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getAuthorsFromWorksUris, getAuthorWorksData, getPublishersFromPublicationsUris } from '#controllers/entities/lib/entities'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
+import { someMatch } from '#lib/utils/base'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri, EntityType } from '#types/entity'
 import type { Task, Suggestion } from '#types/task'
@@ -47,11 +48,18 @@ const mergeIfLabelsMatchByType = {
       getAuthorsFromWorksUris([ fromEntity.uri ]),
       getAuthorsFromWorksUris([ toEntity.uri ]),
     ])
-    const fromLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
-    const toLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
+    const fromAuthorsLabels = uniq(fromEntityAuthors.flatMap(getEntityNormalizedTerms))
+    const toAuthorsLabels = uniq(toEntityAuthors.flatMap(getEntityNormalizedTerms))
+
+    const fromWorkLabels = getEntityNormalizedTerms(fromEntity)
+    const toWorkLabels = getEntityNormalizedTerms(toEntity)
+    // see test: should create a task when authors have the same URI but no works labels match
+    if (!haveExactMatch(fromWorkLabels, toWorkLabels) && someUrisMatch(fromEntityAuthors, toEntityAuthors)) {
+      return
+    }
 
     return validateAndMergeEntities({
-      validation: haveExactMatch(fromLabels, toLabels),
+      validation: haveExactMatch(fromAuthorsLabels, toAuthorsLabels),
       userId,
       fromUri,
       toUri,
@@ -139,4 +147,10 @@ async function validateAndMergeEntities ({ validation, userId, fromUri, toUri })
   if (!validation) { return false }
   await mergeEntities({ userId, fromUri, toUri })
   return { ok: true }
+}
+
+function someUrisMatch (fromEntityAuthors, toEntityAuthors) {
+  const fromUris = map(fromEntityAuthors, 'uri')
+  const toUris = map(toEntityAuthors, 'uri')
+  return someMatch(fromUris, toUris)
 }
