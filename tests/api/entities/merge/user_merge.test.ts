@@ -10,6 +10,7 @@ import {
   createWorkWithAuthor,
   createWork,
   addPublisher,
+  createSerieWithAuthor,
 } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
@@ -270,6 +271,22 @@ describe('entities:merge:as:user', () => {
 
       await userMerge(edition.uri, edition2.uri)
       const tasks = await getBySuspectUri(edition.uri)
+      tasks.length.should.aboveOrEqual(1)
+    })
+  })
+
+  describe('series', () => {
+    it('should create a task even if authors labels match', async () => {
+      const humanLabel = randomLabel()
+      const human = await createHuman({ labels: { en: humanLabel } })
+      const human2 = await createHuman({ labels: { en: humanLabel } })
+      const [ serie1, serie2 ] = await Promise.all([
+        createSerieWithAuthor({ human }),
+        createSerieWithAuthor({ human: human2 })
+      ])
+
+      await userMerge(serie1.uri, serie2.uri)
+      const tasks = await getBySuspectUri(serie1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
   })
