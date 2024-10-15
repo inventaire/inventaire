@@ -8,13 +8,15 @@ import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
-import type { User } from '#types/user'
+import type { User, UserRole } from '#types/user'
+
+export type CustomUserData = Record<string, string | number | boolean>
 
 const origin = config.getLocalOrigin()
 const authEndpoint = `${origin}/api/auth`
 
 let getUser, updateUser
-const importCircularDependencies = async () => {
+async function importCircularDependencies () {
   ;({ getUser } = await import('#tests/api/utils/utils'))
   ;({ updateUser } = await import('#tests/api/utils/users'))
 }
@@ -22,7 +24,7 @@ setImmediate(importCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 const _signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-const loginOrSignup = async userData => {
+async function loginOrSignup (userData) {
   try {
     return await connect(`${authEndpoint}?action=login`, userData)
   } catch (err) {
@@ -39,7 +41,7 @@ export function signup (email) {
   })
 }
 
-async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }: { customData: Partial<User>, mayReuseExistingUser?: boolean, role?: string }) {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -60,11 +62,11 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }
   return getUserWithCookie(cookie)
 }
 
-export function getOrCreateUser (customData, role) {
+export function getOrCreateUser (customData: CustomUserData, role: UserRole) {
   return _getOrCreateUser({ customData, role, mayReuseExistingUser: true })
 }
 
-export function createUser (customData = {}) {
+export function createUser (customData: CustomUserData = {}) {
   return _getOrCreateUser({ customData, mayReuseExistingUser: false })
 }
 
@@ -81,7 +83,7 @@ export async function getUserWithCookie (cookie: string) {
   return user as UserWithCookie
 }
 
-export async function getRefreshedUser (user) {
+export async function getRefreshedUser (user: AwaitableUserWithCookie) {
   // Allow to pass either a user doc or a user promise
   user = await user
   // Get the up-to-date user doc while keeping the cookie
@@ -93,7 +95,7 @@ export const createUsername = () => getSomeUsername()
 
 export const createUserEmail = () => getSomeEmail()
 
-export const getUsersWithoutRelation = async () => {
+export async function getUsersWithoutRelation () {
   const [ userA, userB ] = await Promise.all([
     getUser(),
     createUser(),
@@ -101,7 +103,7 @@ export const getUsersWithoutRelation = async () => {
   return { userA, userB }
 }
 
-export const getRandomPosition = () => {
+export function getRandomPosition () {
   return [
     getRandomLatitude(),
     getRandomLongitude(),
@@ -121,7 +123,7 @@ export async function getTwoFriends () {
 
 const parseCookie = res => res.headers['set-cookie']
 
-const setCustomData = async (user, customData) => {
+async function setCustomData (user: UserWithCookie, customData: CustomUserData) {
   delete customData.username
   delete customData.password
   for (const attribute in customData) {
@@ -134,7 +136,7 @@ const setCustomData = async (user, customData) => {
   }
 }
 
-const randomCoordinate = (min, max) => {
+function randomCoordinate (min: number, max: number) {
   // Let some margin so that no invalid coordinates can be generated
   // from adding/removing less than 5 from any random coordinate composant
   min = min + 5
