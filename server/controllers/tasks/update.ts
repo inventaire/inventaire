@@ -1,4 +1,4 @@
-import { getTaskById, updateTask } from '#controllers/tasks/lib/tasks'
+import { getTaskById, updateTasks } from '#controllers/tasks/lib/tasks'
 import updateRelationScore from './lib/relation_score.js'
 
 const sanitization = {
@@ -8,7 +8,7 @@ const sanitization = {
 }
 
 async function controller ({ id, attribute, value }) {
-  await updateTask({
+  await updateTasks({
     ids: [ id ],
     attribute,
     newValue: value,

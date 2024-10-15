@@ -30,6 +30,7 @@ const commonValidations = {
   patchId: isPatchId,
   transactionId: isTransactionId,
   userId: isUserId,
+  userIds: userIds => isArray(userIds) && userIds.every(isUserId),
   userImg: image => {
     // Allow a user to delete their picture by passing a null value
     if (image === null) return true

@@ -1,8 +1,9 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { createTasksFromSuggestions, getExistingTasks } from '#controllers/tasks/lib/tasks'
 import { notFoundError, newError } from '#lib/error/error'
 import { arrayIncludes } from '#lib/utils/base'
 import { info } from '#lib/utils/logs'
+import type { Suggestion } from '#types/task'
 import getNewSuggestionsOrAutomerge from './get_new_suggestions_or_automerge.js'
 import updateRelationScore from './relation_score.js'
 
@@ -29,7 +30,7 @@ export default async function (uri) {
   }
 
   const existingTasks = await getExistingTasks(uri)
-  const newSuggestions = await getNewSuggestionsOrAutomerge(entity, existingTasks)
+  const newSuggestions: Suggestion[] = await getNewSuggestionsOrAutomerge(entity, existingTasks)
   await createTasksFromSuggestions({
     suspectUri: uri,
     type: 'deduplicate',
@@ -39,5 +40,3 @@ export default async function (uri) {
 
   await updateRelationScore(uri)
 }
-
-const getExistingTasks = uri => getTasksBySuspectUris([ uri ])

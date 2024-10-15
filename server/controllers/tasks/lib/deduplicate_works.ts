@@ -1,12 +1,13 @@
-import { isEqual, map } from 'lodash-es'
+import { isEqual } from 'lodash-es'
 import { getEntitiesByIsbns } from '#controllers/entities/lib/get_entities_by_isbns'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
-import { createTasksFromSuggestions, getTasksBySuspectUris } from '#controllers/tasks/lib/tasks'
+import { getSuggestionsAndCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { newError, notFoundError } from '#lib/error/error'
-import type { EntityUri } from '#server/types/entity'
+import type { SerializedEntity, EntityUri } from '#server/types/entity'
+import type { UserId } from '#types/user'
 
 export default async function (workUri, isbn, userId) {
   const work = await getEntityByUri({ uri: workUri })
@@ -23,43 +24,31 @@ export default async function (workUri, isbn, userId) {
   const edition = editionsRes.entities[0]
   const editionWorksUris = edition.claims['wdt:P629'] as EntityUri[]
   if (isEqual(editionWorksUris, [ workUri ])) return
-
   const editionWorks = await getEntitiesList(editionWorksUris)
-  const suggestions = await getSuggestionsOrAutomerge(work, editionWorks, userId)
+  const toEntities = await mergeIfLabelsMatch(work, editionWorks, userId)
+  if (toEntities.length === 0) return
 
-  if (suggestions.length === 0) return
-  const existingTasks = await getExistingTasks(workUri)
-  let newSuggestions = await filterNewTasks(existingTasks, suggestions)
-  newSuggestions = map(newSuggestions, addToSuggestion(userId, isbn))
-  return createTasksFromSuggestions({
-    suspectUri: workUri,
-    type: 'deduplicate',
+  return getSuggestionsAndCreateTasks({
     entitiesType: type,
-    suggestions: newSuggestions,
+    toEntities,
+    fromEntity: work,
+    userId,
+    clue: isbn,
   })
 }
 
-async function getSuggestionsOrAutomerge (work, editionWorks, userId) {
-  const workLabels = Object.values(work.labels)
-  for (const editionWork of editionWorks) {
-    const editionWorkLabels = Object.values(editionWork.labels)
-    if (haveExactMatch(workLabels, editionWorkLabels)) {
-      await mergeEntities({ userId, fromUri: work.uri, toUri: editionWork.uri })
+export async function mergeIfLabelsMatch (fromEntity: SerializedEntity, toEntities: SerializedEntity[], userId: UserId) {
+  const fromEntityLabels = Object.values(fromEntity.labels)
+  for (const toEntity of toEntities) {
+    const toEntityLabels = Object.values(toEntity.labels)
+    if (haveExactMatch(fromEntityLabels, toEntityLabels)) {
+      await mergeEntities({
+        userId,
+        fromUri: fromEntity.uri,
+        toUri: toEntity.uri,
+      })
       return [] // no suggestions
     }
   }
-  return editionWorks
-}
-
-const getExistingTasks = uri => getTasksBySuspectUris([ uri ])
-
-function filterNewTasks (existingTasks, suggestions) {
-  const existingTasksUris = map(existingTasks, 'suggestionUri')
-  return suggestions.filter(suggestion => !existingTasksUris.includes(suggestion.uri))
-}
-
-const addToSuggestion = (userId, isbn) => suggestion => {
-  suggestion.reporter = userId
-  suggestion.clue = isbn
-  return suggestion
+  return toEntities
 }

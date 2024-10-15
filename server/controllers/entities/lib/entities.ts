@@ -1,4 +1,5 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
@@ -14,7 +15,9 @@ import type { EntityImagePath, ImageHash } from '#server/types/image'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
+import { prefixifyInv } from './prefix.js'
 import { validateProperty } from './properties/validations.js'
+import { getEntityNormalizedTerms } from './terms_normalization.js'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 
 const db = await dbFactory('entities')
@@ -181,4 +184,34 @@ export async function wdEntityHasALocalLayer (wdUri: WdEntityUri) {
   const wdId = unprefixify(wdUri)
   const localLayer = await getWdEntityLocalLayer(wdId)
   return localLayer != null
+}
+
+export async function getAuthorWorksData (authorId) {
+  const works = await getInvEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
+  // works = [
+  //   { labels: { fr: 'Matiere et Memoire'} },
+  //   { labels: { en: 'foo' } }
+  // ]
+  const labels = uniq(works.flatMap(getEntityNormalizedTerms))
+  const langs = uniq(works.flatMap(getLangs))
+  const worksUris = works.map(work => prefixifyInv(work._id))
+  return { authorId, labels, langs, worksUris }
+}
+
+const getLangs = work => Object.keys(work.labels)
+
+export async function getAuthorsFromWorksUris (workUris) {
+  const works = await getEntitiesList(workUris)
+  const authorsUris = getWorksAuthorsUris(works)
+  return getEntitiesList(authorsUris)
+}
+
+export async function getPublishersFromPublicationsUris (publicationUris) {
+  const publications = await getEntitiesList(publicationUris)
+  const publishersUris = uniq(publications.flatMap(getPublishersUris))
+  return getEntitiesList(publishersUris)
+}
+
+function getPublishersUris (publication) {
+  return publication.claims['wdt:P123']
 }

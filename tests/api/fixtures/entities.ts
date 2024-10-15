@@ -19,10 +19,6 @@ import type {
   PropertyUri,
   SerializedEntity,
   WdEntityUri,
-  Claims,
-  EntityUri,
-  Labels,
-  PropertyUri,
 } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
