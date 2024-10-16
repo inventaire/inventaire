@@ -6,7 +6,7 @@ import { customAuthReq } from '#tests/api/utils/request'
 import { adminReq, authReq, publicReq } from '#tests/api/utils/utils'
 
 const context = { type: 'spam', text: 'SEO! https://spamers.corp' }
-const abuseErr = newError('possible spam attempt', 598, context)
+export const abuseErr = newError('possible spam attempt', 598, context)
 
 describe('user:abuse reports', () => {
   it('should ignore an abuse report without user', async () => {
