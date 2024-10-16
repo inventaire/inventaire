@@ -13,7 +13,7 @@ import type { HighResolutionTime, HttpHeaders, HttpMethod, Url } from '#types/co
 import { isUrl } from './boolean_validations.js'
 import isPrivateUrl from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
-import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError } from './requests_temporary_host_ban.js'
+import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError, recordPossibleTimeoutError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
 import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
@@ -65,7 +65,7 @@ async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {
       warn(err, `retrying request ${timer.requestId}`)
       res = await fetch(url, fetchOptions)
     } else {
-      if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') declareHostError(host)
+      recordPossibleTimeoutError(host, err)
       throw err
     }
   } finally {

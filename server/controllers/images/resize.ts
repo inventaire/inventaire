@@ -2,7 +2,9 @@ import { URL } from 'node:url'
 import parseUrl from 'parseurl'
 import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
+import { errorHandler } from '#lib/error/error_handler'
 import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
+import { assertHostIsNotTemporarilyBanned } from '#lib/requests_temporary_host_ban'
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
 import config from '#server/config'
@@ -52,7 +54,12 @@ export default {
         return bundleError(req, res, 'invalid href query', 400, url)
       }
 
-      const { hostname } = new URL(url)
+      const { host, hostname } = new URL(url)
+      try {
+        assertHostIsNotTemporarilyBanned(host)
+      } catch (err) {
+        return errorHandler(req, res, err)
+      }
 
       if (!trustedRemoteHosts.has(hostname)) {
         return bundleError(req, res, 'image domain not allowed', 400, url)

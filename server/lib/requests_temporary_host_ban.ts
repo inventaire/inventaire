@@ -1,6 +1,7 @@
 import { debounce, noop } from 'lodash-es'
 import leveldbFactory from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
+import type { ContextualizedError } from '#lib/error/format_error'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 import config from '#server/config'
@@ -55,6 +56,12 @@ export function assertHostIsNotTemporarilyBanned (host: Host) {
 export function resetBanData (host: Host) {
   delete banData[host]
   lazyBackup()
+}
+
+export function recordPossibleTimeoutError (host: Host, err: ContextualizedError) {
+  if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+    declareHostError(host)
+  }
 }
 
 export function declareHostError (host: Host) {

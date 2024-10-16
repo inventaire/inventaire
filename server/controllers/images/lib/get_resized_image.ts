@@ -4,6 +4,7 @@ import { errorHandler } from '#lib/error/error_handler'
 import { bundleError } from '#lib/error/pre_filled'
 import { applyImageLimits, shrinkAndFormatStream } from '#lib/images'
 import { endReqTimer, startReqTimer, userAgent, type RequestTimer } from '#lib/requests'
+import { declareHostError, recordPossibleTimeoutError, resetBanData } from '#lib/requests_temporary_host_ban'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { Url } from '#types/common'
@@ -14,6 +15,7 @@ const { mediaStorage } = config
 const { maxSize } = mediaStorage.images
 const oneMB = 1024 ** 2
 const fetchOptions = {
+  timeout: 30_000,
   headers: {
     'user-agent': userAgent,
   },
@@ -29,13 +31,14 @@ export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?
 
   let response, errorCode
   const timer: CustomRequestTimer = startReqTimer('get', url, fetchOptions)
+  const { host } = new URL(url)
   try {
     // No need to call sanitizeUrl here, as the url should have been validated
     // in server/controllers/images/resize.js
-    // TODO: add timeout
     response = await fetch(url, fetchOptions)
     timer.processingResponseStream = true
   } catch (err) {
+    recordPossibleTimeoutError(host, err)
     errorCode = err.code || err.type || err.name || err.message
     err.statusCode = 500
     errorHandler(req, res, err)
@@ -47,6 +50,9 @@ export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?
   const { statusText } = response
   let { status: statusCode } = response
   const { 'content-type': contentType, 'content-length': contentLength } = response.headers.raw()
+
+  if (statusCode >= 500) declareHostError(host)
+  else resetBanData(host)
 
   let errMessage
   if (statusCode >= 400) {
