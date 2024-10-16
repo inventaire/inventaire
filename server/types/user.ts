@@ -50,6 +50,11 @@ type OAuthProviderTokens = {
   token_secret: string
 }
 
+export interface AbuseReport {
+  type: string
+  text: string
+}
+
 export type Username = string
 
 export interface User extends CouchDoc {
@@ -81,6 +86,7 @@ export interface User extends CouchDoc {
   undeliveredEmail?: number
   lastSummary?: EpochTimeStamp
   lastNews?: string
+  reports?: AbuseReport[]
 }
 
 export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {

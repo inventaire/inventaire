@@ -24,7 +24,7 @@ export function ownerSafeData (user: User | DeletedUser) {
 }
 
 // Adapts the result to the requester authorization level
-export type UserExtraAttribute = 'email'
+export type UserExtraAttribute = 'email' | 'reports'
 
 export function omitPrivateData (reqUserId?: UserId, networkIds = [], extraAttribute?: UserExtraAttribute) {
   const attributes = getAttributes(extraAttribute)

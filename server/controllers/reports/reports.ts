@@ -1,10 +1,11 @@
 import onlineReport from '#controllers/reports/online_report'
+import { handleAbuseReport } from '#controllers/user/lib/abuse_reports'
 import ActionsControllers from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { bundleMissingBodyError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
-import { logError, warn } from '#lib/utils/logs'
+import { logError } from '#lib/utils/logs'
 
 function cspReport (req, res) {
   const report = req.body['csp-report'] || req.body
@@ -28,7 +29,7 @@ function errorReport (req, res) {
   // 599 = client implementation error
   // 598 = user abuse
   if (err.statusCode === 598) {
-    warn(err, 'client abuse report')
+    handleAbuseReport(req.user, err)
   } else {
     logError(err, 'client error report')
   }
@@ -38,6 +39,7 @@ function errorReport (req, res) {
 function buildError (message, errData, req) {
   const statusCode = errData.statusCode || 500
   const err = newError(message, statusCode, errData)
+  if (errData.context) err.context = errData.context
   // Do not add an emitter stack on client reports as it makes it be confused
   // with the client error stack itself
   delete err.emitter

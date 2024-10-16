@@ -58,10 +58,10 @@ export function findUserByUsernameOrEmail (str: Username | Email) {
   }
 }
 
-export async function getUsersAuthorizedDataByIds (ids: UserId[], reqUserId: UserId) {
+export async function getUsersAuthorizedDataByIds (ids: UserId[], reqUserId: UserId, extraAttribute?: UserExtraAttribute) {
   assert_.array(ids)
   if (ids.length === 0) return []
-  return getUsersAuthorizedData(getUsersByIds(ids), reqUserId)
+  return getUsersAuthorizedData(getUsersByIds(ids), reqUserId, extraAttribute)
 }
 
 export async function getUsersAuthorizedData (usersDocsPromise: Promise<DocWithUsernameInUserDb[]>, reqUserId: UserId, extraAttribute?: UserExtraAttribute) {
@@ -73,8 +73,8 @@ export async function getUsersAuthorizedData (usersDocsPromise: Promise<DocWithU
   return usersDocs.map(omitPrivateData(reqUserId, networkIds, extraAttribute))
 }
 
-export async function getUsersIndexedByIds (ids, reqUserId) {
-  const users = await getUsersAuthorizedDataByIds(ids, reqUserId)
+export async function getUsersIndexedByIds (ids: UserId[], reqUserId: UserId, extraAttribute?: UserExtraAttribute) {
+  const users = await getUsersAuthorizedDataByIds(ids, reqUserId, extraAttribute)
   return keyBy(users, '_id')
 }
 
