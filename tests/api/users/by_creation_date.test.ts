@@ -23,4 +23,16 @@ describe('users:by-creation-date', () => {
     const resUser = users.find(resUser => resUser._id === user._id)
     resUser.reports.length.should.equal(1)
   })
+
+  describe('filter=with-reports', () => {
+    it('should only include users with reports', async () => {
+      const user = await createUser()
+      await customAuthReq(user, 'post', '/api/reports?action=error-report', { error: abuseErr })
+      const { users } = await adminReq('get', getUrl({ limit: 10, filter: 'with-reports' }))
+      users.length.should.be.above(0)
+      for (const user of users) {
+        user.reports.length.should.be.above(0)
+      }
+    })
+  })
 })

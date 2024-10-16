@@ -1,18 +1,24 @@
 import { omitPrivateData, type UserExtraAttribute } from '#controllers/user/lib/authorized_user_data_pickers'
 import { getUsersByCreationDate } from '#controllers/users/lib/users'
-import { hasAdminAccess } from '#lib/user_access_levels'
 
 const sanitization = {
   limit: {},
   offset: {},
+  filter: {
+    allowlist: [ 'with-reports' ],
+    optional: true,
+  },
 }
 
-async function controller ({ limit, offset, reqUserId }, req) {
-  let extraAttribute: UserExtraAttribute
-  if ('user' in req && hasAdminAccess(req.user)) {
-    extraAttribute = 'reports'
-  }
-  const users = await getUsersByCreationDate({ limit, offset })
+// This endpoint is admin-only, so all requests can access users abuse reports
+const extraAttribute: UserExtraAttribute = 'reports'
+
+async function controller ({ limit, offset, filter, reqUserId }) {
+  const users = await getUsersByCreationDate({
+    limit,
+    offset,
+    withReportsOnly: filter === 'with-reports',
+  })
   return {
     users: users.map(omitPrivateData(reqUserId, [], extraAttribute)),
   }

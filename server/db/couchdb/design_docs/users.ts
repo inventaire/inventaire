@@ -25,7 +25,14 @@ export const views: Views<DocInUserDb> = {
   byCreation: {
     map: doc => {
       if (doc.type === 'user') {
-        emit(doc.created, doc.username)
+        emit(doc.created, null)
+      }
+    },
+  },
+  byCreationWithReports: {
+    map: doc => {
+      if (doc.type === 'user' && doc.reports != null && doc.reports.length > 0) {
+        emit(doc.created, null)
       }
     },
   },
