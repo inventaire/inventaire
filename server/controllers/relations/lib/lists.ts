@@ -8,7 +8,7 @@ import parseRelations from './parse_relations.js'
 
 const db = await dbFactory('users', 'relations')
 
-function getAllUserRelations (userId, includeDocs = false) {
+function getAllUserRelations (userId: UserId, includeDocs = false) {
   return db.view<UserId, Relation>('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
@@ -16,24 +16,24 @@ function getAllUserRelations (userId, includeDocs = false) {
   })
 }
 
-export function getUserRelations (userId) {
+export function getUserRelations (userId: UserId) {
   return getAllUserRelations(userId)
   .then(parseRelations)
 }
 
-export function getUserFriends (userId) {
+export async function getUserFriends (userId: UserId) {
   const query = { key: [ userId, 'friends' ] }
-  return db.view<UserId, Relation>('relations', 'byStatus', query)
-  .then(mapValue)
+  const res = await db.view<UserId, Relation>('relations', 'byStatus', query)
+  return mapValue(res)
 }
 
-export function deleteUserRelations (userId) {
+export function deleteUserRelations (userId: UserId) {
   return getAllUserRelations(userId, true)
   .then(mapDoc)
   .then(db.bulkDelete)
 }
 
-export async function getUserFriendsAndGroupsCoMembers (userId) {
+export async function getUserFriendsAndGroupsCoMembers (userId: UserId) {
   const [ friends, coMembers ] = await Promise.all([
     getUserFriends(userId),
     getUserGroupsCoMembers(userId),

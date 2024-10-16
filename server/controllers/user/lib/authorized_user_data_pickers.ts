@@ -26,7 +26,7 @@ export function ownerSafeData (user: User | DeletedUser) {
 // Adapts the result to the requester authorization level
 export type UserExtraAttribute = 'email' | 'reports'
 
-export function omitPrivateData (reqUserId?: UserId, networkIds = [], extraAttribute?: UserExtraAttribute) {
+export function omitPrivateData (reqUserId?: UserId, networkIds: UserId[] = [], extraAttribute?: UserExtraAttribute) {
   const attributes = getAttributes(extraAttribute)
   return (userDoc: DocWithUsernameInUserDb) => {
     if (userDoc.type === 'deletedUser') return userDoc
