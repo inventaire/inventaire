@@ -5,6 +5,7 @@ import {
   Float as floatPattern,
 } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
+import type { AbsoluteUrl } from '#server/types/common'
 import type { ObjectEntries } from 'type-fest/source/entries.js'
 
 export function combinations (array1, array2) {
@@ -139,7 +140,7 @@ export function flatMapUniq (collection, key) {
 }
 
 // Decode first, so that any pre-encoded character isn't re-encoded
-export const encodeURL = url => encodeURI(decodeURI(url))
+export const encodeURL = (url: AbsoluteUrl) => encodeURI(decodeURI(url)) as AbsoluteUrl
 
 export function isNotEmpty <T> (value: T): value is (Exclude<T, undefined | null | void>) {
   return value != null

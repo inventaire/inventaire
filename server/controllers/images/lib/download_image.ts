@@ -3,13 +3,15 @@ import { AbortController } from 'abort-controller'
 import fetch from 'node-fetch'
 import { newError } from '#lib/error/error'
 import { endReqTimer, startReqTimer } from '#lib/requests'
+import { assertHostIsNotTemporarilyBanned, declareHostError, recordPossibleTimeoutError, resetBanData } from '#lib/requests_temporary_host_ban'
 import { encodeURL } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
+import type { AbsoluteUrl, Path } from '#server/types/common'
 import isValidImageContentType from './is_valid_image_content_type.js'
 
 const oneMB = Math.pow(1024, 2)
 
-export default async function (url, path) {
+export default async function (url: AbsoluteUrl, path: Path) {
   url = encodeURL(url)
   const controller = new AbortController()
   let res, errorCode
@@ -20,26 +22,32 @@ export default async function (url, path) {
       accept: 'image/*',
     },
   }
+  const { host } = new URL(url)
+  assertHostIsNotTemporarilyBanned(host)
   const timer = startReqTimer('get', url, fetchOptions)
   try {
     res = await fetch(url, fetchOptions)
-    validateResponse(res, controller, url, path)
+    validateResponse(res, controller, url, path, host)
     return await saveFile(res.body, path)
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
     logError(err, 'download image private error')
+    recordPossibleTimeoutError(host, err)
     throw newError('could not download image', 400, { url })
   } finally {
     endReqTimer(timer, res?.status || errorCode)
   }
 }
 
-function validateResponse (response, controller, url, path) {
+function validateResponse (response, controller, url, path, host) {
   let { status: statusCode, statusText } = response
   let { 'content-type': contentType, 'content-length': contentLength } = response.headers.raw()
   contentType = contentType.join(';')
 
   if (contentLength != null) contentLength = parseInt(contentLength)
+
+  if (statusCode >= 500) declareHostError(host)
+  else resetBanData(host)
 
   let errMessage
   if (statusCode >= 400) {
