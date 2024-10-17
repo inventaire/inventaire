@@ -1,5 +1,6 @@
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
+import type { WdEntityId } from '#server/types/entity'
 
 export default {
   parameters: [ 'qid' ] as const,
@@ -17,4 +18,15 @@ export default {
   OPTIONAL { ?work wdt:P361 ?serie . }
 }`
   },
+
+  minimizable: false,
 }
+
+export interface AuthorWork {
+  work: WdEntityId
+  type: WdEntityId
+  date?: string
+  serie?: WdEntityId
+}
+
+export type AuthorWorks = AuthorWork[]

@@ -76,18 +76,18 @@ export type Reference = Partial<Record<ReferenceProperty, ReferencePropertySnaks
 
 export interface InvClaimObject {
   value: InvClaimValue
-  references: Reference[]
+  references?: Reference[]
 }
 
 export interface DatatypedInvClaimObject <T> {
   value: T
-  references: Reference[]
+  references?: Reference[]
 }
 
 export type ClaimObjectByProperty = {
   [Property in keyof Writable<PropertiesValuesConstraints>]: {
     value: ClaimValueTypeByDatatype[PropertiesValuesConstraints[Property]['datatype']]
-    references: Reference[]
+    references?: Reference[]
   }
 }
 export type ClaimByProperty = {

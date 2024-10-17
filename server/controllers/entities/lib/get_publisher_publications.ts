@@ -1,7 +1,7 @@
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import runWdQuery from '#data/wikidata/run_query'
+import { runWdQuery } from '#data/wikidata/run_query'
 import type { InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import type { Split } from 'type-fest'
@@ -55,6 +55,7 @@ function getPublicationDate (doc) {
 async function getWdPublisherCollections (uri: WdEntityUri, refresh: boolean, dry: boolean) {
   const [ prefix, qid ] = uri.split(':') as Split<WdEntityUri, ':'>
   if (prefix !== 'wd') return []
-  const ids: WdEntityId[] = await runWdQuery({ query: 'publisher-collections', qid, refresh, dry })
+  // TODO: include wd editions
+  const ids: WdEntityId[] = await runWdQuery({ query: 'publisher_collections', qid, refresh, dry })
   return ids.map(id => ({ uri: prefixifyWd(id) }))
 }

@@ -55,7 +55,7 @@ export function simplifyInvClaims (claims: Claims, { keepReferences = false } = 
   return simplifiedClaims
 }
 
-export function extendInvClaims (claims: Claims) {
+export function expandInvClaims (claims: Claims) {
   return simplifyInvClaims(claims, { keepReferences: true })
 }
 
