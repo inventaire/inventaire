@@ -17,7 +17,7 @@ interface ResolveExternalIdsOptions {
   refresh?: boolean
 }
 
-interface FormattedResult {
+interface Triple {
   subject: EntityUri
   property: PropertyUri
   value: string
@@ -47,7 +47,7 @@ export async function resolveExternalIds (claims: Claims, options: ResolveExtern
   if (resolveOnWikidata) requests.push(wdQuery(propertyValuePairs, refresh))
 
   const results = await Promise.all(requests)
-  return uniqBy(flatten(results), 'subject') as FormattedResult[]
+  return uniqBy(flatten(results), 'subject') as Triple[]
 }
 
 async function wdQuery (propertyValuePairs: PropertyValuePair[], refresh: boolean) {

@@ -10,7 +10,7 @@ export async function resolveEdition (entry: SanitizedResolverEntry) {
 
   const [
     uriFoundByIsbn,
-    resultsFoundByExternalIds,
+    matchingTriples,
   ] = await Promise.all([
     resolveByIsbn(isbn),
     resolveExternalIds(claims, { resolveOnWikidata }),
@@ -19,8 +19,8 @@ export async function resolveEdition (entry: SanitizedResolverEntry) {
   let uri
   if (uriFoundByIsbn) {
     uri = uriFoundByIsbn
-  } else if (resultsFoundByExternalIds && resultsFoundByExternalIds.length === 1) {
-    uri = resultsFoundByExternalIds[0].subject
+  } else if (matchingTriples && matchingTriples.length === 1) {
+    uri = matchingTriples[0].subject
   }
   if (uri != null) entry.edition.uri = uri
   return entry
