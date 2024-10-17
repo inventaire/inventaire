@@ -25,7 +25,7 @@ interface CreateWdEntityParams {
   isAlreadyValidated: boolean
 }
 
-interface EntityDraft {
+export interface EntityDraft {
   labels: Labels
   claims: ExpandedClaims
 }
@@ -82,7 +82,8 @@ function validateWikidataCompliance (entity: EntityDraft) {
   return entity
 }
 
-function format (entity: EntityDraft) {
+export function format (entity: EntityDraft) {
+  reshapeMonolingualTextClaims(entity)
   entity.claims = mapKeysValues(entity.claims, (property, propertyClaims) => {
     return [
       unprefixify(property),
@@ -92,7 +93,6 @@ function format (entity: EntityDraft) {
   // Relocate qualifier properties after unprefixifying,
   // as the unprefixifyClaims function doesn't handle qualifiers
   relocateQualifierProperties(entity)
-  reshapeMonolingualTextClaims(entity)
   return entity
 }
 
@@ -129,7 +129,7 @@ const monolingualProperties = [
   'wdt:P1680',
 ] as const satisfies PropertyUri[]
 
-function reshapeMonolingualTextClaims (entity: EntityDraft) {
+export function reshapeMonolingualTextClaims (entity: EntityDraft) {
   const { claims } = entity
   if (!monolingualProperties.find(property => claims[property])) return
   const languageUri = getFirstClaimValue(claims, 'wdt:P407') as WdEntityUri
