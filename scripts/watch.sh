@@ -14,4 +14,5 @@ date +%T
 tsx watch \
   --clear-screen=false \
   --ignore "watcher_server_port_${server_port}" \
+  --include server \
   server/server.ts
