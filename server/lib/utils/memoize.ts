@@ -13,9 +13,9 @@
 //
 // See memoize unit tests for more details
 
-export function memoize <T> (fn) {
+export function memoize <A extends unknown[], T> (fn: (...args: A) => T) {
   const cache = {}
-  return (...args) => {
+  return (...args: A) => {
     args = addUndefinedArguments(args, fn.length)
     const key = args.join('|')
     if (cache[key] == null) cache[key] = fn(...args)
@@ -25,7 +25,7 @@ export function memoize <T> (fn) {
 
 function addUndefinedArguments (args, fnLength) {
   const missingArgs = fnLength - args.length
-  // Due Function.length counting arguments before the first argument
+  // Due to Function.length counting arguments before the first argument
   // with a defautl value, functions with default values called with those default
   // arguments defined will have more arguments than their length, thus missingArgs < 0
   if (missingArgs <= 0) return args
