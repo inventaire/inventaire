@@ -4,7 +4,7 @@ import follow from 'cloudant-follow'
 import { debounce } from 'lodash-es'
 import type { DbName } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
-import metaDbFactory from '#db/level/get_sub_db'
+import { leveldbFactory } from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
@@ -14,7 +14,7 @@ import { log, warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { Url } from '#types/common'
 
-const metaDb = metaDbFactory('meta', 'utf8')
+const metaDb = leveldbFactory('meta', 'utf8')
 const dbHost = config.db.getOrigin() as Url
 const { reset: resetFollow, delay: delayFollow } = config.db.follow
 

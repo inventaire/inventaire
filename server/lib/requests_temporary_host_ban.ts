@@ -1,5 +1,5 @@
 import { debounce, noop } from 'lodash-es'
-import leveldbFactory from '#db/level/get_sub_db'
+import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { serverMode } from '#lib/server_mode'

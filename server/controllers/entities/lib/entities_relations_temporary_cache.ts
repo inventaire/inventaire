@@ -1,5 +1,5 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import leveldbFactory from '#db/level/get_sub_db'
+import { leveldbFactory } from '#db/level/get_sub_db'
 import { isEntityUri, isPropertyUri } from '#lib/boolean_validations'
 import { debounceByKey } from '#lib/debounce_by_key'
 import { newError } from '#lib/error/error'

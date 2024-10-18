@@ -16,7 +16,7 @@
 
 import pTimeout from 'p-timeout'
 import { refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
-import leveldbFactory from '#db/level/get_sub_db'
+import { leveldbFactory } from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'

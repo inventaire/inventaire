@@ -1,4 +1,4 @@
-import leveldbFactory from '#db/level/get_sub_db'
+import { leveldbFactory } from '#db/level/get_sub_db'
 import { expired } from '#lib/time'
 import { LogError } from '#lib/utils/logs'
 import config from '#server/config'

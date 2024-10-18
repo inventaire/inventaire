@@ -5,7 +5,7 @@ import { serverMode } from '#lib/server_mode'
 import { oneMinute } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
 import config from '#server/config'
-import getSubDb from './get_sub_db.js'
+import { leveldbFactory } from './get_sub_db.js'
 
 const levelJobsOptions = {
   maxRetries: 20,
@@ -19,7 +19,7 @@ const levelJobsOptions = {
 // always return an object with 'push' and 'pushBatch' function
 // taking a payload and returning a promise
 export function initJobQueue (jobName, worker, maxConcurrency) {
-  const db = getSubDb(`job:${jobName}`, 'utf8')
+  const db = leveldbFactory(`job:${jobName}`, 'utf8')
 
   const run = config.jobs[jobName] && config.jobs[jobName].run
   if (typeof run !== 'boolean') {
