@@ -1,6 +1,6 @@
 import 'should'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
-import runQuery from '#data/wikidata/run_query'
+import { runWdQuery } from '#data/wikidata/run_query'
 import { someFakeUri } from '#fixtures/entities'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -67,13 +67,13 @@ describe('entities relations temporary cache', () => {
     this.timeout(10000 + delay)
     const authorId = 'Q1345582'
     const authorUri = `wd:${authorId}`
-    const works = await runQuery({ query: 'author_works', qid: authorId })
+    const works = await runWdQuery({ query: 'author_works', qid: authorId })
     works.length.should.be.above(0)
     await set(someFakeUri, 'wdt:P50', authorUri)
     await wait(delay)
     // Using dry=true so that we just get an empty result
     // if the cache invalidation worked as expected
-    const worksInCache = await runQuery({ query: 'author_works', qid: authorId, dry: true })
+    const worksInCache = await runWdQuery({ query: 'author_works', qid: authorId, dry: true })
     worksInCache.length.should.equal(0)
   })
 })

@@ -1,19 +1,22 @@
-import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
-import { mapKeysValues, objectEntries } from '#lib/utils/base'
+import { arrayIncludes, mapKeysValues, objectEntries } from '#lib/utils/base'
+import { requireJson } from '#lib/utils/json'
 import { log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
-import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId } from '#server/types/entity'
+import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { getInvEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { validateInvEntity } from './validate_entity.js'
-import type { SimplifiedQualifiers } from 'wikibase-sdk'
+import type { SimplifiedQualifiers, WikimediaLanguageCode } from 'wikibase-sdk'
 
-const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection' ]
+const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
+
+const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection', 'edition' ]
 
 interface CreateWdEntityParams {
   labels: Labels
@@ -22,7 +25,7 @@ interface CreateWdEntityParams {
   isAlreadyValidated: boolean
 }
 
-interface EntityDraft {
+export interface EntityDraft {
   labels: Labels
   claims: ExpandedClaims
 }
@@ -44,7 +47,7 @@ export async function createWdEntity (params: CreateWdEntityParams) {
 
   log(entity, 'wd entity creation')
 
-  await validate(entity, isAlreadyValidated)
+  if (!isAlreadyValidated) await validateInvEntity(entity)
   validateWikidataCompliance(entity)
   const formattedEntity = format(entity)
   const res = await wdEdit.entity.create(formattedEntity, { credentials })
@@ -56,16 +59,12 @@ export async function createWdEntity (params: CreateWdEntityParams) {
   return createdEntity
 }
 
-async function validate (entity, isAlreadyValidated) {
-  if (!isAlreadyValidated) return validateInvEntity(entity)
-}
-
 function validateWikidataCompliance (entity: EntityDraft) {
   const { claims } = entity
   if (claims == null) throw newError('invalid entity', 400, { entity })
 
   const entityType = getInvEntityType(claims['wdt:P31'])
-  if (!allowlistedEntityTypes.includes(entityType)) {
+  if (!arrayIncludes(allowlistedEntityTypes, entityType)) {
     throw newError('invalid entity type', 400, { entityType, entity })
   }
 
@@ -83,7 +82,8 @@ function validateWikidataCompliance (entity: EntityDraft) {
   return entity
 }
 
-function format (entity: EntityDraft) {
+export function format (entity: EntityDraft) {
+  reshapeMonolingualTextClaims(entity)
   entity.claims = mapKeysValues(entity.claims, (property, propertyClaims) => {
     return [
       unprefixify(property),
@@ -122,4 +122,37 @@ function unprefixifySnakValues (property: ReferenceProperty, propertyValues: Ref
   } else {
     return propertyValues
   }
+}
+
+const monolingualProperties = [
+  'wdt:P1476',
+  'wdt:P1680',
+] as const satisfies PropertyUri[]
+
+export function reshapeMonolingualTextClaims (entity: EntityDraft) {
+  const { claims } = entity
+  if (!monolingualProperties.find(property => claims[property])) return
+  const languageUri = getFirstClaimValue(claims, 'wdt:P407') as WdEntityUri
+  if (!languageUri) {
+    throw newError('monolingual text claims can not be reshaped in absence of a language claim', 400, { entity })
+  }
+  const langWdId = unprefixify(languageUri)
+  const languageCode = wmLanguageCodeByWdId[langWdId] as WikimediaLanguageCode
+  if (!languageCode) {
+    throw newError('wikimedia language code not found', 400, { langWdId })
+  }
+  for (const property of monolingualProperties) {
+    reshapeMonolingualTextPropertyClaims(claims, property, languageCode)
+  }
+}
+
+function reshapeMonolingualTextPropertyClaims (claims: ExpandedClaims, property: PropertyUri, languageCode: WikimediaLanguageCode) {
+  if (!claims[property]) return
+  claims[property] = claims[property].map((claimObject: InvClaimObject) => {
+    const { value, references } = claimObject
+    return {
+      value: { text: value, language: languageCode },
+      references,
+    }
+  })
 }
