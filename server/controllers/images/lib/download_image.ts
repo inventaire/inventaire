@@ -42,7 +42,7 @@ export default async function (url: AbsoluteUrl, path: Path) {
 function validateResponse (response, controller, url, path, host) {
   let { status: statusCode, statusText } = response
   let { 'content-type': contentType, 'content-length': contentLength } = response.headers.raw()
-  contentType = contentType.join(';')
+  contentType = contentType?.join(';') || ''
 
   if (contentLength != null) contentLength = parseInt(contentLength)
 
