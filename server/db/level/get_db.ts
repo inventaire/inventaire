@@ -1,3 +1,4 @@
+import level from 'level-party'
 import { absolutePath } from '#lib/absolute_path'
 import { newError } from '#lib/error/error'
 import { exists } from '#lib/fs'
@@ -12,9 +13,7 @@ if (!(await exists(dbFolder))) {
 const { suffix } = config.db
 const { inMemoryLRUCacheSize } = config.leveldb
 const generalDbPathBase = `${dbFolder}/leveldb`
-const cacheDbPathBase = `${dbFolder}/leveldb_cache`
 const generalDbFolderPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase
-const cacheDbFolderPath = suffix ? `${cacheDbPathBase}-${suffix}` : cacheDbPathBase
 
 // See https://github.com/Level/leveldown#options
 const leveldownOptions = {
@@ -35,9 +34,5 @@ const leveldownOptions = {
   maxOpenFiles: Infinity,
 }
 
-const { default: levelParty } = await import('level-party')
-const level = levelParty
-info(generalDbFolderPath, 'general leveldb path')
-info(cacheDbFolderPath, 'cache leveldb path')
+info(generalDbFolderPath, 'leveldb path')
 export const generalDb = level(generalDbFolderPath, leveldownOptions)
-export const cacheDb = level(cacheDbFolderPath, leveldownOptions)
