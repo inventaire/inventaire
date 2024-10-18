@@ -2,6 +2,7 @@ import should from 'should'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#server/types/common'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
@@ -22,11 +23,11 @@ const startMockServer = async () => {
     port,
     host,
     origin,
-    timeoutEndpoint: `${origin}/timeout`,
-    noTimeoutEndpoint: `${origin}/no-timeout`,
-    errorEndpoint: `${origin}/error`,
-    htmlEndpoint: `${origin}/html`,
-    redirectsToTimeoutEndpoint: `${secondaryOrigin}/redirects-to-timeout`,
+    timeoutEndpoint: `${origin}/timeout` as AbsoluteUrl,
+    noTimeoutEndpoint: `${origin}/no-timeout` as AbsoluteUrl,
+    errorEndpoint: `${origin}/error` as AbsoluteUrl,
+    htmlEndpoint: `${origin}/html` as AbsoluteUrl,
+    redirectsToTimeoutEndpoint: `${secondaryOrigin}/redirects-to-timeout` as AbsoluteUrl,
   }
 }
 
