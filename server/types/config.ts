@@ -32,6 +32,7 @@ export type Config = ReadonlyDeep<{
     banTimeIncreaseFactor: number
     /** Set to 4 or 6 to force the use of IPv4 or IPv6 */
     ipFamily?: 4 | 6
+    rejectPrivateUrls: boolean
   }
   db: {
     protocol: 'http' | 'https'

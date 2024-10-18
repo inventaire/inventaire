@@ -29,6 +29,11 @@ const config = {
   elasticsearch: {
     minReindexationInterval: 0,
   },
+  outgoingRequests: {
+    // Required to be able to request images from the image placeholder server
+    // See tests/api/utils/placeholder_images.ts
+    rejectPrivateUrls: false,
+  },
 }
 
 module.exports = config

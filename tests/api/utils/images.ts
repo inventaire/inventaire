@@ -9,6 +9,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
 import type { ImageContainer } from '#server/types/image'
+import { getSomePlaceholderImageUrl } from '#tests/api/utils/placeholder_images'
 import { waitForTestServer } from '#tests/api/utils/request'
 import { updateClaim } from './entities.js'
 import { updateGroup } from './groups.js'
@@ -24,8 +25,6 @@ const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
 }
 
-const someImageUrl = () => `https://via.placeholder.com/1000x1000.jpg?text=${getRandomString(10)}`
-
 export async function getImageDataUrl (url) {
   url = encodeURIComponent(url)
   const { 'data-url': dataUrl } = await authReq('get', `/api/images?action=data-url&url=${url}`)
@@ -33,15 +32,16 @@ export async function getImageDataUrl (url) {
 }
 
 export async function importSomeImage ({ container }) {
+  const url = await getSomePlaceholderImageUrl()
   return uploadImageFromUrl({
     container,
-    url: someImageUrl(),
+    url,
   })
 }
 
 export async function uploadSomeImage ({ container, imageFilePath, preventAutoRemove = false }: { container: ImageContainer, imageFilePath?: string, preventAutoRemove?: boolean }) {
   imageFilePath = imageFilePath || `/tmp/${getRandomString(10)}.jpg`
-  const imageUrl = someImageUrl()
+  const imageUrl = await getSomePlaceholderImageUrl()
   await downloadImage(imageUrl, imageFilePath)
   const { cookie } = await getUser()
   const form = new FormData()

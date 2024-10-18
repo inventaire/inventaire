@@ -51,6 +51,7 @@ const config = {
     banTimeIncreaseFactor: 4,
     // Set to 4 or 6 to force the use of IPv4 or IPv6
     ipFamily: undefined,
+    rejectPrivateUrls: true,
   },
   // CouchDB settings
   db: {
