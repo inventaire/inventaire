@@ -10,7 +10,7 @@ import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { someMatch } from '#lib/utils/base'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import entitiesQueryBuilder from './entities_query_builder.js'
 import socialQueryBuilder from './social_query_builder.js'
 
@@ -50,7 +50,7 @@ async function typeSearch (params) {
     body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
 
-  const url = `${elasticOrigin}/${queryIndexes.join(',')}/_search` as Url
+  const url = `${elasticOrigin}/${queryIndexes.join(',')}/_search` as AbsoluteUrl
 
   return requests_.post(url, { body })
   .then(getHitsAndTotal)

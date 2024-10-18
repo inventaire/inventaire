@@ -9,7 +9,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { HighResolutionTime, HttpHeaders, HttpMethod, Url } from '#types/common'
+import type { AbsoluteUrl, HighResolutionTime, HttpHeaders, HttpMethod, Url } from '#types/common'
 import { isUrl } from './boolean_validations.js'
 import { isPrivateUrl } from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
@@ -40,7 +40,7 @@ export interface ReqOptions {
   redirect?: 'follow' | 'error' | 'manual'
 }
 
-async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {
+async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = {}) {
   assert_.string(url)
   assert_.object(options)
 
@@ -124,7 +124,7 @@ async function req (method: HttpMethod, url: Url, options: ReqOptions = {}) {
 
 const looksLikeHtml = body => typeof body === 'string' && (body.trim().startsWith('<') || body.includes('<head>'))
 
-export async function sanitizeUrl (url) {
+export async function sanitizeUrl (url: AbsoluteUrl) {
   if (!isUrl(url) || (await isPrivateUrl(url))) {
     throw newInvalidError('url', url)
   }
@@ -245,7 +245,7 @@ export const requests_ = {
   post: req.bind(null, 'post'),
   put: req.bind(null, 'put'),
   delete: req.bind(null, 'delete'),
-  head: (url: Url, options: ReqOptions = {}) => {
+  head: (url: AbsoluteUrl, options: ReqOptions = {}) => {
     options.parseJson = false
     options.returnBodyOnly = false
     return req('head', url, options)

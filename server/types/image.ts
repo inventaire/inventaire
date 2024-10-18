@@ -1,5 +1,5 @@
 import type { uploadContainersNames } from '#controllers/images/lib/containers'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl, Url } from '#types/common'
 import type { CouchDoc } from '#types/couchdb'
 import type { WikimediaCommonsFilename } from '#types/entity'
 
@@ -14,7 +14,7 @@ export type UserImagePath = `/img/users/${ImageHash}`
 
 export interface Image extends CouchDoc {
   _id: ImageHash
-  sources: Url[]
+  sources: AbsoluteUrl[]
   updated: EpochTimeStamp
 }
 
@@ -23,10 +23,10 @@ export type ImageDataUrl = `data:image${string}`
 export type WikimediaCommonsImageUrl = `https://upload.wikimedia.org/${string}`
 
 export interface ImageData {
-  url: Url
+  url: AbsoluteUrl
   file: WikimediaCommonsFilename
   credits: {
     text: string
-    url: Url
+    url: AbsoluteUrl
   }
 }

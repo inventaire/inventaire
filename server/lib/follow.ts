@@ -12,10 +12,10 @@ import { serverMode } from '#lib/server_mode'
 import { assert_ } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 
 const metaDb = leveldbFactory('meta', 'utf8')
-const dbHost = config.db.getOrigin() as Url
+const dbOrigin = config.db.getOrigin() as AbsoluteUrl
 const { reset: resetFollow, delay: delayFollow } = config.db.follow
 
 type DatabaseSeq = `${number}-{string}`
@@ -72,7 +72,7 @@ const initFollow = async (dbName: DbName, reset: () => Promise<void>, lastSeq: D
   if (lastSeq != null) assert_.string(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
-  const dbUrl = `${dbHost}/${dbName}` as Url
+  const dbUrl = `${dbOrigin}/${dbName}` as AbsoluteUrl
 
   await waitForCouchInit()
   const dbLastSeq = await getDbLastSeq(dbUrl)
@@ -151,7 +151,7 @@ function SetLastSeq (dbName: DbName) {
 
 const buildKey = (dbName: DbName) => `${dbName}-last-seq`
 
-async function getDbLastSeq (dbUrl: Url) {
+async function getDbLastSeq (dbUrl: AbsoluteUrl) {
   const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`)
   return lastSeq as DatabaseSeq
 }

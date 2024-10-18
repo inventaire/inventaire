@@ -3,7 +3,7 @@ import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
 import config from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
-import type { ColorHexCode, Url } from '#types/common'
+import type { AbsoluteUrl, ColorHexCode } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
 import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri, InvPropertyUri, WdPropertyUri, WdEntityId } from '#types/entity'
 import type { AssetImagePath, EntityImagePath, GroupImagePath, ImageHash, ImagePath, UserImagePath } from '#types/image'
@@ -25,7 +25,7 @@ function bindedTest <T extends string> (regexName: keyof typeof regex_) {
 
 export const isNonEmptyString = (str: unknown) => typeof str === 'string' && str.length > 0
 
-export function isUrl (url): url is Url {
+export function isUrl (url): url is AbsoluteUrl {
   try {
     const { protocol, username, password } = new URL(url)
     if (!(protocol === 'http:' || protocol === 'https:')) return false

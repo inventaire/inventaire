@@ -7,7 +7,7 @@ import { requestGrouper } from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
 import type { WdEntityId } from '#server/types/entity'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { Item as RawWdEntity } from 'wikibase-sdk'
 
 const { getEntities } = wdk
@@ -24,7 +24,7 @@ async function requester (ids: WdEntityId[]) {
 }
 
 async function getEntitiesBatch (idsBatch: WdEntityId[]) {
-  const url = getEntities({ ids: idsBatch }) as Url
+  const url = getEntities({ ids: idsBatch }) as AbsoluteUrl
   const { entities, error } = await requests_.get(url)
   if (entities) {
     return entities

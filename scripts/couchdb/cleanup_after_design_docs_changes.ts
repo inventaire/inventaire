@@ -15,7 +15,7 @@ import { databases } from '#db/couchdb/databases'
 import { requests_ } from '#lib/requests'
 import { success } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import { waitForActiveTasksToBeDone } from './lib/active_tasks.js'
 import getDatabasesNames from './lib/get_databases_names.js'
 
@@ -35,7 +35,7 @@ async function deleteDesignDocs () {
 
 async function deleteDesignDoc ([ dbBaseName, designDocBaseName ]) {
   const dbName = config.db.name(dbBaseName)
-  const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload` as Url
+  const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload` as AbsoluteUrl
   try {
     const { _rev } = await requests_.get(docUrl)
     await requests_.delete(`${docUrl}?rev=${_rev}`)
@@ -45,7 +45,7 @@ async function deleteDesignDoc ([ dbBaseName, designDocBaseName ]) {
 }
 
 async function removeDatabaseOutdatedViewIndexes (dbName) {
-  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup` as Url)
+  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup` as AbsoluteUrl)
 }
 
 await deleteDesignDocs()

@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { warn, info } from '#lib/utils/logs'
-import type { AbsoluteUrl, Url } from '#server/types/common'
+import type { AbsoluteUrl } from '#server/types/common'
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits
@@ -42,7 +42,7 @@ export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRe
   return persistentRequest()
 }
 
-async function makeRequest <Row> (url: Url, options: SparqlRequestOptions = {}) {
+async function makeRequest <Row> (url: AbsoluteUrl, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
 

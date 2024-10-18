@@ -2,7 +2,7 @@ import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import { logBulkRes } from './helpers.js'
 
 const { origin: elasticOrigin } = config.elasticsearch
@@ -24,7 +24,7 @@ export async function postBatch (batch) {
   // It is required to end by a newline break
   const body = batch.join('\n') + '\n'
   try {
-    const url = `${elasticOrigin}/_doc/_bulk` as Url
+    const url = `${elasticOrigin}/_doc/_bulk` as AbsoluteUrl
     const res = await requests_.post(url, {
       headers,
       body,

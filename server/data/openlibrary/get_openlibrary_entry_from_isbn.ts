@@ -5,7 +5,7 @@ import { setEditionPublisherClaim } from '#data/lib/set_edition_publisher_claim'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
 import { requireJson } from '#lib/utils/json'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { WdEntityUri } from '#types/entity'
 import type { EditionLooseSeed, EntityLooseSeed } from '#types/resolver'
 
@@ -13,7 +13,7 @@ const wdIdByIso6392Code = requireJson('wikidata-lang/mappings/wd_id_by_iso_639_2
 
 export default async function (isbn) {
   const normalizedIsbn = normalizeIsbn(isbn)
-  const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json` as Url
+  const url = `https://openlibrary.org/isbn/${normalizedIsbn}.json` as AbsoluteUrl
   let data
   try {
     data = await requests_.get(url)
@@ -82,7 +82,7 @@ function getEditionSeed (isbn, data) {
 
 async function getEntitySeedFromOlId ({ key }) {
   const id = key.split('/').at(-1)
-  const url = `https://openlibrary.org${key}.json` as Url
+  const url = `https://openlibrary.org${key}.json` as AbsoluteUrl
   const { name, title, type, location, remote_ids: remoteIds = {} } = await requests_.get(url)
   // Ex: https://openlibrary.org/works/OL15331214W.json redirects to /works/OL14933414W
   if (type.key === '/type/redirect') {

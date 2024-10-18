@@ -6,12 +6,12 @@ import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ImageContainer } from '#server/types/image'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import convertImageUrl from './convert_image_url.js'
 
 const { enabled: dataseedEnabled } = config.dataseed
 
-export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer, url: Url }) {
+export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer, url: AbsoluteUrl }) {
   assert_.string(container)
   assert_.string(url)
   const originalUrl = url

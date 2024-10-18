@@ -3,7 +3,7 @@ import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import { assert_ } from './utils/assert_types.js'
 import type { SearchRequest, SearchResponse } from '@elastic/elasticsearch/lib/api/types.js'
 
@@ -14,7 +14,7 @@ export function buildSearcher (params) {
   const index = indexesNamesByBaseNames[dbBaseName]
   assert_.string(index)
 
-  const url = `${elasticOrigin}/${index}/_search` as Url
+  const url = `${elasticOrigin}/${index}/_search` as AbsoluteUrl
 
   return async params => {
     const body: SearchRequest = queryBuilder(params)
@@ -91,5 +91,5 @@ function parseHit (hit) {
 }
 
 export function getIndexedDocUrl (index, id) {
-  return `${elasticOrigin}/${index}/_doc/${id}` as Url
+  return `${elasticOrigin}/${index}/_doc/${id}` as AbsoluteUrl
 }

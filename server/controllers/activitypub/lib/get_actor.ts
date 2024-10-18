@@ -2,7 +2,7 @@ import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import config from '#server/config'
 import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import buildAttachements from './build_attachements.js'
 import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
@@ -32,7 +32,7 @@ async function getUserActor (username) {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links: ActivityLink[] = [
-    { name: 'inventory', url: `${origin}/users/${username}` as Url },
+    { name: 'inventory', url: `${origin}/users/${username}` as AbsoluteUrl },
   ]
   return buildActorObject({
     actorName: stableUsername,

@@ -5,7 +5,7 @@ import type { ResolverBatchParams } from '#controllers/entities/lib/resolver/res
 import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_cleanup_image_url'
 import { objectKeys } from '#lib/utils/types'
 import { addEntityDocClaims } from '#models/entity'
-import type { Url } from '#server/types/common'
+import type { AbsoluteUrl } from '#server/types/common'
 import type { ClaimByDatatype, Claims, EntityId, EntityUriPrefix, InvEntity, InvEntityDoc, InvEntityId, Isbn } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
 import type { EntitySeed, ResolverEntry } from '#server/types/resolver'
@@ -44,7 +44,7 @@ function getEntity (prefix: EntityUriPrefix, entityId: InvEntityId | Isbn) {
   }
 }
 
-async function updateClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl: Url | undefined, reqUserId: UserId, batchId: BatchId) {
+async function updateClaims (entity: InvEntityDoc, seedClaims: Claims, imageUrl: AbsoluteUrl | undefined, reqUserId: UserId, batchId: BatchId) {
   if (!('claims' in entity)) return
   if (entity.type !== 'entity') return
   // Do not update if property already exists (except if date is more precise)
@@ -81,7 +81,7 @@ function dropLikelyBadSubtitle ({ updatedEntity, seedClaims }: { updatedEntity: 
   }
 }
 
-async function addImageClaim (entity: InvEntity, imageUrl: Url | undefined, newClaims: Claims) {
+async function addImageClaim (entity: InvEntity, imageUrl: AbsoluteUrl | undefined, newClaims: Claims) {
   if (!imageUrl) return
   const imageClaims = entity.claims['invp:P2']
   if (imageClaims) return

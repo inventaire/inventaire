@@ -38,13 +38,13 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: Reque
   reqParams.redirect = 'manual'
   reqParams.parseJson = reqParams.parseJson || false
   if (url[0] === '/') url = `${host}${url}`
-  return requests_[method](url, reqParams)
+  return requests_[method](url as AbsoluteUrl, reqParams)
 }
 
 export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
   assert_.string(method)
   assert_.string(endpoint)
-  const url = (endpoint.startsWith('/') ? host + endpoint : endpoint) as Url
+  const url = (endpoint.startsWith('/') ? host + endpoint : endpoint) as AbsoluteUrl
   const options: ReqOptions = {
     headers: { cookie },
     redirect: 'error',

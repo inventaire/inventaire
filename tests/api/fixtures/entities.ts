@@ -8,7 +8,7 @@ import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { Url } from '#server/types/common'
+import type { AbsoluteUrl } from '#server/types/common'
 import type {
   Claims,
   EntityType,
@@ -19,10 +19,6 @@ import type {
   PropertyUri,
   SerializedEntity,
   WdEntityUri,
-  Claims,
-  EntityUri,
-  Labels,
-  PropertyUri,
 } from '#server/types/entity'
 import type { ImageHash } from '#server/types/image'
 import type { Item } from '#server/types/item'
@@ -291,7 +287,7 @@ export async function getSomeWdEdition (attempt = 0) {
     limit: 10,
     offset: random(0, 10000),
     prop: [],
-  }) as Url
+  }) as AbsoluteUrl
   const res = await request('get', url)
   const uris = parse.pagesTitles(res).map(prefixifyWd)
   const { entities } = await getByUris(uris)

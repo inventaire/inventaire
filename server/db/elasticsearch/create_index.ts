@@ -3,12 +3,12 @@ import settings from '#db/elasticsearch/settings/settings'
 import { requests_ } from '#lib/requests'
 import { warn, success } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 
 const { origin } = config.elasticsearch
 
 export default async function (index) {
-  const url = `${origin}/${index}` as Url
+  const url = `${origin}/${index}` as AbsoluteUrl
   const indexBaseName = index.split('-')[0]
   const indexMappings = mappings[indexBaseName]
   const body = { settings, mappings: indexMappings }

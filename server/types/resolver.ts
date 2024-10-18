@@ -1,4 +1,4 @@
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { ClaimByProperty, ClaimValueByProperty, Claims, EntityUri, InvClaim, Isbn, Labels } from '#types/entity'
 
 export type LooseClaim = InvClaim[] | InvClaim
@@ -20,7 +20,7 @@ export interface BaseSeed {
 
 export interface EditionSeed extends BaseSeed {
   isbn: Isbn
-  image?: Url
+  image?: AbsoluteUrl
 }
 
 export type WorkSeed = BaseSeed
@@ -35,7 +35,7 @@ export interface BaseLooseSeed {
 
 export interface EditionLooseSeed extends BaseLooseSeed {
   isbn: Isbn
-  image?: Url
+  image?: AbsoluteUrl
 }
 
 export type EntityLooseSeed = BaseLooseSeed | EditionLooseSeed

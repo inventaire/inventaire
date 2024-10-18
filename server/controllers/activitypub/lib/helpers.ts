@@ -6,9 +6,9 @@ import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
 import type { Context } from '#types/activity'
-import type { AbsoluteUrl, RelativeUrl, Url } from '#types/common'
+import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 
-const host = config.getPublicOrigin()
+const publicOrigin = config.getPublicOrigin()
 
 interface MakeUrlArgs {
   origin?: AbsoluteUrl
@@ -21,7 +21,7 @@ interface MakeUrlArgs {
 }
 
 export function makeUrl ({ origin, endpoint, params }: MakeUrlArgs) {
-  origin = origin || host
+  origin = origin || publicOrigin
   endpoint = endpoint || '/api/activitypub'
   let url: AbsoluteUrl = `${origin}${endpoint}`
   if (params) url = `${url}?${stringifyQuery(params)}`
@@ -50,7 +50,7 @@ export function buildLink (url, text) {
   return `<a href="${url}" rel="me nofollow noopener noreferrer" target="_blank">${text}</a>`
 }
 
-export const entityUrl = uri => `${host}/entity/${uri}` as Url
+export const entityUrl = uri => `${publicOrigin}/entity/${uri}` as AbsoluteUrl
 
 export const propertyLabel = prop => i18n('en', unprefixify(prop))
 

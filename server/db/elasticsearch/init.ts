@@ -3,7 +3,7 @@ import { wait } from '#lib/promises'
 import { get } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Url, RelativeUrl, AbsoluteUrl } from '#types/common'
+import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import createIndex from './create_index.js'
 import reindexOnChange from './reindex_on_change.js'
 
@@ -27,7 +27,7 @@ function ensureIndexesExist () {
 }
 
 function ensureIndexExists (index) {
-  const indexUrl = `${elasticOrigin}/${index}` as Url
+  const indexUrl = `${elasticOrigin}/${index}` as AbsoluteUrl
   return get(indexUrl)
   .catch(err => {
     if (err.statusCode === 404) return createIndex(index)
