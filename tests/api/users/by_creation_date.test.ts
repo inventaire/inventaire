@@ -1,5 +1,6 @@
 import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
+import { wait } from '#lib/promises'
 import { buildUrl } from '#lib/utils/url'
 import { abuseErr } from '#tests/api/user/abuse_reports.test'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -19,7 +20,8 @@ describe('users:by-creation-date', () => {
   it('should include abuse reports', async () => {
     const user = await createUser()
     await customAuthReq(user, 'post', '/api/reports?action=error-report', { error: abuseErr })
-    const { users } = await adminReq('get', getUrl({ limit: 2 }))
+    await wait(200)
+    const { users } = await adminReq('get', getUrl({ limit: 10 }))
     const resUser = users.find(resUser => resUser._id === user._id)
     resUser.reports.length.should.equal(1)
   })
