@@ -17,7 +17,7 @@ const serviceIpsSet = new Set(compact(servicesIps))
 
 // It would be safer to run requests on submitted urls from an isolated process
 // but in the meantime, this mitigates risks of server-side request forgery
-export default async function (url) {
+export async function isPrivateUrl (url: AbsoluteUrl) {
   const { hostname } = new URL(url)
   // - resolve domain names to IP addresses
   // - converts alternative IP addresses representations to the classic representation

@@ -1,7 +1,7 @@
 import 'should'
 import os from 'node:os'
 import { getIpBinaryRepresentation } from '#lib/network/ip_binary_representation'
-import isPrivateUrl from '#lib/network/is_private_url'
+import { isPrivateUrl } from '#lib/network/is_private_url'
 import config from '#server/config'
 
 const hostname = os.hostname()

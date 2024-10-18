@@ -1,7 +1,7 @@
 import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import isPrivateUrl from '#lib/network/is_private_url'
+import { isPrivateUrl } from '#lib/network/is_private_url'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
