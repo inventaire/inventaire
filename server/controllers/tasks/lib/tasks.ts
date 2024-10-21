@@ -1,5 +1,6 @@
 import { groupBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
+import { maxKey, minKey } from '#lib/couch'
 import { mappedArrayPromise } from '#lib/promises'
 import { combinations } from '#lib/utils/base'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
@@ -64,6 +65,7 @@ export function getTasksByEntitiesType (options) {
     limit,
     skip: offset,
     include_docs: true,
+    reduce: false,
   })
 }
 
@@ -132,4 +134,19 @@ function fillWithEmptyArrays (getTasksByUris, uris: EntityUri[]) {
 
 function assignKeyIfExists (newTask, name, value) {
   if (value != null) { newTask[name] = value }
+}
+
+export async function getTasksCount () {
+  const { rows } = await db.view('tasks', 'byTypeAndEntitiesType', {
+    startkey: [ 'deduplicate', minKey ],
+    endkey: [ 'deduplicate', maxKey ],
+    group: true,
+    group_level: 2,
+  })
+
+  const tasksCountByEntitiesType = {}
+  rows.forEach(row => {
+    tasksCountByEntitiesType[row.key[1]] = row.value
+  })
+  return tasksCountByEntitiesType
 }

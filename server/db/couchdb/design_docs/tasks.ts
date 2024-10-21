@@ -35,5 +35,6 @@ export const views: Views<Task> = {
         emit([ doc.type, doc.entitiesType ], null)
       }
     },
+    reduce: '_count',
   },
 }

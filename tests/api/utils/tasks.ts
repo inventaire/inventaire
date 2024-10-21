@@ -55,3 +55,8 @@ export async function checkEntities (uris) {
   const getTasksBySuspectUris = await getBySuspectUris(uris)
   return values(getTasksBySuspectUris).flat()
 }
+
+export async function tasksCount () {
+  const { tasksCount } = await publicReq('get', `${endpoint}tasks-count`)
+  return tasksCount
+}
