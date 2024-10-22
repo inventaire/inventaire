@@ -2,7 +2,7 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import type { InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import type { Split } from 'type-fest'
 
@@ -50,6 +50,14 @@ function getPublicationDate (doc) {
   // as the edition can't have been published much later than its associated entity was created
   // (much more probably, was published before)
   else return doc.created
+}
+
+export function getPublicationYear (claims: Claims) {
+  const date = getFirstClaimValue(claims, 'wdt:P577')
+  if (date) {
+    const year = date.split('-')[0]
+    return parseInt(year)
+  }
 }
 
 async function getWdPublisherCollections (uri: WdEntityUri, refresh: boolean, dry: boolean) {

@@ -1,12 +1,13 @@
 import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
+import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publications'
 import { expandInvClaims, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import type { InvEntityUri } from '#server/types/entity'
+import type { ExpandedClaims, InvEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
@@ -34,10 +35,11 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   if (Object.keys(labels).length === 0) {
     const title = getFirstClaimValue(claims, 'wdt:P1476')
     const lang = getOriginalLang(claims)
-    if (lang) {
+    if (title && lang) {
       labels[lang] = title
     }
   }
+  keepOnlyOneIsbnFormat(claims)
 
   const conflictingWdEntities = await resolveExternalIds(claims, {
     resolveOnWikidata: true,
@@ -82,5 +84,16 @@ const rewrite404 = invEntityUri => err => {
     throw newError('entity not found', 400, { invEntityUri })
   } else {
     throw err
+  }
+}
+
+function keepOnlyOneIsbnFormat (claims: ExpandedClaims) {
+  const publicationYear = getPublicationYear(claims)
+  if (publicationYear != null) {
+    if (publicationYear >= 2007) {
+      delete claims['wdt:P957']
+    } else {
+      delete claims['wdt:P212']
+    }
   }
 }
