@@ -1,6 +1,6 @@
 import { pick } from 'lodash-es'
 import getBestLangValue from '#lib/get_best_lang_value'
-import getOriginalLang from '#lib/wikidata/get_original_lang'
+import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 
 const infoAttributes = [
   '_id',

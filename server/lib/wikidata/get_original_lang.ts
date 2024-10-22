@@ -8,7 +8,7 @@ import type { Claims, PropertyUri, WdEntityUri } from '#server/types/entity'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
-export default (claims: Claims) => {
+export function getOriginalLang (claims: Claims) {
   const langPropertiesClaims = pick(claims, langProperties)
   if (objLength(langPropertiesClaims) === 0) return
 

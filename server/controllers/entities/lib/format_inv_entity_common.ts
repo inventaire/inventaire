@@ -2,7 +2,7 @@
 // Keep in sync with get_wikidata_enriched_entities formatting
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { arrayIncludes } from '#lib/utils/base'
-import getOriginalLang from '#lib/wikidata/get_original_lang'
+import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import type { SerializedInvEntity, SerializedEntity, LocalImageInfo, SerializedRemovedPlaceholder } from '#server/types/entity'
 import { getUrlFromEntityImageHash, setTermsFromClaims, termsFromClaimsTypes } from './entities.js'
 import type { SetOptional } from 'type-fest'
