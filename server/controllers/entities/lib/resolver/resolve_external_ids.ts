@@ -5,7 +5,7 @@ import { prefixifyWd, prefixifyWdProperty } from '#controllers/entities/lib/pref
 import type { PropertyValuePair } from '#data/wikidata/queries/queries'
 import type { ResolvedExternalIdTriple } from '#data/wikidata/queries/resolve_external_ids'
 import { runWdQuery } from '#data/wikidata/run_query'
-import { forceArray, getOptionalValue, objectEntries } from '#lib/utils/base'
+import { forceArray, objectEntries } from '#lib/utils/base'
 import type { Claims, EntityUri, PropertyUri } from '#server/types/entity'
 import type { PropertyValueConstraints } from '#server/types/property'
 import { getInvEntityCanonicalUri } from '../get_inv_entity_canonical_uri.js'
@@ -29,10 +29,10 @@ export async function resolveExternalIds (claims: Claims, options: ResolveExtern
 
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
     const propertyConstraints = properties[property] as PropertyValueConstraints
-    const concurrency = getOptionalValue(propertyConstraints, 'concurrency')
+    const { concurrency } = propertyConstraints
     // Checks for external ids and identifiers typed as concurrent strings such as ISBNs
     if (concurrency) {
-      const format = getOptionalValue(propertyConstraints, 'format')
+      const { format } = propertyConstraints
       forceArray(propertyClaims).map(getClaimValue).forEach(value => {
         if (format) value = format(value)
         propertyValuePairs.push([ property, value ])

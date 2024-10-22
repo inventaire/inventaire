@@ -199,7 +199,3 @@ export function invert (obj: Record<string | number, string | number>) {
   }
   return invertedObj
 }
-
-export function getOptionalValue <T extends object, K extends keyof T> (obj: T, attribute: K) {
-  if (attribute in obj) return obj[attribute]
-}
