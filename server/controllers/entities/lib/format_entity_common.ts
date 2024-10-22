@@ -1,9 +1,10 @@
 // Gathering entity formatting steps common to all the consumers
 // Keep in sync with get_wikidata_enriched_entities formatting
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { arrayIncludes } from '#lib/utils/base'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
 import type { SerializedInvEntity, SerializedEntity, LocalImageInfo, SerializedRemovedPlaceholder } from '#server/types/entity'
-import { getUrlFromEntityImageHash, setTermsFromClaims } from './entities.js'
+import { getUrlFromEntityImageHash, setTermsFromClaims, termsFromClaimsTypes } from './entities.js'
 import type { SetOptional } from 'type-fest'
 
 export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | SerializedRemovedPlaceholder, 'image' | 'invId'>) {
@@ -11,7 +12,7 @@ export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | Se
 
   setEntityImageFromImageHashClaims(entity)
 
-  if (entity.type === 'edition' || entity.type === 'collection') {
+  if (arrayIncludes(termsFromClaimsTypes, entity.type)) {
     // @ts-expect-error
     setTermsFromClaims(entity)
   }

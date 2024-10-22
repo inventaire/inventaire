@@ -4,9 +4,9 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-import { partition, map, compact, omit } from 'lodash-es'
-import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Claims, type PropertyId, type Item as RawWdEntity } from 'wikibase-sdk'
-import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
+import { partition, map, compact } from 'lodash-es'
+import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Item as RawWdEntity } from 'wikibase-sdk'
+import { getWdEntityLocalLayer, setTermsFromClaims, termsFromClaimsTypes } from '#controllers/entities/lib/entities'
 import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getIsbnUriFromClaims } from '#controllers/entities/lib/get_inv_uri_from_doc'
@@ -19,7 +19,7 @@ import { isWdEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import { objectEntries } from '#lib/utils/base'
+import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import getOriginalLang from '#lib/wikidata/get_original_lang'
@@ -150,6 +150,10 @@ async function formatValidEntity (entity: RawWdEntity, type: ExtendedEntityType)
     originalLang: getOriginalLang(formattedClaims),
     // Required by server/db/elasticsearch/wikidata_entities_indexation_queue.js
     lastrevid: entity.lastrevid,
+  }
+  if (arrayIncludes(termsFromClaimsTypes, type)) {
+    // @ts-expect-error
+    setTermsFromClaims(serializedEntity)
   }
 
   await formatAndPropagateRedirection(entity, serializedEntity as SerializedWdEntity)

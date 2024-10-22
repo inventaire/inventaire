@@ -1,5 +1,6 @@
 import 'should'
 import { keyBy } from 'lodash-es'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWdEntitiesByIsbns } from '#data/wikidata/get_wd_entities_by_isbns'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
@@ -26,5 +27,18 @@ describe('get_wd_entities_by_isbns', () => {
     const res = await getWdEntitiesByIsbns([ isbnData ], { refresh: true })
     const entities = keyBy(res.entities, 'uri') as Record<IsbnEntityUri, SerializedWdEntity>
     entities[isbnUri].claims['invp:P1'].should.deepEqual([ 'wd:Q12056079' ])
+  })
+
+  it('should set terms from claims', async () => {
+    const normalizedIsbn = '9782358720137'
+    const isbnUri: IsbnEntityUri = `isbn:${normalizedIsbn}`
+    const isbnData = { ...parseIsbn(normalizedIsbn), uri: isbnUri }
+    const res = await getWdEntitiesByIsbns([ isbnData ], { refresh: true })
+    const entity = res.entities[0] as SerializedWdEntity
+    entity.claims['invp:P1'].should.deepEqual([ 'wd:Q130611070' ])
+    const title = getFirstClaimValue(entity.claims, 'wdt:P1476')
+    const subtitle = getFirstClaimValue(entity.claims, 'wdt:P1680')
+    entity.labels.fromclaims.should.equal(title)
+    entity.descriptions.fromclaims.should.equal(subtitle)
   })
 })
