@@ -1,10 +1,9 @@
 import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
-import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
-import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { expandInvClaims, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
-import { isInvPropertyUri, isIsbnEntityUri } from '#lib/boolean_validations'
+import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
+import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import type { InvEntityUri } from '#server/types/entity'
@@ -20,7 +19,6 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   const entityId = unprefixify(invEntityUri)
 
   const entity = await getEntityById(entityId).catch(rewrite404(invEntityUri))
-  const canonicalUri = getInvEntityCanonicalUri(entity)
 
   if ('redirection' in entity) {
     throw newError('A redirection can not be moved to Wikidata', 400, { invEntityUri, entity })
@@ -73,9 +71,8 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
     },
   })
 
-  if (isIsbnEntityUri(canonicalUri)) {
-    await getEntityByUri({ uri: canonicalUri, refresh: true })
-  }
+  const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
+  if (isbn13h) await temporarilyOverrideWdIdAndIsbnCache(wdEntityUri, isbn13h)
 
   return { uri: wdEntityUri }
 }
