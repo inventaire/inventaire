@@ -25,27 +25,12 @@ export async function getWdEntitiesByIsbns (isbnsData: ParsedIsbnData[], params:
     allFoundWdIds = []
     isbnsToRequest = isbnsData
   } else {
-    const normalizedIsbns = map(isbnsData, 'isbn13')
-    const cacheKeys = normalizedIsbns.map(getCacheKey)
-    const cachedWdIdValues: (CachedWdIdValue | undefined)[] = await cache_.dryGetMany(cacheKeys)
-    const isbnsAndCachedWdUriValues = zip(isbnsData, cachedWdIdValues)
-    const [ cached, notCached ] = partition(isbnsAndCachedWdUriValues, ([ , cachedValue ]) => cachedValue != null)
-    const found = cached.filter(([ , cachedValue ]) => isWdEntityId(cachedValue))
-    allFoundWdIds = found.map(([ , wdId ]) => wdId as WdEntityId)
-    isbnsToRequest = notCached.map(([ isbnData ]) => isbnData)
+    ;({ allFoundWdIds, isbnsToRequest } = await getCachedWdIdsAndIsbns(isbnsData))
   }
 
   // Request missing isbn=>wd pairs
   if (isbnsToRequest.length > 0) {
-    const wdIdByIsbn = await requestWdIdByIsbns(isbnsToRequest)
-    // and cache results individually
-    const newCacheEntries: [ string, CachedWdIdValue ][] = isbnsToRequest.map(({ isbn13 }) => {
-      const wdId = wdIdByIsbn[isbn13]
-      if (wdId) allFoundWdIds.push(wdId)
-      return [ getCacheKey(isbn13), wdId || notFoundValue ]
-    })
-    // No need to wait for this
-    cache_.batchPut(newCacheEntries).catch(LogError('error caching wd entities isbns'))
+    allFoundWdIds = await requestAndCacheWdIdsAndIsbns(isbnsToRequest, allFoundWdIds)
   }
 
   // Return call to get enriched wd entities
@@ -53,6 +38,32 @@ export async function getWdEntitiesByIsbns (isbnsData: ParsedIsbnData[], params:
   // Remove wd to isbn uri redirections (useful only when requesting from wd uris)
   wdEntities.entities.forEach(entity => delete entity.redirects)
   return wdEntities
+}
+
+async function getCachedWdIdsAndIsbns (isbnsData: ParsedIsbnData[]) {
+  const normalizedIsbns = map(isbnsData, 'isbn13')
+  const cacheKeys = normalizedIsbns.map(getCacheKey)
+  const cachedWdIdValues: (CachedWdIdValue | undefined)[] = await cache_.dryGetMany(cacheKeys)
+  const isbnsAndCachedWdUriValues = zip(isbnsData, cachedWdIdValues)
+  const [ cached, notCached ] = partition(isbnsAndCachedWdUriValues, ([ , cachedValue ]) => cachedValue != null)
+  const found = cached.filter(([ , cachedValue ]) => isWdEntityId(cachedValue))
+  return {
+    allFoundWdIds: found.map(([ , wdId ]) => wdId) as WdEntityId[],
+    isbnsToRequest: notCached.map(([ isbnData ]) => isbnData),
+  }
+}
+
+async function requestAndCacheWdIdsAndIsbns (isbnsData: ParsedIsbnData[], allFoundWdIds: WdEntityId[]) {
+  const wdIdByIsbn = await requestWdIdByIsbns(isbnsData)
+  // and cache results individually
+  const newCacheEntries: [ string, CachedWdIdValue ][] = isbnsData.map(({ isbn13 }) => {
+    const wdId = wdIdByIsbn[isbn13]
+    if (wdId) allFoundWdIds.push(wdId)
+    return [ getCacheKey(isbn13), wdId || notFoundValue ]
+  })
+  // No need to wait for this
+  cache_.batchPut(newCacheEntries).catch(LogError('error caching wd entities isbns'))
+  return allFoundWdIds
 }
 
 const getCacheKey = (normalizedIsbn: string) => `wd:isbn:${normalizedIsbn}`
