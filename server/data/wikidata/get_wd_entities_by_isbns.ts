@@ -1,17 +1,21 @@
-import { partition, map, zip } from 'lodash-es'
+import { partition, map, zip, compact } from 'lodash-es'
 import type { ParsedIsbnData } from '#controllers/entities/lib/get_entities_by_isbns'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getWikidataEnrichedEntities } from '#controllers/entities/lib/get_wikidata_enriched_entities'
+import { unprefixify } from '#controllers/entities/lib/prefix'
 import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { normalizeIsbn, toIsbn13 } from '#lib/isbn/isbn'
+import { oneHour } from '#lib/time'
 import { isNotEmpty, objectFromEntries } from '#lib/utils/base'
 import { LogError } from '#lib/utils/logs'
 import { typesAliases } from '#lib/wikidata/aliases'
-import type { NormalizedIsbn, WdEntityId } from '#server/types/entity'
+import type { NormalizedIsbn, WdEntityId, WdEntityUri } from '#server/types/entity'
 
 const { works: worksP31Values, editions: editionsP31Values } = typesAliases
+
+const temporarilyForcedCache = {}
 
 const notFoundValue = '0'
 type CachedWdIdValue = WdEntityId | typeof notFoundValue
@@ -22,8 +26,7 @@ export async function getWdEntitiesByIsbns (isbnsData: ParsedIsbnData[], params:
   let allFoundWdIds: WdEntityId[]
   let isbnsToRequest: ParsedIsbnData[]
   if (refresh) {
-    allFoundWdIds = []
-    isbnsToRequest = isbnsData
+    ;({ allFoundWdIds, isbnsToRequest } = await getWdIdsAndIsbnsToRefresh(isbnsData))
   } else {
     ;({ allFoundWdIds, isbnsToRequest } = await getCachedWdIdsAndIsbns(isbnsData))
   }
@@ -38,6 +41,18 @@ export async function getWdEntitiesByIsbns (isbnsData: ParsedIsbnData[], params:
   // Remove wd to isbn uri redirections (useful only when requesting from wd uris)
   wdEntities.entities.forEach(entity => delete entity.redirects)
   return wdEntities
+}
+
+// Refresh all but those that are in temporarilyForcedCache
+function getWdIdsAndIsbnsToRefresh (isbnsData: ParsedIsbnData[]) {
+  const allFoundWdIds = []
+  const isbnsToRequest = []
+  for (const isbnData of isbnsData) {
+    const wdId = temporarilyForcedCache[isbnData.isbn13]
+    if (wdId) allFoundWdIds.push(wdId)
+    else isbnsToRequest.push(isbnData)
+  }
+  return { allFoundWdIds, isbnsToRequest }
 }
 
 async function getCachedWdIdsAndIsbns (isbnsData: ParsedIsbnData[]) {
@@ -128,3 +143,16 @@ GROUP BY ?edition`
 
 // (1) Filter-out entities that getStrictEntityType will not identify as edition due to the absence of an associated work or a title
 // (2) Filter-out entities that getStrictEntityType will not identify as edition due to the type ambiguity
+
+// When moving an edition to Wikidata, there will be a delay until the SPARQL endpoint
+// will return the new wd entity id for the corresponding isbn, so we need to cache that information until then
+export async function temporarilyOverrideWdIdAndIsbnCache (wdUri: WdEntityUri, isbn13h: string) {
+  const wdId = unprefixify(wdUri)
+  const normalizedIsbn = normalizeIsbn(isbn13h)
+  const cacheKey = getCacheKey(normalizedIsbn)
+  temporarilyForcedCache[normalizedIsbn] = wdId
+  // TODO: if waiting one hour is not enough, there could be a checkIfWdIdAndIsbnCachingIsStillNeeded function
+  // that makes a SPARQL request to see if it was updated
+  setTimeout(() => delete temporarilyForcedCache[normalizedIsbn], oneHour)
+  await cache_.put(cacheKey, wdId)
+}
