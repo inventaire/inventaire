@@ -4,16 +4,11 @@ import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '#fixtures/entities'
 import { wait } from '#lib/promises'
-import config from '#server/config'
 import { addClaim, merge } from '#tests/api/utils/entities'
 import { publicReq } from '#tests/api/utils/utils'
 
 // We are calling directly cacheEntityRelations, as the cases that use it would require to edit Wikidata,
 // so the following tests try to reproduce conditions as close as possible to the real use-cases
-
-if (config.leveldbMemoryBackend) {
-  throw new Error(`this test requires ${config.env} config to have config.leveldbMemoryBackend=false`)
-}
 
 // Due to this feature being primarily used to keep data after edits on Wikidata,
 // and due to the revalidation on primary data, it's quite hard to test from the API itself.
