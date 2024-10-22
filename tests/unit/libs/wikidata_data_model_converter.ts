@@ -1,4 +1,5 @@
 import 'should'
+import { format, reshapeMonolingualTextClaims, type EntityDraft } from '#controllers/entities/lib/create_wd_entity'
 import { someReference } from '#fixtures/entities'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -76,6 +77,45 @@ describe('wikidata data model converter', () => {
         ],
       }
       )
+    })
+  })
+
+  describe('reshapeMonolingualTextClaims', () => {
+    it('should reshape monolingual text claims', () => {
+      const entity = {
+        labels: {},
+        claims: {
+          'wdt:P31': [ { value: 'wd:Q3331189' } ],
+          'wdt:P407': [ { value: 'wd:Q150' } ],
+          'wdt:P1476': [ { value: "L'Eau et les rêves" } ],
+          'wdt:P1680': [ { value: "Essai sur l'imagination de la matière" } ],
+        },
+      } as EntityDraft
+      reshapeMonolingualTextClaims(entity)
+      entity.claims['wdt:P1476'][0].value.should.deepEqual({ text: "L'Eau et les rêves", language: 'fr' })
+      entity.claims['wdt:P1680'][0].value.should.deepEqual({ text: "Essai sur l'imagination de la matière", language: 'fr' })
+    })
+  })
+
+  describe('format', () => {
+    it('should format an entity to the wikibase-edit format', () => {
+      const entity = {
+        labels: {},
+        claims: {
+          'wdt:P31': [ { value: 'wd:Q3331189' } ],
+          'wdt:P212': [ { value: '978-2-253-06099-4' } ],
+          'wdt:P957': [ { value: '2-253-06099-2' } ],
+          'wdt:P407': [ { value: 'wd:Q150' } ],
+          'wdt:P1476': [ { value: "L'Eau et les rêves" } ],
+          'wdt:P577': [ { value: '2009' } ],
+          'wdt:P629': [ { value: 'wd:Q3202802' } ],
+          'wdt:P1680': [ { value: "Essai sur l'imagination de la matière" } ],
+        },
+      } as EntityDraft
+      const formatted = format(entity)
+      formatted.claims.P31[0].value.should.equal('Q3331189')
+      formatted.claims.P1476[0].value.should.deepEqual({ text: "L'Eau et les rêves", language: 'fr' })
+      formatted.claims.P1680[0].value.should.deepEqual({ text: "Essai sur l'imagination de la matière", language: 'fr' })
     })
   })
 })
