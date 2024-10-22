@@ -1,4 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
+import { compact } from 'lodash-es'
+import { logError } from '#lib/utils/logs'
 import config from '#server/config'
 
 const { waitFactor } = config
@@ -56,4 +58,15 @@ export function defer () {
 export async function asyncFilter (array, testFn) {
   const testsResults = await Promise.all(array.map(testFn))
   return array.filter((_, index) => testsResults[index])
+}
+
+export async function whateverWorks <T> (promises: Promise<T>[]) {
+  const results = await Promise.all(promises.map(async promise => {
+    try {
+      return await promise
+    } catch (err) {
+      logError(err, 'facultative promise failed')
+    }
+  }))
+  return compact(results)
 }

@@ -13,6 +13,7 @@ import getOlAuthorWorksTitles from '#data/openlibrary/get_ol_author_works_titles
 import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titles'
 import { getWikipediaArticle } from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
+import { whateverWorks } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import { getEntityByUri } from './get_entity_by_uri.js'
@@ -37,7 +38,7 @@ export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabel
   }
 
   try {
-    const occurrences = await Promise.all([
+    const occurrences = await whateverWorks([
       getWikipediaOccurrences(authorEntity, worksLabels, worksLabelsLangs),
       getBnfOccurrences(authorEntity, worksLabels),
       getOpenLibraryOccurrences(authorEntity, worksLabels),

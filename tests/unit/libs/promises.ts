@@ -1,5 +1,5 @@
 import should from 'should'
-import { objectPromise, tap, wait, mappedArrayPromise } from '#lib/promises'
+import { objectPromise, tap, wait, mappedArrayPromise, whateverWorks } from '#lib/promises'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('promises utils', () => {
@@ -79,6 +79,16 @@ describe('promises utils', () => {
       .then(res => {
         res.should.deepEqual([ 246, 912 ])
       })
+    })
+  })
+
+  describe('whateverWorks', () => {
+    it('should return all fullfied promises, ignoring rejecting promises', async () => {
+      const results = await whateverWorks([
+        Promise.resolve(123),
+        Promise.reject(new Error('oh no')),
+      ])
+      results.should.deepEqual([ 123 ])
     })
   })
 })
