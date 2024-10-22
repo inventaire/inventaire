@@ -1,5 +1,5 @@
 export default {
-  type: [ 'deduplicate' ],
+  type: [ 'deduplicate', 'merge' ],
 
   entitiesType: [ 'work', 'human', 'publisher', 'collection', 'edition', 'serie' ],
 

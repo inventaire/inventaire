@@ -18,7 +18,7 @@ export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, 
 
   return createTasksFromSuggestions({
     suspectUri: fromEntity.uri,
-    type: 'deduplicate',
+    type: 'merge',
     entitiesType,
     suggestions,
   })
