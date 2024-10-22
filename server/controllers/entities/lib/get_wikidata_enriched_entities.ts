@@ -7,7 +7,7 @@
 import { partition, map, compact } from 'lodash-es'
 import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Item as RawWdEntity } from 'wikibase-sdk'
 import { getWdEntityLocalLayer, setTermsFromClaims, termsFromClaimsTypes } from '#controllers/entities/lib/entities'
-import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_entity_common'
+import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_inv_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getIsbnUriFromClaims } from '#controllers/entities/lib/get_inv_uri_from_doc'
 import { getClaimObjectFromClaim, getFirstClaimValue, simplifyInvClaims } from '#controllers/entities/lib/inv_claims_utils'

@@ -8,7 +8,7 @@ import { isWdEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
 import type { EntityRedirection, InvEntityDoc, InvEntityId, InvEntityUri, SerializedEntity, SerializedInvEntity, SerializedRemovedPlaceholder, EntityUri, InvEntity } from '#types/entity'
-import { formatEntityCommon } from './format_entity_common.js'
+import { formatInvEntityCommon } from './format_inv_entity_common.js'
 import { getInvEntityType } from './get_entity_type.js'
 import { getInvEntityCanonicalUriAndRedirection } from './get_inv_entity_canonical_uri.js'
 
@@ -49,10 +49,10 @@ async function format (entity: InvEntityDoc, params: EntitiesGetterParams) {
 
   if (serializedEntity._meta_type === 'removed:placeholder') {
     // @ts-expect-error
-    return formatEntityCommon(serializedEntity) as SerializedRemovedPlaceholder
+    return formatInvEntityCommon(serializedEntity) as SerializedRemovedPlaceholder
   } else {
     // @ts-expect-error
-    return formatEntityCommon(serializedEntity) as SerializedInvEntity
+    return formatInvEntityCommon(serializedEntity) as SerializedInvEntity
   }
 }
 

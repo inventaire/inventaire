@@ -7,7 +7,7 @@ import type { SerializedInvEntity, SerializedEntity, LocalImageInfo, SerializedR
 import { getUrlFromEntityImageHash, setTermsFromClaims, termsFromClaimsTypes } from './entities.js'
 import type { SetOptional } from 'type-fest'
 
-export function formatEntityCommon (entity: SetOptional<SerializedInvEntity | SerializedRemovedPlaceholder, 'image' | 'invId'>) {
+export function formatInvEntityCommon (entity: SetOptional<SerializedInvEntity | SerializedRemovedPlaceholder, 'image' | 'invId'>) {
   entity.originalLang = getOriginalLang(entity.claims)
 
   setEntityImageFromImageHashClaims(entity)
