@@ -21,6 +21,10 @@ async function userMerge (fromUri, toUri) {
   return merge(fromUri, toUri, { user: getUser() })
 }
 
+async function getMergeTaskBySuspectUri (uri) {
+  return getBySuspectUri(uri, 'merge')
+}
+
 describe('entities:merge:as:user', () => {
   it('should reject not logged requests', async () => {
     await publicReq('put', '/api/entities?action=merge')
@@ -44,7 +48,7 @@ describe('entities:merge:as:user', () => {
       await userMerge(human.uri, human2.uri)
       const { entities } = await getByUris(human.uri)
       entities[human2.uri].should.be.ok()
-      const tasks = await getBySuspectUri(human.uri)
+      const tasks = await getMergeTaskBySuspectUri(human.uri)
       tasks.length.should.equal(0)
     })
 
@@ -60,10 +64,11 @@ describe('entities:merge:as:user', () => {
       ])
 
       const res = await userMerge(human.uri, human2.uri)
-      const tasks = await getBySuspectUri(human.uri)
+      const tasks = await getMergeTaskBySuspectUri(human.uri)
       tasks.length.should.aboveOrEqual(1)
       const user = await getUser()
       const task = tasks[0]
+      task.type.should.equal('merge')
       task.reporters.should.deepEqual([ user._id ])
       res.taskId.should.equal(task._id)
     })
@@ -83,6 +88,7 @@ describe('entities:merge:as:user', () => {
       ])
       const firstReporterId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
       const task = await createTask({
+        type: 'merge',
         entitiesType: 'human',
         suspectUri: human.uri,
         suggestionUri: human2.uri,
@@ -90,7 +96,7 @@ describe('entities:merge:as:user', () => {
       })
 
       const res = await userMerge(human.uri, human2.uri)
-      const tasks2 = await getBySuspectUri(human.uri)
+      const tasks2 = await getMergeTaskBySuspectUri(human.uri)
       tasks2.length.should.equal(1)
 
       const user = await getUser()
@@ -100,7 +106,7 @@ describe('entities:merge:as:user', () => {
 
       // should not add an existing userId
       await userMerge(human.uri, human2.uri)
-      const tasks3 = await getBySuspectUri(human.uri)
+      const tasks3 = await getMergeTaskBySuspectUri(human.uri)
       tasks3.length.should.equal(1)
       tasks3[0].reporters.length.should.equal(2)
     })
@@ -136,7 +142,7 @@ describe('entities:merge:as:user', () => {
       ])
 
       await userMerge(work1.uri, work2.uri)
-      const tasks = await getBySuspectUri(work1.uri)
+      const tasks = await getMergeTaskBySuspectUri(work1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
 
@@ -170,7 +176,7 @@ describe('entities:merge:as:user', () => {
       await addPublisher(edition2, publisher2)
 
       await userMerge(publisher1.uri, publisher2.uri)
-      const tasks = await getBySuspectUri(publisher1.uri)
+      const tasks = await getMergeTaskBySuspectUri(publisher1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
 
@@ -240,7 +246,7 @@ describe('entities:merge:as:user', () => {
       ])
 
       await userMerge(collection1.uri, collection2.uri)
-      const tasks = await getBySuspectUri(collection1.uri)
+      const tasks = await getMergeTaskBySuspectUri(collection1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
   })
@@ -270,7 +276,7 @@ describe('entities:merge:as:user', () => {
       ])
 
       await userMerge(edition.uri, edition2.uri)
-      const tasks = await getBySuspectUri(edition.uri)
+      const tasks = await getMergeTaskBySuspectUri(edition.uri)
       tasks.length.should.aboveOrEqual(1)
     })
   })
@@ -282,11 +288,11 @@ describe('entities:merge:as:user', () => {
       const human2 = await createHuman({ labels: { en: humanLabel } })
       const [ serie1, serie2 ] = await Promise.all([
         createSerieWithAuthor({ human }),
-        createSerieWithAuthor({ human: human2 })
+        createSerieWithAuthor({ human: human2 }),
       ])
 
       await userMerge(serie1.uri, serie2.uri)
-      const tasks = await getBySuspectUri(serie1.uri)
+      const tasks = await getMergeTaskBySuspectUri(serie1.uri)
       tasks.length.should.aboveOrEqual(1)
     })
   })

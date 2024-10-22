@@ -18,8 +18,8 @@ export async function getBySuspectUris (uris, type = 'deduplicate') {
   return tasks
 }
 
-export async function getBySuspectUri (uri) {
-  const obj = await getBySuspectUris(uri)
+export async function getBySuspectUri (uri, type = 'deduplicate') {
+  const obj = await getBySuspectUris(uri, type)
   return obj[uri]
 }
 
