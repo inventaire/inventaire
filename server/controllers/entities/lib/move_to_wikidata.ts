@@ -2,10 +2,11 @@ import { omitBy } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
-import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import { expandInvClaims, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { isInvPropertyUri, isIsbnEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import type { InvEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'
@@ -31,6 +32,14 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   let claims, labels
   if ('labels' in entity) labels = entity.labels
   if ('claims' in entity) claims = expandInvClaims(entity.claims)
+
+  if (Object.keys(labels).length === 0) {
+    const title = getFirstClaimValue(claims, 'wdt:P1476')
+    const lang = getOriginalLang(claims)
+    if (lang) {
+      labels[lang] = title
+    }
+  }
 
   const conflictingWdEntities = await resolveExternalIds(claims, {
     resolveOnWikidata: true,
