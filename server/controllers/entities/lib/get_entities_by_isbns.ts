@@ -23,8 +23,11 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   const { autocreate, refresh } = params
 
   let invEntities = await getInvEntitiesByIsbns(isbns)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 26, 'getEntitiesByIsbns ~ ', { invEntities })
   const foundInvIsbns = invEntities.map(getIsbn13h)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 28, 'getEntitiesByIsbns ~ ', { foundInvIsbns })
   const missingLocalIsbns = difference(isbns, foundInvIsbns)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 30, 'getEntitiesByIsbns ~ ', { missingLocalIsbns })
 
   if (autocreate && refresh) {
     // Enrich editions that can be, but let getInvEntitiesByIsbns get the results
@@ -36,10 +39,14 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   }
 
   const remainingParsedIsbnsData = parsedIsbnsData.filter(({ isbn13h }) => missingLocalIsbns.includes(isbn13h))
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 42, 'getEntitiesByIsbns ~ ', { remainingParsedIsbnsData })
   const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(remainingParsedIsbnsData, params)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 44, 'getEntitiesByIsbns ~ ', { serializedWdEntities })
   // This will also take into account entities with an ISBN-10 but no ISBN-13, thank to setInferredClaims
   const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 47, 'getEntitiesByIsbns ~ ', { foundWdIsbns })
   const remainingMissingIsbns = difference(missingLocalIsbns, foundWdIsbns)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 49, 'getEntitiesByIsbns ~ ', { remainingMissingIsbns })
 
   // The cases where autocreate && refresh was already checked above
   let notFound: IsbnEntityUri[] = []
@@ -57,6 +64,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
 
   const { includeReferences } = params
   const serializedInvEntities = invEntities.map(entity => formatEditionEntity(entity, { includeReferences }))
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 67, 'getEntitiesByIsbns ~ ', { serializedInvEntities })
   const serializedEntities = [ ...serializedWdEntities, ...serializedInvEntities ]
   const results = { entities: serializedEntities, notFound }
 

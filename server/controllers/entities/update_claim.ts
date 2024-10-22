@@ -55,7 +55,9 @@ const updaters = {
 }
 
 async function getAltUri (uri: IsbnEntityUri) {
-  const entity = await getEntityByUri({ uri })
+  console.log('🚀 ~ file: update_claim.ts ~ line', 93, 'getAltUri ~ ', { uri })
+  const entity = await getEntityByUri({ uri, refresh: true })
+  console.log('🚀 ~ file: update_claim.ts ~ line', 95, 'getAltUri ~ ', { entity })
   const wdUri = getFirstClaimValue(entity.claims, 'invp:P1')
   if (wdUri) return wdUri
   if ('_id' in entity) {
