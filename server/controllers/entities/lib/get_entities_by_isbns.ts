@@ -37,6 +37,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
 
   const remainingParsedIsbnsData = parsedIsbnsData.filter(({ isbn13h }) => missingLocalIsbns.includes(isbn13h))
   const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(remainingParsedIsbnsData, params)
+  // This will also take into account entities with an ISBN-10 but no ISBN-13, thank to setInferredClaims
   const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
   const remainingMissingIsbns = difference(missingLocalIsbns, foundWdIsbns)
 
