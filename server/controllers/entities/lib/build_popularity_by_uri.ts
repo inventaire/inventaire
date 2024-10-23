@@ -5,11 +5,21 @@ import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { isWdEntityUri } from '#lib/boolean_validations'
-import { info } from '#lib/utils/logs'
+import { info, logError } from '#lib/utils/logs'
+import type { EntityUri } from '#server/types/entity'
 import getSerieParts from './get_serie_parts.js'
 
-export async function buildPopularityByUri (uri) {
-  const entity = await getEntityByUri({ uri, dry: true })
+export async function buildPopularityByUri (uri: EntityUri) {
+  let entity
+  try {
+    entity = await getEntityByUri({ uri, dry: true })
+  } catch (err) {
+    logError(err, `buildPopularityByUri could not get ${uri}`)
+    // Known case: invalid uri (ex: isbn:9788380983435)
+    // Rather return 0 than throwing an exception to prevent the job queue to retry
+    // TODO: identify why invalid uris reach this point
+    return 0
+  }
   // Case where the entity wasn't available in cache
   if (entity == null) return 0
 
