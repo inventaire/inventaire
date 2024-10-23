@@ -138,15 +138,22 @@ function assignKeyIfExists (newTask, name, value) {
 
 export async function getTasksCount () {
   const { rows } = await db.view('tasks', 'byTypeAndEntitiesType', {
-    startkey: [ 'deduplicate', minKey ],
-    endkey: [ 'deduplicate', maxKey ],
+    startkey: [ minKey, minKey ],
+    endkey: [ maxKey, maxKey ],
     group: true,
     group_level: 2,
   })
+  return transformToObject(rows)
+}
 
-  const tasksCountByEntitiesType = {}
+function transformToObject (rows) {
+  const tasksCountByTypeAndEntitiesType = {}
   rows.forEach(row => {
-    tasksCountByEntitiesType[row.key[1]] = row.value
+    const [ type, entitiesType ] = row.key
+    if (!tasksCountByTypeAndEntitiesType[type]) {
+      tasksCountByTypeAndEntitiesType[type] = {}
+    }
+    tasksCountByTypeAndEntitiesType[type][entitiesType] = row.value
   })
-  return tasksCountByEntitiesType
+  return tasksCountByTypeAndEntitiesType
 }
