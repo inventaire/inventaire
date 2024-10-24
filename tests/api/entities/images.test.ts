@@ -6,9 +6,12 @@ import {
   createSerie,
   createWork,
   someImageHash,
+  getSomeWdEditionUri,
+  someRandomImageHash,
 } from '#fixtures/entities'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import config from '#server/config'
+import { addClaim } from '#tests/api/utils/entities'
 import { rawRequest } from '#tests/api/utils/request'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -94,6 +97,15 @@ describe('entities:images', () => {
       const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
       const imagesRes = res.images[uri]
       imagesRes.en.length.should.equal(1)
+    })
+
+    it('should return images from wikidata editions local layers', async () => {
+      const uri = await getSomeWdEditionUri()
+      const imageHash = someRandomImageHash()
+      await addClaim({ uri, property: 'invp:P2', value: imageHash })
+      const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
+      // There might also be wd image file names, typically from wdt:P18 claims
+      res.images[uri].claims.should.containEql(imageHash)
     })
   })
 })
