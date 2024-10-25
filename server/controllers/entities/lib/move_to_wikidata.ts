@@ -1,13 +1,17 @@
-import { omitBy } from 'lodash-es'
+import { omitBy, uniq } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publications'
-import { expandInvClaims, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
+import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { logError } from '#lib/utils/logs'
+import wdEdit from '#lib/wikidata/edit'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import type { ExpandedClaims, InvEntityUri } from '#server/types/entity'
+import type { EntityValue, ExpandedClaims, InvEntityUri, WdEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
@@ -76,6 +80,13 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
   if (isbn13h) await temporarilyOverrideWdIdAndIsbnCache(wdEntityUri, isbn13h)
 
+  try {
+    await setReverseClaims(claims, wdEntityUri, user)
+  } catch (err) {
+    // Setting reverse claims is a nice-to-have but not worth crashing the request if it fails
+    logError(err, 'setReverseClaims failed')
+  }
+
   return { uri: wdEntityUri }
 }
 
@@ -94,6 +105,19 @@ function keepOnlyOneIsbnFormat (claims: ExpandedClaims) {
       delete claims['wdt:P957']
     } else {
       delete claims['wdt:P212']
+    }
+  }
+}
+
+async function setReverseClaims (claims: ExpandedClaims, wdEntityUri: WdEntityUri, user: User) {
+  const credentials = getWikidataOAuthCredentials(user)
+  const entityType = getInvEntityType(claims['wdt:P31'])
+  const newEntityId = unprefixify(wdEntityUri)
+  if (entityType === 'edition') {
+    for (const workClaim of uniq(claims['wdt:P629'])) {
+      const workUri = getClaimValue(workClaim) as EntityValue
+      const id = unprefixify(workUri)
+      await wdEdit.claim.create({ id, property: 'P747', value: newEntityId }, { credentials })
     }
   }
 }
