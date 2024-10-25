@@ -1,5 +1,6 @@
 import { omitBy, uniq } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publications'
 import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
@@ -8,6 +9,7 @@ import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isInvPropertyUri, isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { normalizeIsbn } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
 import wdEdit from '#lib/wikidata/edit'
 import { getLanguageEnglishLabel, getOriginalLang } from '#lib/wikidata/get_original_lang'
@@ -80,7 +82,11 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   })
 
   const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
-  if (isbn13h) await temporarilyOverrideWdIdAndIsbnCache(wdEntityUri, isbn13h)
+  if (isbn13h) {
+    await temporarilyOverrideWdIdAndIsbnCache(wdEntityUri, isbn13h)
+    // Refresh isbn specific caches
+    await getEntityByUri({ uri: `isbn:${normalizeIsbn(isbn13h)}`, refresh: true })
+  }
 
   try {
     await setReverseClaims(claims, wdEntityUri, user)
