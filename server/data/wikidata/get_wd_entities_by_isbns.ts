@@ -9,7 +9,7 @@ import { cache_ } from '#lib/cache'
 import { normalizeIsbn, toIsbn13 } from '#lib/isbn/isbn'
 import { oneHour } from '#lib/time'
 import { isNotEmpty, objectFromEntries } from '#lib/utils/base'
-import { LogError } from '#lib/utils/logs'
+import { info, LogError } from '#lib/utils/logs'
 import { typesAliases } from '#lib/wikidata/aliases'
 import type { NormalizedIsbn, WdEntityId, WdEntityUri } from '#server/types/entity'
 
@@ -27,8 +27,10 @@ export async function getWdEntitiesByIsbns (isbnsData: ParsedIsbnData[], params:
   let isbnsToRequest: ParsedIsbnData[]
   if (refresh) {
     ;({ allFoundWdIds, isbnsToRequest } = await getWdIdsAndIsbnsToRefresh(isbnsData))
+    console.log('🚀 ~ file: get_wd_entities_by_isbns.ts ~ line', 30, 'getWdEntitiesByIsbns ~ ', { allFoundWdIds, isbnsToRequest })
   } else {
     ;({ allFoundWdIds, isbnsToRequest } = await getCachedWdIdsAndIsbns(isbnsData))
+    console.log('🚀 ~ file: get_wd_entities_by_isbns.ts ~ line', 33, 'getWdEntitiesByIsbns ~ ', { allFoundWdIds, isbnsToRequest })
   }
 
   // Request missing isbn=>wd pairs
@@ -148,11 +150,16 @@ GROUP BY ?edition`
 // will return the new wd entity id for the corresponding isbn, so we need to cache that information until then
 export async function temporarilyOverrideWdIdAndIsbnCache (wdUri: WdEntityUri, isbn13h: string) {
   const wdId = unprefixify(wdUri)
+  console.log('🚀 ~ file: get_wd_entities_by_isbns.ts ~ line', 151, 'temporarilyOverrideWdIdAndIsbnCache ~ ', { wdId })
   const normalizedIsbn = normalizeIsbn(isbn13h)
+  console.log('🚀 ~ file: get_wd_entities_by_isbns.ts ~ line', 153, 'temporarilyOverrideWdIdAndIsbnCache ~ ', { normalizedIsbn })
   const cacheKey = getCacheKey(normalizedIsbn)
+  console.log('🚀 ~ file: get_wd_entities_by_isbns.ts ~ line', 155, 'temporarilyOverrideWdIdAndIsbnCache ~ ', { cacheKey })
   temporarilyForcedCache[normalizedIsbn] = wdId
   // TODO: if waiting one hour is not enough, there could be a checkIfWdIdAndIsbnCachingIsStillNeeded function
   // that makes a SPARQL request to see if it was updated
   setTimeout(() => delete temporarilyForcedCache[normalizedIsbn], oneHour)
   await cache_.put(cacheKey, wdId)
 }
+
+setInterval(() => info(temporarilyForcedCache, 'temporarilyForcedCache'), 30000)

@@ -24,6 +24,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
 
   let invEntities = await getInvEntitiesByIsbns(isbns)
   const foundInvIsbns = invEntities.map(getIsbn13h)
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 27, 'getEntitiesByIsbns ~ ', { foundInvIsbns })
   const missingLocalIsbns = difference(isbns, foundInvIsbns)
 
   if (autocreate && refresh) {
@@ -39,6 +40,7 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   const { entities: serializedWdEntities } = await getWdEntitiesByIsbns(remainingParsedIsbnsData, params)
   // This will also take into account entities with an ISBN-10 but no ISBN-13, thank to setInferredClaims
   const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
+  console.log('🚀 ~ file: get_entities_by_isbns.ts ~ line', 43, 'getEntitiesByIsbns ~ ', { foundWdIsbns })
   const remainingMissingIsbns = difference(missingLocalIsbns, foundWdIsbns)
 
   // The cases where autocreate && refresh was already checked above

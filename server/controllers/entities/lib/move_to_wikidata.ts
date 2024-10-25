@@ -81,7 +81,9 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
     },
   })
 
+  console.log('🚀 ~ file: move_to_wikidata.ts ~ line', 81, 'moveInvEntityToWikidata ~ ', { claims })
   const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
+  console.log('🚀 ~ file: move_to_wikidata.ts ~ line', 81, 'moveInvEntityToWikidata ~ ', { isbn13h })
   if (isbn13h) {
     await temporarilyOverrideWdIdAndIsbnCache(wdEntityUri, isbn13h)
     // Refresh isbn specific caches
