@@ -6,9 +6,8 @@ import { getUsersByIds } from '#controllers/user/lib/user'
 import type { Item, SerializedItem } from '#types/item'
 import type { UserId } from '#types/user'
 import { getLastItems, formatActivitySummaryItemsData, getActivitySummaryItemsViewModels, getHighlightedItems } from './last_books_helpers.js'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export async function getLastNetworkBooks (userId: UserId, lang: WikimediaLanguageCode, limitDate = 0) {
+export async function getLastNetworkBooks (userId: UserId, lang: string, limitDate = 0) {
   const networkUsersIds = await getUserFriendsAndGroupsCoMembers(userId)
   const networkItems = await getAuthorizedItemsByUsers(networkUsersIds, userId)
   const lastNetworkItems = getLastItems(limitDate, networkItems)
@@ -16,7 +15,7 @@ export async function getLastNetworkBooks (userId: UserId, lang: WikimediaLangua
   return selectionData
 }
 
-async function extractHighlightedItems (lastItems: Item[], lang: WikimediaLanguageCode) {
+async function extractHighlightedItems (lastItems: Item[], lang: string) {
   const highlightedItems: SerializedItem[] = await Promise.all(getHighlightedItems(lastItems, 10).map(serializeItemData))
   const users = await getItemsUsers(highlightedItems)
   const activitySummaryItemsViewModels = getActivitySummaryItemsViewModels(highlightedItems, users)

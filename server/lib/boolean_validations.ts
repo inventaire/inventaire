@@ -12,7 +12,6 @@ import type { AuthentifiedReq, Req } from '#types/server'
 import type { Email, Username } from '#types/user'
 import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
-import type { Split } from 'type-fest'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
 const publicOrigin = config.getPublicOrigin()
@@ -23,7 +22,7 @@ function bindedTest <T extends string> (regexName: keyof typeof regex_) {
   }
 }
 
-export const isNonEmptyString = (str: unknown) => typeof str === 'string' && str.length > 0
+export const isNonEmptyString = (str: unknown): str is (Exclude<string, ''>) => typeof str === 'string' && str.length > 0
 
 export function isUrl (url: string): url is AbsoluteUrl {
   try {
@@ -51,19 +50,19 @@ export const isWdEntityId = bindedTest<WdEntityId>('WdEntityId')
 
 export function isInvEntityUri (uri: string): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
+  const [ prefix, id ] = uri.split(':')
   return (prefix === 'inv') && isCouchUuid(id)
 }
 
 export function isIsbnEntityUri (uri: string): uri is IsbnEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
+  const [ prefix, id ] = uri.split(':')
   return (prefix === 'isbn') && isNormalizedIsbn(id)
 }
 
 export function isWdEntityUri (uri: string): uri is WdEntityUri {
   if (!isNonEmptyString(uri)) return false
-  const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
+  const [ prefix, id ] = uri.split(':')
   return (prefix === 'wd') && isWikidataItemId(id)
 }
 

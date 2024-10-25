@@ -9,7 +9,6 @@ import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
 import translate from './translate.js'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const { autofix } = config.i18n
 
@@ -35,27 +34,27 @@ activeLanguages.forEach(lang => {
   translators[lang] = translate(lang, polyglot)
 })
 
-function solveLang (lang) {
+function solveLang (lang: string) {
   // There is only support for 2 letters languages for now
   lang = shortLang(lang)
   if (activeLanguages.includes(lang)) return lang
   else return 'en'
 }
 
-export function i18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {
+export function i18n (lang: string, key: string, args?: Record<string, string | number>) {
   lang = solveLang(lang)
   assert_.string(lang)
   assert_.string(key)
   return translators[lang](key, args)
 }
 
-export function I18n (lang: WikimediaLanguageCode, key: string, args?: Record<string, string | number>) {
+export function I18n (lang: string, key: string, args?: Record<string, string | number>) {
   const text = i18n(lang, key, args)
   const firstLetter = text[0].toUpperCase()
   return firstLetter + text.slice(1)
 }
 
-export function dateI18n (lang: WikimediaLanguageCode, epochTime: EpochTimeStamp, format?: LongDateFormatKey) {
+export function dateI18n (lang: string, epochTime: EpochTimeStamp, format?: LongDateFormatKey) {
   // set default while neutralizeing handlebars object
   if (!isString(format)) format = 'LLL'
   lang = solveLang(lang)

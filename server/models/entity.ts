@@ -103,8 +103,10 @@ export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, old
     throw newError('missing old or new value', 400, context)
   }
 
-  if (isString(getClaimValue(oldClaim))) oldClaim = setClaimValue(oldClaim, superTrim(getClaimValue(oldClaim)))
-  if (isString(getClaimValue(newClaim))) newClaim = setClaimValue(newClaim, superTrim(getClaimValue(newClaim)))
+  const oldClaimValue = getClaimValue(oldClaim)
+  const newClaimValue = getClaimValue(newClaim)
+  if (isString(oldClaimValue)) oldClaim = setClaimValue(oldClaim, superTrim(oldClaimValue))
+  if (isString(newClaimValue)) newClaim = setClaimValue(newClaim, superTrim(newClaimValue))
 
   let propArray = doc.claims?.[property]
 
@@ -119,8 +121,9 @@ export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, old
   if (oldClaim != null) {
     if (propArray != null) {
       propArray = propArray.map(claim => {
-        if (isString(claim)) {
-          return setClaimValue(claim, superTrim(getClaimValue(claim)))
+        const value = getClaimValue(claim)
+        if (isString(value)) {
+          return setClaimValue(claim, superTrim(value))
         } else {
           return claim
         }

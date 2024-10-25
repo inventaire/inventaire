@@ -19,7 +19,7 @@ export interface ActivitySummaryItemViewModel {
   item: SerializedItem
   itemHref: AbsoluteUrl
   user: User
-  userLang?: WikimediaLanguageCode
+  userLang?: string
   distance: number
   userHref: AbsoluteUrl
   transactionLabel: string
@@ -55,7 +55,7 @@ export function getActivitySummaryItemsViewModels (items: SerializedItem[], user
   })
 }
 
-export function formatActivitySummaryItemsData (activitySummaryItemsViewModels: ActivitySummaryItemViewModel[], label: string, lang: WikimediaLanguageCode, lastItemsCount: number) {
+export function formatActivitySummaryItemsData (activitySummaryItemsViewModels: ActivitySummaryItemViewModel[], label: string, lang: string, lastItemsCount: number) {
   const more = activitySummaryItemsViewModels.length - lastItemsCount
   return {
     display: activitySummaryItemsViewModels.length > 0,
@@ -99,7 +99,7 @@ function getItemsWithTransactionFirst (lastItems: SerializedItem[], highlightedL
   }
 }
 
-const addSummaryUserLang = (lang: WikimediaLanguageCode) => (itemViewModel: ActivitySummaryItemViewModel) => {
+const addSummaryUserLang = (lang: string) => (itemViewModel: ActivitySummaryItemViewModel) => {
   itemViewModel.userLang = lang
   return itemViewModel
 }

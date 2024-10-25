@@ -10,7 +10,7 @@ import { LogError } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
-import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
+import type { EntityValue, InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import entitiesRelationsTemporaryCache, { triggerSubjectEntityCacheRefresh } from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
@@ -31,7 +31,7 @@ export async function updateWdClaim (user: User, id: WdEntityId, property: Prope
   newValue = prop.format != null ? prop.format(newValue) : newValue
 
   if ((getPropertyDatatype(property) === 'entity')) {
-    if (isInvEntityUri(newValue)) {
+    if (isInvEntityUri(newValue as EntityValue)) {
       throw newError("wikidata entities can't link to inventaire entities", 400)
     }
 
