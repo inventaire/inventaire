@@ -9,8 +9,8 @@ import type { UserId } from '#server/types/user'
 async function _redirectClaims (userId: UserId, fromUri: EntityUri, toUri: EntityUri) {
   const results = await getInvClaimsByClaimValue(fromUri)
   const entitiesToEditIds = map(results, 'entity')
-  log(entitiesToEditIds, 'entitiesToEditIds')
   if (entitiesToEditIds.length === 0) return
+  log(entitiesToEditIds, 'entitiesToEditIds')
   // Doing all the redirects at once to avoid conflicts
   // within a same entity pointing several times to the redirected entity.
   // There is no identified case at the moment though.
