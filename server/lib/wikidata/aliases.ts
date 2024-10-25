@@ -158,23 +158,31 @@ const wikidataOnlyP31Values = {
 
 type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
 
-export const typesAliases = {} as Record<PluralizedEntityType, WdEntityUri[]>
+export type TypesAliases = Record<PluralizedEntityType, WdEntityUri[]>
+export const typesAliases = {} as TypesAliases
 
 for (const [ type, wdTypeValues ] of objectEntries(wikidataOnlyP31Values)) {
   const invTypeValues = invP31Values[type] || []
   typesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
 }
 
-export const types: Record<WdEntityUri, ExtendedEntityType> = {}
+type EntityTypeByP31Value = Record<WdEntityUri, ExtendedEntityType>
 
-for (const [ type, typeIds ] of objectEntries(typesAliases)) {
-  // Drop the plural form, including when deriving from English uses,
-  // notably: series => serie
-  const singularType = type.replace(/s$/, '') as ExtendedEntityType
-  for (const id of typeIds) {
-    types[id] = singularType
+export function getTypesFromTypesAliases (aliases: TypesAliases) {
+  const entityTypeByP31Value: EntityTypeByP31Value = {}
+
+  for (const [ type, typeIds ] of objectEntries(aliases)) {
+    // Drop the plural form, including when deriving from English uses,
+    // notably: series => serie
+    const singularType = type.replace(/s$/, '') as ExtendedEntityType
+    for (const id of typeIds) {
+      entityTypeByP31Value[id] = singularType
+    }
   }
+  return entityTypeByP31Value
 }
+
+export const types = getTypesFromTypesAliases(typesAliases)
 
 export const typesNames = objectKeys(typesAliases)
 
