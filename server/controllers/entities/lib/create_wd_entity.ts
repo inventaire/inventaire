@@ -6,7 +6,7 @@ import { requireJson } from '#lib/utils/json'
 import { info, log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
-import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject } from '#server/types/entity'
+import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject, Descriptions } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { getInvEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
@@ -20,6 +20,7 @@ const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collect
 
 interface CreateWdEntityParams {
   labels: Labels
+  descriptions?: Descriptions
   claims: ExpandedClaims
   user: User
   isAlreadyValidated: boolean
@@ -27,6 +28,7 @@ interface CreateWdEntityParams {
 
 export interface EntityDraft {
   labels: Labels
+  descriptions?: Descriptions
   claims: ExpandedClaims
 }
 
@@ -39,11 +41,11 @@ type UnprefixedClaimObject = {
 export type UnprefixedClaims = Record<WdPropertyId, UnprefixedClaimObject[]>
 
 export async function createWdEntity (params: CreateWdEntityParams) {
-  const { labels, claims, user, isAlreadyValidated } = params
+  const { labels, descriptions, claims, user, isAlreadyValidated } = params
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
 
-  const entity: EntityDraft = { labels, claims }
+  const entity: EntityDraft = { labels, descriptions, claims }
 
   log(entity, 'wd entity creation')
 

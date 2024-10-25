@@ -6,12 +6,12 @@ import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
-import { isInvPropertyUri } from '#lib/boolean_validations'
+import { isInvPropertyUri, isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { logError } from '#lib/utils/logs'
 import wdEdit from '#lib/wikidata/edit'
-import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import type { EntityValue, ExpandedClaims, InvEntityUri, WdEntityUri } from '#server/types/entity'
+import { getLanguageEnglishLabel, getOriginalLang } from '#lib/wikidata/get_original_lang'
+import type { Descriptions, EntityValue, ExpandedClaims, InvEntityUri, WdEntityUri } from '#server/types/entity'
 import type { User } from '#server/types/user'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
@@ -53,11 +53,13 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
     }
   }
   keepOnlyOneIsbnFormat(claims)
+  const descriptions = buildDescriptions(claims)
 
   // Local claims will be preserved in a local layer during merge
   const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
   const { uri: wdEntityUri } = await createWdEntity({
     labels,
+    descriptions,
     claims: claimsWithoutLocalClaims,
     user,
     isAlreadyValidated: true,
@@ -106,6 +108,21 @@ function keepOnlyOneIsbnFormat (claims: ExpandedClaims) {
     } else {
       delete claims['wdt:P212']
     }
+  }
+}
+
+function buildDescriptions (claims: ExpandedClaims): Descriptions {
+  let englishDescription = ''
+  const publicationYear = getPublicationYear(claims)
+  if (publicationYear) englishDescription += publicationYear
+  const languagesUris = claims['wdt:P407']?.map(getClaimValue)
+  if (isNonEmptyArray(languagesUris)) {
+    const languagesLabels = languagesUris.map(getLanguageEnglishLabel).join('-')
+    englishDescription += ` ${languagesLabels}`
+  }
+  englishDescription = `${englishDescription} edition`.trim()
+  return {
+    en: englishDescription,
   }
 }
 
