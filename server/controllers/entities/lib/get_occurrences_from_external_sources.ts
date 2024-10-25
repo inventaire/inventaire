@@ -119,4 +119,4 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
 
 // Example of a case requiring ascii-folding:
 // when "’" is used on one side and "'" on the other
-const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+const normalize = (str: string) => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())

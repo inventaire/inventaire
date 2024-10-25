@@ -25,4 +25,4 @@ if (useSlowPasswordHashFunction) {
 
 export default passwordHashing
 
-const fastHash = str => Buffer.from(str).toString('hex')
+const fastHash = (str: string) => Buffer.from(str).toString('hex')

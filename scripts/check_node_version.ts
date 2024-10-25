@@ -5,7 +5,7 @@ import { requireJson } from '#lib/utils/json'
 const { engines } = requireJson(absolutePath('root', 'package.json'))
 const nodejsVersion = process.version
 const [ , actualMajor, actualMinor, actualPatch ] = nodejsVersion.match(/^v(\d+)\.(\d+)\.(\d+)$/).map(num => parseInt(num))
-const parseVersionNumber = num => num ? parseInt(num) : 0
+const parseVersionNumber = (num: string) => num ? parseInt(num) : 0
 let [ , comparator, requiredMajor, requiredMinor, requiredPatch ] = engines.node.match(/([=><]+) (\d+)\.?(\d+)?\.?(\d+)?$/)
 requiredMajor = parseVersionNumber(requiredMajor)
 requiredMinor = parseVersionNumber(requiredMinor)

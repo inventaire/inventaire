@@ -18,9 +18,9 @@ export const sumValues = obj => sum(Object.values(obj))
 
 export const sameObjects = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 
-export const toLowerCase = str => str.toLowerCase()
+export const toLowerCase = (str: string) => str.toLowerCase()
 
-export function stringToInt (str) {
+export function stringToInt (str: string) {
   if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
   // testing the validity of the string is needed
   // to avoid getting NaN from parseInt
@@ -28,13 +28,13 @@ export function stringToInt (str) {
   return parseInt(str)
 }
 
-export function parsePositiveInteger (str) {
+export function parsePositiveInteger (str: string) {
   // /!\ Difference with parseInt: not throwing
   if ((typeof str !== 'string') || !PositiveIntegerPattern.test(str)) return
   return parseInt(str)
 }
 
-export function stringToFloat (str) {
+export function stringToFloat (str: string) {
   if (typeof str !== 'string') throw new Error(`expected a string: ${str}`)
   if (!floatPattern.test(str)) throw new Error(`invalid float string: ${str}`)
   return parseFloat(str)
@@ -43,27 +43,32 @@ export function stringToFloat (str) {
 export const isArrayLike = obj => isArray(obj) || isArguments(obj)
 
 // Remove any superfluous spaces
-export const superTrim = str => str.replaceAll(/\s+/g, ' ').trim()
+export const superTrim = (str: string) => str.replaceAll(/\s+/g, ' ').trim()
 
-export const KeyBy = attribute => array => keyBy(array, attribute)
+export const KeyBy = (attribute: string) => (collection: object[]) => keyBy(collection, attribute)
 
-export function uniqByKey<T> (collection, key) {
+export function uniqByKey<T> (collection: object[], key: string) {
   assert_.array(collection)
   assert_.string(key)
   return Object.values(keyBy(collection, key)) as T[]
 }
 
-export const initCollectionsIndex = names => names.reduce(aggregateCollections, {})
+export const initCollectionsIndex = (names: string[]) => names.reduce(aggregateCollections, {})
 
-export const obfuscate = str => str.replace(/./g, '*')
+function aggregateCollections (index, name) {
+  index[name] = []
+  return index
+}
+
+export const obfuscate = (str: string) => str.replace(/./g, '*')
 
 // adapted from http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-export function getHashCode (string) {
-  let [ hash, i, len ] = [ 0, 0, string.length ]
+export function getHashCode (str: string) {
+  let [ hash, i, len ] = [ 0, 0, str.length ]
   if (len === 0) return hash
 
   while (i < len) {
-    const chr = string.charCodeAt(i)
+    const chr = str.charCodeAt(i)
     hash = ((hash << 5) - hash) + chr
     hash |= 0 // Convert to 32bit integer
     i++
@@ -84,16 +89,16 @@ export function someMatch (arrayA, arrayB) {
 
 export const objLength = obj => Object.keys(obj).length
 
-export const expired = (timestamp, ttl) => (Date.now() - timestamp) > ttl
+export const expired = (timestamp: EpochTimeStamp, ttl: number) => (Date.now() - timestamp) > ttl
 
-export const shortLang = lang => lang && lang.slice(0, 2)
+export const shortLang = (lang: string) => lang && lang.slice(0, 2)
 
 export function pickOne (obj) {
   const key = Object.keys(obj)[0]
   if (key != null) return obj[key]
 }
 
-export function parseBooleanString (booleanString, defaultVal = false) {
+export function parseBooleanString (booleanString: string, defaultVal = false) {
   if (defaultVal === false) return booleanString === 'true'
   else return booleanString !== 'false'
 }
@@ -124,14 +129,14 @@ export function deepCompact (arrays) {
   .value()
 }
 
-export function mapUniq (collection, key) {
+export function mapUniq (collection: object[], key: string) {
   return chain(collection)
   .map(key)
   .uniq()
   .value()
 }
 
-export function flatMapUniq (collection, key) {
+export function flatMapUniq (collection: object[], key: string) {
   return chain(collection)
   .map(key)
   .flatten()
@@ -146,7 +151,7 @@ export function isNotEmpty <T> (value: T): value is (Exclude<T, undefined | null
   return value != null
 }
 
-export const normalizeString = str => str.trim().normalize()
+export const normalizeString = (str: string) => str.trim().normalize()
 
 const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
   const value = obj[key]
@@ -164,11 +169,6 @@ const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
 
   newObj[newKey] = newValue
   return newObj
-}
-
-function aggregateCollections (index, name) {
-  index[name] = []
-  return index
 }
 
 // Work around the TS2345 error when using Array include method

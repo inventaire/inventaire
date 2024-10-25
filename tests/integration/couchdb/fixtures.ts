@@ -1,6 +1,6 @@
 import { emit } from '#db/couchdb/couchdb_views_context'
 
-function double (num) { return num * 2 }
+function double (num: number) { return num * 2 }
 
 export const someDesignDocView = {
   byExample: {

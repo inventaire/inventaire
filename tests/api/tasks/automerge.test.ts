@@ -119,7 +119,7 @@ describe('tasks:automerge', () => {
   })
 })
 
-const normalize = str => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+const normalize = (str: string) => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
 
 async function forceUpdateEntityClaims (entity, claims, userId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab') {
   // By pass API entity validations,

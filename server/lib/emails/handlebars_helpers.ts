@@ -30,7 +30,7 @@ function onePictureOnly (arg) {
 }
 
 const dataUrlPattern = /^data:image/
-const isDataUrl = str => dataUrlPattern.test(str)
+const isDataUrl = (str: string) => dataUrlPattern.test(str)
 
 function bestImageWidth (width: number) {
   // under 500, it's useful to keep the freedom to get exactly 64 or 128px etc

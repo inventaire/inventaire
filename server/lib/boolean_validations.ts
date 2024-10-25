@@ -8,7 +8,7 @@ import type { CouchUuid } from '#types/couchdb'
 import type { InvEntityUri, IsbnEntityUri, WdEntityUri, EntityUri, PropertyUri, InvPropertyUri, WdPropertyUri, WdEntityId } from '#types/entity'
 import type { AssetImagePath, EntityImagePath, GroupImagePath, ImageHash, ImagePath, UserImagePath } from '#types/image'
 import type { PatchId } from '#types/patch'
-import type { AuthentifiedReq } from '#types/server'
+import type { AuthentifiedReq, Req } from '#types/server'
 import type { Email, Username } from '#types/user'
 import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
@@ -25,7 +25,7 @@ function bindedTest <T extends string> (regexName: keyof typeof regex_) {
 
 export const isNonEmptyString = (str: unknown) => typeof str === 'string' && str.length > 0
 
-export function isUrl (url): url is AbsoluteUrl {
+export function isUrl (url: string): url is AbsoluteUrl {
   try {
     const { protocol, username, password } = new URL(url)
     if (!(protocol === 'http:' || protocol === 'https:')) return false
@@ -49,19 +49,19 @@ export const isLang = bindedTest('Lang')
 export const isInvEntityId = isCouchUuid
 export const isWdEntityId = bindedTest<WdEntityId>('WdEntityId')
 
-export function isInvEntityUri (uri): uri is InvEntityUri {
+export function isInvEntityUri (uri: string): uri is InvEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'inv') && isCouchUuid(id)
 }
 
-export function isIsbnEntityUri (uri): uri is IsbnEntityUri {
+export function isIsbnEntityUri (uri: string): uri is IsbnEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'isbn') && isNormalizedIsbn(id)
 }
 
-export function isWdEntityUri (uri): uri is WdEntityUri {
+export function isWdEntityUri (uri: string): uri is WdEntityUri {
   if (!isNonEmptyString(uri)) return false
   const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
   return (prefix === 'wd') && isWikidataItemId(id)
@@ -108,13 +108,13 @@ export const isNonEmptyArray = array => isArray(array) && (array.length > 0)
 export function isNonEmptyPlainObject (obj): obj is Record<string | number, unknown> {
   return isPlainObject(obj) && (Object.keys(obj).length > 0)
 }
-export const isPositiveIntegerString = str => isString(str) && PositiveIntegerPattern.test(str)
-export const isStrictlyPositiveInteger = num => Number.isInteger(num) && num > 0
-export const isNonNegativeInteger = num => Number.isInteger(num) && num >= 0
-export const isExtendedUrl = str => isUrl(str) || isLocalImg(str)
+export const isPositiveIntegerString = (str: string) => isString(str) && PositiveIntegerPattern.test(str)
+export const isStrictlyPositiveInteger = (num: number) => Number.isInteger(num) && num > 0
+export const isNonNegativeInteger = (num: number) => Number.isInteger(num) && num >= 0
+export const isExtendedUrl = (str: string) => isUrl(str) || isLocalImg(str)
 export const isCollection = array => isArray(array) && array.every(isPlainObject)
 
-export function isLocalActivityPubActorUrl (url): url is LocalActorUrl {
+export function isLocalActivityPubActorUrl (url: string): url is LocalActorUrl {
   if (!isUrl(url)) return false
   const { origin, pathname, searchParams } = new URL(url)
   if (origin !== publicOrigin) return false
@@ -123,11 +123,11 @@ export function isLocalActivityPubActorUrl (url): url is LocalActorUrl {
   return isNonEmptyString(searchParams.get('name'))
 }
 
-export function isVisibilityGroupKey (value): value is VisibilityGroupKey {
+export function isVisibilityGroupKey (value: string): value is VisibilityGroupKey {
   const [ prefix, id ] = value.split(':')
   return prefix === 'group' && isCouchUuid(id)
 }
 
-export function isAuthentifiedReq (req): req is AuthentifiedReq {
-  return req.user != null
+export function isAuthentifiedReq (req: Req): req is AuthentifiedReq {
+  return 'user' in req && req.user != null
 }

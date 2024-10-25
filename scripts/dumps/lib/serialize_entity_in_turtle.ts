@@ -75,7 +75,7 @@ const datatypePropClaimsFormatter = {
   image: propClaims => propClaims.map(formatImageHash),
 }
 
-const formatStringValue = str => {
+const formatStringValue = (str: string) => {
   str = str
     // May also be of type number
     .toString()
