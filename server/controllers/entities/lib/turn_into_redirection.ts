@@ -1,8 +1,8 @@
-import { chain, compact } from 'lodash-es'
+import { compact, pick, uniq } from 'lodash-es'
 import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate, wdEntityHasALocalLayer } from '#controllers/entities/lib/entities'
 import { getClaimValue, hasLocalClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
-import { isWdEntityUri } from '#lib/boolean_validations'
+import { isInvEntityUri, isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit } from '#models/entity'
@@ -43,22 +43,16 @@ export async function turnIntoRedirectionOrLocalLayer ({ userId, fromId, toUri, 
 // destination entity.
 async function removeObsoletePlaceholderEntities (userId: UserId, entityDocBeforeRedirection: InvEntity) {
   const entityUrisToCheck = getEntityUrisToCheck(entityDocBeforeRedirection.claims)
-  log(entityUrisToCheck, 'entityUrisToCheck')
+  log(entityUrisToCheck, 'entity uris to check for autoremoval')
   const fromId = entityDocBeforeRedirection._id
   const removedIds = await Promise.all(entityUrisToCheck.map(deleteIfIsolated(userId, fromId)))
   return compact(removedIds)
 }
 
 function getEntityUrisToCheck (claims: Claims): EntityUri[] {
-  // @ts-expect-error TS2322: Type 'boolean[]' is not assignable to type 'EntityUri[]'  ??
-  return chain(claims)
-  .pick(propertiesToCheckForPlaceholderDeletion)
-  .values()
-  // Merge properties arrays
-  .flatten()
-  .map(getClaimValue)
-  .uniq()
-  .value()
+  const uris = Object.values(pick(claims, propertiesToCheckForPlaceholderDeletion)).flat()
+    .map(getClaimValue) as EntityUri[]
+  return uniq(uris).filter(uri => isInvEntityUri(uri))
 }
 
 const propertiesToCheckForPlaceholderDeletion: PropertyUri[] = [
