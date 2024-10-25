@@ -36,15 +36,6 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   if ('labels' in entity) labels = entity.labels
   if ('claims' in entity) claims = expandInvClaims(entity.claims)
 
-  if (Object.keys(labels).length === 0) {
-    const title = getFirstClaimValue(claims, 'wdt:P1476')
-    const lang = getOriginalLang(claims)
-    if (title && lang) {
-      labels[lang] = title
-    }
-  }
-  keepOnlyOneIsbnFormat(claims)
-
   const conflictingWdEntities = await resolveExternalIds(claims, {
     resolveOnWikidata: true,
     resolveLocally: false,
@@ -53,6 +44,15 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   if (conflictingWdEntities?.length > 0) {
     throw newError('Can not move to Wikidata: some Wikidata entities share the same identifiers', 400, { conflicts: conflictingWdEntities })
   }
+
+  if (Object.keys(labels).length === 0) {
+    const title = getFirstClaimValue(claims, 'wdt:P1476')
+    const lang = getOriginalLang(claims)
+    if (title && lang) {
+      labels[lang] = title
+    }
+  }
+  keepOnlyOneIsbnFormat(claims)
 
   // Local claims will be preserved in a local layer during merge
   const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
