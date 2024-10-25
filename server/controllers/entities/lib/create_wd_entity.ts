@@ -3,7 +3,7 @@ import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers
 import { newError } from '#lib/error/error'
 import { arrayIncludes, mapKeysValues, objectEntries } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import { log } from '#lib/utils/logs'
+import { info, log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject } from '#server/types/entity'
@@ -56,6 +56,7 @@ export async function createWdEntity (params: CreateWdEntityParams) {
     throw newError('invalid wikidata-edit response', 500, { res })
   }
   createdEntity.uri = prefixifyWd(createdEntity.id)
+  info(createdEntity.uri, 'created wd entity')
   return createdEntity
 }
 
