@@ -118,6 +118,8 @@ function keepOnlyOneIsbnFormat (claims: ExpandedClaims) {
 }
 
 function buildDescriptions (claims: ExpandedClaims): Descriptions {
+  const entityType = getInvEntityType(claims['wdt:P31'])
+  if (entityType !== 'edition') return
   let englishDescription = ''
   const publicationYear = getPublicationYear(claims)
   if (publicationYear) englishDescription += publicationYear
