@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
-import { getCollectionEditions, getWorkEditions } from '#controllers/entities/lib/entities'
+import { getCollectionEditions, getUrlFromEntityImageHash, getWorkEditions } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isLang } from '#lib/boolean_validations'
+import { isImageHash, isLang } from '#lib/boolean_validations'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import { getSerieParts } from './get_serie_parts.js'
@@ -86,5 +86,9 @@ function addImage (images, lang, limitPerLang, image) {
   // Index images by language so that we can illustrate a work
   // with the cover from an edition of the user's language
   // when possible
-  images[lang].push(image)
+  if (isImageHash(image)) {
+    images[lang].push(getUrlFromEntityImageHash(image))
+  } else {
+    images[lang].push(image)
+  }
 }
