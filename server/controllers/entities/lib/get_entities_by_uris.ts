@@ -32,9 +32,11 @@ export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
 
 type Domains = Partial<Record<EntityUriPrefix, EntityId[]>>
 
+export type Redirects = Record<EntityUri, EntityUri>
+
 export interface EntitiesByUrisResults {
   entities: SerializedEntitiesByUris
-  redirects: Record<EntityUri, EntityUri>
+  redirects: Redirects
   notFound?: EntityUri[]
 }
 

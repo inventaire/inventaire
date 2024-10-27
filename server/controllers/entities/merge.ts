@@ -1,10 +1,12 @@
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
-import type { EntityUri, SerializedEntity } from '#types/entity'
-import { getEntitiesByUris } from './lib/get_entities_by_uris.js'
+import type { EntityUri, InvEntityUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
+import { getEntitiesByUris, type Redirects } from './lib/get_entities_by_uris.js'
 import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {
@@ -48,20 +50,22 @@ async function controller (params) {
 }
 
 async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
-  const { entities, redirects } = await getEntitiesByUris({ uris: [ fromUri, toUri ], refresh: true })
-  const fromEntity = getMergeEntity(entities, redirects, fromUri)
-  const toEntity = getMergeEntity(entities, redirects, toUri)
+  const [
+    fromEntity,
+    toEntity,
+  ] = await Promise.all([
+    // Fetch entities separately so that if they won't override one another
+    // if they happen to have the same canonical uri (in which case they should be merged)
+    getEntityByUri({ uri: fromUri, refresh: true }),
+    getEntityByUri({ uri: toUri, refresh: true }),
+  ])
   return { fromEntity, toEntity }
-}
-
-function getMergeEntity (entities, redirects, uri) {
-  return (entities[uri] || entities[redirects[uri]]) as (SerializedEntity | undefined)
 }
 
 function validateEntities ({ fromUri, toUri, fromEntity, toEntity }: { fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity }) {
   validateEntity(fromEntity, fromUri, 'from')
   validateEntity(toEntity, toUri, 'to')
-  if (fromEntity.uri === toEntity.uri) {
+  if (fromEntity.invId === toEntity.invId) {
     throw newError("can't merge an entity into itself", 400, { fromUri, toUri })
   }
 }
@@ -70,10 +74,10 @@ function validateEntity (entity: SerializedEntity, originalUri: EntityUri, label
   if (entity == null) {
     throw newError(`'${label}' entity not found`, 400, { originalUri })
   }
-  if (isInvEntityUri(originalUri) && 'wdId' in entity) {
+  if (isInvEntityUri(originalUri) && 'wdId' in entity && entity.invId === unprefixify(originalUri)) {
     throw newError(`'${label}' uri refers to a local entity layer`, 400, { entity, originalUri })
   }
-  if (entity.uri !== originalUri && `inv:${entity.invId}` !== originalUri) {
+  if (isInvEntityUri(originalUri) && entity.uri !== originalUri && `inv:${entity.invId}` !== originalUri) {
     throw newError(`'${label}' entity is already a redirection`, 400, { entity, originalUri })
   }
 }

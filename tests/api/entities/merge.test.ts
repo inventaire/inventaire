@@ -1,4 +1,6 @@
 import should from 'should'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import {
   createWork,
   createHuman,
@@ -10,6 +12,7 @@ import {
   getSomeRemoteEditionWithALocalLayer,
   someRandomImageHash,
   getSomeWdEditionUri,
+  existsOrCreate,
 } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
 import type { InvEntityUri } from '#server/types/entity'
@@ -343,6 +346,22 @@ describe('entities:merge', () => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal("'to' entity not found")
       })
+    })
+
+    it('should merge a local entity with the same isbn as a remote entity into that remote entity', async () => {
+      const isbn = '978-2-7186-0660-6'
+      const property = 'wdt:P212'
+      const edition = await existsOrCreate({
+        createFn: createEdition,
+        claims: {
+          [property]: [ isbn ],
+        },
+      })
+      const invUri = prefixifyInv(edition.invId)
+      await merge(invUri, 'wd:Q130646886')
+      const entity = await getEntityByUri({ uri: invUri })
+      // @ts-expect-error
+      entity.wdId.should.equal('Q130646886')
     })
 
     // Claim transfer are actually just cherry-picked claim copies done in the client
