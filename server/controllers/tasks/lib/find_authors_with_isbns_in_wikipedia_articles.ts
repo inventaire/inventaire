@@ -1,9 +1,11 @@
-import { flatMap } from 'lodash-es'
-import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getMostRelevantWikipediaArticles } from '#controllers/entities/lib/get_occurrences_from_external_sources'
+import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { normalizeIsbn, findIsbns, isValidIsbn } from '#lib/isbn/isbn'
 import { asyncFilter } from '#lib/promises'
 import { someMatch } from '#lib/utils/base'
+import type { EntityUri } from '#server/types/entity'
 
 export async function findAuthorWithMatchingIsbnInWikipediaArticles (worksData, authors) {
   // worksData is built with getAuthorWorksData
@@ -39,8 +41,10 @@ const hasMatchingIsbns = claimsIsbns => article => {
   }
 }
 
-async function getEditionsFromWorks (worksUris) {
-  return Promise.all(worksUris.map(uri => {
-    return getInvEntitiesByClaim('wdt:P629', uri, true, true)
-  })).then(flatMap)
+async function getEditionsFromWorks (worksUris: EntityUri[]) {
+  const worksEditionsUris = await Promise.all(worksUris.map(workUri => {
+    return reverseClaims({ property: 'wdt:P629', value: workUri })
+  }))
+  const uris = uniq(worksEditionsUris.flat())
+  return getEntitiesList(uris)
 }

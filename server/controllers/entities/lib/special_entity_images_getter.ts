@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
-import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getCollectionEditions, getUrlFromEntityImageHash, getWorkEditions } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isLang } from '#lib/boolean_validations'
+import { isImageHash, isLang } from '#lib/boolean_validations'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
@@ -34,17 +34,17 @@ export default {
 
   collection: async entity => {
     const images = { claims: getEntityImagesFromClaims(entity) }
-    return getInvEntitiesByClaim('wdt:P195', entity.uri, true, true)
-    .then(addEditionsImages(images))
+    const editions = await getCollectionEditions(entity.uri)
+    return addEditionsImages(editions, images)
   },
 }
 
-function getWorkImagesFromEditions (workUri, images, limitPerLang) {
-  return getInvEntitiesByClaim('wdt:P629', workUri, true, true)
-  .then(addEditionsImages(images, limitPerLang))
+async function getWorkImagesFromEditions (workUri, images, limitPerLang) {
+  const editions = await getWorkEditions(workUri)
+  return addEditionsImages(editions, images, limitPerLang)
 }
 
-const addEditionsImages = (images, limitPerLang = 3) => editions => {
+function addEditionsImages (editions, images, limitPerLang = 3) {
   editions.sort((a, b) => getEditionImagePreferrability(b) - getEditionImagePreferrability(a))
   for (const edition of editions) {
     const { claims } = edition
@@ -86,5 +86,9 @@ function addImage (images, lang, limitPerLang, image) {
   // Index images by language so that we can illustrate a work
   // with the cover from an edition of the user's language
   // when possible
-  images[lang].push(image)
+  if (isImageHash(image)) {
+    images[lang].push(getUrlFromEntityImageHash(image))
+  } else {
+    images[lang].push(image)
+  }
 }

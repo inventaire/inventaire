@@ -1,7 +1,9 @@
 import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
 import dbFactory from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
 import { newError } from '#lib/error/error'
@@ -183,4 +185,14 @@ export async function wdEntityHasALocalLayer (wdUri: WdEntityUri) {
   const wdId = unprefixify(wdUri)
   const localLayer = await getWdEntityLocalLayer(wdId)
   return localLayer != null
+}
+
+export async function getWorkEditions (workUri: EntityUri) {
+  const editionsUris = await reverseClaims({ property: 'wdt:P629', value: workUri })
+  return getEntitiesList(editionsUris)
+}
+
+export async function getCollectionEditions (workUri: EntityUri) {
+  const editionsUris = await reverseClaims({ property: 'wdt:P195', value: workUri })
+  return getEntitiesList(editionsUris)
 }

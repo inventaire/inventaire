@@ -1,5 +1,5 @@
 import { uniq } from 'lodash-es'
-import { getInvEntitiesByClaim, getEntityById } from '#controllers/entities/lib/entities'
+import { getInvEntitiesByClaim, getEntityById, getWorkEditions } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
@@ -38,7 +38,7 @@ export default (edition, oldTitle) => {
 }
 
 async function fetchLangConsensusTitle (workUri, editionLang) {
-  const editions = await getInvEntitiesByClaim('wdt:P629', workUri, true, true)
+  const editions = await getWorkEditions(workUri)
 
   const titles = editions
     .filter(edition => getOriginalLang(edition.claims) === editionLang)

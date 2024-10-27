@@ -276,6 +276,8 @@ export async function getSomeWdEdition (attempt = 0) {
       'P31=Q3331189',
       // with an associated work
       'P629',
+      // and a langauge
+      'P407',
       // but no ISBN, to avoid getting an entity with an isbn uri as canonical uri
       '-P212',
       '-P957',

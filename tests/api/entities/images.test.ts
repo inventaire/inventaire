@@ -1,4 +1,5 @@
 import should from 'should'
+import { getUrlFromEntityImageHash } from '#controllers/entities/lib/entities'
 import {
   createEdition,
   createEditionWithIsbn,
@@ -11,7 +12,8 @@ import {
 } from '#fixtures/entities'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import config from '#server/config'
-import { addClaim } from '#tests/api/utils/entities'
+import type { EntityUri } from '#server/types/entity'
+import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { rawRequest } from '#tests/api/utils/request'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -77,9 +79,9 @@ describe('entities:images', () => {
       ])
       const res = await publicReq('get', `/api/entities?action=images&uris=${workA.uri}|${workB.uri}`)
       const workAImage = res.images[workA.uri].en[0]
-      should(workAImage === imageHashY || workAImage === imageHashZ).be.true()
+      should(workAImage === getUrlFromEntityImageHash(imageHashY) || workAImage === getUrlFromEntityImageHash(imageHashZ)).be.true()
       const workBImage = res.images[workB.uri].en[0]
-      workBImage.should.equal(imageHashX)
+      workBImage.should.equal(getUrlFromEntityImageHash(imageHashX))
     })
 
     it('should return images from inventaire collection', async () => {
@@ -99,13 +101,24 @@ describe('entities:images', () => {
       imagesRes.en.length.should.equal(1)
     })
 
-    it('should return images from wikidata editions local layers', async () => {
+    it('should return images from wikidata editions local layers for editions', async () => {
       const uri = await getSomeWdEditionUri()
       const imageHash = someRandomImageHash()
       await addClaim({ uri, property: 'invp:P2', value: imageHash })
       const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
       // There might also be wd image file names, typically from wdt:P18 claims
-      res.images[uri].claims.should.containEql(imageHash)
+      res.images[uri].claims.should.containEql(getUrlFromEntityImageHash(imageHash))
+    })
+
+    it('should return images from wikidata editions local layers for works', async () => {
+      const uri = await getSomeWdEditionUri()
+      const edition = await getByUri(uri)
+      const { originalLang } = edition
+      const imageHash = someRandomImageHash()
+      await addClaim({ uri, property: 'invp:P2', value: imageHash })
+      const workUri = edition.claims['wdt:P629'][0] as EntityUri
+      const res = await publicReq('get', `/api/entities?action=images&uris=${workUri}`)
+      res.images[workUri][originalLang].should.containEql(getUrlFromEntityImageHash(imageHash))
     })
   })
 })

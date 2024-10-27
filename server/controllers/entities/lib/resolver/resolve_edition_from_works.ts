@@ -1,10 +1,9 @@
-import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
-import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
+import { getWorkEditions } from '#controllers/entities/lib/entities'
 import { findClaimByValue, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import { objectEntries } from '#lib/utils/base'
 import type { EditionSeed, WorkSeed } from '#server/types/resolver'
-import type { InvEntity } from '#types/entity'
+import type { SerializedEntity } from '#types/entity'
 
 export default async function (editionSeed: EditionSeed, worksSeeds: WorkSeed[]) {
   if (editionSeed.uri) return
@@ -16,29 +15,29 @@ export default async function (editionSeed: EditionSeed, worksSeeds: WorkSeed[])
   if (worksSeeds.length !== 1) return
   const { uri: workUri } = worksSeeds[0]
   if (workUri == null) return
-  const editions = await getInvEntitiesByClaim('wdt:P629', workUri, true, true)
+  const editions = await getWorkEditions(workUri)
   const matchingEditions = editions.filter(isMatchingEdition(editionSeed, editionSeedTitle))
   if (matchingEditions.length === 1) {
     const matchingEdition = matchingEditions[0]
-    editionSeed.uri = getInvEntityCanonicalUri(matchingEdition)
+    editionSeed.uri = matchingEdition.uri
   }
 }
 
-const isMatchingEdition = (editionSeed: EditionSeed, editionSeedTitle: string) => (edition: InvEntity) => {
+const isMatchingEdition = (editionSeed: EditionSeed, editionSeedTitle: string) => (edition: SerializedEntity) => {
   const title = getNormalizedTitle(edition)
   const titlesMatch = editionSeedTitle.includes(title) || title.includes(editionSeedTitle)
   const claimsDoNotContradict = editionSeedHasNoContradictingClaim(editionSeed, edition)
   return titlesMatch && claimsDoNotContradict
 }
 
-function getNormalizedTitle (edition: InvEntity | EditionSeed) {
+function getNormalizedTitle (edition: SerializedEntity | EditionSeed) {
   const { claims } = edition
   if (!claims) return
   const title = getFirstClaimValue(claims, 'wdt:P1476')
   if (title) return normalizeTitle(title)
 }
 
-function editionSeedHasNoContradictingClaim (editionSeed: EditionSeed, edition: InvEntity) {
+function editionSeedHasNoContradictingClaim (editionSeed: EditionSeed, edition: SerializedEntity) {
   for (const [ property, propertyClaims ] of objectEntries(editionSeed.claims)) {
     if (!ignoredProperties.includes(property)) {
       for (const claim of propertyClaims) {
