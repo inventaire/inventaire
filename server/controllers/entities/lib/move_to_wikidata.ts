@@ -38,6 +38,17 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   if ('labels' in entity) labels = entity.labels
   if ('claims' in entity) claims = expandInvClaims(entity.claims)
 
+  const entityType = getInvEntityType(claims['wdt:P31'])
+
+  // Disabling edition transfer until known issues can be resolved
+  // Namely, some transfers were followed by the re-creation of the entity
+  // Ideas to fix that:
+  // - remove isbn uri canonical status, so that the transfered inv entity redirects to the wd entity
+  // - remove autocreate=true from entities requests by the editor
+  if (entityType === 'edition') {
+    throw newError('Can not move an edition to Wikidata', 400, { entity })
+  }
+
   const conflictingWdEntities = await resolveExternalIds(claims, {
     resolveOnWikidata: true,
     resolveLocally: false,
