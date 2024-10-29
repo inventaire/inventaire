@@ -65,7 +65,6 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
       labels[lang] = title
     }
   }
-  keepOnlyOneIsbnFormat(claims)
   const descriptions = buildDescriptions(claims)
 
   // Local claims will be preserved in a local layer during merge
@@ -114,17 +113,6 @@ const rewrite404 = invEntityUri => err => {
     throw newError('entity not found', 400, { invEntityUri })
   } else {
     throw err
-  }
-}
-
-function keepOnlyOneIsbnFormat (claims: ExpandedClaims) {
-  const publicationYear = getPublicationYear(claims)
-  if (publicationYear != null) {
-    if (publicationYear >= 2007) {
-      delete claims['wdt:P957']
-    } else {
-      delete claims['wdt:P212']
-    }
   }
 }
 
