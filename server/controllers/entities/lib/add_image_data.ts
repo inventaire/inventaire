@@ -27,34 +27,20 @@ async function findAnImage (entity: SerializedWdEntityPreImage) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function pickBestPic (entity: SerializedWdEntityPreImage, commonsFilename: WikimediaCommonsFilename, enwikiTitle?: string, openLibraryId?: string) {
-  return objectPromise({
-    wm: getWikimediaThumbnailData(commonsFilename),
+async function pickBestPic (entity: SerializedWdEntityPreImage, commonsFilename: WikimediaCommonsFilename, enwikiTitle?: string, openLibraryId?: string) {
+  const results = await objectPromise({
+    wm: commonsFilename ? getWikimediaThumbnailData(commonsFilename) : undefined,
     // Disabled as requests to en.wikipedia.org and archive.org are often very slow to respond
     // when queries en masse
     // TODO: re-enable with rate limiting (with `async-sema` package?)
     // wp: getSourcePromise('enwiki', getEnwikiImage, enwikiTitle),
     // ol: getSourcePromise('openlibrary', getOpenLibraryCover, openLibraryId, entity.type),
   })
-  .then(results => {
-    const order = getPicSourceOrder(entity)
-    const orderedResults = pick(results, order)
-    const bestPicData = compact(Object.values(orderedResults))[0]
-    return bestPicData
-  })
+  const order = getPicSourceOrder(entity)
+  const orderedResults = pick(results, order)
+  const bestPicData = compact(Object.values(orderedResults))[0]
+  return bestPicData
 }
-
-// function getSourcePromise (sourceName, fn, ...args) {
-//   if (args[0] == null) return null
-
-//   return fn.apply(null, args)
-//   .catch(err => {
-//     err.context = err.context || {}
-//     err.context.args = args
-//     // Do not rethrow the error to let a chance to other sources
-//     logError(err, `${sourceName} image not found`)
-//   })
-// }
 
 function getPicSourceOrder (entity: SerializedWdEntityPreImage) {
   const { type } = entity

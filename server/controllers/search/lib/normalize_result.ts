@@ -1,4 +1,7 @@
+import { getUrlFromEntityImageHash } from '#controllers/entities/lib/entities'
+import { isImageHash } from '#lib/boolean_validations'
 import getBestLangValue from '#lib/get_best_lang_value'
+import type { EntityImagePath, ImageHash } from '#server/types/image'
 
 export default lang => result => {
   if (!lang) return result
@@ -8,16 +11,29 @@ export default lang => result => {
   return formatters[type](result, _source, lang)
 }
 
-const entityFormatter = (result, _source, lang) => ({
-  id: result._id,
-  type: _source.type,
-  uri: getUri(result._id),
-  label: getBestLangValue(lang, null, _source.labels).value,
-  description: getShortDescription(_source.descriptions, lang),
-  image: getBestLangValue(lang, null, _source.images).value,
-  _score: result._score,
-  _popularity: _source.popularity,
-})
+function entityFormatter (result, _source, lang) {
+  return {
+    id: result._id,
+    type: _source.type,
+    uri: getUri(result._id),
+    label: getBestLangValue(lang, null, _source.labels).value,
+    description: getShortDescription(_source.descriptions, lang),
+    image: pickFirstImageAndNormalize(getBestLangValue(lang, null, _source.images).value),
+    _score: result._score,
+    _popularity: _source.popularity,
+  }
+}
+
+function pickFirstImageAndNormalize (image: ImageHash | EntityImagePath | (ImageHash | EntityImagePath)[]) {
+  image = image instanceof Array ? image[0] : image
+  if (image == null) return
+  return normalizeEntityImagePath(image)
+}
+
+export function normalizeEntityImagePath (image: ImageHash | EntityImagePath) {
+  if (isImageHash(image)) return getUrlFromEntityImageHash(image)
+  else return image
+}
 
 function getShortDescription (descriptions, lang) {
   const { value } = getBestLangValue(lang, null, descriptions)

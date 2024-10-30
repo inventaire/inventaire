@@ -61,5 +61,5 @@ async function findRawImage (uri, images, width, height) {
 async function replaceWikimediaFilename (image) {
   // Wikimedia file name neither start by 'http' or '/'
   if (image.startsWith('http') || image[0] === '/') return image
-  else return getWikimediaThumbnailData(image).url
+  else if (image) return getWikimediaThumbnailData(image).url
 }

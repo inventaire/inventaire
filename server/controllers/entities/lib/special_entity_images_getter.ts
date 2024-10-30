@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
-import { getCollectionEditions, getUrlFromEntityImageHash, getWorkEditions } from '#controllers/entities/lib/entities'
+import { getCollectionEditions, getWorkEditions } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isImageHash, isLang } from '#lib/boolean_validations'
+import { isLang } from '#lib/boolean_validations'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
 import getSerieParts from './get_serie_parts.js'
@@ -74,7 +74,7 @@ function aggregateWorkImages (images, workImages) {
 }
 
 function addImage (images, lang, limitPerLang, image) {
-  if (!images[lang]) { images[lang] = [] }
+  images[lang] ??= []
   if (images[lang].length >= limitPerLang) return
   // Prevent duplicates that could be caused by multi-works editions
   // Where several work consider having the same edition and thus
@@ -86,9 +86,5 @@ function addImage (images, lang, limitPerLang, image) {
   // Index images by language so that we can illustrate a work
   // with the cover from an edition of the user's language
   // when possible
-  if (isImageHash(image)) {
-    images[lang].push(getUrlFromEntityImageHash(image))
-  } else {
-    images[lang].push(image)
-  }
+  images[lang].push(image)
 }

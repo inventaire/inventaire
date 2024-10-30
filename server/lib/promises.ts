@@ -7,7 +7,7 @@ const { waitFactor } = config
 
 export const wait = ms => setTimeout(ms * waitFactor)
 
-export async function objectPromise (obj) {
+export async function objectPromise <T> (obj: Record<string, T | Promise<T>>): Promise<Record<string, T>> {
   const keys = []
   const values = []
   for (const key in obj) {
