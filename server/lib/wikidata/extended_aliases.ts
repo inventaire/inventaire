@@ -6,17 +6,15 @@ import { cache_ } from '#lib/cache'
 import { oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
-import { getTypesFromTypesAliases, typesAliases, type TypesAliases } from '#lib/wikidata/aliases'
+import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType, type TypesAliases } from '#lib/wikidata/aliases'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
-
-const { publishers: publishersP31Values } = typesAliases
 
 const extendedTypesAliases = {} as TypesAliases
 
 // Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
 
-async function getTypeExtendedAliases (type: string, sparql: string) {
+async function getTypeExtendedAliases (type: PluralizedEntityType, sparql: string) {
   const hashCode = getHashCode(sparql)
   let extendedUris
   try {
@@ -38,7 +36,8 @@ async function getTypeExtendedAliases (type: string, sparql: string) {
     // Better start without extended uris than to prevent the server to start
     extendedUris = []
   }
-  return uniq(publishersP31Values.concat(extendedUris))
+  const P31Values = typesAliases[type]
+  return uniq(P31Values.concat(extendedUris))
 }
 
 for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {

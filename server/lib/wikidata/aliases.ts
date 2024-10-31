@@ -156,7 +156,7 @@ const wikidataOnlyP31Values = {
   ],
 } as const
 
-type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
+export type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
 
 export type TypesAliases = Record<PluralizedEntityType, WdEntityUri[]>
 export const typesAliases = {} as TypesAliases
