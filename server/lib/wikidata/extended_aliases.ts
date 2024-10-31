@@ -5,7 +5,7 @@ import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_ali
 import { cache_ } from '#lib/cache'
 import { oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
-import { info } from '#lib/utils/logs'
+import { info, logError } from '#lib/utils/logs'
 import { getTypesFromTypesAliases, typesAliases, type TypesAliases } from '#lib/wikidata/aliases'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
@@ -18,19 +18,26 @@ const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true
 
 async function getTypeExtendedAliases (type: string, sparql: string) {
   const hashCode = getHashCode(sparql)
-  const extendedUris = await cache_.get<WdEntityUri[]>({
+  let extendedUris
+  try {
+    extendedUris = await cache_.get<WdEntityUri[]>({
     // Use a a hash code in the key to bust outdated results when the query changes
-    key: `extended-wd-aliases:${type}:${hashCode}`,
-    fn: async () => {
-      info(`Fetching ${type} aliases...`)
-      const ids = await makeSparqlRequest<WdEntityId>(sparql, { minimize: true })
-      return ids.map(prefixifyWd)
-    },
-    // Updates should rather be triggered by a script than by the server
-    // to minimize server start time
-    ttl: oneYear,
-    refresh,
-  })
+      key: `extended-wd-aliases:${type}:${hashCode}`,
+      fn: async () => {
+        info(`Fetching ${type} aliases...`)
+        const ids = await makeSparqlRequest<WdEntityId>(sparql, { minimize: true })
+        return ids.map(prefixifyWd)
+      },
+      // Updates should rather be triggered by a script than by the server
+      // to minimize server start time
+      ttl: oneYear,
+      refresh,
+    })
+  } catch (err) {
+    logError(err, `failed to fetch ${type} extended aliases`)
+    // Better start without extended uris than to prevent the server to start
+    extendedUris = []
+  }
   return uniq(publishersP31Values.concat(extendedUris))
 }
 
