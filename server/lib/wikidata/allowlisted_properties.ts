@@ -47,6 +47,9 @@ const otherHumanProperties = [
 
 const otherWorkProperties = [
   'P674', // characters
+  'P840', // narrative location
+  'P1476', // title
+  'P1680', // subtitle
 ]
 
 const commonOtherNonEditedProperties = [
