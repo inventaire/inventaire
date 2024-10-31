@@ -1,7 +1,7 @@
 import { uniq } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
-import { publishersAliasesQuery } from '#data/wikidata/queries/subclasses/publishers'
+import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_aliases_queries'
 import { cache_ } from '#lib/cache'
 import { oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
@@ -10,10 +10,6 @@ import { getTypesFromTypesAliases, typesAliases, type TypesAliases } from '#lib/
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
 const { publishers: publishersP31Values } = typesAliases
-
-const extendedAliasesQuery = {
-  publishers: publishersAliasesQuery,
-}
 
 const extendedTypesAliases = {} as TypesAliases
 
@@ -38,7 +34,7 @@ async function getTypeExtendedAliases (type: string, sparql: string) {
   return uniq(publishersP31Values.concat(extendedUris))
 }
 
-for (const [ type, sparql ] of objectEntries(extendedAliasesQuery)) {
+for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   extendedTypesAliases[type] = await getTypeExtendedAliases(type, sparql)
 }
 
