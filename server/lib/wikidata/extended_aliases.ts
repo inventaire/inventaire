@@ -17,6 +17,9 @@ const extendedAliasesQuery = {
 
 const extendedTypesAliases = {} as TypesAliases
 
+// Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
+const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
+
 async function getTypeExtendedAliases (type: string, sparql: string) {
   const hashCode = getHashCode(sparql)
   const extendedUris = await cache_.get<WdEntityUri[]>({
@@ -30,6 +33,7 @@ async function getTypeExtendedAliases (type: string, sparql: string) {
     // Updates should rather be triggered by a script than by the server
     // to minimize server start time
     ttl: oneYear,
+    refresh,
   })
   return uniq(publishersP31Values.concat(extendedUris))
 }
