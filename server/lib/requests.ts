@@ -36,6 +36,7 @@ export interface ReqOptions {
   retryOnceOnError?: boolean
   noRetry?: boolean
   timeout?: number
+  noHostBanOnTimeout?: boolean
   ignoreCertificateErrors?: boolean
   redirect?: 'follow' | 'error' | 'manual'
 }
@@ -49,7 +50,7 @@ async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
 
-  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false, noHostBanOnTimeout = false } = options
   const fetchOptions = getFetchOptions(method, options)
 
   const timer = startReqTimer(method, url, fetchOptions)
@@ -65,7 +66,7 @@ async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = 
       warn(err, `retrying request ${timer.requestId}`)
       res = await fetch(url, fetchOptions)
     } else {
-      recordPossibleTimeoutError(host, err)
+      if (!noHostBanOnTimeout) recordPossibleTimeoutError(host, err)
       throw err
     }
   } finally {

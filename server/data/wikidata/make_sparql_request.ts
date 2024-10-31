@@ -16,6 +16,8 @@ const { sparqlQuery } = wdk
 
 interface SparqlRequestOptions {
   minimize?: boolean
+  timeout?: number
+  noHostBanOnTimeout?: boolean
 }
 
 export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRequestOptions = {}): Promise<Row[]> {
@@ -45,6 +47,7 @@ export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRe
 async function makeRequest <Row> (url: AbsoluteUrl, options: SparqlRequestOptions = {}) {
   logStats()
   waiting += 1
+  const { timeout = 30000, noHostBanOnTimeout } = options
 
   async function makePatientRequest () {
     if (ongoing >= maxConcurrency) {
@@ -56,7 +59,7 @@ async function makeRequest <Row> (url: AbsoluteUrl, options: SparqlRequestOption
     ongoing += 1
     try {
       // Don't let a query block the queue more than 30 seconds
-      const results = await requests_.get(url, { timeout: 30000 })
+      const results = await requests_.get(url, { timeout, noHostBanOnTimeout })
       const simplifiedResults = simplifySparqlResults(results)
       if (options.minimize) {
         return minimizeSimplifiedSparqlResults(simplifiedResults) as Row[]
