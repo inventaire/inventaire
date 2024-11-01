@@ -40,9 +40,11 @@ const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => 
 // Disabling recursive subclasses to avoid conflicts with works
 const seriesAliasesQuery = basicSubclassesQuery(serieP31Values, false)
 
-// TODO: include collectives
+const tailoredWellknownHumanTypes = difference(humanP31Values, [
+  'wd:Q5', // human, has a lot of subclasses but they are not used as P31 values
+])
 const humansAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${humanP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?wellknown_type) { ${tailoredWellknownHumanTypes.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279+ ?wellknown_type .
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
