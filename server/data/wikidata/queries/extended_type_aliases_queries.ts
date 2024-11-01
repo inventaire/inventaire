@@ -3,12 +3,15 @@ import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import type { WdEntityUri } from '#server/types/entity'
 
 const {
-  editions: editionP31Values,
+  // editions: editionP31Values,
   works: workP31Values,
   series: serieP31Values,
   humans: humanP31Values,
   publishers: publisherP31Values,
   collections: collectionP31Values,
+  genres: genreP31Values,
+  movements: movementP31Values,
+  // languages: languageP31Values,
 } = typesAliases
 
 function basicSubclassesQuery (P31Values: WdEntityUri[], recursiveSubclass = true) {
@@ -69,6 +72,8 @@ export const extendedAliasesQueries = {
   works: worksAliasesQuery,
   humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
-  // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
-  // editions: editionsAliasesQuery,
+  genres: basicSubclassesQuery(genreP31Values, false),
+  movements: basicSubclassesQuery(movementP31Values, false),
+  // editions: editionsAliasesQuery, // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
+  // languages: basicSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
 } satisfies Partial<Record<PluralizedEntityType, string | string[]>>

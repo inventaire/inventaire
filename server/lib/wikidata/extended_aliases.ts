@@ -1,4 +1,4 @@
-import { difference, intersection, uniq } from 'lodash-es'
+import { difference, intersection, uniq, values, omit } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_aliases_queries'
@@ -23,7 +23,11 @@ for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   } else if (type === 'works') {
     typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.series.concat(extendedTypesAliases.collections))
   }
-  checkOverlaps(type, typeExtendedAliases)
+  if (type === 'genres' || type === 'movements') {
+    typeExtendedAliases = dropOverlaps(type, typeExtendedAliases)
+  } else {
+    checkOverlaps(type, typeExtendedAliases)
+  }
   extendedTypesAliases[type] = typeExtendedAliases
   stats[type] = typeExtendedAliases.length
 }
@@ -76,6 +80,11 @@ function checkOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntit
       throw newError('type aliases overlap', 500, { type, otherType, overlap })
     }
   }
+}
+
+function dropOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntityUri[]) {
+  const otherTypesAliases = values(omit(extendedTypesAliases, type)).flat() as WdEntityUri[]
+  return difference(typeExtendedAliases, otherTypesAliases)
 }
 
 export const typesByExtendedP31AliasesValues = getTypesFromTypesAliases(extendedTypesAliases)
