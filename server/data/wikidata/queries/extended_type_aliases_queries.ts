@@ -16,7 +16,6 @@ function basicSubclassesQuery (P31Values: WdEntityUri[], recursiveSubclass = tru
     VALUES (?wellknown_type) { ${P31Values.map(uri => `(${uri})`).join(' ')} }
     ?type wdt:P279${recursiveSubclass ? '+' : ''} ?wellknown_type .
     FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-    FILTER EXISTS { ?instance wdt:P31 ?type }
   }`
 }
 
@@ -36,8 +35,7 @@ const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => 
   VALUES (?wellknown_type_chunk) { ${urisBatch.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279+ ?wellknown_type_chunk .
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
-  }`)
+}`)
 
 // Disabling recursive subclasses to avoid conflicts with works
 const seriesAliasesQuery = basicSubclassesQuery(serieP31Values, false)
@@ -47,7 +45,6 @@ const humansAliasesQuery = `SELECT DISTINCT ?type {
   VALUES (?wellknown_type) { ${humanP31Values.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279+ ?wellknown_type .
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
 }`
 
 const publishersAliasesQuery = basicSubclassesQuery(publisherP31Values)
