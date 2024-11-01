@@ -49,7 +49,16 @@ const humansAliasesQuery = `SELECT DISTINCT ?type {
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
 
-const publishersAliasesQuery = basicSubclassesQuery(publisherP31Values)
+const publishersDenylist = [
+  'wd:Q28750955', // self-published work (sometimes used as P123 value)
+]
+const publishersAliasesQuery = `SELECT DISTINCT ?type {
+  VALUES (?wellknown_type) { ${publisherP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?excluded_type) { ${publishersDenylist.map(uri => `(${uri})`).join(' ')} }
+  ?type wdt:P279+ ?wellknown_type .
+  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
+  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
+}`
 
 const collectionsAliasesQuery = basicSubclassesQuery(collectionP31Values)
 
