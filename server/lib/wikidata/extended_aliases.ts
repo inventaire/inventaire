@@ -11,6 +11,7 @@ import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType, type
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
 const extendedTypesAliases = {} as TypesAliases
+const stats = {}
 
 // Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
@@ -19,7 +20,10 @@ for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   const typeExtendedAliases = await getTypeExtendedAliases(type, sparql)
   checkOverlaps(type, typeExtendedAliases)
   extendedTypesAliases[type] = typeExtendedAliases
+  stats[type] = typeExtendedAliases.length
 }
+
+info(stats, 'entity types aliases counts')
 
 async function getTypeExtendedAliases (type: PluralizedEntityType, sparqlRequests: string | string[]) {
   const sparqlRequestsArray = sparqlRequests instanceof Array ? sparqlRequests : [ sparqlRequests ]
