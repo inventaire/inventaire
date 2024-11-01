@@ -1,5 +1,5 @@
 import { keyBy, map, mapValues, pick, property } from 'lodash-es'
-import { typesAliases } from '#lib/wikidata/aliases'
+import { extendedTypesAliases } from '#lib/wikidata/extended_aliases'
 import config from '#server/config'
 import type { InvEntityDoc } from '#server/types/entity'
 import type { Group } from '#server/types/group'
@@ -56,4 +56,4 @@ export const socialTypes = [
 
 export const indexedTypes = [ ...indexedEntitiesTypes, ...socialTypes ]
 
-export const indexedEntitiesTypesAliases = Object.values(pick(typesAliases, indexedEntitiesTypes)).flat()
+export const indexedEntitiesTypesAliases = Object.values(pick(extendedTypesAliases, indexedEntitiesTypes)).flat()

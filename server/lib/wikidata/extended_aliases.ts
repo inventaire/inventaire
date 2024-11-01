@@ -10,7 +10,7 @@ import { info, logError } from '#lib/utils/logs'
 import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType, type TypesAliases } from '#lib/wikidata/aliases'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
-const extendedTypesAliases = {} as TypesAliases
+export const extendedTypesAliases = {} as TypesAliases
 const stats = {}
 
 // Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
