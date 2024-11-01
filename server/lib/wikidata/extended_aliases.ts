@@ -1,4 +1,4 @@
-import { intersection, uniq } from 'lodash-es'
+import { difference, intersection, uniq } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_aliases_queries'
@@ -17,7 +17,12 @@ const stats = {}
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
 
 for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
-  const typeExtendedAliases = await getTypeExtendedAliases(type, sparql)
+  let typeExtendedAliases = await getTypeExtendedAliases(type, sparql)
+  if (type === 'series') {
+    typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.collections)
+  } else if (type === 'works') {
+    typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.series.concat(extendedTypesAliases.collections))
+  }
   checkOverlaps(type, typeExtendedAliases)
   extendedTypesAliases[type] = typeExtendedAliases
   stats[type] = typeExtendedAliases.length

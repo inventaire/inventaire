@@ -11,16 +11,16 @@ const {
   collections: collectionP31Values,
 } = typesAliases
 
-function basicSubclassesQuery (P31Values: WdEntityUri[]) {
+function basicSubclassesQuery (P31Values: WdEntityUri[], recursiveSubclass = true) {
   return `SELECT DISTINCT ?type {
     VALUES (?wellknown_type) { ${P31Values.map(uri => `(${uri})`).join(' ')} }
-    ?type wdt:P279+ ?wellknown_type .
+    ?type wdt:P279${recursiveSubclass ? '+' : ''} ?wellknown_type .
     FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
     FILTER EXISTS { ?instance wdt:P31 ?type }
   }`
 }
 
-const editionsAliasesQuery = basicSubclassesQuery(editionP31Values)
+// const editionsAliasesQuery = basicSubclassesQuery(editionP31Values, true)
 
 const tailoredWellknownWorkTypes = difference(workP31Values, [
   'wd:Q571', // book
@@ -39,7 +39,8 @@ const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => 
   FILTER EXISTS { ?instance wdt:P31 ?type }
   }`)
 
-const seriesAliasesQuery = basicSubclassesQuery(serieP31Values)
+// Disabling recursive subclasses to avoid conflicts with works
+const seriesAliasesQuery = basicSubclassesQuery(serieP31Values, false)
 
 // TODO: include collectives
 const humansAliasesQuery = `SELECT DISTINCT ?type {
@@ -54,10 +55,12 @@ const publishersAliasesQuery = basicSubclassesQuery(publisherP31Values)
 const collectionsAliasesQuery = basicSubclassesQuery(collectionP31Values)
 
 export const extendedAliasesQueries = {
-  editions: editionsAliasesQuery,
-  works: worksAliasesQuery,
+  // Keep collections before series and series before works, so that collections and series aliases can be removed from series and works aliases
+  collections: collectionsAliasesQuery,
   series: seriesAliasesQuery,
+  works: worksAliasesQuery,
   humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
-  collections: collectionsAliasesQuery,
+  // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
+  // editions: editionsAliasesQuery,
 } satisfies Partial<Record<PluralizedEntityType, string | string[]>>
