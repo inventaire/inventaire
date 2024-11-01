@@ -1,4 +1,4 @@
-import { difference, intersection, uniq, values, omit } from 'lodash-es'
+import { difference, intersection, uniq, values, omit, cloneDeep } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_aliases_queries'
@@ -7,10 +7,10 @@ import { newError } from '#lib/error/error'
 import { oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
-import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType, type TypesAliases } from '#lib/wikidata/aliases'
+import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
-export const extendedTypesAliases = {} as TypesAliases
+export const extendedTypesAliases = cloneDeep(typesAliases)
 const stats = {}
 
 // Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
@@ -75,9 +75,11 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
 
 function checkOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntityUri[]) {
   for (const [ otherType, otherTypeExtendedAliases ] of objectEntries(extendedTypesAliases)) {
-    const overlap = intersection(typeExtendedAliases, otherTypeExtendedAliases)
-    if (overlap.length > 0) {
-      throw newError('type aliases overlap', 500, { type, otherType, overlap })
+    if (type !== otherType) {
+      const overlap = intersection(typeExtendedAliases, otherTypeExtendedAliases)
+      if (overlap.length > 0) {
+        throw newError('type aliases overlap', 500, { type, otherType, overlap })
+      }
     }
   }
 }
