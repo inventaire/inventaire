@@ -1,3 +1,4 @@
+import { chunk, difference } from 'lodash-es'
 import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 
 const {
@@ -16,12 +17,20 @@ const editionsAliasesQuery = `SELECT DISTINCT ?type {
   FILTER EXISTS { ?instance wdt:P31 ?type }
 }`
 
-const worksAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${workP31Values.map(uri => `(${uri})`).join(' ')} }
+const tailoredWellknownWorkTypes = difference(workP31Values, [
+  'wd:Q571', // book
+  'wd:Q386724', // work
+  'wd:Q234460', // text
+  'wd:Q47461344', // written work (has too many subclasses, some with large irrelevant subgraphs, ex: software (wd:Q7397))
+  'wd:Q11826511', // work of science
+])
+// Querying by chunks reduces risks of timeout and helps debug which subgraph is posing problem
+const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(idsBatch => `SELECT DISTINCT ?type {
+  VALUES (?wellknown_type) { ${idsBatch.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279+ ?wellknown_type .
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
   FILTER EXISTS { ?instance wdt:P31 ?type }
-}`
+  }`)
 
 const seriesAliasesQuery = `SELECT DISTINCT ?type {
   VALUES (?wellknown_type) { ${serieP31Values.map(uri => `(${uri})`).join(' ')} }
@@ -54,9 +63,9 @@ const collectionsAliasesQuery = `SELECT DISTINCT ?type {
 
 export const extendedAliasesQueries = {
   editions: editionsAliasesQuery,
-  // works: worksAliasesQuery,
+  works: worksAliasesQuery,
   series: seriesAliasesQuery,
-  // humans: humansAliasesQuery,
+  humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
   collections: collectionsAliasesQuery,
-} satisfies Partial<Record<PluralizedEntityType, string>>
+} satisfies Partial<Record<PluralizedEntityType, string | string[]>>

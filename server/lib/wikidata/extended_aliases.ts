@@ -14,18 +14,19 @@ const extendedTypesAliases = {} as TypesAliases
 // Let scripts/refresh_entities_type_extended_aliases.sh force a refresh by setting an environment variable
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
 
-async function getTypeExtendedAliases (type: PluralizedEntityType, sparql: string) {
-  const hashCode = getHashCode(sparql)
+for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
+  extendedTypesAliases[type] = await getTypeExtendedAliases(type, sparql)
+}
+
+async function getTypeExtendedAliases (type: PluralizedEntityType, sparqlRequests: string | string[]) {
+  const sparqlRequestsArray = sparqlRequests instanceof Array ? sparqlRequests : [ sparqlRequests ]
+  const hashCode = getHashCode(sparqlRequestsArray.join())
   let extendedUris
   try {
     extendedUris = await cache_.get<WdEntityUri[]>({
     // Use a a hash code in the key to bust outdated results when the query changes
       key: `extended-wd-aliases:${type}:${hashCode}`,
-      fn: async () => {
-        info(`Fetching ${type} aliases...`)
-        const ids = await makeSparqlRequest<WdEntityId>(sparql, { minimize: true })
-        return ids.map(prefixifyWd)
-      },
+      fn: () => makeQueries(type, sparqlRequestsArray),
       // Updates should rather be triggered by a script than by the server
       // to minimize server start time
       ttl: oneYear,
@@ -40,8 +41,20 @@ async function getTypeExtendedAliases (type: PluralizedEntityType, sparql: strin
   return uniq(P31Values.concat(extendedUris))
 }
 
-for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
-  extendedTypesAliases[type] = await getTypeExtendedAliases(type, sparql)
+async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]) {
+  info(`Fetching ${type} aliases...`)
+  const ids = []
+  for (const sparql of sparqlRequests) {
+    try {
+      const batchIds = await makeSparqlRequest<WdEntityId>(sparql, { minimize: true, noHostBanOnTimeout: true, timeout: 60000 })
+      ids.push(...batchIds)
+    } catch (err) {
+      // Ignoring crashing subqueries to be more resilient to changes
+      // on Wikidata that might make some of those queries fail
+      logError(err, `failed query: ${sparql}`)
+    }
+  }
+  return ids.map(prefixifyWd)
 }
 
 export const typesByExtendedP31AliasesValues = getTypesFromTypesAliases(extendedTypesAliases)
