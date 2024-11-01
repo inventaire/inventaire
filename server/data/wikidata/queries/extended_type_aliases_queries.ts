@@ -26,13 +26,15 @@ const tailoredWellknownWorkTypes = difference(workP31Values, [
   'wd:Q571', // book
   'wd:Q386724', // work
   'wd:Q234460', // text
+  'wd:Q7725634', // literary work (has too many subclasses, some with large irrelevant subgraphs, ex: song (wd:Q7366))
   'wd:Q47461344', // written work (has too many subclasses, some with large irrelevant subgraphs, ex: software (wd:Q7397))
   'wd:Q11826511', // work of science
 ])
 // Querying by chunks reduces risks of timeout and helps debug which subgraph is posing problem
-const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(idsBatch => `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${idsBatch.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
+const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => `SELECT DISTINCT ?type {
+  VALUES (?wellknown_type) { ${workP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?wellknown_type_chunk) { ${urisBatch.map(uri => `(${uri})`).join(' ')} }
+  ?type wdt:P279+ ?wellknown_type_chunk .
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
   FILTER EXISTS { ?instance wdt:P31 ?type }
   }`)
