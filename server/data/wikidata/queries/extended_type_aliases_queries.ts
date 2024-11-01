@@ -1,5 +1,6 @@
 import { chunk, difference } from 'lodash-es'
 import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
+import type { WdEntityUri } from '#server/types/entity'
 
 const {
   editions: editionP31Values,
@@ -10,12 +11,16 @@ const {
   collections: collectionP31Values,
 } = typesAliases
 
-const editionsAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${editionP31Values.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
-}`
+function basicSubclassesQuery (P31Values: WdEntityUri[]) {
+  return `SELECT DISTINCT ?type {
+    VALUES (?wellknown_type) { ${P31Values.map(uri => `(${uri})`).join(' ')} }
+    ?type wdt:P279+ ?wellknown_type .
+    FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
+    FILTER EXISTS { ?instance wdt:P31 ?type }
+  }`
+}
+
+const editionsAliasesQuery = basicSubclassesQuery(editionP31Values)
 
 const tailoredWellknownWorkTypes = difference(workP31Values, [
   'wd:Q571', // book
@@ -32,12 +37,7 @@ const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(idsBatch => `
   FILTER EXISTS { ?instance wdt:P31 ?type }
   }`)
 
-const seriesAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${serieP31Values.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
-}`
+const seriesAliasesQuery = basicSubclassesQuery(serieP31Values)
 
 // TODO: include collectives
 const humansAliasesQuery = `SELECT DISTINCT ?type {
@@ -47,19 +47,9 @@ const humansAliasesQuery = `SELECT DISTINCT ?type {
   FILTER EXISTS { ?instance wdt:P31 ?type }
 }`
 
-const publishersAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${publisherP31Values.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
-}`
+const publishersAliasesQuery = basicSubclassesQuery(publisherP31Values)
 
-const collectionsAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${collectionP31Values.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER EXISTS { ?instance wdt:P31 ?type }
-}`
+const collectionsAliasesQuery = basicSubclassesQuery(collectionP31Values)
 
 export const extendedAliasesQueries = {
   editions: editionsAliasesQuery,
