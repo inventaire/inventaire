@@ -70,7 +70,17 @@ const publishersAliasesQuery = `SELECT DISTINCT ?type {
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
 
-const collectionsAliasesQuery = basicSubclassesQuery(collectionP31Values)
+const collectionsDenylist = [
+  'wd:Q1700470', // monograph series (let it to series)
+]
+const collectionsAliasesQuery = `SELECT DISTINCT ?type {
+  VALUES (?wellknown_type) { ${collectionP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?excluded_type) { ${collectionsDenylist.map(uri => `(${uri})`).join(' ')} }
+  ?type wdt:P279+ ?wellknown_type .
+  FILTER(?type NOT IN (${collectionsDenylist.join(',')}))
+  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
+  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
+}`
 
 export const extendedAliasesQueries = {
   // Keep collections before series and series before works, so that collections and series aliases can be removed from series and works aliases
