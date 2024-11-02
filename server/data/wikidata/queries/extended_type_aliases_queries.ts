@@ -65,8 +65,9 @@ const publishersAliasesQuery = `SELECT DISTINCT ?type {
   VALUES (?wellknown_type) { ${publisherP31Values.map(uri => `(${uri})`).join(' ')} }
   VALUES (?excluded_type) { ${publishersDenylist.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
+  FILTER(?type NOT IN (${publishersDenylist.join(',')}))
   FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
+  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
 
 const collectionsAliasesQuery = basicSubclassesQuery(collectionP31Values)
