@@ -1,8 +1,10 @@
 import { minimizeSimplifiedSparqlResults, simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
+import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import { getHashCode } from '#lib/utils/base'
 import { warn, info } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#server/types/common'
 
@@ -80,4 +82,19 @@ function logStats () {
   if (waiting > 0) {
     info({ waiting, ongoing }, 'wikidata sparql requests queue stats')
   }
+}
+
+interface CachedSparqlRequestOptions extends SparqlRequestOptions {
+  ttl: number
+  refresh?: boolean
+}
+export async function makeCachedSparqlRequest <Row> (sparql: string, options: CachedSparqlRequestOptions): Promise<Row[]> {
+  const { ttl, refresh } = options
+  const hash = getHashCode(sparql)
+  return cache_.get({
+    key: `sparql-request:${hash}`,
+    fn: () => makeSparqlRequest(sparql, options),
+    ttl,
+    refresh,
+  })
 }

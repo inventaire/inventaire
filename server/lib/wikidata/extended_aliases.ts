@@ -1,10 +1,10 @@
 import { difference, intersection, uniq, values, omit, cloneDeep } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { makeSparqlRequest } from '#data/wikidata/make_sparql_request'
+import { makeCachedSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { extendedAliasesQueries } from '#data/wikidata/queries/extended_type_aliases_queries'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
-import { oneYear } from '#lib/time'
+import { oneDay, oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
@@ -62,7 +62,12 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
   const ids = []
   for (const sparql of sparqlRequests) {
     try {
-      const batchIds = await makeSparqlRequest<WdEntityId>(sparql, { minimize: true, noHostBanOnTimeout: true, timeout: 60000 })
+      const batchIds = await makeCachedSparqlRequest<WdEntityId>(sparql, {
+        minimize: true,
+        noHostBanOnTimeout: true,
+        timeout: 60000,
+        ttl: oneDay,
+      })
       ids.push(...batchIds)
     } catch (err) {
       // Ignoring crashing subqueries to be more resilient to changes
@@ -81,7 +86,9 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
 
 async function hasInstance (id: WdEntityId) {
   const sparql = `SELECT ?instance { ?instance wdt:P31 wd:${id} . } LIMIT 1`
-  const res = await makeSparqlRequest(sparql, { minimize: true })
+  // Cache those requests for a short time, in case the larger makeQueries call is interrupted
+  // to avoid re-doing the same intermediary queries
+  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneDay })
   return res.length === 1
 }
 
