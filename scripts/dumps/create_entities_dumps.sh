@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Usage:
-#   npm run create-dumps http://username:password@localhost:5984/entities-prod
+#   npm run create-entities-dumps http://username:password@localhost:5984/entities-prod
 #
 
 entities_db_authentified_url="$1"
