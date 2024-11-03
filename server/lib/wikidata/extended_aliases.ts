@@ -70,7 +70,19 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
       logError(err, `failed query: ${sparql}`)
     }
   }
-  return ids.map(prefixifyWd)
+  const filteredIds = []
+  // This check is prohibitively expensive to do within queries, but quite cheap when using limit
+  // TODO: find a way to bundle those requests while preserving the fast response
+  for (const id of ids) {
+    if (await hasInstance(id)) filteredIds.push(id)
+  }
+  return filteredIds.map(prefixifyWd)
+}
+
+async function hasInstance (id: WdEntityId) {
+  const sparql = `SELECT ?instance { ?instance wdt:P31 wd:${id} . } LIMIT 1`
+  const res = await makeSparqlRequest(sparql, { minimize: true })
+  return res.length === 1
 }
 
 function checkOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntityUri[]) {
