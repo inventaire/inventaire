@@ -16,4 +16,4 @@ export function confirmServerPath (url) {
   }
 }
 
-export const serverMode = process.argv[1].includes(serverPathWithoutExtension)
+export const serverMode = process.argv[1]?.includes(serverPathWithoutExtension)
