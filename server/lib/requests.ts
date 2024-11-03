@@ -10,7 +10,7 @@ import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { AbsoluteUrl, HighResolutionTime, HttpHeaders, HttpMethod } from '#types/common'
-import { isUrl } from './boolean_validations.js'
+import { isUrl, isPositiveIntegerString } from './boolean_validations.js'
 import { isPrivateUrl } from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
 import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError, recordPossibleTimeoutError } from './requests_temporary_host_ban.js'
@@ -109,6 +109,7 @@ async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = 
     const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
     const err = newError('request error', statusCode, { method, url, reqBody, statusCode, resBody })
     err.body = resBody
+    if (statusCode === 429) err.retryAfter = parseRetryAfterHeader(res)
     addContextToStack(err)
     throw err
   }
@@ -124,6 +125,11 @@ async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = 
 }
 
 const looksLikeHtml = body => typeof body === 'string' && (body.trim().startsWith('<') || body.includes('<head>'))
+
+function parseRetryAfterHeader (res) {
+  const retryAfter = res.headers.get('retry-after')
+  if (isPositiveIntegerString(retryAfter)) return parseInt(retryAfter)
+}
 
 export async function sanitizeUrl (url: AbsoluteUrl) {
   if (!isUrl(url) || (await isPrivateUrl(url))) {

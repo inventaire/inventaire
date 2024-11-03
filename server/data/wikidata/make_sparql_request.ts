@@ -32,8 +32,9 @@ export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRe
       return await makeRequest<Row>(url, options)
     } catch (err) {
       if (err.statusCode === 429) {
-        warn(url, `${err.message}: retrying in 2s`)
-        await wait(2000)
+        const { retryAfter = 2 } = err
+        warn(url, `${err.message}: retrying in ${retryAfter}s`)
+        await wait(retryAfter * 1000)
         return persistentRequest()
       } else {
         throw err
