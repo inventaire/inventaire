@@ -11,7 +11,7 @@ const folders = {
   db: `${projectRoot}server/db`,
 }
 
-export function absolutePath (folderAlias, filePath) {
+export function absolutePath (folderAlias: keyof typeof folders, filePath: string) {
   const folder = folders[folderAlias]
   if (!folder) throw new Error(`folder not found: ${folderAlias}`)
   return `${folder}/${filePath}`
@@ -21,5 +21,6 @@ export function absolutePath (folderAlias, filePath) {
 //   node server/lib/absolute_path.js folderAlias filePath
 if (import.meta.url.includes(process.argv[1])) {
   const [ folderAlias, filePath ] = process.argv.slice(2)
+  // @ts-expect-error
   console.log(absolutePath(folderAlias, filePath))
 }
