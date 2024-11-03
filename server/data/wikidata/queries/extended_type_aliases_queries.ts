@@ -40,12 +40,16 @@ const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => 
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`)
 
-const seriesDenylist = [ ...workP31Values, ...collectionP31Values ]
-// Disabling recursive subclasses to avoid conflicts with works
+const seriesDenylist = [
+  ...workP31Values,
+  ...collectionP31Values,
+]
 const seriesAliasesQuery = `SELECT DISTINCT ?type {
   VALUES (?wellknown_type) { ${serieP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?excluded_type) { ${seriesDenylist.map(uri => `(${uri})`).join(' ')} }
   ?type wdt:P279 ?wellknown_type .
   FILTER(?type NOT IN (${seriesDenylist.join(',')}))
+  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
 
@@ -71,7 +75,7 @@ const publishersAliasesQuery = `SELECT DISTINCT ?type {
 }`
 
 const collectionsDenylist = [
-  'wd:Q1700470', // monograph series (let it to series)
+  ...serieP31Values,
 ]
 const collectionsAliasesQuery = `SELECT DISTINCT ?type {
   VALUES (?wellknown_type) { ${collectionP31Values.map(uri => `(${uri})`).join(' ')} }
@@ -82,6 +86,17 @@ const collectionsAliasesQuery = `SELECT DISTINCT ?type {
   FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
 }`
 
+const genresDenylist = [
+  ...serieP31Values,
+]
+const genresAliasesQuery = `SELECT DISTINCT ?type {
+  VALUES (?wellknown_type) { ${genreP31Values.map(uri => `(${uri})`).join(' ')} }
+  VALUES (?excluded_type) { ${genresDenylist.map(uri => `(${uri})`).join(' ')} }
+  ?type wdt:P279+ ?wellknown_type .
+  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
+  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
+}`
+
 export const extendedAliasesQueries = {
   // Keep collections before series and series before works, so that collections and series aliases can be removed from series and works aliases
   collections: collectionsAliasesQuery,
@@ -89,8 +104,9 @@ export const extendedAliasesQueries = {
   works: worksAliasesQuery,
   humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
-  genres: basicSubclassesQuery(genreP31Values, false),
-  movements: basicSubclassesQuery(movementP31Values, false),
+  // Keep movements above genre, to keep subclasses intersections on movements side
+  movements: basicSubclassesQuery(movementP31Values),
+  genres: genresAliasesQuery,
   // editions: editionsAliasesQuery, // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
   // languages: basicSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
 } satisfies Partial<Record<PluralizedEntityType, string | string[]>>

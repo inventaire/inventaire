@@ -23,7 +23,7 @@ for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   } else if (type === 'works') {
     typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.series.concat(extendedTypesAliases.collections))
   }
-  if (type === 'genres' || type === 'movements') {
+  if (type === 'genres') {
     typeExtendedAliases = dropOverlaps(type, typeExtendedAliases)
   } else {
     checkOverlaps(type, typeExtendedAliases)
