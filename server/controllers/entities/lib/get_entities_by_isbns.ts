@@ -41,9 +41,8 @@ export async function getEntitiesByIsbns (rawIsbns: Isbn[], params: EntitiesGett
   const foundWdIsbns = serializedWdEntities.map(wdEntity => getFirstClaimValue(wdEntity.claims, 'wdt:P212'))
   const remainingMissingIsbns = difference(missingLocalIsbns, foundWdIsbns)
 
-  // The cases where autocreate && refresh was already checked above
   let notFound: IsbnEntityUri[] = []
-  if (autocreate && !refresh && remainingMissingIsbns.length > 0) {
+  if (autocreate && remainingMissingIsbns.length > 0) {
     const resolvedEditions = await Promise.all(remainingMissingIsbns.map(isbn => enrichAndGetEditionEntityFromIsbn(isbn)))
     const newEntities = []
     for (const resolvedEdition of resolvedEditions) {
