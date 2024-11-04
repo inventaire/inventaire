@@ -1,8 +1,8 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
-import { typesAliases } from '#lib/wikidata/aliases'
+import { primaryTypesAliases } from '#lib/wikidata/aliases'
 import type { DateValue, WdEntityId } from '#server/types/entity'
 
-const { works: worksP31Values } = typesAliases
+const { works: worksP31Values } = primaryTypesAliases
 
 export default {
   parameters: [ 'qid' ] as const,

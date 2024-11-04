@@ -9,11 +9,11 @@ import { newError } from '#lib/error/error'
 import { oneDay, oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
-import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
+import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import { extendedAliasesQueries } from '#scripts/entities_extended_types_aliases/extended_type_aliases_queries'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
-const extendedTypesAliases = cloneDeep(typesAliases)
+const extendedTypesAliases = cloneDeep(primaryTypesAliases)
 const stats = {}
 
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
@@ -55,7 +55,7 @@ async function getTypeExtendedAliases (type: PluralizedEntityType, sparqlRequest
     // Better start without extended uris than to prevent the server to start
     extendedUris = []
   }
-  const P31Values = typesAliases[type]
+  const P31Values = primaryTypesAliases[type]
   return uniq(P31Values.concat(extendedUris))
 }
 

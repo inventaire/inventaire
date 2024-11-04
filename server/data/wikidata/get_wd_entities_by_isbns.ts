@@ -10,10 +10,10 @@ import { normalizeIsbn, toIsbn13 } from '#lib/isbn/isbn'
 import { oneHour } from '#lib/time'
 import { isNotEmpty, objectFromEntries } from '#lib/utils/base'
 import { LogError } from '#lib/utils/logs'
-import { typesAliases } from '#lib/wikidata/aliases'
+import { primaryTypesAliases } from '#lib/wikidata/aliases'
 import type { NormalizedIsbn, WdEntityId, WdEntityUri } from '#server/types/entity'
 
-const { works: worksP31Values, editions: editionsP31Values } = typesAliases
+const { works: worksP31Values, editions: editionsP31Values } = primaryTypesAliases
 
 const temporarilyForcedCache = {}
 

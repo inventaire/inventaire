@@ -6,8 +6,9 @@ import type { ExtendedEntityType, WdEntityUri } from '#server/types/entity'
 
 const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 
-// TODO: replace this list by a SPARQL generated list
-// that can be refreshed from time to time
+// Those Wikidata items are the basic aliases from which extended aliases lists
+// will be found by following subclasses (wdt:P279), with some exceptions
+// See scripts/entities_extended_types_aliases/extended_type_aliases_queries.ts
 const wikidataOnlyP31Values = {
   humans: [
     'wd:Q10648343', // duo
@@ -159,11 +160,11 @@ const wikidataOnlyP31Values = {
 export type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
 
 export type TypesAliases = Record<PluralizedEntityType, WdEntityUri[]>
-export const typesAliases = {} as TypesAliases
+export const primaryTypesAliases = {} as TypesAliases
 
 for (const [ type, wdTypeValues ] of objectEntries(wikidataOnlyP31Values)) {
   const invTypeValues = invP31Values[type] || []
-  typesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
+  primaryTypesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
 }
 
 type EntityTypeByP31Value = Record<WdEntityUri, ExtendedEntityType>
@@ -182,13 +183,13 @@ export function getTypesFromTypesAliases (aliases: TypesAliases) {
   return entityTypeByP31Value
 }
 
-export const types = getTypesFromTypesAliases(typesAliases)
+export const types = getTypesFromTypesAliases(primaryTypesAliases)
 
-export const typesNames = objectKeys(typesAliases)
+export const typesNames = objectKeys(primaryTypesAliases)
 
 export function getPluralType (singularType) {
   const pluralizedType = singularType + 's'
-  if (!typesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
+  if (!primaryTypesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
   return pluralizedType
 }
 

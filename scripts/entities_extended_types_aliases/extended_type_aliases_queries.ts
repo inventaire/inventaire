@@ -1,5 +1,5 @@
 import { chunk, difference } from 'lodash-es'
-import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
+import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import type { WdEntityUri } from '#server/types/entity'
 
 const {
@@ -12,7 +12,7 @@ const {
   genres: genreP31Values,
   movements: movementP31Values,
   // languages: languageP31Values,
-} = typesAliases
+} = primaryTypesAliases
 
 function basicSubclassesQuery (P31Values: WdEntityUri[], recursiveSubclass = true) {
   return `SELECT DISTINCT ?type {
