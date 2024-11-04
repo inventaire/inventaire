@@ -1,3 +1,4 @@
+#!/usr/bin/env tsx
 import { writeFile } from 'node:fs/promises'
 import { difference, intersection, uniq, values, omit, cloneDeep } from 'lodash-es'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
@@ -8,11 +9,11 @@ import { newError } from '#lib/error/error'
 import { oneDay, oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
-import { getTypesFromTypesAliases, typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
+import { typesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import { extendedAliasesQueries } from '#scripts/entities_extended_types_aliases/extended_type_aliases_queries'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
-export const extendedTypesAliases = cloneDeep(typesAliases)
+const extendedTypesAliases = cloneDeep(typesAliases)
 const stats = {}
 
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
@@ -108,8 +109,6 @@ function dropOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntity
   const otherTypesAliases = values(omit(extendedTypesAliases, type)).flat() as WdEntityUri[]
   return difference(typeExtendedAliases, otherTypesAliases)
 }
-
-export const typesByExtendedP31AliasesValues = getTypesFromTypesAliases(extendedTypesAliases)
 
 const path = absolutePath('server', 'assets/extended_types_aliases.json')
 await writeFile(path, JSON.stringify(extendedTypesAliases, null, 2))
