@@ -78,7 +78,7 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
   const filteredIds = []
   // This check is prohibitively expensive to do within queries, but quite cheap when using limit
   // TODO: find a way to bundle those requests while preserving the fast response
-  for (const id of ids) {
+  for (const id of uniq(ids)) {
     if (await hasInstance(id)) filteredIds.push(id)
   }
   return filteredIds.map(prefixifyWd)
