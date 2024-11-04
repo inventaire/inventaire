@@ -112,11 +112,11 @@
     "wikidata-lang": "^4.1.2"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin-ts": "^1.6.3",
+    "@stylistic/eslint-plugin-ts": "^2.10.1",
     "@types/mocha": "^10.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@typescript-eslint/parser": "^7.16.0",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
+    "eslint": "^8.57.1",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.6.0",
