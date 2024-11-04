@@ -21,12 +21,14 @@ const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true
 
 for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   let typeExtendedAliases = await getTypeExtendedAliases(type, sparql)
+  // Ideally, the following adjustments should be done within the queries
+  // but not at the cost of risking to time out
   if (type === 'series') {
     typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.collections)
   } else if (type === 'works') {
-    typeExtendedAliases = difference(typeExtendedAliases, extendedTypesAliases.series.concat(extendedTypesAliases.collections))
+    typeExtendedAliases = difference(typeExtendedAliases, [ ...extendedTypesAliases.series, ...extendedTypesAliases.collections ])
   }
-  if (type === 'genres') {
+  if (type === 'movements' || type === 'genres') {
     typeExtendedAliases = dropOverlaps(type, typeExtendedAliases)
   } else {
     checkOverlaps(type, typeExtendedAliases)

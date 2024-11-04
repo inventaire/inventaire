@@ -1,4 +1,4 @@
-import { chunk, difference } from 'lodash-es'
+import { difference } from 'lodash-es'
 import { getHashCode } from '#lib/utils/base'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import type { WdEntityUri } from '#server/types/entity'
@@ -12,34 +12,41 @@ const {
   collections: collectionP31Values,
   genres: genreP31Values,
   movements: movementP31Values,
+  articles: articlesP31Values,
   // languages: languageP31Values,
 } = primaryTypesAliases
 
-function basicSubclassesQuery (P31Values: WdEntityUri[], recursiveSubclass = true) {
+function genericSubclassesQuery (primaryP31Values: WdEntityUri[], denylist: WdEntityUri[], recursiveSubclass = true) {
   return `SELECT DISTINCT ?type {
-    VALUES (?wellknown_type) { ${P31Values.map(uri => `(${uri})`).join(' ')} }
+    VALUES (?wellknown_type) { ${primaryP31Values.map(uri => `(${uri})`).join(' ')} }
+    VALUES (?excluded_type) { ${denylist.map(uri => `(${uri})`).join(' ')} }
     ?type wdt:P279${recursiveSubclass ? '+' : ''} ?wellknown_type .
+    FILTER(?type NOT IN (${denylist.join(',')}))
+    FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
     FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
   }`
 }
 
-// const editionsAliasesQuery = basicSubclassesQuery(editionP31Values, true)
+// const editionsAliasesQuery = genericSubclassesQuery(editionP31Values, true)
 
+// Those have too many subclasses, some with large irrelevant subgraphs (ex: song (wd:Q7366), software (wd:Q7397))
+const noRecursionWorkP31Values = [
+  'wd:Q7725634',
+  'wd:Q47461344',
+] as WdEntityUri[]
 const tailoredWellknownWorkTypes = difference(workP31Values, [
   'wd:Q571', // book
   'wd:Q386724', // work
   'wd:Q234460', // text
-  'wd:Q7725634', // literary work (has too many subclasses, some with large irrelevant subgraphs, ex: song (wd:Q7366))
-  'wd:Q47461344', // written work (has too many subclasses, some with large irrelevant subgraphs, ex: software (wd:Q7397))
   'wd:Q11826511', // work of science
-])
-// Querying by chunks reduces risks of timeout and helps debug which subgraph is posing problem
-const worksAliasesQuery = chunk(tailoredWellknownWorkTypes, 3).map(urisBatch => `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${workP31Values.map(uri => `(${uri})`).join(' ')} }
-  VALUES (?wellknown_type_chunk) { ${urisBatch.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type_chunk .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-}`)
+  ...noRecursionWorkP31Values,
+]) as WdEntityUri[]
+const worksDenylist = [ ...articlesP31Values, ...serieP31Values, ...collectionP31Values ]
+const worksAliasesQueries = [
+  genericSubclassesQuery(tailoredWellknownWorkTypes, worksDenylist, true),
+  // Fetch only their direct subclasses, as fetching recursively times out
+  genericSubclassesQuery(noRecursionWorkP31Values, worksDenylist, false),
+]
 
 const seriesDenylist = [
   ...workP31Values,
@@ -102,14 +109,14 @@ export const extendedAliasesQueries = {
   // Keep collections before series and series before works, so that collections and series aliases can be removed from series and works aliases
   collections: collectionsAliasesQuery,
   series: seriesAliasesQuery,
-  works: worksAliasesQuery,
+  works: worksAliasesQueries,
   humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
   // Keep movements above genre, to keep subclasses intersections on movements side
-  movements: basicSubclassesQuery(movementP31Values),
+  movements: genericSubclassesQuery(movementP31Values, genreP31Values),
   genres: genresAliasesQuery,
   // editions: editionsAliasesQuery, // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
-  // languages: basicSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
+  // languages: genericSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
 } satisfies Partial<Record<PluralizedEntityType, string | string[]>>
 
 export function getExtendedAliasesQueriesHash () {

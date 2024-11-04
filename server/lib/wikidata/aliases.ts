@@ -79,6 +79,7 @@ const wikidataOnlyP31Values = {
     'wd:Q11825892', // young adult novel
     'wd:Q8275050', // children's book
     'wd:Q747381', // light novel
+    'wd:Q13136', // reference work
   ],
   editions: [
     'wd:Q3972943', // publishing
@@ -97,7 +98,6 @@ const wikidataOnlyP31Values = {
     'wd:Q21114848', // magazine genre
     'wd:Q20087698', // comics genre
     'wd:Q28468127', // target audience for manga
-    'wd:Q13136', // reference work
     'wd:Q108368282', // literary genre by form
     'wd:Q108317211', // novel genre
     'wd:Q20076756', // speculative fiction genre
