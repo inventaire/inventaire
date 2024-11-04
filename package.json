@@ -18,8 +18,6 @@
     "db-actions:delete-user": "./scripts/db_actions/delete_user.ts",
     "debug": "DEBUG=express:* node server/server.ts",
     "delete-tests-databases": "./scripts/tests/api/delete_tests_databases.sh",
-    "git-pre-commit": "./scripts/githooks/pre-commit.sh",
-    "git-post-checkout": "./scripts/githooks/post-checkout.sh",
     "indexation:load": "./scripts/indexation/load.ts",
     "indexation:load-from-couchdb": "./scripts/indexation/load_from_couchdb.sh",
     "indexation:wikidata:load-from-dump": "./scripts/indexation/wikidata/load_from_dump.sh",
