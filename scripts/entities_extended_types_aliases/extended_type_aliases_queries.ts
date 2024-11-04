@@ -17,14 +17,19 @@ const {
 } = primaryTypesAliases
 
 function genericSubclassesQuery (primaryP31Values: WdEntityUri[], denylist: WdEntityUri[], recursiveSubclass = true) {
-  return `SELECT DISTINCT ?type {
+  let body = `
     VALUES (?wellknown_type) { ${primaryP31Values.map(uri => `(${uri})`).join(' ')} }
-    VALUES (?excluded_type) { ${denylist.map(uri => `(${uri})`).join(' ')} }
     ?type wdt:P279${recursiveSubclass ? '+' : ''} ?wellknown_type .
-    FILTER(?type NOT IN (${denylist.join(',')}))
-    FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
     FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  }`
+  `
+  if (denylist.length > 0) {
+    body += `
+      VALUES (?excluded_type) { ${denylist.map(uri => `(${uri})`).join(' ')} }
+      FILTER(?type NOT IN (${denylist.join(',')}))
+      FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
+    `
+  }
+  return `SELECT DISTINCT ?type { ${body} }`
 }
 
 // const editionsAliasesQuery = genericSubclassesQuery(editionP31Values, true)
@@ -52,58 +57,29 @@ const seriesDenylist = [
   ...workP31Values,
   ...collectionP31Values,
 ]
-const seriesAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${serieP31Values.map(uri => `(${uri})`).join(' ')} }
-  VALUES (?excluded_type) { ${seriesDenylist.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279 ?wellknown_type .
-  FILTER(?type NOT IN (${seriesDenylist.join(',')}))
-  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-}`
+const seriesAliasesQuery = genericSubclassesQuery(serieP31Values, seriesDenylist, false)
 
 const tailoredWellknownHumanTypes = difference(humanP31Values, [
   'wd:Q5', // human, has a lot of subclasses but they are not used as P31 values
-])
-const humansAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${tailoredWellknownHumanTypes.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-}`
+]) as WdEntityUri[]
+const humansAliasesQuery = genericSubclassesQuery(tailoredWellknownHumanTypes, [], true)
 
 const publishersDenylist = [
   'wd:Q28750955', // self-published work (sometimes used as P123 value)
-]
-const publishersAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${publisherP31Values.map(uri => `(${uri})`).join(' ')} }
-  VALUES (?excluded_type) { ${publishersDenylist.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER(?type NOT IN (${publishersDenylist.join(',')}))
-  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-}`
+] as WdEntityUri[]
+const publishersAliasesQuery = genericSubclassesQuery(publisherP31Values, publishersDenylist)
 
 const collectionsDenylist = [
   ...serieP31Values,
 ]
-const collectionsAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${collectionP31Values.map(uri => `(${uri})`).join(' ')} }
-  VALUES (?excluded_type) { ${collectionsDenylist.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER(?type NOT IN (${collectionsDenylist.join(',')}))
-  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-}`
+const collectionsAliasesQuery = genericSubclassesQuery(collectionP31Values, collectionsDenylist)
 
 const genresDenylist = [
   ...serieP31Values,
 ]
-const genresAliasesQuery = `SELECT DISTINCT ?type {
-  VALUES (?wellknown_type) { ${genreP31Values.map(uri => `(${uri})`).join(' ')} }
-  VALUES (?excluded_type) { ${genresDenylist.map(uri => `(${uri})`).join(' ')} }
-  ?type wdt:P279+ ?wellknown_type .
-  FILTER NOT EXISTS { ?type wdt:P31 ?wellknown_type }
-  FILTER NOT EXISTS { ?type wdt:P279 ?excluded_type }
-}`
+const genresAliasesQuery = genericSubclassesQuery(genreP31Values, genresDenylist)
+
+const movementsQuery = genericSubclassesQuery(movementP31Values, genreP31Values)
 
 export const extendedAliasesQueries = {
   // Keep collections before series and series before works, so that collections and series aliases can be removed from series and works aliases
@@ -113,7 +89,7 @@ export const extendedAliasesQueries = {
   humans: humansAliasesQuery,
   publishers: publishersAliasesQuery,
   // Keep movements above genre, to keep subclasses intersections on movements side
-  movements: genericSubclassesQuery(movementP31Values, genreP31Values),
+  movements: movementsQuery,
   genres: genresAliasesQuery,
   // editions: editionsAliasesQuery, // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
   // languages: genericSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
