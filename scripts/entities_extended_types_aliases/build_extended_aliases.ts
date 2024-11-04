@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 import { writeFile } from 'node:fs/promises'
 import { difference, intersection, uniq, values, omit, cloneDeep } from 'lodash-es'
-import { prefixifyWd } from '#controllers/entities/lib/prefix'
+import { prefixifyWd, getWdEntityUriNumericId } from '#controllers/entities/lib/prefix'
 import { makeCachedSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { absolutePath } from '#lib/absolute_path'
 import { cache_ } from '#lib/cache'
@@ -30,7 +30,7 @@ for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
   } else {
     checkOverlaps(type, typeExtendedAliases)
   }
-  extendedTypesAliases[type] = typeExtendedAliases
+  extendedTypesAliases[type] = typeExtendedAliases.sort(byNumericId)
   stats[type] = typeExtendedAliases.length
 }
 
@@ -108,6 +108,10 @@ function checkOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntit
 function dropOverlaps (type: PluralizedEntityType, typeExtendedAliases: WdEntityUri[]) {
   const otherTypesAliases = values(omit(extendedTypesAliases, type)).flat() as WdEntityUri[]
   return difference(typeExtendedAliases, otherTypesAliases)
+}
+
+function byNumericId (a, b) {
+  return getWdEntityUriNumericId(a) - getWdEntityUriNumericId(b)
 }
 
 const path = absolutePath('server', 'assets/extended_types_aliases.json')
