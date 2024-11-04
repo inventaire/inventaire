@@ -16,6 +16,7 @@ import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 const extendedTypesAliases = cloneDeep(primaryTypesAliases)
 const stats = {}
 
+// Force a cache refresh by prefixing this script call with `export INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES=true;`
 const refresh = process.env.INV_REFRESH_ENTITIES_TYPE_EXTENDED_ALIASES === 'true'
 
 for (const [ type, sparql ] of objectEntries(extendedAliasesQueries)) {
@@ -67,6 +68,7 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
         noHostBanOnTimeout: true,
         timeout: 60000,
         ttl: oneDay,
+        refresh,
       })
       ids.push(...batchIds)
     } catch (err) {
@@ -88,7 +90,7 @@ async function hasInstance (id: WdEntityId) {
   const sparql = `SELECT ?instance { ?instance wdt:P31 wd:${id} . } LIMIT 1`
   // Cache those requests for a short time, in case the larger makeQueries call is interrupted
   // to avoid re-doing the same intermediary queries
-  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneDay })
+  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneDay, refresh })
   return res.length === 1
 }
 
