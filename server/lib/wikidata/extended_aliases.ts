@@ -6,7 +6,7 @@ import { getTypesFromTypesAliases, type TypesAliases } from '#lib/wikidata/alias
 const extendedAliasesPath = absolutePath('server', 'assets/extended_types_aliases.json')
 let _extendedTypesAliases = {} as TypesAliases
 try {
-  _extendedTypesAliases = requireJson(extendedAliasesPath)
+  ;({ extendedTypesAliases: _extendedTypesAliases } = requireJson(extendedAliasesPath))
 } catch (err) {
   if (err.code === 'MODULE_NOT_FOUND') {
     warn(`Extended entities types aliases not found at ${extendedAliasesPath}. Run scripts/entities_extended_types_aliases/build_extended_aliases.ts to fix`)

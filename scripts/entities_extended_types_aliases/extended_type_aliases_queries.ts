@@ -1,4 +1,5 @@
 import { chunk, difference } from 'lodash-es'
+import { getHashCode } from '#lib/utils/base'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import type { WdEntityUri } from '#server/types/entity'
 
@@ -110,3 +111,8 @@ export const extendedAliasesQueries = {
   // editions: editionsAliasesQuery, // Commented-out, to avoid conflicts with works, and assuming that wellknown edition types are used
   // languages: basicSubclassesQuery(languageP31Values), // Commented-out, to avoid conflicts with works(!!)
 } satisfies Partial<Record<PluralizedEntityType, string | string[]>>
+
+export function getExtendedAliasesQueriesHash () {
+  const stringifiedQueries = JSON.stringify(extendedAliasesQueries)
+  return getHashCode(stringifiedQueries)
+}

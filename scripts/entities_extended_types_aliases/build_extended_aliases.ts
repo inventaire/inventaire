@@ -10,7 +10,7 @@ import { oneDay, oneYear } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
-import { extendedAliasesQueries } from '#scripts/entities_extended_types_aliases/extended_type_aliases_queries'
+import { extendedAliasesQueries, getExtendedAliasesQueriesHash } from '#scripts/entities_extended_types_aliases/extended_type_aliases_queries'
 import type { WdEntityId, WdEntityUri } from '#server/types/entity'
 
 const extendedTypesAliases = cloneDeep(primaryTypesAliases)
@@ -115,5 +115,9 @@ function byNumericId (a, b) {
 }
 
 const path = absolutePath('server', 'assets/extended_types_aliases.json')
-await writeFile(path, JSON.stringify(extendedTypesAliases, null, 2))
+await writeFile(path, JSON.stringify({
+  queriesHash: getExtendedAliasesQueriesHash(),
+  extendedTypesAliases,
+}, null, 2
+))
 info(`Extended entities types aliases saved in ${path}`)
