@@ -6,7 +6,7 @@ import { makeCachedSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { absolutePath } from '#lib/absolute_path'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
-import { oneDay, oneYear } from '#lib/time'
+import { oneDay } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
@@ -42,12 +42,10 @@ async function getTypeExtendedAliases (type: PluralizedEntityType, sparqlRequest
   let extendedUris
   try {
     extendedUris = await cache_.get<WdEntityUri[]>({
-    // Use a a hash code in the key to bust outdated results when the query changes
+      // Use a a hash code in the key to bust outdated results when the query changes
       key: `extended-wd-aliases:${type}:${hashCode}`,
       fn: () => makeQueries(type, sparqlRequestsArray),
-      // Updates should rather be triggered by a script than by the server
-      // to minimize server start time
-      ttl: oneYear,
+      ttl: oneDay,
       refresh,
     })
   } catch (err) {
