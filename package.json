@@ -6,6 +6,7 @@
   "main": "server/server.ts",
   "scripts": {
     "build": "./scripts/typescript/build.sh",
+    "build-extended-entities-types-aliases": "./scripts/entities_extended_types_aliases/build_extended_aliases.ts",
     "check-types": "./scripts/typescript/check_types.sh",
     "create-entities-dumps": "./scripts/dumps/create_entities_dumps.sh",
     "couchdb:backup-databases": "./scripts/couchdb/backup_databases.sh",
