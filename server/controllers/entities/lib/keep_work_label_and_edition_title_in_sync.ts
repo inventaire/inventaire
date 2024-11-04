@@ -1,5 +1,5 @@
 import { uniq } from 'lodash-es'
-import { getInvEntitiesByClaim, getEntityById, getWorkEditions } from '#controllers/entities/lib/entities'
+import { getEntityById, getWorkEditions } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'

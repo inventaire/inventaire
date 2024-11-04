@@ -1,5 +1,6 @@
 import isbn3 from 'isbn3'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { parse: isbnParser } = isbn3
 
 export type LatLng = [ number, number ]

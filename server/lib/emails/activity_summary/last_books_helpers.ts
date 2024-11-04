@@ -7,7 +7,6 @@ import type { LatLng, AbsoluteUrl, ColorHexCode } from '#types/common'
 import type { SerializedItem } from '#types/item'
 import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const host = config.getPublicOrigin()
 

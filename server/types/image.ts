@@ -1,5 +1,5 @@
 import type { uploadContainersNames } from '#controllers/images/lib/containers'
-import type { AbsoluteUrl, Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { CouchDoc } from '#types/couchdb'
 import type { WikimediaCommonsFilename } from '#types/entity'
 

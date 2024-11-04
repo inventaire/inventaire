@@ -4,7 +4,7 @@ import { getUserById, getUsersByIds, serializeUserData } from '#controllers/user
 import { catchDisabledEmails, getGroupAndUsersData, getParsedUsersIndexedByIds } from '#lib/emails/helpers'
 import { sendMail } from '#lib/emails/transporter'
 import { wait } from '#lib/promises'
-import { info, LogError, logErrorMessage } from '#lib/utils/logs'
+import { info, logError, LogError } from '#lib/utils/logs'
 import email_ from './email.js'
 
 export default {
@@ -87,7 +87,7 @@ async function sendSequentially (emails, label) {
     try {
       await sendMail(nextEmail)
     } catch (err) {
-      logErrorMessage(`${label} (address: ${nextEmail.to} err)`)
+      logError(err, `${label} (address: ${nextEmail.to} err)`)
     }
     // Wait to lower risk to trigger any API quota issue from the email service
     await wait(500)

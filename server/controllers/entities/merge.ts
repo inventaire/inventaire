@@ -5,8 +5,7 @@ import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { log } from '#lib/utils/logs'
-import type { EntityUri, InvEntityUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
-import { getEntitiesByUris, type Redirects } from './lib/get_entities_by_uris.js'
+import type { EntityUri, SerializedEntity } from '#types/entity'
 import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {

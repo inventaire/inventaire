@@ -29,6 +29,7 @@ const parseLine = line => {
   try {
     return JSON.parse(line)
   } catch (err) {
+    if (err.name !== 'SyntaxError') throw err
     console.error(red('fail to parse line:'), line)
   }
 }
@@ -77,6 +78,7 @@ const loadFromStdin = () => {
   .pipe(split())
   .on('data', async function (line) {
     ongoing++
+    // @ts-expect-error TS2683
     if (ongoing >= 3) this.pause()
     await addLine(line)
       .catch(err => {
@@ -84,6 +86,7 @@ const loadFromStdin = () => {
         err.context.line = line
         logError(err, 'loadFromStdin addLine error')
       })
+    // @ts-expect-error TS2683
     if (ongoing < 3 && this.paused) this.resume()
     ongoing--
   })

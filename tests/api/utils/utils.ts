@@ -1,6 +1,6 @@
 import 'should'
 import { getOrCreateUser, getRefreshedUser } from '#fixtures/users'
-import type { User, UserRole } from '#server/types/user'
+import type { UserRole } from '#server/types/user'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 import type { ArrayTail } from 'type-fest/source/internal.js'
 

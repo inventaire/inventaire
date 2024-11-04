@@ -1,4 +1,4 @@
-import { partition, map, zip, compact } from 'lodash-es'
+import { partition, map, zip } from 'lodash-es'
 import type { ParsedIsbnData } from '#controllers/entities/lib/get_entities_by_isbns'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getWikidataEnrichedEntities } from '#controllers/entities/lib/get_wikidata_enriched_entities'

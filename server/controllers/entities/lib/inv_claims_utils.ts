@@ -14,6 +14,7 @@ export function getClaimValue (claim: InvClaim) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getTypedClaimValue <C extends InvClaim, P extends keyof ClaimValueByProperty> (claim: C, property: P) {
   if (isClaimObject(claim)) {
     return claim.value as ClaimValueByProperty[typeof property]

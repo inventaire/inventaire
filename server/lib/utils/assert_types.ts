@@ -50,7 +50,7 @@ function parseTypes (types, args) {
 
 // Avoid triggering TS2775 in consuùùers by using an explicit type annotation
 // See https://stackoverflow.com/a/72689922/3324977
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const assert_: Record<string, Function> = {
   type: assertType,
   types: assertTypes,
@@ -70,7 +70,7 @@ export const assert_: Record<string, Function> = {
   object (obj: unknown): asserts obj is Record<string, unknown> {
     assertType('object', obj)
   },
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   function (fn: unknown): asserts fn is Function {
     assertType('function', fn)
   },

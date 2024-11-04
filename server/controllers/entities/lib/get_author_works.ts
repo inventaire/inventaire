@@ -59,7 +59,7 @@ async function getWdAuthorWorks (qid, params) {
 }
 
 function formatWdEntity (result: AuthorWork) {
-  let { work: wdId, type: typeWdId, date, serie } = result
+  const { work: wdId, type: typeWdId, date, serie } = result
   const typeUri = `wd:${typeWdId}`
   const typeName = getPluralTypeByTypeUri(typeUri)
 
