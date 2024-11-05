@@ -15,7 +15,7 @@ watcher_pid=$(pgrep --full "watcher_server_port_${server_port}")
 
 if [ -n "$watcher_pid" ];
 then
-  echo -e "\e[0;32mtests server is running: see logs in ./logs/test-server.log\e[0;30m"
+  echo -e "\e[0;32mtests server watcher is running: see logs in ./logs/test-server.log\e[0;30m"
 else
   ./scripts/tests/api/start_tests_server.sh
 fi
