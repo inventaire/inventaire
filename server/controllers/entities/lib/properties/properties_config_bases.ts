@@ -1,4 +1,5 @@
 import { trim } from 'lodash-es'
+import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl, isWdEntityUri } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import { boundedString } from '#models/validations/common'
@@ -17,14 +18,10 @@ export const remoteEntity = {
   validate: ({ value }: { value: string }) => isWdEntityUri(value),
 } as const
 
-export const stringPropertyBase = {
+export const uniqueString = {
   datatype: 'string',
   primitiveType: 'string',
   format: trim,
-} as const
-
-export const uniqueString = {
-  ...stringPropertyBase,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
   uniqueValue: true,
@@ -80,4 +77,13 @@ export const imageHash = {
   format: trim,
   validate: ({ value }: { value: string }) => isImageHash(value),
   uniqueValue: true,
+} as const
+
+export const entityType = {
+  datatype: 'entity-type',
+  primitiveType: 'string',
+  format: trim,
+  validate: ({ value }) => {
+    return allLocallyEditedEntitiesTypes.includes(value)
+  },
 } as const

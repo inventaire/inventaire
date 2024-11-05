@@ -54,6 +54,10 @@ export type ImageValue = ImageHash
 export type InvSnakValue = EntityValue | StringValue | ExternalIdValue | UrlValue | DateValue | PositiveIntegerValue | PositiveIntegerStringValue | ImageValue
 export type InvClaimValue = InvSnakValue
 
+export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
+export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' | 'language' | 'subject' | 'meta'
+export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
+
 export interface ClaimValueTypeByDatatype {
   'entity': EntityValue
   'string': StringValue
@@ -63,6 +67,7 @@ export interface ClaimValueTypeByDatatype {
   'positive-integer': PositiveIntegerValue
   'positive-integer-string': PositiveIntegerStringValue
   'image': ImageValue
+  'entity-type': EntityType
 }
 
 export type ClaimValueByProperty = {
@@ -140,11 +145,6 @@ export type EntityImg = `/img/entities/${ImageHash}`
 
 // No `File:` prefix (ex: 'Victor Hugo by Étienne Carjat 1876 - full.jpg')
 export type WikimediaCommonsFilename = string
-
-export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
-export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' | 'language' | 'subject' | 'meta'
-
-export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
 export interface RedirectFromTo {
   // 'from' is usually an EntityUri, but can also be `isbn:${nonNormalizedIsbn}`

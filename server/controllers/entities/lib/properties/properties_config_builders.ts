@@ -7,7 +7,7 @@ import { objectValues } from '#lib/utils/base'
 import { getPluralType } from '#lib/wikidata/aliases'
 import type { EntityType } from '#server/types/entity'
 import { allowedValuesPerTypePerProperty } from './allowed_values_per_type_per_property.js'
-import { concurrentString, concurrentExternalId, uniqueEntity, stringPropertyBase } from './properties_config_bases.js'
+import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export function isbnProperty (num: 10 | 13) {
   return {
@@ -74,13 +74,4 @@ export function externalIdWithFormatter ({ regex, format }) {
     format,
     validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
-}
-
-export function shortlistedString (shortlist: readonly string[]) {
-  return {
-    ...stringPropertyBase,
-    validate: ({ value }) => {
-      return shortlist.includes(value)
-    },
-  }
 }

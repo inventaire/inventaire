@@ -8,7 +8,8 @@ export type PropertyDatatype =
   'date' |
   'positive-integer' |
   'positive-integer-string' |
-  'image'
+  'image' |
+  'entity-type'
 
 export type PrimitiveType = 'string' | 'number'
 
