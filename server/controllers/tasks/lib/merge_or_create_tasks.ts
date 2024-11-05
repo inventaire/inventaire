@@ -114,7 +114,7 @@ async function getEditionWorks (edition) {
   return getEntitiesList(worksUris)
 }
 
-export async function mergeOrCreateOrUpdateTask (entitiesType, fromUri, toUri, fromEntity, toEntity, userId) {
+export async function mergeOrCreateOrUpdateTask (entitiesType: EntityType, fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
   const mergeIfLabelsMatch = mergeIfLabelsMatchByType[entitiesType]
   if (mergeIfLabelsMatch) {
     const isMerged = await mergeIfLabelsMatch({ fromUri, toUri, fromEntity, toEntity, userId })

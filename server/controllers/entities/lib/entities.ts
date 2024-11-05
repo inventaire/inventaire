@@ -13,7 +13,7 @@ import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, InvEntityId } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { prefixifyInv } from './prefix.js'
@@ -199,7 +199,7 @@ export async function getCollectionEditions (workUri: EntityUri) {
   return getEntitiesList(editionsUris)
 }
 
-export async function getAuthorWorksData (authorId) {
+export async function getAuthorWorksData (authorId: InvEntityId) {
   const works = await getInvEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
   // works = [
   //   { labels: { fr: 'Matiere et Memoire'} },
@@ -213,18 +213,18 @@ export async function getAuthorWorksData (authorId) {
 
 const getLangs = work => Object.keys(work.labels)
 
-export async function getAuthorsFromWorksUris (workUris) {
+export async function getAuthorsFromWorksUris (workUris: EntityUri[]) {
   const works = await getEntitiesList(workUris)
   const authorsUris = getWorksAuthorsUris(works)
   return getEntitiesList(authorsUris)
 }
 
-export async function getPublishersFromPublicationsUris (publicationUris) {
+export async function getPublishersFromPublicationsUris (publicationUris: EntityUri[]) {
   const publications = await getEntitiesList(publicationUris)
   const publishersUris = uniq(publications.flatMap(getPublishersUris))
   return getEntitiesList(publishersUris)
 }
 
-function getPublishersUris (publication) {
+function getPublishersUris (publication: SerializedEntity) {
   return publication.claims['wdt:P123']
 }
