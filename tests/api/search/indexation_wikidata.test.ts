@@ -1,9 +1,12 @@
 import 'should'
+import { unprefixify } from '#controllers/entities/lib/prefix'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { getSomeWdEditionUri } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import config from '#server/config'
-import { getByUri } from '#tests/api/utils/entities'
+import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { getIndexedDoc, deindex, indexPlaceholder } from '#tests/api/utils/search'
+import { getAdminUser } from '#tests/api/utils/utils'
 
 const { wikidata: wikidataIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
@@ -67,5 +70,12 @@ describe('indexation:wikidata', () => {
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(wikidataIndex, deletedEntityId, { retry: false })
     result.found.should.be.false()
+  })
+
+  it('should correctly index type locked entities', async () => {
+    const uri = await getSomeWdEditionUri()
+    await addClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
+    const result = await getIndexedDoc(wikidataIndex, unprefixify(uri))
+    result._source.type.should.equal('work')
   })
 })

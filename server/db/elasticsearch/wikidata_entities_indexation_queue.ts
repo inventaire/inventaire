@@ -8,6 +8,7 @@ import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
+import type { WdEntityId } from '#server/types/entity'
 
 const { nice } = config
 const { minReindexationInterval } = config.elasticsearch
@@ -22,7 +23,7 @@ async function importCircularDependencies () {
 }
 setImmediate(importCircularDependencies)
 
-async function entitiesIndexationWorker (jobId, wdId) {
+async function entitiesIndexationWorker (jobId, wdId: WdEntityId) {
   await waitForElasticsearchInit()
   if (!reindexWdEntity) {
     warn('entitiesIndexationWorker: waiting for reindexWdEntity function to be available')
@@ -58,7 +59,7 @@ async function entitiesIndexationWorker (jobId, wdId) {
   }
 }
 
-async function getIndexedEntity (wdId) {
+async function getIndexedEntity (wdId: WdEntityId) {
   const url = getIndexedDocUrl(indexName, wdId)
   try {
     const { _source } = await requests_.get(url)
@@ -70,6 +71,6 @@ async function getIndexedEntity (wdId) {
 
 const wdEntitiesIndexationJobQueue = initJobQueue('wd:entity:indexation', entitiesIndexationWorker, 1)
 
-export function addWdEntityToIndexationQueue (wdId) {
+export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
   wdEntitiesIndexationJobQueue.push(wdId)
 }
