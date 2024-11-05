@@ -1,6 +1,6 @@
 import 'should'
 import { getSomeWdEditionUri } from '#fixtures/entities'
-import { addClaim, getByUri } from '#tests/api/utils/entities'
+import { addClaim, getByUri, removeClaim } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -34,5 +34,13 @@ describe('entities type lock', () => {
     await addClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
     const updatedEntity = await getByUri(uri)
     updatedEntity.type.should.equal('work')
+  })
+
+  it('should be possible to remove invp:P3 type lock', async () => {
+    const uri = await getSomeWdEditionUri()
+    await addClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
+    await removeClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
+    const entity = await getByUri(uri)
+    entity.type.should.equal('edition')
   })
 })
