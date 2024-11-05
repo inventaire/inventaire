@@ -27,15 +27,19 @@ import type { PropertyValueConstraints } from '#server/types/property'
 import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
-import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
+import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter, shortlistedString } from './properties_config_builders.js'
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
+
+export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
 const localPropertiesValuesConstraints = {
   // same as remote entity
   'invp:P1': remoteEntity,
   // image hash
   'invp:P2': imageHash,
+  // entity type lock
+  'invp:P3': shortlistedString(allLocallyEditedEntitiesTypes),
 } as const
 
 export const localProperties = objectKeys(localPropertiesValuesConstraints)

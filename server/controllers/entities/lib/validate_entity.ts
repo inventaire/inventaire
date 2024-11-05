@@ -1,6 +1,6 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
+import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'

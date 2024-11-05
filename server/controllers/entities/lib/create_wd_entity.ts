@@ -16,7 +16,7 @@ import type { SimplifiedQualifiers, WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 
-const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection', 'edition' ]
+export const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection', 'edition' ]
 
 interface CreateWdEntityParams {
   labels: Labels

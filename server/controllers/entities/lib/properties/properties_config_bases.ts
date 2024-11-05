@@ -17,10 +17,14 @@ export const remoteEntity = {
   validate: ({ value }: { value: string }) => isWdEntityUri(value),
 } as const
 
-export const uniqueString = {
+export const stringPropertyBase = {
   datatype: 'string',
   primitiveType: 'string',
   format: trim,
+} as const
+
+export const uniqueString = {
+  ...stringPropertyBase,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
   uniqueValue: true,

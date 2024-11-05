@@ -1,5 +1,4 @@
-import type { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
-import type { PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import type { allLocallyEditedEntitiesTypes, PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import type { allowlistedReferenceProperties } from '#controllers/entities/lib/validate_and_format_claim'
 import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'

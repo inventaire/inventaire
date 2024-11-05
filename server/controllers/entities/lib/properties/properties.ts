@@ -1,8 +1,6 @@
-import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { allLocallyEditedEntitiesTypes, propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import type { ExtendedEntityType, PropertyUri } from '#server/types/entity'
 import type { PropertyDatatype } from '#server/types/property'
-
-export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
 
 export const workAuthorRelationsProperties = [
   'wdt:P50', // author
@@ -43,6 +41,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   // image hash
   'invp:P2': {
     subjectTypes: [ 'edition' ],
+  },
+  // entity type lock
+  'invp:P3': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
   },
   // instance of
   'wdt:P31': {
