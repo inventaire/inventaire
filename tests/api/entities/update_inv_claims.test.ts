@@ -1,5 +1,5 @@
 import should from 'should'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn } from '#fixtures/entities'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash } from '#fixtures/entities'
 import type { EntityUri } from '#server/types/entity'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
@@ -71,7 +71,7 @@ describe('entities:update-claims:inv', () => {
     })
   })
 
-  it('should reject an update with an inappropriate property', async () => {
+  it('should reject an update with an inappropriate remote property', async () => {
     const work = await createWork()
     // A work entity should not have pages count
     await addClaim({ uri: work.uri, property: 'wdt:P1104', value: 124 })
@@ -79,6 +79,16 @@ describe('entities:update-claims:inv', () => {
     .catch(err => {
       err.body.status_verbose.should.equal("works can't have a property wdt:P1104")
       err.statusCode.should.equal(400)
+    })
+  })
+
+  it('should reject an update with an inappropriate local property', async () => {
+    const { uri } = await createWork()
+    await addClaim({ uri, property: 'invp:P2', value: someImageHash })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal("works can't have a property invp:P2")
     })
   })
 
