@@ -1,5 +1,5 @@
 import { editInvEntity } from '#controllers/entities/lib/entities'
-import { log } from '#lib/utils/logs'
+import { log, success } from '#lib/utils/logs'
 import { createBlankEntityDoc } from '#models/entity'
 import type { InvEntity } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
@@ -31,5 +31,6 @@ export async function createInvEntity (params: CreateInvEntityParams) {
     batchId,
   })
   entity.uri = prefixifyInv(entity._id)
+  success(`inv entity created: ${entity.uri}`)
   return entity
 }
