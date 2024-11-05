@@ -1,3 +1,5 @@
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -24,15 +26,20 @@ export async function validateInvEntity (entity: ValidatableEntity) {
 }
 
 async function validate (entity: ValidatableEntity) {
-  if (isLocalEntityLayer(entity)) return
-
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
-
-  const type = getValueType(claims)
-  validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
-  validateLabels(labels, type)
+  const isLocalLayer = isLocalEntityLayer(entity)
+  let type
+  if (isLocalLayer) {
+    const remoteEntityUri = getFirstClaimValue(claims, 'invp:P1')
+    const remoteEntity = await getEntityByUri({ uri: remoteEntityUri })
+    type = remoteEntity.type
+  } else {
+    type = getValueType(claims)
+    validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
+    validateLabels(labels, type)
+  }
   return validateAndFormatInvClaims({ _id, type, claims })
 }
 

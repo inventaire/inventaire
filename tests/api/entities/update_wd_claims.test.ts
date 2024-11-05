@@ -82,5 +82,15 @@ describe('entities:update-claims:wd', () => {
         err.body.status_verbose.should.equal('entity local layer linking property (invp:P1) can not be updated')
       })
     })
+
+    it('should reject invalid inv properties', async () => {
+      const uri = await getSomeWdEditionUri()
+      await addClaim({ uri, property: 'invp:P20000', value: 'foo' })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("property isn't allowlisted")
+      })
+    })
   })
 })

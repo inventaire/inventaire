@@ -36,6 +36,10 @@ export interface PropertyConfig {
 // Default `category` = 'general'
 // Default `subjectTypes` = allLocallyEditedEntitiesTypes
 export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
+  // same as remote entity
+  'invp:P1': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
+  },
   // image hash
   'invp:P2': {
     subjectTypes: [ 'edition' ],
