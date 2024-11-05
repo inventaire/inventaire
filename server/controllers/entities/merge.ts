@@ -36,7 +36,13 @@ async function controller (params, req) {
 
   const { user } = req
   const { _id: userId } = user
-  log({ merge: params, user: userId }, 'entity merge request')
+  const isDataadmin = hasDataadminAccess(user)
+
+  log({
+    merge: params,
+    user: userId,
+    isDataadmin,
+  }, 'entity merge request')
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
@@ -45,7 +51,7 @@ async function controller (params, req) {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
-  if (hasDataadminAccess(user)) {
+  if (isDataadmin) {
     await mergeEntities({ userId, fromUri, toUri })
     return { ok: true }
   } else {

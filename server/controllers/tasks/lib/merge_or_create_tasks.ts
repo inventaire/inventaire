@@ -7,6 +7,7 @@ import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normal
 import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data'
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import { someMatch } from '#lib/utils/base'
+import { log } from '#lib/utils/logs'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri, EntityType } from '#types/entity'
 import type { Task, Suggestion } from '#types/task'
@@ -16,9 +17,11 @@ export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, 
   const existingTasks: Task[] = await getExistingTasks(fromEntity.uri)
   let newToEntities: SerializedEntity[] = filterNewSuggestionEntities(toEntities, existingTasks)
   const suggestions: Suggestion[] = map(newToEntities, addToSuggestion(userId, clue))
+  const suspectUri = fromEntity.uri
 
+  log({ suspectUri, suggestions }, 'creating tasks from suggestions')
   return createTasksFromSuggestions({
-    suspectUri: fromEntity.uri,
+    suspectUri,
     type: 'merge',
     entitiesType,
     suggestions,
@@ -119,7 +122,10 @@ export async function mergeOrCreateOrUpdateTask (entitiesType: EntityType, fromU
   const mergeIfLabelsMatch = mergeIfLabelsMatchByType[entitiesType]
   if (mergeIfLabelsMatch) {
     const isMerged = await mergeIfLabelsMatch({ fromUri, toUri, fromEntity, toEntity, userId })
-    if (isMerged) return isMerged
+    if (isMerged) {
+      log({ fromUri, toUri }, 'entities have been merged')
+      return isMerged
+    }
   }
   const fromUriTasks = await getTasksBySuspectUri(fromUri, { index: false })
   const existingTask = fromUriTasks.find(task => task.suggestionUri === toUri)
