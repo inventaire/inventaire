@@ -30,4 +30,5 @@ export interface PropertyValueConstraints {
   entityValueTypes?: Readonly<ExtendedEntityType[]>
   typeSpecificValidation?: boolean
   hasPlaceholders?: boolean
+  remoteEntityOnly?: boolean
 }

@@ -297,4 +297,24 @@ describe('entities:update-claims:inv', () => {
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
   })
+
+  it('should reject invp:P1 updates on local entities', async () => {
+    const { uri } = await createEdition()
+    await addClaim({ uri, property: 'invp:P1', value: 'wd:Q1' })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('local layer can not have remote properties')
+    })
+  })
+
+  it('should reject remote-entities-only properties updates', async () => {
+    const { uri } = await createEdition()
+    await addClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('local entity can not have remote-entity-only claims')
+    })
+  })
 })

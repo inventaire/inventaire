@@ -16,6 +16,7 @@ export const remoteEntity = {
   primitiveType: 'string',
   format: trim,
   validate: ({ value }: { value: string }) => isWdEntityUri(value),
+  remoteEntityOnly: true,
 } as const
 
 export const uniqueString = {
@@ -87,4 +88,5 @@ export const entityType = {
     return allLocallyEditedEntitiesTypes.includes(value)
   },
   adminEditOnly: true,
+  remoteEntityOnly: true,
 } as const
