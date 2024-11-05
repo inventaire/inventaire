@@ -2,6 +2,7 @@ import { createInvEntity } from '#controllers/entities/lib/create_inv_entity'
 import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { updateInvClaim } from '#controllers/entities/lib/update_inv_claim'
+import { userHasAdminRole } from '#controllers/user/lib/user'
 import { newError } from '#lib/error/error'
 import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
 import type { User } from '#server/types/user'
@@ -25,6 +26,7 @@ export async function updateWdEntityLocalClaims (user: User, wdId: WdEntityId, p
     await createInvEntity({
       claims: localEntityLayerClaims,
       userId: user._id,
+      userIsAdmin: userHasAdminRole(user),
     })
   }
 }

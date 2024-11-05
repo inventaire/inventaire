@@ -28,8 +28,11 @@ export async function validateAndFormatClaimValue (params: ValidateAndFormatClai
   // If no old value is passed, it's a claim creation, not an update
   const updatingValue = (oldVal != null)
 
-  // Ex: a user can freely set a wdt:P212 value, but only an admin can change it
-  if (updatingValue && prop.adminUpdateOnly && !userIsAdmin) {
+  if (prop.adminEditOnly && !userIsAdmin) {
+    // Ex: only dataadmins can edit invp:P3
+    throw newError("editing property requires admin's rights", 403, { property, newVal })
+  } else if (updatingValue && prop.adminUpdateOnly && !userIsAdmin) {
+    // Ex: a user can freely set a wdt:P212 value, but only an admin can change it
     throw newError("updating property requires admin's rights", 403, { property, newVal })
   }
 

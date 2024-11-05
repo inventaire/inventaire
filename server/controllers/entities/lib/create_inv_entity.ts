@@ -12,13 +12,14 @@ interface CreateInvEntityParams {
   claims: InvEntity['claims']
   userId: UserId
   batchId?: BatchId
+  userIsAdmin?: boolean
 }
 
 export async function createInvEntity (params: CreateInvEntityParams) {
-  const { labels = {}, claims, userId, batchId } = params
+  const { labels = {}, claims, userId, batchId, userIsAdmin } = params
   log(params, 'inv entity creation')
 
-  await validateInvEntity({ labels, claims })
+  await validateInvEntity({ labels, claims }, userIsAdmin)
 
   const blankEntityDoc = createBlankEntityDoc()
 

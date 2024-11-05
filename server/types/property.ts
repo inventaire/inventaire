@@ -25,6 +25,7 @@ export interface PropertyValueConstraints {
   format?: (value: InvClaimValue) => InvClaimValue
   uniqueValue?: boolean
   concurrency?: boolean
+  adminEditOnly?: boolean
   adminUpdateOnly?: boolean
   entityValueTypes?: Readonly<ExtendedEntityType[]>
   typeSpecificValidation?: boolean

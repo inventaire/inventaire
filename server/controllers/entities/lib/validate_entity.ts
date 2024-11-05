@@ -16,16 +16,16 @@ const allowlistedTypes = allLocallyEditedEntitiesTypes
 type ValidatableEntity = SetOptional<Pick<InvEntity, '_id' | 'labels' | 'claims'>, '_id'>
 
 // Can be used to validate both entities being created or existing entities
-export async function validateInvEntity (entity: ValidatableEntity) {
+export async function validateInvEntity (entity: ValidatableEntity, userIsAdmin?: boolean) {
   try {
-    return await validate(entity)
+    return await validate(entity, userIsAdmin)
   } catch (err) {
     if (err.context == null) err.context = { entity }
     throw err
   }
 }
 
-async function validate (entity: ValidatableEntity) {
+async function validate (entity: ValidatableEntity, userIsAdmin?: boolean) {
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
@@ -40,7 +40,7 @@ async function validate (entity: ValidatableEntity) {
     validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
     validateLabels(labels, type)
   }
-  return validateAndFormatInvClaims({ _id, type, claims })
+  return validateAndFormatInvClaims({ _id, type, claims, userIsAdmin })
 }
 
 function getValueType (claims: Claims) {

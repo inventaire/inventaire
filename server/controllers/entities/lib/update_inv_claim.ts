@@ -3,6 +3,7 @@ import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/ent
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { userHasAdminRole } from '#controllers/user/lib/user'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
@@ -16,8 +17,8 @@ import { validateClaimProperty } from './validate_claim_property.js'
 
 async function _updateInvClaim (user: User, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
   assert_.object(user)
-  const { _id: userId, roles } = user
-  const userIsAdmin = roles?.includes('admin')
+  const { _id: userId } = user
+  const userIsAdmin = userHasAdminRole(user)
   let currentDoc: InvEntityDoc
   try {
     currentDoc = await getEntityById(id)
@@ -60,7 +61,7 @@ interface UpdateClaimParams {
   newVal: InvClaimValue
   userId: UserId
   currentDoc: InvEntity
-  userIsAdmin: boolean
+  userIsAdmin?: boolean
 }
 
 async function updateClaim (params: UpdateClaimParams) {
