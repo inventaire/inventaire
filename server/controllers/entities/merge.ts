@@ -46,7 +46,8 @@ async function controller (params, req) {
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
   if (hasDataadminAccess(user)) {
-    return mergeEntities({ userId, fromUri, toUri })
+    await mergeEntities({ userId, fromUri, toUri })
+    return { ok: true }
   } else {
     return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
   }
