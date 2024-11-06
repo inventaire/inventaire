@@ -3,6 +3,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getClaimValue, setClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { newError } from '#lib/error/error'
 import type { ErrorContext } from '#lib/error/format_error'
+import type { AccessLevel } from '#lib/user_access_levels'
 import { arrayIncludes } from '#lib/utils/base'
 import type { EntityType, EntityUri, ExtendedEntityType, InvClaim, InvClaimValue, InvEntityId, PropertyUri } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
@@ -14,12 +15,12 @@ export interface ValidateAndFormatClaimValueParams {
   oldClaim?: InvClaim
   newClaim?: InvClaim
   letEmptyValuePass: boolean
-  userIsAdmin?: boolean
+  userAccessLevels?: AccessLevel[]
   _id: InvEntityId
 }
 
 export async function validateAndFormatClaimValue (params: ValidateAndFormatClaimValueParams) {
-  const { type, property, oldClaim, newClaim, letEmptyValuePass, userIsAdmin, _id } = params
+  const { type, property, oldClaim, newClaim, letEmptyValuePass, userAccessLevels = [], _id } = params
   const oldVal = getClaimValue(oldClaim)
   let newVal = getClaimValue(newClaim)
 
@@ -28,12 +29,14 @@ export async function validateAndFormatClaimValue (params: ValidateAndFormatClai
   // If no old value is passed, it's a claim creation, not an update
   const updatingValue = (oldVal != null)
 
-  if (prop.adminEditOnly && !userIsAdmin) {
-    // Ex: only dataadmins can edit invp:P3
-    throw newError("editing property requires admin's rights", 403, { property, newVal })
-  } else if (updatingValue && prop.adminUpdateOnly && !userIsAdmin) {
+  const { editAccessLevel, updateAccessLevel } = prop
+
+  if (editAccessLevel && !arrayIncludes(userAccessLevels, editAccessLevel)) {
+    // Ex: only admins can edit invp:P3
+    throw newError(`editing property requires ${editAccessLevel}'s rights`, 403, { property, newVal })
+  } else if (updatingValue && updateAccessLevel && !arrayIncludes(userAccessLevels, updateAccessLevel)) {
     // Ex: a user can freely set a wdt:P212 value, but only an admin can change it
-    throw newError("updating property requires admin's rights", 403, { property, newVal })
+    throw newError(`updating property requires ${updateAccessLevel}'s rights`, 403, { property, newVal })
   }
 
   // letEmptyValuePass to let it be interpreted as a claim deletion

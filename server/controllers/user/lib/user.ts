@@ -107,11 +107,6 @@ export const addUserRole = (userId: UserId, role: UserRole) => db.update(userId,
 
 export const removeUserRole = (userId: UserId, role: UserRole) => db.update(userId, removeUserDocRole(role))
 
-export function userHasAdminRole (user: User) {
-  if (user.roles?.includes('admin')) return true
-  else return false
-}
-
 export function setUserOauthTokens (userId: UserId, provider, data) {
   return db.update(userId, setUserDocOauthTokens(provider, data))
 }

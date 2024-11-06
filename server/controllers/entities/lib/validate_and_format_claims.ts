@@ -1,6 +1,7 @@
 import { isArray } from 'lodash-es'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import type { AccessLevel } from '#lib/user_access_levels'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectKeys, typeOf } from '#lib/utils/types'
 import type { Claims, EntityType, InvEntityId, PropertyUri } from '#types/entity'
@@ -12,9 +13,9 @@ interface ValidateAndFormatInvClaimsParams {
   claims: Claims
   type?: EntityType
   _id: string
-  userIsAdmin?: boolean
+  userAccessLevels?: AccessLevel[]
 }
-export async function validateAndFormatInvClaims ({ claims, type, _id, userIsAdmin }: ValidateAndFormatInvClaimsParams) {
+export async function validateAndFormatInvClaims ({ claims, type, _id, userAccessLevels }: ValidateAndFormatInvClaimsParams) {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getInvEntityType(wdtP31) : type
   assert_.string(type)
@@ -23,18 +24,18 @@ export async function validateAndFormatInvClaims ({ claims, type, _id, userIsAdm
     throw newError('invalid claims', 400, { claims })
   }
 
-  await validatePropertiesClaims(claims, type, _id, userIsAdmin)
+  await validatePropertiesClaims(claims, type, _id, userAccessLevels)
 
   // Returning validated and formatted claims on the mutated object
   return claims
 }
 
-function validatePropertiesClaims (claims: Claims, type: EntityType, _id: InvEntityId, userIsAdmin?: boolean) {
+function validatePropertiesClaims (claims: Claims, type: EntityType, _id: InvEntityId, userAccessLevels?: AccessLevel[]) {
   const properties = objectKeys(claims)
-  return Promise.all(properties.map(property => validatePropertyClaims(property, claims, type, _id, userIsAdmin)))
+  return Promise.all(properties.map(property => validatePropertyClaims(property, claims, type, _id, userAccessLevels)))
 }
 
-async function validatePropertyClaims (property: PropertyUri, claims: Claims, type: EntityType, _id: InvEntityId, userIsAdmin?: boolean) {
+async function validatePropertyClaims (property: PropertyUri, claims: Claims, type: EntityType, _id: InvEntityId, userAccessLevels?: AccessLevel[]) {
   const propertyClaims = claims[property]
 
   if (!isArray(propertyClaims)) {
@@ -64,6 +65,6 @@ async function validatePropertyClaims (property: PropertyUri, claims: Claims, ty
     newClaim,
     letEmptyValuePass: false,
     _id,
-    userIsAdmin,
+    userAccessLevels,
   })))
 }

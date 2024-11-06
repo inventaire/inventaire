@@ -1,11 +1,11 @@
 import { pick } from 'lodash-es'
-import { getUserAccessLevels, type rolesByAccess } from '#lib/user_access_levels'
+import { getUserAccessLevels, type AccessLevel } from '#lib/user_access_levels'
 import userAttributes from '#models/attributes/user'
 import type { DeletedUser, DocWithUsernameInUserDb, User, UserId } from '#types/user'
 
 export interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
   oauth?: string[]
-  accessLevels: typeof rolesByAccess['public'][number]
+  accessLevels: AccessLevel[]
 }
 
 // Including the deleted user, as after deleting, it is still possible to make a request

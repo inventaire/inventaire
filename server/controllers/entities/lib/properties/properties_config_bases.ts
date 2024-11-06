@@ -87,6 +87,6 @@ export const entityType = {
   validate: ({ value }) => {
     return allLocallyEditedEntitiesTypes.includes(value)
   },
-  adminEditOnly: true,
+  editAccessLevel: 'admin',
   remoteEntityOnly: true,
 } as const
