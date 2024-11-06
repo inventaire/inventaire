@@ -92,7 +92,7 @@ describe('tasks:hooks', () => {
     it('should update tasks to merged state when the entity is deleted', async () => {
       const suspect = await createHuman()
       await createTask({ suspectUri: suspect.uri })
-      await deleteEntityByUris(suspect.uri)
+      await deleteEntityByUris([ suspect.uri ])
       const tasks = await getBySuspectUri(suspect.uri)
       tasks.length.should.equal(0)
     })

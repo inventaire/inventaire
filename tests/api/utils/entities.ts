@@ -57,7 +57,7 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
   const ids = map(uris, unprefixify)
   const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))
   const entitiesFound = filter(results, property('found'))
-  const entitiesFoundUris = entitiesFound.map(property('_source.uri'))
+  const entitiesFoundUris: EntityUri[] = entitiesFound.map(property('_source.uri'))
   const entitiesNotFoundUris = difference(uris, entitiesFoundUris)
   if (isNonEmptyArray(entitiesNotFoundUris)) {
     // index entities into elasticsearch by getting the uris
@@ -69,8 +69,6 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
 export function deleteByUris (uris: EntityUri[]) {
-  uris = forceArray(uris)
-  assert_.strings(uris)
   if (uris.length === 0) return
   return authReq('post', '/api/entities?action=delete', { uris })
 }
