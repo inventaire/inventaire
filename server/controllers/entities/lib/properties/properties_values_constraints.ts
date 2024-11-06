@@ -1,15 +1,4 @@
-// Each property configuration object is made of the following attributes:
-
-// primitiveType: {Stirng} which type a property value should return when passed to typeOf
-// datatype: {String} the more specific property value type
-// validate: {Function}
-// format: {Function} (optional)
-// uniqueValue: {Boolean} (default: false)
-// concurrency: {Boolean} (default: false)
-// adminUpdateOnly: {Boolean} (default: false)
-// entityValueTypes: {String[]} (only for properties of datatype 'entity' )
-
-// Those attributes aim to constrain the claims properties and values
+// PropertyValueConstraints attributes aim to constrain the claims properties and values
 // to keep those consistent.
 
 // Bases and builders are an attempt to keep those configuration objects DRY:
