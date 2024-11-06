@@ -1,22 +1,19 @@
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
-import { arrayIncludes, mapKeysValues, objectEntries } from '#lib/utils/base'
+import { mapKeysValues, objectEntries } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { info, log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject, Descriptions } from '#server/types/entity'
 import type { User } from '#server/types/user'
-import { getInvEntityType } from './get_entity_type.js'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { validateInvEntity } from './validate_entity.js'
 import type { SimplifiedQualifiers, WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
-
-export const allowlistedEntityTypes = [ 'work', 'serie', 'human', 'publisher', 'collection', 'edition' ]
 
 interface CreateWdEntityParams {
   labels: Labels
@@ -65,11 +62,6 @@ export async function createWdEntity (params: CreateWdEntityParams) {
 function validateWikidataCompliance (entity: EntityDraft) {
   const { claims } = entity
   if (claims == null) throw newError('invalid entity', 400, { entity })
-
-  const entityType = getInvEntityType(claims['wdt:P31'])
-  if (!arrayIncludes(allowlistedEntityTypes, entityType)) {
-    throw newError('invalid entity type', 400, { entityType, entity })
-  }
 
   for (const [ property, propertyClaims ] of objectEntries(claims)) {
     if (getPropertyDatatype(property) === 'entity') {
