@@ -86,7 +86,7 @@ describe('tasks:automerge', () => {
 
     const human = await createHuman({ labels })
     // make sure edition is not already existing
-    await deleteByUris(prefixifyIsbn(isbn))
+    await deleteByUris([ prefixifyIsbn(isbn) ])
     const work = await createWorkWithAuthor(human)
     await createEdition({
       work,
@@ -106,7 +106,7 @@ describe('tasks:automerge', () => {
 
     const human = await createHuman({ labels })
     // make sure edition is not already existing
-    await deleteByUris(prefixifyIsbn(isbn))
+    await deleteByUris([ prefixifyIsbn(isbn) ])
     const work = await createWorkWithAuthor(human)
     await createEdition({
       work,

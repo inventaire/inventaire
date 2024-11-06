@@ -39,7 +39,7 @@ describe('entities:history', () => {
 
   it('should return removed placeholder patches', async () => {
     const human = await createHuman()
-    await deleteByUris(human.uri)
+    await deleteByUris([ human.uri ])
     const { patches } = await publicReq('get', `${endpoint}&id=${human._id}`)
     patches[0].snapshot.labels.should.deepEqual(human.labels)
   })

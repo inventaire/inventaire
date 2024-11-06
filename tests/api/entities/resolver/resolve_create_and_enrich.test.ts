@@ -1,4 +1,5 @@
 import should from 'should'
+import type { ResolverEntry } from '#server/types/resolver'
 import { deleteByUris, deleteByExternalId } from '#tests/api/utils/entities'
 import { uploadSomeImage } from '#tests/api/utils/images'
 import { authReq } from '#tests/api/utils/utils'
@@ -9,7 +10,7 @@ describe('entities:resolve:create-and-enrich', () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070368228'
     // Make sure the resolver will have to create the edition
-    await deleteByUris(`isbn:${isbn}`)
+    await deleteByUris([ `isbn:${isbn}` ])
     const edition = await resolveCreateAndEnrichEdition({
       edition: { isbn },
       works: [ { labels: { fr: '1984' } } ],
@@ -23,7 +24,7 @@ describe('entities:resolve:create-and-enrich', () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070375165'
     // Make sure the resolver will have to create the edition
-    await deleteByUris(`isbn:${isbn}`)
+    await deleteByUris([ `isbn:${isbn}` ])
     const edition = await resolveCreateAndEnrichEdition({
       edition: { isbn },
       works: [ { labels: { fr: 'La Ferme des animaux' } } ],
@@ -37,7 +38,7 @@ describe('entities:resolve:create-and-enrich', () => {
     // An image is expected to be found by dataseed for this isbn
     const isbn = '9782070375165'
     // Make sure the resolver will have to create the edition
-    await deleteByUris(`isbn:${isbn}`)
+    await deleteByUris([ `isbn:${isbn}` ])
     const { hash } = await uploadSomeImage({ container: 'entities', preventAutoRemove: true })
     const edition = await resolveCreateAndEnrichEdition({
       edition: {
@@ -69,7 +70,7 @@ describe('entities:resolve:create-and-enrich', () => {
   })
 })
 
-const resolveCreateAndEnrichEdition = async (entry, enrich) => {
+const resolveCreateAndEnrichEdition = async (entry, enrich?) => {
   const { entries } = await resolveCreateAndEnrich(entry, enrich)
   const { edition } = entries[0]
   edition.resolved.should.be.false()
@@ -78,7 +79,11 @@ const resolveCreateAndEnrichEdition = async (entry, enrich) => {
 }
 
 const resolveCreateAndEnrich = async (entry, enrich) => {
-  const data = {
+  const data: {
+    entries: ResolverEntry[]
+    create: boolean
+    enrich?: boolean
+  } = {
     entries: [ entry ],
     create: true,
   }

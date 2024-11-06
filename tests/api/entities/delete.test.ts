@@ -12,6 +12,7 @@ import { getByUri, getByUris, deleteByUris } from '#tests/api/utils/entities'
 import { getItemById } from '#tests/api/utils/items'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { SerializedInvEntity, EntityUri } from '#types/entity'
 
 const debounceDelay = config.snapshotsDebounceTime + 100
 
@@ -35,7 +36,7 @@ describe('entities:delete', () => {
   })
 
   it('should reject non-inv URIs', async () => {
-    await deleteByUris('wd:Q535')
+    await deleteByUris([ 'wd:Q535' ])
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid uri: wd:Q535')
@@ -45,8 +46,8 @@ describe('entities:delete', () => {
 
   it('should turn entity into removed:placeholder', async () => {
     const { uri } = await createHuman()
-    await deleteByUris(uri)
-    const entity = await getByUri(uri)
+    await deleteByUris([ uri ])
+    const entity = await getByUri(uri) as SerializedInvEntity
     entity._meta_type.should.equal('removed:placeholder')
   })
 
@@ -57,15 +58,15 @@ describe('entities:delete', () => {
     ])
     const uris = [ entityA.uri, entityB.uri ]
     await deleteByUris(uris)
-    let { entities } = await getByUris(uris)
-    entities = Object.values(entities)
+    const { entities: entitiesRes } = await getByUris(uris)
+    const entities = Object.values(entitiesRes) as SerializedInvEntity[]
     entities[0]._meta_type.should.equal('removed:placeholder')
   })
 
   it('should delete claims where the entity is the value', async () => {
     const work = await createWorkWithAuthor()
     const authorUri = work.claims['wdt:P50'][0]
-    await deleteByUris(authorUri)
+    await deleteByUris([ authorUri ])
     const updatedWork = await getByUri(work.uri)
     should(updatedWork.claims['wdt:P50']).not.be.ok()
   })
@@ -79,7 +80,7 @@ describe('entities:delete', () => {
     ])
     const property = 'wdt:P50'
     const authorUri = workA.claims[property][0]
-    await deleteByUris(authorUri)
+    await deleteByUris([ authorUri ])
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)
@@ -97,25 +98,25 @@ describe('entities:delete', () => {
 
   it('should remove edition entities without an ISBN', async () => {
     const edition = await createEdition()
-    const invUri = `inv:${edition._id}`
-    await deleteByUris(invUri)
+    const invUri: EntityUri = `inv:${edition._id}`
+    await deleteByUris([ invUri ])
   })
 
   it('should remove edition entities with an ISBN from its inv uri', async () => {
     const { invUri } = await createEditionWithIsbn()
-    await deleteByUris(invUri)
+    await deleteByUris([ invUri ])
   })
 
   it('should remove edition entities with an ISBN from its isbn uri', async () => {
     const { uri } = await createEditionWithIsbn()
-    await deleteByUris(uri)
+    await deleteByUris([ uri ])
   })
 
   it('should refuse to delete a work that is depend on by an edition', async () => {
     const edition = await createEdition()
     const property = 'wdt:P629'
     const workUri = edition.claims[property][0]
-    await deleteByUris(workUri)
+    await deleteByUris([ workUri ])
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)
@@ -132,7 +133,7 @@ describe('entities:delete', () => {
     const item = await authReq('post', '/api/items', { entity: work.uri })
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
-    await deleteByUris(author.uri)
+    await deleteByUris([ author.uri ])
     await wait(debounceDelay)
     const updatedItem = await getItemById(item._id)
     updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
@@ -141,16 +142,16 @@ describe('entities:delete', () => {
 
   it('should ignore entities that where already turned into removed:placeholder', async () => {
     const { uri } = await createHuman()
-    await deleteByUris(uri)
-    const entity = await getByUri(uri)
+    await deleteByUris([ uri ])
+    const entity = await getByUri(uri) as SerializedInvEntity
     should(entity._meta_type).equal('removed:placeholder')
-    await deleteByUris(uri)
+    await deleteByUris([ uri ])
   })
 
   it('should not deleted entities that are the entity of an item', async () => {
     const work = await createWork()
     await authReq('post', '/api/items', { entity: work.uri })
-    await deleteByUris(work.uri)
+    await deleteByUris([ work.uri ])
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
@@ -162,7 +163,7 @@ describe('entities:delete', () => {
     const { invUri, uri } = await createEditionWithIsbn()
     await authReq('post', '/api/items', { entity: uri })
     // Using the inv URI, as the isbn one would be rejected
-    await deleteByUris(invUri)
+    await deleteByUris([ invUri ])
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
