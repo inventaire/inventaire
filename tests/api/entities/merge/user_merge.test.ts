@@ -11,6 +11,7 @@ import {
   createWork,
   addPublisher,
   createSerieWithAuthor,
+  existsOrCreate,
 } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
@@ -31,6 +32,23 @@ describe('entities:merge:as:user', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(401)
+    })
+  })
+
+  it('should reject merging if entities have an external identifier property in common', async () => {
+    const whateverOLId = 'OL11111W'
+    // @ts-expect-error
+    const work = await existsOrCreate({
+      claims: {
+        'wdt:P648': [ whateverOLId ],
+      },
+    })
+    // wdWorkUri should have a 'wdt:P648' claim
+    const wdWorkUri = 'wd:Q4728504'
+    await userMerge(work.uri, wdWorkUri)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
     })
   })
 

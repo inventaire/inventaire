@@ -1,11 +1,14 @@
-import { map, uniq } from 'lodash-es'
+import { map, uniq, pick, intersection } from 'lodash-es'
 import { getAuthorsFromWorksUris, getPublishersFromPublicationsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { externalIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data'
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
+import { isNonEmptyArray } from '#lib/boolean_validations'
+import { newError } from '#lib/error/error'
 import { someMatch } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import type { SerializedEntity } from '#server/types/entity'
@@ -119,6 +122,7 @@ async function getEditionWorks (edition) {
 }
 
 export async function mergeOrCreateOrUpdateTask (entitiesType: EntityType, fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, userId: UserId) {
+  validateSameExternalIdentifiersProperties(fromEntity, toEntity)
   const mergeIfLabelsMatch = mergeIfLabelsMatchByType[entitiesType]
   if (mergeIfLabelsMatch) {
     const isMerged = await mergeIfLabelsMatch({ fromUri, toUri, fromEntity, toEntity, userId })
@@ -160,4 +164,18 @@ function someUrisMatch (fromEntityAuthors, toEntityAuthors) {
   const fromUris = map(fromEntityAuthors, 'uri')
   const toUris = map(toEntityAuthors, 'uri')
   return someMatch(fromUris, toUris)
+}
+
+function validateSameExternalIdentifiersProperties (fromEntity, toEntity) {
+  const fromExternalIdsClaims = pick(fromEntity.claims, externalIdsProperties)
+  const toExternalIdsClaims = pick(toEntity.claims, externalIdsProperties)
+
+  const commonExternalIdsProperties = intersection(Object.keys(fromExternalIdsClaims), Object.keys(toExternalIdsClaims))
+  if (isNonEmptyArray(commonExternalIdsProperties)) {
+    throw newError(`entities have conflicting properties: ${commonExternalIdsProperties}`, 400, {
+      fromEntityUri: fromEntity.uri,
+      toEntityUri: toEntity.uri,
+      commonExternalIdsProperties,
+    })
+  }
 }
