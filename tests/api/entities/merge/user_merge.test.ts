@@ -52,6 +52,21 @@ describe('entities:merge:as:user', () => {
     })
   })
 
+  it('should reject merging entities that have claim linking to one another', async () => {
+    const work1 = await createWork()
+    const work2 = await createWork({
+      claims: {
+        'wdt:P921': [ work1.uri ],
+      },
+    })
+    await userMerge(work1.uri, work2.uri)
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('entities are refering to one antoher')
+    })
+  })
+
   describe('authors', () => {
     it('should merge when works labels match', async () => {
       const humanLabel = randomLabel()
