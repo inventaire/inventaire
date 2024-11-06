@@ -1,6 +1,12 @@
 import { keyBy, map, mapValues, pick, property } from 'lodash-es'
 import { typesAliases } from '#lib/wikidata/aliases'
 import config from '#server/config'
+import type { InvEntityDoc } from '#server/types/entity'
+import type { Group } from '#server/types/group'
+import type { Item } from '#server/types/item'
+import type { Listing } from '#server/types/listing'
+import type { Shelf } from '#server/types/shelf'
+import type { User } from '#server/types/user'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [
@@ -23,6 +29,8 @@ export type IndexBaseName = typeof indexesData[number]['indexBaseName']
 export const syncIndexesList = indexesData
   .filter(indexData => indexData.sync)
   .map(property('indexBaseName'))
+
+export type IndexedCouchDoc = InvEntityDoc | Item | Group | User | Shelf | Listing
 
 export const indexedEntitiesTypes = [
   // inventaire and wikidata entities

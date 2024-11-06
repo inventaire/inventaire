@@ -36,15 +36,17 @@ npm run indexation:load-from-couchdb lists
 ```
 
 ## Entities
-### Inventaire entities
-```sh
-npm run indexation:load-from-couchdb entities
-```
-
 ### Wikidata entities
 ```sh
 npm run indexation:wikidata:load-from-dump
 ```
+
+### Inventaire entities
+Index Inventaire entities after having indexed Wikidata entities so that Wikidata entities with local Inventaire layers can be reindexed, without being overwritten by the entities from the Wikidata dump (which ignore the existance of local layers)
+```sh
+npm run indexation:load-from-couchdb entities
+```
+
 
 Alternatively, a subset of Wikidata entities can be indexed from a SPARQL query, using [`wikibase-cli`](https://github.com/maxlath/wikibase-cli). For instance, to reindex all languages:
 

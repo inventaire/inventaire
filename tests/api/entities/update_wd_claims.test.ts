@@ -1,5 +1,5 @@
 import should from 'should'
-import { getSomeWdEditionUri, someRandomImageHash } from '#fixtures/entities'
+import { getSomeWdEditionUri, someImageHash, someRandomImageHash } from '#fixtures/entities'
 import { validateP31Update } from '#lib/wikidata/validate_wd_update'
 import type { SimplifiedClaims } from '#server/types/entity'
 import { addClaim, getByUri, removeClaim, updateClaim } from '#tests/api/utils/entities'
@@ -80,6 +80,16 @@ describe('entities:update-claims:wd', () => {
       .catch(err => {
         err.statusCode.should.equal(400)
         err.body.status_verbose.should.equal('entity local layer linking property (invp:P1) can not be updated')
+      })
+    })
+
+    it('should reject invalid local claim updates', async () => {
+      const remoteWorkUri = 'wd:Q18120925'
+      await addClaim({ uri: remoteWorkUri, property: 'invp:P2', value: someImageHash })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.statusCode.should.equal(400)
+        err.body.status_verbose.should.equal("works can't have a property invp:P2")
       })
     })
   })

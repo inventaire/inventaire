@@ -8,7 +8,8 @@ export type PropertyDatatype =
   'date' |
   'positive-integer' |
   'positive-integer-string' |
-  'image'
+  'image' |
+  'entity-type'
 
 export type PrimitiveType = 'string' | 'number'
 
@@ -24,8 +25,10 @@ export interface PropertyValueConstraints {
   format?: (value: InvClaimValue) => InvClaimValue
   uniqueValue?: boolean
   concurrency?: boolean
+  adminEditOnly?: boolean
   adminUpdateOnly?: boolean
   entityValueTypes?: Readonly<ExtendedEntityType[]>
   typeSpecificValidation?: boolean
   hasPlaceholders?: boolean
+  remoteEntityOnly?: boolean
 }

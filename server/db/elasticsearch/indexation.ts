@@ -1,13 +1,16 @@
 import { throttle } from 'lodash-es'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { unprefixify } from '#controllers/entities/lib/prefix'
+import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { assert_ } from '#lib/utils/assert_types'
+import { isLocalEntityLayer } from '#models/entity'
 import config from '#server/config'
-import type { CouchDoc } from '#types/couchdb'
-import type { SerializedWdEntity } from '#types/entity'
+import type { SerializedWdEntity, WdEntityId } from '#types/entity'
 import { addToBatch, postBatch } from './bulk.js'
 import deindex from './deindex.js'
 import filters from './filters.js'
 import formatters from './formatters/formatters.js'
-import { indexesNamesByBaseNames, type IndexBaseName } from './indexes.js'
+import { indexesNamesByBaseNames, type IndexBaseName, type IndexedCouchDoc } from './indexes.js'
 
 const { updateDelay } = config.elasticsearch
 const bulkThrottleDelay = updateDelay / 2
@@ -25,10 +28,14 @@ export function indexation (indexBaseName: IndexBaseName) {
   assert_.function(shouldBeDeindexed)
   assert_.function(filter)
 
-  return async function (doc: CouchDoc | SerializedWdEntity) {
+  return async function (doc: IndexedCouchDoc | SerializedWdEntity) {
     if (!filter(doc)) return
     if (shouldBeDeindexed(doc)) {
       addToBatch(batch, 'delete', index, doc)
+    } else if ('type' in doc && doc.type === 'entity' && 'claims' in doc && isLocalEntityLayer(doc)) {
+      const remoteEntityUri = getFirstClaimValue(doc.claims, 'invp:P1')
+      const remoteEntityId = unprefixify(remoteEntityUri) as WdEntityId
+      addWdEntityToIndexationQueue(remoteEntityId)
     } else {
       // Allow the format function to return undefined,
       // to be used as a filter for cases that couldn't be filtered-out

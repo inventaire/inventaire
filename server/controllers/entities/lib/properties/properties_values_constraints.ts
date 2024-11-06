@@ -1,15 +1,4 @@
-// Each property configuration object is made of the following attributes:
-
-// primitiveType: {Stirng} which type a property value should return when passed to typeOf
-// datatype: {String} the more specific property value type
-// validate: {Function}
-// format: {Function} (optional)
-// uniqueValue: {Boolean} (default: false)
-// concurrency: {Boolean} (default: false)
-// adminUpdateOnly: {Boolean} (default: false)
-// entityValueTypes: {String[]} (only for properties of datatype 'entity' )
-
-// Those attributes aim to constrain the claims properties and values
+// PropertyValueConstraints attributes aim to constrain the claims properties and values
 // to keep those consistent.
 
 // Bases and builders are an attempt to keep those configuration objects DRY:
@@ -24,18 +13,22 @@ import { objectKeys } from '#lib/utils/types'
 import type { OmitNever } from '#server/types/common'
 import type { PropertyUri } from '#server/types/entity'
 import type { PropertyValueConstraints } from '#server/types/property'
-import { collectionEntity, entity, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
+export const allLocallyEditedEntitiesTypes = [ 'edition', 'work', 'serie', 'human', 'publisher', 'collection' ] as const
+
 const localPropertiesValuesConstraints = {
   // same as remote entity
   'invp:P1': remoteEntity,
   // image hash
   'invp:P2': imageHash,
+  // entity type lock
+  'invp:P3': entityType,
 } as const
 
 export const localProperties = objectKeys(localPropertiesValuesConstraints)

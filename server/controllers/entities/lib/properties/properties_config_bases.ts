@@ -1,4 +1,5 @@
 import { trim } from 'lodash-es'
+import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isImageHash, isPositiveIntegerString, isSimpleDay, isUrl, isWdEntityUri } from '#lib/boolean_validations'
 import { EntityUri } from '#lib/regex'
 import { boundedString } from '#models/validations/common'
@@ -15,6 +16,7 @@ export const remoteEntity = {
   primitiveType: 'string',
   format: trim,
   validate: ({ value }: { value: string }) => isWdEntityUri(value),
+  remoteEntityOnly: true,
 } as const
 
 export const uniqueString = {
@@ -76,4 +78,15 @@ export const imageHash = {
   format: trim,
   validate: ({ value }: { value: string }) => isImageHash(value),
   uniqueValue: true,
+} as const
+
+export const entityType = {
+  datatype: 'entity-type',
+  primitiveType: 'string',
+  format: trim,
+  validate: ({ value }) => {
+    return allLocallyEditedEntitiesTypes.includes(value)
+  },
+  editAccessLevel: 'admin',
+  remoteEntityOnly: true,
 } as const

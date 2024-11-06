@@ -1,7 +1,10 @@
-import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
+import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'
+import type { AccessLevel } from '#lib/user_access_levels'
 import { assert_ } from '#lib/utils/assert_types'
 import { isLocalEntityLayer } from '#models/entity'
 import type { Claims, EntityType, InvEntity, Labels, WdEntityUri } from '#server/types/entity'
@@ -14,26 +17,31 @@ const allowlistedTypes = allLocallyEditedEntitiesTypes
 type ValidatableEntity = SetOptional<Pick<InvEntity, '_id' | 'labels' | 'claims'>, '_id'>
 
 // Can be used to validate both entities being created or existing entities
-export async function validateInvEntity (entity: ValidatableEntity) {
+export async function validateInvEntity (entity: ValidatableEntity, userAccessLevels?: AccessLevel[]) {
   try {
-    return await validate(entity)
+    return await validate(entity, userAccessLevels)
   } catch (err) {
     if (err.context == null) err.context = { entity }
     throw err
   }
 }
 
-async function validate (entity: ValidatableEntity) {
-  if (isLocalEntityLayer(entity)) return
-
+async function validate (entity: ValidatableEntity, userAccessLevels?: AccessLevel[]) {
   const { _id, labels, claims } = entity
   assert_.object(labels)
   assert_.object(claims)
-
-  const type = getValueType(claims)
-  validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
-  validateLabels(labels, type)
-  return validateAndFormatInvClaims({ _id, type, claims })
+  const isLocalLayer = isLocalEntityLayer(entity)
+  let type
+  if (isLocalLayer) {
+    const remoteEntityUri = getFirstClaimValue(claims, 'invp:P1')
+    const remoteEntity = await getEntityByUri({ uri: remoteEntityUri })
+    type = remoteEntity.type
+  } else {
+    type = getValueType(claims)
+    validateValueType(type, claims['wdt:P31'] as WdEntityUri[])
+    validateLabels(labels, type)
+  }
+  return validateAndFormatInvClaims({ _id, type, claims, userAccessLevels })
 }
 
 function getValueType (claims: Claims) {

@@ -1,4 +1,5 @@
 import { uniq } from 'lodash-es'
+import type { User } from '#server/types/user'
 
 export const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,
@@ -6,6 +7,8 @@ export const rolesByAccess = {
   dataadmin: [ 'dataadmin', 'admin' ] as const,
   admin: [ 'admin' ] as const,
 }
+
+export type AccessLevel = keyof typeof rolesByAccess
 
 const accessByRoles = {}
 
@@ -17,7 +20,7 @@ for (const access in rolesByAccess) {
   }
 }
 
-export function getUserAccessLevels (user) {
+export function getUserAccessLevels (user: User): AccessLevel[] {
   if (!user) return []
   const { roles: userRoles } = user
   if (!userRoles || userRoles.length === 0) return []
@@ -25,5 +28,5 @@ export function getUserAccessLevels (user) {
   return uniq(userRoles.map(role => accessByRoles[role]).flat())
 }
 
-export const hasAdminAccess = user => getUserAccessLevels(user).includes('admin')
-export const hasDataadminAccess = user => getUserAccessLevels(user).includes('dataadmin')
+export const hasAdminAccess = (user: User) => getUserAccessLevels(user).includes('admin')
+export const hasDataadminAccess = (user: User) => getUserAccessLevels(user).includes('dataadmin')

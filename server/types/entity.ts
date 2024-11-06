@@ -1,5 +1,4 @@
-import type { allLocallyEditedEntitiesTypes } from '#controllers/entities/lib/properties/properties'
-import type { PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
+import type { allLocallyEditedEntitiesTypes, PropertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import type { allowlistedReferenceProperties } from '#controllers/entities/lib/validate_and_format_claim'
 import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
@@ -55,6 +54,10 @@ export type ImageValue = ImageHash
 export type InvSnakValue = EntityValue | StringValue | ExternalIdValue | UrlValue | DateValue | PositiveIntegerValue | PositiveIntegerStringValue | ImageValue
 export type InvClaimValue = InvSnakValue
 
+export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
+export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' | 'language' | 'subject' | 'meta'
+export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
+
 export interface ClaimValueTypeByDatatype {
   'entity': EntityValue
   'string': StringValue
@@ -64,6 +67,7 @@ export interface ClaimValueTypeByDatatype {
   'positive-integer': PositiveIntegerValue
   'positive-integer-string': PositiveIntegerStringValue
   'image': ImageValue
+  'entity-type': EntityType
 }
 
 export type ClaimValueByProperty = {
@@ -141,11 +145,6 @@ export type EntityImg = `/img/entities/${ImageHash}`
 
 // No `File:` prefix (ex: 'Victor Hugo by Étienne Carjat 1876 - full.jpg')
 export type WikimediaCommonsFilename = string
-
-export type EntityType = typeof allLocallyEditedEntitiesTypes[number]
-export type ExtendedEntityType = EntityType | 'article' | 'movement' | 'genre' | 'language' | 'subject' | 'meta'
-
-export type PluralizedIndexedEntityType = typeof indexedEntitiesTypes[number]
 
 export interface RedirectFromTo {
   // 'from' is usually an EntityUri, but can also be `isbn:${nonNormalizedIsbn}`

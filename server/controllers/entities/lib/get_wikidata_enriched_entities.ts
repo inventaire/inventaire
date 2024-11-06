@@ -81,6 +81,8 @@ function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, lo
   if (localEntityLayer.claims['invp:P2'] != null) {
     setEntityImageFromImageHashClaims(remoteEntity)
   }
+  const lockedType = getFirstClaimValue(localEntityLayer.claims, 'invp:P3')
+  if (lockedType) remoteEntity.type = lockedType
 }
 
 async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {

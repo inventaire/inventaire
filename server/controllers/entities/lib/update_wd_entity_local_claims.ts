@@ -3,6 +3,7 @@ import { getWdEntityLocalLayer } from '#controllers/entities/lib/entities'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { updateInvClaim } from '#controllers/entities/lib/update_inv_claim'
 import { newError } from '#lib/error/error'
+import { getUserAccessLevels } from '#lib/user_access_levels'
 import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
 import type { User } from '#server/types/user'
 
@@ -22,9 +23,11 @@ export async function updateWdEntityLocalClaims (user: User, wdId: WdEntityId, p
       'invp:P1': [ wdUri ],
       [property]: [ newValue ],
     }
+    const userAccessLevels = getUserAccessLevels(user)
     await createInvEntity({
       claims: localEntityLayerClaims,
       userId: user._id,
+      userAccessLevels,
     })
   }
 }

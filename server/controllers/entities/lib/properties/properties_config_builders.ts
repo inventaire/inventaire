@@ -20,7 +20,7 @@ export function isbnProperty (num: 10 | 13) {
     },
     uniqueValue: true,
     format: (isbn: string) => formatIsbn(isbn, `${num}h`) || isbn,
-    adminUpdateOnly: true,
+    updateAccessLevel: 'admin',
   } as const
 }
 

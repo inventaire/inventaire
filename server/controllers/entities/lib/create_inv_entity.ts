@@ -1,5 +1,6 @@
 import { editInvEntity } from '#controllers/entities/lib/entities'
-import { log } from '#lib/utils/logs'
+import type { AccessLevel } from '#lib/user_access_levels'
+import { log, success } from '#lib/utils/logs'
 import { createBlankEntityDoc } from '#models/entity'
 import type { InvEntity } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
@@ -12,13 +13,14 @@ interface CreateInvEntityParams {
   claims: InvEntity['claims']
   userId: UserId
   batchId?: BatchId
+  userAccessLevels?: AccessLevel[]
 }
 
 export async function createInvEntity (params: CreateInvEntityParams) {
-  const { labels = {}, claims, userId, batchId } = params
+  const { labels = {}, claims, userId, batchId, userAccessLevels } = params
   log(params, 'inv entity creation')
 
-  await validateInvEntity({ labels, claims })
+  await validateInvEntity({ labels, claims }, userAccessLevels)
 
   const blankEntityDoc = createBlankEntityDoc()
 
@@ -31,5 +33,6 @@ export async function createInvEntity (params: CreateInvEntityParams) {
     batchId,
   })
   entity.uri = prefixifyInv(entity._id)
+  success(`inv entity created: ${entity.uri}`)
   return entity
 }

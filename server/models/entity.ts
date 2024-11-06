@@ -163,9 +163,7 @@ export function beforeEntityDocSave (doc: InvEntity) {
   // Do not validate redirections, removed placeholder, etc
   if (doc.claims != null) {
     removeEmptyClaimArrays(doc.claims)
-    if (!isLocalEntityLayer(doc)) {
-      validateRequiredPropertiesValues(doc.claims)
-    }
+    validateRequiredPropertiesValues(doc)
   }
   doc.updated = Date.now()
   doc.version++

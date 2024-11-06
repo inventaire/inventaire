@@ -1,22 +1,31 @@
 import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import type { Claims, PropertyUri } from '#types/entity'
+import { objectKeys } from '#lib/utils/types'
+import { isLocalEntityLayer } from '#models/entity'
+import type { InvEntity, PropertyUri } from '#server/types/entity'
 
-export function validateRequiredPropertiesValues (claims: Claims, checkedProperties?: PropertyUri[]) {
-  if (claims['wdt:P31']?.[0] == null) {
-    throw newError("wdt:P31 array can't be empty", 400, { claims })
+export function validateRequiredPropertiesValues (doc: InvEntity) {
+  const { claims } = doc
+  const isLocalLayer = isLocalEntityLayer(doc)
+  if (!isLocalLayer) {
+    if (claims['wdt:P31']?.[0] == null) {
+      throw newError("wdt:P31 array can't be empty", 400, { claims })
+    }
+    const type = getInvEntityType(claims['wdt:P31'])
+    if (validateControlledPropertiesClaimsPerType[type]) {
+      validateControlledPropertiesClaimsPerType[type](claims)
+    }
   }
 
-  const type = getInvEntityType(claims['wdt:P31'])
-  if (validateControlledPropertiesClaimsPerType[type]) {
-    validateControlledPropertiesClaimsPerType[type](claims)
-  }
-
-  checkedProperties = checkedProperties || (Object.keys(claims) as PropertyUri[])
-
-  checkedProperties.forEach(property => {
+  objectKeys(claims).forEach(property => {
     validateUniqueValue(property, claims[property])
+    if (isLocalLayer) {
+      validateLocalLayerClaimProperty(property, doc)
+    } else {
+      validateRemoteEntityClaimProperty(property, doc)
+    }
   })
 }
 
@@ -45,5 +54,18 @@ function validateUniqueValue (property, propertyClaims) {
   const { uniqueValue } = properties[property]
   if (uniqueValue && propertyClaims != null && propertyClaims.length > 1) {
     throw newError('this property accepts only one value', 400, { property, propertyClaims })
+  }
+}
+
+function validateLocalLayerClaimProperty (property: PropertyUri, doc: InvEntity) {
+  if (!isInvPropertyUri(property)) {
+    throw newError('local layer can not have remote properties', 400, { doc, property })
+  }
+}
+
+function validateRemoteEntityClaimProperty (property: PropertyUri, doc: InvEntity) {
+  const { remoteEntityOnly } = properties[property]
+  if (remoteEntityOnly) {
+    throw newError('local entity can not have remote-entity-only claims', 400, { doc, property })
   }
 }
