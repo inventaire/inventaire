@@ -22,9 +22,9 @@ export function validateRequiredPropertiesValues (doc: InvEntity) {
   objectKeys(claims).forEach(property => {
     validateUniqueValue(property, claims[property])
     if (isLocalLayer) {
-      rejectRemotePropertiesOnLocalLayer(property, doc)
+      validateLocalLayerClaimProperty(property, doc)
     } else {
-      rejectRemoteEntityOnlyProperty(property, doc)
+      validateRemoteEntityClaimProperty(property, doc)
     }
   })
 }
@@ -57,13 +57,15 @@ function validateUniqueValue (property, propertyClaims) {
   }
 }
 
-function rejectRemotePropertiesOnLocalLayer (property: PropertyUri, doc: InvEntity) {
+function validateLocalLayerClaimProperty (property: PropertyUri, doc: InvEntity) {
   if (!isInvPropertyUri(property)) {
     throw newError('local layer can not have remote properties', 400, { doc, property })
   }
 }
 
-function rejectRemoteEntityOnlyProperty (property: PropertyUri, doc: InvEntity) {
+function validateRemoteEntityClaimProperty (property: PropertyUri, doc: InvEntity) {
   const { remoteEntityOnly } = properties[property]
-  if (remoteEntityOnly) throw newError('local entity can not have remote-entity-only claims', 400, { doc, property })
+  if (remoteEntityOnly) {
+    throw newError('local entity can not have remote-entity-only claims', 400, { doc, property })
+  }
 }
