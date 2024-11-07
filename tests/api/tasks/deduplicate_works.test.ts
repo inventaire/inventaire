@@ -62,7 +62,7 @@ describe('tasks:deduplicate:works', () => {
     newTask.entitiesType.should.equal('work')
     newTask.suggestionUri.should.equal(editionWorkUri)
     const user = await getUser()
-    newTask.reporter.should.equal(user._id)
+    newTask.reporters.should.deepEqual([ user._id ])
     newTask.clue.should.equal(isbn)
   })
 

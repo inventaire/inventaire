@@ -1,6 +1,7 @@
 import { cloneDeep, isEqual } from 'lodash-es'
 import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
+import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import { mergeEntitiesDocs } from '#models/entity'
@@ -10,7 +11,7 @@ import type { UserId } from '#types/user'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { turnIntoRedirectionOrLocalLayer } from './turn_into_redirection.js'
 
-export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) => {
+export default async function ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) {
   let [ fromPrefix, fromId ] = fromUri.split(':')
   let [ toPrefix, toId ] = toUri.split(':')
 
@@ -25,12 +26,13 @@ export default ({ userId, fromUri, toUri, context }: { userId: UserId, fromUri: 
 
   if (toPrefix === 'wd') {
     // no merge to do for Wikidata entities, simply creating a redirection or a local layer
-    return turnIntoRedirectionOrLocalLayer({ userId, fromId, toUri, context })
+    await turnIntoRedirectionOrLocalLayer({ userId, fromId, toUri, context })
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
-    return mergeInvEntities(userId, fromId, toId)
+    await mergeInvEntities(userId, fromId, toId)
   }
+  await emit('entity:merge', fromUri, toUri)
 }
 
 async function mergeInvEntities (userId, fromId, toId) {

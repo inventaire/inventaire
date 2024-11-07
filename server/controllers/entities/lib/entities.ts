@@ -196,3 +196,19 @@ export async function getCollectionEditions (workUri: EntityUri) {
   const editionsUris = await reverseClaims({ property: 'wdt:P195', value: workUri })
   return getEntitiesList(editionsUris)
 }
+
+export async function getAuthorsFromWorksUris (workUris: EntityUri[]) {
+  const works = await getEntitiesList(workUris)
+  const authorsUris = getWorksAuthorsUris(works)
+  return getEntitiesList(authorsUris)
+}
+
+export async function getPublishersFromPublicationsUris (publicationUris: EntityUri[]) {
+  const publications = await getEntitiesList(publicationUris)
+  const publishersUris = uniq(publications.flatMap(getPublishersUris))
+  return getEntitiesList(publishersUris)
+}
+
+function getPublishersUris (publication: SerializedEntity) {
+  return publication.claims['wdt:P123']
+}

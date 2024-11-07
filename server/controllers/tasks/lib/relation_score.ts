@@ -1,5 +1,5 @@
 import { map, round } from 'lodash-es'
-import { getTasksBySuspectUri, updateTask } from '#controllers/tasks/lib/tasks'
+import { getTasksBySuspectUri, updateTasks } from '#controllers/tasks/lib/tasks'
 import type { EntityUri } from '#types/entity'
 
 // relationScore (between 0 & 1) express the number of tasks for the same suspect
@@ -9,7 +9,7 @@ export default async function getRelationScore (suspectUri: EntityUri) {
   const relationScore = calculateRelationScore(tasks)
   const tasksToUpdate = tasks.filter(relationScoreIsntUpToDate(relationScore))
   if (tasksToUpdate.length === 0) return
-  return updateTask({
+  return updateTasks({
     ids: map(tasksToUpdate, '_id'),
     attribute: 'relationScore',
     newValue: relationScore,

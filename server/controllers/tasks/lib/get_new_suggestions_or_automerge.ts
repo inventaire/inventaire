@@ -1,13 +1,12 @@
-import { map, uniq } from 'lodash-es'
-import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { map } from 'lodash-es'
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import getOccurrencesFromEntities from '#controllers/entities/lib/get_occurrences_from_entities'
 import { getOccurrencesFromExternalSources } from '#controllers/entities/lib/get_occurrences_from_external_sources'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
-import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import typeSearch from '#controllers/search/lib/type_search'
+import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { forceArray, someMatch } from '#lib/utils/base'
 import config from '#server/config'
@@ -134,20 +133,6 @@ const addOccurrencesToSuggestion = suspectWorksData => async suggestion => {
     return suggestion
   })
 }
-
-async function getAuthorWorksData (authorId) {
-  const works = await getInvEntitiesByClaim('wdt:P50', `inv:${authorId}`, true, true)
-  // works = [
-  //   { labels: { fr: 'Matiere et Memoire'} },
-  //   { labels: { en: 'foo' } }
-  // ]
-  const labels = uniq(works.flatMap(getEntityNormalizedTerms))
-  const langs = uniq(works.flatMap(getLangs))
-  const worksUris = works.map(work => prefixifyInv(work._id))
-  return { authorId, labels, langs, worksUris }
-}
-
-const getLangs = work => Object.keys(work.labels)
 
 async function searchEntityDuplicatesSuggestions (entity) {
   const name = Object.values(entity.labels)[0]

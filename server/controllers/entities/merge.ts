@@ -1,9 +1,11 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_create_tasks'
+import { validateThatEntitiesAreNotRelated, validateAbsenceOfConflictingProperties } from '#controllers/tasks/lib/merge_validation'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { emit } from '#lib/radio'
+import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
 import mergeEntities from './lib/merge_entities.js'
@@ -23,8 +25,7 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-async function controller (params) {
-  const { reqUserId } = params
+async function controller (params, req) {
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
 
@@ -34,18 +35,32 @@ async function controller (params) {
     throw newError(message, 400, params)
   }
 
-  log({ merge: params, user: reqUserId }, 'entity merge request')
+  const { user } = req
+  const { _id: userId } = user
+  const isDataadmin = hasDataadminAccess(user)
+
+  log({
+    merge: params,
+    user: userId,
+    isDataadmin,
+  }, 'entity merge request')
 
   const { fromEntity, toEntity } = await getMergeEntities(fromUri, toUri)
   validateEntities({ fromUri, toUri, fromEntity, toEntity })
-  validateEntitiesByType({ fromEntity, toEntity })
+  const entitiesType = validateEntitiesByType({ fromEntity, toEntity })
 
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
-  await mergeEntities({ userId: reqUserId, fromUri, toUri })
-  await emit('entity:merge', fromUri, toUri)
-  return { ok: true }
+  validateAbsenceOfConflictingProperties(fromEntity, toEntity)
+  validateThatEntitiesAreNotRelated(fromEntity, toEntity)
+
+  if (isDataadmin) {
+    await mergeEntities({ userId, fromUri, toUri })
+    return { ok: true }
+  } else {
+    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
+  }
 }
 
 async function getMergeEntities (fromUri: EntityUri, toUri: EntityUri) {
@@ -104,6 +119,8 @@ function validateEntitiesByType ({ fromEntity, toEntity }) {
       throw newError("can't merge editions with different ISBNs", 400, { fromUri, toUri })
     }
   }
+
+  return fromEntity.type
 }
 
 function replaceIsbnUriByInvUri (uri, entity) {

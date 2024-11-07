@@ -18,18 +18,10 @@ import { getRandomString } from '#lib/utils/random_string'
 import type { InvEntityUri } from '#server/types/entity'
 import { getByUris, merge, getHistory, addClaim, getByUri } from '#tests/api/utils/entities'
 import { getItemsByIds } from '#tests/api/utils/items'
-import { authReq, dataadminReq } from '#tests/api/utils/utils'
+import { dataadminReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-describe('entities:merge', () => {
-  it('should require dataadmin rights', async () => {
-    await authReq('put', '/api/entities?action=merge')
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.statusCode.should.equal(403)
-    })
-  })
-
+describe('entities:merge:as:dataadmin', () => {
   it('should reject without from uri', async () => {
     await dataadminReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)
@@ -50,11 +42,11 @@ describe('entities:merge', () => {
 
   it('should reject invalid uris', async () => {
     await dataadminReq('put', '/api/entities?action=merge', { from: 'fromUri', to: 'toUri' })
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.body.status_verbose.should.startWith('invalid from:')
-      err.statusCode.should.equal(400)
-    })
+  .then(shouldNotBeCalled)
+  .catch(err => {
+    err.body.status_verbose.should.startWith('invalid from:')
+    err.statusCode.should.equal(400)
+  })
   })
 
   it('should reject invalid from prefix', async () => {

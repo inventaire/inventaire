@@ -1,5 +1,5 @@
 import { map } from 'lodash-es'
-import { bulkDeleteTasks, getTasksBySuggestionUri, getTasksBySuspectUri, getTasksBySuspectUriAndState, updateTask } from '#controllers/tasks/lib/tasks'
+import { bulkDeleteTasks, getTasksBySuggestionUri, getTasksBySuspectUri, getTasksBySuspectUriAndState, updateTasks } from '#controllers/tasks/lib/tasks'
 import { tap, mappedArrayPromise } from '#lib/promises'
 import { radio } from '#lib/radio'
 import type { EntityUri } from '#types/entity'
@@ -32,11 +32,11 @@ function deleteBySuggestionUriAndRecheckSuspects (previousSuggestionUri: EntityU
 function archiveTasks (tasks: Task[]) {
   if (tasks.length === 0) return
   const ids = map(tasks, '_id')
-  return updateTask({ ids, attribute: 'state', newValue: 'merged' })
+  return updateTasks({ ids, attribute: 'state', newValue: 'merged' })
 }
 
 async function revertArchive (uri: EntityUri) {
   const tasks = await getTasksBySuspectUriAndState(uri, 'merged')
   const ids = map(tasks, '_id')
-  return updateTask({ ids, attribute: 'state', newValue: undefined })
+  return updateTasks({ ids, attribute: 'state', newValue: undefined })
 }

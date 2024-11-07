@@ -4,11 +4,11 @@ import { mappedArrayPromise } from '#lib/promises'
 import { combinations } from '#lib/utils/base'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
 import type { EntityType, EntityUri } from '#types/entity'
-import type { Task, TaskState, TaskType } from '#types/task'
+import type { Task, TaskState, TaskType, Suggestion } from '#types/task'
 
 const db = await dbFactory('tasks')
 
-export async function createTasksFromSuggestions ({ suspectUri, type, entitiesType, suggestions }: { suspectUri: EntityUri, type: TaskType, entitiesType: EntityType, suggestions }) {
+export async function createTasksFromSuggestions ({ suspectUri, type, entitiesType, suggestions }: { suspectUri: EntityUri, type: TaskType, entitiesType: EntityType, suggestions: Suggestion[] }) {
   // suggestions may only be an array of objects with a 'uri' key
   const newTasksObjects = suggestions.map(suggestion => {
     const { lexicalScore, uri: suggestionUri, occurrences, reporter, clue } = suggestion
@@ -30,8 +30,7 @@ export async function createTasksInBulk (tasksDocs) {
   return db.bulk(tasks)
 }
 
-export async function updateTask (options) {
-  const { ids, attribute, newValue } = options
+export async function updateTasks ({ ids, attribute, newValue }) {
   if (ids.length === 0) return []
 
   return getTasksByIds(ids)
@@ -94,8 +93,12 @@ export async function getTasksBySuspectUrisAndType (uris: EntityUri[], types: st
 export async function getTasksBySuspectUris (uris: EntityUri[], options: TasksQueryOptions = {}) {
   const { index, includeArchived } = options
   const tasks = await db.getDocsByViewKeys<Task>('bySuspectUriAndState', getKeys(uris, includeArchived))
-  if (index !== true) return tasks
+  if (index !== true) return tasks || []
   return indexByTasksKey(tasks, 'suspectUri', uris)
+}
+
+export function getExistingTasks (uri: EntityUri) {
+  return getTasksBySuspectUris([ uri ])
 }
 
 export async function getTasksBySuggestionUris (uris: EntityUri[], options: TasksQueryOptions = {}) {

@@ -22,8 +22,11 @@ export function createTaskDoc (newTask) {
   validateAndAssign(task, 'entitiesType', entitiesType)
   validateAndAssign(task, 'lexicalScore', lexicalScore)
   validateAndAssign(task, 'externalSourcesOccurrences', externalSourcesOccurrences)
-  validateAndAssign(task, 'reporter', reporter)
   validateAndAssign(task, 'clue', clue)
+  if (reporter) {
+    taskValidations.pass('reporter', reporter)
+    assignArrayOrConcatValue(task, 'reporters', reporter)
+  }
   return task
 }
 
@@ -36,9 +39,13 @@ export function updateTaskDoc (task, attribute, value) {
   taskValidations.pass('attribute', attribute)
   taskValidations.pass(attribute, value)
 
-  const now = Date.now()
+  if (attribute === 'reporter') {
+    assignArrayOrConcatValue(task, 'reporters', value)
+  } else {
+    task[attribute] = value
+  }
 
-  task[attribute] = value
+  const now = Date.now()
   task.updated = now
   return task
 }
@@ -47,5 +54,12 @@ function validateAndAssign (task, name, attribute) {
   if (attribute) {
     taskValidations.pass(name, attribute)
     task[name] = attribute
+  }
+}
+
+function assignArrayOrConcatValue (task, attribute, value) {
+  task[attribute] ??= []
+  if (!task[attribute].includes(value)) {
+    task[attribute].push(value)
   }
 }

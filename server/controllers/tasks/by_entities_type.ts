@@ -5,10 +5,10 @@ const sanitization = {
     allowlist: [ 'deduplicate' ],
   },
   'entities-type': {
-    allowlist: [ 'work', 'human' ],
+    allowlist: [ 'work', 'human', 'publisher', 'collection', 'edition', 'serie' ],
   },
   limit: {
-    default: 10,
+    default: 1,
   },
   offset: {
     default: 0,
