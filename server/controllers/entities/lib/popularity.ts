@@ -18,7 +18,9 @@ const { nice } = config
 // - a popularity score being just an integer, it is extremely cheap to keep in store
 const ttl = 6 * oneMonth
 
-export async function getEntitiesPopularities ({ uris, refresh }: { uris: EntityUri[], refresh?: boolean }) {
+export type PopularityScoreByUri = Record<EntityUri, number>
+
+export async function getEntitiesPopularities ({ uris, refresh }: { uris: EntityUri[], refresh?: boolean }): Promise<PopularityScoreByUri> {
   if (uris.length === 0) return {}
   const popularityPromises = {}
   for (const uri of uris) {

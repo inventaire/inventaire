@@ -1,20 +1,33 @@
-import { flatten } from 'lodash-es'
 import { getInvEntitiesByClaim, uniqByUri } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import { LogErrorAndRethrow } from '#lib/utils/logs'
-import type { EntityUri, InvEntity, SerializedEntity, WdEntityId } from '#server/types/entity'
+import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId } from '#server/types/entity'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 
-export default params => {
+interface GetSeriePartsParams {
+  uri: EntityUri
+  refresh?: boolean
+  dry?: boolean
+  useCacheRelations?: boolean
+}
+
+export interface SeriePart {
+  uri: EntityUri
+  date?: string
+  ordinal?: string
+  subparts?: number
+  superpart?: EntityUri
+}
+
+export async function getSerieParts (params: GetSeriePartsParams) {
   const { uri, refresh, dry, useCacheRelations = true } = params
   const [ prefix, id ] = uri.split(':')
-  const promises = []
+  const promises = [] as Promise<SeriePart[]>[]
 
   // If the prefix is 'inv' or 'isbn', no need to check Wikidata
-  if (prefix === 'wd') promises.push(getWdSerieParts(id, refresh, dry))
+  if (prefix === 'wd') promises.push(getWdSerieParts(id as WdEntityId, refresh, dry))
 
   promises.push(getInvSerieParts(uri))
 
@@ -26,14 +39,13 @@ export default params => {
     }))
   }
 
-  return Promise.all(promises)
-  .then(flatten)
+  const domainsParts = await Promise.all(promises)
   // There might be duplicates, mostly due to temporarily cached relations
-  .then(uniqByUri)
-  .then(results => ({
-    parts: results.sort(sortByOrdinalOrDate),
-  }))
-  .catch(LogErrorAndRethrow('get serie parts err'))
+  let parts = domainsParts.flat()
+  parts = uniqByUri(parts)
+  return {
+    parts: parts.sort(sortByOrdinalOrDate),
+  }
 }
 
 async function getWdSerieParts (qid: WdEntityId, refresh: boolean, dry: boolean) {
@@ -56,7 +68,7 @@ async function getInvSerieParts (uri: EntityUri) {
 
 function formatInvEntity ({ _id, claims }: InvEntity) {
   return {
-    uri: `inv:${_id}`,
+    uri: `inv:${_id}` as InvEntityUri,
     date: getFirstClaimValue(claims, 'wdt:P577'),
     ordinal: getFirstClaimValue(claims, 'wdt:P1545'),
     subparts: 0,

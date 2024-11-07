@@ -33,7 +33,7 @@ export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
   return Promise.all(promises)
 }
 
-export async function getCachedRelations ({ valueUri, properties, formatEntity }: { valueUri: EntityUri, properties: readonly PropertyUri[], formatEntity }) {
+export async function getCachedRelations <T> ({ valueUri, properties, formatEntity }: { valueUri: EntityUri, properties: readonly PropertyUri[], formatEntity: (entity: SerializedEntity) => T }) {
   const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
   let entities = await getEntitiesList(subjectsUris, { refresh: true })

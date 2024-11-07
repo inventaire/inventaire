@@ -3,7 +3,7 @@ import { isPositiveIntegerString } from '#lib/boolean_validations'
 export function getSimpleDayDate (date: string) {
   if (date) {
     // Parse ISO date
-    date.split('T')[0]
+    return date.split('T')[0]
     // If the date is a January 1st, it's very probably because
     // its a year-precision date
     .replace('-01-01', '')

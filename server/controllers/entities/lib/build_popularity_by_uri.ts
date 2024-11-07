@@ -7,7 +7,7 @@ import { getItemsByEntity } from '#controllers/items/lib/items'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { info, logError } from '#lib/utils/logs'
 import type { EntityUri } from '#server/types/entity'
-import getSerieParts from './get_serie_parts.js'
+import { getSerieParts } from './get_serie_parts.js'
 
 export async function buildPopularityByUri (uri: EntityUri) {
   let entity

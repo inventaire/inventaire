@@ -2,11 +2,16 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import type { Claims, InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, EntityUri, InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import type { Split } from 'type-fest'
 
-export default async function ({ uri, refresh, dry }) {
+interface GetPublisherPublicationsParams {
+  uri: EntityUri
+  refresh?: boolean
+  dry?: boolean
+}
+export async function getPublisherPublications ({ uri, refresh, dry }: GetPublisherPublicationsParams) {
   const [ wdCollections, invPublications ] = await Promise.all([
     getWdPublisherCollections(uri, refresh, dry),
     getInvPublisherCollections(uri),
@@ -18,7 +23,7 @@ export default async function ({ uri, refresh, dry }) {
   }
 }
 
-async function getInvPublisherCollections (uri) {
+async function getInvPublisherCollections (uri: EntityUri) {
   const docs = await getInvEntitiesByClaim('wdt:P123', uri, true, true)
   const collections = []
   const editions = []
@@ -43,7 +48,7 @@ const format = (doc: InvEntity) => ({
 
 const isEdition = publication => getFirstClaimValue(publication.claims, 'wdt:P31') === 'wd:Q3331189'
 
-function getPublicationDate (doc) {
+function getPublicationDate (doc: InvEntity) {
   const date = getFirstClaimValue(doc.claims, 'wdt:P577')
   if (date) return new Date(date).getTime()
   // If no publication date can be found, we can fallback on the document creation date,
@@ -60,7 +65,7 @@ export function getPublicationYear (claims: Claims) {
   }
 }
 
-async function getWdPublisherCollections (uri: WdEntityUri, refresh: boolean, dry: boolean) {
+async function getWdPublisherCollections (uri: EntityUri, refresh: boolean, dry: boolean) {
   const [ prefix, qid ] = uri.split(':') as Split<WdEntityUri, ':'>
   if (prefix !== 'wd') return []
   // TODO: include wd editions

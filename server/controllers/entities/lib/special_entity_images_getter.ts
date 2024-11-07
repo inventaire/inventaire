@@ -4,7 +4,7 @@ import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isLang } from '#lib/boolean_validations'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import { getEntityImagesFromClaims } from './get_entity_images_from_claims.js'
-import getSerieParts from './get_serie_parts.js'
+import { getSerieParts } from './get_serie_parts.js'
 
 export default {
   // Works images (wdt:P18) in Wikidata aren't satisfying, as not making use

@@ -53,11 +53,12 @@ export function uniqByKey<T> (collection: object[], key: string) {
   return Object.values(keyBy(collection, key)) as T[]
 }
 
-export const initCollectionsIndex = (names: string[]) => names.reduce(aggregateCollections, {})
-
-function aggregateCollections (index, name) {
-  index[name] = []
-  return index
+export function initCollectionsIndex <N extends string, T> (names: readonly N[]) {
+  const index: Partial<Record<N, T[]>> = {}
+  for (const name of names) {
+    index[name] = []
+  }
+  return index as Record<N, T[]>
 }
 
 export const obfuscate = (str: string) => str.replace(/./g, '*')
