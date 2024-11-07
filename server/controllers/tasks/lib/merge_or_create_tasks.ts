@@ -19,7 +19,7 @@ export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, 
   const suggestions: Suggestion[] = map(newToEntities, addToSuggestion(userId, clue))
   const suspectUri = fromEntity.uri
 
-  log({ suspectUri, suggestions }, 'creating tasks from suggestions')
+  log({ suspectUri, suggestions: map(suggestions, 'uri') }, 'creating tasks from suggestions')
   return createTasksFromSuggestions({
     suspectUri,
     type: 'merge',
