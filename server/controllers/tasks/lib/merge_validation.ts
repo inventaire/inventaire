@@ -6,7 +6,7 @@ import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri } from '#types/entity'
 
-export function validateSameExternalIdentifiersProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
+export function validateAbsenceOfConflictingProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
   const fromConcurrentIdsClaims = pick(fromEntity.claims, concurrentIdsProperties)
 
   for (const [ property, fromValues ] of objectEntries(fromConcurrentIdsClaims)) {
@@ -21,12 +21,12 @@ export function validateSameExternalIdentifiersProperties (fromEntity: Serialize
   }
 }
 
-export function validateEntitiesHaveAnyClaimLinkingToOneAnother (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
-  rejectIfEntitiesAreRelated(fromEntity, toEntity.uri)
-  rejectIfEntitiesAreRelated(toEntity, fromEntity.uri)
+export function validateThatEntitiesAreNotRelated (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
+  validateThatEntityIsNotRelatedToTheOtherEntity(fromEntity, toEntity.uri)
+  validateThatEntityIsNotRelatedToTheOtherEntity(toEntity, fromEntity.uri)
 }
 
-function rejectIfEntitiesAreRelated (entity: SerializedEntity, otherEntityUri: EntityUri) {
+function validateThatEntityIsNotRelatedToTheOtherEntity (entity: SerializedEntity, otherEntityUri: EntityUri) {
   for (const [ property, values ] of objectEntries(entity.claims)) {
     if (getPropertyDatatype(property) === 'entity') {
       for (const value of values) {

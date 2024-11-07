@@ -2,7 +2,7 @@ import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_create_tasks'
-import { validateEntitiesHaveAnyClaimLinkingToOneAnother, validateSameExternalIdentifiersProperties } from '#controllers/tasks/lib/merge_validation'
+import { validateThatEntitiesAreNotRelated, validateAbsenceOfConflictingProperties } from '#controllers/tasks/lib/merge_validation'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasDataadminAccess } from '#lib/user_access_levels'
@@ -52,8 +52,8 @@ async function controller (params, req) {
   fromUri = replaceIsbnUriByInvUri(fromUri, fromEntity)
   toUri = replaceIsbnUriByInvUri(toUri, toEntity)
 
-  validateSameExternalIdentifiersProperties(fromEntity, toEntity)
-  validateEntitiesHaveAnyClaimLinkingToOneAnother(fromEntity, toEntity)
+  validateAbsenceOfConflictingProperties(fromEntity, toEntity)
+  validateThatEntitiesAreNotRelated(fromEntity, toEntity)
 
   if (isDataadmin) {
     await mergeEntities({ userId, fromUri, toUri })
