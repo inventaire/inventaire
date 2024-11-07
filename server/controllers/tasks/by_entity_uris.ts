@@ -1,7 +1,7 @@
 import { forceArray } from '#lib/utils/base'
 import { getTasksBySuspectUrisAndType, getTasksBySuggestionUris } from './lib/tasks.js'
 
-const typeAllowList = [ 'deduplicate', 'merge' ]
+const typeAllowList = [ 'deduplicate', 'merge', 'delete' ]
 
 const sanitization = {
   uris: {},

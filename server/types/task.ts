@@ -4,7 +4,7 @@ import type { UserId } from '#types/user'
 import type { EntityType } from 'wikibase-sdk'
 
 export type TaskId = CouchUuid
-export type TaskType = 'deduplicate' | 'merge'
+export type TaskType = 'deduplicate' | 'merge' | 'delete'
 export type TaskState = 'merged'
 
 export interface externalSourceOccurrence {

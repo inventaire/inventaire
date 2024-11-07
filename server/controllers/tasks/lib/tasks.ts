@@ -1,10 +1,11 @@
-import { groupBy } from 'lodash-es'
+import { groupBy, uniq } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
+import { isEntityUri } from '#lib/boolean_validations'
 import { maxKey, minKey } from '#lib/couch'
 import { mappedArrayPromise } from '#lib/promises'
 import { combinations } from '#lib/utils/base'
 import { createTaskDoc, updateTaskDoc } from '#models/task'
-import type { EntityType, EntityUri } from '#types/entity'
+import type { EntityUri, EntityType, Claims } from '#types/entity'
 import type { Task, TaskState, TaskType, Suggestion } from '#types/task'
 
 const db = await dbFactory('tasks')
@@ -108,6 +109,14 @@ export async function getTasksBySuggestionUris (uris: EntityUri[], options: Task
   const tasks = await db.getDocsByViewKeys<Task>('bySuggestionUriAndState', getKeys(uris, includeArchived))
   if (index !== true) return tasks
   return indexByTasksKey(tasks, 'suggestionUri', uris)
+}
+
+export function getClaimsValuesUris (claims: Claims) {
+  // This should still work after adding new relation properties
+  const uris = Object.values(claims)
+    .flat()
+    .filter(value => isEntityUri(value))
+  return uniq(uris)
 }
 
 function indexByTasksKey (tasks, key, tasksUris) {

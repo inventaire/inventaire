@@ -12,7 +12,7 @@ export async function removeEntitiesByInvId (user: User, uris: InvEntityUri[]) {
 
   // Removing sequentially to avoid edit conflicts if entities or items
   // are concerned by several of the deleted entities.
-  // This makes it a potentially slow operation, which is OK, as it's an admin task
+  // This makes it a potentially slow operation
   async function removeNext () {
     const uri = uris.pop()
     if (uri == null) return
