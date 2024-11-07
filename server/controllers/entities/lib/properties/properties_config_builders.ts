@@ -75,3 +75,10 @@ export function externalIdWithFormatter ({ regex, format }) {
     validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
 }
+
+export function caseInsensitiveExternalId (regex: RegExp) {
+  return externalIdWithFormatter({
+    regex,
+    format: str => str.toLowerCase().trim(),
+  })
+}

@@ -16,7 +16,7 @@ import type { PropertyValueConstraints } from '#server/types/property'
 import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
-import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter } from './properties_config_builders.js'
+import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter, caseInsensitiveExternalId } from './properties_config_builders.js'
 
 const uuidPattern = /[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}/
 
@@ -86,7 +86,8 @@ export const propertiesValuesConstraints = {
   // NDL Authority ID
   'wdt:P349': externalId(/^(a1|s)?[0-9]?\d{8}$/),
   // DOI
-  'wdt:P356': externalId(/^10.\d{4,9}\/[^\s]+$/),
+  // See https://pardalotus.tech/posts/2024-10-02-falsehoods-programmers-believe-about-dois/#8-you-can-compare-doi-urls-for-equality
+  'wdt:P356': caseInsensitiveExternalId(/^10.\d{4,9}\/[^\s]+$/),
   // language of work
   'wdt:P407': languageEntity,
   // distribution format
