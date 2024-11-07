@@ -14,7 +14,7 @@ export interface externalSourceOccurrence {
   structuredDataSource: boolean
 }
 
-export interface SuggestionInterface {
+export type Suggestion = SerializedEntity & {
   lexicalScore?: number
   relationScore?: number
   entitiesType: EntityType
@@ -37,5 +37,3 @@ export interface Task extends CouchDoc {
   reporters?: UserId[]
   clue?: string
 }
-
-export type Suggestion = SerializedEntity & SuggestionInterface
