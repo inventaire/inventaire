@@ -11,22 +11,27 @@ const criticalClaimProperties = [
   'wdt:P629',
 ]
 
-export function verifyThatEntitiesCanBeRemoved (uris: InvEntityUri[]) {
+export async function verifyThatEntitiesCanBeRemoved (uris: InvEntityUri[]) {
   return Promise.all([
     entitiesRelationsChecks(uris),
     entitiesItemsChecks(uris),
   ])
 }
 
-const entitiesRelationsChecks = uris => Promise.all(uris.map(entityIsntUsedMuch))
+const entitiesRelationsChecks = uris => Promise.all(uris.map(validateEntityIsntUsedMuch))
 
-async function entityIsntUsedMuch (uri) {
+export async function getClaimsWithThisUri (uri) {
   const claims = await getInvClaimsByClaimValue(uri)
 
   claims.forEach(claim => { claim.entity = prefixifyInv(claim.entity) })
 
+  return claims
+}
+
+export async function validateEntityIsntUsedMuch (uri) {
   // Tolerating 1 claim: typically when a junk author entity is linked via a wdt:P50 claim
   // to a work, the author can be deleted, which will also remove the claim on the work
+  const claims = await getClaimsWithThisUri(uri)
   if (claims.length > 1) {
     throw newError('this entity is used has value in too many claims to be removed', 403, { uri, claims })
   }
