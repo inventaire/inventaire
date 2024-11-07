@@ -15,7 +15,7 @@ import type { UserId } from '#types/user'
 
 export async function getSuggestionsAndCreateTasks ({ entitiesType, toEntities, fromEntity, userId, clue }: { entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
   const existingTasks: Task[] = await getExistingTasks(fromEntity.uri)
-  let newToEntities: SerializedEntity[] = filterNewSuggestionEntities(toEntities, existingTasks)
+  const newToEntities: SerializedEntity[] = filterNewSuggestionEntities(toEntities, existingTasks)
   const suggestions: Suggestion[] = map(newToEntities, addToSuggestion(userId, clue))
   const suspectUri = fromEntity.uri
 

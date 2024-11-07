@@ -18,7 +18,7 @@ interface TaskDoc {
   clue?: string
 }
 
-export async function createTask (params?: TaskDoc={}) {
+export async function createTask (params?: TaskDoc = {}) {
   let taskDoc = await createTaskBase(params)
   if (taskDoc.entitiesType && taskDoc.entitiesType === 'work') {
     taskDoc = await createWorkTaskDoc(params)

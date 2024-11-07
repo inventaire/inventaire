@@ -63,7 +63,7 @@ describe('entities:merge:as:user', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('entities are refering to one antoher')
+      err.body.status_verbose.should.equal('entities are referring to one antoher')
     })
   })
 

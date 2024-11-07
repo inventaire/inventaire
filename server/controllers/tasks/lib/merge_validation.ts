@@ -24,7 +24,7 @@ export function validateEntitiesHaveAnyClaimLinkingToOneAnother (fromEntity: Ser
   const isToUriInRelatedEntityUris = isUriInClaimsValues(toEntity.uri, fromEntity.claims)
 
   if (isFromUriInRelatedEntityUris || isToUriInRelatedEntityUris) {
-    throw newError('entities are refering to one antoher', 400, {
+    throw newError('entities are referring to one antoher', 400, {
       fromEntityUri: fromEntity.uri,
       toEntityUri: toEntity.uri,
     })
