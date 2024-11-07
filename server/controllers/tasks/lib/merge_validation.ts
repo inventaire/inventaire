@@ -1,10 +1,10 @@
-import { uniq, pick } from 'lodash-es'
-import { concurrentIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
-import { isEntityUri, isNonEmptyArray } from '#lib/boolean_validations'
+import { pick } from 'lodash-es'
+import { concurrentIdsProperties, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import type { SerializedEntity } from '#server/types/entity'
-import type { EntityUri, Claims } from '#types/entity'
+import type { EntityUri } from '#types/entity'
 
 export function validateSameExternalIdentifiersProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
   const fromConcurrentIdsClaims = pick(fromEntity.claims, concurrentIdsProperties)
@@ -22,23 +22,22 @@ export function validateSameExternalIdentifiersProperties (fromEntity: Serialize
 }
 
 export function validateEntitiesHaveAnyClaimLinkingToOneAnother (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
-  const isFromUriInRelatedEntityUris = isUriInClaimsValues(fromEntity.uri, toEntity.claims)
-  const isToUriInRelatedEntityUris = isUriInClaimsValues(toEntity.uri, fromEntity.claims)
-
-  if (isFromUriInRelatedEntityUris || isToUriInRelatedEntityUris) {
-    throw newError('entities are referring to one antoher', 400, {
-      fromEntityUri: fromEntity.uri,
-      toEntityUri: toEntity.uri,
-    })
-  }
+  rejectIfEntitiesAreRelated(fromEntity, toEntity.uri)
+  rejectIfEntitiesAreRelated(toEntity, fromEntity.uri)
 }
 
-function isUriInClaimsValues (uri: EntityUri, claims: Claims) {
-  // This should still work after adding new relation properties
-  const uris = Object.values(claims)
-    .flat()
-    .filter(value => isEntityUri(value))
-  const uniqUris = uniq(uris)
-
-  return uniqUris.includes(uri)
+function rejectIfEntitiesAreRelated (entity: SerializedEntity, otherEntityUri: EntityUri) {
+  for (const [ property, values ] of objectEntries(entity.claims)) {
+    if (getPropertyDatatype(property) === 'entity') {
+      for (const value of values) {
+        if (value === otherEntityUri) {
+          throw newError('entities are referring to one antoher', 400, {
+            entity: entity.uri,
+            relatedTo: otherEntityUri,
+            property,
+          })
+        }
+      }
+    }
+  }
 }

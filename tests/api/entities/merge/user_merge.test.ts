@@ -76,6 +76,7 @@ describe('entities:merge:as:user', () => {
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('entities are referring to one antoher')
+      err.body.context.property.should.equal('wdt:P921')
     })
   })
 
