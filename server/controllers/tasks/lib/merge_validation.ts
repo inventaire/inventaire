@@ -1,21 +1,23 @@
-import { uniq, pick, intersection } from 'lodash-es'
-import { externalIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { uniq, pick } from 'lodash-es'
+import { concurrentIdsProperties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isEntityUri, isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import type { SerializedEntity } from '#server/types/entity'
 import type { EntityUri, Claims } from '#types/entity'
 
 export function validateSameExternalIdentifiersProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
-  const fromExternalIdsClaims = pick(fromEntity.claims, externalIdsProperties)
-  const toExternalIdsClaims = pick(toEntity.claims, externalIdsProperties)
+  const fromConcurrentIdsClaims = pick(fromEntity.claims, concurrentIdsProperties)
 
-  const commonExternalIdsProperties = intersection(Object.keys(fromExternalIdsClaims), Object.keys(toExternalIdsClaims))
-  if (isNonEmptyArray(commonExternalIdsProperties)) {
-    throw newError(`entities have conflicting properties: ${commonExternalIdsProperties}`, 400, {
-      fromEntityUri: fromEntity.uri,
-      toEntityUri: toEntity.uri,
-      commonExternalIdsProperties,
-    })
+  for (const [ property, fromValues ] of objectEntries(fromConcurrentIdsClaims)) {
+    const toPropertyValues = toEntity.claims[property]
+    if (isNonEmptyArray(toPropertyValues) && fromValues.some(value => !arrayIncludes(toPropertyValues, value))) {
+      throw newError('entities have conflicting properties', 400, {
+        fromEntityUri: fromEntity.uri,
+        toEntityUri: toEntity.uri,
+        conflictingProperty: property,
+      })
+    }
   }
 }
 

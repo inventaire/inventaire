@@ -309,3 +309,15 @@ export type ExternalIdProperty = keyof ExternalIdPropertiesValuesConstraints
 export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
   return propertiesValuesConstraints[property].datatype === 'external-id'
 }) as ExternalIdProperty[]
+
+type ConcurrentIdPropertiesValuesConstraints = OmitNever<{
+  [P in keyof PropertiesValuesConstraints]: PropertiesValuesConstraints[P] & { concurrency: true }
+}>
+
+export type ConcurrentIdProperty = keyof ConcurrentIdPropertiesValuesConstraints
+
+/** concurrentIdsProperties extends externalIdsProperties by including concurrent string properties such as ISBNs */
+export const concurrentIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
+  const prop = propertiesValuesConstraints[property]
+  return 'concurrency' in prop && prop.concurrency === true
+}) as ConcurrentIdProperty[]

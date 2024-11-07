@@ -313,7 +313,7 @@ export async function getSomeRemoteEditionWithALocalLayer () {
 
 interface ExistsOrCreateParams {
   claims: Claims
-  createFn: (params: { claims: Claims }) => Promise<SerializedEntity>
+  createFn?: (params: { claims: Claims }) => Promise<SerializedEntity>
 }
 export async function existsOrCreate ({ claims, createFn = createWork }: ExistsOrCreateParams) {
   try {

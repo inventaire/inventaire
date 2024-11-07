@@ -12,6 +12,7 @@ import {
   addPublisher,
   createSerieWithAuthor,
   existsOrCreate,
+  someOpenLibraryId,
 } from '#tests/api/fixtures/entities'
 import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
@@ -35,12 +36,10 @@ describe('entities:merge:as:user', () => {
     })
   })
 
-  it('should reject merging if entities have an external identifier property in common', async () => {
-    const whateverOLId = 'OL11111W'
-    // @ts-expect-error
+  it('should reject merging if entities have conflicting external identifiers', async () => {
     const work = await existsOrCreate({
       claims: {
-        'wdt:P648': [ whateverOLId ],
+        'wdt:P648': [ someOpenLibraryId('work') ],
       },
     })
     // wdWorkUri should have a 'wdt:P648' claim
@@ -49,7 +48,20 @@ describe('entities:merge:as:user', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('entities have conflicting properties')
+      err.body.context.conflictingProperty.should.equal('wdt:P648')
     })
+  })
+
+  it('should merge if entities have the same external identifier', async () => {
+    const wdWorkUri = 'wd:Q18120925'
+    const workOpenLibraryId = 'OL4504172W'
+    const work = await existsOrCreate({
+      claims: {
+        'wdt:P648': [ workOpenLibraryId ],
+      },
+    })
+    await userMerge(work.uri, wdWorkUri)
   })
 
   it('should reject merging entities that have claim linking to one another', async () => {
