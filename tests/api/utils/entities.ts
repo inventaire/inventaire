@@ -11,7 +11,7 @@ import { waitForIndexation } from '#tests/api/utils/search'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
-import { publicReq, authReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
+import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
@@ -68,9 +68,10 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
 
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
-export function deleteByUris (uris: EntityUri[]) {
+export function deleteByUris (uris: EntityUri[], options: { user?: AwaitableUserWithCookie } = {}) {
   if (uris.length === 0) return
-  return authReq('post', '/api/entities?action=delete', { uris })
+  const user = options.user || getDataadminUser()
+  return customAuthReq(user, 'post', '/api/entities?action=delete', { uris })
 }
 
 export async function getReverseClaims (property: PropertyUri, value: InvClaimValue) {
