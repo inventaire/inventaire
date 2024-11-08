@@ -1,6 +1,7 @@
 import { values } from 'lodash-es'
 import { forceArray } from '#lib/utils/base'
 import type { EntityType } from '#server/types/entity'
+import type { TaskType } from '#server/types/task'
 import type { Url } from '#types/common'
 import { publicReq, adminReq } from './utils.js'
 
@@ -37,7 +38,7 @@ export async function getByScore ({ limit, offset }: { limit?: number, offset?: 
   return tasks
 }
 
-export async function getByEntitiesType ({ type, entitiesType, limit, offset }: { type: any, entitiesType: EntityType, limit?: number, offset?: number }) {
+export async function getByEntitiesType ({ type, entitiesType, limit, offset }: { type: TaskType, entitiesType: EntityType, limit?: number, offset?: number }) {
   let url: Url = `${endpoint}by-entities-type&type=${type}&entities-type=${entitiesType}`
   if (limit != null) url += `&limit=${limit}`
   if (offset != null) url += `&offset=${offset}`
@@ -54,4 +55,9 @@ export async function checkEntities (uris) {
   await adminReq('post', `${endpoint}check-human-duplicates`, { uris })
   const getTasksBySuspectUris = await getBySuspectUris(uris)
   return values(getTasksBySuspectUris).flat()
+}
+
+export async function tasksCount () {
+  const { tasksCount } = await publicReq('get', `${endpoint}tasks-count`)
+  return tasksCount
 }

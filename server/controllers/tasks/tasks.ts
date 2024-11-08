@@ -7,6 +7,7 @@ import byScore from './by_score.js'
 import checkHumanDuplicates from './check_human_duplicates.js'
 import collectHumanDuplicates from './collect_human_duplicates.js'
 import deduplicateWorks from './deduplicate_works.js'
+import getTasksCount from './get_tasks_count.js'
 import update from './update.js'
 
 export default {
@@ -17,6 +18,7 @@ export default {
       'by-entities-type': byEntitiesType,
       'by-uris': bySuspectUris,
       'by-suggestion-uris': bySuggestionUris,
+      'tasks-count': getTasksCount,
     },
   }),
 
