@@ -127,9 +127,9 @@ function indexByTasksKey (tasks, key, tasksUris) {
 function getKeys (uris: EntityUri[], includeArchived?: boolean) {
   const keys = uris.map(buildKey(null))
   if (includeArchived == null) return keys
-  const mergedKeys = uris.map(buildKey('merged'))
+  const processedKeys = uris.map(buildKey('processed'))
   const dissmissedKeys = uris.map(buildKey('dismissed'))
-  return keys.concat(mergedKeys, dissmissedKeys)
+  return keys.concat(processedKeys, dissmissedKeys)
 }
 
 const buildKey = state => uri => [ uri, state ]
