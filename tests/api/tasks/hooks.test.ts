@@ -19,7 +19,7 @@ describe('tasks:hooks', () => {
       await findOrIndexEntities(wikidataUris)
     })
 
-    it('should update same suspect tasks to merged state ', async () => {
+    it('should update same suspect tasks to processed state ', async () => {
       const { uri: suspectUri } = await createHuman({ labels: { en: 'Victor Hugo' } })
       await createTask({
         suspectUri,
@@ -32,10 +32,10 @@ describe('tasks:hooks', () => {
       await merge(suspectUri, 'wd:Q535')
       await wait(hookDelay)
       const [ updatedTask ] = await getByIds(otherTask._id)
-      updatedTask.state.should.equal('merged')
+      updatedTask.state.should.equal('processed')
     })
 
-    it('should update task state to merged', async () => {
+    it('should update task state to processed', async () => {
       const [ suspect, suggestion ] = await Promise.all([ createHuman(), createHuman() ])
       const taskParams = {
         suspectUri: suspect.uri,
@@ -45,7 +45,7 @@ describe('tasks:hooks', () => {
       await merge(suspect.uri, suggestion.uri)
       await wait(hookDelay)
       const [ updatedTask ] = await getByIds(task._id)
-      updatedTask.state.should.equal('merged')
+      updatedTask.state.should.equal('processed')
     })
   })
 
@@ -80,7 +80,7 @@ describe('tasks:hooks', () => {
       await merge(task.suspectUri, task.suggestionUri)
       await wait(hookDelay)
       const [ refreshedTask ] = await getByIds(task._id)
-      refreshedTask.state.should.equal('merged')
+      refreshedTask.state.should.equal('processed')
       await revertMerge(refreshedTask.suspectUri)
       await wait(150)
       const [ rerefreshedTask ] = await getByIds(task._id)
@@ -89,7 +89,7 @@ describe('tasks:hooks', () => {
   })
 
   describe('entity removed', () => {
-    it('should update tasks to merged state when the entity is deleted', async () => {
+    it('should update tasks to processed state when the entity is deleted', async () => {
       const suspect = await createHuman()
       await createTask({ suspectUri: suspect.uri })
       await deleteEntityByUris([ suspect.uri ])

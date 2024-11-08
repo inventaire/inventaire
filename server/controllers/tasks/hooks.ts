@@ -32,11 +32,11 @@ function deleteBySuggestionUriAndRecheckSuspects (previousSuggestionUri: EntityU
 function archiveTasks (tasks: Task[]) {
   if (tasks.length === 0) return
   const ids = map(tasks, '_id')
-  return updateTasks({ ids, attribute: 'state', newValue: 'merged' })
+  return updateTasks({ ids, attribute: 'state', newValue: 'processed' })
 }
 
 async function revertArchive (uri: EntityUri) {
-  const tasks = await getTasksBySuspectUriAndState(uri, 'merged')
+  const tasks = await getTasksBySuspectUriAndState(uri, 'processed')
   const ids = map(tasks, '_id')
   return updateTasks({ ids, attribute: 'state', newValue: undefined })
 }

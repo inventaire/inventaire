@@ -3,7 +3,7 @@ export default {
 
   entitiesType: [ 'work', 'human', 'publisher', 'collection', 'edition', 'serie' ],
 
-  state: [ undefined, 'merged', 'dismissed' ],
+  state: [ undefined, 'processed', 'dismissed' ],
 
   relationScore: [],
 
