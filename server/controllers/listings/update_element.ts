@@ -16,6 +16,7 @@ const sanitization = {
     optional: true,
   },
   ordinal: { optional: true },
+  list: { optional: true },
 }
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
