@@ -24,6 +24,7 @@ export const attributes = {
     'comment',
   ],
   updatable: [
+    'list',
     'uri',
     'ordinal',
     'comment',

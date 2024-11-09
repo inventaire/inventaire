@@ -1,4 +1,6 @@
 import { sentence } from '#fixtures/text'
+import should from 'should'
+import { createListing } from '#fixtures/listings'
 import { wait } from '#lib/promises'
 import { getListingById, getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
@@ -87,6 +89,20 @@ describe('element:update', () => {
     })
     const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
     updatedElementListing2.elements[0].comment.should.equal('')
+  })
+
+describe('element:update:list', () => {
+  it('should update attribute with the recipient listing id', async () => {
+    const { listing } = await createListing()
+    const { listing: elementListing } = await createListingWithElements()
+    const { elements } = elementListing
+    const element = elements[0]
+    await authReq('post', endpoint, {
+      id: element._id,
+      list: listing._id,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(element._id)
   })
 })
 

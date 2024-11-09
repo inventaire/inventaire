@@ -13,6 +13,7 @@ const sanitization = {
     optional: true,
   },
   ordinal: { optional: true },
+  list: { optional: true },
 }
 
 const controller = async params => {
