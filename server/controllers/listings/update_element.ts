@@ -1,10 +1,13 @@
 import { pick } from 'lodash-es'
 import { getElementById, updateElementDocAttributes } from '#controllers/listings/lib/elements'
+import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import { getListingById, getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
-import { notFoundError } from '#lib/error/error'
+import { isNonEmptyArray } from '#lib/boolean_validations'
+import { newError, notFoundError } from '#lib/error/error'
 import { attributes } from '#models/element'
 import type { ListingElement } from '#types/element'
-import type { Listing } from '#types/listing'
+import type { Listing, ListingId, ListingWithElements } from '#types/listing'
+import type { UserId } from '#types/user'
 
 const sanitization = {
   id: {},
@@ -17,17 +20,20 @@ const sanitization = {
 }
 
 const controller = async params => {
-  const { id, reqUserId, ordinal } = params
+  const { id, reqUserId, ordinal, list: recipientListingId } = params
   const element: ListingElement = await getElementById(id)
 
   if (!element) throw notFoundError({ elementId: id })
 
   let listing: Listing
   let elements: ListingElement[]
+
   if (ordinal != null) {
-    const listingWithElements = await getListingWithElements(element.list)
+    const listingWithElements: ListingWithElements = await getListingWithElements(element.list)
     validateListingOwnership(reqUserId, listingWithElements)
     ;({ elements } = listingWithElements)
+  } else if (recipientListingId != null) {
+    await validateUpdateListing(reqUserId, element, recipientListingId)
   } else {
     listing = await getListingById(element.list)
     validateListingOwnership(reqUserId, listing)
@@ -41,4 +47,18 @@ export default {
   sanitization,
   controller,
   track: [ 'lists', 'updateElement' ],
+}
+
+async function validateUpdateListing (reqUserId: UserId, element: ListingElement, recipientListingId: ListingId) {
+  const listing: Listing = await getListingById(element.list)
+  validateListingOwnership(reqUserId, listing)
+  const recipientListing: ListingWithElements = await getListingWithElements(recipientListingId)
+  validateListingOwnership(reqUserId, recipientListing)
+  if (recipientListingId === listing._id) {
+    throw newError('element already belongs to the list', 400, { listId: listing._id })
+  }
+  const { foundElements } = filterFoundElementsUris(recipientListing.elements, [ element.uri ])
+  if (isNonEmptyArray(foundElements)) {
+    throw newError('element is already in the list', 400, { listId: listing._id })
+  }
 }
