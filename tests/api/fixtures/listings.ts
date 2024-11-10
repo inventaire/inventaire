@@ -52,7 +52,9 @@ export async function createListingWithElements (userPromise?: AwaitableUserWith
   return { listing: updatedListing, user, uris }
 }
 
-export const createElement = async ({ visibility = [ 'public' ], uri, listing }: { visibility?: VisibilityKey[], uri?: EntityUri, listing?: Listing }, userPromise?: AwaitableUserWithCookie) => {
+export const createElement = async (params = {}, userPromise?: AwaitableUserWithCookie) => {
+  const { visibility = [ 'public' ] }: { visibility?: VisibilityKey[] } = params
+  let { uri, listing }: { uri?: EntityUri, listing?: Listing } = params
   userPromise = userPromise || getUser()
   if (!listing) {
     const fixtureListing = await createListing(userPromise, { visibility })
