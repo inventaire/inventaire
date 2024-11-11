@@ -153,6 +153,20 @@ describe('element:update:list', () => {
       err.statusCode.should.equal(400)
     }
   })
+
+  it('should update ordinal to the last position of the recipient listing elements', async () => {
+    const elementsLength = 4
+    const { listing: elementListing } = await createListingWithElements()
+    const { listing: recipientListing } = await createListingWithElements(null, elementsLength)
+    const { elements } = elementListing
+    const element = elements[0]
+    await authReq('post', endpoint, {
+      id: element._id,
+      list: recipientListing._id,
+    })
+    const res = await getByIdWithElements({ id: recipientListing._id })
+    res.elements[elementsLength]._id.should.equal(element._id)
+  })
 })
 
 describe('element:update:ordinal', () => {
