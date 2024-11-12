@@ -85,14 +85,15 @@ function logStats () {
 }
 
 interface CachedSparqlRequestOptions extends SparqlRequestOptions {
+  cacheKeyPrefix: string
   ttl: number
   refresh?: boolean
 }
 export async function makeCachedSparqlRequest <Row> (sparql: string, options: CachedSparqlRequestOptions): Promise<Row[]> {
-  const { ttl, refresh } = options
+  const { cacheKeyPrefix, ttl, refresh } = options
   const hash = getHashCode(sparql)
   return cache_.get({
-    key: `sparql-request:${hash}`,
+    key: `${cacheKeyPrefix}:${hash}`,
     fn: () => makeSparqlRequest(sparql, options),
     ttl,
     refresh,

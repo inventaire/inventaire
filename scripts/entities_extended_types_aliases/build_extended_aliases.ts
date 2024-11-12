@@ -67,6 +67,7 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
     try {
       const batchIds = await makeCachedSparqlRequest<WdEntityId>(sparql, {
         minimize: true,
+        cacheKeyPrefix: `extended-aliases:${type}`,
         noHostBanOnTimeout: true,
         timeout: 60000,
         ttl: oneMonth,
@@ -92,7 +93,12 @@ async function hasInstance (id: WdEntityId) {
   const sparql = `SELECT ?instance { ?instance wdt:P31 wd:${id} . } LIMIT 1`
   // Cache those requests for a short time, in case the larger makeQueries call is interrupted
   // to avoid re-doing the same intermediary queries
-  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneMonth, refresh })
+  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, {
+    minimize: true,
+    cacheKeyPrefix: `has-instance:${id}`,
+    ttl: oneMonth,
+    refresh,
+  })
   return res.length === 1
 }
 
