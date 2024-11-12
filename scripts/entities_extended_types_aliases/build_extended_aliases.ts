@@ -6,7 +6,7 @@ import { makeCachedSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { absolutePath } from '#lib/absolute_path'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
-import { oneDay } from '#lib/time'
+import { oneMonth } from '#lib/time'
 import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
@@ -48,7 +48,7 @@ async function getTypeExtendedAliases (type: PluralizedEntityType, sparqlRequest
       // Use a a hash code in the key to bust outdated results when the query changes
       key: `extended-wd-aliases:${type}:${hashCode}`,
       fn: () => makeQueries(type, sparqlRequestsArray),
-      ttl: oneDay,
+      ttl: oneMonth,
       refresh,
     })
   } catch (err) {
@@ -69,7 +69,7 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
         minimize: true,
         noHostBanOnTimeout: true,
         timeout: 60000,
-        ttl: oneDay,
+        ttl: oneMonth,
         refresh,
       })
       ids.push(...batchIds)
@@ -92,7 +92,7 @@ async function hasInstance (id: WdEntityId) {
   const sparql = `SELECT ?instance { ?instance wdt:P31 wd:${id} . } LIMIT 1`
   // Cache those requests for a short time, in case the larger makeQueries call is interrupted
   // to avoid re-doing the same intermediary queries
-  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneDay, refresh })
+  const res = await makeCachedSparqlRequest<WdEntityId>(sparql, { minimize: true, ttl: oneMonth, refresh })
   return res.length === 1
 }
 
