@@ -4,7 +4,7 @@ import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
-import { types } from '#lib/wikidata/aliases'
+import { typesByExtendedP31AliasesValues } from '#lib/wikidata/extended_aliases'
 import type { ExtendedEntityType, InvPropertyClaims, Claims, EntityUri, InvClaim, EntityType } from '#server/types/entity'
 
 export function getInvEntityType (wdtP31Claims: InvPropertyClaims): EntityType {
@@ -51,5 +51,5 @@ export function getWdEntityType (entity: RawWdEntity) {
 
 function getP31Type (claim: InvClaim) {
   const value = getClaimValue(claim)
-  return types[value]
+  return typesByExtendedP31AliasesValues[value]
 }

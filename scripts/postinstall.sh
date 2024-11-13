@@ -3,6 +3,7 @@
 set -eu
 
 ./scripts/check_node_version.ts
+./scripts/entities_extended_types_aliases/check_extended_aliases_freshness.ts
 
 # Make git hooks trackable (see https://stackoverflow.com/a/4457124/3324977)
 rm -rf .git/hooks

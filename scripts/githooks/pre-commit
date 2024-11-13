@@ -4,3 +4,10 @@ set -eu
 
 echo -e "\e[0;30mstarting to lint...\e[0m"
 npm run lint-staged
+
+# Check entities extended types aliases freshness when at least one of the source file changes
+staged_entities_extended_types_aliases_files=$(git status --porcelain | grep --extended-regexp "^(A|M)" | grep --extended-regexp '.ts$' | sed --regexp-extended 's/^\w+\s+//' | grep -E '(extended_type|wikidata/aliases)' > /dev/null || echo "")
+if [ "$staged_entities_extended_types_aliases_files" != "" ] ; then
+  echo "staged_entities_extended_types_aliases_files: $staged_entities_extended_types_aliases_files"
+  ./scripts/entities_extended_types_aliases/check_extended_aliases_freshness.ts 1
+fi

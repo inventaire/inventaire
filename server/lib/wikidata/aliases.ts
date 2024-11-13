@@ -6,8 +6,9 @@ import type { ExtendedEntityType, WdEntityUri } from '#server/types/entity'
 
 const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 
-// TODO: replace this list by a SPARQL generated list
-// that can be refreshed from time to time
+// Those Wikidata items are the basic aliases from which extended aliases lists
+// will be found by following subclasses (wdt:P279), with some exceptions
+// See scripts/entities_extended_types_aliases/extended_type_aliases_queries.ts
 const wikidataOnlyP31Values = {
   humans: [
     'wd:Q10648343', // duo
@@ -78,6 +79,7 @@ const wikidataOnlyP31Values = {
     'wd:Q11825892', // young adult novel
     'wd:Q8275050', // children's book
     'wd:Q747381', // light novel
+    'wd:Q13136', // reference work
   ],
   editions: [
     'wd:Q3972943', // publishing
@@ -96,7 +98,6 @@ const wikidataOnlyP31Values = {
     'wd:Q21114848', // magazine genre
     'wd:Q20087698', // comics genre
     'wd:Q28468127', // target audience for manga
-    'wd:Q13136', // reference work
     'wd:Q108368282', // literary genre by form
     'wd:Q108317211', // novel genre
     'wd:Q20076756', // speculative fiction genre
@@ -156,31 +157,39 @@ const wikidataOnlyP31Values = {
   ],
 } as const
 
-type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
+export type PluralizedEntityType = keyof typeof wikidataOnlyP31Values
 
-export const typesAliases = {} as Record<PluralizedEntityType, WdEntityUri[]>
+export type TypesAliases = Record<PluralizedEntityType, WdEntityUri[]>
+export const primaryTypesAliases = {} as TypesAliases
 
 for (const [ type, wdTypeValues ] of objectEntries(wikidataOnlyP31Values)) {
   const invTypeValues = invP31Values[type] || []
-  typesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
+  primaryTypesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
 }
 
-export const types: Record<WdEntityUri, ExtendedEntityType> = {}
+type EntityTypeByP31Value = Record<WdEntityUri, ExtendedEntityType>
 
-for (const [ type, typeIds ] of objectEntries(typesAliases)) {
-  // Drop the plural form, including when deriving from English uses,
-  // notably: series => serie
-  const singularType = type.replace(/s$/, '') as ExtendedEntityType
-  for (const id of typeIds) {
-    types[id] = singularType
+export function getTypesFromTypesAliases (aliases: TypesAliases) {
+  const entityTypeByP31Value: EntityTypeByP31Value = {}
+
+  for (const [ type, typeIds ] of objectEntries(aliases)) {
+    // Drop the plural form, including when deriving from English uses,
+    // notably: series => serie
+    const singularType = type.replace(/s$/, '') as ExtendedEntityType
+    for (const id of typeIds) {
+      entityTypeByP31Value[id] = singularType
+    }
   }
+  return entityTypeByP31Value
 }
 
-export const typesNames = objectKeys(typesAliases)
+export const types = getTypesFromTypesAliases(primaryTypesAliases)
+
+export const typesNames = objectKeys(primaryTypesAliases)
 
 export function getPluralType (singularType) {
   const pluralizedType = singularType + 's'
-  if (!typesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
+  if (!primaryTypesAliases[pluralizedType]) throw newError('invalid type', 500, { singularType })
   return pluralizedType
 }
 

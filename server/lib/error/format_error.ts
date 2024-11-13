@@ -14,6 +14,7 @@ export interface ContextualizedError extends Error {
   emitter?: string
   notFound?: boolean
   statusCode?: number
+  retryAfter?: number
   type?: string
   attachReqContext?: string
   error_type?: string

@@ -2,7 +2,7 @@ import { isPropertyId } from 'wikibase-sdk'
 import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
-import type { EntityUri, InvEntityId, IsbnEntityUri, NormalizedIsbn, PropertyUri, WdEntityId, WdPropertyId } from '#types/entity'
+import type { EntityUri, InvEntityId, IsbnEntityUri, NormalizedIsbn, PropertyUri, WdEntityId, WdEntityUri, WdPropertyId } from '#types/entity'
 import type { Split } from 'type-fest'
 
 export function prefixify <I extends string, P extends string> (id: I, prefix?: P) {
@@ -35,4 +35,8 @@ export function prefixifyIsbn <T extends NormalizedIsbn> (isbn: T) {
 export function unprefixify <T extends EntityUri | PropertyUri> (uri: T) {
   assert_.string(uri)
   return uri.split(':')[1] as Split<T, ':'>[1]
+}
+
+export function getWdEntityUriNumericId (uri: WdEntityUri) {
+  return parseInt(uri.replace('wd:Q', ''))
 }

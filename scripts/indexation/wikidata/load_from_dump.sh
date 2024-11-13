@@ -18,6 +18,8 @@ which jq > /dev/null || {
 
 indexed_types_ids=$(mktemp)
 
+check_extended_aliases_freshness.ts 1
+
 ./scripts/print_module_exports.ts ./server/db/elasticsearch/indexes.ts indexedEntitiesTypesAliases |
   jq '.[]' -cr |
   sed --regexp-extended 's/wd:(Q.*)/"\1"/' > "$indexed_types_ids"
