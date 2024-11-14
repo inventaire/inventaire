@@ -294,6 +294,8 @@ export const propertiesValuesConstraints = {
   'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
   // NooSFere editorial collection ID
   'wdt:P13004': externalId(signedIntegerPattern),
+  // ISFDB editorial collection ID
+  'wdt:P13137': externalId(strictlyPositiveIntegerPattern),
 } as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>
 
 export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype

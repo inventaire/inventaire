@@ -466,6 +466,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P13004': {
     subjectTypes: [ 'collection' ],
   },
+  // ISFDB editorial collection ID
+  'wdt:P13137': {
+    subjectTypes: [ 'collection' ],
+  },
 }
 
 for (const property of workAuthorRelationsProperties) {
