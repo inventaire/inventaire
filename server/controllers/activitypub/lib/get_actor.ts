@@ -71,7 +71,7 @@ async function getEntityActor (name) {
     actorName,
     displayName: label,
     summary,
-    imagePath: entity.image.url,
+    imagePath: entity.image?.url,
     links,
     attachment: attachments,
   })
