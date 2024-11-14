@@ -72,7 +72,7 @@ export function updateElementDoc (newAttributes, oldElement, listingElements?) {
       newVal = newAttributes[attribute] || defaultValues[attribute]?.()
       validations.pass(attribute, newVal)
     }
-    if (newVal !== undefined) {
+    if (newVal != null) {
       newElement[attribute] = newVal
     }
   }
