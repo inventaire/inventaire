@@ -3,9 +3,10 @@ import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings
 import { createListing, createElement } from '#fixtures/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { Url } from '#types/common'
 
 const endpoint = '/api/lists?action='
-const removeElements = `${endpoint}remove-elements`
+const removeElements: Url = `${endpoint}remove-elements`
 
 describe('listings:remove-elements', () => {
   it('should reject without listing id', async () => {
@@ -77,7 +78,7 @@ describe('listings:remove-elements', () => {
 
   it('should remove from listing an element by its entity uris and delete the element', async () => {
     const { listing, uri, element } = await createElement({})
-    const resListing = await getListingsByIdsWithElements(listing._id)
+    const resListing = await getListingsByIdsWithElements([ listing._id ])
     resListing[0].elements.length.should.equal(1)
     await authReq('post', removeElements, {
       id: listing._id,
@@ -91,7 +92,7 @@ describe('listings:remove-elements', () => {
       err.body.reason.should.equal('deleted')
     })
 
-    await getListingsByIdsWithElements(listing._id)
+    await getListingsByIdsWithElements([ listing._id ])
     .then(lists => lists[0].elements.length.should.equal(0))
   })
 })

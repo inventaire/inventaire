@@ -8,7 +8,10 @@ import type { Listing } from '#types/listing'
 
 const sanitization = {
   id: {},
-  comment: { optional: true },
+  comment: {
+    canBeNull: true,
+    optional: true,
+  },
   ordinal: { optional: true },
 }
 
