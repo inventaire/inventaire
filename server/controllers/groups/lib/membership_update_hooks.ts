@@ -1,7 +1,7 @@
 import dbFactory from '#db/couchdb/base'
 import { setDeletedTrue } from '#lib/couch'
 import { emit, radio } from '#lib/radio'
-import { Log, logErrorMessage } from '#lib/utils/logs'
+import { Log, logError } from '#lib/utils/logs'
 import type { Group } from '#types/group'
 
 const db = await dbFactory('groups')
@@ -23,6 +23,6 @@ async function deleteGroupIfEmpty (groupId) {
       }
     }
   } catch (err) {
-    logErrorMessage(`group deletion err: ${groupId}`)
+    logError(err, `group deletion err: ${groupId}`)
   }
 }

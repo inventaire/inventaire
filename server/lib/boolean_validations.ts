@@ -95,7 +95,9 @@ export function isSimpleDay (str) {
     const truncatedIsoDate = isoDate.slice(0, str.length)
     isValidDate = truncatedIsoDate === str
   } catch (err) {
-    isValidDate = false
+    // RangeError is throwned by calling toISOString on an InvalidDate object
+    if (err.name === 'RangeError') isValidDate = false
+    else throw err
   }
 
   return isValidDate && regex_.SimpleDay.test(str)

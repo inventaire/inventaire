@@ -95,6 +95,7 @@ function getDomainsPromises (domains: Domains, params: EntitiesGetterParams) {
 
 type DomainsResults = Awaited<ReturnType<typeof getDomainsPromises>>
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatRichResults (results: DomainsResults, { includeReferences = false }) {
   const response = {
     // entities are a array until they are indexed by uri hereafter
