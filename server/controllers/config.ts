@@ -3,6 +3,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import config from '#server/config'
 
 const { piwik, spam, mapTilesAccessToken } = config
+const { remoteEntitiesOrigin } = config.federation
 
 assert_.array(spam.suspectKeywords)
 
@@ -12,6 +13,7 @@ const clientConfig = JSON.stringify({
   piwik: endpoint && endpoint.replace('/piwik.php', ''),
   spam,
   mapTilesAccessToken,
+  remoteEntitiesOrigin,
 })
 
 // A endpoint dedicated to pass configuration parameters to the client
