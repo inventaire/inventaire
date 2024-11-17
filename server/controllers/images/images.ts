@@ -3,7 +3,7 @@ import { radio } from '#lib/radio'
 import convertUrl from './convert_url.js'
 import dataUrl from './data_url.js'
 import gravatar from './gravatar.js'
-import checkImage from './lib/check_image.js'
+import { checkImage } from './lib/check_image.js'
 import upload from './upload.js'
 
 export default {

@@ -8,7 +8,7 @@ import config from '#server/config'
 
 const { checkDelays } = config.mediaStorage.images
 
-export default async function ({ container, hash, url, context }) {
+export async function checkImage ({ container, hash, url, context }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
   assert_.string(container)
   assert_.string(hash)
@@ -16,10 +16,10 @@ export default async function ({ container, hash, url, context }) {
   const delay = checkDelays[context]
   // Use 'setTimeout' instead of 'wait' to not hold any consumer
   // Especially, in test environment, requests wouldn't respond before radio events are fulfilled
-  setTimeout(checkImage.bind(null, container, hash), delay)
+  setTimeout(_checkImage.bind(null, container, hash), delay)
 }
 
-async function checkImage (container, hash) {
+async function _checkImage (container, hash) {
   try {
     const isUsed = await checkImagePerContainer[container](hash)
     if (!isUsed) {
