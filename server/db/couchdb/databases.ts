@@ -15,21 +15,39 @@ import { views as shelvesViews } from '#db/couchdb/design_docs/shelves'
 import { views as tasksViews } from '#db/couchdb/design_docs/tasks'
 import { views as transactionsViews } from '#db/couchdb/design_docs/transactions'
 import { views as usersViews } from '#db/couchdb/design_docs/users'
+import config from '#server/config'
 import type { DatabaseName } from '#types/couchdb'
 import type { DatabaseConfig } from '#types/couchdb_init'
 
+const federatedEntities = config.federation.remoteEntitiesOrigin != null
+
 export type Databases = Record<DatabaseName, DatabaseConfig['designDocs']>
 
+let entitiesRelatedDatabases
+if (federatedEntities) {
+  entitiesRelatedDatabases = {}
+} else {
+  entitiesRelatedDatabases = {
+    entities: {
+      entities: entitiesViews,
+      entities_deduplicate: entitiesDeduplicateViews,
+    },
+    patches: {
+      patches: patchesViews,
+    },
+    tasks: {
+      tasks: tasksViews,
+    },
+  }
+}
+
 export const databases: Databases = {
+  ...entitiesRelatedDatabases,
   activities: {
     activities: activitiesViews,
   },
   comments: {
     comments: commentsViews,
-  },
-  entities: {
-    entities: entitiesViews,
-    entities_deduplicate: entitiesDeduplicateViews,
   },
   groups: {
     groups: groupsViews,
@@ -46,17 +64,11 @@ export const databases: Databases = {
   notifications: {
     notifications: notificationsViews,
   },
-  patches: {
-    patches: patchesViews,
-  },
   elements: {
     elements: elementsViews,
   },
   shelves: {
     shelves: shelvesViews,
-  },
-  tasks: {
-    tasks: tasksViews,
   },
   oauth_authorizations: {},
   oauth_clients: {},
