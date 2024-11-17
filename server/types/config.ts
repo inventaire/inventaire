@@ -74,6 +74,10 @@ export type Config = ReadonlyDeep<{
     minReindexationInterval: number
   }
 
+  federation: {
+    remoteEntitiesOrigin: AbsoluteUrl
+  }
+
   // See server/data/dataseed/dataseed.js
   dataseed: {
     enabled: boolean
