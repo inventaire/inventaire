@@ -1,6 +1,7 @@
 import { couchdbBundlesFactory } from '#db/couchdb/bundles'
 import { databases } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
+import { newError } from '#lib/error/error'
 import config from '#server/config'
 import type { DatabaseBaseName, DatabaseName, DesignDocName } from '#types/couchdb'
 import getDbApi from './cot_base.js'
@@ -36,10 +37,13 @@ function getHandler (dbBaseName: string, dbName: string, designDocName: string) 
 // Not using error_ as that would make hard to solve cirucular dependencies
 function validate (dbBaseName: string, designDocName: string) {
   if (!databases[dbBaseName]) {
-    throw new Error(`unknown dbBaseName: ${dbBaseName}`)
+    throw newError(`unknown dbBaseName: ${dbBaseName}`, 500, { knownDatabases: Object.keys(databases) })
   }
 
   if (designDocName && !(designDocName in databases[dbBaseName])) {
-    throw new Error(`unknown designDocName: ${designDocName}`)
+    throw newError(`unknown designDocName: ${designDocName}`, 500, {
+      dbBaseName,
+      knownDesigndocs: Object.keys(databases[dbBaseName]),
+    })
   }
 }
