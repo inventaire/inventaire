@@ -2,7 +2,7 @@ import { map, property, sum, uniq } from 'lodash-es'
 import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getEntitiesPopularities } from '#controllers/entities/lib/popularity'
-import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
+import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { info, logError } from '#lib/utils/logs'
@@ -44,7 +44,7 @@ async function getItemsCount (uri) {
 // Limit request to local entities as Wikidata editions entities are currently ignored
 // see https://github.com/inventaire/inventaire/issues/182
 const getEditionsScores = property => uri => {
-  return reverseClaims({ property, value: uri, dry: true })
+  return getReverseClaims({ property, value: uri, dry: true })
   .then(editonsUris => {
     const editonsCount = editonsUris.length
     return Promise.all(editonsUris.map(getItemsCount))
