@@ -1,5 +1,5 @@
+import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
-import { reverseClaims } from './lib/reverse_claims.js'
 
 const sanitization = {
   property: {},
@@ -15,7 +15,7 @@ const sanitization = {
 
 async function controller (params: SanitizedParameters) {
   const { property, value, refresh, sort } = params
-  const uris = await reverseClaims({
+  const uris = await getReverseClaims({
     property,
     value: value as string,
     refresh,
