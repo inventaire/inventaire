@@ -10,7 +10,7 @@ export async function dbFactory (dbBaseName: string, designDocName?: string) {
   const dbName = config.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,
   // assumes that it is the default design doc, which has the same name as the dbBaseName
-  if (Object.keys(databases[dbBaseName]).length > 0 && designDocName == null) {
+  if (databases[dbBaseName] && Object.keys(databases[dbBaseName]).length > 0 && designDocName == null) {
     designDocName = dbBaseName
   }
   return getHandler(dbBaseName, dbName, designDocName)
