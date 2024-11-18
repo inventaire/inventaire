@@ -17,7 +17,7 @@ import type { EntityUri, InvSnakValue, PropertyUri, WdEntityId, WdPropertyUri } 
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
-const { getReverseClaims } = wdk
+const { getReverseClaims: buildGetReverseClaimsUrl } = wdk
 
 const caseInsensitiveProperties = [
   'wdt:P2002',
@@ -37,7 +37,7 @@ interface ReverseClaimsParams {
   dry?: boolean
 }
 
-export async function reverseClaims (params: ReverseClaimsParams) {
+export async function getReverseClaims (params: ReverseClaimsParams) {
   const { property, value, refresh, sort, dry } = params
   assert_.strings([ property, value ])
 
@@ -93,7 +93,7 @@ async function _wikidataReverseClaims (property: WdPropertyUri, value: InvSnakVa
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
   log([ property, value ], 'reverse claim')
-  const url = getReverseClaims({ properties: wdProp, values: value, caseInsensitive }) as AbsoluteUrl
+  const url = buildGetReverseClaimsUrl({ properties: wdProp, values: value, caseInsensitive }) as AbsoluteUrl
   const results = await requests_.get(url)
   return minimizeSimplifiedSparqlResults(simplifySparqlResults(results))
   .map(wdId => prefixifyWd(wdId))
