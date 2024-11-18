@@ -7,7 +7,7 @@ import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/u
 describe('activitypub:post:inbox', () => {
   it('should reject without activity id in body', async () => {
     try {
-      const { username } = await createUsername()
+      const username = await createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
         url: inboxUrl,
@@ -24,7 +24,7 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject without activity type', async () => {
     try {
-      const { username } = await createUsername()
+      const username = await createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const body = createActivity()
       delete body.type
@@ -43,7 +43,7 @@ describe('activitypub:post:inbox', () => {
 
   it('should reject without an activity object', async () => {
     try {
-      const { username } = await createUsername()
+      const username = await createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
         url: inboxUrl,
@@ -62,7 +62,7 @@ describe('activitypub:post:inbox', () => {
       const { username } = await createUser({ fediversable: false })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       await signedReq({
-        object: 'invalidActorUrl',
+        object: 'http://invalidActorUrl',
         url: inboxUrl,
       })
       .then(shouldNotBeCalled)

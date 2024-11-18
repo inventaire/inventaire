@@ -7,7 +7,7 @@ import type { AbsoluteUrl, Host, Origin } from '#server/types/common'
 let port = 10000 + parseInt(Date.now().toString().slice(-4))
 
 type App = ReturnType<typeof express>
-type Server = ReturnType<App['listen']>
+export type Server = ReturnType<App['listen']>
 
 export function startGenericMockServer (serverSetupFn: (app: App) => void): Promise<{ port: number, host: Host, origin: Origin, server: Server }> {
   return new Promise(resolve => {

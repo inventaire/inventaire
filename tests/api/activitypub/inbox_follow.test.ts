@@ -9,6 +9,7 @@ import { requests_ } from '#lib/requests'
 import { signedReq, createRemoteActivityPubServerUser } from '#tests/api/utils/activitypub'
 import { getActorName } from '#tests/api/utils/shelves'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { ObjectType } from '#types/activity'
 
 describe('activitypub:inbox:Follow', () => {
   describe('users', () => {
@@ -46,8 +47,8 @@ describe('activitypub:inbox:Follow', () => {
     it('should not recreate a Follow activity if actor is already following someone', async () => {
       const emitterUser = await createRemoteActivityPubServerUser()
       const { username } = await createUser({ fediversable: true })
-      const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } }) as ObjectType
       const requestPromise = signedReq({
         emitterUser,
         object: actorUrl,

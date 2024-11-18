@@ -9,13 +9,14 @@ import {
   createActivity,
   getSomeRemoteServerUser,
   createRemoteActivityPubServerUser,
+  type TestsActorActivity,
 } from '#tests/api/utils/activitypub'
 import { rawRequest } from '#tests/api/utils/request'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
 const endpoint = '/api/activitypub'
 
-const inboxReq = async ({ emitterUser, username }) => {
+const inboxReq = async ({ emitterUser, username }: { emitterUser?: TestsActorActivity, username?: string }) => {
   if (!username) username = createUsername()
   const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
   const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
@@ -31,7 +32,7 @@ describe('activitypub:signed:request', () => {
     try {
       const username = createUsername()
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity({ actor: 'foo', object: 'bar' })
+      const body = createActivity({ actor: 'http://foo', object: 'bar' })
       await rawRequest('post', inboxUrl, {
         headers: {
           'content-type': 'application/activity+json',
@@ -64,7 +65,10 @@ describe('activitypub:signed:request', () => {
   it('should reject when fetching an invalid publicKey', async () => {
     try {
       const emitterUser = await createRemoteActivityPubServerUser()
-      emitterUser.publicKey = 'foo'
+      emitterUser.publicKey = {
+        id: 'foo',
+        owner: 'http://bar',
+      }
       await inboxReq({ emitterUser })
       .then(shouldNotBeCalled)
     } catch (err) {
@@ -103,6 +107,7 @@ describe('activitypub:signed:request', () => {
       }
       const signedHeadersNames = Object.keys(reqHeaders).join(' ')
       const method = 'post'
+      // @ts-expect-error
       reqHeaders.signature = sign({
         method,
         keyId,
@@ -112,7 +117,7 @@ describe('activitypub:signed:request', () => {
         reqHeaders,
       })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const body = createActivity({ actor: 'foo', object: 'bar' })
+      const body = createActivity({ actor: 'http://foo', object: 'bar' })
       await rawRequest(method, inboxUrl, {
         headers: reqHeaders,
         body,
@@ -128,8 +133,7 @@ describe('activitypub:signed:request', () => {
 
   it('should verify request', async () => {
     const { username } = await createUser({ fediversable: true })
-    const res = await inboxReq({ username })
-    const resBody = JSON.parse(res.body)
-    resBody.ok.should.be.true()
+    const { statusCode } = await inboxReq({ username })
+    statusCode.should.equal(200)
   })
 })
