@@ -11,6 +11,7 @@ import { customAuthReq } from '#tests/api/utils/request'
 import { getActorName } from '#tests/api/utils/shelves'
 import { publicReq, getFediversableUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { Url } from '#types/common'
 
 const origin = config.getPublicOrigin()
 const debounceTime = config.activitypub.activitiesDebounceTime + 50
@@ -22,7 +23,7 @@ describe('outbox', () => {
       try {
         const user = createUser({ fediversable: false })
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}`
+        const outboxUrl: Url = `${endpoint}${username}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -36,7 +37,7 @@ describe('outbox', () => {
       await createItem(user)
       const { username } = await user
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${username}`
+      const outboxUrl: Url = `${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
       const url = `${origin}${outboxUrl}`
       res.id.should.equal(url)
@@ -52,11 +53,11 @@ describe('outbox', () => {
       const itemB = await createItem(user, { visibility: [ 'public' ] })
       await wait(debounceTime)
       const { username } = await user
-      const firstOutboxPage = `${endpoint}${username}&offset=0&limit=1`
+      const firstOutboxPage: Url = `${endpoint}${username}&offset=0&limit=1`
       const res1 = await publicReq('get', firstOutboxPage)
       res1.orderedItems.length.should.equal(1)
       res1.orderedItems[0].object.content.should.containEql(itemB._id)
-      const nextOutboxPage = `${endpoint}${username}&offset=1&limit=1`
+      const nextOutboxPage: Url = `${endpoint}${username}&offset=1&limit=1`
       const res2 = await publicReq('get', nextOutboxPage)
       res2.orderedItems.length.should.equal(1)
       res2.orderedItems[0].object.content.should.containEql(itemA._id)
@@ -68,7 +69,7 @@ describe('outbox', () => {
       const item = await createItem(user, { details })
       const { username } = await user
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${username}&offset=0`
+      const outboxUrl: Url = `${endpoint}${username}&offset=0`
       const url = `${origin}${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
       res.type.should.equal('OrderedCollectionPage')
@@ -93,7 +94,7 @@ describe('outbox', () => {
       await createItem(user)
       const { username } = await user
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${username}&offset=0`
+      const outboxUrl: Url = `${endpoint}${username}&offset=0`
       const res = await publicReq('get', outboxUrl)
       res.orderedItems[0].object.content.should.not.containEql('undefined')
     })
@@ -103,7 +104,7 @@ describe('outbox', () => {
       await createItem(user, { visibility: [ 'friends', 'groups' ] })
       const { username } = await user
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${username}&offset=0`
+      const outboxUrl: Url = `${endpoint}${username}&offset=0`
       const res = await publicReq('get', outboxUrl)
       res.orderedItems.length.should.equal(0)
     })
@@ -114,7 +115,7 @@ describe('outbox', () => {
         const user = createUser({ fediversable: true })
         const item = await createItem(user)
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         await wait(debounceTime)
         item.transaction = 'lending'
         await customAuthReq(user, 'put', '/api/items', item)
@@ -131,7 +132,7 @@ describe('outbox', () => {
         ])
         await wait(debounceTime)
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         const res1 = await publicReq('get', outboxUrl)
         res1.orderedItems.length.should.equal(1)
         res1.orderedItems[0].object.content.should.containEql(publicItem._id)
@@ -150,7 +151,7 @@ describe('outbox', () => {
         const user = createUser({ fediversable: true })
         await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(1)
@@ -161,7 +162,7 @@ describe('outbox', () => {
         await createItem(user)
         await createItem(user)
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(1)
@@ -173,7 +174,7 @@ describe('outbox', () => {
         await wait(debounceTime)
         await createItem(user)
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         await wait(debounceTime)
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(2)
@@ -183,7 +184,7 @@ describe('outbox', () => {
         const user = createUser({ fediversable: true })
         await createItem(user)
         const { username } = await user
-        const outboxUrl = `${endpoint}${username}&offset=0`
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
         const res = await publicReq('get', outboxUrl)
         res.orderedItems.length.should.equal(0)
       })
@@ -195,7 +196,7 @@ describe('outbox', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri } = await createWork()
       await addAuthor(workUri, authorUri)
-      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
+      const outboxUrl: Url = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', outboxUrl)
       const url = `${origin}${outboxUrl}`
       res.id.should.equal(url)
@@ -210,7 +211,7 @@ describe('outbox', () => {
       const { uri: workUri, _id: workId } = await createWork()
       await addAuthor(workUri, authorUri)
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
+      const outboxUrl: Url = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
       const url = `${origin}${outboxUrl}`
       res.type.should.equal('OrderedCollectionPage')
@@ -240,11 +241,13 @@ describe('outbox', () => {
         addAuthor(workUri2, authorUri),
       ])
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${getEntityActorName(authorUri)}`
-      const res1 = await publicReq('get', `${outboxUrl}&offset=0&limit=1`)
+      const outboxUrl: Url = `${endpoint}${getEntityActorName(authorUri)}`
+      const outboxQuery: Url = `${outboxUrl}&offset=0&limit=1`
+      const res1 = await publicReq('get', outboxQuery)
       res1.orderedItems.length.should.equal(1)
       new URL(res1.orderedItems[0].object.id).searchParams.get('id').should.containEql(workId2)
-      const res2 = await publicReq('get', `${outboxUrl}&offset=1&limit=1`)
+      const outboxQuery2: Url = `${outboxUrl}&offset=1&limit=1`
+      const res2 = await publicReq('get', outboxQuery2)
       res2.orderedItems.length.should.equal(1)
       new URL(res2.orderedItems[0].object.id).searchParams.get('id').should.containEql(workId1)
     })
@@ -253,7 +256,7 @@ describe('outbox', () => {
   describe('shelves', () => {
     it('reject invalid shelf id', async () => {
       try {
-        const outboxUrl = `${endpoint}shelf-foo`
+        const outboxUrl: Url = `${endpoint}shelf-foo`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -267,7 +270,7 @@ describe('outbox', () => {
         const user = createUser({ fediversable: false })
         const { shelf } = await createShelf(user)
         const name = getActorName(shelf)
-        const outboxUrl = `${endpoint}${name}`
+        const outboxUrl: Url = `${endpoint}${name}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -281,7 +284,7 @@ describe('outbox', () => {
         const user = createUser({ fediversable: true })
         const { shelf } = await createShelf(user, { visibility: [ 'friends' ] })
         const name = getActorName(shelf)
-        const outboxUrl = `${endpoint}${name}`
+        const outboxUrl: Url = `${endpoint}${name}`
         await publicReq('get', outboxUrl).then(shouldNotBeCalled)
       } catch (err) {
         rethrowShouldNotBeCalledErrors(err)
@@ -294,7 +297,7 @@ describe('outbox', () => {
       const { shelf } = await createShelfWithItem({}, null, getFediversableUser())
       await wait(debounceTime)
       const name = getActorName(shelf)
-      const outboxUrl = `${endpoint}${name}`
+      const outboxUrl: Url = `${endpoint}${name}`
       const res = await publicReq('get', outboxUrl)
       const url = `${origin}${outboxUrl}`
       res.id.should.equal(url)
@@ -308,7 +311,7 @@ describe('outbox', () => {
       const { shelf, item } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
       await wait(debounceTime)
-      const outboxUrl = `${endpoint}${name}&offset=0`
+      const outboxUrl: Url = `${endpoint}${name}&offset=0`
       const res = await publicReq('get', outboxUrl)
       const url = `${origin}${endpoint}${name}`
       res.type.should.equal('OrderedCollectionPage')

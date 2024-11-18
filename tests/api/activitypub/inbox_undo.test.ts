@@ -119,7 +119,7 @@ describe('activitypub:inbox:Undo', () => {
         object: {
           id: activity.externalId,
           type: 'Follow',
-          actor: emitterUser.actor,
+          actor: emitterUser.id,
           object: actorUrl,
         },
       })

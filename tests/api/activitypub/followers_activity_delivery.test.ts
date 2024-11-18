@@ -11,6 +11,8 @@ import config from '#server/config'
 import { signedReq } from '#tests/api/utils/activitypub'
 import { addItemsToShelf, getActorName } from '#tests/api/utils/shelves'
 import { rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { ObjectType } from '#types/activity'
+import type { Url } from '#types/common'
 
 const debounceTime = config.activitypub.activitiesDebounceTime + 200
 
@@ -19,7 +21,7 @@ describe('followers activity delivery', () => {
     it('should post an activity to inbox', async () => {
       const user = await createUser({ fediversable: true })
       const { username } = user
-      const followedActorUrl = makeUrl({ params: { action: 'actor', name: username } })
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
       const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
       const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
         url: inboxUrl,
@@ -29,7 +31,8 @@ describe('followers activity delivery', () => {
       const details = randomWords(4)
       const item = await createItem(user, { details })
       await wait(debounceTime)
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
+      const url: Url = `${remoteHost}/inbox_inspection?username=${remoteUsername}`
+      const { inbox } = await requests_.get(url)
       const createActivity = inbox.find(a => a.type === 'Create')
       createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.object.content.should.containEql(item._id)
@@ -106,12 +109,11 @@ describe('followers activity delivery', () => {
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
-      const res = await signedReq({
+      const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
       })
-      const { remoteHost, remoteUserId, remoteUsername } = res
       const { _id: itemId } = await createItem(user)
       await addItemsToShelf(user, shelf, [ itemId ])
       await wait(debounceTime)
@@ -128,12 +130,11 @@ describe('followers activity delivery', () => {
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
       const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
-      const res = await signedReq({
+      const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
       })
-      const { remoteHost, remoteUserId, remoteUsername } = res
       const { _id: itemId } = await createItem(user, {
         shelves: [ shelf._id ],
       })

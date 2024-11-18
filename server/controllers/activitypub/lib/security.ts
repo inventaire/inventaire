@@ -120,7 +120,7 @@ async function fetchActorPublicKey (actorUrl) {
   if (!publicKeyPem) {
     throw newError('no publicKeyPem found', 400, actor)
   }
-  if (!publicKeyPem.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
+  if (!publicKeyPem?.publicKeyHash.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
     throw newError('invalid publicKeyPem found', 400, actor.publicKey)
   }
   // TODO: handle timeout

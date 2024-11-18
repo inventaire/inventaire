@@ -25,7 +25,7 @@ export const createItems = async (user, itemsData = []) => {
   return customAuthReq(user, 'post', '/api/items', items)
 }
 
-export async function createItem (user, itemData) {
+export async function createItem (user, itemData?) {
   user = user || getUser()
   itemData = itemData || {}
   itemData.visibility = itemData.visibility || [ 'public' ]
