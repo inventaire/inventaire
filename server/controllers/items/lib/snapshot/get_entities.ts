@@ -1,7 +1,6 @@
 import { getAggregatedPropertiesValues } from '#controllers/entities/lib/entities'
-import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
-import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
+import { getEntitiesByUris, getEntityByUri } from '#controllers/entities/lib/remote/instance_agnostic_entities'
 import { assert_ } from '#lib/utils/assert_types'
 import type { EntityUri } from '#types/entity'
 import { aggregateClaims } from './helpers.js'
