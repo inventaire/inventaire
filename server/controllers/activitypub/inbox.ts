@@ -48,6 +48,7 @@ const sanitization = {
 }
 
 async function controller (params, req, res) {
+  console.log('🚀 ~ file: inbox.ts ~ line', 51, 'controller ~ ', params)
   setActivityPubContentType(res)
   const { type } = params
   if (inboxActivityTypes[type] != null) {
