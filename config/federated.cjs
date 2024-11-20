@@ -14,6 +14,11 @@ const config = {
   },
   federation: {
     remoteEntitiesOrigin: 'http://localhost:3006',
+    instanceClientCustomization: {
+      name: 'fed-inv',
+      orgName: 'Example Organization',
+      orgUrl: 'https://inventaire.example.org',
+    },
   },
   dataseed: {
     enabled: false,
