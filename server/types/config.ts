@@ -75,6 +75,11 @@ export type Config = ReadonlyDeep<{
 
   federation: {
     remoteEntitiesOrigin: AbsoluteUrl
+    instanceClientCustomization: {
+      name: string
+      orgName: string
+      orgUrl: AbsoluteUrl
+    }
   }
 
   // See server/data/dataseed/dataseed.js
