@@ -17,7 +17,7 @@ import { updateUser } from './users.js'
 import { authReq, getUser } from './utils.js'
 
 const { mediaStorage } = config
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
 const localStorageFolder = mediaStorage.local.folder()
 
@@ -47,7 +47,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
   const form = new FormData()
   form.append('somefile', createReadStream(imageFilePath))
   await waitForTestServer
-  const res = await fetch(`${host}/api/images?action=upload&container=${container}`, {
+  const res = await fetch(`${origin}/api/images?action=upload&container=${container}`, {
     method: 'post',
     headers: { cookie, ...form.getHeaders() },
     body: form,

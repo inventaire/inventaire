@@ -9,7 +9,7 @@ import { rawRequest } from '#tests/api/utils/request'
 import { getUserGetter, publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const db = await dbFactory('users')
 const endpoint = '/api/token?action=validation-email'
 
@@ -51,8 +51,8 @@ describe('token:validation-email', () => {
     const user = await getUserGetter(email)()
     await db.update(user._id, BasicUpdater('validEmail', true))
     await wait(100)
-    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${host}/?validEmail=false`)
+    const { headers } = await rawRequest('get', `${origin}${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${origin}/?validEmail=false`)
   })
 
   it('should reject if invalid token', async () => {
@@ -60,7 +60,7 @@ describe('token:validation-email', () => {
     const token = getRandomString(32)
     const userPromise = getUserGetter(email)()
     await userPromise
-    const { headers } = await rawRequest('get', `${host}${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${host}/?validEmail=false`)
+    const { headers } = await rawRequest('get', `${origin}${endpoint}&email=${email}&token=${token}`)
+    headers.location.should.equal(`${origin}/?validEmail=false`)
   })
 })

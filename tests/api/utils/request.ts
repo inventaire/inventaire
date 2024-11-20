@@ -10,7 +10,7 @@ import type { BearerToken } from '#server/types/oauth'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
 import type { OverrideProperties } from 'type-fest'
 
-const host: AbsoluteUrl = config.getPublicOrigin()
+const origin: AbsoluteUrl = config.getPublicOrigin()
 
 type RequestOptions = OverrideProperties<ReqOptions, { headers?: HttpHeaders }>
 
@@ -18,7 +18,7 @@ async function testServerAvailability () {
   if (!config.waitForServer) return
 
   try {
-    await requests_.get(`${host}/api/tests`, { timeout: 1000 })
+    await requests_.get(`${origin}/api/tests`, { timeout: 1000 })
     success('tests server is ready')
   } catch (err) {
     if (err.code !== 'ECONNREFUSED' && err.name !== 'TimeoutError') throw err
@@ -37,14 +37,14 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: Reque
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
   reqParams.parseJson = reqParams.parseJson || false
-  if (url[0] === '/') url = `${host}${url}`
+  if (url[0] === '/') url = `${origin}${url}`
   return requests_[method](url as AbsoluteUrl, reqParams)
 }
 
 export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
   assert_.string(method)
   assert_.string(endpoint)
-  const url = (endpoint.startsWith('/') ? host + endpoint : endpoint) as AbsoluteUrl
+  const url = (endpoint.startsWith('/') ? origin + endpoint : endpoint) as AbsoluteUrl
   const options: ReqOptions = {
     headers: { cookie },
     redirect: 'error',

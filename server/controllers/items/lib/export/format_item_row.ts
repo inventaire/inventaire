@@ -2,7 +2,7 @@ import { isArray } from '#lib/boolean_validations'
 import config from '#server/config'
 import { getNames } from '../snapshot/helpers.js'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 
 export default lang => item => {
   const { _id, entity: uri, details, notes, shelfNames, created, visibility, transaction } = item
@@ -112,7 +112,7 @@ function getFirstValue (entity, property) {
 }
 
 function generateUrl (path) {
-  if (path != null) return `${host}${path}`
+  if (path != null) return `${origin}${path}`
 }
 
 function generateEntityUrl (uri) {

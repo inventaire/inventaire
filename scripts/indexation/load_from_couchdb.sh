@@ -19,10 +19,10 @@ database_base_name=$1
 database_name=$(node -p "require('config').db.name('$1')")
 
 couchdb_database_url=$(node -p "require('config').db.databaseUrl('$1')")
-couchdb_auth_host=$(node -p "require('config').db.getOrigin()")
+couchdb_auth_origin=$(node -p "require('config').db.getOrigin()")
 
-elastic_host=$(node -p "require('config').elasticsearch.origin")
-elastic_index_url="${elastic_host}/${database_name}"
+elastic_origin=$(node -p "require('config').elasticsearch.origin")
+elastic_index_url="${elastic_origin}/${database_name}"
 
 leveldb_folder_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
 leveldb_folder_path=$(node -p "require('config').db.name('$leveldb_folder_path_base')")
@@ -61,7 +61,7 @@ docs_indexed_before=$(docs_indexed)
 
 echo "docs indexed before starting: $docs_indexed_before"
 
-curl -s "${couchdb_auth_host}/${database_name}/_all_docs?include_docs=true" |
+curl -s "${couchdb_auth_origin}/${database_name}/_all_docs?include_docs=true" |
   # Omit lines that aren't rows (the first and the last lines)
   grep '{"id"' |
   # Drop end of line comma so that each line is a valid JSON object

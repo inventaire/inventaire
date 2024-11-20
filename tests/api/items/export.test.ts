@@ -17,10 +17,10 @@ import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 
 const { parse } = papaparse
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 
 const endpoint = '/api/items?action=export&format=csv'
-const generateUrl = path => `${host}${path}`
+const generateUrl = path => `${origin}${path}`
 const generateEntityUrl = uri => generateUrl(`/entity/${uri}`)
 const generateEntitiesUrls = uris => uris.map(generateEntityUrl)
 const userPromise = createUser()
@@ -131,7 +131,7 @@ describe('items:export', () => {
 
       const itemRow = await reqAndParse(item._id)
       itemRow['Edition subtitle'].should.equal(edition.claims['wdt:P1680'][0])
-      itemRow['Edition cover'].should.equal(`${host}/img/entities/${someImageHash}`)
+      itemRow['Edition cover'].should.equal(`${origin}/img/entities/${someImageHash}`)
       itemRow['Edition publication date'].should.equal(publicationDate)
       itemRow['Edition number of pages'].should.equal('10')
       itemRow['Translators labels'].should.equal(translatorLabel)

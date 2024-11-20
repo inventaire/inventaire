@@ -11,8 +11,7 @@ import { i18n } from '../i18n/i18n.js'
 import { getLastNearbyPublicBooks } from './last_nearby_books.js'
 import { getLastNetworkBooks } from './last_network_books.js'
 
-const host = config.getPublicOrigin()
-const { contactAddress } = config
+const origin = config.getPublicOrigin()
 const { newsKey, didYouKnowKeys } = config.activitySummary
 // keep in sync with the nextSummary view in the user design_docs
 // and defaultPeriodicity in the client's notifications_settings
@@ -100,10 +99,8 @@ const spreadEmailData = (user: User) => results => {
       user,
       lang,
       meta: {
-        host,
         periodicity,
-        settingsHref: `${host}/settings/notifications`,
-        contactAddress,
+        settingsHref: `${origin}/settings/notifications`,
       },
       friendsRequests: counter(friendsRequests, '/users/network'),
       groupInvitations: counter(groupInvitations, '/users/network'),
@@ -122,7 +119,7 @@ const spreadEmailData = (user: User) => results => {
 const counter = (count, path) => ({
   display: count > 0,
   smart_count: count,
-  href: host + path,
+  href: origin + path,
 })
 
 function newsData (user) {

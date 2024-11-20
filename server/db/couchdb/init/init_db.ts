@@ -4,11 +4,11 @@ import type { DatabaseOperationsSummary } from '#types/couchdb_init'
 import { putSecurityDoc } from './put_security_doc.js'
 import { syncDesignDocs } from './sync_design_docs.js'
 
-const couchdbHost = config.db.getOrigin()
+const couchdbOrigin = config.db.getOrigin()
 
 export async function initDb (dbData) {
   const { name: dbName, designDocs } = dbData
-  const dbUrl = `${couchdbHost}/${dbName}`
+  const dbUrl = `${couchdbOrigin}/${dbName}`
   const operation: DatabaseOperationsSummary = await ensureDbExistance(dbUrl)
 
   const [ designDocsOps, securityDocOp ] = await Promise.all([

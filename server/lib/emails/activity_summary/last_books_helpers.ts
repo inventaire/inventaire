@@ -8,7 +8,7 @@ import type { SerializedItem } from '#types/item'
 import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 
 export function getLastItems (limitDate: EpochTimeStamp, items: SerializedItem[]) {
   return items.filter(item => item.created > limitDate)
@@ -30,14 +30,14 @@ export function getActivitySummaryItemsViewModels (items: SerializedItem[], user
   const usersByIds = keyBy(users, '_id')
   return items.map(item => {
     const user = usersByIds[item.owner]
-    const itemHref: AbsoluteUrl = `${host}/items/${item._id}`
+    const itemHref: AbsoluteUrl = `${origin}/items/${item._id}`
     let userHref: AbsoluteUrl
     let distance, transactionLabel, transactionColor
     if (user) {
       if ((user.position != null) && (position != null)) {
         distance = kmBetween(user.position, position)
       }
-      userHref = `${host}/users/${user.username}`
+      userHref = `${origin}/users/${user.username}`
       transactionLabel = `${item.transaction}_personalized_strong`
       transactionColor = transactionsColors[item.transaction]
     }

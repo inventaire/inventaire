@@ -5,12 +5,12 @@ import { getStringifiedDesignDoc } from '#db/couchdb/init/sync_design_docs'
 import config from '#server/config'
 import { someDesignDocView } from '#tests/integration/couchdb/fixtures'
 
-const authHost = config.db.getOrigin()
-const nonAuthHost = config.db.getOriginSansAuth()
+const authOrigin = config.db.getOrigin()
+const nonAuthOrigin = config.db.getOriginSansAuth()
 const dbName = 'couch-init-tests'
 const someDesignDocName = 'some-design-doc'
-const dbUrlWithAuth = `${authHost}/${dbName}`
-const dbUrlWithoutAuth = `${nonAuthHost}/${dbName}`
+const dbUrlWithAuth = `${authOrigin}/${dbName}`
+const dbUrlWithoutAuth = `${nonAuthOrigin}/${dbName}`
 
 const dbsList = [
   {

@@ -7,7 +7,7 @@ import type { Activity, ItemNote } from '#types/activity'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const maxLinksToDisplay = 3
 
 export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
@@ -24,7 +24,7 @@ export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor,
     // itemsLength as in OrderedItems (not user's item)
     const itemsLength = publicRangeItems.length
 
-    const id = `${host}/api/activitypub?action=activity&id=${activityDoc._id}`
+    const id = `${origin}/api/activitypub?action=activity&id=${activityDoc._id}`
 
     const object = {
       id,
@@ -61,7 +61,7 @@ interface LinkContent {
 function buildLinkContentFromItem (item) {
   const content: LinkContent = {
     text: item.snapshot['entity:title'],
-    url: `${host}/items/${item._id}`,
+    url: `${origin}/items/${item._id}`,
     details: null,
   }
   const { details } = item
@@ -84,7 +84,7 @@ function buildContent ({ links, name, lang = 'en', itemsLength, parentLink }: Bu
   })
   html += htmlLinks.join(', ')
   if (itemsLength > maxLinksToDisplay) {
-    const url = `${host}${parentLink}`
+    const url = `${origin}${parentLink}`
     const moreLink = i18n(lang, 'and_x_more_books_to_inventory', { itemsLength: itemsLength - maxLinksToDisplay, link: url })
     html += moreLink
   }
@@ -102,6 +102,6 @@ function buildAttachement (item) {
   return {
     type: 'Image',
     mediaType: 'image/jpeg',
-    url: `${host}${imageUrl}`,
+    url: `${origin}${imageUrl}`,
   }
 }

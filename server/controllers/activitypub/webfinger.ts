@@ -7,7 +7,7 @@ import config from '#server/config'
 import { validateUser, validateShelf } from './lib/validations.js'
 
 const origin = config.getPublicOrigin()
-const publicHost = origin.split('://')[1]
+const publicOrigin = origin.split('://')[1]
 
 const sanitization = {
   resource: {},
@@ -45,7 +45,7 @@ function formatWebfinger (name) {
   const actorUrl = makeUrl({ params: { action: 'actor', name } })
 
   return {
-    subject: `acct:${name}@${publicHost}`,
+    subject: `acct:${name}@${publicOrigin}`,
     aliases: [ actorUrl ],
     links: [
       {

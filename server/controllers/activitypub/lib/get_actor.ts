@@ -9,7 +9,7 @@ import { getSharedKeyPair } from './shared_key_pair.js'
 import { validateShelf, validateUser, validateEntity } from './validations.js'
 
 const origin = config.getPublicOrigin()
-const publicHost = origin.split('://')[1]
+const publicOrigin = origin.split('://')[1]
 
 async function getShelfActor (name) {
   const { shelf, owner } = await validateShelf(name)
@@ -51,7 +51,7 @@ async function getEntityActor (name) {
   const url = entityUrl(uri)
   const links: ActivityLink[] = [
     {
-      name: publicHost,
+      name: publicOrigin,
       url,
     },
   ]

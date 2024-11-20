@@ -9,7 +9,7 @@ import type { TransactionUserRole } from '#types/transaction'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 const { defaultFrom } = config.mailer
 
 export default {
@@ -51,7 +51,7 @@ export default {
       to: user1.email,
       subject: i18n(lang, 'friend_accepted_request_subject', user2),
       template: 'friend_accepted_request',
-      context: { user: user1, friend: user2, lang, host },
+      context: { user: user1, friend: user2, lang, origin },
     }
   },
 
@@ -61,7 +61,7 @@ export default {
 
     checkUserNotificationsSettings(user1, 'friendship_request')
 
-    user2.href = `${host}/users/${user2.username}`
+    user2.href = `${origin}/users/${user2.username}`
 
     let { bio } = user2
     if (bio == null) bio = ''
@@ -76,7 +76,7 @@ export default {
       to: user1.email,
       subject: i18n(lang, 'friendship_request_subject', user2),
       template: 'friendship_request',
-      context: { user: user1, otherUser: user2, lang, host },
+      context: { user: user1, otherUser: user2, lang, origin },
     }
   },
 
@@ -99,7 +99,7 @@ export default {
       to: email,
       subject: i18n(lang, `group_${action}_subject`, groupContext),
       template: 'group',
-      context: { title, button, group, groupContext, lang, host },
+      context: { title, button, group, groupContext, lang, origin },
     }
   },
 
@@ -131,7 +131,7 @@ export default {
           requester,
           group,
           lang,
-          host,
+          origin,
         },
       }
     }
@@ -145,7 +145,7 @@ export default {
       replyTo: user && user.email,
       subject: `[feedback][${username}] ${subject}`,
       template: 'feedback',
-      context: { subject, message, user, unknownUser, uris, host, context },
+      context: { subject, message, user, unknownUser, uris, origin, context },
     }
   },
 
@@ -158,13 +158,13 @@ export default {
     const { username, language } = inviter
     const lang = shortLang(language)
 
-    inviter.pathname = `${host}/users/${username}`
+    inviter.pathname = `${origin}/users/${username}`
     return emailAddress => {
       return {
         to: emailAddress,
         subject: i18n(lang, 'email_invitation_subject', inviter),
         template: 'email_invitation',
-        context: { inviter, message, lang, host },
+        context: { inviter, message, lang, origin },
       }
     }
   },
@@ -174,13 +174,13 @@ export default {
     const { username, language } = inviter
     const lang = shortLang(language)
     const { name: groupName, slug } = group
-    const pathname = `${host}/groups/${slug}`
+    const pathname = `${origin}/groups/${slug}`
     // Object required to pass as i18n strings context
     return emailAddress => ({
       to: emailAddress,
       subject: i18n(lang, 'group_email_invitation_subject', { username, groupName }),
       template: 'group_email_invitation',
-      context: { message, lang, host, username, groupName, pathname },
+      context: { message, lang, origin, username, groupName, pathname },
     })
   },
 
@@ -214,8 +214,8 @@ function transactionEmail (transactionEmailViewModel: TransactionEmailViewModel,
     subject: i18n(lang, `${label}_title`, titleContext),
     template: 'transaction_update',
     context: Object.assign(transactionEmailViewModel, {
-      host,
-      link: `${host}/transactions/${transaction._id}`,
+      origin,
+      link: `${origin}/transactions/${transaction._id}`,
       title: itemTitle,
       username: other.username,
       subject: `${label}_subject`,
@@ -235,5 +235,5 @@ function validateOptions (options) {
 }
 
 function buildTokenUrl (action, email, token) {
-  return buildUrl(`${host}/api/token`, { action, email, token })
+  return buildUrl(`${origin}/api/token`, { action, email, token })
 }

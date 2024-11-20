@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys | join(" ")' -r)
-dbHost=$(node -p "require('config').db.getOrigin()")
-elasticOrigin=$(node -p "require('config').elasticsearch.origin")
-leveldbPathBase=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
-leveldbPath="${leveldbPathBase}*-tests"
+couchdb_origin=$(node -p "require('config').db.getOrigin()")
+elastic_origin=$(node -p "require('config').elasticsearch.origin")
+leveldb_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
+leveldb_path="${leveldb_path_base}*-tests"
 
 echo "Delete databases: $databases"
 
@@ -19,10 +19,10 @@ fi
 for db in $databases
 do
   echo "deleting ${db}-tests in couchdb... " &&
-  curl -sXDELETE "${dbHost}/${db}-tests"
+  curl -sXDELETE "${couchdb_origin}/${db}-tests"
   echo "deleting ${db}-tests in elastic search... " &&
-  curl -sXDELETE "${elasticOrigin}/${db}-tests"
+  curl -sXDELETE "${elastic_origin}/${db}-tests"
 done
 
-echo "deleting ${leveldbPath}... " &&
-rm -rf ${leveldbPath}
+echo "deleting ${leveldb_path}... " &&
+rm -rf ${leveldb_path}

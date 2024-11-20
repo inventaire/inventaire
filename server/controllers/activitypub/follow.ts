@@ -11,7 +11,7 @@ import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
 import { signAndPostActivity } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
-const host = config.getPublicOrigin()
+const origin = config.getPublicOrigin()
 
 interface FollowArgs {
   id: ActivityId
@@ -24,7 +24,9 @@ interface FollowArgs {
 export async function follow (params: FollowArgs) {
   const { id: externalId, type } = params
   const { actor: actorUrl, object: objectUrl } = params
-  if (!objectUrl?.startsWith(host)) throw newError(`invalid object, string should start with ${host}`, 400, { objectUrl })
+  if (!objectUrl?.startsWith(origin)) {
+    throw newError(`invalid object, string should start with ${origin}`, 400, { objectUrl })
+  }
   const { name: requestedObjectName } = parseQuery(objectUrl)
 
   let object
