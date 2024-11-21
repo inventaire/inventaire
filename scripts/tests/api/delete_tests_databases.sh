@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys | join(" ")' -r)
+databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys[]' -cr | sed 's/$/-tests/' | tr '\n' ' ')
 couchdb_origin=$(node -p "require('config').db.getOrigin()")
 elastic_origin=$(node -p "require('config').elasticsearch.origin")
 leveldb_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
@@ -18,10 +18,10 @@ fi
 
 for db in $databases
 do
-  echo "deleting ${db}-tests in couchdb... " &&
-  curl -sXDELETE "${couchdb_origin}/${db}-tests"
-  echo "deleting ${db}-tests in elastic search... " &&
-  curl -sXDELETE "${elastic_origin}/${db}-tests"
+  echo "deleting ${db} in couchdb... " &&
+  curl -sXDELETE "${couchdb_origin}/${db}"
+  echo "deleting ${db} in elastic search... " &&
+  curl -sXDELETE "${elastic_origin}/${db}"
 done
 
 echo "deleting ${leveldb_path}... " &&
