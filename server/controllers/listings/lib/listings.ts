@@ -100,7 +100,7 @@ export async function deleteUserListingsAndElements (userId: UserId) {
   ])
 }
 
-async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType) {
+export async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType) {
   const { notFound, entities } = await getEntitiesByUris({ uris })
   const allowlistedEntityTypes = entityTypesByListingType[listingType]
   const wrongTypeEntity = Object.values(entities).find(entity => {

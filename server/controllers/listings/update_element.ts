@@ -1,7 +1,7 @@
 import { pick } from 'lodash-es'
 import { getElementById, updateElementDocAttributes } from '#controllers/listings/lib/elements'
 import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
-import { getListingById, getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { getListingById, getListingWithElements, validateListingOwnership, validateEntitiesCanBeAdded } from '#controllers/listings/lib/listings'
 import { checkSpamContent } from '#controllers/user/lib/spam'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { notFoundError, newError } from '#lib/error/error'
@@ -61,6 +61,7 @@ async function validateUpdateListing (reqUserId: UserId, element: ListingElement
   const listing: Listing = await getListingById(element.list)
   validateListingOwnership(reqUserId, listing)
   validateListingOwnership(reqUserId, recipientListing)
+  validateEntitiesCanBeAdded([ element.uri ], recipientListing.type)
   if (recipientListing._id === listing._id) {
     throw newError('element already belongs to the list', 400, { listId: listing._id })
   }

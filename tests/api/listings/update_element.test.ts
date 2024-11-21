@@ -154,6 +154,27 @@ describe('element:update:list', () => {
     }
   })
 
+  it('should reject when the recipient listing type and the entity type do not match', async () => {
+    try {
+      const { listing } = await createListingWithElements()
+      const element = listing.elements[0]
+      const { listing: recipientListing } = await createListing(null, { type: 'author' })
+      await addElements(getUser(), {
+        id: recipientListing._id,
+        uris: [ element.uri ],
+      })
+      await authReq('post', endpoint, {
+        id: element._id,
+        list: recipientListing._id,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('cannot add this entity type to this list')
+      err.statusCode.should.equal(403)
+    }
+  })
+
   it('should update ordinal to the last position of the recipient listing elements', async () => {
     const elementsLength = 4
     const { listing: elementListing } = await createListingWithElements()
