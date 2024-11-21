@@ -4,6 +4,7 @@ import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
+import { serverMode } from '#lib/server_mode'
 import { getHashCode } from '#lib/utils/base'
 import { warn, info } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#server/types/common'
@@ -25,7 +26,7 @@ interface SparqlRequestOptions {
 export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRequestOptions = {}): Promise<Row[]> {
   const url = sparqlQuery(sparql) as AbsoluteUrl
 
-  if (waiting > 500) {
+  if (serverMode && waiting > 500) {
     throw newError('too many requests in queue', 500, { sparql })
   }
 
@@ -54,6 +55,8 @@ async function makeRequest <Row> (url: AbsoluteUrl, options: SparqlRequestOption
 
   async function makePatientRequest () {
     if (ongoing >= maxConcurrency) {
+      // TODO: replace with a proper first-in-first-out queuing mechanism
+      // such as a semaphore https://github.com/vercel/async-sema
       await wait(100)
       return makePatientRequest()
     }

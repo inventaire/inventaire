@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import { writeFile } from 'node:fs/promises'
-import { difference, intersection, uniq, values, omit, cloneDeep } from 'lodash-es'
+import { difference, intersection, uniq, values, omit, cloneDeep, compact } from 'lodash-es'
 import { prefixifyWd, getWdEntityUriNumericId } from '#controllers/entities/lib/prefix'
 import { makeCachedSparqlRequest } from '#data/wikidata/make_sparql_request'
 import { absolutePath } from '#lib/absolute_path'
@@ -80,13 +80,12 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
       logError(err, `failed query: ${sparql}`)
     }
   }
-  const filteredIds = []
   // This check is prohibitively expensive to do within queries, but quite cheap when using limit
   // TODO: find a way to bundle those requests while preserving the fast response
-  for (const id of uniq(ids)) {
-    if (await hasInstance(id)) filteredIds.push(id)
-  }
-  return filteredIds.map(prefixifyWd)
+  const filteredIds = await Promise.all(uniq(ids).map(async id => {
+    if (await hasInstance(id)) return id
+  }))
+  return compact(filteredIds).map(prefixifyWd)
 }
 
 async function hasInstance (id: WdEntityId) {
