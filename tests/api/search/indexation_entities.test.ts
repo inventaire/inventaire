@@ -1,4 +1,5 @@
 import should from 'should'
+import { getUrlFromEntityImageHash } from '#controllers/entities/lib/entities'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { createHuman, createEdition, addSerie } from '#fixtures/entities'
@@ -33,7 +34,7 @@ describe('indexation:entities', () => {
     await updateLabel({ uri: workUri, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, unprefixify(workUri))
-    result._source.images[lang][0].should.equal(editionImageHash)
+    result._source.images[lang][0].should.equal(getUrlFromEntityImageHash(editionImageHash))
   })
 
   it('should index a serie with its works editions images per lang', async () => {
@@ -50,7 +51,7 @@ describe('indexation:entities', () => {
     await updateLabel({ uri: serieId, lang: 'es', value: 'foo' })
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, serieId)
-    result._source.images[lang][0].should.equal(editionImageHash)
+    result._source.images[lang][0].should.equal(getUrlFromEntityImageHash(editionImageHash))
   })
 
   it('should index the entity popularity', async () => {
