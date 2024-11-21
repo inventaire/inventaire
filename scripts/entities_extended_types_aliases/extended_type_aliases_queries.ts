@@ -56,7 +56,8 @@ const worksAliasesQueries = [
 const seriesDenylist = [
   ...workP31Values,
   ...collectionP31Values,
-]
+  'wd:Q109551565', // sub-set of literature
+] as WdEntityUri[]
 const seriesAliasesQuery = genericSubclassesQuery(serieP31Values, seriesDenylist, false)
 
 const tailoredWellknownHumanTypes = difference(humanP31Values, [
