@@ -173,6 +173,19 @@ function getWorkAuthorsUris (work) {
   return Object.values(pick(work.claims, workAuthorRelationsProperties)).flat()
 }
 
+export async function getWdEntitiesLocalLayers (wdIds: WdEntityId[]) {
+  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
+    keys: wdIds.map(wdId => [ 'invp:P1', `wd:${wdId}` ]),
+    include_docs: true,
+  })
+  const docsByWdId: Record<WdEntityId, InvEntity> = {}
+  for (const { doc } of res.rows) {
+    const id = unprefixify(getFirstClaimValue(doc.claims, 'invp:P1'))
+    docsByWdId[id] = doc
+  }
+  return docsByWdId
+}
+
 export async function getWdEntityLocalLayer (wdId: WdEntityId) {
   const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
     key: [ 'invp:P1', `wd:${wdId}` ],

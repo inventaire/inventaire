@@ -4,9 +4,9 @@
 // - delete unnecessary attributes and ignore undesired claims
 //   such as ISBNs defined on work entities
 
-import { partition, map, compact } from 'lodash-es'
+import { partition, map, compact, keyBy } from 'lodash-es'
 import { simplifyAliases, simplifyDescriptions, simplifyLabels, simplifySitelinks, type Item as RawWdEntity } from 'wikibase-sdk'
-import { getWdEntityLocalLayer, setTermsFromClaims, termsFromClaimsTypes } from '#controllers/entities/lib/entities'
+import { getWdEntitiesLocalLayers, getWdEntityLocalLayer, setTermsFromClaims, termsFromClaimsTypes } from '#controllers/entities/lib/entities'
 import { setEntityImageFromImageHashClaims } from '#controllers/entities/lib/format_inv_entity_common'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getIsbnUriFromClaims } from '#controllers/entities/lib/get_inv_uri_from_doc'
@@ -38,7 +38,11 @@ setImmediate(importCircularDependencies)
 const { _id: hookUserId } = hardCodedUsers.hook
 
 export async function getWikidataEnrichedEntities (ids: WdEntityId[], { refresh, dry, includeReferences }: EntitiesGetterParams) {
-  const entities = await Promise.all(ids.map(wdId => getAggregatedWdEntityLayers({ wdId, refresh, dry })))
+  const [ remoteEntitiesByIds, localEntitiesLayersByIds ] = await Promise.all([
+    getCachedEnrichedEntities({ wdIds: ids, refresh, dry }),
+    getWdEntitiesLocalLayers(ids),
+  ])
+  const entities = ids.map(wdId => aggregateWdEntityLayers(wdId, remoteEntitiesByIds[wdId], localEntitiesLayersByIds[wdId]))
   let [ foundEntities, notFoundEntities ] = partition(entities, isNotMissing)
   if (dry) foundEntities = compact(foundEntities)
   const notFound = map(notFoundEntities, 'uri') as WdEntityUri[]
@@ -62,6 +66,20 @@ export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdI
     getCachedEnrichedEntity({ wdId, refresh, dry }),
     getWdEntityLocalLayer(wdId),
   ])
+  return aggregateWdEntityLayers(wdId, remoteEntity, localEntityLayer)
+}
+
+interface SerializedEmptyWdEntity {
+  wdId: WdEntityId
+  uri: WdEntityUri
+  type: 'meta' | 'missing'
+  // The following attributes might be set by indexation functions
+  _indexationTime?: EpochTimeStamp
+  _id?: WdEntityId
+  lastrevid?: number
+}
+
+function aggregateWdEntityLayers (wdId: WdEntityId, remoteEntity: SerializedWdEntity | SerializedEmptyWdEntity, localEntityLayer: InvEntity) {
   // Known case: when dry=true and getting a cache miss
   if (!remoteEntity) return
   if (localEntityLayer) {
@@ -83,6 +101,20 @@ function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, lo
   }
   const lockedType = getFirstClaimValue(localEntityLayer.claims, 'invp:P3')
   if (lockedType) remoteEntity.type = lockedType
+}
+
+async function getCachedEnrichedEntities ({ wdIds, refresh, dry }: { wdIds: WdEntityId[], refresh?: boolean, dry?: boolean }) {
+  const results = await cache_.getMany({
+    keysAndArgs: wdIds.map(wdId => {
+      const key = `wd:enriched:${wdId}`
+      const args = [ wdId, refresh ]
+      return [ key, args ]
+    }),
+    fn: getEnrichedEntity,
+    refresh,
+    dry,
+  })
+  return keyBy(results, 'wdId')
 }
 
 async function getCachedEnrichedEntity ({ wdId, refresh, dry }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean }) {
@@ -187,21 +219,10 @@ async function formatAndPropagateRedirection (entity: RawWdEntity, serializedEnt
   }
 }
 
-interface SerializedEmptyWdEntity {
-  id: WdEntityId
-  uri: WdEntityUri
-  type: 'meta' | 'missing'
-  wdId?: WdEntityId
-  // The following attributes might be set by indexation functions
-  _indexationTime?: EpochTimeStamp
-  _id?: WdEntityId
-  lastrevid?: number
-}
-
 // Keeping just enough data to filter-out while not cluttering the cache
 function formatEmpty (type: 'meta' | 'missing', entity: RawWdEntity | MissingWdEntity): SerializedEmptyWdEntity {
   return {
-    id: entity.id,
+    wdId: entity.id,
     uri: `wd:${entity.id}`,
     type,
   }

@@ -9,7 +9,7 @@ import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils/utils'
 const { ttlCheckFrequency } = config.leveldb
 if (config.env !== 'tests-unit') throw new Error(`invalid env: ${config.env}`)
 
-const hashKey = async key => getHashCode(key)
+const hashKey = async (key: string) => getHashCode(key)
 const getSomeRandomValue = async () => getRandomString(8)
 const failingFn = async () => {
   const err = new Error('Jag är Döden')
@@ -124,6 +124,83 @@ describe('cache', () => {
         const fn = getSomeRandomValue.bind(null, 'foo')
         const res1 = await cache_.get({ key, fn, refresh: true, dry: true })
         should(res1).be.ok()
+      })
+    })
+  })
+
+  describe('getMany', () => {
+    it('should get multiple cached values', async () => {
+      const keyA = getRandomString(8)
+      const keyB = getRandomString(8)
+      const keysAndArgs: [ string, [ string ] ][] = [
+        [ keyA, [ 'x' ] ],
+        [ keyB, [ 'y' ] ],
+      ]
+      const res = await cache_.getMany({ keysAndArgs, fn: hashKey })
+      res.should.deepEqual([
+        await hashKey('x'),
+        await hashKey('y'),
+      ])
+    })
+
+    it('should get undefined values when the cache population failed', async () => {
+      const keyA = getRandomString(8)
+      const keyB = getRandomString(8)
+      const keysAndArgs: [ string, [ string ] ][] = [
+        [ keyA, [ 'x' ] ],
+        [ keyB, [ 'y' ] ],
+      ]
+      const res = await cache_.getMany({ keysAndArgs, fn: failingFn })
+      res.should.deepEqual([])
+    })
+
+    describe('refresh', () => {
+      it('should get refreshed cached values', async () => {
+        const keyA = getRandomString(8)
+        const keyB = getRandomString(8)
+        const keysAndArgs: [ string, [ string ] ][] = [
+          [ keyA, [ 'x' ] ],
+          [ keyB, [ 'y' ] ],
+        ]
+        await cache_.put(keyA, await hashKey('z'))
+        const res = await cache_.getMany({ keysAndArgs, fn: hashKey, refresh: true })
+        res.should.deepEqual([
+          await hashKey('x'),
+          await hashKey('y'),
+        ])
+      })
+    })
+
+    describe('dry', () => {
+      it('should get multiple cached values', async () => {
+        const keyA = getRandomString(8)
+        const keyB = getRandomString(8)
+        const keysAndArgs: [ string, [ string ] ][] = [
+          [ keyA, [ 'x' ] ],
+          [ keyB, [ 'y' ] ],
+        ]
+        await cache_.put(keyA, await hashKey('z'))
+        const res = await cache_.getMany({ keysAndArgs, fn: hashKey, dry: true })
+        res.should.deepEqual([
+          await hashKey('z'),
+        ])
+      })
+    })
+
+    describe('dryFallbackValue', () => {
+      it('should get multiple cached values or the fallback value', async () => {
+        const keyA = getRandomString(8)
+        const keyB = getRandomString(8)
+        const keysAndArgs: [ string, [ string ] ][] = [
+          [ keyA, [ 'x' ] ],
+          [ keyB, [ 'y' ] ],
+        ]
+        await cache_.put(keyA, await hashKey('z'))
+        const res = await cache_.getMany({ keysAndArgs, fn: hashKey, dry: true, dryFallbackValue: 0 })
+        res.should.deepEqual([
+          await hashKey('z'),
+          0,
+        ])
       })
     })
   })
