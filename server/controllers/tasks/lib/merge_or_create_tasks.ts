@@ -13,7 +13,7 @@ import type { EntityUri, EntityType } from '#types/entity'
 import type { Task, Suggestion, TaskType } from '#types/task'
 import type { UserId } from '#types/user'
 
-export async function getSuggestionsAndCreateTasks ({ type = 'merge', entitiesType, toEntities, fromEntity, userId, clue }: { type: TaskType, entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
+export async function getSuggestionsAndCreateTasks ({ type, entitiesType, toEntities, fromEntity, userId, clue }: { type: TaskType, entitiesType?: EntityType, toEntities: SerializedEntity[], fromEntity: SerializedEntity, userId?: UserId, clue?: string }) {
   const existingTasks: Task[] = await getExistingTasks(fromEntity.uri)
   const newToEntities: SerializedEntity[] = filterNewSuggestionEntities(toEntities, existingTasks)
   const suggestions: Suggestion[] = map(newToEntities, addToSuggestion(userId, clue))
@@ -138,6 +138,7 @@ export async function mergeOrCreateOrUpdateTask (entitiesType: EntityType, fromU
     })
   } else {
     [ taskRes ] = await getSuggestionsAndCreateTasks({
+      type: 'merge',
       entitiesType,
       toEntities: [ toEntity ],
       fromEntity,
