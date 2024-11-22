@@ -42,7 +42,7 @@ describe('tasks:byEntitiesType', () => {
 
   it('should take an offset parameter', async () => {
     await createTask({ entitiesType })
-    const tasksA = await getByEntitiesType({ type, entitiesType })
+    const tasksA = await getByEntitiesType({ type, entitiesType, limit: 2 })
     const tasksB = await getByEntitiesType({ type, entitiesType, offset: 1 })
     tasksA[1].should.deepEqual(tasksB[0])
   })
