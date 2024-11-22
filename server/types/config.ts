@@ -190,6 +190,10 @@ export type Config = ReadonlyDeep<{
    *  https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose?wpownerOnly=1 */
   botAccountWikidataOAuth: OwnerOnlyOAuthConsumer
 
+  wikidataEdit: {
+    maxlag?: number
+  }
+
   snapshotsDebounceTime: number
 
   jobs: {

@@ -236,6 +236,10 @@ const config = {
     token_secret: 'your-access-secret',
   },
 
+  wikidataEdit: {
+    maxlag: undefined,
+  },
+
   snapshotsDebounceTime: 5000,
 
   jobs: {
