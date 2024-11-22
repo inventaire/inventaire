@@ -40,6 +40,11 @@ const config = {
   dataseed: {
     enabled: false,
   },
+
+  wikidataEdit: {
+    // Bots requests triggering Wikidata edits can be patient
+    maxlag: 5,
+  },
 }
 
 module.exports = config

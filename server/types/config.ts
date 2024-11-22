@@ -2,7 +2,7 @@
 
 import type { ImagePath } from '#server/types/image'
 import type { AbsoluteUrl, Path, RelativeUrl } from '#types/common'
-import type { Email } from '#types/user'
+import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
 
 export type Config = ReadonlyDeep<{
@@ -182,10 +182,16 @@ export type Config = ReadonlyDeep<{
 
   /** Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
    *  Request tokens at
-   *  https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose  */
-  wikidataOAuth: {
-    consumer_key: string
-    consumer_secret: string
+   *  https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose */
+  wikidataOAuth: OAuthConsumer
+
+  /** Keys for server own OAuth
+   *  Request tokens at
+   *  https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose?wpownerOnly=1 */
+  botAccountWikidataOAuth: OwnerOnlyOAuthConsumer
+
+  wikidataEdit: {
+    maxlag?: number
   }
 
   snapshotsDebounceTime: number

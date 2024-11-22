@@ -1,4 +1,7 @@
+import { isEmpty, omitBy, pick } from 'lodash-es'
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
+import { formatClaimsForWikidata } from '#controllers/entities/lib/create_wd_entity'
+import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
 import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
@@ -6,12 +9,12 @@ import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#li
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { arrayIncludes } from '#lib/utils/base'
-import { LogError } from '#lib/utils/logs'
+import { LogError, success, warn } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
-import type { EntityValue, InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
-import type { User } from '#server/types/user'
+import type { EntityValue, InvClaimValue, PropertyUri, WdEntityId, Claims, ExpandedClaims } from '#server/types/entity'
+import type { User, SpecialUser } from '#server/types/user'
 import entitiesRelationsTemporaryCache, { triggerSubjectEntityCacheRefresh } from './entities_relations_temporary_cache.js'
 import { unprefixify, prefixifyWd } from './prefix.js'
 import { getPropertyDatatype, propertiesValuesConstraints as properties } from './properties/properties_values_constraints.js'
@@ -130,4 +133,29 @@ function getQualifierHash (claim, property, value) {
     throw newError('unique matching qualifier not found', 400, { claim, property, value })
   }
   return matchingQualifiers[0].hash
+}
+
+export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | SpecialUser) {
+  if (isEmpty(claims)) return
+  validateWikidataOAuth(user)
+  const credentials = getWikidataOAuthCredentials(user)
+  const context = { id, claims, user: pick(user._id, '_id', 'username') }
+  if (!('oauth' in credentials)) {
+    warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
+    return
+  }
+  const expandedClaims = expandInvClaims(claims)
+  await wdEdit.entity.edit({
+    id,
+    claims: formatClaimsForWikidata(omitLocalClaims(expandedClaims)),
+    // See https://github.com/maxlath/wikibase-edit/blob/main/docs/how_to.md#reconciliation-modes
+    reconciliation: {
+      mode: 'skip-on-any-value',
+    },
+  }, { credentials })
+  success(context, 'claims added to Wikidata')
+}
+
+export function omitLocalClaims (claims: ExpandedClaims) {
+  return omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
 }

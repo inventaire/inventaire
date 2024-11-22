@@ -5,9 +5,9 @@ import { updateInvClaim } from '#controllers/entities/lib/update_inv_claim'
 import { newError } from '#lib/error/error'
 import { getUserAccessLevels } from '#lib/user_access_levels'
 import type { InvClaimValue, PropertyUri, WdEntityId } from '#server/types/entity'
-import type { User } from '#server/types/user'
+import type { SpecialUser, User } from '#server/types/user'
 
-export async function updateWdEntityLocalClaims (user: User, wdId: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
+export async function updateWdEntityLocalClaims (user: User | SpecialUser, wdId: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
   if (property === 'invp:P1') {
     throw newError('entity local layer linking property (invp:P1) can not be updated', 400, { wdId, property, oldValue, newValue })
   }

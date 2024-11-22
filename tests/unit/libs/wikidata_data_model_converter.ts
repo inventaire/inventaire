@@ -1,5 +1,5 @@
 import 'should'
-import { format, reshapeMonolingualTextClaims, type EntityDraft } from '#controllers/entities/lib/create_wd_entity'
+import { formatClaimsForWikidata, reshapeMonolingualTextClaims, type EntityDraft } from '#controllers/entities/lib/create_wd_entity'
 import { someReference } from '#fixtures/entities'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -7,15 +7,13 @@ import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 describe('wikidata data model converter', () => {
   describe('relocateQualifierProperties', () => {
     it('should pass when no serie ordinal is set', () => {
-      relocateQualifierProperties({ claims: {} })
+      relocateQualifierProperties({ })
     })
 
     it('should throw when no serie is set but a serie ordinal is', () => {
       try {
         relocateQualifierProperties({
-          claims: {
-            P1545: [ { value: '1' } ],
-          },
+          P1545: [ { value: '1' } ],
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -25,19 +23,15 @@ describe('wikidata data model converter', () => {
 
     it('should not throw when several series are set but no ordinal', () => {
       relocateQualifierProperties({
-        claims: {
-          P179: [ { value: 'Q1' }, { value: 'Q2' } ],
-        },
+        P179: [ { value: 'Q1' }, { value: 'Q2' } ],
       })
     })
 
     it('should throw when several series are set with an ordinal', () => {
       try {
         relocateQualifierProperties({
-          claims: {
-            P179: [ { value: 'Q1' }, { value: 'Q2' } ],
-            P1545: [ { value: '1' } ],
-          },
+          P179: [ { value: 'Q1' }, { value: 'Q2' } ],
+          P1545: [ { value: '1' } ],
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -48,10 +42,8 @@ describe('wikidata data model converter', () => {
     it('should throw when several serie ordinals are set', () => {
       try {
         relocateQualifierProperties({
-          claims: {
-            P179: [ { value: 'Q1' } ],
-            P1545: [ { value: '1' }, { value: '2' } ],
-          },
+          P179: [ { value: 'Q1' } ],
+          P1545: [ { value: '1' }, { value: '2' } ],
         })
         shouldNotBeCalled()
       } catch (err) {
@@ -64,7 +56,7 @@ describe('wikidata data model converter', () => {
         P179: [ { value: 'Q1', references: [ someReference ] } ],
         P1545: [ { value: '1' } ],
       }
-      relocateQualifierProperties({ claims })
+      relocateQualifierProperties(claims)
       claims.should.deepEqual({
         P179: [
           {
@@ -91,14 +83,14 @@ describe('wikidata data model converter', () => {
           'wdt:P1680': [ { value: "Essai sur l'imagination de la matière" } ],
         },
       } as EntityDraft
-      reshapeMonolingualTextClaims(entity)
+      reshapeMonolingualTextClaims(entity.claims)
       entity.claims['wdt:P1476'][0].value.should.deepEqual({ text: "L'Eau et les rêves", language: 'fr' })
       entity.claims['wdt:P1680'][0].value.should.deepEqual({ text: "Essai sur l'imagination de la matière", language: 'fr' })
     })
   })
 
-  describe('format', () => {
-    it('should format an entity to the wikibase-edit format', () => {
+  describe('formatClaimsForWikidata', () => {
+    it('should format claims to the wikibase-edit format', () => {
       const entity = {
         labels: {},
         claims: {
@@ -112,10 +104,10 @@ describe('wikidata data model converter', () => {
           'wdt:P1680': [ { value: "Essai sur l'imagination de la matière" } ],
         },
       } as EntityDraft
-      const formatted = format(entity)
-      formatted.claims.P31[0].value.should.equal('Q3331189')
-      formatted.claims.P1476[0].value.should.deepEqual({ text: "L'Eau et les rêves", language: 'fr' })
-      formatted.claims.P1680[0].value.should.deepEqual({ text: "Essai sur l'imagination de la matière", language: 'fr' })
+      const formattedClaims = formatClaimsForWikidata(entity.claims)
+      formattedClaims.P31[0].value.should.equal('Q3331189')
+      formattedClaims.P1476[0].value.should.deepEqual({ text: "L'Eau et les rêves", language: 'fr' })
+      formattedClaims.P1680[0].value.should.deepEqual({ text: "Essai sur l'imagination de la matière", language: 'fr' })
     })
   })
 })

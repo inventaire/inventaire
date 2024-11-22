@@ -1,13 +1,14 @@
-import { omitBy, uniq } from 'lodash-es'
+import { uniq } from 'lodash-es'
 import { getEntityById } from '#controllers/entities/lib/entities'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publications'
 import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
+import { omitLocalClaims } from '#controllers/entities/lib/update_wd_claim'
 import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
-import { isInvPropertyUri, isNonEmptyArray } from '#lib/boolean_validations'
+import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
@@ -68,7 +69,7 @@ export async function moveInvEntityToWikidata (user: User, invEntityUri: InvEnti
   const descriptions = buildDescriptions(claims)
 
   // Local claims will be preserved in a local layer during merge
-  const claimsWithoutLocalClaims = omitBy(claims, (propertyClaims, property) => isInvPropertyUri(property))
+  const claimsWithoutLocalClaims = omitLocalClaims(claims)
   const { uri: wdEntityUri } = await createWdEntity({
     labels,
     descriptions,
