@@ -101,7 +101,7 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
     if (err.name === 'InvalidClaimValueError' || err.cause?.name === 'InvalidClaimValueError') {
       const { property, value } = err.context
       const invalidClaim = findClaimByValue(seed.claims[property], value)
-      if (invalidClaim) {
+      if (invalidClaim && !nonRecoverableProperties.has(property)) {
         warn(err, 'InvalidClaimValueError: removing invalid claim')
         seed.claims[property] = seed.claims[property].filter(claim => claim !== invalidClaim)
         return createEntityFromSeed({ seed, userId, batchId })
@@ -119,6 +119,11 @@ async function createEntityFromSeed ({ seed, userId, batchId }: { seed: EntitySe
   seed.labels = entity.labels
   seed.claims = entity.claims
 }
+
+const nonRecoverableProperties = new Set([
+  'wdt:P212',
+  'wdt:P957',
+])
 
 function buildBestEditionTitle (edition, works) {
   const editionTitleClaim = getFirstClaimValue(edition.claims, 'wdt:P1476')
