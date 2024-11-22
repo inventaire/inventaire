@@ -56,11 +56,7 @@ export type ClaimPropertyValueTuple = [ PropertyUri, InvClaimValue ]
 
 export async function getInvEntitiesByClaims (claims: ClaimPropertyValueTuple[]) {
   claims.forEach(([ property ]) => validateProperty(property))
-  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
-    keys: claims,
-    include_docs: true,
-  })
-  return res
+  return db.getDocsByViewKeys<InvEntity>('byClaim', claims)
 }
 
 export async function getInvUrisByClaim (property: PropertyUri, value: InvClaimValue) {
@@ -70,8 +66,7 @@ export async function getInvUrisByClaim (property: PropertyUri, value: InvClaimV
 
 export async function getInvEntitiesUrisByClaims (properties: PropertyUri[], value: InvClaimValue) {
   const claims: ClaimPropertyValueTuple[] = properties.map(property => [ property, value ])
-  const res = await getInvEntitiesByClaims(claims)
-  const entities = mapDoc(res)
+  const entities = await getInvEntitiesByClaims(claims)
   return entities.map(getInvEntityCanonicalUri)
 }
 

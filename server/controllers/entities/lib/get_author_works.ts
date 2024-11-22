@@ -1,5 +1,6 @@
 import { identity, map, uniqBy } from 'lodash-es'
 import { uniqByUri, getInvEntitiesByClaims, type ClaimPropertyValueTuple } from '#controllers/entities/lib/entities'
+import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getEntitiesPopularities, type PopularityScoreByUri } from '#controllers/entities/lib/popularity'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
@@ -8,8 +9,7 @@ import type { AuthorWork as WdAuthorWork } from '#data/wikidata/queries/author_w
 import { runWdQuery } from '#data/wikidata/run_query'
 import { arrayIncludes, initCollectionsIndex } from '#lib/utils/base'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
-import type { ViewRow } from '#server/types/couchdb'
-import type { EntityUri, EntityValue, InvEntity, InvEntityUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 import type { OverrideProperties } from 'type-fest'
@@ -90,19 +90,19 @@ function formatWdEntity (result: WdAuthorWork) {
 // # INV
 async function getInvAuthorWorks (uri: EntityUri) {
   const authorClaims = workAuthorRelationsProperties.map(property => [ property, uri ]) satisfies ClaimPropertyValueTuple[]
-  const { rows } = await getInvEntitiesByClaims(authorClaims)
-  return rows.map(formatInvEntity).filter(identity)
+  const entities = await getInvEntitiesByClaims(authorClaims)
+  return entities.map(formatInvEntity).filter(identity)
 }
 
-function formatInvEntity (row: ViewRow<EntityValue, InvEntity>) {
-  const typeUri = row.value
-  const typeName = getPluralTypeByTypeUri(typeUri)
-  if (!arrayIncludes(allowlistedTypesNames, typeName)) return
+function formatInvEntity (doc: InvEntity) {
+  const type = getInvEntityType(doc.claims['wdt:P31'])
+  const pluralizedType = getPluralType(type)
+  if (!arrayIncludes(allowlistedTypesNames, pluralizedType)) return
   return {
-    uri: `inv:${row.id}` as InvEntityUri,
-    date: getFirstClaimValue(row.doc.claims, 'wdt:P577'),
-    serie: getFirstClaimValue(row.doc.claims, 'wdt:P179'),
-    type: typeName,
+    uri: `inv:${doc._id}` as InvEntityUri,
+    date: getFirstClaimValue(doc.claims, 'wdt:P577'),
+    serie: getFirstClaimValue(doc.claims, 'wdt:P179'),
+    type: pluralizedType,
   }
 }
 
