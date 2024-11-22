@@ -108,7 +108,7 @@
     "turtle-validator": "^1.0.2",
     "type-fest": "^4.21.0",
     "typescript": "^5.6.2",
-    "wikibase-edit": "^5.3.2",
+    "wikibase-edit": "^7.2.0",
     "wikibase-sdk": "^10.2.1",
     "wikidata-lang": "^4.1.2"
   },
