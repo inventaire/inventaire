@@ -49,7 +49,7 @@ describe('tasks:deduplicate:works', () => {
   it('should create task from a work uri and an isbn', async () => {
     // task is created because work labels and edition work labels have nothing in common, then no automerge possible
     const work = await createWork()
-    const uri = work.uri
+    const { uri } = work
     const edition = await createEditionWithIsbn()
     const editionWorkUri = edition.claims['wdt:P629'][0]
     const isbn = edition.isbn

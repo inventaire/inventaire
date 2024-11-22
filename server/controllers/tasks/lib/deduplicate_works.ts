@@ -29,6 +29,7 @@ export default async function (workUri, isbn, userId) {
   if (toEntities.length === 0) return
 
   return getSuggestionsAndCreateTasks({
+    type: 'deduplicate',
     entitiesType: type,
     toEntities,
     fromEntity: work,
