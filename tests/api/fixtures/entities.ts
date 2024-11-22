@@ -306,9 +306,12 @@ export async function getSomeWdEditionUri () {
 export async function getSomeRemoteEditionWithALocalLayer () {
   const uri = await getSomeWdEditionUri()
   const imageHash = someRandomImageHash()
-  await addClaim({ uri, property: 'invp:P2', value: imageHash })
-  const updatedEdition = await getByUri(uri)
-  return updatedEdition as ExpandedSerializedWdEntity
+  let edition = await getByUri(uri)
+  if (edition.claims['invp:P2'] == null) {
+    await addClaim({ uri, property: 'invp:P2', value: imageHash })
+    edition = await getByUri(uri)
+  }
+  return edition as ExpandedSerializedWdEntity
 }
 
 interface ExistsOrCreateParams {
