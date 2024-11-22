@@ -1,6 +1,6 @@
 import 'should'
 import { map, uniq } from 'lodash-es'
-import { createHuman, createWork } from '#fixtures/entities'
+import { createWorkWithAuthor, createHuman, createWork } from '#fixtures/entities'
 import { findOrIndexEntities, deleteByUris } from '#tests/api/utils/entities'
 import { checkEntities, getBySuspectUri } from '#tests/api/utils/tasks'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -25,6 +25,8 @@ describe('tasks:check-entities', () => {
 
   it('should create tasks for the requested URIs', async () => {
     const human = await createHuman({ labels: { en: 'Fred Vargas' } })
+    // should not automerge if author name is in work title
+    await createWorkWithAuthor(human, 'Fred Vargas')
     const tasks = await checkEntities(human.uri)
     tasks.should.be.an.Array()
     const task = tasks[0]

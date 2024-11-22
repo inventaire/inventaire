@@ -71,7 +71,11 @@ describe('tasks:hooks', () => {
   describe('entity merge revert', () => {
     it('should revert task state', async () => {
       const { uri } = await createHuman({ labels: { en: 'Fred Vargas' } })
-      const [ task ] = await checkEntities(uri)
+      const { _id: otherTaskId } = await createTask({
+        suspectUri: uri,
+        suggestionUri: 'wd:Q15339037',
+      })
+      const [ task ] = await getByIds(otherTaskId)
       await merge(task.suspectUri, task.suggestionUri)
       await wait(hookDelay)
       const [ refreshedTask ] = await getByIds(task._id)
