@@ -3,7 +3,8 @@ import { createHuman } from '#fixtures/entities'
 import { createTask } from '#fixtures/tasks'
 import { wait } from '#lib/promises'
 import { merge, revertMerge, deleteByUris as deleteEntityByUris, findOrIndexEntities } from '#tests/api/utils/entities'
-import { getByIds, getBySuspectUri, update, checkEntities } from '#tests/api/utils/tasks'
+import { getByIds, getBySuspectUri, update } from '#tests/api/utils/tasks'
+import type { EntityUri } from '#types/entity'
 
 const hookDelay = 300
 
@@ -11,7 +12,7 @@ describe('tasks:hooks', () => {
   describe('entity merge', () => {
     before(async () => {
       // Tests dependency: having a populated ElasticSearch wikidata index
-      const wikidataUris = [
+      const wikidataUris: EntityUri[] = [
         'wd:Q535', 'wd:Q15339037', // some Victor Hugos
         'wd:Q237087', // Fred Vargas
       ]

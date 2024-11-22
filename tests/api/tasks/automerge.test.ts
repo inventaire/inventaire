@@ -6,11 +6,12 @@ import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { generateIsbn13, createHuman, createWorkWithAuthor, randomLabel, createEdition } from '#fixtures/entities'
 import { getByUris, findOrIndexEntities, deleteByUris } from '#tests/api/utils/entities'
 import { checkEntities } from '#tests/api/utils/tasks'
+import type { EntityUri } from '#types/entity'
 
 describe('tasks:automerge', () => {
   before(async () => {
     // Tests dependency: having a populated ElasticSearch wikidata index
-    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248', 'wd:Q259507' ]
+    const wikidataUris: EntityUri[] = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q2829704', 'wd:Q2300248', 'wd:Q259507' ]
     await findOrIndexEntities(wikidataUris)
   })
 

@@ -4,10 +4,11 @@ import { createWorkWithAuthor, createHuman, createWork } from '#fixtures/entitie
 import { findOrIndexEntities, deleteByUris } from '#tests/api/utils/entities'
 import { checkEntities, getBySuspectUri } from '#tests/api/utils/tasks'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { EntityUri } from '#types/entity'
 
 describe('tasks:check-entities', () => {
   before(async () => {
-    const wikidataUris = [ 'wd:Q237087' ]
+    const wikidataUris: EntityUri[] = [ 'wd:Q237087' ]
     await findOrIndexEntities(wikidataUris)
   })
 

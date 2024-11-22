@@ -4,11 +4,12 @@ import { createHuman, createWorkWithAuthor, addSerie } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { getByUris, findOrIndexEntities } from '#tests/api/utils/entities'
 import { checkEntities } from '#tests/api/utils/tasks'
+import type { EntityUri } from '#types/entity'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
   before(async () => {
     // Tests dependency: having a populated ElasticSearch wikidata index
-    const wikidataUris = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140', 'wd:Q732060' ]
+    const wikidataUris: EntityUri[] = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140', 'wd:Q732060' ]
     await findOrIndexEntities(wikidataUris)
   })
 

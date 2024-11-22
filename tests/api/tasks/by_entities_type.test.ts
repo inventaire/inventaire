@@ -3,6 +3,7 @@ import { createTask } from '#fixtures/tasks'
 import { getByEntitiesType } from '#tests/api/utils/tasks'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { Url } from '#types/common'
 
 describe('tasks:byEntitiesType', () => {
   const entitiesType = 'work'
@@ -20,7 +21,7 @@ describe('tasks:byEntitiesType', () => {
 
   it('should reject requests without entities type', async () => {
     await createTask({ entitiesType })
-    const url = `/api/tasks?action=by-entities-type&type=${type}`
+    const url: Url = `/api/tasks?action=by-entities-type&type=${type}`
     return publicReq('get', url)
     .then(shouldNotBeCalled)
     .catch(err => {
@@ -31,6 +32,7 @@ describe('tasks:byEntitiesType', () => {
   it('should return tasks with a specific entities type', async () => {
     await createTask({ entitiesType })
     const tasks = await getByEntitiesType({ type, entitiesType })
+    tasks[0].type.should.equal(type)
     tasks[0].entitiesType.should.equal(entitiesType)
   })
 

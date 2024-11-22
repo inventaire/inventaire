@@ -2,6 +2,7 @@ import 'should'
 import { map, uniq } from 'lodash-es'
 import { createWork, generateIsbn13h, createEditionWithIsbn, createHuman } from '#fixtures/entities'
 import { wait } from '#lib/promises'
+import { objectValues } from '#lib/utils/base'
 import { getByUris, getByUri, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { authReq, getUser } from '#tests/api/utils/utils'
@@ -57,8 +58,9 @@ describe('tasks:deduplicate:works', () => {
     const res = await authReq('post', endpoint, { uri, isbn })
     res.tasks[0].ok.should.equal(true)
     const suspectUriTasksRes = await getBySuspectUri(uri)
-    const newTask = Object.values(suspectUriTasksRes)[0]
+    const newTask = objectValues(suspectUriTasksRes)[0]
 
+    newTask.type.should.equal('deduplicate')
     newTask.entitiesType.should.equal('work')
     newTask.suggestionUri.should.equal(editionWorkUri)
     const user = await getUser()
