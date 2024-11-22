@@ -174,12 +174,10 @@ function getWorkAuthorsUris (work) {
 }
 
 export async function getWdEntitiesLocalLayers (wdIds: WdEntityId[]) {
-  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
-    keys: wdIds.map(wdId => [ 'invp:P1', `wd:${wdId}` ]),
-    include_docs: true,
-  })
+  const keys = wdIds.map(wdId => [ 'invp:P1', `wd:${wdId}` ])
+  const docs = await db.getDocsByViewKeys<InvEntity>('byClaim', keys)
   const docsByWdId: Record<WdEntityId, InvEntity> = {}
-  for (const { doc } of res.rows) {
+  for (const doc of docs) {
     const id = unprefixify(getFirstClaimValue(doc.claims, 'invp:P1'))
     docsByWdId[id] = doc
   }
