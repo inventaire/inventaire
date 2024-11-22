@@ -139,20 +139,27 @@ export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | 
   if (isEmpty(claims)) return
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
+  const bot = 'special' in user && user.special
   const context = { id, claims, user: pick(user._id, '_id', 'username') }
   if (!('oauth' in credentials)) {
     warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
     return
   }
   const expandedClaims = expandInvClaims(claims)
+  const formattedClaims = formatClaimsForWikidata(omitLocalClaims(expandedClaims))
   await wdEdit.entity.edit({
     id,
-    claims: formatClaimsForWikidata(omitLocalClaims(expandedClaims)),
+    claims: formattedClaims,
     // See https://github.com/maxlath/wikibase-edit/blob/main/docs/how_to.md#reconciliation-modes
     reconciliation: {
       mode: 'skip-on-any-value',
     },
-  }, { credentials })
+  }, {
+    summary: `add claims: ${Object.keys(formattedClaims).join(', ')}`,
+    credentials,
+    // bot, // Requires bot rigths, see https://www.wikidata.org/wiki/Wikidata:Bots
+    maxlag: bot ? 5 : undefined,
+  })
   success(context, 'claims added to Wikidata')
 }
 
