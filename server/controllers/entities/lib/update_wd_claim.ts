@@ -1,4 +1,4 @@
-import { omitBy } from 'lodash-es'
+import { isEmpty, omitBy, pick } from 'lodash-es'
 import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk'
 import { formatClaimsForWikidata } from '#controllers/entities/lib/create_wd_entity'
 import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
@@ -9,7 +9,7 @@ import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#li
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { arrayIncludes } from '#lib/utils/base'
-import { LogError } from '#lib/utils/logs'
+import { LogError, warn } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
@@ -136,8 +136,14 @@ function getQualifierHash (claim, property, value) {
 }
 
 export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | SpecialUser) {
+  if (isEmpty(claims)) return
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
+  if (!('oauth' in credentials)) {
+    const context = { id, claims, user: pick(user._id, '_id', 'username') }
+    warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
+    return
+  }
   const expandedClaims = expandInvClaims(claims)
   return wdEdit.entity.edit({
     id,
