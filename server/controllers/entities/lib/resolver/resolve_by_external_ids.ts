@@ -20,6 +20,10 @@ async function resolveSeed (seed, expectedEntityType) {
     // There is no test for this, as this condition should not be possible to create,
     // other than by setting an external id already set on existing local entity on a Wikidata entity,
     // or alternatively, by bypassing local checks and writting directly in the database
+    // Another known case is when an entity had an external id but not the right type,
+    // thus a new entity with the desired type was created.
+    // Example: wd:Q1350100 is a museum, but to be used as an author, inv:c9349f80cc11bdbea74970376f0f5462 was created
+    // both with identical external ids (wdt:P268=13520355z, and others)
     warn({ uris, claims: seed.claims }, 'resolveExternalIds found too many uris, those are likely duplicates')
     const wdUris = uris.filter(isWdEntityUri)
     // Use a Wikidata uri in priority, but if there are none,
