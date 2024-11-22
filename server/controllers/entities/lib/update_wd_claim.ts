@@ -9,7 +9,7 @@ import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#li
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { arrayIncludes } from '#lib/utils/base'
-import { LogError, warn } from '#lib/utils/logs'
+import { LogError, success, warn } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
@@ -139,13 +139,13 @@ export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | 
   if (isEmpty(claims)) return
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
+  const context = { id, claims, user: pick(user._id, '_id', 'username') }
   if (!('oauth' in credentials)) {
-    const context = { id, claims, user: pick(user._id, '_id', 'username') }
     warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
     return
   }
   const expandedClaims = expandInvClaims(claims)
-  return wdEdit.entity.edit({
+  await wdEdit.entity.edit({
     id,
     claims: formatClaimsForWikidata(omitLocalClaims(expandedClaims)),
     // See https://github.com/maxlath/wikibase-edit/blob/main/docs/how_to.md#reconciliation-modes
@@ -153,6 +153,7 @@ export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | 
       mode: 'skip-on-any-value',
     },
   }, { credentials })
+  success(context, 'claims added to Wikidata')
 }
 
 export function omitLocalClaims (claims: ExpandedClaims) {
