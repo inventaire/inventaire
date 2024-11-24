@@ -2,6 +2,7 @@ import { keyBy } from 'lodash-es'
 import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import { createNotificationDoc, updateNotificationDoc } from '#models/notification'
+import type { Notification } from '#types/notification'
 
 const db = await dbFactory('notifications')
 

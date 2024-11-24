@@ -3,16 +3,22 @@ import { setDocsDeletedTrue } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
+import type { CouchDoc } from '#server/types/couchdb'
 import type getDbApi from './cot_base.js'
+import type { MaybeIdentifiedDocument } from 'blue-cot/types/nano.js'
 
 export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo) {
-  function actionAndReturn (verb: string, doc) {
+  async function actionAndReturn <D> (verb: string, doc: D) {
     assert_.object(doc)
-    return db[verb](doc)
-    .then(updateIdAndRev.bind(null, doc))
+    const couchRes = await db[verb](doc)
+    // @ts-expect-error
+    if (!doc._id) doc._id = couchRes.id
+    // @ts-expect-error
+    doc._rev = couchRes.rev
+    return doc as CouchDoc & D
   }
 
-  async function bulkDelete (docs) {
+  async function bulkDelete (docs: CouchDoc[]) {
     assert_.objects(docs)
     if (docs.length === 0) return []
     warn(docs, `${db.dbName} bulkDelete`)
@@ -20,19 +26,13 @@ export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo)
   }
 
   return {
-    byIds: async <D>(ids: string[]) => {
+    byIds: async <D extends CouchDoc>(ids: string[]) => {
       ids = forceArray(ids)
       const { docs } = await db.fetch<D>(ids)
       return docs
     },
-    postAndReturn: actionAndReturn.bind(null, 'post'),
-    putAndReturn: actionAndReturn.bind(null, 'put'),
+    postAndReturn: <D extends MaybeIdentifiedDocument> (doc: D) => actionAndReturn('post', doc),
+    putAndReturn: <D extends CouchDoc> (doc: D) => actionAndReturn('put', doc),
     bulkDelete,
   }
-}
-
-function updateIdAndRev (doc, couchRes) {
-  if (!doc._id) doc._id = couchRes.id
-  doc._rev = couchRes.rev
-  return doc
 }

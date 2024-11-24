@@ -4,9 +4,11 @@ import dbFactory from '#db/couchdb/base'
 import { notFoundError } from '#lib/error/error'
 import searchGroupsByPositionFactory from '#lib/search_by_position'
 import { assert_ } from '#lib/utils/assert_types'
-import { Log } from '#lib/utils/logs'
+import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
-import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds } from '#models/group'
+import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds, type GroupCreationParams } from '#models/group'
+import type { NewCouchDoc } from '#server/types/couchdb'
+import type { UserId } from '#server/types/user'
 import type { GroupId, Group } from '#types/group'
 import { addSlug } from './slug.js'
 
@@ -50,7 +52,7 @@ export async function getGroupsWhereUserHasAnyRole (userId) {
 
 export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
   assert_.string(userId)
-  const { rows } = await db.view<null, Group>('groups', 'byRoleAndUser', {
+  const { rows } = await db.view<Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: [
       [ 'admins', userId ],
@@ -60,9 +62,9 @@ export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
   return map(rows, 'id')
 }
 
-export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
+export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds: UserId[]) {
   assert_.strings(usersIds)
-  const { rows } = await db.view<null, Group>('groups', 'byRoleAndUser', {
+  const { rows } = await db.view<Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: usersIds.flatMap(userId => {
       return [
@@ -80,10 +82,12 @@ export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds) {
   return groupsIdsByMembersIds
 }
 
-export async function createGroup (options) {
-  const group = createGroupDoc(options)
+export async function createGroup (params: GroupCreationParams) {
+  const group = createGroupDoc(params)
   await addSlug(group)
-  return db.postAndReturn(group).then(Log('group created'))
+  const groupDoc = await db.postAndReturn(group as NewCouchDoc<Group>)
+  log('group created')
+  return groupDoc
 }
 
 export async function getUserGroupsCoMembers (userId) {
@@ -106,7 +110,7 @@ export const getGroupsByPosition = searchGroupsByPosition
 
 export async function imageIsUsed (imageHash) {
   assert_.string(imageHash)
-  const { rows } = await db.view<null, Group>('groups', 'byPicture', { key: imageHash })
+  const { rows } = await db.view<Group>('groups', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 

@@ -134,7 +134,7 @@ export const getUserByPosition = searchUsersByPosition
 
 export async function imageIsUsed (imageHash: ImageHash) {
   assert_.string(imageHash)
-  const { rows } = await db.view<null, User>('users', 'byPicture', { key: imageHash })
+  const { rows } = await db.view<User>('users', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 

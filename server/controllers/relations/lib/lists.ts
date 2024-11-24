@@ -9,7 +9,7 @@ import parseRelations from './parse_relations.js'
 const db = await dbFactory('users', 'relations')
 
 function getAllUserRelations (userId: UserId, includeDocs = false) {
-  return db.view<UserId, Relation>('relations', 'byStatus', {
+  return db.view<Relation>('relations', 'byStatus', {
     startkey: [ userId, minKey ],
     endkey: [ userId, maxKey ],
     include_docs: includeDocs,
@@ -23,7 +23,7 @@ export function getUserRelations (userId: UserId) {
 
 export async function getUserFriends (userId: UserId) {
   const query = { key: [ userId, 'friends' ] }
-  const res = await db.view<UserId, Relation>('relations', 'byStatus', query)
+  const res = await db.view<Relation>('relations', 'byStatus', query)
   return mapValue(res)
 }
 

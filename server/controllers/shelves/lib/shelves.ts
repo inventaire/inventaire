@@ -9,17 +9,18 @@ import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import shelfAttributes from '#models/attributes/shelf'
 import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
+import type { NewCouchDoc } from '#server/types/couchdb'
 import type { Item } from '#types/item'
-import type { Shelf, ShelfWithItems } from '#types/shelf'
+import type { NewShelf, Shelf, ShelfWithItems } from '#types/shelf'
 
 const { updatable } = shelfAttributes
 
 const db = await dbFactory('shelves')
 
-export async function createShelf (newShelf) {
+export async function createShelf (newShelf: NewShelf) {
   const shelf = createShelfDoc(newShelf)
   await validateVisibilityKeys(shelf.visibility, shelf.owner)
-  return db.postAndReturn(shelf)
+  return db.postAndReturn(shelf as NewCouchDoc<Shelf>)
 }
 
 export const getShelfById = db.get<Shelf>

@@ -8,6 +8,7 @@ import { newError } from '#lib/error/error'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
 import { createListingDoc, updateListingDocAttributes } from '#models/listing'
+import type { NewCouchDoc } from '#server/types/couchdb'
 import type { ListingElement } from '#types/element'
 import type { EntityUri } from '#types/entity'
 import type { Listing, ListingId, ListingWithElements } from '#types/listing'
@@ -32,7 +33,7 @@ export async function getListingsByIdsWithElements (ids: ListingId[]) {
 export async function createListing (params) {
   const listing = createListingDoc(params)
   await validateVisibilityKeys(listing.visibility, listing.creator)
-  return db.postAndReturn(listing)
+  return db.postAndReturn(listing as NewCouchDoc<Listing>)
 }
 
 export async function updateListingAttributes (params) {

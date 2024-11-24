@@ -37,13 +37,15 @@ export async function getInvEntityByIsbn (isbn: Isbn) {
   return docs[0]
 }
 
-export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: false, parseDoc?: false): Promise<DocumentViewResponse<EntityValue, undefined>>
-export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: true, parseDoc?: false): Promise<DocumentViewResponse<EntityValue, InvEntity>>
+type ByClaimViewKey = [ PropertyUri, InvClaimValue ]
+
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: false, parseDoc?: false): Promise<DocumentViewResponse<InvEntity, ByClaimViewKey, EntityValue>>
+export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: true, parseDoc?: false): Promise<DocumentViewResponse<InvEntity, ByClaimViewKey, EntityValue>>
 export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs?: true, parseDoc?: true): Promise<InvEntity[]>
 export async function getInvEntitiesByClaim (property: PropertyUri, value: InvClaimValue, includeDocs = false, parseDoc = false) {
   validateProperty(property)
 
-  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
+  const res = await db.view<InvEntity, ByClaimViewKey, EntityValue>('entities', 'byClaim', {
     key: [ property, value ],
     include_docs: includeDocs,
   })
@@ -71,7 +73,7 @@ export async function getInvEntitiesUrisByClaims (properties: PropertyUri[], val
 }
 
 export async function getInvClaimsByClaimValue (value: InvClaimValue) {
-  const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
+  const { rows } = await db.view<InvEntity, EntityValue, PropertyUri>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
   })
@@ -82,7 +84,7 @@ export async function getInvClaimsByClaimValue (value: InvClaimValue) {
 }
 
 export async function getInvEntitiesClaimValueCount (value: InvClaimValue) {
-  const { rows } = await db.view<PropertyUri, InvEntity>('entities', 'byClaimValue', {
+  const { rows } = await db.view<InvEntity, EntityValue, PropertyUri>('entities', 'byClaimValue', {
     key: value,
     include_docs: false,
   })
@@ -180,7 +182,7 @@ export async function getWdEntitiesLocalLayers (wdIds: WdEntityId[]) {
 }
 
 export async function getWdEntityLocalLayer (wdId: WdEntityId) {
-  const res = await db.view<EntityValue, InvEntity>('entities', 'byClaim', {
+  const res = await db.view<InvEntity, ByClaimViewKey, EntityValue>('entities', 'byClaim', {
     key: [ 'invp:P1', `wd:${wdId}` ],
     include_docs: true,
   })

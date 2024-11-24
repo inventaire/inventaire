@@ -6,10 +6,10 @@ const sanitization = {
 }
 
 async function controller ({ ids }) {
-  let clients = await getOauthClientsByIds(ids)
-  clients = clients.map(omitPrivateData)
+  const clients = await getOauthClientsByIds(ids)
+  const formattedClients = clients.map(omitPrivateData)
   return {
-    clients: keyBy(clients, '_id'),
+    clients: keyBy(formattedClients, '_id'),
   }
 }
 
@@ -17,6 +17,6 @@ const omitPrivateData = client => omit(client, privateAttributes)
 
 const privateAttributes = [
   'secret',
-]
+] as const
 
 export default { sanitization, controller }

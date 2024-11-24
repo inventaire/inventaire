@@ -6,7 +6,7 @@ const db = await dbFactory('users')
 
 export async function getUsersByCreationDate ({ limit = 100, offset = 0, withReportsOnly = false }) {
   const viewName = withReportsOnly ? 'byCreationWithReports' : 'byCreation'
-  const { rows } = await db.view<string, User>('users', viewName, {
+  const { rows } = await db.view<User>('users', viewName, {
     include_docs: true,
     limit,
     skip: offset,

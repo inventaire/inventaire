@@ -19,7 +19,8 @@ export async function getFollowActivitiesByObject (name: string) {
 
 export async function createActivity (newActivity) {
   const activity = createActivityDoc(newActivity)
-  return db.postAndReturn(activity)
+  const createdActivity = await db.postAndReturn(activity)
+  return createdActivity as Activity
 }
 
 export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }: { name: string, limit?: number, offset?: number }) {

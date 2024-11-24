@@ -18,6 +18,8 @@ export interface Shelf extends CouchDoc {
   updated?: EpochTimeStamp
 }
 
+export type NewShelf = Pick<Shelf, 'name' | 'visibility' | 'owner'> & Partial<Pick<Shelf, 'description' | 'color' | 'created'>>
+
 export interface ShelfWithItems extends Shelf {
   items: Item[]
 }

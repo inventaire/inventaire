@@ -1,8 +1,8 @@
-import type { DatabaseName, DesignDocName, Views } from '#types/couchdb'
+import type { CouchDoc, DatabaseName, DesignDocName, Views } from '#types/couchdb'
 
 export interface DatabaseConfig {
   name: string
-  designDocs: Record<DesignDocName, Views<unknown>>
+  designDocs: Record<DesignDocName, Views<CouchDoc>>
 }
 
 interface DesignDocOperationsSummary {

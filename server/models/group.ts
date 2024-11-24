@@ -4,11 +4,16 @@ import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
+import type { NewCouchDoc } from '#server/types/couchdb'
+import type { Group } from '#server/types/group'
+import type { UserId } from '#server/types/user'
 import groupValidations from './validations/group.js'
 
-export function createGroupDoc (options) {
-  log(options, 'group create')
-  const { name, description, searchable, position, creatorId, open } = options
+export type GroupCreationParams = Pick<Group, 'name' | 'description' | 'searchable' | 'position' | 'open' > & { creatorId: UserId }
+
+export function createGroupDoc (params: GroupCreationParams) {
+  log(params, 'group create')
+  const { name, description, searchable, position, creatorId, open } = params
   groupValidations.pass('name', name)
   groupValidations.pass('description', description)
   groupValidations.pass('searchable', searchable)
@@ -35,7 +40,7 @@ export function createGroupDoc (options) {
     creator: creatorId,
     // using the same timestamp for clarity
     created: creator.timestamp,
-  }
+  } as Omit<NewCouchDoc<Group>, 'slug'>
 }
 
 export const findGroupInvitation = (userId, group, wanted) => findMembership(userId, group, 'invited', wanted)

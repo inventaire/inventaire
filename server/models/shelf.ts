@@ -2,12 +2,12 @@ import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
-import type { Shelf } from '#types/shelf'
+import type { NewShelf, Shelf } from '#types/shelf'
 import type { UserId } from '#types/user'
 import attributes, { type UpdatableShelfAttributes } from './attributes/shelf.js'
 import validations from './validations/shelf.js'
 
-export function createShelfDoc (shelf) {
+export function createShelfDoc (shelf: NewShelf) {
   assert_.object(shelf)
   assert_.string(shelf.owner)
   assert_.string(shelf.name)
@@ -25,7 +25,7 @@ export function createShelfDoc (shelf) {
 
   newShelf.created = Date.now()
 
-  return newShelf
+  return newShelf as NewShelf
 }
 
 export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: Pick<Shelf, UpdatableShelfAttributes>, userId: UserId) {
