@@ -1,6 +1,6 @@
 import { getUrlFromEntityImageHash } from '#controllers/entities/lib/entities'
 import { isImageHash } from '#lib/boolean_validations'
-import getBestLangValue from '#lib/get_best_lang_value'
+import { getBestLangValue } from '#lib/get_best_lang_value'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
 
 export default lang => result => {

@@ -1,7 +1,7 @@
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import getBestLangValue from '#lib/get_best_lang_value'
+import { getBestLangValue } from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import itemValidations from '#models/validations/item'
 import type { SerializedEntity } from '#server/types/entity'

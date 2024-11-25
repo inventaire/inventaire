@@ -2,7 +2,7 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { i18n } from '#lib/emails/i18n/i18n'
-import getBestLangValue from '#lib/get_best_lang_value'
+import { getBestLangValue } from '#lib/get_best_lang_value'
 import config from '#server/config'
 import { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } from './helpers.js'
 

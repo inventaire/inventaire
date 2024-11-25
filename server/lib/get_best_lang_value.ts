@@ -1,7 +1,7 @@
 import { uniq } from 'lodash-es'
 
 // data: labels or descriptions
-export default (lang, originalLang, data) => {
+export function getBestLangValue (lang, originalLang, data) {
   if (!data) return {}
 
   const order = getLangPriorityOrder(lang, originalLang, data)
