@@ -16,7 +16,7 @@ export default (lang, originalLang, data) => {
 }
 
 function getLangPriorityOrder (lang, originalLang, data) {
-  const order = [ lang ]
+  const order = [ lang, 'mul' ]
   if (originalLang) order.push(originalLang)
   order.push('en')
   const availableLangs = Object.keys(data)
