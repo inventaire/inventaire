@@ -1,5 +1,5 @@
 import { updateSnapshotOnEntityChange } from '#controllers/items/lib/snapshot/update_snapshot_on_entity_change'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import bulkUpdate from './bulk_update.js'
 import byEntities from './by_entities.js'
 import byIds from './by_ids.js'
@@ -17,7 +17,7 @@ import search from './search.js'
 import update from './update.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-ids': byIds,
       'by-users': byUsers,
@@ -34,7 +34,7 @@ export default {
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       default: create,
       'delete-by-ids': deleteByIds,
@@ -44,7 +44,7 @@ export default {
     },
   }),
 
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     authentified: {
       default: update,
       'bulk-update': bulkUpdate,

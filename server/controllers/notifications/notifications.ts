@@ -2,18 +2,18 @@ import acceptedRequest from '#controllers/notifications/lib/accepted_request'
 import deleteNotifications from '#controllers/notifications/lib/delete_notifications'
 import groupUpdate from '#controllers/notifications/lib/group_update'
 import userMadeAdmin from '#controllers/notifications/lib/user_made_admin'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import { radio } from '#lib/radio'
 import get from './get.js'
 import updateStatus from './update_status.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     authentified: {
       default: get,
     },
   }),
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       default: updateStatus,
     },

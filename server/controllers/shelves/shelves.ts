@@ -1,4 +1,4 @@
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import byIds from './by_ids.js'
 import byOwners from './by_owners.js'
 import create from './create.js'
@@ -7,13 +7,13 @@ import { addItems, removeItems } from './items_actions.js'
 import update from './update.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-ids': byIds,
       'by-owners': byOwners,
     },
   }),
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       create,
       // TODO: harmonize with other endpoints to have 'update'

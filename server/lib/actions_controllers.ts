@@ -1,25 +1,16 @@
+import { objectEntries } from '#lib/utils/base'
 import validateObject from '#lib/validate_object'
+import type { ActionController, ActionsControllers } from '#server/types/controllers'
+import type { Req, Res } from '#server/types/server'
 import { controllerWrapper, validateControllerWrapperParams } from './controller_wrapper.js'
 import { bundleMissingQueryError, bundleUnknownAction } from './error/pre_filled.js'
-import { rolesByAccess } from './user_access_levels.js'
+import { accessLevels, type AccessLevel } from './user_access_levels.js'
 
-// A function to route requests to an endpoint to sub-endpoints
-// identified by their 'action' names:
-//
-// controllers = {
-//   [accessLevel]: {
-//     [actionA]: controller,
-//     [actionB]: {
-//       sanitization,
-//       controller,
-//       track,
-//     },
-//   }
-// }
+// A function to route requests to an endpoint to sub-endpoints identified by their 'action' names
 
-export default controllers => {
+export function actionsControllersFactory (controllers: ActionsControllers) {
   const actionsControllersParams = getActionsControllersParams(controllers)
-  return async (req, res) => {
+  return async (req: Req, res: Res) => {
     // Accepting the action to be passed either as a query string
     // or as a body parameter for more flexibility
     const action = req.query.action || req.body.action || 'default'
@@ -35,30 +26,23 @@ export default controllers => {
   }
 }
 
-const accessLevels = Object.keys(rolesByAccess)
-
-function getActionsControllersParams (controllers) {
+function getActionsControllersParams (controllers: ActionsControllers) {
   validateObject(controllers, accessLevels, 'object')
-
-  const controllerKeys = Object.keys(controllers)
   const actionsControllersParams = {}
-
-  controllerKeys.forEach(access => {
-    for (const action in controllers[access]) {
-      const actionData = controllers[access][action]
-      actionsControllersParams[action] = getActionControllerParams(access, actionData)
+  for (const [ accessLevel, actionControllers ] of objectEntries(controllers)) {
+    for (const [ actionName, actionData ] of objectEntries(actionControllers)) {
+      actionsControllersParams[actionName] = getActionControllerParams(accessLevel, actionData)
     }
-  })
-
+  }
   return actionsControllersParams
 }
 
-function getActionControllerParams (access, actionData) {
+function getActionControllerParams (access: AccessLevel, actionData: ActionController) {
   let controller, sanitization, track
-  if (actionData.sanitization) {
-    ({ controller, sanitization, track } = actionData)
-  } else {
+  if (typeof actionData === 'function') {
     controller = actionData
+  } else {
+    ({ controller, sanitization, track } = actionData)
   }
   const controllerParams = { access, controller, sanitization, track }
   validateControllerWrapperParams(controllerParams)

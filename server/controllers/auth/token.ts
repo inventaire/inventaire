@@ -1,5 +1,5 @@
 import { tokenLength, confirmEmailTokenValidity } from '#controllers/user/lib/token'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import { newError } from '#lib/error/error'
 import passport_ from '#lib/passport/passport'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
@@ -52,7 +52,7 @@ function assertGetReq ({ method }) {
 }
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'validation-email': confirmEmailValidity,
       'reset-password': allowPasswordReset,

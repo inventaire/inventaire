@@ -2,12 +2,12 @@ import emailConfirmation from '#controllers/auth/email_confirmation'
 import resetPassword from '#controllers/auth/reset_password'
 import updatePassword from '#controllers/auth/update_password'
 import wikidataOauth from '#controllers/auth/wikidata_oauth'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import { usernameAvailability, emailAvailability } from './availability.js'
 import { signup, login, logout } from './connection.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'username-availability': usernameAvailability,
       'email-availability': emailAvailability,
@@ -17,7 +17,7 @@ export default {
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     public: {
       signup,
       login,

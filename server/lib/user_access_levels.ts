@@ -1,4 +1,5 @@
 import { uniq } from 'lodash-es'
+import { objectKeys } from '#lib/utils/types'
 import type { SpecialUser, User } from '#server/types/user'
 
 export const rolesByAccess = {
@@ -6,9 +7,11 @@ export const rolesByAccess = {
   authentified: [ 'authentified', 'dataadmin', 'admin' ] as const,
   dataadmin: [ 'dataadmin', 'admin' ] as const,
   admin: [ 'admin' ] as const,
-}
+} as const
 
-export type AccessLevel = keyof typeof rolesByAccess
+export const accessLevels = objectKeys(rolesByAccess)
+
+export type AccessLevel = typeof accessLevels[number]
 
 const accessByRoles = {}
 

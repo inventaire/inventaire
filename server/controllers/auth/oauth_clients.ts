@@ -1,8 +1,8 @@
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import clientsByIds from './clients_by_ids.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-ids': clientsByIds,
     },

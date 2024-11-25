@@ -1,4 +1,4 @@
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import addElements from './add_elements.js'
 import byCreators from './by_creators.js'
 import byElementId from './by_element_id.js'
@@ -12,7 +12,7 @@ import update from './update.js'
 import updateElement from './update_element.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-id': byId,
       'by-element-id': byElementId,
@@ -21,7 +21,7 @@ export default {
       'by-creators': byCreators,
     },
   }),
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       create,
       'add-elements': addElements,
@@ -30,7 +30,7 @@ export default {
       'update-element': updateElement,
     },
   }),
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     authentified: {
       default: update,
     },

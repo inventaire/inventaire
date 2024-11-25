@@ -1,4 +1,4 @@
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import create from './create.js'
 import getUserGroups from './get_user_groups.js'
 import membersActions from './members_actions.js'
@@ -6,7 +6,7 @@ import publicActions from './public_actions.js'
 import updateSettings from './update_settings.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-id': publicActions.byId,
       'by-slug': publicActions.bySlug,
@@ -18,13 +18,13 @@ export default {
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       create,
     },
   }),
 
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     authentified: {
       invite: membersActions('invite'),
       accept: membersActions('accept'),

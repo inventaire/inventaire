@@ -1,5 +1,5 @@
 import { initTasksHooks } from '#controllers/tasks/hooks'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import byEntitiesType from './by_entities_type.js'
 import { bySuspectUris, bySuggestionUris } from './by_entity_uris.js'
 import byIds from './by_ids.js'
@@ -11,7 +11,7 @@ import getTasksCount from './get_tasks_count.js'
 import update from './update.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-ids': byIds,
       'by-score': byScore,
@@ -22,7 +22,7 @@ export default {
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       'deduplicate-works': deduplicateWorks,
     },
@@ -34,7 +34,7 @@ export default {
     },
   }),
 
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     admin: {
       update,
     },

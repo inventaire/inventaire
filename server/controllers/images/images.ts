@@ -1,4 +1,4 @@
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import { radio } from '#lib/radio'
 import convertUrl from './convert_url.js'
 import dataUrl from './data_url.js'
@@ -7,14 +7,14 @@ import checkImage from './lib/check_image.js'
 import upload from './upload.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     authentified: {
       'data-url': dataUrl,
       gravatar,
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     authentified: {
       upload,
       'convert-url': convertUrl,

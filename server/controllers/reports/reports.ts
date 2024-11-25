@@ -1,6 +1,6 @@
 import onlineReport from '#controllers/reports/online_report'
 import { handleAbuseReport } from '#controllers/user/lib/abuse_reports'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { bundleMissingBodyError } from '#lib/error/pre_filled'
@@ -66,7 +66,7 @@ function getErrStack (err) {
 }
 
 export default {
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     public: {
       'csp-report': cspReport,
       'error-report': errorReport,

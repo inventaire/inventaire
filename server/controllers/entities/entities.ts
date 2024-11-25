@@ -1,5 +1,5 @@
 import removeLabel from '#controllers/entities/remove_label'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import byUrisGet from './by_uris_get.js'
 import contributions from './contributions.js'
 import contributionsCount from './contributions_count.js'
@@ -21,7 +21,7 @@ import updateClaim from './update_claim.js'
 import updateLabel from './update_label.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     public: {
       'by-uris': byUrisGet,
       'reverse-claims': reverseClaims,
@@ -41,7 +41,7 @@ export default {
     },
   }),
 
-  post: ActionsControllers({
+  post: actionsControllersFactory({
     public: {
       'by-uris': byUrisGet,
     },
@@ -52,7 +52,7 @@ export default {
     },
   }),
 
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     authentified: {
       'update-claim': updateClaim,
       'update-label': updateLabel,

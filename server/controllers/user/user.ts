@@ -8,23 +8,23 @@
 // - users: finding users by their usernames, positions, etc
 
 import { keepSnapshotItemsCountsUpdated } from '#controllers/user/lib/keep_snapshot_items_counts_updated'
-import ActionsControllers from '#lib/actions_controllers'
+import { actionsControllersFactory } from '#lib/actions_controllers'
 import delet from './delete.js'
 import get from './get.js'
 import update from './update.js'
 
 export default {
-  get: ActionsControllers({
+  get: actionsControllersFactory({
     authentified: {
       default: get,
     },
   }),
-  put: ActionsControllers({
+  put: actionsControllersFactory({
     authentified: {
       default: update,
     },
   }),
-  delete: ActionsControllers({
+  delete: actionsControllersFactory({
     authentified: {
       default: delet,
     },
