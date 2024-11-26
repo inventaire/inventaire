@@ -2,7 +2,7 @@ import { map, uniq } from 'lodash-es'
 import { signRequest } from '#controllers/activitypub/lib/security'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { requests_ } from '#lib/requests'
+import { requests_, sanitizeUrl } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
@@ -11,7 +11,7 @@ import { makeUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
 // Arbitrary timeout
 const timeout = 30 * 1000
-const sanitize = config.activitypub.sanitizeUrls
+const { sanitizeUrls } = config.activitypub
 
 export async function signAndPostActivity ({ actorName, recipientActorUri, activity }) {
   assert_.string(actorName)
@@ -19,7 +19,8 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
   assert_.object(activity)
   let actorRes
   try {
-    actorRes = await requests_.get(recipientActorUri, { timeout, sanitize })
+    if (sanitizeUrls) recipientActorUri = await sanitizeUrl(recipientActorUri)
+    actorRes = await requests_.get(recipientActorUri, { timeout })
   } catch (err) {
     logError(err, 'signAndPostActivity private error')
     throw newError('Cannot fetch remote actor information, cannot post activity', 400, { recipientActorUri, activity })
