@@ -34,7 +34,7 @@ export function sign (params) {
 export async function verifySignature (req) {
   const { method, path: pathname, headers: reqHeaders } = req
   const { date, signature } = reqHeaders
-  // 30 seconds time window for thtat signature to be considered valid
+  // 30 seconds time window for that signature to be considered valid
   if (thirtySecondsTimeWindow(date)) throw newError('outdated request', 400, reqHeaders)
   if (signature === undefined) throw newError('no signature header', 400, reqHeaders)
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
