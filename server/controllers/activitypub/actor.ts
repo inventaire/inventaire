@@ -1,6 +1,7 @@
 import getActor from '#controllers/activitypub/lib/get_actor'
 import getActorHtmlUrl from '#controllers/activitypub/lib/get_actor_html_url'
 import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
+import { getInstanceActor } from '#lib/federation/instance'
 
 const sanitization = {
   name: {},
@@ -9,6 +10,10 @@ const sanitization = {
 async function controller (params, req, res) {
   const { name } = params
   const { accept = '' } = req.headers
+  if (name === 'instance') {
+    setActivityPubContentType(res)
+    return getInstanceActor()
+  }
   // TODO: detect cases where text/html is preceded by application/json
   const prefersHtml = accept.includes('text/html')
   if (prefersHtml) {
