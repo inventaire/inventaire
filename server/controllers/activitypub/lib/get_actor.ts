@@ -11,6 +11,11 @@ import { validateShelf, validateUser, validateEntity } from './validations.js'
 
 const host = publicOrigin.split('://')[1]
 
+export function getActor (name) {
+  const type = getActorTypeFromName(name)
+  return getActorByType[type](name)
+}
+
 async function getShelfActor (name: ShelfActorName) {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
@@ -104,6 +109,7 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
     inbox: `${publicOrigin}/api/activitypub?action=inbox&name=${actorName}`,
     sharedInbox: `${publicOrigin}/api/activitypub?action=shared-inbox`,
     outbox: `${publicOrigin}/api/activitypub?action=outbox&name=${actorName}`,
+    followers: `${publicOrigin}/api/activitypub?action=followers&name=${actorName}`,
     // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
     // shared public keys they already know
     publicKey: {
@@ -146,9 +152,4 @@ const getActorByType = {
   user: getUserActor,
   shelf: getShelfActor,
   entity: getEntityActor,
-}
-
-export default name => {
-  const type = getActorTypeFromName(name)
-  return getActorByType[type](name)
 }

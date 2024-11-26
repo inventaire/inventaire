@@ -40,6 +40,7 @@ export interface ActorActivity {
   inbox: AbsoluteUrl
   sharedInbox: AbsoluteUrl
   outbox: Url
+  followers: Url
   publicKey: {
     id: ActorKeyId
     owner: ActorUrl
@@ -132,12 +133,6 @@ export interface ItemNote extends Note {
 export interface ActivityLink {
   name: 'shelf' | 'inventory' | 'wikidata.org' | string
   url: AbsoluteUrl
-}
-
-export interface PublicKeyObject {
-  id: string
-  owner: ActorUrl
-  publicKeyPem: string
 }
 
 export interface ActorParams {
