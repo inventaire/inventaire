@@ -73,6 +73,7 @@ export interface ActorActivity {
   summary: string
   inbox: Url
   outbox: Url
+  followers: Url
   publicKey: {
     id: string
     owner: LocalActorUrl

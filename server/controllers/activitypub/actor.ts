@@ -1,4 +1,4 @@
-import getActor from '#controllers/activitypub/lib/get_actor'
+import { getActor } from '#controllers/activitypub/lib/get_actor'
 import getActorHtmlUrl from '#controllers/activitypub/lib/get_actor_html_url'
 import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
