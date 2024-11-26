@@ -49,6 +49,7 @@ const config = {
     bodyLogLimit: 500,
     baseBanTime: 5000,
     banTimeIncreaseFactor: 4,
+    maxBanTime: 24 * 60 * 60 * 1000,
     // Set to 4 or 6 to force the use of IPv4 or IPv6
     ipFamily: undefined,
     rejectPrivateUrls: true,

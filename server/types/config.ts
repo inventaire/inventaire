@@ -30,6 +30,7 @@ export type Config = ReadonlyDeep<{
     bodyLogLimit: number
     baseBanTime: number
     banTimeIncreaseFactor: number
+    maxBanTime: number
     /** Set to 4 or 6 to force the use of IPv4 or IPv6 */
     ipFamily?: 4 | 6
     rejectPrivateUrls: boolean

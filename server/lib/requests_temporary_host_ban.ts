@@ -8,7 +8,7 @@ import config from '#server/config'
 import type { Host } from '#server/types/common'
 
 const db = leveldbFactory('hosts-bans', 'json')
-const { baseBanTime, banTimeIncreaseFactor } = config.outgoingRequests
+const { baseBanTime, banTimeIncreaseFactor, maxBanTime } = config.outgoingRequests
 // Using port to keep instances data separated
 // to avoid overriding data between instances
 // TODO: share ban data among instances
@@ -75,7 +75,7 @@ export function declareHostError (host: Host) {
     // while the service might actually only have been down for a short while
     if (Date.now() < hostBanData.expire) return
     // This host persists to timeout: renew and increase ban time
-    hostBanData.banTime *= banTimeIncreaseFactor
+    hostBanData.banTime = Math.min(hostBanData.banTime * banTimeIncreaseFactor, maxBanTime)
     hostBanData.expire = getExpireTime(hostBanData.banTime)
   } else {
     hostBanData = banData[host] = {
