@@ -22,7 +22,7 @@ interface ItemsObj {
 
 export type ObjectType = NameObj & ItemsObj & Url
 
-export type LocalActorUrl = Url
+export type LocalActorUrl = AbsoluteUrl
 
 export type Actor = NameObj & UriObj
 
