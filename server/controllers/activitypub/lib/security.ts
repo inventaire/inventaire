@@ -2,14 +2,15 @@ import crypto from 'node:crypto'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { getSha256Base64Digest } from '#lib/crypto'
 import { newError } from '#lib/error/error'
-import { requests_ } from '#lib/requests'
+import { requests_, sanitizeUrl } from '#lib/requests'
 import { expired } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { HttpHeaders } from '#types/common'
+import type { Req } from '#server/types/server'
+import type { AbsoluteUrl, HttpHeaders } from '#types/common'
 
-const sanitize = config.activitypub.sanitizeUrls
+const { sanitizeUrls } = config.activitypub
 
 export function sign (params) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params
@@ -31,7 +32,7 @@ export function sign (params) {
   return `keyId="${keyId}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
 }
 
-export async function verifySignature (req) {
+export async function verifySignature (req: Req) {
   const { method, path: pathname, headers: reqHeaders } = req
   const { date, signature } = reqHeaders
   // 30 seconds time window for that signature to be considered valid
@@ -106,8 +107,9 @@ function buildSignatureString (params) {
   return signatureString
 }
 
-async function fetchActorPublicKey (actorUrl) {
-  const actor = await requests_.get(actorUrl, { sanitize })
+async function fetchActorPublicKey (actorUrl: string) {
+  if (sanitizeUrls) actorUrl = await sanitizeUrl(actorUrl)
+  const actor = await requests_.get(actorUrl as AbsoluteUrl)
   assert_.object(actor)
   const { publicKey } = actor
   if (!publicKey) {
