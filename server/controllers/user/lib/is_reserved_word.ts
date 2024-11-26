@@ -1,56 +1,64 @@
+import { databases } from '#db/couchdb/databases'
+import { objectKeys } from '#lib/utils/types'
+
+const singularize = str => str.replace(/s$/, '')
+const singularizedDatabasesNames = objectKeys(databases).map(singularize)
+
 // Additionnaly all 1 letter strings are reserved words
 // but the restriction is handled by the username regex
 const reservedWords = new Set([
+  ...singularizedDatabasesNames,
   'api',
   'auth',
+  'client',
   'contact',
-  'contacts',
   'contribute',
   'donate',
   'ean',
   'email',
-  'entities',
-  'entity',
   'exchange',
-  'exchanges',
   'feedback',
   'friend',
-  'friends',
   'give',
   'group',
-  'groups',
+  'instance',
   'inv',
   'inventories',
   'inventorize',
   'inventory',
+  'invite',
+  'invited',
   'isbn',
-  'item',
-  'items',
+  'key',
   'last',
   'latest',
   'lend',
-  'listings',
   'local',
   'map',
   'me',
   'nearby',
   'network',
+  'oauth',
   'private',
   'profil',
   'profile',
   'public',
+  'relation',
+  'self',
   'sell',
+  'server',
   'setting',
-  'settings',
   'share',
-  'transaction',
-  'transactions',
   'user',
   'username',
-  'users',
+  'value',
   'wd',
   'welcome',
   'wikidata',
 ])
 
-export default username => reservedWords.has(username.toLowerCase())
+export default username => {
+  const maybePlural = username.toLowerCase()
+  const singular = singularize(maybePlural)
+  return reservedWords.has(singular) || reservedWords.has(maybePlural)
+}
