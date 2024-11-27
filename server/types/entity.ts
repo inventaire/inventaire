@@ -4,7 +4,7 @@ import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { ExtraWdPropertyUri } from '#lib/wikidata/allowlisted_properties'
 import type { Url } from '#types/common'
-import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { CouchDoc, CouchUuid, NewCouchDoc } from '#types/couchdb'
 import type { ImageHash } from '#types/image'
 import type { OverrideProperties, Writable } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Claims as WdClaims, GetSitelinkUrlOptions } from 'wikibase-sdk'
@@ -140,6 +140,8 @@ export interface EntityRedirection extends Omit<InvEntity, 'labels' | 'claims'> 
 }
 
 export type InvEntityDoc = InvEntity | RemovedPlaceholderEntity | EntityRedirection
+
+export type NewInvEntity = NewCouchDoc<InvEntity>
 
 export type EntityImg = `/img/entities/${ImageHash}`
 

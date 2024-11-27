@@ -19,23 +19,25 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, objectFromEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
-import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference, WdEntityUri } from '#types/entity'
+import type { NewCouchDoc } from '#server/types/couchdb'
+import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference, WdEntityUri, RemovedPlaceholderEntity, NewInvEntity } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const wikimediaLanguageCodes = new Set(Object.keys(wikimediaLanguageCodesByWdId))
 
 export function createBlankEntityDoc () {
-  return {
+  const blankEntity: NewCouchDoc<InvEntity> = {
     type: 'entity' as const,
-    labels: {},
-    claims: {},
-    created: Date.now(),
+    labels: {} as Labels,
+    claims: {} as Claims,
+    created: Date.now() as EpochTimeStamp,
     version: 1,
   }
+  return blankEntity
 }
 
-export function setEntityDocLabel (doc: InvEntity, lang: WikimediaLanguageCode, value: Label) {
+export function setEntityDocLabel <D extends (InvEntity | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label) {
   assert_.object(doc)
   assert_.string(lang)
 
@@ -61,7 +63,7 @@ export function setEntityDocLabel (doc: InvEntity, lang: WikimediaLanguageCode, 
   return doc
 }
 
-export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
+export function setEntityDocLabels <D extends (InvEntity | NewInvEntity)> (doc: D, labels: Labels) {
   preventRedirectionEdit(doc)
   for (const [ lang, value ] of objectEntries(labels)) {
     doc = setEntityDocLabel(doc, lang, value)
@@ -70,9 +72,9 @@ export function setEntityDocLabels (doc: InvEntity, labels: Labels) {
   return doc
 }
 
-type CustomInvEntity = InvEntity & { _allClaimsProps?: PropertyUri[] }
+type CustomInvEntity <D> = (D & { _allClaimsProps?: PropertyUri[] })
 
-export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
+export function addEntityDocClaims <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, newClaims: Claims) {
   preventRedirectionEdit(doc)
 
   // Pass the list of all edited properties, so that when trying to infer property
@@ -91,12 +93,12 @@ export function addEntityDocClaims (doc: CustomInvEntity, newClaims: Claims) {
   return doc
 }
 
-export function createEntityDocClaim (doc: InvEntity, property: PropertyUri, claim: InvClaim) {
+export function createEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, claim: InvClaim) {
   preventRedirectionEdit(doc)
   return updateEntityDocClaim(doc, property, null, claim)
 }
 
-export function updateEntityDocClaim (doc: InvEntity, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim) {
+export function updateEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim) {
   const context = { doc, property, oldClaim, newClaim }
   preventRedirectionEdit(doc)
   if (oldClaim == null && newClaim == null) {
@@ -159,9 +161,9 @@ function minimizeClaimObject (claim: InvClaimObject) {
   }
 }
 
-export function beforeEntityDocSave (doc: InvEntity) {
+export function beforeEntityDocSave (doc: InvEntityDoc | NewInvEntity) {
   // Do not validate redirections, removed placeholder, etc
-  if (doc.claims != null) {
+  if ('claims' in doc && doc.type === 'entity') {
     removeEmptyClaimArrays(doc.claims)
     validateRequiredPropertiesValues(doc)
   }
@@ -290,19 +292,25 @@ export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
   return Object.assign(cloneDeep(entityDoc), { type: 'entity' })
 }
 
-export function preventRedirectionEdit (doc: InvEntityDoc): asserts doc is InvEntity {
+export function preventRedirectionEdit (doc: InvEntityDoc | NewInvEntity): asserts doc is (Exclude<(InvEntityDoc | NewInvEntity), EntityRedirection>) {
   if ('redirect' in doc) {
     throw newError('entity edit failed: the entity is a redirection', 400, { doc })
   }
 }
 
-export function preventLocalLayerEdit (doc: InvEntityDoc) {
+export function preventRemovedPlaceholderEdit (doc: InvEntityDoc | NewInvEntity): asserts doc is (Exclude<(InvEntityDoc | NewInvEntity), RemovedPlaceholderEntity>) {
+  if ('type' in doc && doc.type === 'removed:placeholder') {
+    throw newError('entity edit failed: the entity is a removed placeholder', 400, { doc })
+  }
+}
+
+export function preventLocalLayerEdit (doc: InvEntityDoc | NewInvEntity) {
   if (isLocalEntityLayer(doc)) {
     throw newError('entity edit failed: the entity is a local entity layer', 400, { doc })
   }
 }
 
-function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim) {
+function updateInferredProperties <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim) {
   const declaredProperties = doc._allClaimsProps || []
   // Use _allClaimsProps to list properties that shouldn't be inferred
   const propInferences: InferedProperties = omit(inferences[property], declaredProperties)
@@ -346,7 +354,7 @@ function updateInferredProperties (doc: CustomInvEntity, property: PropertyUri, 
   return doc
 }
 
-function setPossiblyEmptyPropertyArray (doc: InvEntity, property: PropertyUri, propertyArray: InvClaim[]) {
+function setPossiblyEmptyPropertyArray (doc: InvEntity | NewInvEntity, property: PropertyUri, propertyArray: InvClaim[]) {
   if (propertyArray.length === 0) {
     // if empty, clean the doc from the property
     doc.claims = omit(doc.claims, property)
@@ -355,7 +363,7 @@ function setPossiblyEmptyPropertyArray (doc: InvEntity, property: PropertyUri, p
   }
 }
 
-function deleteLabel (doc, lang) {
+function deleteLabel (doc: InvEntity | NewInvEntity, lang: WikimediaLanguageCode) {
   if (doc.labels[lang] == null) {
     throw newError('can not delete a non-existant label', 400, { doc, lang })
   }

@@ -5,7 +5,7 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { isInvEntityUri, isWdEntityUri } from '#lib/boolean_validations'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
-import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit } from '#models/entity'
+import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit, preventRemovedPlaceholderEdit } from '#models/entity'
 import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
@@ -20,6 +20,7 @@ export async function turnIntoRedirectionOrLocalLayer ({ userId, fromId, toUri, 
   const currentFromDoc = await getEntityById(fromId)
   preventRedirectionEdit(currentFromDoc)
   preventLocalLayerEdit(currentFromDoc)
+  preventRemovedPlaceholderEdit(currentFromDoc)
   let updatedFromDoc
   if (isWdEntityUri(toUri) && hasLocalClaims(currentFromDoc) && !(await wdEntityHasALocalLayer(toUri))) {
     updatedFromDoc = convertEntityDocIntoALocalLayer(currentFromDoc, toUri)

@@ -1,5 +1,5 @@
 import type { CouchDoc } from '#types/couchdb'
-import type { EntityUri, InvClaimValue, InvEntityId, InvEntityUri, Label } from '#types/entity'
+import type { EntityUri, InvClaimValue, InvEntityId, Label } from '#types/entity'
 import type { UserId } from '#types/user'
 
 export type PatchId = `${InvEntityId}:${number}`
@@ -40,7 +40,7 @@ export interface MergePatchContext {
 }
 
 export interface RedirectedClaimsContext {
-  redirectClaims: { fromUri: InvEntityUri }
+  redirectClaims: { fromUri: EntityUri }
 }
 
 export interface RevertedPatchContext {

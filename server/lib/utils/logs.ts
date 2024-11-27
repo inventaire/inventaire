@@ -39,7 +39,7 @@ export const success = (obj: unknown, label?: string) => log(obj, label, 'green'
 export const info = (obj: unknown, label?: string) => log(obj, label, 'blue')
 export function warn (err: unknown, label?: string) {
   if (iscontextualizedError(err)) {
-    const url = err.context && err.context.url
+    const url = err.context?.url
     // Local 404 errors don't need to be logged, as they will be logged
     // by the request logger middleware and logging the error object is of no help,
     // everything is in the URL

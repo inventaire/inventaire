@@ -3,11 +3,21 @@ import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { createBlankEntityDoc } from '#models/entity'
-import type { Patch } from '#types/patch'
+import type { InvEntityDoc } from '#server/types/entity'
+import type { UserId } from '#server/types/user'
+import type { BatchId, Patch, PatchContext } from '#types/patch'
 import { versioned } from './attributes/entity.js'
 import validations from './validations/common.js'
 
-export function createPatchDoc (params) {
+interface CreatePatchDocParams {
+  userId: UserId
+  currentDoc: InvEntityDoc
+  updatedDoc: InvEntityDoc
+  context?: PatchContext
+  batchId?: BatchId
+}
+
+export function createPatchDoc (params: CreatePatchDocParams) {
   const { userId, currentDoc, updatedDoc, context, batchId } = params
   validations.pass('userId', userId)
   assert_.object(currentDoc)

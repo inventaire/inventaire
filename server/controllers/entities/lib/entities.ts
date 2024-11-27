@@ -13,7 +13,9 @@ import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType } from '#types/entity'
+import type { BatchId, PatchContext } from '#server/types/patch'
+import type { UserId } from '#server/types/user'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Labels, Claims, NewInvEntity } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import createPatch from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -91,18 +93,26 @@ export async function getInvEntitiesClaimValueCount (value: InvClaimValue) {
   return rows.length
 }
 
-export async function editInvEntity (params) {
-  const { userId, updatedLabels, updatedClaims, currentDoc, batchId, create } = params
-  let updatedDoc = cloneDeep(currentDoc)
-  updatedDoc = setEntityDocLabels(updatedDoc, updatedLabels)
-  updatedDoc = addEntityDocClaims(updatedDoc, updatedClaims)
-  return putInvEntityUpdate({ userId, currentDoc, updatedDoc, batchId, create })
+interface PutInvEntityCommonParams {
+  userId: UserId
+  batchId?: BatchId
+  context?: PatchContext
 }
-
-export async function putInvEntityUpdate (params) {
+interface PutInvEntityCreationParams extends PutInvEntityCommonParams {
+  currentDoc: NewInvEntity
+  updatedDoc: NewInvEntity
+  create: true
+}
+interface PutInvEntityUpdateParams extends PutInvEntityCommonParams {
+  currentDoc: InvEntityDoc
+  updatedDoc: InvEntityDoc
+  create?: false
+}
+export async function putInvEntityUpdate (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
   const { userId, currentDoc, updatedDoc, create } = params
   assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
   if (currentDoc === updatedDoc) {
+    // @ts-expect-error TS2345
     throw newError('currentDoc and updatedDoc can not be the same object', 500, params)
   }
 
@@ -111,7 +121,7 @@ export async function putInvEntityUpdate (params) {
   // It is to the consumers responsability to check if there is an update:
   // empty patches at this stage will throw 500 errors
   let docAfterUpdate
-  if (create) {
+  if (create === true) {
     docAfterUpdate = await db.postAndReturn(updatedDoc)
   } else {
     docAfterUpdate = await db.putAndReturn(updatedDoc)
@@ -128,6 +138,30 @@ export async function putInvEntityUpdate (params) {
   }
 
   return docAfterUpdate
+}
+
+interface EditInvEntityCommonParams {
+  userId: UserId
+  updatedLabels: Labels
+  updatedClaims: Claims
+  batchId?: BatchId
+}
+interface CreateInvEntityParams extends EditInvEntityCommonParams {
+  currentDoc: NewInvEntity
+  create: true
+}
+interface EditInvEntityParams extends EditInvEntityCommonParams {
+  currentDoc: InvEntity
+  create?: false
+}
+export async function editInvEntity (params: CreateInvEntityParams | EditInvEntityParams) {
+  const { userId, currentDoc, updatedLabels, updatedClaims, batchId, create } = params
+  let updatedDoc = cloneDeep(currentDoc)
+  updatedDoc = setEntityDocLabels(updatedDoc, updatedLabels)
+  updatedDoc = addEntityDocClaims(updatedDoc, updatedClaims)
+  type T = typeof create extends true ? PutInvEntityCreationParams : PutInvEntityUpdateParams
+  const updateParams = { userId, currentDoc, updatedDoc, batchId, create } as T
+  return putInvEntityUpdate(updateParams)
 }
 
 export const getUrlFromEntityImageHash = (imageHash: ImageHash) => getUrlFromImageHash('entities', imageHash) as EntityImagePath
@@ -157,16 +191,16 @@ export function setTermsFromClaims (entity: SerializedEntity) {
   }
 }
 
-export function getAggregatedPropertiesValues (claims, properties) {
+export function getAggregatedPropertiesValues (claims: Claims, properties: PropertyUri[]) {
   return uniq(Object.values(pick(claims, properties)).flat().map(getClaimValue))
 }
 
-export function getWorksAuthorsUris (works) {
+export function getWorksAuthorsUris (works: SerializedEntity[]) {
   const uris: EntityUri[] = works.map(getWorkAuthorsUris).flat()
   return uniq(uris)
 }
 
-function getWorkAuthorsUris (work) {
+function getWorkAuthorsUris (work: SerializedEntity) {
   return Object.values(pick(work.claims, workAuthorRelationsProperties)).flat()
 }
 

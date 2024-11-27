@@ -33,7 +33,12 @@ export async function cacheEntityRelations (invEntityUri: InvEntityUri) {
   return Promise.all(promises)
 }
 
-export async function getCachedRelations <T> ({ valueUri, properties, formatEntity }: { valueUri: EntityUri, properties: readonly PropertyUri[], formatEntity: (entity: SerializedEntity) => T }) {
+interface GetCachedRelationsParams <T> {
+  valueUri: EntityUri
+  properties: PropertyUri[]
+  formatEntity: (entity: SerializedEntity) => T
+}
+export async function getCachedRelations <T> ({ valueUri, properties, formatEntity }: GetCachedRelationsParams<T>) {
   const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
   let entities = await getEntitiesList(subjectsUris, { refresh: true })
@@ -41,18 +46,20 @@ export async function getCachedRelations <T> ({ valueUri, properties, formatEnti
   return compact(entities).map(formatEntity)
 }
 
-async function getSubjectsUris (valueUri, properties) {
+async function getSubjectsUris (valueUri: EntityUri, properties: PropertyUri[]) {
   const subjectsUris = await Promise.all(properties.map(property => {
     return entitiesRelationsTemporaryCache.get(property, valueUri)
   }))
-  return uniq(subjectsUris.flat())
+  return uniq(subjectsUris.flat()) as EntityUri[]
 }
 
-export const relationIsConfirmedByPrimaryData = (properties: readonly PropertyUri[], valueUri: EntityUri) => async (entity: SerializedEntity) => {
-  const relationsUris = getAggregatedPropertiesValues(entity.claims, properties) as EntityUri[]
-  // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
-  const canonicalValuesUris = await getResolvedUris(relationsUris)
-  if (canonicalValuesUris.includes(valueUri)) return entity
+export function relationIsConfirmedByPrimaryData (properties: PropertyUri[], valueUri: EntityUri) {
+  return async function (entity: SerializedEntity) {
+    const relationsUris = getAggregatedPropertiesValues(entity.claims, properties) as EntityUri[]
+    // Wikidata might not have propagated redirections yet, so values uris redirections need to be resolved
+    const canonicalValuesUris = await getResolvedUris(relationsUris)
+    if (canonicalValuesUris.includes(valueUri)) return entity
+  }
 }
 
 async function getResolvedUris (uris: EntityUri[]) {

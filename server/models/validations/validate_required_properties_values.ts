@@ -4,9 +4,9 @@ import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { objectKeys } from '#lib/utils/types'
 import { isLocalEntityLayer } from '#models/entity'
-import type { InvEntity, PropertyUri } from '#server/types/entity'
+import type { InvEntity, NewInvEntity, PropertyUri } from '#server/types/entity'
 
-export function validateRequiredPropertiesValues (doc: InvEntity) {
+export function validateRequiredPropertiesValues (doc: InvEntity | NewInvEntity) {
   const { claims } = doc
   const isLocalLayer = isLocalEntityLayer(doc)
   if (!isLocalLayer) {
@@ -57,13 +57,13 @@ function validateUniqueValue (property, propertyClaims) {
   }
 }
 
-function validateLocalLayerClaimProperty (property: PropertyUri, doc: InvEntity) {
+function validateLocalLayerClaimProperty (property: PropertyUri, doc: InvEntity | NewInvEntity) {
   if (!isInvPropertyUri(property)) {
     throw newError('local layer can not have remote properties', 400, { doc, property })
   }
 }
 
-function validateRemoteEntityClaimProperty (property: PropertyUri, doc: InvEntity) {
+function validateRemoteEntityClaimProperty (property: PropertyUri, doc: InvEntity | NewInvEntity) {
   const { remoteEntityOnly } = properties[property]
   if (remoteEntityOnly) {
     throw newError('local entity can not have remote-entity-only claims', 400, { doc, property })

@@ -4,8 +4,8 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
-import { mergeEntitiesDocs } from '#models/entity'
-import type { EntityUri } from '#types/entity'
+import { mergeEntitiesDocs, preventRedirectionEdit } from '#models/entity'
+import type { EntityUri, InvEntityId } from '#types/entity'
 import type { PatchContext } from '#types/patch'
 import type { UserId } from '#types/user'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
@@ -35,11 +35,13 @@ export default async function ({ userId, fromUri, toUri, context }: { userId: Us
   await emit('entity:merge', fromUri, toUri)
 }
 
-async function mergeInvEntities (userId, fromId, toId) {
+async function mergeInvEntities (userId: UserId, fromId: InvEntityId, toId: InvEntityId) {
   assert_.strings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs
   const [ fromEntityDoc, toEntityDoc ] = await getEntitiesByIds([ fromId, toId ])
+  preventRedirectionEdit(fromEntityDoc)
+  preventRedirectionEdit(toEntityDoc)
   // At this point if the entities are not found, that's the server's fault,
   // thus the 500 statusCode
   if (fromEntityDoc._id !== fromId) {
