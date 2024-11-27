@@ -25,7 +25,7 @@ export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: {
 }
 
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
-  const followActivities = await getFollowActivitiesByObject(actorName)
+  const followActivities = await getFollowActivitiesByObject({ name: actorName })
   const bodyToByInboxUris: Record<AbsoluteUrl, BodyTo> = {}
   await whateverWorks(followActivities.map(activity => buildAudience(activity, bodyToByInboxUris)))
   const inboxUris = Object.keys(bodyToByInboxUris) as AbsoluteUrl[]

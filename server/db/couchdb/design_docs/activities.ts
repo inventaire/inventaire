@@ -9,8 +9,9 @@ export const views: Views<ActivityDoc> = {
   },
   followActivitiesByObject: {
     map: doc => {
-      if (doc.type === 'Follow') emit(doc.object.name, null)
+      if (doc.type === 'Follow') emit([ doc.object.name, doc.updated ], null)
     },
+    reduce: '_count',
   },
   byExternalId: {
     map: doc => {

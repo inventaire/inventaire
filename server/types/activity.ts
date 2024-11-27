@@ -144,7 +144,7 @@ export interface ActorParams {
   attachment?: PropertyValueAttachment[]
 }
 
-export interface Outbox {
+export interface OrderedCollection {
   '@context': Context[]
   id: Url
   type: 'OrderedCollection'

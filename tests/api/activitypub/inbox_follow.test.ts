@@ -40,7 +40,7 @@ describe('activitypub:inbox:Follow', () => {
         url: inboxUrl,
       })
       res.statusCode.should.equal(200)
-      const activities = await getFollowActivitiesByObject(username)
+      const activities = await getFollowActivitiesByObject({ name: username })
       activities.length.should.equal(1)
     })
 
@@ -57,7 +57,7 @@ describe('activitypub:inbox:Follow', () => {
       await requestPromise
       await wait(500)
       await requestPromise
-      const activities = await getFollowActivitiesByObject(username)
+      const activities = await getFollowActivitiesByObject({ name: username })
       activities.length.should.equal(1)
     })
 
@@ -110,7 +110,7 @@ describe('activitypub:inbox:Follow', () => {
         url: inboxUrl,
       })
       res.statusCode.should.equal(200)
-      const activities = await getFollowActivitiesByObject(name)
+      const activities = await getFollowActivitiesByObject({ name })
       activities.length.should.equal(1)
     })
   })
@@ -127,7 +127,7 @@ describe('activitypub:inbox:Follow', () => {
         url: inboxUrl,
       })
       res.statusCode.should.equal(200)
-      const activities = await getFollowActivitiesByObject(name)
+      const activities = await getFollowActivitiesByObject({ name })
       activities.length.should.equal(1)
     })
   })

@@ -13,8 +13,17 @@ export const getActivityById = (id: ActivityId) => db.get<ActivityDoc>(id)
 export const getActivitiesByIds = db.byIds<ActivityDoc>
 export const deleteActivityById = db.delete
 
-export async function getFollowActivitiesByObject (name: ActorName) {
-  return db.getDocsByViewKey<ActivityDoc>('followActivitiesByObject', name)
+export async function getFollowActivitiesByObject ({ name, limit = 10, offset = 0 }: { name: ActorName, limit?: number, offset?: number }) {
+  assertString(name)
+  return db.getDocsByViewQuery<ActivityDoc>('followActivitiesByObject', {
+    limit,
+    skip: offset,
+    startkey: [ name, Date.now() ],
+    endkey: [ name, 0 ],
+    descending: true,
+    include_docs: true,
+    reduce: false,
+  })
 }
 
 export async function createActivity (newActivity) {
