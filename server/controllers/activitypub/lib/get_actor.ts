@@ -1,7 +1,11 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import { publicOrigin } from '#server/config'
-import type { PropertyValueAttachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl, ShelfActorName, EntityActorName } from '#types/activity'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
+import { oneMonth } from '#lib/time'
+import { logError } from '#lib/utils/logs'
+import config, { publicOrigin } from '#server/config'
+import type { PropertyValueAttachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl, ShelfActorName, EntityActorName, RemoteActor } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import type { Username } from '#types/user'
 import buildAttachments from './build_attachments.js'
@@ -152,4 +156,38 @@ const getActorByType = {
   user: getUserActor,
   shelf: getShelfActor,
   entity: getEntityActor,
+}
+
+export async function getRemoteActor (actorUrl) {
+  let remoteActor: RemoteActor = { id: actorUrl }
+  try {
+    remoteActor = await cache_.get({
+      key: `remoteActor:${actorUrl}`,
+      fn: () => fetchRemoteActor(actorUrl),
+      ttl: oneMonth,
+    })
+  } catch (err) {
+    logError(err, `Cannot fetch remote actor information, actorUrl ${actorUrl}`)
+    return remoteActor
+  }
+  return remoteActor
+}
+
+const sanitize = config.activitypub.sanitizeUrls
+async function fetchRemoteActor (actorUrl) {
+  const remoteActorRes = await requests_.get(actorUrl, { sanitize })
+  return serializeRemoteActor(remoteActorRes)
+}
+
+function serializeRemoteActor (remoteActorRes) {
+  const { id, url, preferredUsername, name, icon, inbox } = remoteActorRes
+  const remoteActor: RemoteActor = {
+    id: id || url,
+    name: preferredUsername || name,
+    inbox,
+  }
+  if (icon) {
+    Object.assign(remoteActor, { icon: remoteActorRes.icon })
+  }
+  return remoteActor
 }

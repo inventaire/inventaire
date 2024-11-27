@@ -156,4 +156,18 @@ describe('followers', () => {
       res.orderedItems[0].should.equal(remoteUserId)
     })
   })
+
+  describe('with-remote-actors', () => {
+    const infoEndpoint = '/api/activitypub?action=followers&with-actors-info=true&name='
+    it('should paginate followers information', async () => {
+      const user = await createUser({ fediversable: true })
+      const { username } = await user
+      const { remoteUserId, remoteUsername } = await createFollowActivity(username)
+      const firstfollowersPage: Url = `${infoEndpoint}${username}&offset=0&limit=1`
+      const res = await publicReq('get', firstfollowersPage)
+      res.orderedItems.length.should.equal(1)
+      res.orderedItems[0].id.should.equal(remoteUserId)
+      res.orderedItems[0].preferredUsername.should.equal(remoteUsername)
+    })
+  })
 })

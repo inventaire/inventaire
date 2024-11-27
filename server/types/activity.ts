@@ -132,7 +132,7 @@ export interface ItemNote extends Note {
 
 export interface ActivityLink {
   name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: AbsoluteUrl
+  url: Url
 }
 
 export interface ActorParams {
@@ -154,3 +154,10 @@ export interface OrderedCollection {
 }
 
 export type BodyTo = (AbsoluteUrl | 'Public')[]
+
+export interface RemoteActor {
+  id: Url
+  icon?: ImageAttachment
+  name?: string
+  inbox?: Url
+}
