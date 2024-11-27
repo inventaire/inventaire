@@ -26,6 +26,16 @@ export async function getFollowActivitiesByObject ({ name, limit = 10, offset = 
   })
 }
 
+export async function getFollowActivitiesCount (name: string) {
+  assertString(name)
+  const res = await db.view('activities', 'followActivitiesByObject', {
+    startkey: [ name, 0 ],
+    endkey: [ name, Date.now() ],
+    group_level: 1,
+  })
+  return (res.rows[0]?.value || 0) as number
+}
+
 export async function createActivity (newActivity) {
   const activity = createActivityDoc(newActivity)
   const createdActivity = await db.postAndReturn(activity)
