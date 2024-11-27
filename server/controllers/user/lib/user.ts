@@ -12,7 +12,7 @@ import userValidations from '#models/validations/user'
 import { publicHost } from '#server/config'
 import type { ImageHash } from '#types/image'
 import type { OAuthProvider, OAuthProviderUserData } from '#types/oauth'
-import type { AccountUri } from '#types/server'
+import type { UserAccountUri } from '#types/server'
 import type { DocWithUsernameInUserDb, Email, User, UserId, UserRole, Username } from '#types/user'
 import { omitPrivateData, type UserExtraAttribute } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
@@ -167,5 +167,5 @@ export async function stopAllUserEmailNotifications (email) {
 }
 
 export function getLocalUserAcct (userId: UserId) {
-  return `${userId}@${publicHost}` as AccountUri
+  return `${userId}@${publicHost}` as UserAccountUri
 }
