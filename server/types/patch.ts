@@ -62,3 +62,5 @@ export interface Patch extends CouchDoc {
   batch?: BatchId
   context?: PatchContext
 }
+
+export type NewPatch = Omit<Patch, '_rev'>

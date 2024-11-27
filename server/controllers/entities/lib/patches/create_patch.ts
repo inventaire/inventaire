@@ -1,12 +1,23 @@
 import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import { createPatchDoc, getPatchDiff, revertPatch } from '#models/patch'
+import type { InvEntityDoc, NewInvEntity } from '#server/types/entity'
+import type { BatchId, NewPatch, Patch, PatchContext, PatchOperation } from '#server/types/patch'
+import type { UserId } from '#server/types/user'
 import { getEntityLastPatches } from './patches.js'
 
 const designDocName = 'patches'
 const db = await dbFactory('patches', designDocName)
 
-export default async function (params) {
+interface PatchCreationParams {
+  userId: UserId
+  currentDoc: NewInvEntity | InvEntityDoc
+  updatedDoc: InvEntityDoc
+  batchId?: BatchId
+  context?: PatchContext
+}
+
+export async function createPatch (params: PatchCreationParams) {
   const { currentDoc, updatedDoc, userId } = params
   const newPatchDoc = createPatchDoc(params)
 
@@ -32,30 +43,32 @@ export default async function (params) {
   return db.postAndReturn(newPatchDoc)
 }
 
-const entityHasPreviousVersions = currentDoc => currentDoc.version > 1
+function entityHasPreviousVersions (currentDoc: NewInvEntity | InvEntityDoc): currentDoc is InvEntityDoc {
+  return '_id' in currentDoc && currentDoc.version > 1
+}
 
-function lastPatchWasFromSameUser (previousPatchDoc, userId) {
+function lastPatchWasFromSameUser (previousPatchDoc: Patch, userId: UserId) {
   return previousPatchDoc && previousPatchDoc.user === userId
 }
 
-function getAggregatedOperations (currentDoc, updatedDoc, previousPatchDoc) {
+function getAggregatedOperations (currentDoc: InvEntityDoc, updatedDoc: InvEntityDoc, previousPatchDoc: Patch) {
   const beforeLastPatch = revertPatch(currentDoc, previousPatchDoc)
   return getPatchDiff(beforeLastPatch, updatedDoc)
 }
 
-const isNotSpecialPatch = patch => patch.context == null && patch.batch == null
+const isNotSpecialPatch = (patch: Patch) => patch.context == null && patch.batch == null
 
-const aggregatedOperationsAreEmpty = operations => operations.length === 0
+const aggregatedOperationsAreEmpty = (operations: PatchOperation[]) => operations.length === 0
 
-function aggregatedOperationsAreShorter (aggregatedOperations, previousPatchDoc, newPatchDoc) {
+function aggregatedOperationsAreShorter (aggregatedOperations: PatchOperation[], previousPatchDoc: Patch, newPatchDoc: NewPatch) {
   return aggregatedOperations.length < (previousPatchDoc.operations.length + newPatchDoc.operations.length)
 }
 
-async function deletePatch (patch) {
+async function deletePatch (patch: Patch) {
   await db.delete(patch._id, patch._rev)
 }
 
-async function updatePreviousPatch (aggregatedOperations, previousPatchDoc) {
+async function updatePreviousPatch (aggregatedOperations: PatchOperation[], previousPatchDoc: Patch) {
   previousPatchDoc.operations = aggregatedOperations
   return db.putAndReturn(previousPatchDoc)
 }

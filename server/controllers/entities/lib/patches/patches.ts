@@ -3,9 +3,9 @@ import dbFactory from '#db/couchdb/base'
 import { maxKey } from '#lib/couch'
 import { oneDay } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'
-import { simpleDay } from '#lib/utils/base'
+import { objectEntries, simpleDay } from '#lib/utils/base'
 import { addVersionsSnapshots } from '#models/patch'
-import type { InvEntityId } from '#types/entity'
+import type { InvClaimValue, InvEntityId } from '#types/entity'
 import type { Patch, PatchId } from '#types/patch'
 import type { UserId } from '#types/user'
 import type { ViewKey } from 'blue-cot/types/types.js'
@@ -99,7 +99,7 @@ export async function getGlobalContributions () {
   .slice(0, 100)
 }
 
-export function getContributionsFromLastDay (days) {
+export function getContributionsFromLastDay (days: number) {
   assert_.number(days)
   const now = Date.now()
   const startTime = now - (oneDay * days)
@@ -119,7 +119,7 @@ export function getContributionsFromLastDay (days) {
   }))
 }
 
-export async function getPatchesByClaimValue (claimValue, offset, limit) {
+export async function getPatchesByClaimValue (claimValue: InvClaimValue, offset: number, limit: number) {
   const { rows } = await db.view<Patch>(designDocName, 'byClaimValueAndDate', {
     startkey: [ claimValue, maxKey ],
     endkey: [ claimValue ],
@@ -131,7 +131,7 @@ export async function getPatchesByClaimValue (claimValue, offset, limit) {
   return rows
 }
 
-export async function getPatchesCountByClaimValue (claimValue) {
+export async function getPatchesCountByClaimValue (claimValue: InvClaimValue) {
   const { rows } = await db.view<Patch>(designDocName, 'byClaimValueAndDate', {
     startkey: [ claimValue, maxKey ],
     endkey: [ claimValue ],
@@ -146,25 +146,26 @@ const formatRow = row => ({
   contributions: row.value,
 })
 
-function aggregatePeriodContributions (counts, row) {
+function aggregatePeriodContributions (counts: Record<UserId, number>, row) {
   const userId = row.key[1]
   const contributions = row.value
-  if (counts[userId] == null) { counts[userId] = 0 }
+  if (counts[userId] == null) counts[userId] = 0
   counts[userId] += contributions
   return counts
 }
 
-function convertToArray (counts) {
-  const data = []
-  for (const userId in counts) {
-    const contributions = counts[userId]
-    data.push({ user: userId, contributions })
-  }
+export interface UserContributionCount {
+  user: UserId
+  contributions: number
+}
+function convertToArray (counts: Record<UserId, number>) {
+  const data = objectEntries(counts)
+    .map(([ userId, contributions ]) => ({ user: userId, contributions }))
   return sortAndFilterContributions(data)
 }
 
-function sortAndFilterContributions (rows) {
-  return rows
+function sortAndFilterContributions (userContributionCounts: UserContributionCount[]) {
+  return userContributionCounts
   .filter(noSpecialUser)
   .sort((a, b) => b.contributions - a.contributions)
 }

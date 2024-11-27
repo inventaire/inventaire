@@ -3,7 +3,7 @@ import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { createBlankEntityDoc } from '#models/entity'
-import type { InvEntityDoc } from '#server/types/entity'
+import type { InvEntityDoc, NewInvEntity } from '#server/types/entity'
 import type { UserId } from '#server/types/user'
 import type { BatchId, Patch, PatchContext } from '#types/patch'
 import { versioned } from './attributes/entity.js'
@@ -11,7 +11,7 @@ import validations from './validations/common.js'
 
 interface CreatePatchDocParams {
   userId: UserId
-  currentDoc: InvEntityDoc
+  currentDoc: NewInvEntity | InvEntityDoc
   updatedDoc: InvEntityDoc
   context?: PatchContext
   batchId?: BatchId
@@ -65,7 +65,7 @@ export function createPatchDoc (params: CreatePatchDocParams) {
   if (context != null) patch.context = context
   if (batchId != null) patch.batch = batchId
 
-  return patch
+  return patch as Omit<Patch, '_rev'>
 }
 
 export function getPatchDiff (currentDoc, updatedDoc) {

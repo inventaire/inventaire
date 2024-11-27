@@ -17,7 +17,7 @@ import type { BatchId, PatchContext } from '#server/types/patch'
 import type { UserId } from '#server/types/user'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Labels, Claims, NewInvEntity } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
-import createPatch from './patches/create_patch.js'
+import { createPatch } from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 
@@ -109,7 +109,7 @@ interface PutInvEntityUpdateParams extends PutInvEntityCommonParams {
   create?: false
 }
 export async function putInvEntityUpdate (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
-  const { userId, currentDoc, updatedDoc, create } = params
+  const { userId, currentDoc, updatedDoc, create, batchId, context } = params
   assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
   if (currentDoc === updatedDoc) {
     // @ts-expect-error TS2345
@@ -128,7 +128,14 @@ export async function putInvEntityUpdate (params: PutInvEntityCreationParams | P
   }
 
   try {
-    const patch = await createPatch(params)
+    const patchCreationParams = {
+      userId,
+      currentDoc,
+      updatedDoc: docAfterUpdate as InvEntityDoc,
+      batchId,
+      context,
+    }
+    const patch = await createPatch(patchCreationParams)
     if (patch) await emit('patch:created', patch)
   } catch (err) {
     const patchErr = newError('patch creation failed', 500, { currentDoc, updatedDoc })
