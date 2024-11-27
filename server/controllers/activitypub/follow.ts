@@ -77,6 +77,6 @@ async function sendAcceptActivity (followActivity, actor, object) {
 }
 
 async function getExistingFollowActivity (actor, name) {
-  const followActivities = await getFollowActivitiesByObject(name)
+  const followActivities = await getFollowActivitiesByObject({ name })
   return followActivities.find(activity => activity.actor.uri === actor.uri)
 }

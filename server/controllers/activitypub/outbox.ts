@@ -3,7 +3,7 @@ import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getPatchesByClaimValue, getPatchesCountByClaimValue } from '#controllers/entities/lib/patches/patches'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import type { Outbox } from '#types/activity'
+import type { OrderedCollection } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { Req, Res } from '#types/server'
@@ -55,7 +55,7 @@ async function getEntityActivities ({ name, offset, limit }) {
   const { entity } = await validateEntity(name)
   const actorName = getEntityActorName(entity.uri)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: actorName } })
-  const baseOutbox: Outbox = {
+  const baseOutbox: OrderedCollection = {
     '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',
@@ -71,7 +71,7 @@ async function getEntityActivities ({ name, offset, limit }) {
 }
 
 function getBaseOutbox (url: AbsoluteUrl) {
-  const outbox: Outbox = {
+  const outbox: OrderedCollection = {
     '@context': context,
     id: url,
     type: 'OrderedCollection',
@@ -84,7 +84,7 @@ function getBaseOutbox (url: AbsoluteUrl) {
 async function getUserActivities ({ name, offset, limit }) {
   const { user } = await validateUser(name)
   const fullOutboxUrl = makeUrl({ params: { action: 'outbox', name: user.stableUsername } })
-  const baseOutbox: Outbox = {
+  const baseOutbox: OrderedCollection = {
     '@context': context,
     id: fullOutboxUrl,
     type: 'OrderedCollection',

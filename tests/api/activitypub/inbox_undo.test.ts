@@ -35,7 +35,7 @@ describe('activitypub:inbox:Undo', () => {
         object: actorUrl,
         url: inboxUrl,
       })
-      const activities = await getFollowActivitiesByObject(username)
+      const activities = await getFollowActivitiesByObject({ name: username })
       const activity = activities[0]
       await signedReq({
         emitterUser: emitterUserB,
@@ -59,7 +59,7 @@ describe('activitypub:inbox:Undo', () => {
         object: actorUrl,
         url: inboxUrl,
       })
-      const activities = await getFollowActivitiesByObject(username)
+      const activities = await getFollowActivitiesByObject({ name: username })
       const activity = activities[0]
       await signedReq({
         emitterUser,
@@ -68,7 +68,7 @@ describe('activitypub:inbox:Undo', () => {
         object: activity.externalId,
       })
       await wait(500)
-      const activities2 = await getFollowActivitiesByObject(username)
+      const activities2 = await getFollowActivitiesByObject({ name: username })
       activities2.length.should.equal(0)
     })
   })
@@ -85,7 +85,7 @@ describe('activitypub:inbox:Undo', () => {
         object: actorUrl,
         url: inboxUrl,
       })
-      const activities = await getFollowActivitiesByObject(name)
+      const activities = await getFollowActivitiesByObject({ name })
       const activity = activities[0]
       await signedReq({
         emitterUser,
@@ -94,7 +94,7 @@ describe('activitypub:inbox:Undo', () => {
         object: activity.externalId,
       })
       await wait(500)
-      const activities2 = await getFollowActivitiesByObject(name)
+      const activities2 = await getFollowActivitiesByObject({ name })
       activities2.length.should.equal(0)
     })
 
@@ -110,7 +110,7 @@ describe('activitypub:inbox:Undo', () => {
         object: actorUrl,
         url: inboxUrl,
       })
-      const activities = await getFollowActivitiesByObject(name)
+      const activities = await getFollowActivitiesByObject({ name })
       const activity = activities[0]
       await signedReq({
         emitterUser,
@@ -124,7 +124,7 @@ describe('activitypub:inbox:Undo', () => {
         },
       })
       await wait(500)
-      const activities2 = await getFollowActivitiesByObject(name)
+      const activities2 = await getFollowActivitiesByObject({ name })
       activities2.length.should.equal(0)
     })
   })
@@ -142,7 +142,7 @@ describe('activitypub:inbox:Undo', () => {
         object: actorUrl,
         url: inboxUrl,
       })
-      const activities = await getFollowActivitiesByObject(name)
+      const activities = await getFollowActivitiesByObject({ name })
       const activity = activities[0]
       await signedReq({
         emitterUser,
@@ -151,7 +151,7 @@ describe('activitypub:inbox:Undo', () => {
         object: activity.externalId,
       })
       await wait(500)
-      const activities2 = await getFollowActivitiesByObject(name)
+      const activities2 = await getFollowActivitiesByObject({ name })
       activities2.length.should.equal(0)
     })
   })
