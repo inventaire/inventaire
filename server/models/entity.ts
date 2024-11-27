@@ -19,6 +19,7 @@ import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectEntries, objectFromEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
+import { objectKeys } from '#lib/utils/types'
 import type { NewCouchDoc } from '#server/types/couchdb'
 import type { Claims, EntityRedirection, EntityUri, InvClaim, InvClaimObject, InvEntity, InvEntityDoc, Label, Labels, PropertyUri, RemovedPlaceholdersIds, InvPropertyClaims, Reference, WdEntityUri, RemovedPlaceholderEntity, NewInvEntity } from '#types/entity'
 import { validateRequiredPropertiesValues } from './validations/validate_required_properties_values.js'
@@ -72,33 +73,28 @@ export function setEntityDocLabels <D extends (InvEntity | NewInvEntity)> (doc: 
   return doc
 }
 
-type CustomInvEntity <D> = (D & { _allClaimsProps?: PropertyUri[] })
-
-export function addEntityDocClaims <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, newClaims: Claims) {
+export function addEntityDocClaims <D extends (InvEntity | NewInvEntity)> (doc: D, newClaims: Claims) {
   preventRedirectionEdit(doc)
 
   // Pass the list of all edited properties, so that when trying to infer property
-  // values, we know which one should not be inferred at the risk of creating
-  // a conflict
-  doc._allClaimsProps = Object.keys(newClaims) as PropertyUri[]
+  // values, we know which one should not be inferred at the risk of creating a conflict
+  const definedProperties = objectKeys(newClaims)
 
   for (const [ property, propertyClaims ] of objectEntries(newClaims)) {
     for (const claim of propertyClaims) {
-      doc = createEntityDocClaim(doc, property, claim)
+      doc = createEntityDocClaim(doc, property, claim, definedProperties)
     }
   }
-
-  delete doc._allClaimsProps
 
   return doc
 }
 
-export function createEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, claim: InvClaim) {
+export function createEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: D, property: PropertyUri, claim: InvClaim, definedProperties?: PropertyUri[]) {
   preventRedirectionEdit(doc)
-  return updateEntityDocClaim(doc, property, null, claim)
+  return updateEntityDocClaim(doc, property, null, claim, definedProperties)
 }
 
-export function updateEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim) {
+export function updateEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: D, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim, definedProperties?: PropertyUri[]) {
   const context = { doc, property, oldClaim, newClaim }
   preventRedirectionEdit(doc)
   if (oldClaim == null && newClaim == null) {
@@ -150,7 +146,7 @@ export function updateEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc
     doc.claims[property].push(newClaim)
   }
 
-  return updateInferredProperties(doc, property, oldClaim, newClaim)
+  return updateInferredProperties(doc, property, oldClaim, newClaim, definedProperties)
 }
 
 function minimizeClaimObject (claim: InvClaimObject) {
@@ -310,10 +306,8 @@ export function preventLocalLayerEdit (doc: InvEntityDoc | NewInvEntity) {
   }
 }
 
-function updateInferredProperties <D extends (InvEntity | NewInvEntity)> (doc: CustomInvEntity<D>, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim) {
-  const declaredProperties = doc._allClaimsProps || []
-  // Use _allClaimsProps to list properties that shouldn't be inferred
-  const propInferences: InferedProperties = omit(inferences[property], declaredProperties)
+function updateInferredProperties <D extends (InvEntity | NewInvEntity)> (doc: D, property: PropertyUri, oldVal?: InvClaim, newVal?: InvClaim, definedProperties: PropertyUri[] = []) {
+  const propInferences: InferedProperties = omit(inferences[property], definedProperties)
 
   const addingOrUpdatingValue = (newVal != null)
 
