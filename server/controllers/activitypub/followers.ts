@@ -5,6 +5,7 @@ import { newError } from '#lib/error/error'
 import type { OrderedCollection } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import type { Req, Res } from '#types/server'
+import { getRemoteActor } from './lib/get_actor.js'
 import { makeUrl, getEntityUriFromActorName, context, setActivityPubContentType } from './lib/helpers.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
@@ -18,10 +19,14 @@ const sanitization = {
     optional: true,
     default: 10,
   },
+  'with-actors-info': {
+    optional: true,
+    generic: 'boolean',
+  },
 }
 
 async function controller (params, req: Req, res: Res) {
-  const { name: paramsName, offset, limit } = params
+  const { name: paramsName, offset, limit, withActorsInfo } = params
   let name
   setActivityPubContentType(res)
   if (isEntityUri(getEntityUriFromActorName(paramsName))) {
@@ -34,7 +39,7 @@ async function controller (params, req: Req, res: Res) {
   } else {
     throw newError('invalid name', 400, { name: paramsName })
   }
-  return buildFollowers(name, offset, limit)
+  return buildFollowers(name, offset, limit, withActorsInfo)
 }
 
 async function validateAndGetEntityName (name) {
@@ -49,7 +54,7 @@ async function validateAndGetUserName (name) {
   return stableUsername
 }
 
-async function buildFollowers (name, offset, limit) {
+async function buildFollowers (name, offset, limit, withActorsInfo) {
   const followersUrl = makeUrl({ params: { action: 'followers', name } })
   const baseFollowers = getFollowersBase(followersUrl)
   if (offset == null) {
@@ -60,7 +65,7 @@ async function buildFollowers (name, offset, limit) {
     baseFollowers.totalItems = await getFollowActivitiesCount(name)
     return baseFollowers
   } else {
-    return buildPaginatedFollowers(name, offset, limit, baseFollowers)
+    return buildPaginatedFollowers(name, offset, limit, baseFollowers, withActorsInfo)
   }
 }
 
@@ -75,13 +80,17 @@ function getFollowersBase (url: AbsoluteUrl) {
   return orderedCollection
 }
 
-async function buildPaginatedFollowers (name, offset, limit, followersObj) {
+async function buildPaginatedFollowers (name, offset, limit, followersObj, withActorsInfo) {
   const { id: followersUrl } = followersObj
   followersObj.type = 'OrderedCollectionPage'
   followersObj.partOf = followersUrl
   followersObj.next = `${followersUrl}&offset=${offset + limit}`
   const activitiesDocs = await getFollowActivitiesByObject({ name, limit, offset })
-  followersObj.orderedItems = await activitiesDocs.map(activity => activity.actor.uri)
+  if (withActorsInfo) {
+    followersObj.orderedItems = await Promise.all(activitiesDocs.map(activity => getRemoteActor(activity.actor.uri)))
+  } else {
+    followersObj.orderedItems = await activitiesDocs.map(activity => activity.actor.uri)
+  }
   return followersObj
 }
 

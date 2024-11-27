@@ -64,6 +64,12 @@ export interface ActivityLink {
 
 export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 
+interface Icon {
+  mediaType: 'image/jpeg'
+  type: 'Image'
+  url: string
+}
+
 export interface ActorActivity {
   '@context': Context[]
   type: 'Person'
@@ -81,11 +87,7 @@ export interface ActorActivity {
       publicKeyHash: string
     }
   }
-  icon?: {
-    mediaType: 'image/jpeg'
-    type: 'Image'
-    url: string
-  }
+  icon?: Icon
   attachment?: Attachement[]
 }
 
@@ -105,4 +107,11 @@ export interface OrderedCollection {
   first: Url
   next: Url
   totalItems?: number
+}
+
+export interface RemoteActor {
+  id: Url
+  icon?: Icon
+  name?: string
+  inbox?: Url
 }
