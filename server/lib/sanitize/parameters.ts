@@ -9,10 +9,7 @@ import { isWikimediaLanguageCode } from '#lib/wikimedia'
 import common from '#models/validations/common'
 import user from '#models/validations/user'
 import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
-import config from '#server/config'
-
-const origin = config.getPublicOrigin()
-const publicHost = origin.split('://')[1]
+import { publicHost } from '#server/config'
 
 // Parameters attributes:
 // - format (optional)

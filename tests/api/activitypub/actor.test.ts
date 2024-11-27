@@ -6,15 +6,12 @@ import { createHuman, createEdition } from '#fixtures/entities'
 import { createShelf } from '#fixtures/shelves'
 import { createUser, createUsername } from '#fixtures/users'
 import { i18n } from '#lib/emails/i18n/i18n'
-import config from '#server/config'
+import { publicHost } from '#server/config'
 import { rawRequest } from '#tests/api/utils/request'
 import { getActorName } from '#tests/api/utils/shelves'
 import { updateUser } from '#tests/api/utils/users'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-
-const origin = config.getPublicOrigin()
-const publicHost = origin.split('://')[1]
 
 const getAttachement = async (actorName, prop) => {
   const actorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
