@@ -9,10 +9,7 @@ import { isWikimediaLanguageCode } from '#lib/wikimedia'
 import common from '#models/validations/common'
 import user from '#models/validations/user'
 import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
-import config from '#server/config'
-
-const origin = config.getPublicOrigin()
-const publicHost = origin.split('://')[1]
+import { publicHost, publicOrigin } from '#server/config'
 
 // Parameters attributes:
 // - format (optional)
@@ -150,7 +147,7 @@ const arrayOfNumbers = {
 const imgUrl = {
   format: value => {
     let decodedUrl = decodeURIComponent(value)
-    if (decodedUrl[0] === '/') decodedUrl = `${origin}${decodedUrl}`
+    if (decodedUrl[0] === '/') decodedUrl = `${publicOrigin}${decodedUrl}`
     return decodedUrl
   },
   validate: validations.common.imgUrl,
