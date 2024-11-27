@@ -5,14 +5,11 @@ import { createHuman } from '#fixtures/entities'
 import { createShelf } from '#fixtures/shelves'
 import { createUser, createUsername } from '#fixtures/users'
 import { wait } from '#lib/promises'
-import config from '#server/config'
+import config, { publicHost, publicOrigin } from '#server/config'
 import { getActorName } from '#tests/api/utils/shelves'
 import { updateUser } from '#tests/api/utils/users'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-
-const publicOrigin = config.getPublicOrigin()
-const publicHost = publicOrigin.split('://')[1]
 
 const endpoint = '/.well-known/webfinger?resource='
 
