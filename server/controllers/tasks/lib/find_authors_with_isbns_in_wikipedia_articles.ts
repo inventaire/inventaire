@@ -5,7 +5,7 @@ import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { normalizeIsbn, findIsbns, isValidIsbn } from '#lib/isbn/isbn'
 import { asyncFilter } from '#lib/promises'
 import { someMatch } from '#lib/utils/base'
-import type { EntityUri } from '#server/types/entity'
+import type { EntityUri } from '#types/entity'
 
 export async function findAuthorWithMatchingIsbnInWikipediaArticles (worksData, authors) {
   // worksData is built with getAuthorWorksData

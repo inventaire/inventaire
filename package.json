@@ -141,8 +141,8 @@
     "#lib/*": "./server/lib/*.js",
     "#models/*": "./server/models/*.js",
     "#scripts/*": "./scripts/*.js",
-    "#server/*": "./server/*.js",
     "#tests/*": "./tests/*.js",
-    "#types/*": "./server/types/*.js"
+    "#types/*": "./server/types/*.js",
+    "#server/*": "./server/*.js"
   }
 }

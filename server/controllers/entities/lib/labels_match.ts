@@ -1,5 +1,5 @@
 import { someMatch } from '#lib/utils/base'
-import type { Label } from '#server/types/entity'
+import type { Label } from '#types/entity'
 
 export function haveExactMatch (labels1: Label[], labels2: Label[]) {
   const formattedLabels1 = labels1.map(formatLabel)

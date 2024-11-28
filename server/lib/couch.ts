@@ -1,5 +1,5 @@
 import { BasicUpdater } from '#lib/doc_updates'
-import type { UnknownDocumentViewResponse } from '#server/types/couchdb'
+import type { UnknownDocumentViewResponse } from '#types/couchdb'
 
 export function mapDoc <R extends UnknownDocumentViewResponse> (res: R) {
   return res.rows.map(row => row.doc)

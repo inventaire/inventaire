@@ -10,8 +10,8 @@ import dbFactory from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { convertEntityDocToPlaceholder, recoverEntityDocFromPlaceholder } from '#models/entity'
-import type { UserId } from '#server/types/user'
 import type { InvEntityDoc, InvEntityId, RemovedPlaceholderEntity } from '#types/entity'
+import type { UserId } from '#types/user'
 
 const db = await dbFactory('entities')
 

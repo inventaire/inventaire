@@ -1,7 +1,7 @@
 import type { ResolverBatchParams } from '#controllers/entities/lib/resolver/resolve_update_and_create'
-import type { BatchId } from '#server/types/patch'
-import type { EntitySeed, SanitizedResolverEntry } from '#server/types/resolver'
-import type { UserId } from '#server/types/user'
+import type { BatchId } from '#types/patch'
+import type { EntitySeed, SanitizedResolverEntry } from '#types/resolver'
+import type { UserId } from '#types/user'
 import { createEdition, createWork, createAuthor } from './create_entity_from_seed.js'
 
 export async function createUnresolvedEntry (entry: SanitizedResolverEntry, { reqUserId, batchId, enrich }: ResolverBatchParams) {

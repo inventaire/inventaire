@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { warn } from '#lib/utils/logs'
-import type { SanitizedResolverEntry } from '#server/types/resolver'
+import type { SanitizedResolverEntry } from '#types/resolver'
 import { resolveExternalIds } from './resolve_external_ids.js'
 
 export async function resolveEdition (entry: SanitizedResolverEntry) {

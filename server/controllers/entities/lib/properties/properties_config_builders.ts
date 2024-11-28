@@ -5,7 +5,7 @@ import { parseIsbn } from '#lib/isbn/parse'
 import { assert_ } from '#lib/utils/assert_types'
 import { objectValues } from '#lib/utils/base'
 import { getPluralType } from '#lib/wikidata/aliases'
-import type { EntityType } from '#server/types/entity'
+import type { EntityType } from '#types/entity'
 import { allowedValuesPerTypePerProperty } from './allowed_values_per_type_per_property.js'
 import { concurrentString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 

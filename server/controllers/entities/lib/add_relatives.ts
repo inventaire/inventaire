@@ -2,7 +2,7 @@
 // requested entities, following those entities claims
 
 import { chain, pick } from 'lodash-es'
-import type { PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
+import type { PropertyUri, SerializedEntitiesByUris } from '#types/entity'
 import { getEntitiesByUris, type EntitiesByUrisResults } from './get_entities_by_uris.js'
 
 export async function addRelatives (results: EntitiesByUrisResults, relatives: PropertyUri[], refresh: boolean) {

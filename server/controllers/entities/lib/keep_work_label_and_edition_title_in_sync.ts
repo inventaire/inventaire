@@ -5,7 +5,7 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import type { InvEntity } from '#server/types/entity'
+import type { InvEntity } from '#types/entity'
 import { updateLabel } from './update_label.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 

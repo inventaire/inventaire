@@ -2,9 +2,9 @@ import should from 'should'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import config from '#server/config'
-import type { AbsoluteUrl } from '#server/types/common'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { AbsoluteUrl } from '#types/common'
 
 const { baseBanTime, banTimeIncreaseFactor } = config.outgoingRequests
 

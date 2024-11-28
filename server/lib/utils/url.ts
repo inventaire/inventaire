@@ -1,5 +1,5 @@
 import { objectEntries } from '#lib/utils/base'
-import type { Url } from '#server/types/common'
+import type { Url } from '#types/common'
 
 const encodeCharacter = character => `%${character.charCodeAt(0).toString(16)}`
 

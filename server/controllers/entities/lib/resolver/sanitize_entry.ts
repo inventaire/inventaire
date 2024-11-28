@@ -5,8 +5,8 @@ import { newError } from '#lib/error/error'
 import { guessLangFromIsbn, isValidIsbn, normalizeIsbn } from '#lib/isbn/isbn'
 import { forceArray } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { EntityType, Isbn } from '#server/types/entity'
-import type { EditionLooseSeed, EntityLooseSeed, ResolverEntry, SanitizedResolverEntry } from '#server/types/resolver'
+import type { EntityType, Isbn } from '#types/entity'
+import type { EditionLooseSeed, EntityLooseSeed, ResolverEntry, SanitizedResolverEntry } from '#types/resolver'
 import { sanitizeSeed } from './sanitize_seed.js'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')

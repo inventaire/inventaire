@@ -5,7 +5,7 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import { getBestLangValue } from '#lib/get_best_lang_value'
 import { assert_ } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
-import type { InvEntityDoc, SerializedEntity } from '#server/types/entity'
+import type { InvEntityDoc, SerializedEntity } from '#types/entity'
 
 export function getEntityUriAndType (entity: InvEntityDoc | SerializedEntity) {
   // Case when a serialized entity is passed

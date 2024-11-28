@@ -1,6 +1,6 @@
 import { uniq } from 'lodash-es'
 import { objectKeys } from '#lib/utils/types'
-import type { SpecialUser, User } from '#server/types/user'
+import type { SpecialUser, User } from '#types/user'
 
 export const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,

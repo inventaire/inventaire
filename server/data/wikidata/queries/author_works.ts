@@ -1,6 +1,6 @@
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
-import type { WdEntityId } from '#server/types/entity'
+import type { WdEntityId } from '#types/entity'
 
 export default {
   parameters: [ 'qid' ] as const,

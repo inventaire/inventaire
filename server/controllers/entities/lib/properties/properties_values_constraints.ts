@@ -10,9 +10,9 @@ import {
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
 import { objectKeys } from '#lib/utils/types'
-import type { OmitNever } from '#server/types/common'
-import type { PropertyUri } from '#server/types/entity'
-import type { PropertyValueConstraints } from '#server/types/property'
+import type { OmitNever } from '#types/common'
+import type { PropertyUri } from '#types/entity'
+import type { PropertyValueConstraints } from '#types/property'
 import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs

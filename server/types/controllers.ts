@@ -1,5 +1,5 @@
 import type { AccessLevel } from '#lib/user_access_levels'
-import type { Req, Res } from '#server/types/server'
+import type { Req, Res } from '#types/server'
 
 type SanitizationObject = Record<string, unknown>
 

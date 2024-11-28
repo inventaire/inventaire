@@ -1,7 +1,7 @@
 import type { UserExtraAttribute } from '#controllers/user/lib/authorized_user_data_pickers'
 import { getUsersIndexedByIds } from '#controllers/user/lib/user'
 import { hasAdminAccess } from '#lib/user_access_levels'
-import type { Req } from '#server/types/server'
+import type { Req } from '#types/server'
 
 const sanitization = {
   ids: {},

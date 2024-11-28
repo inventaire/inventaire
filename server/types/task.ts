@@ -1,6 +1,5 @@
-import type { SerializedEntity } from '#server/types/entity'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
-import type { EntityUri } from '#types/entity'
+import type { SerializedEntity, EntityUri } from '#types/entity'
 import type { UserId } from '#types/user'
 import type { EntityType } from 'wikibase-sdk'
 

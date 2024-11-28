@@ -1,6 +1,6 @@
 import { allLocallyEditedEntitiesTypes, propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
-import type { ExtendedEntityType, PropertyUri } from '#server/types/entity'
-import type { PropertyDatatype } from '#server/types/property'
+import type { ExtendedEntityType, PropertyUri } from '#types/entity'
+import type { PropertyDatatype } from '#types/property'
 
 export const workAuthorRelationsProperties = [
   'wdt:P50', // author

@@ -1,6 +1,6 @@
 import { newError } from '#lib/error/error'
 import config from '#server/config'
-import type { SpecialUser, User } from '#server/types/user'
+import type { SpecialUser, User } from '#types/user'
 
 const { wikidataOAuth, botAccountWikidataOAuth } = config
 

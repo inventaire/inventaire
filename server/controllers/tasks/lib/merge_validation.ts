@@ -3,8 +3,7 @@ import { concurrentIdsProperties, getPropertyDatatype } from '#controllers/entit
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
-import type { SerializedEntity } from '#server/types/entity'
-import type { EntityUri } from '#types/entity'
+import type { SerializedEntity, EntityUri } from '#types/entity'
 
 export function validateAbsenceOfConflictingProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
   const fromConcurrentIdsClaims = pick(fromEntity.claims, concurrentIdsProperties)

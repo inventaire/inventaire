@@ -5,7 +5,7 @@ import type { ContextualizedError } from '#lib/error/format_error'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Host } from '#server/types/common'
+import type { Host } from '#types/common'
 
 const db = leveldbFactory('hosts-bans', 'json')
 const { baseBanTime, banTimeIncreaseFactor, maxBanTime } = config.outgoingRequests

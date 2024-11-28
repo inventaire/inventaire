@@ -2,7 +2,7 @@ import { allowedValuesPerTypePerProperty } from '#controllers/entities/lib/prope
 import { newError } from '#lib/error/error'
 import { objectEntries } from '#lib/utils/base'
 import { objectKeys } from '#lib/utils/types'
-import type { ExtendedEntityType, WdEntityUri } from '#server/types/entity'
+import type { ExtendedEntityType, WdEntityUri } from '#types/entity'
 
 const { 'wdt:P31': invP31Values } = allowedValuesPerTypePerProperty
 

@@ -1,7 +1,7 @@
 import { oneDay } from '#lib/time'
-import type { ResolverEntry } from '#server/types/resolver'
-import type { AuthentifiedReq } from '#server/types/server'
-import type { UserId } from '#server/types/user'
+import type { ResolverEntry } from '#types/resolver'
+import type { AuthentifiedReq } from '#types/server'
+import type { UserId } from '#types/user'
 import { resolveUpdateAndCreate } from './lib/resolver/resolve_update_and_create.js'
 
 // Entry example:

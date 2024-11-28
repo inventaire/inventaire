@@ -1,5 +1,5 @@
 import { some } from 'lodash-es'
-import type { SanitizedResolverEntry } from '#server/types/resolver'
+import type { SanitizedResolverEntry } from '#types/resolver'
 import { resolveAuthorsFromWorks } from './resolve_authors_from_works.js'
 import { resolveEditionFromWorks } from './resolve_edition_from_works.js'
 import { resolveWorksFromAuthors } from './resolve_works_from_authors.js'

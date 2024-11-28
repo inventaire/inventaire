@@ -15,11 +15,11 @@ import {
   existsOrCreate,
 } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
-import type { InvEntityUri } from '#server/types/entity'
 import { getByUris, merge, getHistory, addClaim, getByUri } from '#tests/api/utils/entities'
 import { getItemsByIds } from '#tests/api/utils/items'
 import { dataadminReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { InvEntityUri } from '#types/entity'
 
 describe('entities:merge:as:dataadmin', () => {
   it('should reject without from uri', async () => {

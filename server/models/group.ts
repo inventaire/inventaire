@@ -4,9 +4,9 @@ import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
-import type { NewCouchDoc } from '#server/types/couchdb'
-import type { Group } from '#server/types/group'
-import type { UserId } from '#server/types/user'
+import type { NewCouchDoc } from '#types/couchdb'
+import type { Group } from '#types/group'
+import type { UserId } from '#types/user'
 import groupValidations from './validations/group.js'
 
 export type GroupCreationParams = Pick<Group, 'name' | 'description' | 'searchable' | 'position' | 'open' > & { creatorId: UserId }

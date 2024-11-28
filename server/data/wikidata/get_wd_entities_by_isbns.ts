@@ -11,7 +11,7 @@ import { oneHour } from '#lib/time'
 import { isNotEmpty, objectFromEntries } from '#lib/utils/base'
 import { LogError } from '#lib/utils/logs'
 import { primaryTypesAliases } from '#lib/wikidata/aliases'
-import type { NormalizedIsbn, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { NormalizedIsbn, WdEntityId, WdEntityUri } from '#types/entity'
 
 const { works: worksP31Values, editions: editionsP31Values } = primaryTypesAliases
 

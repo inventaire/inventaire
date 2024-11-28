@@ -4,7 +4,7 @@ import { isInvPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { objectKeys } from '#lib/utils/types'
 import { isLocalEntityLayer } from '#models/entity'
-import type { InvEntity, NewInvEntity, PropertyUri } from '#server/types/entity'
+import type { InvEntity, NewInvEntity, PropertyUri } from '#types/entity'
 
 export function validateRequiredPropertiesValues (doc: InvEntity | NewInvEntity) {
   const { claims } = doc

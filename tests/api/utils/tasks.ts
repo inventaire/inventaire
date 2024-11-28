@@ -1,8 +1,8 @@
 import { values } from 'lodash-es'
 import { forceArray } from '#lib/utils/base'
-import type { EntityType } from '#server/types/entity'
-import type { TaskType } from '#server/types/task'
 import type { Url } from '#types/common'
+import type { EntityType } from '#types/entity'
+import type { TaskType } from '#types/task'
 import { publicReq, adminReq } from './utils.js'
 
 export const endpoint: Url = '/api/tasks?action='

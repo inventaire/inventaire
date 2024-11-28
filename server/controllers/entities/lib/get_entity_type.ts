@@ -5,7 +5,7 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { warn } from '#lib/utils/logs'
 import { typesByExtendedP31AliasesValues } from '#lib/wikidata/extended_aliases'
-import type { ExtendedEntityType, InvPropertyClaims, Claims, EntityUri, InvClaim, EntityType } from '#server/types/entity'
+import type { ExtendedEntityType, InvPropertyClaims, Claims, EntityUri, InvClaim, EntityType } from '#types/entity'
 
 export function getInvEntityType (wdtP31Claims: InvPropertyClaims): EntityType {
   if (wdtP31Claims == null) return

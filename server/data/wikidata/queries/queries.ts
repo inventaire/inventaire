@@ -1,4 +1,4 @@
-import type { InvSnakValue, PropertyUri, WdEntityId, WdPropertyId, WdPropertyUri } from '#server/types/entity'
+import type { InvSnakValue, PropertyUri, WdEntityId, WdPropertyId, WdPropertyUri } from '#types/entity'
 import authorWorks, { type AuthorWorks } from './author_works.js'
 import editionsReverseClaims, { type ReverseClaimsEditions } from './editions_reverse_claims.js'
 import humansReverseClaims, { type ReverseClaimsHumans } from './humans_reverse_claims.js'

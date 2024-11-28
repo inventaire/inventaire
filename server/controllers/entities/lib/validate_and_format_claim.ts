@@ -4,7 +4,7 @@ import { validateAndFormatSnakValueSync } from '#controllers/entities/lib/valida
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
-import type { InvClaimObject } from '#server/types/entity'
+import type { InvClaimObject } from '#types/entity'
 import { validateProperty } from './properties/validations.js'
 import { validateAndFormatClaimValue, type ValidateAndFormatClaimValueParams } from './validate_and_format_claim_value.js'
 

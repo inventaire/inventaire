@@ -1,6 +1,6 @@
 import { flatten, map } from 'lodash-es'
 import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
-import type { EntityUri } from '#server/types/entity'
+import type { EntityUri } from '#types/entity'
 import { getEntitiesList } from '../get_entities_list.js'
 
 export async function getWorksFromAuthorsUris (authorUris: EntityUri[]) {

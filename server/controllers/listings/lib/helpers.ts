@@ -1,6 +1,6 @@
 import { keyBy } from 'lodash-es'
 import { paginate, type PageParams } from '#lib/pagination'
-import type { Listing } from '#server/types/listing'
+import type { Listing } from '#types/listing'
 
 export function filterFoundElementsUris (elements, uris) {
   const foundElements = []

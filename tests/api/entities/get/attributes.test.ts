@@ -1,7 +1,6 @@
 import should from 'should'
 import { objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
-import type { ExpandedSerializedEntity } from '#server/types/entity'
 import {
   createEditionWithWorkAuthorAndSerie,
   createWorkWithAuthor,
@@ -9,6 +8,7 @@ import {
 } from '#tests/api/fixtures/entities'
 import { getEntitiesAttributesByUris, getEntityAttributesByUri } from '#tests/api/utils/entities'
 import { publicReq } from '#tests/api/utils/utils'
+import type { ExpandedSerializedEntity } from '#types/entity'
 
 const workWithAuthorPromise = createWorkWithAuthor()
 

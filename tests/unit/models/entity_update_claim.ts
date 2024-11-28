@@ -3,9 +3,9 @@ import should from 'should'
 import { someReference, someReferenceB } from '#fixtures/entities'
 import { superTrim } from '#lib/utils/base'
 import { createBlankEntityDoc, createEntityDocClaim, updateEntityDocClaim } from '#models/entity'
-import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { EntityUri, InvEntity, WdEntityUri } from '#server/types/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { CouchRevId, CouchUuid } from '#types/couchdb'
+import type { EntityUri, InvEntity, WdEntityUri } from '#types/entity'
 
 const workDoc = () => {
   const doc: InvEntity = {

@@ -3,7 +3,7 @@ import gm from 'gm'
 import { sha1 } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'
 import config from '#server/config'
-import type { ImageContainer, ImagePath } from '#server/types/image'
+import type { ImageContainer, ImagePath } from '#types/image'
 
 const { maxSize } = config.mediaStorage.images
 

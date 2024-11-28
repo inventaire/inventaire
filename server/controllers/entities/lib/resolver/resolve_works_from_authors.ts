@@ -1,5 +1,5 @@
 import { compact, uniq } from 'lodash-es'
-import type { EntitySeed } from '#server/types/resolver'
+import type { EntitySeed } from '#types/resolver'
 import { getAuthorsUris } from '../get_authors_uris.js'
 import { getWorksFromAuthorsUris } from './get_works_from_authors_uris.js'
 import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers.js'

@@ -12,7 +12,7 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
 import { propertiesValuesConstraints } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { objectKeys } from '#lib/utils/types'
-import type { WdPropertyId } from '#server/types/entity'
+import type { WdPropertyId } from '#types/entity'
 
 const editedProperties = objectKeys(propertiesValuesConstraints)
   .filter(property => property.startsWith('wdt:'))

@@ -1,6 +1,5 @@
 import should from 'should'
 import { isCouchUuid } from '#lib/boolean_validations'
-import type { ExpandedSerializedWdEntity, InvEntityUri } from '#server/types/entity'
 import {
   createEdition,
   createEditionWithIsbn,
@@ -13,6 +12,7 @@ import {
 } from '#tests/api/fixtures/entities'
 import { addClaim, getByUri, getByUris, merge } from '#tests/api/utils/entities'
 import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { ExpandedSerializedWdEntity, InvEntityUri } from '#types/entity'
 
 const workWithAuthorPromise = createWorkWithAuthor()
 

@@ -5,7 +5,7 @@
 import { debounceByKey } from '#lib/debounce_by_key'
 import { radio } from '#lib/radio'
 import config from '#server/config'
-import type { UserId } from '#server/types/user'
+import type { UserId } from '#types/user'
 import { updateSnapshotItemsCounts } from './update_snapshot_items_counts.js'
 
 const { snapshotsDebounceTime: delay } = config

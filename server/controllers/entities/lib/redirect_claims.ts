@@ -3,8 +3,8 @@ import { getInvClaimsByClaimValue, getEntitiesByIds, putInvEntityUpdate } from '
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { log } from '#lib/utils/logs'
 import { updateEntityDocClaim } from '#models/entity'
-import type { EntityUri, InvEntityDoc, InvEntityId } from '#server/types/entity'
-import type { UserId } from '#server/types/user'
+import type { EntityUri, InvEntityDoc, InvEntityId } from '#types/entity'
+import type { UserId } from '#types/user'
 
 async function _redirectClaims (userId: UserId, fromUri: EntityUri, toUri: EntityUri) {
   const results = await getInvClaimsByClaimValue(fromUri)

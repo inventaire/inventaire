@@ -1,8 +1,8 @@
 import { map, uniq } from 'lodash-es'
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { userShouldBeAnonymized } from '#models/user'
-import type { Patch } from '#server/types/patch'
-import type { UserId } from '#server/types/user'
+import type { Patch } from '#types/patch'
+import type { UserId } from '#types/user'
 
 interface AnonymizePatchesParams {
   patches: Patch[]

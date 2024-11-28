@@ -2,7 +2,7 @@ import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import type { Claims, EntityUri, InvEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, EntityUri, InvEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import type { Split } from 'type-fest'
 

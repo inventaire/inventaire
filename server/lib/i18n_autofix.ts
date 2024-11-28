@@ -5,7 +5,7 @@ import { arrayIncludes, objLength } from '#lib/utils/base'
 import { readJsonFile, writeJsonFile } from '#lib/utils/json'
 import { success, info, warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { WdPropertyId } from '#server/types/entity'
+import type { WdPropertyId } from '#types/entity'
 import { wait } from './promises.js'
 
 const { autofix, srcFolderPath } = config.i18n

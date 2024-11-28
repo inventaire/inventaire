@@ -1,6 +1,6 @@
 // A canonical URI is the prefered URI to refer to an entity,
 import { newError } from '#lib/error/error'
-import type { EntityUri, InvEntityDoc, RedirectFromTo } from '#server/types/entity'
+import type { EntityUri, InvEntityDoc, RedirectFromTo } from '#types/entity'
 // typically, an isbn: URI rather than an inv: one
 // Those URIs are the only URIs used to bound items to entities and
 // in entities claims, and are used in the client to build entities URLs

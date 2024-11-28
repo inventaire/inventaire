@@ -1,5 +1,5 @@
 import { parseFormMiddleware } from '#controllers/images/lib/parse_form'
-import type { Middleware, PathSpecificMiddleware } from '#server/types/server'
+import type { Middleware, PathSpecificMiddleware } from '#types/server'
 import auth from './auth.js'
 import { acceptUrlencoded, jsonBodyParser, deduplicateRequests } from './content.js'
 import requestsLogger from './requests_logger.js'

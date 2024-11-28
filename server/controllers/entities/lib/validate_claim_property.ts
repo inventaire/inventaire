@@ -1,7 +1,7 @@
 import { propertiesPerType } from '#controllers/entities/lib/properties/properties'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import type { EntityType, PropertyUri } from '#server/types/entity'
+import type { EntityType, PropertyUri } from '#types/entity'
 import { validateProperty } from './properties/validations.js'
 
 export function validateClaimProperty (type: EntityType, property: PropertyUri) {

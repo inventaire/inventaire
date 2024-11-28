@@ -7,9 +7,9 @@ import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
 import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds, type GroupCreationParams } from '#models/group'
-import type { NewCouchDoc } from '#server/types/couchdb'
-import type { UserId } from '#server/types/user'
+import type { NewCouchDoc } from '#types/couchdb'
 import type { GroupId, Group } from '#types/group'
+import type { UserId } from '#types/user'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')

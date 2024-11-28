@@ -6,7 +6,7 @@ import { validateClaimValueSync } from '#controllers/entities/lib/validate_claim
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes } from '#lib/utils/base'
-import type { EntityValue, ExtendedEntityType, InvClaimValue, SimplifiedClaims, WdEntityId, WdPropertyUri } from '#server/types/entity'
+import type { EntityValue, ExtendedEntityType, InvClaimValue, SimplifiedClaims, WdEntityId, WdPropertyUri } from '#types/entity'
 
 export async function validateWdEntityUpdate (id: WdEntityId, property: WdPropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
   const uri = prefixifyWd(id)

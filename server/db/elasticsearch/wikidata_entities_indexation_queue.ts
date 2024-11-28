@@ -8,7 +8,7 @@ import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
-import type { WdEntityId } from '#server/types/entity'
+import type { WdEntityId } from '#types/entity'
 
 const { nice } = config
 const { minReindexationInterval } = config.elasticsearch

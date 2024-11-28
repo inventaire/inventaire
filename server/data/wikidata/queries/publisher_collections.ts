@@ -1,5 +1,5 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
-import type { WdEntityId } from '#server/types/entity'
+import type { WdEntityId } from '#types/entity'
 
 const relationProperty = 'wdt:P123'
 

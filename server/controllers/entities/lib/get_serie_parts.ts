@@ -2,7 +2,7 @@ import { getInvEntitiesByClaim, uniqByUri } from '#controllers/entities/lib/enti
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { runWdQuery } from '#data/wikidata/run_query'
-import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId } from '#server/types/entity'
+import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId } from '#types/entity'
 import { getSimpleDayDate, sortByOrdinalOrDate } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 

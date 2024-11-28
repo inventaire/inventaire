@@ -1,5 +1,5 @@
 import { property } from 'lodash-es'
-import type { Item } from '#server/types/item'
+import type { Item } from '#types/item'
 import { buildInvertedClaimTree } from './build_inverted_claim_tree.js'
 
 export function bundleViewData (items: Item[], entitiesData) {

@@ -1,7 +1,7 @@
 import { someReference } from '#fixtures/entities'
 import { createBlankEntityDoc } from '#models/entity'
-import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { InvEntity } from '#server/types/entity'
+import type { CouchRevId, CouchUuid } from '#types/couchdb'
+import type { InvEntity } from '#types/entity'
 
 export function workDoc () {
   const doc: InvEntity = Object.assign(createBlankEntityDoc(), {

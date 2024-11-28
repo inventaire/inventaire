@@ -1,4 +1,4 @@
-import type { AbsoluteUrl } from '#server/types/common'
+import type { AbsoluteUrl } from '#types/common'
 
 const coverBase = 'http://covers.openlibrary.org'
 

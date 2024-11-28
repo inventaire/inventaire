@@ -1,7 +1,7 @@
 import { difference } from 'lodash-es'
 import { getHashCode } from '#lib/utils/base'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
-import type { WdEntityUri } from '#server/types/entity'
+import type { WdEntityUri } from '#types/entity'
 
 const {
   // editions: editionP31Values,
