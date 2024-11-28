@@ -3,9 +3,11 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
+import type { InvEntityUri } from '#server/types/entity'
+import type { User } from '#server/types/user'
 import { updateInvClaim } from './update_inv_claim.js'
 
-export default (user, uris) => {
+export async function removeEntitiesByInvId (user: User, uris: InvEntityUri[]) {
   const reqUserId = user._id
 
   // Removing sequentially to avoid edit conflicts if entities or items
@@ -28,7 +30,7 @@ export default (user, uris) => {
   return removeNext()
 }
 
-async function deleteUriValueClaims (user, uri) {
+async function deleteUriValueClaims (user: User, uri: InvEntityUri) {
   const claimsData = await getInvClaimsByClaimValue(uri)
   return removeClaimsSequentially(user, uri, claimsData)
 }

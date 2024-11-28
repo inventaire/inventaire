@@ -2,7 +2,7 @@ import { getEntitiesList } from '../get_entities_list.js'
 import { getEntityByUri } from '../get_entity_by_uri.js'
 import { someTermsMatch, resolveSeed } from './helpers.js'
 
-export default async function (worksSeeds, editionSeed) {
+export async function resolveWorksFromEdition (worksSeeds, editionSeed) {
   if (editionSeed.uri == null) return worksSeeds
 
   const editionEntity = await getEntityByUri({ uri: editionSeed.uri })

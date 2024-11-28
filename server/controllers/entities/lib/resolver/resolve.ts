@@ -1,8 +1,8 @@
 import type { SanitizedResolverEntry } from '#types/resolver'
 import { resolveAuthorsByExternalIds, resolveWorksByExternalIds } from './resolve_by_external_ids.js'
 import { resolveEdition } from './resolve_edition.js'
-import resolveInContext from './resolve_in_context.js'
-import resolveOnTerms from './resolve_on_terms.js'
+import { resolveInContext } from './resolve_in_context.js'
+import { resolveOnTerms } from './resolve_on_terms.js'
 
 export async function resolveEntry (entry: SanitizedResolverEntry) {
   await Promise.all([

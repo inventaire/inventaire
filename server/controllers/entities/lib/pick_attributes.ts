@@ -1,6 +1,19 @@
 import { pick } from 'lodash-es'
 import { getBestLangValue } from '#lib/get_best_lang_value'
+import { objectEntries } from '#lib/utils/base'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
+import type { SerializedEntitiesByUris } from '#server/types/entity'
+
+export const entitiesAttributes = [
+  'info',
+  'labels',
+  'descriptions',
+  'claims',
+  'references',
+  'sitelinks',
+  'image',
+  'popularity',
+] as const
 
 const infoAttributes = [
   '_id',
@@ -10,15 +23,16 @@ const infoAttributes = [
   'updated',
   'version',
   'originalLang',
-]
+] as const
 
-export function pickAttributes (entities, attributes) {
+type Attribute = typeof entitiesAttributes[number] | typeof infoAttributes[number]
+
+export function pickAttributes (entities: SerializedEntitiesByUris, attributes: Attribute[]) {
   if (attributes.includes('info')) {
-    attributes = infoAttributes.concat(attributes)
+    attributes = [ ...infoAttributes, ...attributes ]
   }
   const formattedEntities = {}
-  for (const uri of Object.keys(entities)) {
-    const entity = entities[uri]
+  for (const [ uri, entity ] of objectEntries(entities)) {
     const formattedEntity = {
       uri,
       ...pick(entity, attributes),

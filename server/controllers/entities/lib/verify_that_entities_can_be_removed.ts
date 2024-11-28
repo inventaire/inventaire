@@ -2,6 +2,7 @@ import { getInvClaimsByClaimValue } from '#controllers/entities/lib/entities'
 import { getItemsByEntity } from '#controllers/items/lib/items'
 import { newError } from '#lib/error/error'
 import { info } from '#lib/utils/logs'
+import type { InvEntityUri } from '#server/types/entity'
 import { getEntitiesByUris } from './get_entities_by_uris.js'
 import { prefixifyInv } from './prefix.js'
 
@@ -10,7 +11,7 @@ const criticalClaimProperties = [
   'wdt:P629',
 ]
 
-export default uris => {
+export function verifyThatEntitiesCanBeRemoved (uris: InvEntityUri[]) {
   return Promise.all([
     entitiesRelationsChecks(uris),
     entitiesItemsChecks(uris),

@@ -1,12 +1,13 @@
 import { some } from 'lodash-es'
-import resolveAuthorsFromWorks from './resolve_authors_from_works.js'
-import resolveEditionFromWorks from './resolve_edition_from_works.js'
-import resolveWorksFromAuthors from './resolve_works_from_authors.js'
-import resolveWorksFromEdition from './resolve_works_from_edition.js'
+import type { SanitizedResolverEntry } from '#server/types/resolver'
+import { resolveAuthorsFromWorks } from './resolve_authors_from_works.js'
+import { resolveEditionFromWorks } from './resolve_edition_from_works.js'
+import { resolveWorksFromAuthors } from './resolve_works_from_authors.js'
+import { resolveWorksFromEdition } from './resolve_works_from_edition.js'
 
 // Resolve a work(or author) seed when the author(or work) seed is already resolved
 
-export default async function (entry) {
+export async function resolveInContext (entry: SanitizedResolverEntry) {
   const { authors, works, edition } = entry
 
   if (!some(works)) return entry

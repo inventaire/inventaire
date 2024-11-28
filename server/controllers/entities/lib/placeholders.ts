@@ -11,7 +11,7 @@ import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { convertEntityDocToPlaceholder, recoverEntityDocFromPlaceholder } from '#models/entity'
 import type { UserId } from '#server/types/user'
-import type { InvEntityDoc, InvEntityId } from '#types/entity'
+import type { InvEntityDoc, InvEntityId, RemovedPlaceholderEntity } from '#types/entity'
 
 const db = await dbFactory('entities')
 
@@ -39,7 +39,7 @@ function PlaceholderHandler (actionName, modelFn) {
       }
     }
 
-    await putInvEntityUpdate({ userId, currentDoc, updatedDoc })
+    await putInvEntityUpdate<RemovedPlaceholderEntity>({ userId, currentDoc, updatedDoc })
     await emit(`entity:${actionName}`, `inv:${entityId}`)
     return currentDoc._id
   }

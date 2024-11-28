@@ -11,7 +11,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { isLocalEntityLayer, updateEntityDocClaim } from '#models/entity'
 import type { ExtendedEntityType, InvClaimValue, InvEntity, InvEntityDoc, InvEntityId, PropertyUri } from '#server/types/entity'
 import type { SpecialUser, User, UserId } from '#server/types/user'
-import inferredClaimUpdates from './inferred_claim_updates.js'
+import { inferredClaimUpdates } from './inferred_claim_updates.js'
 import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
@@ -44,7 +44,7 @@ async function _updateInvClaim (user: User | SpecialUser, id: InvEntityId, prope
   }
   const updatedDoc = await updateClaim({ _id: id, type, property, oldVal, newVal, userId, currentDoc, userAccessLevels })
 
-  await inferredClaimUpdates(updatedDoc, property, oldVal)
+  await inferredClaimUpdates(updatedDoc as InvEntity, property, oldVal)
 
   await emit('entity:update:claim', updatedDoc)
 

@@ -18,7 +18,7 @@ const { origin: elasticOrigin } = config.elasticsearch
 
 const indexedTypesSet = new Set(indexedTypes)
 
-async function typeSearch (params) {
+export async function typeSearch (params) {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
   assert_.array(types)
   for (const type of types) {
@@ -64,8 +64,6 @@ async function typeSearch (params) {
     }
   })
 }
-
-export default typeSearch
 
 const entitiesIndexesPerFilter = {
   wd: [ indexes.wikidata ],

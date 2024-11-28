@@ -5,7 +5,7 @@ import { objectEntries } from '#lib/utils/base'
 import type { EditionSeed, WorkSeed } from '#server/types/resolver'
 import type { SerializedEntity } from '#types/entity'
 
-export default async function (editionSeed: EditionSeed, worksSeeds: WorkSeed[]) {
+export async function resolveEditionFromWorks (editionSeed: EditionSeed, worksSeeds: WorkSeed[]) {
   if (editionSeed.uri) return
   // Only edition seeds with no known isbns can be resolved this way
   if (editionSeed.isbn) return

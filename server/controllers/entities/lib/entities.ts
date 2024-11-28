@@ -1,4 +1,4 @@
-import { uniqBy, cloneDeep, identity, pick, uniq } from 'lodash-es'
+import { uniqBy, identity, pick, uniq } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
@@ -11,11 +11,11 @@ import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
-import { addEntityDocClaims, beforeEntityDocSave, setEntityDocLabels } from '#models/entity'
+import { beforeEntityDocSave } from '#models/entity'
 import type { EntityImagePath, ImageHash } from '#server/types/image'
 import type { BatchId, PatchContext } from '#server/types/patch'
 import type { UserId } from '#server/types/user'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Labels, Claims, NewInvEntity } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { createPatch } from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
@@ -98,7 +98,7 @@ interface PutInvEntityCommonParams {
   batchId?: BatchId
   context?: PatchContext
 }
-interface PutInvEntityCreationParams extends PutInvEntityCommonParams {
+export interface PutInvEntityCreationParams extends PutInvEntityCommonParams {
   currentDoc: NewInvEntity
   updatedDoc: NewInvEntity
   create: true
@@ -108,7 +108,7 @@ interface PutInvEntityUpdateParams extends PutInvEntityCommonParams {
   updatedDoc: InvEntityDoc
   create?: false
 }
-export async function putInvEntityUpdate (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
+export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
   const { userId, currentDoc, updatedDoc, create, batchId, context } = params
   assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
   if (currentDoc === updatedDoc) {
@@ -131,7 +131,7 @@ export async function putInvEntityUpdate (params: PutInvEntityCreationParams | P
     const patchCreationParams = {
       userId,
       currentDoc,
-      updatedDoc: docAfterUpdate as InvEntityDoc,
+      updatedDoc: docAfterUpdate as T,
       batchId,
       context,
     }
@@ -144,31 +144,7 @@ export async function putInvEntityUpdate (params: PutInvEntityCreationParams | P
     throw patchErr
   }
 
-  return docAfterUpdate
-}
-
-interface EditInvEntityCommonParams {
-  userId: UserId
-  updatedLabels: Labels
-  updatedClaims: Claims
-  batchId?: BatchId
-}
-interface CreateInvEntityParams extends EditInvEntityCommonParams {
-  currentDoc: NewInvEntity
-  create: true
-}
-interface EditInvEntityParams extends EditInvEntityCommonParams {
-  currentDoc: InvEntity
-  create?: false
-}
-export async function editInvEntity (params: CreateInvEntityParams | EditInvEntityParams) {
-  const { userId, currentDoc, updatedLabels, updatedClaims, batchId, create } = params
-  let updatedDoc = cloneDeep(currentDoc)
-  updatedDoc = setEntityDocLabels(updatedDoc, updatedLabels)
-  updatedDoc = addEntityDocClaims(updatedDoc, updatedClaims)
-  type T = typeof create extends true ? PutInvEntityCreationParams : PutInvEntityUpdateParams
-  const updateParams = { userId, currentDoc, updatedDoc, batchId, create } as T
-  return putInvEntityUpdate(updateParams)
+  return docAfterUpdate as T
 }
 
 export const getUrlFromEntityImageHash = (imageHash: ImageHash) => getUrlFromImageHash('entities', imageHash) as EntityImagePath

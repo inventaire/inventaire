@@ -4,8 +4,11 @@ import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers
 import { isWdEntityId } from '#lib/boolean_validations'
 import { newInvalidError } from '#lib/error/pre_filled'
 import wdEdit from '#lib/wikidata/edit'
+import type { Label, WdEntityId } from '#server/types/entity'
+import type { User } from '#server/types/user'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export default async function (user, id, language, value) {
+export default async function (user: User, id: WdEntityId, language: WikimediaLanguageCode, value: Label) {
   if (!isWdEntityId(id)) throw newInvalidError('id', id)
 
   validateWikidataOAuth(user)

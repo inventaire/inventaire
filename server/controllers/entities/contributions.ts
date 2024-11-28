@@ -5,7 +5,7 @@ import { isPropertyUri, isLang } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasAdminAccess } from '#lib/user_access_levels'
 import { userShouldBeAnonymized } from '#models/user'
-import anonymizePatches from './lib/anonymize_patches.js'
+import { anonymizePatches } from './lib/anonymize_patches.js'
 
 const sanitization = {
   user: { optional: true },

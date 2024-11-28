@@ -38,7 +38,7 @@ export function createBlankEntityDoc () {
   return blankEntity
 }
 
-export function setEntityDocLabel <D extends (InvEntity | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label) {
+export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label) {
   assert_.object(doc)
   assert_.string(lang)
 
@@ -47,6 +47,7 @@ export function setEntityDocLabel <D extends (InvEntity | NewInvEntity)> (doc: D
   }
 
   preventRedirectionEdit(doc)
+  preventRemovedPlaceholderEdit(doc)
 
   if (value === null) {
     deleteLabel(doc, lang)
@@ -64,7 +65,7 @@ export function setEntityDocLabel <D extends (InvEntity | NewInvEntity)> (doc: D
   return doc
 }
 
-export function setEntityDocLabels <D extends (InvEntity | NewInvEntity)> (doc: D, labels: Labels) {
+export function setEntityDocLabels <D extends (InvEntityDoc | NewInvEntity)> (doc: D, labels: Labels) {
   preventRedirectionEdit(doc)
   for (const [ lang, value ] of objectEntries(labels)) {
     doc = setEntityDocLabel(doc, lang, value)
@@ -73,7 +74,7 @@ export function setEntityDocLabels <D extends (InvEntity | NewInvEntity)> (doc: 
   return doc
 }
 
-export function addEntityDocClaims <D extends (InvEntity | NewInvEntity)> (doc: D, newClaims: Claims) {
+export function addEntityDocClaims <D extends (InvEntityDoc | NewInvEntity)> (doc: D, newClaims: Claims) {
   preventRedirectionEdit(doc)
 
   // Pass the list of all edited properties, so that when trying to infer property
@@ -89,14 +90,15 @@ export function addEntityDocClaims <D extends (InvEntity | NewInvEntity)> (doc: 
   return doc
 }
 
-export function createEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: D, property: PropertyUri, claim: InvClaim, definedProperties?: PropertyUri[]) {
+export function createEntityDocClaim <D extends (InvEntityDoc | NewInvEntity)> (doc: D, property: PropertyUri, claim: InvClaim, definedProperties?: PropertyUri[]) {
   preventRedirectionEdit(doc)
   return updateEntityDocClaim(doc, property, null, claim, definedProperties)
 }
 
-export function updateEntityDocClaim <D extends (InvEntity | NewInvEntity)> (doc: D, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim, definedProperties?: PropertyUri[]) {
+export function updateEntityDocClaim <D extends (InvEntityDoc | NewInvEntity)> (doc: D, property: PropertyUri, oldClaim?: InvClaim, newClaim?: InvClaim, definedProperties?: PropertyUri[]) {
   const context = { doc, property, oldClaim, newClaim }
   preventRedirectionEdit(doc)
+  preventRemovedPlaceholderEdit(doc)
   if (oldClaim == null && newClaim == null) {
     throw newError('missing old or new value', 400, context)
   }
@@ -182,7 +184,7 @@ export function isLocalEntityLayer (doc: InvEntityDoc | Pick<InvEntity, 'claims'
 // 'from' and 'to' refer to the redirection process which rely on merging
 // two existing document: redirecting from an entity to another entity,
 // only the 'to' doc will survive
-export function mergeEntitiesDocs (fromEntityDoc: InvEntity | EntityRedirection, toEntityDoc: InvEntity | EntityRedirection) {
+export function mergeEntitiesDocs (fromEntityDoc: InvEntityDoc | EntityRedirection, toEntityDoc: InvEntityDoc | EntityRedirection) {
   preventRedirectionEdit(fromEntityDoc)
   preventRedirectionEdit(toEntityDoc)
 
@@ -298,6 +300,11 @@ export function preventRemovedPlaceholderEdit (doc: InvEntityDoc | NewInvEntity)
   if ('type' in doc && doc.type === 'removed:placeholder') {
     throw newError('entity edit failed: the entity is a removed placeholder', 400, { doc })
   }
+}
+
+export function assertEditableEntity (doc: InvEntityDoc): asserts doc is InvEntity {
+  preventRedirectionEdit(doc)
+  preventRemovedPlaceholderEdit(doc)
 }
 
 export function preventLocalLayerEdit (doc: InvEntityDoc | NewInvEntity) {

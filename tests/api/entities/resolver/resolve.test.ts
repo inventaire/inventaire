@@ -1,5 +1,5 @@
 import should from 'should'
-import getWorksFromAuthorsUris from '#controllers/entities/lib/resolver/get_works_from_authors_uris'
+import { getWorksFromAuthorsUris } from '#controllers/entities/lib/resolver/get_works_from_authors_uris'
 import {
   createWork,
   createHuman,

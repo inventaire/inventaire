@@ -2,7 +2,7 @@ import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
 
-type SomeAsyncFunction = <T> (...args: unknown[]) => Promise<T | T[] | void>
+type SomeAsyncFunction = (...args: unknown[]) => Promise<unknown>
 
 export function retryOnConflict <F extends SomeAsyncFunction> (updateFn: F, maxAttempts?: number) {
   return function (...args: Parameters<F>): ReturnType<F> {
@@ -23,7 +23,6 @@ export function retryOnConflict <F extends SomeAsyncFunction> (updateFn: F, maxA
       } catch (err) {
         // Retry only if the conflict comes from then entity
         if (err.statusCode === 409 && err.name !== 'patch_creation_failed') {
-          // @ts-expect-error [TS2345] Type 'Promise<unknown>' is not assignable to type 'Promise<void | T | T[]>'
           return runAfterDelay(run, attemptsCount)
         } else {
           throw err

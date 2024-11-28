@@ -1,7 +1,8 @@
-import { editInvEntity } from '#controllers/entities/lib/entities'
+import { cloneDeep } from 'lodash-es'
+import { putInvEntityUpdate, type PutInvEntityCreationParams } from '#controllers/entities/lib/entities'
 import type { AccessLevel } from '#lib/user_access_levels'
 import { log, success } from '#lib/utils/logs'
-import { createBlankEntityDoc } from '#models/entity'
+import { addEntityDocClaims, createBlankEntityDoc, setEntityDocLabels } from '#models/entity'
 import type { InvEntity } from '#server/types/entity'
 import type { BatchId } from '#server/types/patch'
 import type { UserId } from '#server/types/user'
@@ -22,17 +23,15 @@ export async function createInvEntity (params: CreateInvEntityParams) {
 
   await validateInvEntity({ labels, claims }, userAccessLevels)
 
-  const blankEntityDoc = createBlankEntityDoc()
-
-  const entity = await editInvEntity({
-    create: true,
-    userId,
-    currentDoc: blankEntityDoc,
-    updatedLabels: labels,
-    updatedClaims: claims,
-    batchId,
-  })
-  entity.uri = prefixifyInv(entity._id)
-  success(`inv entity created: ${entity.uri}`)
-  return entity
+  const currentDoc = createBlankEntityDoc()
+  let updatedDoc = cloneDeep(currentDoc)
+  updatedDoc = setEntityDocLabels(updatedDoc, labels)
+  updatedDoc = addEntityDocClaims(updatedDoc, claims)
+  const updateParams = { userId, currentDoc, updatedDoc, batchId, create: true } as PutInvEntityCreationParams
+  const createdEntity = await putInvEntityUpdate(updateParams)
+  // @ts-expect-error
+  createdEntity.uri = prefixifyInv(createdEntity._id)
+  // @ts-expect-error
+  success(`inv entity created: ${createdEntity.uri}`)
+  return createdEntity
 }

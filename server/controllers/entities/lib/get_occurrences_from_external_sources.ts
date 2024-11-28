@@ -16,14 +16,16 @@ import { isWdEntityUri } from '#lib/boolean_validations'
 import { whateverWorks } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
+import type { EntityUri, Label } from '#server/types/entity'
 import { getEntityByUri } from './get_entity_by_uri.js'
 import { normalizeTerm } from './terms_normalization.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 // - worksLabels: labels from works of an author suspected
 //   to be the same as the wdAuthorUri author
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
-export async function getOccurrencesFromExternalSources (wdAuthorUri, worksLabels, worksLabelsLangs) {
+export async function getOccurrencesFromExternalSources (wdAuthorUri: EntityUri, worksLabels: Label[], worksLabelsLangs: WikimediaLanguageCode[]) {
   assert_.string(wdAuthorUri)
   assert_.strings(worksLabels)
   assert_.strings(worksLabelsLangs)

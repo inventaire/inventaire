@@ -11,7 +11,7 @@ import type { IndexedTypes } from '#server/types/search'
 import type { Req, Res, Sanitized } from '#server/types/server'
 import type { UserId } from '#server/types/user'
 import normalizeResult from './lib/normalize_result.js'
-import typeSearch from './lib/type_search.js'
+import { typeSearch } from './lib/type_search.js'
 
 const sanitization = {
   search: {

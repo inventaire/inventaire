@@ -1,9 +1,10 @@
 import { compact, uniq } from 'lodash-es'
-import getAuthorsUris from '../get_authors_uris.js'
-import getWorksFromAuthorsLabels from './get_works_from_authors_uris.js'
+import type { EntitySeed } from '#server/types/resolver'
+import { getAuthorsUris } from '../get_authors_uris.js'
+import { getWorksFromAuthorsUris } from './get_works_from_authors_uris.js'
 import { getAlreadyResolvedUris, someTermsMatch, resolveSeed } from './helpers.js'
 
-export default async function (works, authors) {
+export async function resolveWorksFromAuthors (works: EntitySeed[], authors: EntitySeed[]) {
   const worksAuthorsUris = compact(works.flatMap(getAuthorsUris))
   const authorsUris = uniq(getAlreadyResolvedUris(authors).concat(worksAuthorsUris))
   if (authorsUris.length === 0) return works
@@ -12,7 +13,7 @@ export default async function (works, authors) {
 
 const resolveWork = authorsUris => workSeed => {
   if (workSeed.uri != null) return workSeed
-  return getWorksFromAuthorsLabels(authorsUris)
+  return getWorksFromAuthorsUris(authorsUris)
   .then(works => works.filter(someTermsMatch(workSeed)))
   .then(resolveSeed(workSeed, 'work'))
 }

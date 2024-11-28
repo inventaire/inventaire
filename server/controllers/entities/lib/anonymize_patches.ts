@@ -1,8 +1,15 @@
 import { map, uniq } from 'lodash-es'
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { userShouldBeAnonymized } from '#models/user'
+import type { Patch } from '#server/types/patch'
+import type { UserId } from '#server/types/user'
 
-export default async function ({ patches, reqUserId }) {
+interface AnonymizePatchesParams {
+  patches: Patch[]
+  reqUserId: UserId
+}
+
+export async function anonymizePatches ({ patches, reqUserId }: AnonymizePatchesParams) {
   const usersIds = uniq(map(patches, 'user'))
   const users = await getUsersByIds(usersIds)
   const deanonymizedUsersIds = getDeanonymizedUsersIds(users)

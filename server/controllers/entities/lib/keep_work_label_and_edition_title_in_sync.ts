@@ -5,17 +5,19 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { warn, info, LogError } from '#lib/utils/logs'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import updateLabel from './update_label.js'
+import type { InvEntity } from '#server/types/entity'
+import { updateLabel } from './update_label.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const { _id: hookUserId } = hardCodedUsers.hook
 
 // TODO: also check for edition subtitle
 
-export default (edition, oldTitle) => {
+export async function keepWorkLabelAndEditionTitleInSync (edition: InvEntity, oldTitle: string) {
   const workUris = edition.claims['wdt:P629']
   // Ignore composite editions
   if (workUris.length !== 1) return
-  const workUri = workUris[0]
+  const workUri = getFirstClaimValue(edition.claims, 'wdt:P629')
   const editionLang = getOriginalLang(edition.claims)
 
   if (editionLang == null) {
@@ -52,12 +54,14 @@ async function fetchLangConsensusTitle (workUri, editionLang) {
   }
 }
 
-const updateWorkLabel = (editionLang, oldTitle, consensusEditionTitle) => workDoc => {
-  const currentEditionLangLabel = workDoc.labels[editionLang]
-  const workLabelAndEditionTitleSynced = oldTitle === currentEditionLangLabel
-  const noWorkLabel = (currentEditionLangLabel == null)
-  if (noWorkLabel || workLabelAndEditionTitleSynced) {
-    info([ workDoc._id, editionLang, consensusEditionTitle ], 'hook update')
-    return updateLabel(editionLang, consensusEditionTitle, hookUserId, workDoc)
+function updateWorkLabel (editionLang: WikimediaLanguageCode, oldTitle: string, consensusEditionTitle: string) {
+  return function (workDoc: InvEntity) {
+    const currentEditionLangLabel = workDoc.labels[editionLang]
+    const workLabelAndEditionTitleSynced = oldTitle === currentEditionLangLabel
+    const noWorkLabel = (currentEditionLangLabel == null)
+    if (noWorkLabel || workLabelAndEditionTitleSynced) {
+      info([ workDoc._id, editionLang, consensusEditionTitle ], 'hook update')
+      return updateLabel(editionLang, consensusEditionTitle, hookUserId, workDoc)
+    }
   }
 }

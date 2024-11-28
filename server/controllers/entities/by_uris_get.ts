@@ -1,24 +1,15 @@
 import { addEntitiesPopularities } from '#controllers/entities/lib/popularity'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { EntityUri } from '#types/entity'
-import addRelatives from './lib/add_relatives.js'
+import { addRelatives } from './lib/add_relatives.js'
 import { getPossiblyExpandedEntitiesByUris } from './lib/get_entities_by_uris.js'
-import { pickAttributes, pickLanguages } from './lib/pick_attributes.js'
+import { entitiesAttributes, pickAttributes, pickLanguages } from './lib/pick_attributes.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const sanitization = {
   uris: {},
   attributes: {
-    allowlist: [
-      'info',
-      'labels',
-      'descriptions',
-      'claims',
-      'references',
-      'sitelinks',
-      'image',
-      'popularity',
-    ] as const,
+    allowlist: entitiesAttributes,
     optional: true,
   },
   lang: {
@@ -54,8 +45,10 @@ export interface GetEntitiesParams {
 async function controller ({ uris, attributes, lang, refresh, relatives, autocreate }: GetEntitiesParams) {
   const includeReferences = attributes?.includes('references')
   let results = await getPossiblyExpandedEntitiesByUris({ uris, refresh, autocreate, includeReferences })
+  // @ts-expect-error
   if (relatives) results = await addRelatives(results, relatives, refresh)
   if (attributes) {
+    // @ts-expect-error
     results.entities = pickAttributes(results.entities, attributes)
     if (attributes.includes('popularity')) {
       await addEntitiesPopularities({

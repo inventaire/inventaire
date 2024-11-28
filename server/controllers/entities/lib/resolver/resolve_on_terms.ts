@@ -1,17 +1,18 @@
 import { flatten, identity, intersection, uniq } from 'lodash-es'
-import typeSearch from '#controllers/search/lib/type_search'
+import { typeSearch } from '#controllers/search/lib/type_search'
 import { someMatch } from '#lib/utils/base'
 import { hasConvincingOccurrences } from '#server/controllers/tasks/lib/automerge'
-import getAuthorsUris from '../get_authors_uris.js'
+import type { SanitizedResolverEntry } from '#server/types/resolver'
+import { getAuthorsUris } from '../get_authors_uris.js'
 import { getOccurrencesFromExternalSources } from '../get_occurrences_from_external_sources.js'
 import { getEntityNormalizedTerms } from '../terms_normalization.js'
-import getWorksFromAuthorsUris from './get_works_from_authors_uris.js'
+import { getWorksFromAuthorsUris } from './get_works_from_authors_uris.js'
 
 // resolve :
 // - if seeds terms match entities terms
 // - if no other entity matches those terms
 
-export default async function (entry) {
+export async function resolveOnTerms (entry: SanitizedResolverEntry) {
   const { authors, works } = entry
   if ((authors.length === 0) || (works.length === 0)) return entry
 

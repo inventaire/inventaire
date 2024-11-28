@@ -3,10 +3,13 @@ import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { setEntityDocLabel } from '#models/entity'
+import type { InvEntity, Label } from '#server/types/entity'
+import type { UserId } from '#server/types/user'
 import { getInvEntityType } from './get_entity_type.js'
 import { typeWithoutLabels } from './type_without_labels.js'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export default async function (lang, value, userId, currentDoc) {
+export async function updateLabel (lang: WikimediaLanguageCode, value: Label, userId: UserId, currentDoc: InvEntity) {
   checkEntityTypeCanHaveLabel(currentDoc)
 
   let updatedDoc = cloneDeep(currentDoc)
@@ -16,7 +19,7 @@ export default async function (lang, value, userId, currentDoc) {
   return docAfterUpdate
 }
 
-function checkEntityTypeCanHaveLabel (currentDoc) {
+function checkEntityTypeCanHaveLabel (currentDoc: InvEntity) {
   const type = getInvEntityType(currentDoc.claims['wdt:P31'])
 
   if (typeWithoutLabels.has(type)) {

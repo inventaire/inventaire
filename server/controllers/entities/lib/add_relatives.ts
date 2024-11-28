@@ -2,29 +2,28 @@
 // requested entities, following those entities claims
 
 import { chain, pick } from 'lodash-es'
-import { getEntitiesByUris } from './get_entities_by_uris.js'
+import type { PropertyUri, SerializedEntitiesByUris } from '#server/types/entity'
+import { getEntitiesByUris, type EntitiesByUrisResults } from './get_entities_by_uris.js'
 
-function addRelatives (results, relatives, refresh) {
+export async function addRelatives (results: EntitiesByUrisResults, relatives: PropertyUri[], refresh: boolean) {
   const { entities } = results
 
   const additionalEntitiesUris = getAdditionalEntitiesUris(entities, relatives)
 
   if (additionalEntitiesUris.length === 0) return results
 
-  return getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
+  let additionalResults = await getEntitiesByUris({ uris: additionalEntitiesUris, refresh })
   // Recursively add relatives, so that an edition could be sent
   // with its works, and its works authors and series
-  .then(additionalResults => addRelatives(additionalResults, relatives, refresh))
-  .then(additionalResults => {
-    // We only need to extend entities, as those additional URIs
-    // should already be the canonical URIs (no redirection needed)
-    // and all URIs should resolve to an existing entity
-    Object.assign(results.entities, additionalResults.entities)
-    return results
-  })
+  additionalResults = await addRelatives(additionalResults, relatives, refresh)
+  // We only need to extend entities, as those additional URIs
+  // should already be the canonical URIs (no redirection needed)
+  // and all URIs should resolve to an existing entity
+  Object.assign(results.entities, additionalResults.entities)
+  return results
 }
 
-function getAdditionalEntitiesUris (entities, relatives) {
+function getAdditionalEntitiesUris (entities: SerializedEntitiesByUris, relatives: PropertyUri[]) {
   return chain(entities)
   .values()
   .map(getEntityRelativesUris(relatives))
@@ -34,5 +33,3 @@ function getAdditionalEntitiesUris (entities, relatives) {
 }
 
 const getEntityRelativesUris = relatives => entity => Object.values(pick(entity.claims, relatives))
-
-export default addRelatives
