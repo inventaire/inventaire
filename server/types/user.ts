@@ -61,6 +61,8 @@ export interface AbuseReport {
 
 export type Username = string
 
+export type UserOAuth = Partial<Record<OAuthProvider, OAuthProviderTokens>>
+
 export interface User extends CouchDoc {
   _id: UserId
   type: 'user'
@@ -84,7 +86,7 @@ export interface User extends CouchDoc {
   snapshot?: UserDataSnapshot
   deleted?: EpochTimeStamp
   resetPassword?: EpochTimeStamp
-  oauth?: Partial<Record<OAuthProvider, OAuthProviderTokens>>
+  oauth?: UserOAuth
   undeliveredEmail?: number
   lastSummary?: EpochTimeStamp
   lastNews?: string
@@ -100,6 +102,8 @@ export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
   username: string
   stableUsername: never
   roles: never
+  // Not used currently, but required to avoid type errors when typing user as (User | SpecialUser)
+  oauth?: UserOAuth
 }
 
 export interface DeletedUser extends Pick<User, typeof userAttributes.critical[number]> {
