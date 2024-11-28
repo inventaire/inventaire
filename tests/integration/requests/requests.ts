@@ -1,8 +1,8 @@
 import 'should'
 import { requests_ } from '#lib/requests'
-import type { AbsoluteUrl } from '#server/types/common'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { AbsoluteUrl } from '#types/common'
 
 const startMockServer = async () => {
   const { port, host, origin } = await startGenericMockServer(app => {

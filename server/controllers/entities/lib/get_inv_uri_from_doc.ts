@@ -1,6 +1,6 @@
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { normalizeIsbn } from '#lib/isbn/isbn'
-import type { InvEntity, IsbnEntityUri, RemovedPlaceholderEntity, Claims } from '#server/types/entity'
+import type { InvEntity, IsbnEntityUri, RemovedPlaceholderEntity, Claims } from '#types/entity'
 import { prefixifyInv } from './prefix.js'
 
 export function getInvUriFromDoc (entity: InvEntity | RemovedPlaceholderEntity) {

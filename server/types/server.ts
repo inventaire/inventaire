@@ -1,5 +1,5 @@
 import type { ParsedForm } from '#controllers/images/lib/parse_form'
-import type { RelativeUrl } from '#server/types/common'
+import type { RelativeUrl } from '#types/common'
 import type { User, UserId } from '#types/user'
 import type Express from 'express'
 

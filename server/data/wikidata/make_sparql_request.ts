@@ -7,7 +7,7 @@ import { requests_ } from '#lib/requests'
 import { serverMode } from '#lib/server_mode'
 import { getHashCode } from '#lib/utils/base'
 import { warn, info } from '#lib/utils/logs'
-import type { AbsoluteUrl } from '#server/types/common'
+import type { AbsoluteUrl } from '#types/common'
 
 // Wikidata Query Service limits to 5 concurrent requests per IP
 // see https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual#Query_limits

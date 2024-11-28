@@ -4,7 +4,7 @@ import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { AbsoluteUrl } from '#server/types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { AuthentifiedReq, Res } from '#types/server'
 import type { UserId } from '#types/user'
 

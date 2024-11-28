@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { forceArray, objectEntries, simpleDay } from '#lib/utils/base'
-import type { InvSimplifiedPropertyClaims, Reference, ReferenceProperty } from '#server/types/entity'
-import type { EntityLooseSeed, ResolverEntry } from '#server/types/resolver'
+import type { InvSimplifiedPropertyClaims, Reference, ReferenceProperty } from '#types/entity'
+import type { EntityLooseSeed, ResolverEntry } from '#types/resolver'
 
 export function addClaimsReferences (entry: ResolverEntry, property: ReferenceProperty) {
   if (!entry) return

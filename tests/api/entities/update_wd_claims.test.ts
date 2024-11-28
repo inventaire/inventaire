@@ -1,9 +1,9 @@
 import should from 'should'
 import { getSomeWdEditionUri, someImageHash, someRandomImageHash } from '#fixtures/entities'
 import { validateP31Update } from '#lib/wikidata/validate_wd_update'
-import type { SimplifiedClaims } from '#server/types/entity'
 import { addClaim, getByUri, removeClaim, updateClaim } from '#tests/api/utils/entities'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { SimplifiedClaims } from '#types/entity'
 
 describe('entities:update-claims:wd', () => {
   describe('validateP31Update', () => {

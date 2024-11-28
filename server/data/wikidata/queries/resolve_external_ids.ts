@@ -1,5 +1,5 @@
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
-import type { InvClaimValue, PropertyUri, WdEntityId, WdPropertyId } from '#server/types/entity'
+import type { InvClaimValue, PropertyUri, WdEntityId, WdPropertyId } from '#types/entity'
 
 export default {
   parameters: [ 'propertyValuePairs' ] as const,

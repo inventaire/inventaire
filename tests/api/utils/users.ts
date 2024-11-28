@@ -1,7 +1,7 @@
 import type { UserWithCookie } from '#fixtures/users'
 import { assert_ } from '#lib/utils/assert_types'
-import type { RelativeUrl } from '#server/types/common'
 import { customAuthReq } from '#tests/api/utils/request'
+import type { RelativeUrl } from '#types/common'
 import { getUser } from './utils.js'
 
 export async function getUsersNearPosition (position, user) {

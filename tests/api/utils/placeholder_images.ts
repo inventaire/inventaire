@@ -1,8 +1,8 @@
 import gm from 'gm'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomString } from '#lib/utils/random_string'
-import type { AbsoluteUrl } from '#server/types/common'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
+import type { AbsoluteUrl } from '#types/common'
 import type { Response } from 'express'
 
 const baseImagePath = absolutePath('client', 'app/assets/icon/120.png')

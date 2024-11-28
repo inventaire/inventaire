@@ -3,7 +3,7 @@ import { setDocsDeletedTrue } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
-import type { CouchDoc } from '#server/types/couchdb'
+import type { CouchDoc } from '#types/couchdb'
 import type getDbApi from './cot_base.js'
 import type { MaybeIdentifiedDocument } from 'blue-cot/types/nano.js'
 

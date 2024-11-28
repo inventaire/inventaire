@@ -6,8 +6,8 @@ import { newError } from '#lib/error/error'
 import { requestGrouper } from '#lib/request_grouper'
 import { requests_ } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
-import type { WdEntityId } from '#server/types/entity'
 import type { AbsoluteUrl } from '#types/common'
+import type { WdEntityId } from '#types/entity'
 import type { Item as RawWdEntity } from 'wikibase-sdk'
 
 const { getEntities } = wdk

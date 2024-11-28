@@ -3,7 +3,7 @@ import dbFactory from '#db/couchdb/base'
 import { info, LogError } from '#lib/utils/logs'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import { updateUserItemsCounts } from '#models/user'
-import type { UserId } from '#server/types/user'
+import type { UserId } from '#types/user'
 
 const db = await dbFactory('users')
 

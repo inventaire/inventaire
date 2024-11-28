@@ -1,6 +1,6 @@
 import isbn3 from 'isbn3'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { NormalizedIsbn } from '#server/types/entity'
+import type { NormalizedIsbn } from '#types/entity'
 import type { Replace } from 'type-fest'
 
 const { parse: isbnParser } = isbn3

@@ -1,5 +1,5 @@
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
-import type { WdPropertyId } from '#server/types/entity'
+import type { WdPropertyId } from '#types/entity'
 
 export const nonPrefixedLanguagesCodesProperties = [
   'P218', // ISO 639-1 code

@@ -3,8 +3,8 @@ import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { wait } from '#lib/promises'
 import { warn } from '#lib/utils/logs'
-import type { InvEntityUri } from '#server/types/entity'
-import type { User } from '#server/types/user'
+import type { InvEntityUri } from '#types/entity'
+import type { User } from '#types/user'
 import { updateInvClaim } from './update_inv_claim.js'
 
 export async function removeEntitiesByInvId (user: User, uris: InvEntityUri[]) {

@@ -2,7 +2,7 @@ import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
-import type { FormReq } from '#server/types/server'
+import type { FormReq } from '#types/server'
 import { containers, uploadContainersNames } from './lib/containers.js'
 
 const sanitization = {

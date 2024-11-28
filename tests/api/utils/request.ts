@@ -6,8 +6,8 @@ import { assert_ } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { BearerToken } from '#server/types/oauth'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
+import type { BearerToken } from '#types/oauth'
 import type { OverrideProperties } from 'type-fest'
 
 const origin: AbsoluteUrl = config.getPublicOrigin()

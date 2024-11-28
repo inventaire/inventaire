@@ -13,11 +13,11 @@ import {
 } from '#fixtures/entities'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
 import config from '#server/config'
-import type { EntityUri } from '#server/types/entity'
 import { addClaim, getByUri } from '#tests/api/utils/entities'
 import { rawRequest } from '#tests/api/utils/request'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { EntityUri } from '#types/entity'
 
 const origin = config.getPublicOrigin()
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')

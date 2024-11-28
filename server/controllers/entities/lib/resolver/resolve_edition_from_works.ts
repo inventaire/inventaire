@@ -2,8 +2,8 @@ import { getWorkEditions } from '#controllers/entities/lib/entities'
 import { findClaimByValue, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { normalizeTitle } from '#controllers/entities/lib/resolver/helpers'
 import { objectEntries } from '#lib/utils/base'
-import type { EditionSeed, WorkSeed } from '#server/types/resolver'
 import type { SerializedEntity } from '#types/entity'
+import type { EditionSeed, WorkSeed } from '#types/resolver'
 
 export async function resolveEditionFromWorks (editionSeed: EditionSeed, worksSeeds: WorkSeed[]) {
   if (editionSeed.uri) return

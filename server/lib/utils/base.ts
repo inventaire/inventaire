@@ -5,7 +5,7 @@ import {
   Float as floatPattern,
 } from '#lib/regex'
 import { assert_ } from '#lib/utils/assert_types'
-import type { AbsoluteUrl } from '#server/types/common'
+import type { AbsoluteUrl } from '#types/common'
 import type { ObjectEntries } from 'type-fest/source/entries.js'
 
 export function combinations (array1, array2) {

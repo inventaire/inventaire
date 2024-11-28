@@ -6,7 +6,7 @@ import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { getWdEntitiesByIsbns } from '#data/wikidata/get_wd_entities_by_isbns'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { IsbnData } from '#server/types/common'
+import type { IsbnData } from '#types/common'
 import type { EntityUri, InvEntity, Isbn, IsbnEntityUri, RedirectFromTo, SerializedEntity, ExpandedSerializedEntity } from '#types/entity'
 import { formatEditionEntity } from './format_edition_entity.js'
 

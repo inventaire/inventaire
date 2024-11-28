@@ -9,7 +9,7 @@ import { forceArray } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import shelfAttributes from '#models/attributes/shelf'
 import { createShelfDoc, updateShelfDocAttributes } from '#models/shelf'
-import type { NewCouchDoc } from '#server/types/couchdb'
+import type { NewCouchDoc } from '#types/couchdb'
 import type { Item } from '#types/item'
 import type { NewShelf, Shelf, ShelfWithItems } from '#types/shelf'
 

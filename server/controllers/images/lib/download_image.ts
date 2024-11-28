@@ -6,7 +6,7 @@ import { endReqTimer, startReqTimer } from '#lib/requests'
 import { assertHostIsNotTemporarilyBanned, declareHostError, recordPossibleTimeoutError, resetBanData } from '#lib/requests_temporary_host_ban'
 import { encodeURL } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
-import type { AbsoluteUrl, Path } from '#server/types/common'
+import type { AbsoluteUrl, Path } from '#types/common'
 import isValidImageContentType from './is_valid_image_content_type.js'
 
 const oneMB = Math.pow(1024, 2)

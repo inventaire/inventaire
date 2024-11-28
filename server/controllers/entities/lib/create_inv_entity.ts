@@ -3,9 +3,9 @@ import { putInvEntityUpdate, type PutInvEntityCreationParams } from '#controller
 import type { AccessLevel } from '#lib/user_access_levels'
 import { log, success } from '#lib/utils/logs'
 import { addEntityDocClaims, createBlankEntityDoc, setEntityDocLabels } from '#models/entity'
-import type { InvEntity } from '#server/types/entity'
-import type { BatchId } from '#server/types/patch'
-import type { UserId } from '#server/types/user'
+import type { InvEntity } from '#types/entity'
+import type { BatchId } from '#types/patch'
+import type { UserId } from '#types/user'
 import { prefixifyInv } from './prefix.js'
 import { validateInvEntity } from './validate_entity.js'
 

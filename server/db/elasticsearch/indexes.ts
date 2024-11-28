@@ -1,12 +1,12 @@
 import { keyBy, map, mapValues, pick, property } from 'lodash-es'
 import { extendedTypesAliases } from '#lib/wikidata/extended_aliases'
 import config from '#server/config'
-import type { InvEntityDoc } from '#server/types/entity'
-import type { Group } from '#server/types/group'
-import type { Item } from '#server/types/item'
-import type { Listing } from '#server/types/listing'
-import type { Shelf } from '#server/types/shelf'
-import type { User } from '#server/types/user'
+import type { InvEntityDoc } from '#types/entity'
+import type { Group } from '#types/group'
+import type { Item } from '#types/item'
+import type { Listing } from '#types/listing'
+import type { Shelf } from '#types/shelf'
+import type { User } from '#types/user'
 
 // Using CouchDB database names + environment suffix as indexes names
 const indexesData = [

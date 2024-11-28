@@ -4,8 +4,8 @@ import { validateClaimSync } from '#controllers/entities/lib/validate_claim_sync
 import { isLang, isNonEmptyString, isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { forceArray, objectEntries } from '#lib/utils/base'
-import type { EntityType, InvClaim } from '#server/types/entity'
-import type { EditionLooseSeed, EntityLooseSeed } from '#server/types/resolver'
+import type { EntityType, InvClaim } from '#types/entity'
+import type { EditionLooseSeed, EntityLooseSeed } from '#types/resolver'
 import { validateProperty } from '../properties/validations.js'
 
 export function sanitizeSeed (seed: EntityLooseSeed, type: EntityType) {

@@ -4,7 +4,7 @@ import { sha1, hashPassword, getRandomBytes } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { buildUrl, parseQuery } from '#lib/utils/url'
-import type { OAuthScope } from '#server/types/oauth'
+import type { OAuthScope } from '#types/oauth'
 import { waitForTestServer, postUrlencoded, rawCustomAuthReq } from './request.js'
 import { getUser } from './utils.js'
 

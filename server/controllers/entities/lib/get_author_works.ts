@@ -9,7 +9,7 @@ import type { AuthorWork as WdAuthorWork } from '#data/wikidata/queries/author_w
 import { runWdQuery } from '#data/wikidata/run_query'
 import { arrayIncludes, initCollectionsIndex } from '#lib/utils/base'
 import { getPluralType, getPluralTypeByTypeUri } from '#lib/wikidata/aliases'
-import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { EntityUri, InvEntity, InvEntityUri, SerializedEntity, WdEntityId, WdEntityUri } from '#types/entity'
 import { getSimpleDayDate, sortByScore } from './queries_utils.js'
 import { getCachedRelations } from './temporarily_cache_relations.js'
 import type { OverrideProperties } from 'type-fest'

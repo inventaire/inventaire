@@ -12,7 +12,7 @@ import { oneMonth } from '#lib/time'
 import { forceArray, isNotEmpty, objLength } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { EntityLooseSeed, LooseClaims, ResolverEntry } from '#server/types/resolver'
+import type { EntityLooseSeed, LooseClaims, ResolverEntry } from '#types/resolver'
 
 const { offline } = config
 

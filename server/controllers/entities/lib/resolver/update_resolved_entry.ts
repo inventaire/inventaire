@@ -9,11 +9,11 @@ import { convertAndCleanupImageUrl } from '#controllers/images/lib/convert_and_c
 import { getUserById } from '#controllers/user/lib/user'
 import { objectKeys } from '#lib/utils/types'
 import { addEntityDocClaims } from '#models/entity'
-import type { AbsoluteUrl } from '#server/types/common'
-import type { ClaimByDatatype, Claims, InvEntity, InvEntityDoc, SerializedWdEntity } from '#server/types/entity'
-import type { BatchId } from '#server/types/patch'
-import type { EntitySeed, ResolverEntry } from '#server/types/resolver'
-import type { UserId } from '#server/types/user'
+import type { AbsoluteUrl } from '#types/common'
+import type { ClaimByDatatype, Claims, InvEntity, InvEntityDoc, SerializedWdEntity } from '#types/entity'
+import type { BatchId } from '#types/patch'
+import type { EntitySeed, ResolverEntry } from '#types/resolver'
+import type { UserId } from '#types/user'
 import { getEntityById, putInvEntityUpdate } from '../entities.js'
 
 export async function updateResolvedEntry (entry: ResolverEntry, { reqUserId, batchId }: ResolverBatchParams) {

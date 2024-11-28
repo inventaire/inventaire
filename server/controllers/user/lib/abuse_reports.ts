@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { arrayIncludes } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
-import type { AbuseReport, User } from '#server/types/user'
+import type { AbuseReport, User } from '#types/user'
 
 const db = await dbFactory('users')
 

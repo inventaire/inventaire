@@ -1,7 +1,7 @@
 import { intersection, property } from 'lodash-es'
 import { getAuthorWorks } from '#controllers/entities/lib/get_author_works'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
-import type { EntityUri, Label } from '#server/types/entity'
+import type { EntityUri, Label } from '#types/entity'
 import { getEntityNormalizedTerms } from './terms_normalization.js'
 
 export function getOccurrencesFromEntities (uri: EntityUri, suspectWorksLabels: Label[]) {

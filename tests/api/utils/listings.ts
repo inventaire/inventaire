@@ -1,7 +1,7 @@
 import type { AwaitableUserWithCookie } from '#fixtures/users'
-import type { RelativeUrl } from '#server/types/common'
-import type { ListingId } from '#server/types/listing'
 import { getUser } from '#tests/api/utils/utils'
+import type { RelativeUrl } from '#types/common'
+import type { ListingId } from '#types/listing'
 import { customAuthReq } from './request.js'
 
 const endpoint = '/api/lists?action='

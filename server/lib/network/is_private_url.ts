@@ -1,6 +1,6 @@
 import { compact, uniq } from 'lodash-es'
 import config from '#server/config'
-import type { AbsoluteUrl } from '#server/types/common'
+import type { AbsoluteUrl } from '#types/common'
 import { dnsLookup, getHostname, getHostnameIp } from './helpers.js'
 import ipIsInPrivateIpRange from './is_in_private_ip_range.js'
 

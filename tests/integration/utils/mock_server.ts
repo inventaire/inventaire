@@ -1,7 +1,7 @@
 import express from 'express'
 import { jsonBodyParser } from '#server/middlewares/content'
 import requestsLogger from '#server/middlewares/requests_logger'
-import type { AbsoluteUrl, Host, Origin } from '#server/types/common'
+import type { AbsoluteUrl, Host, Origin } from '#types/common'
 
 // Avoid reusing ports from the previous test session, as hosts bans data might be restored
 let port = 10000 + parseInt(Date.now().toString().slice(-4))

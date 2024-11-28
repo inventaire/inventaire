@@ -2,9 +2,9 @@ import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/ent
 import { getPatchesByEntityId } from '#controllers/entities/lib/patches/patches'
 import { emit } from '#lib/radio'
 import { revertPatch } from '#models/patch'
-import type { InvEntity } from '#server/types/entity'
-import type { PatchId } from '#server/types/patch'
-import type { UserId } from '#server/types/user'
+import type { InvEntity } from '#types/entity'
+import type { PatchId } from '#types/patch'
+import type { UserId } from '#types/user'
 import { validateInvEntity } from './validate_entity.js'
 
 export async function restoreVersion (patchId: PatchId, userId: UserId) {

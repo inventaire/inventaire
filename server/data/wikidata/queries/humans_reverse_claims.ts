@@ -1,7 +1,7 @@
 import { authorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import type { SparqlQueryParams } from '#data/wikidata/queries/queries'
 import { primaryTypesAliases } from '#lib/wikidata/aliases'
-import type { WdEntityId } from '#server/types/entity'
+import type { WdEntityId } from '#types/entity'
 
 const { works: worksP31Values } = primaryTypesAliases
 

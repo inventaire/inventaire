@@ -1,8 +1,7 @@
 import { isPropertyUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { objectKeys, typeOf } from '#lib/utils/types'
-import type { PropertyUri } from '#server/types/entity'
-import type { InvClaimValue } from '#types/entity'
+import type { PropertyUri, InvClaimValue } from '#types/entity'
 import { propertiesValuesConstraints as properties } from './properties_values_constraints.js'
 
 const allowlist = objectKeys(properties)

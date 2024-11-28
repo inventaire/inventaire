@@ -2,7 +2,7 @@ import { partition, uniq } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
 import { isInvEntityUri, isWdEntityUri } from '#lib/boolean_validations'
 import { newInvalidError } from '#lib/error/pre_filled'
-import type { EntityUri, InvEntityUri, IsbnEntityUri } from '#server/types/entity'
+import type { EntityUri, InvEntityUri, IsbnEntityUri } from '#types/entity'
 import { removeEntitiesByInvId } from './lib/remove_entities_by_inv_id.js'
 import { verifyThatEntitiesCanBeRemoved } from './lib/verify_that_entities_can_be_removed.js'
 

@@ -2,7 +2,7 @@ import { pick } from 'lodash-es'
 import { simplifyClaims, type Claims as WdClaims } from 'wikibase-sdk'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { assert_ } from '#lib/utils/assert_types'
-import type { ExtendedEntityType, SimplifiedClaimsIncludingWdExtra } from '#server/types/entity'
+import type { ExtendedEntityType, SimplifiedClaimsIncludingWdExtra } from '#types/entity'
 import { allowlistedProperties, allowlistedPropertiesPerType } from './allowlisted_properties.js'
 import { flattenQualifierProperties } from './data_model_adapter.js'
 

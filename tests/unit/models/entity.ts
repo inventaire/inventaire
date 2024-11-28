@@ -1,10 +1,10 @@
 import should from 'should'
 import { someReference, someReferenceB } from '#fixtures/entities'
 import { beforeEntityDocSave, createBlankEntityDoc, mergeEntitiesDocs, setEntityDocLabel, convertEntityDocIntoARedirection, convertEntityDocToPlaceholder, createEntityDocClaim } from '#models/entity'
-import type { CouchRevId, CouchUuid } from '#server/types/couchdb'
-import type { EntityRedirection } from '#server/types/entity'
 import { workDoc } from '#tests/unit/utils/entity'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { CouchRevId, CouchUuid } from '#types/couchdb'
+import type { EntityRedirection } from '#types/entity'
 
 const nonTrimmedString = `
       foo

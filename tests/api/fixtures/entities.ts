@@ -8,7 +8,10 @@ import { sha1 } from '#lib/crypto'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
-import type { AbsoluteUrl } from '#server/types/common'
+import { getByUri, addClaim, getByUris } from '#tests/api/utils/entities'
+import { customAuthReq, request } from '#tests/api/utils/request'
+import { authReq, getUser } from '#tests/api/utils/utils'
+import type { AbsoluteUrl } from '#types/common'
 import type {
   Claims,
   EntityType,
@@ -19,12 +22,9 @@ import type {
   PropertyUri,
   SerializedEntity,
   WdEntityUri,
-} from '#server/types/entity'
-import type { ImageHash } from '#server/types/image'
-import type { Item } from '#server/types/item'
-import { getByUri, addClaim, getByUris } from '#tests/api/utils/entities'
-import { customAuthReq, request } from '#tests/api/utils/request'
-import { authReq, getUser } from '#tests/api/utils/utils'
+} from '#types/entity'
+import type { ImageHash } from '#types/image'
+import type { Item } from '#types/item'
 import { firstName, humanName, randomWords } from './text.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 

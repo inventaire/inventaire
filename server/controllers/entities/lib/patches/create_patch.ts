@@ -1,9 +1,9 @@
 import dbFactory from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import { createPatchDoc, getPatchDiff, revertPatch } from '#models/patch'
-import type { InvEntityDoc, NewInvEntity } from '#server/types/entity'
-import type { BatchId, NewPatch, Patch, PatchContext, PatchOperation } from '#server/types/patch'
-import type { UserId } from '#server/types/user'
+import type { InvEntityDoc, NewInvEntity } from '#types/entity'
+import type { BatchId, NewPatch, Patch, PatchContext, PatchOperation } from '#types/patch'
+import type { UserId } from '#types/user'
 import { getEntityLastPatches } from './patches.js'
 
 const designDocName = 'patches'

@@ -11,7 +11,7 @@ import { getHashCode, objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { primaryTypesAliases, type PluralizedEntityType } from '#lib/wikidata/aliases'
 import { extendedAliasesQueries, getExtendedAliasesQueriesHash } from '#scripts/entities_extended_types_aliases/extended_type_aliases_queries'
-import type { WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { WdEntityId, WdEntityUri } from '#types/entity'
 
 const extendedTypesAliases = cloneDeep(primaryTypesAliases)
 const stats = {}

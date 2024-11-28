@@ -6,7 +6,7 @@ import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getSuggestionsAndCreateTasks } from '#controllers/tasks/lib/merge_or_create_tasks'
 import { newError, notFoundError } from '#lib/error/error'
-import type { SerializedEntity, EntityUri } from '#server/types/entity'
+import type { SerializedEntity, EntityUri } from '#types/entity'
 import type { UserId } from '#types/user'
 
 export default async function (workUri, isbn, userId) {

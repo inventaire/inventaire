@@ -2,7 +2,7 @@ import { intersection } from 'lodash-es'
 import { getUserGroupsCoMembers, getGroupsIdsWhereUsersAreAdminsOrMembers } from '#controllers/groups/lib/groups'
 import { getUserFriends } from '#controllers/relations/lib/lists'
 import { getRelationStatus } from '#controllers/relations/lib/queries'
-import type { UserId } from '#server/types/user'
+import type { UserId } from '#types/user'
 
 export async function areFriends (userId: UserId, otherId: UserId) {
   const relationStatus = await getRelationStatus(userId, otherId)

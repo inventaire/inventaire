@@ -4,7 +4,7 @@ import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWdEntitiesByIsbns } from '#data/wikidata/get_wd_entities_by_isbns'
 import { toIsbn13 } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import type { IsbnEntityUri, SerializedWdEntity } from '#server/types/entity'
+import type { IsbnEntityUri, SerializedWdEntity } from '#types/entity'
 
 describe('get_wd_entities_by_isbns', () => {
   it('should get an existing wd entity by isbn', async () => {

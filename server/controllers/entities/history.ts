@@ -5,7 +5,7 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasAdminAccess } from '#lib/user_access_levels'
-import type { EntityUri } from '#server/types/entity'
+import type { EntityUri } from '#types/entity'
 import { anonymizePatches } from './lib/anonymize_patches.js'
 
 const sanitization = {

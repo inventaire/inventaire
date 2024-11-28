@@ -8,8 +8,7 @@ import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import { someMatch } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
-import type { SerializedEntity } from '#server/types/entity'
-import type { EntityUri, EntityType } from '#types/entity'
+import type { SerializedEntity, EntityUri, EntityType } from '#types/entity'
 import type { Task, Suggestion, TaskType } from '#types/task'
 import type { UserId } from '#types/user'
 

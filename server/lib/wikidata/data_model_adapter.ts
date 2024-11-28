@@ -1,7 +1,7 @@
 import { simplifyQualifier } from 'wikibase-sdk'
 import type { UnprefixedClaims } from '#controllers/entities/lib/create_wd_entity'
 import { newError } from '#lib/error/error'
-import type { ClaimValueByProperty } from '#server/types/entity'
+import type { ClaimValueByProperty } from '#types/entity'
 
 export function flattenQualifierProperties (simplifiedClaims, rawClaims) {
   if (simplifiedClaims['wdt:P179']?.length === 1) {

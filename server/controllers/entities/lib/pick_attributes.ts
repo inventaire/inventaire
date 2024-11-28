@@ -2,7 +2,7 @@ import { pick } from 'lodash-es'
 import { getBestLangValue } from '#lib/get_best_lang_value'
 import { objectEntries } from '#lib/utils/base'
 import { getOriginalLang } from '#lib/wikidata/get_original_lang'
-import type { SerializedEntitiesByUris } from '#server/types/entity'
+import type { SerializedEntitiesByUris } from '#types/entity'
 
 export const entitiesAttributes = [
   'info',

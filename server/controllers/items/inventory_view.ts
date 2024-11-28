@@ -3,7 +3,7 @@ import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uri
 import { getAuthorizedItemsByGroup, getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { newMissingQueryError } from '#lib/error/pre_filled'
-import type { SerializedEntitiesByUris } from '#server/types/entity'
+import type { SerializedEntitiesByUris } from '#types/entity'
 import { bundleViewData } from './lib/view/bundle_view_data.js'
 import { replaceEditionsByTheirWork } from './lib/view/replace_editions_by_their_work.js'
 

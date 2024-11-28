@@ -5,7 +5,7 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { objectEntries, objectFromEntries, objLength } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { objectKeys } from '#lib/utils/types'
-import type { Claims, PropertyUri, WdEntityId, WdEntityUri } from '#server/types/entity'
+import type { Claims, PropertyUri, WdEntityId, WdEntityUri } from '#types/entity'
 
 const wmLanguageCodeByWdId = requireJson('wikidata-lang/mappings/wm_code_by_wd_id.json')
 

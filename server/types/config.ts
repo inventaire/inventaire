@@ -1,7 +1,7 @@
 // Inspired by https://blog.goncharov.page/node-config-made-type-safe
 
-import type { ImagePath } from '#server/types/image'
 import type { AbsoluteUrl, Path, RelativeUrl } from '#types/common'
+import type { ImagePath } from '#types/image'
 import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
 

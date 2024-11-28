@@ -4,7 +4,7 @@ import { isInvEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
 import { log } from '#lib/utils/logs'
-import type { IsbnEntityUri } from '#server/types/entity'
+import type { IsbnEntityUri } from '#types/entity'
 import { updateInvClaim } from './lib/update_inv_claim.js'
 import { updateWdClaim } from './lib/update_wd_claim.js'
 
