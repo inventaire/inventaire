@@ -1,5 +1,6 @@
 import should from 'should'
 import { getUrlFromEntityImageHash } from '#controllers/entities/lib/entities'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import {
   createEdition,
   createEditionWithIsbn,
@@ -114,8 +115,13 @@ describe('entities:images', () => {
       const uri = await getSomeWdEditionUri()
       const edition = await getByUri(uri)
       const { originalLang } = edition
-      const imageHash = someRandomImageHash()
-      await addClaim({ uri, property: 'invp:P2', value: imageHash })
+      let imageHash = someRandomImageHash()
+      if (edition.claims['invp:P2']) {
+        imageHash = getFirstClaimValue(edition.claims, 'invp:P2')
+      } else {
+        imageHash = someRandomImageHash()
+        await addClaim({ uri, property: 'invp:P2', value: imageHash })
+      }
       const workUri = edition.claims['wdt:P629'][0] as EntityUri
       const res = await publicReq('get', `/api/entities?action=images&uris=${workUri}`)
       res.images[workUri][originalLang].should.containEql(getUrlFromEntityImageHash(imageHash))
