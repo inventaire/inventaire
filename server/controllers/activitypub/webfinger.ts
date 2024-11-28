@@ -1,13 +1,10 @@
 import { makeUrl, getEntityUriFromActorName, getEntityActorName } from '#controllers/activitypub/lib/helpers'
-import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
+import { getEntityByUri } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { notFoundError } from '#lib/error/error'
-import config from '#server/config'
+import { publicHost } from '#server/config'
 import { validateUser, validateShelf } from './lib/validations.js'
-
-const origin = config.getPublicOrigin()
-const publicOrigin = origin.split('://')[1]
 
 const sanitization = {
   resource: {},
@@ -45,7 +42,7 @@ function formatWebfinger (name) {
   const actorUrl = makeUrl({ params: { action: 'actor', name } })
 
   return {
-    subject: `acct:${name}@${publicOrigin}`,
+    subject: `acct:${name}@${publicHost}`,
     aliases: [ actorUrl ],
     links: [
       {

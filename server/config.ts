@@ -3,4 +3,7 @@ import type { Config } from '#types/config'
 
 const config: Config = _config
 
+export const publicOrigin = config.getPublicOrigin()
+export const publicHost = publicOrigin.split('://')[1]
+
 export default config

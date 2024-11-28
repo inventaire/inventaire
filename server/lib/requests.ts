@@ -19,15 +19,17 @@ import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
-const { repository } = requireJson(absolutePath('root', 'package.json'))
+const { version } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
-export const userAgent = `${config.name} (${repository.url})`
+const publicOrigin = config.getPublicOrigin()
+
+export const userAgent = `${config.name}/${version}; +${publicOrigin}`
+
 const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
 export interface ReqOptions {
-  sanitize?: boolean
   returnBodyOnly?: boolean
   parseJson?: boolean
   body?: unknown
@@ -44,8 +46,6 @@ export interface ReqOptions {
 async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = {}) {
   assert_.string(url)
   assert_.object(options)
-
-  if (options.sanitize) await sanitizeUrl(url)
 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
@@ -131,10 +131,12 @@ function parseRetryAfterHeader (res) {
   if (isPositiveIntegerString(retryAfter)) return parseInt(retryAfter)
 }
 
-export async function sanitizeUrl (url: AbsoluteUrl) {
+export async function sanitizeUrl (url: unknown) {
   if (!isUrl(url) || (await isPrivateUrl(url))) {
     throw newInvalidError('url', url)
   }
+  // Async assertion, waiting for https://github.com/microsoft/typescript/issues/37681
+  return url as AbsoluteUrl
 }
 
 function formatHeaders (headers) {

@@ -5,6 +5,7 @@ import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_creat
 import { validateThatEntitiesAreNotRelated, validateAbsenceOfConflictingProperties } from '#controllers/tasks/lib/merge_validation'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { getMaybeRemoteReqUser } from '#lib/federation/remote_user'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntity } from '#types/entity'
@@ -26,7 +27,7 @@ const sanitization = {
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
 async function controller (params, req) {
-  let { from: fromUri, to: toUri } = params
+  let { from: fromUri, to: toUri, reqUserAcct } = params
   const [ fromPrefix ] = fromUri.split(':')
 
   if (!validFromUriPrefix.includes(fromPrefix)) {
@@ -35,13 +36,12 @@ async function controller (params, req) {
     throw newError(message, 400, params)
   }
 
-  const { user } = req
-  const { _id: userId } = user
+  const user = getMaybeRemoteReqUser(req)
   const isDataadmin = hasDataadminAccess(user)
 
   log({
     merge: params,
-    user: userId,
+    user: reqUserAcct,
     isDataadmin,
   }, 'entity merge request')
 
@@ -56,10 +56,10 @@ async function controller (params, req) {
   validateThatEntitiesAreNotRelated(fromEntity, toEntity)
 
   if (isDataadmin) {
-    await mergeEntities({ userId, fromUri, toUri })
+    await mergeEntities({ userAcct: reqUserAcct, fromUri, toUri })
     return { ok: true }
   } else {
-    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, userId)
+    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, reqUserAcct)
   }
 }
 

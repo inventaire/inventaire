@@ -24,7 +24,8 @@ function bindedTest <T extends string> (regexName: keyof typeof regex_) {
 
 export const isNonEmptyString = (str: unknown): str is (Exclude<string, ''>) => typeof str === 'string' && str.length > 0
 
-export function isUrl (url: string): url is AbsoluteUrl {
+export function isUrl (url: unknown): url is AbsoluteUrl {
+  if (typeof url !== 'string') return false
   try {
     const { protocol, username, password } = new URL(url)
     if (!(protocol === 'http:' || protocol === 'https:')) return false

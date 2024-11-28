@@ -1,23 +1,30 @@
 import { newError } from '#lib/error/error'
+import type { RemoteUser } from '#lib/federation/remote_user'
 import config from '#server/config'
 import type { SpecialUser, User } from '#types/user'
 
 const { wikidataOAuth, botAccountWikidataOAuth } = config
 
-export function validateWikidataOAuth (user: User | SpecialUser) {
+export function validateWikidataOAuth (user: User | SpecialUser | RemoteUser) {
   if ('special' in user) return
+  if (!('oauth' in user)) {
+    throw newError('missing wikidata oauth tokens', 400)
+  }
   const userWikidataOAuth = user.oauth != null ? user.oauth.wikidata : undefined
   if (userWikidataOAuth == null) {
     throw newError('missing wikidata oauth tokens', 400)
   }
 }
 
-export function getWikidataOAuthCredentials (user: User | SpecialUser) {
+export function getWikidataOAuthCredentials (user: User | SpecialUser | RemoteUser) {
   if ('special' in user) {
     return {
       oauth: botAccountWikidataOAuth,
     }
   } else {
+    if (!('oauth' in user) || !('wikidata' in user.oauth)) {
+      throw newError('missing wikidata oauth tokens', 400)
+    }
     return {
       oauth: { ...wikidataOAuth, ...user.oauth.wikidata },
     }

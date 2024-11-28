@@ -5,12 +5,12 @@ import { assert_ } from '#lib/utils/assert_types'
 import { createBlankEntityDoc } from '#models/entity'
 import type { InvEntityDoc, NewInvEntity } from '#types/entity'
 import type { BatchId, Patch, PatchContext } from '#types/patch'
-import type { UserId } from '#types/user'
+import type { UserAccountUri } from '#types/server'
 import { versioned } from './attributes/entity.js'
 import validations from './validations/common.js'
 
 interface CreatePatchDocParams {
-  userId: UserId
+  userAcct: UserAccountUri
   currentDoc: NewInvEntity | InvEntityDoc
   updatedDoc: InvEntityDoc
   context?: PatchContext
@@ -18,8 +18,8 @@ interface CreatePatchDocParams {
 }
 
 export function createPatchDoc (params: CreatePatchDocParams) {
-  const { userId, currentDoc, updatedDoc, context, batchId } = params
-  validations.pass('userId', userId)
+  const { userAcct, currentDoc, updatedDoc, context, batchId } = params
+  assert_.string(userAcct)
   assert_.object(currentDoc)
   assert_.object(updatedDoc)
   validations.pass('couchUuid', updatedDoc._id)
@@ -44,7 +44,7 @@ export function createPatchDoc (params: CreatePatchDocParams) {
   const patch: Partial<Patch> = {
     _id: `${entityId}:${entityVersion}`,
     type: 'patch',
-    user: userId,
+    user: userAcct,
     timestamp: now,
     operations: getPatchDiff(currentDoc, updatedDoc),
   }

@@ -1,4 +1,4 @@
-import { reverseClaims } from './lib/reverse_claims.js'
+import { getReverseClaims } from './lib/reverse_claims.js'
 
 const sanitization = {
   property: {},
@@ -13,7 +13,7 @@ const sanitization = {
 }
 
 async function controller (params) {
-  const uris = await reverseClaims(params)
+  const uris = await getReverseClaims(params)
   return { uris }
 }
 

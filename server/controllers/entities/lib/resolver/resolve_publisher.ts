@@ -1,7 +1,7 @@
 import leven from 'leven'
 import { uniq } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
-import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
+import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { parseIsbn } from '#lib/isbn/parse'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
@@ -10,7 +10,7 @@ export async function resolvePublisher (isbn, publisherLabel) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { publisherPrefix } = isbnData
-  const isbnPrefixPublishersUris = await reverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
+  const isbnPrefixPublishersUris = await getReverseClaims({ property: 'wdt:P3035', value: publisherPrefix })
   if (isbnPrefixPublishersUris.length === 0) return
   const isbnPrefixPublishers = await getEntitiesList(isbnPrefixPublishersUris)
   const matchingPublishers = getMatchingPublishers(publisherLabel, isbnPrefixPublishers)

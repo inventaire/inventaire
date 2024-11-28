@@ -3,7 +3,7 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
-import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
+import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import dbFactory from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
 import { newError } from '#lib/error/error'
@@ -12,14 +12,17 @@ import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { beforeEntityDocSave } from '#models/entity'
+import config from '#server/config'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity } from '#types/entity'
 import type { EntityImagePath, ImageHash } from '#types/image'
 import type { BatchId, PatchContext } from '#types/patch'
-import type { UserId } from '#types/user'
+import type { UserAccountUri } from '#types/server'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { createPatch } from './patches/create_patch.js'
 import { validateProperty } from './properties/validations.js'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
+
+const federatedMode = config.federation.remoteEntitiesOrigin != null
 
 const db = await dbFactory('entities')
 
@@ -94,7 +97,7 @@ export async function getInvEntitiesClaimValueCount (value: InvClaimValue) {
 }
 
 interface PutInvEntityCommonParams {
-  userId: UserId
+  userAcct: UserAccountUri
   batchId?: BatchId
   context?: PatchContext
 }
@@ -109,8 +112,8 @@ interface PutInvEntityUpdateParams extends PutInvEntityCommonParams {
   create?: false
 }
 export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
-  const { userId, currentDoc, updatedDoc, create, batchId, context } = params
-  assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
+  const { userAcct, currentDoc, updatedDoc, create, batchId, context } = params
+  assert_.types([ 'string', 'object', 'object' ], [ userAcct, currentDoc, updatedDoc ])
   if (currentDoc === updatedDoc) {
     // @ts-expect-error TS2345
     throw newError('currentDoc and updatedDoc can not be the same object', 500, params)
@@ -129,7 +132,7 @@ export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (p
 
   try {
     const patchCreationParams = {
-      userId,
+      userAcct,
       currentDoc,
       updatedDoc: docAfterUpdate as T,
       batchId,
@@ -152,6 +155,7 @@ export const getUrlFromEntityImageHash = (imageHash: ImageHash) => getUrlFromIma
 export const uniqByUri = entities => uniqBy(entities, getUri)
 
 export async function imageIsUsed (imageHash: ImageHash) {
+  if (federatedMode) return false
   assert_.string(imageHash)
   const { rows } = await getInvEntitiesByClaim('invp:P2', imageHash)
   return rows.length > 0
@@ -213,12 +217,12 @@ export async function wdEntityHasALocalLayer (wdUri: WdEntityUri) {
 }
 
 export async function getWorkEditions (workUri: EntityUri) {
-  const editionsUris = await reverseClaims({ property: 'wdt:P629', value: workUri })
+  const editionsUris = await getReverseClaims({ property: 'wdt:P629', value: workUri })
   return getEntitiesList(editionsUris)
 }
 
 export async function getCollectionEditions (workUri: EntityUri) {
-  const editionsUris = await reverseClaims({ property: 'wdt:P195', value: workUri })
+  const editionsUris = await getReverseClaims({ property: 'wdt:P195', value: workUri })
   return getEntitiesList(editionsUris)
 }
 
