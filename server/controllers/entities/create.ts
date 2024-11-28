@@ -1,6 +1,6 @@
-import { getLocalUserAcct } from '#controllers/user/lib/user'
 import { newError } from '#lib/error/error'
-import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#server/types/server'
+import { getLocalUserAcct } from '#lib/federation/remote_user'
+import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 import { createInvEntity } from './lib/create_inv_entity.js'
 import { createWdEntity } from './lib/create_wd_entity.js'
 import { getEntityByUri } from './lib/get_entity_by_uri.js'
