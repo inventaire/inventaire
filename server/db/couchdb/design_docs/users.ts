@@ -48,8 +48,8 @@ export const views: Views<DocInUserDb> = {
   nextSummary: {
     map: doc => {
       if (doc.type !== 'user') return
-      if (doc.settings && doc.settings.notifications.global === false) return
-      if (doc.settings && doc.settings.notifications.inventories_activity_summary === false) return
+      if (doc.settings && doc.settings.notifications && doc.settings.notifications.global === false) return
+      if (doc.settings && doc.settings.notifications && doc.settings.notifications.inventories_activity_summary === false) return
       if (doc.undeliveredEmail > 1) return
 
       const lastSummary = doc.lastSummary || doc.created
