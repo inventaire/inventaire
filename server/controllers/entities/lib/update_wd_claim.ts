@@ -3,7 +3,7 @@ import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk
 import { formatClaimsForWikidata } from '#controllers/entities/lib/create_wd_entity'
 import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
-import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getWikidataOAuthCredentials, hasWikidataOAuth, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -137,14 +137,14 @@ function getQualifierHash (claim, property, value) {
 
 export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | SpecialUser) {
   if (isEmpty(claims)) return
-  validateWikidataOAuth(user)
-  const credentials = getWikidataOAuthCredentials(user)
-  const bot = 'special' in user && user.special
   const context = { id, claims, user: pick(user._id, '_id', 'username') }
-  if (!('oauth' in credentials)) {
+  // TODO: Let users without Wikidata OAuth use the botAccountWikidataOAuth crendentials(?)
+  if (!hasWikidataOAuth(user)) {
     warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
     return
   }
+  const credentials = getWikidataOAuthCredentials(user)
+  const bot = 'special' in user && user.special
   const expandedClaims = expandInvClaims(claims)
   const formattedClaims = formatClaimsForWikidata(omitLocalClaims(expandedClaims))
   await wdEdit.entity.edit({

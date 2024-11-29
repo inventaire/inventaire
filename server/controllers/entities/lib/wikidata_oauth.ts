@@ -4,10 +4,14 @@ import type { SpecialUser, User } from '#types/user'
 
 const { wikidataOAuth, botAccountWikidataOAuth } = config
 
-export function validateWikidataOAuth (user: User | SpecialUser) {
-  if ('special' in user) return
+export function hasWikidataOAuth (user: User | SpecialUser) {
+  if ('special' in user) return true
   const userWikidataOAuth = user.oauth != null ? user.oauth.wikidata : undefined
-  if (userWikidataOAuth == null) {
+  return userWikidataOAuth != null
+}
+
+export function validateWikidataOAuth (user: User | SpecialUser) {
+  if (!hasWikidataOAuth(user)) {
     throw newError('missing wikidata oauth tokens', 400)
   }
 }
