@@ -23,6 +23,7 @@ interface ItemsObj {
 export type ObjectType = NameObj & ItemsObj & Url
 
 export type LocalActorUrl = AbsoluteUrl
+export type ActorUrl = AbsoluteUrl
 
 export type Actor = NameObj & UriObj
 
@@ -64,10 +65,16 @@ export interface ActivityLink {
 
 export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 
+export interface PublicKeyObject {
+  id: string
+  owner: ActorUrl
+  publicKeyPem: string
+}
+
 export interface ActorActivity {
   '@context': Context[]
   type: 'Person'
-  id: LocalActorUrl
+  id: ActorUrl
   name: string
   preferredUsername: string
   summary: string
@@ -75,7 +82,7 @@ export interface ActorActivity {
   outbox: Url
   publicKey: {
     id: string
-    owner: LocalActorUrl
+    owner: ActorUrl
     publicKeyPem?: {
       publicKeyHash: string
     }
