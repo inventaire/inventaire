@@ -1,5 +1,6 @@
 import { URL } from 'node:url'
 import parseUrl from 'parseurl'
+import { isFediverseKnownHost } from '#controllers/activitypub/lib/activities'
 import { containers } from '#controllers/images/lib/containers'
 import { isUrl } from '#lib/boolean_validations'
 import { errorHandler } from '#lib/error/error_handler'
@@ -23,7 +24,7 @@ if (env === 'production' && useProdCachedImages) {
 // /img/#{container}/#{w}x#{h}/(#{hash}|#{external url getHashCode?href=escaped url})"
 
 export default {
-  get: (req, res) => {
+  get: async (req, res) => {
     // can be useful in development
     if (offline) {
       const message = 'you are in offline mode: no img delivered'
@@ -59,7 +60,9 @@ export default {
         return errorHandler(req, res, err)
       }
 
-      if (!trustedRemoteHosts.has(hostname)) {
+      const rootDomain = getApproximativeRootDomain(hostname)
+      const isKnownHostname = await isFediverseKnownHost(rootDomain)
+      if (!trustedRemoteHosts.has(hostname) && !isKnownHostname) {
         return bundleError(req, res, 'image domain not allowed', 400, url)
       }
 
@@ -100,3 +103,15 @@ const trustedRemoteHosts = new Set([
   // TODO: move to /img/assets instead
   'inventaire.io',
 ])
+
+function getApproximativeRootDomain (hostname) {
+  // From https://gist.github.com/aaronpeterson/8c481deafa549b3614d3d8c9192e3908
+  // As many images servers have subdomains: ie. static.mamot.fr
+  let parts = hostname.split('.')
+  if (parts.length <= 2) return hostname
+
+  parts = parts.slice(-3)
+  if ([ 'co', 'com' ].indexOf(parts[1]) > -1) return parts.join('.')
+
+  return parts.slice(-2).join('.')
+}

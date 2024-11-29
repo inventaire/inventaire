@@ -68,3 +68,11 @@ export async function getActivitiesCountByName (name: string) {
 export function getActivityByExternalId (externalId: string) {
   return db.findDocByViewKey<ActivityDoc>('byExternalId', externalId)
 }
+
+export async function isFediverseKnownHost (hostname) {
+  const res = await db.view('activities', 'isKnownHostname', {
+    key: hostname,
+    limit: 1,
+  })
+  return res.rows.length > 0
+}

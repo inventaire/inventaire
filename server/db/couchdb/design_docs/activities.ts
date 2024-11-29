@@ -18,4 +18,12 @@ export const views: Views<ActivityDoc> = {
       if (doc.externalId) emit(doc.externalId, null)
     },
   },
+  isKnownHostname: {
+    map: doc => {
+      if (doc.actor && doc.actor.uri) {
+        const host = doc.actor.uri.split('/')[2]
+        emit(host, null)
+      }
+    },
+  },
 }

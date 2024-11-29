@@ -36,4 +36,15 @@ describe('images:resize', () => {
       JSON.parse(err.body).status_verbose.should.equal('image domain not allowed')
     })
   })
+
+  // Requires config.remoteImages.useProdCachedImages = false
+  xit('should return a resized remote image from a trusted domain', async () => {
+    const remoteUrl = 'https://static.mamot.fr/accounts/avatars/000/066/589/original/7234e39fa914ed2b.jpg'
+    const urlHash = getHashCode(remoteUrl)
+    const url: RelativeUrl = `/img/remote/10x10/${urlHash}?href=${encodeURIComponent(remoteUrl)}`
+    const { statusCode, headers, body } = await rawRequest('get', url)
+    statusCode.should.equal(200)
+    headers['content-type'].should.equal('image/jpeg')
+    body.length.should.be.below(1000)
+  })
 })
