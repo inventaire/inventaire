@@ -2,7 +2,6 @@ import 'should'
 import { getEntityByUri, getExpandedEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get_edition_entity_from_isbn'
 import { wait } from '#lib/promises'
-import { simpleDay } from '#lib/utils/base'
 
 describe('get resolved seed', () => {
   // Give the time to importCircularDependencies to run
@@ -16,7 +15,9 @@ describe('get resolved seed', () => {
     const edition = await getExpandedEntityByUri({ uri })
     edition.claims['wdt:P629'].should.deepEqual([ { value: 'wd:Q1217816' } ])
     edition.claims['wdt:P268'].should.deepEqual([ { value: '34577092d' } ])
-    const reference = { 'wdt:P268': [ '34577092d' ], 'wdt:P813': [ simpleDay() ] }
+    // Take the retrieved date from the data, as that might come from the cache from previous test sessions
+    const retrievedDate = edition.claims['wdt:P577'][0].references[0]['wdt:P813'][0]
+    const reference = { 'wdt:P268': [ '34577092d' ], 'wdt:P813': [ retrievedDate ] }
     edition.claims['wdt:P577'].should.deepEqual([ { value: '1975', references: [ reference ] } ])
     edition.claims['wdt:P655'].should.deepEqual([ { value: 'wd:Q3587936', references: [ reference ] } ])
   })
