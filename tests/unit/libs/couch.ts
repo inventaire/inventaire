@@ -1,5 +1,5 @@
 import 'should'
-import { joinOrderedIds } from '#lib/couch'
+import { joinOrderedIds } from '#models/relation'
 
 describe('couch utils', () => {
   describe('joinOrderedIds', () => {

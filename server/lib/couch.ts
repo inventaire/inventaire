@@ -13,11 +13,6 @@ export function firstDoc (docs) {
   return docs != null ? docs[0] : null
 }
 
-export function joinOrderedIds (idA, idB) {
-  if (idA < idB) return `${idA}:${idB}`
-  else return `${idB}:${idA}`
-}
-
 export function ignoreNotFound (err) {
   if (!(err && err.statusCode === 404)) throw err
 }
