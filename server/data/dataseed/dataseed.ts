@@ -10,6 +10,7 @@ import { forceArray } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#types/common'
 import type { Isbn } from '#types/entity'
 
 const { enabled, origin } = config.dataseed
@@ -19,13 +20,23 @@ const reqOptions = {
   ignoreCertificateErrors: origin.startsWith('https'),
 }
 
+export interface DataSeed {
+  isbn: string
+  title?: string
+  authors?: string[]
+  image?: AbsoluteUrl
+  publisher?: string
+  publicationDate?: string
+}
+
 export async function getSeedsByIsbns (isbns: Isbn | Isbn[], refresh?: boolean) {
   isbns = forceArray(isbns) as Isbn[]
   if (!enabled) return isbns.map(emptySeed)
   isbns = isbns.join('|')
   const url = buildUrl(`${origin}/books`, { isbns, refresh })
   try {
-    return await requests_.get(url, reqOptions)
+    const seeds = await requests_.get(url, reqOptions)
+    return seeds as DataSeed[]
   } catch (err) {
     logError(err, 'dataseed getSeedsByIsbns err')
     return []
@@ -46,4 +57,4 @@ export function cleanupImageUrl (imageUrl) {
   return requests_.get(url, reqOptions)
 }
 
-const emptySeed = isbn => ({ isbn })
+const emptySeed = isbn => ({ isbn } as DataSeed)

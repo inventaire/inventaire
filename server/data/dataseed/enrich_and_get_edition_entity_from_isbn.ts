@@ -7,7 +7,7 @@ import { parseIsbn } from '#lib/isbn/parse'
 import temporarilyMemoize from '#lib/temporarily_memoize'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
-import { getSeedsByIsbns } from './dataseed.js'
+import { getSeedsByIsbns, type DataSeed } from './dataseed.js'
 
 const { _id: seedUserId } = hardCodedUsers.seed
 
@@ -31,7 +31,7 @@ async function _enrichAndGetEditionEntityFromIsbn (isbn: string) {
     if (dataseedEnabled) {
       const [ seed ] = await getSeedsByIsbns(isbn)
       if (seed?.title) {
-        const dataseedEntry = await buildEntry(seed)
+        const dataseedEntry = await buildEntryFromDataSeed(seed)
         const entity = await enrichAndGetEditionEntityFromEntry(dataseedEntry)
         if (entity) return entity
         return dataseedEntry
@@ -57,7 +57,7 @@ async function enrichAndGetEditionEntityFromEntry (entry) {
   }
 }
 
-async function buildEntry (seed) {
+async function buildEntryFromDataSeed (seed: DataSeed) {
   const { title, authors, image, publisher, publicationDate, isbn } = seed
   const isbnData = parseIsbn(isbn)
   const lang = isbnData.groupLang || 'en'

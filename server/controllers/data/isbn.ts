@@ -1,5 +1,6 @@
 // An endpoint to get basic facts from an ISBN
 // Returns a merge of isbn3 and dataseed data
+import { omit } from 'lodash-es'
 import { getSeedsByIsbns } from '#data/dataseed/dataseed'
 import { parseIsbn } from '#lib/isbn/parse'
 import type { IsbnData } from '#types/common'
@@ -19,11 +20,10 @@ async function controller ({ isbn, refresh }) {
 
   const resp = await getSeedsByIsbns(data.isbn13, refresh)
   const seed = resp[0] || {}
-  delete seed.isbn
-  // TODO: convert image URL to hash?
-  delete seed.image
-  Object.assign(data, seed)
-  return data
+  return {
+    ...data,
+    ...omit(seed, [ 'isbn', 'image' ]),
+  }
 }
 
 export default { sanitization, controller }
