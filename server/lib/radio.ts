@@ -20,7 +20,9 @@ if (waitForListeners) {
   emit = async (eventName, ...args) => {
     const listeners = radio.listeners(eventName)
     if (listeners.length === 0) {
-      warn('no event listner found: ' + JSON.stringify({ eventName, args }))
+      const context = JSON.stringify({ eventName, args })
+      const stringifiedContext = context.length > 100 ? context.slice(0, 100) + '…' : context
+      warn(`no event listner found: ${stringifiedContext}`)
     } else {
       await Promise.all(listeners.map(triggerAndWait(eventName, args)))
     }
