@@ -14,7 +14,7 @@ export function emit (key: ViewKey, value?: unknown) {
  *   *"The log() function will log output to the CouchDB log file or stream.
  *    You can log strings, objects, and arrays directly, without first converting to JSON"*
  */
-export function log (...args: unknown[]) {
-  console.error('log arguments', { args })
+export function log (arg: unknown) {
+  console.error('log argument', { arg })
   throw new Error('This function should never actually be called by the server')
 }
