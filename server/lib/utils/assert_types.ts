@@ -5,7 +5,7 @@ import { typeOf } from './types.js'
 function assertType (type: string, obj: unknown) {
   const trueType = typeOf(obj)
   if (!type.split('|').includes(trueType)) {
-    throw newError(`TypeError: expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj })
+    throw newError(`expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj }, TypeError)
   }
 }
 

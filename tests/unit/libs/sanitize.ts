@@ -10,7 +10,8 @@ describe('sanitize', () => {
       sanitize(req, {}, configs)
       shouldNotBeCalled()
     } catch (err) {
-      err.message.should.startWith('TypeError: expected object, got undefined')
+      err.name.should.equal('TypeError')
+      err.message.should.startWith('expected object, got undefined')
     }
   })
 
