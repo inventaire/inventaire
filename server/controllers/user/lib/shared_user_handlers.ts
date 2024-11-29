@@ -1,4 +1,3 @@
-import { firstDoc } from '#lib/couch'
 import { notFoundError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
@@ -14,11 +13,9 @@ export function byEmails <D extends CouchDoc> (db: DbHandler, emails) {
   return db.getDocsByViewKeys<D>('byEmail', emails.map(toLowerCase))
 }
 
-export function findOneByEmail <D extends CouchDoc> (db: DbHandler, email) {
-  return byEmail<D>(db, email)
-  .then(firstDoc)
-  .then(user => {
-    if (user) return user
-    else throw notFoundError(email)
-  })
+export async function findOneByEmail <D extends CouchDoc> (db: DbHandler, email) {
+  const docs = await byEmail<D>(db, email)
+  const user = docs[0]
+  if (user) return user
+  else throw notFoundError(email)
 }
