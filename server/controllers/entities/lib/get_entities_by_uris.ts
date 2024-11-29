@@ -52,7 +52,7 @@ export async function getExpandedEntitiesByUris (params: Omit<GetEntitiesByUrisP
 
 export async function getPossiblyExpandedEntitiesByUris (params: GetEntitiesByUrisParams) {
   const { uris, includeReferences } = params
-  assert_.array(uris)
+  assert_.strings(uris)
   const domains: Domains = {}
 
   // validate per URI to be able to return a precise error message

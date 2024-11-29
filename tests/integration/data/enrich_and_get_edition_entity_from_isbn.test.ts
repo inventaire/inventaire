@@ -12,6 +12,7 @@ describe('get resolved seed', () => {
     // Expect only BNF to return a seed. If that's not the case, you can find new candidates with
     // https://query.inventaire.io/#SELECT%20%2a%20%7B%0A%20%20%3Fitem%20wdt%3AP268%20%3FbnfId%20.%0A%20%20%3Fitem%20wdt%3AP629%20%3Fwork%20.%0A%20%20FILTER%20NOT%20EXISTS%20%7B%20%3Fwork%20wdt%3AP31%20%3Ftype%20%7D%20.%0A%20%20%3Fitem%20wdt%3AP212%20%3Fisbn%20.%0A%20%20%3Fitem%20wdt%3AP577%20%3Fdate%20.%0A%7D%0AORDER%20BY%20%3Fdate
     const { uri } = await enrichAndGetEditionEntityFromIsbn('978-2-245-00322-0')
+    uri.should.be.a.String()
     const edition = await getExpandedEntityByUri({ uri })
     edition.claims['wdt:P629'].should.deepEqual([ { value: 'wd:Q1217816' } ])
     edition.claims['wdt:P268'].should.deepEqual([ { value: '34577092d' } ])
