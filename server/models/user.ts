@@ -2,6 +2,7 @@ import { get, omit, pick, without } from 'lodash-es'
 import { hashPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
+import type { UserWithAcct } from '#lib/federation/remote_user'
 import { truncateLatLng } from '#lib/geo'
 import { assert_ } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
@@ -154,7 +155,7 @@ export function setUserDocStableUsername (user: User) {
   return user
 }
 
-export function userShouldBeAnonymized (user: User) {
+export function userShouldBeAnonymized (user: UserWithAcct) {
   const userSetting = get(user, 'settings.contributions.anonymize')
   return userSetting !== false
 }
