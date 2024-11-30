@@ -2,6 +2,8 @@ import { checkIfItemIsBusy, getTransactionById, updateTransactionState } from '#
 import { newError } from '#lib/error/error'
 import { track } from '#lib/track'
 import { transactionStates, transactionStatesList } from '#models/attributes/transaction'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { Req } from '#types/server'
 import { verifyIsRequester, verifyIsOwner, verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
 
 const sanitization = {
@@ -11,8 +13,9 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
-  await updateState(params)
+async function controller (params: SanitizedParameters, req: Req) {
+  const { transactionId, state, reqUserId } = params
+  await updateState({ transactionId, state, reqUserId })
   const transaction = await getTransactionById(params.transaction)
   track(req, [ 'transaction', 'update', params.state ])
   return { ok: true, transaction }

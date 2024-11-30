@@ -1,5 +1,6 @@
 import { compact } from 'lodash-es'
 import { bulkDeleteShelves, deleteShelvesItems, getShelvesByIdsWithItems, validateShelfOwnership } from '#controllers/shelves/lib/shelves'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   ids: {},
@@ -9,7 +10,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ ids, reqUserId, withItems }) {
+async function controller ({ ids, reqUserId, withItems }: SanitizedParameters) {
   const shelvesRes = await getShelvesByIdsWithItems(ids, reqUserId)
   const shelves = compact(shelvesRes)
   validateShelfOwnership(reqUserId, shelves)

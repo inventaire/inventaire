@@ -1,6 +1,8 @@
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { newMissingQueryError } from '#lib/error/pre_filled'
 import { getLangFromHeaders } from '#lib/headers'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { Req, Res } from '#types/server'
 import generateFeedFromFeedData from './lib/generate_feed_from_feed_data.js'
 import getAuthentifiedUser from './lib/get_authentified_user.js'
 import groupFeedData from './lib/group_feed_data.js'
@@ -30,7 +32,7 @@ const sanitization = {
   },
 }
 
-async function controller (params, req, res) {
+async function controller (params: SanitizedParameters, req: Req, res: Res) {
   const headersLang = getLangFromHeaders(req.headers)
   const xml = await getFeed(headersLang, params)
   res.header('content-type', 'application/rss+xml')

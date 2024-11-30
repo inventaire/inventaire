@@ -2,12 +2,13 @@ import { refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_
 import { isEntityUri } from '#lib/boolean_validations'
 import { wait } from '#lib/promises'
 import { log, warn } from '#lib/utils/logs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   uris: {},
 }
 
-async function controller ({ uris }) {
+async function controller ({ uris }: SanitizedParameters) {
   await refreshSequentially(uris)
   return { ok: true }
 }

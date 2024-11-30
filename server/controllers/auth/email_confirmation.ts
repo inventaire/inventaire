@@ -1,9 +1,11 @@
 import { sendValidationEmail } from '#controllers/user/lib/token'
 import { newError } from '#lib/error/error'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {}
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   await sendEmailValidation(req.user)
   return { ok: true }
 }

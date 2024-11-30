@@ -7,7 +7,9 @@ import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { EntityUri, SerializedEntity } from '#types/entity'
+import type { AuthentifiedReq } from '#types/server'
 import mergeEntities from './lib/merge_entities.js'
 
 const sanitization = {
@@ -25,7 +27,7 @@ const sanitization = {
 // Only inv entities can be merged yet
 const validFromUriPrefix = [ 'inv', 'isbn' ]
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   let { from: fromUri, to: toUri } = params
   const [ fromPrefix ] = fromUri.split(':')
 

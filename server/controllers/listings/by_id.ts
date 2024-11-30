@@ -1,7 +1,10 @@
 import { getListingWithElements } from '#controllers/listings/lib/listings'
 import { notFoundError, unauthorizedError } from '#lib/error/error'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { Req } from '#types/server'
 
+// TODO: actually implement pagination
 const sanitization = {
   id: {},
   // Elements pagination
@@ -9,8 +12,7 @@ const sanitization = {
   offset: { optional: true },
 }
 
-// TODO: actually implement pagination
-async function controller ({ id, reqUserId }, req) {
+async function controller ({ id, reqUserId }: SanitizedParameters, req: Req) {
   const listing = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
 

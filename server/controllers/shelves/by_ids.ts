@@ -4,6 +4,8 @@ import { getShelvesByIds, getShelvesByIdsWithItems } from '#controllers/shelves/
 import { notFoundError, unauthorizedError } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { Req, Res } from '#types/server'
 import type { Shelf, ShelfId } from '#types/shelf'
 
 const sanitization = {
@@ -14,7 +16,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ ids, withItems, reqUserId }, req, res) {
+async function controller ({ ids, withItems, reqUserId }: SanitizedParameters, req: Req, res: Res) {
   const getShelves = withItems ? getShelvesByIdsWithItems : getShelvesByIds
   const foundShelves = await getShelves(ids, reqUserId)
   const foundShelvesIds: ShelfId[] = map(foundShelves, '_id')

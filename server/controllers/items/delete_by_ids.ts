@@ -2,12 +2,13 @@ import { compact } from 'lodash-es'
 import { getItemsByIds, itemsBulkDelete } from '#controllers/items/lib/items'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   ids: {},
 }
 
-async function controller ({ ids, reqUserId }) {
+async function controller ({ ids, reqUserId }: SanitizedParameters) {
   await getItemsByIds(ids)
   .then(compact)
   .then(verifyOwnership(reqUserId))

@@ -6,14 +6,14 @@ import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import { runWdQuery } from '#data/wikidata/run_query'
-import { isEntityUri } from '#lib/boolean_validations'
+import { isEntityUri, isWdPropertyUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assert_ } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
-import type { EntityUri, InvSnakValue, WdEntityId, WdPropertyUri } from '#types/entity'
+import type { EntityUri, InvSnakValue, PropertyUri, WdEntityId, WdPropertyUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
@@ -30,7 +30,7 @@ const denylistedProperties = [
 ]
 
 interface ReverseClaimsParams {
-  property?: WdPropertyUri
+  property?: PropertyUri
   value?: InvSnakValue
   refresh?: boolean
   sort?: boolean
@@ -60,7 +60,8 @@ export async function reverseClaims (params: ReverseClaimsParams) {
   }
 }
 
-function requestWikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
+async function requestWikidataReverseClaims (property: PropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
+  if (!isWdPropertyUri(property)) return []
   if (isEntityUri(value)) {
     const [ prefix, id ] = value.split(':')
     // If the prefix is 'inv' or 'isbn', no need to check Wikidata
@@ -98,7 +99,7 @@ async function _wikidataReverseClaims (property: WdPropertyUri, value: InvSnakVa
   .map(wdId => prefixifyWd(wdId))
 }
 
-async function invReverseClaims (property: WdPropertyUri, value: InvSnakValue) {
+async function invReverseClaims (property: PropertyUri, value: InvSnakValue) {
   try {
     const entities = await getInvEntitiesByClaim(property, value, true, true)
     return entities.map(getInvEntityCanonicalUri)
@@ -150,7 +151,8 @@ const typeTailoredQuery = {
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
 
-async function getReverseClaimsFromCachedRelations (property: WdPropertyUri, value: InvSnakValue) {
+async function getReverseClaimsFromCachedRelations (property: PropertyUri, value: InvSnakValue) {
+  if (!isWdPropertyUri(property)) return []
   if (getPropertyDatatype(property) === 'entity') {
     return getCachedRelations({
       valueUri: value as EntityUri,

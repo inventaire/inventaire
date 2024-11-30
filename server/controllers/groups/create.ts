@@ -1,4 +1,5 @@
 import { createGroup } from '#controllers/groups/lib/groups'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   name: {},
@@ -14,7 +15,7 @@ const sanitization = {
   },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const { name, description, position, open, reqUserId } = params
   let { searchable } = params
 

@@ -4,6 +4,7 @@ import { getOwnerIdAndVisibilityKeys } from '#controllers/items/lib/get_authoriz
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { newMissingQueryError } from '#lib/error/pre_filled'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { GroupId } from '#types/group'
 import type { ShelfId } from '#types/shelf'
 import type { UserId } from '#types/user'
@@ -27,7 +28,7 @@ export interface ItemsSearchQuery {
   offset?: number
 }
 
-async function controller ({ reqUserId, userId, groupId, shelfId, search, limit, offset }) {
+async function controller ({ reqUserId, userId, groupId, shelfId, search, limit, offset }: SanitizedParameters) {
   if (!(userId || groupId || shelfId)) {
     throw newMissingQueryError('user|group|shelf')
   }

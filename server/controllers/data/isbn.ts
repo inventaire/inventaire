@@ -4,13 +4,14 @@ import { omit } from 'lodash-es'
 import { getSeedsByIsbns } from '#data/dataseed/dataseed'
 import { parseIsbn } from '#lib/isbn/parse'
 import type { IsbnData } from '#types/common'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   isbn: {},
   refresh: { optional: true },
 }
 
-async function controller ({ isbn, refresh }) {
+async function controller ({ isbn, refresh }: SanitizedParameters) {
   const data: IsbnData & { query?: string } = parseIsbn(isbn)
 
   // Not using source to pass the original input as 'source'

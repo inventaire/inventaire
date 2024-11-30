@@ -5,6 +5,7 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { Outbox } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { Req, Res } from '#types/server'
 import formatEntityPatchesActivities from './lib/format_entity_patches_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
@@ -24,15 +25,15 @@ const sanitization = {
   },
 }
 
-async function controller (params, req: Req, res: Res) {
-  const { name } = params
+async function controller (params: SanitizedParameters, req: Req, res: Res) {
+  const { name, offset, limit } = params
   setActivityPubContentType(res)
   if (isEntityUri(getEntityUriFromActorName(name))) {
-    return getEntityActivities(params)
+    return getEntityActivities({ name, offset, limit })
   } else if (name.startsWith('shelf-')) {
-    return getShelfActivities(params)
+    return getShelfActivities({ name, offset, limit })
   } else if (isUsername(name)) {
-    return getUserActivities(params)
+    return getUserActivities({ name, offset, limit })
   } else {
     throw newError('invalid name', 400, { name })
   }

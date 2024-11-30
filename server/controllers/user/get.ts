@@ -1,8 +1,10 @@
 import { pick } from 'lodash-es'
 import { setUserStableUsername } from '#controllers/user/lib/user'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq, Res } from '#types/server'
 import { ownerSafeData } from './lib/authorized_user_data_pickers.js'
 
-async function controller (params, req, res) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq, res: Res) {
   // The logged in user as its document set on req.user by passport.js
   const userData = ownerSafeData(req.user)
 

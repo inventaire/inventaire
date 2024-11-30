@@ -4,13 +4,15 @@ import { getListingWithElements, validateListingsOwnership } from '#controllers/
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { notFoundError } from '#lib/error/error'
 import { addWarning } from '#lib/responses'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { Req, Res } from '#types/server'
 
 const sanitization = {
   id: {},
   uris: {},
 }
 
-async function controller ({ id, uris, reqUserId }, req, res) {
+async function controller ({ id, uris, reqUserId }: SanitizedParameters, req: Req, res: Res) {
   const listing = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
 

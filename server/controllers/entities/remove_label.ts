@@ -1,12 +1,14 @@
 import { labelUpdatersByPrefix } from '#controllers/entities/update_label'
 import { newError } from '#lib/error/error'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {
   uri: {},
   lang: {},
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { uri, lang } = params
 
   const [ prefix, id ] = uri.split(':')

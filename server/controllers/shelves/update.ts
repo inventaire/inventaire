@@ -1,4 +1,5 @@
 import { updateShelfAttributes } from '#controllers/shelves/lib/shelves'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   shelf: {},
@@ -8,7 +9,7 @@ const sanitization = {
   color: { optional: true },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const shelf = await updateShelfAttributes(params)
   return { shelf }
 }

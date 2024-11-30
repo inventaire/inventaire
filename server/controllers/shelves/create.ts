@@ -1,4 +1,5 @@
 import { addItemsToShelves, createShelf } from '#controllers/shelves/lib/shelves'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { NewShelf } from '#types/shelf'
 
 const sanitization = {
@@ -9,7 +10,7 @@ const sanitization = {
   items: { optional: true },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const { items: itemsIds, reqUserId } = params
   const shelf = await formatNewShelf(params)
   if (itemsIds) await addItemsToShelves([ shelf._id ], itemsIds, reqUserId)

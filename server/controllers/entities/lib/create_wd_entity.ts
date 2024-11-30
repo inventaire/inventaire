@@ -20,7 +20,7 @@ interface CreateWdEntityParams {
   descriptions?: Descriptions
   claims: ExpandedClaims
   user: User
-  isAlreadyValidated: boolean
+  isAlreadyValidated?: boolean
 }
 
 export interface EntityDraft {
@@ -38,7 +38,7 @@ type UnprefixedClaimObject = {
 export type UnprefixedClaims = Record<WdPropertyId, UnprefixedClaimObject[]>
 
 export async function createWdEntity (params: CreateWdEntityParams) {
-  const { labels, descriptions, claims, user, isAlreadyValidated } = params
+  const { labels, descriptions, claims, user, isAlreadyValidated = false } = params
   validateWikidataOAuth(user)
   const credentials = getWikidataOAuthCredentials(user)
 

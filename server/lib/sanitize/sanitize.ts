@@ -7,6 +7,7 @@ import { assert_ } from '#lib/utils/assert_types'
 import { obfuscate } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 import type { ControllerInputSanitization, FormatFunction, GenericParameterName, ParameterName, ParameterPlace, ControllerSanitizationParameterConfig, SanitizationParameter, RenameFunction } from '#types/controllers_input_sanitization'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, Req, Res } from '#types/server'
 import { sanitizationParameters } from './parameters.js'
 
@@ -48,7 +49,7 @@ export function sanitize (req: Req | AuthentifiedReq, res: Res, configs: Control
     input.reqUserId = req.user._id
   }
 
-  return input
+  return input as SanitizedParameters
 }
 
 const optionsNames = new Set([ 'nonJsonBody' ])

@@ -4,7 +4,9 @@ import { isInvEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
 import { log } from '#lib/utils/logs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { IsbnEntityUri } from '#types/entity'
+import type { AuthentifiedReq } from '#types/server'
 import { updateInvClaim } from './lib/update_inv_claim.js'
 import { updateWdClaim } from './lib/update_wd_claim.js'
 
@@ -16,7 +18,7 @@ const sanitization = {
   'new-value': { optional: true },
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   let { id, uri, property, oldValue, newValue } = params
   let prefix
   log(params, 'update claim input')
@@ -34,13 +36,13 @@ async function controller (params, req) {
   ;[ prefix, id ] = uri.split(':')
 
   if (prefix === 'isbn') {
-    const altUri = await getAltUri(uri)
+    const altUri = await getAltUri(uri as IsbnEntityUri)
     if (altUri) [ prefix, id ] = altUri.split(':')
   }
 
   const updater = updaters[prefix]
   if (updater == null) {
-    throw newError(`unsupported uri prefix: ${prefix}`, 400, uri)
+    throw newError(`unsupported uri prefix: ${prefix}`, 400, { uri })
   }
 
   await updater(req.user, id, property, oldValue, newValue)

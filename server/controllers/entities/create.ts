@@ -1,3 +1,6 @@
+import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 import { createInvEntity } from './lib/create_inv_entity.js'
 import { createWdEntity } from './lib/create_wd_entity.js'
 import { getEntityByUri } from './lib/get_entity_by_uri.js'
@@ -16,23 +19,24 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { prefix, labels, claims, reqUserId } = params
-  const createFn = creators[prefix]
-  params = { labels, claims }
+  let entity
   if (prefix === 'wd') {
-    params.user = req.user
+    entity = await createWdEntity({
+      labels,
+      claims: expandInvClaims(claims),
+      user: req.user,
+    })
   } else {
-    params.userId = reqUserId
+    entity = await createInvEntity({
+      labels,
+      claims,
+      userId: reqUserId,
+    })
   }
-  const entity = await createFn(params)
   // Re-request the entity's data to get it formatted
   return getEntityByUri({ uri: entity.uri, refresh: true })
-}
-
-const creators = {
-  inv: createInvEntity,
-  wd: createWdEntity,
 }
 
 export default {

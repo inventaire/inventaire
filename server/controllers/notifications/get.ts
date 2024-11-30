@@ -1,11 +1,12 @@
 import { getNotificationsByUserId } from '#controllers/notifications/lib/notifications'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   limit: { optional: true, default: 10 },
   offset: { optional: true },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const notifications = await getNotificationsByUserId(params.reqUserId)
   return paginate(notifications, params)
 }

@@ -4,6 +4,7 @@ import isbn3 from 'isbn3'
 const { parse: isbnParser } = isbn3
 
 export type LatLng = [ number, number ]
+export type BBox = [ LatLng, LatLng ]
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head'
 export type HttpHeaderKey =

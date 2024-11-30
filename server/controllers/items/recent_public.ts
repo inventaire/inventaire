@@ -1,4 +1,5 @@
 import { getPublicItemsByDate } from '#controllers/items/lib/items'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import bundleOwnersToItems from './lib/bundle_owners_to_items.js'
 
 const itemsQueryLimit = 100
@@ -17,7 +18,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ assertImage, lang, limit, reqUserId }) {
+async function controller ({ assertImage, lang, limit, reqUserId }: SanitizedParameters) {
   let items = await getPublicItemsByDate(itemsQueryLimit, offset, assertImage, reqUserId)
   items = selectRecentItems(items, lang, limit)
   return bundleOwnersToItems(items, reqUserId)

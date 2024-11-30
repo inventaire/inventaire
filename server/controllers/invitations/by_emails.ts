@@ -6,6 +6,8 @@ import { isGroupId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { userIsGroupMember } from '#models/group'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 import parseEmails from './lib/parse_emails.js'
 import { sendInvitationAndReturnData } from './lib/send_invitation_and_return_data.js'
 
@@ -15,7 +17,7 @@ const sanitization = {
   group: { optional: true },
 }
 
-export async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { emails, groupId, reqUserId } = params
   let { message } = params
   const { user } = req

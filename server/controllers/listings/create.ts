@@ -1,4 +1,5 @@
 import { createListing } from '#controllers/listings/lib/listings'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   name: {},
@@ -9,7 +10,7 @@ const sanitization = {
   },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const listing = await formatNewListing(params)
   return { list: listing }
 }

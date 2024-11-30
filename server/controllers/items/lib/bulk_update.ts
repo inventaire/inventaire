@@ -5,8 +5,19 @@ import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import { updateItemDoc } from '#models/item'
+import type { ItemId } from '#types/item'
+import type { UserId } from '#types/user'
 
-export async function bulkItemsUpdate ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }) {
+interface BulkItemsUpdateParams {
+  reqUserId: UserId
+  ids: ItemId[]
+  attribute: string
+  value: unknown
+  attempt?: number
+  previousUpdates?: Awaited<ReturnType<typeof itemsBulkUpdate>>
+}
+
+export async function bulkItemsUpdate ({ reqUserId, ids, attribute, value, attempt = 0, previousUpdates = [] }: BulkItemsUpdateParams) {
   const itemUpdateData = { [attribute]: value }
   const currentItems = await getItemsByIds(ids)
   const formattedItems = currentItems.map(currentItem => updateItemDoc(reqUserId, itemUpdateData, currentItem))

@@ -6,6 +6,7 @@ import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 const { nice } = config
@@ -17,7 +18,7 @@ const sanitization = {
   refresh: { optional: true },
 }
 
-async function controller ({ refresh }) {
+async function controller ({ refresh }: SanitizedParameters) {
   addEntitiesToQueueSequentially(refresh)
   .catch(LogError('addEntitiesToQueueSequentially err'))
 

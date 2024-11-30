@@ -1,12 +1,13 @@
 // Mark the whole transaction as read
 import { getTransactionById, markTransactionAsRead } from '#controllers/transactions/lib/transactions'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import { verifyRightToInteractWithTransaction } from './lib/rights_verification.js'
 
 const sanitization = {
   id: {},
 }
 
-async function controller ({ id, reqUserId }) {
+async function controller ({ id, reqUserId }: SanitizedParameters) {
   const transaction = await getTransactionById(id)
   verifyRightToInteractWithTransaction(reqUserId, transaction)
   await markTransactionAsRead(reqUserId, transaction)

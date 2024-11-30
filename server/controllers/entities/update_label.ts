@@ -1,4 +1,6 @@
 import { newError } from '#lib/error/error'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 import { unprefixify } from './lib/prefix.js'
 import inv from './lib/update_inv_label.js'
 import wd from './lib/update_wd_label.js'
@@ -10,7 +12,7 @@ const sanitization = {
   value: { type: 'string' },
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   let { uri, id, value, lang } = params
 
   const prefix = getPrefix(uri, id)

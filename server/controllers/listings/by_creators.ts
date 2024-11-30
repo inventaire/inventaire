@@ -2,6 +2,7 @@ import { paginateListings } from '#controllers/listings/lib/helpers'
 import { assignElementsToListings, getListingsByCreators } from '#controllers/listings/lib/listings'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   users: {},
@@ -16,7 +17,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ users, offset, limit, context, withElements, reqUserId }) {
+async function controller ({ users, offset, limit, context, withElements, reqUserId }: SanitizedParameters) {
   const foundListings = await getListingsByCreators(users)
   const allVisibleListings = await filterVisibleDocs(foundListings, reqUserId)
   const { listings, total, continue: continu } = paginateListings(allVisibleListings, { offset, limit, context })

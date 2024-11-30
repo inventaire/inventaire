@@ -1,5 +1,6 @@
 import { omitPrivateData, type UserExtraAttribute } from '#controllers/user/lib/authorized_user_data_pickers'
 import { getUsersByCreationDate } from '#controllers/users/lib/users'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   limit: {},
@@ -13,7 +14,7 @@ const sanitization = {
 // This endpoint is admin-only, so all requests can access users abuse reports
 const extraAttribute: UserExtraAttribute = 'reports'
 
-async function controller ({ limit, offset, filter, reqUserId }) {
+async function controller ({ limit, offset, filter, reqUserId }: SanitizedParameters) {
   const users = await getUsersByCreationDate({
     limit,
     offset,

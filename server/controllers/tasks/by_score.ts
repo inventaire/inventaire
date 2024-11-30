@@ -1,4 +1,5 @@
 import { getTasksByScore } from '#controllers/tasks/lib/tasks'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   limit: {
@@ -13,7 +14,7 @@ const sanitization = {
 // Known case: collect-entities endpoint automatically create tasks
 // withkeys `lexicalScore` and `relationScore`
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const tasks = await getTasksByScore(params)
   return { tasks }
 }

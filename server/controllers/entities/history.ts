@@ -5,7 +5,9 @@ import { unprefixify } from '#controllers/entities/lib/prefix'
 import { isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { hasAdminAccess } from '#lib/user_access_levels'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { EntityUri } from '#types/entity'
+import type { AuthentifiedReq } from '#types/server'
 import { anonymizePatches } from './lib/anonymize_patches.js'
 
 const sanitization = {
@@ -17,7 +19,7 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { uri, reqUserId } = params
   let { id } = params
 

@@ -1,4 +1,5 @@
 import { updateListingAttributes } from '#controllers/listings/lib/listings'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   id: {},
@@ -7,7 +8,7 @@ const sanitization = {
   name: { optional: true },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const listing = await updateListingAttributes(params)
   return { list: listing }
 }

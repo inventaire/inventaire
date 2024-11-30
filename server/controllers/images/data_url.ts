@@ -6,6 +6,7 @@ import { isPrivateUrl } from '#lib/network/is_private_url'
 import { endReqTimer, sanitizeUrl, startReqTimer } from '#lib/requests'
 import { logError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const { enabled: dataseedEnabled } = config.dataseed
 
@@ -14,7 +15,7 @@ const sanitization = {
 }
 
 // Get an image data-url from a URL
-async function controller ({ url }) {
+async function controller ({ url }: SanitizedParameters) {
   try {
     const dataUrl = await getImageDataUrl(url)
     return { 'data-url': dataUrl }

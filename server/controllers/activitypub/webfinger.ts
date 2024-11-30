@@ -4,6 +4,7 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { ControllerWrapper } from '#lib/controller_wrapper'
 import { notFoundError } from '#lib/error/error'
 import config from '#server/config'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import { validateUser, validateShelf } from './lib/validations.js'
 
 const origin = config.getPublicOrigin()
@@ -13,7 +14,7 @@ const sanitization = {
   resource: {},
 }
 
-async function controller ({ resource }) {
+async function controller ({ resource }: SanitizedParameters) {
   const name = getActorName(resource)
   if (isEntityUri(getEntityUriFromActorName(name))) {
     const entity = await getEntityByUri({ uri: getEntityUriFromActorName(name) })

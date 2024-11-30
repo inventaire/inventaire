@@ -1,5 +1,6 @@
 import { addListingElements, getListingWithElements, validateListingsOwnership } from '#controllers/listings/lib/listings'
 import { notFoundError } from '#lib/error/error'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { ListingWithElements } from '#types/listing'
 
 const sanitization = {
@@ -7,7 +8,7 @@ const sanitization = {
   uris: {},
 }
 
-async function controller ({ id, uris, reqUserId }) {
+async function controller ({ id, uris, reqUserId }: SanitizedParameters) {
   const listing: ListingWithElements = await getListingWithElements(id)
   if (!listing) throw notFoundError({ id })
   const listings: ListingWithElements[] = [ listing ]

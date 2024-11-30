@@ -10,6 +10,8 @@ import { emit } from '#lib/radio'
 import userAttributes from '#models/attributes/user'
 import { userFormatters } from '#models/user'
 import userValidations from '#models/validations/user'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 
 const { updatable, concurrencial, acceptNullValue } = userAttributes
 const db = await dbFactory('users')
@@ -21,7 +23,7 @@ const sanitization = {
   },
 }
 
-async function controller (params, req) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { attribute, value } = params
   const { user } = req
   await update(user, attribute, value)

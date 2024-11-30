@@ -1,4 +1,5 @@
 import { getTasksByEntitiesType } from '#controllers/tasks/lib/tasks'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   type: {
@@ -18,7 +19,7 @@ const sanitization = {
 // This endpoint should only return tasks created by a user,
 // to return bot generated tasks, see endpoint 'byScore'
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const tasks = await getTasksByEntitiesType(params)
   return { tasks }
 }

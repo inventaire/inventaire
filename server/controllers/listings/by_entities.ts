@@ -3,6 +3,7 @@ import { getElementsByListingsAndEntity, getElementsByEntities } from '#controll
 import { paginateListings } from '#controllers/listings/lib/helpers'
 import { getListingsByIdsWithElements } from '#controllers/listings/lib/listings'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
   uris: {},
@@ -12,7 +13,7 @@ const sanitization = {
   context: { optional: true },
 }
 
-async function controller ({ uris, lists, offset, limit, context, reqUserId }) {
+async function controller ({ uris, lists, offset, limit, context, reqUserId }: SanitizedParameters) {
   let foundElements
   if (lists) {
     foundElements = await getElementsByListingsAndEntity(lists, uris)

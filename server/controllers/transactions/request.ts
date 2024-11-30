@@ -3,6 +3,7 @@ import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { addTransactionMessage, createTransaction, getTransactionById } from '#controllers/transactions/lib/transactions'
 import { getUsersByIds } from '#controllers/user/lib/user'
 import { log } from '#lib/utils/logs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import { verifyRightToRequest } from './lib/rights_verification.js'
 
 const sanitization = {
@@ -10,7 +11,7 @@ const sanitization = {
   message: {},
 }
 
-async function controller ({ item, message, reqUserId }) {
+async function controller ({ item, message, reqUserId }: SanitizedParameters) {
   log([ item, message ], 'item request')
   const itemDoc = await getItemById(item)
   await verifyRightToRequest(reqUserId, itemDoc)

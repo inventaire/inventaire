@@ -10,6 +10,7 @@ import { getWikimediaThumbnailData } from '#data/commons/thumb'
 import { imgUrlBuilder } from '#lib/emails/app_api'
 import { notFoundError, newError } from '#lib/error/error'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
+import type { Req, Res } from '#types/server'
 import getEntitiesImages from './lib/get_entities_images.js'
 
 const sanitization = validateSanitization({
@@ -29,7 +30,7 @@ const sanitization = validateSanitization({
   },
 })
 
-export default async function (req, res) {
+export default async function (req: Req, res: Res) {
   const { uris, refresh, redirect, width, height } = sanitize(req, res, sanitization)
   if (redirect) {
     if (uris.length !== 1) {

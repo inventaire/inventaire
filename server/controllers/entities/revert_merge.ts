@@ -1,13 +1,14 @@
 import { isInvEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import revertMerge from './lib/revert_merge.js'
 
 const sanitization = {
   from: {},
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const { from: fromUri, reqUserId } = params
   const [ fromPrefix, fromId ] = fromUri.split(':')
 

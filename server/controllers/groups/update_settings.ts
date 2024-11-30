@@ -1,4 +1,5 @@
 import { log } from '#lib/utils/logs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import membershipValidations from './lib/membership_validations.js'
 import updateSettings from './lib/update_settings.js'
 
@@ -10,7 +11,7 @@ const sanitization = {
   },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const { group: groupId, reqUserId } = params
   log(params, 'update group settings')
 

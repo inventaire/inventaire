@@ -1,3 +1,4 @@
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import { getItemsByUsers } from './lib/get_items_by_users.js'
 
 const sanitization = {
@@ -15,7 +16,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ users: usersIds, limit, offset, context, includeUsers, reqUserId }) {
+async function controller ({ users: usersIds, limit, offset, context, includeUsers, reqUserId }: SanitizedParameters) {
   return getItemsByUsers({ usersIds, limit, offset, context, includeUsers, reqUserId })
 }
 

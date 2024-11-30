@@ -49,7 +49,7 @@ export async function updateListingAttributes (params) {
 
 export const bulkDeleteListings = db.bulkDelete
 
-export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri, userId: UserId }) {
+export async function addListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri[], userId: UserId }) {
   const currentElements = listing.elements || []
   const { foundElements, notFoundUris } = filterFoundElementsUris(currentElements, uris)
   await validateExistingEntities(notFoundUris)

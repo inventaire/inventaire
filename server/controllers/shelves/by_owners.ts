@@ -2,6 +2,7 @@ import { keyBy } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/shelves/lib/filter_private_attributes'
 import { getShelvesByOwners } from '#controllers/shelves/lib/shelves'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { Shelf, ShelfId } from '#types/shelf'
 
 const sanitization = {
@@ -10,7 +11,7 @@ const sanitization = {
   offset: { optional: true },
 }
 
-async function controller (params) {
+async function controller (params: SanitizedParameters) {
   const { reqUserId, owners } = params
   const foundShelves = await getShelvesByOwners(owners)
   let authorizedShelves = await filterVisibleDocs(foundShelves, reqUserId)
