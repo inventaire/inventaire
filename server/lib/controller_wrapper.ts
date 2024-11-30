@@ -1,6 +1,6 @@
 import { isAuthentifiedReq } from '#lib/boolean_validations'
 import { errorHandler } from '#lib/error/error_handler'
-import { getRemoteUser } from '#lib/federation/remote_user'
+import { getReqRemoteUser } from '#lib/federation/remote_user'
 import { someMatch } from '#lib/utils/base'
 import validateObject from '#lib/validate_object'
 import { newUnauthorizedApiAccessError } from './error/pre_filled.js'
@@ -25,7 +25,7 @@ export async function controllerWrapper (controllerParams, req, res) {
       roles.push('authentified')
       if (req.user.roles) roles.push(...req.user.roles)
     } else if ('signature' in req.headers) {
-      req.remoteUser = await getRemoteUser(req)
+      req.remoteUser = await getReqRemoteUser(req)
       roles.push('authentified')
     }
 
