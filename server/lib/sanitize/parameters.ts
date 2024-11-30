@@ -193,7 +193,7 @@ const langs = {
   validate: arrayOfAType(lang.validate),
 }
 
-const generics = {
+export const genericParameters = {
   allowlist: {
     validate: (value, name, config) => config.allowlist.includes(value),
   },
@@ -232,9 +232,9 @@ const generics = {
   stringOrObject: {
     validate: value => isNonEmptyString(value) || isPlainObject(value),
   },
-}
+} as const
 
-export default {
+export const sanitizationParameters = {
   '@context': allowlistedStrings,
   actor: nonEmptyString,
   attribute: nonEmptyString,
@@ -287,7 +287,7 @@ export default {
   filter: allowlistedString,
   format: allowlistedStrings,
   from: entityUri,
-  generics,
+  generics: genericParameters,
   group: couchUuid,
   id: couchUuidWithoutRenaming,
   ids: couchUuids,
@@ -327,7 +327,7 @@ export default {
     default: 50,
     max: 500,
   }),
-  refresh: generics.boolean,
+  refresh: genericParameters.boolean,
   resource: {
     format: resource => {
       if (isLocalActivityPubActorUrl(resource)) {
@@ -392,4 +392,4 @@ export default {
   visibility: {
     validate: validations.visibility,
   },
-}
+} as const
