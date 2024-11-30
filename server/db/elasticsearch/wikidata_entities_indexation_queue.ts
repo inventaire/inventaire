@@ -1,7 +1,9 @@
 import { getAggregatedWdEntityLayers } from '#controllers/entities/lib/get_wikidata_enriched_entities'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { initJobQueue } from '#db/level/jobs'
+import { isWdEntityId } from '#lib/boolean_validations'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
+import { newError } from '#lib/error/error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
@@ -72,5 +74,10 @@ async function getIndexedEntity (wdId: WdEntityId) {
 const wdEntitiesIndexationJobQueue = initJobQueue('wd:entity:indexation', entitiesIndexationWorker, 1)
 
 export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
-  wdEntitiesIndexationJobQueue.push(wdId)
+  if (isWdEntityId(wdId)) {
+    wdEntitiesIndexationJobQueue.push(wdId)
+  } else {
+    // Tracking down why some isbns arrive here as wd id
+    logError(newError('invalid wd entity id', 500, { wdId }), 'addWdEntityToIndexationQueue err')
+  }
 }
