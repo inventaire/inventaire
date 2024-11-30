@@ -274,7 +274,8 @@ describe('items:snapshot', () => {
       updatedItem.snapshot['entity:title'].should.equal(editionTitle)
     })
 
-    it('should be updated when its remote work entity is target for a merge', async () => {
+    // Flaky: seen to fail when called within the whole test suite
+    it('should be updated when its remote work entity is target for a merge [flaky]', async () => {
       const workEntity = await createWork()
       const editionEntity = await createEditionFromWorks(workEntity)
       const item = await authReq('post', '/api/items', { entity: editionEntity.uri })

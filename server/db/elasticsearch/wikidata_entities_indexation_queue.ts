@@ -34,7 +34,7 @@ async function entitiesIndexationWorker (jobId, wdId: WdEntityId) {
   }
   try {
     info(`wd entity indexation worker pending: ${wdId}`)
-    // Run the worker when the CPUs activity is below 55% load
+    // Run the worker when the CPUs activity is below 50% load
     // to give the priority to more urgent matters,
     // such as answering users requests
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })

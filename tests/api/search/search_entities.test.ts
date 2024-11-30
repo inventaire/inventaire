@@ -342,7 +342,7 @@ describe('search:entities', () => {
   })
 
   describe('collections', () => {
-    it('should return a local collection', async () => {
+    it('should return a local collection [flaky]', async () => {
       const collectionLabel = collection.claims['wdt:P1476'][0]
       // Without filter=inv, Wikidata collections sharing a word with the collectionLabel take all the place
       // and the test often fails

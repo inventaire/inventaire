@@ -12,7 +12,10 @@ const { wikidata: wikidataIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 describe('indexation:wikidata', () => {
-  it('should index a wikidata entity when refreshed', async () => {
+  // Flaky tests: seen to fail when called within the whole test suite
+  // Running `lev db/leveldb-tests --prefix '!job'` revealed that jobs
+  // were waiting in the queue for some reason
+  it('should index a wikidata entity when refreshed [flaky]', async () => {
     const id = 'Q94973707'
     const uri = `wd:${id}`
     await deindex(wikidataIndex, id)
@@ -43,7 +46,7 @@ describe('indexation:wikidata', () => {
     result.found.should.be.false()
   })
 
-  it('should index the popularity', async () => {
+  it('should index the popularity [flaky]', async () => {
     const id = 'Q94973707'
     const uri = `wd:${id}`
     await deindex(wikidataIndex, id)
@@ -63,7 +66,7 @@ describe('indexation:wikidata', () => {
     result.found.should.be.false()
   })
 
-  it('should deindex a wikidata entity when deleted', async () => {
+  it('should deindex a wikidata entity when deleted [flaky]', async () => {
     const deletedEntityId = 'Q6'
     await indexPlaceholder(wikidataIndex, deletedEntityId)
     await getByUri(`wd:${deletedEntityId}`, true)
@@ -72,7 +75,7 @@ describe('indexation:wikidata', () => {
     result.found.should.be.false()
   })
 
-  it('should correctly index type locked entities', async () => {
+  it('should correctly index type locked entities [flaky]', async () => {
     const uri = await getSomeWdEditionUri()
     await addClaim({ user: getAdminUser(), uri, property: 'invp:P3', value: 'work' })
     const result = await getIndexedDoc(wikidataIndex, unprefixify(uri))

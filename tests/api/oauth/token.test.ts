@@ -33,6 +33,7 @@ describe('oauth:token', () => {
     await post({ client_id: clientId, client_secret: 'not_the_secret' })
     .then(shouldNotBeCalled)
     .catch(err => {
+      // Known to fail with a 503. TODO: fix
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('Invalid client: client credentials are invalid')
     })

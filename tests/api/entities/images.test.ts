@@ -124,6 +124,7 @@ describe('entities:images', () => {
       }
       const workUri = edition.claims['wdt:P629'][0] as EntityUri
       const res = await publicReq('get', `/api/entities?action=images&uris=${workUri}`)
+      // Flaky: seen to fail when called within the whole test suite
       res.images[workUri][originalLang].should.containEql(getUrlFromEntityImageHash(imageHash))
     })
   })
