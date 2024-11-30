@@ -34,18 +34,18 @@ export function omitPrivateData (reqUserId?: UserId, networkIds: UserId[] = [], 
     const userId = userDoc._id
     if (userId === reqUserId) return ownerSafeData(userDoc)
 
-    const formatttedUserDoc = pick(userDoc, attributes)
-    if ('snapshot' in formatttedUserDoc) {
-      if ('private' in formatttedUserDoc.snapshot) delete formatttedUserDoc.snapshot.private
+    const formattedUserDoc = pick(userDoc, attributes)
+    if ('snapshot' in formattedUserDoc) {
+      if ('private' in formattedUserDoc.snapshot) delete formattedUserDoc.snapshot.private
     }
 
     if (networkIds.includes(userId)) {
-      return formatttedUserDoc
+      return formattedUserDoc
     } else {
-      if ('snapshot' in formatttedUserDoc && 'network' in formatttedUserDoc.snapshot) {
-        delete formatttedUserDoc.snapshot.network
+      if ('snapshot' in formattedUserDoc && 'network' in formattedUserDoc.snapshot) {
+        delete formattedUserDoc.snapshot.network
       }
-      return formatttedUserDoc
+      return formattedUserDoc
     }
   }
 }
