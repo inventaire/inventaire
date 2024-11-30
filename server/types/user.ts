@@ -66,6 +66,7 @@ export type UserOAuth = Partial<Record<OAuthProvider, OAuthProviderTokens>>
 export interface User extends CouchDoc {
   _id: UserId
   type: 'user'
+  special: never
   username: Username
   stableUsername?: Username
   created: EpochTimeStamp
