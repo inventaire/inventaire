@@ -2,7 +2,7 @@ import 'should'
 import { getOrCreateUser, getRefreshedUser } from '#fixtures/users'
 import type { UserRole } from '#types/user'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
-import type { ArrayTail } from 'type-fest/source/internal.js'
+import type { ArrayTail } from 'type-fest'
 
 const userPromises = {}
 
