@@ -159,5 +159,6 @@ export interface RemoteActor {
   id: Url
   icon?: ImageAttachment
   name?: string
+  preferredUsername?: string
   inbox?: Url
 }

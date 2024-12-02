@@ -183,7 +183,8 @@ function serializeRemoteActor (remoteActorRes) {
   const { id, url, preferredUsername, name, icon, inbox } = remoteActorRes
   const remoteActor: RemoteActor = {
     id: id || url,
-    name: preferredUsername || name,
+    name,
+    preferredUsername,
     inbox,
   }
   if (icon) {
