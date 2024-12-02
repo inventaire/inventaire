@@ -1,13 +1,13 @@
-import OAuthServer from 'express-oauth-server'
+import ExpressOAuthServer from '@node-oauth/express-oauth-server'
 import { bundleError, bundleMissingQueryError, bundleUnauthorizedApiAccess } from '#lib/error/pre_filled'
 import config from '#server/config'
 import type { AuthentifiedReq } from '#types/server'
-import oauthServerModel from './lib/oauth/model.js'
+import { oauthServerModel } from './lib/oauth/model.js'
 import { getAcceptedScopes, allScopes } from './lib/oauth/scopes.js'
 
 const { authorizationCodeLifetimeMs } = config.oauthServer
 
-const oauthServer = new OAuthServer({
+const oauthServer = new ExpressOAuthServer({
   useErrorHandler: true,
   model: oauthServerModel,
 })

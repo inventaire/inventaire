@@ -115,7 +115,7 @@ describe('oauth:authorize', () => {
   })
 
   it('should accept multiple scopes', async () => {
-    const { _id: clientId } = await getClient()
+    const { _id: clientId } = await getClient({ scope: [ 'username', 'email' ] })
     const state = getRandomString(20)
     const url = `${endpoint}?client_id=${clientId}&state=${state}&response_type=code&scope=username%20email`
     const { statusCode } = await rawAuthReq({ method: 'get', url })

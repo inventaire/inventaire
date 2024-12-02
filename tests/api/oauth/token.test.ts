@@ -79,12 +79,12 @@ describe('oauth:token', () => {
       redirect_uri: redirectUris[0],
     })
     body.access_token.should.be.a.String()
-    body.access_token.should.match(/^[0-9a-f]{40}$/)
+    body.access_token.should.match(/^[0-9a-f]{64}$/)
     body.token_type.should.equal('Bearer')
     body.expires_in.should.be.a.Number()
     body.refresh_token.should.be.a.String()
-    body.refresh_token.should.match(/^[0-9a-f]{40}$/)
-    body.scope.should.deepEqual(scope)
+    body.refresh_token.should.match(/^[0-9a-f]{64}$/)
+    body.scope.should.equal(scope.join(' '))
   })
 
   it('should reject when the authorization expired', async () => {
