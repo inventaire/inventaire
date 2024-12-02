@@ -113,5 +113,6 @@ export interface RemoteActor {
   id: Url
   icon?: Icon
   name?: string
+  preferredUsername?: string
   inbox?: Url
 }
