@@ -3,9 +3,10 @@ import { signRequest } from '#controllers/activitypub/lib/security'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import { assert_ } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { AcceptActivity } from '#types/activity'
+import type { AbsoluteUrl } from '#types/common'
 import { getFollowActivitiesByObject } from './activities.js'
 import { makeUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
@@ -13,10 +14,7 @@ import { getSharedKeyPair } from './shared_key_pair.js'
 const timeout = 30 * 1000
 const sanitize = config.activitypub.sanitizeUrls
 
-export async function signAndPostActivity ({ actorName, recipientActorUri, activity }) {
-  assert_.string(actorName)
-  assert_.string(recipientActorUri)
-  assert_.object(activity)
+export async function signAndPostActivity ({ actorName, recipientActorUri, activity }: { actorName: string, recipientActorUri: AbsoluteUrl, activity: AcceptActivity }) {
   let actorRes
   try {
     actorRes = await requests_.get(recipientActorUri, { timeout, sanitize })

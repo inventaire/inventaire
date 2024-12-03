@@ -3,7 +3,7 @@ import { context } from '#controllers/activitypub/lib/helpers'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
 import config from '#server/config'
-import type { Activity, ItemNote } from '#types/activity'
+import type { ActivityDoc, ItemNote } from '#types/activity'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
@@ -11,7 +11,7 @@ const origin = config.getPublicOrigin()
 const maxLinksToDisplay = 3
 
 export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
-  return async function (activityDoc: Activity) {
+  return async function (activityDoc: ActivityDoc) {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range
     const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
