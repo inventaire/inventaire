@@ -59,8 +59,7 @@ export async function follow (params: FollowArgs) {
 }
 
 async function sendAcceptActivity (followActivity: FollowActivity, actor: UriObj, object: NameObj, followCouchId: CouchUuid) {
-  const actorName = object.name
-  const followedActorUri = makeUrl({ params: { action: 'actor', name: actorName } })
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
   const activity: AcceptActivity = {
     '@context': context,
     id: `${followedActorUri}#accept/follows-${followCouchId}`,
