@@ -3,7 +3,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   type: {
-    allowlist: [ 'deduplicate', 'merge' ],
+    allowlist: [ 'deduplicate', 'merge', 'delete' ],
   },
   'entities-type': {
     allowlist: [ 'work', 'human', 'publisher', 'collection', 'edition', 'serie' ],

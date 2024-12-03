@@ -51,7 +51,7 @@ describe('tasks:check-entities', () => {
 
   it('should not create a task for a removed placeholders', async () => {
     const human = await createHuman({ labels: { en: 'Fred Vargas' } })
-    await deleteByUris(human.uri)
+    await deleteByUris([ human.uri ])
     await checkEntities(human.uri)
     const tasks = await getBySuspectUri(human.uri)
     tasks.length.should.equal(0)

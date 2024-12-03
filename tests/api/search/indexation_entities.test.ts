@@ -69,7 +69,7 @@ describe('deindexation:entities', () => {
   it('should unindex a deleted local entity', async () => {
     const { _id, uri } = await createHuman()
     await wait(elasticsearchUpdateDelay)
-    await deleteByUris(uri)
+    await deleteByUris([ uri ])
     await wait(elasticsearchUpdateDelay)
     const result = await getIndexedDoc(entitiesIndex, _id, { retry: false })
     result.found.should.be.false()

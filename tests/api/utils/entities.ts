@@ -11,7 +11,7 @@ import { waitForIndexation } from '#tests/api/utils/search'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
-import { publicReq, authReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
+import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
@@ -57,7 +57,7 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
   const ids = map(uris, unprefixify)
   const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))
   const entitiesFound = filter(results, property('found'))
-  const entitiesFoundUris = entitiesFound.map(property('_source.uri'))
+  const entitiesFoundUris: EntityUri[] = entitiesFound.map(property('_source.uri'))
   const entitiesNotFoundUris = difference(uris, entitiesFoundUris)
   if (isNonEmptyArray(entitiesNotFoundUris)) {
     // index entities into elasticsearch by getting the uris
@@ -68,11 +68,10 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
 
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
-export function deleteByUris (uris: EntityUri[]) {
-  uris = forceArray(uris)
-  assert_.strings(uris)
+export function deleteByUris (uris: EntityUri[], options: { user?: AwaitableUserWithCookie } = {}) {
   if (uris.length === 0) return
-  return authReq('post', '/api/entities?action=delete', { uris })
+  const user = options.user || getDataadminUser()
+  return customAuthReq(user, 'post', '/api/entities?action=delete', { uris })
 }
 
 export async function getReverseClaims (property: PropertyUri, value: InvClaimValue) {

@@ -1,7 +1,9 @@
 import { partition, uniq } from 'lodash-es'
 import { getInvEntitiesByIsbns } from '#controllers/entities/lib/entities'
+import { removeOrCreateOrUpdateTasks } from '#controllers/tasks/lib/remove_or_create_tasks'
 import { isInvEntityUri, isWdEntityUri } from '#lib/boolean_validations'
 import { newInvalidError } from '#lib/error/pre_filled'
+import { hasDataadminAccess } from '#lib/user_access_levels'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { EntityUri, InvEntityUri, IsbnEntityUri } from '#types/entity'
 import type { AuthentifiedReq } from '#types/server'
@@ -14,17 +16,23 @@ const sanitization = {
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { user } = req
-  const uris = uniq(params.uris) as EntityUri[]
+  const uris: EntityUri[] = uniq(params.uris)
   validateUris(uris)
   const invUris: InvEntityUri[] = await replaceIsbnUrisByInvUris(uris)
-  await verifyThatEntitiesCanBeRemoved(invUris)
-  await removeEntitiesByInvId(user, invUris)
+  const isDataadmin = hasDataadminAccess(user)
+
+  if (isDataadmin) {
+    await verifyThatEntitiesCanBeRemoved(invUris)
+    await removeEntitiesByInvId(user, invUris)
+  } else {
+    await removeOrCreateOrUpdateTasks(user, invUris)
+  }
   return { ok: true }
 }
 
 function validateUris (uris: EntityUri[]): asserts uris is (InvEntityUri | IsbnEntityUri)[] {
   for (const uri of uris) {
-    // Wikidata entities can't be delete
+    // Wikidata entities can't be deleted
     if (isWdEntityUri(uri)) throw newInvalidError('uri', uri)
   }
 }
