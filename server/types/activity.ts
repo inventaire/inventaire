@@ -3,52 +3,9 @@ import type { CouchDoc, CouchUuid } from '#types/couchdb'
 import type { Item } from '#types/item'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo'
-
-interface NameObj {
-  name: string
-}
-
-export interface UriObj {
-  uri: string
-}
-
-interface ItemsObj {
-  items: {
-    since: EpochTimeStamp
-    until: EpochTimeStamp
-  }
-}
-
-export type ObjectType = NameObj & ItemsObj & Url
-
+export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo' | 'Accept' | 'Follow'
+export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 export type LocalActorUrl = Url
-
-export type Actor = NameObj & UriObj
-
-export interface Activity extends CouchDoc {
-  _id: CouchUuid
-  type: string
-  actor: Actor
-  object: ObjectType
-  externalId: string
-  content: string
-  created: EpochTimeStamp
-  updated: EpochTimeStamp
-}
-
-export type ActivityId = CouchUuid
-
-interface Note {
-  name: string
-  actor: AbsoluteUrl
-  lang?: WikimediaLanguageCode
-  parentLink: RelativeUrl
-}
-
-export interface ItemNote extends Note {
-  allActivitiesItems: Item[]
-}
 
 export interface Attachment {
   type: 'PropertyValue'
@@ -56,13 +13,6 @@ export interface Attachment {
   value?: string
   url?: Url
 }
-
-export interface ActivityLink {
-  name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: Url
-}
-
-export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 
 export interface ActorActivity {
   '@context': Context[]
@@ -86,6 +36,73 @@ export interface ActorActivity {
     url: string
   }
   attachment?: Attachment[]
+}
+
+interface BaseActivity {
+  '@context'?: any[]
+  id: Url
+  to?: string[]
+  cc?: string[]
+  actor?: Url | ActorActivity
+  type: ActivityType
+}
+
+interface NameObj {
+  name: string
+}
+
+export interface UriObj {
+  uri: string
+}
+
+interface ItemsObj {
+  items: {
+    since: EpochTimeStamp
+    until: EpochTimeStamp
+  }
+}
+
+export type ObjectType = NameObj & ItemsObj & Url
+
+export type Actor = NameObj & UriObj
+
+export interface ActivityDoc extends CouchDoc {
+  _id: CouchUuid
+  type: ActivityType
+  actor: Actor
+  object: ObjectType
+  externalId: string
+  content: string
+  created: EpochTimeStamp
+  updated: EpochTimeStamp
+}
+
+export interface FollowActivity extends BaseActivity {
+  type: 'Follow'
+  object: Url
+}
+
+export interface AcceptActivity extends BaseActivity {
+  type: 'Accept'
+  object: FollowActivity
+}
+
+export type ActivityId = CouchUuid
+
+interface Note {
+  name: string
+  actor: AbsoluteUrl
+  lang?: WikimediaLanguageCode
+  parentLink: RelativeUrl
+}
+
+export interface ItemNote extends Note {
+  allActivitiesItems: Item[]
+}
+
+export interface ActivityLink {
+  name: 'shelf' | 'inventory' | 'wikidata.org' | string
+  url: Url
 }
 
 export interface ActorParams {
