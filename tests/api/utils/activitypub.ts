@@ -22,6 +22,7 @@ interface ActivityBody {
 export interface TestsActorActivity {
   id: LocalActorUrl
   name: string
+  preferredUsername: string
   inbox: Url
   publicKey: {
     id: string
@@ -31,6 +32,11 @@ export interface TestsActorActivity {
     }
   }
   privateKey: string
+  icon?: {
+    mediaType: 'image/jpeg'
+    type: 'Image'
+    url: string
+  }
 }
 
 interface SignedReqParams {
@@ -106,6 +112,7 @@ export const createRemoteActivityPubServerUser = async () => {
   const user: TestsActorActivity = {
     id: actorUrl,
     name: username,
+    preferredUsername: username,
     publicKey: {
       id: `${actorUrl}#main-key`,
       owner: actorUrl,
@@ -113,6 +120,11 @@ export const createRemoteActivityPubServerUser = async () => {
     },
     privateKey,
     inbox,
+    icon: {
+      mediaType: 'image/jpeg',
+      type: 'Image',
+      url: 'https://inventaire.io/img/users/646b5a207488f9f745594e8934e9dd5528f6a44f',
+    },
   }
   remoteActivityPubServerUsers[username] = user
   return user

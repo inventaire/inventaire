@@ -13,8 +13,27 @@ export const getActivityById = (id: ActivityId) => db.get<Activity>(id)
 export const getActivitiesByIds = db.byIds<Activity>
 export const deleteActivityById = db.delete
 
-export async function getFollowActivitiesByObject (name: string) {
-  return db.getDocsByViewKey<Activity>('followActivitiesByObject', name)
+export async function getFollowActivitiesByObject ({ name, limit = 10, offset = 0 }: { name: string, limit?: number, offset?: number }) {
+  assert_.string(name)
+  return db.getDocsByViewQuery<Activity>('followActivitiesByObject', {
+    limit,
+    skip: offset,
+    startkey: [ name, Date.now() ],
+    endkey: [ name, 0 ],
+    descending: true,
+    include_docs: true,
+    reduce: false,
+  })
+}
+
+export async function getFollowActivitiesCount (name: string) {
+  assert_.string(name)
+  const res = await db.view('activities', 'followActivitiesByObject', {
+    startkey: [ name, 0 ],
+    endkey: [ name, Date.now() ],
+    group_level: 1,
+  })
+  return (res.rows[0]?.value || 0) as number
 }
 
 export async function createActivity (newActivity) {
@@ -48,4 +67,12 @@ export async function getActivitiesCountByName (name: string) {
 
 export function getActivityByExternalId (externalId: string) {
   return db.findDocByViewKey<Activity>('byExternalId', externalId)
+}
+
+export async function isFediverseKnownHost (hostname) {
+  const res = await db.view('activities', 'isKnownHostname', {
+    key: hostname,
+    limit: 1,
+  })
+  return res.rows.length > 0
 }

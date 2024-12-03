@@ -1,7 +1,11 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { cache_ } from '#lib/cache'
+import { requests_ } from '#lib/requests'
+import { oneMonth } from '#lib/time'
+import { logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
+import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl, RemoteActor } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import buildAttachements from './build_attachements.js'
 import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
@@ -10,6 +14,11 @@ import { validateShelf, validateUser, validateEntity } from './validations.js'
 
 const origin = config.getPublicOrigin()
 const publicOrigin = origin.split('://')[1]
+
+export function getActor (name) {
+  const type = getActorTypeFromName(name)
+  return getActorByType[type](name)
+}
 
 async function getShelfActor (name) {
   const { shelf, owner } = await validateShelf(name)
@@ -95,6 +104,7 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
     summary,
     inbox: `${origin}/api/activitypub?action=inbox&name=${actorName}`,
     outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
+    followers: `${origin}/api/activitypub?action=followers&name=${actorName}`,
     // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
     // shared public keys they already know
     publicKey: {
@@ -139,7 +149,37 @@ const getActorByType = {
   entity: getEntityActor,
 }
 
-export default name => {
-  const type = getActorTypeFromName(name)
-  return getActorByType[type](name)
+export async function getRemoteActor (actorUrl) {
+  let remoteActor: RemoteActor = { id: actorUrl }
+  try {
+    remoteActor = await cache_.get({
+      key: `remoteActor:${actorUrl}`,
+      fn: () => fetchRemoteActor(actorUrl),
+      ttl: oneMonth,
+    })
+  } catch (err) {
+    logError(err, `Cannot fetch remote actor information, actorUrl ${actorUrl}`)
+    return remoteActor
+  }
+  return remoteActor
+}
+
+const sanitize = config.activitypub.sanitizeUrls
+async function fetchRemoteActor (actorUrl) {
+  const remoteActorRes = await requests_.get(actorUrl, { sanitize })
+  return serializeRemoteActor(remoteActorRes)
+}
+
+function serializeRemoteActor (remoteActorRes) {
+  const { id, url, preferredUsername, name, icon, inbox } = remoteActorRes
+  const remoteActor: RemoteActor = {
+    id: id || url,
+    name,
+    preferredUsername,
+    inbox,
+  }
+  if (icon) {
+    Object.assign(remoteActor, { icon: remoteActorRes.icon })
+  }
+  return remoteActor
 }

@@ -65,7 +65,7 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
 
 // TODO: use sharedInbox
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }) {
-  const followActivities = await getFollowActivitiesByObject(actorName)
+  const followActivities = await getFollowActivitiesByObject({ name: actorName })
   if (followActivities.length === 0) return
   const followersActorsUris = uniq(map(followActivities, 'actor.uri'))
   return Promise.all(followersActorsUris.map(uri => {
