@@ -5,7 +5,7 @@ import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo' | 'Accept' | 'Follow'
 export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
-export type LocalActorUrl = Url
+export type LocalActorUrl = AbsoluteUrl
 
 export interface Attachment {
   type: 'PropertyValue'
@@ -47,12 +47,12 @@ interface BaseActivity {
   type: ActivityType
 }
 
-interface NameObj {
+export interface NameObj {
   name: string
 }
 
 export interface UriObj {
-  uri: string
+  uri: LocalActorUrl
 }
 
 interface ItemsObj {
@@ -71,7 +71,7 @@ export interface ActivityDoc extends CouchDoc {
   type: ActivityType
   actor: Actor
   object: ObjectType
-  externalId: string
+  externalId: Url
   content: string
   created: EpochTimeStamp
   updated: EpochTimeStamp
