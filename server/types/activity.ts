@@ -71,6 +71,8 @@ export interface PublicKeyObject {
   publicKeyPem: string
 }
 
+export type ActorKeyId = AbsoluteUrl
+
 export interface ActorActivity {
   '@context': Context[]
   type: 'Person'
@@ -81,7 +83,7 @@ export interface ActorActivity {
   inbox: Url
   outbox: Url
   publicKey: {
-    id: string
+    id: ActorKeyId
     owner: ActorUrl
     publicKeyPem?: {
       publicKeyHash: string
