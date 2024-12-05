@@ -31,7 +31,7 @@ export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor,
       type: 'Note',
       content: buildContent({ links, name, lang, itemsLength, parentLink }),
       published: new Date(until).toISOString(),
-      attachment: compact(firstItems.map(buildAttachement)),
+      attachment: compact(firstItems.map(buildAttachment)),
     }
     return {
       id: `${id}#create`,
@@ -96,7 +96,7 @@ function buildContent ({ links, name, lang = 'en', itemsLength, parentLink }: Bu
   return html
 }
 
-function buildAttachement (item) {
+function buildAttachment (item) {
   const imageUrl = item.snapshot['entity:image']
   if (!imageUrl) return
   return {

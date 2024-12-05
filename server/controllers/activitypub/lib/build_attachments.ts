@@ -1,54 +1,54 @@
 import { compact, escape, identity } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import type { Attachement } from '#types/activity'
+import type { Attachment } from '#types/activity'
 import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
 import { platforms } from './platforms.js'
 import { propertiesDisplay } from './properties_display.js'
 
-const typesWithAttachements = Object.keys(propertiesDisplay)
+const typesWithAttachments = Object.keys(propertiesDisplay)
 
 export default async function (entity) {
   const { claims, type } = entity
-  if (!typesWithAttachements.includes(type)) return
+  if (!typesWithAttachments.includes(type)) return
 
-  const attachementsList = propertiesDisplay[type]
-  const properties = Object.keys(attachementsList)
-  const attachements = await Promise.all(properties.map(buildAttachement(claims, attachementsList)))
-  return compact(attachements)
+  const attachmentsList = propertiesDisplay[type]
+  const properties = Object.keys(attachmentsList)
+  const attachments = await Promise.all(properties.map(buildAttachment(claims, attachmentsList)))
+  return compact(attachments)
 }
 
-const buildAttachement = (claims, attachementsList) => async prop => {
+const buildAttachment = (claims, attachmentsList) => async prop => {
   const claimValues = claims[prop]
   if (!claimValues) return
-  const attachement: Attachement = {
+  const attachment: Attachment = {
     type: 'PropertyValue',
     name: propertyLabel(prop),
     value: null,
   }
-  const attachementValue = await buildAttachementValues(claimValues, prop, attachementsList)
-  if (attachementValue && isNonEmptyString(attachementValue)) {
-    attachement.value = attachementValue
-    return attachement
+  const attachmentValue = await buildAttachmentValues(claimValues, prop, attachmentsList)
+  if (attachmentValue && isNonEmptyString(attachmentValue)) {
+    attachment.value = attachmentValue
+    return attachment
   }
 }
 
-async function buildAttachementValues (claimValues, prop, attachementsList) {
-  const claimType = attachementsList[prop]
-  const attachementValues = await Promise.all(claimValues.map(buildAttachementValue(claimType, prop)))
-  return compact(attachementValues).join(', ') || null
+async function buildAttachmentValues (claimValues, prop, attachmentsList) {
+  const claimType = attachmentsList[prop]
+  const attachmentValues = await Promise.all(claimValues.map(buildAttachmentValue(claimType, prop)))
+  return compact(attachmentValues).join(', ') || null
 }
 
 async function buildEntity ({ claimValue, claimType }) {
-  let attachementValue
+  let attachmentValue
   const isWdUri = claimValue && claimValue.startsWith('wd:')
   if (isWdUri) {
     const wdUrl = entityUrl(claimValue)
     const entity = await getEntityByUri({ uri: claimValue })
     const label = defaultLabel(entity)
-    attachementValue = claimType === 'entityString' ? label : buildLinkWrapper({ claimValue: wdUrl, text: label })
+    attachmentValue = claimType === 'entityString' ? label : buildLinkWrapper({ claimValue: wdUrl, text: label })
   }
-  if (attachementValue) return attachementValue
+  if (attachmentValue) return attachmentValue
 }
 
 function buildLinkWrapper (args) {
@@ -62,11 +62,11 @@ function buildPlatform ({ claimValue, prop }) {
   const plateformProp = platforms[prop]
   if (!plateformProp) return
   const { url, text } = plateformProp
-  const attachementValue = buildLinkWrapper({
+  const attachmentValue = buildLinkWrapper({
     claimValue: url(claimValue),
     text: text(claimValue),
   })
-  if (attachementValue) return attachementValue
+  if (attachmentValue) return attachmentValue
 }
 
 const claimTypesActions = {
@@ -78,7 +78,7 @@ const claimTypesActions = {
   url: buildLinkWrapper,
 }
 
-const buildAttachementValue = (claimType, prop) => async claimValue => {
+const buildAttachmentValue = (claimType, prop) => async claimValue => {
   const escapeClaimValue = escape(claimValue) // html urls
   const claimTypeAction = claimTypesActions[claimType]
   if (claimTypeAction) return claimTypeAction({ claimValue: escapeClaimValue, claimType, prop })

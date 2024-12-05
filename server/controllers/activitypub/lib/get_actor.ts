@@ -1,9 +1,9 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import config from '#server/config'
-import type { Attachement, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
+import type { Attachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
-import buildAttachements from './build_attachements.js'
+import buildAttachments from './build_attachments.js'
 import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
 import { validateShelf, validateUser, validateEntity } from './validations.js'
@@ -62,7 +62,7 @@ async function getEntityActor (name) {
     }
     links.push(wdLink)
   }
-  const attachments: Attachement[] = await buildAttachements(entity)
+  const attachments: Attachment[] = await buildAttachments(entity)
   let summary
   if ('descriptions' in entity && 'en' in entity.descriptions) {
     summary = entity.descriptions.en
@@ -114,18 +114,18 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
   }
 
   if (links) {
-    const linksAttachements = links.map(({ name, url }) => {
+    const linksAttachments = links.map(({ name, url }) => {
       const [ protocol, urlWithoutProtocol ] = url.split('://')
       const value = `<span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span>`
-      const attachement: Attachement = {
+      const attachment: Attachment = {
         type: 'PropertyValue',
         name,
         url,
         value: buildLink(url, value),
       }
-      return attachement
+      return attachment
     })
-    actor.attachment = linksAttachements.concat(attachment)
+    actor.attachment = linksAttachments.concat(attachment)
   } else {
     actor.attachment = attachment
   }

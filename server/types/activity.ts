@@ -50,7 +50,7 @@ export interface ItemNote extends Note {
   allActivitiesItems: Item[]
 }
 
-export interface Attachement {
+export interface Attachment {
   type: 'PropertyValue'
   name: string
   value?: string
@@ -85,7 +85,7 @@ export interface ActorActivity {
     type: 'Image'
     url: string
   }
-  attachment?: Attachement[]
+  attachment?: Attachment[]
 }
 
 export interface ActorParams {
@@ -94,7 +94,7 @@ export interface ActorParams {
   summary?: string
   imagePath?: string
   links: ActivityLink[]
-  attachment?: Attachement[]
+  attachment?: Attachment[]
 }
 
 export interface Outbox {

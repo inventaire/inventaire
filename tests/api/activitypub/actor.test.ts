@@ -16,7 +16,7 @@ import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/u
 const origin = config.getPublicOrigin()
 const publicHost = origin.split('://')[1]
 
-const getAttachement = async (actorName, prop) => {
+const getAttachment = async (actorName, prop) => {
   const actorUrl = makeUrl({ params: { action: 'actor', name: actorName } })
   const { attachment } = await publicReq('get', actorUrl)
   return find(attachment, { name: i18n('en', prop) })
@@ -149,7 +149,7 @@ describe('activitypub:actor', () => {
       attachment[2].type.should.equal('PropertyValue')
       attachment[2].name.should.equal(i18n('en', 'P135'))
       attachment[2].value.should.containEql(`${origin}/entity/wd:`)
-      // check attachement order against "properties display"
+      // check attachment order against "properties display"
       const propertiesLabels = propertiesLabelsByType('human')
       const name3 = propertiesLabels.indexOf(attachment[3].name)
       const name4 = propertiesLabels.indexOf(attachment[4].name)
@@ -157,27 +157,27 @@ describe('activitypub:actor', () => {
     })
 
     it('should set entity claim as attachment', async () => {
-      const { value } = await getAttachement('wd-Q140057', 'P941')
+      const { value } = await getAttachment('wd-Q140057', 'P941')
       value.should.containEql(`${origin}/entity/wd:`)
     })
 
     it('should set entity string claim as attachment', async () => {
-      const { value } = await getAttachement('wd-Q140057', 'P407')
+      const { value } = await getAttachment('wd-Q140057', 'P407')
       value.should.equal('French')
     })
 
     it('should set date claim as attachment', async () => {
-      const { value } = await getAttachement('wd-Q11859', 'P577')
+      const { value } = await getAttachment('wd-Q11859', 'P577')
       value.should.equal('1837')
     })
 
     it('should set URL claim as attachment', async () => {
-      const { value } = await getAttachement('wd-Q856656', 'P856')
+      const { value } = await getAttachment('wd-Q856656', 'P856')
       value.should.containEql('www.la-pleiade.fr')
     })
 
     it('should set platform claim as attachment', async () => {
-      const { value } = await getAttachement('wd-Q110436', 'P4033')
+      const { value } = await getAttachment('wd-Q110436', 'P4033')
       value.should.containEql('doctorow@mamot.fr')
       value.should.containEql('https://mamot.fr/@doctorow')
     })
