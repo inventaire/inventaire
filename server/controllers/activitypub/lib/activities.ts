@@ -1,7 +1,7 @@
 import { dbFactory } from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
-import type { ActivityDoc, ActivityId } from '#types/activity'
+import type { ActivityDoc, ActivityId, ActorName } from '#types/activity'
 
 const db = await dbFactory('activities')
 
@@ -13,7 +13,7 @@ export const getActivityById = (id: ActivityId) => db.get<ActivityDoc>(id)
 export const getActivitiesByIds = db.byIds<ActivityDoc>
 export const deleteActivityById = db.delete
 
-export async function getFollowActivitiesByObject (name: string) {
+export async function getFollowActivitiesByObject (name: ActorName) {
   return db.getDocsByViewKey<ActivityDoc>('followActivitiesByObject', name)
 }
 

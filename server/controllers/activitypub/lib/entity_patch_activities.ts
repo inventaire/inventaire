@@ -1,13 +1,14 @@
 import { logError } from '#lib/utils/logs'
+import type { CreateActivity, ActorName } from '#types/activity'
 import formatEntityPatchesActivities from './format_entity_patches_activities.js'
 import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
 export async function deliverEntityActivitiesFromPatch (patch) {
   try {
-    const activities = await getActivitiesFromPatch(patch)
+    const activities: CreateActivity[] = await getActivitiesFromPatch(patch)
     if (activities.length === 0) return
     await Promise.all(activities.map(activity => {
-      const actorName = new URL(activity.actor).searchParams.get('name')
+      const actorName: ActorName = new URL(activity.actor).searchParams.get('name')
       return postActivityToActorFollowersInboxes({ activity, actorName })
     }))
   } catch (err) {

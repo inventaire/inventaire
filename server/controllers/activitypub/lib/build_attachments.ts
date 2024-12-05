@@ -1,7 +1,7 @@
 import { compact, escape, identity } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import type { Attachment } from '#types/activity'
+import type { PropertyValueAttachment } from '#types/activity'
 import { buildLink, entityUrl, defaultLabel, propertyLabel } from './helpers.js'
 import { platforms } from './platforms.js'
 import { propertiesDisplay } from './properties_display.js'
@@ -21,7 +21,7 @@ export default async function (entity) {
 const buildAttachment = (claims, attachmentsList) => async prop => {
   const claimValues = claims[prop]
   if (!claimValues) return
-  const attachment: Attachment = {
+  const attachment: PropertyValueAttachment = {
     type: 'PropertyValue',
     name: propertyLabel(prop),
     value: null,

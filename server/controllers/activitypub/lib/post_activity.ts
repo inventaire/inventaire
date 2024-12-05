@@ -5,7 +5,7 @@ import { newError } from '#lib/error/error'
 import { requests_, sanitizeUrl } from '#lib/requests'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
-import type { AcceptActivity } from '#types/activity'
+import type { ActorName, PostActivity } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import { getFollowActivitiesByObject } from './activities.js'
 import { makeUrl } from './helpers.js'
@@ -14,7 +14,7 @@ import { getSharedKeyPair } from './shared_key_pair.js'
 const timeout = 30 * 1000
 const { sanitizeUrls } = config.activitypub
 
-export async function signAndPostActivity ({ actorName, recipientActorUri, activity }: { actorName: string, recipientActorUri: AbsoluteUrl, activity: AcceptActivity }) {
+export async function signAndPostActivity ({ actorName, recipientActorUri, activity }: { actorName: ActorName, recipientActorUri: AbsoluteUrl, activity: PostActivity }) {
   let actorRes
   try {
     if (sanitizeUrls) recipientActorUri = await sanitizeUrl(recipientActorUri)
@@ -63,7 +63,7 @@ export async function signAndPostActivity ({ actorName, recipientActorUri, activ
 }
 
 // TODO: use sharedInbox
-export async function postActivityToActorFollowersInboxes ({ activity, actorName }) {
+export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
   if (followActivities.length === 0) return
   const followersActorsUris = uniq(map(followActivities, 'actor.uri'))
