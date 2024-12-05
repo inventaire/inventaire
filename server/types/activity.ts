@@ -1,24 +1,36 @@
 import type { Url, RelativeUrl, AbsoluteUrl } from '#types/common'
 import type { CouchDoc, CouchUuid } from '#types/couchdb'
+import type { DateValue, EntityUriPrefix } from '#types/entity'
 import type { Item } from '#types/item'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
+import type { Username } from '#types/user'
 
-export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo' | 'Accept' | 'Follow'
+export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo' | 'Accept' | 'Follow' | 'Note'
 export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 export type LocalActorUrl = AbsoluteUrl
 
-export interface Attachment {
+export interface PropertyValueAttachment {
   type: 'PropertyValue'
   name: string
   value?: string
   url?: Url
 }
 
+export interface Attachment{
+  mediaType: 'image/jpeg'
+  type: 'Image' | 'Document'
+  url: string
+}
+
+export type ShelfActorName = `shelf-${CouchUuid}`
+export type EntityActorName = `${EntityUriPrefix}-${CouchUuid}`
+
+export type ActorName = ShelfActorName | EntityActorName | Username
+
 export interface ActorActivity {
   '@context': Context[]
   type: 'Person'
   id: LocalActorUrl
-  name: string
+  name: ActorName
   preferredUsername: string
   summary: string
   inbox: Url
@@ -30,12 +42,8 @@ export interface ActorActivity {
       publicKeyHash: string
     }
   }
-  icon?: {
-    mediaType: 'image/jpeg'
-    type: 'Image'
-    url: string
-  }
-  attachment?: Attachment[]
+  icon?: Attachment
+  attachment?: PropertyValueAttachment[]
 }
 
 interface BaseActivity {
@@ -82,17 +90,33 @@ export interface FollowActivity extends BaseActivity {
   object: Url
 }
 
+export interface NoteActivity extends BaseActivity {
+  type: 'Note'
+  content: string
+  published: DateValue
+  attachment?: Attachment[]
+}
+
 export interface AcceptActivity extends BaseActivity {
   type: 'Accept'
   object: FollowActivity
 }
+
+export interface CreateActivity extends BaseActivity {
+  type: 'Create'
+  object: NoteActivity
+  actor?: Url
+}
+
+export type PostActivity = AcceptActivity | CreateActivity
 
 export type ActivityId = CouchUuid
 
 interface Note {
   name: string
   actor: AbsoluteUrl
-  lang?: WikimediaLanguageCode
+  // Using User.language type
+  lang?: string
   parentLink: RelativeUrl
 }
 
@@ -106,12 +130,12 @@ export interface ActivityLink {
 }
 
 export interface ActorParams {
-  actorName: string
+  actorName: ActorName
   displayName: string
   summary?: string
   imagePath?: string
   links: ActivityLink[]
-  attachment?: Attachment[]
+  attachment?: PropertyValueAttachment[]
 }
 
 export interface Outbox {
