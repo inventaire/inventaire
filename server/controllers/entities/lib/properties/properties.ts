@@ -278,6 +278,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P1844': {
     subjectTypes: [ 'edition' ],
   },
+  // different from
+  'wdt:P1889': {
+    subjectTypes: allLocallyEditedEntitiesTypes,
+  },
   // Google Scholar author ID
   'wdt:P1960': {
     subjectTypes: [ 'human' ],

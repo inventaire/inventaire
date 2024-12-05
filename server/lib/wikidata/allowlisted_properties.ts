@@ -27,7 +27,6 @@ const relationsProperties = [
   'P738', // influence of
   'P1038', // relative
   'P1066', // student of
-  'P1889', // different from
   'P3342', // significant person
   'P3373', // sibling
   'P3448', // stepparent

@@ -186,6 +186,8 @@ export const propertiesValuesConstraints = {
   'wdt:P1680': uniqueString,
   // HathiTrust ID
   'wdt:P1844': externalId(/^\d{9}$/),
+  // different from
+  'wdt:P1889': entity,
   // Project Gutenberg author ID
   'wdt:P1938': externalId(/^[1-9]\d{0,4}$/),
   // Google Scholar author ID
