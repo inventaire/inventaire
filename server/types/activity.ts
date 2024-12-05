@@ -52,7 +52,7 @@ export interface ActorActivity {
 }
 
 interface BaseActivity {
-  '@context'?: any[]
+  '@context'?: Context[]
   id: Url
   to?: string[]
   cc?: string[]
@@ -147,64 +147,6 @@ interface BaseActivity {
   cc?: string[]
   actor?: Url | ActorActivity
   type: ActivityType
-}
-
-interface NameObj {
-  name: string
-}
-
-export interface UriObj {
-  uri: string
-}
-
-interface ItemsObj {
-  items: {
-    since: EpochTimeStamp
-    until: EpochTimeStamp
-  }
-}
-
-export type ObjectType = NameObj & ItemsObj & Url
-
-export type Actor = NameObj & UriObj
-
-export interface ActivityDoc extends CouchDoc {
-  _id: CouchUuid
-  type: ActivityType
-  actor: Actor
-  object: ObjectType
-  externalId: string
-  content: string
-  created: EpochTimeStamp
-  updated: EpochTimeStamp
-}
-
-export interface FollowActivity extends BaseActivity {
-  type: 'Follow'
-  object: Url
-}
-
-export interface AcceptActivity extends BaseActivity {
-  type: 'Accept'
-  object: FollowActivity
-}
-
-export type ActivityId = CouchUuid
-
-interface Note {
-  name: string
-  actor: AbsoluteUrl
-  lang?: WikimediaLanguageCode
-  parentLink: RelativeUrl
-}
-
-export interface ItemNote extends Note {
-  allActivitiesItems: Item[]
-}
-
-export interface ActivityLink {
-  name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: Url
 }
 
 export interface ActorParams {
