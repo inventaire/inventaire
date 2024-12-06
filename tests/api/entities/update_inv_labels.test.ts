@@ -5,9 +5,12 @@ import { getByUri, updateLabel } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 
-const humanPromise = createHuman()
+let humanPromise
 
 describe('entities:update-labels:inv', () => {
+  before(() => {
+    humanPromise = createHuman()
+  })
   it('should reject without value', async () => {
     const { _id } = await humanPromise
     try {

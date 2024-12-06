@@ -3,10 +3,13 @@ import { createWorkWithAuthorAndSerie } from '#fixtures/entities'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const workWithSeriePromise = createWorkWithAuthorAndSerie()
+let workWithSeriePromise
 const endpoint = '/api/entities?action=serie-parts'
 
 describe('entities:serie-parts', () => {
+  before(() => {
+    workWithSeriePromise = createWorkWithAuthorAndSerie()
+  })
   it('should reject without uri', async () => {
     await publicReq('get', endpoint)
     .then(shouldNotBeCalled)

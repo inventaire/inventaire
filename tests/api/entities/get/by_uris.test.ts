@@ -14,9 +14,12 @@ import { addClaim, getByUri, getByUris, merge } from '#tests/api/utils/entities'
 import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
 import type { ExpandedSerializedWdEntity, InvEntityUri } from '#types/entity'
 
-const workWithAuthorPromise = createWorkWithAuthor()
+let workWithAuthorPromise
 
 describe('entities:get:by-uris', () => {
+  before(() => {
+    workWithAuthorPromise = createWorkWithAuthor()
+  })
   it('should reject invalid uri', async () => {
     const invalidUri = 'bla'
     try {

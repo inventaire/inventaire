@@ -5,9 +5,12 @@ import {
 import { getByUris } from '#tests/api/utils/entities'
 import { rethrowShouldNotBeCalledErrors, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const workWithAuthorPromise = createWorkWithAuthor()
+let workWithAuthorPromise
 
 describe('entities:get:by-uris:relatives', () => {
+  before(() => {
+    workWithAuthorPromise = createWorkWithAuthor()
+  })
   it("should accept a 'relatives' parameter", async () => {
     const work = await workWithAuthorPromise
     const { uri: workUri } = work

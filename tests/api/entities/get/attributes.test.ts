@@ -10,9 +10,12 @@ import { getEntitiesAttributesByUris, getEntityAttributesByUri } from '#tests/ap
 import { publicReq } from '#tests/api/utils/utils'
 import type { ExpandedSerializedEntity } from '#types/entity'
 
-const workWithAuthorPromise = createWorkWithAuthor()
+let workWithAuthorPromise
 
 describe('entities:get:by-uris:attributes', () => {
+  before(() => {
+    workWithAuthorPromise = createWorkWithAuthor()
+  })
   it("should return only the requested 'attributes'", async () => {
     const work = await workWithAuthorPromise
     const { uri: invWorkUri } = work
