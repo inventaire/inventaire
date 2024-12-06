@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
 import type { Activity, ActivityId } from '#types/activity'

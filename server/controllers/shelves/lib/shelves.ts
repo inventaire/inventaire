@@ -2,7 +2,7 @@ import { compact, difference, flatMap, map, pick, property, uniq } from 'lodash-
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getAuthorizedItemsByShelves } from '#controllers/items/lib/get_authorized_items'
 import { getItemsByIds, itemsBulkDelete, updateItemsShelves } from '#controllers/items/lib/items'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { forceArray } from '#lib/utils/base'

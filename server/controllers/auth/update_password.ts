@@ -1,5 +1,5 @@
 import { isNumber } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { hashPassword, verifyPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { oneHour, expired } from '#lib/time'

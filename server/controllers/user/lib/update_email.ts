@@ -1,5 +1,5 @@
 import { sendValidationEmail } from '#controllers/user/lib/token'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { updateUserDocEmail } from '#models/user'
 
 const db = await dbFactory('users')

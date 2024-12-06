@@ -1,6 +1,6 @@
 import { uniq } from 'lodash-es'
 import { getUserGroupsCoMembers } from '#controllers/groups/lib/groups'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
 import type { Relation } from '#types/relation'
 import type { UserId } from '#types/user'

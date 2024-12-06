@@ -6,7 +6,7 @@
 // thus the remove/recover mechanism hereafter
 
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { warn } from '#lib/utils/logs'
 import { convertEntityDocToPlaceholder, recoverEntityDocFromPlaceholder } from '#models/entity'

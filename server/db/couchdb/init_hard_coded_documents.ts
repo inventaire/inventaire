@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { success } from '#lib/utils/logs'
 

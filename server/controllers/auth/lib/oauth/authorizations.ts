@@ -1,5 +1,5 @@
 import { omit } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import type { OAuthAuthorization, OAuthAuthorizationCode, OAuthClientId, SerializedOAuthAuthorization } from '#types/oauth'
 import type { UserId } from '#types/user'

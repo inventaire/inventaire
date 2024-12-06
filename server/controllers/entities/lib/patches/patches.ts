@@ -1,5 +1,5 @@
 import { map } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { maxKey } from '#lib/couch'
 import { oneDay } from '#lib/time'
 import { assert_ } from '#lib/utils/assert_types'

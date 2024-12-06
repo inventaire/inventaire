@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
 import { assert_ } from '#lib/utils/assert_types'
 import { createNotificationDoc, markNotificationDocAsRead } from '#models/notification'

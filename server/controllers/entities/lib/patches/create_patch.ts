@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { logError } from '#lib/utils/logs'
 import { createPatchDoc, getPatchDiff, revertPatch } from '#models/patch'
 import type { InvEntityDoc, NewInvEntity } from '#types/entity'

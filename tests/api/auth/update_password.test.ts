@@ -1,5 +1,5 @@
 import 'should'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { createUser } from '#fixtures/users'
 import { BasicUpdater } from '#lib/doc_updates'
 import { wait } from '#lib/promises'

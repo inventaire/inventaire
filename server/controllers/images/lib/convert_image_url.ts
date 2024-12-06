@@ -1,5 +1,5 @@
 import { uniq } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { isImageHash } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { log } from '#lib/utils/logs'

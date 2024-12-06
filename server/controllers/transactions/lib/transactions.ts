@@ -1,6 +1,6 @@
 import { map } from 'lodash-es'
 import comments_ from '#controllers/comments/lib/comments'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
 import { BasicUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'

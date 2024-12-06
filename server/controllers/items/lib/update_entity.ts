@@ -1,5 +1,5 @@
 import { getItemsByEntity, getItemsByPreviousEntity } from '#controllers/items/lib/items'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { revertItemDocEntity, updateItemDocEntity } from '#models/item'
 
 const db = await dbFactory('items')

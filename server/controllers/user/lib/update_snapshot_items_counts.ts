@@ -1,5 +1,5 @@
 import { getItemsByOwner } from '#controllers/items/lib/items'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { info, LogError } from '#lib/utils/logs'
 import { getVisibilitySummaryKey } from '#lib/visibility/visibility'
 import { updateUserItemsCounts } from '#models/user'

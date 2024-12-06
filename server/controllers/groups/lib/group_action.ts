@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { groupMembershipActions } from '#models/group'
 import initMembershipUpdateHooks from './membership_update_hooks.js'

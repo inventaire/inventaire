@@ -1,6 +1,6 @@
 import { keyBy, set, without } from 'lodash-es'
 import { getNetworkIds } from '#controllers/user/lib/relations_status'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
 import { firstDoc } from '#lib/couch'
 import { newError, notFoundError } from '#lib/error/error'

@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { sha1, hashPassword, getRandomBytes } from '#lib/crypto'
 import { assert_ } from '#lib/utils/assert_types'

@@ -1,5 +1,5 @@
 import { groupBy, uniq } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { isEntityUri } from '#lib/boolean_validations'
 import { maxKey, minKey } from '#lib/couch'
 import { mappedArrayPromise } from '#lib/promises'

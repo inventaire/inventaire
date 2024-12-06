@@ -1,7 +1,7 @@
 import { convertInvitations, findInvitationByEmail } from '#controllers/invitations/lib/invitations'
 import { checkUsernameAvailability } from '#controllers/user/lib/availability'
 import { sendValidationEmail } from '#controllers/user/lib/token'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { success, Log } from '#lib/utils/logs'
 import { createUserDoc, upgradeInvitedUser } from '#models/user'
 import type { Email, Username } from '#types/user'

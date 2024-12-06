@@ -1,4 +1,4 @@
-import type dbFactory from '#db/couchdb/base'
+import type { dbFactory } from '#db/couchdb/base'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 import type { NewDoc, ViewKey, ViewName } from 'blue-cot/types/types.js'
 import type { AsyncReturnType } from 'type-fest'

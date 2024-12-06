@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { setDeletedTrue } from '#lib/couch'
 import { emit, radio } from '#lib/radio'
 import { Log, logError } from '#lib/utils/logs'

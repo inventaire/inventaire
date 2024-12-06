@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { firstDoc } from '#lib/couch'
 import config from '#server/config'
 import type { User } from '#types/user'

@@ -4,7 +4,7 @@
 // to sort it by reduced values, which isn't supported by CouchDB
 // see https://stackoverflow.com/questions/2817703/sorting-couchdb-views-by-value
 
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 
 const designDocName = 'entities_deduplicate'
 const db = await dbFactory('entities', designDocName)

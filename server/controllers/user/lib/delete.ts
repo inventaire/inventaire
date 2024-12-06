@@ -1,4 +1,4 @@
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { softDeleteUser } from '#models/user'
 
 const db = await dbFactory('users')

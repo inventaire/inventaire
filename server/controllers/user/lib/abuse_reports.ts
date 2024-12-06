@@ -1,5 +1,5 @@
 import leven from 'leven'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { arrayIncludes } from '#lib/utils/base'

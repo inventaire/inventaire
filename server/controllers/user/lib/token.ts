@@ -1,6 +1,6 @@
 import { omit, pick } from 'lodash-es'
 import { findUserByEmail } from '#controllers/user/lib/user'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { hashPassword, verifyPassword } from '#lib/crypto'
 import { WrappedUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'

@@ -5,7 +5,7 @@ import config from '#server/config'
 import type { DatabaseBaseName, DatabaseName, DesignDocName } from '#types/couchdb'
 import getDbApi from './cot_base.js'
 
-export default async function (dbBaseName: string, designDocName?: string) {
+export async function dbFactory (dbBaseName: string, designDocName?: string) {
   await waitForCouchInit()
   const dbName = config.db.name(dbBaseName)
   // If no designDocName is provided while there are defined design docs for this database,

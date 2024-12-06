@@ -1,5 +1,5 @@
 import { getUserRelations } from '#controllers/relations/lib/lists'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { ignoreNotFound } from '#lib/couch'
 import { createRelationDoc, getRelationDocId } from '#models/relation'
 import type { NewCouchDoc } from '#types/couchdb'

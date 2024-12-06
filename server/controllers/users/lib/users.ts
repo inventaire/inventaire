@@ -1,5 +1,5 @@
 import { map } from 'lodash-es'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import type { User } from '#types/user'
 
 const db = await dbFactory('users')

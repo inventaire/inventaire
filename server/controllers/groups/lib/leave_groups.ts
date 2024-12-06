@@ -1,6 +1,6 @@
 import { property } from 'lodash-es'
 import { getGroupById, getGroupsWhereUserHasAnyRole } from '#controllers/groups/lib/groups'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { emit } from '#lib/radio'
 import { removeUserFromGroupDoc } from '#models/group'
 

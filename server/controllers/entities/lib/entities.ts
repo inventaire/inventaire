@@ -4,7 +4,7 @@ import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { reverseClaims } from '#controllers/entities/lib/reverse_claims'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
 import { newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'

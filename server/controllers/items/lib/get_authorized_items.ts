@@ -1,6 +1,6 @@
 import { map, uniq } from 'lodash-es'
 import { getGroupMembersIds } from '#controllers/groups/lib/groups'
-import dbFactory from '#db/couchdb/base'
+import { dbFactory } from '#db/couchdb/base'
 import { combinations, uniqByKey } from '#lib/utils/base'
 import { getAllowedVisibilityKeys } from '#lib/visibility/allowed_visibility_keys'
 import { getGroupVisibilityKey } from '#lib/visibility/visibility'
