@@ -20,3 +20,5 @@ export async function exists (path) {
     return false
   }
 }
+
+export const fileOwnerOnlyReadWriteMode = 0o600
