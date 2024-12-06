@@ -3,9 +3,13 @@ import { createWork, createSerie, randomLabel, generateIsbn13h } from '#fixtures
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const workEntityPromise = createWork()
+let workEntityPromise
 
 describe('entities:editions:create', () => {
+  before(() => {
+    workEntityPromise = createWork()
+  })
+
   it('should not be able to create an edition entity without a work entity', async () => {
     await authReq('post', '/api/entities?action=create', {
       labels: {},
