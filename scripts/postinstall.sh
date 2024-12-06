@@ -16,7 +16,7 @@ npm run update-i18n
 # Needs to be re-executed after changing server types
 npm run build
 
-mkdir -p logs run db/leveldb
+mkdir -p logs run db/leveldb keys
 
 touch ./logs/server.log ./logs/error.log
 # Expected by scripts/actions/backup_databases.ts
