@@ -4,23 +4,24 @@ import { sendValidationEmail } from '#controllers/user/lib/token'
 import dbFactory from '#db/couchdb/base'
 import { success, Log } from '#lib/utils/logs'
 import { createUserDoc, upgradeInvitedUser } from '#models/user'
+import type { Email, Username } from '#types/user'
 import preventMultiAccountsCreation from './prevent_multi_accounts_creation.js'
 
 const db = await dbFactory('users')
 
-export default async function (username, email, creationStrategy, language, password) {
+export default async function (username: Username, email: Email, language: string, password: string) {
   preventMultiAccountsCreation(username)
 
   return checkUsernameAvailability(username)
   .then(findInvitationByEmail.bind(null, email))
   .then(Log('invitedDoc'))
   .then(invitedDoc => {
-    return upgradeInvitedUser(invitedDoc, username, creationStrategy, language, password)
+    return upgradeInvitedUser(invitedDoc, username, language, password)
     .then(db.putAndReturn)
   })
   .catch(err => {
     if (err.notFound) {
-      return createUserDoc(username, email, creationStrategy, language, password)
+      return createUserDoc(username, email, language, password)
       .then(db.postAndReturn)
     } else {
       throw err

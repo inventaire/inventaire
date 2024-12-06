@@ -40,8 +40,6 @@ export type UserDataSnapshot = Record<SnapshotVisibilitySectionName, SnapshotVis
 
 export type UserRole = 'admin' | 'dataadmin'
 
-export type CreationStrategy = 'local' | 'browserid'
-
 export type UserImg = `/img/users/${ImageHash}`
 
 type OAuthProvider = 'wikidata'
@@ -69,10 +67,8 @@ export interface User extends CouchDoc {
   username: Username
   stableUsername?: Username
   created: EpochTimeStamp
-  creationStrategy: CreationStrategy
   email?: Email
   password?: string | StringifiedHashedSecretData
-  hasPassword?: boolean
   picture?: UserImagePath
   language?: string
   validEmail?: boolean

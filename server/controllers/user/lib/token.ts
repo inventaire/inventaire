@@ -18,7 +18,7 @@ export const tokenLength = 32
 
 export async function sendValidationEmail (user) {
   if (user.validEmail) {
-    const log = pick(user, [ '_id', 'creationStrategy' ])
+    const log = pick(user, [ '_id' ])
     warn(log, 'email was already validated')
     return user
   }

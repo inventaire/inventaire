@@ -8,23 +8,21 @@ import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import type { StringifiedHashedSecretData } from '#types/common'
-import type { User, CreationStrategy, Email, DeletedUser, UserRole, DocWithUsernameInUserDb } from '#types/user'
+import type { User, Email, DeletedUser, UserRole, DocWithUsernameInUserDb, InvitedUser, Username } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
 
 const generateReadToken = getRandomString.bind(null, 32)
 
-// TODO: remove the last traces of creationStrategy=browserid: optional password
-export async function createUserDoc (username: string, email: Email, creationStrategy: CreationStrategy, language: string, password: string) {
-  log([ username, email, creationStrategy, language, `password:${(password != null)}` ], 'creating user')
-  assert_.strings([ username, email, creationStrategy ])
+export async function createUserDoc (username: string, email: Email, language: string, password: string) {
+  log([ username, email, language, `password:${(password != null)}` ], 'creating user')
+  assert_.strings([ username, email ])
   if (language != null) { assert_.string(language) }
 
   username = userFormatters.username(username)
 
   userValidations.pass('username', username)
   userValidations.pass('email', email)
-  userValidations.pass('creationStrategy', creationStrategy)
 
   // it's ok to have an undefined language
   if (language && !userValidations.language(language)) {
@@ -36,7 +34,6 @@ export async function createUserDoc (username: string, email: Email, creationStr
     email,
     type: 'user',
     created: Date.now(),
-    creationStrategy,
     language,
     settings: {},
     // A token that, when combined with the right user id,
@@ -54,17 +51,13 @@ export async function createUserDoc (username: string, email: Email, creationStr
     },
   }
 
-  if (creationStrategy === 'local') {
-    user.validEmail = false
-    if (!userValidations.password(password)) {
-      // Do NOT pass the password as context, as it would be logged
-      // and returned in the response
-      throw newError('invalid password', 400)
-    }
-    user.password = password
-  } else {
-    throw newError('unknown strategy', 400)
+  user.validEmail = false
+  if (!userValidations.password(password)) {
+    // Do NOT pass the password as context, as it would be logged
+    // and returned in the response
+    throw newError('invalid password', 400)
   }
+  user.password = password
 
   await hashUserPassword(user)
 
@@ -79,9 +72,9 @@ async function hashUserPassword (user: Partial<User>) {
   }
 }
 
-export async function upgradeInvitedUser (invitedDoc, username, creationStrategy, language, password) {
+export async function upgradeInvitedUser (invitedDoc: InvitedUser, username: Username, language: string, password: string) {
   const { email } = invitedDoc
-  const userDoc = await createUserDoc(username, email, creationStrategy, language, password)
+  const userDoc = await createUserDoc(username, email, language, password)
   // Will override type but keep inviters and inviting groups
   return Object.assign(invitedDoc, userDoc)
 }
@@ -106,9 +99,6 @@ export function updateUserDocEmail (doc, email) {
 export function updateUserDocPassword (user: User, newHash: StringifiedHashedSecretData) {
   user.password = newHash
   user = omit(user, 'resetPassword')
-  // Unlocking password-related functionalities on client-side
-  // for users originally created with browserid if they ask for a password reset
-  if (user.creationStrategy === 'browserid') { user.hasPassword = true }
   // Also change the read token, following Github practice
   // https://github.com/blog/16-token-private-feeds
   user.readToken = generateReadToken()

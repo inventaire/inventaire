@@ -11,10 +11,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
 }
 
 async function sendEmailValidation (user) {
-  const { creationStrategy, validEmail } = user
-  if (creationStrategy !== 'local') {
-    throw newError('wrong authentification creationStrategy', 400)
-  }
+  const { validEmail } = user
 
   if (validEmail) {
     throw newError('email was already validated', 400)

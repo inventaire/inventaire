@@ -8,9 +8,6 @@ const ownerSafe = [
   'email',
   'picture',
   'language',
-  'creationStrategy',
-  // TODO: remove, as part of browserid obsolete implementation
-  // 'hasPassword',
   'validEmail',
   'bio',
   'settings',
@@ -85,8 +82,6 @@ const userAttributes = {
     'position',
     'picture',
   ] as const,
-
-  creationStrategies: [ 'local' ] as const,
 
   settings: {
     notifications: [

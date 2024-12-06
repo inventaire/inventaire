@@ -3,7 +3,7 @@ import { isArray, isLang, isPropertyUri } from '#lib/boolean_validations'
 import userAttributes from '../attributes/user.js'
 import commonValidations from './common.js'
 
-const { creationStrategies, settings } = userAttributes
+const { settings } = userAttributes
 
 const { pass, userId, username, email, userImg, boolean, position, BoundedString } = commonValidations
 
@@ -27,7 +27,6 @@ const userValidations = {
   // Accepting second level languages (like es-AR), but only using first level yet
   language: isLang,
   picture: userImg,
-  creationStrategy: creationStrategy => creationStrategies.includes(creationStrategy),
   bio: BoundedString(0, 1000),
   settings: boolean,
   position,

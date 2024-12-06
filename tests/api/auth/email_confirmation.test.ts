@@ -28,17 +28,6 @@ describe('auth:email-confirmation', () => {
       err.body.status_verbose.should.equal('email was already validated')
     })
   })
-
-  it('should reject if creation strategy is not local ', async () => {
-    const email = createUserEmail()
-    const user = await getUserGetter(email)()
-    await setCustomUserAttribute(user, 'creationStrategy', 'notLocal')
-    await customAuthReq(user, 'post', endpoint, { email })
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.body.status_verbose.should.equal('wrong authentification creationStrategy')
-    })
-  })
 })
 
 const setCustomUserAttribute = async (user, userAttribute, value) => {
