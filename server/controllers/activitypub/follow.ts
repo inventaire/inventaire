@@ -5,11 +5,11 @@ import { newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { FollowActivity, ActivityDoc, AcceptActivity, LocalActorUrl, UriObj, NameObj, ActivityType, Context } from '#types/activity'
-import type { Url } from '#types/common'
+import type { FollowActivity, ActivityDoc, AcceptActivity, LocalActorUrl, UriObj, NameObj, ActivityType, Context, BodyTo } from '#types/activity'
+import type { AbsoluteUrl, Url } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
 import { makeUrl, getEntityUriFromActorName, context, serializeFollowActivity } from './lib/helpers.js'
-import { signAndPostActivity } from './lib/post_activity.js'
+import { postActivity, fetchInboxUri } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const origin = config.getPublicOrigin()
@@ -61,7 +61,8 @@ export async function follow (params: FollowArgs) {
 }
 
 async function sendAcceptActivity (followActivity: FollowActivity, actor: UriObj, object: NameObj, followCouchId: CouchUuid) {
-  const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
+  const actorName = object.name
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: actorName } })
   const activity: AcceptActivity = {
     '@context': context,
     id: `${followedActorUri}#accept/follows-${followCouchId}`,
@@ -72,11 +73,10 @@ async function sendAcceptActivity (followActivity: FollowActivity, actor: UriObj
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
   // See https://www.w3.org/TR/activitypub/#follow-activity-outbox
-  await signAndPostActivity({
-    actorName: object.name,
-    recipientActorUri: actor.uri,
-    activity,
-  })
+  const bodyTo: BodyTo = [ followedActorUri, 'Public' ]
+  const actorUri = actor.uri
+  const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
+  return postActivity({ actorName, inboxUri, bodyTo, activity })
 }
 
 async function getExistingFollowActivity (actor: UriObj, name: string) {

@@ -146,3 +146,5 @@ export interface Outbox {
   next: Url
   totalItems?: number
 }
+
+export type BodyTo = (AbsoluteUrl | 'Public')[]
