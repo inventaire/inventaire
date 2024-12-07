@@ -83,7 +83,7 @@ export async function fetchInboxUri ({ actorUri, activity }: { actorUri: Absolut
 
 async function buildAudience (activity, inboxUrisByBodyTos) {
   const actorUri: AbsoluteUrl = activity.actor.uri
-  const inboxUri = await fetchInboxUri({ actorUri, activity })
+  const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
   if (inboxUri) {
     if (inboxUrisByBodyTos[inboxUri]) {
       inboxUrisByBodyTos[inboxUri] = inboxUrisByBodyTos[inboxUri].unshift(actorUri)
