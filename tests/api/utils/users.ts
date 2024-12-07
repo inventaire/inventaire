@@ -1,7 +1,11 @@
+import { getUserAnonymizableId } from '#controllers/user/lib/anonymizable_user'
 import type { UserWithCookie } from '#fixtures/users'
+import { getLocalUserAcct } from '#lib/federation/remote_user'
 import { assert_ } from '#lib/utils/assert_types'
+import { federatedMode } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import type { RelativeUrl } from '#types/common'
+import type { User } from '#types/user'
 import { getUser } from './utils.js'
 
 export async function getUsersNearPosition (position, user) {
@@ -23,4 +27,13 @@ export const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 
 const getBboxFromPosition = ([ lat, lng ]) => {
   return [ lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1 ]
+}
+
+export async function getTestUserAcct (user: User) {
+  if (federatedMode) {
+    const anonymizableUserId = await getUserAnonymizableId(user)
+    return getLocalUserAcct(anonymizableUserId)
+  } else {
+    return getLocalUserAcct(user._id)
+  }
 }

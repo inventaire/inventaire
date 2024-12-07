@@ -7,6 +7,7 @@ import { wait } from '#lib/promises'
 import { federatedMode } from '#server/config'
 import { updateClaim, updateLabel } from '#tests/api/utils/entities'
 import { customAuthReq } from '#tests/api/utils/request'
+import { getTestUserAcct } from '#tests/api/utils/users'
 import {
   adminReq,
   getUser,
@@ -183,7 +184,7 @@ describe('entities:contributions', () => {
 
     it('should accept requests for public contributions', async () => {
       const deanonymizedUser = await getDeanonymizedUser()
-      const deanonymizedUserAcct = getLocalUserAcct(deanonymizedUser._id)
+      const deanonymizedUserAcct = await getTestUserAcct(deanonymizedUser)
       const { patches } = await authReq('get', `${endpoint}&user=${deanonymizedUserAcct}`)
       patches.should.be.an.Array()
     })
