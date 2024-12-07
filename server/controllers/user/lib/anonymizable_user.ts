@@ -46,14 +46,7 @@ export interface DeanonymizedUser extends Pick<User, DeanonymizedAttribute> {
 export function anonymizeUser (user: UserWithAnonymizedId) {
   const anonymizeSetting = get(user, 'settings.contributions.anonymize', true)
   if (anonymizeSetting) {
-    return {
-      _id: user.anonymizableId,
-      settings: {
-        contributions: {
-          anonymize: true,
-        },
-      },
-    } as AnonymizedUser
+    return buildAnonymizedUser(user.anonymizableId)
   } else {
     return {
       _id: user.anonymizableId,
@@ -66,4 +59,15 @@ export function anonymizeUser (user: UserWithAnonymizedId) {
       ...pick(user, deanonymizedAttributes),
     } as DeanonymizedUser
   }
+}
+
+export function buildAnonymizedUser (anonymizableId: UserId) {
+  return {
+    _id: anonymizableId,
+    settings: {
+      contributions: {
+        anonymize: true,
+      },
+    },
+  } as AnonymizedUser
 }
