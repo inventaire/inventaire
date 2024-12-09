@@ -5,16 +5,17 @@ import { newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { LocalActorUrl, ActivityId, UriObj, ActivityType, Context } from '#types/activity'
-import type { Url } from '#types/common'
-import { makeUrl, getEntityUriFromActorName, context } from './lib/helpers.js'
-import { signAndPostActivity } from './lib/post_activity.js'
+import type { FollowActivity, ActivityDoc, AcceptActivity, LocalActorUrl, UriObj, NameObj, ActivityType, Context, BodyTo } from '#types/activity'
+import type { AbsoluteUrl, Url } from '#types/common'
+import type { CouchUuid } from '#types/couchdb'
+import { makeUrl, getEntityUriFromActorName, context, serializeFollowActivity } from './lib/helpers.js'
+import { postActivity, fetchInboxUri } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
 
 const origin = config.getPublicOrigin()
 
 interface FollowArgs {
-  id: ActivityId
+  id: Url
   type: ActivityType
   '@context': Context[]
   actor: LocalActorUrl
@@ -35,48 +36,50 @@ export async function follow (params: FollowArgs) {
     const { entity } = await validateEntity(requestedObjectName)
     // Use canonical uri
     const actorName = getEntityActorName(entity.uri)
-    object = { name: actorName }
+    object = { name: actorName } as NameObj
   } else if (requestedObjectName.startsWith('shelf-')) {
     await validateShelf(requestedObjectName)
-    object = { name: requestedObjectName }
+    object = { name: requestedObjectName } as NameObj
   } else if (isUsername(requestedObjectName)) {
     const { user } = await validateUser(requestedObjectName)
     const { stableUsername } = user
-    object = { name: stableUsername }
+    object = { name: stableUsername } as NameObj
   } else {
     throw newError('invalid object name', 400, { object })
   }
 
-  let followActivity = await getExistingFollowActivity(actor, object.name)
-  if (followActivity) {
-    followActivity.externalId = externalId
+  let followActivityDoc: ActivityDoc = await getExistingFollowActivity(actor, object.name)
+  if (followActivityDoc) {
+    followActivityDoc.externalId = externalId
   } else {
-    followActivity = await createActivity({ id: externalId, type, actor, object })
+    followActivityDoc = await createActivity({ id: externalId, type, actor, object })
   }
-  await sendAcceptActivity(followActivity, actor, object)
+  const followActivity: FollowActivity = serializeFollowActivity(followActivityDoc)
+  await sendAcceptActivity(followActivity, actor, object, followActivityDoc._id)
   trackActor(actor.uri, [ 'activitypub', 'follow' ])
   return { ok: true }
 }
 
-async function sendAcceptActivity (followActivity, actor, object) {
-  const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
-  const activity = {
+async function sendAcceptActivity (followActivity: FollowActivity, actor: UriObj, object: NameObj, followCouchId: CouchUuid) {
+  const actorName = object.name
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: actorName } })
+  const activity: AcceptActivity = {
     '@context': context,
+    id: `${followedActorUri}#accept/follows-${followCouchId}`,
     type: 'Accept',
     actor: followedActorUri,
-    object: followActivity.externalId,
+    object: followActivity,
   }
   // "the server SHOULD generate either an Accept or Reject activity
   // with the Follow as the object and deliver it to the actor of the Follow."
   // See https://www.w3.org/TR/activitypub/#follow-activity-outbox
-  await signAndPostActivity({
-    actorName: object.name,
-    recipientActorUri: actor.uri,
-    activity,
-  })
+  const bodyTo: BodyTo = [ followedActorUri, 'Public' ]
+  const actorUri = actor.uri
+  const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
+  return postActivity({ actorName, inboxUri, bodyTo, activity })
 }
 
-async function getExistingFollowActivity (actor, name) {
-  const followActivities = await getFollowActivitiesByObject(name)
+async function getExistingFollowActivity (actor: UriObj, name: string) {
+  const followActivities: ActivityDoc[] = await getFollowActivitiesByObject(name)
   return followActivities.find(activity => activity.actor.uri === actor.uri)
 }

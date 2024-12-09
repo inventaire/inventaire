@@ -39,6 +39,29 @@ describe('followers activity delivery', () => {
       createActivity.object.content.should.containEql(details)
       createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
     })
+
+    it('should post an activity to shared inbox when available', async () => {
+      const user = await createUser({ fediversable: true })
+      const { username } = user
+      const followedActorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
+      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const { remoteHost, remoteUserId } = await signedReq({
+        url: inboxUrl,
+        object: followedActorUrl,
+        type: 'Follow',
+        withSharedInbox: true,
+      })
+      const details = randomWords(4)
+      const item = await createItem(user, { details })
+      await wait(debounceTime)
+      const sharedInspectionInboxUrl: Url = `${remoteHost}/shared_inbox_inspection`
+      const { inbox: sharedInbox } = await requests_.get(sharedInspectionInboxUrl)
+      const createActivity = sharedInbox[0]
+      createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
+      createActivity.object.content.should.containEql(item._id)
+      createActivity.object.content.should.containEql(details)
+      createActivity.to.should.deepEqual([ remoteUserId, 'Public' ])
+    })
   })
 
   describe('entities followers', () => {

@@ -5,7 +5,7 @@ import { i18n } from '#lib/emails/i18n/i18n'
 import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
-import type { Context } from '#types/activity'
+import type { FollowActivity, Context, ActivityDoc } from '#types/activity'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 
 const publicOrigin = config.getPublicOrigin()
@@ -60,4 +60,18 @@ export const context: Context[] = [
 
 export function setActivityPubContentType (res) {
   res.header('content-type', 'application/activity+json')
+}
+
+export function serializeFollowActivity (followActivityDoc: ActivityDoc) {
+  const { actor, externalId, object } = followActivityDoc
+  const followedActorUri = makeUrl({ params: { action: 'actor', name: object.name } })
+
+  const followActivity: FollowActivity = {
+    '@context': context,
+    type: 'Follow',
+    object: followedActorUri,
+    id: externalId,
+    actor: actor.uri,
+  }
+  return followActivity
 }
