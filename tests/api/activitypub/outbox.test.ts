@@ -147,7 +147,7 @@ describe('outbox', () => {
 
     describe('create:items', () => {
       it('should return an activity when creating items in bulk', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
         const { username } = await user
         const outboxUrl: Url = `${endpoint}${username}&offset=0`
@@ -157,7 +157,7 @@ describe('outbox', () => {
       })
 
       it('should return an activity when creating items sequentially', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         await createItem(user)
         const { username } = await user
@@ -168,7 +168,7 @@ describe('outbox', () => {
       })
 
       it('should return several activities when creating items at a different time', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         await wait(debounceTime)
         await createItem(user)
@@ -180,7 +180,7 @@ describe('outbox', () => {
       })
 
       it('should not return recent activities', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         const { username } = await user
         const outboxUrl: Url = `${endpoint}${username}&offset=0`

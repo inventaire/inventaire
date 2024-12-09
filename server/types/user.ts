@@ -85,6 +85,7 @@ export interface User extends CouchDoc {
   readToken?: string
   roles?: UserRole[]
   fediversable?: boolean
+  poolActivities?: boolean
   customProperties?: PropertyUri[]
   snapshot?: UserDataSnapshot
   deleted?: EpochTimeStamp
