@@ -32,6 +32,7 @@ const userValidations = {
   settings: boolean,
   position,
   fediversable: boolean,
+  poolActivities: boolean,
   customProperties: props => isArray(props) && props.every(isPropertyUri),
   summaryPeriodicity: days => Number.isInteger(days) && days >= 1,
   deepAttributesExistance: attribute => get(deepAttributes, attribute) != null,
