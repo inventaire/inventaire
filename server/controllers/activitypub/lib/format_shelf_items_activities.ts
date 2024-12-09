@@ -1,5 +1,6 @@
 import { compact } from 'lodash-es'
 import { getPublicItemsByShelfAndDate } from '#controllers/items/lib/items'
+import type { CreateActivity } from '#types/activity'
 import type { RelativeUrl, AbsoluteUrl } from '#types/common'
 import { createItemsNote, findFullRangeFromActivities } from './format_items_activities.js'
 import { makeUrl } from './helpers.js'
@@ -15,6 +16,6 @@ export default async function (activitiesDocs, shelfId, name) {
     until,
   })
 
-  const formattedActivities = await Promise.all(activitiesDocs.map(createItemsNote({ allActivitiesItems, name, actor, parentLink })))
+  const formattedActivities: CreateActivity[] = await Promise.all(activitiesDocs.map(createItemsNote({ allActivitiesItems, name, actor, parentLink })))
   return compact(formattedActivities)
 }
