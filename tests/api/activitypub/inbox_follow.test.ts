@@ -69,13 +69,17 @@ describe('activitypub:inbox:Follow', () => {
         object: actorUrl,
         url: inboxUrl,
       })
+      // Leave some time for 'post:activity' job to be processed
+      await wait(50)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       inbox.length.should.equal(1)
       const activity = inbox[0]
       activity['@context'].should.deepEqual([ 'https://www.w3.org/ns/activitystreams' ])
       activity.type.should.equal('Accept')
       activity.actor.should.equal(actorUrl)
-      activity.object.should.startWith(remoteHost)
+      activity.object.type.should.equal('Follow')
+      activity.object.actor.should.startWith(remoteHost)
+      activity.object.object.should.startWith(actorUrl)
     })
   })
 

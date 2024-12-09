@@ -5,10 +5,11 @@ import type { UserId } from '#types/user'
 import type { VisibilityKey } from '#types/visibility'
 
 export type ShelfId = CouchUuid
+export type ShelfName = string
 
 export interface Shelf extends CouchDoc {
   _id: ShelfId
-  name: string
+  name: ShelfName
   slug: string
   description?: string
   owner: UserId

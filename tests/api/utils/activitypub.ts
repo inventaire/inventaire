@@ -23,6 +23,7 @@ export interface TestsActorActivity {
   id: LocalActorUrl
   name: string
   inbox: Url
+  sharedInbox?: Url
   publicKey: {
     id: string
     owner: LocalActorUrl
@@ -40,11 +41,12 @@ interface SignedReqParams {
   body?: ActivityBody
   emitterUser?: TestsActorActivity
   type?: ActivityType
+  withSharedInbox?: boolean
 }
 
 // In a separate file since createUser has a circular dependency in api/utils/request.js
-export async function signedReq ({ method, object, url, body, emitterUser, type }: SignedReqParams) {
-  const { id, username, keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser)
+export async function signedReq ({ method, object, url, body, emitterUser, type, withSharedInbox }: SignedReqParams) {
+  const { id, username, keyId, privateKey, origin } = await getSomeRemoteServerUser(emitterUser, withSharedInbox)
   if (!body) {
     body = createActivity({
       actor: keyId,
@@ -97,12 +99,13 @@ export const createActivity = (params: CreateActivityParams = {}) => {
   }
 }
 
-export const createRemoteActivityPubServerUser = async () => {
+export const createRemoteActivityPubServerUser = async (withSharedInbox?: boolean) => {
   const { publicKey, privateKey } = await getSharedKeyPair()
   const { host, origin } = await getActivityPubServer()
   const username = createUsername()
   const actorUrl: LocalActorUrl = `http://${host}${actorEndpoint}?name=${username}`
   const inbox = `${origin}${inboxEndpoint}?username=${username}` as Url
+  const sharedInbox = `${origin}${sharedInboxEndpoint}` as Url
   const user: TestsActorActivity = {
     id: actorUrl,
     name: username,
@@ -114,15 +117,18 @@ export const createRemoteActivityPubServerUser = async () => {
     privateKey,
     inbox,
   }
+  if (withSharedInbox) {
+    Object.assign(user, { sharedInbox })
+  }
   remoteActivityPubServerUsers[username] = user
   return user
 }
 
 const actorEndpoint = '/some_actor_endpoint'
 
-export async function getSomeRemoteServerUser (emitterUser) {
+export async function getSomeRemoteServerUser (emitterUser, withSharedInbox?: boolean) {
   const { origin } = await getActivityPubServer()
-  emitterUser = emitterUser || (await createRemoteActivityPubServerUser())
+  emitterUser = emitterUser || (await createRemoteActivityPubServerUser(withSharedInbox))
   const { id, name, privateKey } = emitterUser
   const query = { name }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
@@ -133,6 +139,8 @@ const remoteActivityPubServerUsers = {}
 
 const inboxEndpoint = '/inbox'
 const inboxInspectionEndpoint = '/inbox_inspection'
+const sharedInboxEndpoint = '/shared_inbox'
+const sharedInboxInspectionEndpoint = '/shared_inbox_inspection'
 
 let removeActivityPubServer
 const getActivityPubServer = async () => {
@@ -169,6 +177,20 @@ const startActivityPubServer = async () => {
     app.get(inboxInspectionEndpoint, async (req, res) => {
       const username = req.query.username as string
       res.json({ inbox: inboxes[username] })
+    })
+
+    let sharedInbox = []
+
+    app.post(sharedInboxEndpoint, async (req, res) => {
+      await verifySignature(req)
+      const activity = req.body
+      sharedInbox = sharedInbox || []
+      sharedInbox.unshift(activity)
+      res.json({ ok: true })
+    })
+
+    app.get(sharedInboxInspectionEndpoint, async (req, res) => {
+      res.json({ inbox: sharedInbox })
     })
   })
 

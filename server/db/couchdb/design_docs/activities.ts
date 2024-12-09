@@ -1,8 +1,8 @@
 import { emit } from '#db/couchdb/couchdb_views_context'
-import type { Activity } from '#types/activity'
+import type { ActivityDoc } from '#types/activity'
 import type { Views } from '#types/couchdb'
 
-export const views: Views<Activity> = {
+export const views: Views<ActivityDoc> = {
   byActorNameAndDate: {
     map: doc => emit([ doc.actor.name, doc.updated ], null),
     reduce: '_count',
