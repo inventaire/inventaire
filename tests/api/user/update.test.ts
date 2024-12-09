@@ -163,7 +163,7 @@ describe('user:update', () => {
 
     it('should update a user poolActivities setting', async () => {
       const user = await createUser()
-      const attribute = 'pool-activities'
+      const attribute = 'poolActivities'
       const value = true
       await customAuthReq(user, 'put', endpoint, { attribute, value })
       const updatedUser = await getRefreshedUser(user)
