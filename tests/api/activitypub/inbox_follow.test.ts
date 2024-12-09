@@ -69,6 +69,8 @@ describe('activitypub:inbox:Follow', () => {
         object: actorUrl,
         url: inboxUrl,
       })
+      // Leave some time for 'post:activity' job to be processed
+      await wait(50)
       const { inbox } = await requests_.get(`${remoteHost}/shared_inbox_inspection`)
       inbox.length.should.above(0)
       const activity = inbox.find(a => a.type === 'Accept')
