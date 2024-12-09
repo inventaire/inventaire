@@ -68,7 +68,6 @@ async function _createDebouncedActivity ({ userId, shelfId }: createActivityPara
     actor: { name },
     object: { items: { since, until: Date.now() } },
   })
-
   let createActivities: CreateActivity[]
   if (userId) {
     createActivities = await formatUserItemsActivities([ activityDoc ], user)
