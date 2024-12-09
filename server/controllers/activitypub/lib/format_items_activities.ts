@@ -44,6 +44,42 @@ export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor,
   }
 }
 
+export function createItemsActivities ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
+  return async function (activityDoc: ActivityDoc) {
+    const { since, until } = activityDoc.object.items
+    // todo: pre-sorting the items per range
+    const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
+    await Promise.all(publicRangeItems.map(addSnapshotToItem))
+
+    const noteActivities: NoteActivity[] = publicRangeItems.map(item => {
+      const link = buildLinkContentFromItem(item)
+      const id: Url = `${origin}/api/activitypub?action=activity&id=${item._id}`
+
+      const noteActivity: NoteActivity = {
+        id,
+        type: 'Note',
+        content: buildContent({ links: [ link ], name, lang, itemsLength: 1, parentLink }),
+        published: new Date(until).toISOString(),
+        attachment: [ buildAttachment(item) ],
+      }
+      return noteActivity
+    })
+
+    const createdActivities: CreateActivity[] = noteActivities.map(noteActivity => {
+      const createdActivity: CreateActivity = {
+        id: `${noteActivity.id}#create`,
+        '@context': context,
+        type: 'Create',
+        object: noteActivity,
+        actor,
+        to: [ 'Public' ],
+      }
+      return createdActivity
+    })
+    return createdActivities
+  }
+}
+
 export function findFullRangeFromActivities (activitiesDocs) {
   return {
     since: min(map(activitiesDocs, 'object.items.since')),
