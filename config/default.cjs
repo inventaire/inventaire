@@ -253,6 +253,9 @@ const config = {
     'wd:entity:indexation': {
       run: true,
     },
+    'post:activity': {
+      run: true,
+    },
   },
 
   // give priority to more urgent matters

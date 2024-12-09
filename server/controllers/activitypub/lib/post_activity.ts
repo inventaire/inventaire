@@ -1,8 +1,9 @@
 import { signRequest } from '#controllers/activitypub/lib/security'
+import { initJobQueue } from '#db/level/jobs'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import { warn, logError } from '#lib/utils/logs'
+import { LogError, warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorName, PostActivity, BodyTo } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
@@ -28,19 +29,8 @@ export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: {
     body,
   })
   postHeaders['content-type'] = 'application/activity+json'
-  try {
-    await requests_.post(inboxUri, {
-      headers: postHeaders,
-      body,
-      timeout,
-      parseJson: false,
-      retryOnceOnError: true,
-    })
-  } catch (err) {
-    err.context = err.context || {}
-    Object.assign(err.context, { inboxUri, activity })
-    logError(err, 'Posting activity to inbox failed')
-  }
+  await postActivityQueue.push({ inboxUri, postHeaders, body, activity })
+  .catch(LogError('addPostActivityToQueue err'))
 }
 
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
@@ -86,3 +76,21 @@ async function buildAudience (activity, inboxUrisByBodyTos) {
     inboxUrisByBodyTos[inboxUri] = [ actorUri, 'Public' ]
   }
 }
+
+async function postActivityWorker (jobId, cb) {
+  const { inboxUri, postHeaders, body, activity } = cb
+  try {
+    await requests_.post(inboxUri, {
+      headers: postHeaders,
+      body,
+      timeout,
+      parseJson: false,
+    })
+  } catch (err) {
+    err.context = err.context || {}
+    Object.assign(err.context, { inboxUri, activity })
+    logError(err, 'Posting activity to inbox failed')
+  }
+}
+
+const postActivityQueue = initJobQueue('post:activity', postActivityWorker, 1)

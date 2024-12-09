@@ -69,6 +69,8 @@ describe('activitypub:inbox:Follow', () => {
         object: actorUrl,
         url: inboxUrl,
       })
+      // Leave some time for 'post:activity' job to be processed
+      await wait(50)
       const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
       inbox.length.should.equal(1)
       const activity = inbox[0]
