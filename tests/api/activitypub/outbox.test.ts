@@ -124,7 +124,7 @@ describe('outbox', () => {
       })
 
       it('should including an item previously private after it was updated to public', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         const [ publicItem, privateItem ] = await createItems(user, [
           { visibility: [ 'public' ] },
           { visibility: [] },
@@ -146,6 +146,16 @@ describe('outbox', () => {
     })
 
     describe('create:items', () => {
+      it('should return several activities when creating items in bulk', async () => {
+        const user = createUser({ fediversable: true })
+        await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
+        const { username } = await user
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
+        await wait(debounceTime)
+        const res = await publicReq('get', outboxUrl)
+        res.orderedItems.length.should.equal(2)
+      })
+
       it('should return an activity when creating items in bulk', async () => {
         const user = createUser({ fediversable: true, poolActivities: true })
         await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
