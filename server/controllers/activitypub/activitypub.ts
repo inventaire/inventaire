@@ -16,6 +16,7 @@ export default {
   post: actionsControllersFactory({
     public: {
       inbox,
+      'shared-inbox': inbox,
     },
   }),
 }

@@ -17,7 +17,7 @@ describe('activitypub:inbox:Follow', () => {
       try {
         const { username } = await createUser({ fediversable: false })
         const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-        const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+        const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } })
         await signedReq({
           object: actorUrl,
           url: inboxUrl,
@@ -34,7 +34,7 @@ describe('activitypub:inbox:Follow', () => {
     it('should create a Follow activity', async () => {
       const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } })
       const res = await signedReq({
         object: actorUrl,
         url: inboxUrl,
@@ -48,7 +48,7 @@ describe('activitypub:inbox:Follow', () => {
       const emitterUser = await createRemoteActivityPubServerUser()
       const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } }) as ObjectType
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } }) as ObjectType
       const requestPromise = signedReq({
         emitterUser,
         object: actorUrl,
@@ -64,16 +64,15 @@ describe('activitypub:inbox:Follow', () => {
     it('should trigger an Accept activity', async () => {
       const { username } = await createUser({ fediversable: true })
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
-      const { remoteHost, remoteUsername } = await signedReq({
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } })
+      const { remoteHost } = await signedReq({
         object: actorUrl,
         url: inboxUrl,
       })
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
-      inbox.length.should.equal(1)
-      const activity = inbox[0]
+      const { inbox } = await requests_.get(`${remoteHost}/shared_inbox_inspection`)
+      inbox.length.should.above(0)
+      const activity = inbox.find(a => a.type === 'Accept')
       activity['@context'].should.deepEqual([ 'https://www.w3.org/ns/activitystreams' ])
-      activity.type.should.equal('Accept')
       activity.actor.should.equal(actorUrl)
       activity.object.type.should.equal('Follow')
       activity.object.actor.should.startWith(remoteHost)
@@ -86,7 +85,7 @@ describe('activitypub:inbox:Follow', () => {
       try {
         const name = 'inv-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
         const actorUrl = makeUrl({ params: { action: 'actor', name } })
-        const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+        const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
         await signedReq({
           object: actorUrl,
           url: inboxUrl,
@@ -103,7 +102,7 @@ describe('activitypub:inbox:Follow', () => {
       const { uri } = await createHuman()
       const name = getEntityActorName(uri)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
       const res = await signedReq({
         object: actorUrl,
         url: inboxUrl,
@@ -120,7 +119,7 @@ describe('activitypub:inbox:Follow', () => {
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
       const res = await signedReq({
         object: actorUrl,
         url: inboxUrl,
