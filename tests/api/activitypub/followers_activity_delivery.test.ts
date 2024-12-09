@@ -22,11 +22,12 @@ describe('followers activity delivery', () => {
       const user = await createUser({ fediversable: true })
       const { username } = user
       const followedActorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } })
       const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
+        withSharedInbox: false,
       })
       const details = randomWords(4)
       const item = await createItem(user, { details })
@@ -44,7 +45,7 @@ describe('followers activity delivery', () => {
       const user = await createUser({ fediversable: true })
       const { username } = user
       const followedActorUrl = makeUrl({ params: { action: 'actor', name: username } }) as ObjectType
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: username } })
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: username } })
       const { remoteHost, remoteUserId } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
@@ -69,15 +70,15 @@ describe('followers activity delivery', () => {
       const { uri: authorUri } = await createHuman()
       const { uri: workUri, _id: workId } = await createWork()
       const followedActorUrl = makeUrl({ params: { action: 'actor', name: getEntityActorName(authorUri) } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name: getEntityActorName(authorUri) } })
-      const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name: getEntityActorName(authorUri) } })
+      const { remoteHost, remoteUserId } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
       })
       await addAuthor(workUri, authorUri)
       await wait(500)
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
+      const { inbox } = await requests_.get(`${remoteHost}/shared_inbox_inspection`)
       const createActivity = inbox.find(a => a.type === 'Create')
       createActivity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       createActivity.type.should.equal('Create')
@@ -96,7 +97,7 @@ describe('followers activity delivery', () => {
         const name = getActorName(shelf)
 
         const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
-        const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+        const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
         await signedReq({
           url: inboxUrl,
           object: followedActorUrl,
@@ -114,7 +115,7 @@ describe('followers activity delivery', () => {
         const { shelf } = await createShelf(user, { visibility: [ 'friends' ] })
         const name = getActorName(shelf)
         const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
-        const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
+        const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
         await signedReq({
           url: inboxUrl,
           object: followedActorUrl,
@@ -131,8 +132,8 @@ describe('followers activity delivery', () => {
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
-      const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
+      const { remoteHost, remoteUserId } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
@@ -140,7 +141,7 @@ describe('followers activity delivery', () => {
       const { _id: itemId } = await createItem(user)
       await addItemsToShelf(user, shelf, [ itemId ])
       await wait(debounceTime)
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
+      const { inbox } = await requests_.get(`${remoteHost}/shared_inbox_inspection`)
       const activity = inbox.find(a => a.type === 'Create')
       activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       activity.object.content.should.containEql(itemId)
@@ -152,8 +153,8 @@ describe('followers activity delivery', () => {
       const { shelf } = await createShelf(user)
       const name = getActorName(shelf)
       const followedActorUrl = makeUrl({ params: { action: 'actor', name } })
-      const inboxUrl = makeUrl({ params: { action: 'inbox', name } })
-      const { remoteHost, remoteUserId, remoteUsername } = await signedReq({
+      const inboxUrl = makeUrl({ params: { action: 'shared-inbox', name } })
+      const { remoteHost, remoteUserId } = await signedReq({
         url: inboxUrl,
         object: followedActorUrl,
         type: 'Follow',
@@ -162,7 +163,7 @@ describe('followers activity delivery', () => {
         shelves: [ shelf._id ],
       })
       await wait(debounceTime)
-      const { inbox } = await requests_.get(`${remoteHost}/inbox_inspection?username=${remoteUsername}`)
+      const { inbox } = await requests_.get(`${remoteHost}/shared_inbox_inspection`)
       const activity = inbox.find(a => a.type === 'Create')
       activity['@context'].should.containEql('https://www.w3.org/ns/activitystreams')
       activity.object.content.should.containEql(itemId)
