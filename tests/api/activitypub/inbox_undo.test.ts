@@ -66,6 +66,7 @@ describe('activitypub:inbox:Undo', () => {
         url: inboxUrl,
         type: 'Undo',
         object: activity.externalId,
+        withSharedInbox: false,
       })
       await wait(500)
       const activities2 = await getFollowActivitiesByObject(username)
