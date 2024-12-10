@@ -34,6 +34,7 @@ export interface ActorActivity {
   preferredUsername: string
   summary: string
   inbox: Url
+  sharedInbox: Url
   outbox: Url
   publicKey: {
     id: string
