@@ -15,6 +15,7 @@ extract_mocha_results(){
 
 drop_ansi_colors < ./logs/tests.log | extract_mocha_results > ./logs/tests_results.log
 timestamp=$(file_path_timestamp)
-tmpfile="/tmp/inventaire_tests_results.${timestamp}.log"
+mkdir -p /tmp/inventaire_tests_results
+tmpfile="/tmp/inventaire_tests_results/${timestamp}.log"
 cp ./logs/tests_results.log "$tmpfile"
 echo -e "\e[0;30mThose tests logs have been saved in file://$tmpfile \e[0;0m"
