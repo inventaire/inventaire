@@ -118,6 +118,8 @@ export const propertiesValuesConstraints = {
   'wdt:P675': externalId(/^[\w-]{12}$/),
   // influenced by
   'wdt:P737': humanEntity,
+  // parent organization
+  'wdt:P749': publisherEntity,
   // retrieved
   'wdt:P813': uniqueSimpleDay,
   // narrative set in

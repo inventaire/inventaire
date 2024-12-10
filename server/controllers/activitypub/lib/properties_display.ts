@@ -64,6 +64,7 @@ const publisherProperties = {
   'wdt:P576': 'time', // dissolution
   'wdt:P112': 'entity', // founded by
   'wdt:P127': 'entity', // owned by
+  'wdt:P749': 'entity', // parent organization
   'wdt:P856': 'url', // official website
   'wdt:P4033': 'platform', // mastodon
 }

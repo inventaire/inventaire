@@ -170,6 +170,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P737': {
     subjectTypes: [ 'human' ],
   },
+  // parent organization
+  'wdt:P749': {
+    subjectTypes: [ 'publisher' ],
+  },
   // official website
   'wdt:P856': {
     subjectTypes: allLocallyEditedEntitiesTypes,
