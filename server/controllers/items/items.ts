@@ -1,6 +1,7 @@
 import { updateSnapshotOnEntityChange } from '#controllers/items/lib/snapshot/update_snapshot_on_entity_change'
 import { actionsControllersFactory } from '#lib/actions_controllers'
 import bulkUpdate from './bulk_update.js'
+import byBbox from './by_bbox.js'
 import byEntities from './by_entities.js'
 import byIds from './by_ids.js'
 import byUserAndEntities from './by_user_and_entities.js'
@@ -19,6 +20,7 @@ import update from './update.js'
 export default {
   get: actionsControllersFactory({
     public: {
+      'by-bbox': byBbox,
       'by-ids': byIds,
       'by-users': byUsers,
       'by-entities': byEntities,
