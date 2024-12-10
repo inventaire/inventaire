@@ -41,6 +41,7 @@ export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?
     recordPossibleTimeoutError(host, err)
     errorCode = err.code || err.type || err.name || err.message
     err.statusCode = 500
+    err.context = { url }
     errorHandler(req, res, err)
     return
   } finally {

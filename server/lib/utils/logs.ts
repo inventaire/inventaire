@@ -2,14 +2,16 @@ import util from 'node:util'
 import { isArguments } from 'lodash-es'
 import chalk, { red, grey } from 'tiny-chalk'
 import { iscontextualizedError, type ContextualizedError } from '#lib/error/format_error'
+import { getHost } from '#lib/network/helpers'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#types/common'
 
 const { offline, verbose } = config
 // Log full objects
 util.inspect.defaultOptions.depth = 20
 
 let errorCount = 0
-const countsByErrorStatusCode = {}
+const countsByHostAndErrorStatusCode = {}
 
 const print = (str: string) => process.stdout.write(str + '\n')
 
@@ -72,9 +74,11 @@ export function logError (err: ContextualizedError, label?: string) {
 
   log(err, label, 'red')
 
-  const errorStatusCode = err.statusCode || 'no-status-code'
-  countsByErrorStatusCode[errorStatusCode] = countsByErrorStatusCode[errorStatusCode] || 0
-  countsByErrorStatusCode[errorStatusCode]++
+  const host = err?.context?.url != null ? getHost(err.context.url as AbsoluteUrl) : 'local'
+  const errorStatusCode = err.statusCode || 500
+  countsByHostAndErrorStatusCode[host] ??= {}
+  countsByHostAndErrorStatusCode[host][errorStatusCode] ??= 0
+  countsByHostAndErrorStatusCode[host][errorStatusCode]++
   errorCount++
 }
 
@@ -105,7 +109,7 @@ export function logErrorsCount () {
   const counter = () => {
     if (errorCount !== prev) {
       prev = errorCount
-      console.log(red('errors by status codes:'), countsByErrorStatusCode)
+      console.log(red('errors by hosts and status codes:'), countsByHostAndErrorStatusCode)
     }
   }
   setInterval(counter, 5000)
