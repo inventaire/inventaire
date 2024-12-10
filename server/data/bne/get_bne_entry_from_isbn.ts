@@ -25,7 +25,7 @@ const headers = {
 
 export default async function (isbn) {
   const url = `https://datos.bne.es/sparql?timeout=${timeout}&format=json&query=${getQuery(isbn)}` as AbsoluteUrl
-  const response = await requests_.get(url, { headers, timeout })
+  const response = await requests_.get(url, { headers, timeout, ignoreCertificateErrors: true })
   let simplifiedResults = simplifySparqlResults(response)
   // Work around the absence of support for GROUP_CONCAT
   simplifiedResults = regroupSameAsMatches(simplifiedResults)
