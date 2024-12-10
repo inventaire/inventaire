@@ -11,6 +11,7 @@ import exportt from './export.js'
 import inventoryView from './inventory_view.js'
 import lastPublic from './last_public.js'
 import nearby from './nearby.js'
+import nearbyPublic from './nearby_public.js'
 import recentPublic from './recent_public.js'
 import refreshSnapshot from './refresh_snapshot.js'
 import search from './search.js'
@@ -25,6 +26,7 @@ export default {
       'by-user-and-entities': byUserAndEntities,
       'inventory-view': inventoryView,
       'recent-public': recentPublic,
+      'nearby-public': nearbyPublic,
       'last-public': lastPublic,
       search,
     },

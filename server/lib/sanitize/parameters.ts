@@ -114,6 +114,11 @@ function formatStringArrayElement (str) {
   else return str
 }
 
+function formatPipedPosition (str) {
+  const arrayOfNumbers = arrayOrPipedString(str)
+  return truncateLatLng(arrayOfNumbers)
+}
+
 const arrayOrPipedString = arrayOrSeparatedString('|')
 const arrayOrCommaSeparatedString = arrayOrSeparatedString(',')
 
@@ -144,6 +149,7 @@ const couchUuids = {
 }
 
 const arrayOfNumbers = {
+  format: arrayOrPipedString,
   validate: arrayOfAType(isNumber),
 }
 
@@ -318,7 +324,7 @@ export const sanitizationParameters = {
     rename: renameId,
   },
   position: {
-    format: truncateLatLng,
+    format: formatPipedPosition,
     validate: arrayOfNumbers.validate,
   },
   prefix: allowlistedString,
