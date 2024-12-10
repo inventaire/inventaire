@@ -135,7 +135,7 @@ export async function getUsersNearby (userId: UserId, meterRange: number, strict
   return without(usersIds, userId)
 }
 
-export const getUserByPosition = searchUsersByPosition
+export const getUsersByBbox = searchUsersByPosition
 
 export async function imageIsUsed (imageHash: ImageHash) {
   assertString(imageHash)
@@ -149,7 +149,7 @@ export function serializeUserData (user) {
   return user
 }
 
-async function findNearby (latLng, meterRange, iterations = 0, strict = false) {
+export async function findNearby (latLng, meterRange, iterations = 0, strict = false) {
   const usersIds = await searchUsersByDistance(latLng, meterRange)
   // Try to get the 10 closest (11 minus the main user)
   // If strict, don't increase the range, just return what was found;
