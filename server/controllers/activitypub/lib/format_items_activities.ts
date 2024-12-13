@@ -9,7 +9,7 @@ import type { SerializedItem } from '#types/item'
 
 const maxLinksToDisplay = 3
 
-export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
+export function buildPooledCreateActivities ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
   return async function (activityDoc: ActivityDoc) {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range
@@ -44,40 +44,44 @@ export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor,
   }
 }
 
-export function createItemsActivities ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
+export function buildItemsCreateActivities ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
   return async function (activityDoc: ActivityDoc) {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range
     const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
     await Promise.all(publicRangeItems.map(addSnapshotToItem))
 
-    const noteActivities: NoteActivity[] = publicRangeItems.map(item => {
-      const link = buildLinkContentFromItem(item)
-      const id: Url = `${origin}/api/activitypub?action=activity&id=${item._id}`
+    const noteActivities: NoteActivity[] = publicRangeItems.map(item => buildNoteActivity(item, name, lang, parentLink, until))
 
-      const noteActivity: NoteActivity = {
-        id,
-        type: 'Note',
-        content: buildContent({ links: [ link ], name, lang, itemsLength: 1, parentLink }),
-        published: new Date(until).toISOString(),
-        attachment: [ buildAttachment(item) ],
-      }
-      return noteActivity
-    })
-
-    const createdActivities: CreateActivity[] = noteActivities.map(noteActivity => {
-      const createdActivity: CreateActivity = {
-        id: `${noteActivity.id}#create`,
-        '@context': context,
-        type: 'Create',
-        object: noteActivity,
-        actor,
-        to: [ 'Public' ],
-      }
-      return createdActivity
-    })
+    const createdActivities: CreateActivity[] = noteActivities.map(noteActivity => buildCreateActivity(noteActivity, actor))
     return createdActivities
   }
+}
+
+export function buildCreateActivity (noteActivity: NoteActivity, actor) {
+  const createdActivity: CreateActivity = {
+    id: `${noteActivity.id}#create`,
+    '@context': context,
+    type: 'Create',
+    object: noteActivity,
+    actor,
+    to: [ 'Public' ],
+  }
+  return createdActivity
+}
+
+export function buildNoteActivity (item, name, lang, parentLink, publishedDate) {
+  const link = buildLinkContentFromItem(item)
+  const id: AbsoluteUrl = `${publicOrigin}/api/activitypub?action=activity&id=item-${item._id}`
+
+  const noteActivity: NoteActivity = {
+    id,
+    type: 'Note',
+    content: buildContent({ links: [ link ], name, lang, itemsLength: 1, parentLink }),
+    published: new Date(publishedDate).toISOString(),
+    attachment: [ buildAttachment(item) ],
+  }
+  return noteActivity
 }
 
 export function findFullRangeFromActivities (activitiesDocs) {
