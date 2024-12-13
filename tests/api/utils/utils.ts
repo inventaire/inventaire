@@ -37,3 +37,5 @@ export const getDataadminUser = getUserGetter('dataadmin', 'dataadmin')
 export const getDeanonymizedUser = getUserGetter('deanonymized', null, {
   'settings.contributions.anonymize': false,
 })
+
+export type Awaitable <T> = T | Promise<T>

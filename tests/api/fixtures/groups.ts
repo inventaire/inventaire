@@ -1,13 +1,16 @@
 import { getGroupById } from '#controllers/groups/lib/groups'
 import { randomWords } from '#fixtures/text'
-import { createUser } from '#fixtures/users'
+import { createUser, type AwaitableUserWithCookie } from '#fixtures/users'
+import type { GroupCreationParams } from '#models/group'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
-import { getUser, getUserB } from '#tests/api/utils/utils'
+import { getUser, getUserB, type Awaitable } from '#tests/api/utils/utils'
+import type { Group } from '#types/group'
 
 export const endpointBase = '/api/groups'
 
-export const createGroup = (params = {}) => {
+type CreateGroupParams = Partial<GroupCreationParams> & { user?: AwaitableUserWithCookie }
+export const createGroup = (params: CreateGroupParams = {}) => {
   const {
     name = groupName(),
     description = groupDescription(),
@@ -22,14 +25,19 @@ export const createGroup = (params = {}) => {
     position,
     searchable,
     open,
-  })
+  }) as Promise<Group>
 }
 
-export async function membershipAction (actor, action, group, user) {
+type AwaitableGroup = Awaitable<Group>
+
+export async function membershipAction (actor: AwaitableUserWithCookie, action: string, group: AwaitableGroup, user?: AwaitableUserWithCookie) {
   group = await group
   user = await user
-  const data = { action, group: group._id }
-  if (user) data.user = user._id
+  const data = {
+    action,
+    group: group._id,
+    user: user ? user._id : undefined,
+  }
   return customAuthReq(actor, 'put', endpointBase, data)
 }
 
@@ -82,7 +90,7 @@ export const createGroupAndMember = async () => {
 export const groupName = () => randomWords(3, ' group')
 const groupDescription = () => randomWords(10)
 
-export async function createGroupWithAMember (params) {
+export async function createGroupWithAMember (params?: CreateGroupParams) {
   const group = await createGroup(params)
   const admin = await getUser()
   const member = await getUserB()

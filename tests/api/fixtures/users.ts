@@ -8,6 +8,7 @@ import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
+import type { Awaitable } from '#tests/api/utils/utils'
 import type { User, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean>
@@ -74,7 +75,7 @@ export interface UserWithCookie extends User {
   cookie: string
 }
 
-export type AwaitableUserWithCookie = UserWithCookie | Promise<UserWithCookie>
+export type AwaitableUserWithCookie = Awaitable<UserWithCookie>
 
 export async function getUserWithCookie (cookie: string) {
   const user = await request('get', '/api/user', null, cookie)
