@@ -1,6 +1,6 @@
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
-import type { Activity } from '#types/activity'
+import type { ActivityDoc } from '#types/activity'
 import attributes from './attributes/activity.js'
 import { baseActivityValidations } from './validations/activity.js'
 
@@ -13,7 +13,7 @@ export function createActivityDoc (activity) {
   delete activity.context
   delete activity['@context']
 
-  const newActivity: Partial<Activity> = {}
+  const newActivity: Partial<ActivityDoc> = {}
   Object.keys(activity).forEach(key => {
     const value = activity[key]
     if (!attributes.includes(key)) {

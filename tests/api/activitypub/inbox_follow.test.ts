@@ -75,7 +75,9 @@ describe('activitypub:inbox:Follow', () => {
       activity['@context'].should.deepEqual([ 'https://www.w3.org/ns/activitystreams' ])
       activity.type.should.equal('Accept')
       activity.actor.should.equal(actorUrl)
-      activity.object.should.startWith(remoteHost)
+      activity.object.type.should.equal('Follow')
+      activity.object.actor.should.startWith(remoteHost)
+      activity.object.object.should.startWith(actorUrl)
     })
   })
 
