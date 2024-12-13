@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import type { ActivityDoc, CreateActivity } from '#types/activity'
 import type { RelativeUrl, AbsoluteUrl } from '#types/common'
 import type { User } from '#types/user'
-import { createItemsNote, createItemsActivities, findFullRangeFromActivities } from './format_items_activities.js'
+import { buildPooledCreateActivities, buildItemsCreateActivities, findFullRangeFromActivities } from './format_items_activities.js'
 import { makeUrl } from './helpers.js'
 
 export default async function (activitiesDocs: ActivityDoc[], user: User) {
@@ -22,9 +22,9 @@ export default async function (activitiesDocs: ActivityDoc[], user: User) {
   })
   let formattedActivities: CreateActivity[] = []
   if (user.poolActivities) {
-    formattedActivities = await Promise.all(activitiesDocs.map(createItemsNote({ allActivitiesItems, lang: language, name, actor, parentLink })))
+    formattedActivities = await Promise.all(activitiesDocs.map(buildPooledCreateActivities({ allActivitiesItems, lang: language, name, actor, parentLink })))
   } else {
-    formattedActivities = flatten(await Promise.all(activitiesDocs.map(createItemsActivities({ allActivitiesItems, lang: language, name, actor, parentLink }))))
+    formattedActivities = flatten(await Promise.all(activitiesDocs.map(buildItemsCreateActivities({ allActivitiesItems, lang: language, name, actor, parentLink }))))
   }
   return compact(formattedActivities)
 }
