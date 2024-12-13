@@ -2,6 +2,7 @@ import should from 'should'
 import { createUser } from '#fixtures/users'
 import { newError } from '#lib/error/error'
 import { buildUrl } from '#lib/utils/url'
+import { federatedMode } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { adminReq, authReq, publicReq } from '#tests/api/utils/utils'
 
@@ -13,7 +14,9 @@ describe('user:abuse reports', () => {
     await publicReq('post', '/api/reports?action=error-report', { error: abuseErr })
   })
 
-  it('should save an abuse report', async () => {
+  it('should save an abuse report', async function () {
+    // Disabled in federated mode yet as this test relies on a special role
+    if (federatedMode) this.skip()
     const user = await createUser()
     await customAuthReq(user, 'post', '/api/reports?action=error-report', { error: abuseErr })
     const { users: adminViewUsers } = await adminReq('get', buildUrl('/api/users', { action: 'by-ids', ids: user._id }))
