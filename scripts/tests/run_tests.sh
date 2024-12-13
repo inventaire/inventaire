@@ -18,19 +18,19 @@ filter_files(){
     echo "Starting API tests"
     ./scripts/tests/run_api_slow_tests.sh
   else
-    unit_tests_files=$(filter_files "tests/unit/" "$@")
+    unit_tests_files=$(filter_files "tests/unit" "$@")
     [ "$unit_tests_files" != "" ] && {
       echo "Run unit tests from $unit_tests_files"
       ./scripts/tests/run_unit_tests.sh $unit_tests_files
     }
 
-    integration_tests_files=$(filter_files "tests/integration/" "$@")
+    integration_tests_files=$(filter_files "tests/integration" "$@")
     [ "$integration_tests_files" != "" ] && {
       echo "Run integration tests from $integration_tests_files"
       ./scripts/tests/run_integration_tests.sh $integration_tests_files
     }
 
-    api_tests_files=$(filter_files "tests/api/" "$@")
+    api_tests_files=$(filter_files "tests/api" "$@")
     [ "$api_tests_files" != "" ] && {
       echo "Run API tests from $api_tests_files"
       ./scripts/tests/api/test_api_quick.sh $api_tests_files
