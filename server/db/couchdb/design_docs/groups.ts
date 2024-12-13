@@ -3,11 +3,6 @@ import type { Views } from '#types/couchdb'
 import type { Group } from '#types/group'
 
 export const views: Views<Group> = {
-  byId: {
-    map: doc => {
-      emit(doc._id, null)
-    },
-  },
   bySlug: {
     map: doc => {
       emit(doc.slug, null)

@@ -15,8 +15,11 @@ import { addSlug } from './slug.js'
 const db = await dbFactory('groups')
 const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
 
-export const getGroupById = (id: GroupId) => db.findDocByViewKey<Group>('byId', id)
-export const getGroupsByIds = (ids: GroupId[]) => db.byIds<Group>(ids)
+export const getGroupById = (id: GroupId) => db.get<Group>(id)
+export async function getGroupsByIds (ids: GroupId[]) {
+  const { docs } = await db.fetch<Group>(ids)
+  return docs
+}
 export const getGroupBySlug = (id: GroupId) => db.findDocByViewKey<Group>('bySlug', id)
 
 export async function getGroupsWhereUserIsAdmin (userId) {
