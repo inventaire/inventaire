@@ -1,12 +1,14 @@
+import { federatedMode } from '#server/config'
 import { findOrIndexEntities } from '#tests/api/utils/entities'
 import { search } from '#tests/api/utils/search'
-import type { EntityUri } from '#types/entity'
+import type { WdEntityUri } from '#types/entity'
 import 'should'
 
-const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ] as EntityUri[]
+const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ] as WdEntityUri[]
 
 describe('entities:languages:search', () => {
-  before(async () => {
+  before(async function () {
+    if (federatedMode) this.skip()
     // Ensure wikidata uris are indexed in the current format
     await findOrIndexEntities(wikidataUris)
   })
