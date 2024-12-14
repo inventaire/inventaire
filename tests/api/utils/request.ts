@@ -41,12 +41,12 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: RawRe
   return requests_[method](url as AbsoluteUrl, reqParams)
 }
 
-export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
+export async function request (method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
   assert_.string(method)
   assert_.string(endpoint)
   const url = (endpoint.startsWith('/') ? origin + endpoint : endpoint) as AbsoluteUrl
   const options: RequestOptions = {
-    headers: { cookie },
+    headers,
     redirect: 'error',
     body,
   }
@@ -65,13 +65,14 @@ export async function request (method: HttpMethod, endpoint: Url, body?: unknown
   }
 }
 
-export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown) {
+export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
   assert_.type('object|promise', user)
   assert_.string(method)
   assert_.string(endpoint)
   user = await user
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
-  return request(method, endpoint, body, user.cookie)
+  headers.cookie = user.cookie
+  return request(method, endpoint, body, headers)
 }
 
 interface RawCustomAuthReqOptions {
