@@ -74,7 +74,7 @@
     "email-addresses": "^2.0.1",
     "express": "^4.21.2",
     "fold-to-ascii": "^5.0.0",
-    "formidable": "^3.5.1",
+    "formidable": "^3.5.2",
     "gm": "^1.23.1",
     "inventaire-i18n": "github:inventaire/inventaire-i18n",
     "isbn-groups": "^2.0.1",
