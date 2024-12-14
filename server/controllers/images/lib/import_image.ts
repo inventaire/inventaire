@@ -1,3 +1,4 @@
+import { tmpdir } from 'node:os'
 import { containers } from '#controllers/images/lib/containers'
 import { md5 } from '#lib/crypto'
 import { newInvalidError } from '#lib/error/pre_filled'
@@ -9,7 +10,7 @@ export default async function (container, sourceUrl) {
   }
 
   const tmpFilename = md5(sourceUrl)
-  const tmpPath = `/tmp/${tmpFilename}`
+  const tmpPath = `${tmpdir()}/${tmpFilename}`
 
   await downloadImage(sourceUrl, tmpPath)
   return containers[container].putImage({ path: tmpPath })

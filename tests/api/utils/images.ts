@@ -1,5 +1,6 @@
 import 'should'
 import fs, { createReadStream } from 'node:fs'
+import { tmpdir } from 'node:os'
 import FormData from 'form-data'
 import fetch from 'node-fetch'
 import downloadImage from '#controllers/images/lib/download_image'
@@ -40,7 +41,7 @@ export async function importSomeImage ({ container }) {
 }
 
 export async function uploadSomeImage ({ container, imageFilePath, preventAutoRemove = false }: { container: ImageContainer, imageFilePath?: string, preventAutoRemove?: boolean }) {
-  imageFilePath = imageFilePath || `/tmp/${getRandomString(10)}.jpg`
+  imageFilePath = imageFilePath || `${tmpdir()}/${getRandomString(10)}.jpg`
   const imageUrl = await getSomePlaceholderImageUrl()
   await downloadImage(imageUrl, imageFilePath)
   const { cookie } = await getUser()
