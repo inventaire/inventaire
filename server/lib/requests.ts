@@ -272,6 +272,6 @@ export const get = requests_.get
 
 const methodWithBody = [ 'put', 'post' ] as const
 
-export function httpMethodHasBody (method: HttpMethod) {
-  return arrayIncludes(methodWithBody, method)
+export function httpMethodHasBody (method: HttpMethod | Uppercase<HttpMethod>) {
+  return arrayIncludes(methodWithBody, method.toLowerCase())
 }
