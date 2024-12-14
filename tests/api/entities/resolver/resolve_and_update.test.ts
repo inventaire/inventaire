@@ -8,6 +8,7 @@ import {
   generateIsbn13,
   createEdition,
   generateIsbn13h,
+  generateSomeRecoverableIsni,
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
@@ -317,7 +318,7 @@ describe('entities:resolver:update-resolved', () => {
   })
 
   it('should update recoverable ids', async () => {
-    const someRecoverableIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = generateSomeRecoverableIsni()
     const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
     const human = await createHuman()
     const author = {

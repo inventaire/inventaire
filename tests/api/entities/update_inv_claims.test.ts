@@ -1,5 +1,5 @@
 import should from 'should'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash } from '#fixtures/entities'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash, generateSomeRecoverableIsni } from '#fixtures/entities'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -292,7 +292,7 @@ describe('entities:update-claims:inv', () => {
 
   it('should accept a recoverable ISNI', async () => {
     const human = await createHuman()
-    const someRecoverableIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = generateSomeRecoverableIsni()
     const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
     await addClaim({ uri: human.uri, property: 'wdt:P213', value: someRecoverableIsni })
     const updatedHuman = await getByUri(human.uri)

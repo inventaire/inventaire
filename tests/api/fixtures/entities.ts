@@ -331,3 +331,9 @@ export async function existsOrCreate ({ claims, createFn = createWork }: ExistsO
     }
   }
 }
+
+const randomDigits = (num: number) => Math.random().toString().slice(2, num + 2)
+
+export function generateSomeRecoverableIsni () {
+  return `0000 000${randomDigits(1)} ${randomDigits(4)} ${randomDigits(3)}X`
+}

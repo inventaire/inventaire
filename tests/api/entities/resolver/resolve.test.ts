@@ -10,6 +10,7 @@ import {
   generateIsbn13,
   createPublisher,
   createEditionWithIsbn, randomLabel,
+  generateSomeRecoverableIsni,
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
@@ -294,7 +295,7 @@ describe('entities:resolve:external-id', () => {
   })
 
   it('should resolve recoverable ids', async () => {
-    const someRecoverableIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = generateSomeRecoverableIsni()
     const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
     const human = await createHuman({
       claims: {

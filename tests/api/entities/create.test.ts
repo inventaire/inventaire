@@ -1,5 +1,5 @@
 import should from 'should'
-import { createEditionWithIsbn, randomLabel, someOpenLibraryId, someReference } from '#fixtures/entities'
+import { createEditionWithIsbn, generateSomeRecoverableIsni, randomLabel, someOpenLibraryId, someReference } from '#fixtures/entities'
 import { getSomeUsername } from '#fixtures/text'
 import { getEntityAttributesByUri } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
@@ -269,7 +269,7 @@ describe('entities:create', () => {
   })
 
   it('should accept a recoverable ISNI', async () => {
-    const someRecoverableIsni = `0000 0000 ${Math.random().toString().slice(2, 6)} 123X`
+    const someRecoverableIsni = generateSomeRecoverableIsni()
     const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
     const res = await authReq('post', endpoint, {
       labels: { fr: randomLabel() },
