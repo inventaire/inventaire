@@ -2,6 +2,7 @@ import { map } from 'lodash-es'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
 import { buildUrl } from '#lib/utils/url'
+import { federatedMode } from '#server/config'
 import { abuseErr } from '#tests/api/user/abuse_reports.test'
 import { customAuthReq } from '#tests/api/utils/request'
 import { adminReq } from '#tests/api/utils/utils'
@@ -9,7 +10,9 @@ import { adminReq } from '#tests/api/utils/utils'
 const getUrl = query => buildUrl('/api/users', { action: 'by-creation-date', ...query })
 
 describe('users:by-creation-date', () => {
-  it('should get the latest users', async () => {
+  it('should get the latest users', async function () {
+    // Disabled in federated mode yet as this test relies on a special role
+    if (federatedMode) this.skip()
     const user = await createUser()
     const { users } = await adminReq('get', getUrl({ limit: 2 }))
     users.should.be.an.Array()
@@ -17,7 +20,9 @@ describe('users:by-creation-date', () => {
     map(users, '_id').should.containEql(user._id)
   })
 
-  it('should include abuse reports', async () => {
+  it('should include abuse reports', async function () {
+    // Disabled in federated mode yet as this test relies on a special role
+    if (federatedMode) this.skip()
     const user = await createUser()
     await customAuthReq(user, 'post', '/api/reports?action=error-report', { error: abuseErr })
     await wait(200)
@@ -27,7 +32,9 @@ describe('users:by-creation-date', () => {
   })
 
   describe('filter=with-reports', () => {
-    it('should only include users with reports', async () => {
+    it('should only include users with reports', async function () {
+      // Disabled in federated mode yet as this test relies on a special role
+      if (federatedMode) this.skip()
       const user = await createUser()
       await customAuthReq(user, 'post', '/api/reports?action=error-report', { error: abuseErr })
       const { users } = await adminReq('get', getUrl({ limit: 10, filter: 'with-reports' }))

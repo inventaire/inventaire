@@ -20,16 +20,29 @@ import type { DatabaseConfig } from '#types/couchdb_init'
 
 export type Databases = Record<DatabaseName, DatabaseConfig['designDocs']>
 
+// Always create entities-related databases, even when in federated mode
+// to avoid having to create switches everywhere in the code base,
+// but those database should remain empty
+const entitiesRelatedDatabases = {
+  entities: {
+    entities: entitiesViews,
+    entities_deduplicate: entitiesDeduplicateViews,
+  },
+  patches: {
+    patches: patchesViews,
+  },
+  tasks: {
+    tasks: tasksViews,
+  },
+}
+
 export const databases: Databases = {
+  ...entitiesRelatedDatabases,
   activities: {
     activities: activitiesViews,
   },
   comments: {
     comments: commentsViews,
-  },
-  entities: {
-    entities: entitiesViews,
-    entities_deduplicate: entitiesDeduplicateViews,
   },
   groups: {
     groups: groupsViews,
@@ -46,17 +59,11 @@ export const databases: Databases = {
   notifications: {
     notifications: notificationsViews,
   },
-  patches: {
-    patches: patchesViews,
-  },
   elements: {
     elements: elementsViews,
   },
   shelves: {
     shelves: shelvesViews,
-  },
-  tasks: {
-    tasks: tasksViews,
   },
   oauth_authorizations: {},
   oauth_clients: {},

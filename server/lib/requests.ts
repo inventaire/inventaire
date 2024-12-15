@@ -6,6 +6,7 @@ import { newError, addContextToStack } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { wait } from '#lib/promises'
 import { assert_ } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
@@ -19,14 +20,21 @@ import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
-const { repository } = requireJson(absolutePath('root', 'package.json'))
+const { version } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
-export const userAgent = `${config.name} (${repository.url})`
+const publicOrigin = config.getPublicOrigin()
+
+const { NODE_APP_INSTANCE: nodeAppInstance } = process.env
+const { env } = config
+export const userAgent = env.includes('tests')
+  ? `${env}-${nodeAppInstance}`
+  : `${config.name}/${version}; +${publicOrigin}`
+
 const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
-export interface ReqOptions {
+export interface RequestOptions {
   returnBodyOnly?: boolean
   parseJson?: boolean
   body?: unknown
@@ -40,7 +48,7 @@ export interface ReqOptions {
   redirect?: 'follow' | 'error' | 'manual'
 }
 
-async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = {}) {
+export async function request (method: HttpMethod, url: AbsoluteUrl, options: RequestOptions = {}) {
   assert_.string(url)
   assert_.object(options)
 
@@ -247,17 +255,23 @@ function getStatusColor (statusCode) {
 }
 
 export const requests_ = {
-  get: req.bind(null, 'get'),
-  post: req.bind(null, 'post'),
-  put: req.bind(null, 'put'),
-  delete: req.bind(null, 'delete'),
-  head: (url: AbsoluteUrl, options: ReqOptions = {}) => {
+  get: request.bind(null, 'get'),
+  post: request.bind(null, 'post'),
+  put: request.bind(null, 'put'),
+  delete: request.bind(null, 'delete'),
+  head: (url: AbsoluteUrl, options: RequestOptions = {}) => {
     options.parseJson = false
     options.returnBodyOnly = false
-    return req('head', url, options)
+    return request('head', url, options)
   },
-  options: req.bind(null, 'options'),
+  options: request.bind(null, 'options'),
   userAgent,
 }
 
 export const get = requests_.get
+
+const methodWithBody = [ 'put', 'post' ] as const
+
+export function httpMethodHasBody (method: HttpMethod | Uppercase<HttpMethod>) {
+  return arrayIncludes(methodWithBody, method.toLowerCase())
+}
