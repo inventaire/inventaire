@@ -9,9 +9,9 @@ const sanitization = {
 
 async function controller ({ bbox, reqUserId }: SanitizedParameters, req: Req) {
   const reqUserHasAdminAccess = reqHasAdminAccess(req)
-  let users = await getUsersByBbox(bbox)
-  users = await getUsersAuthorizedData(users, { reqUserId, reqUserHasAdminAccess })
-  return { users }
+  const usersPromise = getUsersByBbox(bbox)
+  const filteredUsers = await getUsersAuthorizedData(usersPromise, { reqUserId, reqUserHasAdminAccess })
+  return { users: filteredUsers }
 }
 
 export default { sanitization, controller }

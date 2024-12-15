@@ -5,7 +5,7 @@ import { requests_ } from '#lib/requests'
 import { assertString } from '#lib/utils/assert_types'
 import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
-import type { SearchRequest, SearchResponse } from '@elastic/elasticsearch/lib/api/types.js'
+import type { SearchRequest, SearchResponse, SearchHitsMetadata } from '@elastic/elasticsearch/lib/api/types.js'
 
 const { origin: elasticOrigin, selfSignedCertificate } = config.elasticsearch
 
@@ -25,8 +25,8 @@ export function buildSearcher (params) {
     const { limit, offset } = params
     try {
       const res: SearchResponse = await requests_.post(url, { body, ...elasticReqOptions })
-      const { hits, total } = getHitsAndTotal(res)
-      let continu
+      const { hits, total }: SearchHitsMetadata = getHitsAndTotal(res)
+      let continu: number
       if (isNumber(limit) && isNumber(offset)) {
         continu = limit + offset
       }

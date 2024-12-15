@@ -3,12 +3,13 @@ import { getNetworkIds } from '#controllers/user/lib/relations_status'
 import { dbFactory } from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
 import { newError, notFoundError } from '#lib/error/error'
-import searchUsersByDistanceFactory from '#lib/search_by_distance'
-import searchUsersByPositionFactory from '#lib/search_by_position'
+import { searchByDistanceFactory } from '#lib/search_by_distance'
+import { searchByPositionFactory } from '#lib/search_by_position'
 import { assertArray, assertString } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
+import type { LatLng } from '#types/common'
 import type { ImageHash } from '#types/image'
 import type { OAuthProvider, OAuthProviderUserData } from '#types/oauth'
 import type { DocWithUsernameInUserDb, Email, User, UserId, UserRole, Username } from '#types/user'
@@ -16,8 +17,8 @@ import { omitPrivateData, type UserExtraAttribute } from './authorized_user_data
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
 
 const db = await dbFactory('users')
-const searchUsersByPosition = searchUsersByPositionFactory(db, 'users')
-const searchUsersByDistance = searchUsersByDistanceFactory('users')
+const searchUsersByPosition = searchByPositionFactory(db, 'users')
+const searchUsersByDistance = searchByDistanceFactory('users')
 
 // TODO: include SpecialUser in possibly returned type
 export const getUserById = db.get<User>
@@ -149,7 +150,7 @@ export function serializeUserData (user) {
   return user
 }
 
-export async function findNearby (latLng, meterRange, iterations = 0, strict = false) {
+export async function findNearby (latLng: LatLng, meterRange: number, iterations: number = 0, strict: boolean = false) {
   const usersIds = await searchUsersByDistance(latLng, meterRange)
   // Try to get the 10 closest (11 minus the main user)
   // If strict, don't increase the range, just return what was found;
