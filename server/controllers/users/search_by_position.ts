@@ -6,9 +6,9 @@ const sanitization = {
 }
 
 async function controller ({ bbox, reqUserId }: SanitizedParameters) {
-  let users = await getUsersByBbox(bbox)
-  users = await getUsersAuthorizedData(users, reqUserId)
-  return { users }
+  const usersPromise = getUsersByBbox(bbox)
+  const filteredUsers = await getUsersAuthorizedData(usersPromise, reqUserId)
+  return { users: filteredUsers }
 }
 
 export default { sanitization, controller }
