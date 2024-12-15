@@ -1,4 +1,6 @@
-export function filterMaximumItemsPerOwner (items, lang, limit) {
+import type { SerializedItem } from '#types/item'
+
+export function filterMaximumItemsPerOwner (items: SerializedItem[], lang: string, limit: number) {
   const filteredItems = []
   const discardedItems = []
   const itemsCountByOwner = {}
