@@ -1,3 +1,4 @@
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import { newError } from '#lib/error/error'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq } from '#types/server'
@@ -21,6 +22,8 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   if (uri) id = unprefixify(uri)
 
   if (value === '') throw newError('invalid value', 400, params)
+
+  await checkSpamContent(req.user, value)
 
   if (updater == null) {
     throw newError(`unsupported uri prefix: ${prefix}`, 400, params)

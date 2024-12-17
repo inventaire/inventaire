@@ -1,10 +1,13 @@
 import { pick } from 'lodash-es'
 import { getElementById, updateElementDocAttributes } from '#controllers/listings/lib/elements'
 import { getListingById, getListingWithElements, validateListingOwnership } from '#controllers/listings/lib/listings'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import { notFoundError } from '#lib/error/error'
 import { attributes } from '#models/element'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { ListingElement } from '#types/element'
 import type { Listing } from '#types/listing'
+import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {
   id: {},
@@ -15,11 +18,12 @@ const sanitization = {
   ordinal: { optional: true },
 }
 
-const controller = async params => {
-  const { id, reqUserId, ordinal } = params
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
+  const { id, reqUserId, ordinal, comment } = params
   const element: ListingElement = await getElementById(id)
 
   if (!element) throw notFoundError({ elementId: id })
+  await checkSpamContent(req.user, comment)
 
   let listing: Listing
   let elements: ListingElement[]

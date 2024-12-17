@@ -1,5 +1,7 @@
 import { createListing } from '#controllers/listings/lib/listings'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {
   name: {},
@@ -10,7 +12,8 @@ const sanitization = {
   },
 }
 
-async function controller (params: SanitizedParameters) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
+  await checkSpamContent(req.user, params.description)
   const listing = await formatNewListing(params)
   return { list: listing }
 }

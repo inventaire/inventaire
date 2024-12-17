@@ -3,6 +3,7 @@ import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '#tests/api/utils/utils'
+import type { ListingElement } from '#types/element'
 import type { EntityUri } from '#types/entity'
 import type { Listing } from '#types/listing'
 import type { VisibilityKey } from '#types/visibility'
@@ -22,7 +23,20 @@ export const createListing = async (userPromise?: AwaitableUserWithCookie, listi
   listingData.description = listingData.description || listingDescription()
   const user = await userPromise
   const { list: listing } = await customAuthReq(user, 'post', `${endpoint}create`, listingData)
-  return { listing, user }
+  return {
+    listing: listing as Listing,
+    user,
+  }
+}
+
+export async function updateListing (user: AwaitableUserWithCookie, listing: Listing) {
+  const { _id, name, description, visibility } = listing
+  await customAuthReq(user, 'put', endpoint, {
+    id: _id,
+    name,
+    description,
+    visibility,
+  })
 }
 
 export async function createListingWithElements (userPromise?: AwaitableUserWithCookie, numberOfElements = 3) {
@@ -53,19 +67,28 @@ export const createElement = async ({ visibility = [ 'public' ], uri, listing }:
     uris: [ uri ],
   })
   return {
-    element: createdElements[0],
+    element: createdElements[0] as ListingElement,
     listing,
     uri,
   }
 }
 
-export const removeElement = async ({ uri, listing }, userPromise) => {
-  userPromise = userPromise || getUser()
-  const user = await userPromise
+export const removeElement = async ({ uri, listing }, user: AwaitableUserWithCookie) => {
+  user = user || getUser()
+  user = await (user || getUser())
   const removeElements = '/api/lists?action=remove-elements'
 
   return customAuthReq(user, 'post', removeElements, {
     id: listing._id,
     uris: [ uri ],
+  })
+}
+
+export function updateElement (element: ListingElement, user: AwaitableUserWithCookie) {
+  const { _id: id, comment, ordinal } = element
+  return customAuthReq(user, 'post', '/api/lists?action=update-element', {
+    id,
+    comment,
+    ordinal,
   })
 }

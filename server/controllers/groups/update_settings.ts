@@ -1,5 +1,7 @@
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import { log } from '#lib/utils/logs'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 import membershipValidations from './lib/membership_validations.js'
 import updateSettings from './lib/update_settings.js'
 
@@ -11,8 +13,11 @@ const sanitization = {
   },
 }
 
-async function controller (params: SanitizedParameters) {
-  const { group: groupId, reqUserId } = params
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
+  const { group: groupId, reqUserId, attribute, value } = params
+
+  if (attribute === 'name' || attribute === 'description') await checkSpamContent(req.user, value)
+
   log(params, 'update group settings')
 
   await membershipValidations.updateSettings(reqUserId, groupId)

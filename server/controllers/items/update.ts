@@ -1,4 +1,5 @@
 import { updateItems } from '#controllers/items/lib/items'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import { isEntityUri, isItemId } from '#lib/boolean_validations'
 import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
@@ -27,6 +28,8 @@ export default async function (req, res) {
   if (!isEntityUri(entity)) {
     throw newInvalidError('entity', entity)
   }
+
+  await checkSpamContent(req.user, item.details)
 
   const reqUserId = req.user._id
 

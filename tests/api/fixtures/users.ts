@@ -144,3 +144,5 @@ function randomCoordinate (min: number, max: number) {
   max = max - 5
   return round(random(min, max, true), 4)
 }
+
+export const someSpamText = 'SEO! https://spamers.corp'
