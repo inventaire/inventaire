@@ -10,7 +10,7 @@ export function findNewOrdinal (element: ListingElement, elements: ListingElemen
 
   // Place element in last position if newOrdinal is too high
   if (elements.length < newOrdinal) newOrdinal = elements.length - 1
-  if (elements[newOrdinal]._id === element._id) return
+  if (elements[newOrdinal]?._id === element._id) return
   removeElementIfNecessary(element, elements, newOrdinal)
   return findNewLexicographicOrdinal(newOrdinal, elements)
 }
@@ -28,7 +28,7 @@ function findNewLexicographicOrdinal (newOrdinal: number, currentElements: Listi
   let precedentElementIndex, beforeOrdinal
   if (newOrdinal === 0) {
     precedentElementIndex = 0
-    // See nextHighestOrdinal comment on why '0' can be set as beforeOrdinal
+    // See getNextHighestOrdinal comment on why '0' can be set as beforeOrdinal
     beforeOrdinal = '0'
   } else {
     precedentElementIndex = newOrdinal - 1
@@ -37,17 +37,17 @@ function findNewLexicographicOrdinal (newOrdinal: number, currentElements: Listi
   const afterElement = currentElements[newOrdinal]
   let afterOrdinal
   if (!afterElement) {
-    afterOrdinal = nextHighestOrdinal(currentElements)
+    afterOrdinal = getNextHighestOrdinal(currentElements)
   } else {
     afterOrdinal = afterElement.ordinal
   }
   const lexicographicOrdinal = findOrdinalBetween(beforeOrdinal, afterOrdinal)
-  if (currentElements[precedentElementIndex].ordinal !== lexicographicOrdinal) {
+  if (currentElements[precedentElementIndex]?.ordinal !== lexicographicOrdinal) {
     return lexicographicOrdinal
   }
 }
 
-export function nextHighestOrdinal (elements: ListingElement[]) {
+export function getNextHighestOrdinal (elements: ListingElement[]) {
   // First element's ordinal can not be the first lexicographical possibility (aka '0'),
   // since some ordinal slots should be available before first element,
   // to be able to replace first element when needed.
