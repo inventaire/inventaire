@@ -1,5 +1,4 @@
 import onlineReport from '#controllers/reports/online_report'
-import { handleAbuseReport } from '#controllers/user/lib/abuse_reports'
 import { actionsControllersFactory } from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -28,11 +27,7 @@ function errorReport (req, res) {
   // Non-standard status codes used in reported errors
   // 599 = client implementation error
   // 598 = user abuse
-  if (err.statusCode === 598) {
-    handleAbuseReport(req.user, err)
-  } else {
-    logError(err, 'client error report')
-  }
+  logError(err, 'client error report')
   responses_.ok(res)
 }
 

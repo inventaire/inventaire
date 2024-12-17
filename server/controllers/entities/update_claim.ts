@@ -1,6 +1,7 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { isInvEntityId } from '#lib/boolean_validations'
+import { checkSpamContent } from '#controllers/user/lib/spam'
+import { isInvEntityId, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
 import { log } from '#lib/utils/logs'
@@ -32,6 +33,8 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   // An empty string is interpreted as a null value
   oldValue = parseEmptyValue(oldValue)
   newValue = parseEmptyValue(newValue)
+
+  if (isNonEmptyString(newValue)) await checkSpamContent(req.user, newValue)
 
   ;[ prefix, id ] = uri.split(':')
 

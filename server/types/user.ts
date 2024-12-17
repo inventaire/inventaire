@@ -54,10 +54,11 @@ export interface OAuthProviderTokens {
 }
 export type OwnerOnlyOAuthConsumer = OAuthConsumer & OAuthProviderTokens
 
-export interface AbuseReport {
-  type: string
+export interface SpamReport {
+  type: 'spam'
   text: string
 }
+export type AbuseReport = SpamReport
 
 export type Username = string
 

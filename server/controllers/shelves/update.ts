@@ -1,5 +1,7 @@
 import { updateShelfAttributes } from '#controllers/shelves/lib/shelves'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {
   shelf: {},
@@ -9,7 +11,8 @@ const sanitization = {
   color: { optional: true },
 }
 
-async function controller (params: SanitizedParameters) {
+async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
+  await checkSpamContent(req.user, params.description)
   const shelf = await updateShelfAttributes(params)
   return { shelf }
 }

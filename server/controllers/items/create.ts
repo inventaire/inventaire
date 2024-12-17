@@ -1,5 +1,6 @@
 import { isPlainObject } from 'lodash-es'
 import { createItems } from '#controllers/items/lib/items'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import { isEntityUri } from '#lib/boolean_validations'
 import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { track } from '#lib/track'
@@ -23,6 +24,7 @@ export default async function (req, res) {
     if (!isEntityUri(entityUri)) {
       throw newInvalidError('entity', entityUri)
     }
+    await checkSpamContent(user, item.details)
   }
 
   const itemsDocs = await createItems(user._id, items)

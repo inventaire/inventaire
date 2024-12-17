@@ -1,5 +1,6 @@
 import { get } from 'lodash-es'
 import { availability_ } from '#controllers/user/lib/availability'
+import { checkSpamContent } from '#controllers/user/lib/spam'
 import updateEmail from '#controllers/user/lib/update_email'
 import { setUserStableUsername } from '#controllers/user/lib/user'
 import { dbFactory } from '#db/couchdb/base'
@@ -26,6 +27,7 @@ const sanitization = {
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { attribute, value } = params
   const { user } = req
+  if (attribute === 'bio') await checkSpamContent(user, value)
   await update(user, attribute, value)
   return { ok: true }
 }

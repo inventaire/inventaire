@@ -3,6 +3,7 @@ import { randomWords } from '#fixtures/text'
 import { customAuthReq } from '#tests/api/utils/request'
 import { addItemsToShelf } from '#tests/api/utils/shelves'
 import { getUser } from '#tests/api/utils/utils'
+import type { Shelf } from '#types/shelf'
 import { createItem } from './items.js'
 
 export const shelfName = () => randomWords(3, ' shelf')
@@ -10,7 +11,7 @@ export const shelfDescription = () => {
   return randomWords(3, ' shelf')
 }
 
-export const createShelf = async (userPromise, shelfData = {}) => {
+export const createShelf = async (userPromise, shelfData: Partial<Shelf> = {}) => {
   userPromise = userPromise || getUser()
   shelfData.name = shelfData.name || shelfName()
   shelfData.visibility = shelfData.visibility || [ 'public' ]
@@ -22,7 +23,7 @@ export const createShelf = async (userPromise, shelfData = {}) => {
   return { shelf, user }
 }
 
-export const createShelfWithItem = async (shelfData = {}, itemData, userPromise) => {
+export const createShelfWithItem = async (shelfData: Partial<Shelf> = {}, itemData, userPromise) => {
   userPromise = userPromise || getUser()
   const { shelf, user } = await createShelf(userPromise, shelfData)
   let item
