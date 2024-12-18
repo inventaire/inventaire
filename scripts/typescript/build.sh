@@ -27,3 +27,4 @@ ln -sf "$(realpath package.json)" ./dist
 ln -sf "$(realpath config)" ./dist
 ln -sf "$(realpath client)" ./dist
 ln -sf "$(realpath db)" ./dist
+ln -sf "$(realpath keys)" ./dist
