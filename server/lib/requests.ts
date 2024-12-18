@@ -195,7 +195,7 @@ function getFetchOptions (method, options) {
   return fetchOptions
 }
 
-const basicAuthPattern = /\/\/\w+:[^@:]+@/
+const basicAuthPattern = /\/\/\w+:[^@:/]+@/
 
 const requestIntervalLogs = {}
 
