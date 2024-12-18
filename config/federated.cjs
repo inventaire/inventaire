@@ -8,7 +8,8 @@
 /** @type {PartialDeep<Config>} */
 const config = {
   env: 'federated',
-  port: 3011,
+  // By convention, federated server port = (equivalent default server port + 10)
+  port: 3016,
   db: {
     suffix: 'federated',
   },
