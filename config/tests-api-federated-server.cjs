@@ -11,7 +11,8 @@ const testsApiServerConfig = require('./tests-api-server.cjs')
 const config = {
   ...testsApiServerConfig,
   env: 'federated-tests',
-  port: 3013,
+  // By convention, federated server port = (equivalent default server port + 10)
+  port: 3019,
   db: {
     suffix: 'federated-tests',
   },
