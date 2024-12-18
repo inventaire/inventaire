@@ -73,7 +73,7 @@ export interface User extends CouchDoc {
   stableUsername?: Username
   created: EpochTimeStamp
   email?: Email
-  anonymizableId?: AnonymizableUserId
+  anonymizableId: AnonymizableUserId
   password?: string | StringifiedHashedSecretData
   picture?: UserImagePath
   language?: string
@@ -98,8 +98,9 @@ export interface User extends CouchDoc {
 }
 
 export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
-  _id: `00000000000000000000000000000${number}`
+  _id: CouchUuid
   _rev: CouchRevId
+  anonymizableId: AnonymizableUserId
   // TODO: replace doc.special with doc.type='special'
   type: never
   special: true
