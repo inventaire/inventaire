@@ -1,4 +1,4 @@
-import { getUserByPosition, getUsersAuthorizedData } from '#controllers/user/lib/user'
+import { getUsersByBbox, getUsersAuthorizedData } from '#controllers/user/lib/user'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
 const sanitization = {
@@ -6,9 +6,9 @@ const sanitization = {
 }
 
 async function controller ({ bbox, reqUserId }: SanitizedParameters) {
-  let users = await getUserByPosition(bbox)
-  users = await getUsersAuthorizedData(users, reqUserId)
-  return { users }
+  const usersPromise = getUsersByBbox(bbox)
+  const filteredUsers = await getUsersAuthorizedData(usersPromise, reqUserId)
+  return { users: filteredUsers }
 }
 
 export default { sanitization, controller }
