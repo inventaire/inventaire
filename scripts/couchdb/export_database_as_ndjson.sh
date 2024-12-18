@@ -5,7 +5,7 @@ set -euo pipefail
 # ex: "http://username:password@localhost:7984/comments"
 db_authentified_database_url="$1"
 
-curl "$db_authentified_database_url/_all_docs?include_docs=true" |
+curl -s "$db_authentified_database_url/_all_docs?include_docs=true" |
   # Omit first and last lines
   grep 'id' |
   # Ignore design docs
