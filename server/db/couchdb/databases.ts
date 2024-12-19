@@ -27,6 +27,9 @@ export const databases: Databases = {
   comments: {
     comments: commentsViews,
   },
+  elements: {
+    elements: elementsViews,
+  },
   entities: {
     entities: entitiesViews,
     entities_deduplicate: entitiesDeduplicateViews,
@@ -46,11 +49,11 @@ export const databases: Databases = {
   notifications: {
     notifications: notificationsViews,
   },
+  oauth_authorizations: {},
+  oauth_clients: {},
+  oauth_tokens: {},
   patches: {
     patches: patchesViews,
-  },
-  elements: {
-    elements: elementsViews,
   },
   shelves: {
     shelves: shelvesViews,
@@ -58,9 +61,6 @@ export const databases: Databases = {
   tasks: {
     tasks: tasksViews,
   },
-  oauth_authorizations: {},
-  oauth_clients: {},
-  oauth_tokens: {},
   transactions: {
     transactions: transactionsViews,
   },
