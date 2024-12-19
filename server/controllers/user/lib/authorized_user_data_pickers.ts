@@ -1,22 +1,23 @@
 import { pick } from 'lodash-es'
 import { getUserAccessLevels, type AccessLevel } from '#lib/user_access_levels'
 import userAttributes from '#models/attributes/user'
-import type { DeletedUser, DocWithUsernameInUserDb, User, UserId } from '#types/user'
+import type { DeletedUser, DocWithUsernameInUserDb, SpecialUser, User, UserId } from '#types/user'
 
-export interface OwnerSafeUser extends Pick<User, typeof userAttributes['ownerSafe'][number]> {
-  oauth?: string[]
+type OwnerSafeUserAttribute = typeof userAttributes['ownerSafe'][number]
+export interface OwnerSafeUser extends Pick<User, OwnerSafeUserAttribute> {
+  enabledOAuth: string[]
   accessLevels: AccessLevel[]
 }
 
 // Including the deleted user, as after deleting, it is still possible to make a request
 // with the session cookies
 export function ownerSafeData (user: User | DeletedUser) {
-  if (user.type === 'deletedUser') return user
-  const safeUserDoc: OwnerSafeUser = {
+  if (user.type === 'deleted') return user
+  const safeUserDoc: Partial<OwnerSafeUser> = {
     ...pick(user, userAttributes.ownerSafe),
     accessLevels: getUserAccessLevels(user),
   }
-  safeUserDoc.oauth = ('oauth' in user && user.oauth != null) ? Object.keys(user.oauth) : []
+  safeUserDoc.enabledOAuth = ('oauth' in user && user.oauth != null) ? Object.keys(user.oauth) : []
   safeUserDoc.roles = safeUserDoc.roles || []
   safeUserDoc.settings = safeUserDoc.settings || {}
   safeUserDoc.settings.notifications = safeUserDoc.settings.notifications || {}
@@ -29,10 +30,13 @@ export type UserExtraAttribute = 'email' | 'reports'
 export function omitPrivateData (reqUserId?: UserId, networkIds: UserId[] = [], extraAttribute?: UserExtraAttribute) {
   const attributes = getAttributes(extraAttribute)
   return (userDoc: DocWithUsernameInUserDb) => {
-    if (userDoc.type === 'deletedUser') return userDoc
+    if (userDoc.type === 'deleted') return userDoc
 
     const userId = userDoc._id
-    if (userId === reqUserId) return ownerSafeData(userDoc)
+    if (userId === reqUserId) {
+      // reqUserId is never a special user id
+      return ownerSafeData(userDoc as Exclude<DocWithUsernameInUserDb, SpecialUser>)
+    }
 
     const formattedUserDoc = pick(userDoc, attributes)
     if ('snapshot' in formattedUserDoc) {

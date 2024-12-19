@@ -3,7 +3,7 @@ import { newError } from '#lib/error/error'
 export default (user, notificationLabel) => {
   const { _id, type, settings, undeliveredEmail } = user
 
-  if (type === 'deletedUser') throw emailDisabled({ user: _id, reason: 'deleted user' })
+  if (type === 'deleted') throw emailDisabled({ user: _id, reason: 'deleted user' })
 
   if (!settings) throw newError('invalid user doc', user)
 

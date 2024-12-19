@@ -1,8 +1,7 @@
 import type { SpecialUser } from '#types/user'
 
 export const specialUserDocBase = {
-  // TODO: replace with type: 'special' for consistency with the other docs in the database
-  special: true,
+  type: 'special',
   // Data required to avoid crashing users logic
   snapshot: {},
   settings: {
@@ -16,7 +15,7 @@ export const specialUserDocBase = {
 } as const
 
 function buildSpecialUserDoc (username, idLastCharacters) {
-  const specialUser: Omit<SpecialUser, '_rev' | 'type' | 'stableUsername' | 'roles'> = {
+  const specialUser: Omit<SpecialUser, '_rev' | 'stableUsername' | 'roles'> = {
     _id: `00000000000000000000000000000${idLastCharacters}`,
     username,
     ...specialUserDocBase,

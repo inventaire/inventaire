@@ -9,7 +9,7 @@ export default {
   shelves: isntDesignDoc,
   lists: isntDesignDoc,
   // Do not filter-out doc.type=deletedUser so that deleted users can be unindexed
-  users: doc => doc.type === 'user' || doc.type === 'deletedUser',
+  users: doc => doc.type === 'user' || doc.type === 'deleted',
   // Do not filter-out doc.searchable=false so that toggling this settings does
   // update the document in Elasticsearch and can then be filtered-out at search time
   wikidata: identity,

@@ -102,7 +102,7 @@ describe('user model', () => {
         _id: user._id,
         _rev: user._rev,
         username: user.username,
-        type: 'deletedUser',
+        type: 'deleted',
         created: user.created,
       })
     })

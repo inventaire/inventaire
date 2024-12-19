@@ -82,7 +82,7 @@ export async function upgradeInvitedUser (invitedDoc: InvitedUser, username: Use
 export function softDeleteUser (userDoc: User) {
   const userSouvenir: DeletedUser = {
     ...pick(userDoc, userAttributes.critical),
-    type: 'deletedUser',
+    type: 'deleted',
     deleted: Date.now(),
   }
   return userSouvenir
@@ -118,7 +118,7 @@ export const setUserDocOauthTokens = (provider, data) => (user: User) => {
 export const updateUserItemsCounts = itemsCounts => (user: DocWithUsernameInUserDb) => {
   // This function is used by db.update and should thus always return a user doc
   // even if unmodified
-  if (user.type === 'deletedUser') return user
+  if (user.type === 'deleted') return user
   assert_.object(itemsCounts.private)
   assert_.object(itemsCounts.network)
   assert_.object(itemsCounts.public)

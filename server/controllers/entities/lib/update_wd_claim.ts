@@ -144,7 +144,7 @@ export async function addWdClaims (id: WdEntityId, claims: Claims, user: User | 
     return
   }
   const credentials = getWikidataOAuthCredentials(user)
-  const bot = 'special' in user && user.special
+  const bot = user.type === 'special'
   const expandedClaims = expandInvClaims(claims)
   const formattedClaims = formatClaimsForWikidata(omitLocalClaims(expandedClaims))
   await wdEdit.entity.edit({

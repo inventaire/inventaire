@@ -5,7 +5,7 @@ import type { SpecialUser, User } from '#types/user'
 const { wikidataOAuth, botAccountWikidataOAuth } = config
 
 export function hasWikidataOAuth (user: User | SpecialUser) {
-  if ('special' in user) return true
+  if (user.type === 'special') return true
   const userWikidataOAuth = user.oauth != null ? user.oauth.wikidata : undefined
   return userWikidataOAuth != null
 }
@@ -17,7 +17,7 @@ export function validateWikidataOAuth (user: User | SpecialUser) {
 }
 
 export function getWikidataOAuthCredentials (user: User | SpecialUser) {
-  if ('special' in user) {
+  if (user.type === 'special') {
     return {
       oauth: botAccountWikidataOAuth,
     }

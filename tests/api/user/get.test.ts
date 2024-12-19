@@ -24,7 +24,7 @@ describe('user:get', () => {
     snapshot.private.should.be.an.Object()
     snapshot.network.should.be.an.Object()
     snapshot.public.should.be.an.Object()
-    userPrivateData.oauth.should.be.an.Array()
+    userPrivateData.enabledOAuth.should.be.an.Array()
   })
 
   it('should get delete user flag', async () => {
@@ -32,7 +32,7 @@ describe('user:get', () => {
     await deleteUser(user)
     const deletedUserData = await customAuthReq(user, 'get', endpoint)
     deletedUserData._id.should.equal(user._id)
-    deletedUserData.type.should.equal('deletedUser')
+    deletedUserData.type.should.equal('deleted')
   })
 
   it('should get access levels', async () => {
