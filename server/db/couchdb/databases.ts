@@ -55,6 +55,9 @@ export const databases: Databases = {
   patches: {
     patches: patchesViews,
   },
+  relations: {
+    relations: relationsViews,
+  },
   shelves: {
     shelves: shelvesViews,
   },
@@ -66,7 +69,6 @@ export const databases: Databases = {
   },
   users: {
     users: usersViews,
-    relations: relationsViews,
     invited: invitedViews,
   },
 } as const

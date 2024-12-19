@@ -6,7 +6,7 @@ import type { Relation } from '#types/relation'
 import type { UserId } from '#types/user'
 import parseRelations from './parse_relations.js'
 
-const db = await dbFactory('users', 'relations')
+const db = await dbFactory('relations')
 
 function getAllUserRelations (userId: UserId, includeDocs = false) {
   return db.view<Relation>('relations', 'byStatus', {

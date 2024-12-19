@@ -5,7 +5,6 @@ import type { CouchDoc, CouchRevId, CouchUuid } from '#types/couchdb'
 import type { PropertyUri } from '#types/entity'
 import type { GroupId } from '#types/group'
 import type { ImageHash, UserImagePath } from '#types/image'
-import type { Relation } from '#types/relation'
 import type { ReadonlyDeep } from 'type-fest'
 
 export type UserId = CouchUuid
@@ -116,5 +115,5 @@ export interface InvitedUser extends CouchDoc {
   invitersGroups?: Record<GroupId, UserId>
 }
 
-export type DocInUserDb = User | InvitedUser | DeletedUser | SpecialUser | Relation
+export type DocInUserDb = User | InvitedUser | DeletedUser | SpecialUser
 export type DocWithUsernameInUserDb = User | DeletedUser | SpecialUser

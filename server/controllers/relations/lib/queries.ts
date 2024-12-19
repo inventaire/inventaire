@@ -7,7 +7,7 @@ import type { Relation, RelationId, RelationStatus } from '#types/relation'
 import type { UserId } from '#types/user'
 import userRelativeRequest from './user-relative_request.js'
 
-const db = await dbFactory('users', 'relations')
+const db = await dbFactory('relations')
 
 function getUsersRelation (userId: UserId, otherId: UserId) {
   const relationId = getRelationDocId(userId, otherId)

@@ -7,7 +7,6 @@ export type RelationStatus = typeof statuses[number]
 
 export interface Relation extends CouchDoc {
   _id: RelationId
-  type: 'relation'
   status: RelationStatus
   created: EpochTimeStamp
   updated?: EpochTimeStamp
