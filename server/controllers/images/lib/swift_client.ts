@@ -6,12 +6,11 @@ import config from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import getToken from './get_swift_token.js'
 
-const { publicURL } = config.mediaStorage.swift
-
-const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}` as AbsoluteUrl
 const relativeUrl = (container, filename) => `/img/${container}/${filename}` as RelativeUrl
 
 async function getParams (container, filename) {
+  const { publicURL } = config.mediaStorage?.swift
+  const absoluteUrl = (container, filename) => `${publicURL}/${container}/${filename}` as AbsoluteUrl
   const token = await getToken()
   return {
     url: absoluteUrl(container, filename),

@@ -11,7 +11,7 @@ const servicesHostnames = uniq(compact([
   db.hostname,
   getHostname(elasticsearch.origin),
   getHostname(dataseed.origin),
-  getHostname(mediaStorage.swift.publicURL),
+  getHostname(mediaStorage.swift?.publicURL),
 ]))
 
 const servicesIps = await Promise.all(servicesHostnames.map(getHostnameIp))
