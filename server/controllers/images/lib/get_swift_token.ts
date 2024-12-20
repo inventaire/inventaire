@@ -12,7 +12,10 @@ let lastTokenExpirationTime = 0
 // let a 10 minutes margin before token expiration
 const tokenExpired = () => Date.now() > (lastTokenExpirationTime - tenMinutes)
 
-const { username, password, authUrl, tenantName } = config.mediaStorage.swift
+let username, password, authUrl, tenantName
+if (config.mediaStorage.swift) {
+  ;({ username, password, authUrl, tenantName } = config.mediaStorage.swift)
+}
 
 // source: https://docs.openstack.org/keystone/pike/contributor/http-api.html#i-have-a-non-python-client
 const url = `${authUrl}/v3/auth/tokens` as AbsoluteUrl
