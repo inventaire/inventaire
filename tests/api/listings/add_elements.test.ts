@@ -1,5 +1,5 @@
 import { map, uniq } from 'lodash-es'
-import { createEdition, someFakeUri, createHuman, createSerie} from '#fixtures/entities'
+import { createWork, someFakeUri, createHuman, createSerie } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { getByIdWithElements } from '#tests/api/utils/listings'
 import { getUserB, authReq } from '#tests/api/utils/utils'
@@ -49,12 +49,12 @@ describe('listings:add-elements', () => {
 
   it('should add uri and create element', async () => {
     const { listing } = await createListing()
-    const { uri } = await createEdition()
+    const { uri } = await createWork()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
       uris: [ uri ],
     })
-    const { uri: uri2 } = await createEdition()
+    const { uri: uri2 } = await createWork()
     await authReq('post', `${endpoint}add-elements`, {
       id: listing._id,
       uris: [ uri2 ],
@@ -81,7 +81,7 @@ describe('listings:add-elements', () => {
   it('should reject adding an element to a listing of another creator', async () => {
     try {
       const { listing } = await createListing(getUserB())
-      const { uri } = await createEdition()
+      const { uri } = await createWork()
       await authReq('post', `${endpoint}add-elements`, {
         id: listing._id,
         uris: [ uri ],
@@ -97,10 +97,10 @@ describe('listings:add-elements', () => {
   it('should give different ordinals to multiple elements created at the same time', async () => {
     const { listing } = await createListing()
     const editions = await Promise.all([
-      createEdition(),
-      createEdition(),
-      createEdition(),
-      createEdition(),
+      createWork(),
+      createWork(),
+      createWork(),
+      createWork(),
     ])
     const uris = map(editions, 'uri')
     await authReq('post', `${endpoint}add-elements`, {
