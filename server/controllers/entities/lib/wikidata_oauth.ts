@@ -1,5 +1,6 @@
 import { newError } from '#lib/error/error'
 import type { MinimalRemoteUser, UserWithAcct } from '#lib/federation/remote_user'
+import { getUserAcct } from '#lib/federation/remote_user'
 import config from '#server/config'
 import type { SpecialUser, User } from '#types/user'
 
@@ -10,7 +11,7 @@ export function hasWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser |
   return 'oauth' in user && 'wikidata' in user.oauth && user.oauth.wikidata != null
 }
 
-export function validateWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
+export function assertUserHasWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
   if (!hasWikidataOAuth(user)) {
     throw newError('missing wikidata oauth tokens', 400)
   }
@@ -19,15 +20,19 @@ export function validateWikidataOAuth (user: User | SpecialUser | MinimalRemoteU
 export function getWikidataOAuthCredentials (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
   if ('type' in user && user.type === 'special') {
     return {
-      oauth: botAccountWikidataOAuth,
+      hasOwnOAuth: true,
+      credentials: { oauth: botAccountWikidataOAuth },
+    }
+  } else if (('oauth' in user && 'wikidata' in user.oauth)) {
+    return {
+      hasOwnOAuth: true,
+      credentials: { oauth: { ...wikidataOAuth, ...user.oauth.wikidata } },
     }
   } else {
-    if (('oauth' in user && 'wikidata' in user.oauth)) {
-      return {
-        oauth: { ...wikidataOAuth, ...user.oauth.wikidata },
-      }
-    } else {
-      throw newError('missing wikidata oauth tokens', 400)
+    return {
+      hasOwnOAuth: false,
+      credentials: { oauth: botAccountWikidataOAuth },
+      summarySuffix: `Edit on behalf of acct:${getUserAcct(user)}`,
     }
   }
 }
