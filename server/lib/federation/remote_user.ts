@@ -71,7 +71,7 @@ export function buildLocalUserAcct (anonymizableId: AnonymizableUserId) {
   return buildUserAcct(anonymizableId, publicHost)
 }
 
-export function getUserAcct (user: User | SpecialUser | BareRemoteUser) {
+export function getUserAcct (user: User | SpecialUser | BareRemoteUser | UserWithAcct) {
   if ('acct' in user) {
     return user.acct
   } else {

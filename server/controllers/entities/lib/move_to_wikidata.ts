@@ -136,14 +136,14 @@ function buildDescriptions (claims: ExpandedClaims): Descriptions {
 }
 
 async function setReverseClaims (claims: ExpandedClaims, wdEntityUri: WdEntityUri, user: User | BareRemoteUser) {
-  const credentials = getWikidataOAuthCredentials(user)
+  const { credentials, summarySuffix: summary } = getWikidataOAuthCredentials(user)
   const entityType = getInvEntityType(claims['wdt:P31'])
   const newEntityId = unprefixify(wdEntityUri)
   if (entityType === 'edition') {
     for (const workClaim of uniq(claims['wdt:P629'])) {
       const workUri = getClaimValue(workClaim) as EntityValue
       const id = unprefixify(workUri)
-      await wdEdit.claim.create({ id, property: 'P747', value: newEntityId }, { credentials })
+      await wdEdit.claim.create({ id, property: 'P747', value: newEntityId }, { credentials, summary })
     }
   }
 }

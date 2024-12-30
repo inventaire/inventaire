@@ -1,6 +1,6 @@
 import { triggerSubjectEntityCacheRefresh } from '#controllers/entities/lib/entities_relations_temporary_cache'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
-import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getWikidataOAuthCredentials, assertUserHasWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
@@ -15,10 +15,10 @@ export async function updateWdLabel (user: User | BareRemoteUser, id: WdEntityId
   if (!isWdEntityId(id)) throw newInvalidError('id', id)
   if (isRemoteUser(user)) throw newError('remote users can not update wd label yet', 400)
 
-  validateWikidataOAuth(user)
-  const credentials = getWikidataOAuthCredentials(user)
+  assertUserHasWikidataOAuth(user)
+  const { credentials, summarySuffix: summary } = getWikidataOAuthCredentials(user)
 
-  const res = await wdEdit.label.set({ id, language, value }, { credentials })
+  const res = await wdEdit.label.set({ id, language, value }, { credentials, summary })
   triggerSubjectEntityCacheRefresh(prefixifyWd(id))
   return res
 }
