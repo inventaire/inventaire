@@ -108,7 +108,7 @@ describe('users:by-usernames', () => {
       should(users[lowerCasedUsername].anonymizableId).not.be.ok()
     })
 
-    it.only('should get the anonymizableId of an anonymized user, when requested by the user', async () => {
+    it('should get the anonymizableId of an anonymized user, when requested by the user', async () => {
       const user = await createUser()
       const { username } = user
       const { users } = await customAuthReq(user, 'get', `${endpoint}&usernames=${username}`)
