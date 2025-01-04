@@ -4,16 +4,18 @@ const updatable = [
   'name',
 ]
 
+const entityTypesByListingType = {
+  work: [ 'work', 'serie' ],
+  author: [ 'human' ],
+  publisher: [ 'publisher' ],
+}
+
 export default {
   updatable,
   validAtCreation: updatable.concat([
     'creator',
     'type',
   ]),
-  type: [ 'work', 'author', 'publisher' ],
-  entityTypesByListingType: {
-    work: [ 'work', 'serie' ],
-    author: [ 'human' ],
-    publisher: [ 'publisher' ],
-  },
+  type: Object.keys(entityTypesByListingType),
+  entityTypesByListingType,
 }
