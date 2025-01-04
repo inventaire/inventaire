@@ -11,7 +11,7 @@ import { createListingDoc, updateListingDocAttributes } from '#models/listing'
 import type { NewCouchDoc } from '#types/couchdb'
 import type { ListingElement } from '#types/element'
 import type { EntityUri } from '#types/entity'
-import type { Listing, ListingId, ListingWithElements } from '#types/listing'
+import type { Listing, ListingId, ListingWithElements, ListingType } from '#types/listing'
 import type { UserId } from '#types/user'
 
 const { updatable: updateAttributes, entityTypesByListingType } = listingAttributes
@@ -100,7 +100,7 @@ export async function deleteUserListingsAndElements (userId: UserId) {
   ])
 }
 
-export async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType) {
+export async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType: ListingType) {
   const { notFound, entities } = await getEntitiesByUris({ uris })
   const allowlistedEntityTypes = entityTypesByListingType[listingType]
   const wrongTypeEntity = Object.values(entities).find(entity => {
