@@ -1,6 +1,7 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assert_ } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import type { Listing } from '#types/listing'
 import attributes from './attributes/listing.js'
 import validations from './validations/listing.js'
@@ -33,7 +34,7 @@ export function updateListingDocAttributes (oldListing, newAttributes, creatorId
     throw newError('wrong user', 403, oldListing.creator)
   }
   for (const attr of Object.keys(newAttributes)) {
-    if (!(attributes.updatable.includes(attr))) {
+    if (!(arrayIncludes(attributes.updatable, attr))) {
       throw newError(`invalid attribute: ${attr}`, 400, oldListing)
     }
   }
