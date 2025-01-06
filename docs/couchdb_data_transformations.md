@@ -63,7 +63,7 @@ Here, we use [`ndjson-apply`](https://github.com/maxlath/ndjson-apply) to apply 
 
 Write your transform function in a file:
 ```js
-// transform_users.ts
+// transform_users.js
 export default function (doc) {
   doc.language = doc.language || 'en'
   delete doc.picture
@@ -76,16 +76,22 @@ You can test the effects of your function by using `ndjson-apply` `--diff` mode:
 
 ```sh
 # Preview the transformation on all the documents
-cat ./documents.ndjson | ndjson-apply-ts ./transform_users.ts --diff
+cat ./documents.ndjson | ndjson-apply ./transform_users.js --diff
 # or just the first 100 docs
-head -n 100 ./documents.ndjson | ndjson-apply-ts ./transform_users.ts --diff
+head -n 100 ./documents.ndjson | ndjson-apply ./transform_users.js --diff
+```
+
+This can also be done with a TypeScript file using `ndjson-apply` TS executable `ndjson-apply-ts`
+```sh
+cat ./documents.ndjson | ndjson-apply-ts ./transform_users.ts --diff
 ```
 
 When the preview gives the expected results, you're ready to transform all your documents!
 
 ```sh
-cat ./documents.ndjson | ndjson-apply-ts ./transform_users.ts > updated_documents.ndjson
+cat ./documents.ndjson | ndjson-apply ./transform_users.js > updated_documents.ndjson
 ```
+
 
 ### By modifying the document as text
 In some cases, it's ok to just pass the documents through a `sed` command to replace some bits of the document. It should generally be considered more risky than modifying the JS object, but in some cases, and assuming that you have a good knowledge of the documents you're modifying, that should be just fine.
