@@ -88,7 +88,12 @@ async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = 
       // - SPARQL services too
       // Let the error be raised as a request error instead of a JSON.parse error
       if (statusCode < 400) {
-        err.context = { url, options, statusCode, responseText }
+        err.context = {
+          url,
+          options,
+          statusCode,
+          body: looksLikeHtml(responseText) ? '[HTML response body]' : responseText,
+        }
         addContextToStack(err)
         declareHostError(host)
         throw err
