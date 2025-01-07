@@ -1,6 +1,7 @@
 import { signRequest } from '#controllers/activitypub/lib/security'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
+import { whateverWorks } from '#lib/promises'
 import { requests_, sanitizeUrl } from '#lib/requests'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
@@ -46,7 +47,7 @@ export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: {
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
   const inboxUrisByBodyTos: Record<AbsoluteUrl, BodyTo> = {}
-  await Promise.all(followActivities.map(activity => buildAudience(activity, inboxUrisByBodyTos)))
+  await whateverWorks(followActivities.map(activity => buildAudience(activity, inboxUrisByBodyTos)))
   const inboxUris = Object.keys(inboxUrisByBodyTos) as AbsoluteUrl[]
   return Promise.all(inboxUris.map(inboxUri => {
     const bodyTo: BodyTo = inboxUrisByBodyTos[inboxUri]
