@@ -74,21 +74,22 @@ export async function fetchInboxUri ({ actorUri, activity }: { actorUri: Absolut
   const inbox: AbsoluteUrl = sharedInbox || inboxUri
 
   if (!inbox) {
-    return warn({ actorUri, activity }, 'No inbox found, cannot post activity')
+    warn({ actorUri, activity }, 'No inbox found, cannot post activity')
+  } else if (!isUrl(inbox)) {
+    warn({ actorUri, activity, inbox }, 'Invalid inbox URL, cannot post activity')
+  } else {
+    return inbox
   }
-  if (!isUrl(inbox)) {
-    return warn({ actorUri, activity, inbox }, 'Invalid inbox URL, cannot post activity')
-  }
-
-  return inbox
 }
 
 async function buildAudience (activity, inboxUrisByBodyTos) {
   const actorUri: AbsoluteUrl = activity.actor.uri
-  const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
-  if (inboxUrisByBodyTos[inboxUri]) {
-    inboxUrisByBodyTos[inboxUri] = inboxUrisByBodyTos[inboxUri].unshift(actorUri)
-  } else {
-    inboxUrisByBodyTos[inboxUri] = [ actorUri, 'Public' ]
+  const inboxUri = await fetchInboxUri({ actorUri, activity })
+  if (inboxUri) {
+    if (inboxUrisByBodyTos[inboxUri]) {
+      inboxUrisByBodyTos[inboxUri] = inboxUrisByBodyTos[inboxUri].unshift(actorUri)
+    } else {
+      inboxUrisByBodyTos[inboxUri] = [ actorUri, 'Public' ]
+    }
   }
 }
