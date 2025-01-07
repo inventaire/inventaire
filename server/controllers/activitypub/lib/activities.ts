@@ -1,7 +1,7 @@
 import { dbFactory } from '#db/couchdb/base'
 import { assert_ } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
-import type { Activity, ActivityId } from '#types/activity'
+import type { ActivityDoc, ActivityId, ActorName } from '#types/activity'
 
 const db = await dbFactory('activities')
 
@@ -9,23 +9,23 @@ const db = await dbFactory('activities')
 // grouping items (and entities) under the same activity, this
 // way ensures activities consistency which allows pagination based on offsets
 
-export const getActivityById = (id: ActivityId) => db.get<Activity>(id)
-export const getActivitiesByIds = db.byIds<Activity>
+export const getActivityById = (id: ActivityId) => db.get<ActivityDoc>(id)
+export const getActivitiesByIds = db.byIds<ActivityDoc>
 export const deleteActivityById = db.delete
 
-export async function getFollowActivitiesByObject (name: string) {
-  return db.getDocsByViewKey<Activity>('followActivitiesByObject', name)
+export async function getFollowActivitiesByObject (name: ActorName) {
+  return db.getDocsByViewKey<ActivityDoc>('followActivitiesByObject', name)
 }
 
 export async function createActivity (newActivity) {
   const activity = createActivityDoc(newActivity)
   const createdActivity = await db.postAndReturn(activity)
-  return createdActivity as Activity
+  return createdActivity as ActivityDoc
 }
 
 export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }: { name: string, limit?: number, offset?: number }) {
   assert_.string(name)
-  return db.getDocsByViewQuery<Activity>('byActorNameAndDate', {
+  return db.getDocsByViewQuery<ActivityDoc>('byActorNameAndDate', {
     limit,
     skip: offset,
     startkey: [ name, Date.now() ],
@@ -47,5 +47,5 @@ export async function getActivitiesCountByName (name: string) {
 }
 
 export function getActivityByExternalId (externalId: string) {
-  return db.findDocByViewKey<Activity>('byExternalId', externalId)
+  return db.findDocByViewKey<ActivityDoc>('byExternalId', externalId)
 }

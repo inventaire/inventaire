@@ -5,8 +5,9 @@ import { radio } from '#lib/radio'
 import { assert_ } from '#lib/utils/assert_types'
 import { LogError } from '#lib/utils/logs'
 import config from '#server/config'
+import type { CreateActivity, ShelfActorName } from '#types/activity'
 import type { ShelfId } from '#types/shelf'
-import type { UserId } from '#types/user'
+import type { User, UserId, Username } from '#types/user'
 import { getActivitiesByActorName, createActivity } from './activities.js'
 import { deliverEntityActivitiesFromPatch } from './entity_patch_activities.js'
 import formatShelfItemsActivities from './format_shelf_items_activities.js'
@@ -44,9 +45,9 @@ async function _createDebouncedActivity ({ userId, shelfId }: createActivityPara
   let name, user
   if (userId) {
     delete debouncedActivities[userId]
-    user = await getUserById(userId)
+    user = await getUserById(userId) as User
     if (!user.fediversable) return
-    name = user.stableUsername
+    name = user.stableUsername as Username
   } else if (shelfId) {
     delete debouncedActivities[shelfId]
     // TODO: if this throws an error because the shelf was deleted
@@ -57,7 +58,7 @@ async function _createDebouncedActivity ({ userId, shelfId }: createActivityPara
     if (!owner.fediversable) return
     // todo: use group slugify to create shelf name
     // shelf = await getShelfById(shelfId)
-    name = `shelf-${shelfId}`
+    name = `shelf-${shelfId}` as ShelfActorName
   }
   const [ lastActivity ] = await getActivitiesByActorName({ name, limit: 1 })
   const since = lastActivity?.updated || 0
@@ -68,12 +69,13 @@ async function _createDebouncedActivity ({ userId, shelfId }: createActivityPara
     object: { items: { since, until: Date.now() } },
   })
 
-  let activity
+  let createActivities: CreateActivity[]
   if (userId) {
-    [ activity ] = await formatUserItemsActivities([ activityDoc ], user)
+    createActivities = await formatUserItemsActivities([ activityDoc ], user)
   } else if (shelfId) {
-    [ activity ] = await formatShelfItemsActivities([ activityDoc ], shelfId, name)
+    createActivities = await formatShelfItemsActivities([ activityDoc ], shelfId, name)
   }
+  const activity: CreateActivity = createActivities[0]
   if (!activity) return
 
   return postActivityToActorFollowersInboxes({ activity, actorName: name })

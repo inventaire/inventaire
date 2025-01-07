@@ -4,6 +4,8 @@ import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { getBestLangValue } from '#lib/get_best_lang_value'
 import config from '#server/config'
+import type { CreateActivity, NoteActivity } from '#types/activity'
+import type { Url } from '#types/common'
 import { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } from './helpers.js'
 
 const origin = config.getPublicOrigin()
@@ -30,27 +32,28 @@ async function formatEntityPatchActivity (row, rowIndex) {
   const subjectLabel = getLabel(subjectEntity)
   const objectLabel = getLabel(objectEntity)
   const activityId = getActivityIdFromPatchId(patchId, rowIndex)
-  const id = `${origin}/api/activitypub?action=activity&id=${activityId}`
+  const id: Url = `${origin}/api/activitypub?action=activity&id=${activityId}`
   const name = getEntityActorName(objectUri)
-  const actor = makeUrl({ params: { action: 'actor', name } })
+  const actor: Url = makeUrl({ params: { action: 'actor', name } })
   const subjectUrl = `${origin}/entity/${subjectUri}`
   const objectUrl = `${origin}/entity/${objectUri}`
 
-  const object = {
+  const object: NoteActivity = {
     id,
     type: 'Note',
     content: `<p>${i18n('en', activityText[property], { subjectLabel, subjectUrl, objectLabel, objectUrl })}</p>`,
     published: new Date(timestamp).toISOString(),
   }
 
-  return {
+  const createdActivity: CreateActivity = {
     id: `${id}#create`,
     '@context': context,
     type: 'Create',
     object,
     actor,
-    to: 'Public',
+    to: [ 'Public' ],
   }
+  return createdActivity
 }
 
 function getLabel (entity) {

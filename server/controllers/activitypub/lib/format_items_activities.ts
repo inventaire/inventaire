@@ -3,15 +3,14 @@ import { context } from '#controllers/activitypub/lib/helpers'
 import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
 import config from '#server/config'
-import type { Activity, ItemNote } from '#types/activity'
-import type { AbsoluteUrl, RelativeUrl } from '#types/common'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
+import type { ActivityDoc, ItemNote, NoteActivity, CreateActivity, Attachment } from '#types/activity'
+import type { Url, AbsoluteUrl, RelativeUrl } from '#types/common'
 
 const origin = config.getPublicOrigin()
 const maxLinksToDisplay = 3
 
 export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor, parentLink }: ItemNote) {
-  return async function (activityDoc: Activity) {
+  return async function (activityDoc: ActivityDoc) {
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range
     const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
@@ -24,23 +23,24 @@ export function createItemsNote ({ allActivitiesItems, lang = 'en', name, actor,
     // itemsLength as in OrderedItems (not user's item)
     const itemsLength = publicRangeItems.length
 
-    const id = `${origin}/api/activitypub?action=activity&id=${activityDoc._id}`
+    const id: Url = `${origin}/api/activitypub?action=activity&id=${activityDoc._id}`
 
-    const object = {
+    const object: NoteActivity = {
       id,
       type: 'Note',
       content: buildContent({ links, name, lang, itemsLength, parentLink }),
       published: new Date(until).toISOString(),
       attachment: compact(firstItems.map(buildAttachment)),
     }
-    return {
+    const createdActivity: CreateActivity = {
       id: `${id}#create`,
       '@context': context,
       type: 'Create',
       object,
       actor,
-      to: 'Public',
+      to: [ 'Public' ],
     }
+    return createdActivity
   }
 }
 
@@ -72,7 +72,8 @@ function buildLinkContentFromItem (item) {
 interface BuildContentOptions {
   links: LinkContent[]
   name: string
-  lang: WikimediaLanguageCode
+  // Using User.language type
+  lang: string
   itemsLength: number
   parentLink: RelativeUrl
 }
@@ -99,9 +100,10 @@ function buildContent ({ links, name, lang = 'en', itemsLength, parentLink }: Bu
 function buildAttachment (item) {
   const imageUrl = item.snapshot['entity:image']
   if (!imageUrl) return
-  return {
+  const attachment: Attachment = {
     type: 'Image',
     mediaType: 'image/jpeg',
     url: `${origin}${imageUrl}`,
   }
+  return attachment
 }

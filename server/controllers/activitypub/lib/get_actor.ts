@@ -1,8 +1,9 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import config from '#server/config'
-import type { Attachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl } from '#types/activity'
+import type { PropertyValueAttachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl, ShelfActorName, EntityActorName } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
+import type { Username } from '#types/user'
 import buildAttachments from './build_attachments.js'
 import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './helpers.js'
 import { getSharedKeyPair } from './shared_key_pair.js'
@@ -11,7 +12,7 @@ import { validateShelf, validateUser, validateEntity } from './validations.js'
 const origin = config.getPublicOrigin()
 const publicOrigin = origin.split('://')[1]
 
-async function getShelfActor (name) {
+async function getShelfActor (name: ShelfActorName) {
   const { shelf, owner } = await validateShelf(name)
   const { description } = shelf
   const links: ActivityLink[] = [
@@ -28,7 +29,7 @@ async function getShelfActor (name) {
   })
 }
 
-async function getUserActor (username) {
+async function getUserActor (username: Username) {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links: ActivityLink[] = [
@@ -43,7 +44,7 @@ async function getUserActor (username) {
   })
 }
 
-async function getEntityActor (name) {
+async function getEntityActor (name: EntityActorName) {
   const { entity } = await validateEntity(name)
   const actorName = getEntityActorName(entity.uri)
   const { uri } = entity
@@ -62,7 +63,7 @@ async function getEntityActor (name) {
     }
     links.push(wdLink)
   }
-  const attachments: Attachment[] = await buildAttachments(entity)
+  const attachments: PropertyValueAttachment[] = await buildAttachments(entity)
   let summary
   if ('descriptions' in entity && 'en' in entity.descriptions) {
     summary = entity.descriptions.en
@@ -117,7 +118,7 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
     const linksAttachments = links.map(({ name, url }) => {
       const [ protocol, urlWithoutProtocol ] = url.split('://')
       const value = `<span class="invisible">${protocol}://</span><span>${urlWithoutProtocol}</span>`
-      const attachment: Attachment = {
+      const attachment: PropertyValueAttachment = {
         type: 'PropertyValue',
         name,
         url,
