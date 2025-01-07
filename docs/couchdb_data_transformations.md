@@ -109,7 +109,7 @@ Cons:
 Those updated documents can be uploaded back to CouchDB with a tool such as [`couchdb-bulk2`](https://github.com/maxlath/couchdb-bulk2)
 
 ```sh
-cat updated_documents.ndjson | couchdb-bulk2 "$db_host/users" > update.success 2> update.errors
+cat updated_documents.ndjson | couchdb-bulk2 "$db_host/users"
 ```
 
 ## 4 - Check for conflicts
