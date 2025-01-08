@@ -16,8 +16,3 @@ export function typeOf (obj: unknown) {
 export function objectKeys <Obj> (obj: Obj): (keyof Obj)[] {
   return Object.keys(obj) as (keyof Obj)[]
 }
-
-// Source: https://stackoverflow.com/a/74213179
-export function isIncluding<T> (array: readonly T[], element: any): element is T {
-  return array.includes(element)
-}

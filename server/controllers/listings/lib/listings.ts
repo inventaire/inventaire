@@ -5,7 +5,7 @@ import { filterFoundElementsUris } from '#controllers/listings/lib/helpers'
 import { dbFactory } from '#db/couchdb/base'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { isIncluding } from '#lib/utils/types'
+import { arrayIncludes } from '#lib/utils/base'
 import { validateVisibilityKeys } from '#lib/visibility/visibility'
 import listingAttributes from '#models/attributes/listing'
 import { createListingDoc, updateListingDocAttributes } from '#models/listing'
@@ -105,7 +105,7 @@ export async function validateEntitiesCanBeAdded (uris: EntityUri[], listingType
   const { notFound, entities } = await getEntitiesByUris({ uris })
   const allowlistedEntityTypes = entityTypesByListingType[listingType]
   const wrongTypeEntity = Object.values(entities).find(entity => {
-    return !isIncluding(allowlistedEntityTypes, entity.type)
+    return !arrayIncludes(allowlistedEntityTypes, entity.type)
   })
   if (wrongTypeEntity !== undefined) {
     const { uri, type } = wrongTypeEntity
