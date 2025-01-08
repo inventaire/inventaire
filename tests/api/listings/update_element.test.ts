@@ -1,19 +1,13 @@
+import should from 'should'
+import { createListing } from '#fixtures/listings'
 import { sentence } from '#fixtures/text'
 import { wait } from '#lib/promises'
-import { getListingById, getByIdWithElements } from '#tests/api/utils/listings'
-import { getUserB, authReq } from '#tests/api/utils/utils'
+import { createElement, createListingWithElements } from '#tests/api/fixtures/listings'
+import { getListingById, addElements, getByIdWithElements } from '#tests/api/utils/listings'
+import { getUser, getUserB, authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
-import { createListingWithElements } from '../fixtures/listings.js'
 
 const endpoint = '/api/lists?action=update-element'
-
-async function createElement () {
-  const { listing } = await createListingWithElements()
-  return {
-    element: listing.elements[0],
-    listing,
-  }
-}
 
 describe('element:update', () => {
   it('should reject without element id', async () => {
@@ -71,7 +65,9 @@ describe('element:update', () => {
     })
     updatedRes.comment.should.equal(comment2)
   })
+})
 
+describe('element:update:comment', () => {
   it('should be able to remove a comment', async () => {
     const { listing, element } = await createElement()
     const comment = sentence()
@@ -87,6 +83,112 @@ describe('element:update', () => {
     })
     const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
     updatedElementListing2.elements[0].comment.should.equal('')
+  })
+})
+
+describe('element:update:list', () => {
+  it('should update attribute with the recipient listing id', async () => {
+    const { listing } = await createListing()
+    const { listing: elementListing } = await createListingWithElements()
+    const { elements } = elementListing
+    const element = elements[0]
+    await authReq('post', endpoint, {
+      id: element._id,
+      list: listing._id,
+    })
+    const res = await getByIdWithElements({ id: listing._id })
+    res.elements[0]._id.should.equal(element._id)
+  })
+
+  it('should reject when the recipient listing belong to another owner', async () => {
+    try {
+      const { listing } = await createListing(getUserB())
+      const { listing: elementListing } = await createListingWithElements()
+      const { elements } = elementListing
+      const element = elements[0]
+      await authReq('post', endpoint, {
+        id: element._id,
+        list: listing._id,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('wrong user')
+      err.statusCode.should.equal(403)
+    }
+  })
+
+  it("should reject when the recipient listing is already the element's one", async () => {
+    try {
+      const { listing: elementListing } = await createListingWithElements()
+      const { elements } = elementListing
+      const element = elements[0]
+      await authReq('post', endpoint, {
+        id: element._id,
+        list: elementListing._id,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('element already belongs to the list')
+      err.statusCode.should.equal(400)
+    }
+  })
+
+  it('should reject when the element uri is already part of the recipient listing', async () => {
+    try {
+      const { listing } = await createListingWithElements()
+      const element = listing.elements[0]
+      const { listing: recipientListing } = await createListing()
+      await addElements(getUser(), {
+        id: recipientListing._id,
+        uris: [ element.uri ],
+      })
+      await authReq('post', endpoint, {
+        id: element._id,
+        list: recipientListing._id,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('element is already in the list')
+      err.statusCode.should.equal(400)
+    }
+  })
+
+  it('should reject when the recipient listing type and the entity type do not match', async () => {
+    try {
+      const { listing } = await createListingWithElements()
+      const element = listing.elements[0]
+      const { listing: recipientListing } = await createListing(null, { type: 'author' })
+      await addElements(getUser(), {
+        id: recipientListing._id,
+        uris: [ element.uri ],
+      })
+      await authReq('post', endpoint, {
+        id: element._id,
+        list: recipientListing._id,
+      })
+      .then(shouldNotBeCalled)
+    } catch (err) {
+      rethrowShouldNotBeCalledErrors(err)
+      err.body.status_verbose.should.startWith('cannot add this entity type to this list')
+      err.statusCode.should.equal(403)
+    }
+  })
+
+  it('should update ordinal to the last position of the recipient listing elements', async () => {
+    const elementsLength = 4
+    const { listing: elementListing } = await createListingWithElements()
+    const { listing: recipientListing } = await createListingWithElements(null, elementsLength)
+    const { elements } = elementListing
+    const element = elements[0]
+    await authReq('post', endpoint, {
+      id: element._id,
+      list: recipientListing._id,
+    })
+    const res = await getByIdWithElements({ id: recipientListing._id })
+    res.elements[elementsLength]._id.should.equal(element._id)
   })
 })
 
