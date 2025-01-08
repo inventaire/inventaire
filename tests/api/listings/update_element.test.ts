@@ -49,39 +49,41 @@ describe('element:update', () => {
       err.statusCode.should.equal(403)
     }
   })
+
+  it('should create and update element attribute', async () => {
+    const { element } = await createElement()
+    const comment = sentence()
+    const createdRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const comment2 = sentence()
+    createdRes.comment.should.equal(comment)
+    const updatedRes = await authReq('post', endpoint, {
+      id: element._id,
+      comment: comment2,
+    })
+    updatedRes.comment.should.equal(comment2)
+  })
 })
 
-it('should create and update element attribute', async () => {
-  const { element } = await createElement()
-  const comment = sentence()
-  const createdRes = await authReq('post', endpoint, {
-    id: element._id,
-    comment,
+describe('element:update:comment', () => {
+  it('should be able to remove a comment', async () => {
+    const { listing, element } = await createElement()
+    const comment = sentence()
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment,
+    })
+    const updatedElementListing = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing.elements[0].comment.should.equal(comment)
+    await authReq('post', endpoint, {
+      id: element._id,
+      comment: null,
+    })
+    const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
+    updatedElementListing2.elements[0].comment.should.equal('')
   })
-  const comment2 = sentence()
-  createdRes.comment.should.equal(comment)
-  const updatedRes = await authReq('post', endpoint, {
-    id: element._id,
-    comment: comment2,
-  })
-  updatedRes.comment.should.equal(comment2)
-})
-
-it('should be able to remove a comment', async () => {
-  const { listing, element } = await createElement()
-  const comment = sentence()
-  await authReq('post', endpoint, {
-    id: element._id,
-    comment,
-  })
-  const updatedElementListing = await getListingById({ user: getUserB(), id: listing._id })
-  updatedElementListing.elements[0].comment.should.equal(comment)
-  await authReq('post', endpoint, {
-    id: element._id,
-    comment: null,
-  })
-  const updatedElementListing2 = await getListingById({ user: getUserB(), id: listing._id })
-  updatedElementListing2.elements[0].comment.should.equal('')
 })
 
 describe('element:update:list', () => {
