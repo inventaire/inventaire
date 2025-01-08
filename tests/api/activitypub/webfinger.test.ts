@@ -142,6 +142,14 @@ describe('activitypub:webfinger', () => {
       const firstLink = find(links, { rel: 'self' })
       firstLink.href.should.equal(actorUrl)
     })
+
+    it('should accept lower case wikidata uri', async () => {
+      const wdUri = 'wd:Q535'
+      const actorName = getEntityActorName(wdUri.toLowerCase())
+      const resource = `acct:${actorName}@${publicHost}`
+      const res = await publicReq('get', `${endpoint}${resource}`)
+      res.links.should.be.an.Array()
+    })
   })
 
   describe('shelves', () => {

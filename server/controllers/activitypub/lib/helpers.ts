@@ -29,7 +29,7 @@ export function makeUrl ({ origin, endpoint, params }: MakeUrlArgs) {
 }
 
 export const getEntityActorName = uri => uri.replace(':', '-')
-export const getEntityUriFromActorName = name => name.replace('-', ':')
+export const getEntityUriFromActorName = name => name.replace('-', ':').replace('q', 'Q')
 export const getActivityIdFromPatchId = (patchId, rowIndex) => `inv-${patchId.replace(':', '-')}-${rowIndex}`
 
 const activityIdPattern = /^inv-[0-9a-f]{32}-\d{1,3}-\d{1,3}$/
