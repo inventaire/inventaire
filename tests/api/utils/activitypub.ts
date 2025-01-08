@@ -126,7 +126,7 @@ export const createRemoteActivityPubServerUser = async (withSharedInbox?: boolea
 
 const actorEndpoint = '/some_actor_endpoint'
 
-export async function getSomeRemoteServerUser (emitterUser, withSharedInbox?: boolean) {
+export async function getSomeRemoteServerUser (emitterUser, withSharedInbox: boolean = true) {
   const { origin } = await getActivityPubServer()
   emitterUser = emitterUser || (await createRemoteActivityPubServerUser(withSharedInbox))
   const { id, name, privateKey } = emitterUser

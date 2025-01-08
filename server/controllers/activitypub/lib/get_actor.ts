@@ -95,6 +95,7 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
     preferredUsername: actorName,
     summary,
     inbox: `${origin}/api/activitypub?action=inbox&name=${actorName}`,
+    sharedInbox: `${origin}/api/activitypub?action=shared-inbox`,
     outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
     // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
     // shared public keys they already know
