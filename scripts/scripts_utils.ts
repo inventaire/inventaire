@@ -5,7 +5,7 @@ import { logError, logErrorMessage, success } from '#lib/utils/logs'
 
 const execAsync = promisify(exec)
 
-export function logErrorAndExit (label, err) {
+export function logErrorAndExit (label, err?) {
   makeSureLogsAreWrittenBeforeExit()
   if (err) logError(err, label)
   else console.error(red(label))

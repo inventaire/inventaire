@@ -15,6 +15,7 @@
     "couchdb:cleanup-after-design-docs-changes": "./scripts/couchdb/cleanup_after_design_docs_changes.ts",
     "db-actions:increment-user-undelivered-emails-count": "./scripts/db_actions/increment_user_undelivered_emails_count.ts",
     "db-actions:update-user-role": "./scripts/db_actions/update_user_role.ts",
+    "db-actions:update-user-role-from-username": "./scripts/db_actions/update_user_role_from_username.ts",
     "db-actions:stop-emails-to-address": "./scripts/db_actions/stop_emails_to_address.ts",
     "db-actions:delete-user": "./scripts/db_actions/delete_user.ts",
     "debug": "DEBUG=express:* node server/server.ts",
