@@ -15,7 +15,7 @@ export async function checkSpamContent (reqUser: User, ...values: unknown[]) {
   for (const value of values) {
     if (isNonEmptyString(value)) {
       if (looksLikeSpam(value)) {
-        const report: SpamReport = { type: 'spam', text: value }
+        const report: SpamReport = { type: 'spam', text: value, timestamp: Date.now() }
         await handleAbuseReport(reqUser, report)
         // Do not throw an error to not disturbe legitimate uses that might trigger false positive
       }

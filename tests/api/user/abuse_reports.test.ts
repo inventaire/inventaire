@@ -143,4 +143,5 @@ async function userShouldHaveASpamAbuseReport (user: UserWithCookie) {
   const { reports } = adminViewUser
   reports.length.should.equal(1)
   reports[0].type.should.equal('spam')
+  reports[0].timestamp.should.be.a.Number()
 }

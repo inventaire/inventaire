@@ -56,6 +56,7 @@ export type OwnerOnlyOAuthConsumer = OAuthConsumer & OAuthProviderTokens
 export interface SpamReport {
   type: 'spam'
   text: string
+  timestamp: number
 }
 export type AbuseReport = SpamReport
 
