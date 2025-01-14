@@ -5,6 +5,8 @@ import type { AbuseReport, User } from '#types/user'
 
 const db = await dbFactory('users')
 
+// TODO: add a way for instance admins to clear user.reports
+// when the abuse reports were false positives
 export async function handleAbuseReport (reqUser: User, report: AbuseReport) {
   const { _id: userId } = reqUser
   report.text = report.text.slice(0, 500)

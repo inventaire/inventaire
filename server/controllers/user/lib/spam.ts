@@ -1,6 +1,5 @@
 import { handleAbuseReport } from '#controllers/user/lib/abuse_reports'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { newError } from '#lib/error/error'
 import config from '#server/config'
 import type { SpamReport, User } from '#types/user'
 
@@ -18,7 +17,7 @@ export async function checkSpamContent (reqUser: User, ...values: unknown[]) {
       if (looksLikeSpam(value)) {
         const report: SpamReport = { type: 'spam', text: value }
         await handleAbuseReport(reqUser, report)
-        throw newError('possible spam attempt', 403, { report })
+        // Do not throw an error to not disturbe legitimate uses that might trigger false positive
       }
     }
   }
