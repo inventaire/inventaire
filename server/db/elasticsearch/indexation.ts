@@ -2,7 +2,7 @@ import { throttle } from 'lodash-es'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertFunction, assertString } from '#lib/utils/assert_types'
 import { isLocalEntityLayer } from '#models/entity'
 import config from '#server/config'
 import type { SerializedWdEntity, WdEntityId } from '#types/entity'
@@ -18,15 +18,15 @@ const bulkThrottleDelay = updateDelay / 2
 let batch = []
 
 export function indexation (indexBaseName: IndexBaseName) {
-  assert_.string(indexBaseName)
+  assertString(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
   const format = formatters[indexBaseName]
   const shouldBeDeindexed = deindex[indexBaseName]
   const filter = filters[indexBaseName]
 
-  assert_.function(format)
-  assert_.function(shouldBeDeindexed)
-  assert_.function(filter)
+  assertFunction(format)
+  assertFunction(shouldBeDeindexed)
+  assertFunction(filter)
 
   return async function (doc: IndexedCouchDoc | SerializedWdEntity) {
     if (!filter(doc)) return

@@ -1,6 +1,6 @@
 import { omit } from 'lodash-es'
 import { dbFactory } from '#db/couchdb/base'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import type { OAuthAuthorization, OAuthAuthorizationCode, OAuthClientId, SerializedOAuthAuthorization } from '#types/oauth'
 import type { UserId } from '#types/user'
 
@@ -16,9 +16,9 @@ export async function getAuthorizationById (id: OAuthAuthorizationCode) {
 }
 
 export async function saveAuthorization (code, userId: UserId, clientId: OAuthClientId) {
-  assert_.object(code)
-  assert_.string(userId)
-  assert_.string(clientId)
+  assertObject(code)
+  assertString(userId)
+  assertString(clientId)
 
   const { authorizationCode } = code
   const doc = omit(code, [ 'authorizationCode' ])

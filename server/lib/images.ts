@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import gm from 'gm'
 import { sha1 } from '#lib/crypto'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import config from '#server/config'
 import type { ImageContainer, ImagePath } from '#types/image'
 
@@ -22,19 +22,19 @@ export function shrinkAndFormatStream (data, width, height) {
 }
 
 export function getHashFilename (path) {
-  assert_.string(path)
+  assertString(path)
   return readFile(path)
   .then(sha1)
 }
 
 export function shrinkAndFormat (path, width = maxSize, height = maxSize) {
-  assert_.string(path)
+  assertString(path)
   return new Promise((resolve, reject) => shrinkAndFormatStream(path, width, height)
   .write(path, returnPath(path, resolve, reject)))
 }
 
 export function removeExif (path: string) {
-  assert_.string(path)
+  assertString(path)
   return new Promise((resolve, reject) => {
     gm(path)
     .noProfile()

@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import type { RelationId, RelationStatus } from '#types/relation'
 import type { UserId } from '#types/user'
@@ -26,7 +26,7 @@ export function getRelationDocId (userId: UserId, otherId: UserId) {
 function assertValidId (id: string): asserts id is RelationId {
   const [ userA, userB ] = id.split(':')
   assert(userA !== userB)
-  assert_.string(userA)
+  assertString(userA)
   assert(userId(userA))
   assert(userId(userB))
 }

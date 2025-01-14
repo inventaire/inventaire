@@ -1,9 +1,9 @@
 import { round } from 'lodash-es'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertType, assertObject, assertString } from '#lib/utils/assert_types'
 import taskValidations from './validations/task.js'
 
 export function createTaskDoc (newTask) {
-  assert_.object(newTask)
+  assertObject(newTask)
   const { type, entitiesType, suspectUri, suggestionUri, externalSourcesOccurrences, reporter, clue } = newTask
   let { lexicalScore } = newTask
 
@@ -31,10 +31,10 @@ export function createTaskDoc (newTask) {
 }
 
 export function updateTaskDoc (task, attribute, value) {
-  assert_.object(task)
-  assert_.string(attribute)
+  assertObject(task)
+  assertString(attribute)
   // Accept an undefined state value as that's the default state
-  if (value || attribute !== 'state') assert_.type('string|number', value)
+  if (value || attribute !== 'state') assertType('string|number', value)
 
   taskValidations.pass('attribute', attribute)
   taskValidations.pass(attribute, value)

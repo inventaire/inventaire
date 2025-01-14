@@ -9,7 +9,7 @@ import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { serverMode } from '#lib/server_mode'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertFunction, assertString } from '#lib/utils/assert_types'
 import { log, warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
@@ -31,10 +31,10 @@ const followers = {}
 
 export default async function (params) {
   const { dbBaseName, filter, onChange, reset } = params
-  assert_.string(dbBaseName)
-  assert_.function(filter)
-  assert_.function(onChange)
-  if (reset != null) assert_.function(reset)
+  assertString(dbBaseName)
+  assertFunction(filter)
+  assertFunction(onChange)
+  if (reset != null) assertFunction(reset)
 
   const dbName = config.db.name(dbBaseName)
 
@@ -69,7 +69,7 @@ async function getLastSeq (dbName) {
 }
 
 const initFollow = async (dbName: DbName, reset: () => Promise<void>, lastSeq: DatabaseSeq) => {
-  if (lastSeq != null) assert_.string(lastSeq)
+  if (lastSeq != null) assertString(lastSeq)
 
   const setLastSeq = SetLastSeq(dbName)
   const dbUrl = `${dbOrigin}/${dbName}` as AbsoluteUrl

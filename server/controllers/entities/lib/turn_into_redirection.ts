@@ -3,7 +3,7 @@ import { getInvClaimsByClaimValue, getEntityById, putInvEntityUpdate, wdEntityHa
 import { getClaimValue, hasLocalClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { removePlaceholder } from '#controllers/entities/lib/placeholders'
 import { isInvEntityUri, isWdEntityUri } from '#lib/boolean_validations'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit, preventRemovedPlaceholderEdit } from '#models/entity'
 import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
@@ -12,8 +12,8 @@ import type { UserId } from '#types/user'
 import propagateRedirection from './propagate_redirection.js'
 
 export async function turnIntoRedirectionOrLocalLayer ({ userId, fromId, toUri, previousToUri, context }: { userId: UserId, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) {
-  assert_.strings([ userId, fromId, toUri ])
-  if (previousToUri != null) assert_.string(previousToUri)
+  assertStrings([ userId, fromId, toUri ])
+  if (previousToUri != null) assertString(previousToUri)
 
   const fromUri = `inv:${fromId}` as InvEntityUri
 

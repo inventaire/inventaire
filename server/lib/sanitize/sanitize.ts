@@ -3,7 +3,7 @@ import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { newMissingError, newInvalidError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import { obfuscate } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 import type { ControllerInputSanitization, FormatFunction, GenericParameterName, ParameterName, ParameterPlace, ControllerSanitizationParameterConfig, SanitizationParameter, RenameFunction } from '#types/controllers_input_sanitization'
@@ -20,7 +20,7 @@ const { generics } = sanitizationParameters
 // Example: consumers of the request (aka req) stream need to run on the same tick.
 // If they have to wait for the next tick, 'data' events might be over
 export function sanitize (req: Req | AuthentifiedReq, res: Res, configs: ControllerInputSanitization) {
-  assert_.object(req.query)
+  assertObject(req.query)
 
   const place = getPlace(req.method, configs)
   const rawInput: unknown = cloneDeep(req[place])

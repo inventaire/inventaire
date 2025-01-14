@@ -2,7 +2,7 @@ import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_, type ReqOptions } from '#lib/requests'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertType, assertString } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
 import config from '#server/config'
@@ -31,8 +31,8 @@ async function testServerAvailability () {
 export const waitForTestServer = testServerAvailability()
 
 export async function rawRequest (method: HttpMethod, url: Url, reqParams: RequestOptions = {}) {
-  assert_.string(method)
-  assert_.string(url)
+  assertString(method)
+  assertString(url)
   await waitForTestServer
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
@@ -42,8 +42,8 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: Reque
 }
 
 export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
-  assert_.string(method)
-  assert_.string(endpoint)
+  assertString(method)
+  assertString(endpoint)
   const url = (endpoint.startsWith('/') ? origin + endpoint : endpoint) as AbsoluteUrl
   const options: ReqOptions = {
     headers: { cookie },
@@ -66,9 +66,9 @@ export async function request (method: HttpMethod, endpoint: Url, body?: unknown
 }
 
 export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown) {
-  assert_.type('object|promise', user)
-  assert_.string(method)
-  assert_.string(endpoint)
+  assertType('object|promise', user)
+  assertString(method)
+  assertString(endpoint)
   user = await user
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   return request(method, endpoint, body, user.cookie)
@@ -82,9 +82,9 @@ interface RawCustomAuthReqOptions {
 }
 
 export async function rawCustomAuthReq ({ user, method, url, options = {} }: RawCustomAuthReqOptions) {
-  assert_.type('object|promise', user)
-  assert_.string(method)
-  assert_.string(url)
+  assertType('object|promise', user)
+  assertString(method)
+  assertString(url)
   user = await user
   options.headers = options.headers || {}
   options.headers.cookie = user.cookie
@@ -102,8 +102,8 @@ export function postUrlencoded (url: Url, body: unknown) {
 }
 
 export function bearerTokenReq (token: BearerToken, method: HttpMethod, endpoint: Url, body?: unknown) {
-  assert_.object(token)
-  assert_.string(token.access_token)
+  assertObject(token)
+  assertString(token.access_token)
   return rawRequest(method, endpoint, {
     headers: {
       authorization: `Bearer ${token.access_token}`,

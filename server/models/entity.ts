@@ -16,7 +16,7 @@ import { findClaimByValue, getClaimIndex, getClaimValue, isClaimObject, setClaim
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isInvPropertyUri, isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { objectEntries, objectFromEntries, sameObjects, superTrim } from '#lib/utils/base'
 import { log, warn } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
@@ -39,8 +39,8 @@ export function createBlankEntityDoc () {
 }
 
 export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label) {
-  assert_.object(doc)
-  assert_.string(lang)
+  assertObject(doc)
+  assertString(lang)
 
   if (!wikimediaLanguageCodes.has(lang)) {
     throw newError('invalid lang', 400, { doc, lang, value })
@@ -52,7 +52,7 @@ export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc
   if (value === null) {
     deleteLabel(doc, lang)
   } else {
-    assert_.string(value)
+    assertString(value)
     value = superTrim(value)
 
     if (doc.labels[lang] === value) {

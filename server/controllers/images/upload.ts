@@ -1,6 +1,6 @@
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import { Log } from '#lib/utils/logs'
 import type { FormReq } from '#types/server'
 import { containers, uploadContainersNames } from './lib/containers.js'
@@ -35,9 +35,9 @@ function getFilesFromFormData (formData) {
   }
 
   return Object.entries(files).map(([ key, fileArray ]) => {
-    assert_.array(fileArray)
+    assertArray(fileArray)
     const file = fileArray[0]
-    assert_.string(file.filepath)
+    assertString(file.filepath)
     file.id = key
     // This somehow does not have any effect: the "path" attribute is undefined when we reach transformAndPutImage
     file.path = file.pathname

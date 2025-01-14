@@ -1,4 +1,4 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import groupValidations from '#models/validations/group'
 import notificationAttributes from '../attributes/notification.js'
 import commonValidations from './common.js'
@@ -10,7 +10,7 @@ const notificationValidations = {
   pass,
   type: type => types.includes(type),
   data: (data, { type }) => {
-    assert_.object(data)
+    assertObject(data)
     dataValidationPerType[type](data)
     return true
   },

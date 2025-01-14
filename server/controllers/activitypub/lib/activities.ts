@@ -1,5 +1,5 @@
 import { dbFactory } from '#db/couchdb/base'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
 import type { ActivityDoc, ActivityId, ActorName } from '#types/activity'
 
@@ -24,7 +24,7 @@ export async function createActivity (newActivity) {
 }
 
 export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }: { name: string, limit?: number, offset?: number }) {
-  assert_.string(name)
+  assertString(name)
   return db.getDocsByViewQuery<ActivityDoc>('byActorNameAndDate', {
     limit,
     skip: offset,
@@ -37,7 +37,7 @@ export async function getActivitiesByActorName ({ name, limit = 10, offset = 0 }
 }
 
 export async function getActivitiesCountByName (name: string) {
-  assert_.string(name)
+  assertString(name)
   const res = await db.view('activities', 'byActorNameAndDate', {
     startkey: [ name, 0 ],
     endkey: [ name, Date.now() ],

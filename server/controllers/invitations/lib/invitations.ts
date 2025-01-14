@@ -3,7 +3,7 @@ import { groupAction } from '#controllers/groups/lib/group_action'
 import { makeRequest } from '#controllers/relations/lib/actions'
 import { findOneByEmail, byEmails } from '#controllers/user/lib/shared_user_handlers'
 import { dbFactory } from '#db/couchdb/base'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertTypes, assertString } from '#lib/utils/assert_types'
 import { log, LogError, LogErrorAndRethrow } from '#lib/utils/logs'
 import Invited from '#models/invited'
 import type { InvitedUser } from '#types/user'
@@ -15,17 +15,17 @@ export const findInvitationByEmail = email => findOneByEmail<InvitedUser>(db, em
 export const getInvitationsByEmails = email => byEmails<InvitedUser>(db, email)
 
 export function createUnknownInvited (inviterId, groupId, unknownEmails) {
-  assert_.string(inviterId)
-  assert_.array(unknownEmails)
-  if (groupId) assert_.string(groupId)
+  assertString(inviterId)
+  assertArray(unknownEmails)
+  if (groupId) assertString(groupId)
   const invitedDocs = unknownEmails.map(Invited.create(inviterId, groupId))
   return db.bulk(invitedDocs)
   .catch(LogErrorAndRethrow('createUnknownInvited'))
 }
 
 export function addInviter (inviterId, groupId, invitedDocs) {
-  assert_.types([ 'string', 'array' ], [ inviterId, invitedDocs ])
-  if (groupId != null) { assert_.string(groupId) }
+  assertTypes([ 'string', 'array' ], [ inviterId, invitedDocs ])
+  if (groupId != null) { assertString(groupId) }
   const addInviterFn = Invited.addInviter.bind(null, inviterId, groupId)
   invitedDocs = invitedDocs.map(addInviterFn)
   return db.bulk(invitedDocs)

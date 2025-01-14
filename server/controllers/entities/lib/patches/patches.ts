@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { dbFactory } from '#db/couchdb/base'
 import { maxKey } from '#lib/couch'
 import { oneDay } from '#lib/time'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber } from '#lib/utils/assert_types'
 import { objectEntries, simpleDay } from '#lib/utils/base'
 import { addVersionsSnapshots } from '#models/patch'
 import type { InvClaimValue, InvEntityId } from '#types/entity'
@@ -100,7 +100,7 @@ export async function getGlobalContributions () {
 }
 
 export function getContributionsFromLastDay (days: number) {
-  assert_.number(days)
+  assertNumber(days)
   const now = Date.now()
   const startTime = now - (oneDay * days)
   const today = simpleDay()

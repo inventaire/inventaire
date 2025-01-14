@@ -4,7 +4,7 @@ import {
   PositiveInteger as PositiveIntegerPattern,
   Float as floatPattern,
 } from '#lib/regex'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import type { AbsoluteUrl } from '#types/common'
 import type { ObjectEntries } from 'type-fest/source/entries.js'
 
@@ -48,8 +48,8 @@ export const superTrim = (str: string) => str.replaceAll(/\s+/g, ' ').trim()
 export const KeyBy = (attribute: string) => (collection: object[]) => keyBy(collection, attribute)
 
 export function uniqByKey<T> (collection: object[], key: string) {
-  assert_.array(collection)
-  assert_.string(key)
+  assertArray(collection)
+  assertString(key)
   return Object.values(keyBy(collection, key)) as T[]
 }
 

@@ -7,7 +7,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { getUserAccessLevels, type AccessLevel } from '#lib/user_access_levels'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import { isLocalEntityLayer, updateEntityDocClaim } from '#models/entity'
 import type { ExtendedEntityType, InvClaimValue, InvEntity, InvEntityDoc, InvEntityId, PropertyUri } from '#types/entity'
 import type { SpecialUser, User, UserId } from '#types/user'
@@ -16,7 +16,7 @@ import { validateAndFormatClaim } from './validate_and_format_claim.js'
 import { validateClaimProperty } from './validate_claim_property.js'
 
 async function _updateInvClaim (user: User | SpecialUser, id: InvEntityId, property: PropertyUri, oldVal?: InvClaimValue, newVal?: InvClaimValue) {
-  assert_.object(user)
+  assertObject(user)
   const { _id: userId } = user
   const userAccessLevels = getUserAccessLevels(user)
   let currentDoc: InvEntityDoc

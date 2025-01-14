@@ -10,7 +10,7 @@ import { isEntityUri, isWdPropertyUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
 import type { EntityUri, InvSnakValue, PropertyUri, WdEntityId, WdPropertyUri } from '#types/entity'
@@ -39,7 +39,7 @@ interface ReverseClaimsParams {
 
 export async function getReverseClaims (params: ReverseClaimsParams) {
   const { property, value, refresh, sort, dry } = params
-  assert_.strings([ property, value ])
+  assertStrings([ property, value ])
 
   if (denylistedProperties.includes(property)) {
     throw newError('denylisted property', 400, { property })

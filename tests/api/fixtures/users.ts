@@ -3,7 +3,7 @@ import { randomBytes } from 'node:crypto'
 import { isPlainObject, random, round } from 'lodash-es'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
@@ -56,7 +56,7 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }
   } else {
     cookie = await _signup(userData).then(parseCookie)
   }
-  assert_.string(cookie)
+  assertString(cookie)
   const user = await getUserWithCookie(cookie)
   await setCustomData(user, customData)
   if (role) await addUserRole(user._id, role)
@@ -80,7 +80,7 @@ export type AwaitableUserWithCookie = Awaitable<UserWithCookie>
 export async function getUserWithCookie (cookie: string) {
   const user = await request('get', '/api/user', null, cookie)
   user.cookie = cookie
-  assert_.string(user.cookie)
+  assertString(user.cookie)
   return user as UserWithCookie
 }
 

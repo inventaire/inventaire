@@ -1,15 +1,15 @@
 import { notFoundError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import type { CouchDoc, DbHandler } from '#types/couchdb'
 
 export function byEmail <D extends CouchDoc> (db: DbHandler, email) {
-  assert_.string(email)
+  assertString(email)
   return db.getDocsByViewKey<D>('byEmail', email.toLowerCase())
 }
 
 export function byEmails <D extends CouchDoc> (db: DbHandler, emails) {
-  assert_.strings(emails)
+  assertStrings(emails)
   return db.getDocsByViewKeys<D>('byEmail', emails.map(toLowerCase))
 }
 

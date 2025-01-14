@@ -1,7 +1,7 @@
 import jiff from 'jiff'
 import { cloneDeep, get, isArray, pick } from 'lodash-es'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber, assertObject } from '#lib/utils/assert_types'
 import { createBlankEntityDoc } from '#models/entity'
 import type { InvEntityDoc, NewInvEntity } from '#types/entity'
 import type { BatchId, Patch, PatchContext } from '#types/patch'
@@ -20,12 +20,12 @@ interface CreatePatchDocParams {
 export function createPatchDoc (params: CreatePatchDocParams) {
   const { userId, currentDoc, updatedDoc, context, batchId } = params
   validations.pass('userId', userId)
-  assert_.object(currentDoc)
-  assert_.object(updatedDoc)
+  assertObject(currentDoc)
+  assertObject(updatedDoc)
   validations.pass('couchUuid', updatedDoc._id)
 
-  if (context != null) assert_.object(context)
-  if (batchId != null) assert_.number(batchId)
+  if (context != null) assertObject(context)
+  if (batchId != null) assertNumber(batchId)
 
   if (currentDoc === updatedDoc) {
     throw newError('invalid update: same document objects', 500, { currentDoc, updatedDoc })

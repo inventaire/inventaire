@@ -18,7 +18,7 @@ import { addWdEntityToIndexationQueue } from '#db/elasticsearch/wikidata_entitie
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { formatClaims } from '#lib/wikidata/format_claims'
@@ -214,7 +214,7 @@ async function formatAndPropagateRedirection (entity: RawWdEntity, serializedEnt
   } else if (!isWdEntityUri(serializedEntity.uri)) {
     // Canonical uri redirection
     const wdUri = getFirstClaimValue(serializedEntity.claims, 'invp:P1') as WdEntityUri
-    assert_.string(wdUri)
+    assertString(wdUri)
     serializedEntity.redirects = { from: wdUri, to: serializedEntity.uri }
   }
 }

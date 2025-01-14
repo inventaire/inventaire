@@ -1,4 +1,4 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString, assertObject } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 
 // returns a function triggering a standard confirmation response
@@ -26,8 +26,8 @@ export function wrap (res, key, data) {
 export const Wrap = (res, key) => data => wrap(res, key, data)
 
 export function send (res, data) {
-  assert_.object(res)
-  assert_.object(data)
+  assertObject(res)
+  assertObject(data)
   setWarnings(res, data)
   res.json(data)
 }
@@ -43,8 +43,8 @@ export function sendStaticJson (res, staticJson) {
 export const Send = res => send.bind(null, res)
 
 export function addWarning (res, message) {
-  assert_.object(res)
-  assert_.string(message)
+  assertObject(res)
+  assertString(message)
   warn(message)
   res.warnings = res.warnings || []
   res.warnings.push(message)

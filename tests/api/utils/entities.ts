@@ -3,7 +3,7 @@ import type { GetEntitiesByUrisResponse, GetEntitiesParams } from '#controllers/
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -16,7 +16,7 @@ import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
   uris = forceArray(uris)
-  assert_.strings(uris)
+  assertStrings(uris)
   const url = buildUrl('/api/entities', {
     action: 'by-uris',
     uris: forceArray(uris).join('|'),
@@ -86,8 +86,8 @@ export async function deleteByExternalId (property: PropertyUri, externalId: str
 }
 
 export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie } = {}) {
-  assert_.string(fromUri)
-  assert_.string(toUri)
+  assertString(fromUri)
+  assertString(toUri)
   fromUri = normalizeUri(fromUri)
   toUri = normalizeUri(toUri)
   const user = options.user || getDataadminUser()
@@ -95,7 +95,7 @@ export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: A
 }
 
 export function revertMerge (fromUri: EntityUri) {
-  assert_.string(fromUri)
+  assertString(fromUri)
   fromUri = normalizeUri(fromUri)
   return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
 }
@@ -156,7 +156,7 @@ export async function getRefreshedPopularityByUri (uri: EntityUri) {
 }
 
 export async function revertEdit ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
-  assert_.string(patchId)
+  assertString(patchId)
   user = user || getUser()
   return customAuthReq(user, 'put', '/api/entities?action=revert-edit', {
     patch: patchId,
@@ -164,7 +164,7 @@ export async function revertEdit ({ patchId, user }: { patchId: PatchId, user?: 
 }
 
 export async function restoreVersion ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
-  assert_.string(patchId)
+  assertString(patchId)
   user = user || getUser()
   return customAuthReq(user, 'put', '/api/entities?action=restore-version', {
     patch: patchId,

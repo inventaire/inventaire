@@ -1,7 +1,7 @@
 import { dbFactory } from '#db/couchdb/base'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { sha1, hashPassword, getRandomBytes } from '#lib/crypto'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { buildUrl, parseQuery } from '#lib/utils/url'
 import type { OAuthScope } from '#types/oauth'
@@ -15,7 +15,7 @@ export async function getClient (params = {}) {
   params.scope = params.scope || [ 'username' ]
   const { scope } = params
 
-  assert_.array(scope)
+  assertArray(scope)
 
   // Generate a deterministic id that looks like a CouchDB-uuid
   const id = sha1(JSON.stringify(params)).slice(0, 32)

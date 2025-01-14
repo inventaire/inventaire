@@ -1,6 +1,6 @@
 import { buildSearcher } from '#lib/elasticsearch'
 import { distanceBetween } from '#lib/geo'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumbers, assertNumber } from '#lib/utils/assert_types'
 import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
 
 export default dbBaseName => {
@@ -10,8 +10,8 @@ export default dbBaseName => {
   })
 
   return async (latLng, meterRange) => {
-    assert_.numbers(latLng)
-    assert_.number(meterRange)
+    assertNumbers(latLng)
+    assertNumber(meterRange)
     const { hits } = await searchByDistance({ latLng, meterRange })
     return getIdsSortedByDistance(hits, latLng)
   }

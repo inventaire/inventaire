@@ -1,6 +1,6 @@
 import { omit } from 'lodash-es'
 import { dbFactory } from '#db/couchdb/base'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import type { OAuthClientId, OAuthTokenDoc, OAuthToken, SerializedOAuthTokenDoc } from '#types/oauth'
 import type { UserId } from '#types/user'
 import type OAuth2Server from '@node-oauth/oauth2-server'
@@ -18,9 +18,9 @@ export async function getOauthTokenbyId (id: OAuthToken) {
 }
 
 export async function saveOauthToken (token: OAuth2Server.Token, userId: UserId, clientId: OAuthClientId) {
-  assert_.object(token)
-  assert_.string(userId)
-  assert_.string(clientId)
+  assertObject(token)
+  assertString(userId)
+  assertString(clientId)
 
   const { accessToken } = token
   const doc = omit(token, [ 'accessToken' ])

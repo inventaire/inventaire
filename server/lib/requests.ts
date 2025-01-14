@@ -5,7 +5,7 @@ import { absolutePath } from '#lib/absolute_path'
 import { newError, addContextToStack } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { wait } from '#lib/promises'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
@@ -41,8 +41,8 @@ export interface ReqOptions {
 }
 
 async function req (method: HttpMethod, url: AbsoluteUrl, options: ReqOptions = {}) {
-  assert_.string(url)
-  assert_.object(options)
+  assertString(url)
+  assertObject(options)
 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)

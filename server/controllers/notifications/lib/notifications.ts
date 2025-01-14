@@ -1,13 +1,13 @@
 import { dbFactory } from '#db/couchdb/base'
 import { minKey, maxKey } from '#lib/couch'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumbers, assertString } from '#lib/utils/assert_types'
 import { createNotificationDoc, markNotificationDocAsRead } from '#models/notification'
 import type { Notification } from '#types/notification'
 
 const db = await dbFactory('notifications')
 
 export function getNotificationsByUserId (userId) {
-  assert_.string(userId)
+  assertString(userId)
   return db.getDocsByViewQuery<Notification>('byUserAndTime', {
     startkey: [ userId, maxKey ],
     endkey: [ userId, minKey ],
@@ -28,8 +28,8 @@ export function createNotification (user, type, data) {
 }
 
 export async function updateNotificationReadStatus (userId, times) {
-  assert_.string(userId)
-  assert_.numbers(times)
+  assertString(userId)
+  assertNumbers(times)
   const keys = times.map(time => [ userId, time ])
   const docs = await db.getDocsByViewKeys<Notification>('byUserAndTime', keys)
   docs.forEach(markNotificationDocAsRead)
@@ -39,7 +39,7 @@ export async function updateNotificationReadStatus (userId, times) {
 export function deleteAllNotificationsBySubjectId (subjectId) {
   // You absolutly don't want this id to be undefined
   // as this would end up deleting the whole database
-  assert_.string(subjectId)
+  assertString(subjectId)
   return getNotificationsBySubject(subjectId)
   .then(db.bulkDelete)
 }

@@ -2,7 +2,7 @@ import { isArray } from 'lodash-es'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { AccessLevel } from '#lib/user_access_levels'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { objectKeys, typeOf } from '#lib/utils/types'
 import type { Claims, EntityType, InvEntityId, PropertyUri } from '#types/entity'
 import { getInvEntityType } from './get_entity_type.js'
@@ -18,7 +18,7 @@ interface ValidateAndFormatInvClaimsParams {
 export async function validateAndFormatInvClaims ({ claims, type, _id, userAccessLevels }: ValidateAndFormatInvClaimsParams) {
   const wdtP31 = claims['wdt:P31']
   type = wdtP31 ? getInvEntityType(wdtP31) : type
-  assert_.string(type)
+  assertString(type)
 
   if (!isNonEmptyPlainObject(claims)) {
     throw newError('invalid claims', 400, { claims })

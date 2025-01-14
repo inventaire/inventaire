@@ -3,7 +3,7 @@ import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
 import { dbFactory } from '#db/couchdb/base'
 import { notFoundError } from '#lib/error/error'
 import searchGroupsByPositionFactory from '#lib/search_by_position'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
 import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds, type GroupCreationParams } from '#models/group'
@@ -54,7 +54,7 @@ export async function getGroupsWhereUserHasAnyRole (userId) {
 }
 
 export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
-  assert_.string(userId)
+  assertString(userId)
   const { rows } = await db.view<Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: [
@@ -66,7 +66,7 @@ export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
 }
 
 export async function getGroupsIdsWhereUsersAreAdminsOrMembers (usersIds: UserId[]) {
-  assert_.strings(usersIds)
+  assertStrings(usersIds)
   const { rows } = await db.view<Group>('groups', 'byRoleAndUser', {
     include_docs: false,
     keys: usersIds.flatMap(userId => {
@@ -112,7 +112,7 @@ export async function getGroupMembersIds (groupId) {
 export const getGroupsByPosition = searchGroupsByPosition
 
 export async function imageIsUsed (imageHash) {
-  assert_.string(imageHash)
+  assertString(imageHash)
   const { rows } = await db.view<Group>('groups', 'byPicture', { key: imageHash })
   return rows.length > 0
 }

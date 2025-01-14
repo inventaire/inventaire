@@ -2,7 +2,7 @@ import 'should'
 import { noop } from 'lodash-es'
 import { wait } from '#lib/promises'
 import { requestGrouper } from '#lib/request_grouper'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { makeSpy, shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -27,7 +27,7 @@ const mockRequesterSync = ids => {
 }
 
 const mockRequesterSingleSync = id => {
-  assert_.string(id)
+  assertString(id)
   return `yep:${id}`
 }
 

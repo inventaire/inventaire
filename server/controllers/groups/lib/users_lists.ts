@@ -1,6 +1,6 @@
 import { chain } from 'lodash-es'
 import { getGroupById } from '#controllers/groups/lib/groups'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray } from '#lib/utils/assert_types'
 import { groupCategories } from '#models/group'
 
 export function userIsInGroup (userId, groupId) {
@@ -51,7 +51,7 @@ export function getGroupRequestedUsersIds (group) {
 }
 
 function getUsersIdsByAgregatedCategories (group, categories) {
-  assert_.array(categories)
+  assertArray(categories)
   return chain(group)
   .pick(categories)
   .values()

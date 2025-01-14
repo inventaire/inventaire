@@ -1,8 +1,8 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertFunction, assertNumber } from '#lib/utils/assert_types'
 
 export default ({ fn, ttlAfterFunctionCallReturned }) => {
-  assert_.function(fn)
-  assert_.number(ttlAfterFunctionCallReturned)
+  assertFunction(fn)
+  assertNumber(ttlAfterFunctionCallReturned)
   const cache = {}
   return async (...args) => {
     if (args.length !== 1) throw new Error('only single argument functions are supported')

@@ -1,5 +1,5 @@
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber } from '#lib/utils/assert_types'
 import commonValidations from './common.js'
 
 const { pass, BoundedString } = commonValidations
@@ -25,8 +25,8 @@ export const objectValidations = {
   content: BoundedString(1, contentLimit),
   name: BoundedString(1, 80),
   items: itemsMetadata => {
-    assert_.number(itemsMetadata.since)
-    assert_.number(itemsMetadata.until)
+    assertNumber(itemsMetadata.since)
+    assertNumber(itemsMetadata.until)
     return true
   },
 }

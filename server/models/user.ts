@@ -3,7 +3,7 @@ import { hashPassword } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { truncateLatLng } from '#lib/geo'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertObject, assertString } from '#lib/utils/assert_types'
 import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
@@ -16,8 +16,8 @@ const generateReadToken = getRandomString.bind(null, 32)
 
 export async function createUserDoc (username: string, email: Email, language: string, password: string) {
   log([ username, email, language, `password:${(password != null)}` ], 'creating user')
-  assert_.strings([ username, email ])
-  if (language != null) { assert_.string(language) }
+  assertStrings([ username, email ])
+  if (language != null) { assertString(language) }
 
   username = userFormatters.username(username)
 
@@ -106,10 +106,10 @@ export function updateUserDocPassword (user: User, newHash: StringifiedHashedSec
 }
 
 export const setUserDocOauthTokens = (provider, data) => (user: User) => {
-  assert_.string(provider)
-  assert_.object(data)
-  assert_.string(data.token)
-  assert_.string(data.token_secret)
+  assertString(provider)
+  assertObject(data)
+  assertString(data.token)
+  assertString(data.token_secret)
   user.oauth = user.oauth || {}
   user.oauth[provider] = data
   return user
@@ -119,9 +119,9 @@ export const updateUserItemsCounts = itemsCounts => (user: DocWithUsernameInUser
   // This function is used by db.update and should thus always return a user doc
   // even if unmodified
   if (user.type === 'deleted') return user
-  assert_.object(itemsCounts.private)
-  assert_.object(itemsCounts.network)
-  assert_.object(itemsCounts.public)
+  assertObject(itemsCounts.private)
+  assertObject(itemsCounts.network)
+  assertObject(itemsCounts.public)
   Object.assign(user.snapshot, itemsCounts)
   return user
 }

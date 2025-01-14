@@ -1,6 +1,6 @@
 import type { UserWithCookie } from '#fixtures/users'
 import type { ContextualizedError } from '#lib/error/format_error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { customAuthReq } from '#tests/api/utils/request'
 import type { RelativeUrl } from '#types/common'
 import { getUser } from './utils.js'
@@ -15,8 +15,8 @@ export async function getUsersNearPosition (position, user) {
 
 export async function updateUser ({ user, attribute, value }: { user: UserWithCookie, attribute: string, value }) {
   user = await (user || getUser())
-  assert_.object(user)
-  assert_.string(attribute)
+  assertObject(user)
+  assertString(attribute)
   return customAuthReq(user, 'put', '/api/user', { attribute, value })
 }
 

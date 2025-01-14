@@ -2,7 +2,7 @@ import { cleanupImageUrl } from '#data/dataseed/dataseed'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { isPrivateUrl } from '#lib/network/is_private_url'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
@@ -12,8 +12,8 @@ import convertImageUrl from './convert_image_url.js'
 const { enabled: dataseedEnabled } = config.dataseed
 
 export async function convertAndCleanupImageUrl ({ container, url }: { container: ImageContainer, url: AbsoluteUrl }) {
-  assert_.string(container)
-  assert_.string(url)
+  assertString(container)
+  assertString(url)
   const originalUrl = url
   if (dataseedEnabled && container === 'entities') {
     const res = await cleanupImageUrl(url)

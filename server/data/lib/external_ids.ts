@@ -2,7 +2,7 @@ import { uniq, flatten } from 'lodash-es'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
 import getEntityIdBySitelink from '#data/wikidata/get_entity_id_by_sitelink'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 import type { EntityUri } from '#types/entity'
 import type { LooseClaims } from '#types/resolver'
@@ -12,8 +12,8 @@ export async function parseSameasMatches ({ matches, expectedEntityType }: {
   matches: string[] | string[][]
   expectedEntityType: string
 }): Promise<{ claims: LooseClaims, uri?: EntityUri }> {
-  assert_.array(matches)
-  assert_.string(expectedEntityType)
+  assertArray(matches)
+  assertString(expectedEntityType)
 
   matches = flatten(matches)
     .filter(match => match != null && match !== '')

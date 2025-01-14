@@ -2,7 +2,7 @@ import { debounce } from 'lodash-es'
 import { getShelfById } from '#controllers/shelves/lib/shelves'
 import { getUserById } from '#controllers/user/lib/user'
 import { radio } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber } from '#lib/utils/assert_types'
 import { LogError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { CreateActivity, ShelfActorName } from '#types/activity'
@@ -15,7 +15,7 @@ import formatUserItemsActivities from './format_user_items_activities.js'
 import { postActivityToActorFollowersInboxes } from './post_activity.js'
 
 const { activitiesDebounceTime } = config.activitypub
-assert_.number(activitiesDebounceTime)
+assertNumber(activitiesDebounceTime)
 const debouncedActivities = {}
 
 export function initRadioHooks () {

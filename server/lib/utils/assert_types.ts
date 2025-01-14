@@ -2,14 +2,14 @@ import { isArguments, isArray, times } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { typeOf } from './types.js'
 
-function assertType (type: string, obj: unknown) {
+export function assertType (type: string, obj: unknown) {
   const trueType = typeOf(obj)
   if (!type.split('|').includes(trueType)) {
     throw newError(`expected ${type}, got ${stringify(obj)} (${trueType})`, 500, { type, obj }, TypeError)
   }
 }
 
-function assertTypes (types: string | string[], args: unknown[]) {
+export function assertTypes (types: string | string[], args: unknown[]) {
   if (isArguments(args)) {
     args = Array.from(args)
     if (!isArray(types)) {
@@ -48,46 +48,47 @@ function parseTypes (types, args) {
   return times(args.length, () => multiTypes)
 }
 
-// Avoid triggering TS2775 in consuùùers by using an explicit type annotation
-// See https://stackoverflow.com/a/72689922/3324977
+export function assertString (str: unknown): asserts str is string {
+  assertType('string', str)
+}
+
+export function assertNumber (num: unknown): asserts num is number {
+  assertType('number', num)
+}
+
+export function assertBoolean (bool: unknown): asserts bool is boolean {
+  assertType('boolean', bool)
+}
+
+export function assertArray (arr: unknown): asserts arr is Array<unknown> {
+  assertType('array', arr)
+}
+
+export function assertObject (obj: unknown): asserts obj is Record<string, unknown> {
+  assertType('object', obj)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const assert_: Record<string, Function> = {
-  type: assertType,
-  types: assertTypes,
+export function assertFunction (fn: unknown): asserts fn is Function {
+  assertType('function', fn)
+}
 
-  string (str: unknown): asserts str is string {
-    assertType('string', str)
-  },
-  number (num: unknown): asserts num is number {
-    assertType('number', num)
-  },
-  boolean (bool: unknown): asserts bool is boolean {
-    assertType('boolean', bool)
-  },
-  array (arr: unknown): asserts arr is Array<unknown> {
-    assertType('array', arr)
-  },
-  object (obj: unknown): asserts obj is Record<string, unknown> {
-    assertType('object', obj)
-  },
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  function (fn: unknown): asserts fn is Function {
-    assertType('function', fn)
-  },
-  promise (promise: unknown): asserts promise is Promise<unknown> {
-    assertType('promise', promise)
-  },
+export function assertPromise (promise: unknown): asserts promise is Promise<unknown> {
+  assertType('promise', promise)
+}
 
-  strings (strings: unknown[]): asserts strings is string[] {
-    assertTypes('strings...', strings)
-  },
-  numbers (numbers: unknown[]): asserts numbers is number[] {
-    assertTypes('numbers...', numbers)
-  },
-  arrays (arrays: unknown[]): asserts arrays is Array<unknown>[] {
-    assertTypes('arrays...', arrays)
-  },
-  objects (objects: unknown[]): asserts objects is Record<string, unknown>[] {
-    assertTypes('objects...', objects)
-  },
+export function assertStrings (strings: unknown[]): asserts strings is string[] {
+  assertTypes('strings...', strings)
+}
+
+export function assertNumbers (numbers: unknown[]): asserts numbers is number[] {
+  assertTypes('numbers...', numbers)
+}
+
+export function assertArrays (arrays: unknown[]): asserts arrays is Array<unknown>[] {
+  assertTypes('arrays...', arrays)
+}
+
+export function assertObjects (objects: unknown[]): asserts objects is Record<string, unknown>[] {
+  assertTypes('objects...', objects)
 }

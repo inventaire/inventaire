@@ -14,7 +14,7 @@ import getSelibrAuthorWorksTitle from '#data/selibr/get_selibr_author_works_titl
 import { getWikipediaArticle } from '#data/wikipedia/get_article'
 import { isWdEntityUri } from '#lib/boolean_validations'
 import { whateverWorks } from '#lib/promises'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import type { EntityUri, Label } from '#types/entity'
 import { getEntityByUri } from './get_entity_by_uri.js'
@@ -26,9 +26,9 @@ import type { WikimediaLanguageCode } from 'wikibase-sdk'
 // - worksLabelsLangs: those labels language, indicating which Wikipedia editions
 //   should be checked
 export async function getOccurrencesFromExternalSources (wdAuthorUri: EntityUri, worksLabels: Label[], worksLabelsLangs: WikimediaLanguageCode[]) {
-  assert_.string(wdAuthorUri)
-  assert_.strings(worksLabels)
-  assert_.strings(worksLabelsLangs)
+  assertString(wdAuthorUri)
+  assertStrings(worksLabels)
+  assertStrings(worksLabelsLangs)
 
   if (!isWdEntityUri(wdAuthorUri)) return []
 

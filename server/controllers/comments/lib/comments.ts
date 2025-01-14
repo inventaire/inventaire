@@ -1,5 +1,5 @@
 import { dbFactory } from '#db/couchdb/base'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings } from '#lib/utils/assert_types'
 import { createTransactionComment } from '#models/comment'
 import type { TransactionComment } from '#types/comment'
 
@@ -13,7 +13,7 @@ export default {
   },
 
   addTransactionComment: (userId, message, transactionId) => {
-    assert_.strings([ userId, message, transactionId ])
+    assertStrings([ userId, message, transactionId ])
     const comment = createTransactionComment(userId, message, transactionId)
     return db.post(comment)
   },

@@ -1,7 +1,7 @@
 import { find, map, without } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { truncateLatLng } from '#lib/geo'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
 import type { NewCouchDoc } from '#types/couchdb'
@@ -167,7 +167,7 @@ export const groupCategories = {
 }
 
 export function getAllGroupDocMembersIds (group) {
-  assert_.object(group)
+  assertObject(group)
   const adminsIds = map(group.admins, 'user')
   const membersIds = map(group.members, 'user')
   return adminsIds.concat(membersIds)

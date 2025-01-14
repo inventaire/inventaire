@@ -1,18 +1,18 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { assert_ } from './assert_types.js'
+import { assertString, assertType } from '#lib/utils/assert_types'
 
 const stringify = data => JSON.stringify(data, null, 2)
 
 export function readJsonFile (path) {
-  assert_.string(path)
+  assertString(path)
   return readFile(path, 'utf-8')
   .then(JSON.parse)
 }
 
 export function writeJsonFile (path, data) {
-  assert_.string(path)
-  assert_.type('object|array', data)
+  assertString(path)
+  assertType('object|array', data)
   const json = stringify(data)
   return writeFile(path, json)
 }

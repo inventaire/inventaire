@@ -6,7 +6,7 @@ import { firstDoc } from '#lib/couch'
 import { newError, notFoundError } from '#lib/error/error'
 import searchUsersByDistanceFactory from '#lib/search_by_distance'
 import searchUsersByPositionFactory from '#lib/search_by_position'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
@@ -28,7 +28,7 @@ export const getUsersByEmail = (email: Email) => byEmail<User>(db, email)
 export const getUsersByEmails = (emails: Email[]) => byEmails<User>(db, emails)
 
 export function getUsersAuthorizedDataByEmails (emails: Email[], reqUserId: UserId) {
-  assert_.array(emails)
+  assertArray(emails)
   // Keeping the email is required to map the users returned
   // with the initial input
   return getUsersAuthorizedData(getUsersByEmails(emails), reqUserId, 'email')
@@ -60,7 +60,7 @@ export function findUserByUsernameOrEmail (str: Username | Email) {
 }
 
 export async function getUsersAuthorizedDataByIds (ids: UserId[], reqUserId: UserId, extraAttribute?: UserExtraAttribute) {
-  assert_.array(ids)
+  assertArray(ids)
   if (ids.length === 0) return []
   return getUsersAuthorizedData(getUsersByIds(ids), reqUserId, extraAttribute)
 }
@@ -133,7 +133,7 @@ export async function getUsersNearby (userId: UserId, meterRange: number, strict
 export const getUserByPosition = searchUsersByPosition
 
 export async function imageIsUsed (imageHash: ImageHash) {
-  assert_.string(imageHash)
+  assertString(imageHash)
   const { rows } = await db.view<User>('users', 'byPicture', { key: imageHash })
   return rows.length > 0
 }

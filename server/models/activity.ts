@@ -1,13 +1,13 @@
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import type { ActivityDoc } from '#types/activity'
 import attributes from './attributes/activity.js'
 import { baseActivityValidations } from './validations/activity.js'
 
 export function createActivityDoc (activity) {
-  assert_.object(activity)
-  assert_.string(activity.type)
-  assert_.object(activity.actor)
+  assertObject(activity)
+  assertString(activity.type)
+  assertObject(activity.actor)
   if (activity.id) activity.externalId = activity.id
   delete activity.id
   delete activity.context

@@ -2,7 +2,7 @@ import { trim } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { formatIsbn } from '#lib/isbn/isbn'
 import { parseIsbn } from '#lib/isbn/parse'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { objectValues } from '#lib/utils/base'
 import { getPluralType } from '#lib/wikidata/aliases'
 import type { EntityType } from '#types/entity'
@@ -61,7 +61,7 @@ export function allowedPropertyValues (property: keyof typeof allowedValuesPerTy
     typeSpecificValidation: true,
     format: trim,
     validate: ({ value, entityType }) => {
-      assert_.string(entityType)
+      assertString(entityType)
       const type = getPluralType(entityType)
       return allowedValuesPerType[type].includes(value)
     },

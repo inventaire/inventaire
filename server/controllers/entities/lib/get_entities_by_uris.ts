@@ -2,7 +2,7 @@ import { keyBy } from 'lodash-es'
 import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { isValidIsbn } from '#lib/isbn/isbn'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertArray } from '#lib/utils/assert_types'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import { objectKeys } from '#lib/utils/types'
 import type { EntityId, EntityUri, EntityUriPrefix, ExpandedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
@@ -52,7 +52,7 @@ export async function getExpandedEntitiesByUris (params: Omit<GetEntitiesByUrisP
 
 export async function getPossiblyExpandedEntitiesByUris (params: GetEntitiesByUrisParams) {
   const { uris, includeReferences } = params
-  assert_.strings(uris)
+  assertStrings(uris)
   const domains: Domains = {}
 
   // validate per URI to be able to return a precise error message
@@ -109,11 +109,11 @@ function formatRichResults (results: DomainsResults, { includeReferences = false
   let entitiesList = []
 
   for (const result of results) {
-    assert_.array(result.entities)
+    assertArray(result.entities)
     for (const entity of result.entities) {
       if (entity.redirects) {
         const { from, to } = entity.redirects
-        assert_.strings([ from, to ])
+        assertStrings([ from, to ])
         response.redirects[from] = to
         delete entity.redirects
       }

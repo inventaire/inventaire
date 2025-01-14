@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import { defer } from '#lib/promises'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 
 // Goal: Make one grouped request return several individual promises
 // Use case: we got several entities to fetch on Wikidata at about the same time
@@ -40,7 +40,7 @@ export function requestGrouper <K, T> (params) {
   // make a request for a single piece, get the result for this single piece.
   // The request grouper abstract all the rest, namely the request grouping
   return async function (key: K) {
-    assert_.string(key)
+    assertString(key)
     keys.push(key)
 
     const groupedResults = await getGroupedRequestPromise()

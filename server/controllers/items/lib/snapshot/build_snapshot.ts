@@ -2,7 +2,7 @@ import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { getBestLangValue } from '#lib/get_best_lang_value'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import itemValidations from '#models/validations/item'
 import type { SerializedEntity } from '#types/entity'
 import type { ItemSnapshot } from '#types/item'
@@ -59,7 +59,7 @@ interface BuildOperationParams {
 
 function buildOperation (params: BuildOperationParams) {
   const { entity, works, title, subtitle, lang, image, authors, series } = params
-  assert_.array(works)
+  assertArray(works)
   if (!isNonEmptyString(title)) {
     throw newError('no title found', 400, { entity })
   }
@@ -88,7 +88,7 @@ function buildOperation (params: BuildOperationParams) {
   }
 
   const { uri } = entity
-  assert_.string(uri)
+  assertString(uri)
 
   return { key: uri, value: snapshot }
 }

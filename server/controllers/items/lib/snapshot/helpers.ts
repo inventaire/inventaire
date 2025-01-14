@@ -3,7 +3,7 @@ import { getInvEntityType } from '#controllers/entities/lib/get_entity_type'
 import { getInvEntityCanonicalUri } from '#controllers/entities/lib/get_inv_entity_canonical_uri'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { getBestLangValue } from '#lib/get_best_lang_value'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray, assertString } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 import type { InvEntityDoc, SerializedEntity } from '#types/entity'
 
@@ -31,8 +31,8 @@ export function getNames (preferedLang, entities) {
 }
 
 export function aggregateClaims (entities, property) {
-  assert_.array(entities)
-  assert_.string(property)
+  assertArray(entities)
+  assertString(property)
 
   return chain(entities)
   .filter(entity => {

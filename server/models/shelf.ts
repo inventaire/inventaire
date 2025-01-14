@@ -1,6 +1,6 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import type { NewShelf, Shelf } from '#types/shelf'
 import type { UserId } from '#types/user'
@@ -8,9 +8,9 @@ import attributes, { type UpdatableShelfAttributes } from './attributes/shelf.js
 import validations from './validations/shelf.js'
 
 export function createShelfDoc (shelf: NewShelf) {
-  assert_.object(shelf)
-  assert_.string(shelf.owner)
-  assert_.string(shelf.name)
+  assertObject(shelf)
+  assertString(shelf.owner)
+  assertString(shelf.name)
 
   const newShelf: Partial<Shelf> = {}
   newShelf.visibility = shelf.visibility || []
@@ -29,8 +29,8 @@ export function createShelfDoc (shelf: NewShelf) {
 }
 
 export function updateShelfDocAttributes (oldShelf: Shelf, newAttributes: Pick<Shelf, UpdatableShelfAttributes>, userId: UserId) {
-  assert_.object(oldShelf)
-  assert_.object(newAttributes)
+  assertObject(oldShelf)
+  assertObject(newAttributes)
 
   if (oldShelf.owner !== userId) {
     throw newError('wrong owner', 403, { owner: oldShelf.owner })

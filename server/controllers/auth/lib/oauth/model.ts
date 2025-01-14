@@ -9,7 +9,7 @@ import { getOauthTokenbyId, saveOauthToken } from '#controllers/auth/lib/oauth/t
 import { getUserById } from '#controllers/user/lib/user'
 import { verifyPassword } from '#lib/crypto'
 import { newError, catchNotFound } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import type { OAuthAuthorizationCode, OAuthClientId, OAuthToken, SerializedOAuthClient } from '#types/oauth'
@@ -86,7 +86,7 @@ export const oauthServerModel = {
   validateScope: async (user, client: SerializedOAuthClient, scope: string[]) => {
     if (typeof scope === 'string') scope = getScopeArray(scope)
     else scope = scope.flatMap(getScopeArray)
-    assert_.array(client.scope)
+    assertArray(client.scope)
     const notClientScopes = difference(scope, client.scope)
     if (notClientScopes.length > 0) {
       warn({ requestedScopes: scope, clientScopes: client.scope, notClientScopes }, 'oauth scope validation failed')
@@ -99,7 +99,7 @@ export const oauthServerModel = {
   // Spec https://node-oauthoauth2-server.readthedocs.io/en/latest/model/spec.html#verifyscope-accesstoken-scope
   verifyScope: async (token: OAuth2Server.Token, acceptedScopes: string[]) => {
     if (typeof token.scope === 'string') token.scope = getScopeArray(token.scope)
-    assert_.array(acceptedScopes)
+    assertArray(acceptedScopes)
     token.matchingScopes = token.scope.filter(scope => arrayIncludes(acceptedScopes, scope))
     return token.matchingScopes.length > 0
   },

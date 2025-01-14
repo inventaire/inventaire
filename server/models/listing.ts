@@ -1,15 +1,15 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import type { Listing } from '#types/listing'
 import attributes from './attributes/listing.js'
 import validations from './validations/listing.js'
 
 export function createListingDoc (listing) {
-  assert_.object(listing)
-  assert_.string(listing.creator)
-  assert_.string(listing.name)
+  assertObject(listing)
+  assertString(listing.creator)
+  assertString(listing.name)
 
   listing.type ??= 'work'
   const newListing: Partial<Listing> = {}
@@ -28,8 +28,8 @@ export function createListingDoc (listing) {
 }
 
 export function updateListingDocAttributes (oldListing, newAttributes, creatorId) {
-  assert_.object(oldListing)
-  assert_.object(newAttributes)
+  assertObject(oldListing)
+  assertObject(newAttributes)
   if (oldListing.creator !== creatorId) {
     throw newError('wrong user', 403, oldListing.creator)
   }

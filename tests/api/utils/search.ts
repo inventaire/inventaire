@@ -3,7 +3,7 @@ import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { getIndexedDocUrl } from '#lib/elasticsearch'
 import { wait } from '#lib/promises'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
@@ -25,9 +25,9 @@ interface GetIndexedDocOptions {
   attempt?: number
 }
 export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = {}) {
-  assert_.string(index)
-  assert_.string(id)
-  if (options) assert_.object(options)
+  assertString(index)
+  assertString(id)
+  if (options) assertObject(options)
   const { retry = true, attempt = 0 } = options
   const url = getIndexedDocUrl(index, id)
   try {
@@ -48,9 +48,9 @@ export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = 
 }
 
 export async function getAnalyze ({ indexBaseName, text, analyzer }) {
-  assert_.string(indexBaseName)
-  assert_.string(text)
-  assert_.string(analyzer)
+  assertString(indexBaseName)
+  assertString(text)
+  assertString(analyzer)
   const index = indexesNamesByBaseNames[indexBaseName]
   const url = `${elasticOrigin}/${index}/_analyze`
   const { body } = await rawRequest('post', url, {
@@ -65,10 +65,10 @@ export async function getAnalyzedTokens ({ indexBaseName, text, analyzer }) {
 }
 
 export async function waitForIndexation (indexBaseName, id) {
-  assert_.string(indexBaseName)
+  assertString(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
-  assert_.string(index)
-  assert_.string(id)
+  assertString(index)
+  assertString(id)
   const { found } = await getIndexedDoc(index, id)
   if (found) {
     // Now that the doc is in ElasticSearch, let it a moment to update secondary indexes
@@ -100,10 +100,10 @@ export async function waitForReindexation (elasticResponse: ElasticResponse) {
 }
 
 export async function waitForDeindexation (indexBaseName, id) {
-  assert_.string(indexBaseName)
+  assertString(indexBaseName)
   const index = indexesNamesByBaseNames[indexBaseName]
-  assert_.string(index)
-  assert_.string(id)
+  assertString(index)
+  assertString(id)
   const { found } = await getIndexedDoc(index, id, { retry: false })
   if (found) {
     warn(`waiting for ${index}/${id} deindexation`)
@@ -141,8 +141,8 @@ export async function customAuthSearch (user, types, search) {
 }
 
 export async function deindex (index, id) {
-  assert_.string(index)
-  assert_.string(id)
+  assertString(index)
+  assertString(id)
   const url = `${elasticOrigin}/${index}/_doc/${id}`
   try {
     await rawRequest('delete', url)
@@ -157,8 +157,8 @@ export async function deindex (index, id) {
 }
 
 export async function indexPlaceholder (index, id) {
-  assert_.string(index)
-  assert_.string(id)
+  assertString(index)
+  assertString(id)
   const url = `${elasticOrigin}/${index}/_doc/${id}`
   await rawRequest('put', url, { body: { testPlaceholder: true } })
   success(url, 'placeholder added')

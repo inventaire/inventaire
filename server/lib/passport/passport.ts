@@ -5,20 +5,20 @@ import basicStrategy from '#lib/passport/basic_strategy'
 import localLoginStrategy from '#lib/passport/local_login_strategy'
 import localSignupStrategy from '#lib/passport/local_signup_strategy'
 import tokenStrategy from '#lib/passport/token_strategy'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertFunction, assertString } from '#lib/utils/assert_types'
 import { success, logError } from '#lib/utils/logs'
 
 passport.serializeUser((user, done) => {
-  assert_.object(user)
-  assert_.function(done)
+  assertObject(user)
+  assertFunction(done)
   const { _id: id } = user
   success(id, 'serializeUser')
   done(null, id)
 })
 
 passport.deserializeUser((id, done) => {
-  assert_.string(id)
-  assert_.function(done)
+  assertString(id)
+  assertFunction(done)
   return getUserById(id)
   .then(user => done(null, user))
   .catch(err => {

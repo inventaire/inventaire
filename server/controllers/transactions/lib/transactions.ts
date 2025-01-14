@@ -5,7 +5,7 @@ import { minKey, maxKey } from '#lib/couch'
 import { BasicUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings, assertObjects, assertString } from '#lib/utils/assert_types'
 import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { createTransactionDoc, transactionIsActive, validateTransactionPossibleState } from '#models/transaction'
@@ -24,7 +24,7 @@ export function getTransactionsByUser (userId) {
 }
 
 export function getTransactionsByUserAndItem (userId, itemId) {
-  assert_.strings([ userId, itemId ])
+  assertStrings([ userId, itemId ])
   return db.getDocsByViewKey<Transaction>('byUserAndItem', [ userId, itemId ])
 }
 
@@ -37,7 +37,7 @@ export async function createTransaction (itemDoc, ownerDoc, requesterDoc) {
 }
 
 export function addTransactionMessage (userId, message, transactionId) {
-  assert_.strings([ userId, message, transactionId ])
+  assertStrings([ userId, message, transactionId ])
   if (message) {
     return comments_.addTransactionComment(userId, message, transactionId)
   }
@@ -77,13 +77,13 @@ export async function cancelAllActiveTransactions (userId) {
 }
 
 export async function checkIfItemIsBusy (itemId) {
-  assert_.string(itemId)
+  assertString(itemId)
   const rows = await getBusyItems([ itemId ])
   return rows.length > 0
 }
 
 export async function setItemsBusyFlag (items) {
-  assert_.objects(items)
+  assertObjects(items)
   const itemsIdsToCheck = map(items.filter(mayBeBusy), '_id')
   const rows = await getBusyItems(itemsIdsToCheck)
   const busyItemsIds = new Set(map(rows, 'key'))

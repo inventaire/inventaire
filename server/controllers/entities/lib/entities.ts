@@ -10,7 +10,7 @@ import { newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertTypes, assertString } from '#lib/utils/assert_types'
 import { beforeEntityDocSave } from '#models/entity'
 import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity } from '#types/entity'
 import type { EntityImagePath, ImageHash } from '#types/image'
@@ -110,7 +110,7 @@ interface PutInvEntityUpdateParams extends PutInvEntityCommonParams {
 }
 export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (params: PutInvEntityCreationParams | PutInvEntityUpdateParams) {
   const { userId, currentDoc, updatedDoc, create, batchId, context } = params
-  assert_.types([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
+  assertTypes([ 'string', 'object', 'object' ], [ userId, currentDoc, updatedDoc ])
   if (currentDoc === updatedDoc) {
     // @ts-expect-error TS2345
     throw newError('currentDoc and updatedDoc can not be the same object', 500, params)
@@ -152,7 +152,7 @@ export const getUrlFromEntityImageHash = (imageHash: ImageHash) => getUrlFromIma
 export const uniqByUri = entities => uniqBy(entities, getUri)
 
 export async function imageIsUsed (imageHash: ImageHash) {
-  assert_.string(imageHash)
+  assertString(imageHash)
   const { rows } = await getInvEntitiesByClaim('invp:P2', imageHash)
   return rows.length > 0
 }

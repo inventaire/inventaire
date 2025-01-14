@@ -1,4 +1,4 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString, assertObject } from '#lib/utils/assert_types'
 import { formatContextualizedError, type ErrorContext } from './format_error.js'
 
 type ErrorClass = typeof Error
@@ -24,8 +24,8 @@ export function notFoundError (context) {
 }
 
 export function unauthorizedError (req, message, context) {
-  assert_.object(req)
-  assert_.string(message)
+  assertObject(req)
+  assertString(message)
   // If the requested is authentified, its a forbidden access
   // If not, the requested might be fullfilled after authentification
   const statusCode = req.user ? 403 : 401

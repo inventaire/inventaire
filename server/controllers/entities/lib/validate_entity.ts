@@ -5,7 +5,7 @@ import { isNonEmptyArray, isNonEmptyPlainObject, isNonEmptyString } from '#lib/b
 import { newError } from '#lib/error/error'
 import { Lang } from '#lib/regex'
 import type { AccessLevel } from '#lib/user_access_levels'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import { isLocalEntityLayer } from '#models/entity'
 import type { Claims, EntityType, InvEntity, Labels, WdEntityUri } from '#types/entity'
 import { getInvEntityType } from './get_entity_type.js'
@@ -28,8 +28,8 @@ export async function validateInvEntity (entity: ValidatableEntity, userAccessLe
 
 async function validate (entity: ValidatableEntity, userAccessLevels?: AccessLevel[]) {
   const { _id, labels, claims } = entity
-  assert_.object(labels)
-  assert_.object(claims)
+  assertObject(labels)
+  assertObject(claims)
   const isLocalLayer = isLocalEntityLayer(entity)
   let type
   if (isLocalLayer) {

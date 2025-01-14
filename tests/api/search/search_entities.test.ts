@@ -13,7 +13,7 @@ import {
   createWorkWithSerie,
 } from '#fixtures/entities'
 import { humanName, randomLongWord, randomWords } from '#fixtures/text'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { getByUris } from '#tests/api/utils/entities'
 import { search, waitForIndexation, getIndexedDoc } from '#tests/api/utils/search'
@@ -22,7 +22,7 @@ import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 const wikidataUris = [ 'wd:Q184226', 'wd:Q180736', 'wd:Q27536277', 'wd:Q225946', 'wd:Q3409094', 'wd:Q3236382' ]
 const { max_gram: maxGram } = elasticsearchSettings.analysis.filter.edge_ngram
 
-assert_.number(maxGram)
+assertNumber(maxGram)
 
 describe('search:entities', () => {
   let human, work, serie, collection, publisher

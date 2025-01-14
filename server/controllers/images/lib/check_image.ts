@@ -2,7 +2,7 @@ import { imageIsUsed as entityImageIsUsed } from '#controllers/entities/lib/enti
 import { imageIsUsed as groupImageIsUsed } from '#controllers/groups/lib/groups'
 import { containers } from '#controllers/images/lib/containers'
 import { imageIsUsed as userImageIsUsed } from '#controllers/user/lib/user'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { info, logError } from '#lib/utils/logs'
 import config from '#server/config'
 
@@ -10,9 +10,9 @@ const { checkDelays } = config.mediaStorage.images
 
 export async function checkImage ({ container, hash, url, context }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
-  assert_.string(container)
-  assert_.string(hash)
-  assert_.string(context)
+  assertString(container)
+  assertString(hash)
+  assertString(context)
   const delay = checkDelays[context]
   // Use 'setTimeout' instead of 'wait' to not hold any consumer
   // Especially, in test environment, requests wouldn't respond before radio events are fulfilled

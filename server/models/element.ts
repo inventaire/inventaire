@@ -1,6 +1,6 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { findNewOrdinal } from '#lib/utils/lexicographic_ordinal'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
@@ -36,10 +36,10 @@ export const attributes = {
 }
 
 export function createElementDoc (element) {
-  assert_.object(element)
-  assert_.string(element.uri)
-  assert_.string(element.list)
-  assert_.string(element.ordinal)
+  assertObject(element)
+  assertString(element.uri)
+  assertString(element.list)
+  assertString(element.ordinal)
 
   const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {
@@ -56,8 +56,8 @@ export function createElementDoc (element) {
 }
 
 export function updateElementDoc (newAttributes, oldElement, listingElements?) {
-  assert_.object(newAttributes)
-  assert_.object(oldElement)
+  assertObject(newAttributes)
+  assertObject(oldElement)
   const newElement = clone(oldElement)
 
   const passedAttributes = Object.keys(newAttributes)

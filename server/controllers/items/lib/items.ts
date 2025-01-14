@@ -3,7 +3,7 @@ import { addItemsSnapshots } from '#controllers/items/lib/queries_commons'
 import { dbFactory } from '#db/couchdb/base'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber, assertArray, assertString } from '#lib/utils/assert_types'
 import { deepCompact, forceArray } from '#lib/utils/base'
 import { changeItemDocOwner, createItemDoc, updateItemDoc } from '#models/item'
 import type { Item } from '#types/item'
@@ -28,9 +28,9 @@ export function getItemsByOwnerAndEntities (ownerId, entitiesUris) {
 export const getItemsByPreviousEntity = entityUri => db.getDocsByViewKey<Item>('byPreviousEntity', entityUri)
 
 export function getPublicItemsByOwnerAndDate ({ ownerId, since, until }) {
-  assert_.string(ownerId)
-  assert_.number(since)
-  assert_.number(until)
+  assertString(ownerId)
+  assertNumber(since)
+  assertNumber(until)
   return db.getDocsByViewQuery<Item>('publicByOwnerAndDate', {
     include_docs: true,
     startkey: [ ownerId, until ],
@@ -40,9 +40,9 @@ export function getPublicItemsByOwnerAndDate ({ ownerId, since, until }) {
 }
 
 export function getPublicItemsByShelfAndDate ({ shelf, since, until }) {
-  assert_.string(shelf)
-  assert_.number(since)
-  assert_.number(until)
+  assertString(shelf)
+  assertNumber(since)
+  assertNumber(until)
   return db.getDocsByViewQuery<Item>('publicByShelfAndDate', {
     include_docs: true,
     startkey: [ shelf, until ],
@@ -63,7 +63,7 @@ export function getPublicItemsByDate (limit = 15, offset = 0, assertImage = fals
 }
 
 export async function createItems (userId, items) {
-  assert_.array(items)
+  assertArray(items)
   items = items.map(item => createItemDoc(userId, item))
   await validateItemsAsync(items)
   const res = await db.bulk(items)

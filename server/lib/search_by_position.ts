@@ -1,6 +1,6 @@
 import { map } from 'lodash-es'
 import { buildSearcher } from '#lib/elasticsearch'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumbers } from '#lib/utils/assert_types'
 import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
 
 export default (db, dbBaseName) => {
@@ -10,7 +10,7 @@ export default (db, dbBaseName) => {
   })
 
   return async bbox => {
-    assert_.numbers(bbox)
+    assertNumbers(bbox)
     const { hits } = await searchByPosition(bbox)
     const ids = map(hits, '_id')
     return db.byIds(ids)

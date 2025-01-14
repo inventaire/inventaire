@@ -1,4 +1,4 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArrays } from '#lib/utils/assert_types'
 
 // Distance between LatLng
 // adapted from Leaflet distanceTo
@@ -26,7 +26,7 @@ const R = 6378137
 const d2r = Math.PI / 180
 
 export function kmBetween (latLngA, latLngB) {
-  assert_.arrays([ latLngA, latLngB ])
+  assertArrays([ latLngA, latLngB ])
   const meters = distanceBetween(latLngA, latLngB)
   // 1km precision above 10km
   if (meters > 10000) {

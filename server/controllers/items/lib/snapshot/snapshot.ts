@@ -19,7 +19,7 @@ import { refreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { formatBatchOps } from '#db/level/utils'
 import { newError } from '#lib/error/error'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { logError } from '#lib/utils/logs'
 import type { EntityUri } from '#types/entity'
 import type { ItemSnapshot, SerializedItem } from '#types/item'
@@ -30,7 +30,7 @@ export async function addSnapshotToItem (item: SerializedItem) {
   if (item.snapshot) return item
 
   try {
-    assert_.string(item.entity)
+    assertString(item.entity)
     item.snapshot = await getSnapshot(item.entity)
   } catch (err) {
     err.context = err.context || {}

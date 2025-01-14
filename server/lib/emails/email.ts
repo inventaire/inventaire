@@ -1,6 +1,6 @@
 import type { TransactionEmailViewModel } from '#lib/emails/build_transaction_email'
 import { kmBetween } from '#lib/geo'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObjects } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
@@ -228,7 +228,7 @@ function transactionEmail (transactionEmailViewModel: TransactionEmailViewModel,
 
 function validateOptions (options) {
   const { user1, user2 } = options
-  assert_.objects([ user1, user2 ])
+  assertObjects([ user1, user2 ])
   if (user1.email == null) throw new Error('missing user1 email')
   if (user2.username == null) throw new Error('missing user2 username')
   return [ user1, user2 ]

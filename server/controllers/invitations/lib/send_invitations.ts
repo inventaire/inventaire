@@ -1,15 +1,15 @@
 import { difference, map } from 'lodash-es'
 import { addInviter, createUnknownInvited, getInvitationsByEmails } from '#controllers/invitations/lib/invitations'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertType, assertArray, assertObject } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import Invited from '#models/invited'
 
 export async function sendInvitation ({ reqUser, group, emails, message }) {
-  assert_.object(reqUser)
-  assert_.type('object|null', group)
-  assert_.array(emails)
-  assert_.type('string|null', message)
+  assertObject(reqUser)
+  assertType('object|null', group)
+  assertArray(emails)
+  assertType('string|null', message)
   const reqUserId = reqUser._id
   const groupId = group && group._id
   log(emails, 'send_invitations emails')

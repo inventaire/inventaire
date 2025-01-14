@@ -1,5 +1,5 @@
 import { requests_ } from '#lib/requests'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
@@ -11,7 +11,7 @@ const headers = { 'content-type': 'application/x-ndjson' }
 export function addToBatch (batch, action, index, doc) {
   if (!doc) return warn('ignore empty doc')
   const { _id } = doc
-  assert_.string(_id)
+  assertString(_id)
   // Prevent triggering the error
   // 'Field [_id] is a metadata field and cannot be added inside a document.'
   delete doc._id

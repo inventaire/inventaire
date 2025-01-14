@@ -7,14 +7,14 @@ import { newError } from '#lib/error/error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertNumber } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { WdEntityId } from '#types/entity'
 
 const { nice } = config
 const { minReindexationInterval } = config.elasticsearch
-assert_.number(minReindexationInterval)
+assertNumber(minReindexationInterval)
 
 const indexName = 'wikidata'
 

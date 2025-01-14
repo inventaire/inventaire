@@ -4,7 +4,7 @@ import { getSha256Base64Digest } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { requests_, sanitizeUrl } from '#lib/requests'
 import { expired } from '#lib/time'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { Req } from '#server/types/server'
@@ -70,7 +70,7 @@ export function signRequest ({ url, method, keyId, privateKey, body }) {
   // Source: https://github.com/mastodon/mastodon/blob/main/app/controllers/concerns/signature_verification.rb
   const reqHeaders: HttpHeaders = { host, date }
   if (body) {
-    assert_.object(body)
+    assertObject(body)
     reqHeaders.digest = `SHA-256=${getSha256Base64Digest(JSON.stringify(body))}`
   }
   const signedHeadersNames = Object.keys(reqHeaders).join(' ')
@@ -110,7 +110,7 @@ function buildSignatureString (params) {
 async function fetchActorPublicKey (actorUrl: string) {
   if (sanitizeUrls) actorUrl = await sanitizeUrl(actorUrl)
   const actor = await requests_.get(actorUrl as AbsoluteUrl)
-  assert_.object(actor)
+  assertObject(actor)
   const { publicKey } = actor
   if (!publicKey) {
     throw newError('no publicKey found', 400, actor)

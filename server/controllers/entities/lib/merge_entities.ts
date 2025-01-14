@@ -2,7 +2,7 @@ import { cloneDeep, isEqual } from 'lodash-es'
 import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertStrings } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import { mergeEntitiesDocs, preventRedirectionEdit } from '#models/entity'
 import type { EntityUri, InvEntityId } from '#types/entity'
@@ -36,7 +36,7 @@ export default async function ({ userId, fromUri, toUri, context }: { userId: Us
 }
 
 async function mergeInvEntities (userId: UserId, fromId: InvEntityId, toId: InvEntityId) {
-  assert_.strings([ userId, fromId, toId ])
+  assertStrings([ userId, fromId, toId ])
 
   // Fetching non-formmatted docs
   const [ fromEntityDoc, toEntityDoc ] = await getEntitiesByIds([ fromId, toId ])

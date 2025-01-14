@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 import downloadImage from '#controllers/images/lib/download_image'
 import { createEdition } from '#fixtures/entities'
 import { createGroup } from '#fixtures/groups'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertString } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import config from '#server/config'
 import { getSomePlaceholderImageUrl } from '#tests/api/utils/placeholder_images'
@@ -66,7 +66,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
 
 export function localContainerHasImage ({ container, hash, url }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
-  assert_.string(hash)
+  assertString(hash)
   const localImagePath = `${localStorageFolder}/${container}/${hash}`
   try {
     // Using the sync method so that consumers can chain this function with ".shoud.be.true()"

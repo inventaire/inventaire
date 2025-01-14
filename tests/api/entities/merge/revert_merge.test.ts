@@ -15,7 +15,7 @@ describe('entities:revert-merge', () => {
   })
 
   it('should reject without "from" uri', async () => {
-    // Not using utils/entities `revertMerge` function to avoid getting an error from `assert_.string(fromUri)`
+    // Not using utils/entities `revertMerge` function to avoid getting an error from `assertString(fromUri)`
     await dataadminReq('put', '/api/entities?action=revert-merge', {})
     .then(shouldNotBeCalled)
     .catch(err => {

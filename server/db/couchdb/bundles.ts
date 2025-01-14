@@ -1,6 +1,6 @@
 import type { DbInfo } from '#db/couchdb/base'
 import { setDocsDeletedTrue } from '#lib/couch'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObjects, assertObject } from '#lib/utils/assert_types'
 import { forceArray } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import type { CouchDoc } from '#types/couchdb'
@@ -9,7 +9,7 @@ import type { MaybeIdentifiedDocument } from 'blue-cot/types/nano.js'
 
 export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo) {
   async function actionAndReturn <D> (verb: string, doc: D) {
-    assert_.object(doc)
+    assertObject(doc)
     const couchRes = await db[verb](doc)
     // @ts-expect-error
     if (!doc._id) doc._id = couchRes.id
@@ -19,7 +19,7 @@ export function couchdbBundlesFactory (db: ReturnType<typeof getDbApi> & DbInfo)
   }
 
   async function bulkDelete (docs: CouchDoc[]) {
-    assert_.objects(docs)
+    assertObjects(docs)
     if (docs.length === 0) return []
     warn(docs, `${db.dbName} bulkDelete`)
     return db.bulk(setDocsDeletedTrue(docs))

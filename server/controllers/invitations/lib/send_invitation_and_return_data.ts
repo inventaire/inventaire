@@ -2,15 +2,15 @@ import { difference, map } from 'lodash-es'
 import { groupAction } from '#controllers/groups/lib/group_action'
 import { requestFriend } from '#controllers/relations/lib/intent'
 import { getUsersAuthorizedDataByEmails } from '#controllers/user/lib/user'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertArray, assertType, assertString } from '#lib/utils/assert_types'
 import { sendInvitation } from './send_invitations.js'
 
 export async function sendInvitationAndReturnData ({ reqUser, message, group, parsedEmails, reqUserId }) {
-  assert_.object(reqUser)
-  assert_.type('string|null', message)
-  assert_.type('object|null', group)
-  assert_.array(parsedEmails)
-  assert_.string(reqUserId)
+  assertObject(reqUser)
+  assertType('string|null', message)
+  assertType('object|null', group)
+  assertArray(parsedEmails)
+  assertString(reqUserId)
 
   const existingUsers = await getUsersAuthorizedDataByEmails(parsedEmails, reqUserId)
   const existingUsersEmails = map(existingUsers, 'email')

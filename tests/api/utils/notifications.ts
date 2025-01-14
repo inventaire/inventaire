@@ -1,11 +1,11 @@
-import { assert_ } from '#lib/utils/assert_types'
+import { assertObject, assertString } from '#lib/utils/assert_types'
 import { } from './utils.js'
 import { customAuthReq } from '#tests/api/utils/request'
 
 export async function getNotifications ({ user, type, subject }) {
-  assert_.object(user)
-  assert_.string(type)
-  assert_.string(subject)
+  assertObject(user)
+  assertString(type)
+  assertString(subject)
   const { notifications } = await customAuthReq(user, 'get', '/api/notifications?limit=50')
   return notifications.filter(notification => {
     return notification.type === type && getSubjectId(notification) === subject

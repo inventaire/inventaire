@@ -2,7 +2,7 @@ import { getAggregatedPropertiesValues } from '#controllers/entities/lib/entitie
 import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uris'
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
-import { assert_ } from '#lib/utils/assert_types'
+import { assertArray } from '#lib/utils/assert_types'
 import type { EntityUri } from '#types/entity'
 import { aggregateClaims } from './helpers.js'
 
@@ -26,7 +26,7 @@ export async function getWorkAuthorsAndSeries (work) {
 
 export async function getEditionGraphFromEdition (edition) {
   const works = await getEditionWorks(edition)
-  assert_.array(works)
+  assertArray(works)
   const [ authors, series ] = await getWorksAuthorsAndSeries(works)
   // Tailor output to be spreaded on buildSnapshot.edition
   return [ edition, works, authors, series ]
