@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { truncateLatLng } from '#lib/geo'
 import { assertStrings, assertObject, assertString } from '#lib/utils/assert_types'
-import { normalizeString } from '#lib/utils/base'
+import { normalizeString, arrayIncludes } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import type { StringifiedHashedSecretData } from '#types/common'
@@ -127,10 +127,15 @@ export const updateUserItemsCounts = itemsCounts => (user: DocWithUsernameInUser
   return user
 }
 
-export const addUserDocRole = (role: UserRole) => (user: User) => {
-  if (!userAttributes.roles.includes(role)) {
+export function assertUserRole (role: unknown): asserts role is UserRole {
+  assertString(role)
+  if (!arrayIncludes(userAttributes.roles, role)) {
     throw newError('unknown role', 400)
   }
+}
+
+export const addUserDocRole = (role: UserRole) => (user: User) => {
+  assertUserRole(role)
   user.roles = user.roles || []
   if (user.roles.includes(role)) {
     throw newError('user already has role', 400)
@@ -140,9 +145,7 @@ export const addUserDocRole = (role: UserRole) => (user: User) => {
 }
 
 export const removeUserDocRole = (role: UserRole) => (user: User) => {
-  if (!userAttributes.roles.includes(role)) {
-    throw newError('unknown role', 400)
-  }
+  assertUserRole(role)
   user.roles = user.roles || []
   user.roles = without(user.roles, role)
   return user
