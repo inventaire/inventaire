@@ -7,8 +7,9 @@ import localSignupStrategy from '#lib/passport/local_signup_strategy'
 import tokenStrategy from '#lib/passport/token_strategy'
 import { assertObject, assertFunction, assertString } from '#lib/utils/assert_types'
 import { success, logError } from '#lib/utils/logs'
+import type { User } from '#types/user'
 
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: User, done) => {
   assertObject(user)
   assertFunction(done)
   const { _id: id } = user
@@ -23,7 +24,7 @@ passport.deserializeUser((id, done) => {
   .then(user => done(null, user))
   .catch(err => {
     if (err.statusCode === 404) {
-      err = newError("Couldn't deserialize cookies: user not found", 400, id)
+      err = newError("Couldn't deserialize cookies: user not found", 400, { id })
       err.name = 'SessionError'
     }
     logError(err, 'deserializeUser err')

@@ -111,19 +111,16 @@ async function fetchActorPublicKey (actorUrl: string) {
   if (sanitizeUrls) actorUrl = await sanitizeUrl(actorUrl)
   const actor = await requests_.get(actorUrl as AbsoluteUrl)
   assertObject(actor)
+  if (!('publicKey' in actor)) {
+    throw newError('no publicKey found', 400, { actor })
+  }
   const { publicKey } = actor
-  if (!publicKey) {
-    throw newError('no publicKey found', 400, actor)
+  if (!isNonEmptyPlainObject(publicKey) || typeof publicKey.publicKeyPem !== 'string') {
+    throw newError('invalid publicKey found', 400, { publicKey })
   }
-  if (!isNonEmptyPlainObject(publicKey) || !publicKey.publicKeyPem) {
-    throw newError('invalid publicKey found', 400, actor.publicKey)
-  }
-  const { publicKeyPem } = actor.publicKey
-  if (!publicKeyPem) {
-    throw newError('no publicKeyPem found', 400, actor)
-  }
+  const { publicKeyPem } = publicKey
   if (!publicKeyPem.startsWith('-----BEGIN PUBLIC KEY-----\n')) {
-    throw newError('invalid publicKeyPem found', 400, actor.publicKey)
+    throw newError('invalid publicKeyPem found', 400, { publicKey })
   }
   // TODO: handle timeout
   return actor.publicKey

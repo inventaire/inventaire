@@ -5,7 +5,7 @@ import { isNonEmptyArray } from '#lib/boolean_validations'
 import { getBestLangValue } from '#lib/get_best_lang_value'
 import { assertArray, assertString } from '#lib/utils/assert_types'
 import { warn } from '#lib/utils/logs'
-import type { InvEntityDoc, SerializedEntity } from '#types/entity'
+import type { InvEntityDoc, PropertyUri, SerializedEntity } from '#types/entity'
 
 export function getEntityUriAndType (entity: InvEntityDoc | SerializedEntity) {
   // Case when a serialized entity is passed
@@ -30,7 +30,7 @@ export function getNames (preferedLang, entities) {
   .join(', ')
 }
 
-export function aggregateClaims (entities, property) {
+export function aggregateClaims (entities: SerializedEntity[], property: PropertyUri) {
   assertArray(entities)
   assertString(property)
 

@@ -7,8 +7,8 @@ import {
 import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
-import { assertArray, assertString } from '#lib/utils/assert_types'
-import { someMatch } from '#lib/utils/base'
+import { assertString, assertStrings } from '#lib/utils/assert_types'
+import { setHas, someMatch } from '#lib/utils/base'
 import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import entitiesQueryBuilder from './entities_query_builder.js'
@@ -20,9 +20,9 @@ const indexedTypesSet = new Set(indexedTypes)
 
 export async function typeSearch (params) {
   const { lang, types, search, limit, offset, filter, exact, minScore, claim, safe = false } = params
-  assertArray(types)
+  assertStrings(types)
   for (const type of types) {
-    if (!indexedTypesSet.has(type)) throw newError('invalid type', 500, { type, types })
+    if (!setHas(indexedTypesSet, type)) throw newError('invalid type', 500, { type, types })
   }
   if (search) assertString(search)
 

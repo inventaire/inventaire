@@ -11,6 +11,7 @@ import { toLowerCase } from '#lib/utils/base'
 import { setUserDocOauthTokens, addUserDocRole, removeUserDocRole, setUserDocStableUsername } from '#models/user'
 import userValidations from '#models/validations/user'
 import type { ImageHash } from '#types/image'
+import type { OAuthProvider, OAuthProviderUserData } from '#types/oauth'
 import type { DocWithUsernameInUserDb, Email, User, UserId, UserRole, Username } from '#types/user'
 import { omitPrivateData, type UserExtraAttribute } from './authorized_user_data_pickers.js'
 import { byEmail, byEmails, findOneByEmail } from './shared_user_handlers.js'
@@ -108,7 +109,7 @@ export const addUserRole = (userId: UserId, role: UserRole) => db.update(userId,
 
 export const removeUserRole = (userId: UserId, role: UserRole) => db.update(userId, removeUserDocRole(role))
 
-export function setUserOauthTokens (userId: UserId, provider, data) {
+export function setUserOauthTokens (userId: UserId, provider: OAuthProvider, data: OAuthProviderUserData) {
   return db.update(userId, setUserDocOauthTokens(provider, data))
 }
 

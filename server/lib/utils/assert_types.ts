@@ -60,11 +60,11 @@ export function assertBoolean (bool: unknown): asserts bool is boolean {
   assertType('boolean', bool)
 }
 
-export function assertArray (arr: unknown): asserts arr is Array<unknown> {
+export function assertArray (arr: unknown): asserts arr is unknown[] {
   assertType('array', arr)
 }
 
-export function assertObject (obj: unknown): asserts obj is Record<string, unknown> {
+export function assertObject (obj: unknown): asserts obj is object {
   assertType('object', obj)
 }
 
@@ -85,10 +85,10 @@ export function assertNumbers (numbers: unknown[]): asserts numbers is number[] 
   assertTypes('numbers...', numbers)
 }
 
-export function assertArrays (arrays: unknown[]): asserts arrays is Array<unknown>[] {
+export function assertArrays (arrays: unknown[]): asserts arrays is unknown[][] {
   assertTypes('arrays...', arrays)
 }
 
-export function assertObjects (objects: unknown[]): asserts objects is Record<string, unknown>[] {
+export function assertObjects (objects: unknown[]): asserts objects is object[] {
   assertTypes('objects...', objects)
 }

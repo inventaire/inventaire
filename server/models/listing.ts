@@ -6,7 +6,7 @@ import type { Listing } from '#types/listing'
 import attributes from './attributes/listing.js'
 import validations from './validations/listing.js'
 
-export function createListingDoc (listing) {
+export function createListingDoc (listing: Listing) {
   assertObject(listing)
   assertString(listing.creator)
   assertString(listing.name)
@@ -27,15 +27,15 @@ export function createListingDoc (listing) {
   return newListing
 }
 
-export function updateListingDocAttributes (oldListing, newAttributes, creatorId) {
+export function updateListingDocAttributes (oldListing: Listing, newAttributes, creatorId) {
   assertObject(oldListing)
   assertObject(newAttributes)
   if (oldListing.creator !== creatorId) {
-    throw newError('wrong user', 403, oldListing.creator)
+    throw newError('wrong user', 403, { creator: oldListing.creator })
   }
   for (const attr of Object.keys(newAttributes)) {
     if (!(arrayIncludes(attributes.updatable, attr))) {
-      throw newError(`invalid attribute: ${attr}`, 400, oldListing)
+      throw newError(`invalid attribute: ${attr}`, 400, { oldListing })
     }
   }
   const updatedListing = clone(oldListing)
@@ -46,7 +46,7 @@ export function updateListingDocAttributes (oldListing, newAttributes, creatorId
   }
 
   if (isEqual(updatedListing, oldListing)) {
-    throw newError('nothing to update', 400, newAttributes)
+    throw newError('nothing to update', 400, { newAttributes })
   }
 
   updatedListing.updated = Date.now()

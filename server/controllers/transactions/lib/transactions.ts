@@ -9,6 +9,7 @@ import { assertStrings, assertObjects, assertString } from '#lib/utils/assert_ty
 import { sameObjects } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { createTransactionDoc, transactionIsActive, validateTransactionPossibleState } from '#models/transaction'
+import type { Item } from '#types/item'
 import type { Transaction, TransactionAction } from '#types/transaction'
 
 const db = await dbFactory('transactions')
@@ -82,7 +83,7 @@ export async function checkIfItemIsBusy (itemId) {
   return rows.length > 0
 }
 
-export async function setItemsBusyFlag (items) {
+export async function setItemsBusyFlag (items: Item[]) {
   assertObjects(items)
   const itemsIdsToCheck = map(items.filter(mayBeBusy), '_id')
   const rows = await getBusyItems(itemsIdsToCheck)

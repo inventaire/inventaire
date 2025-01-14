@@ -180,6 +180,12 @@ export function arrayIncludes <T extends (string | number)> (array: readonly T[]
   return arrayT.includes(value)
 }
 
+// Same as `arrayIncludes` but for sets
+export function setHas <T extends (string | number)> (set: Set<T>, value: string | number): value is T {
+  const setT: Set<string | number> = set
+  return setT.has(value)
+}
+
 export function objectEntries <Obj> (obj: Obj) {
   return Object.entries(obj) as ObjectEntries<Obj>
 }

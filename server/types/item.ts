@@ -30,6 +30,7 @@ export interface Item extends CouchDoc {
   notes?: string
   history?: ItemHistoryEvent[]
   previousEntity?: EntityUri[]
+  busy?: boolean
 }
 
 export interface ItemSnapshot {

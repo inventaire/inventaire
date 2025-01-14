@@ -1,6 +1,8 @@
+import type { ParsedForm } from '#controllers/images/lib/parse_form'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { assertArray, assertString } from '#lib/utils/assert_types'
+import { assertArray, assertObject, assertString } from '#lib/utils/assert_types'
+import { objectEntries } from '#lib/utils/base'
 import { Log } from '#lib/utils/logs'
 import type { FormReq } from '#types/server'
 import { containers, uploadContainersNames } from './lib/containers.js'
@@ -27,20 +29,25 @@ async function controller (params, req: FormReq) {
   .then(Log('uploaded images'))
 }
 
-function getFilesFromFormData (formData) {
+function getFilesFromFormData (formData: ParsedForm) {
   const { files } = formData
 
   if (!isNonEmptyPlainObject(files)) {
-    throw newError('no file provided', 400, formData)
+    throw newError('no file provided', 400, { formData })
   }
 
-  return Object.entries(files).map(([ key, fileArray ]) => {
+  return objectEntries(files).map(([ key, fileArray ]) => {
     assertArray(fileArray)
     const file = fileArray[0]
+    assertObject(file)
+    // @ts-expect-error
     assertString(file.filepath)
-    file.id = key
-    // This somehow does not have any effect: the "path" attribute is undefined when we reach transformAndPutImage
-    file.path = file.pathname
+    Object.assign(file, {
+      id: key,
+      // This somehow does not have any effect: the "path" attribute is undefined when we reach transformAndPutImage
+      // @ts-expect-error
+      path: file.pathname,
+    })
     return file
   })
 }

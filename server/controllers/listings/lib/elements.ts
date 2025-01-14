@@ -5,8 +5,11 @@ import { maxKey, minKey } from '#lib/couch'
 import { newError } from '#lib/error/error'
 import { combinations } from '#lib/utils/base'
 import { getNextHighestOrdinal } from '#lib/utils/lexicographic_ordinal'
-import { createElementDoc, updateElementDoc } from '#models/element'
+import { createElementDoc, updateElementDoc, type ListingElementNewAttributes } from '#models/element'
 import type { ListingElement } from '#types/element'
+import type { EntityUri } from '#types/entity'
+import type { ListingWithElements } from '#types/listing'
+import type { UserId } from '#types/user'
 
 const db = await dbFactory('elements')
 
@@ -46,7 +49,7 @@ export async function deleteListingsElements (listings) {
   return listingsElements
 }
 
-export async function createListingElements ({ listing, uris, userId }) {
+export async function createListingElements ({ listing, uris, userId }: { listing: ListingWithElements, uris: EntityUri[], userId: UserId }) {
   const listingId = listing._id
   if (listing.creator !== userId) {
     throw newError('wrong user', 403, { userId, listingId })
@@ -68,7 +71,7 @@ export async function createListingElements ({ listing, uris, userId }) {
   return db.fetch<ListingElement>(elementsIds)
 }
 
-export async function updateElementDocAttributes ({ element, newAttributes, elements }: { element: ListingElement, newAttributes: any, elements: ListingElement[] }) {
+export async function updateElementDocAttributes ({ element, newAttributes, elements }: { element: ListingElement, newAttributes: ListingElementNewAttributes, elements: ListingElement[] }) {
   const updatedElement = updateElementDoc(newAttributes, element, elements)
   return db.putAndReturn(updatedElement)
 }

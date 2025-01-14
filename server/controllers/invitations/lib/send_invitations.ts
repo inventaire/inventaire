@@ -4,8 +4,17 @@ import { emit } from '#lib/radio'
 import { assertType, assertArray, assertObject } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import Invited from '#models/invited'
+import type { Group } from '#types/group'
+import type { Email, User } from '#types/user'
 
-export async function sendInvitation ({ reqUser, group, emails, message }) {
+interface SendInvitationParams {
+  reqUser: User
+  group?: Group
+  emails: Email[]
+  message?: string
+}
+
+export async function sendInvitation ({ reqUser, group, emails, message }: SendInvitationParams) {
   assertObject(reqUser)
   assertType('object|null', group)
   assertArray(emails)

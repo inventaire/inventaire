@@ -38,7 +38,7 @@ export function createBlankEntityDoc () {
   return blankEntity
 }
 
-export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label) {
+export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc: D, lang: WikimediaLanguageCode, value: Label | null) {
   assertObject(doc)
   assertString(lang)
 
@@ -46,8 +46,7 @@ export function setEntityDocLabel <D extends (InvEntityDoc | NewInvEntity)> (doc
     throw newError('invalid lang', 400, { doc, lang, value })
   }
 
-  preventRedirectionEdit(doc)
-  preventRemovedPlaceholderEdit(doc)
+  assertEditableEntity(doc)
 
   if (value === null) {
     deleteLabel(doc, lang)
@@ -302,7 +301,7 @@ export function preventRemovedPlaceholderEdit (doc: InvEntityDoc | NewInvEntity)
   }
 }
 
-export function assertEditableEntity (doc: InvEntityDoc): asserts doc is InvEntity {
+export function assertEditableEntity (doc: InvEntityDoc | NewInvEntity): asserts doc is (InvEntity | NewInvEntity) {
   preventRedirectionEdit(doc)
   preventRemovedPlaceholderEdit(doc)
 }

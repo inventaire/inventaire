@@ -4,12 +4,15 @@ import type { ActivityDoc } from '#types/activity'
 import attributes from './attributes/activity.js'
 import { baseActivityValidations } from './validations/activity.js'
 
-export function createActivityDoc (activity) {
+export function createActivityDoc (activity: ActivityDoc) {
   assertObject(activity)
   assertString(activity.type)
   assertObject(activity.actor)
+  // @ts-expect-error
   if (activity.id) activity.externalId = activity.id
+  // @ts-expect-error
   delete activity.id
+  // @ts-expect-error
   delete activity.context
   delete activity['@context']
 

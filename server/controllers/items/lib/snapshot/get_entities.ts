@@ -3,7 +3,7 @@ import { getEntitiesByUris } from '#controllers/entities/lib/get_entities_by_uri
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { assertArray } from '#lib/utils/assert_types'
-import type { EntityUri } from '#types/entity'
+import type { EntityUri, PropertyUri } from '#types/entity'
 import { aggregateClaims } from './helpers.js'
 
 const getRelativeEntities = relationProperties => async entity => {
@@ -37,7 +37,7 @@ function getWorksAuthorsAndSeries (works) {
   return getWorkAuthorsAndSeries(mergedWorks)
 }
 
-const workRelationsProperties = [ ...workAuthorRelationsProperties, 'wdt:P179' ]
+const workRelationsProperties = [ ...workAuthorRelationsProperties, 'wdt:P179' ] satisfies PropertyUri[]
 // Aggregating edition's potentially multiple works claims to fit
 // dependent functions' needs
 function mergeWorksClaims (works) {

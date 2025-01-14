@@ -1,5 +1,6 @@
 import { assertString, assertObject } from '#lib/utils/assert_types'
-import { formatContextualizedError, type ErrorContext } from './format_error.js'
+import type { Req } from '#types/server'
+import { formatContextualizedError, type ContextualizedError, type ErrorContext } from './format_error.js'
 
 type ErrorClass = typeof Error
 
@@ -11,33 +12,33 @@ export function newError (message: string, filter: number | string, context?: Er
   return formatContextualizedError(err, filter, context)
 }
 
-export function addErrorContext (err, additionalContext) {
+export function addErrorContext (err: ContextualizedError, additionalContext: ErrorContext) {
   err.context = err.context || {}
   Object.assign(err.context, additionalContext)
   return err
 }
 
-export function notFoundError (context) {
+export function notFoundError (context: ErrorContext) {
   const err = newError('not found', 404, context)
   err.notFound = true
   return err
 }
 
-export function unauthorizedError (req, message, context) {
+export function unauthorizedError (req: Req, message: string, context: ErrorContext) {
   assertObject(req)
   assertString(message)
   // If the requested is authentified, its a forbidden access
   // If not, the requested might be fullfilled after authentification
-  const statusCode = req.user ? 403 : 401
+  const statusCode = 'user' in req ? 403 : 401
   return newError(message, statusCode, context)
 }
 
-export function catchNotFound (err) {
+export function catchNotFound (err: ContextualizedError) {
   // notFound flag is set by: levelup, notFoundError
   if (err && (err.notFound || err.statusCode === 404)) return
   throw err
 }
 
-export function addContextToStack (err) {
+export function addContextToStack (err: ContextualizedError) {
   if (err.context) err.stack += `\n[Context] ${JSON.stringify(err.context)}`
 }

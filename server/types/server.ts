@@ -10,7 +10,7 @@ export interface AuthentifiedReq extends Express.Request {
 export type Req = Express.Request | AuthentifiedReq
 export type SignedReq = Req
 
-export type Res = Express.Response
+export type Res = Express.Response & { warnings?: string[] }
 
 export type Next = () => void
 

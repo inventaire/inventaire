@@ -3,6 +3,7 @@ import { dbFactory } from '#db/couchdb/base'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import type { OAuthAuthorization, OAuthAuthorizationCode, OAuthClientId, SerializedOAuthAuthorization } from '#types/oauth'
 import type { UserId } from '#types/user'
+import type OAuth2Server from '@node-oauth/oauth2-server'
 
 const db = await dbFactory('oauth_authorizations')
 
@@ -15,7 +16,7 @@ export async function getAuthorizationById (id: OAuthAuthorizationCode) {
   } as SerializedOAuthAuthorization
 }
 
-export async function saveAuthorization (code, userId: UserId, clientId: OAuthClientId) {
+export async function saveAuthorization (code: OAuth2Server.AuthorizationCode, userId: UserId, clientId: OAuthClientId) {
   assertObject(code)
   assertString(userId)
   assertString(clientId)

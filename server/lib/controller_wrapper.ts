@@ -1,5 +1,5 @@
 import { errorHandler } from '#lib/error/error_handler'
-import { assertFunction, assertArray, assertObject } from '#lib/utils/assert_types'
+import { assertFunction, assertArray, assertObject, assertString } from '#lib/utils/assert_types'
 import { someMatch } from '#lib/utils/base'
 import validateObject from '#lib/validate_object'
 import { bundleUnauthorizedApiAccess } from './error/pre_filled.js'

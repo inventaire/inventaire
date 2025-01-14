@@ -71,3 +71,9 @@ export interface BearerToken {
   refresh_token: string
   scope: OAuthScope[]
 }
+
+export type OAuthProvider = 'wikidata'
+export interface OAuthProviderUserData {
+  token: string
+  token_secret: string
+}

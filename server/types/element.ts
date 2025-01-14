@@ -12,4 +12,5 @@ export interface ListingElement extends CouchDoc {
   ordinal: string
   comment?: string
   created: EpochTimeStamp
+  updated?: EpochTimeStamp
 }

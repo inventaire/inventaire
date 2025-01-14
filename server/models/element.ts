@@ -1,9 +1,11 @@
 import { clone, isEqual } from 'lodash-es'
 import { newError } from '#lib/error/error'
 import { assertObject, assertString } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import { findNewOrdinal } from '#lib/utils/lexicographic_ordinal'
 import type { ListingElement } from '#types/element'
 import commonValidations from './validations/common.js'
+import type { OverrideProperties } from 'type-fest'
 
 const { pass, entityUri, couchUuid, BoundedString, boundedString } = commonValidations
 
@@ -33,9 +35,9 @@ export const attributes = {
   apiUpdatable: [
     'comment',
   ],
-}
+} as const
 
-export function createElementDoc (element) {
+export function createElementDoc (element: Pick<ListingElement, 'list' | 'uri' | 'ordinal'>) {
   assertObject(element)
   assertString(element.uri)
   assertString(element.list)
@@ -43,7 +45,7 @@ export function createElementDoc (element) {
 
   const newElement: Partial<ListingElement> = {}
   Object.keys(element).forEach(attribute => {
-    if (!attributes.validAtCreation.includes(attribute)) {
+    if (!arrayIncludes(attributes.validAtCreation, attribute)) {
       throw newError('invalid attribute', 400, { attribute, element })
     }
     validations.pass(attribute, element[attribute])
@@ -55,7 +57,12 @@ export function createElementDoc (element) {
   return newElement
 }
 
-export function updateElementDoc (newAttributes, oldElement, listingElements?) {
+export type ListingElementNewAttributes = OverrideProperties<Partial<Pick<ListingElement, typeof attributes.updatable[number]>>, {
+  // The ordinal must be passed as a number, but will be converted to a string
+  ordinal?: number
+}>
+
+export function updateElementDoc (newAttributes: ListingElementNewAttributes, oldElement: ListingElement, listingElements?: ListingElement[]) {
   assertObject(newAttributes)
   assertObject(oldElement)
   const newElement = clone(oldElement)
@@ -63,12 +70,12 @@ export function updateElementDoc (newAttributes, oldElement, listingElements?) {
   const passedAttributes = Object.keys(newAttributes)
 
   for (const attribute of passedAttributes) {
-    if (!attributes.updatable.includes(attribute)) {
+    if (!arrayIncludes(attributes.updatable, attribute)) {
       throw newError('invalid attribute', 400, { attribute, oldElement })
     }
     let newVal
     if (attribute === 'ordinal') {
-      newVal = findNewOrdinal(oldElement, listingElements, newAttributes[attribute])
+      newVal = findNewOrdinal(oldElement, listingElements, newAttributes.ordinal)
     } else {
       newVal = newAttributes[attribute] || defaultValues[attribute]?.()
       validations.pass(attribute, newVal)

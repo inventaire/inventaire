@@ -29,6 +29,7 @@ export interface Task extends CouchDoc {
   suspectUri: EntityUri
   suggestionUri: EntityUri
   created: EpochTimeStamp
+  updated?: EpochTimeStamp
   lexicalScore?: number
   relationScore?: number
   entitiesType: EntityType

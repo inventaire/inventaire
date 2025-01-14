@@ -164,9 +164,9 @@ export const userIsGroupMember = (userId, group) => userIsAdmin(userId, group) |
 export const groupCategories = {
   members: [ 'admins', 'members' ],
   users: [ 'admins', 'members', 'invited', 'requested' ],
-}
+} as const
 
-export function getAllGroupDocMembersIds (group) {
+export function getAllGroupDocMembersIds (group: Group) {
   assertObject(group)
   const adminsIds = map(group.admins, 'user')
   const membersIds = map(group.members, 'user')

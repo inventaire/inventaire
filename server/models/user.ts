@@ -8,6 +8,7 @@ import { normalizeString } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import type { StringifiedHashedSecretData } from '#types/common'
+import type { OAuthProvider, OAuthProviderUserData } from '#types/oauth'
 import type { User, Email, DeletedUser, UserRole, DocWithUsernameInUserDb, InvitedUser, Username } from '#types/user'
 import userAttributes from './attributes/user.js'
 import userValidations from './validations/user.js'
@@ -105,7 +106,7 @@ export function updateUserDocPassword (user: User, newHash: StringifiedHashedSec
   return user
 }
 
-export const setUserDocOauthTokens = (provider, data) => (user: User) => {
+export const setUserDocOauthTokens = (provider: OAuthProvider, data: OAuthProviderUserData) => (user: User) => {
   assertString(provider)
   assertObject(data)
   assertString(data.token)
