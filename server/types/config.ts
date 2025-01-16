@@ -6,8 +6,14 @@ import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
 
 export type Config = ReadonlyDeep<{
-  name: string
   env: 'default' | 'dev' | 'production' | 'tests' | 'tests-api' | 'tests-integration' | 'tests-unit'
+
+  softwareName: string
+  instanceName: string
+  orgName: string
+  orgUrl: AbsoluteUrl
+  contactAddress: Email
+
   verbose: boolean
   hostname: string
   protocol: 'http' | 'https'
@@ -75,11 +81,6 @@ export type Config = ReadonlyDeep<{
 
   federation: {
     remoteEntitiesOrigin: AbsoluteUrl
-    instanceClientCustomization: {
-      name: string
-      orgName: string
-      orgUrl: AbsoluteUrl
-    }
   }
 
   // See server/data/dataseed/dataseed.js
@@ -114,10 +115,9 @@ export type Config = ReadonlyDeep<{
         pass: string
       }
     }
-    defaultFrom: string
+    getDefaultFrom: () => string
     initDelay: number
   }
-  contactAddress: Email
   activitySummary: {
     disabled: boolean
     disableUserUpdate: boolean

@@ -7,6 +7,11 @@
 /** @type {PartialDeep<Config>} */
 const config = {
   env: 'federated',
+
+  instanceName: 'fed-inv',
+  orgName: 'Example Organization',
+  orgUrl: 'https://inventaire.example.org',
+
   // By convention, federated server port = (equivalent default server port + 10)
   port: 3016,
   db: {
@@ -14,11 +19,6 @@ const config = {
   },
   federation: {
     remoteEntitiesOrigin: 'http://localhost:3006',
-    instanceClientCustomization: {
-      name: 'fed-inv',
-      orgName: 'Example Organization',
-      orgUrl: 'https://inventaire.example.org',
-    },
   },
   dataseed: {
     enabled: false,

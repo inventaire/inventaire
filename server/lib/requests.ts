@@ -25,10 +25,10 @@ const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyL
 const publicOrigin = config.getPublicOrigin()
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
-const { env } = config
+const { env, softwareName } = config
 export const userAgent = env.includes('tests')
   ? `${env}-${nodeAppInstance}`
-  : `${config.name}/${version}; +${publicOrigin}`
+  : `${softwareName}/${version}; +${publicOrigin}`
 
 const defaultTimeout = 30 * 1000
 

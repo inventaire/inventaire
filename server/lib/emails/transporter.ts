@@ -37,7 +37,8 @@ const options = {
   extName: '.hbs',
 }
 
-const { defaultFrom, nodemailer: nodemailerOptions } = config.mailer
+const { nodemailer: nodemailerOptions } = config.mailer
+const defaultFrom = config.mailer.getDefaultFrom()
 const defaults = { from: defaultFrom }
 
 const transporter = createTransport(nodemailerOptions, defaults)

@@ -8,12 +8,18 @@
 const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
-const contactAddress = 'hello@inventaire.io'
 
 /** @type {Config} */
 const config = {
-  name: 'inventaire',
   env: 'default',
+
+  softwareName: 'inventaire',
+
+  instanceName: 'My Inventaire Instance',
+  orgName: 'Example Organization',
+  orgUrl: 'https://inventaire.example.org',
+  contactAddress: 'contact@inventaire.example.org',
+
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
   // protocol: 'http'
@@ -104,11 +110,6 @@ const config = {
   federation: {
     // Set to 'https://inventaire.io' in ./local-dev.cjs to use inventaire.io entities locally
     remoteEntitiesOrigin: null,
-    instanceClientCustomization: {
-      name: 'inventaire',
-      orgName: 'Example Organization',
-      orgUrl: 'https://inventaire.example.org',
-    },
   },
 
   // See server/data/dataseed/dataseed.js
@@ -150,7 +151,7 @@ const config = {
         pass: 'somepassword',
       },
     },
-    defaultFrom: `inventaire <${contactAddress}>`,
+    getDefaultFrom: () => `${config.instanceName} <${config.contactAddress}>`,
     initDelay: 10000,
   },
   debouncedEmail: {
@@ -159,7 +160,6 @@ const config = {
     disabled: false,
   },
 
-  contactAddress,
   activitySummary: {
     disabled: true,
     disableUserUpdate: false,

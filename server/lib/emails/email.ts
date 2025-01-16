@@ -10,7 +10,7 @@ import checkUserNotificationsSettings from './check_user_notifications_settings.
 import { i18n } from './i18n/i18n.js'
 
 const origin = config.getPublicOrigin()
-const { defaultFrom } = config.mailer
+const defaultFrom = config.mailer.getDefaultFrom()
 
 export default {
   validationEmail: (user, token) => {

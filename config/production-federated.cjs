@@ -14,11 +14,6 @@ const config = {
   },
   federation: {
     remoteEntitiesOrigin: 'https://inventaire.io',
-    instanceClientCustomization: {
-      name: 'fed-inv',
-      orgName: 'Example Organization',
-      orgUrl: 'https://inventaire.example.org',
-    },
   },
   activitySummary: {
     disabled: false,

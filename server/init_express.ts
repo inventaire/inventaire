@@ -6,7 +6,7 @@ import { middlewareErrorHandler } from '#server/middlewares/middleware_error_han
 import { routes } from './controllers/routes.js'
 import { middlewares } from './middlewares/middlewares.js'
 
-const { port, hostname, name, publicProtocol, trustProxy } = config
+const { port, hostname, softwareName, publicProtocol, trustProxy } = config
 
 export function initExpress () {
   const app = express()
@@ -46,7 +46,7 @@ export function initExpress () {
       if (err) {
         reject(err)
       } else {
-        info(`${name} server is listening on port ${port}...`)
+        info(`${softwareName} server is listening on port ${port}...`)
         resolve(app)
       }
     })
