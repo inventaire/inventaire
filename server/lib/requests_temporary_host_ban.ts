@@ -1,11 +1,18 @@
-import { debounce, noop } from 'lodash-es'
+import { compact, debounce, noop } from 'lodash-es'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
+import { getHost } from '#lib/network/helpers'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
 import config from '#server/config'
 import type { Host } from '#types/common'
+
+const unbannableServicesHosts = new Set(compact([
+  `${config.db.hostname}:${config.db.port}`,
+  getHost(config.elasticsearch.origin),
+  config.dataseed.enabled ? getHost(config.dataseed.origin) : null,
+]))
 
 const db = leveldbFactory('hosts-bans', 'json')
 const { baseBanTime, banTimeIncreaseFactor, maxBanTime } = config.outgoingRequests
@@ -71,8 +78,7 @@ export function conditionallyDeclareHostError (host: Host, err: ContextualizedEr
 }
 
 export function declareHostError (host: Host) {
-  // Never ban local services
-  if (host.startsWith('localhost')) return
+  if (unbannableServicesHosts.has(host)) return
 
   let hostBanData = banData[host]
 
