@@ -17,6 +17,8 @@ export type Config = ReadonlyDeep<{
   publicProtocol: 'http' | 'https'
   publicHostname: string
   getPublicOrigin: () => AbsoluteUrl
+  /** See https://expressjs.com/en/api.html#trust.proxy.options.table */
+  trustProxy: string
   autoRotateKeys: boolean
   cookieMaxAge: number
   incomingRequests: {

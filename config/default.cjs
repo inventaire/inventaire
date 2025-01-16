@@ -32,6 +32,8 @@ const config = {
   getPublicOrigin: function () {
     return `${this.publicProtocol}://${this.publicHostname}:${this.port}`
   },
+  // See https://expressjs.com/en/api.html#trust.proxy.options.table
+  trustProxy: 'loopback, uniquelocal',
   // To allow fallback between servers, they need to share the same session keys:
   // one should have autoRotateKeys=true and the others autoRotateKeys=false
   autoRotateKeys: true,

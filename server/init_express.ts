@@ -6,7 +6,7 @@ import { middlewareErrorHandler } from '#server/middlewares/middleware_error_han
 import { routes } from './controllers/routes.js'
 import { middlewares } from './middlewares/middlewares.js'
 
-const { port, hostname, name, publicProtocol } = config
+const { port, hostname, name, publicProtocol, trustProxy } = config
 
 export function initExpress () {
   const app = express()
@@ -36,7 +36,7 @@ export function initExpress () {
     // Allows Nginx to pass a "X-Forwarded-Proto=https" header
     // Required to set secure cookies
     // See https://expressjs.com/en/api.html#trust.proxy.options.table
-    app.set('trust proxy', 'loopback')
+    app.set('trust proxy', trustProxy)
   }
 
   app.disable('x-powered-by')
