@@ -8,7 +8,6 @@
 const path = require('node:path')
 
 const root = path.resolve(__dirname, '..')
-const port = 3006
 const contactAddress = 'hello@inventaire.io'
 
 /** @type {Config} */
@@ -21,7 +20,7 @@ const config = {
   verbose: true,
   hostname: 'localhost',
   protocol: 'http',
-  port,
+  port: 3006,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
   getLocalOrigin: function () {
@@ -189,7 +188,7 @@ const config = {
     mode: 'local',
     local: {
       folder: () => `${root}/storage`,
-      internalEndpoint: () => `http://localhost:${port}/local/`,
+      internalEndpoint: () => `${config.getLocalOrigin()}/local/`,
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
