@@ -141,7 +141,7 @@ const config = {
         pass: 'somepassword',
       },
     },
-    defaultFrom: `inventaire.io <${contactAddress}>`,
+    defaultFrom: `inventaire <${contactAddress}>`,
     initDelay: 10000,
   },
   debouncedEmail: {
