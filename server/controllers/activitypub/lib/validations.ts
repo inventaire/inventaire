@@ -20,7 +20,7 @@ export async function validateShelf (name) {
 export async function validateUser (username) {
   const user = await findUserByUsername(username)
   if (!user) throw notFoundError({ username })
-  if (!user.fediversable) throw newError('user is not on the fediverse', 404, { username })
+  if (!('fediversable' in user && user.fediversable)) throw newError('user is not on the fediverse', 404, { username })
   return { user }
 }
 
