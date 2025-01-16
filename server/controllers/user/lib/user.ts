@@ -2,7 +2,6 @@ import { keyBy, set, without } from 'lodash-es'
 import { getNetworkIds } from '#controllers/user/lib/relations_status'
 import { dbFactory } from '#db/couchdb/base'
 import { defaultAvatar } from '#lib/assets'
-import { firstDoc } from '#lib/couch'
 import { newError, notFoundError } from '#lib/error/error'
 import searchUsersByDistanceFactory from '#lib/search_by_distance'
 import searchUsersByPositionFactory from '#lib/search_by_position'
@@ -43,13 +42,11 @@ export function getUsersByUsernames (usernames) {
   return db.getDocsByViewKeys<DocWithUsernameInUserDb>('byUsername', usernames.map(toLowerCase))
 }
 
-export function findUserByUsername (username: Username) {
-  return getUserByUsername(username)
-  .then(firstDoc)
-  .then(user => {
-    if (user) return user
-    else throw notFoundError({ username })
-  })
+export async function findUserByUsername (username: Username) {
+  const docs = await getUserByUsername(username)
+  const user = docs[0]
+  if (user) return user
+  else throw notFoundError({ username })
 }
 
 export function findUserByUsernameOrEmail (str: Username | Email) {

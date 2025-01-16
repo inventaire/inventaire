@@ -4,7 +4,7 @@ import { dbFactory } from '#db/couchdb/base'
 import { mapDoc, mapValue, maxKey, minKey } from '#lib/couch'
 import type { Relation } from '#types/relation'
 import type { UserId } from '#types/user'
-import parseRelations from './parse_relations.js'
+import { parseRelations } from './parse_relations.js'
 
 const db = await dbFactory('relations')
 
@@ -16,9 +16,9 @@ function getAllUserRelations (userId: UserId, includeDocs = false) {
   })
 }
 
-export function getUserRelations (userId: UserId) {
-  return getAllUserRelations(userId)
-  .then(parseRelations)
+export async function getUserRelations (userId: UserId) {
+  const res = await getAllUserRelations(userId)
+  return parseRelations(res)
 }
 
 export async function getUserFriends (userId: UserId) {
@@ -27,10 +27,10 @@ export async function getUserFriends (userId: UserId) {
   return mapValue(res)
 }
 
-export function deleteUserRelations (userId: UserId) {
-  return getAllUserRelations(userId, true)
-  .then(mapDoc)
-  .then(db.bulkDelete)
+export async function deleteUserRelations (userId: UserId) {
+  const res = await getAllUserRelations(userId, true)
+  const docs = mapDoc(res)
+  return db.bulkDelete(docs)
 }
 
 export async function getUserFriendsAndGroupsCoMembers (userId: UserId) {
