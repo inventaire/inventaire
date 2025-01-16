@@ -1,13 +1,15 @@
 import { sendStaticJson } from '#lib/responses'
 import config, { publicHost } from '#server/config'
 
-const { piwik, mapTilesAccessToken } = config
-const { remoteEntitiesOrigin, instanceClientCustomization } = config.federation
+const { instanceName, orgName, orgUrl, piwik, mapTilesAccessToken } = config
+const { remoteEntitiesOrigin } = config.federation
 
 const endpoint = piwik.enabled ? piwik.endpoint : null
 
 const clientConfig = JSON.stringify({
-  ...instanceClientCustomization,
+  instanceName,
+  orgName,
+  orgUrl,
   remoteEntitiesOrigin,
   piwik: endpoint && endpoint.replace('/piwik.php', ''),
   mapTilesAccessToken,
