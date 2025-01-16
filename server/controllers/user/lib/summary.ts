@@ -1,5 +1,4 @@
 import { dbFactory } from '#db/couchdb/base'
-import { firstDoc } from '#lib/couch'
 import config from '#server/config'
 import type { User } from '#types/user'
 
@@ -16,9 +15,9 @@ function waitingForSummary (limit) {
   })
 }
 
-export function findOneWaitingForSummary () {
-  return waitingForSummary(1)
-  .then(firstDoc)
+export async function findOneWaitingForSummary () {
+  const docs = await waitingForSummary(1)
+  return docs[0]
 }
 
 export function justReceivedActivitySummary (id) {

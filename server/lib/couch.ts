@@ -9,10 +9,6 @@ export function mapValue <R extends UnknownDocumentViewResponse> (res: R) {
   return res.rows.map(row => row.value)
 }
 
-export function firstDoc (docs) {
-  return docs != null ? docs[0] : null
-}
-
 export function ignoreNotFound (err) {
   if (!(err && err.statusCode === 404)) throw err
 }

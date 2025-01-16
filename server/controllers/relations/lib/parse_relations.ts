@@ -1,6 +1,6 @@
 import { initCollectionsIndex } from '#lib/utils/base'
 
-export default res => {
+export function parseRelations (res) {
   const relations = initCollectionsIndex(relationsTypes)
   for (const row of res.rows) {
     spreadRelation(relations, row)
