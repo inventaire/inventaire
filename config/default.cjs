@@ -29,14 +29,9 @@ const config = {
   port: 3006,
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
-  getLocalOrigin: function () {
-    return `${config.protocol}://${config.hostname}:${config.port}`
-  },
   publicProtocol: 'http',
   publicHostname: 'localhost',
-  getPublicOrigin: function () {
-    return `${config.publicProtocol}://${config.publicHostname}:${config.port}`
-  },
+  publicPort: 3006,
   // See https://expressjs.com/en/api.html#trust.proxy.options.table
   trustProxy: 'loopback, uniquelocal',
   // To allow fallback between servers, they need to share the same session keys:
