@@ -3,12 +3,11 @@ import OAuth from 'oauth-1.0a'
 import { setUserOauthTokens } from '#controllers/user/lib/user'
 import { requests_ } from '#lib/requests'
 import { parseQuery } from '#lib/utils/url'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import type { AuthentifiedReq, Res } from '#types/server'
 import type { UserId } from '#types/user'
 
-const root = config.getPublicOrigin()
 function createHmacSha1Hash (baseString, key) {
   return crypto.createHmac('sha1', key)
   .update(baseString)
@@ -50,12 +49,12 @@ export default async function wikidataOauth (req: AuthentifiedReq, res: Res) {
   } else {
     const step3Res = await getStep3(reqUserId, verifier, reqToken)
     await saveUserTokens(step3Res, reqUserId)
-    res.redirect(`${root}${redirect}`)
+    res.redirect(`${publicOrigin}${redirect}`)
   }
 }
 
 function getStep1Token (redirect) {
-  let callback = `${root}/api/auth?action=wikidata-oauth`
+  let callback = `${publicOrigin}/api/auth?action=wikidata-oauth`
   if (redirect && redirect[0] === '/') callback += `&redirect=${redirect}`
   const reqData = {
     url: step1Url,

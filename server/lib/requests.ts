@@ -9,7 +9,7 @@ import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HighResolutionTime, HttpHeaders, HttpMethod } from '#types/common'
 import { isUrl, isPositiveIntegerString } from './boolean_validations.js'
 import { isPrivateUrl } from './network/is_private_url.js'
@@ -22,7 +22,6 @@ import type OAuth from 'oauth-1.0a'
 
 const { version } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
-const publicOrigin = config.getPublicOrigin()
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
 const { env, softwareName } = config

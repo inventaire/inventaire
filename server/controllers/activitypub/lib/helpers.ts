@@ -4,11 +4,9 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { notFoundError } from '#lib/error/error'
 import { stringifyQuery } from '#lib/utils/url'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { FollowActivity, Context, ActivityDoc } from '#types/activity'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
-
-const publicOrigin = config.getPublicOrigin()
 
 interface MakeUrlArgs {
   origin?: AbsoluteUrl

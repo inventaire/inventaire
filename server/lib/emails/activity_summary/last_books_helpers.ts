@@ -2,13 +2,11 @@ import { clone, keyBy } from 'lodash-es'
 import { serializeUserData } from '#controllers/user/lib/user'
 import { kmBetween } from '#lib/geo'
 import { itemAllowsTransactions } from '#models/item'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { LatLng, AbsoluteUrl, ColorHexCode } from '#types/common'
 import type { SerializedItem } from '#types/item'
 import type { User } from '#types/user'
 import transactionsColors from './transactions_colors.js'
-
-const origin = config.getPublicOrigin()
 
 export function getLastItems (limitDate: EpochTimeStamp, items: SerializedItem[]) {
   return items.filter(item => item.created > limitDate)
@@ -30,14 +28,14 @@ export function getActivitySummaryItemsViewModels (items: SerializedItem[], user
   const usersByIds = keyBy(users, '_id')
   return items.map(item => {
     const user = usersByIds[item.owner]
-    const itemHref: AbsoluteUrl = `${origin}/items/${item._id}`
+    const itemHref: AbsoluteUrl = `${publicOrigin}/items/${item._id}`
     let userHref: AbsoluteUrl
     let distance, transactionLabel, transactionColor
     if (user) {
       if ((user.position != null) && (position != null)) {
         distance = kmBetween(user.position, position)
       }
-      userHref = `${origin}/users/${user.username}`
+      userHref = `${publicOrigin}/users/${user.username}`
       transactionLabel = `${item.transaction}_personalized_strong`
       transactionColor = transactionsColors[item.transaction]
     }

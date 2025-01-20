@@ -1,7 +1,7 @@
 import { isPlainObject, isString } from 'lodash-es'
 import { isItemId as isWikidataItemId } from 'wikibase-sdk'
 import * as regex_ from '#lib/regex'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { AbsoluteUrl, ColorHexCode, RelativeUrl } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
@@ -14,7 +14,6 @@ import type { VisibilityGroupKey } from '#types/visibility'
 import { isNormalizedIsbn } from './isbn/isbn.js'
 
 const { PositiveInteger: PositiveIntegerPattern } = regex_
-const publicOrigin = config.getPublicOrigin()
 
 function bindedTest <T extends string> (regexName: keyof typeof regex_) {
   return function (str: unknown): str is T {
