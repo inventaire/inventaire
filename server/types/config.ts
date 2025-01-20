@@ -19,10 +19,9 @@ export type Config = ReadonlyDeep<{
   protocol: 'http' | 'https'
   port: number
   offline: boolean
-  getLocalOrigin: () => AbsoluteUrl
   publicProtocol: 'http' | 'https'
   publicHostname: string
-  getPublicOrigin: () => AbsoluteUrl
+  publicPort: number | null
   /** See https://expressjs.com/en/api.html#trust.proxy.options.table */
   trustProxy: string
   autoRotateKeys: boolean

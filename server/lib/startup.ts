@@ -1,7 +1,7 @@
 import { red } from 'tiny-chalk'
 import { initEmailServices } from '#lib/emails/mailer'
 import { log, logErrorsCount } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { getLocalOrigin, publicOrigin } from '#server/config'
 
 export function beforeStartup () {
   initUncaughtExceptionCatcher()
@@ -10,8 +10,8 @@ export function beforeStartup () {
   log(`node: ${process.version}`)
   log(`pid: ${process.pid}`)
   log(`env: ${config.env}`)
-  log(`local origin: ${config.getLocalOrigin()}`)
-  log(`public origin: ${config.getPublicOrigin()}`)
+  log(`local origin: ${getLocalOrigin()}`)
+  log(`public origin: ${publicOrigin}`)
 }
 
 function initUncaughtExceptionCatcher () {

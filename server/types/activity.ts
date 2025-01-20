@@ -37,8 +37,8 @@ export interface ActorActivity {
   name: ActorName
   preferredUsername: string
   summary: string
-  inbox: Url
-  sharedInbox: Url
+  inbox: AbsoluteUrl
+  sharedInbox: AbsoluteUrl
   outbox: Url
   publicKey: {
     id: ActorKeyId
@@ -131,7 +131,7 @@ export interface ItemNote extends Note {
 
 export interface ActivityLink {
   name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: Url
+  url: AbsoluteUrl
 }
 
 export interface PublicKeyObject {

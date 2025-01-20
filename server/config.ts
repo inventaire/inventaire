@@ -1,10 +1,31 @@
 import _config from 'config'
+import type { AbsoluteUrl } from '#types/common'
 import type { Config } from '#types/config'
 
 const config: Config = _config
 
-export const publicOrigin = config.getPublicOrigin()
+const {
+  protocol,
+  hostname,
+  port,
+  mediaStorage,
+  publicHostname,
+  publicProtocol,
+  publicPort,
+} = config
+
+export const publicOrigin: AbsoluteUrl = publicPort ? `${publicProtocol}://${publicHostname}:${publicPort}` : `${publicProtocol}://${publicHostname}`
+
 export const publicHost = publicOrigin.split('://')[1]
 export const federatedMode = config.federation.remoteEntitiesOrigin != null
+
+export function getLocalOrigin () {
+  return `${protocol}://${hostname}:${port}`
+}
+
+export const mediaStorageInternalEndpointsByMode = {
+  local: () => `${getLocalOrigin()}/local/`,
+  swift: () => `${mediaStorage.swift.publicURL}/`,
+}
 
 export default config
