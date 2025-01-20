@@ -1,10 +1,9 @@
 import parseUrl from 'parseurl'
 import type { MinimalRemoteUser } from '#lib/federation/remote_user'
 import { coloredElapsedTime } from '#lib/time'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { Next, Req, Res } from '#types/server'
 
-const publicOrigin = config.getPublicOrigin()
 const { mutedDomains, mutedPath } = config.requestsLogger
 
 // Adapted from https://github.com/expressjs/morgan 1.1.1

@@ -11,17 +11,15 @@ import {
 import { createItem } from '#fixtures/items'
 import { createShelf } from '#fixtures/shelves'
 import { createUser, type AwaitableUserWithCookie } from '#fixtures/users'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import { getByUri, addClaim, parseLabel, updateLabel } from '#tests/api/utils/entities'
 import { customAuthReq, rawCustomAuthReq } from '#tests/api/utils/request'
 import type { ItemId } from '#types/item'
 
 const { parse } = papaparse
 
-const origin = config.getPublicOrigin()
-
 const endpoint = '/api/items?action=export&format=csv'
-const generateUrl = path => `${origin}${path}`
+const generateUrl = path => `${publicOrigin}${path}`
 const generateEntityUrl = uri => generateUrl(`/entity/${uri}`)
 const generateEntitiesUrls = uris => uris.map(generateEntityUrl)
 const userPromise = createUser()
@@ -132,7 +130,7 @@ describe('items:export', () => {
 
       const itemRow = await reqAndParse(item._id)
       itemRow['Edition subtitle'].should.equal(edition.claims['wdt:P1680'][0])
-      itemRow['Edition cover'].should.equal(`${origin}/img/entities/${someImageHash}`)
+      itemRow['Edition cover'].should.equal(`${publicOrigin}/img/entities/${someImageHash}`)
       itemRow['Edition publication date'].should.equal(publicationDate)
       itemRow['Edition number of pages'].should.equal('10')
       itemRow['Translators labels'].should.equal(translatorLabel)

@@ -5,7 +5,7 @@ import { createItem, createItems } from '#fixtures/items'
 import { createShelf, createShelfWithItem } from '#fixtures/shelves'
 import { createUser } from '#fixtures/users'
 import { wait } from '#lib/promises'
-import config, { federatedMode } from '#server/config'
+import config, { federatedMode, publicOrigin } from '#server/config'
 import { updateItems } from '#tests/api/utils/items'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getActorName } from '#tests/api/utils/shelves'
@@ -13,7 +13,6 @@ import { publicReq, getFediversableUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
 import type { Url } from '#types/common'
 
-const origin = config.getPublicOrigin()
 const debounceTime = config.activitypub.activitiesDebounceTime + 50
 const endpoint = '/api/activitypub?action=outbox&name='
 
@@ -39,7 +38,7 @@ describe('outbox', () => {
       await wait(debounceTime)
       const outboxUrl: Url = `${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
-      const url = `${origin}${outboxUrl}`
+      const url = `${publicOrigin}${outboxUrl}`
       res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
@@ -70,7 +69,7 @@ describe('outbox', () => {
       const { username } = await user
       await wait(debounceTime)
       const outboxUrl: Url = `${endpoint}${username}&offset=0`
-      const url = `${origin}${endpoint}${username}`
+      const url = `${publicOrigin}${endpoint}${username}`
       const res = await publicReq('get', outboxUrl)
       res.type.should.equal('OrderedCollectionPage')
       res.partOf.should.equal(url)
@@ -200,7 +199,7 @@ describe('outbox', () => {
       await addAuthor(workUri, authorUri)
       const outboxUrl: Url = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', outboxUrl)
-      const url = `${origin}${outboxUrl}`
+      const url = `${publicOrigin}${outboxUrl}`
       res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
@@ -215,7 +214,7 @@ describe('outbox', () => {
       await wait(debounceTime)
       const outboxUrl: Url = `${endpoint}${getEntityActorName(authorUri)}`
       const res = await publicReq('get', `${outboxUrl}&offset=0`)
-      const url = `${origin}${outboxUrl}`
+      const url = `${publicOrigin}${outboxUrl}`
       res.type.should.equal('OrderedCollectionPage')
       res.partOf.should.equal(url)
       res.first.should.equal(`${url}&offset=0`)
@@ -301,7 +300,7 @@ describe('outbox', () => {
       const name = getActorName(shelf)
       const outboxUrl: Url = `${endpoint}${name}`
       const res = await publicReq('get', outboxUrl)
-      const url = `${origin}${outboxUrl}`
+      const url = `${publicOrigin}${outboxUrl}`
       res.id.should.equal(url)
       res.type.should.equal('OrderedCollection')
       res.totalItems.should.equal(1)
@@ -315,7 +314,7 @@ describe('outbox', () => {
       await wait(debounceTime)
       const outboxUrl: Url = `${endpoint}${name}&offset=0`
       const res = await publicReq('get', outboxUrl)
-      const url = `${origin}${endpoint}${name}`
+      const url = `${publicOrigin}${endpoint}${name}`
       res.type.should.equal('OrderedCollectionPage')
       res.partOf.should.equal(url)
       res.first.should.equal(`${url}&offset=0`)

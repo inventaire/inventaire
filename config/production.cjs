@@ -11,9 +11,7 @@ const config = {
   verbose: true,
   publicHostname: 'OVERRIDE',
   publicProtocol: 'https',
-  getPublicOrigin: function () {
-    return `${this.publicProtocol}://${this.publicHostname}`
-  },
+  publicPort: null,
   // Let Nginx serve the static files
   // https://github.com/inventaire/inventaire-deploy/blob/main/nginx/inventaire.original.nginx
   serveStaticFiles: false,

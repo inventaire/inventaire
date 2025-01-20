@@ -5,12 +5,10 @@ import { requests_, type RequestOptions } from '#lib/requests'
 import { assertObject, assertType, assertString } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
 import type { BearerToken } from '#types/oauth'
 import type { OverrideProperties } from 'type-fest'
-
-const origin: AbsoluteUrl = config.getPublicOrigin()
 
 type RawRequestOptions = OverrideProperties<RequestOptions, { headers?: HttpHeaders }>
 
@@ -18,7 +16,7 @@ async function testServerAvailability () {
   if (!config.waitForServer) return
 
   try {
-    await requests_.get(`${origin}/api/tests`, { timeout: 1000 })
+    await requests_.get(`${publicOrigin}/api/tests`, { timeout: 1000 })
     success('tests server is ready')
   } catch (err) {
     if (err.code !== 'ECONNREFUSED' && err.name !== 'TimeoutError') throw err
@@ -37,14 +35,14 @@ export async function rawRequest (method: HttpMethod, url: Url, reqParams: RawRe
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
   reqParams.parseJson = reqParams.parseJson || false
-  if (url[0] === '/') url = `${origin}${url}`
+  if (url[0] === '/') url = `${publicOrigin}${url}`
   return requests_[method](url as AbsoluteUrl, reqParams)
 }
 
 export async function request (method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
   assertString(method)
   assertString(endpoint)
-  const url = (endpoint.startsWith('/') ? origin + endpoint : endpoint) as AbsoluteUrl
+  const url = (endpoint.startsWith('/') ? publicOrigin + endpoint : endpoint) as AbsoluteUrl
   const options: RequestOptions = {
     headers,
     redirect: 'error',

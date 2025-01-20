@@ -60,6 +60,7 @@ async function proxyPublicJsonRequest (req: Req, res: Res, method: HttpMethod, a
   if (!isRelativeUrl(url)) throw newError('invalid relative url', 500, { method, action })
   const body = httpMethodHasBody(method) ? req.body : undefined
   const remoteRes = await federatedRequest(method, url, { body })
+  // @ts-expect-error
   runPostProxiedRequestHooks(method, url, action, req.query)
   return res.json(remoteRes)
 }
