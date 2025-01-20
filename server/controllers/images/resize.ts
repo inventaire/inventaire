@@ -13,6 +13,7 @@ import { getResizedImage } from './lib/get_resized_image.js'
 const { env } = config
 const { mode } = config.mediaStorage
 const mediaStorageEndpoint = config.mediaStorage[mode].internalEndpoint()
+console.log('🚀 ~ file: resize.ts ~ line', 16, { mediaStorageEndpoint })
 const { offline } = config
 const containersList = Object.keys(containers)
 const { useProdCachedImages } = config.remoteImages

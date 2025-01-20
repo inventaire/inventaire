@@ -187,7 +187,12 @@ const config = {
     mode: 'local',
     local: {
       folder: () => `${root}/storage`,
-      internalEndpoint: () => `${config.getLocalOrigin()}/local/`,
+      internalEndpoint: () => {
+        console.log('config', config)
+        console.log('config.port', config.port)
+        console.log('config.getLocalOrigin()', config.getLocalOrigin())
+        return `${config.getLocalOrigin()}/local/`
+      },
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
