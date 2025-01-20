@@ -12,9 +12,6 @@ const config = {
   hostname: 'localhost',
   port: 3009,
   verbose: false,
-  getLocalOrigin: function () {
-    return `${this.protocol}://${this.hostname}:${this.port}`
-  },
   db: {
     suffix: 'tests',
     // debug: true

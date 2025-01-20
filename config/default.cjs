@@ -30,12 +30,12 @@ const config = {
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
   getLocalOrigin: function () {
-    return `${this.protocol}://${this.hostname}:${this.port}`
+    return `${config.protocol}://${config.hostname}:${config.port}`
   },
   publicProtocol: 'http',
   publicHostname: 'localhost',
   getPublicOrigin: function () {
-    return `${this.publicProtocol}://${this.publicHostname}:${this.port}`
+    return `${config.publicProtocol}://${config.publicHostname}:${config.port}`
   },
   // See https://expressjs.com/en/api.html#trust.proxy.options.table
   trustProxy: 'loopback, uniquelocal',
