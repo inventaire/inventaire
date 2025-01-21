@@ -4,13 +4,11 @@ import { assertObjects } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import config, { publicOrigin } from '#server/config'
+import { defaultFrom, publicOrigin } from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import type { TransactionUserRole } from '#types/transaction'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
-
-const defaultFrom = config.mailer.getDefaultFrom()
 
 export default {
   validationEmail: (user, token) => {

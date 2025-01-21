@@ -146,7 +146,6 @@ const config = {
         pass: 'somepassword',
       },
     },
-    getDefaultFrom: () => `${config.instanceName} <${config.contactAddress}>`,
     initDelay: 10000,
   },
   debouncedEmail: {
