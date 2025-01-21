@@ -5,7 +5,7 @@ import { absolutePath } from '#lib/absolute_path'
 import { debug, imgSrc, stringify } from '#lib/emails/handlebars_helpers'
 import { i18n, I18n, dateI18n } from '#lib/emails/i18n/i18n'
 import { warn, success, logError } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { defaultFrom } from '#server/config'
 
 const viewsPath = absolutePath('lib', 'emails/views')
 const debugMode = config.mailer.nodemailer.host === 'smtp.ethereal.email'
@@ -38,7 +38,6 @@ const options = {
 }
 
 const { nodemailer: nodemailerOptions } = config.mailer
-const defaultFrom = config.mailer.getDefaultFrom()
 const defaults = { from: defaultFrom }
 
 const transporter = createTransport(nodemailerOptions, defaults)

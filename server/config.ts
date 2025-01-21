@@ -19,6 +19,8 @@ export const publicOrigin: AbsoluteUrl = publicPort ? `${publicProtocol}://${pub
 export const publicHost = publicOrigin.split('://')[1]
 export const federatedMode = config.federation.remoteEntitiesOrigin != null
 
+export const defaultFrom = `${config.instanceName} <${config.contactAddress}>`
+
 export function getLocalOrigin () {
   return `${protocol}://${hostname}:${port}`
 }
