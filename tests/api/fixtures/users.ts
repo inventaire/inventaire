@@ -6,7 +6,7 @@ import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { getRandomUuid } from '#lib/crypto'
 import { assertString } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import config from '#server/config'
+import { localOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
 import { deleteUser } from '#tests/api/utils/users'
@@ -15,8 +15,7 @@ import type { User, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean>
 
-const origin = config.getLocalOrigin()
-const authEndpoint = `${origin}/api/auth`
+const authEndpoint = `${localOrigin}/api/auth`
 
 let getUser, updateUser
 async function importCircularDependencies () {
