@@ -183,7 +183,6 @@ const config = {
     mode: 'local',
     local: {
       folder: () => `${root}/storage`,
-      internalEndpoint: () => `${config.getLocalOrigin()}/local/`,
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
@@ -195,9 +194,6 @@ const config = {
       publicURL: 'https://swiftPublicURL/',
       tenantName: '12345678',
       region: 'SBG-1',
-      internalEndpoint: function () {
-        return `${this.publicURL}/`
-      },
     },
   },
 

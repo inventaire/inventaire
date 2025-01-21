@@ -145,10 +145,6 @@ export type Config = ReadonlyDeep<{
       }
     }
     mode: 'local' | 'swift'
-    local: {
-      folder: () => Path
-      internalEndpoint: () => AbsoluteUrl
-    }
     swift: {
       username: string
       password: string
@@ -158,7 +154,6 @@ export type Config = ReadonlyDeep<{
       publicURL: AbsoluteUrl
       tenantName: string
       region: string
-      internalEndpoint: () => AbsoluteUrl
     }
   }
 

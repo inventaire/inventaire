@@ -19,7 +19,7 @@ import { authReq, getUser } from './utils.js'
 
 const { mediaStorage } = config
 mediaStorage.mode.should.equal('local')
-const localStorageFolder = mediaStorage.local.folder()
+const localStorageFolder = mediaStorage.local.folder
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
