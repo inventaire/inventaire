@@ -143,6 +143,9 @@ export type Config = ReadonlyDeep<{
       }
     }
     mode: 'local' | 'swift'
+    local: {
+      folder?: Path
+    }
     swift: {
       username: string
       password: string

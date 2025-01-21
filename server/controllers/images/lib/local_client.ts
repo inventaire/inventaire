@@ -1,10 +1,12 @@
+import { resolve } from 'node:path'
+import { projectRoot } from '#lib/absolute_path'
 import { mv, rm } from '#lib/fs'
 import config from '#server/config'
 
 const { local: localStorage } = config.mediaStorage
-const storageFolder = localStorage.folder()
+export const localStorageFolder = resolve(projectRoot, localStorage.folder)
 
-const filePath = (container, filename) => `${storageFolder}/${container}/${filename}`
+const filePath = (container, filename) => `${localStorageFolder}/${container}/${filename}`
 
 export default {
   putImage: async (container, path, filename) => {
