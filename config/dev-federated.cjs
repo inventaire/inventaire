@@ -38,6 +38,14 @@ const config = {
     },
   },
   nice: false,
+
+  mediaStorage: {
+    mode: 'local',
+    local: {
+      // Storage path relative to the project root
+      folder: './storage_federated',
+    },
+  },
 }
 
 module.exports = config
