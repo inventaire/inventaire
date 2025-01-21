@@ -5,10 +5,6 @@
 
 /** @typedef { import('../types/types.ts').Config } Config */
 
-const path = require('node:path')
-
-const root = path.resolve(__dirname, '..')
-
 /** @type {Config} */
 const config = {
   env: 'default',
@@ -181,7 +177,8 @@ const config = {
     // object storage service such as Swift
     mode: 'local',
     local: {
-      folder: () => `${root}/storage`,
+      // Storage path relative to the project root
+      folder: './storage',
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
