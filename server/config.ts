@@ -23,9 +23,12 @@ export function getLocalOrigin () {
   return `${protocol}://${hostname}:${port}`
 }
 
-export const mediaStorageInternalEndpointsByMode = {
-  local: () => `${getLocalOrigin()}/local/`,
-  swift: () => `${mediaStorage.swift.publicURL}/`,
+export function getMediaStorageEndpoint () {
+  if (mediaStorage.mode === 'local') {
+    return `${getLocalOrigin()}/local/`
+  } else {
+    return mediaStorage[mode].publicURL
+  }
 }
 
 export default config
