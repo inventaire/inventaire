@@ -12,7 +12,7 @@ import {
 } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { forceArray } from '#lib/utils/base'
-import config, { federatedMode } from '#server/config'
+import { federatedMode, localOrigin } from '#server/config'
 import { getByUris, getByUri, addClaim, getHistory } from '#tests/api/utils/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -165,7 +165,7 @@ describe('entities:resolver:update-resolved', () => {
 
   // Requires a running dataseed service and config.dataseed.enabled=true
   xit('should refuse to add an invalid image', async () => {
-    const validUrlButNotAnImage = `${config.getLocalOrigin()}/api/tests`
+    const validUrlButNotAnImage = `${localOrigin}/api/tests`
     const { isbn } = await createEditionWithIsbn()
     const entry = {
       edition: {

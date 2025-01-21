@@ -15,20 +15,17 @@ const {
 } = config
 
 export const publicOrigin: AbsoluteUrl = publicPort ? `${publicProtocol}://${publicHostname}:${publicPort}` : `${publicProtocol}://${publicHostname}`
-
 export const publicHost = publicOrigin.split('://')[1]
+export const localOrigin = `${protocol}://${hostname}:${port}` as AbsoluteUrl
+
 export const federatedMode = config.federation.remoteEntitiesOrigin != null
 
 export const defaultFrom = `${config.instanceName} <${config.contactAddress}>`
 
-export function getLocalOrigin () {
-  return `${protocol}://${hostname}:${port}`
-}
-
 export let mediaStorageEndpoint
 const { mode } = mediaStorage
 if (mode === 'local') {
-  mediaStorageEndpoint = `${getLocalOrigin()}/local/`
+  mediaStorageEndpoint = `${localOrigin}/local/`
 } else {
   mediaStorageEndpoint = config.mediaStorage[mode].publicURL
 }

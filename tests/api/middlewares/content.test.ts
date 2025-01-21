@@ -1,9 +1,7 @@
 import 'should'
 import fetch from 'node-fetch'
-import config from '#server/config'
+import { localOrigin } from '#server/config'
 import { waitForTestServer } from '#tests/api/utils/request'
-
-const origin = config.getLocalOrigin()
 
 describe('content', () => {
   describe('body-parser', () => {
@@ -21,7 +19,7 @@ describe('content', () => {
 
     it('should reject url encoded bodies', async () => {
       await waitForTestServer
-      const res = await fetch(`${origin}/api/tests`, {
+      const res = await fetch(`${localOrigin}/api/tests`, {
         method: 'POST',
         body: 'bla=123',
         headers: {
@@ -36,7 +34,7 @@ describe('content', () => {
 
   it('should make an exception for /api/submit', async () => {
     await waitForTestServer
-    const res = await fetch(`${origin}/api/submit?redirect=foo`, {
+    const res = await fetch(`${localOrigin}/api/submit?redirect=foo`, {
       method: 'POST',
       body: 'bla=123',
       redirect: 'manual',
@@ -44,14 +42,14 @@ describe('content', () => {
         'content-type': 'application/x-www-form-urlencoded',
       },
     })
-    res.headers.get('location').should.equal(`${origin}/foo`)
+    res.headers.get('location').should.equal(`${localOrigin}/foo`)
     res.status.should.equal(302)
   })
 })
 
 const makeRequest = async contentType => {
   await waitForTestServer
-  const res = await fetch(`${origin}/api/tests`, {
+  const res = await fetch(`${localOrigin}/api/tests`, {
     method: 'POST',
     body: JSON.stringify({ bla: 123 }),
     headers: {
