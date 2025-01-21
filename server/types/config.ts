@@ -114,7 +114,6 @@ export type Config = ReadonlyDeep<{
         pass: string
       }
     }
-    getDefaultFrom: () => string
     initDelay: number
   }
   activitySummary: {
