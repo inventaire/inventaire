@@ -7,14 +7,13 @@ import { bundleError, bundleInvalidError } from '#lib/error/pre_filled'
 import { assertHostIsNotTemporarilyBanned } from '#lib/requests_temporary_host_ban'
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
-import config, { getMediaStorageEndpoint } from '#server/config'
+import config, { mediaStorageEndpoint } from '#server/config'
 import { getResizedImage } from './lib/get_resized_image.js'
 
 const { env } = config
 const { offline } = config
 const containersList = Object.keys(containers)
 const { useProdCachedImages } = config.remoteImages
-const mediaStorageEndpoint = getMediaStorageEndpoint()
 
 if (env === 'production' && useProdCachedImages) {
   throw new Error("useProdCachedImages can not be true when env is 'production'")
