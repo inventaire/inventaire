@@ -9,7 +9,9 @@ import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
 import { mkdirp } from '#lib/fs'
 import * as regex_ from '#lib/regex'
+import { arrayIncludes } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
+import { federatedMode } from '#server/config'
 
 const imagesAssetsFolder = absolutePath('server', 'assets/images')
 
@@ -30,8 +32,12 @@ export default {
 
     const [ container, filename ] = pathname.split('/').slice(2)
 
-    if (!container) {
+    if (!container || !(container === 'assets' || arrayIncludes(uploadContainersNames, container))) {
       return bundleError(req, res, 'invalid container', 400, { pathname, container, filename })
+    }
+
+    if (federatedMode && container === 'entities') {
+      return bundleError(req, res, 'no local entities images in federated mode', 400, { pathname, container, filename })
     }
 
     if (!filename) {
